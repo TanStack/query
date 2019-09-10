@@ -1,4 +1,5 @@
 import React from "react";
+import JSONStableStringify from 'fast-json-stable-stringify'
 
 const context = React.createContext();
 
@@ -40,7 +41,7 @@ function getQueryID(query) {
 
 function getQueryInfo({ query, variables: variablesObj, cacheBuster = "" }) {
   const queryID = getQueryID(query);
-  const variablesHash = JSON.stringify(variablesObj);
+  const variablesHash = JSONStableStringify(variablesObj);
   return [
     [queryID, variablesHash, cacheBuster].join(""),
     queryID,
@@ -49,7 +50,7 @@ function getQueryInfo({ query, variables: variablesObj, cacheBuster = "" }) {
 }
 
 function useVariables(variablesObj) {
-  const stringified = JSON.stringify(variablesObj);
+  const stringified = JSONStableStringify(variablesObj);
   // eslint-disable-next-line
   return React.useMemo(() => variablesObj, [stringified]);
 }
@@ -174,8 +175,7 @@ function useSharedQuery({
   };
 }
 
-export function useQuery({
-  query,
+export function useQuery(query, {
   variables: userVariables,
   tags = [],
   manual = false,
@@ -257,6 +257,8 @@ export function useQuery({
               }, delay)
             );
           }
+
+          throw error
         }
       };
 
@@ -388,7 +390,7 @@ export function useUpdateQuery() {
     ({ query, variables }, data) => {
       const [queryHash] = getQueryInfo({
         query,
-        variables
+        variables: typeof variables === 'function' ? variables(data) : variables
       });
 
       setState(old => ({
@@ -403,8 +405,7 @@ export function useUpdateQuery() {
   );
 }
 
-export function useMutation({
-  query,
+export function useMutation(mutation, {
   invalidate: defaultInvalidate,
   update: defaultUpdate
 }) {
@@ -424,7 +425,7 @@ export function useMutation({
     ) => {
       setIsLoading(true);
       try {
-        const res = await query(variables);
+        const res = await mutation(variables);
         setData(res);
         invalidate(userInvalidate);
         if (update) {
@@ -437,10 +438,10 @@ export function useMutation({
         setIsLoading(false);
       }
     },
-    [defaultInvalidate, defaultUpdate, invalidate, query, updateQuery]
+    [defaultInvalidate, defaultUpdate, invalidate, mutation, updateQuery]
   );
 
-  return [{ data, isLoading, error }, mutate];
+  return [mutate, { data, isLoading, error }];
 }
 
 export function useRefetchAll() {
