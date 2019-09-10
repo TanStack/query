@@ -1,6 +1,6 @@
 {
   "name": "@tannerlinsley/react-query-temp",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Hooks for orchestrating, managing, and syncing asynchronous data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -22,7 +22,9 @@
     "prop-types": "^15.5.4",
     "react": "^16.6.3"
   },
-  "dependencies": {},
+  "dependencies": {
+    "fast-json-stable-stringify": "^2.0.0"
+  },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
