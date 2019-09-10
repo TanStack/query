@@ -5,8 +5,9 @@ import {
   ReactQueryProvider,
   useQuery,
   useMutation,
+  useIsFetching,
   useRefetchAll
-} from "react-query";
+} from "@tannerlinsley/react-query-temp";
 
 import "./styles.css";
 
@@ -87,11 +88,11 @@ function Todos({ initialFilter = "", setEditingID }) {
     error,
     failureCount,
     refetch
-  } = useQuery({
-    query: fetchTodos,
+  } = useQuery(fetchTodos, {
     variables: {
       filter
-    }
+    },
+    cacheTime: 5000
   });
 
   return (
@@ -136,9 +137,8 @@ function Todos({ initialFilter = "", setEditingID }) {
 function AddTodo() {
   const [name, setName] = React.useState("");
 
-  const [{ data, isLoading, error }, mutate] = useMutation({
-    invalidate: [fetchTodos],
-    query: postTodo
+  const [mutate, { data, isLoading, error }] = useMutation(postTodo, {
+    invalidate: [fetchTodos]
   });
 
   return (
@@ -166,8 +166,7 @@ function AddTodo() {
 
 function EditTodo({ editingID, setEditingID }) {
   // Query for the individual todo
-  const queryState = useQuery({
-    query: fetchTodoByID,
+  const queryState = useQuery(fetchTodoByID, {
     variables: {
       id: editingID
     }
@@ -183,8 +182,7 @@ function EditTodo({ editingID, setEditingID }) {
   }, [queryState.data]);
 
   // Create a mutation for u
-  const [mutationState, mutate] = useMutation({
-    query: patchTodo,
+  const [mutate, mutationState] = useMutation(patchTodo, {
     invalidate: {
       query: fetchTodos
     },
@@ -262,6 +260,17 @@ function EditTodo({ editingID, setEditingID }) {
   );
 }
 
+function RefreshingBanner() {
+  const isFetching = useIsFetching();
+  return (
+    <div>
+      isFetching: {isFetching.toString()}
+      <br />
+      <br />
+    </div>
+  );
+}
+
 function RefetchAll() {
   const refetchAll = useRefetchAll();
   return (
@@ -274,6 +283,7 @@ function RefetchAll() {
 function App() {
   const [editingID, setEditingID] = React.useState(null);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
+  const [views] = React.useState(["", "fruit", "apple"]);
 
   React.useEffect(() => {
     errorRate = localErrorRate;
@@ -284,6 +294,7 @@ function App() {
       <div className="App">
         <h1>Hello CodeSandbox</h1>
         <h2>Start editing to see some magic happen!</h2>
+        <RefreshingBanner />
         <div>
           Error Rate:{" "}
           <input
@@ -298,11 +309,12 @@ function App() {
         </div>
         <RefetchAll />
         <br />
-        <Todos setEditingID={setEditingID} />
-        <br />
-        <Todos initialFilter="fruit" setEditingID={setEditingID} />
-        <br />
-        <Todos initialFilter="apple" setEditingID={setEditingID} />
+        {views.map((view, index) => (
+          <div key={index}>
+            <Todos initialFilter={view} setEditingID={setEditingID} />
+            <br />
+          </div>
+        ))}
         <hr />
         {editingID !== null ? (
           <EditTodo editingID={editingID} setEditingID={setEditingID} />

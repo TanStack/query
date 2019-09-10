@@ -14,6 +14,7 @@ export function ReactQueryProvider({ children, config = {} }) {
     retryDelay: attempt =>
       Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
     defaultMerge: (old, data) => [...old, ...data],
+    cacheTime: 60 * 1000,
     ...config
   };
 
@@ -62,7 +63,8 @@ function useSharedQuery({
   instanceID,
   refetchRef,
   retry: queryRetry,
-  retryDelay: queryRetryDelay
+  retryDelay: queryRetryDelay,
+  cacheTime: queryCacheTime
 }) {
   const [
     providerState,
@@ -135,21 +137,9 @@ function useSharedQuery({
     refetchRef
   };
 
-  // Manage query active-ness and garbage collection
-  React.useEffect(() => {
-    const providerMetaCopy = providerMetaRef.current;
-
-    return () => {
-      // Do some cleanup between hash changes
-      delete providerMetaCopy[queryHash].instancesByID[instanceID];
-
-      // If no more instances are tied to this query, GC it
-      if (!Object.keys(providerMetaCopy[queryHash].instancesByID).length) {
-        delete providerMetaCopy[queryHash];
-        setQueryState(undefined);
-      }
-    };
-  }, [queryHash, providerMetaRef, instanceID, setQueryState]);
+  if (providerMetaRef.current[queryHash].cleanupTimeout) {
+    clearTimeout(providerMetaRef.current[queryHash].cleanupTimeout)
+  }
 
   const metaRef = React.useRef();
   metaRef.current = providerMetaRef.current[queryHash];
@@ -162,8 +152,27 @@ function useSharedQuery({
     retryDelay:
       typeof queryRetryDelay !== "undefined"
         ? queryRetryDelay
-        : configRef.current.retryDelay
+        : configRef.current.retryDelay,
+    cacheTime: typeof queryCacheTime !== 'undefined' ? queryCacheTime : configRef.current.cacheTime
   };
+
+  // Manage query active-ness and garbage collection
+  React.useEffect(() => {
+    const providerMetaCopy = providerMetaRef.current;
+
+    return () => {
+      // Do some cleanup between hash changes
+      delete providerMetaCopy[queryHash].instancesByID[instanceID];
+
+      // If no more instances are tied to this query, GC it
+      if (!Object.keys(providerMetaCopy[queryHash].instancesByID).length) {
+        providerMetaCopy[queryHash].cleanupTimeout = setTimeout(() => {
+          delete providerMetaCopy[queryHash];
+          setQueryState(undefined);
+        }, queryConfigRef.current.cacheTime)
+      }
+    };
+  }, [instanceID, providerMetaRef, queryHash, setQueryState]);
 
   return {
     queryState,
@@ -180,6 +189,7 @@ export function useQuery(query, {
   tags = [],
   manual = false,
   cache = true,
+  cacheTime,
   retry: queryRetry,
   retryDelay: queryRetryDelay
 }) {
@@ -208,7 +218,8 @@ export function useQuery(query, {
     instanceID,
     refetchRef,
     retry: queryRetry,
-    retryDelay: queryRetryDelay
+    retryDelay: queryRetryDelay,
+    cacheTime
   });
 
   const isCached = successCount && !error;
@@ -442,6 +453,13 @@ export function useMutation(mutation, {
   );
 
   return [mutate, { data, isLoading, error }];
+}
+
+export function useIsFetching () {
+  const [state] = React.useContext(context);
+  return React.useMemo(() => {
+    return Object.entries(state).some(([key, queryState]) => queryState.isFetching);
+  }, [state])
 }
 
 export function useRefetchAll() {
