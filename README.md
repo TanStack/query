@@ -1,13 +1,13 @@
 # React Query
 
-<a href="https://travis-ci.org/react-query/react-query" target="\_parent">
-  <img alt="" src="https://travis-ci.org/react-query/react-query.svg?branch=master" />
+<a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
+  <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
 </a>
 <a href="https://npmjs.com/package/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a>
 <a href="https://github.com/tannerlinsley/react-query" target="\_parent">
-  <img alt="" src="https://img.shields.io/github/stars/react-query/react-query.svg?style=social&label=Star" />
+  <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
 </a>
 <a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
@@ -35,6 +35,8 @@ React Query contains a set of hooks that attempt to address these issues. Ouf of
 - Automatically manages and garbage collects unused cache data
 - Supports retries and even exponential/custom back-off delays
 - Provides a declarative API for invalidating and managing cached responses.
+- Built with and for React hooks
+- 7kb gzipped
 
 ## Hat Tipping
 
