@@ -20,7 +20,7 @@ Hooks for managing asynchronous data in React
 Tools for managing promises or normalized client stores/caches are plentiful these days, but most of these tools:
 
 - Don't dedupe network operations that could be made in a single request
-- Force denormalization or custom caching strategies on your data
+- Force normalized or object/id-based caching strategies on your data
 - Don't invalidate their cache often enough or don't offer sane defaults to do so
 - Because of this ☝️, they require imperative interaction to invalidate or manage their caches
 - Don't perform optimistic updates across the network
