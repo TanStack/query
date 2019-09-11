@@ -36,6 +36,10 @@ React Query contains a set of hooks that attempt to address these issues. Ouf of
 - Supports retries and even exponential/custom back-off delays
 - Provides a declarative API for invalidating and managing cached responses.
 
+## Hat Tipping
+
+A big thanks to [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's API and documentation. You rock!
+
 ## Demos
 
 - [A contrived CodeSandbox example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/example)

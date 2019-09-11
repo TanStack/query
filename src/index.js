@@ -356,7 +356,7 @@ export function useRefetchQueries() {
   const [, , providerMetaRef] = React.useContext(context)
 
   return React.useCallback(
-    async (refetchQueries, { waitForRefetchQueries }) => {
+    async (refetchQueries, { waitForRefetchQueries } = {}) => {
       const refetchQueryPromises = refetchQueries.map(async refetchQuery => {
         const { query, variables } =
           typeof refetchQuery === 'function'
