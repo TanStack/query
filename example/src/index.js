@@ -138,7 +138,7 @@ function AddTodo() {
   const [name, setName] = React.useState("");
 
   const [mutate, { data, isLoading, error }] = useMutation(postTodo, {
-    invalidate: [fetchTodos]
+    refetchQueries: [fetchTodos]
   });
 
   return (
@@ -183,15 +183,15 @@ function EditTodo({ editingID, setEditingID }) {
 
   // Create a mutation for u
   const [mutate, mutationState] = useMutation(patchTodo, {
-    invalidate: {
-      query: fetchTodos
-    },
-    update: {
-      query: fetchTodoByID,
-      variables: {
-        id: editingID
+    refetchQueries: [fetchTodos],
+    updateQueries: [
+      {
+        query: fetchTodoByID,
+        variables: {
+          id: editingID
+        }
       }
-    }
+    ]
   });
 
   const canEditOrSave = queryState.isLoading || mutationState.isLoading;
