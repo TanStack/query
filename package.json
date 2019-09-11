@@ -1,6 +1,6 @@
 {
   "name": "@tannerlinsley/react-query-temp",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Hooks for orchestrating, managing, and syncing asynchronous data in React",
   "author": "tannerlinsley",
   "license": "MIT",
