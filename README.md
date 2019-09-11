@@ -31,9 +31,9 @@ React Query contains a set of hooks that attempt to address these issues. Ouf of
 
 - Dedupes similar requests at the application level
 - Caches response data across similar requests
-- Optimistically updates cached requests
+- Optimistically updates requests in the background
 - Automatically manages and garbage collects unused cache data
-- Supports retries and even exponential/custom back-off delays
+- Supports retries and exponential/custom back-off delays
 - Provides a declarative API for invalidating and managing cached responses.
 - Built with and for React hooks
 - 7kb gzipped
