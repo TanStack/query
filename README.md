@@ -1,4 +1,4 @@
-# React Query
+# ⚛️ React Query 🐧
 
 <a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
@@ -20,10 +20,10 @@ Hooks for managing asynchronous data in React
 Tools for managing promises or normalized client stores/caches are plentiful these days, but most of these tools:
 
 - Don't dedupe network operations that could be made in a single request
-- Force denormalization or custom caching strategies on your data
+- Force normalized or object/id-based caching strategies on your data
 - Don't invalidate their cache often enough or don't offer sane defaults to do so
 - Because of this ☝️, they require imperative interaction to invalidate or manage their caches
-- Don't perform optimistic updates across the network
+- Don't perform optimistic updates, or require setup to know when to perform them
 
 ## The solution
 
@@ -31,9 +31,9 @@ React Query contains a set of hooks that attempt to address these issues. Ouf of
 
 - Dedupes similar requests at the application level
 - Caches response data across similar requests
-- Optimistically updates cached requests
+- Optimistically updates requests in the background
 - Automatically manages and garbage collects unused cache data
-- Supports retries and even exponential/custom back-off delays
+- Supports retries and exponential/custom back-off delays
 - Provides a declarative API for invalidating and managing cached responses.
 - Built with and for React hooks
 - 7kb gzipped
