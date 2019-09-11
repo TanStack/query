@@ -6,8 +6,7 @@
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
   "main": "dist/index.js",
-  "_module": "dist/index.es.js",
-  "_jsnext:main": "dist/index.es.js",
+  "module": "dist/index.es.js",
   "scripts": {
     "test": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
@@ -22,9 +21,7 @@
     "prop-types": "^15.5.4",
     "react": "^16.6.3"
   },
-  "dependencies": {
-    "fast-json-stable-stringify": "^2.0.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",

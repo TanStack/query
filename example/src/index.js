@@ -24,7 +24,7 @@ let list = [
 let errorRate = 0.05;
 
 const fetchTodos = ({ filter }) => {
-  console.log("fetchTodos");
+  console.log("fetchTodos", { filter });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -36,7 +36,7 @@ const fetchTodos = ({ filter }) => {
 };
 
 const fetchTodoByID = ({ id }) => {
-  console.log("fetchTodoByID");
+  console.log("fetchTodoByID", { id });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -48,7 +48,7 @@ const fetchTodoByID = ({ id }) => {
 };
 
 const postTodo = ({ name, notes }) => {
-  console.log("postTodo");
+  console.log("postTodo", { name, notes });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -62,7 +62,7 @@ const postTodo = ({ name, notes }) => {
 };
 
 const patchTodo = todo => {
-  console.log("patchTodo");
+  console.log("patchTodo", todo);
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -107,7 +107,8 @@ function Todos({ initialFilter = "", setEditingID }) {
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : error ? (
         <span>
-          Error! <button onClick={() => refetch()}>Retry</button>
+          Error!{" "}
+          <button onClick={() => refetch({ disableThrow: true })}>Retry</button>
         </span>
       ) : (
         <>
@@ -148,7 +149,10 @@ function AddTodo() {
         onChange={e => setName(e.target.value)}
         disabled={isLoading}
       />
-      <button onClick={() => mutate({ name })} disabled={isLoading || !name}>
+      <button
+        onClick={() => mutate({ name }, { disableThrow: true })}
+        disabled={isLoading || !name}
+      >
         Add Todo
       </button>
       <div>
@@ -205,7 +209,10 @@ function EditTodo({ editingID, setEditingID }) {
         <span>Loading... (Attempt: {queryState.failureCount + 1})</span>
       ) : queryState.error ? (
         <span>
-          Error! <button onClick={() => queryState.refetch()}>Retry</button>
+          Error!{" "}
+          <button onClick={() => queryState.refetch({ disableThrow: true })}>
+            Retry
+          </button>
         </span>
       ) : (
         <>
@@ -232,7 +239,10 @@ function EditTodo({ editingID, setEditingID }) {
             />
           </label>
           <div>
-            <button onClick={() => mutate(todo)} disabled={canEditOrSave}>
+            <button
+              onClick={() => mutate(todo, { disableThrow: true })}
+              disabled={canEditOrSave}
+            >
               Save
             </button>
           </div>
@@ -274,7 +284,9 @@ function RefetchAll() {
   const refetchAll = useRefetchAll();
   return (
     <div>
-      <button onClick={() => refetchAll()}>Refetch All</button>
+      <button onClick={() => refetchAll({ disableThrow: true })}>
+        Refetch All
+      </button>
     </div>
   );
 }

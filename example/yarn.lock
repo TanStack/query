@@ -1279,10 +1279,10 @@
     "@svgr/plugin-svgo" "^4.0.3"
     loader-utils "^1.1.0"
 
-"@tannerlinsley/react-query-temp@^0.0.10":
-  version "0.0.10"
-  resolved "https://registry.yarnpkg.com/@tannerlinsley/react-query-temp/-/react-query-temp-0.0.10.tgz#ff9c3ad5ab639ed77e6a802c78d6f99d6730882d"
-  integrity sha512-ZUZoCBYZdEfIVRcPLHdAOPcArMfPQcJf+a7RLJHxaexXhF7f5Rn842GG9q8I2sGH7B2T4MLQ+vd9bK/KPvBRow==
+"@tannerlinsley/react-query-temp@latest":
+  version "0.0.13"
+  resolved "https://registry.yarnpkg.com/@tannerlinsley/react-query-temp/-/react-query-temp-0.0.13.tgz#976064ddbc642f8f37161ec94d4af1e1eff7ba7d"
+  integrity sha512-iSRNEtQ00yO+6N500SSIDkM3hrVESrPUZuANK6r9reHFjodweuTs//Pm544wUBvMKwwoJ8Fo/7v9FF2HhbOoVA==
   dependencies:
     fast-json-stable-stringify "^2.0.0"
 

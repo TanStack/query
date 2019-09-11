@@ -1,7 +1,9 @@
 import React from 'react'
-import JSONStableStringify from 'fast-json-stable-stringify'
 
 const context = React.createContext()
+
+let uid = 0
+const queryIDsByQuery = new Map()
 
 export function ReactQueryProvider({ children, config = {} }) {
   const metaRef = React.useRef({})
@@ -23,33 +25,8 @@ export function ReactQueryProvider({ children, config = {} }) {
   return <context.Provider value={contextValue}>{children}</context.Provider>
 }
 
-let uid = 0
-const queryIDsByQuery = new Map()
-
-function getQueryID(query) {
-  // Get a query ID for this query function
-  let queryID = queryIDsByQuery.get(query)
-  // Make the queryID if necessary
-  if (!queryID) {
-    queryIDsByQuery.set(query, uid++)
-    queryID = queryIDsByQuery.get(query)
-  }
-
-  return queryID
-}
-
-function getQueryInfo({ query, variables: variablesObj, cacheBuster = '' }) {
-  const queryID = getQueryID(query)
-  const variablesHash = JSONStableStringify(variablesObj)
-  return [
-    [queryID, variablesHash, cacheBuster].join(''),
-    queryID,
-    variablesHash,
-  ]
-}
-
 function useVariables(variablesObj) {
-  const stringified = JSONStableStringify(variablesObj)
+  const stringified = sortedStringify(variablesObj)
   // eslint-disable-next-line
   return React.useMemo(() => variablesObj, [stringified])
 }
@@ -131,10 +108,6 @@ function useSharedQuery({
     instancesByID: {},
   }
 
-  providerMetaRef.current[queryHash].instancesByID[instanceID] = {
-    refetchRef,
-  }
-
   if (providerMetaRef.current[queryHash].cleanupTimeout) {
     clearTimeout(providerMetaRef.current[queryHash].cleanupTimeout)
   }
@@ -161,6 +134,10 @@ function useSharedQuery({
   React.useEffect(() => {
     const providerMetaCopy = providerMetaRef.current
 
+    providerMetaCopy[queryHash].instancesByID[instanceID] = {
+      refetchRef,
+    }
+
     return () => {
       // Do some cleanup between hash changes
       delete providerMetaCopy[queryHash].instancesByID[instanceID]
@@ -173,7 +150,7 @@ function useSharedQuery({
         }, queryConfigRef.current.cacheTime)
       }
     }
-  }, [instanceID, providerMetaRef, queryHash, setQueryState])
+  }, [instanceID, providerMetaRef, queryHash, refetchRef, setQueryState])
 
   return {
     queryState,
@@ -195,6 +172,7 @@ export function useQuery(
     cacheTime,
     retry: queryRetry,
     retryDelay: queryRetryDelay,
+    disableThrow: queryDisableThrow,
   }
 ) {
   const instanceIDRef = React.useRef(uid++)
@@ -239,7 +217,13 @@ export function useQuery(
   }
 
   refetchRef.current = React.useCallback(
-    async ({ variables = defaultVariables, merge } = {}) => {
+    async ({
+      variables = defaultVariables,
+      merge,
+      disableThrow = queryDisableThrow,
+    } = {}) => {
+      const instancesByID = metaRef.current.instancesByID
+
       const fetch = async () => {
         try {
           return await query(variables)
@@ -256,6 +240,9 @@ export function useQuery(
             configRef.current.retry === true ||
             latestRef.current.failureCount < configRef.current.retry
           ) {
+            // If we're going to retry, at least log the last error
+            console.error(error)
+
             const delay =
               typeof configRef.current.retryDelay === 'function'
                 ? configRef.current.retryDelay(latestRef.current.failureCount)
@@ -263,7 +250,10 @@ export function useQuery(
 
             return new Promise(resolve =>
               setTimeout(() => {
-                resolve(fetch())
+                // Only fetch if the query is still active
+                if (Object.keys(instancesByID).length) {
+                  resolve(fetch())
+                }
               }, delay)
             )
           }
@@ -306,10 +296,12 @@ export function useQuery(
             return new Promise((resolve, reject) => {
               // Never resolve this promise
             })
-          } catch (err) {
-            console.error(err)
+          } catch (error) {
             if (isLatest()) {
-              reject(err)
+              console.error(error)
+              if (!disableThrow) {
+                reject(error)
+              }
             }
           } finally {
             if (isLatest()) {
@@ -328,7 +320,14 @@ export function useQuery(
 
       return metaRef.current.promise
     },
-    [defaultVariables, metaRef, query, setQueryState, configRef]
+    [
+      defaultVariables,
+      queryDisableThrow,
+      metaRef,
+      query,
+      setQueryState,
+      configRef,
+    ]
   )
 
   const refetch = refetchRef.current
@@ -337,7 +336,17 @@ export function useQuery(
     if (manual) {
       return
     }
-    refetch()
+
+    const runRefetch = async () => {
+      try {
+        await refetch()
+      } catch (err) {
+        console.error(err)
+        // Swallow this error. Don't rethrow it into a render function
+      }
+    }
+
+    runRefetch()
   }, [manual, refetch])
 
   return {
@@ -380,7 +389,14 @@ export function useRefetchQueries() {
           }
 
           const queryInstancesPromises = Object.keys(query.instancesByID).map(
-            id => query.instancesByID[id].refetchRef.current()
+            async id => {
+              try {
+                await query.instancesByID[id].refetchRef.current()
+              } catch (err) {
+                console.error(err)
+                // Swallow this error. Don't leak it out into any render functions
+              }
+            }
           )
 
           await Promise.all(queryInstancesPromises)
@@ -442,6 +458,7 @@ export function useMutation(
         refetchQueries: userRefetchQueries = defaultRefetchQueries,
         updateQueries: userUpdateQueries,
         waitForRefetchQueries,
+        disableThrow,
       } = {}
     ) => {
       setIsLoading(true)
@@ -456,9 +473,12 @@ export function useMutation(
         if (userUpdateQueries) {
           updateQueries(userUpdateQueries, res)
         }
-      } catch (err) {
-        console.error(err)
-        setError(err)
+      } catch (error) {
+        console.error(error)
+        setError(error)
+        if (!disableThrow) {
+          throw error
+        }
       } finally {
         setIsLoading(false)
       }
@@ -476,13 +496,65 @@ export function useIsFetching() {
   }, [state])
 }
 
-export function useRefetchAll() {
+export function useRefetchAll({ disableThrow: defaultDisableThrow } = {}) {
   const [, , metaRef] = React.useContext(context)
-  return React.useCallback(() => {
-    Object.keys(metaRef.current).forEach(key => {
-      Object.keys(metaRef.current[key].instancesByID).forEach(key2 => {
-        metaRef.current[key].instancesByID[key2].refetchRef.current()
+  return React.useCallback(
+    async ({ disableThrow = defaultDisableThrow } = {}) => {
+      const promises = Object.keys(metaRef.current).map(key => {
+        const promises = Object.keys(metaRef.current[key].instancesByID).map(
+          key2 => metaRef.current[key].instancesByID[key2].refetchRef.current()
+        )
+        return Promise.all(promises)
       })
-    })
-  }, [metaRef])
+      try {
+        await Promise.all(promises)
+      } catch (err) {
+        if (!disableThrow) {
+          throw err
+        }
+      }
+    },
+    [defaultDisableThrow, metaRef]
+  )
+}
+
+// Utils
+
+function getQueryID(query) {
+  // Get a query ID for this query function
+  let queryID = queryIDsByQuery.get(query)
+  // Make the queryID if necessary
+  if (!queryID) {
+    queryIDsByQuery.set(query, uid++)
+    queryID = queryIDsByQuery.get(query)
+  }
+
+  return queryID
+}
+
+function getQueryInfo({ query, variables: variablesObj, cacheBuster = '' }) {
+  const queryID = getQueryID(query)
+  const variablesHash = sortedStringify(variablesObj)
+  return [
+    [queryID, variablesHash, cacheBuster].join(''),
+    queryID,
+    variablesHash,
+  ]
+}
+
+function sortedStringifyReplacer(_, value) {
+  return value === null || typeof value !== 'object' || Array.isArray(value)
+    ? value
+    : Object.assign(
+        {},
+        ...Object.keys(value)
+          .sort((keyA, keyB) => (keyA > keyB ? 1 : keyB > keyA ? -1 : 0))
+          .map(key => ({
+            [key]: value[key],
+          }))
+      )
+}
+
+function sortedStringify(obj) {
+  return JSON.stringify(obj, sortedStringifyReplacer)
 }
