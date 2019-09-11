@@ -50,7 +50,7 @@ $ yarn add @tannerlinsley/react-query-temp
 $ npm i @tannerlinsley/react-query-temp --save
 ```
 
-## `ReactQueryProvider`
+## ReactQueryProvider
 
 The `ReactQueryProvider` is a provider component that is necessary to use React Query. Render it at the base of your application like so:
 
