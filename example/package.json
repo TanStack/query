@@ -7,7 +7,7 @@
     "eject": "rescripts eject"
   },
   "dependencies": {
-    "@tannerlinsley/react-query-temp": "next",
+    "@tannerlinsley/react-query-temp": "latest",
     "namor": "^1.1.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
