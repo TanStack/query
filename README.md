@@ -1,4 +1,4 @@
-# React Query ⚛️🐧
+# React Query ⚛️ 🐧
 
 <a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
