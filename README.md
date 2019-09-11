@@ -441,9 +441,22 @@ const run = async () => {
 }
 ```
 
+You can also lazily define mutation options with the `mutate` function:
+
+```js
+const [mutate] = useMutation(addTodo)
+
+// Wait to call the function to define the refetchQueries
+mutate(todo, {
+  refetchQueries: [fetchTodoList],
+})
+```
+
 ### Query Updates from Mutations
 
-Normally when dealing with REST calls that **update** objects on the server, the updated version of that object is returned in the response. Instead of invalidating queries that would return that same object and wasting a network call, we can update query responses that match that exact object query:
+Normally when dealing with REST calls that **update** objects on the server, the updated version of that object is returned in the response. Instead of invalidating queries that would return that same object and wasting a network call, we can update query responses that match that exact object query using the `updateQueries` option:
+
+> **NOTE:** The `updatedQueries` option can only be passed to the `mutate` function. Passing it to `useMutation` will have no effect
 
 ```js
 import fetchTodoByID from '../queries/fetchTodoByID'

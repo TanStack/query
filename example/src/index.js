@@ -176,7 +176,6 @@ function EditTodo({ editingID, setEditingID }) {
 
   React.useEffect(() => {
     if (queryState.data) {
-      console.log("new data", queryState.data);
       setTodo(queryState.data);
     }
   }, [queryState.data]);

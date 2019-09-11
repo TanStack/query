@@ -359,7 +359,7 @@ export function useRefetchQueries() {
     async (refetchQueries, { waitForRefetchQueries }) => {
       const refetchQueryPromises = refetchQueries.map(async refetchQuery => {
         const { query, variables } =
-          typeof invalidator === 'function'
+          typeof refetchQuery === 'function'
             ? { query: refetchQuery }
             : refetchQuery
 
@@ -383,14 +383,14 @@ export function useRefetchQueries() {
             id => query.instancesByID[id].refetchRef.current()
           )
 
-          return Promise.all(queryInstancesPromises)
+          await Promise.all(queryInstancesPromises)
         })
 
-        return Promise.all(matchingQueriesPromises)
+        await Promise.all(matchingQueriesPromises)
       })
 
       if (waitForRefetchQueries) {
-        return Promise.all(refetchQueryPromises)
+        await Promise.all(refetchQueryPromises)
       }
     },
     [providerMetaRef]
@@ -401,26 +401,34 @@ export function useUpdateQueries() {
   const [, setState] = React.useContext(context)
 
   return React.useCallback(
-    ({ query, variables }, data) => {
-      const [queryHash] = getQueryInfo({
-        query,
-        variables:
-          typeof variables === 'function' ? variables(data) : variables,
-      })
+    (updaters, data) => {
+      updaters.forEach(updater => {
+        const { query, variables } =
+          typeof updater === 'function' ? { query: updater } : updater
 
-      setState(old => ({
-        ...old,
-        [queryHash]: {
-          ...old[queryHash],
-          data,
-        },
-      }))
+        const [queryHash] = getQueryInfo({
+          query,
+          variables:
+            typeof variables === 'function' ? variables(data) : variables,
+        })
+
+        setState(old => ({
+          ...old,
+          [queryHash]: {
+            ...old[queryHash],
+            data,
+          },
+        }))
+      })
     },
     [setState]
   )
 }
 
-export function useMutation(mutation) {
+export function useMutation(
+  mutation,
+  { refetchQueries: defaultRefetchQueries } = {}
+) {
   const [data, setData] = React.useState(null)
   const [error, setError] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(false)
@@ -431,7 +439,7 @@ export function useMutation(mutation) {
     async (
       variables,
       {
-        refetchQueries: userRefetchQueries,
+        refetchQueries: userRefetchQueries = defaultRefetchQueries,
         updateQueries: userUpdateQueries,
         waitForRefetchQueries,
       } = {}
@@ -440,9 +448,11 @@ export function useMutation(mutation) {
       try {
         const res = await mutation(variables)
         setData(res)
-        await refetchQueries(userRefetchQueries, {
-          waitForRefetchQueries,
-        })
+        if (userRefetchQueries) {
+          await refetchQueries(userRefetchQueries, {
+            waitForRefetchQueries,
+          })
+        }
         if (userUpdateQueries) {
           updateQueries(userUpdateQueries, res)
         }
@@ -453,7 +463,7 @@ export function useMutation(mutation) {
         setIsLoading(false)
       }
     },
-    [mutation, refetchQueries, updateQueries]
+    [defaultRefetchQueries, mutation, refetchQueries, updateQueries]
   )
 
   return [mutate, { data, isLoading, error }]
