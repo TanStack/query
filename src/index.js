@@ -206,7 +206,7 @@ export function useQuery(
 
   const isCached = successCount && !error
 
-  const [isLoading, setIsLoading] = React.useState(!cache || !isCached)
+  const [isLoading, setIsLoading] = React.useState(manual ? false : !cache || !isCached)
 
   const latestRef = React.useRef({})
   latestRef.current = {
