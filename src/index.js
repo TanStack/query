@@ -473,6 +473,7 @@ export function useMutation(
         if (userUpdateQueries) {
           updateQueries(userUpdateQueries, res)
         }
+        return res
       } catch (error) {
         console.error(error)
         setError(error)

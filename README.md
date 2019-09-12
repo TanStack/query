@@ -212,28 +212,93 @@ function Todos() {
     })
   }
 
-  return (
+  return isLoading ? (
+    <span>Loading...</span>
+  ) : error ? (
+    <span>Error: {error.message}</span>
+  ) : data ? (
     <>
-      {isLoading && <span>Loading…</span>}
-      {error && <span>Error: {error.message}</span>}
-      {data && (
-        <ul>
-          {data.todos.map(todo => (
-            <li key={todo.id}>{todo.title}</li>
-          ))}
-        </ul>
-      )}
+      <ul>
+        {data.todos.map(todo => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
       {data.pagination.hasMore && (
         <button disabled={isFetching} onClick={onFetchMore}>
           {isFetching ? 'Loading more todos...' : 'Load more todos'}
         </button>
       )}
     </>
-  )
+  ) : null
 }
 ```
 
 To prevent you from managing the loading state of `refetch` manually (since `isLoading` will remain false when `refetch` is called), React Query exposes an `isFetching` variable. It's the same as `isLoading`, but only reflects the state of the actual fetch operation for the query.
+
+### Manual Querying
+
+If you ever want to disable a query from automatically running when the query or variables change, you can use the `manual = true` option. When `manual` is set to true, queries will not automatically refetch due to changes to their query or variables.
+
+```js
+function Todos() {
+  const { data, isLoading, error, refetch, isFetching } = useQuery(
+    fetchTodoList,
+    {
+      manual: true,
+    }
+  )
+
+  return (
+    <>
+      <button onClick={() => refetch()}>Fetch Todos</button>
+
+      {isLoading ? (
+        <span>Loading...</span>
+      ) : error ? (
+        <span>Error: {error.message}</span>
+      ) : data ? (
+        <>
+          <ul>
+            {data.map(todo => (
+              <li key={todo.id}>{todo.title}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
+    </>
+  )
+}
+```
+
+This can also be useful under circumstances where you don't want your query firing because of unmet required conditions like a missing variable
+
+```js
+function TodosByUser({ userID }) {
+  const { data, isLoading, error, refetch, isFetching } = useQuery(
+    fetchTodoListByUserID,
+    {
+      manual: !userID, // Don't auto fetch if there is no userID
+      variables: {
+        userID,
+      },
+    }
+  )
+
+  return isLoading ? (
+    <span>Loading...</span>
+  ) : error ? (
+    <span>Error: {error.message}</span>
+  ) : data ? (
+    <>
+      <ul>
+        {data.map(todo => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+    </>
+  ) : null
+}
+```
 
 ### Retries
 
