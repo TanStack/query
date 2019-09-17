@@ -171,6 +171,7 @@ function AddTodo() {
 function EditTodo({ editingID, setEditingID }) {
   // Query for the individual todo
   const queryState = useQuery(fetchTodoByID, {
+    manual: typeof editingID !== "number",
     variables: {
       id: editingID
     }
@@ -179,10 +180,12 @@ function EditTodo({ editingID, setEditingID }) {
   const [todo, setTodo] = React.useState(queryState.data);
 
   React.useEffect(() => {
-    if (queryState.data) {
+    if (typeof editingID === "number" && queryState.data) {
       setTodo(queryState.data);
+    } else {
+      setTodo();
     }
-  }, [queryState.data]);
+  }, [editingID, queryState.data]);
 
   // Create a mutation for u
   const [mutate, mutationState] = useMutation(patchTodo, {
@@ -214,7 +217,7 @@ function EditTodo({ editingID, setEditingID }) {
             Retry
           </button>
         </span>
-      ) : (
+      ) : todo ? (
         <>
           <label>
             Name:{" "}
@@ -264,6 +267,8 @@ function EditTodo({ editingID, setEditingID }) {
             ) : null}
           </div>
         </>
+      ) : (
+        <span>Not editing a todo.</span>
       )}
     </div>
   );
@@ -327,11 +332,9 @@ function App() {
           </div>
         ))}
         <hr />
-        {editingID !== null ? (
-          <EditTodo editingID={editingID} setEditingID={setEditingID} />
-        ) : (
-          <AddTodo />
-        )}
+        <EditTodo editingID={editingID} setEditingID={setEditingID} />
+        <hr />
+        <AddTodo />
       </div>
     </ReactQueryProvider>
   );

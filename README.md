@@ -237,7 +237,10 @@ To prevent you from managing the loading state of `refetch` manually (since `isL
 
 ### Manual Querying
 
-If you ever want to disable a query from automatically running when the query or variables change, you can use the `manual = true` option. When `manual` is set to true, queries will not automatically refetch due to changes to their query or variables.
+If you ever want to disable a query from automatically running when the query or variables change, you can use the `manual = true` option. When `manual` is set to true:
+
+- The query will not automatically refetch due to changes to their query function or variables.
+- The query will not included in any `refetchQueries` options or `useRefetchQueries` calls. To override this, use the `includeManual` option in either.
 
 ```js
 function Todos() {

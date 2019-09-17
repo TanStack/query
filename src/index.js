@@ -40,6 +40,7 @@ function useSharedQuery({
   retry: queryRetry,
   retryDelay: queryRetryDelay,
   cacheTime: queryCacheTime,
+  manual,
 }) {
   const [
     providerState,
@@ -136,6 +137,7 @@ function useSharedQuery({
 
     providerMetaCopy[queryHash].instancesByID[instanceID] = {
       refetchRef,
+      manual,
     }
 
     return () => {
@@ -150,7 +152,14 @@ function useSharedQuery({
         }, queryConfigRef.current.cacheTime)
       }
     }
-  }, [instanceID, providerMetaRef, queryHash, refetchRef, setQueryState])
+  }, [
+    instanceID,
+    manual,
+    providerMetaRef,
+    queryHash,
+    refetchRef,
+    setQueryState,
+  ])
 
   return {
     queryState,
@@ -202,11 +211,14 @@ export function useQuery(
     retry: queryRetry,
     retryDelay: queryRetryDelay,
     cacheTime,
+    manual,
   })
 
   const isCached = successCount && !error
 
-  const [isLoading, setIsLoading] = React.useState(manual ? false : !cache || !isCached)
+  const [isLoading, setIsLoading] = React.useState(
+    manual ? false : !cache || !isCached
+  )
 
   const latestRef = React.useRef({})
   latestRef.current = {
@@ -298,8 +310,9 @@ export function useQuery(
             })
           } catch (error) {
             if (isLatest()) {
-              console.error(error)
-              if (!disableThrow) {
+              if (disableThrow) {
+                console.error(error)
+              } else {
                 reject(error)
               }
             }
@@ -365,9 +378,15 @@ export function useRefetchQueries() {
   const [, , providerMetaRef] = React.useContext(context)
 
   return React.useCallback(
-    async (refetchQueries, { waitForRefetchQueries } = {}) => {
+    async (
+      refetchQueries,
+      {
+        waitForRefetchQueries,
+        includeManual: defaultIncludeManual = false,
+      } = {}
+    ) => {
       const refetchQueryPromises = refetchQueries.map(async refetchQuery => {
-        const { query, variables } =
+        const { query, variables, includeManual = defaultIncludeManual } =
           typeof refetchQuery === 'function'
             ? { query: refetchQuery }
             : refetchQuery
@@ -391,6 +410,9 @@ export function useRefetchQueries() {
           const queryInstancesPromises = Object.keys(query.instancesByID).map(
             async id => {
               try {
+                if (query.instancesByID[id].manual && !includeManual) {
+                  return
+                }
                 await query.instancesByID[id].refetchRef.current()
               } catch (err) {
                 console.error(err)
