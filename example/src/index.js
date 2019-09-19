@@ -28,7 +28,9 @@ const fetchTodos = ({ filter }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
-        return reject(new Error("Oh no!"));
+        return reject(
+          new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2))
+        );
       }
       resolve(list.filter(d => d.name.includes(filter)));
     }, 1000);
@@ -40,7 +42,9 @@ const fetchTodoByID = ({ id }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
-        return reject(new Error("Oh no!"));
+        return reject(
+          new Error(JSON.stringify({ fetchTodoByID: { id } }, null, 2))
+        );
       }
       resolve(list.find(d => d.id === id));
     }, 1000);
@@ -52,7 +56,9 @@ const postTodo = ({ name, notes }) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
-        return reject(new Error("Oh no!"));
+        return reject(
+          new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2))
+        );
       }
       const todo = { name, notes, id: id++ };
       list = [...list, todo];
@@ -66,7 +72,7 @@ const patchTodo = todo => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
-        return reject(new Error("Oh no!"));
+        return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)));
       }
       list = list.map(d => {
         if (d.id === todo.id) {
@@ -91,8 +97,7 @@ function Todos({ initialFilter = "", setEditingID }) {
   } = useQuery(fetchTodos, {
     variables: {
       filter
-    },
-    cacheTime: 5000
+    }
   });
 
   return (
@@ -299,14 +304,19 @@ function RefetchAll() {
 function App() {
   const [editingID, setEditingID] = React.useState(null);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
-  const [views] = React.useState(["", "fruit", "apple"]);
+  const [cacheTime, setCacheTime] = React.useState(5000);
+  const [views] = React.useState(["", "fruit", "grape"]);
 
   React.useEffect(() => {
     errorRate = localErrorRate;
   }, [localErrorRate]);
 
   return (
-    <ReactQueryProvider>
+    <ReactQueryProvider
+      config={{
+        cacheTime
+      }}
+    >
       <div className="App">
         <h1>Hello CodeSandbox</h1>
         <h2>Start editing to see some magic happen!</h2>
@@ -320,6 +330,17 @@ function App() {
             step=".05"
             value={localErrorRate}
             onChange={e => setErrorRate(parseFloat(e.target.value, 10))}
+            style={{ width: "100px" }}
+          />
+        </div>
+        <div>
+          Cache Time:{" "}
+          <input
+            type="number"
+            min="0"
+            step="1000"
+            value={cacheTime}
+            onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
             style={{ width: "100px" }}
           />
         </div>

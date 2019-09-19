@@ -6,6 +6,9 @@
 <a href="https://npmjs.com/package/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a>
+<a href="https://bundlephobia.com/result?p=@tannerlinsley/react-query-temp" target="\_parent">
+  <img alt="" src="https://badgen.net/bundlephobia/minzip/@tannerlinsley/react-query-temp" />
+</a>
 <a href="https://github.com/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
 </a>
@@ -21,7 +24,7 @@ Tools for managing promises or normalized client stores/caches are plentiful the
 
 - Don't dedupe network operations that could be made in a single request
 - Force normalized or object/id-based caching strategies on your data
-- Don't invalidate their cache often enough or don't offer sane defaults to do so
+- Don't invalidate their cache often enough, don't know when to invalidate, or don't ship with good defaults
 - Because of this ☝️, they require imperative interaction to invalidate or manage their caches
 - Don't perform optimistic updates, or require setup to know when to perform them
 
@@ -32,11 +35,11 @@ React Query contains a set of hooks that attempt to address these issues. Ouf of
 - Dedupes similar requests at the application level
 - Caches response data across similar requests
 - Optimistically updates requests in the background
-- Automatically manages and garbage collects unused cache data
+- Automatically manages query caching, invalidation, and garbage collection
 - Supports retries and exponential/custom back-off delays
-- Provides a declarative API for invalidating and managing cached responses.
+- Provides a declarative API for invalidating and atomically updating cached responses.
 - Built with and for React hooks
-- 7kb gzipped
+- 3.6kb gzipped
 
 ## Hat Tipping
 
@@ -165,7 +168,9 @@ React Query caching is automatic and invalidates data very aggressively. It uses
 At a glance:
 
 - Caching is automatic and aggressive by default.
-- You can configure the `cacheTime` option that determines how long inactive cache data is kept before it is purged.
+- You can configure the `cacheTime` option that determines how long cache data is considered fresh before it is marked as stale
+- Stale cache data for active queries is optimistically updated automatically
+- Stale cache data that is no longer is use by any query is automatically garbage collected.
 - The cache is keyed on unique `query + variables` combinations.
 - Data is not normalized or stored outside of the context of its usage.
 - Caching can be turned off either globally or individually for each query
@@ -177,12 +182,19 @@ Here is a more detailed example of the caching lifecycle:
 - A new usage of `useQuery(fetchTodoList, { page: 1 })` mounts
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
   - It will then cache the data using `fetchTodoList` and `{ page: 1 }` as the unique identifiers for that cache.
-- Another instance of `useQuery(fetchTodoList, { page: 1 })` mounts elsewhere
-  - Because this exact data has already been cached from the other existing query, that data is immediately returned
-  - Despite having the data in the cache, the query function is called again to optimistically update the data for this query in the background
-  - Both this instance and the first instance of this query get optimistically updated with the new data from the background request
-- Both instances of the `useQuery(fetchTodoList, { page: 1 })` query unmount.
-  - Since there are no more active instances to this query combination, a timeout is set to expire its cache using the `cacheTime` option (defaults to `60 * 1000` milliseconds)
+  - A cache expiration is scheduled for later using the `cacheTime` option (defaults to `10 * 1000` milliseconds or `10` seconds) as a delay.
+- A second instance of `useQuery(fetchTodoList, { page: 1 })` mounts elsewhere
+  - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache
+- `10` seconds pass since the data came in for the first instance of this query
+  - The data for these queries is marked as outdated
+- A third instance of `useQuery(fetchTodoList, { page: 1 })` mounts elsewhere
+  - Because this exact data exist in the cache from the first and second instances of this query, that data is immediately returned from the cache
+  - However, since the data has been marked as outdated, a background request is made to updated the stale data
+  - Both this instance and the other first and second instances of this query get optimistically updated with the new data from the background request
+  - A new cache expiration is scheduled for later using the `cacheTime` option as a delay.
+- All 3 instances of the `useQuery(fetchTodoList, { page: 1 })` query unmount.
+  - Since there are no more active instances to this query combination, a fallback timeout is set using `cacheTime` to garbage collect the cache.
+  - If there is an active cache expiration scheduled already, it will be used instead.
 - No more instances of `useQuery(fetchTodoList, { page: 1 })` appear within the timeout
   - The cache for the this query is deleted and garbage collected.
 

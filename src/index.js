@@ -10,18 +10,15 @@ export function ReactQueryProvider({ children, config = {} }) {
 
   const [state, setState] = React.useState({})
 
-  const configRef = React.useRef({})
-  configRef.current = {
+  const contextValue = React.useMemo(() => [state, setState, metaRef], [state])
+
+  contextValue[3] = {
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    cacheTime: 60 * 1000,
+    cacheTime: 10 * 1000,
     ...config,
   }
 
-  const contextValue = React.useMemo(
-    () => [state, setState, metaRef, configRef],
-    [state]
-  )
   return <context.Provider value={contextValue}>{children}</context.Provider>
 }
 
@@ -46,7 +43,7 @@ function useSharedQuery({
     providerState,
     setProviderState,
     providerMetaRef,
-    configRef,
+    config,
   ] = React.useContext(context)
 
   // Use this cacheBusterRef ID to avoid cache usage
@@ -69,14 +66,18 @@ function useSharedQuery({
       data: null,
       error: null,
       isFetching: false,
-      fetchCount: 0,
-      successCount: 0,
       failureCount: 0,
+      isCached: false,
+      isStale: true,
     }),
     []
   )
 
+  const latestRef = React.useRef({})
+
   const queryState = providerState[queryHash] || defaultQueryState
+
+  Object.assign(latestRef.current, queryState)
 
   const setQueryState = React.useCallback(
     updater => {
@@ -109,47 +110,198 @@ function useSharedQuery({
     instancesByID: {},
   }
 
-  if (providerMetaRef.current[queryHash].cleanupTimeout) {
-    clearTimeout(providerMetaRef.current[queryHash].cleanupTimeout)
-  }
+  const sharedMeta = providerMetaRef.current[queryHash]
 
-  const metaRef = React.useRef()
-  metaRef.current = providerMetaRef.current[queryHash]
-
-  const queryConfigRef = React.useRef()
-  queryConfigRef.current = {
-    ...configRef.current,
-    retry:
-      typeof queryRetry !== 'undefined' ? queryRetry : configRef.current.retry,
+  latestRef.current.config = {
+    ...config,
+    retry: typeof queryRetry !== 'undefined' ? queryRetry : config.retry,
     retryDelay:
       typeof queryRetryDelay !== 'undefined'
         ? queryRetryDelay
-        : configRef.current.retryDelay,
+        : config.retryDelay,
     cacheTime:
-      typeof queryCacheTime !== 'undefined'
-        ? queryCacheTime
-        : configRef.current.cacheTime,
+      typeof queryCacheTime !== 'undefined' ? queryCacheTime : config.cacheTime,
   }
+
+  const scheduleCacheInvalidation = React.useCallback(
+    ({ soft } = {}) => {
+      if (soft && sharedMeta.cacheTimout) {
+        return
+      }
+
+      if (!soft) {
+        clearTimeout(sharedMeta.cacheTimeout)
+      }
+
+      sharedMeta.cacheTimeout = setTimeout(() => {
+        // If no more query instances exist, garbage collect
+        // the whole darn thing!
+        if (!Object.keys(sharedMeta.instancesByID).length) {
+          delete providerMetaRef.current[queryHash]
+          setQueryState(() => undefined)
+          return
+        }
+
+        // Otherwise, just mark the data as stale
+        delete sharedMeta.cacheTimeout
+        setQueryState(old => {
+          return {
+            ...old,
+            isStale: true,
+          }
+        })
+      }, latestRef.current.config.cacheTime)
+    },
+    [providerMetaRef, queryHash, setQueryState, sharedMeta]
+  )
+
+  let tryFetchQueryInstance
+
+  // Set up the fetch function
+  const tryFetchQuery = (tryFetchQueryInstance = React.useCallback(
+    async ({ variables }) => {
+      try {
+        // Perform the query
+        const data = await query(variables)
+
+        if (sharedMeta.cancelled) throw sharedMeta.cancelled
+
+        return data
+      } catch (error) {
+        if (sharedMeta.cancelled) throw sharedMeta.cancelled
+
+        // If we fail, increase the failureCount
+        setQueryState(old => {
+          return {
+            ...old,
+            failureCount: old.failureCount + 1,
+          }
+        })
+
+        // Do we need to retry the request?
+        if (
+          latestRef.current.config.retry === true ||
+          latestRef.current.failureCount < latestRef.current.config.retry
+        ) {
+          // Determine the retryDelay
+          const delay =
+            typeof latestRef.current.config.retryDelay === 'function'
+              ? latestRef.current.config.retryDelay(
+                  latestRef.current.failureCount
+                )
+              : latestRef.current.config.retryDelay
+
+          // Return a new promise with the retry
+          return new Promise((resolve, reject) => {
+            // Keep track of the retry timeout
+            setTimeout(async () => {
+              if (sharedMeta.cancelled) return reject(sharedMeta.cancelled)
+
+              try {
+                const data = await tryFetchQueryInstance({
+                  variables,
+                })
+
+                if (sharedMeta.cancelled) return reject(sharedMeta.cancelled)
+
+                resolve(data)
+              } catch (error) {
+                if (sharedMeta.cancelled) return reject(sharedMeta.cancelled)
+
+                reject(error)
+              }
+            }, delay)
+          })
+        }
+
+        throw error
+      }
+    },
+    [query, setQueryState, sharedMeta, tryFetchQueryInstance]
+  ))
+
+  const fetchQuery = React.useCallback(
+    async ({ variables, merge }) => {
+      // Create a new promise for the query cache if necessary
+      if (!sharedMeta.promise) {
+        sharedMeta.promise = (async () => {
+          // If there are any retries pending for this query, kill them
+          sharedMeta.cancelled = false
+
+          try {
+            // Set up the query refreshing state
+            setQueryState(old => {
+              return {
+                ...old,
+                error: null,
+                isFetching: true,
+                failureCount: 0,
+              }
+            })
+
+            // Try to fetch
+            const data = await tryFetchQuery({ variables })
+
+            // Set data and mark it as cached
+            setQueryState(old => {
+              return {
+                ...old,
+                data: merge ? merge(old.data, data) : data,
+                isCached: true,
+                isStale: false,
+              }
+            })
+
+            return data
+          } catch (error) {
+            // As long as it's not a cancelled retry
+            if (error !== sharedMeta.cancelled) {
+              // Store the error
+              setQueryState(old => {
+                return {
+                  ...old,
+                  error,
+                  isCached: false,
+                  isStale: true,
+                }
+              })
+
+              throw error
+            }
+          } finally {
+            // Schedule a fresh invalidation, always!
+            scheduleCacheInvalidation()
+
+            setQueryState(old => {
+              return {
+                ...old,
+                isFetching: false,
+              }
+            })
+            delete sharedMeta.promise
+          }
+        })()
+      }
+
+      return sharedMeta.promise
+    },
+    [scheduleCacheInvalidation, setQueryState, sharedMeta, tryFetchQuery]
+  )
 
   // Manage query active-ness and garbage collection
   React.useEffect(() => {
-    const providerMetaCopy = providerMetaRef.current
-
-    providerMetaCopy[queryHash].instancesByID[instanceID] = {
+    sharedMeta.instancesByID[instanceID] = {
       refetchRef,
       manual,
     }
 
     return () => {
       // Do some cleanup between hash changes
-      delete providerMetaCopy[queryHash].instancesByID[instanceID]
+      delete sharedMeta.instancesByID[instanceID]
 
-      // If no more instances are tied to this query, GC it
-      if (!Object.keys(providerMetaCopy[queryHash].instancesByID).length) {
-        providerMetaCopy[queryHash].cleanupTimeout = setTimeout(() => {
-          delete providerMetaCopy[queryHash]
-          setQueryState(undefined)
-        }, queryConfigRef.current.cacheTime)
+      if (!Object.keys(sharedMeta.instancesByID).length) {
+        sharedMeta.cancelled = {}
+        scheduleCacheInvalidation({ soft: true })
       }
     }
   }, [
@@ -158,16 +310,16 @@ function useSharedQuery({
     providerMetaRef,
     queryHash,
     refetchRef,
+    scheduleCacheInvalidation,
     setQueryState,
+    sharedMeta,
   ])
 
   return {
-    queryState,
-    setQueryState,
-    metaRef,
+    ...queryState,
     variables,
+    fetchQuery,
     queryHash,
-    configRef,
   }
 }
 
@@ -186,21 +338,19 @@ export function useQuery(
 ) {
   const instanceIDRef = React.useRef(uid++)
   const instanceID = instanceIDRef.current
+
   const refetchRef = React.useRef()
 
   const {
-    queryState: {
-      data,
-      error,
-      fetchCount,
-      isFetching,
-      successCount,
-      failureCount,
-    },
-    setQueryState,
-    metaRef,
+    data,
+    error,
+    isFetching,
+    isCached,
+    isStale,
+    failureCount,
     variables: defaultVariables,
-    configRef,
+    fetchQuery,
+    queryHash,
   } = useSharedQuery({
     query,
     tags,
@@ -214,139 +364,48 @@ export function useQuery(
     manual,
   })
 
-  const isCached = successCount && !error
-
   const [isLoading, setIsLoading] = React.useState(
-    manual ? false : !cache || !isCached
+    manual ? false : cache && isCached ? false : true
   )
 
-  const latestRef = React.useRef({})
+  const latestRef = React.useRef()
   latestRef.current = {
-    successCount,
-    error,
-    failureCount,
-    isFetching,
+    isCached,
+    queryDisableThrow,
+    isStale,
   }
 
-  refetchRef.current = React.useCallback(
+  const refetch = React.useCallback(
     async ({
       variables = defaultVariables,
       merge,
-      disableThrow = queryDisableThrow,
+      disableThrow = latestRef.current.queryDisableThrow,
     } = {}) => {
-      const instancesByID = metaRef.current.instancesByID
+      if (!latestRef.current.isCached) {
+        setIsLoading(true)
+      }
 
-      const fetch = async () => {
-        try {
-          return await query(variables)
-        } catch (error) {
-          setQueryState(old => {
-            return {
-              ...old,
-              error,
-              failureCount: old.failureCount + 1,
-            }
-          })
-
-          if (
-            configRef.current.retry === true ||
-            latestRef.current.failureCount < configRef.current.retry
-          ) {
-            // If we're going to retry, at least log the last error
-            console.error(error)
-
-            const delay =
-              typeof configRef.current.retryDelay === 'function'
-                ? configRef.current.retryDelay(latestRef.current.failureCount)
-                : configRef.current.retryDelay
-
-            return new Promise(resolve =>
-              setTimeout(() => {
-                // Only fetch if the query is still active
-                if (Object.keys(instancesByID).length) {
-                  resolve(fetch())
-                }
-              }, delay)
-            )
-          }
-
+      try {
+        return await fetchQuery({ variables, merge })
+      } catch (error) {
+        if (disableThrow) {
+          // If throwing is disabled, log the error
+          console.error(error)
+        } else {
+          // Otherwise, rethrow the error
           throw error
         }
+      } finally {
+        setIsLoading(false)
       }
-
-      // Create a new promise for the query cache if necessary
-      if (!metaRef.current.promise) {
-        metaRef.current.promise = new Promise(async (resolve, reject) => {
-          const fetchID = uid++
-          metaRef.current.fetchID = fetchID
-          const isLatest = () => metaRef.current.fetchID === fetchID
-          if (!latestRef.current.successCount || latestRef.current.error) {
-            setIsLoading(true)
-          }
-          try {
-            setQueryState(old => {
-              return {
-                ...old,
-                error: null,
-                isFetching: true,
-                fetchCount: old.fetchCount + 1,
-                failureCount: 0,
-              }
-            })
-            const data = await fetch()
-            if (isLatest()) {
-              setQueryState(old => {
-                return {
-                  ...old,
-                  data: merge ? merge(old.data, data) : data,
-                  successCount: old.successCount + 1,
-                }
-              })
-              resolve(data)
-              return data
-            }
-            return new Promise((resolve, reject) => {
-              // Never resolve this promise
-            })
-          } catch (error) {
-            if (isLatest()) {
-              if (disableThrow) {
-                console.error(error)
-              } else {
-                reject(error)
-              }
-            }
-          } finally {
-            if (isLatest()) {
-              delete metaRef.current.promise
-              setIsLoading(false)
-              setQueryState(old => {
-                return {
-                  ...old,
-                  isFetching: false,
-                }
-              })
-            }
-          }
-        })
-      }
-
-      return metaRef.current.promise
     },
-    [
-      defaultVariables,
-      queryDisableThrow,
-      metaRef,
-      query,
-      setQueryState,
-      configRef,
-    ]
+    [defaultVariables, fetchQuery]
   )
 
-  const refetch = refetchRef.current
+  refetchRef.current = refetch
 
   React.useEffect(() => {
-    if (manual) {
+    if (manual || !latestRef.current.isStale) {
       return
     }
 
@@ -360,16 +419,15 @@ export function useQuery(
     }
 
     runRefetch()
-  }, [manual, refetch])
+  }, [manual, queryHash, refetch])
 
   return {
     data,
     error,
-    isLoading,
     isFetching,
-    fetchCount,
-    successCount,
+    isCached,
     failureCount,
+    isLoading,
     refetch,
   }
 }
@@ -484,6 +542,7 @@ export function useMutation(
       } = {}
     ) => {
       setIsLoading(true)
+      setError(null)
       try {
         const res = await mutation(variables)
         setData(res)
@@ -497,9 +556,10 @@ export function useMutation(
         }
         return res
       } catch (error) {
-        console.error(error)
         setError(error)
-        if (!disableThrow) {
+        if (disableThrow) {
+          console.error(error)
+        } else {
           throw error
         }
       } finally {
@@ -532,7 +592,9 @@ export function useRefetchAll({ disableThrow: defaultDisableThrow } = {}) {
       try {
         await Promise.all(promises)
       } catch (err) {
-        if (!disableThrow) {
+        if (disableThrow) {
+          console.error(err)
+        } else {
           throw err
         }
       }
