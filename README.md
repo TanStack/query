@@ -39,7 +39,7 @@ React Query contains a set of hooks that attempt to address these issues. Ouf of
 - Supports retries and exponential/custom back-off delays
 - Provides a declarative API for invalidating and atomically updating cached responses.
 - Built with and for React hooks
-- 3.6kb gzipped
+- 3.8kb minzipped
 
 ## Hat Tipping
 
