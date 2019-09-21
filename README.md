@@ -30,7 +30,7 @@ Tools for managing promises or normalized client stores/caches are plentiful the
 
 ## The solution
 
-React Query contains a set of hooks that attempt to address these issues. Ouf of the box, React Query:
+React Query contains a set of hooks that attempt to address these issues. Out of the box, React Query:
 
 - Dedupes similar requests at the application level
 - Caches response data across similar requests
