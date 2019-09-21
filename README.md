@@ -67,7 +67,7 @@ The `ReactQueryProvider` is a provider component that is necessary to use React 
 import { ReactQueryProvider } from '@tannerlinsley/react-query-temp'
 
 function App() {
-  ;<ReactQueryProvider>...</ReactQueryProvider>
+  return <ReactQueryProvider>...</ReactQueryProvider>
 }
 ```
 
@@ -86,7 +86,7 @@ const config = {
 }
 
 function App() {
-  ;<ReactQueryProvider config={config}>...</ReactQueryProvider>
+  return <ReactQueryProvider config={config}>...</ReactQueryProvider>
 }
 ```
 
