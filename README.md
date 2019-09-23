@@ -613,11 +613,13 @@ Pass options to `ReactQueryProvider` by pass it a `config` prop:
 Pass options to `useQuery` like so:
 
 ```js
-useQuery(query, { variables, manual, retry })
+useQuery(query, { variables, queryID, manual, retry })
 ```
 
 - `query: Function(variables) => Promise(data/error)`
   - The function that this query will use to fetch data
-  - **Must be defined only across your entire app.**
+  - **Must be defined only across your entire app.** (or a `queryID` must be optionally used)
   - Receives the `variables` object passed to `useQuery(query, { variables })` or `refetch({ variables })`
-  - Returns a promise that either resolves data or throws an error
+  - Must return a promise that either resolves data or throws an error
+- `variables`
+  - ...to be continued

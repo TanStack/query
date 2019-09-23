@@ -35,6 +35,7 @@ export function _useQueryContext() {
 
 function useSharedQuery({
   query,
+  queryID: customQueryID,
   variables: variablesObj,
   cache,
   instanceID,
@@ -61,6 +62,7 @@ function useSharedQuery({
   // Create the final query hash
   const [queryHash, queryID, variablesHash] = getQueryInfo({
     query,
+    queryID: customQueryID,
     variables: variablesObj,
     cacheBuster: !cache ? cacheBusterRef.current : '',
   })
@@ -354,6 +356,7 @@ export function useQuery(
   query,
   {
     variables: userVariables,
+    queryID: customQueryID,
     tags = [],
     manual = false,
     cache = true,
@@ -380,6 +383,7 @@ export function useQuery(
     queryHash,
   } = useSharedQuery({
     query,
+    queryID: customQueryID,
     tags,
     variables: userVariables,
     cache,
@@ -471,13 +475,21 @@ export function useRefetchQueries() {
       } = {}
     ) => {
       const refetchQueryPromises = refetchQueries.map(async refetchQuery => {
-        const { query, variables, includeManual = defaultIncludeManual } =
+        const {
+          query,
+          queryID: customQueryID,
+          variables,
+          includeManual = defaultIncludeManual,
+        } =
           typeof refetchQuery === 'function'
             ? { query: refetchQuery }
+            : typeof refetchQuery === 'string'
+            ? { queryID: refetchQuery }
             : refetchQuery
 
         const [, queryID, variablesHash] = getQueryInfo({
           query,
+          queryID: customQueryID,
           variables,
         })
 
@@ -526,11 +538,16 @@ export function useUpdateQueries() {
   return React.useCallback(
     (updaters, data) => {
       updaters.forEach(updater => {
-        const { query, variables } =
-          typeof updater === 'function' ? { query: updater } : updater
+        const { query, queryID: customQueryID, variables } =
+          typeof updater === 'function'
+            ? { query: updater }
+            : typeof updater === 'string'
+            ? { queryID: updater }
+            : updater
 
         const [queryHash] = getQueryInfo({
           query,
+          queryID: customQueryID,
           variables:
             typeof variables === 'function' ? variables(data) : variables,
         })
@@ -646,9 +663,9 @@ export function useRefetchAll({
 
 // Utils
 
-function getQueryID(query) {
+function getQueryID(query, customQueryID) {
   // Get a query ID for this query function
-  let queryID = queryIDsByQuery.get(query)
+  let queryID = customQueryID || queryIDsByQuery.get(query)
   // Make the queryID if necessary
   if (!queryID) {
     queryIDsByQuery.set(query, uid++)
@@ -658,8 +675,13 @@ function getQueryID(query) {
   return queryID
 }
 
-function getQueryInfo({ query, variables: variablesObj, cacheBuster = '' }) {
-  const queryID = getQueryID(query)
+function getQueryInfo({
+  query,
+  queryID: customQueryID,
+  variables: variablesObj,
+  cacheBuster = '',
+}) {
+  const queryID = getQueryID(query, customQueryID)
   const variablesHash = sortedStringify(variablesObj)
   return [
     [queryID, variablesHash, cacheBuster].join(''),
