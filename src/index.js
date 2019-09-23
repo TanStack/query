@@ -16,6 +16,7 @@ export function ReactQueryProvider({ children, config = {} }) {
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     cacheTime: 10 * 1000,
+    inactiveCacheTime: 10 * 1000,
     ...config,
   }
 
@@ -28,6 +29,10 @@ function useVariables(variablesObj) {
   return React.useMemo(() => variablesObj, [stringified])
 }
 
+export function _useQueryContext() {
+  return React.useContext(context)
+}
+
 function useSharedQuery({
   query,
   variables: variablesObj,
@@ -37,6 +42,7 @@ function useSharedQuery({
   retry: queryRetry,
   retryDelay: queryRetryDelay,
   cacheTime: queryCacheTime,
+  inactiveCacheTime: queryInactiveCacheTime,
   manual,
 }) {
   const [
@@ -82,15 +88,17 @@ function useSharedQuery({
   const setQueryState = React.useCallback(
     updater => {
       return setProviderState(old => {
+        const oldQueryState =
+          typeof old[queryHash] === 'undefined'
+            ? defaultQueryState
+            : old[queryHash]
+
         const newValue =
-          typeof updater === 'function'
-            ? updater(old[queryHash] || defaultQueryState)
-            : updater
+          typeof updater === 'function' ? updater(oldQueryState) : updater
 
         if (typeof newValue === 'undefined') {
-          const copy = { ...old }
-          delete copy[queryHash]
-          return copy
+          const { [queryHash]: _, ...rest } = old
+          return rest
         }
 
         return {
@@ -121,38 +129,50 @@ function useSharedQuery({
         : config.retryDelay,
     cacheTime:
       typeof queryCacheTime !== 'undefined' ? queryCacheTime : config.cacheTime,
+    inactiveCacheTime:
+      typeof queryInactiveCacheTime !== 'undefined'
+        ? queryInactiveCacheTime
+        : config.inactiveCacheTime,
   }
 
-  const scheduleCacheInvalidation = React.useCallback(
-    ({ soft } = {}) => {
-      if (soft && sharedMeta.cacheTimout) {
-        return
+  const scheduleCleanup = React.useCallback(() => {
+    clearTimeout(sharedMeta.inactiveCacheTimeout)
+    setQueryState(old => {
+      return {
+        ...old,
+        isInactive: true,
       }
+    })
+    sharedMeta.inactiveCacheTimeout = setTimeout(() => {
+      setQueryState(undefined)
+      clearTimeout(sharedMeta.cacheTimeout)
+      delete providerMetaRef.current[queryHash]
+    }, latestRef.current.config.inactiveCacheTime)
+  }, [providerMetaRef, queryHash, setQueryState, sharedMeta])
 
-      if (!soft) {
+  const doInvalidation = React.useCallback(() => {
+    setQueryState(old => {
+      return {
+        ...old,
+        isStale: true,
+      }
+    })
+  }, [setQueryState])
+
+  const scheduleCacheInvalidation = React.useCallback(
+    ({ cleanup } = {}) => {
+      if (cleanup) {
+        return scheduleCleanup()
+      } else {
         clearTimeout(sharedMeta.cacheTimeout)
       }
 
       sharedMeta.cacheTimeout = setTimeout(() => {
-        // If no more query instances exist, garbage collect
-        // the whole darn thing!
-        if (!Object.keys(sharedMeta.instancesByID).length) {
-          delete providerMetaRef.current[queryHash]
-          setQueryState(() => undefined)
-          return
-        }
-
         // Otherwise, just mark the data as stale
-        delete sharedMeta.cacheTimeout
-        setQueryState(old => {
-          return {
-            ...old,
-            isStale: true,
-          }
-        })
+        doInvalidation()
       }, latestRef.current.config.cacheTime)
     },
-    [providerMetaRef, queryHash, setQueryState, sharedMeta]
+    [sharedMeta, scheduleCleanup, doInvalidation]
   )
 
   let tryFetchQueryInstance
@@ -290,6 +310,13 @@ function useSharedQuery({
 
   // Manage query active-ness and garbage collection
   React.useEffect(() => {
+    if (sharedMeta.inactiveCacheTimeout) {
+      setQueryState(({ isInactive, ...old }) => {
+        return old
+      })
+      clearTimeout(sharedMeta.inactiveCacheTimeout)
+    }
+
     sharedMeta.instancesByID[instanceID] = {
       refetchRef,
       manual,
@@ -301,7 +328,7 @@ function useSharedQuery({
 
       if (!Object.keys(sharedMeta.instancesByID).length) {
         sharedMeta.cancelled = {}
-        scheduleCacheInvalidation({ soft: true })
+        scheduleCacheInvalidation({ cleanup: true })
       }
     }
   }, [
@@ -579,13 +606,27 @@ export function useIsFetching() {
   }, [state])
 }
 
-export function useRefetchAll({ disableThrow: defaultDisableThrow } = {}) {
+export function useRefetchAll({
+  disableThrow: defaultDisableThrow,
+  includeManual: defaultIncludeManual,
+} = {}) {
   const [, , metaRef] = React.useContext(context)
   return React.useCallback(
-    async ({ disableThrow = defaultDisableThrow } = {}) => {
+    async ({
+      disableThrow = defaultDisableThrow,
+      includeManual = defaultIncludeManual,
+    } = {}) => {
       const promises = Object.keys(metaRef.current).map(key => {
         const promises = Object.keys(metaRef.current[key].instancesByID).map(
-          key2 => metaRef.current[key].instancesByID[key2].refetchRef.current()
+          key2 => {
+            if (
+              metaRef.current[key].instancesByID[key2].manual &&
+              !includeManual
+            ) {
+              return Promise.resolve()
+            }
+            return metaRef.current[key].instancesByID[key2].refetchRef.current()
+          }
         )
         return Promise.all(promises)
       })
@@ -599,7 +640,7 @@ export function useRefetchAll({ disableThrow: defaultDisableThrow } = {}) {
         }
       }
     },
-    [defaultDisableThrow, metaRef]
+    [defaultDisableThrow, defaultIncludeManual, metaRef]
   )
 }
 

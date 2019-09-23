@@ -1,15 +1,48 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import styled from "styled-components";
 
 import {
   ReactQueryProvider,
   useQuery,
   useMutation,
   useIsFetching,
-  useRefetchAll
+  useRefetchAll,
+  _useQueryContext
 } from "@tannerlinsley/react-query-temp";
 
 import "./styles.css";
+
+const QueryStateList = styled.div`
+  display: flex;
+  padding: 0.15rem;
+  flex-wrap: wrap;
+`;
+
+const QueryState = styled.div`
+  margin: 0.3rem;
+  color: white;
+  padding: 0.3rem;
+  font-size: 12px;
+  border-radius: 0.3rem;
+  font-weight: bold;
+  text-shadow: 0 0 10px black;
+
+  background: ${props =>
+    props.isFetching
+      ? "orange"
+      : props.isInactive
+      ? "grey"
+      : props.isStale
+      ? "red"
+      : "green"};
+`;
+
+const QueryKey = styled.div`
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+`;
 
 let id = 0;
 let list = [
@@ -22,6 +55,8 @@ let list = [
 ].map(d => ({ id: id++, name: d, notes: "These are some notes" }));
 
 let errorRate = 0.05;
+let queryTimeMin = 1000;
+let queryTimeMax = 2000;
 
 const fetchTodos = ({ filter }) => {
   console.log("fetchTodos", { filter });
@@ -33,7 +68,7 @@ const fetchTodos = ({ filter }) => {
         );
       }
       resolve(list.filter(d => d.name.includes(filter)));
-    }, 1000);
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 };
 
@@ -47,7 +82,7 @@ const fetchTodoByID = ({ id }) => {
         );
       }
       resolve(list.find(d => d.id === id));
-    }, 1000);
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 };
 
@@ -63,7 +98,7 @@ const postTodo = ({ name, notes }) => {
       const todo = { name, notes, id: id++ };
       list = [...list, todo];
       resolve(todo);
-    }, 1000);
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 };
 
@@ -81,9 +116,162 @@ const patchTodo = todo => {
         return d;
       });
       resolve(todo);
-    }, 1000);
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 };
+
+function Root() {
+  const [cacheTime, setCacheTime] = React.useState(5000);
+  const [inactiveCacheTime, setInactiveCacheTime] = React.useState(5000);
+  const [localErrorRate, setErrorRate] = React.useState(errorRate);
+  const [localQueryTimeMin, setLocalQueryTimeMin] = React.useState(
+    queryTimeMin
+  );
+  const [localQueryTimeMax, setLocalQueryTimeMax] = React.useState(
+    queryTimeMax
+  );
+
+  React.useEffect(() => {
+    errorRate = localErrorRate;
+    queryTimeMin = localQueryTimeMin;
+    queryTimeMax = localQueryTimeMax;
+  }, [localErrorRate, localQueryTimeMax, localQueryTimeMin]);
+
+  return (
+    <ReactQueryProvider
+      config={{
+        cacheTime,
+        inactiveCacheTime
+      }}
+    >
+      <div>
+        Error Rate:{" "}
+        <input
+          type="number"
+          min="0"
+          max="1"
+          step=".05"
+          value={localErrorRate}
+          onChange={e => setErrorRate(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <div>
+        Query Time Min:{" "}
+        <input
+          type="number"
+          min="1"
+          step="500"
+          value={localQueryTimeMin}
+          onChange={e => setLocalQueryTimeMin(parseFloat(e.target.value, 10))}
+          style={{ width: "60px" }}
+        />{" "}
+        Query Time Max:{" "}
+        <input
+          type="number"
+          min="1"
+          step="500"
+          value={localQueryTimeMax}
+          onChange={e => setLocalQueryTimeMax(parseFloat(e.target.value, 10))}
+          style={{ width: "60px" }}
+        />
+      </div>
+      <div>
+        Cache Time:{" "}
+        <input
+          type="number"
+          min="0"
+          step="1000"
+          value={cacheTime}
+          onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <div>
+        Inactive Cache Time:{" "}
+        <input
+          type="number"
+          min="0"
+          step="1000"
+          value={inactiveCacheTime}
+          onChange={e => setInactiveCacheTime(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <br />
+      <App />
+    </ReactQueryProvider>
+  );
+}
+
+function App() {
+  const [editingID, setEditingID] = React.useState(null);
+  const [views] = React.useState(["", "fruit", "grape"]);
+  const [state, _, metaRef] = _useQueryContext();
+
+  return (
+    <div className="App">
+      <div>
+        <QueryKey style={{ background: "green" }} /> Cached{" "}
+        <QueryKey style={{ background: "orange" }} /> Fetching{" "}
+        <QueryKey style={{ background: "red" }} /> Stale
+        <QueryKey style={{ background: "gray" }} /> Inactive
+      </div>
+      <QueryStateList>
+        {Object.keys(state).map(key => {
+          const { isFetching, isStale, isInactive } = state[key];
+          return (
+            <QueryState
+              key={key}
+              isFetching={isFetching}
+              isStale={isStale}
+              isInactive={isInactive}
+            >
+              {key}
+            </QueryState>
+          );
+        })}
+      </QueryStateList>
+      <br />
+      <RefreshingBanner />
+      <RefetchAll />
+      <br />
+      <hr />
+      {views.map((view, index) => (
+        <div key={index}>
+          <Todos initialFilter={view} setEditingID={setEditingID} />
+          <br />
+        </div>
+      ))}
+      <hr />
+      <EditTodo editingID={editingID} setEditingID={setEditingID} />
+      <hr />
+      <AddTodo />
+    </div>
+  );
+}
+
+function RefreshingBanner() {
+  const isFetching = useIsFetching();
+  return (
+    <div>
+      Global <code>isFetching</code>: {isFetching.toString()}
+      <br />
+      <br />
+    </div>
+  );
+}
+
+function RefetchAll() {
+  const refetchAll = useRefetchAll();
+  return (
+    <div>
+      <button onClick={() => refetchAll({ disableThrow: true })}>
+        Refetch All
+      </button>
+    </div>
+  );
+}
 
 function Todos({ initialFilter = "", setEditingID }) {
   const [filter, setFilter] = React.useState(initialFilter);
@@ -140,43 +328,10 @@ function Todos({ initialFilter = "", setEditingID }) {
   );
 }
 
-function AddTodo() {
-  const [name, setName] = React.useState("");
-
-  const [mutate, { data, isLoading, error }] = useMutation(postTodo, {
-    refetchQueries: [fetchTodos]
-  });
-
-  return (
-    <div>
-      <input
-        value={name}
-        onChange={e => setName(e.target.value)}
-        disabled={isLoading}
-      />
-      <button
-        onClick={() => mutate({ name }, { disableThrow: true })}
-        disabled={isLoading || !name}
-      >
-        Add Todo
-      </button>
-      <div>
-        {isLoading
-          ? "Saving..."
-          : error
-          ? String(error)
-          : data
-          ? "Saved!"
-          : null}
-      </div>
-    </div>
-  );
-}
-
 function EditTodo({ editingID, setEditingID }) {
   // Query for the individual todo
   const queryState = useQuery(fetchTodoByID, {
-    manual: typeof editingID !== "number",
+    manual: editingID === null,
     variables: {
       id: editingID
     }
@@ -279,87 +434,38 @@ function EditTodo({ editingID, setEditingID }) {
   );
 }
 
-function RefreshingBanner() {
-  const isFetching = useIsFetching();
-  return (
-    <div>
-      isFetching: {isFetching.toString()}
-      <br />
-      <br />
-    </div>
-  );
-}
+function AddTodo() {
+  const [name, setName] = React.useState("");
 
-function RefetchAll() {
-  const refetchAll = useRefetchAll();
+  const [mutate, { data, isLoading, error }] = useMutation(postTodo, {
+    refetchQueries: [fetchTodos]
+  });
+
   return (
     <div>
-      <button onClick={() => refetchAll({ disableThrow: true })}>
-        Refetch All
+      <input
+        value={name}
+        onChange={e => setName(e.target.value)}
+        disabled={isLoading}
+      />
+      <button
+        onClick={() => mutate({ name }, { disableThrow: true })}
+        disabled={isLoading || !name}
+      >
+        Add Todo
       </button>
-    </div>
-  );
-}
-
-function App() {
-  const [editingID, setEditingID] = React.useState(null);
-  const [localErrorRate, setErrorRate] = React.useState(errorRate);
-  const [cacheTime, setCacheTime] = React.useState(5000);
-  const [views] = React.useState(["", "fruit", "grape"]);
-
-  React.useEffect(() => {
-    errorRate = localErrorRate;
-  }, [localErrorRate]);
-
-  return (
-    <ReactQueryProvider
-      config={{
-        cacheTime
-      }}
-    >
-      <div className="App">
-        <h1>Hello CodeSandbox</h1>
-        <h2>Start editing to see some magic happen!</h2>
-        <RefreshingBanner />
-        <div>
-          Error Rate:{" "}
-          <input
-            type="number"
-            min="0"
-            max="1"
-            step=".05"
-            value={localErrorRate}
-            onChange={e => setErrorRate(parseFloat(e.target.value, 10))}
-            style={{ width: "100px" }}
-          />
-        </div>
-        <div>
-          Cache Time:{" "}
-          <input
-            type="number"
-            min="0"
-            step="1000"
-            value={cacheTime}
-            onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
-            style={{ width: "100px" }}
-          />
-        </div>
-        <RefetchAll />
-        <br />
-        {views.map((view, index) => (
-          <div key={index}>
-            <Todos initialFilter={view} setEditingID={setEditingID} />
-            <br />
-          </div>
-        ))}
-        <hr />
-        <EditTodo editingID={editingID} setEditingID={setEditingID} />
-        <hr />
-        <AddTodo />
+      <div>
+        {isLoading
+          ? "Saving..."
+          : error
+          ? String(error)
+          : data
+          ? "Saved!"
+          : null}
       </div>
-    </ReactQueryProvider>
+    </div>
   );
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.render(<Root />, rootElement);

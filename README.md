@@ -16,17 +16,17 @@
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
 </a>
 
-Hooks for managing asynchronous data in React
+Hooks for orchestrating, caching and managing asynchronous data in React
 
 ## The problem
 
-Tools for managing promises or normalized client stores/caches are plentiful these days, but most of these tools:
+Tools for managing async data and client stores/caches are plentiful these days, but most of these tools:
 
 - Don't dedupe network operations that could be made in a single request
 - Force normalized or object/id-based caching strategies on your data
 - Don't invalidate their cache often enough, don't know when to invalidate, or don't ship with good defaults
-- Because of this ☝️, they require imperative interaction to invalidate or manage their caches
 - Don't perform optimistic updates, or require setup to know when to perform them
+- Because of this ☝️, they require imperative interaction to invalidate or manage their caches
 
 ## The solution
 
@@ -81,8 +81,8 @@ const config = {
   retry: 3,
   retryDelay: attempt =>
     Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
-  defaultMerge: (old, data) => [...old, ...data],
-  cacheTime: 60 * 1000,
+  cacheTime: 10 * 1000, // 10 seconds
+  invalidCacheTime: 10 * 1000, // 10 seconds
 }
 
 function App() {
@@ -168,10 +168,11 @@ React Query caching is automatic and invalidates data very aggressively. It uses
 At a glance:
 
 - Caching is automatic and aggressive by default.
-- You can configure the `cacheTime` option that determines how long cache data is considered fresh before it is marked as stale
-- Stale cache data for active queries is optimistically updated automatically
-- Stale cache data that is no longer is use by any query is automatically garbage collected.
 - The cache is keyed on unique `query + variables` combinations.
+- You can configure the `cacheTime` option that determines how long cache data is considered fresh before it is marked as stale
+- You can configure the `inactiveCacheTime` option that determines how long unused stale cache data is kept around before it is garbage collected
+- Stale queries are optimistically and automatically updated when new instances of that query mount or variables change
+- If stale or unused cache data that has not been garbage collected is available, it will be used as a cold-start cache for queries while they are updated.
 - Data is not normalized or stored outside of the context of its usage.
 - Caching can be turned off either globally or individually for each query
 
@@ -182,7 +183,7 @@ Here is a more detailed example of the caching lifecycle:
 - A new usage of `useQuery(fetchTodoList, { page: 1 })` mounts
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
   - It will then cache the data using `fetchTodoList` and `{ page: 1 }` as the unique identifiers for that cache.
-  - A cache expiration is scheduled for later using the `cacheTime` option (defaults to `10 * 1000` milliseconds or `10` seconds) as a delay.
+  - A cache expiration is scheduled for later using the `cacheTime` option as a delay (defaults to `10 * 1000` milliseconds or `10` seconds).
 - A second instance of `useQuery(fetchTodoList, { page: 1 })` mounts elsewhere
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache
 - `10` seconds pass since the data came in for the first instance of this query
@@ -193,7 +194,7 @@ Here is a more detailed example of the caching lifecycle:
   - Both this instance and the other first and second instances of this query get optimistically updated with the new data from the background request
   - A new cache expiration is scheduled for later using the `cacheTime` option as a delay.
 - All 3 instances of the `useQuery(fetchTodoList, { page: 1 })` query unmount.
-  - Since there are no more active instances to this query combination, a fallback timeout is set using `cacheTime` to garbage collect the cache.
+  - Since there are no more active instances to this query combination, a fallback timeout is set using `inactiveCacheTime` to garbage collect the cache (defaults to `10 * 1000` milliseconds or `10` seconds).
   - If there is an active cache expiration scheduled already, it will be used instead.
 - No more instances of `useQuery(fetchTodoList, { page: 1 })` appear within the timeout
   - The cache for the this query is deleted and garbage collected.
@@ -576,6 +577,47 @@ const { data, isLoading, error } = useQuery(fetchTodoList, {
 })
 ```
 
-## API
+# API
 
-Detailed API documentation is coming ASAP.
+## `ReactQueryProvider`
+
+`ReactQueryProvider` is required and can optionally define defaults for all instances of `useQuery` and `useMutation` through your app
+
+### Options
+
+Pass options to `ReactQueryProvider` by pass it a `config` prop:
+
+```js
+<ReactQueryProvider config={{...}}>
+  ...
+</ReactQueryProvider>
+```
+
+- `retry: Boolean | Int`
+  - If `false`, failed queries will not retry by default
+  - If `true`, failed queries will retry infinitely
+  - If set to an `Int`, eg. `3`, failed queries will retry until the failed query count meets that number
+- `retryDelay: Function(retryAttempt: Int) => Int`
+  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds
+  - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff
+  - A function like `attempt => attempt * 1000` applies linear backoff.
+- `cacheTime: Int`
+  - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration
+- `invalidCacheTime: Int`
+  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+
+## `useQuery`
+
+### Options
+
+Pass options to `useQuery` like so:
+
+```js
+useQuery(query, { variables, manual, retry })
+```
+
+- `query: Function(variables) => Promise(data/error)`
+  - The function that this query will use to fetch data
+  - **Must be defined only across your entire app.**
+  - Receives the `variables` object passed to `useQuery(query, { variables })` or `refetch({ variables })`
+  - Returns a promise that either resolves data or throws an error
