@@ -30,7 +30,7 @@ Tools for managing async data and client stores/caches are plentiful these days,
 
 ## The solution
 
-React Query contains a set of hooks that attempt to address these issues. Ouf of the box, React Query:
+React Query contains a set of hooks that attempt to address these issues. Out of the box, React Query:
 
 - Dedupes similar requests at the application level
 - Caches response data across similar requests
@@ -67,7 +67,7 @@ The `ReactQueryProvider` is a provider component that is necessary to use React 
 import { ReactQueryProvider } from '@tannerlinsley/react-query-temp'
 
 function App() {
-  ;<ReactQueryProvider>...</ReactQueryProvider>
+  return <ReactQueryProvider>...</ReactQueryProvider>
 }
 ```
 
@@ -86,7 +86,7 @@ const config = {
 }
 
 function App() {
-  ;<ReactQueryProvider config={config}>...</ReactQueryProvider>
+  return <ReactQueryProvider config={config}>...</ReactQueryProvider>
 }
 ```
 
