@@ -1,4 +1,8 @@
-# ⚛️ React Query 🐧
+![React Query Header](https://github.com/tannerlinsley/react-query/raw/master/media/header.png)
+
+<img src='https://github.com/tannerlinsley/react-query/raw/master/media/logo.png' width='300'/>
+
+Hooks for orchestrating, caching and managing asynchronous data in React
 
 <a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
@@ -15,8 +19,11 @@
 <a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
 </a>
-
-Hooks for orchestrating, caching and managing asynchronous data in React
+<br />
+<br />
+<a href="https://patreon.com/tannerlinsley">
+  <img width="180" alt="" src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/become-a-patron.png" />
+</a>
 
 ## The problem
 
