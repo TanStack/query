@@ -580,7 +580,7 @@ saveTodo({
 })
 
 // The query below will be updated with the response from the mutation above when it succeeds
-const { data, isLoading, error } = useQuery(fetchTodoList, {
+const { data, isLoading, error } = useQuery(fetchTodoByID, {
   variables: {
     id: 5,
   },
