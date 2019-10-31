@@ -2,7 +2,7 @@
 
 <img src='https://github.com/tannerlinsley/react-query/raw/master/media/logo.png' width='300'/>
 
-Hooks for orchestrating, caching and managing asynchronous data in React
+Hooks for managing, caching and syncing asynchronous and remote data in React
 
 <!-- <a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
