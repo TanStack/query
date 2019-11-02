@@ -10,8 +10,8 @@ Hooks for managing, caching and syncing asynchronous and remote data in React
 <a href="https://npmjs.com/package/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a>
-<a href="https://bundlephobia.com/result?p=@tannerlinsley/react-query-temp" target="\_parent">
-  <img alt="" src="https://badgen.net/bundlephobia/minzip/@tannerlinsley/react-query-temp" />
+<a href="https://bundlephobia.com/result?p=react-query" target="\_parent">
+  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query" />
 </a>
 <a href="https://spectrum.chat/react-query">
   <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
@@ -28,32 +28,43 @@ Hooks for managing, caching and syncing asynchronous and remote data in React
   <img width="180" alt="" src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/become-a-patron.png" />
 </a>
 
-## The problem
+## Quick Features
+
+- Transport, protocol & backend agnostic data fetching
+- Auto Caching + Background Refetching (stale-while-revalidate model)
+- Auto Refetch (on-window-focus, when-stale)
+- Parallel + Dependent Queries
+- Mutations
+- Multi-layer Cache + Garbage Collection
+- 4kb (minzipped)
+
+## The Challenge
 
 Tools for managing async data and client stores/caches are plentiful these days, but most of these tools:
 
-- Don't dedupe network operations that could be made in a single request
+- Duplicate unnecessary network operations
 - Force normalized or object/id-based caching strategies on your data
-- Don't invalidate their cache often enough, don't know when to invalidate, or don't ship with good defaults
+- Don't invalidate their caches often enough or don't ship with good defaults or mechanisms to do so
 - Don't perform optimistic updates, or require setup to know when to perform them
 - Because of this ☝️, they require imperative interaction to invalidate or manage their caches
 
-## The solution
+## The Solution
 
-React Query contains a set of hooks that attempt to address these issues. Out of the box, React Query:
+React Query exports a set of hooks that attempt to address these issues. Out of the box, React Query:
 
-- Dedupes similar requests at the application level
-- Caches response data across similar requests
-- Optimistically updates requests in the background
-- Automatically manages query caching, invalidation, and garbage collection
-- Supports retries and exponential/custom back-off delays
-- Provides a declarative API for invalidating and atomically updating cached responses.
-- Built with and for React hooks
-- 3.8kb minzipped
+- Flexibly dedupes simultaneous requests to assets
+- Automatically caches request responses
+- Automatically invalidates stale cache data
+- Optimistically updates stale requests in the background
+- Optimistically seeds new requests from stale data while fetching new dat
+- Supports automatic retries and exponential or custom back-off delays
+- Provides both declarative and imperative API's for:
+  - Manually invalidating requests
+  - Atomically updating cached responses
 
 ## Hat Tipping
 
-A big thanks to [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's API and documentation. You rock!
+A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and it's creators for inspiring even further customizations and optimizations. You all rock!
 
 ## Demos
 
@@ -64,55 +75,48 @@ A big thanks to [Draqula](https://github.com/vadimdemedes/draqula) for inspiring
 ## Installation
 
 ```bash
-$ yarn add @tannerlinsley/react-query-temp
+$ npm i --save react-query
 # or
-$ npm i @tannerlinsley/react-query-temp --save
+$ yarn add react-query
 ```
 
-## ReactQueryProvider
+## Setup
 
-The `ReactQueryProvider` is a provider component that is necessary to use React Query. Render it at the base of your application like so:
+React Query exports a necessary components called `ReactQueryProvider` that must be rendered at the root of your application like so:
 
 ```js
-import { ReactQueryProvider } from '@tannerlinsley/react-query-temp'
+import { ReactQueryProvider } from 'react-query'
 
 function App() {
-  return <ReactQueryProvider>...</ReactQueryProvider>
+  return <ReactQueryProvider>{/* Your application code */}</ReactQueryProvider>
 }
 ```
 
-### Optional Configuration
-
-You may also pass a config object to `ReactQueryProvider` as well to customize the default behavior of hooks like `useQuery` and `useMutation` used within it:
-
-```js
-const config = {
-  // These are the default config options for the ReactQueryProvider
-  retry: 3,
-  retryDelay: attempt =>
-    Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
-  cacheTime: 10 * 1000, // 10 seconds
-  invalidCacheTime: 10 * 1000, // 10 seconds
-}
-
-function App() {
-  return <ReactQueryProvider config={config}>...</ReactQueryProvider>
-}
-```
+> You can use the `ReactQueryProvider` to globally customize options across your project by passing a `config` prop to it with an object of options. See [`ReactQueryProvider`](#reactqueryprovider) for more information.
 
 ## Queries
 
-### Basic queries
+To make a new query, call the `useQuery` hook with:
 
-To perform a simple query without any options, simply pass the `useQuery` hook an **asynchronous function (or similar then-able)**:
+- A **unique key for the query**
+- An **asynchronous function (or similar then-able)** to resolve the data
 
 ```js
-import { useQuery } from '@tannerlinsley/react-query-temp'
+const info = useQuery('todos', fetchTodoList)
+```
 
-import fetchTodoList from './queries/fetchTodoList'
+The **unique key** you provide is used internally for refetching, caching, deduping related queries.
 
+This key can be whatever you'd like it to be as long as:
+
+- It changes when your query should be requested again
+- It is consistent across all instances of that specific query in your application
+
+The query `info` returned contains all information about the query and can be easily destructured and used in your component:
+
+```js
 function Todos() {
-  const { data, isLoading, error } = useQuery(fetchTodoList)
+  const { data, isLoading, error } = useQuery('todos', fetchTodoList)
 
   return (
     <div>
@@ -132,27 +136,45 @@ function Todos() {
 }
 ```
 
-### Query Variables
+### Query Keys
 
-Using variables is as easy as passing a variables object to the query configuration:
+Since React Query uses a query's **unique key** for essentially everything, it's important to tailor them so that will change with your query requirements. In other libraries like Zeit's SWR, you'll see the use of URL's and GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, you can pass a **tuple key** with a `string` and `object` of variables to deterministically get the the same key.
+
+> Pro Tip: Variables passed in the key are automatically passed to your query function!
+
+All of the following queries would result in using the same key:
 
 ```js
-const { data, isLoading, error } = useQuery(fetchTodoList, {
-  variables: {
-    status: 'done',
-  },
-})
+useQuery(['todos', { status, page }])
+useQuery(['todos', { page, status }])
+useQuery(['todos', { page, status, other: undefined }])
 ```
 
-Whenever variables are updated, `useQuery` will automatically refetch and update the query for you:
+> Note: To aid you in your quest, if a query key is used that contains a `?` (like `todos?page=${page}&status=${status}`), you will see a gentle console warning to use the above format instead.
+
+### Query Variables
+
+To use external props, state, or variables in a query function, pass them as a variables in your query key! They will be passed through to your query function as the first parameter.
+
+```js
+function Todos({ status }) {
+  const { data, isLoading, error } = useQuery(
+    ['todos', { status, page }],
+    fetchTodoList // This is the same as `fetchTodoList({ status, page })`
+  )
+}
+```
+
+Whenever a query's key changes, the query will automatically update:
 
 ```js
 function Todos() {
   const [page, setPage] = useState(0)
 
-  const { data, isLoading, error } = useQuery(fetchTodoList, {
-    variables: { page },
-  })
+  const { data, isLoading, error } = useQuery(
+    ['todos', { page }],
+    fetchTodoList
+  )
 
   const onNextPage = () => {
     setPage(page => page + 1)
@@ -167,9 +189,41 @@ function Todos() {
 }
 ```
 
-If the same query (with the same variables) is used anywhere else in your application, it will get optimistically updated with the response
+### Dependent Queries
 
-> **Hint:** Query functions **must be declared outside of the component** so as to maintain a single instance across your entire application. React Query uses query function equality to detect similar queries and cache responses.
+React Query makes it easy to make queries that depends on other queries for both:
+
+- Parallel Queries (avoiding waterfalls) and
+- Serial Queries (when a piece of data is required for the next query to happen.
+
+To do this effectively, you can use the following 2 approaches:
+
+#### Conditionally passing a falsey value as a query key
+
+If a query isn't ready to be requested yet, just pass a falsey value as the query key:
+
+```js
+const { data: user } = useQuery(['user', { userId }])
+const { data: projects } = useQuery(user && ['projects', { userId: user.id }]) // User is `null`, so the query key will be falsey
+```
+
+#### Using a function as a query key
+
+If a function is passed, the query will not execute until the function can be called without throwing:
+
+```js
+const { data: user } = useQuery(['user', { userId }])
+const { data: projects } = useQuery(() => ['projects', { userId: user.id }]) // This will throw until `user` is available
+```
+
+#### Mix them together!
+
+```js
+const [ready, setReady] = React.useState(false)
+const { data: user } = useQuery(ready && ['user', { userId }]) // Wait for ready
+const { data: projects } = useQuery(
+  () => ready && ['projects', { userId: user.id }] // Wait for ready and user.id
+```
 
 ### Caching
 
@@ -211,17 +265,15 @@ Here is a more detailed example of the caching lifecycle:
 
 ### Pagination
 
-If all you need is page-based pagination, where the previous set of data is replaced with a new one, this section is not applicable to your use-case. For that, you can simply increment the page variable and pass it to your query via variables.
+If all you need is page-based pagination, where the previous set of data is replaced with a new one, this section is not applicable to your use-case. For that, you can increment the page variable and pass it to your query via variables.
 
 However, if your app needs to add more data to the list along with existing one (for example, infinite loading), React Query provides you with a way to fetch additional data without deleting the current data. Let's use page-based pagination for simplicity, but assume that we want to append new todo items at the end of the list.
 
 ```js
 function Todos() {
   const { data, isLoading, error, refetch, isFetching } = useQuery(
-    fetchTodoList,
-    {
-      page: 1,
-    }
+    ['todos', { page: 1 }],
+    fetchTodoList
   )
 
   const onFetchMore = () => {
@@ -260,14 +312,15 @@ To prevent you from managing the loading state of `refetch` manually (since `isL
 
 ### Manual Querying
 
-If you ever want to disable a query from automatically running when the query or variables change, you can use the `manual = true` option. When `manual` is set to true:
+If you ever want to disable a query from automatically running, you can use the `manual = true` option. When `manual` is set to true:
 
 - The query will not automatically refetch due to changes to their query function or variables.
-- The query will not included in any `refetchQueries` options or `useRefetchQueries` calls. To override this, use the `includeManual` option in either.
+- The query will not automatically refetch due to `refetchQueries` options in other queries or via `useRefetchQuery` calls.
 
 ```js
 function Todos() {
   const { data, isLoading, error, refetch, isFetching } = useQuery(
+    'todos',
     fetchTodoList,
     {
       manual: true,
@@ -296,35 +349,7 @@ function Todos() {
 }
 ```
 
-This can also be useful under circumstances where you don't want your query firing because of unmet required conditions like a missing variable
-
-```js
-function TodosByUser({ userID }) {
-  const { data, isLoading, error, refetch, isFetching } = useQuery(
-    fetchTodoListByUserID,
-    {
-      manual: !userID, // Don't auto fetch if there is no userID
-      variables: {
-        userID,
-      },
-    }
-  )
-
-  return isLoading ? (
-    <span>Loading...</span>
-  ) : error ? (
-    <span>Error: {error.message}</span>
-  ) : data ? (
-    <>
-      <ul>
-        {data.map(todo => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
-    </>
-  ) : null
-}
-```
+> Pro Tip: Don't use `manual` for dependent queries. Use [Dependent Queries](#dependent-queries) instead!
 
 ### Retries
 
@@ -351,8 +376,7 @@ function App() {
 }
 
 // Make specific query retry a certain number of times
-const { data, isLoading, error } = useQuery(fetchTodoList, {
-  variables: { page: 1 },
+const { data, isLoading, error } = useQuery(['todos', { page: 1 }, fetchTodoList, {
   retry: 10, // Will retry failed requests 10 times before displaying an error
 })
 ```
@@ -381,30 +405,31 @@ function App() {
 Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
 
 ```js
-const { data, isLoading, error } = useQuery(fetchTodoList, {
+const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
   retryDelay: 10000, // Will always wait 1000ms to retry, regardless of how many retries
 })
 ```
 
 ## Mutations
 
-Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query offers a `useMutation` hook. Just like queries, remember to define your mutations outside your components to prevent infinite unnecessary rerenders.
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query exports a `useMutation` hook.
 
 ### Basic Mutations
 
-Assuming the server implements a ping mutation, that simply returns "pong" string, here's an example of the most basic mutation:
+Assuming the server implements a ping mutation, that returns "pong" string, here's an example of the most basic mutation:
 
 ```js
-// pingMutation is a function that returns a promise
-import pingMutation from '../queries/pingMutation'
-
 const PingPong = () => {
   const [mutate, { data, isLoading, error }] = useMutation(pingMutation)
 
   const onPing = async () => {
-    const data = await mutate()
-    console.log(data)
-    // { ping: 'pong' }
+    try {
+      const data = await mutate()
+      console.log(data)
+      // { ping: 'pong' }
+    } catch {
+      // Uh oh, something went wrong
+    }
   }
   return <button onClick={onPing}>Ping</button>
 }
@@ -414,11 +439,9 @@ Mutations without variables are not that useful, so let's add some variables to 
 
 ### Mutation Variables
 
-Similar to `useQuery`, `useMutation` also accepts variables. The only difference is that you pass `variables` to the `mutate` function, instead of the `useMutation` hook:
+To pass `variables` to your `mutate` function, call `mutate` with an object.
 
 ```js
-import createTodo from '../mutations/createTodo'
-
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
   const [mutate] = useMutation(createTodo)
@@ -449,159 +472,180 @@ const CreateTodo = () => {
 }
 ```
 
-### Refetching Queries from Mutations
+Even with just variables, mutations aren't all that special, but when used with the `refetchQueries` and `mutateQuery` options, they become a very powerful tool.
 
-When a mutation succeeds, it's likely that other queries in your application need to update. For example, a successful `postTodo` mutation will likely require that any `fetchTodoList` queries get updated to show the new todo item.
+### Invalidate and Refetch Queries from Mutations
 
-Where other libraries that use normalized caches would attempt to update locale queries with the new data imperatively, React Query avoids the pitfalls that come with normalized caches and uses **atomic updates** instead of partial manipulation of caches.
+When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update locale queries with the new data imperatively, React Query avoids the pitfalls that come with normalized caches and prescribes **atomic updates** instead of partial cache manipulation.
 
-To automatically refetch queries after a mutation succeeds, you can use the `useMutation` hook's `refetchQueries` option:
+For example, assume we have a mutation to post a new todo:
 
 ```js
-import fetchTodoList from '../queries/fetchTodoList'
-import createTodo from '../mutations/createTodo'
-
-// When this mutation succeeds, any query relying on `fetchTodoList` query will be refetched
-const [mutate] = useMutation(createTodo, { refetchQueries: [fetchTodoList] })
-
-// The 2 queries below will be refetched when the mutation above succeeds
-const { data, isLoading, error } = useQuery(fetchTodoList)
-const { data, isLoading, error } = useQuery(fetchTodoList, {
-  variables: { status: 'done' },
-})
+const [mutate] = useMutation(postTodo)
 ```
 
-It's easy to refetch multiple queries too:
+When a successful `postTodo` mutation happens, we likely want all `todos` queries to get refetched to show the new todo item. To do this, you can use the `refetchQueries` option when calling a mutation's `mutate` function.
 
 ```js
-import fetchTodoList from '../queries/fetchTodoList'
-import fetchReminders from '../queries/fetchReminders'
-import createTodo from '../mutations/createTodo'
+// When this mutation succeeds, any queries with the `todos` or `reminders` query key will be refetched
+mutate(newTodo, { refetchQueries: ['todos', 'reminders'], })
 
-// When this mutation succeeds, any query relying on `fetchTodoList` query will be refetched
-const [mutate] = useMutation(createTodo, {
-  refetchQueries: [fetchTodoList, fetchReminders],
-})
-
-// The 2 queries below will be refetched when the mutation above succeeds
-const todoListQuery = useQuery(fetchTodoList)
-const remindersQuery = useQuery(fetchReminders)
+// The 3 queries below will be refetched when the mutation above succeeds
+const todoListQuery = useQuery('todos', fetchTodoList)
+const todoListQuery = useQuery(['todos', { page: 1 }, fetchTodoList)
+const remindersQuery = useQuery('reminders', fetchReminders)
 ```
 
-You can even refetch queries with specific variables by passing objects to `refetchQueries`
+You can even refetch queries with specific variables by passing a query key tuple to `refetchQueries`:
 
 ```js
-import fetchTodoList from '../queries/fetchTodoList'
-import addTodo from '../mutations/addTodo'
-
-// You can lazily pass invalidation options to the `mutate` function instead
-const [mutate] = useMutation(addTodo, {
-  refetchQueries: [
-    {
-      query: fetchTodoList,
-      variables: {
-        type: 'done',
-      },
-    },
-  ],
-})
+mutate(newTodo, { refetchQueries: [['todos', { status: 'done' }]] })
 
 // The query below will be refetched when the mutation above succeeds
-const { data, isLoading, error } = useQuery(fetchTodoList, {
-  variables: {
-    type: 'done',
-  },
-})
-
-// The query below will NOT be refetched when the mutation succeeds
-const { data, isLoading, error } = useQuery(fetchTodoList)
+const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
+// However, the following query below will NOT be refetched
+const todoListQuery = useQuery('todos', fetchTodoList)
 ```
 
-If you prefer that the promise returned from `mutate()` only resolves **after** any `refetchQueries` have been refetched, you can set `waitForRefetchQueries = true`:
+If you want to **only** refetch `todos` queries that don't have variables, you can pass a tuple with `variables` set to `false`:
 
 ```js
-const [mutate] = useMutation(addTodo, {
-  waitForRefetchQueries: true,
-  refetchQueries: [
-    {
-      query: fetchTodoList,
-      variables: {
-        type: 'done',
-      },
-    },
-  ],
-})
+mutate(newTodo, { refetchQueries: [['todos', false]] })
+
+// The query below will be refetched when the mutation above succeeds
+const todoListQuery = useQuery(['todos'], fetchTodoList)
+// However, the following query below will NOT be refetched
+const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
+```
+
+If you prefer that the promise returned from `mutate()` only resolves **after** any `refetchQueries` have been refetched, you can pass the `waitForRefetchQueries = true` option to `mutate`:
+
+```js
+const [mutate] = useMutation(addTodo, {})
 
 const run = async () => {
-  await mutate(todo)
-  console.log('I will only log after all refetchQueries are done refetching!')
+  try {
+    await mutate(todo, { waitForRefetchQueries: true })
+    console.log('I will only log after all refetchQueries are done refetching!')
+  } catch {}
 }
-```
-
-You can also lazily define mutation options with the `mutate` function:
-
-```js
-const [mutate] = useMutation(addTodo)
-
-// Wait to call the function to define the refetchQueries
-mutate(todo, {
-  refetchQueries: [fetchTodoList],
-})
 ```
 
 ### Query Updates from Mutations
 
-Normally when dealing with REST calls that **update** objects on the server, the updated version of that object is returned in the response. Instead of invalidating queries that would return that same object and wasting a network call, we can update query responses that match that exact object query using the `updateQueries` option:
-
-> **NOTE:** The `updatedQueries` option can only be passed to the `mutate` function. Passing it to `useMutation` will have no effect
+When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of invalidating any queries for that item and wasting a network call to refetch them again, we can take advantage of the object returned by the mutation function and update any query responses with that data that match that query using the `mutateQuery` option:
 
 ```js
-import fetchTodoByID from '../queries/fetchTodoByID'
-import editTodo from '../mutations/editTodo'
-
 const [mutate] = useMutation(editTodo)
 
-const saveTodo = async todo => {
-  await mutate(todo, {
-    updateQueries: [
-      {
-        query: fetchTodoByID,
-        variables: {
-          id: todo.id,
-        },
-      },
-    ],
-  })
-}
-
-saveTodo({
-  id: 5,
-  name: 'Do the laundry',
-})
+mutate(
+  {
+    id: 5,
+    name: 'Do the laundry',
+  },
+  {
+    mutateQuery: [['todo', { id: 5 }]],
+  }
+)
 
 // The query below will be updated with the response from the mutation above when it succeeds
-const { data, isLoading, error } = useQuery(fetchTodoByID, {
-  variables: {
-    id: 5,
-  },
+const { data, isLoading, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
+```
+
+### Manually or Optimistically Mutating Query Data
+
+In rare circumstances, you may want to manually update a query's response outside of a mutation. To do this, you can use the exported `mutateQuery` function:
+
+```js
+import { mutateQuery } from 'react-query'
+
+// Full replacement
+mutateQuery(['todo', { id: 5 }], newTodo)
+
+// or functional update
+mutateQuery(['todo', { id: 5 }], previous => ({ ...previous, status: 'done' }))
+```
+
+**Most importantly**, when manually mutating a query response, it naturally becomes out-of-sync with it's original source. To ease this issue, `mutateQuery` automatically triggers a background refresh of the query after it's called to ensure it stays in sync with the original source.
+
+Should choose _not_ to refetch the query, you can set the `shouldRefetch` option to `false`:
+
+```js
+import { mutateQuery } from 'react-query'
+
+// Mutate, but do not automatically refetch the query in the background
+mutateQuery(['todo', { id: 5 }], newTodo, {
+  shouldRefetch: false,
 })
+```
+
+### Displaying Background Fetching Loading States
+
+A query's `isLoading` boolean is usually sufficient to show the initial hard-loading state for a query, but sometimes you may want to display a more subtle indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state:
+
+```js
+function Todos() {
+  const { data: todos, isLoading, isFetching } = useQuery('todos', fetchTodos)
+
+  return isLoading ? (
+    <span>Loading...</span>
+  ) : todos ? (
+    <>
+      {isFetching ? <div>Refreshing...</div> : null}
+
+      <div>
+        {todos.map(todo => (
+          <Todo todo={todo} />
+        ))}
+      </div>
+    </>
+  ) : null
+}
+```
+
+### Displaying Global Background Fetching Loading State
+
+In addition to individual query loading states, if you would like to show a global loading indicator when **any** queries are fetching (including in the background), you can use the `useIsFetching` hook:
+
+```js
+import { useIsFetching } from 'react-query'
+
+function GlobalLoadingIndicator() {
+  const isFetching = useIsFetching()
+
+  return isFetching ? (
+    <div>Queries are fetching in the background...</div>
+  ) : null
+}
+```
+
+### Window-Focus Refetching
+
+If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `ReactQueryProvider`'s `refetchAllOnWindowFocus` option to disable it:
+
+```js
+<ReactQueryProvider config={{ refetchAllOnWindowFocus: false }}>
+  ...
+</ReactQueryProvider>
 ```
 
 # API
 
 ## `ReactQueryProvider`
 
-`ReactQueryProvider` is required and can optionally define defaults for all instances of `useQuery` and `useMutation` through your app
+`ReactQueryProvider` is required and can optionally define defaults for all instances of `useQuery` and `useMutate` through your app:
+
+```js
+<ReactQueryProvider
+  config={{ retry, retryDelay, cachetime, invalideCacheTime }}
+>
+  ...
+</ReactQueryProvider>
+```
 
 ### Options
 
 Pass options to `ReactQueryProvider` by pass it a `config` prop:
-
-```js
-<ReactQueryProvider config={{...}}>
-  ...
-</ReactQueryProvider>
-```
 
 - `retry: Boolean | Int`
   - If `false`, failed queries will not retry by default
@@ -616,20 +660,150 @@ Pass options to `ReactQueryProvider` by pass it a `config` prop:
 - `invalidCacheTime: Int`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
 
+### Example
+
+```js
+const config = {
+  // These are the default config options for the ReactQueryProvider
+  retry: 3,
+  retryDelay: attempt =>
+    Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
+  cacheTime: 10 * 1000, // 10 seconds
+  invalidCacheTime: 10 * 1000, // 10 seconds
+}
+
+function App() {
+  return <ReactQueryProvider config={config}>...</ReactQueryProvider>
+}
+```
+
 ## `useQuery`
+
+```js
+const {
+  data,
+  error,
+  isFetching,
+  isCached,
+  failureCount,
+  isLoading,
+  refetch,
+} = useQuery(queryKey, queryFn, {
+  manual,
+  cacheTime,
+  retry,
+  retryDelay,
+})
+```
 
 ### Options
 
-Pass options to `useQuery` like so:
+- `queryKey: String | [String, Variables: Object] | falsey | Function => queryKey`
+  - **Required**
+  - The query key to use for this query.
+  - If a string is passed, it will be used as the query key
+  - If a `[String, Object]` tuple is passed, they will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
+  - If a falsey value is passed, the query will be disabled and not run automatically.
+  - If a function is passed, it should resolve to any other valid query key type. If the function throws, the query will be disabled and not run automatically.
+  - The query will automatically update when this key changes (if the key is not falsey and if `manual` is not set to `true`)
+  - `Variables: Object`
+    - If a tuple with variables is passed, this object should be **serializable**.
+    - Nested arrays and objects are supported
+    - The order of object keys is sorted to be stable before being serialized into the query key
+- `queryFn: Function(variables) => Promise(data/error)`
+  - **Required**
+  - The function that the query will use to request data
+  - Optionally receives the `variables` object passed from either the query key tuple (`useQuery(['todos', variables], queryFn)`) or the refetch method's `variables` option `refetch({ variables })`
+  - Must return a promise that will either resolves data or throws an error.
+- `manual: Boolean`
+  - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
+  - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+- `cacheTime`
+  - [See `ReactQueryProvider` options...](#reactqueryprovider)
+- `retry`
+  - [See `ReactQueryProvider` options...](#reactqueryprovider)
+- `retryDelay`
+  - [See `ReactQueryProvider` options...](#reactqueryprovider)
+
+### Query Instance
+
+- `data: null | Any`
+  - Defaults to `null`
+  - The last successfully resolved data for the query.
+- `error: null | Error`
+  - The error object for the query, if an error was thrown.
+- `isLoading: Boolean`
+  - Will be `true` if the query is both fetching and does not have any cached data to display.
+- `isFetching: Boolean`
+  - Will be `true` if the query is currently fetching, including background fetching.
+- `isCached: Boolean`
+  - Will be `true` if the query's response is currently cached.
+- `failureCount: Integer`
+  - The failure count for the query.
+  - Incremented every time the query fails.
+  - Reset to `0` when the query succeeds.
+- `refetch: Function({ variables: Object, merge: Function, disableThrow: Boolean })`
+  - A function to manually refetch the query.
+  - Supports custom variables (useful for "fetch more" calls)
+  - Supports custom data merging (useful for "fetch more" calls)
+  - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
+
+## `useMutation`
 
 ```js
-useQuery(query, { variables, queryID, manual, retry })
+const [mutate, { data, isLoading, error }] = useMutation(queryKey, {
+  refetchQueries,
+  updateQuery,
+})
 ```
 
-- `query: Function(variables) => Promise(data/error)`
-  - The function that this query will use to fetch data
-  - **Must be defined only across your entire app.** (or a `queryID` must be optionally used)
-  - Receives the `variables` object passed to `useQuery(query, { variables })` or `refetch({ variables })`
-  - Must return a promise that either resolves data or throws an error
-- `variables`
-  - ...to be continued
+### Options
+
+- `mutationFn: Function(variables)`
+  - **Required**
+  - The query key to use for this query.
+  - If a string is passed, it will be used as the query key
+  - If a `[String, Object]` tuple is passed, they will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
+  - If a falsey value is passed, the query will be disabled and not run automatically.
+  - If a function is passed, it should resolve to any other valid query key type. If the function throws, the query will be disabled and not run automatically.
+  - The query will automatically update when this key changes (if the key is not falsey and if `manual` is not set to `true`)
+  - `Variables: Object`
+    - If a tuple with variables is passed, this object should be **serializable**.
+    - Nested arrays and objects are supported
+    - The order of object keys is sorted to be stable before being serialized into the query key
+- `manual: Boolean`
+  - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
+  - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+
+### Query Instance
+
+- `data: null | Any`
+  - Defaults to `null`
+  - The last successfully resolved data for the query.
+- `error: null | Error`
+  - The error object for the query, if an error was thrown.
+- `isLoading: Boolean`
+  - Will be `true` if the query is both fetching and does not have any cached data to display.
+- `isFetching: Boolean`
+  - Will be `true` if the query is currently fetching, including background fetching.
+- `isCached: Boolean`
+  - Will be `true` if the query's response is currently cached.
+- `failureCount: Integer`
+  - The failure count for the query.
+  - Incremented every time the query fails.
+  - Reset to `0` when the query succeeds.
+- `refetch: Function({ variables: Object, merge: Function, disableThrow: Boolean })`
+  - A function to manually refetch the query.
+  - Supports custom variables (useful for "fetch more" calls)
+  - Supports custom data merging (useful for "fetch more" calls)
+  - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
+
+## `useMutation`
+
+## `mutateQuery`
+
+## `refetchQuery`
+
+## `refetchAllQueries`
+
+## `useIsFetching`

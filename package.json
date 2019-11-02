@@ -1,7 +1,7 @@
 {
-  "name": "@tannerlinsley/react-query-temp",
-  "version": "0.0.20",
-  "description": "Hooks for orchestrating, managing, and syncing asynchronous data in React",
+  "name": "react-query",
+  "version": "0.0.11",
+  "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tannerlinsley/react-query",

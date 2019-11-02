@@ -885,6 +885,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@^7.4.4":
+  version "7.6.3"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.3.tgz#935122c74c73d2240cafd32ddb5fc2a6cd35cf1f"
+  integrity sha512-kq6anf9JGjW8Nt5rYfEuGRaEAaH1mkv3Bbu6rYvLOpPh/RusSJXuKPEAoZ7L7gybZkchE8+NV5g9vKF4AGAtsA==
+  dependencies:
+    regenerator-runtime "^0.13.2"
+
 "@babel/template@^7.1.0", "@babel/template@^7.4.0", "@babel/template@^7.4.4", "@babel/template@^7.6.0":
   version "7.6.0"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.6.0.tgz#7f0159c7f5012230dad64cca42ec9bdb5c9536e6"
@@ -1279,9 +1286,9 @@
     "@svgr/plugin-svgo" "^4.0.3"
     loader-utils "^1.1.0"
 
-"@tannerlinsley/react-query-temp@latest":
+"react-query@latest":
   version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@tannerlinsley/react-query-temp/-/react-query-temp-0.0.13.tgz#976064ddbc642f8f37161ec94d4af1e1eff7ba7d"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-temp-0.0.13.tgz#976064ddbc642f8f37161ec94d4af1e1eff7ba7d"
   integrity sha512-iSRNEtQ00yO+6N500SSIDkM3hrVESrPUZuANK6r9reHFjodweuTs//Pm544wUBvMKwwoJ8Fo/7v9FF2HhbOoVA==
   dependencies:
     fast-json-stable-stringify "^2.0.0"
@@ -9049,6 +9056,13 @@ stealthy-require@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
+
+stop-runaway-react-effects@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/stop-runaway-react-effects/-/stop-runaway-react-effects-1.2.0.tgz#795a00dfdd16e69185f501f2ad7d70b9f0d55709"
+  integrity sha512-VKBB01YXuiNbUzftBZsHoJyY+6c4UTNRDNcVypZwKIOD0o9DiGM4C8KnLKXO6J5/DJoFqcjYbQxYJ+xZIDbdPQ==
+  dependencies:
+    "@babel/runtime" "^7.4.4"
 
 stream-browserify@^2.0.1:
   version "2.0.2"

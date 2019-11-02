@@ -403,7 +403,7 @@ export function useUpdateQuery() {
   );
 }
 
-export function useMutation({
+export function useMutate({
   query,
   invalidate: defaultInvalidate,
   update: defaultUpdate

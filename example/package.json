@@ -7,12 +7,13 @@
     "eject": "rescripts eject"
   },
   "dependencies": {
-    "@tannerlinsley/react-query-temp": "latest",
+    "react-query": "latest",
     "namor": "^1.1.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-scripts": "3.0.1",
     "react-table": "next",
+    "stop-runaway-react-effects": "^1.2.0",
     "styled-components": "^4.3.2"
   },
   "devDependencies": {
