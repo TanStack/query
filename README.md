@@ -36,7 +36,7 @@ Hooks for managing, caching and syncing asynchronous and remote data in React
 - Parallel + Dependent Queries
 - Mutations
 - Multi-layer Cache + Garbage Collection
-- 4kb (minzipped)
+- 3.6 kb (minzipped)
 
 ## The Challenge
 
