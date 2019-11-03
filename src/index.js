@@ -1,24 +1,15 @@
 import React from 'react'
 
-const context = React.createContext()
+let queries = []
 const cancelledError = {}
-let globalContextValue = null
+let globalStateListeners = []
 let uid = 0
-
-const defaultConfig = {
-  retry: 3,
-  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-  cacheTime: 10 * 1000,
-  inactiveCacheTime: 10 * 1000,
-  queryAutoRefetch: false,
-  refetchAllOnWindowFocus: true,
-}
 
 // Focus revalidate
 let eventsBinded = false
 if (typeof window !== 'undefined' && !eventsBinded) {
   const revalidate = () => {
-    const [, , , { refetchAllOnWindowFocus }] = globalContextValue
+    const { refetchAllOnWindowFocus } = defaultConfig
     if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
       refetchAllQueries()
   }
@@ -27,167 +18,124 @@ if (typeof window !== 'undefined' && !eventsBinded) {
   eventsBinded = true
 }
 
+let defaultConfig = {
+  retry: 3,
+  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+  cacheTime: 10 * 1000,
+  inactiveCacheTime: 10 * 1000,
+  queryAutoRefetch: false,
+  refetchAllOnWindowFocus: true,
+  autoRefetch: false,
+}
+
 export function ReactQueryProvider({ children, config = {} }) {
-  const metaRef = React.useRef({})
-
-  const [state, setState] = React.useState({})
-
-  globalContextValue = React.useMemo(() => [state, setState, metaRef], [state])
-
-  globalContextValue[3] = {
-    ...defaultConfig,
-    ...config,
-  }
-
-  return (
-    <context.Provider value={globalContextValue}>{children}</context.Provider>
-  )
+  Object.assign(defaultConfig, config)
+  return children
 }
 
-export function _useQueryContext() {
-  return React.useContext(context)
-}
-
-function useSharedQuery(
-  userQueryKey,
-  { queryFn, instanceId, refetchRef, queryConfig, manual }
-) {
-  const [
-    providerState,
-    setProviderState,
-    providerMetaRef,
-    config,
-  ] = React.useContext(context)
-
-  // Create the final query hash
-  const [queryHash, queryGroup, variablesHash, variables] = getQueryInfo(
-    userQueryKey
-  )
-
-  const defaultQueryState = React.useMemo(
-    () => ({
+function makeQuery({
+  queryHash,
+  queryGroup,
+  variablesHash,
+  variables,
+  config,
+  queryFn,
+}) {
+  let query = {
+    queryHash,
+    queryGroup,
+    variablesHash,
+    variables,
+    promise: null,
+    previousDelay: 0,
+    cacheTimeout: null,
+    inactiveCacheTimeout: null,
+    cancelled: null,
+    state: {
       data: null,
       error: null,
       isFetching: false,
       failureCount: 0,
       isCached: false,
       isStale: true,
-    }),
-    []
-  )
-
-  const queryState = providerState[queryHash] || defaultQueryState
-
-  const latestRef = React.useRef({})
-  latestRef.current = {
-    ...queryState,
-    queryFn,
-    config: merge(queryConfig, config),
+    },
+    instances: [],
   }
 
-  const setQueryState = React.useCallback(
-    updater => {
-      return setProviderState(old => {
-        if (!queryHash) {
-          return old
-        }
-
-        const oldQueryState =
-          typeof old[queryHash] === 'undefined'
-            ? defaultQueryState
-            : old[queryHash]
-
-        const newValue =
-          typeof updater === 'function' ? updater(oldQueryState) : updater
-
-        if (typeof newValue === 'undefined') {
-          const { [queryHash]: _, ...rest } = old
-          return rest
-        }
-
-        return {
-          ...old,
-          [queryHash]: newValue,
-        }
-      })
-    },
-    [setProviderState, queryHash, defaultQueryState]
-  )
-
-  providerMetaRef.current[queryHash] = providerMetaRef.current[queryHash] || {
-    queryHash,
-    queryGroup,
-    variables,
-    variablesHash,
-    promise: null,
-    previousDelay: 0,
-    instancesById: {},
+  query.setState = updater => {
+    query.state = typeof updater === 'function' ? updater(query.state) : updater
+    query.instances.forEach(instance => {
+      instance.onStateUpdate(query.state)
+    })
+    globalStateListeners.forEach(d => d())
   }
 
-  const sharedMeta = providerMetaRef.current[queryHash]
+  query.subscribe = instance => {
+    let found = query.instances.find(d => d.id === instance.id)
 
-  const scheduleCleanup = React.useCallback(() => {
-    clearTimeout(sharedMeta.inactiveCacheTimeout)
-    setQueryState(old => {
+    if (found) {
+      Object.assign(found, instance)
+    } else {
+      found = instance
+      query.instances.push(instance)
+    }
+
+    // Mark as inactive
+    query.setState(old => {
       return {
         ...old,
-        isInactive: true,
+        isInactive: false,
       }
     })
-    sharedMeta.inactiveCacheTimeout = setTimeout(() => {
-      setQueryState(undefined)
-      clearTimeout(sharedMeta.cacheTimeout)
-      delete providerMetaRef.current[queryHash]
-    }, latestRef.current.config.inactiveCacheTime)
-  }, [
-    providerMetaRef,
-    queryHash,
-    setQueryState,
-    sharedMeta.cacheTimeout,
-    sharedMeta.inactiveCacheTimeout,
-  ])
 
-  const doInvalidation = React.useCallback(() => {
-    setQueryState(old => {
-      return {
-        ...old,
-        isStale: true,
+    // Cancel garbage collection
+    clearTimeout(query.inactiveCacheTimeout)
+
+    // Mark the query as not cancelled
+    query.cancelled = null
+
+    // Return the unsubscribe function
+    return () => {
+      query.instances = query.instances.filter(d => d.id !== instance.id)
+
+      if (!query.instances.length) {
+        // Cancel any side-effects
+        query.cancelled = cancelledError
+
+        // Mark as inactive
+        query.setState(old => {
+          return {
+            ...old,
+            isInactive: true,
+          }
+        })
+
+        // Schedule garbage collection
+        query.inactiveCacheTimeout = setTimeout(
+          () => {
+            queries.splice(queries.findIndex(d => d === query), 1)
+            globalStateListeners.forEach(d => d())
+          },
+          query.state.isCached ? config.inactiveCacheTime : 0
+        )
       }
-    })
-  }, [setQueryState])
-
-  const scheduleCacheInvalidation = React.useCallback(
-    ({ cleanup } = {}) => {
-      if (cleanup) {
-        return scheduleCleanup()
-      } else {
-        clearTimeout(sharedMeta.cacheTimeout)
-      }
-
-      sharedMeta.cacheTimeout = setTimeout(() => {
-        // Otherwise, just mark the data as stale
-        doInvalidation()
-      }, latestRef.current.config.cacheTime)
-    },
-    [sharedMeta, scheduleCleanup, doInvalidation]
-  )
-
-  let tryFetchQueryInstance
+    }
+  }
 
   // Set up the fetch function
-  const tryFetchQuery = (tryFetchQueryInstance = React.useCallback(async () => {
+  const tryFetchQuery = async () => {
     try {
       // Perform the query
-      const data = await latestRef.current.queryFn(sharedMeta.variables)
+      const data = await queryFn(query.variables)
 
-      if (sharedMeta.cancelled) throw sharedMeta.cancelled
+      if (query.cancelled) throw query.cancelled
 
       return data
     } catch (error) {
-      if (sharedMeta.cancelled) throw sharedMeta.cancelled
+      if (query.cancelled) throw query.cancelled
 
       // If we fail, increase the failureCount
-      setQueryState(old => {
+      query.setState(old => {
         return {
           ...old,
           failureCount: old.failureCount + 1,
@@ -197,8 +145,8 @@ function useSharedQuery(
       // Do we need to retry the request?
       if (
         // Only retry if the document is visible
-        latestRef.current.config.retry === true ||
-        latestRef.current.failureCount < latestRef.current.config.retry
+        config.retry === true ||
+        query.state.failureCount < config.retry
       ) {
         if (!isDocumentVisible()) {
           return new Promise(r => {})
@@ -206,27 +154,22 @@ function useSharedQuery(
 
         // Determine the retryDelay
         const delay =
-          typeof latestRef.current.config.retryDelay === 'function'
-            ? latestRef.current.config.retryDelay(
-                latestRef.current.failureCount
-              )
-            : latestRef.current.config.retryDelay
+          typeof config.retryDelay === 'function'
+            ? config.retryDelay(query.state.failureCount)
+            : config.retryDelay
 
         // Return a new promise with the retry
         return new Promise((resolve, reject) => {
           // Keep track of the retry timeout
           setTimeout(async () => {
-            if (sharedMeta.cancelled) return reject(sharedMeta.cancelled)
+            if (query.cancelled) return reject(query.cancelled)
 
             try {
-              const data = await tryFetchQueryInstance()
-
-              if (sharedMeta.cancelled) return reject(sharedMeta.cancelled)
-
+              const data = await tryFetchQuery()
+              if (query.cancelled) return reject(query.cancelled)
               resolve(data)
             } catch (error) {
-              if (sharedMeta.cancelled) return reject(sharedMeta.cancelled)
-
+              if (query.cancelled) return reject(query.cancelled)
               reject(error)
             }
           }, delay)
@@ -235,231 +178,155 @@ function useSharedQuery(
 
       throw error
     }
-  }, [
-    setQueryState,
-    sharedMeta.cancelled,
-    sharedMeta.variables,
-    tryFetchQueryInstance,
-  ]))
+  }
 
-  const fetchQuery = React.useCallback(
-    async ({ merge }) => {
-      // Create a new promise for the query cache if necessary
-      if (!sharedMeta.promise) {
-        sharedMeta.promise = (async () => {
-          // If there are any retries pending for this query, kill them
-          sharedMeta.cancelled = false
+  query.fetch = async ({ merge, force } = {}) => {
+    // Don't refetch fresh queries without force
+    if (!query.state.isStale && !force) {
+      return
+    }
 
-          try {
-            // Set up the query refreshing state
-            setQueryState(old => {
+    // Create a new promise for the query cache if necessary
+    if (!query.promise) {
+      query.promise = (async () => {
+        // If there are any retries pending for this query, kill them
+        query.cancelled = null
+
+        try {
+          // Set up the query refreshing state
+          query.setState(old => {
+            return {
+              ...old,
+              error: null,
+              isFetching: true,
+              failureCount: 0,
+            }
+          })
+
+          // Try to fetch
+          const data = await tryFetchQuery()
+
+          // Set data and mark it as cached
+          query.setState(old => {
+            return {
+              ...old,
+              data: merge ? merge(old.data, data) : data,
+              isCached: true,
+              isStale: false,
+            }
+          })
+
+          return data
+        } catch (error) {
+          // As long as it's not a cancelled retry
+          if (error !== query.cancelled) {
+            // Store the error
+            query.setState(old => {
               return {
                 ...old,
-                error: null,
-                isFetching: true,
-                failureCount: 0,
+                error,
+                isCached: false,
+                isStale: true,
               }
             })
 
-            // Try to fetch
-            const data = await tryFetchQuery()
-
-            // Set data and mark it as cached
-            setQueryState(old => {
-              return {
-                ...old,
-                data: merge ? merge(old.data, data) : data,
-                isCached: true,
-                isStale: false,
-              }
-            })
-
-            return data
-          } catch (error) {
-            // As long as it's not a cancelled retry
-            if (error !== sharedMeta.cancelled) {
-              // Store the error
-              setQueryState(old => {
+            throw error
+          }
+        } finally {
+          // Schedule a fresh invalidation, always!
+          query.cacheTimeout = setTimeout(() => {
+            if (query) {
+              query.setState(old => {
                 return {
                   ...old,
-                  error,
-                  isCached: false,
                   isStale: true,
                 }
               })
-
-              throw error
-            }
-          } finally {
-            // Schedule a fresh invalidation, always!
-            scheduleCacheInvalidation()
-
-            setQueryState(old => {
-              return {
-                ...old,
-                isFetching: false,
+              if (config.autoRefetch) {
+                fetch()
               }
-            })
-            delete sharedMeta.promise
-          }
-        })()
-      }
+            }
+          }, config.cacheTime)
 
-      return sharedMeta.promise
-    },
-    [scheduleCacheInvalidation, setQueryState, sharedMeta, tryFetchQuery]
-  )
-
-  const setData = React.useCallback(
-    updater =>
-      setQueryState(old => ({
-        ...old,
-        data: typeof updater === 'function' ? updater(old.data) : updater,
-      })),
-    [setQueryState]
-  )
-
-  // Manage query active-ness and garbage collection
-  React.useEffect(() => {
-    if (sharedMeta.inactiveCacheTimeout) {
-      setQueryState(({ isInactive, ...old }) => {
-        return old
-      })
-      clearTimeout(sharedMeta.inactiveCacheTimeout)
-      delete sharedMeta.inactiveCacheTimeout
+          query.setState(old => {
+            return {
+              ...old,
+              isFetching: false,
+            }
+          })
+          delete query.promise
+        }
+      })()
     }
 
-    sharedMeta.instancesById[instanceId] = {
-      refetchRef,
-      manual,
-    }
-
-    return () => {
-      // Do some cleanup between hash changes
-      delete sharedMeta.instancesById[instanceId]
-
-      if (!Object.keys(sharedMeta.instancesById).length) {
-        sharedMeta.cancelled = cancelledError
-        scheduleCacheInvalidation({ cleanup: true })
-      }
-    }
-  }, [
-    instanceId,
-    manual,
-    refetchRef,
-    scheduleCacheInvalidation,
-    setQueryState,
-    sharedMeta,
-  ])
-
-  return {
-    ...queryState,
-    setData,
-    fetchQuery,
-    queryHash,
-    queryGroup,
-    variablesHash,
-    variables,
-    config,
+    return query.promise
   }
+
+  query.setData = updater =>
+    query.setState(old => ({
+      ...old,
+      data: typeof updater === 'function' ? updater(old.data) : updater,
+    }))
+
+  return query
 }
 
-export function useQuery(
-  userQueryKey,
-  queryFn,
-  {
-    manual = false,
-    cache = true,
-    cacheTime,
-    autoRefetch,
-    retry,
-    retryDelay,
-  } = {}
-) {
+export function useQuery(queryKey, queryFn, config = {}) {
   const instanceIdRef = React.useRef(uid++)
   const instanceId = instanceIdRef.current
 
-  const refetchRef = React.useRef()
-
-  let queryConfig = {
-    retry,
-    retryDelay,
-    cacheTime,
-    autoRefetch,
+  config = {
+    ...defaultConfig,
+    ...config,
   }
 
-  const {
-    queryHash,
-    data,
-    error,
-    isFetching,
-    isCached,
-    isStale,
-    failureCount,
-    fetchQuery,
-    setData,
-    config,
-  } = useSharedQuery(userQueryKey, {
-    queryFn,
-    cache,
-    instanceId,
-    refetchRef,
-    manual,
-    queryConfig,
-  })
+  const { manual } = config
 
-  queryConfig = merge(queryConfig, config)
-
-  const [isLoading, setIsLoading] = React.useState(
-    !queryHash || manual ? false : cache && isCached ? false : true
+  const [queryHash, queryGroup, variablesHash, variables] = getQueryInfo(
+    queryKey
   )
 
-  const latestRef = React.useRef()
-  latestRef.current = {
-    queryHash,
-    isCached,
-    isStale,
-    queryConfig,
+  let query = queries.find(query => query.queryHash === queryHash)
+
+  if (query) {
+    query.config = config
+    query.queryFn = queryFn
+  } else {
+    query = makeQuery({
+      queryHash,
+      queryGroup,
+      variablesHash,
+      variables,
+      config,
+      queryFn,
+    })
+    queries.push(query)
   }
 
-  React.useEffect(() => {
-    if (isCached) {
-      setIsLoading(false)
-    }
-  }, [isCached])
+  const [state, setState] = React.useState(query.state)
 
-  const refetch = React.useCallback(
-    async ({ merge } = {}) => {
-      const thisQueryHash = latestRef.current.queryHash
-
-      try {
-        if (!latestRef.current.isCached) {
-          setIsLoading(true)
-        }
-        return await fetchQuery({ merge })
-      } catch (error) {
-        if (thisQueryHash === latestRef.current.queryHash) {
-          throw error
-        }
-      } finally {
-        if (thisQueryHash === latestRef.current.queryHash) {
-          setIsLoading(false)
-        }
-      }
-    },
-    [fetchQuery]
-  )
-
-  refetchRef.current = refetch
+  const onStateUpdate = React.useCallback(newState => setState(newState), [])
 
   React.useEffect(() => {
-    if (!queryHash || manual || !latestRef.current.isStale) {
+    const unsubscribeFromQuery = query.subscribe({
+      id: instanceId,
+      onStateUpdate,
+    })
+    return unsubscribeFromQuery
+  }, [instanceId, onStateUpdate, query])
+
+  const isLoading = !queryHash || manual ? false : state.isCached ? false : true
+  const refetch = query.fetch
+  const getLatestManual = useGetLatest(manual)
+
+  React.useEffect(() => {
+    if (getLatestManual()) {
       return
     }
 
     const runRefetch = async () => {
       try {
-        await refetch()
+        await query.fetch()
       } catch (err) {
         console.error(err)
         // Swallow this error. Don't rethrow it into a render function
@@ -467,38 +334,24 @@ export function useQuery(
     }
 
     runRefetch()
-  }, [manual, queryHash, refetch])
-
-  React.useEffect(() => {
-    if (isStale && latestRef.current.queryConfig.autoRefetch) {
-      refetchRef.current()
-    }
-  }, [isStale])
+  }, [getLatestManual, query, queryHash])
 
   return {
-    data,
-    error,
-    isFetching,
-    isCached,
-    failureCount,
+    ...state,
     isLoading,
     refetch,
-    setData,
+    setData: query.setData,
   }
 }
 
-export async function refetchQuery(userQueryKey) {
+export async function refetchQuery(userQueryKey, { force } = {}) {
   const [, queryGroup, variablesHash, variables] = getQueryInfo(userQueryKey)
 
   if (!queryGroup) {
     return
   }
 
-  const [, , metaRef] = globalContextValue
-
-  const queryPromises = Object.keys(metaRef.current).map(async key => {
-    const query = metaRef.current[key]
-
+  const queryPromises = queries.map(async query => {
     if (query.queryGroup !== queryGroup) {
       return
     }
@@ -511,23 +364,13 @@ export async function refetchQuery(userQueryKey) {
       return
     }
 
-    const queryInstancesPromises = Object.keys(query.instancesById).map(
-      async id => {
-        try {
-          await query.instancesById[id].refetchRef.current()
-        } catch (err) {
-          console.error(err)
-        }
-      }
-    )
-
-    await Promise.all(queryInstancesPromises)
+    await query.fetch({ force })
   })
 
   await Promise.all(queryPromises)
 }
 
-export function useMutation(mutationFn) {
+export function useMutation(mutationFn, { refetchQueries } = {}) {
   const [data, setData] = React.useState(null)
   const [error, setError] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(false)
@@ -537,12 +380,7 @@ export function useMutation(mutationFn) {
   const mutate = React.useCallback(
     async (
       variables,
-      {
-        throwOnError = false,
-        refetchQueries,
-        mutateQuery: userMutateQuery,
-        waitForRefetchQueries = false,
-      } = {}
+      { throwOnError = false, updateQuery, waitForRefetchQueries = false } = {}
     ) => {
       setIsLoading(true)
       setError(null)
@@ -552,15 +390,15 @@ export function useMutation(mutationFn) {
 
         if (refetchQueries) {
           const refetchPromises = refetchQueries.map(queryKey =>
-            refetchQuery(queryKey)
+            refetchQuery(queryKey, { force: true })
           )
           if (waitForRefetchQueries) {
             await Promise.all(refetchPromises)
           }
         }
 
-        if (userMutateQuery) {
-          mutateQuery(userMutateQuery)
+        if (updateQuery) {
+          mutateQuery(updateQuery, res, { shouldRefetch: false })
         }
 
         return res
@@ -573,17 +411,34 @@ export function useMutation(mutationFn) {
         setIsLoading(false)
       }
     },
-    []
+    [refetchQueries]
   )
 
   return [mutate, { data, isLoading, error }]
 }
 
+export function _useQueries() {
+  const [state, setState] = React.useState({ queries })
+
+  React.useEffect(() => {
+    const fn = () => {
+      setState({ queries })
+    }
+
+    globalStateListeners.push(fn)
+
+    return () => {
+      globalStateListeners = globalStateListeners.filter(d => d !== fn)
+    }
+  }, [])
+
+  return state.queries
+}
+
 export function useIsFetching() {
-  const [state] = React.useContext(context)
-  return React.useMemo(() => {
-    return Object.keys(state).some(key => state[key].isFetching)
-  }, [state])
+  const queries = _useQueries()
+
+  return React.useMemo(() => queries.some(query => query.isFetching), [queries])
 }
 
 export function mutateQuery(
@@ -591,22 +446,16 @@ export function mutateQuery(
   updater,
   { shouldRefetch = true } = {}
 ) {
-  const [, setState] = globalContextValue
+  const [queryHash] = getQueryInfo(userQueryKey)
 
-  const [queryHash, queryGroup] = getQueryInfo(userQueryKey)
-
-  if (!queryGroup) {
+  if (!queryHash) {
     return
   }
 
-  setState(old => ({
-    ...old,
-    [queryHash]: {
-      ...old[queryHash],
-      data:
-        typeof updater === 'function' ? updater(old[queryHash].data) : updater,
-    },
-  }))
+  const query = queries.find(d => d.queryHash === queryHash)
+
+  console.log(userQueryKey, updater)
+  query.setData(updater)
 
   if (shouldRefetch) {
     return refetchQuery(userQueryKey)
@@ -614,17 +463,10 @@ export function mutateQuery(
 }
 
 export async function refetchAllQueries({ force } = {}) {
-  const [state, , metaRef] = globalContextValue
-
-  const promises = Object.keys(metaRef.current).map(key => {
-    const queryState = state[metaRef.current[key].queryHash]
-    if (force || (queryState && queryState.isStale)) {
-      const promises = Object.keys(metaRef.current[key].instancesById).map(
-        key2 => metaRef.current[key].instancesById[key2].refetchRef.current()
-      )
-      return Promise.all(promises)
+  const promises = queries.map(async query => {
+    if (force || query.isStale) {
+      await query.fetch()
     }
-    return Promise.resolve()
   })
 
   await Promise.all(promises)
@@ -709,23 +551,9 @@ function isOnline() {
   return true
 }
 
-function merge(left, right) {
-  const merged = {}
+function useGetLatest(obj) {
+  const ref = React.useRef()
+  ref.current = obj
 
-  Object.keys({
-    ...left,
-    ...right,
-  }).forEach(key => {
-    merged[key] = firstUndefined(left[key], right[key])
-  })
-
-  return merged
-}
-
-function firstUndefined(...args) {
-  return (
-    args.find(d => typeof d !== 'undefined') ||
-    args[args.length - 1] ||
-    undefined
-  )
+  return React.useCallback(() => ref.current, [])
 }

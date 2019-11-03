@@ -8,7 +8,7 @@ import {
   useMutation,
   refetchAllQueries,
   useIsFetching,
-  _useQueryContext
+  _useQueries
 } from "react-query";
 
 import "./styles.css";
@@ -128,24 +128,25 @@ function Root() {
   const [cacheTime, setCacheTime] = React.useState(5000);
   const [inactiveCacheTime, setInactiveCacheTime] = React.useState(5000);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
-  const [localQueryTimeMin, setLocalQueryTimeMin] = React.useState(
+  const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
     queryTimeMin
   );
-  const [localQueryTimeMax, setLocalQueryTimeMax] = React.useState(
+  const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(
     queryTimeMax
   );
 
   React.useEffect(() => {
     errorRate = localErrorRate;
-    queryTimeMin = localQueryTimeMin;
-    queryTimeMax = localQueryTimeMax;
-  }, [localErrorRate, localQueryTimeMax, localQueryTimeMin]);
+    queryTimeMin = localFetchTimeMin;
+    queryTimeMax = localFetchTimeMax;
+  }, [localErrorRate, localFetchTimeMax, localFetchTimeMin]);
 
   return (
     <ReactQueryProvider
       config={{
         cacheTime,
-        inactiveCacheTime
+        inactiveCacheTime,
+        refetchAllOnWindowFocus: false
       }}
     >
       <div>
@@ -161,22 +162,22 @@ function Root() {
         />
       </div>
       <div>
-        Query Time Min:{" "}
+        Fetch Time Min:{" "}
         <input
           type="number"
           min="1"
           step="500"
-          value={localQueryTimeMin}
-          onChange={e => setLocalQueryTimeMin(parseFloat(e.target.value, 10))}
+          value={localFetchTimeMin}
+          onChange={e => setLocalFetchTimeMin(parseFloat(e.target.value, 10))}
           style={{ width: "60px" }}
         />{" "}
-        Query Time Max:{" "}
+        Fetch Time Max:{" "}
         <input
           type="number"
           min="1"
           step="500"
-          value={localQueryTimeMax}
-          onChange={e => setLocalQueryTimeMax(parseFloat(e.target.value, 10))}
+          value={localFetchTimeMax}
+          onChange={e => setLocalFetchTimeMax(parseFloat(e.target.value, 10))}
           style={{ width: "60px" }}
         />
       </div>
@@ -211,25 +212,31 @@ function Root() {
 function App() {
   const [editingIndex, setEditingIndex] = React.useState(null);
   const [views, setViews] = React.useState(["", "fruit", "grape"]);
-  const [state] = _useQueryContext();
+  // const [views, setViews] = React.useState([""]);
+
+  const queries = _useQueries();
 
   return (
     <div className="App">
       Queries - <small>Click a query to log to console)</small>
       <QueryStateList>
-        {Object.keys(state).map(key => {
-          const { isFetching, isStale, isInactive } = state[key];
+        {queries.map(query => {
+          const {
+            queryHash,
+            state: { isFetching, isStale, isInactive }
+          } = query;
+
           return (
             <QueryState
-              key={key}
+              key={queryHash}
               isFetching={isFetching}
               isStale={isStale}
               isInactive={isInactive}
               onClick={() => {
-                console.info(state[key]);
+                console.info(query);
               }}
             >
-              {key}
+              {queryHash}
             </QueryState>
           );
         })}
@@ -375,27 +382,29 @@ function EditTodo({ editingIndex, setEditingIndex }) {
     refetch
   } = useQuery(
     editingIndex !== null && ["todo", { id: editingIndex }],
-    fetchTodoById,
-    { autoRefetch: true }
+    fetchTodoById
   );
 
   const [todo, setTodo] = React.useState(data);
 
   React.useEffect(() => {
-    if (typeof editingIndex === "number" && data) {
+    if (editingIndex !== null && data) {
+      console.log(data);
       setTodo(data);
     } else {
       setTodo();
     }
   }, [data, editingIndex]);
 
-  const [mutate, mutationState] = useMutation(patchTodo, {});
+  const [mutate, mutationState] = useMutation(patchTodo, {
+    refetchQueries: ["todos"]
+  });
 
   const onSave = () => {
     try {
       mutate(todo, {
         // Update `todos` and the individual todo queries when this mutation succeeds
-        refetchQueries: ["todos", ["todo", { id: editingIndex }]]
+        updateQuery: ["todo", { id: editingIndex }]
       });
     } catch {
       // Errors are shown in the UI

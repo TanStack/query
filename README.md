@@ -80,20 +80,6 @@ $ npm i --save react-query
 $ yarn add react-query
 ```
 
-## Setup
-
-React Query exports a necessary components called `ReactQueryProvider` that must be rendered at the root of your application like so:
-
-```js
-import { ReactQueryProvider } from 'react-query'
-
-function App() {
-  return <ReactQueryProvider>{/* Your application code */}</ReactQueryProvider>
-}
-```
-
-> You can use the `ReactQueryProvider` to globally customize options across your project by passing a `config` prop to it with an object of options. See [`ReactQueryProvider`](#reactqueryprovider) for more information.
-
 ## Queries
 
 To make a new query, call the `useQuery` hook with:
@@ -198,7 +184,7 @@ React Query makes it easy to make queries that depends on other queries for both
 
 To do this effectively, you can use the following 2 approaches:
 
-#### Conditionally passing a falsey value as a query key
+#### Pass a falsey query key
 
 If a query isn't ready to be requested yet, just pass a falsey value as the query key:
 
@@ -207,7 +193,7 @@ const { data: user } = useQuery(['user', { userId }])
 const { data: projects } = useQuery(user && ['projects', { userId: user.id }]) // User is `null`, so the query key will be falsey
 ```
 
-#### Using a function as a query key
+#### Use a query key function
 
 If a function is passed, the query will not execute until the function can be called without throwing:
 
@@ -225,13 +211,13 @@ const { data: projects } = useQuery(
   () => ready && ['projects', { userId: user.id }] // Wait for ready and user.id
 ```
 
-### Caching
+### Caching & Invalidation
 
-React Query caching is automatic and invalidates data very aggressively. It uses optimistic updates and short-term caching across similar queries to always ensure your query's data is only stored once, quickly available and kept up to date with the server.
+React Query caching is automatic and uses optimistic updates and short-term caching across similar queries to always ensure a query's data is only stored once, quickly available and kept up to date with the server.
 
 At a glance:
 
-- Caching is automatic and aggressive by default.
+- Caching is automatic dand aggressive by default.
 - The cache is keyed on unique `query + variables` combinations.
 - You can configure the `cacheTime` option that determines how long cache data is considered fresh before it is marked as stale
 - You can configure the `inactiveCacheTime` option that determines how long unused stale cache data is kept around before it is garbage collected
@@ -242,7 +228,8 @@ At a glance:
 
 > **Did You Know?** - Because React Query doesn't use document normalization in its cache (made popular with libraries like Apollo and Redux-Query), it eliminates a whole range of common issues with caching like incorrect data merges, failed cache reads/writes, and imperative maintenance of the cache.
 
-Here is a more detailed example of the caching lifecycle:
+<details>
+ <summary>A more detailed example of the caching lifecycle</summary>
 
 - A new usage of `useQuery(fetchTodoList, { page: 1 })` mounts
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
@@ -262,6 +249,8 @@ Here is a more detailed example of the caching lifecycle:
   - If there is an active cache expiration scheduled already, it will be used instead.
 - No more instances of `useQuery(fetchTodoList, { page: 1 })` appear within the timeout
   - The cache for the this query is deleted and garbage collected.
+
+</details>
 
 ### Pagination
 
