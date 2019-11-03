@@ -740,31 +740,22 @@ const {
 ## `useMutation`
 
 ```js
-const [mutate, { data, isLoading, error }] = useMutation(queryKey, {
-  refetchQueries,
-  updateQuery,
+const [mutate, { data, isLoading, error }] = useMutation(mutationFn, {
+  refetchQueries
 })
+
+const promise = mutate(variables, { updateQuery })
 ```
 
 ### Options
 
-- `mutationFn: Function(variables)`
+- `mutationFn: Function(variables) => Promise`
   - **Required**
-  - The query key to use for this query.
-  - If a string is passed, it will be used as the query key
-  - If a `[String, Object]` tuple is passed, they will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
-  - If a falsey value is passed, the query will be disabled and not run automatically.
-  - If a function is passed, it should resolve to any other valid query key type. If the function throws, the query will be disabled and not run automatically.
-  - The query will automatically update when this key changes (if the key is not falsey and if `manual` is not set to `true`)
-  - `Variables: Object`
-    - If a tuple with variables is passed, this object should be **serializable**.
-    - Nested arrays and objects are supported
-    - The order of object keys is sorted to be stable before being serialized into the query key
-- `manual: Boolean`
-  - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
-  - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+  - A function that performs an asynchronous task and returns a promise
+- `refetchQueries: Array<QueryKey>`
+  - When the mutation succeeds, these queries will be automatically refetched
 
-### Query Instance
+### Mutation Instance
 
 - `data: null | Any`
   - Defaults to `null`
@@ -772,24 +763,9 @@ const [mutate, { data, isLoading, error }] = useMutation(queryKey, {
 - `error: null | Error`
   - The error object for the query, if an error was thrown.
 - `isLoading: Boolean`
-  - Will be `true` if the query is both fetching and does not have any cached data to display.
-- `isFetching: Boolean`
-  - Will be `true` if the query is currently fetching, including background fetching.
-- `isCached: Boolean`
-  - Will be `true` if the query's response is currently cached.
-- `failureCount: Integer`
-  - The failure count for the query.
-  - Incremented every time the query fails.
-  - Reset to `0` when the query succeeds.
-- `refetch: Function({ variables: Object, merge: Function, disableThrow: Boolean })`
-  - A function to manually refetch the query.
-  - Supports custom variables (useful for "fetch more" calls)
-  - Supports custom data merging (useful for "fetch more" calls)
-  - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
+  - Will be `true` if the query is both fetching and does not have any cached data
 
-## `useMutation`
-
-## `mutateQuery`
+## `setQueryData`
 
 ## `refetchQuery`
 
