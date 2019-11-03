@@ -32,7 +32,7 @@ Hooks for fetching, caching and syncing asynchronous and remote data in React
 
 - Transport, protocol & backend agnostic data fetching
 - Auto Caching + Background Refetching (stale-while-revalidate model)
-- Auto Refetch (on-window-focus, when-stale)
+- Auto Refetch (on-window-focus, when-stale, polling)
 - Parallel + Dependent Queries
 - Mutations
 - Multi-layer Cache + Garbage Collection
@@ -522,7 +522,7 @@ const run = async () => {
 
 ### Query Updates from Mutations
 
-When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of invalidating any queries for that item and wasting a network call to refetch them again, we can take advantage of the object returned by the mutation function and update any query responses with that data that match that query using the `mutateQuery` option:
+When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of invalidating any queries for that item and wasting a network call to refetch them again, we can take advantage of the object returned by the mutation function and update any query responses with that data that match that query using the `updateQuery` option:
 
 ```js
 const [mutate] = useMutation(editTodo)
@@ -533,7 +533,7 @@ mutate(
     name: 'Do the laundry',
   },
   {
-    mutateQuery: [['todo', { id: 5 }]],
+    updateQuery: ['todo', { id: 5 }]
   }
 )
 
@@ -541,29 +541,29 @@ mutate(
 const { data, isLoading, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
-### Manually or Optimistically Mutating Query Data
+### Manually or Optimistically Setting Query Data
 
-In rare circumstances, you may want to manually update a query's response outside of a mutation. To do this, you can use the exported `mutateQuery` function:
+In rare circumstances, you may want to manually update a query's response before it has been refetched. To do this, you can use the exported `setQueryData` function:
 
 ```js
-import { mutateQuery } from 'react-query'
+import { setQueryData } from 'react-query'
 
 // Full replacement
-mutateQuery(['todo', { id: 5 }], newTodo)
+setQueryData(['todo', { id: 5 }], newTodo)
 
 // or functional update
-mutateQuery(['todo', { id: 5 }], previous => ({ ...previous, status: 'done' }))
+setQueryData(['todo', { id: 5 }], previous => ({ ...previous, status: 'done' }))
 ```
 
-**Most importantly**, when manually mutating a query response, it naturally becomes out-of-sync with it's original source. To ease this issue, `mutateQuery` automatically triggers a background refresh of the query after it's called to ensure it stays in sync with the original source.
+**Most importantly**, when manually setting a query response, it naturally becomes out-of-sync with it's original source. To ease this issue, `setQueryData` automatically triggers a background refresh of the query after it's called to ensure it eventually synchronizes with the original source.
 
-Should choose _not_ to refetch the query, you can set the `shouldRefetch` option to `false`:
+Should you choose that you do _not_ want to refetch the query automatically, you can set the `shouldRefetch` option to `false`:
 
 ```js
-import { mutateQuery } from 'react-query'
+import { setQueryData } from 'react-query'
 
 // Mutate, but do not automatically refetch the query in the background
-mutateQuery(['todo', { id: 5 }], newTodo, {
+setQueryData(['todo', { id: 5 }], newTodo, {
   shouldRefetch: false,
 })
 ```
@@ -622,7 +622,7 @@ If a user leaves your application and returns to stale data, you may want to tri
 
 ## `ReactQueryProvider`
 
-`ReactQueryProvider` is required and can optionally define defaults for all instances of `useQuery` and `useMutate` through your app:
+`ReactQueryProvider` is optional and can be used to define defaults for all instances of `useQuery` through your app:
 
 ```js
 <ReactQueryProvider
