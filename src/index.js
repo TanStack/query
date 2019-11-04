@@ -350,23 +350,23 @@ export async function refetchQuery(userQueryKey, { force } = {}) {
     return
   }
 
-  const queryPromises = queries.map(async query => {
-    if (query.queryGroup !== queryGroup) {
-      return
-    }
+  return Promise.all(
+    queries.map(async query => {
+      if (query.queryGroup !== queryGroup) {
+        return
+      }
 
-    if (variables === false && query.variablesHash) {
-      return
-    }
+      if (variables === false && query.variablesHash) {
+        return
+      }
 
-    if (variablesHash && query.variablesHash !== variablesHash) {
-      return
-    }
+      if (variablesHash && query.variablesHash !== variablesHash) {
+        return
+      }
 
-    await query.fetch({ force })
-  })
-
-  await Promise.all(queryPromises)
+      await query.fetch({ force })
+    })
+  )
 }
 
 export function useMutation(mutationFn, { refetchQueries } = {}) {
@@ -462,13 +462,7 @@ export function setQueryData(
 }
 
 export async function refetchAllQueries({ force } = {}) {
-  const promises = queries.map(async query => {
-    if (force || query.isStale) {
-      await query.fetch()
-    }
-  })
-
-  await Promise.all(promises)
+  return Promise.all(queries.map(async query => query.fetch({ force })))
 }
 
 function getQueryInfo(queryKey) {
