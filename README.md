@@ -36,6 +36,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 - Mutations + Automatic Query Refetching
 - Multi-layer Cache + Garbage Collection
 - Load-More Pagination + Scroll Recovery
+- Suspense Support (Coming Soon)
 - 3.6 kb (minzipped)
 
 <details>
