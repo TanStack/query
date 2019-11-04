@@ -39,7 +39,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 - 3.6 kb (minzipped)
 
 <details>
-<summary>Core Concepts</summary>
+<summary>Core Issues and Solution</summary>
 
 ## The Challenge
 
