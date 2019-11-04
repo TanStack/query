@@ -10,8 +10,8 @@ Hooks for fetching, caching and updating asynchronous data in React
 <a href="https://npmjs.com/package/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a>
-<a href="https://bundlephobia.com/result?p=react-query" target="\_parent">
-  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query" />
+<a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
+  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
 </a>
 <a href="https://spectrum.chat/react-query">
   <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
@@ -34,7 +34,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 - Multi-layer Cache + Garbage Collection
 - Load-More Pagination + Scroll Recovery
 - Suspense Support (Coming Soon)
-- 3.6 kb (minzipped)
+- 4.1 kb (minzipped)
 
 <details>
 <summary>Core Issues and Solution</summary>
