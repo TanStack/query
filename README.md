@@ -76,7 +76,13 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 ## Examples
 
-- [Sandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/example)
+- [CodeSandbox Playground](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
+- [Basic](./examples/basic)
+- [Custom Hooks](./examples/custom-hooks)
+- [Auto Refetching / Polling / Realtime](./examples/auto-refetching)
+- [Window Refocus Refetching](./examples/focus-refetching)
+- [Optimistic Updates](./examples/optimistic-updates)
+- [Load-More Pagination](./examples/load-more-pagination)
 
 # Documentation
 
