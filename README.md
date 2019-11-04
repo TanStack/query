@@ -2,7 +2,7 @@
 
 <img src='https://github.com/tannerlinsley/react-query/raw/master/media/logo.png' width='300'/>
 
-Hooks for fetching, caching and syncing asynchronous and remote data in React
+Hooks for fetching, caching and updating asynchronous data in React
 
 <!-- <a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
@@ -71,6 +71,34 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [A contrived CodeSandbox example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/example)
 
 # Documentation
+
+- [Installation](#installation)
+- [Queries](#queries)
+  - [Query Keys](#query-keys)
+  - [Query Variables](#query-variables)
+  - [Dependent Queries](#dependent-queries)
+  - [Caching & Invalidation](#caching--invalidation)
+  - [Pagination](#pagination)
+  - [Manual Querying](#manual-querying)
+  - [Retries](#retries)
+  - [Retry Delay](#retry-delay)
+- [Mutations](#mutations)
+  - [Basic Mutations](#basic-mutations)
+  - [Mutation Variables](#mutation-variables)
+  - [Invalidate and Refetch Queries from Mutations](#invalidate-and-refetch-queries-from-mutations)
+  - [Query Updates from Mutations](#query-updates-from-mutations)
+- [Manually or Optimistically Setting Query Data](#manually-or-optimistically-setting-query-data)
+- [Displaying Background Fetching Loading States](#displaying-background-fetching-loading-states)
+- [Displaying Global Background Fetching Loading State](#displaying-global-background-fetching-loading-state)
+- [Window-Focus Refetching](#window-focus-refetching)
+- [API](#api)
+  - [`useQuery`](#usequery)
+  - [`useMutation`](#usemutation)
+  - [`setQueryData`](#setquerydata)
+  - [`refetchQuery`](#refetchquery)
+  - [`refetchAllQueries`](#refetchallqueries)
+  - [`useIsFetching`](#useisfetching)
+  - [`useReactQueryConfig`](#usereactqueryconfig)
 
 ## Installation
 
@@ -351,26 +379,24 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = true` will infinitely retry failing requests.
 
 ```js
-// Turn off retries for all queries
-const config = {
-  retry: false,
-}
+import { useReactQueryConfig } from 'react-query'
 
-function App() {
-  return (
-    <ReactQueryProvider config={config}>
-      <Stuff />
-    </ReactQueryProvider>
-  )
-}
+// Turn off retries for all queries
+useReactQueryConfig({
+  retry: false,
+})
 
 // Make specific query retry a certain number of times
-const { data, isLoading, error } = useQuery(['todos', { page: 1 }, fetchTodoList, {
-  retry: 10, // Will retry failed requests 10 times before displaying an error
-})
+const { data, isLoading, error } = useQuery(
+  ['todos', { page: 1 }],
+  fetchTodoList,
+  {
+    retry: 10, // Will retry failed requests 10 times before displaying an error
+  }
+)
 ```
 
-### Retry Delay with `retryDelay`
+### Retry Delay
 
 By default, retries in React Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.
 
@@ -378,16 +404,16 @@ The default `retryDelay` is set to double (starting at `1000`ms) with each attem
 
 ```js
 // Configure for all queries
+import { useReactQueryConfig } from 'react-query'
+
 const config = {
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
 }
 
 function App() {
-  return (
-    <ReactQueryProvider config={config}>
-      <Stuff />
-    </ReactQueryProvider>
-  )
+  useReactQueryConfig(config)
+
+  return <Stuff />
 }
 ```
 
@@ -461,7 +487,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `refetchQueries` and `mutateQuery` options, they become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `refetchQueries` and `updateQuery` options, they become a very powerful tool.
 
 ### Invalidate and Refetch Queries from Mutations
 
@@ -533,7 +559,7 @@ mutate(
     name: 'Do the laundry',
   },
   {
-    updateQuery: ['todo', { id: 5 }]
+    updateQuery: ['todo', { id: 5 }],
   }
 )
 
@@ -541,7 +567,7 @@ mutate(
 const { data, isLoading, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
-### Manually or Optimistically Setting Query Data
+## Manually or Optimistically Setting Query Data
 
 In rare circumstances, you may want to manually update a query's response before it has been refetched. To do this, you can use the exported `setQueryData` function:
 
@@ -568,7 +594,7 @@ setQueryData(['todo', { id: 5 }], newTodo, {
 })
 ```
 
-### Displaying Background Fetching Loading States
+## Displaying Background Fetching Loading States
 
 A query's `isLoading` boolean is usually sufficient to show the initial hard-loading state for a query, but sometimes you may want to display a more subtle indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state:
 
@@ -592,7 +618,7 @@ function Todos() {
 }
 ```
 
-### Displaying Global Background Fetching Loading State
+## Displaying Global Background Fetching Loading State
 
 In addition to individual query loading states, if you would like to show a global loading indicator when **any** queries are fetching (including in the background), you can use the `useIsFetching` hook:
 
@@ -608,63 +634,15 @@ function GlobalLoadingIndicator() {
 }
 ```
 
-### Window-Focus Refetching
+## Window-Focus Refetching
 
-If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `ReactQueryProvider`'s `refetchAllOnWindowFocus` option to disable it:
+If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `useReactQueryConfig`'s `refetchAllOnWindowFocus` option to disable it:
 
 ```js
-<ReactQueryProvider config={{ refetchAllOnWindowFocus: false }}>
-  ...
-</ReactQueryProvider>
+useReactQueryConfig({ refetchAllOnWindowFocus: false })
 ```
 
 # API
-
-## `ReactQueryProvider`
-
-`ReactQueryProvider` is optional and can be used to define defaults for all instances of `useQuery` through your app:
-
-```js
-<ReactQueryProvider
-  config={{ retry, retryDelay, cachetime, invalideCacheTime }}
->
-  ...
-</ReactQueryProvider>
-```
-
-### Options
-
-Pass options to `ReactQueryProvider` by pass it a `config` prop:
-
-- `retry: Boolean | Int`
-  - If `false`, failed queries will not retry by default
-  - If `true`, failed queries will retry infinitely
-  - If set to an `Int`, eg. `3`, failed queries will retry until the failed query count meets that number
-- `retryDelay: Function(retryAttempt: Int) => Int`
-  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds
-  - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff
-  - A function like `attempt => attempt * 1000` applies linear backoff.
-- `cacheTime: Int`
-  - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration
-- `invalidCacheTime: Int`
-  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
-
-### Example
-
-```js
-const config = {
-  // These are the default config options for the ReactQueryProvider
-  retry: 3,
-  retryDelay: attempt =>
-    Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
-  cacheTime: 10 * 1000, // 10 seconds
-  invalidCacheTime: 10 * 1000, // 10 seconds
-}
-
-function App() {
-  return <ReactQueryProvider config={config}>...</ReactQueryProvider>
-}
-```
 
 ## `useQuery`
 
@@ -708,13 +686,13 @@ const {
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
 - `cacheTime`
-  - [See `ReactQueryProvider` options...](#reactqueryprovider)
+  - [See `useReactQueryConfig` options...](#usereactqueryconfig)
 - `retry`
-  - [See `ReactQueryProvider` options...](#reactqueryprovider)
+  - [See `useReactQueryConfig` options...](#usereactqueryconfig)
 - `retryDelay`
-  - [See `ReactQueryProvider` options...](#reactqueryprovider)
+  - [See `useReactQueryConfig` options...](#usereactqueryconfig)
 
-### Query Instance
+### Returns
 
 - `data: null | Any`
   - Defaults to `null`
@@ -741,7 +719,7 @@ const {
 
 ```js
 const [mutate, { data, isLoading, error }] = useMutation(mutationFn, {
-  refetchQueries
+  refetchQueries,
 })
 
 const promise = mutate(variables, { updateQuery })
@@ -754,9 +732,18 @@ const promise = mutate(variables, { updateQuery })
   - A function that performs an asynchronous task and returns a promise
 - `refetchQueries: Array<QueryKey>`
   - When the mutation succeeds, these queries will be automatically refetched
+- `variables: any`
+  - Optional
+  - The variables object to pass tot he `mutationFn`
+- `updateQuery: QueryKey`
+  - Optional
+  - The query key for the individual query to update with the response from this mutation.
+  - Suggested use is for `update` mutations that regularly return the updated data with the mutation. This saves you from making another unnecessary network call to refetch the data.
 
-### Mutation Instance
+### Returns
 
+- `mutate: Function(variables, { updateQuery })`
+  - The mutation function you can call with variables to trigger the mutation and optionally update a query with its response.
 - `data: null | Any`
   - Defaults to `null`
   - The last successfully resolved data for the query.
@@ -764,11 +751,158 @@ const promise = mutate(variables, { updateQuery })
   - The error object for the query, if an error was thrown.
 - `isLoading: Boolean`
   - Will be `true` if the query is both fetching and does not have any cached data
+- `promise: Promise`
+  - The promise that is returned by the `mutationFn`
 
 ## `setQueryData`
 
+`setQueryData` is a function for imperatively updating the response of a query. By default, this function also triggers a background refetch to ensure that the data is eventually consistent with the remote source, but this can be disabled.
+
+```js
+import { setQueryData } from 'react-query'
+
+const maybePromise = setQueryData(queryKey, data, { shouldRefetch })
+```
+
+### Options
+
+- `queryKey: QueryKey`
+  - **Required**
+  - The query key for the individual query to update with new data.
+- `data: any | Function(old) => any`
+  - **Required**
+  - Must either be the new data or a function that receives the old data and returns the new data
+- `shouldRefetch: Boolean`
+  - Optional
+  - Defaults to `true`
+  - Set this to `false` to disable the automatic background refetch from happening
+
+### Returns
+
+- `maybePromise: undefined | Promise`
+  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations is done).
+
 ## `refetchQuery`
+
+`refetchQuery` is a function for imperatively triggering a refetch of either:
+
+- A group of queries
+- A single query
+
+By default, it will only refetch stale queries, but the `force` option can be used to refetch all queries, including non-stale ones.
+
+```js
+import { refetchQuery } from 'react-query'
+
+const promise = refetchQuery(queryKey, { force })
+```
+
+### Options
+
+- `queryKey: QueryKey`
+  - **Required**
+  - The query key for the query or query group to refetch.
+  - If a single `string` is passed, any queries using that `string` or any tuple key queries that include that `string` (eg. passing `todos` would refetch both `todos` and `['todos', { status: 'done' }]`).
+  - If a tuple key is passed, only the exact query with that key will be refetched (eg. `['todos', { status: 'done' }]` will only refetch queries with that exact key)
+  - If a tuple key is passed with the `variables` slot set to `false`, then only queries that match the `string` key and have no variables will be refetched (eg. `['todos', false]` would only refetch `todos` and not `['todos', { status: 'done' }]`)
+- `force: Boolean`
+  - Optional
+  - Set this to true to force all queries to refetch instead of only stale ones.
+
+### Returns
+
+- `promise: Promise`
+  - A promise is returned that will either resolve when all refetch queries are complete or will reject if any refetch queries fail (after their respective retry configurations are done).
 
 ## `refetchAllQueries`
 
+`refetchAllQueries` is a function for imperatively triggering a refetch of all queries. By default, it will only refetch stale queries, but the `force` option can be used to refetch all queries, including non-stale ones.
+
+```js
+import { refetchAllQueries } from 'react-query'
+
+const promise = refetchAllQueries({ force })
+```
+
+### Options
+
+- `force: Boolean`
+  - Optional
+  - Set this to true to force all queries to refetch instead of only stale ones.
+
+### Returns
+
+- `promise: Promise`
+  - A promise is returned that will either resolve when all refetch queries are complete or will reject if any refetch queries fail (after their respective retry configurations are done).
+
 ## `useIsFetching`
+
+`useIsFetching` is an optional hook that returns true if any query in your application is loading for fetching in the background (useful for app-wide loading indicators)
+
+```js
+import { useIsFetching } from 'react-query'
+
+const isFetching = useIsFetching()
+```
+
+### Returns
+
+- `isFetching: Boolean`
+  - Will be `true` if any query in your application is loading or fetching in the background
+
+## `useReactQueryConfig`
+
+`useReactQueryConfig` is optional and can be used to define defaults for all instances of `useQuery` through your app:
+
+```js
+import { useReactQueryConfig } from 'react-query'
+
+useReactQueryConfig({
+  retry,
+  retryDelay,
+  cacheTime,
+  invalidCacheTime,
+})
+```
+
+### Options
+
+Pass options to `useReactQueryConfig` by pass it a `config` prop:
+
+- `retry: Boolean | Int`
+  - If `false`, failed queries will not retry by default
+  - If `true`, failed queries will retry infinitely
+  - If set to an `Int`, eg. `3`, failed queries will retry until the failed query count meets that number
+- `retryDelay: Function(retryAttempt: Int) => Int`
+  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds
+  - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff
+  - A function like `attempt => attempt * 1000` applies linear backoff.
+- `cacheTime: Int`
+  - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration
+- `invalidCacheTime: Int`
+  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+
+### Returns
+
+This hook does not return anything
+
+### Example
+
+```js
+const config = {
+  // These are the default config options for the useReactQueryConfig
+  retry: 3,
+  retryDelay: attempt =>
+    Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
+  cacheTime: 10 * 1000, // 10 seconds
+  invalidCacheTime: 10 * 1000, // 10 seconds
+}
+
+function App() {
+  useReactQueryConfig({
+    retry: 4
+  })
+
+  return </>
+}
+```

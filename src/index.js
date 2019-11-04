@@ -28,9 +28,8 @@ let defaultConfig = {
   autoRefetch: false,
 }
 
-export function ReactQueryProvider({ children, config = {} }) {
+export function useReactQueryConfig(config = {}) {
   Object.assign(defaultConfig, config)
-  return children
 }
 
 function makeQuery({
@@ -398,7 +397,7 @@ export function useMutation(mutationFn, { refetchQueries } = {}) {
         }
 
         if (updateQuery) {
-          mutateQuery(updateQuery, res, { shouldRefetch: false })
+          setQueryData(updateQuery, res, { shouldRefetch: false })
         }
 
         return res
@@ -441,7 +440,7 @@ export function useIsFetching() {
   return React.useMemo(() => queries.some(query => query.isFetching), [queries])
 }
 
-export function mutateQuery(
+export function setQueryData(
   userQueryKey,
   updater,
   { shouldRefetch = true } = {}

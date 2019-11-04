@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 
 import {
-  ReactQueryProvider,
+  useReactQueryConfig,
   useQuery,
   useMutation,
   refetchAllQueries,
@@ -135,6 +135,12 @@ function Root() {
     queryTimeMax
   );
 
+  useReactQueryConfig({
+    cacheTime,
+    inactiveCacheTime
+    // refetchAllOnWindowFocus: false
+  });
+
   React.useEffect(() => {
     errorRate = localErrorRate;
     queryTimeMin = localFetchTimeMin;
@@ -142,13 +148,7 @@ function Root() {
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin]);
 
   return (
-    <ReactQueryProvider
-      config={{
-        cacheTime,
-        inactiveCacheTime,
-        refetchAllOnWindowFocus: false
-      }}
-    >
+    <>
       <div>
         Error Rate:{" "}
         <input
@@ -205,7 +205,7 @@ function Root() {
       </div>
       <br />
       <App />
-    </ReactQueryProvider>
+    </>
   );
 }
 
