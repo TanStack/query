@@ -519,8 +519,17 @@ export function setQueryData(
   }
 }
 
-export async function refetchAllQueries({ force } = {}) {
-  return Promise.all(queries.map(async query => query.fetch({ force })))
+export async function refetchAllQueries({
+  includeInactive,
+  force = includeInactive,
+} = {}) {
+  return Promise.all(
+    queries.map(async query => {
+      if (query.instances.length || includeInactive) {
+        return query.fetch({ force })
+      }
+    })
+  )
 }
 
 function getQueryInfo(queryKey) {

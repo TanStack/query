@@ -31,7 +31,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 ## Quick Features
 
 - Transport, protocol & backend agnostic data fetching
-- Auto Caching + Refetching (stale-while-revalidate, on-window-focus, polling)
+- Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
 - Parallel + Dependent Queries
 - Mutations + Automatic Query Refetching
 - Multi-layer Cache + Garbage Collection
@@ -961,14 +961,18 @@ const promise = refetchQuery(queryKey, { force })
 ```js
 import { refetchAllQueries } from 'react-query'
 
-const promise = refetchAllQueries({ force })
+const promise = refetchAllQueries({ force, includeInactive })
 ```
 
 ### Options
 
 - `force: Boolean`
   - Optional
-  - Set this to true to force all queries to refetch instead of only stale ones.
+  - Set this to `true` to force all queries to refetch instead of only stale ones.
+- `includeInactive: Boolean`
+  - Optional
+  - Set this to `true` to also refetch inactive queries.
+  - Overrides the `force` option to be `true`, regardless of it's value.
 
 ### Returns
 
