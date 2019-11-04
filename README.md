@@ -22,10 +22,8 @@ Hooks for fetching, caching and updating asynchronous data in React
 <a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
 </a>
-<br />
-<br />
 
-## [Become a Sponsor](https://github.com/sponsors/tannerlinsley)
+### [Become a Sponsor](https://github.com/sponsors/tannerlinsley)
 
 ## Quick Features
 
