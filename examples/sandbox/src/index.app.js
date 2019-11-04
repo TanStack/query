@@ -125,8 +125,8 @@ const patchTodo = todo => {
 };
 
 function Root() {
-  const [staleTime, setStaleTime] = React.useState(500);
-  const [cacheTime, setCacheTime] = React.useState(2000);
+  const [staleTime, setStaleTime] = React.useState(1000);
+  const [cacheTime, setCacheTime] = React.useState(3000);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
     queryTimeMin
@@ -155,6 +155,29 @@ function Root() {
         granular level
       </p>
       <div>
+        Stale Time:{" "}
+        <input
+          type="number"
+          min="0"
+          step="1000"
+          value={staleTime}
+          onChange={e => setStaleTime(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <div>
+        Cache Time:{" "}
+        <input
+          type="number"
+          min="0"
+          step="1000"
+          value={cacheTime}
+          onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <br />
+      <div>
         Error Rate:{" "}
         <input
           type="number"
@@ -176,6 +199,8 @@ function Root() {
           onChange={e => setLocalFetchTimeMin(parseFloat(e.target.value, 10))}
           style={{ width: "60px" }}
         />{" "}
+      </div>
+      <div>
         Fetch Time Max:{" "}
         <input
           type="number"
@@ -184,28 +209,6 @@ function Root() {
           value={localFetchTimeMax}
           onChange={e => setLocalFetchTimeMax(parseFloat(e.target.value, 10))}
           style={{ width: "60px" }}
-        />
-      </div>
-      <div>
-        Stale Time:{" "}
-        <input
-          type="number"
-          min="0"
-          step="1000"
-          value={staleTime}
-          onChange={e => setStaleTime(parseFloat(e.target.value, 10))}
-          style={{ width: "100px" }}
-        />
-      </div>
-      <div>
-        Cache Time:{" "}
-        <input
-          type="number"
-          min="0"
-          step="1000"
-          value={cacheTime}
-          onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
-          style={{ width: "100px" }}
         />
       </div>
       <br />
