@@ -269,7 +269,7 @@ function makeQuery({
         } finally {
           // Schedule a fresh invalidation, always!
           clearTimeout(query.staleTimeout)
-          
+
           query.staleTimeout = setTimeout(() => {
             if (query) {
               query.setState(old => {

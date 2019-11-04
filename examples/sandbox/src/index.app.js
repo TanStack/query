@@ -125,8 +125,8 @@ const patchTodo = todo => {
 };
 
 function Root() {
-  const [staleTime, setCacheTime] = React.useState(5000);
-  const [cacheTime, setInactiveCacheTime] = React.useState(5000);
+  const [staleTime, setStaleTime] = React.useState(500);
+  const [cacheTime, setCacheTime] = React.useState(2000);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
     queryTimeMin
@@ -149,6 +149,11 @@ function Root() {
 
   return (
     <>
+      <p>
+        The "staleTime" and "cacheTime" durations have been altered in this
+        example to show how query stale-ness and query caching work on a
+        granular level
+      </p>
       <div>
         Error Rate:{" "}
         <input
@@ -182,24 +187,24 @@ function Root() {
         />
       </div>
       <div>
-        Cache Time:{" "}
+        Stale Time:{" "}
         <input
           type="number"
           min="0"
           step="1000"
           value={staleTime}
-          onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
+          onChange={e => setStaleTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
       </div>
       <div>
-        Inactive Cache Time:{" "}
+        Cache Time:{" "}
         <input
           type="number"
           min="0"
           step="1000"
           value={cacheTime}
-          onChange={e => setInactiveCacheTime(parseFloat(e.target.value, 10))}
+          onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
       </div>
