@@ -26,6 +26,7 @@ let defaultConfig = {
   queryAutoRefetch: false,
   refetchAllOnWindowFocus: true,
   autoRefetch: false,
+  suspense: false,
 }
 
 export function useReactQueryConfig(config = {}) {
@@ -364,9 +365,14 @@ export function useQuery(queryKey, queryFn, config = {}) {
   )
 
   const getLatestManual = useGetLatest(manual)
+  const isMountedRef = React.useRef(false)
 
   React.useEffect(() => {
-    if (getLatestManual()) {
+    isMountedRef.current = true
+  }, [])
+
+  React.useEffect(() => {
+    if (getLatestManual() || (config.suspense && !isMountedRef.current)) {
       return
     }
 
@@ -380,7 +386,16 @@ export function useQuery(queryKey, queryFn, config = {}) {
     }
 
     runRefetch()
-  }, [getLatestManual, query, queryHash])
+  }, [config.suspense, getLatestManual, query, queryHash])
+
+  if (config.suspense) {
+    if (state.error) {
+      throw state.error
+    }
+    if (!state.isCached) {
+      throw query.fetch()
+    }
+  }
 
   return {
     ...state,
