@@ -3,9 +3,11 @@
     [
       "@babel/env",
       {
-        "modules": false
+        "modules": false,
+        "exclude": ["@babel/plugin-transform-regenerator"]
       }
     ],
     "@babel/react"
-  ]
+  ],
+  "plugins": ["module:fast-async"]
 }

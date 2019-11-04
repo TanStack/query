@@ -19,10 +19,13 @@
     "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write"
   },
   "peerDependencies": {
-    "prop-types": "^15.5.4",
     "react": "^16.6.3"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@babel/plugin-transform-regenerator": "^7.4.5",
+    "core-js": "3",
+    "fast-async": "^6.3.8"
+  },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",

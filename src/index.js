@@ -21,8 +21,8 @@ if (typeof window !== 'undefined' && !eventsBinded) {
 let defaultConfig = {
   retry: 3,
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-  cacheTime: 10 * 1000,
-  inactiveCacheTime: 10 * 1000,
+  staleTime: 0,
+  cacheTime: 5 * 60 * 1000,
   queryAutoRefetch: false,
   refetchAllOnWindowFocus: true,
   autoRefetch: false,
@@ -47,17 +47,20 @@ function makeQuery({
     variables,
     promise: null,
     previousDelay: 0,
+    staleTimeout: null,
     cacheTimeout: null,
-    inactiveCacheTimeout: null,
     cancelled: null,
     state: {
-      data: null,
+      data: config.paginated ? [] : null,
       error: null,
       isFetching: false,
+      isFetchingMore: false,
+      canFetchMore: false,
       failureCount: 0,
       isCached: false,
       isStale: true,
     },
+    pageVariables: [],
     instances: [],
   }
 
@@ -88,7 +91,7 @@ function makeQuery({
     })
 
     // Cancel garbage collection
-    clearTimeout(query.inactiveCacheTimeout)
+    clearTimeout(query.cacheTimeout)
 
     // Mark the query as not cancelled
     query.cancelled = null
@@ -110,22 +113,24 @@ function makeQuery({
         })
 
         // Schedule garbage collection
-        query.inactiveCacheTimeout = setTimeout(
+        query.cacheTimeout = setTimeout(
           () => {
             queries.splice(queries.findIndex(d => d === query), 1)
             globalStateListeners.forEach(d => d())
           },
-          query.state.isCached ? config.inactiveCacheTime : 0
+          query.state.isCached ? config.cacheTime : 0
         )
       }
     }
   }
 
   // Set up the fetch function
-  const tryFetchQuery = async () => {
+  const tryFetchQueryPages = async pageVariables => {
     try {
       // Perform the query
-      const data = await queryFn(query.variables)
+      const data = await Promise.all(
+        pageVariables.map(variables => queryFn(variables))
+      )
 
       if (query.cancelled) throw query.cancelled
 
@@ -164,7 +169,7 @@ function makeQuery({
             if (query.cancelled) return reject(query.cancelled)
 
             try {
-              const data = await tryFetchQuery()
+              const data = await tryFetchQueryPages(pageVariables)
               if (query.cancelled) return reject(query.cancelled)
               resolve(data)
             } catch (error) {
@@ -179,7 +184,13 @@ function makeQuery({
     }
   }
 
-  query.fetch = async ({ merge, force } = {}) => {
+  query.fetch = async ({
+    variables = config.paginated && query.state.isCached
+      ? query.pageVariables
+      : query.variables,
+    force,
+    isFetchMore,
+  } = {}) => {
     // Don't refetch fresh queries without force
     if (!query.state.isStale && !force) {
       return
@@ -198,20 +209,44 @@ function makeQuery({
               ...old,
               error: null,
               isFetching: true,
+              isFetchingMore: isFetchMore,
               failureCount: 0,
             }
           })
 
+          variables =
+            config.paginated && query.state.isCached && !isFetchMore
+              ? variables
+              : [variables]
+
           // Try to fetch
-          const data = await tryFetchQuery()
+          let data = await tryFetchQueryPages(variables)
+
+          // If we are paginating, and this is the first query or a fetch more
+          // query, then store the variables in the pageVariables
+          if (config.paginated && (isFetchMore || !query.state.isCached)) {
+            query.pageVariables.push(variables[0])
+          }
 
           // Set data and mark it as cached
           query.setState(old => {
+            data = config.paginated
+              ? isFetchMore
+                ? [...old.data, data[0]]
+                : data
+              : data[0]
+
             return {
               ...old,
-              data: merge ? merge(old.data, data) : data,
+              data,
               isCached: true,
               isStale: false,
+              ...(config.paginated && {
+                canFetchMore: config.getCanFetchMore(
+                  data[data.length - 1],
+                  data
+                ),
+              }),
             }
           })
 
@@ -233,7 +268,9 @@ function makeQuery({
           }
         } finally {
           // Schedule a fresh invalidation, always!
-          query.cacheTimeout = setTimeout(() => {
+          clearTimeout(query.staleTimeout)
+          
+          query.staleTimeout = setTimeout(() => {
             if (query) {
               query.setState(old => {
                 return {
@@ -242,15 +279,16 @@ function makeQuery({
                 }
               })
               if (config.autoRefetch) {
-                fetch()
+                query.fetch()
               }
             }
-          }, config.cacheTime)
+          }, config.staleTime)
 
           query.setState(old => {
             return {
               ...old,
               isFetching: false,
+              isFetchingMore: false,
             }
           })
           delete query.promise
@@ -316,6 +354,15 @@ export function useQuery(queryKey, queryFn, config = {}) {
 
   const isLoading = !queryHash || manual ? false : state.isCached ? false : true
   const refetch = query.fetch
+  const setData = query.setData
+
+  const fetchMore = React.useCallback(
+    config.paginated
+      ? variables => query.fetch({ variables, force: true, isFetchMore: true })
+      : undefined,
+    [query]
+  )
+
   const getLatestManual = useGetLatest(manual)
 
   React.useEffect(() => {
@@ -339,7 +386,8 @@ export function useQuery(queryKey, queryFn, config = {}) {
     ...state,
     isLoading,
     refetch,
-    setData: query.setData,
+    fetchMore,
+    setData,
   }
 }
 
@@ -369,7 +417,10 @@ export async function refetchQuery(userQueryKey, { force } = {}) {
   )
 }
 
-export function useMutation(mutationFn, { refetchQueries } = {}) {
+export function useMutation(
+  mutationFn,
+  { refetchQueries, refetchQueriesOnFailure } = {}
+) {
   const [data, setData] = React.useState(null)
   const [error, setError] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(false)
@@ -377,40 +428,48 @@ export function useMutation(mutationFn, { refetchQueries } = {}) {
   mutationFnRef.current = mutationFn
 
   const mutate = React.useCallback(
-    async (
-      variables,
-      { throwOnError = false, updateQuery, waitForRefetchQueries = false } = {}
-    ) => {
+    async (variables, { updateQuery, waitForRefetchQueries = false } = {}) => {
       setIsLoading(true)
       setError(null)
+
+      const doRefetchQueries = async () => {
+        const refetchPromises = refetchQueries.map(queryKey =>
+          refetchQuery(queryKey, { force: true })
+        )
+        if (waitForRefetchQueries) {
+          await Promise.all(refetchPromises)
+        }
+      }
+
       try {
         const res = await mutationFnRef.current(variables)
         setData(res)
-
-        if (refetchQueries) {
-          const refetchPromises = refetchQueries.map(queryKey =>
-            refetchQuery(queryKey, { force: true })
-          )
-          if (waitForRefetchQueries) {
-            await Promise.all(refetchPromises)
-          }
-        }
 
         if (updateQuery) {
           setQueryData(updateQuery, res, { shouldRefetch: false })
         }
 
+        if (refetchQueries) {
+          try {
+            await doRefetchQueries()
+          } catch (err) {
+            console.error(err)
+            // Swallow this error since it is a side-effect
+          }
+        }
+
         return res
       } catch (error) {
         setError(error)
-        if (throwOnError) {
-          throw error
+
+        if (refetchQueriesOnFailure) {
+          await doRefetchQueries()
         }
       } finally {
         setIsLoading(false)
       }
     },
-    [refetchQueries]
+    [refetchQueriesOnFailure, refetchQueries]
   )
 
   return [mutate, { data, isLoading, error }]
@@ -453,7 +512,6 @@ export function setQueryData(
 
   const query = queries.find(d => d.queryHash === queryHash)
 
-  console.log(userQueryKey, updater)
   query.setData(updater)
 
   if (shouldRefetch) {

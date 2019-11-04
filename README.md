@@ -31,12 +31,15 @@ Hooks for fetching, caching and updating asynchronous data in React
 ## Quick Features
 
 - Transport, protocol & backend agnostic data fetching
-- Auto Caching + Background Refetching (stale-while-revalidate model)
-- Auto Refetch (on-window-focus, when-stale, polling)
+- Auto Caching + Refetching (stale-while-revalidate, on-window-focus, polling)
 - Parallel + Dependent Queries
-- Mutations
+- Mutations + Automatic Query Refetching
 - Multi-layer Cache + Garbage Collection
+- Load-More Pagination + Scroll Recovery
 - 3.6 kb (minzipped)
+
+<details>
+<summary>Core Concepts</summary>
 
 ## The Challenge
 
@@ -44,31 +47,34 @@ Tools for managing async data and client stores/caches are plentiful these days,
 
 - Duplicate unnecessary network operations
 - Force normalized or object/id-based caching strategies on your data
-- Don't invalidate their caches often enough or don't ship with good defaults or mechanisms to do so
-- Don't perform optimistic updates, or require setup to know when to perform them
-- Because of this ☝️, they require imperative interaction to invalidate or manage their caches
+- Do not automatically manage stale-ness or caching
+- Do not offer robust API's around mutation events, invalidation or query management
+- Are built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools] etc.
 
 ## The Solution
 
 React Query exports a set of hooks that attempt to address these issues. Out of the box, React Query:
 
 - Flexibly dedupes simultaneous requests to assets
-- Automatically caches request responses
+- Automatically caches data
 - Automatically invalidates stale cache data
 - Optimistically updates stale requests in the background
-- Optimistically seeds new requests from stale data while fetching new dat
+- Automatically manages garbage collection
 - Supports automatic retries and exponential or custom back-off delays
 - Provides both declarative and imperative API's for:
-  - Manually invalidating requests
-  - Atomically updating cached responses
+  - Mutations and automatic query syncing
+  - Query Refetching
+  - Atomic and Optimistic query manipulation
+
+</details>
 
 ## Hat Tipping
 
-A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and it's creators for inspiring even further customizations and optimizations. You all rock!
+A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and it's creators for inspiring even further customizations and examples. You all rock!
 
-## Demos
+## Examples
 
-- [A contrived CodeSandbox example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/example)
+- [Sandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/example)
 
 # Documentation
 
@@ -79,6 +85,8 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
   - [Dependent Queries](#dependent-queries)
   - [Caching & Invalidation](#caching--invalidation)
   - [Pagination](#pagination)
+  - [Load-More/Infinite-Scroll Pagination](#load-more-pagination)
+  - [Scroll Restoration](#scroll-restoration)
   - [Manual Querying](#manual-querying)
   - [Retries](#retries)
   - [Retry Delay](#retry-delay)
@@ -241,44 +249,38 @@ const { data: projects } = useQuery(
 
 ### Caching & Invalidation
 
-React Query caching is automatic and uses optimistic updates and short-term caching across similar queries to always ensure a query's data is only stored once, quickly available and kept up to date with the server.
+React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching model across queries along with query deduping to to always ensure a query's data is only stored once even if that query is used multiple times across your application.
 
 At a glance:
 
-- Caching is automatic dand aggressive by default.
+- Caching is automatic and aggressive by default.
 - The cache is keyed on unique `query + variables` combinations.
-- You can configure the `cacheTime` option that determines how long cache data is considered fresh before it is marked as stale
-- You can configure the `inactiveCacheTime` option that determines how long unused stale cache data is kept around before it is garbage collected
-- Stale queries are optimistically and automatically updated when new instances of that query mount or variables change
-- If stale or unused cache data that has not been garbage collected is available, it will be used as a cold-start cache for queries while they are updated.
-- Data is not normalized or stored outside of the context of its usage.
-- Caching can be turned off either globally or individually for each query
-
-> **Did You Know?** - Because React Query doesn't use document normalization in its cache (made popular with libraries like Apollo and Redux-Query), it eliminates a whole range of common issues with caching like incorrect data merges, failed cache reads/writes, and imperative maintenance of the cache.
+- By default query results become **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level)
+- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)** or when **new usages/instances** of the query are mounted.
+- By default query results are **always** cached **when in use**.
+- If a query is no longer being used, it becomes inactive and by default is cached in the background for **5 minutes**. This time can be configured using the `cacheTime` option at both the global and query-level)
+- After a query is inactive for the time specified via the `cacheTime` option (defaults to 5 minutes), the query is deleted and garbage collected.
 
 <details>
  <summary>A more detailed example of the caching lifecycle</summary>
 
-- A new usage of `useQuery(fetchTodoList, { page: 1 })` mounts
+Let's assume we are using the default `cacheTime` of **5 minutes** and the default `staleTime` of `0`.
+
+- A new instance of `useQuery('todos', fetchTodos)` mounts
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
-  - It will then cache the data using `fetchTodoList` and `{ page: 1 }` as the unique identifiers for that cache.
-  - A cache expiration is scheduled for later using the `cacheTime` option as a delay (defaults to `10 * 1000` milliseconds or `10` seconds).
-- A second instance of `useQuery(fetchTodoList, { page: 1 })` mounts elsewhere
+  - It will then cache the data using `'todos'` and `` as the unique identifiers for that cache.
+  - A stale invalidation is scheduled using the `staleTime` option as a delay (defaults to `0`, or immediately).
+- A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache
-- `10` seconds pass since the data came in for the first instance of this query
-  - The data for these queries is marked as outdated
-- A third instance of `useQuery(fetchTodoList, { page: 1 })` mounts elsewhere
-  - Because this exact data exist in the cache from the first and second instances of this query, that data is immediately returned from the cache
-  - However, since the data has been marked as outdated, a background request is made to updated the stale data
-  - Both this instance and the other first and second instances of this query get optimistically updated with the new data from the background request
-  - A new cache expiration is scheduled for later using the `cacheTime` option as a delay.
-- All 3 instances of the `useQuery(fetchTodoList, { page: 1 })` query unmount.
-  - Since there are no more active instances to this query combination, a fallback timeout is set using `inactiveCacheTime` to garbage collect the cache (defaults to `10 * 1000` milliseconds or `10` seconds).
-  - If there is an active cache expiration scheduled already, it will be used instead.
-- No more instances of `useQuery(fetchTodoList, { page: 1 })` appear within the timeout
-  - The cache for the this query is deleted and garbage collected.
+  - Since the query is stale, it is refetched in the background automatically
+- Both instances of the `useQuery('todos', fetchTodos)` query are unmount and no longer in use.
+  - Since there are no more active instances to this query, a cache timeout is set using `cacheTime` to delete and garbage collect the query (defaults to **5 minutes**).
+- No more instances of `useQuery('todos', fetchTodos)` appear within **5 minutes**
+  - This query and its data is deleted and garbage collected.
 
 </details>
+
+> **Did You Know?** - Because React Query doesn't use document normalization in its cache (made popular with libraries like Apollo and Redux-Query), it eliminates a whole range of common issues with caching like incorrect data merges, failed cache reads/writes, and imperative maintenance of the cache.
 
 ### Pagination
 
@@ -325,7 +327,126 @@ function Todos() {
 }
 ```
 
-To prevent you from managing the loading state of `refetch` manually (since `isLoading` will remain false when `refetch` is called), React Query exposes an `isFetching` variable. It's the same as `isLoading`, but only reflects the state of the actual fetch operation for the query.
+### Load-More/Infinite-Scroll Pagination
+
+Rendering paginated lists that can "load more" data or "infinite scroll" is a common UI pattern. React Query supports some useful features for querying these types of lists. Let's assume we have an API that returns pages of `todos` 3 at a time based on a `cursor` index:
+
+```js
+fetch('/api/projects?cursor=0'
+// { data: [...], nextId: 3}
+fetch('/api/projects?cursor=3'
+// { data: [...], nextId: 6}
+fetch('/api/projects?cursor=6'
+// { data: [...], nextId: 9}
+```
+
+Using the `nextId` value in each page's response, we can configure `useQuery` to fetch more pages as needed:
+
+- Configure your query function to use optional pagination variables. We'll send through the `nextId` as the `cursor` for the next page request
+- Set the `paginated` option to `true`
+- Define a `getCanFetchMore` option to know if there is more data to load (it receives the `lastPage` and `allPages` as parameters)
+
+```js
+import { useQuery } from 'react-query'
+
+function Todos() {
+  const {
+    data: pages,
+    isLoading,
+    isFetching,
+    isFetchingMore,
+    fetchMore,
+    canFetchMore,
+  } = useQuery(
+    'todos',
+    ({ nextId } = {}) => fetch('/api/projects?cursor=' + (nextId || 0)),
+    {
+      paginated: true,
+      getCanFetchMore: (lastPage, allPages) => next.nextId,
+    }
+  )
+
+  // ...
+}
+```
+
+You'll notice a few new things now:
+
+- `data` is now an array of pages that contain query results, instead of the query results themselves
+- A `fetchMore` function is now available
+- A `canFetchMore` boolean is now available
+- An `isFetchingMore` boolean is now available
+
+These can now be used to render a "load more" list (this example uses an `offset` key):
+
+```js
+import { useQuery } from 'react-query'
+
+function Todos() {
+  const {
+    data: pages,
+    isLoading,
+    isFetching,
+    isFetchingMore,
+    fetchMore,
+    canFetchMore,
+  } = useQuery(
+    'projects',
+    ({ offset } = {}) => fetch('/api/projects?offset=' + (offset || 0)),
+    {
+      paginated: true,
+      getCanFetchMore: (lastPage, allPages) => next.nextId,
+    }
+  )
+
+  const loadMore = async () => {
+    try {
+      // Get the last page
+      const lastPage = data[data.length - 1]
+      // Get the last item's ID
+      const lastItemId = lastPage[lastPage.length - 1].id
+      // Fetch more with the offset ID + 1
+      await fetchMore({
+        offset: lastItemId + 1,
+      })
+    } catch {}
+  }
+
+  return isLoading ? (
+    <p>Loading...</p>
+  ) : data ? (
+    <>
+      {data.map((page, i) => (
+        <React.Fragment key={i}>
+          {page.data.map(project => (
+            <p key={project.id}>{project.name}</p>
+          ))}
+        </React.Fragment>
+      ))}
+      <div>
+        {canFetchMore ? (
+          <button onClick={loadMore} disabled={isFetchingMore}>
+            {isFetchingMore ? 'Loading more...' : 'Load More'}
+          </button>
+        ) : (
+          'Nothing more to fetch.'
+        )}
+      </div>
+      <div>
+        {isFetching && !isFetchingMore ? 'Background Updating...' : null}
+      </div>
+    </>
+  ) : null
+}
+```
+
+#### What happens when a paginated query needs to be refetched?\*\*
+
+When a paginated query becomes `stale` and needs to be refetched, each page is fetched `individually` with the same variables that were used to request it originally. If a paginated query's results are ever removed from the cache, the pagination restarts at the initial state with a single page being requested.
+
+### Scroll Restoration
+
+Out of the box, "scroll restoration" Just Works™️ in React Query. The reason for this is that query results are cached and retrieved synchronously when rendered. As long as a query is cached and has not been garbage collected, you should never experience problems with scroll restoration.
 
 ### Manual Querying
 
@@ -536,12 +657,25 @@ const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
 If you prefer that the promise returned from `mutate()` only resolves **after** any `refetchQueries` have been refetched, you can pass the `waitForRefetchQueries = true` option to `mutate`:
 
 ```js
-const [mutate] = useMutation(addTodo, {})
+const [mutate] = useMutation(addTodo, { refetchQueries: ['todos'] })
 
 const run = async () => {
   try {
     await mutate(todo, { waitForRefetchQueries: true })
     console.log('I will only log after all refetchQueries are done refetching!')
+  } catch {}
+}
+```
+
+It's important to note that `refetchQueries` by default will only happen after a successful mutation (the mutation function doesn't throw an error). If you would like to refetch the `refetchQueries` regardless of this, you can set `refetchQueriesOnFailure` to `true` in your `mutate` options:
+
+```js
+const [mutate] = useMutation(addTodo, { refetchQueries: ['todos'] })
+
+const run = async () => {
+  try {
+    await mutate(todo, { refetchQueriesOnFailure: true })
+    // Even if the above mutation fails, any `todos` queries will still be refetched.
   } catch {}
 }
 ```
@@ -657,7 +791,7 @@ const {
   refetch,
 } = useQuery(queryKey, queryFn, {
   manual,
-  cacheTime,
+  staleTime,
   retry,
   retryDelay,
 })
@@ -685,7 +819,7 @@ const {
 - `manual: Boolean`
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-- `cacheTime`
+- `staleTime`
   - [See `useReactQueryConfig` options...](#usereactqueryconfig)
 - `retry`
   - [See `useReactQueryConfig` options...](#usereactqueryconfig)
@@ -720,6 +854,7 @@ const {
 ```js
 const [mutate, { data, isLoading, error }] = useMutation(mutationFn, {
   refetchQueries,
+  refetchQueriesOnFailure,
 })
 
 const promise = mutate(variables, { updateQuery })
@@ -731,7 +866,12 @@ const promise = mutate(variables, { updateQuery })
   - **Required**
   - A function that performs an asynchronous task and returns a promise
 - `refetchQueries: Array<QueryKey>`
+  - Optional
   - When the mutation succeeds, these queries will be automatically refetched
+  - Must be an array of query keys, eg. `['todos', ['todo', { id: 5 }], 'reminders']`
+- `refetchQueriesOnFailure: Boolean`
+  - Defaults to `false`
+  - Set this to `true` if you want `refetchQueries` to be refetched regardless of the mutation succeeding.
 - `variables: any`
   - Optional
   - The variables object to pass tot he `mutationFn`
@@ -860,7 +1000,7 @@ import { useReactQueryConfig } from 'react-query'
 useReactQueryConfig({
   retry,
   retryDelay,
-  cacheTime,
+  staleTime,
   invalidCacheTime,
 })
 ```
@@ -877,7 +1017,7 @@ Pass options to `useReactQueryConfig` by pass it a `config` prop:
   - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff
   - A function like `attempt => attempt * 1000` applies linear backoff.
-- `cacheTime: Int`
+- `staleTime: Int`
   - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration
 - `invalidCacheTime: Int`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
@@ -894,7 +1034,7 @@ const config = {
   retry: 3,
   retryDelay: attempt =>
     Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
-  cacheTime: 10 * 1000, // 10 seconds
+  staleTime: 10 * 1000, // 10 seconds
   invalidCacheTime: 10 * 1000, // 10 seconds
 }
 

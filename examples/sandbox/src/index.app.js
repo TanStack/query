@@ -125,8 +125,8 @@ const patchTodo = todo => {
 };
 
 function Root() {
-  const [cacheTime, setCacheTime] = React.useState(5000);
-  const [inactiveCacheTime, setInactiveCacheTime] = React.useState(5000);
+  const [staleTime, setCacheTime] = React.useState(5000);
+  const [cacheTime, setInactiveCacheTime] = React.useState(5000);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
   const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
     queryTimeMin
@@ -136,8 +136,8 @@ function Root() {
   );
 
   useReactQueryConfig({
-    cacheTime,
-    inactiveCacheTime
+    staleTime,
+    cacheTime
     // refetchAllOnWindowFocus: false
   });
 
@@ -187,7 +187,7 @@ function Root() {
           type="number"
           min="0"
           step="1000"
-          value={cacheTime}
+          value={staleTime}
           onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
@@ -198,7 +198,7 @@ function Root() {
           type="number"
           min="0"
           step="1000"
-          value={inactiveCacheTime}
+          value={cacheTime}
           onChange={e => setInactiveCacheTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
