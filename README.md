@@ -298,8 +298,6 @@ useQuery(['todos', { page, status }])
 useQuery(['todos', { page, status, other: undefined }])
 ```
 
-> Note: To aid you in your quest, if a query key is used that contains a `?` (like `todos?page=${page}&status=${status}`), you will see a gentle console warning to use the above format instead.
-
 ### Query Variables
 
 To use external props, state, or variables in a query function, pass them as a variables in your query key! They will be passed through to your query function as the first parameter.
