@@ -27,6 +27,18 @@ async function fetchProject({ id }) {
   });
 }
 
+function Spinner() {
+  return (
+    <span
+      className="fa fa-circle-o-notch fa-spin"
+      style={{
+        marginLeft: 4,
+        fontSize: "small"
+      }}
+    />
+  );
+}
+
 function Button({ children, timeoutMs = 3000, onClick }) {
   const [startTransition, isPending] = React.useTransition({
     timeoutMs: timeoutMs
@@ -41,7 +53,7 @@ function Button({ children, timeoutMs = 3000, onClick }) {
   return (
     <>
       <button onClick={handleClick} disabled={isPending}>
-        {isPending ? "Loading..." : children}
+        {children} {isPending ? <Spinner /> : null}
       </button>
     </>
   );
@@ -52,16 +64,25 @@ function App() {
     suspense: true
   });
 
+  const [startTransition] = React.useTransition({
+    timeoutMs: 5000
+  });
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
-  console.log(activeProject);
-
   return (
     <>
-      <Button onClick={() => setShowProjects(old => !old)}>
+      <Button
+        onClick={() =>
+          startTransition(() => {
+            setShowProjects(old => !old);
+          })
+        }
+      >
         {showProjects ? "Hide Projects" : "Show Projects"}
       </Button>
+
+      <hr />
 
       {showProjects ? (
         activeProject ? (
@@ -85,17 +106,14 @@ function Projects({ setActiveProject }) {
   const { data, isFetching } = useQuery("projects", fetchProjects);
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Trending Projects</h1>
-      <div>
-        {data.map(project => (
-          <p key={project}>
-            {project}{" "}
-            <Button onClick={() => setActiveProject(project)}>Load</Button>
-          </p>
-        ))}
-      </div>
-      <div>{isFetching ? "Background Updating..." : " "}</div>
+    <div>
+      <h1>Trending Projects {isFetching ? <Spinner /> : null}</h1>
+      {data.map(project => (
+        <p key={project}>
+          <Button onClick={() => setActiveProject(project)}>Load</Button>{" "}
+          {project}
+        </p>
+      ))}
     </div>
   );
 }
@@ -107,21 +125,20 @@ function Project({ activeProject, setActiveProject }) {
   );
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>{activeProject}</h1>
+    <div>
+      <Button onClick={() => setActiveProject(null)}>Back</Button>
+      <h1>
+        {activeProject} {isFetching ? <Spinner /> : null}
+      </h1>
       {data ? (
-        <>
-          <div>
-            <p>forks: {data.forks_count}</p>
-            <p>stars: {data.stargazers_count}</p>
-            <p>watchers: {data.watchers}</p>
-          </div>
-          <div>{isFetching ? "Background Updating..." : " "}</div>
-        </>
+        <div>
+          <p>forks: {data.forks_count}</p>
+          <p>stars: {data.stargazers_count}</p>
+          <p>watchers: {data.watchers}</p>
+        </div>
       ) : null}
       <br />
       <br />
-      <Button onClick={() => setActiveProject(null)}>Back</Button>
     </div>
   );
 }
