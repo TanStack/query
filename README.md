@@ -68,7 +68,9 @@ React Query exports a set of hooks that attempt to address these issues. Out of 
 
 <details>
 <summary>Inspiration & Hat-Tipping</summary>
+
 A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and it's creators for inspiring even further customizations and examples. You all rock!
+
 </details>
 
 ## Examples
