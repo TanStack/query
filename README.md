@@ -34,7 +34,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 - Multi-layer Cache + Garbage Collection
 - Load-More Pagination + Scroll Recovery
 - React Suspense Support
-- 4.1 kb (minzipped)
+- 4.2 kb (minzipped)
 
 <details>
 <summary>Core Issues and Solution</summary>
