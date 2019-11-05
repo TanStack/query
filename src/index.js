@@ -32,24 +32,11 @@ export function useReactQueryConfig(config = {}) {
   Object.assign(defaultConfig, config)
 }
 
-function makeQuery({
-  queryHash,
-  queryGroup,
-  variablesHash,
-  variables,
-  config,
-  queryFn,
-}) {
+function makeQuery(options) {
+  const { config } = options
+
   let query = {
-    queryHash,
-    queryGroup,
-    variablesHash,
-    variables,
-    promise: null,
-    previousDelay: 0,
-    staleTimeout: null,
-    cacheTimeout: null,
-    cancelled: null,
+    ...options,
     state: {
       data: config.paginated ? [] : null,
       error: null,
@@ -62,10 +49,14 @@ function makeQuery({
     },
     pageVariables: [],
     instances: [],
+    // promise: null,
+    // staleTimeout: null,
+    // cacheTimeout: null,
+    // cancelled: null,
   }
 
   query.setState = updater => {
-    query.state = typeof updater === 'function' ? updater(query.state) : updater
+    query.state = functionalUpdate(updater, query.state)
     query.instances.forEach(instance => {
       instance.onStateUpdate(query.state)
     })
@@ -129,7 +120,7 @@ function makeQuery({
     try {
       // Perform the query
       const data = await Promise.all(
-        pageVariables.map(variables => queryFn(variables))
+        pageVariables.map(variables => query.queryFn(variables))
       )
 
       if (query.cancelled) throw query.cancelled
@@ -157,10 +148,10 @@ function makeQuery({
         }
 
         // Determine the retryDelay
-        const delay =
-          typeof config.retryDelay === 'function'
-            ? config.retryDelay(query.state.failureCount)
-            : config.retryDelay
+        const delay = functionalUpdate(
+          config.retryDelay,
+          query.state.failureCount
+        )
 
         // Return a new promise with the retry
         return new Promise((resolve, reject) => {
@@ -299,7 +290,7 @@ function makeQuery({
   query.setData = updater =>
     query.setState(old => ({
       ...old,
-      data: typeof updater === 'function' ? updater(old.data) : updater,
+      data: functionalUpdate(updater, old.data),
     }))
 
   return query
@@ -571,13 +562,11 @@ function getQueryInfo(queryKey) {
     let [id, variables] = queryKey
     const variablesIsObject = isObject(variables)
 
-    if (process.env.NODE_ENV !== 'production') {
-      if (typeof id !== 'string' || (variables && !variablesIsObject)) {
-        console.warn('Tuple queryKey:', queryKey)
-        throw new Error(
-          `Tuple query keys must be of type [string, object]. You have passed [${typeof id}, and ${typeof variables}]`
-        )
-      }
+    if (typeof id !== 'string' || (variables && !variablesIsObject)) {
+      console.warn('Tuple queryKey:', queryKey)
+      throw new Error(
+        `Invalid query key tuple type: [${typeof id}, and ${typeof variables}]`
+      )
     }
 
     const variablesHash = variablesIsObject ? sortedStringify(variables) : ''
@@ -621,7 +610,7 @@ function isDocumentVisible() {
       document.visibilityState === 'prerender'
     )
   }
-  // always assume it's visible
+
   return true
 }
 
@@ -629,7 +618,7 @@ function isOnline() {
   if (typeof navigator.onLine !== 'undefined') {
     return navigator.onLine
   }
-  // always assume it's online
+
   return true
 }
 
@@ -638,4 +627,8 @@ function useGetLatest(obj) {
   ref.current = obj
 
   return React.useCallback(() => ref.current, [])
+}
+
+function functionalUpdate(updater, old) {
+  return typeof updater === 'function' ? updater(old) : updater
 }
