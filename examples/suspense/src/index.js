@@ -15,7 +15,7 @@ function fetchProjects() {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(projects);
-    }, 2000);
+    }, 500);
   });
 }
 
@@ -64,40 +64,29 @@ function App() {
     suspense: true
   });
 
-  const [startTransition] = React.useTransition({
-    timeoutMs: 5000
-  });
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
   return (
     <>
-      <Button
-        onClick={() =>
-          startTransition(() => {
-            setShowProjects(old => !old);
-          })
-        }
-      >
+      <Button onClick={() => setShowProjects(old => !old)}>
         {showProjects ? "Hide Projects" : "Show Projects"}
       </Button>
 
       <hr />
 
-      {showProjects ? (
-        activeProject ? (
-          <React.Suspense fallback={<h1>Loading project...</h1>}>
+      <React.Suspense fallback={<h1>Loading projects...</h1>}>
+        {showProjects ? (
+          activeProject ? (
             <Project
               activeProject={activeProject}
               setActiveProject={setActiveProject}
             />
-          </React.Suspense>
-        ) : (
-          <React.Suspense fallback={<h1>Loading projects...</h1>}>
+          ) : (
             <Projects setActiveProject={setActiveProject} />
-          </React.Suspense>
-        )
-      ) : null}
+          )
+        ) : null}
+      </React.Suspense>
     </>
   );
 }

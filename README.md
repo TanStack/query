@@ -33,7 +33,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 - Mutations + Automatic Query Refetching
 - Multi-layer Cache + Garbage Collection
 - Load-More Pagination + Scroll Recovery
-- Suspense Support (Coming Soon)
+- React Suspense Support
 - 4.1 kb (minzipped)
 
 <details>
@@ -73,13 +73,14 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 ## Examples
 
-- [CodeSandbox Playground](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
 - [Basic](./examples/basic)
 - [Custom Hooks](./examples/custom-hooks)
 - [Auto Refetching / Polling / Realtime](./examples/auto-refetching)
 - [Window Refocus Refetching](./examples/focus-refetching)
 - [Optimistic Updates](./examples/optimistic-updates)
 - [Load-More Pagination](./examples/load-more-pagination)
+- [Suspense CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense)
+- [Playground CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
 
 # Documentation
 
@@ -95,6 +96,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
   - [Manual Querying](#manual-querying)
   - [Retries](#retries)
   - [Retry Delay](#retry-delay)
+  - [Suspense Mode](#suspense-mode)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -551,6 +553,24 @@ const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
 })
 ```
 
+### Suspense Mode
+
+React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`:
+
+```js
+const { useReactQueryConfig, useQuery } from 'react-query'
+
+// Enable for all queries by default
+useReactQueryConfig({
+  suspense: true
+})
+
+// Enable for an individual query
+useQuery(queryKey, queryFn, { suspense: true })
+```
+
+When using suspense mode, `isLoading` and `error` states will be replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors. Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
+
 ## Mutations
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query exports a `useMutation` hook.
@@ -805,6 +825,7 @@ const {
   staleTime,
   retry,
   retryDelay,
+  suspense,
 })
 ```
 
@@ -836,12 +857,26 @@ const {
 - `getCanFetchMore: Function(lastPage, allPages) => Boolean`
   - **Required if using `pagination` mode**
   - When using `pagination` mode, this function should return `true` if there is more data than can be fetched.
-- `staleTime`
-  - [See `useReactQueryConfig` options...](#usereactqueryconfig)
-- `retry`
-  - [See `useReactQueryConfig` options...](#usereactqueryconfig)
-- `retryDelay`
-  - [See `useReactQueryConfig` options...](#usereactqueryconfig)
+- `retry: Boolean | Int`
+  - If `false`, failed queries will not retry by default
+  - If `true`, failed queries will retry infinitely
+  - If set to an `Int`, eg. `3`, failed queries will retry until the failed query count meets that number
+- `retryDelay: Function(retryAttempt: Int) => Int`
+  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds
+  - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff
+  - A function like `attempt => attempt * 1000` applies linear backoff.
+- `staleTime: Int`
+  - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration
+- `cacheTime: Int`
+  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+- `refetchInterval: false | Integer`
+  - Optional
+  - If set to a number, all queries will continuously refetch at this frequency in milliseconds
+- `suspense: Boolean`
+  - Optional
+  - Set this to `true` to enable suspense mode.
+  - When `true`, `useQuery` will suspend when `isLoading` would normally be `true`
+  - When `true`, `useQuery` will throw runtime errors when `error` would normally be truthy
 
 ### Returns
 
@@ -1029,29 +1064,19 @@ const isFetching = useIsFetching()
 import { useReactQueryConfig } from 'react-query'
 
 useReactQueryConfig({
-  retry,
-  retryDelay,
-  staleTime,
-  invalidCacheTime,
+  retry: 3,
+  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+  staleTime: 0,
+  cacheTime: 5 * 60 * 1000,
+  refetchAllOnWindowFocus: true,
+  refetchInterval: false,
+  suspense: false,
 })
 ```
 
 ### Options
 
-Pass options to `useReactQueryConfig` by pass it a `config` prop:
-
-- `retry: Boolean | Int`
-  - If `false`, failed queries will not retry by default
-  - If `true`, failed queries will retry infinitely
-  - If set to an `Int`, eg. `3`, failed queries will retry until the failed query count meets that number
-- `retryDelay: Function(retryAttempt: Int) => Int`
-  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds
-  - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff
-  - A function like `attempt => attempt * 1000` applies linear backoff.
-- `staleTime: Int`
-  - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration
-- `invalidCacheTime: Int`
-  - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+For a description of all options, please see the [`useQuery` hook](#usequery).
 
 ### Returns
 

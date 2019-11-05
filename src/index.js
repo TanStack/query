@@ -23,9 +23,8 @@ let defaultConfig = {
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   staleTime: 0,
   cacheTime: 5 * 60 * 1000,
-  queryAutoRefetch: false,
   refetchAllOnWindowFocus: true,
-  autoRefetch: false,
+  refetchInterval: false,
   suspense: false,
 }
 
@@ -279,9 +278,6 @@ function makeQuery({
                   isStale: true,
                 }
               })
-              if (config.autoRefetch) {
-                query.fetch()
-              }
             }
           }, config.staleTime)
 
@@ -340,6 +336,17 @@ export function useQuery(queryKey, queryFn, config = {}) {
     })
     queries.push(query)
   }
+
+  React.useEffect(() => {
+    if (config.refetchInterval && !query.refetchInterval) {
+      query.refetchInterval = setInterval(query.fetch, config.refetchInterval)
+
+      return () => {
+        clearInterval(query.refetchInterval)
+        query.refetchInterval = null
+      }
+    }
+  }, [config.refetchInterval, query])
 
   const [state, setState] = React.useState(query.state)
 

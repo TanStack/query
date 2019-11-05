@@ -8,9 +8,8 @@ export default () => {
   const [value, setValue] = React.useState('')
 
   const { data, isLoading } = useQuery('todos', () => fetch('/api/data'), {
-    autoRefetch: true,
-    // revalidate the data per second
-    staleTime: 1000,
+    // Refetch the data every second
+    refetchInterval: 1000,
   })
 
   const [mutateAddTodo] = useMutation(
