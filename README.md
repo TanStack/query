@@ -33,8 +33,10 @@ Hooks for fetching, caching and updating asynchronous data in React
 - Mutations + Automatic Query Refetching
 - Multi-layer Cache + Garbage Collection
 - Load-More Pagination + Scroll Recovery
-- React Suspense Support
-- <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
+- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) Support
+- <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
+    <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
+  </a>
 
 <details>
 <summary>Core Issues and Solution</summary>
@@ -68,7 +70,7 @@ React Query exports a set of hooks that attempt to address these issues. Out of 
 
 <details>
 <summary>Inspiration & Hat-Tipping</summary>
-
+<br />
 A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and it's creators for inspiring even further customizations and examples. You all rock!
 
 </details>
