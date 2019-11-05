@@ -224,6 +224,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 - [Displaying Background Fetching Loading States](#displaying-background-fetching-loading-states)
 - [Displaying Global Background Fetching Loading State](#displaying-global-background-fetching-loading-state)
 - [Window-Focus Refetching](#window-focus-refetching)
+- [Custom Query Key Serializers (Experimental)](#custom-query-key-serializers-experimental)
 - [API](#api)
   - [`useQuery`](#usequery)
   - [`useMutation`](#usemutation)
@@ -917,6 +918,94 @@ If a user leaves your application and returns to stale data, you may want to tri
 
 ```js
 useReactQueryConfig({ refetchAllOnWindowFocus: false })
+```
+
+## Custom Query Key Serializers (Experimental)
+
+> **WARNING:** This is an advanced and experimental feature. There be dragons here. Do not change the Query Key Serializer unless you know what you are doing and are fine with encountering edge cases in the React Query API
+
+If you absolutely despise the default query key and variable syntax, you can replace the default query key serializer with your own by using the `useReactQueryConfig` hook's `queryKeySerializerFn` option:
+
+```js
+import { useReactQueryConfig } from 'react-query'
+
+useReactQueryConfig({
+  queryKeySerializerFn: userQueryKey => {
+    // Your custom logic here...
+
+    return [fullQueryHash, queryGroupId, variablesHash, variables]
+  },
+})
+```
+
+- `userQueryKey: any`
+  - This is the queryKey passed in `useQuery` and all other publis methods and utilities exported by React Query.
+- `fullQueryHash: string`
+  - This must be a unique `string` representing the query and variables.
+  - It must be stable and deterministic and should not change if things like the order of variables is changed or shuffled.
+- `queryGroupId: string`
+  - This must be a unique `string` representing only the query type without any variables
+  - It must be stable and deterministic and should not change if the variables of the query change
+- `variablesHash: string`
+  - This must be a unique `string` representing only the variables of the query
+  - It must be stable and deterministic and should not change if things like the order of variables is changed or shuffled.
+- `variables: any`
+  - This is the object that will be passed to the `queryFn` when using `useQuery`.
+
+> An additional `stableStringify` utility is also exported to help with stringifying objects to have sorted keys.
+
+#### URL Query Key Serializer Example
+
+```js
+import { useReactQueryConfig, stableStringify } from 'react-query'
+
+function urlQueryKeySerializer(queryKey) {
+  // Deconstruct the url
+  let [url, params = ''] = queryKey.split('?')
+
+  // Build the variables object
+  let variables = {}
+  params
+    .split('&')
+    .filter(Boolean)
+    .forEach(param => {
+      const [key, value] = param.split('=')
+      variables[key] = value
+    })
+
+  // Use stableStringify to turn variables into a stable string
+  const variablesHash = Object.keys(variables).length
+    ? stableStringify(variables)
+    : ''
+
+  // Remove trailing slashes from the url to make an ID
+  const queryGroupId = url.replace(/\/{1,}$/, '')
+
+  const queryHash = `${id}_${variablesHash}`
+
+  return [queryHash, queryGroupId, variablesHash, variables]
+}
+
+// Set it as the default serializer
+useReactQueryConfig({
+  queryKeySerializerFn: urlQueryKeySerializer,
+})
+
+// Heck, you can even make your own custom useQueryHook!
+
+function useFetchQuery(url, options) {
+  return useQuery(url, () => axios.get(url).then(res => res.data))
+}
+
+// Use it in your app!
+
+function Todos({ status = 'pending' }) {
+  const todosQuery = useFetchQuery(`/todos?status=${status}`)
+}
+
+function Todo({ id }) {
+  const todoQuery = useFetchQuery(`/todos/${id}`)
+}
 ```
 
 # API

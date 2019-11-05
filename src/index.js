@@ -26,6 +26,7 @@ let defaultConfig = {
   refetchAllOnWindowFocus: true,
   refetchInterval: false,
   suspense: false,
+  queryKeySerializerFn: defaultQueryKeySerializerFn,
 }
 
 export function useReactQueryConfig(config = {}) {
@@ -307,9 +308,12 @@ export function useQuery(queryKey, queryFn, config = {}) {
 
   const { manual } = config
 
-  const [queryHash, queryGroup, variablesHash, variables] = getQueryInfo(
-    queryKey
-  )
+  const [
+    queryHash,
+    queryGroup,
+    variablesHash,
+    variables,
+  ] = defaultConfig.queryKeySerializerFn(queryKey)
 
   let query = queries.find(query => query.queryHash === queryHash)
 
@@ -405,7 +409,12 @@ export function useQuery(queryKey, queryFn, config = {}) {
 }
 
 export async function refetchQuery(userQueryKey, { force } = {}) {
-  const [, queryGroup, variablesHash, variables] = getQueryInfo(userQueryKey)
+  const [
+    ,
+    queryGroup,
+    variablesHash,
+    variables,
+  ] = defaultConfig.queryKeySerializerFn(userQueryKey)
 
   if (!queryGroup) {
     return
@@ -517,7 +526,7 @@ export function setQueryData(
   updater,
   { shouldRefetch = true } = {}
 ) {
-  const [queryHash] = getQueryInfo(userQueryKey)
+  const [queryHash] = defaultConfig.queryKeySerializerFn(userQueryKey)
 
   if (!queryHash) {
     return
@@ -545,14 +554,14 @@ export async function refetchAllQueries({
   )
 }
 
-function getQueryInfo(queryKey) {
+function defaultQueryKeySerializerFn(queryKey) {
   if (!queryKey) {
     return []
   }
 
   if (typeof queryKey === 'function') {
     try {
-      return getQueryInfo(queryKey())
+      return defaultQueryKeySerializerFn(queryKey())
     } catch {
       return []
     }
@@ -569,7 +578,7 @@ function getQueryInfo(queryKey) {
       )
     }
 
-    const variablesHash = variablesIsObject ? sortedStringify(variables) : ''
+    const variablesHash = variablesIsObject ? stableStringify(variables) : ''
 
     return [
       `${id}${variablesHash ? `_${variablesHash}}` : ''}`,
@@ -582,7 +591,7 @@ function getQueryInfo(queryKey) {
   return [queryKey, queryKey]
 }
 
-function sortedStringifyReplacer(_, value) {
+function stableStringifyReplacer(_, value) {
   return isObject(value)
     ? Object.assign(
         {},
@@ -595,8 +604,8 @@ function sortedStringifyReplacer(_, value) {
     : value
 }
 
-function sortedStringify(obj) {
-  return JSON.stringify(obj, sortedStringifyReplacer)
+export function stableStringify(obj) {
+  return JSON.stringify(obj, stableStringifyReplacer)
 }
 
 function isObject(a) {
