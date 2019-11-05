@@ -337,12 +337,12 @@ function Todos() {
 
 ### Dependent Queries
 
-React Query makes it easy to make queries that depends on other queries for both:
+React Query makes it easy to make queries that depend on other queries for both:
 
 - Parallel Queries (avoiding waterfalls) and
 - Serial Queries (when a piece of data is required for the next query to happen.
 
-To do this effectively, you can use the following 2 approaches:
+To do this, you can use the following 2 approaches:
 
 #### Pass a falsey query key
 
@@ -366,24 +366,23 @@ const { data: projects } = useQuery(() => ['projects', { userId: user.id }]) // 
 
 ```js
 const [ready, setReady] = React.useState(false)
-const { data: user } = useQuery(ready && ['user', { userId }]) // Wait for ready
+const { data: user } = useQuery(ready && ['user', { userId }]) // Wait for ready to be truthy
 const { data: projects } = useQuery(
-  () => ready && ['projects', { userId: user.id }] // Wait for ready and user.id
+  () => ['projects', { userId: user.id }] // Wait for user.id to become available (and not throw)
 ```
 
 ### Caching & Invalidation
 
-React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching model across queries along with query deduping to to always ensure a query's data is only stored once even if that query is used multiple times across your application.
+React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching strategy together with robust query deduping to to always ensure a query's data is only cached when it's needed and only cached once even if that query is used multiple times across your application.
 
 At a glance:
 
-- Caching is automatic and aggressive by default.
 - The cache is keyed on unique `query + variables` combinations.
 - By default query results become **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level)
-- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)** or when **new usages/instances** of the query are mounted.
+- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)** or when **new usages/instances** of a query are mounted.
 - By default query results are **always** cached **when in use**.
-- If a query is no longer being used, it becomes inactive and by default is cached in the background for **5 minutes**. This time can be configured using the `cacheTime` option at both the global and query-level)
-- After a query is inactive for the time specified via the `cacheTime` option (defaults to 5 minutes), the query is deleted and garbage collected.
+- If and when a query is no longer being used, it becomes **inactive** and by default is cached in the background for **5 minutes**. This time can be configured using the `cacheTime` option at both the global and query-level
+- After a query is inactive for the `cacheTime` specified (defaults to 5 minutes), the query is deleted and garbage collected.
 
 <details>
  <summary>A more detailed example of the caching lifecycle</summary>
@@ -406,52 +405,11 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 
 > **Did You Know?** - Because React Query doesn't use document normalization in its cache (made popular with libraries like Apollo and Redux-Query), it eliminates a whole range of common issues with caching like incorrect data merges, failed cache reads/writes, and imperative maintenance of the cache.
 
-### Pagination
+### Load-More & Infinite-Scroll Pagination
 
 If all you need is page-based pagination, where the previous set of data is replaced with a new one, this section is not applicable to your use-case. For that, you can increment the page variable and pass it to your query via variables.
 
 However, if your app needs to add more data to the list along with existing one (for example, infinite loading), React Query provides you with a way to fetch additional data without deleting the current data. Let's use page-based pagination for simplicity, but assume that we want to append new todo items at the end of the list.
-
-```js
-function Todos() {
-  const { data, isLoading, error, refetch, isFetching } = useQuery(
-    ['todos', { page: 1 }],
-    fetchTodoList
-  )
-
-  const onFetchMore = () => {
-    refetch({
-      variables: { page: data.pagination.nextPage },
-      merge: (prev, next) => ({
-        ...next,
-        // Merge the new todos with the existing ones
-        todos: [...prev.todos, ...next.todos],
-      }),
-    })
-  }
-
-  return isLoading ? (
-    <span>Loading...</span>
-  ) : error ? (
-    <span>Error: {error.message}</span>
-  ) : data ? (
-    <>
-      <ul>
-        {data.todos.map(todo => (
-          <li key={todo.id}>{todo.title}</li>
-        ))}
-      </ul>
-      {data.pagination.hasMore && (
-        <button disabled={isFetching} onClick={onFetchMore}>
-          {isFetching ? 'Loading more todos...' : 'Load more todos'}
-        </button>
-      )}
-    </>
-  ) : null
-}
-```
-
-### Load-More/Infinite-Scroll Pagination
 
 Rendering paginated lists that can "load more" data or "infinite scroll" is a common UI pattern. React Query supports some useful features for querying these types of lists. Let's assume we have an API that returns pages of `todos` 3 at a time based on a `cursor` index:
 
