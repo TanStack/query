@@ -407,10 +407,6 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 
 ### Load-More & Infinite-Scroll Pagination
 
-If all you need is page-based pagination, where the previous set of data is replaced with a new one, this section is not applicable to your use-case. For that, you can increment the page variable and pass it to your query via variables.
-
-However, if your app needs to add more data to the list along with existing one (for example, infinite loading), React Query provides you with a way to fetch additional data without deleting the current data. Let's use page-based pagination for simplicity, but assume that we want to append new todo items at the end of the list.
-
 Rendering paginated lists that can "load more" data or "infinite scroll" is a common UI pattern. React Query supports some useful features for querying these types of lists. Let's assume we have an API that returns pages of `todos` 3 at a time based on a `cursor` index:
 
 ```js
