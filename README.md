@@ -905,6 +905,8 @@ useReactQueryConfig({
 
 #### URL Query Key Serializer Example
 
+The example below shows how to build your own serializer for use with urls and use it with React Query:
+
 ```js
 import { useReactQueryConfig, stableStringify } from 'react-query'
 
@@ -942,18 +944,89 @@ useReactQueryConfig({
 
 // Heck, you can even make your own custom useQueryHook!
 
-function useFetchQuery(url, options) {
+function useUrlQuery(url, options) {
   return useQuery(url, () => axios.get(url).then(res => res.data))
 }
 
 // Use it in your app!
 
 function Todos({ status = 'pending' }) {
-  const todosQuery = useFetchQuery(`/todos?status=${status}`)
+  const todosQuery = useUrlQuery(`/todos?status=${status}`)
 }
 
 function Todo({ id }) {
-  const todoQuery = useFetchQuery(`/todos/${id}`)
+  const todoQuery = useUrlQuery(`/todos/${id}`)
+}
+
+refetchQuery('/todos')
+refetchQuery('/todos?status=pending')
+refetchQuery('/todos/5')
+```
+
+#### Function Query Key Serializer Example
+
+The example below shows how to you build your own functional serializer and use it with React Query:
+
+```js
+import { useReactQueryConfig, stableStringify } from 'react-query'
+
+// A map to keep track of our function pointers
+const functionSerializerMap = new Map()
+
+function functionQueryKeySerializer(queryKey) {
+  if (!queryKey) {
+    return []
+  }
+
+  let queryFn = queryKey
+  let variables
+
+  if (Array.isArray(queryKey)) {
+    queryFn = queryKey[0]
+    variables = queryKey[1]
+  }
+
+  // Get or create an ID for the function pointer
+  const queryGroupId = functionSerializerMap.get(queryFn) || (() => {
+    const id = Date.now()
+    functionSerializerMap.set(queryFn, id)
+    return id
+  })()
+
+  const variablesIsObject = isObject(variables)
+
+  const variablesHash = variablesIsObject ? stableStringify(variables) : ''
+
+  const queryHash = `${queryGroupId}_${variablesHash}`,
+
+  return [
+    queryHash,
+    queryGroupId,
+    variablesHash,
+    variables,
+  ]
+}
+
+// Set it as the default serializer
+useReactQueryConfig({
+  queryKeySerializerFn: functionQueryKeySerializer,
+})
+
+// Heck, you can even make your own custom useQueryHook!
+
+function useFunctionQuery(functionTuple, options) {
+  const [queryFn, variables] = Array.isArray(functionTuple) ? functionTuple : [functionTuple]
+  return useQuery(functionTuple, queryFn, options)
+}
+
+// Use it in your app!
+
+function Todos({ status = 'pending' }) {
+  const todosQuery = useFunctionQuery(getTodos, { status })
+}
+
+function Todo({ id }) {
+  const todoQuery = useFunctionQuery(getTodo, { id })
 }
 ```
 
