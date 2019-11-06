@@ -402,8 +402,6 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 
 </details>
 
-> **Did You Know?** - Because React Query doesn't use document normalization in its cache (made popular with libraries like Apollo and Redux-Query), it eliminates a whole range of common issues with caching like incorrect data merges, failed cache reads/writes, and imperative maintenance of the cache.
-
 ### Load-More & Infinite-Scroll Pagination
 
 Rendering paginated lists that can "load more" data or "infinite scroll" is a common UI pattern. React Query supports some useful features for querying these types of lists. Let's assume we have an API that returns pages of `todos` 3 at a time based on a `cursor` index:
