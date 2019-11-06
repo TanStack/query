@@ -4,6 +4,7 @@ let queries = []
 const cancelledError = {}
 let globalStateListeners = []
 let uid = 0
+const configContext = React.createContext()
 
 // Focus revalidate
 let eventsBinded = false
@@ -29,17 +30,39 @@ let defaultConfig = {
   queryKeySerializerFn: defaultQueryKeySerializerFn,
 }
 
-export function useReactQueryConfig(config = {}) {
-  Object.assign(defaultConfig, config)
+export function ReactQueryConfigProvider({ config, children }) {
+  let configContextValue = React.useContext(configContext) || defaultConfig
+
+  if (!configContextValue) {
+    Object.assign(defaultConfig, config)
+    configContextValue = defaultConfig
+  }
+
+  const newConfig = React.useMemo(
+    () => ({
+      ...configContextValue,
+      ...config,
+    }),
+    [config, configContextValue]
+  )
+
+  return (
+    <configContext.Provider value={newConfig}>
+      {children}
+    </configContext.Provider>
+  )
+}
+
+function useConfigContext() {
+  return React.useContext(configContext) || defaultConfig
 }
 
 function makeQuery(options) {
-  const { config } = options
-
   let query = {
     ...options,
+    pageVariables: [],
+    instances: [],
     state: {
-      data: config.paginated ? [] : null,
       error: null,
       isFetching: false,
       isFetchingMore: false,
@@ -47,9 +70,8 @@ function makeQuery(options) {
       failureCount: 0,
       isCached: false,
       isStale: true,
+      data: options.config.paginated ? [] : null,
     },
-    pageVariables: [],
-    instances: [],
     // promise: null,
     // staleTimeout: null,
     // cacheTimeout: null,
@@ -74,7 +96,7 @@ function makeQuery(options) {
       query.instances.push(instance)
     }
 
-    // Mark as inactive
+    // Mark as active
     query.setState(old => {
       return {
         ...old,
@@ -110,7 +132,7 @@ function makeQuery(options) {
             queries.splice(queries.findIndex(d => d === query), 1)
             globalStateListeners.forEach(d => d())
           },
-          query.state.isCached ? config.cacheTime : 0
+          query.state.isCached ? query.config.cacheTime : 0
         )
       }
     }
@@ -141,8 +163,8 @@ function makeQuery(options) {
       // Do we need to retry the request?
       if (
         // Only retry if the document is visible
-        config.retry === true ||
-        query.state.failureCount < config.retry
+        query.config.retry === true ||
+        query.state.failureCount < query.config.retry
       ) {
         if (!isDocumentVisible()) {
           return new Promise(r => {})
@@ -150,7 +172,7 @@ function makeQuery(options) {
 
         // Determine the retryDelay
         const delay = functionalUpdate(
-          config.retryDelay,
+          query.config.retryDelay,
           query.state.failureCount
         )
 
@@ -177,7 +199,7 @@ function makeQuery(options) {
   }
 
   query.fetch = async ({
-    variables = config.paginated && query.state.isCached
+    variables = query.config.paginated && query.state.isCached
       ? query.pageVariables
       : query.variables,
     force,
@@ -194,6 +216,32 @@ function makeQuery(options) {
         // If there are any retries pending for this query, kill them
         query.cancelled = null
 
+        const cleanup = () => {
+          delete query.promise
+
+          // Schedule a fresh invalidation, always!
+          clearTimeout(query.staleTimeout)
+
+          query.staleTimeout = setTimeout(() => {
+            if (query) {
+              query.setState(old => {
+                return {
+                  ...old,
+                  isStale: true,
+                }
+              })
+            }
+          }, query.config.staleTime)
+
+          query.setState(old => {
+            return {
+              ...old,
+              isFetching: false,
+              isFetchingMore: false,
+            }
+          })
+        }
+
         try {
           // Set up the query refreshing state
           query.setState(old => {
@@ -207,7 +255,7 @@ function makeQuery(options) {
           })
 
           variables =
-            config.paginated && query.state.isCached && !isFetchMore
+            query.config.paginated && query.state.isCached && !isFetchMore
               ? variables
               : [variables]
 
@@ -216,13 +264,16 @@ function makeQuery(options) {
 
           // If we are paginating, and this is the first query or a fetch more
           // query, then store the variables in the pageVariables
-          if (config.paginated && (isFetchMore || !query.state.isCached)) {
+          if (
+            query.config.paginated &&
+            (isFetchMore || !query.state.isCached)
+          ) {
             query.pageVariables.push(variables[0])
           }
 
           // Set data and mark it as cached
           query.setState(old => {
-            data = config.paginated
+            data = query.config.paginated
               ? isFetchMore
                 ? [...old.data, data[0]]
                 : data
@@ -233,14 +284,16 @@ function makeQuery(options) {
               data,
               isCached: true,
               isStale: false,
-              ...(config.paginated && {
-                canFetchMore: config.getCanFetchMore(
+              ...(query.config.paginated && {
+                canFetchMore: query.config.getCanFetchMore(
                   data[data.length - 1],
                   data
                 ),
               }),
             }
           })
+
+          cleanup()
 
           return data
         } catch (error) {
@@ -258,29 +311,8 @@ function makeQuery(options) {
 
             throw error
           }
-        } finally {
-          // Schedule a fresh invalidation, always!
-          clearTimeout(query.staleTimeout)
 
-          query.staleTimeout = setTimeout(() => {
-            if (query) {
-              query.setState(old => {
-                return {
-                  ...old,
-                  isStale: true,
-                }
-              })
-            }
-          }, config.staleTime)
-
-          query.setState(old => {
-            return {
-              ...old,
-              isFetching: false,
-              isFetchingMore: false,
-            }
-          })
-          delete query.promise
+          cleanup()
         }
       })()
     }
@@ -298,11 +330,12 @@ function makeQuery(options) {
 }
 
 export function useQuery(queryKey, queryFn, config = {}) {
+  const isMountedRef = React.useRef(false)
   const instanceIdRef = React.useRef(uid++)
   const instanceId = instanceIdRef.current
 
   config = {
-    ...defaultConfig,
+    ...useConfigContext(),
     ...config,
   }
 
@@ -313,12 +346,18 @@ export function useQuery(queryKey, queryFn, config = {}) {
     queryGroup,
     variablesHash,
     variables,
-  ] = defaultConfig.queryKeySerializerFn(queryKey)
+  ] = config.queryKeySerializerFn(queryKey)
 
   let query = queries.find(query => query.queryHash === queryHash)
 
+  let wasPrefetched
+
   if (query) {
+    wasPrefetched = query.config.prefetch
     query.config = config
+    if (!isMountedRef.current) {
+      query.config.prefetch = wasPrefetched
+    }
     query.queryFn = queryFn
   } else {
     query = makeQuery({
@@ -367,15 +406,16 @@ export function useQuery(queryKey, queryFn, config = {}) {
   )
 
   const getLatestManual = useGetLatest(manual)
-  const isMountedRef = React.useRef(false)
 
   React.useEffect(() => {
-    isMountedRef.current = true
-  }, [])
-
-  React.useEffect(() => {
-    if (getLatestManual() || (config.suspense && !isMountedRef.current)) {
+    if (getLatestManual()) {
       return
+    }
+
+    if (config.suspense) {
+      if (isMountedRef.current || wasPrefetched) {
+        return
+      }
     }
 
     const runRefetch = async () => {
@@ -388,7 +428,11 @@ export function useQuery(queryKey, queryFn, config = {}) {
     }
 
     runRefetch()
-  }, [config.suspense, getLatestManual, query, queryHash])
+  }, [config.suspense, getLatestManual, query, wasPrefetched])
+
+  React.useEffect(() => {
+    isMountedRef.current = true
+  }, [])
 
   if (config.suspense) {
     if (state.error) {
@@ -405,6 +449,51 @@ export function useQuery(queryKey, queryFn, config = {}) {
     refetch,
     fetchMore,
     setData,
+  }
+}
+
+export async function fetchQuery(queryKey, queryFn, config = {}) {
+  config = {
+    ...defaultConfig,
+    ...config,
+  }
+
+  const [
+    queryHash,
+    queryGroup,
+    variablesHash,
+    variables,
+  ] = config.queryKeySerializerFn(queryKey)
+
+  let query = queries.find(query => query.queryHash === queryHash)
+
+  if (query) {
+    query.config = config
+    query.queryFn = queryFn
+  } else {
+    query = makeQuery({
+      queryHash,
+      queryGroup,
+      variablesHash,
+      variables,
+      config,
+      queryFn,
+    })
+    queries.push(query)
+  }
+
+  // Trigger a query subscription with one-time unique id
+  const unsubscribeFromQuery = query.subscribe({
+    id: uid++,
+    onStateUpdate: () => {},
+  })
+
+  // Trigger a fetch and return the promise
+  try {
+    return await query.fetch()
+  } finally {
+    // Since this is not a hook, upsubscribe after we're done
+    unsubscribeFromQuery()
   }
 }
 
@@ -480,6 +569,8 @@ export function useMutation(
           }
         }
 
+        setIsLoading(false)
+
         return res
       } catch (error) {
         setError(error)
@@ -487,7 +578,7 @@ export function useMutation(
         if (refetchQueriesOnFailure) {
           await doRefetchQueries()
         }
-      } finally {
+
         setIsLoading(false)
       }
     },

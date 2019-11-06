@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 
 import {
-  useReactQueryConfig,
+  ReactQueryConfigProvider,
   useQuery,
   useMutation,
   refetchAllQueries,
@@ -135,20 +135,22 @@ function Root() {
     queryTimeMax
   );
 
-  useReactQueryConfig({
-    staleTime,
-    cacheTime
-    // refetchAllOnWindowFocus: false
-  });
-
   React.useEffect(() => {
     errorRate = localErrorRate;
     queryTimeMin = localFetchTimeMin;
     queryTimeMax = localFetchTimeMax;
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin]);
 
+  const queryConfig = React.useMemo(
+    () => ({
+      staleTime,
+      cacheTime
+    }),
+    [cacheTime, staleTime]
+  );
+
   return (
-    <>
+    <ReactQueryConfigProvider config={queryConfig}>
       <p>
         The "staleTime" and "cacheTime" durations have been altered in this
         example to show how query stale-ness and query caching work on a
@@ -213,7 +215,7 @@ function Root() {
       </div>
       <br />
       <App />
-    </>
+    </ReactQueryConfigProvider>
   );
 }
 

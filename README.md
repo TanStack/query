@@ -231,7 +231,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`refetchQuery`](#refetchquery)
   - [`refetchAllQueries`](#refetchallqueries)
   - [`useIsFetching`](#useisfetching)
-  - [`useReactQueryConfig`](#usereactqueryconfig)
+  - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
 
 ## Installation
 
@@ -575,12 +575,7 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = true` will infinitely retry failing requests.
 
 ```js
-import { useReactQueryConfig } from 'react-query'
-
-// Turn off retries for all queries
-useReactQueryConfig({
-  retry: false,
-})
+import { useQuery } from 'react-query'
 
 // Make specific query retry a certain number of times
 const { data, isLoading, error } = useQuery(
@@ -600,16 +595,18 @@ The default `retryDelay` is set to double (starting at `1000`ms) with each attem
 
 ```js
 // Configure for all queries
-import { useReactQueryConfig } from 'react-query'
+import { ReactQueryConfigProvider } from 'react-query'
 
-const config = {
+const queryConfig = {
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
 }
 
 function App() {
-  useReactQueryConfig(config)
-
-  return <Stuff />
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
 }
 ```
 
@@ -623,15 +620,31 @@ const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
 
 ### Suspense Mode
 
-React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`:
+React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
+
+Global configuration:
 
 ```js
-const { useReactQueryConfig, useQuery } from 'react-query'
+// Configure for all queries
+import { ReactQueryConfigProvider } from 'react-query'
 
-// Enable for all queries by default
-useReactQueryConfig({
-  suspense: true
-})
+const queryConfig = {
+  suspense: true,
+}
+
+function App() {
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
+}
+```
+
+Query configuration:
+
+```js
+const { useQuery } from 'react-query'
 
 // Enable for an individual query
 useQuery(queryKey, queryFn, { suspense: true })
@@ -863,28 +876,42 @@ function GlobalLoadingIndicator() {
 
 ## Window-Focus Refetching
 
-If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `useReactQueryConfig`'s `refetchAllOnWindowFocus` option to disable it:
+If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `ReactQueryConfigProvider`'s `refetchAllOnWindowFocus` option to disable it:
 
 ```js
-useReactQueryConfig({ refetchAllOnWindowFocus: false })
+const queryConfig = { refetchAllOnWindowFocus: false }
+
+function App() {
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
+}
 ```
 
 ## Custom Query Key Serializers (Experimental)
 
 > **WARNING:** This is an advanced and experimental feature. There be dragons here. Do not change the Query Key Serializer unless you know what you are doing and are fine with encountering edge cases in the React Query API
 
-If you absolutely despise the default query key and variable syntax, you can replace the default query key serializer with your own by using the `useReactQueryConfig` hook's `queryKeySerializerFn` option:
+If you absolutely despise the default query key and variable syntax, you can replace the default query key serializer with your own by using the `ReactQueryConfigProvider` hook's `queryKeySerializerFn` option:
 
 ```js
-import { useReactQueryConfig } from 'react-query'
-
-useReactQueryConfig({
+const queryConfig = {
   queryKeySerializerFn: userQueryKey => {
     // Your custom logic here...
 
     return [fullQueryHash, queryGroupId, variablesHash, variables]
   },
-})
+}
+
+function App() {
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
+}
 ```
 
 - `userQueryKey: any`
@@ -908,7 +935,7 @@ useReactQueryConfig({
 The example below shows how to build your own serializer for use with urls and use it with React Query:
 
 ```js
-import { useReactQueryConfig, stableStringify } from 'react-query'
+import { ReactQueryConfigProvider, stableStringify } from 'react-query'
 
 function urlQueryKeySerializer(queryKey) {
   // Deconstruct the url
@@ -937,10 +964,17 @@ function urlQueryKeySerializer(queryKey) {
   return [queryHash, queryGroupId, variablesHash, variables]
 }
 
-// Set it as the default serializer
-useReactQueryConfig({
+const queryConfig = {
   queryKeySerializerFn: urlQueryKeySerializer,
-})
+}
+
+function App() {
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
+}
 
 // Heck, you can even make your own custom useQueryHook!
 
@@ -972,7 +1006,7 @@ refetchQuery('/todos/5')
 The example below shows how to you build your own functional serializer and use it with React Query:
 
 ```js
-import { useReactQueryConfig, stableStringify } from 'react-query'
+import { ReactQueryConfigProvider, stableStringify } from 'react-query'
 
 // A map to keep track of our function pointers
 const functionSerializerMap = new Map()
@@ -1011,11 +1045,17 @@ function functionQueryKeySerializer(queryKey) {
   ]
 }
 
-// Set it as the default serializer
-useReactQueryConfig({
+const queryConfig = {
   queryKeySerializerFn: functionQueryKeySerializer,
-})
+}
 
+function App() {
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
+}
 // Heck, you can even make your own custom useQueryHook!
 
 function useFunctionQuery(functionTuple, options) {
@@ -1297,14 +1337,14 @@ const isFetching = useIsFetching()
 - `isFetching: Boolean`
   - Will be `true` if any query in your application is loading or fetching in the background
 
-## `useReactQueryConfig`
+## `ReactQueryConfigProvider`
 
-`useReactQueryConfig` is optional and can be used to define defaults for all instances of `useQuery` through your app:
+`ReactQueryConfigProvider` is an optional provider component and can be used to define defaults for all instances of `useQuery` within it's sub-tree:
 
 ```js
-import { useReactQueryConfig } from 'react-query'
+import { ReactQueryConfigProvider } from 'react-query'
 
-useReactQueryConfig({
+const queryConfig = {
   retry: 3,
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   staleTime: 0,
@@ -1312,34 +1352,19 @@ useReactQueryConfig({
   refetchAllOnWindowFocus: true,
   refetchInterval: false,
   suspense: false,
-})
+}
+
+function App() {
+  return (
+    <ReactQueryConfigProvider config={queryConfig}>
+      ...
+    </ReactQueryConfigProvider>
+  )
+}
 ```
 
 ### Options
 
-For a description of all options, please see the [`useQuery` hook](#usequery).
-
-### Returns
-
-This hook does not return anything
-
-### Example
-
-```js
-const config = {
-  // These are the default config options for the useReactQueryConfig
-  retry: 3,
-  retryDelay: attempt =>
-    Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000),
-  staleTime: 10 * 1000, // 10 seconds
-  invalidCacheTime: 10 * 1000, // 10 seconds
-}
-
-function App() {
-  useReactQueryConfig({
-    retry: 4
-  })
-
-  return </>
-}
-```
+- `config: Object`
+  - Must be **stable** or **memoized**. Do not create an inline object!
+  - For a description of all config options, please see the [`useQuery` hook](#usequery).
