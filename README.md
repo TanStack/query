@@ -950,8 +950,12 @@ function useUrlQuery(url, options) {
 
 // Use it in your app!
 
-function Todos({ status = 'pending' }) {
-  const todosQuery = useUrlQuery(`/todos?status=${status}`)
+function Todos() {
+  const todosQuery = useUrlQuery(`/todos`)
+}
+
+function FilteredTodos({ status = 'pending' }) {
+  const todosQuery = useFunctionQuery([getTodos, { status }])
 }
 
 function Todo({ id }) {
@@ -1021,13 +1025,21 @@ function useFunctionQuery(functionTuple, options) {
 
 // Use it in your app!
 
-function Todos({ status = 'pending' }) {
-  const todosQuery = useFunctionQuery(getTodos, { status })
+function Todos() {
+  const todosQuery = useFunctionQuery(getTodos)
+}
+
+function FilteredTodos({ status = 'pending' }) {
+  const todosQuery = useFunctionQuery([getTodos, { status }])
 }
 
 function Todo({ id }) {
-  const todoQuery = useFunctionQuery(getTodo, { id })
+  const todoQuery = useFunctionQuery([getTodo, { id }])
 }
+
+refetchQuery(getTodos)
+refetchQuery([getTodos, { status: 'pending' }])
+refetchQuery([getTodo, { id: 5}])
 ```
 
 # API
