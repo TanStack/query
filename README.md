@@ -890,7 +890,7 @@ useReactQueryConfig({
 ```
 
 - `userQueryKey: any`
-  - This is the queryKey passed in `useQuery` and all other publis methods and utilities exported by React Query.
+  - This is the queryKey passed in `useQuery` and all other public methods and utilities exported by React Query.
 - `fullQueryHash: string`
   - This must be a unique `string` representing the query and variables.
   - It must be stable and deterministic and should not change if things like the order of variables is changed or shuffled.
