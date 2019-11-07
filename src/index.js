@@ -583,6 +583,7 @@ export function useMutation(
         }
 
         setIsLoading(false)
+        throw error
       }
     },
     [refetchQueriesOnFailure, refetchQueries]
