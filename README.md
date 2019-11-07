@@ -213,7 +213,9 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Manual Querying](#manual-querying)
   - [Retries](#retries)
   - [Retry Delay](#retry-delay)
+  - [Prefetching](#prefetching)
   - [Suspense Mode](#suspense-mode)
+  - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -229,6 +231,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`useMutation`](#usemutation)
   - [`setQueryData`](#setquerydata)
   - [`refetchQuery`](#refetchquery)
+  - [`prefetchQuery`](#prefetchQuery)
   - [`refetchAllQueries`](#refetchallqueries)
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
@@ -528,7 +531,7 @@ Out of the box, "scroll restoration" Just Works™️ in React Query. The reason
 If you ever want to disable a query from automatically running, you can use the `manual = true` option. When `manual` is set to true:
 
 - The query will not automatically refetch due to changes to their query function or variables.
-- The query will not automatically refetch due to `refetchQueries` options in other queries or via `useRefetchQuery` calls.
+- The query will not automatically refetch due to `refetchQueries` options in other queries or via `refetchQuery` calls.
 
 ```js
 function Todos() {
@@ -618,6 +621,21 @@ const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
 })
 ```
 
+### Prefetching
+
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, then you're in luck. You can use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
+
+```js
+import { prefetchQuery } from 'react-query'
+
+const prefetchTodos async () => {
+  const queryData = await prefetchQuery('todos', () => fetch('/todos'))
+  // The results of this query will be cached like a normal query
+}
+```
+
+The next time a `useQuery` instance is used for a prefetched query, it will use the cached data! If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
+
 ### Suspense Mode
 
 React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
@@ -651,6 +669,10 @@ useQuery(queryKey, queryFn, { suspense: true })
 ```
 
 When using suspense mode, `isLoading` and `error` states will be replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors. Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
+
+#### Fetch-on-render vs Fetch-as-you-render
+
+Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. However, if you want to take it to the next level and implement a `Fetch-as-you-render` model, we recommend implementing [Prefetching](#prefetching) on routing and/or user interactions events to initialize queries before they are needed.
 
 ## Mutations
 
@@ -1127,7 +1149,7 @@ const {
 - `queryFn: Function(variables) => Promise(data/error)`
   - **Required**
   - The function that the query will use to request data
-  - Optionally receives the `variables` object passed from either the query key tuple (`useQuery(['todos', variables], queryFn)`) or the refetch method's `variables` option `refetch({ variables })`
+  - Optionally receives the `variables` object passed from either the query key tuple (`useQuery(['todos', variables], queryFn)`) or the `refetch` method's `variables` option, eg. `refetch({ variables })`
   - Must return a promise that will either resolves data or throws an error.
 - `pagination: Boolean`
   - Set this to `true` to enable pagination mode
@@ -1267,12 +1289,12 @@ const maybePromise = setQueryData(queryKey, data, { shouldRefetch })
 
 ## `refetchQuery`
 
-`refetchQuery` is a function for imperatively triggering a refetch of either:
+`refetchQuery` is a function that can ge used to trigger a refetch of
 
-- A group of queries
-- A single query
+- A group of active queries
+- A single, specific query
 
-By default, it will only refetch stale queries, but the `force` option can be used to refetch all queries, including non-stale ones.
+By default, `refetchQuery` will only refetch stale queries, but the `force` option can be used to include non-stale ones.
 
 ```js
 import { refetchQuery } from 'react-query'
@@ -1336,6 +1358,29 @@ const isFetching = useIsFetching()
 
 - `isFetching: Boolean`
   - Will be `true` if any query in your application is loading or fetching in the background
+
+## `prefetchQuery`
+
+`prefetchQuery` is a function that can ge used to fetch and cache a query response for later before it is needed or rendered with `useQuery`. **Please note** that `prefetch` will not trigger a query fetch if the query is already cached. If you wish, you can force a prefetch for non-stale queries by using the `force` option:
+
+```js
+import { prefetchQuery } from 'react-query'
+
+const data = await prefetchQuery(queryKey, queryFn, { force, ...config })
+```
+
+### Options
+
+The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#usequery), with the exception of a `force` option:
+
+- `force: Boolean`
+  - Optional
+  - Set this to true to prefetch a query **even if it is stale**
+
+### Returns
+
+- `promise: Promise`
+  - A promise is returned that will either resolve with the **query's response data**, or throw with an **error**.
 
 ## `ReactQueryConfigProvider`
 

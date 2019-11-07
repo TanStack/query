@@ -452,10 +452,11 @@ export function useQuery(queryKey, queryFn, config = {}) {
   }
 }
 
-export async function fetchQuery(queryKey, queryFn, config = {}) {
+export async function prefetchQuery(queryKey, queryFn, config = {}) {
   config = {
     ...defaultConfig,
     ...config,
+    prefetch: true,
   }
 
   const [
@@ -463,7 +464,9 @@ export async function fetchQuery(queryKey, queryFn, config = {}) {
     queryGroup,
     variablesHash,
     variables,
-  ] = config.queryKeySerializerFn(queryKey)
+  ] = defaultConfig.queryKeySerializerFn(queryKey)
+
+  // If we're prefetching, use the queryFn to make the fetch call
 
   let query = queries.find(query => query.queryHash === queryHash)
 
@@ -500,13 +503,16 @@ export async function fetchQuery(queryKey, queryFn, config = {}) {
   }
 }
 
-export async function refetchQuery(userQueryKey, { force } = {}) {
+export async function refetchQuery(queryKey, config = {}) {
   const [
     ,
     queryGroup,
     variablesHash,
     variables,
-  ] = defaultConfig.queryKeySerializerFn(userQueryKey)
+  ] = defaultConfig.queryKeySerializerFn(queryKey)
+
+  // If we're simpley refetching an existing query, then go find them
+  // and call their fetch functions
 
   if (!queryGroup) {
     return
@@ -526,7 +532,7 @@ export async function refetchQuery(userQueryKey, { force } = {}) {
         return
       }
 
-      await query.fetch({ force })
+      await query.fetch({ force: config.force })
     })
   )
 }
