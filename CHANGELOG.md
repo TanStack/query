@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.3
+
+- Fixed an issue where falsey query keys would sometimes still fetch
+
 ## 0.3.2
 
 - Added the `useQuery.onSuccess` callback option
