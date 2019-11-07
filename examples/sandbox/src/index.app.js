@@ -8,7 +8,8 @@ import {
   useMutation,
   refetchAllQueries,
   useIsFetching,
-  _useQueries
+  queries,
+  globalStateListeners
 } from "react-query";
 
 import "./styles.css";
@@ -123,6 +124,24 @@ const patchTodo = todo => {
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 };
+
+export function useQueries() {
+  const [state, setState] = React.useState({ queries });
+
+  React.useEffect(() => {
+    const fn = () => {
+      setState({ queries });
+    };
+
+    globalStateListeners.push(fn);
+
+    return () => {
+      globalStateListeners.splice(globalStateListeners.indexOf(fn), 1);
+    };
+  }, []);
+
+  return state.queries;
+}
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);

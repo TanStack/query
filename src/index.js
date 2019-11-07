@@ -1,8 +1,8 @@
 import React from 'react'
 
-let queries = []
+export let queries = []
 const cancelledError = {}
-let globalStateListeners = []
+export let globalStateListeners = []
 let uid = 0
 const configContext = React.createContext()
 
@@ -468,6 +468,9 @@ export async function fetchQuery(queryKey, queryFn, config = {}) {
   let query = queries.find(query => query.queryHash === queryHash)
 
   if (query) {
+    if (!config.force) {
+      return
+    }
     query.config = config
     query.queryFn = queryFn
   } else {
@@ -490,7 +493,7 @@ export async function fetchQuery(queryKey, queryFn, config = {}) {
 
   // Trigger a fetch and return the promise
   try {
-    return await query.fetch()
+    return await query.fetch({ force: config.force })
   } finally {
     // Since this is not a hook, upsubscribe after we're done
     unsubscribeFromQuery()
@@ -586,24 +589,6 @@ export function useMutation(
   )
 
   return [mutate, { data, isLoading, error }]
-}
-
-export function _useQueries() {
-  const [state, setState] = React.useState({ queries })
-
-  React.useEffect(() => {
-    const fn = () => {
-      setState({ queries })
-    }
-
-    globalStateListeners.push(fn)
-
-    return () => {
-      globalStateListeners = globalStateListeners.filter(d => d !== fn)
-    }
-  }, [])
-
-  return state.queries
 }
 
 export function useIsFetching() {
