@@ -206,7 +206,7 @@ function makeQuery(options) {
     isFetchMore,
   } = {}) => {
     // Don't refetch fresh queries without force
-    if (!query.state.isStale && !force) {
+    if (!query.queryHash || (!query.state.isStale && !force)) {
       return
     }
 
