@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.2
+
+- Added the `useQuery.onSuccess` callback option
+- Added the `useQuery.onError` callback option
+
 ## 0.3.1
 
 - Added the `prefetchQuery` method

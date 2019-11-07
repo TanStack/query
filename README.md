@@ -1128,6 +1128,8 @@ const {
   staleTime,
   retry,
   retryDelay,
+  onSuccess,
+  onError,
   suspense,
 })
 ```
@@ -1175,6 +1177,12 @@ const {
 - `refetchInterval: false | Integer`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
+- `onError: Function(err) => void`
+  - Optional
+  - This function will fire if the query encounters an error (after all retries have happened) and will be passed the error.
+- `onSucess: Function(data) => data`
+  - Optional
+  - This function will fire any time the query successfully fetches new data.
 - `suspense: Boolean`
   - Optional
   - Set this to `true` to enable suspense mode.

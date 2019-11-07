@@ -293,6 +293,11 @@ function makeQuery(options) {
             }
           })
 
+          query.instances.forEach(
+            instance =>
+              instance.onSuccess && instance.onSuccess(query.state.data)
+          )
+
           cleanup()
 
           return data
@@ -308,6 +313,10 @@ function makeQuery(options) {
                 isStale: true,
               }
             })
+
+            query.instances.forEach(
+              instance => instance.onError && instance.onError(error)
+            )
 
             throw error
           }
@@ -385,14 +394,18 @@ export function useQuery(queryKey, queryFn, config = {}) {
   const [state, setState] = React.useState(query.state)
 
   const onStateUpdate = React.useCallback(newState => setState(newState), [])
+  const getLatestOnError = useGetLatest(config.onError)
+  const getLatestOnSuccess = useGetLatest(config.onSuccess)
 
   React.useEffect(() => {
     const unsubscribeFromQuery = query.subscribe({
       id: instanceId,
       onStateUpdate,
+      onSuccess: data => getLatestOnSuccess() && getLatestOnSuccess()(data),
+      onError: err => getLatestOnError() && getLatestOnError()(err),
     })
     return unsubscribeFromQuery
-  }, [instanceId, onStateUpdate, query])
+  }, [getLatestOnError, getLatestOnSuccess, instanceId, onStateUpdate, query])
 
   const isLoading = !queryHash || manual ? false : state.isCached ? false : true
   const refetch = query.fetch

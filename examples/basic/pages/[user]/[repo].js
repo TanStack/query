@@ -7,6 +7,7 @@ import { useQuery } from 'react-query'
 export default () => {
   const id =
     typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
+
   const { data, isLoading, isFetching } = useQuery(['repository', { id }], () =>
     fetch('/api/data?id=' + id)
   )
