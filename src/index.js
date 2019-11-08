@@ -724,7 +724,7 @@ export function stableStringify(obj) {
 }
 
 function isObject(a) {
-  return a && a !== null && typeof a === 'object'
+  return a && typeof a === 'object'
 }
 
 function isDocumentVisible() {
