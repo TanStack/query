@@ -31,20 +31,19 @@ let defaultConfig = {
 }
 
 export function ReactQueryConfigProvider({ config, children }) {
-  let configContextValue = React.useContext(configContext) || defaultConfig
-
-  if (!configContextValue) {
-    Object.assign(defaultConfig, config)
-    configContextValue = defaultConfig
-  }
+  let configContextValue = React.useContext(configContext)
 
   const newConfig = React.useMemo(
     () => ({
-      ...configContextValue,
+      ...(configContextValue || defaultConfig),
       ...config,
     }),
     [config, configContextValue]
   )
+
+  if (!configContextValue) {
+    defaultConfig = newConfig
+  }
 
   return (
     <configContext.Provider value={newConfig}>

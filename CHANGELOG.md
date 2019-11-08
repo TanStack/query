@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.6
+
+- Fixed an issue where passing `config` to `ReactQueryConfigProvider` would not update the non-hook `defaultContext`
+
 ## 0.3.5
 
 - Fixed an issue where `isLoading` would remain `true` if a query encountered an error after all retries
