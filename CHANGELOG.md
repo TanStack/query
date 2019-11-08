@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.5
+
+- Fixed an issue where `isLoading` would remain `true` if a query encountered an error after all retries
+- Fixed regression where `useIsFetching` stopped working
+
+## 0.3.4
+
+- Fixed an issue where `useMutation().mutate` would not throw an error when failing
+
 ## 0.3.3
 
 - Fixed an issue where falsey query keys would sometimes still fetch

@@ -303,6 +303,8 @@ function makeQuery(options) {
           return data
         } catch (error) {
           // As long as it's not a cancelled retry
+          cleanup()
+
           if (error !== query.cancelled) {
             // Store the error
             query.setState(old => {
@@ -320,8 +322,6 @@ function makeQuery(options) {
 
             throw error
           }
-
-          cleanup()
         }
       })()
     }
@@ -407,13 +407,18 @@ export function useQuery(queryKey, queryFn, config = {}) {
     return unsubscribeFromQuery
   }, [getLatestOnError, getLatestOnSuccess, instanceId, onStateUpdate, query])
 
-  const isLoading = !queryHash || manual ? false : state.isCached ? false : true
+  const isLoading = !state.isCached && query.state.isFetching
   const refetch = query.fetch
   const setData = query.setData
 
   const fetchMore = React.useCallback(
     config.paginated
-      ? variables => query.fetch({ variables, force: true, isFetchMore: true })
+      ? paginationVariables =>
+          query.fetch({
+            variables: paginationVariables,
+            force: true,
+            isFetchMore: true,
+          })
       : undefined,
     [query]
   )
@@ -612,9 +617,23 @@ export function useMutation(
 }
 
 export function useIsFetching() {
-  const queries = _useQueries()
+  const [state, setState] = React.useState({ queries })
 
-  return React.useMemo(() => queries.some(query => query.isFetching), [queries])
+  React.useEffect(() => {
+    const fn = () => {
+      setState({ queries })
+    }
+
+    globalStateListeners.push(fn)
+
+    return () => {
+      globalStateListeners = globalStateListeners.filter(d => d !== fn)
+    }
+  }, [])
+
+  return React.useMemo(() => state.queries.some(query => query.isFetching), [
+    state.queries,
+  ])
 }
 
 export function setQueryData(
