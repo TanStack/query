@@ -710,7 +710,7 @@ function stableStringifyReplacer(_, value) {
     ? Object.assign(
         {},
         ...Object.keys(value)
-          .sort((keyA, keyB) => (keyA > keyB ? 1 : keyB > keyA ? -1 : 0))
+          .sort()
           .map(key => ({
             [key]: value[key],
           }))
