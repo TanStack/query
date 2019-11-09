@@ -727,22 +727,13 @@ function isObject(a) {
 }
 
 function isDocumentVisible() {
-  if (typeof document.visibilityState !== 'undefined') {
-    return (
-      document.visibilityState === 'visible' ||
-      document.visibilityState === 'prerender'
-    )
-  }
-
-  return true
+  return document.visibilityState === undefined
+    || document.visibilityState === 'visible'
+    || document.visibilityState === 'prerender'
 }
 
 function isOnline() {
-  if (typeof navigator.onLine !== 'undefined') {
-    return navigator.onLine
-  }
-
-  return true
+  return navigator.onLine === undefined || navigator.onLine
 }
 
 function useGetLatest(obj) {
