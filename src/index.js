@@ -528,7 +528,7 @@ export async function refetchQuery(queryKey, config = {}) {
     variables,
   ] = defaultConfig.queryKeySerializerFn(queryKey)
 
-  // If we're simpley refetching an existing query, then go find them
+  // If we're simply refetching an existing query, then go find them
   // and call their fetch functions
 
   if (!queryGroup) {
