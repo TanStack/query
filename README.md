@@ -1118,13 +1118,13 @@ const {
   failureCount,
   isLoading,
   refetch,
-  // with pagination mode enabled
+  // with paginated mode enabled
   isFetchingMore,
   canFetchMore,
   fetchMore,
 } = useQuery(queryKey, queryFn, {
   manual,
-  pagination,
+  paginated,
   getCanFetchMore,
   staleTime,
   retry,
@@ -1154,15 +1154,15 @@ const {
   - The function that the query will use to request data
   - Optionally receives the `variables` object passed from either the query key tuple (`useQuery(['todos', variables], queryFn)`) or the `refetch` method's `variables` option, eg. `refetch({ variables })`
   - Must return a promise that will either resolves data or throws an error.
-- `pagination: Boolean`
-  - Set this to `true` to enable pagination mode
+- `paginated: Boolean`
+  - Set this to `true` to enable `paginated` mode
   - In this mode, new pagination utilities are returned from `useQuery` and `data` becomes an array of page results
 - `manual: Boolean`
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
 - `getCanFetchMore: Function(lastPage, allPages) => Boolean`
-  - **Required if using `pagination` mode**
-  - When using `pagination` mode, this function should return `true` if there is more data than can be fetched.
+  - **Required if using `paginated` mode**
+  - When using `paginated` mode, this function should return `true` if there is more data than can be fetched.
 - `retry: Boolean | Int`
   - If `false`, failed queries will not retry by default
   - If `true`, failed queries will retry infinitely
@@ -1213,11 +1213,11 @@ const {
   - Supports custom data merging (useful for "fetch more" calls)
   - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
 - `isFetchingMore: Boolean`
-  - If using `pagination` mode, this will be `true` when fetching more results using the `fetchMore` function.
+  - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
 - `canFetchMore: Boolean`
-  - If using `pagination` mode, this will be `true` if there is more data to be fetched (known via the required `getCanFetchMore` option function)
+  - If using `paginated` mode, this will be `true` if there is more data to be fetched (known via the required `getCanFetchMore` option function)
 - `fetchMore: Function(variables) => Promise`
-  - If using `pagination` mode, this function allows you to fetch the next "page" of results.
+  - If using `paginated` mode, this function allows you to fetch the next "page" of results.
   - `variables` should be an object that is passed to your query function to retrieve the next page of results
 
 ## `useMutation`
