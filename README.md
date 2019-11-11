@@ -234,6 +234,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`prefetchQuery`](#prefetchQuery)
   - [`refetchAllQueries`](#refetchallqueries)
   - [`useIsFetching`](#useisfetching)
+  - [`clearQueryCache`](#clearquerycache)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
 
 ## Installation
@@ -1389,6 +1390,19 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 
 - `promise: Promise`
   - A promise is returned that will either resolve with the **query's response data**, or throw with an **error**.
+
+## `clearQueryCache`
+
+`clearQueryCache` does exactly what it sounds like, it clears all query caches. It does this by:
+
+- Immediately deleting any queries that no not have active subscriptions
+- Immediately setting `data` to `null` for all queries with active subscriptions
+
+```js
+import { clearQueryCache } from 'react-query'
+
+clearQueryCache()
+```
 
 ## `ReactQueryConfigProvider`
 

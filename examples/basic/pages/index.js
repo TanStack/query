@@ -5,7 +5,7 @@ import fetch from '../libs/fetch'
 import { useQuery } from 'react-query'
 
 export default () => {
-  const { data, isLoading, isFetching } = useQuery(false && 'projects', () =>
+  const { data, isLoading, isFetching } = useQuery('projects', () =>
     fetch('/api/data')
   )
 

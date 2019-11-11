@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.7
+
+- Added the `clearQueryCache` API function to clear the query cache
+
 ## 0.3.6
 
 - Fixed an issue where passing `config` to `ReactQueryConfigProvider` would not update the non-hook `defaultContext`
