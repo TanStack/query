@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.8
+
+- Internal cleanup and refactoring
+
 ## 0.3.7
 
 - Added the `clearQueryCache` API function to clear the query cache
