@@ -528,7 +528,7 @@ export async function refetchQuery(queryKey, config = {}) {
     variables,
   ] = defaultConfig.queryKeySerializerFn(queryKey)
 
-  // If we're simpley refetching an existing query, then go find them
+  // If we're simply refetching an existing query, then go find them
   // and call their fetch functions
 
   if (!queryGroup) {
@@ -719,7 +719,7 @@ function stableStringifyReplacer(_, value) {
     ? Object.assign(
         {},
         ...Object.keys(value)
-          .sort((keyA, keyB) => (keyA > keyB ? 1 : keyB > keyA ? -1 : 0))
+          .sort()
           .map(key => ({
             [key]: value[key],
           }))
@@ -736,22 +736,13 @@ function isObject(a) {
 }
 
 function isDocumentVisible() {
-  if (typeof document.visibilityState !== 'undefined') {
-    return (
-      document.visibilityState === 'visible' ||
-      document.visibilityState === 'prerender'
-    )
-  }
-
-  return true
+  return document.visibilityState === undefined
+    || document.visibilityState === 'visible'
+    || document.visibilityState === 'prerender'
 }
 
 function isOnline() {
-  if (typeof navigator.onLine !== 'undefined') {
-    return navigator.onLine
-  }
-
-  return true
+  return navigator.onLine === undefined || navigator.onLine
 }
 
 function useGetLatest(obj) {

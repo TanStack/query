@@ -1058,7 +1058,7 @@ function functionQueryKeySerializer(queryKey) {
 
   const variablesHash = variablesIsObject ? stableStringify(variables) : ''
 
-  const queryHash = `${queryGroupId}_${variablesHash}`,
+  const queryHash = `${queryGroupId}_${variablesHash}`
 
   return [
     queryHash,
