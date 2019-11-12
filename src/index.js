@@ -669,12 +669,7 @@ export async function refetchAllQueries({
 }
 
 export function clearQueryCache() {
-  queries = queries.filter(query => {
-    if (!query.instances.length) {
-      query.state.data = null
-      return true
-    }
-  })
+  queries.length = 0;
 }
 
 function defaultQueryKeySerializerFn(queryKey) {
