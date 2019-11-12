@@ -441,7 +441,7 @@ function Todos() {
     ({ nextId } = {}) => fetch('/api/projects?cursor=' + (nextId || 0)),
     {
       paginated: true,
-      getCanFetchMore: (lastPage, allPages) => next.nextId,
+      getCanFetchMore: (lastPage, allPages) => lastPage.nextId,
     }
   )
 
@@ -474,14 +474,14 @@ function Todos() {
     ({ offset } = {}) => fetch('/api/projects?offset=' + (offset || 0)),
     {
       paginated: true,
-      getCanFetchMore: (lastPage, allPages) => next.nextId,
+      getCanFetchMore: (lastPage, allPages) => lastPage.nextId,
     }
   )
 
   const loadMore = async () => {
     try {
       // Get the last page
-      const lastPage = data[data.length - 1]
+      const lastPage = pages[pages.length - 1]
       // Get the last item's ID
       const lastItemId = lastPage[lastPage.length - 1].id
       // Fetch more with the offset ID + 1
