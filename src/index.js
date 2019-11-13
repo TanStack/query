@@ -9,11 +9,7 @@ const configContext = React.createContext()
 // Focus revalidate
 let eventsBinded = false
 if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
-  const revalidate = () => {
-    const { refetchAllOnWindowFocus } = defaultConfig
-    if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
-      refetchAllQueries()
-  }
+  const revali
   window.addEventListener('visibilitychange', revalidate, false)
   window.addEventListener('focus', revalidate, false)
   eventsBinded = true
