@@ -11,7 +11,7 @@ let eventsBinded = false
 if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
   const revalidate = () => {
     const { refetchAllOnWindowFocus } = defaultConfig
-    if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
+    if isOnline())
       refetchAllQueries()
   }
   window.addEventListener('visibilitychange', revalidate, false)
