@@ -1,4 +1,6 @@
 {
+  "autoAlias": false,
+  "silent": true,
   "version": 2,
   "alias": "react-query.tannerlinsley.com",
   "builds": [{ "src": "www/package.json", "use": "@now/next" }]
