@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.12
+
+- Remove orphaned npm dependencies
+
+## 0.3.11
+
+- Add `@types/react-query` as a dependency for typescript users
+
 ## 0.3.10
 
 - Fix issue where window focus event would try and register in react-native

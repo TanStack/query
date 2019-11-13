@@ -1,6 +1,6 @@
 {
   "name": "react-query",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -22,10 +22,7 @@
     "react": "^16.6.3"
   },
   "dependencies": {
-    "@babel/plugin-transform-regenerator": "^7.4.5",
-    "@types/react-query": "^0.3.0",
-    "core-js": "3",
-    "fast-async": "^6.3.8"
+    "@types/react-query": "^0.3.0"
   },
   "devDependencies": {
     "@babel/plugin-proposal-class-properties": "^7.4.4",
