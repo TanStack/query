@@ -3,6 +3,7 @@
 ## 0.3.9
 
 - Fix issue where variable hashes could contain arrays or similar number/string pairs
+- Fix issue where clearing query cache could lead to out of date query states
 
 ## 0.3.8
 
