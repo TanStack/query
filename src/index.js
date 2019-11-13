@@ -8,7 +8,7 @@ const configContext = React.createContext()
 
 // Focus revalidate
 let eventsBinded = false
-if (typeof window !== 'undefined' && !eventsBinded) {
+if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
   const revalidate = () => {
     const { refetchAllOnWindowFocus } = defaultConfig
     if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
@@ -669,7 +669,7 @@ export async function refetchAllQueries({
 }
 
 export function clearQueryCache() {
-  queries.length = 0;
+  queries.length = 0
 }
 
 function defaultQueryKeySerializerFn(queryKey) {

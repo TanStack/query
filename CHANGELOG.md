@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.10
+
+- Fix issue where window focus event would try and register in react-native
+
 ## 0.3.9
 
 - Fix issue where variable hashes could contain arrays or similar number/string pairs
