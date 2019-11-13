@@ -1181,7 +1181,7 @@ const {
 - `onError: Function(err) => void`
   - Optional
   - This function will fire if the query encounters an error (after all retries have happened) and will be passed the error.
-- `onSucess: Function(data) => data`
+- `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data.
 - `suspense: Boolean`
