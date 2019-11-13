@@ -724,7 +724,9 @@ function stableStringifyReplacer(_, value) {
             [key]: value[key],
           }))
       )
-    : value
+    : Array.isArray(value)
+    ? value
+    : String(value)
 }
 
 export function stableStringify(obj) {
@@ -732,13 +734,15 @@ export function stableStringify(obj) {
 }
 
 function isObject(a) {
-  return a && typeof a === 'object'
+  return a && typeof a === 'object' && !Array.isArray(a)
 }
 
 function isDocumentVisible() {
-  return document.visibilityState === undefined
-    || document.visibilityState === 'visible'
-    || document.visibilityState === 'prerender'
+  return (
+    document.visibilityState === undefined ||
+    document.visibilityState === 'visible' ||
+    document.visibilityState === 'prerender'
+  )
 }
 
 function isOnline() {

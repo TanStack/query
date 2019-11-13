@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.9
+
+- Fix issue where variable hashes could contain arrays or similar number/string pairs
+
 ## 0.3.8
 
 - Internal cleanup and refactoring
