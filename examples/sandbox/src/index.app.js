@@ -243,7 +243,7 @@ function App() {
   const [views, setViews] = React.useState(["", "fruit", "grape"]);
   // const [views, setViews] = React.useState([""]);
 
-  const queries = _useQueries();
+  const queries = useQueries();
 
   return (
     <div className="App">

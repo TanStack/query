@@ -7,6 +7,9 @@ Hooks for fetching, caching and updating asynchronous data in React
 <!-- <a href="https://travis-ci.org/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://travis-ci.org/tannerlinsley/react-query.svg?branch=master" />
 </a> -->
+<a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
+  <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
+</a>
 <a href="https://npmjs.com/package/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a>
@@ -22,6 +25,8 @@ Hooks for fetching, caching and updating asynchronous data in React
 <a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
 </a>
+
+Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley/react-table), [React Form](https://github.com/tannerlinsley/react-form), [React Charts](https://github.com/tannerlinsley/react-charts)
 
 ## Quick Features
 
@@ -1048,11 +1053,13 @@ function functionQueryKeySerializer(queryKey) {
   }
 
   // Get or create an ID for the function pointer
-  const queryGroupId = functionSerializerMap.get(queryFn) || (() => {
-    const id = Date.now()
-    functionSerializerMap.set(queryFn, id)
-    return id
-  })()
+  const queryGroupId =
+    functionSerializerMap.get(queryFn) ||
+    (() => {
+      const id = Date.now()
+      functionSerializerMap.set(queryFn, id)
+      return id
+    })()
 
   const variablesIsObject = isObject(variables)
 
@@ -1060,12 +1067,7 @@ function functionQueryKeySerializer(queryKey) {
 
   const queryHash = `${queryGroupId}_${variablesHash}`
 
-  return [
-    queryHash,
-    queryGroupId,
-    variablesHash,
-    variables,
-  ]
+  return [queryHash, queryGroupId, variablesHash, variables]
 }
 
 const queryConfig = {
@@ -1082,7 +1084,9 @@ function App() {
 // Heck, you can even make your own custom useQueryHook!
 
 function useFunctionQuery(functionTuple, options) {
-  const [queryFn, variables] = Array.isArray(functionTuple) ? functionTuple : [functionTuple]
+  const [queryFn, variables] = Array.isArray(functionTuple)
+    ? functionTuple
+    : [functionTuple]
   return useQuery(functionTuple, queryFn, options)
 }
 
@@ -1102,7 +1106,7 @@ function Todo({ id }) {
 
 refetchQuery(getTodos)
 refetchQuery([getTodos, { status: 'pending' }])
-refetchQuery([getTodo, { id: 5}])
+refetchQuery([getTodo, { id: 5 }])
 ```
 
 # API
