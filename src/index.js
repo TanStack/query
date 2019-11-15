@@ -665,7 +665,9 @@ export async function refetchAllQueries({
         return query.fetch({ force })
       }
     })
-  )
+  ).catch(error => { 
+    console.error(error.message)
+  });
 }
 
 export function clearQueryCache() {
