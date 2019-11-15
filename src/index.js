@@ -165,7 +165,7 @@ function makeQuery(options) {
         query.config.retry === true ||
         query.state.failureCount < query.config.retry
       ) {
-        if (!isDocumentVisible()) {
+        if (typeof document !== 'undefined' && !isDocumentVisible()) {
           return new Promise(r => {})
         }
 
