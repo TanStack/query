@@ -667,7 +667,7 @@ export async function refetchAllQueries({
         return query.fetch({ force })
       }
     })
-  );
+  )
 }
 
 export function clearQueryCache() {
