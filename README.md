@@ -714,6 +714,8 @@ const query = useQuery('todos', () => {
 })
 ```
 
+Using `fetch`:
+
 ```js
 const query = useQuery('todos', () => {
   // Create a new AbortController instance for this request
