@@ -1302,7 +1302,7 @@ const maybePromise = setQueryData(queryKey, data, { shouldRefetch })
 
 ## `refetchQuery`
 
-`refetchQuery` is a function that can ge used to trigger a refetch of
+`refetchQuery` is a function that can be used to trigger a refetch of
 
 - A group of active queries
 - A single, specific query
@@ -1374,7 +1374,7 @@ const isFetching = useIsFetching()
 
 ## `prefetchQuery`
 
-`prefetchQuery` is a function that can ge used to fetch and cache a query response for later before it is needed or rendered with `useQuery`. **Please note** that `prefetch` will not trigger a query fetch if the query is already cached. If you wish, you can force a prefetch for non-stale queries by using the `force` option:
+`prefetchQuery` is a function that can be used to fetch and cache a query response for later before it is needed or rendered with `useQuery`. **Please note** that `prefetch` will not trigger a query fetch if the query is already cached. If you wish, you can force a prefetch for non-stale queries by using the `force` option:
 
 ```js
 import { prefetchQuery } from 'react-query'
