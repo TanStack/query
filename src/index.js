@@ -12,7 +12,9 @@ if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
   const revalidate = () => {
     const { refetchAllOnWindowFocus } = defaultConfig
     if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
-      refetchAllQueries()
+      refetchAllQueries().catch(error => { 
+        console.error(error.message)
+      })
   }
   window.addEventListener('visibilitychange', revalidate, false)
   window.addEventListener('focus', revalidate, false)
