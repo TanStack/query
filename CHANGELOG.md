@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.14
+
+- Add `promise.cancel` support to query promises to support request cancellation APIs
+
+## 0.3.13
+
+- Fix issue where `document` was not guarded againts in React Native
+
 ## 0.3.12
 
 - Remove orphaned npm dependencies

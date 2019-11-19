@@ -117,6 +117,10 @@ function makeQuery(options) {
         // Cancel any side-effects
         query.cancelled = cancelledError
 
+        if (query.promise && query.promise.cancel) {
+          query.promise.cancel()
+        }
+
         // Mark as inactive
         query.setState(old => {
           return {

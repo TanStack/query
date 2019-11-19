@@ -221,6 +221,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Prefetching](#prefetching)
   - [Suspense Mode](#suspense-mode)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
+  - [Cancelling Query Requests](#cancelling-query-requests)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -676,9 +677,62 @@ useQuery(queryKey, queryFn, { suspense: true })
 
 When using suspense mode, `isLoading` and `error` states will be replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors. Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
 
-#### Fetch-on-render vs Fetch-as-you-render
+### Fetch-on-render vs Fetch-as-you-render
 
 Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. However, if you want to take it to the next level and implement a `Fetch-as-you-render` model, we recommend implementing [Prefetching](#prefetching) on routing and/or user interactions events to initialize queries before they are needed.
+
+### Cancelling Query Requests
+
+By default, queries that become inactive before their promises are resolved are simply ignored instead of cancelled. Why is this?
+
+- For most applications, ignoring out-of-date queries is sufficient
+- Cancellation APIs may not be available for every query function
+- If cancellation APIs are available, they typically vary in implementation between utilities/libraries (eg. Fetch vs Axios vs XMLHttpRequest).
+
+But don't worry! If your queries are high-bandwidth or potentially very expensive to download, React Query exposes a generic way to **cancel** query requests using a cancellation token or other related API. To integrate with this feature, attach a `cancel` function to the promise returned by your query that implements your request cancellation. When a query becomes out-of-date or inactive, this `promise.cancel` function will called (if available):
+
+Using `axios`:
+
+```js
+import { CancelToken } from 'axios'
+
+const query = useQuery('todos', () => {
+  // Create a new CancelToken source for this request
+  const source = CancelToken.source()
+
+  const promise = axios.get('/todos', {
+    // Pass the source token to your request
+    cancelToken: source.token,
+  })
+
+  // Cancel the request if React Query calls the `promise.cancel` method
+  promise.cancel = () => {
+    source.cancel('Query was cancelled by React Query')
+  }
+
+  return promise
+})
+```
+
+```js
+const query = useQuery('todos', () => {
+  // Create a new AbortController instance for this request
+  const controller = new AbortController()
+  // Get the abortController's signal
+  const signal = controller.signal
+
+  const promise = fetch('/todos', {
+    method: 'get',
+    // Pass the signal to your request
+    signal,
+  })
+
+  // Cancel the request if React Query calls the `promise.cancel` method
+  promise.cancel = controller.abort
+
+  return promise
+})
+```
 
 ## Mutations
 
