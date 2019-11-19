@@ -169,11 +169,11 @@ This library is being built and maintained by me, @tannerlinsley and I am always
           <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/supporters.png" />
         </a>
       </td>
-      <!-- <td>
+      <td>
         <ul>
-        <li><a href=""><a></li>
+          <li><a href="https://github.com/bgazzera">@bgazzera<a></li>
         </ul>
-      </td> -->
+      </td>
       <td>
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
           Become a Supporter!
