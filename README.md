@@ -36,6 +36,7 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Mutations + Automatic Query Refetching
 - Multi-layer Cache + Garbage Collection
 - Load-More Pagination + Scroll Recovery
+- Request Cancellation
 - [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) Support
 - <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
     <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
