@@ -3,6 +3,7 @@
 ## 0.3.14
 
 - Add `promise.cancel` support to query promises to support request cancellation APIs
+- Refetch all on window focus should no longer raise unhandled promise rejections
 
 ## 0.3.13
 
