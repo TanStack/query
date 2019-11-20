@@ -2,7 +2,7 @@
 
 ## 0.3.15
 
-- Better esm bundles
+- Better esm bundle configuration
 
 ## 0.3.14
 
