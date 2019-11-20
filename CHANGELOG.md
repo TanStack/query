@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.15
+
+- Better esm bundles
+
 ## 0.3.14
 
 - Add `promise.cancel` support to query promises to support request cancellation APIs

@@ -6,27 +6,23 @@ import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
 
 import pkg from './package.json'
 
-export default {
-  input: 'src/index.js',
-  output: [
-    {
+export default [
+  {
+    input: 'src/index.js',
+    output: {
       file: pkg.main,
       format: 'cjs',
       sourcemap: true,
     },
-    {
+    plugins: [external(), babel(), resolve(), commonjs(), sizeSnapshot()],
+  },
+  {
+    input: 'src/index.js',
+    output: {
       file: pkg.module,
       format: 'es',
       sourcemap: true,
     },
-  ],
-  plugins: [
-    external(),
-    babel({
-      exclude: 'node_modules/**',
-    }),
-    resolve(),
-    commonjs(),
-    sizeSnapshot(),
-  ],
-}
+    plugins: [external(), babel(), sizeSnapshot()],
+  },
+]
