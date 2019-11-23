@@ -636,7 +636,7 @@ If you're lucky enough, you may know enough about what your users will do to be 
 ```js
 import { prefetchQuery } from 'react-query'
 
-const prefetchTodos async () => {
+const prefetchTodos = async () => {
   const queryData = await prefetchQuery('todos', () => fetch('/todos'))
   // The results of this query will be cached like a normal query
 }
