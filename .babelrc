@@ -9,5 +9,11 @@
     ],
     "@babel/react"
   ],
-  "plugins": ["module:fast-async"]
+  "plugins": [
+    ["module:fast-async", {
+      "compiler": {
+        "noRuntime": true
+      }
+    }]
+  ]
 }
