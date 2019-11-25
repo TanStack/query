@@ -12,7 +12,7 @@ if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
   const revalidate = () => {
     const { refetchAllOnWindowFocus } = defaultConfig
     if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
-      refetchAllQueries().catch(error => { 
+      refetchAllQueries().catch(error => {
         console.error(error.message)
       })
   }
@@ -436,7 +436,7 @@ export function useQuery(queryKey, queryFn, config = {}) {
     }
 
     if (config.suspense) {
-      if (isMountedRef.current || wasPrefetched) {
+      if (!isMountedRef.current || wasPrefetched) {
         return
       }
     }

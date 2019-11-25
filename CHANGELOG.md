@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.17
+
+- Fix and issue where queries would double fetch when using suspense
+
 ## 0.3.16
 
 - Remove nodent runtime from react-async (shaved off 938 bytes!)
