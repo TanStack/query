@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.16
+
+- Remove nodent runtime from react-async (shaved off 938 bytes!)
+
 ## 0.3.15
 
 - Better esm bundle configuration
