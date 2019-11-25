@@ -46,6 +46,7 @@
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.5.0",
     "eslint-plugin-standard": "^4.0.0",
+    "fast-async": "^6.3.8",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
