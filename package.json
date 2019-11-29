@@ -10,7 +10,7 @@
   "scripts": {
     "test": "cross-env CI=1 react-scripts test --env=jsdom",
     "test:watch": "react-scripts test --env=jsdom",
-    "build": "rollup -c",
+    "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "prepare": "yarn build",
@@ -55,6 +55,7 @@
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
+    "rollup-plugin-size": "^0.2.1",
     "rollup-plugin-size-snapshot": "^0.10.0",
     "rollup-plugin-terser": "^5.1.2"
   },
