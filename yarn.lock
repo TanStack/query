@@ -4419,12 +4419,12 @@ rollup-plugin-size-snapshot@^0.10.0:
     terser "^4.1.2"
     webpack "^4.28.4"
 
-rollup-plugin-size@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-size/-/rollup-plugin-size-0.2.0.tgz#8aea01becee264e362987f8f685ce78f5f691f13"
-  integrity sha512-mhnUoag+9beFrNrl+vdn13CAVtUk2uRyT+gwti5zaHfA8TNVsR/x140fC9YBbEXdtD//31aWKUp/jdX50y6uBg==
+rollup-plugin-size@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/rollup-plugin-size/-/rollup-plugin-size-0.2.1.tgz#aec287896740e73550629c43cd6d402f71cc51de"
+  integrity sha512-ZwOXarF21okk8u7gZKTH9JyULNFmaUyosOMifxa0vvdjJGaJs3NDhnTgFaJW8PsFMxOVgwxqJrLqqTmFfvH4EA==
   dependencies:
-    size-plugin-core "^0.0.6"
+    size-plugin-core "^0.0.7"
 
 rollup-plugin-terser@^5.1.2:
   version "5.1.2"
@@ -4588,10 +4588,10 @@ signal-exit@^3.0.0, signal-exit@^3.0.2:
   resolved "https://registry.yarnpkg.com/signal-exit/-/signal-exit-3.0.2.tgz#b5fdc08f1287ea1178628e415e25132b73646c6d"
   integrity sha1-tf3AjxKH6hF4Yo5BXiUTK3NkbG0=
 
-size-plugin-core@^0.0.6:
-  version "0.0.6"
-  resolved "https://registry.yarnpkg.com/size-plugin-core/-/size-plugin-core-0.0.6.tgz#9d717f0ff3649855a0d8c2e883b34dc42e2bb5ec"
-  integrity sha512-r4ULc4vHJqbY0glpEVu/xtgONdkSP4dtGWhPPyTQau7U5B4Kev4cUbuK6vAqH99kJnftUYB07g0rCqMw0auPRw==
+size-plugin-core@^0.0.7:
+  version "0.0.7"
+  resolved "https://registry.yarnpkg.com/size-plugin-core/-/size-plugin-core-0.0.7.tgz#f63875902d6ae694d3989b7385286934a78020cd"
+  integrity sha512-vMX3AhK3hh5vxfOL5VgEIxUkcm0MFfiPsZ9LqZsZRH7iQ+erU669zYsx+WCF4EQ+nn11GYXL91U/sEvS1FnPug==
   dependencies:
     brotli-size "^4.0.0"
     chalk "^2.4.2"
@@ -4600,13 +4600,13 @@ size-plugin-core@^0.0.6:
     gzip-size "^5.1.1"
     minimatch "^3.0.4"
     pretty-bytes "^5.3.0"
-    size-plugin-store "^0.0.4"
+    size-plugin-store "^0.0.5"
     util.promisify "^1.0.0"
 
-size-plugin-store@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/size-plugin-store/-/size-plugin-store-0.0.4.tgz#7d013e4c58829f19a78166e05e32fd096830a97c"
-  integrity sha512-BFa0R5617s6xU65yc9a6Mj5wRp9Ziqmc1yp+pLZMOVuwb2m2K27AplZK8gxHUlHcTXV0Q45/BOwLVG4CYDD2rA==
+size-plugin-store@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/size-plugin-store/-/size-plugin-store-0.0.5.tgz#5b36e6f0f12e2f25f7bf1cab029a52e000348f98"
+  integrity sha512-SIFBv0wMMMfdqg1Po8vem90OaXe2Cftfo0AiXYU9m9JxDhOd726K+0BfNcYyOmDyrH2uUM7zMlnU2OhbbsDv5Q==
   dependencies:
     axios "^0.19.0"
     ci-env "^1.11.0"
