@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.18
+
+- Fix and issue where `setQueryData` would crash when the query does not exist
+
 ## 0.3.17
 
 - Fix and issue where queries would double fetch when using suspense
