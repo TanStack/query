@@ -8,8 +8,8 @@
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "scripts": {
-    "test": "cross-env CI=1 react-scripts test --env=jsdom",
-    "test:watch": "react-scripts test --env=jsdom",
+    "test": "jest",
+    "test:watch": "jest .",
     "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
@@ -25,12 +25,14 @@
     "@types/react-query": "^0.3.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "@svgr/rollup": "^4.3.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.x",
+    "babel-jest": "^24.9.0",
     "cross-env": "^5.1.4",
     "eslint": "5.x",
     "eslint-config-prettier": "^4.3.0",
@@ -47,6 +49,7 @@
     "eslint-plugin-react-hooks": "1.5.0",
     "eslint-plugin-standard": "^4.0.0",
     "fast-async": "^6.3.8",
+    "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
