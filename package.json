@@ -10,7 +10,7 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest .",
-    "build": "rollup -c",
+    "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "prepare": "yarn build",
