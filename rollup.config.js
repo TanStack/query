@@ -15,7 +15,7 @@ export default [
       sourcemap: true,
     },
     plugins: [external(), babel(), resolve(), commonjs(),
-      size({publish:true,exclude:pkg.module,filename:'sizes-cjs.json'}),
+      size({publish:true,exclude:pkg.module,filename:'sizes-cjs.json',writeFile:process.env.CI?true:false}),
       sizeSnapshot()],
   },
   {
@@ -26,7 +26,7 @@ export default [
       sourcemap: true,
     },
     plugins: [external(), babel(),
-      size({publish:true,exclude:pkg.main,filename:'sizes-es.json'}),
+      size({publish:true,exclude:pkg.main,filename:'sizes-es.json',writeFile:process.env.CI?true:false}),
       sizeSnapshot()],
   },
 ]
