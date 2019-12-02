@@ -1,5 +1,5 @@
 language: node_js
-env:
-  - NODE_ENV=production
 node_js:
   - 10
+env:
+  - NODE_ENV=production
