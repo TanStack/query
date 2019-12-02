@@ -134,7 +134,10 @@ function makeQuery(options) {
         // Schedule garbage collection
         query.cacheTimeout = setTimeout(
           () => {
-            queries.splice(queries.findIndex(d => d === query), 1)
+            queries.splice(
+              queries.findIndex(d => d === query),
+              1
+            )
             globalStateListeners.forEach(d => d())
           },
           query.state.isCached ? query.config.cacheTime : 0
@@ -653,6 +656,10 @@ export function setQueryData(
   }
 
   const query = queries.find(d => d.queryHash === queryHash)
+
+  if (!query) {
+    return
+  }
 
   query.setData(updater)
 
