@@ -383,7 +383,7 @@ const { data: projects } = useQuery(
 
 ### Caching & Invalidation
 
-React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching strategy together with robust query deduping to to always ensure a query's data is only cached when it's needed and only cached once even if that query is used multiple times across your application.
+React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching strategy together with robust query deduping to always ensure a query's data is only cached when it's needed and only cached once even if that query is used multiple times across your application.
 
 At a glance:
 
