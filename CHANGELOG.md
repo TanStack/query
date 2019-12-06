@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.21
+
+- Fixed an edge case where `useIsLoading` would not update or rerender correctly.
+
+## 0.3.20
+
+- Added `config.refetchIntervalInBackground` option
+
+## 0.3.19
+
+- Added `config.initialData` option for SSR
+
 ## 0.3.18
 
 - Fix and issue where `setQueryData` would crash when the query does not exist

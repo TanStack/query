@@ -220,6 +220,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Retries](#retries)
   - [Retry Delay](#retry-delay)
   - [Prefetching](#prefetching)
+  - [SSR & Initial Data](#ssr--initial-data)
   - [Suspense Mode](#suspense-mode)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
   - [Cancelling Query Requests](#cancelling-query-requests)
@@ -643,6 +644,20 @@ const prefetchTodos = async () => {
 ```
 
 The next time a `useQuery` instance is used for a prefetched query, it will use the cached data! If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
+
+### SSR & Initial Data
+
+When using SSR (server-side-rendering) with React Query, you will (by default) render using the initial state of the query before it has been fetched. To get around this, you can pre-seed a query's data using the `config.initialData` option:
+
+```js
+const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
+  initialData: [{ id: 0, name: 'Implement SSR!' }],
+})
+
+// data === [{ id: 0, name: 'Implement SSR!'}]
+```
+
+The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, will continue as normal and request a fresh copy of the query result.
 
 ### Suspense Mode
 
@@ -1187,12 +1202,16 @@ const {
   manual,
   paginated,
   getCanFetchMore,
-  staleTime,
   retry,
   retryDelay,
+  staleTime
+  cacheTime,
+  refetchInterval,
+  refetchIntervalInBackground,
   onSuccess,
   onError,
   suspense,
+  initialData
 })
 ```
 
@@ -1239,6 +1258,9 @@ const {
 - `refetchInterval: false | Integer`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
+- `refetchIntervalInBackground: Boolean`
+  - Optional
+  - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
 - `onError: Function(err) => void`
   - Optional
   - This function will fire if the query encounters an error (after all retries have happened) and will be passed the error.
@@ -1250,6 +1272,9 @@ const {
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `isLoading` would normally be `true`
   - When `true`, `useQuery` will throw runtime errors when `error` would normally be truthy
+- `initialData: any`
+  - Optional
+  - If set, this value will be used as the initial data for the query (as long as the query hasn't been created or cached yet)
 
 ### Returns
 

@@ -59,6 +59,12 @@ function useConfigContext() {
 }
 
 function makeQuery(options) {
+  let initialData = options.config.paginated ? [] : null
+
+  if (typeof options.config.initialData !== 'undefined') {
+    initialData = options.config.initialData
+  }
+
   let query = {
     ...options,
     pageVariables: [],
@@ -71,7 +77,7 @@ function makeQuery(options) {
       failureCount: 0,
       isCached: false,
       isStale: true,
-      data: options.config.paginated ? [] : null,
+      data: initialData,
     },
     // promise: null,
     // staleTimeout: null,
@@ -134,10 +140,7 @@ function makeQuery(options) {
         // Schedule garbage collection
         query.cacheTimeout = setTimeout(
           () => {
-            queries.splice(
-              queries.findIndex(d => d === query),
-              1
-            )
+            queries.splice(queries.findIndex(d => d === query), 1)
             globalStateListeners.forEach(d => d())
           },
           query.state.isCached ? query.config.cacheTime : 0
@@ -390,14 +393,18 @@ export function useQuery(queryKey, queryFn, config = {}) {
 
   React.useEffect(() => {
     if (config.refetchInterval && !query.refetchInterval) {
-      query.refetchInterval = setInterval(query.fetch, config.refetchInterval)
+      query.refetchInterval = setInterval(() => {
+        if (isDocumentVisible() || config.refetchIntervalInBackground) {
+          query.fetch()
+        }
+      }, config.refetchInterval)
 
       return () => {
         clearInterval(query.refetchInterval)
         query.refetchInterval = null
       }
     }
-  }, [config.refetchInterval, query])
+  }, [config.refetchInterval, config.refetchIntervalInBackground, query])
 
   const [state, setState] = React.useState(query.state)
 
@@ -625,23 +632,26 @@ export function useMutation(
 }
 
 export function useIsFetching() {
-  const [state, setState] = React.useState({ queries })
+  const [state, setState] = React.useState({})
+  const ref = React.useRef()
+
+  if (!ref.current) {
+    ref.current = () => {
+      setState({})
+    }
+    globalStateListeners.push(ref.current)
+  }
 
   React.useEffect(() => {
-    const fn = () => {
-      setState({ queries })
-    }
-
-    globalStateListeners.push(fn)
-
     return () => {
-      globalStateListeners = globalStateListeners.filter(d => d !== fn)
+      globalStateListeners = globalStateListeners.filter(d => d !== ref.current)
     }
   }, [])
 
-  return React.useMemo(() => state.queries.some(query => query.isFetching), [
-    state.queries,
-  ])
+  return React.useMemo(
+    () => state && queries.some(query => query.state.isFetching),
+    [state]
+  )
 }
 
 export function setQueryData(
