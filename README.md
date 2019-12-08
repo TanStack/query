@@ -1188,6 +1188,8 @@ const {
   paginated,
   getCanFetchMore,
   staleTime,
+  cacheTime,
+  refetchInterval,
   retry,
   retryDelay,
   onSuccess,
