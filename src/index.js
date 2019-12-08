@@ -255,7 +255,6 @@ function makeQuery(options) {
           query.setState(old => {
             return {
               ...old,
-              error: null,
               isFetching: true,
               isFetchingMore: isFetchMore,
               failureCount: 0,
@@ -289,6 +288,7 @@ function makeQuery(options) {
 
             return {
               ...old,
+              error: null,
               data,
               isCached: true,
               isStale: false,
