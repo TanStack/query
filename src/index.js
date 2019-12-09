@@ -11,13 +11,16 @@ let eventsBinded = false
 if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
   const revalidate = () => {
     const { refetchAllOnWindowFocus } = defaultConfig
-    if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
-      refetchAllQueries({ shouldRefetchQuery: (query) => {
-        if (query.config.refetchOnWindowFocus === false) {
-          return false
-        }
-        return true
-      }}).catch(error => {
+    if (isDocumentVisible() && isOnline())
+      refetchAllQueries({
+        shouldRefetchQuery: (query) => {
+          if (typeof query.config.refetchOnWindowFocus === 'undefined') {
+            return refetchAllOnWindowFocus;
+          } else {
+            return query.config.refetchOnWindowFocus;
+          }
+        },
+      }).catch(error => {
         console.error(error.message)
       })
   }
