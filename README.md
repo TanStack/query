@@ -646,7 +646,10 @@ The next time a `useQuery` instance is used for a prefetched query, it will use 
 
 ### SSR & Initial Data
 
-When using SSR (server-side-rendering) with React Query, you will (by default) render using the initial state of the query before it has been fetched. To get around this, you can pre-seed a query's data using the `config.initialData` option:
+When using SSR (server-side-rendering) with React Query there are a few things to note:
+
+- Caching is not performed during SSR. This is outside of the scope of React Query and easily leads to out-of-sync data when used with frameworks like Next.js or other SSR strategies.
+- Queries rendered on the server will by default use the initial state of an unfetched query. This means that `data` will be set to `null`. To get around this in SSR, you can pre-seed a query's data using the `config.initialData` option:
 
 ```js
 const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
