@@ -1260,17 +1260,14 @@ const {
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
 - `refetchInterval: false | Integer`
   - Optional
-    <<<<<<< HEAD
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
 - `refetchIntervalInBackground: Boolean`
   - Optional
-  - # If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
-  - If set to a number, all queries will continuously refetch at this frequency in milliseconds.
+  - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
 - `refetchOnWindowFocus: Boolean`
   - Optional
   - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `true`).
-  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `false`).
-    > > > > > > > e16d191529c2d4935d9fb85513b27f4f06eafaf0
+  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `false`.
 - `onError: Function(err) => void`
   - Optional
   - This function will fire if the query encounters an error (after all retries have happened) and will be passed the error.
@@ -1280,15 +1277,11 @@ const {
 - `suspense: Boolean`
   - Optional
   - Set this to `true` to enable suspense mode.
-    <<<<<<< HEAD
   - When `true`, `useQuery` will suspend when `isLoading` would normally be `true`
   - When `true`, `useQuery` will throw runtime errors when `error` would normally be truthy
 - `initialData: any`
   - Optional
-  - # If set, this value will be used as the initial data for the query (as long as the query hasn't been created or cached yet)
-  - When `true`, `useQuery` will suspend when `isLoading` would normally be `true`.
-  - When `true`, `useQuery` will throw runtime errors when `error` would normally be truthy.
-    > > > > > > > e16d191529c2d4935d9fb85513b27f4f06eafaf0
+  - If set, this value will be used as the initial data for the query (as long as the query hasn't been created or cached yet)
 
 ### Returns
 
