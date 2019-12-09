@@ -1191,6 +1191,7 @@ const {
   refetchInterval,
   retry,
   retryDelay,
+  refetchOnWindowFocus,
   onSuccess,
   onError,
   suspense,
@@ -1240,6 +1241,10 @@ const {
 - `refetchInterval: false | Integer`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds.
+- `refetchOnWindowFocus: Boolean`
+  - Optional
+  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `true`).
+  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `false`).
 - `onError: Function(err) => void`
   - Optional
   - This function will fire if the query encounters an error (after all retries have happened) and will be passed the error.
