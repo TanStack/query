@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.22
+
+- Caching is now disabled when React Query is used on the server. It is still possible to seed queries using `initialData` during SSR.
+
 ## 0.3.21
 
 - Fixed an edge case where `useIsLoading` would not update or rerender correctly.

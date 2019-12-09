@@ -9,11 +9,8 @@ export default () => {
     fetch('/api/data')
   )
 
-  const isGlobalFetching = useIsFetching()
-
   return (
     <div style={{ textAlign: 'center' }}>
-      {isGlobalFetching ? 'fetching...' : null}
       <h1>Trending Projects</h1>
       <div>
         {isLoading ? (

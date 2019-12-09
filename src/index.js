@@ -5,6 +5,7 @@ const cancelledError = {}
 export let globalStateListeners = []
 let uid = 0
 const configContext = React.createContext()
+const isServer = typeof window === 'undefined'
 
 // Focus revalidate
 let eventsBinded = false
@@ -13,11 +14,11 @@ if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
     const { refetchAllOnWindowFocus } = defaultConfig
     if (isDocumentVisible() && isOnline())
       refetchAllQueries({
-        shouldRefetchQuery: (query) => {
+        shouldRefetchQuery: query => {
           if (typeof query.config.refetchOnWindowFocus === 'undefined') {
-            return refetchAllOnWindowFocus;
+            return refetchAllOnWindowFocus
           } else {
-            return query.config.refetchOnWindowFocus;
+            return query.config.refetchOnWindowFocus
           }
         },
       }).catch(error => {
@@ -396,7 +397,9 @@ export function useQuery(queryKey, queryFn, config = {}) {
       config,
       queryFn,
     })
-    queries.push(query)
+    if (!isServer) {
+      queries.push(query)
+    }
   }
 
   React.useEffect(() => {
@@ -526,7 +529,9 @@ export async function prefetchQuery(queryKey, queryFn, config = {}) {
       config,
       queryFn,
     })
-    queries.push(query)
+    if (!isServer) {
+      queries.push(query)
+    }
   }
 
   // Trigger a query subscription with one-time unique id
@@ -693,8 +698,11 @@ export async function refetchAllQueries({
 } = {}) {
   return Promise.all(
     queries.map(async query => {
-      if (typeof shouldRefetchQuery !== 'undefined' && !shouldRefetchQuery(query)) {
-        return;
+      if (
+        typeof shouldRefetchQuery !== 'undefined' &&
+        !shouldRefetchQuery(query)
+      ) {
+        return
       }
       if (query.instances.length || includeInactive) {
         return query.fetch({ force })
