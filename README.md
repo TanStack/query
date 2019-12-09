@@ -489,20 +489,19 @@ function Todos() {
     try {
       // Get the last page
       const lastPage = pages[pages.length - 1]
-      // Get the last item's ID
-      const lastItemId = lastPage[lastPage.length - 1].id
-      // Fetch more with the offset ID + 1
+      const { nextId } = lastPage;
+      // Fetch more starting from nextId
       await fetchMore({
-        offset: lastItemId + 1,
+        offset: nextId,
       })
     } catch {}
   }
 
   return isLoading ? (
     <p>Loading...</p>
-  ) : data ? (
+  ) : pages ? (
     <>
-      {data.map((page, i) => (
+      {pages.map((page, i) => (
         <React.Fragment key={i}>
           {page.data.map(project => (
             <p key={project.id}>{project.name}</p>
