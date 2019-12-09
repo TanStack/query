@@ -360,6 +360,7 @@ function makeQuery(options) {
 
 export function useQuery(queryKey, queryFn, config = {}) {
   const isMountedRef = React.useRef(false)
+  const wasSuspendedRef = React.useRef(false)
   const instanceIdRef = React.useRef(uid++)
   const instanceId = instanceIdRef.current
 
@@ -457,7 +458,7 @@ export function useQuery(queryKey, queryFn, config = {}) {
     }
 
     if (config.suspense) {
-      if (!isMountedRef.current || wasPrefetched) {
+      if (wasSuspendedRef.current || wasPrefetched) {
         return
       }
     }
@@ -483,9 +484,12 @@ export function useQuery(queryKey, queryFn, config = {}) {
       throw state.error
     }
     if (!state.isCached) {
+      wasSuspendedRef.current = true
       throw query.fetch()
     }
   }
+
+  wasSuspendedRef.current = false
 
   return {
     ...state,
