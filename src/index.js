@@ -11,8 +11,16 @@ let eventsBinded = false
 if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
   const revalidate = () => {
     const { refetchAllOnWindowFocus } = defaultConfig
-    if (refetchAllOnWindowFocus && isDocumentVisible() && isOnline())
-      refetchAllQueries().catch(error => {
+    if (isDocumentVisible() && isOnline())
+      refetchAllQueries({
+        shouldRefetchQuery: (query) => {
+          if (typeof query.config.refetchOnWindowFocus === 'undefined') {
+            return refetchAllOnWindowFocus;
+          } else {
+            return query.config.refetchOnWindowFocus;
+          }
+        },
+      }).catch(error => {
         console.error(error.message)
       })
   }
@@ -258,7 +266,6 @@ function makeQuery(options) {
           query.setState(old => {
             return {
               ...old,
-              error: null,
               isFetching: true,
               isFetchingMore: isFetchMore,
               failureCount: 0,
@@ -292,6 +299,7 @@ function makeQuery(options) {
 
             return {
               ...old,
+              error: null,
               data,
               isCached: true,
               isStale: false,
@@ -681,9 +689,13 @@ export function setQueryData(
 export async function refetchAllQueries({
   includeInactive,
   force = includeInactive,
+  shouldRefetchQuery,
 } = {}) {
   return Promise.all(
     queries.map(async query => {
+      if (typeof shouldRefetchQuery !== 'undefined' && !shouldRefetchQuery(query)) {
+        return;
+      }
       if (query.instances.length || includeInactive) {
         return query.fetch({ force })
       }

@@ -1,1 +1,32 @@
-[{"timestamp":1575241903421,"files":[{"filename":"index.es.js","size":6406,"delta":9}]}]
+[
+  {
+    "timestamp": 1575910427783,
+    "files": [
+      {
+        "filename": "index.es.js",
+        "size": 6457,
+        "delta": 54
+      }
+    ]
+  },
+  {
+    "timestamp": 1575841192229,
+    "files": [
+      {
+        "filename": "index.es.js",
+        "size": 6403,
+        "delta": -3
+      }
+    ]
+  },
+  {
+    "timestamp": 1575241903421,
+    "files": [
+      {
+        "filename": "index.es.js",
+        "size": 6406,
+        "delta": 9
+      }
+    ]
+  }
+]
