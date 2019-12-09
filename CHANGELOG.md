@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.23
+
+- Fixed an issue where queries would not refresh in the background when using suspense
+
 ## 0.3.22
 
 - Caching is now disabled when React Query is used on the server. It is still possible to seed queries using `initialData` during SSR.
