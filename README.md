@@ -832,7 +832,12 @@ When a successful `postTodo` mutation happens, we likely want all `todos` querie
 
 ```js
 // When this mutation succeeds, any queries with the `todos` or `reminders` query key will be refetched
-mutate(newTodo, { refetchQueries: ['todos', 'reminders'], })
+const [mutate] = useMutation(addTodo, { refetchQueries: ['todos', 'reminders'] })
+const run = async () => {
+  try {
+    await mutate(todo)
+  } catch {}
+}
 
 // The 3 queries below will be refetched when the mutation above succeeds
 const todoListQuery = useQuery('todos', fetchTodoList)
@@ -843,7 +848,12 @@ const remindersQuery = useQuery('reminders', fetchReminders)
 You can even refetch queries with specific variables by passing a query key tuple to `refetchQueries`:
 
 ```js
-mutate(newTodo, { refetchQueries: [['todos', { status: 'done' }]] })
+const [mutate] = useMutation(addTodo, { refetchQueries: [['todos', { status: 'done' }]] })
+const run = async () => {
+  try {
+    await mutate(todo)
+  } catch {}
+}
 
 // The query below will be refetched when the mutation above succeeds
 const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
@@ -854,7 +864,12 @@ const todoListQuery = useQuery('todos', fetchTodoList)
 If you want to **only** refetch `todos` queries that don't have variables, you can pass a tuple with `variables` set to `false`:
 
 ```js
-mutate(newTodo, { refetchQueries: [['todos', false]] })
+const [mutate] = useMutation(addTodo, { refetchQueries: [['todos', false]] })
+const run = async () => {
+  try {
+    await mutate(todo)
+  } catch {}
+}
 
 // The query below will be refetched when the mutation above succeeds
 const todoListQuery = useQuery(['todos'], fetchTodoList)
