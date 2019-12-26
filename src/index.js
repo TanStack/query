@@ -186,7 +186,7 @@ function makeQuery(options) {
         query.config.retry === true ||
         query.state.failureCount < query.config.retry
       ) {
-        if (typeof document !== 'undefined' && !isDocumentVisible()) {
+        if (!isDocumentVisible()) {
           return new Promise(r => {})
         }
 
@@ -781,6 +781,7 @@ function isObject(a) {
 
 function isDocumentVisible() {
   return (
+    typeof document === 'undefined' ||
     document.visibilityState === undefined ||
     document.visibilityState === 'visible' ||
     document.visibilityState === 'prerender'
