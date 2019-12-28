@@ -239,7 +239,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`useMutation`](#usemutation)
   - [`setQueryData`](#setquerydata)
   - [`refetchQuery`](#refetchquery)
-  - [`prefetchQuery`](#prefetchQuery)
+  - [`prefetchQuery`](#prefetchquery)
   - [`refetchAllQueries`](#refetchallqueries)
   - [`useIsFetching`](#useisfetching)
   - [`clearQueryCache`](#clearquerycache)
