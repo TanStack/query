@@ -134,9 +134,7 @@ function makeQuery(options) {
         // Cancel any side-effects
         query.cancelled = cancelledError
 
-        if (query.promise && query.promise.cancel) {
-          query.promise.cancel()
-        }
+        query.cancelQueries()
 
         // Mark as inactive
         query.setState(old => {
@@ -162,9 +160,12 @@ function makeQuery(options) {
   const tryFetchQueryPages = async pageVariables => {
     try {
       // Perform the query
-      const data = await Promise.all(
-        pageVariables.map(variables => query.queryFn(variables))
-      )
+      const promises = pageVariables.map(variables => query.queryFn(variables))
+
+      query.cancelQueries = () =>
+        promises.map(({ cancel }) => cancel && cancel())
+
+      const data = await Promise.all(promises)
 
       if (query.cancelled) throw query.cancelled
 
