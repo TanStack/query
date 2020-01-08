@@ -548,7 +548,7 @@ export async function prefetchQuery(queryKey, queryFn, config = {}) {
   try {
     return await query.fetch({ force: config.force })
   } finally {
-    // Since this is not a hook, upsubscribe after we're done
+    // Since this is not a hook, unsubscribe after we're done
     unsubscribeFromQuery()
   }
 }
