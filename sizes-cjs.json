@@ -1,51 +1,11 @@
 [
   {
-    "timestamp": 1575924356635,
+    "timestamp": 1578528271721,
     "files": [
       {
         "filename": "index.js",
-        "size": 6694,
-        "delta": 26
-      }
-    ]
-  },
-  {
-    "timestamp": 1575923760697,
-    "files": [
-      {
-        "filename": "index.js",
-        "size": 6668,
-        "delta": 78
-      }
-    ]
-  },
-  {
-    "timestamp": 1575910422912,
-    "files": [
-      {
-        "filename": "index.js",
-        "size": 6590,
-        "delta": 54
-      }
-    ]
-  },
-  {
-    "timestamp": 1575841187256,
-    "files": [
-      {
-        "filename": "index.js",
-        "size": 6536,
-        "delta": -2
-      }
-    ]
-  },
-  {
-    "timestamp": 1575241900808,
-    "files": [
-      {
-        "filename": "index.js",
-        "size": 6538,
-        "delta": 8
+        "size": 6695,
+        "delta": 1
       }
     ]
   }
