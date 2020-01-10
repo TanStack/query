@@ -527,7 +527,16 @@ function AddTodo() {
         onChange={e => setName(e.target.value)}
         disabled={isLoading}
       />
-      <button onClick={() => mutate({ name })} disabled={isLoading || !name}>
+      <button
+        onClick={async () => {
+          try {
+            await mutate({ name });
+          } catch (error) {
+            console.error(error);
+          }
+        }}
+        disabled={isLoading || !name}
+      >
         Add Todo
       </button>
       <div>
