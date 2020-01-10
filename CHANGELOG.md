@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.24
+
+- Fixed an issue where isDocumentVisible wasn't properly guarded against in all non-web scenarios
+- Fixed an issue where query cancellation functions may not have been called
+- Added the new `setFocusHandler` utility which allows the overriding of the event that triggers window focusing
+- Updated the docs to show how to use `setFocusHandler` to avoid iframe events from triggerig window focus
+
 ## 0.3.23
 
 - Fixed an issue where queries would not refresh in the background when using suspense

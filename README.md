@@ -233,6 +233,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 - [Displaying Background Fetching Loading States](#displaying-background-fetching-loading-states)
 - [Displaying Global Background Fetching Loading State](#displaying-global-background-fetching-loading-state)
 - [Window-Focus Refetching](#window-focus-refetching)
+  - [Custom Window Focus Event](#custom-window-focus-event)
+  - [Ignoring Iframe Focus Events](#ignoring-iframe-focus-events)
 - [Custom Query Key Serializers (Experimental)](#custom-query-key-serializers-experimental)
 - [API](#api)
   - [`useQuery`](#usequery)
@@ -832,7 +834,9 @@ When a successful `postTodo` mutation happens, we likely want all `todos` querie
 
 ```js
 // When this mutation succeeds, any queries with the `todos` or `reminders` query key will be refetched
-const [mutate] = useMutation(addTodo, { refetchQueries: ['todos', 'reminders'] })
+const [mutate] = useMutation(addTodo, {
+  refetchQueries: ['todos', 'reminders'],
+})
 const run = async () => {
   try {
     await mutate(todo)
@@ -848,7 +852,9 @@ const remindersQuery = useQuery('reminders', fetchReminders)
 You can even refetch queries with specific variables by passing a query key tuple to `refetchQueries`:
 
 ```js
-const [mutate] = useMutation(addTodo, { refetchQueries: [['todos', { status: 'done' }]] })
+const [mutate] = useMutation(addTodo, {
+  refetchQueries: [['todos', { status: 'done' }]],
+})
 const run = async () => {
   try {
     await mutate(todo)
@@ -1005,6 +1011,37 @@ function App() {
     </ReactQueryConfigProvider>
   )
 }
+```
+
+### Custom Window Focus Event
+
+In rare circumstances, you may want manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the defalt handler) and your new handler is used instead. For example, this is the default handler:
+
+```js
+setFocusHandler(handleFocus => {
+  // Listen to visibillitychange and focus
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    window.addEventListener('visibilitychange', handleFocus, false)
+    window.addEventListener('focus', handleFocus, false)
+  }
+
+  return () => {
+    // Be sure to unsubscribe if a new handler is set
+    window.removeEventListener('visibilitychange', handleFocus)
+    window.removeEventListener('focus', handleFocus)
+  }
+})
+```
+
+### Ignoring Iframe Focus Events
+
+A greate use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
+
+```js
+import { setFocusHandler } from 'react-query'
+import onWindowFocus from './onWindowFocus' // The gist above
+
+setFocusHandler(onWindowFocus) // Boom!
 ```
 
 ## Custom Query Key Serializers (Experimental)

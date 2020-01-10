@@ -7,29 +7,6 @@ let uid = 0
 const configContext = React.createContext()
 const isServer = typeof window === 'undefined'
 
-// Focus revalidate
-let eventsBinded = false
-if (typeof window !== 'undefined' && window.addEventListener && !eventsBinded) {
-  const revalidate = () => {
-    const { refetchAllOnWindowFocus } = defaultConfig
-    if (isDocumentVisible() && isOnline())
-      refetchAllQueries({
-        shouldRefetchQuery: query => {
-          if (typeof query.config.refetchOnWindowFocus === 'undefined') {
-            return refetchAllOnWindowFocus
-          } else {
-            return query.config.refetchOnWindowFocus
-          }
-        },
-      }).catch(error => {
-        console.error(error.message)
-      })
-  }
-  window.addEventListener('visibilitychange', revalidate, false)
-  window.addEventListener('focus', revalidate, false)
-  eventsBinded = true
-}
-
 let defaultConfig = {
   retry: 3,
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -40,6 +17,49 @@ let defaultConfig = {
   suspense: false,
   queryKeySerializerFn: defaultQueryKeySerializerFn,
 }
+
+const onWindowFocus = () => {
+  const { refetchAllOnWindowFocus } = defaultConfig
+
+  if (isDocumentVisible() && isOnline()) {
+    refetchAllQueries({
+      shouldRefetchQuery: query => {
+        if (typeof query.config.refetchOnWindowFocus === 'undefined') {
+          return refetchAllOnWindowFocus
+        } else {
+          return query.config.refetchOnWindowFocus
+        }
+      },
+    }).catch(error => {
+      console.error(error.message)
+    })
+  }
+}
+
+let removePreviousHandler
+
+export function setFocusHandler(callback) {
+  // Unsub the old watcher
+  if (removePreviousHandler) {
+    removePreviousHandler()
+  }
+  // Sub the new watcher
+  removePreviousHandler = callback(onWindowFocus)
+}
+
+setFocusHandler(handleFocus => {
+  // Listen to visibillitychange and focus
+  if (typeof window !== 'undefined' && window.addEventListener) {
+    window.addEventListener('visibilitychange', handleFocus, false)
+    window.addEventListener('focus', handleFocus, false)
+
+    return () => {
+      // Be sure to unsubscribe if a new handler is set
+      window.removeEventListener('visibilitychange', handleFocus)
+      window.removeEventListener('focus', handleFocus)
+    }
+  }
+})
 
 export function ReactQueryConfigProvider({ config, children }) {
   let configContextValue = React.useContext(configContext)
