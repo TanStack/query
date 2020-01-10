@@ -530,7 +530,7 @@ function AddTodo() {
       <button
         onClick={async () => {
           try {
-            mutate({ name });
+            await mutate({ name });
           } catch (error) {
             console.error(error);
           }
