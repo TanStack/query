@@ -154,7 +154,9 @@ function makeQuery(options) {
         // Cancel any side-effects
         query.cancelled = cancelledError
 
-        query.cancelQueries()
+        if (query.cancelQueries) {
+          query.cancelQueries()
+        }
 
         // Mark as inactive
         query.setState(old => {
