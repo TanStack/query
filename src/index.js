@@ -769,7 +769,7 @@ function defaultQueryKeySerializerFn(queryKey) {
     const variablesHash = variablesIsObject ? stableStringify(variables) : ''
 
     return [
-      `${id}${variablesHash ? `_${variablesHash}}` : ''}`,
+      `${id}${variablesHash ? `_${variablesHash}` : ''}`,
       id,
       variablesHash,
       variables,
