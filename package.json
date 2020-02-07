@@ -30,6 +30,7 @@
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "@svgr/rollup": "^4.3.0",
+    "@testing-library/react": "^9.4.0",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.x",
     "babel-jest": "^24.9.0",
