@@ -1439,7 +1439,7 @@ const maybePromise = setQueryData(queryKey, data, { shouldRefetch })
 ### Returns
 
 - `maybePromise: undefined | Promise`
-  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations is done).
+  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations are done).
 
 ## `refetchQuery`
 
