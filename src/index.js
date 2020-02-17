@@ -668,7 +668,9 @@ export function useMutation(
     [refetchQueriesOnFailure, refetchQueries]
   )
 
-  return [mutate, { data, isLoading, error }]
+  const reset = React.useCallback(() => setData(null), [])
+
+  return [mutate, { data, isLoading, error, reset }]
 }
 
 export function useIsFetching() {
