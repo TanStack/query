@@ -1,4 +1,4 @@
-export * from './utils'
+export { queries, globalStateListeners } from './utils'
 export { clearQueryCache } from './clearQueryCache'
 export { makeQuery, queryReducer } from './makeQuery'
 export { prefetchQuery } from './prefetchQuery'
