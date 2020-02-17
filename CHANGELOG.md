@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.27
+
+- Switched from the fast-async babel plugin to the babel-plugin-transform-async-to-promises. This should offer better compiler/browser support at the expense of 0.1kb
+
 ## 0.3.26
 
 - By default the initial state for `data` is now `undefined` instead of `null`, allowing for use of default parameters in destructuring. While this may technically be a "breaking" change, it's more of a bug in spirit as it was not intended to be shipped this way. Don't like this? Become a sponsor and demand otherwise ;)
