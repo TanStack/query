@@ -1,6 +1,6 @@
 {
   "name": "react-query",
-  "version": "0.3.26",
+  "version": "0.3.27-test.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -26,7 +26,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.7.4",
-    "@babel/plugin-proposal-class-properties": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/preset-react": "^7.0.0",
     "@svgr/rollup": "^4.3.0",
@@ -34,6 +33,7 @@
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.x",
     "babel-jest": "^24.9.0",
+    "babel-plugin-transform-async-to-promises": "^0.8.15",
     "cross-env": "^5.1.4",
     "eslint": "5.x",
     "eslint-config-prettier": "^4.3.0",
@@ -49,7 +49,6 @@
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "1.5.0",
     "eslint-plugin-standard": "^4.0.0",
-    "fast-async": "^6.3.8",
     "jest": "^24.9.0",
     "prettier": "^1.18.2",
     "react": "^16.8.6",
