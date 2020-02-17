@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.28
+## 0.4.0
 
 - Added the `useMutation.throwOnError` and corresponding `queryConfig.throwOnError` option to configure whether the `mutate` function rethrows errors encountered in the mutation function
 - Added the `useMutation.useErrorBoundary` and corresponding `queryConfig.useErrorBoundary` option to configure whether mutation errors should be thrown during the render function and propagated to the nearest error boundary. This option will default to the same value as `queryConfig.suspense` if not defined otherwise
