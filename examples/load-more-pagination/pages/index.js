@@ -6,8 +6,9 @@ import { useQuery } from 'react-query'
 
 export default () => {
   const {
+    status,
     data,
-    isLoading,
+    error,
     isFetching,
     isFetchingMore,
     fetchMore,
@@ -34,9 +35,11 @@ export default () => {
   return (
     <div>
       <h1>Pagination</h1>
-      {isLoading ? (
+      {status === 'loading' ? (
         <p>Loading...</p>
-      ) : data ? (
+      ) : status === 'error' ? (
+        <span>Error: {error.message}</span>
+      ) : (
         <>
           {data.map((page, i) => (
             <React.Fragment key={i}>
@@ -67,7 +70,7 @@ export default () => {
             {isFetching && !isFetchingMore ? 'Background Updating...' : null}
           </div>
         </>
-      ) : null}
+      )}
       <hr />
       <Link href="/about">
         <a>Go to another page</a>

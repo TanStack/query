@@ -277,21 +277,21 @@ The query `info` returned contains all information about the query and can be ea
 
 ```js
 function Todos() {
-  const { data, isLoading, error } = useQuery('todos', fetchTodoList)
+  const { status, data, error } = useQuery('todos', fetchTodoList)
 
   return (
     <div>
-      {isLoading ? (
+      {status === 'loading' ? (
         <span>Loading...</span>
-      ) : error ? (
+      ) : status === 'error' ? (
         <span>Error: {error.message}</span>
-      ) : data ? (
+      ) : (
         <ul>
           {data.map(todo => (
             <li key={todo.id}>{todo.title}</li>
           ))}
         </ul>
-      ) : null}
+      )}
     </div>
   )
 }
@@ -316,9 +316,9 @@ useQuery(['todos', { page, status, other: undefined }])
 To use external props, state, or variables in a query function, pass them as a variables in your query key! They will be passed through to your query function as the first parameter.
 
 ```js
-function Todos({ status }) {
-  const { data, isLoading, error } = useQuery(
-    ['todos', { status, page }],
+function Todos({ completed }) {
+  const { status, data, error } = useQuery(
+    ['todos', { completed, page }],
     fetchTodoList // This is the same as `fetchTodoList({ status, page })`
   )
 }
@@ -330,10 +330,7 @@ Whenever a query's key changes, the query will automatically update:
 function Todos() {
   const [page, setPage] = useState(0)
 
-  const { data, isLoading, error } = useQuery(
-    ['todos', { page }],
-    fetchTodoList
-  )
+  const { status, data, error } = useQuery(['todos', { page }], fetchTodoList)
 
   const onNextPage = () => {
     setPage(page => page + 1)
@@ -440,8 +437,8 @@ import { useQuery } from 'react-query'
 
 function Todos() {
   const {
+    status,
     data: pages,
-    isLoading,
     isFetching,
     isFetchingMore,
     fetchMore,
@@ -473,8 +470,8 @@ import { useQuery } from 'react-query'
 
 function Todos() {
   const {
+    status,
     data: pages,
-    isLoading,
     isFetching,
     isFetchingMore,
     fetchMore,
@@ -500,9 +497,11 @@ function Todos() {
     } catch {}
   }
 
-  return isLoading ? (
+  return status === 'loading' ? (
     <p>Loading...</p>
-  ) : pages ? (
+  ) : status === 'error' ? (
+    <p>Error: {error.message}</p>
+  ) : (
     <>
       {pages.map((page, i) => (
         <React.Fragment key={i}>
@@ -545,7 +544,7 @@ If you ever want to disable a query from automatically running, you can use the 
 
 ```js
 function Todos() {
-  const { data, isLoading, error, refetch, isFetching } = useQuery(
+  const { status, data, error, refetch, isFetching } = useQuery(
     'todos',
     fetchTodoList,
     {
@@ -557,19 +556,20 @@ function Todos() {
     <>
       <button onClick={() => refetch()}>Fetch Todos</button>
 
-      {isLoading ? (
+      {status === 'loading' ? (
         <span>Loading...</span>
-      ) : error ? (
+      ) : status === 'error' ? (
         <span>Error: {error.message}</span>
-      ) : data ? (
+      ) : (
         <>
           <ul>
             {data.map(todo => (
               <li key={todo.id}>{todo.title}</li>
             ))}
           </ul>
+          <div>{isFetching ? 'Background Updating...' : null}</div>
         </>
-      ) : null}
+      )}
     </>
   )
 }
@@ -591,7 +591,7 @@ You can configure retries both on a global level and an individual query level.
 import { useQuery } from 'react-query'
 
 // Make specific query retry a certain number of times
-const { data, isLoading, error } = useQuery(
+const { status, data, error } = useQuery(
   ['todos', { page: 1 }],
   fetchTodoList,
   {
@@ -626,7 +626,7 @@ function App() {
 Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
 
 ```js
-const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
+const { status, data, error } = useQuery('todos', fetchTodoList, {
   retryDelay: 10000, // Will always wait 1000ms to retry, regardless of how many retries
 })
 ```
@@ -654,7 +654,7 @@ When using SSR (server-side-rendering) with React Query there are a few things t
 - Queries rendered on the server will by default use the initial state of an unfetched query. This means that `data` will be set to `null`. To get around this in SSR, you can pre-seed a query's data using the `config.initialData` option:
 
 ```js
-const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
+const { status, data, error } = useQuery('todos', fetchTodoList, {
   initialData: [{ id: 0, name: 'Implement SSR!' }],
 })
 
@@ -695,7 +695,7 @@ const { useQuery } from 'react-query'
 useQuery(queryKey, queryFn, { suspense: true })
 ```
 
-When using suspense mode, `isLoading` and `error` states will be replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
+When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
 
 ### Fetch-on-render vs Fetch-as-you-render
 
@@ -766,7 +766,7 @@ Assuming the server implements a ping mutation, that returns "pong" string, here
 
 ```js
 const PingPong = () => {
-  const [mutate, { data, isLoading, error }] = useMutation(pingMutation)
+  const [mutate, { status, data, error }] = useMutation(pingMutation)
 
   const onPing = async () => {
     try {
@@ -927,7 +927,7 @@ mutate(
 )
 
 // The query below will be updated with the response from the mutation above when it succeeds
-const { data, isLoading, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
+const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
 ## Manually or Optimistically Setting Query Data
@@ -959,15 +959,20 @@ setQueryData(['todo', { id: 5 }], newTodo, {
 
 ## Displaying Background Fetching Loading States
 
-A query's `isLoading` boolean is usually sufficient to show the initial hard-loading state for a query, but sometimes you may want to display a more subtle indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state:
+A query's `status === 'loading'` state is sufficient enough to show the initial hard-loading state for a query, but sometimes you may want to display an additional indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state, regardless of the state of the `status` variable:
 
 ```js
 function Todos() {
-  const { data: todos, isLoading, isFetching } = useQuery('todos', fetchTodos)
+  const { status, data: todos, error, isFetching } = useQuery(
+    'todos',
+    fetchTodos
+  )
 
-  return isLoading ? (
+  return status === 'loading' ? (
     <span>Loading...</span>
-  ) : todos ? (
+  ) : status === 'error' ? (
+    <span>Error: {error.message}</span>
+  ) : (
     <>
       {isFetching ? <div>Refreshing...</div> : null}
 
@@ -977,7 +982,7 @@ function Todos() {
         ))}
       </div>
     </>
-  ) : null
+  )
 }
 ```
 
@@ -1241,12 +1246,12 @@ refetchQuery([getTodo, { id: 5 }])
 
 ```js
 const {
+  ,
   data,
   error,
   isFetching,
   isCached,
   failureCount,
-  isLoading,
   refetch,
   // with paginated mode enabled
   isFetchingMore,
@@ -1329,22 +1334,27 @@ const {
 - `suspense: Boolean`
   - Optional
   - Set this to `true` to enable suspense mode.
-  - When `true`, `useQuery` will suspend when `isLoading` would normally be `true`
-  - When `true`, `useQuery` will throw runtime errors when `error` would normally be truthy
+  - When `true`, `useQuery` will suspend when `status === 'loading'`
+  - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
 - `initialData: any`
   - Optional
   - If set, this value will be used as the initial data for the query (as long as the query hasn't been created or cached yet)
 
 ### Returns
 
-- `data: null | Any`
-  - Defaults to `null`.
+- `status: String`
+  - Will be:
+    - `loading` if the query is in an initial loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`)
+    - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
+    - `success` if the query has received a response with no errors. The corresponding `data` property has the error received from the successful fetch.
+- `data: Any`
+  - Defaults to `undefined`.
   - The last successfully resolved data for the query.
 - `error: null | Error`
+  - Defualts to `null`
   - The error object for the query, if an error was thrown.
-- `isLoading: Boolean`
-  - Will be `true` if the query is both fetching and does not have any cached data to display.
 - `isFetching: Boolean`
+  - Defaults to `true` so long as `manual` is set to `false`
   - Will be `true` if the query is currently fetching, including background fetching.
 - `isCached: Boolean`
   - Will be `true` if the query's response is currently cached.
@@ -1368,7 +1378,7 @@ const {
 ## `useMutation`
 
 ```js
-const [mutate, { data, isLoading, error }] = useMutation(mutationFn, {
+const [mutate, { status, data, error }] = useMutation(mutationFn, {
   refetchQueries,
   refetchQueriesOnFailure,
 })
@@ -1403,13 +1413,16 @@ const promise = mutate(variables, { updateQuery, waitForRefetchQueries })
 
 - `mutate: Function(variables, { updateQuery })`
   - The mutation function you can call with variables to trigger the mutation and optionally update a query with its response.
+- `status: String`
+  - Will be:
+    - `loading` if the mutation is currently executing.
+    - `error` if the last mutation attempt resulted in an error.
+    - `success' if the last mutation attempt was successful.
 - `data: null | Any`
   - Defaults to `null`
   - The last successfully resolved data for the query.
 - `error: null | Error`
-  - The error object for the query, if an error was thrown.
-- `isLoading: Boolean`
-  - Will be `true` if the query is both fetching and does not have any cached data.
+  - The error object for the query, if an error was encountered.
 - `promise: Promise`
   - The promise that is returned by the `mutationFn`.
 

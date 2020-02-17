@@ -2,10 +2,10 @@ import React from 'react'
 import Link from 'next/link'
 import fetch from '../libs/fetch'
 
-import { useQuery, useIsFetching } from 'react-query'
+import { useQuery } from 'react-query'
 
 export default () => {
-  const { data, isLoading, isFetching } = useQuery('projects', () =>
+  const { status, data, error, isFetching } = useQuery('projects', () =>
     fetch('/api/data')
   )
 
@@ -13,9 +13,11 @@ export default () => {
     <div style={{ textAlign: 'center' }}>
       <h1>Trending Projects</h1>
       <div>
-        {isLoading ? (
+        {status === 'loading' ? (
           'Loading...'
-        ) : data ? (
+        ) : status === 'error' ? (
+          <span>Error: {error.message}</span>
+        ) : (
           <>
             <div>
               {data.map(project => (
@@ -28,7 +30,7 @@ export default () => {
             </div>
             <div>{isFetching ? 'Background Updating...' : ' '}</div>
           </>
-        ) : null}
+        )}
       </div>
     </div>
   )

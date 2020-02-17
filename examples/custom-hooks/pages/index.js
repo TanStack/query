@@ -3,15 +3,17 @@ import Link from 'next/link'
 import useProjects from '../hooks/use-projects'
 
 export default () => {
-  const { data, isLoading, isFetching } = useProjects()
+  const { status, data, error, isFetching } = useProjects()
 
   return (
     <div style={{ textAlign: 'center' }}>
       <h1>Trending Projects</h1>
       <div>
-        {isLoading ? (
+        {status === 'loading' ? (
           'Loading...'
-        ) : data ? (
+        ) : status === 'error' ? (
+          <span>Error: {error.message}</span>
+        ) : (
           <>
             <div>
               {data.map(project => (
@@ -24,7 +26,7 @@ export default () => {
             </div>
             <div>{isFetching ? 'Background Updating...' : ' '}</div>
           </>
-        ) : null}
+        )}
       </div>
     </div>
   )

@@ -7,6 +7,21 @@ let uid = 0
 const configContext = React.createContext()
 const isServer = typeof window === 'undefined'
 
+const statusIdle = 'idle'
+const statusLoading = 'loading'
+const statusError = 'error'
+const statusSuccess = 'success'
+
+const actionInit = {}
+const actionActivate = {}
+const actionDeactivate = {}
+const actionFailed = {}
+const actionMarkStale = {}
+const actionFetch = {}
+const actionSuccess = {}
+const actionError = {}
+const actionSetData = {}
+
 let defaultConfig = {
   retry: 3,
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -87,8 +102,90 @@ function useConfigContext() {
   return React.useContext(configContext) || defaultConfig
 }
 
+function queryReducer(state, action) {
+  switch (action.type) {
+    case actionInit:
+      return {
+        status: action.options.config.manual ? statusIdle : statusLoading,
+        error: null,
+        isFetching: action.options.config.manual ? false : true,
+        isFetchingMore: false,
+        canFetchMore: false,
+        failureCount: 0,
+        isCached: false,
+        isStale: true,
+        data: action.initialData,
+      }
+    case actionActivate:
+      return {
+        ...state,
+        isInactive: false,
+      }
+    case actionDeactivate:
+      return {
+        ...state,
+        isInactive: true,
+      }
+    case actionFailed:
+      return {
+        ...state,
+        failureCount: state.failureCount + 1,
+      }
+    case actionMarkStale:
+      return {
+        ...state,
+        isStale: true,
+      }
+    case actionFetch:
+      return {
+        ...state,
+        status: state.status === statusError ? statusLoading : state.status,
+        isFetching: true,
+        isFetchingMore: action.isFetchMore,
+        failureCount: 0,
+      }
+    case actionSuccess:
+      const newData = action.paginated
+        ? action.isFetchMore
+          ? [...state.data, action.data[0]]
+          : action.data
+        : action.data[0]
+
+      return {
+        ...state,
+        status: statusSuccess,
+        data: newData,
+        error: null,
+        isCached: true,
+        isStale: false,
+        isFetching: false,
+        isFetchingMore: false,
+        canFetchMore: action.canFetchMore,
+      }
+    case actionError:
+      return {
+        ...state,
+        isFetching: false,
+        isFetchingMore: false,
+        ...(!action.cancelled && {
+          status: statusError,
+          error: action.error,
+          isCached: false,
+          isStale: true,
+        }),
+      }
+    case actionSetData:
+      return {
+        ...state,
+        data: functionalUpdate(action.updater, state.data),
+      }
+    default:
+      throw new Error()
+  }
+}
+
 function makeQuery(options) {
-  let initialData = options.config.paginated ? [] : null
+  let initialData = options.config.paginated ? [] : undefined
 
   if (typeof options.config.initialData !== 'undefined') {
     initialData = options.config.initialData
@@ -98,24 +195,15 @@ function makeQuery(options) {
     ...options,
     pageVariables: [],
     instances: [],
-    state: {
-      error: null,
-      isFetching: false,
-      isFetchingMore: false,
-      canFetchMore: false,
-      failureCount: 0,
-      isCached: false,
-      isStale: true,
-      data: initialData,
-    },
+    state: queryReducer(undefined, { type: actionInit, options, initialData }),
     // promise: null,
     // staleTimeout: null,
     // cacheTimeout: null,
     // cancelled: null,
   }
 
-  query.setState = updater => {
-    query.state = functionalUpdate(updater, query.state)
+  query.dispatch = action => {
+    query.state = queryReducer(query.state, action)
     query.instances.forEach(instance => {
       instance.onStateUpdate(query.state)
     })
@@ -133,12 +221,7 @@ function makeQuery(options) {
     }
 
     // Mark as active
-    query.setState(old => {
-      return {
-        ...old,
-        isInactive: false,
-      }
-    })
+    query.dispatch({ type: actionActivate })
 
     // Cancel garbage collection
     clearTimeout(query.cacheTimeout)
@@ -159,12 +242,7 @@ function makeQuery(options) {
         }
 
         // Mark as inactive
-        query.setState(old => {
-          return {
-            ...old,
-            isInactive: true,
-          }
-        })
+        query.dispatch({ type: actionDeactivate })
 
         // Schedule garbage collection
         query.cacheTimeout = setTimeout(
@@ -196,12 +274,7 @@ function makeQuery(options) {
       if (query.cancelled) throw query.cancelled
 
       // If we fail, increase the failureCount
-      query.setState(old => {
-        return {
-          ...old,
-          failureCount: old.failureCount + 1,
-        }
-      })
+      query.dispatch({ type: actionFailed })
 
       // Do we need to retry the request?
       if (
@@ -267,34 +340,14 @@ function makeQuery(options) {
 
           query.staleTimeout = setTimeout(() => {
             if (query) {
-              query.setState(old => {
-                return {
-                  ...old,
-                  isStale: true,
-                }
-              })
+              query.dispatch({ type: actionMarkStale })
             }
           }, query.config.staleTime)
-
-          query.setState(old => {
-            return {
-              ...old,
-              isFetching: false,
-              isFetchingMore: false,
-            }
-          })
         }
 
         try {
           // Set up the query refreshing state
-          query.setState(old => {
-            return {
-              ...old,
-              isFetching: true,
-              isFetchingMore: isFetchMore,
-              failureCount: 0,
-            }
-          })
+          query.dispatch({ type: actionFetch })
 
           variables =
             query.config.paginated && query.state.isCached && !isFetchMore
@@ -314,26 +367,14 @@ function makeQuery(options) {
           }
 
           // Set data and mark it as cached
-          query.setState(old => {
-            data = query.config.paginated
-              ? isFetchMore
-                ? [...old.data, data[0]]
-                : data
-              : data[0]
-
-            return {
-              ...old,
-              error: null,
-              data,
-              isCached: true,
-              isStale: false,
-              ...(query.config.paginated && {
-                canFetchMore: query.config.getCanFetchMore(
-                  data[data.length - 1],
-                  data
-                ),
-              }),
-            }
+          query.dispatch({
+            type: actionSuccess,
+            data,
+            paginated: query.config.paginated,
+            isFetchMore,
+            canFetchMore:
+              query.config.paginated &&
+              query.config.getCanFetchMore(data[data.length - 1], data),
           })
 
           query.instances.forEach(
@@ -345,20 +386,15 @@ function makeQuery(options) {
 
           return data
         } catch (error) {
-          // As long as it's not a cancelled retry
+          query.dispatch({
+            type: actionError,
+            cancelled: error === query.cancelled,
+            error,
+          })
+
           cleanup()
 
           if (error !== query.cancelled) {
-            // Store the error
-            query.setState(old => {
-              return {
-                ...old,
-                error,
-                isCached: false,
-                isStale: true,
-              }
-            })
-
             query.instances.forEach(
               instance => instance.onError && instance.onError(error)
             )
@@ -372,11 +408,7 @@ function makeQuery(options) {
     return query.promise
   }
 
-  query.setData = updater =>
-    query.setState(old => ({
-      ...old,
-      data: functionalUpdate(updater, old.data),
-    }))
+  query.setData = updater => query.dispatch({ type: actionSetData, updater })
 
   return query
 }
@@ -457,7 +489,6 @@ export function useQuery(queryKey, queryFn, config = {}) {
     return unsubscribeFromQuery
   }, [getLatestOnError, getLatestOnSuccess, instanceId, onStateUpdate, query])
 
-  const isLoading = !state.isCached && query.state.isFetching
   const refetch = query.fetch
   const setData = query.setData
 
@@ -516,7 +547,6 @@ export function useQuery(queryKey, queryFn, config = {}) {
 
   return {
     ...state,
-    isLoading,
     refetch,
     fetchMore,
     setData,
@@ -616,13 +646,13 @@ export function useMutation(
 ) {
   const [data, setData] = React.useState(null)
   const [error, setError] = React.useState(null)
-  const [isLoading, setIsLoading] = React.useState(false)
+  const [status, setStatus] = React.useState('idle')
   const mutationFnRef = React.useRef()
   mutationFnRef.current = mutationFn
 
   const mutate = React.useCallback(
     async (variables, { updateQuery, waitForRefetchQueries = false } = {}) => {
-      setIsLoading(true)
+      setStatus(statusLoading)
       setError(null)
 
       const doRefetchQueries = async () => {
@@ -651,7 +681,7 @@ export function useMutation(
           }
         }
 
-        setIsLoading(false)
+        setStatus(statusSuccess)
 
         return res
       } catch (error) {
@@ -661,14 +691,14 @@ export function useMutation(
           await doRefetchQueries()
         }
 
-        setIsLoading(false)
+        setStatus(statusError)
         throw error
       }
     },
     [refetchQueriesOnFailure, refetchQueries]
   )
 
-  return [mutate, { data, isLoading, error }]
+  return [mutate, { data, status, error }]
 }
 
 export function useIsFetching() {
