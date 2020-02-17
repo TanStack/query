@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.25
+
+- Fixed an issue where `cancelQueries` was called while not being defined
+
 ## 0.3.24
 
 - Fixed an issue where isDocumentVisible wasn't properly guarded against in all non-web scenarios
