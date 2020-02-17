@@ -177,7 +177,10 @@ function makeQuery(options) {
         // Schedule garbage collection
         query.cacheTimeout = setTimeout(
           () => {
-            queries.splice(queries.findIndex(d => d === query), 1)
+            queries.splice(
+              queries.findIndex(d => d === query),
+              1
+            )
             globalStateListeners.forEach(d => d())
           },
           query.state.isCached ? query.config.cacheTime : 0
@@ -438,7 +441,12 @@ export function useQuery(queryKey, queryFn, config = {}) {
     if (config.refetchInterval && !query.refetchInterval) {
       query.refetchInterval = setInterval(() => {
         if (isDocumentVisible() || config.refetchIntervalInBackground) {
-          query.fetch()
+          try {
+            query.fetch()
+          } catch (err) {
+            console.error(err)
+            // Swallow this error, since it is handled elsewhere
+          }
         }
       }, config.refetchInterval)
 
