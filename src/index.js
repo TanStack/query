@@ -88,7 +88,7 @@ function useConfigContext() {
 }
 
 function makeQuery(options) {
-  let initialData = options.config.paginated ? [] : null
+  let initialData = options.config.paginated ? [] : undefined
 
   if (typeof options.config.initialData !== 'undefined') {
     initialData = options.config.initialData

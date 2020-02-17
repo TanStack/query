@@ -1333,7 +1333,7 @@ const {
   - When `true`, `useQuery` will throw runtime errors when `error` would normally be truthy
 - `initialData: any`
   - Optional
-  - If set, this value will be used as the initial data for the query (as long as the query hasn't been created or cached yet)
+  - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
 
 ### Returns
 

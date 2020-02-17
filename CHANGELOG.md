@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.26
+
+- By default the initial state for `data` is now `undefined` instead of `null`, allowing for use of default parameters in destructuring. While this may technically be a "breaking" change, it's more of a bug in spirit as it was not intended to be shipped this way. Don't like this? Become a sponsor and demand otherwise ;)
+
 ## 0.3.25
 
 - Fixed an issue where `cancelQueries` was called while not being defined
