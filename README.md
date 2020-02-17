@@ -79,6 +79,19 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 </details>
 
+<details>
+<summary>How is this different from Zeit's SWR?</summary>
+<br />
+[Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar is spirit and implementation to React Query with a few notable differences:
+
+- React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
+- React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
+- React Query uses query key generation, query variables, and implicit query groups. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ status: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query "groups" when defining query refetching configs, eg. you can refetch every query that has a `todos` key, regardless of variables, or you can target specific queries with (or without) variables. This architecture is much more robust and forgiving especially for larger apps.
+- Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
+- Overall API design opinions
+
+</details>
+
 ## Examples
 
 - [Basic](./examples/basic)
