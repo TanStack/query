@@ -1,5 +1,30 @@
 # Changelog
 
+## 0.4.2
+
+- Added a new `setConsole` exported function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used.
+
+## 0.4.1
+
+- Fixed an issue where interval fetching errors would throw repeatedly
+
+## 0.4.0
+
+- Added the `useMutation.throwOnError` and corresponding `queryConfig.throwOnError` option to configure whether the `mutate` function rethrows errors encountered in the mutation function
+- Added the `useMutation.useErrorBoundary` and corresponding `queryConfig.useErrorBoundary` option to configure whether mutation errors should be thrown during the render function and propagated to the nearest error boundary. This option will default to the same value as `queryConfig.suspense` if not defined otherwise
+
+## 0.3.27
+
+- Switched from the fast-async babel plugin to the babel-plugin-transform-async-to-promises. This should offer better compiler/browser support at the expense of 0.1kb
+
+## 0.3.26
+
+- By default the initial state for `data` is now `undefined` instead of `null`, allowing for use of default parameters in destructuring. While this may technically be a "breaking" change, it's more of a bug in spirit as it was not intended to be shipped this way. Don't like this? Become a sponsor and demand otherwise ;)
+
+## 0.3.25
+
+- Fixed an issue where `cancelQueries` was called while not being defined
+
 ## 0.3.24
 
 - Fixed an issue where isDocumentVisible wasn't properly guarded against in all non-web scenarios

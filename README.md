@@ -53,7 +53,7 @@ Tools for managing async data and client stores/caches are plentiful these days,
 - Force normalized or object/id-based caching strategies on your data
 - Do not automatically manage stale-ness or caching
 - Do not offer robust API's around mutation events, invalidation or query management
-- Are built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools] etc.
+- Are built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools], etc.
 
 ## The Solution
 
@@ -76,6 +76,20 @@ React Query exports a set of hooks that attempt to address these issues. Out of 
 <summary>Inspiration & Hat-Tipping</summary>
 <br />
 A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and its creators for inspiring even further customizations and examples. You all rock!
+
+</details>
+
+<details>
+<summary>How is this different from Zeit's SWR?</summary>
+<br />
+
+[Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar is spirit and implementation to React Query with a few notable differences:
+
+- React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
+- React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
+- React Query uses query key generation, query variables, and implicit query groups. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ status: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query "groups" when defining query refetching configs, eg. you can refetch every query that has a `todos` key, regardless of variables, or you can target specific queries with (or without) variables. This architecture is much more robust and forgiving especially for larger apps.
+- Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
+- Overall API design opinions
 
 </details>
 
@@ -246,6 +260,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`useIsFetching`](#useisfetching)
   - [`clearQueryCache`](#clearquerycache)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
+  - [`setConsole`](#setConsole)
 
 ## Installation
 
@@ -299,7 +314,7 @@ function Todos() {
 
 ### Query Keys
 
-Since React Query uses a query's **unique key** for essentially everything, it's important to tailor them so that will change with your query requirements. In other libraries like Zeit's SWR, you'll see the use of URL's and GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, you can pass a **tuple key** with a `string` and `object` of variables to deterministically get the the same key.
+Since React Query uses a query's **unique key** for essentially everything, it's important to tailor them so that they will change with your query requirements. In other libraries like Zeit's SWR, you'll see the use of URL's and GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, you can pass a **tuple key** with a `string` and `object` of variables to deterministically get the same key.
 
 > Pro Tip: Variables passed in the key are automatically passed to your query function!
 
@@ -313,7 +328,7 @@ useQuery(['todos', { page, status, other: undefined }])
 
 ### Query Variables
 
-To use external props, state, or variables in a query function, pass them as a variables in your query key! They will be passed through to your query function as the first parameter.
+To use external props, state, or variables in a query function, pass them as a variable in your query key! They will be passed through to your query function as the first parameter.
 
 ```js
 function Todos({ completed }) {
@@ -406,7 +421,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 - A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere.
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
   - Since the query is stale, it is refetched in the background automatically.
-- Both instances of the `useQuery('todos', fetchTodos)` query are unmount and no longer in use.
+- Both instances of the `useQuery('todos', fetchTodos)` query are unmounted and no longer in use.
   - Since there are no more active instances to this query, a cache timeout is set using `cacheTime` to delete and garbage collect the query (defaults to **5 minutes**).
 - No more instances of `useQuery('todos', fetchTodos)` appear within **5 minutes**.
   - This query and its data is deleted and garbage collected.
@@ -661,7 +676,7 @@ const { status, data, error } = useQuery('todos', fetchTodoList, {
 // data === [{ id: 0, name: 'Implement SSR!'}]
 ```
 
-The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, will continue as normal and request a fresh copy of the query result.
+The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, it will continue as normal and request a fresh copy of the query result.
 
 ### Suspense Mode
 
@@ -696,6 +711,8 @@ useQuery(queryKey, queryFn, { suspense: true })
 ```
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
+
+In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `useErrorBoundary` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
 
 ### Fetch-on-render vs Fetch-as-you-render
 
@@ -944,7 +961,7 @@ setQueryData(['todo', { id: 5 }], newTodo)
 setQueryData(['todo', { id: 5 }], previous => ({ ...previous, status: 'done' }))
 ```
 
-**Most importantly**, when manually setting a query response, it naturally becomes out-of-sync with it's original source. To ease this issue, `setQueryData` automatically triggers a background refresh of the query after it's called to ensure it eventually synchronizes with the original source.
+**Most importantly**, when manually setting a query response, it naturally becomes out-of-sync with its original source. To ease this issue, `setQueryData` automatically triggers a background refresh of the query after it's called to ensure it eventually synchronizes with the original source.
 
 Should you choose that you do _not_ want to refetch the query automatically, you can set the `shouldRefetch` option to `false`:
 
@@ -1020,7 +1037,7 @@ function App() {
 
 ### Custom Window Focus Event
 
-In rare circumstances, you may want manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the defalt handler) and your new handler is used instead. For example, this is the default handler:
+In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
 ```js
 setFocusHandler(handleFocus => {
@@ -1040,7 +1057,7 @@ setFocusHandler(handleFocus => {
 
 ### Ignoring Iframe Focus Events
 
-A greate use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
+A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
 
 ```js
 import { setFocusHandler } from 'react-query'
@@ -1338,7 +1355,7 @@ const {
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
 - `initialData: any`
   - Optional
-  - If set, this value will be used as the initial data for the query (as long as the query hasn't been created or cached yet)
+  - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
 
 ### Returns
 
@@ -1381,6 +1398,8 @@ const {
 const [mutate, { status, data, error }] = useMutation(mutationFn, {
   refetchQueries,
   refetchQueriesOnFailure,
+  useErrorBoundary,
+  throwOnError,
 })
 
 const promise = mutate(variables, { updateQuery, waitForRefetchQueries })
@@ -1398,6 +1417,12 @@ const promise = mutate(variables, { updateQuery, waitForRefetchQueries })
 - `refetchQueriesOnFailure: Boolean`
   - Defaults to `false`
   - Set this to `true` if you want `refetchQueries` to be refetched regardless of the mutation succeeding.
+- `useErrorBoundary`
+  - Defaults to the global query config's `useErrorBoundary` value, which is `false`
+  - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
+- `throwOnError`
+  - Defaults to `true` (but will be `false` in the next major release)
+  - Set this to `true` if failed mutations should re-throw errors from the mutation function to the `mutate` function.
 - `variables: any`
   - Optional
   - The variables object to pass to the `mutationFn`.
@@ -1452,7 +1477,7 @@ const maybePromise = setQueryData(queryKey, data, { shouldRefetch })
 ### Returns
 
 - `maybePromise: undefined | Promise`
-  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations is done).
+  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations are done).
 
 ## `refetchQuery`
 
@@ -1504,7 +1529,7 @@ const promise = refetchAllQueries({ force, includeInactive })
 - `includeInactive: Boolean`
   - Optional
   - Set this to `true` to also refetch inactive queries.
-  - Overrides the `force` option to be `true`, regardless of it's value.
+  - Overrides the `force` option to be `true`, regardless of its value.
 
 ### Returns
 
@@ -1577,6 +1602,8 @@ const queryConfig = {
   refetchAllOnWindowFocus: true,
   refetchInterval: false,
   suspense: false,
+  useErrorBoundary: undefined, // Defaults to the value of `suspense` if not defined otherwise
+  throwOnError: true,
 }
 
 function App() {
@@ -1592,4 +1619,24 @@ function App() {
 
 - `config: Object`
   - Must be **stable** or **memoized**. Do not create an inline object!
-  - For a description of all config options, please see the [`useQuery` hook](#usequery).
+  - For a description of all config options, please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
+
+## `setConsole`
+
+`setConsole` is an optional utility function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used. If no global `console` object is found in the environment, nothing will be logged.
+
+```js
+import { setConsole } from 'react-query'
+import { printLog, printWarn, printError } from 'custom-logger'
+
+setConsole({
+  log: printLog,
+  warn: printWarn,
+  error: printError,
+})
+```
+
+### Options
+
+- `console: Object`
+  - Must implement the `log`, `warn`, and `error` methods.

@@ -3,30 +3,19 @@
     [
       "@babel/env",
       {
-        "modules": false,
-        "exclude": ["@babel/plugin-transform-regenerator"]
+        "modules": false
       }
     ],
     "@babel/react"
   ],
-  "plugins": [
-    [
-      "module:fast-async",
-      {
-        "compiler": {
-          "noRuntime": true
-        }
-      }
-    ]
-  ],
+  "plugins": ["babel-plugin-transform-async-to-promises"],
   "env": {
     "test": {
       "presets": [
         [
           "@babel/env",
           {
-            "modules": "commonjs",
-            "exclude": ["@babel/plugin-transform-regenerator"]
+            "modules": "commonjs"
           }
         ]
       ]
