@@ -2,6 +2,7 @@ import {
   cleanup,
   render,
   fireEvent,
+  waitForElement,
 } from '@testing-library/react'
 import * as React from 'react'
 import { act } from 'react-dom/test-utils'
@@ -13,7 +14,9 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const [mutate, mutationResult] = useMutation(() => Promise.resolve('mutation'))
+      const [mutate, mutationResult] = useMutation(() =>
+        Promise.resolve('mutation')
+      )
 
       return (
         <div>
@@ -28,15 +31,15 @@ describe('useMutation', () => {
 
     expect(getByTestId('title').textContent).toBe('')
 
-    await act(async () => {
-      fireEvent.click(getByText('mutate'))
-    })
+    fireEvent.click(getByText('mutate'))
+
+    await waitForElement(() => getByTestId('title'))
 
     expect(getByTestId('title').textContent).toBe('mutation')
 
-    await act(async () => {
-      fireEvent.click(getByText('reset'))
-    })
+    fireEvent.click(getByText('reset'))
+
+    await waitForElement(() => getByTestId('title'))
 
     expect(getByTestId('title').textContent).toBe('')
   })
