@@ -82,6 +82,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 <details>
 <summary>How is this different from Zeit's SWR?</summary>
 <br />
+
 [Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar is spirit and implementation to React Query with a few notable differences:
 
 - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
