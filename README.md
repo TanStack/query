@@ -697,6 +697,8 @@ useQuery(queryKey, queryFn, { suspense: true })
 
 When using suspense mode, `isLoading` and `error` states will be replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) for more information on how to set up suspense mode.
 
+In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `useErrorBoundary` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
+
 ### Fetch-on-render vs Fetch-as-you-render
 
 Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. However, if you want to take it to the next level and implement a `Fetch-as-you-render` model, we recommend implementing [Prefetching](#prefetching) on routing and/or user interactions events to initialize queries before they are needed.
@@ -1371,6 +1373,8 @@ const {
 const [mutate, { data, isLoading, error }] = useMutation(mutationFn, {
   refetchQueries,
   refetchQueriesOnFailure,
+  useErrorBoundary,
+  throwOnError,
 })
 
 const promise = mutate(variables, { updateQuery, waitForRefetchQueries })
@@ -1388,6 +1392,12 @@ const promise = mutate(variables, { updateQuery, waitForRefetchQueries })
 - `refetchQueriesOnFailure: Boolean`
   - Defaults to `false`
   - Set this to `true` if you want `refetchQueries` to be refetched regardless of the mutation succeeding.
+- `useErrorBoundary`
+  - Defaults to the global query config's `useErrorBoundary` value, which is `false`
+  - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
+- `throwOnError`
+  - Defaults to `true` (but will be `false` in the next major release)
+  - Set this to `true` if failed mutations should re-throw errors from the mutation function to the `mutate` function.
 - `variables: any`
   - Optional
   - The variables object to pass to the `mutationFn`.
@@ -1564,6 +1574,8 @@ const queryConfig = {
   refetchAllOnWindowFocus: true,
   refetchInterval: false,
   suspense: false,
+  useErrorBoundary: undefined, // Defaults to the value of `suspense` if not defined otherwise
+  throwOnError: true,
 }
 
 function App() {
@@ -1579,4 +1591,4 @@ function App() {
 
 - `config: Object`
   - Must be **stable** or **memoized**. Do not create an inline object!
-  - For a description of all config options, please see the [`useQuery` hook](#usequery).
+  - For a description of all config options, please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).

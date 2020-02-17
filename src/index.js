@@ -16,6 +16,8 @@ let defaultConfig = {
   refetchInterval: false,
   suspense: false,
   queryKeySerializerFn: defaultQueryKeySerializerFn,
+  throwOnError: true,
+  useErrorBoundary: undefined, // this will default to the suspense value
 }
 
 const onWindowFocus = () => {
@@ -64,13 +66,19 @@ setFocusHandler(handleFocus => {
 export function ReactQueryConfigProvider({ config, children }) {
   let configContextValue = React.useContext(configContext)
 
-  const newConfig = React.useMemo(
-    () => ({
+  const newConfig = React.useMemo(() => {
+    const newConfig = {
       ...(configContextValue || defaultConfig),
       ...config,
-    }),
-    [config, configContextValue]
-  )
+    }
+
+    // Default useErrorBoundary to the suspense value
+    if (typeof newConfig.useErrorBoundary === 'undefined') {
+      newConfig.useErrorBoundary = newConfig.suspense
+    }
+
+    return newConfig
+  }, [config, configContextValue])
 
   if (!configContextValue) {
     defaultConfig = newConfig
@@ -612,13 +620,18 @@ export async function refetchQuery(queryKey, config = {}) {
 
 export function useMutation(
   mutationFn,
-  { refetchQueries, refetchQueriesOnFailure } = {}
+  { refetchQueries, refetchQueriesOnFailure, ...config } = {}
 ) {
   const [data, setData] = React.useState(null)
   const [error, setError] = React.useState(null)
   const [isLoading, setIsLoading] = React.useState(false)
   const mutationFnRef = React.useRef()
   mutationFnRef.current = mutationFn
+
+  const { throwOnError, useErrorBoundary } = {
+    ...useConfigContext(),
+    ...config,
+  }
 
   const mutate = React.useCallback(
     async (variables, { updateQuery, waitForRefetchQueries = false } = {}) => {
@@ -662,13 +675,21 @@ export function useMutation(
         }
 
         setIsLoading(false)
-        throw error
+        if (throwOnError) {
+          throw error
+        }
       }
     },
-    [refetchQueriesOnFailure, refetchQueries]
+    [refetchQueries, refetchQueriesOnFailure, throwOnError]
   )
 
   const reset = React.useCallback(() => setData(null), [])
+
+  React.useEffect(() => {
+    if (useErrorBoundary && error) {
+      throw error
+    }
+  }, [error, useErrorBoundary])
 
   return [mutate, { data, isLoading, error, reset }]
 }
