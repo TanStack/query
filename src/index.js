@@ -697,7 +697,10 @@ export function useMutation(
     [refetchQueries, refetchQueriesOnFailure, throwOnError]
   )
 
-  const reset = React.useCallback(() => setData(null), [])
+  const reset = React.useCallback(() => {
+    setData(null)
+    setError(null)
+  }, [])
 
   React.useEffect(() => {
     if (useErrorBoundary && error) {

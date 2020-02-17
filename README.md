@@ -947,6 +947,37 @@ mutate(
 const { data, isLoading, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
+### Resetting Mutation State
+
+It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function to handle this:
+
+```js
+const CreateTodo = () => {
+  const [title, setTitle] = useState('')
+  const [mutate, { error, mutate }] = useMutation(createTodo)
+
+  const onCreateTodo = async e => {
+    e.preventDefault()
+    await mutate({ title })
+  }
+
+  return (
+    <form onSubmit={onCreateTodo}>
+      {error &&
+        <h5 onClick={() => reset()}>{error}</h5>
+      }
+      <input
+        type="text"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+      />
+      <br />
+      <button type="submit">Create Todo</button>
+    </form>
+  )
+}
+```
+
 ## Manually or Optimistically Setting Query Data
 
 In rare circumstances, you may want to manually update a query's response before it has been refetched. To do this, you can use the exported `setQueryData` function:
@@ -1385,7 +1416,7 @@ const {
 ## `useMutation`
 
 ```js
-const [mutate, { data, isLoading, error }] = useMutation(mutationFn, {
+const [mutate, { data, isLoading, error, reset }] = useMutation(mutationFn, {
   refetchQueries,
   refetchQueriesOnFailure,
   useErrorBoundary,
@@ -1433,6 +1464,8 @@ const promise = mutate(variables, { updateQuery, waitForRefetchQueries })
   - The last successfully resolved data for the query.
 - `error: null | Error`
   - The error object for the query, if an error was thrown.
+- `reset: Function() => void`
+  - Sets the mutation's `data` and `error` fields to `null`.
 - `isLoading: Boolean`
   - Will be `true` if the query is both fetching and does not have any cached data.
 - `promise: Promise`
