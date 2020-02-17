@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.2
+
+- Added a new `setConsole` exported function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used.
+
+## 0.4.1
+
+- Fixed an issue where interval fetching errors would throw repeatedly
+
 ## 0.4.0
 
 - Added the `useMutation.throwOnError` and corresponding `queryConfig.throwOnError` option to configure whether the `mutate` function rethrows errors encountered in the mutation function

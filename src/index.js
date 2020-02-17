@@ -6,6 +6,8 @@ export let globalStateListeners = []
 let uid = 0
 const configContext = React.createContext()
 const isServer = typeof window === 'undefined'
+const noop = () => {}
+let Console = console || { error: noop, warn: noop, log: noop }
 
 let defaultConfig = {
   retry: 3,
@@ -18,6 +20,10 @@ let defaultConfig = {
   queryKeySerializerFn: defaultQueryKeySerializerFn,
   throwOnError: true,
   useErrorBoundary: undefined, // this will default to the suspense value
+}
+
+export function setConsole(c) {
+  Console = c
 }
 
 const onWindowFocus = () => {
@@ -33,7 +39,7 @@ const onWindowFocus = () => {
         }
       },
     }).catch(error => {
-      console.error(error.message)
+      Console.error(error.message)
     })
   }
 }
@@ -444,7 +450,7 @@ export function useQuery(queryKey, queryFn, config = {}) {
           try {
             query.fetch()
           } catch (err) {
-            console.error(err)
+            Console.error(err)
             // Swallow this error, since it is handled elsewhere
           }
         }
@@ -506,7 +512,7 @@ export function useQuery(queryKey, queryFn, config = {}) {
       try {
         await query.fetch()
       } catch (err) {
-        console.error(err)
+        Console.error(err)
         // Swallow this error. Don't rethrow it into a render function
       }
     }
@@ -580,7 +586,7 @@ export async function prefetchQuery(queryKey, queryFn, config = {}) {
   // Trigger a query subscription with one-time unique id
   const unsubscribeFromQuery = query.subscribe({
     id: uid++,
-    onStateUpdate: () => {},
+    onStateUpdate: noop,
   })
 
   // Trigger a fetch and return the promise
@@ -667,7 +673,7 @@ export function useMutation(
           try {
             await doRefetchQueries()
           } catch (err) {
-            console.error(err)
+            Console.error(err)
             // Swallow this error since it is a side-effect
           }
         }
@@ -791,7 +797,7 @@ function defaultQueryKeySerializerFn(queryKey) {
     const variablesIsObject = isObject(variables)
 
     if (typeof id !== 'string' || (variables && !variablesIsObject)) {
-      console.warn('Tuple queryKey:', queryKey)
+      Console.warn('Tuple queryKey:', queryKey)
       throw new Error(
         `Invalid query key tuple type: [${typeof id}, and ${typeof variables}]`
       )
