@@ -53,7 +53,7 @@ Tools for managing async data and client stores/caches are plentiful these days,
 - Force normalized or object/id-based caching strategies on your data
 - Do not automatically manage stale-ness or caching
 - Do not offer robust API's around mutation events, invalidation or query management
-- Are built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools] etc.
+- Are built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools], etc.
 
 ## The Solution
 
@@ -299,7 +299,7 @@ function Todos() {
 
 ### Query Keys
 
-Since React Query uses a query's **unique key** for essentially everything, it's important to tailor them so that will change with your query requirements. In other libraries like Zeit's SWR, you'll see the use of URL's and GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, you can pass a **tuple key** with a `string` and `object` of variables to deterministically get the the same key.
+Since React Query uses a query's **unique key** for essentially everything, it's important to tailor them so that they will change with your query requirements. In other libraries like Zeit's SWR, you'll see the use of URL's and GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, you can pass a **tuple key** with a `string` and `object` of variables to deterministically get the same key.
 
 > Pro Tip: Variables passed in the key are automatically passed to your query function!
 
@@ -313,7 +313,7 @@ useQuery(['todos', { page, status, other: undefined }])
 
 ### Query Variables
 
-To use external props, state, or variables in a query function, pass them as a variables in your query key! They will be passed through to your query function as the first parameter.
+To use external props, state, or variables in a query function, pass them as a variable in your query key! They will be passed through to your query function as the first parameter.
 
 ```js
 function Todos({ status }) {
@@ -409,7 +409,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 - A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere.
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
   - Since the query is stale, it is refetched in the background automatically.
-- Both instances of the `useQuery('todos', fetchTodos)` query are unmount and no longer in use.
+- Both instances of the `useQuery('todos', fetchTodos)` query are unmounted and no longer in use.
   - Since there are no more active instances to this query, a cache timeout is set using `cacheTime` to delete and garbage collect the query (defaults to **5 minutes**).
 - No more instances of `useQuery('todos', fetchTodos)` appear within **5 minutes**.
   - This query and its data is deleted and garbage collected.
@@ -661,7 +661,7 @@ const { data, isLoading, error } = useQuery('todos', fetchTodoList, {
 // data === [{ id: 0, name: 'Implement SSR!'}]
 ```
 
-The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, will continue as normal and request a fresh copy of the query result.
+The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, it will continue as normal and request a fresh copy of the query result.
 
 ### Suspense Mode
 
@@ -944,7 +944,7 @@ setQueryData(['todo', { id: 5 }], newTodo)
 setQueryData(['todo', { id: 5 }], previous => ({ ...previous, status: 'done' }))
 ```
 
-**Most importantly**, when manually setting a query response, it naturally becomes out-of-sync with it's original source. To ease this issue, `setQueryData` automatically triggers a background refresh of the query after it's called to ensure it eventually synchronizes with the original source.
+**Most importantly**, when manually setting a query response, it naturally becomes out-of-sync with its original source. To ease this issue, `setQueryData` automatically triggers a background refresh of the query after it's called to ensure it eventually synchronizes with the original source.
 
 Should you choose that you do _not_ want to refetch the query automatically, you can set the `shouldRefetch` option to `false`:
 
@@ -1015,7 +1015,7 @@ function App() {
 
 ### Custom Window Focus Event
 
-In rare circumstances, you may want manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the defalt handler) and your new handler is used instead. For example, this is the default handler:
+In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
 ```js
 setFocusHandler(handleFocus => {
@@ -1035,7 +1035,7 @@ setFocusHandler(handleFocus => {
 
 ### Ignoring Iframe Focus Events
 
-A greate use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
+A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
 
 ```js
 import { setFocusHandler } from 'react-query'
@@ -1439,7 +1439,7 @@ const maybePromise = setQueryData(queryKey, data, { shouldRefetch })
 ### Returns
 
 - `maybePromise: undefined | Promise`
-  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations is done).
+  - If `shouldRefetch` is `true`, a promise is returned that will either resolve when the query refetch is complete or will reject if the refetch fails (after its respective retry configurations are done).
 
 ## `refetchQuery`
 
@@ -1491,7 +1491,7 @@ const promise = refetchAllQueries({ force, includeInactive })
 - `includeInactive: Boolean`
   - Optional
   - Set this to `true` to also refetch inactive queries.
-  - Overrides the `force` option to be `true`, regardless of it's value.
+  - Overrides the `force` option to be `true`, regardless of its value.
 
 ### Returns
 
