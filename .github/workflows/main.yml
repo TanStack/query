@@ -1,6 +1,6 @@
 name: Compressed Size
 
-on: [pull_request, commit]
+on: [pull_request, push]
 
 jobs:
   build:
