@@ -1,4 +1,4 @@
-import { queries } from './utils'
+import { getQueryCache } from './queryCache'
 
 export async function refetchAllQueries({
   includeInactive,
@@ -6,7 +6,7 @@ export async function refetchAllQueries({
   shouldRefetchQuery,
 } = {}) {
   return Promise.all(
-    queries.map(async query => {
+    Object.values(getQueryCache().cache).map(async query => {
       if (
         typeof shouldRefetchQuery !== 'undefined' &&
         !shouldRefetchQuery(query)

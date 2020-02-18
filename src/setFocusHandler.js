@@ -1,5 +1,9 @@
-import { defaultConfigRef, isOnline, isDocumentVisible, Console } from './utils'
+import { isOnline, isDocumentVisible, Console, isServer } from './utils'
+import { defaultConfigRef } from './config'
 import { refetchAllQueries } from './refetchAllQueries'
+
+const visibilityChangeEvent = 'visibilitychange'
+const focusEvent = 'focus'
 
 const onWindowFocus = () => {
   const { refetchAllOnWindowFocus } = defaultConfigRef.current
@@ -32,14 +36,14 @@ export function setFocusHandler(callback) {
 
 setFocusHandler(handleFocus => {
   // Listen to visibillitychange and focus
-  if (typeof window !== 'undefined' && window.addEventListener) {
-    window.addEventListener('visibilitychange', handleFocus, false)
-    window.addEventListener('focus', handleFocus, false)
+  if (!isServer) {
+    window.addEventListener(visibilityChangeEvent, handleFocus, false)
+    window.addEventListener(focusEvent, handleFocus, false)
 
     return () => {
       // Be sure to unsubscribe if a new handler is set
-      window.removeEventListener('visibilitychange', handleFocus)
-      window.removeEventListener('focus', handleFocus)
+      window.removeEventListener(visibilityChangeEvent, handleFocus)
+      window.removeEventListener(focusEvent, handleFocus)
     }
   }
 })

@@ -1,4 +1,5 @@
-import { queries, defaultConfigRef } from './utils'
+import { getQueryCache } from './queryCache'
+import { defaultConfigRef } from './config'
 
 export async function refetchQuery(queryKey, config = {}) {
   const [
@@ -16,7 +17,7 @@ export async function refetchQuery(queryKey, config = {}) {
   }
 
   return Promise.all(
-    queries.map(async query => {
+    Object.values(getQueryCache().cache).map(async query => {
       if (query.queryGroup !== queryGroup) {
         return
       }

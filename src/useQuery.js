@@ -2,88 +2,52 @@ import React from 'react'
 
 //
 
+import { getQueryCache } from './queryCache'
+import { useConfigContext } from './config'
 import {
-  useConfigContext,
-  uid,
-  queries,
-  isServer,
+  useUid,
   isDocumentVisible,
   Console,
   useGetLatest,
+  statusError,
+  statusLoading,
 } from './utils'
-import { makeQuery } from './makeQuery'
 
 export function useQuery(queryKey, queryFn, config = {}) {
-  const isMountedRef = React.useRef(false)
-  const wasSuspendedRef = React.useRef(false)
-  const instanceIdRef = React.useRef(uid())
-  const instanceId = instanceIdRef.current
+  const instanceId = useUid()
 
   config = {
     ...useConfigContext(),
     ...config,
   }
 
-  const { manual } = config
-
-  const [
-    queryHash,
-    queryGroup,
-    variablesHash,
-    variables,
-  ] = config.queryKeySerializerFn(queryKey)
-
-  let query = queries.find(query => query.queryHash === queryHash)
-
-  let wasPrefetched
-
-  if (query) {
-    wasPrefetched = query.config.prefetch
-    query.config = config
-    if (!isMountedRef.current) {
-      query.config.prefetch = wasPrefetched
-    }
-    query.queryFn = queryFn
-  } else {
-    query = makeQuery({
-      queryHash,
-      queryGroup,
-      variablesHash,
-      variables,
-      config,
-      queryFn,
-    })
-    if (!isServer) {
-      queries.push(query)
-    }
-  }
+  let query = getQueryCache().build({
+    queryKey,
+    config,
+    queryFn,
+  })
 
   React.useEffect(() => {
-    if (config.refetchInterval && !query.refetchInterval) {
+    if (
+      config.refetchInterval &&
+      (!query.refetchInterval || config.refetchInterval < query.refetchInterval)
+    ) {
+      clearInterval(query.refetchInterval)
       query.refetchInterval = setInterval(() => {
         if (isDocumentVisible() || config.refetchIntervalInBackground) {
-          try {
-            query.fetch()
-          } catch (err) {
-            Console.error(err)
-            // Swallow this error, since it is handled elsewhere
-          }
+          query.fetch().catch(Console.error)
         }
       }, config.refetchInterval)
 
       return () => {
         clearInterval(query.refetchInterval)
-        query.refetchInterval = null
+        delete query.refetchInterval
       }
     }
   }, [config.refetchInterval, config.refetchIntervalInBackground, query])
 
   const [state, setState] = React.useState(query.state)
-
-  const onStateUpdate = React.useCallback(newState => setState(newState), [])
-  const getLatestOnError = useGetLatest(config.onError)
-  const getLatestOnSuccess = useGetLatest(config.onSuccess)
-  const getLatestManual = useGetLatest(manual)
+  const getLatestConfig = useGetLatest(config)
 
   const refetch = query.fetch
   const setData = query.setData
@@ -103,51 +67,29 @@ export function useQuery(queryKey, queryFn, config = {}) {
   React.useEffect(() => {
     const unsubscribeFromQuery = query.subscribe({
       id: instanceId,
-      onStateUpdate,
-      onSuccess: data => getLatestOnSuccess() && getLatestOnSuccess()(data),
-      onError: err => getLatestOnError() && getLatestOnError()(err),
+      onStateUpdate: newState => setState(newState),
+      onSuccess: data => getLatestConfig().onSuccess(data),
+      onError: err => getLatestConfig().onError(err),
     })
     return unsubscribeFromQuery
-  }, [getLatestOnError, getLatestOnSuccess, instanceId, onStateUpdate, query])
+  }, [getLatestConfig, instanceId, query])
 
   React.useEffect(() => {
-    if (getLatestManual()) {
+    if (getLatestConfig().manual) {
       return
     }
 
-    if (config.suspense) {
-      if (wasSuspendedRef.current || wasPrefetched) {
-        return
-      }
-    }
-
-    const runRefetch = async () => {
-      try {
-        await query.fetch()
-      } catch (err) {
-        Console.error(err)
-        // Swallow this error. Don't rethrow it into a render function
-      }
-    }
-
-    runRefetch()
-  }, [config.suspense, getLatestManual, query, wasPrefetched])
-
-  React.useEffect(() => {
-    isMountedRef.current = true
-  }, [])
+    query.fetch().catch(Console.error)
+  }, [config.suspense, getLatestConfig, query])
 
   if (config.suspense) {
-    if (state.error) {
+    if (state.status === statusError) {
       throw state.error
     }
-    if (!state.isCached) {
-      wasSuspendedRef.current = true
+    if (state.status === statusLoading) {
       throw query.fetch()
     }
   }
-
-  wasSuspendedRef.current = false
 
   return {
     ...state,

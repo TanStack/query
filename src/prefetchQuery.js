@@ -1,6 +1,6 @@
-import { queries, defaultConfigRef, isServer, uid, noop } from './utils'
-
-import { makeQuery } from './makeQuery'
+import { getQueryCache } from './queryCache'
+import { defaultConfigRef } from './config'
+import { uid } from './utils'
 
 export async function prefetchQuery(queryKey, queryFn, config = {}) {
   config = {
@@ -9,48 +9,24 @@ export async function prefetchQuery(queryKey, queryFn, config = {}) {
     prefetch: true,
   }
 
-  const [
-    queryHash,
-    queryGroup,
-    variablesHash,
-    variables,
-  ] = config.queryKeySerializerFn(queryKey)
+  const query = getQueryCache().build({
+    queryKey,
+  })
 
-  // If we're prefetching, use the queryFn to make the fetch call
-
-  let query = queries.find(query => query.queryHash === queryHash)
-
-  if (query) {
-    if (!config.force) {
-      return
-    }
-    query.config = config
-    query.queryFn = queryFn
-  } else {
-    query = makeQuery({
-      queryHash,
-      queryGroup,
-      variablesHash,
-      variables,
-      config,
-      queryFn,
-    })
-    if (!isServer) {
-      queries.push(query)
-    }
+  if (!config.force) {
+    return
   }
+  query.config = config
+  query.queryFn = queryFn
 
   // Trigger a query subscription with one-time unique id
-  const unsubscribeFromQuery = query.subscribe({
-    id: uid(),
-    onStateUpdate: noop,
-  })
+  const unsubscribeFromQuery = query.subscribe({ id: uid() })
 
   // Trigger a fetch and return the promise
   try {
     return await query.fetch({ force: config.force })
   } finally {
-    // Since this is not a hook, upsubscribe after we're done
+    // Since this is not a hook, upsubscribe right after we're done
     unsubscribeFromQuery()
   }
 }

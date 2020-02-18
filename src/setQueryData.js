@@ -1,4 +1,4 @@
-import { queries, defaultConfigRef } from './utils'
+import { getQueryCache } from './queryCache'
 
 import { refetchQuery } from './refetchQuery'
 
@@ -7,15 +7,7 @@ export function setQueryData(
   updater,
   { shouldRefetch = true } = {}
 ) {
-  const [queryHash] = defaultConfigRef.current.queryKeySerializerFn(
-    userQueryKey
-  )
-
-  if (!queryHash) {
-    return
-  }
-
-  const query = queries.find(d => d.queryHash === queryHash)
+  const query = getQueryCache().getByKey(userQueryKey)
 
   if (!query) {
     return

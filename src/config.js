@@ -1,0 +1,90 @@
+import React from 'react'
+import { noop, isObject, Console, stableStringify } from './utils'
+
+export const configContext = React.createContext()
+
+export const defaultConfigRef = {
+  current: {
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
+    refetchAllOnWindowFocus: true,
+    refetchInterval: false,
+    suspense: false,
+    queryKeySerializerFn: defaultQueryKeySerializerFn,
+    throwOnError: true,
+    useErrorBoundary: undefined, // this will default to the suspense value
+    onSuccess: noop,
+    onError: noop,
+  },
+}
+
+export function useConfigContext() {
+  return React.useContext(configContext) || defaultConfigRef.current
+}
+
+export function ReactQueryConfigProvider({ config, children }) {
+  let configContextValue = React.useContext(configContext)
+
+  const newConfig = React.useMemo(() => {
+    const newConfig = {
+      ...(configContextValue || defaultConfigRef.current),
+      ...config,
+    }
+
+    // Default useErrorBoundary to the suspense value
+    if (typeof newConfig.useErrorBoundary === 'undefined') {
+      newConfig.useErrorBoundary = newConfig.suspense
+    }
+
+    return newConfig
+  }, [config, configContextValue])
+
+  if (!configContextValue) {
+    defaultConfigRef.current = newConfig
+  }
+
+  return (
+    <configContext.Provider value={newConfig}>
+      {children}
+    </configContext.Provider>
+  )
+}
+
+export function defaultQueryKeySerializerFn(queryKey) {
+  if (!queryKey) {
+    return []
+  }
+
+  if (typeof queryKey === 'function') {
+    try {
+      return defaultQueryKeySerializerFn(queryKey())
+    } catch {
+      return []
+    }
+  }
+
+  if (Array.isArray(queryKey)) {
+    let [id, variables] = queryKey
+    const variablesIsObject = isObject(variables)
+
+    if (typeof id !== 'string' || (variables && !variablesIsObject)) {
+      Console.warn('Tuple queryKey:', queryKey)
+      throw new Error(
+        `Invalid query key tuple type: [${typeof id}, and ${typeof variables}]`
+      )
+    }
+
+    const variablesHash = variablesIsObject ? stableStringify(variables) : ''
+
+    return [
+      `${id}${variablesHash ? `_${variablesHash}` : ''}`,
+      id,
+      variablesHash,
+      variables,
+    ]
+  }
+
+  return [queryKey, queryKey]
+}

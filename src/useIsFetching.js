@@ -1,26 +1,27 @@
 import React from 'react'
 
-import { queries, globalStateListeners } from './utils'
+import { getQueryCache } from './queryCache'
 
 export function useIsFetching() {
   const [state, setState] = React.useState({})
-  const ref = React.useRef()
+  const subscriptionRef = React.useRef(
+    getQueryCache().subscribe(() => setState({}))
+  )
 
-  if (!ref.current) {
-    ref.current = () => {
-      setState({})
-    }
-    globalStateListeners.push(ref.current)
-  }
+  const unsubscribe = subscriptionRef.current
 
   React.useEffect(() => {
     return () => {
-      globalStateListeners.splice(globalStateListeners.indexOf(ref.current), 1)
+      unsubscribe()
     }
-  }, [])
+  }, [unsubscribe])
 
   return React.useMemo(
-    () => state && queries.some(query => query.state.isFetching),
+    () =>
+      state &&
+      Object.values(getQueryCache().cache).some(
+        query => query.state.isFetching
+      ),
     [state]
   )
 }

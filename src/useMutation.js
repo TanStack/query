@@ -2,26 +2,66 @@ import React from 'react'
 
 //
 
+import { useConfigContext } from './config'
+import { refetchQuery } from './refetchQuery'
+import { setQueryData } from './setQueryData'
 import {
-  useConfigContext,
+  statusIdle,
   statusLoading,
   statusSuccess,
   statusError,
   Console,
+  useGetLatest,
+  noop,
 } from './utils'
 
-import { refetchQuery } from './refetchQuery'
-import { setQueryData } from './setQueryData'
+const getDefaultState = () => ({
+  status: 'idle',
+  data: undefined,
+  error: null,
+})
+
+const actionReset = {}
+const actionMutate = {}
+const actionResolve = {}
+const actionReject = {}
+
+function mutationReducer(state, action) {
+  if (action.type === actionReset) {
+    return getDefaultState()
+  } else if (
+    [statusIdle, statusSuccess, statusError].includes(state.status) &&
+    action.type === actionMutate
+  ) {
+    return {
+      status: statusLoading,
+    }
+  } else if (state.status === statusLoading && action.type === actionResolve) {
+    return {
+      status: statusSuccess,
+      data: action.data,
+    }
+  } else if (state.status === statusLoading && action.type === actionReject) {
+    return {
+      status: statusError,
+      data: action.error,
+    }
+  } else {
+    throw new Error()
+  }
+}
 
 export function useMutation(
   mutationFn,
   { refetchQueries, refetchQueriesOnFailure, ...config } = {}
 ) {
-  const [data, setData] = React.useState(null)
-  const [error, setError] = React.useState(null)
-  const [status, setStatus] = React.useState('idle')
-  const mutationFnRef = React.useRef()
-  mutationFnRef.current = mutationFn
+  const [state, dispatch] = React.useReducer(
+    mutationReducer,
+    null,
+    getDefaultState
+  )
+
+  const getMutationFn = useGetLatest(mutationFn)
 
   const { throwOnError, useErrorBoundary } = {
     ...useConfigContext(),
@@ -30,8 +70,7 @@ export function useMutation(
 
   const mutate = React.useCallback(
     async (variables, { updateQuery, waitForRefetchQueries = false } = {}) => {
-      setStatus(statusLoading)
-      setError(null)
+      dispatch({ type: actionMutate })
 
       const doRefetchQueries = async () => {
         const refetchPromises = refetchQueries.map(queryKey =>
@@ -43,11 +82,10 @@ export function useMutation(
       }
 
       try {
-        const res = await mutationFnRef.current(variables)
-        setData(res)
+        const data = await getMutationFn()(variables)
 
         if (updateQuery) {
-          setQueryData(updateQuery, res, { shouldRefetch: false })
+          setQueryData(updateQuery, data, { shouldRefetch: false })
         }
 
         if (refetchQueries) {
@@ -59,32 +97,31 @@ export function useMutation(
           }
         }
 
-        setStatus(statusSuccess)
+        dispatch({ type: actionResolve, data })
 
-        return res
+        return data
       } catch (error) {
-        setError(error)
+        dispatch({ type: actionReject, error })
 
         if (refetchQueriesOnFailure) {
-          await doRefetchQueries()
+          doRefetchQueries().catch(noop)
         }
 
-        setStatus(statusError)
         if (throwOnError) {
           throw error
         }
       }
     },
-    [refetchQueries, refetchQueriesOnFailure, throwOnError]
+    [getMutationFn, refetchQueries, refetchQueriesOnFailure, throwOnError]
   )
 
-  const reset = React.useCallback(() => setData(null), [])
+  const reset = React.useCallback(() => dispatch({ action: actionReset }), [])
 
   React.useEffect(() => {
-    if (useErrorBoundary && error) {
-      throw error
+    if (useErrorBoundary && state.error) {
+      throw state.error
     }
-  }, [error, useErrorBoundary])
+  }, [state.error, useErrorBoundary])
 
-  return [mutate, { data, status, error, reset }]
+  return [mutate, { ...state, reset }]
 }
