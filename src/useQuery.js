@@ -83,16 +83,7 @@ export function useQuery(queryKey, queryFn, config = {}) {
   const onStateUpdate = React.useCallback(newState => setState(newState), [])
   const getLatestOnError = useGetLatest(config.onError)
   const getLatestOnSuccess = useGetLatest(config.onSuccess)
-
-  React.useEffect(() => {
-    const unsubscribeFromQuery = query.subscribe({
-      id: instanceId,
-      onStateUpdate,
-      onSuccess: data => getLatestOnSuccess() && getLatestOnSuccess()(data),
-      onError: err => getLatestOnError() && getLatestOnError()(err),
-    })
-    return unsubscribeFromQuery
-  }, [getLatestOnError, getLatestOnSuccess, instanceId, onStateUpdate, query])
+  const getLatestManual = useGetLatest(manual)
 
   const refetch = query.fetch
   const setData = query.setData
@@ -109,7 +100,15 @@ export function useQuery(queryKey, queryFn, config = {}) {
     [query]
   )
 
-  const getLatestManual = useGetLatest(manual)
+  React.useEffect(() => {
+    const unsubscribeFromQuery = query.subscribe({
+      id: instanceId,
+      onStateUpdate,
+      onSuccess: data => getLatestOnSuccess() && getLatestOnSuccess()(data),
+      onError: err => getLatestOnError() && getLatestOnError()(err),
+    })
+    return unsubscribeFromQuery
+  }, [getLatestOnError, getLatestOnSuccess, instanceId, onStateUpdate, query])
 
   React.useEffect(() => {
     if (getLatestManual()) {
