@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+- Remove unrelated branch artifacts from dist folder, including types
+
 ## 0.4.2
 
 - Added a new `setConsole` exported function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used.
