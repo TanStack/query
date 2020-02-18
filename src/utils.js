@@ -16,7 +16,10 @@ export const noop = () => {}
 export let Console = console || { error: noop, warn: noop, log: noop }
 
 export function useUid() {
-  const ref = React.useRef(uid())
+  const ref = React.useRef()
+  if (!ref.current) {
+    ref.current = uid()
+  }
   return ref.current
 }
 

@@ -46,7 +46,7 @@ export function queryCache() {
       variables,
     ] = config.queryKeySerializerFn(queryKey)
 
-    let query = cache[queryCache]
+    let query = cache[queryKey]
 
     if (!query) {
       let initialData = config.paginated ? [] : undefined
@@ -55,7 +55,7 @@ export function queryCache() {
         initialData = config.initialData
       }
 
-      let query = {
+      query = {
         queryHash,
         queryGroup,
         variablesHash,
@@ -293,6 +293,8 @@ export function queryCache() {
     if (!isServer) {
       cache[queryHash] = query
     }
+
+    return query
   }
 
   return {

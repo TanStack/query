@@ -7,6 +7,8 @@
   "repository": "tannerlinsley/react-query",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "browser": "dist/index.js",
+  "unpkg": "dist/index.min.js",
   "scripts": {
     "test": "jest",
     "test:watch": "jest .",
@@ -22,10 +24,13 @@
     "react": "^16.6.3"
   },
   "dependencies": {
+    "@babel/runtime": "^7.8.4",
     "@types/react-query": "^0.3.7"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
+    "@babel/plugin-external-helpers": "^7.8.3",
+    "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
     "@svgr/rollup": "^4.3.0",

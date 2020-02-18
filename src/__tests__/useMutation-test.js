@@ -5,7 +5,6 @@ import {
   waitForElement,
 } from '@testing-library/react'
 import * as React from 'react'
-import { act } from 'react-dom/test-utils'
 
 import { useMutation } from '../index'
 
@@ -14,14 +13,14 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const [mutate, mutationResult] = useMutation(() =>
+      const [mutate, { data = '', reset }] = useMutation(() =>
         Promise.resolve('mutation')
       )
 
       return (
         <div>
-          <h1 data-testid="title">{mutationResult.data}</h1>
-          <button onClick={mutationResult.reset}>reset</button>
+          <h1 data-testid="title">{data}</h1>
+          <button onClick={reset}>reset</button>
           <button onClick={mutate}>mutate</button>
         </div>
       )
