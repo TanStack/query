@@ -954,7 +954,7 @@ It's sometimes the case that you need to clear the `error` or `data` of a mutati
 ```js
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
-  const [mutate, { error, mutate }] = useMutation(createTodo)
+  const [mutate, { error, reset }] = useMutation(createTodo)
 
   const onCreateTodo = async e => {
     e.preventDefault()
