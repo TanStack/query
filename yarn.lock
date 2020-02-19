@@ -544,13 +544,6 @@
   resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.8.4.tgz#d1dbe64691d60358a974295fa53da074dd2ce8e8"
   integrity sha512-0fKu/QqildpXmPVaRBoXOlyBb3MC+J0A66x97qEfLOMkn3u6nfY5esWogQwi/K0BjASYy4DbnsEWnpNL6qT5Mw==
 
-"@babel/plugin-external-helpers@^7.8.3":
-  version "7.8.3"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-external-helpers/-/plugin-external-helpers-7.8.3.tgz#5a94164d9af393b2820a3cdc407e28ebf237de4b"
-  integrity sha512-mx0WXDDiIl5DwzMtzWGRSPugXi9BxROS05GQrhLNbEamhBiicgn994ibwkyiBH+6png7bm/yA7AUsvHyCXi4Vw==
-  dependencies:
-    "@babel/helper-plugin-utils" "^7.8.3"
-
 "@babel/plugin-proposal-async-generator-functions@^7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-proposal-async-generator-functions/-/plugin-proposal-async-generator-functions-7.2.0.tgz#b289b306669dce4ad20b0252889a15768c9d417e"
@@ -1250,16 +1243,6 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.8.3"
 
-"@babel/plugin-transform-runtime@^7.8.3":
-  version "7.8.3"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.8.3.tgz#c0153bc0a5375ebc1f1591cb7eea223adea9f169"
-  integrity sha512-/vqUt5Yh+cgPZXXjmaG9NT8aVfThKk7G4OqkVhrXqwsC5soMn/qTCxs36rZ2QFhpfTJcjw4SNDIZ4RUb8OL4jQ==
-  dependencies:
-    "@babel/helper-module-imports" "^7.8.3"
-    "@babel/helper-plugin-utils" "^7.8.3"
-    resolve "^1.8.1"
-    semver "^5.5.1"
-
 "@babel/plugin-transform-shorthand-properties@^7.2.0":
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-shorthand-properties/-/plugin-transform-shorthand-properties-7.2.0.tgz#6333aee2f8d6ee7e28615457298934a3b46198f0"
@@ -1499,7 +1482,7 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
-"@babel/runtime@^7.6.2", "@babel/runtime@^7.7.6", "@babel/runtime@^7.8.4":
+"@babel/runtime@^7.6.2", "@babel/runtime@^7.7.6":
   version "7.8.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.8.4.tgz#d79f5a2040f7caa24d53e563aad49cbc05581308"
   integrity sha512-neAp3zt80trRVBI1x0azq6c57aNBqYZH8KhMm3TaB7wEI5Q4A2SHfBHE8w9gOhI/lrqxtEbXZgQIrHP+wvSGwQ==
@@ -6746,7 +6729,7 @@ resolve@^1.10.0, resolve@^1.10.1, resolve@^1.11.0, resolve@^1.11.1, resolve@^1.3
   dependencies:
     path-parse "^1.0.6"
 
-resolve@^1.14.2, resolve@^1.8.1:
+resolve@^1.14.2:
   version "1.15.1"
   resolved "https://registry.yarnpkg.com/resolve/-/resolve-1.15.1.tgz#27bdcdeffeaf2d6244b95bb0f9f4b4653451f3e8"
   integrity sha512-84oo6ZTtoTUpjgNEr5SJyzQhzL72gaRodsSfyxC/AXRvwu0Yse9H8eF9IpGo7b8YetZhlI6v7ZQ6bKBFV/6S7w==
