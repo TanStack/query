@@ -17,12 +17,9 @@ export default [
     },
     plugins: [
       external(),
-      babel({
-        // plugins: ['@babel/plugin-external-helpers'],
-        includeHelpers: true,
-      }),
+      babel(),
       size({
-        publish: process.env.CI ? true : false,
+        publish: true,
         exclude: pkg.main,
         filename: 'sizes-es.json',
         writeFile: process.env.CI ? true : false,
@@ -43,12 +40,9 @@ export default [
     },
     plugins: [
       external(),
-      babel({
-        // plugins: ['@babel/plugin-external-helpers'],
-        includeHelpers: true,
-      }),
+      babel(),
       size({
-        publish: process.env.CI ? true : false,
+        publish: true,
         exclude: pkg.module,
         filename: 'sizes-cjs.json',
         writeFile: process.env.CI ? true : false,
@@ -69,10 +63,10 @@ export default [
     },
     plugins: [
       external(),
-      babel({ runtimeHelpers: false }),
+      babel(),
       terser(),
       size({
-        publish: process.env.CI ? true : false,
+        publish: true,
         exclude: pkg.module,
         filename: 'sizes-cjs.json',
         writeFile: process.env.CI ? true : false,
