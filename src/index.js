@@ -735,27 +735,45 @@ export function useIsFetching() {
 }
 
 export function setQueryData(
-  userQueryKey,
+  queryKey,
   updater,
   { shouldRefetch = true } = {}
 ) {
-  const [queryHash] = defaultConfig.queryKeySerializerFn(userQueryKey)
+  const [
+    ,
+    queryGroup,
+    variablesHash,
+    variables,
+  ] = defaultConfig.queryKeySerializerFn(queryKey)
 
-  if (!queryHash) {
+  if (!queryGroup) {
     return
   }
 
-  const query = queries.find(d => d.queryHash === queryHash)
+  return Promise.all(
+    queries.map(async query => {
+      if (query.queryGroup !== queryGroup) {
+        return
+      }
 
-  if (!query) {
-    return
-  }
+      if (variables === false && query.variablesHash) {
+        return
+      }
 
-  query.setData(updater)
+      if (variablesHash && query.variablesHash !== variablesHash) {
+        return
+      }
 
-  if (shouldRefetch) {
-    return refetchQuery(userQueryKey)
-  }
+      const newData = updater(query.state.data, query.variables);
+      if (typeof newData !== "undefined") {
+        query.setData(newData)
+
+        if (shouldRefetch) {
+          return refetchQuery([queryGroup, query.variables])
+        }
+      }
+    })
+  )
 }
 
 export async function refetchAllQueries({
