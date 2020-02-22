@@ -1,12 +1,10 @@
 import React from 'react'
 
-import { getQueryCache } from './queryCache'
+import { queryCache } from './queryCache'
 
 export function useIsFetching() {
   const [state, setState] = React.useState({})
-  const subscriptionRef = React.useRef(
-    getQueryCache().subscribe(() => setState({}))
-  )
+  const subscriptionRef = React.useRef(queryCache.subscribe(() => setState({})))
 
   const unsubscribe = subscriptionRef.current
 
@@ -16,12 +14,5 @@ export function useIsFetching() {
     }
   }, [unsubscribe])
 
-  return React.useMemo(
-    () =>
-      state &&
-      Object.values(getQueryCache().cache).some(
-        query => query.state.isFetching
-      ),
-    [state]
-  )
+  return React.useMemo(() => state && queryCache.isFetching, [state])
 }

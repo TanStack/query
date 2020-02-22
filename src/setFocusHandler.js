@@ -1,6 +1,6 @@
 import { isOnline, isDocumentVisible, Console, isServer } from './utils'
 import { defaultConfigRef } from './config'
-import { refetchAllQueries } from './refetchAllQueries'
+import { queryCache } from './queryCache'
 
 const visibilityChangeEvent = 'visibilitychange'
 const focusEvent = 'focus'
@@ -9,17 +9,17 @@ const onWindowFocus = () => {
   const { refetchAllOnWindowFocus } = defaultConfigRef.current
 
   if (isDocumentVisible() && isOnline()) {
-    refetchAllQueries({
-      shouldRefetchQuery: query => {
+    queryCache
+      .refetchQueries(query => {
         if (typeof query.config.refetchOnWindowFocus === 'undefined') {
           return refetchAllOnWindowFocus
         } else {
           return query.config.refetchOnWindowFocus
         }
-      },
-    }).catch(error => {
-      Console.error(error.message)
-    })
+      })
+      .catch(error => {
+        Console.error(error.message)
+      })
   }
 }
 

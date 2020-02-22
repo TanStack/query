@@ -1,11 +1,15 @@
-export { getQueryCache } from './queryCache'
-export { prefetchQuery } from './prefetchQuery'
+export { queryCache } from './queryCache'
 export { ReactQueryConfigProvider } from './config'
-export { refetchQuery } from './refetchQuery'
-export { refetchAllQueries } from './refetchAllQueries'
 export { setFocusHandler } from './setFocusHandler'
-export { setQueryData } from './setQueryData'
 export { useIsFetching } from './useIsFetching'
 export { useMutation } from './useMutation'
 export { useQuery } from './useQuery'
-export { statusIdle, statusLoading, statusSuccess, statusError } from './utils'
+export { usePaginatedQuery } from './usePaginatedQuery'
+export { useInfiniteQuery } from './useInfiniteQuery'
+export {
+  statusIdle,
+  statusLoading,
+  statusSuccess,
+  statusError,
+  stableStringify,
+} from './utils'

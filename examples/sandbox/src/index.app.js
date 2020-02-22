@@ -6,13 +6,13 @@ import {
   ReactQueryConfigProvider,
   useQuery,
   useMutation,
-  refetchAllQueries,
   useIsFetching,
   queries,
   globalStateListeners
 } from "react-query";
 
 import "./styles.css";
+import { queryCache } from "../../../src/queryCache";
 
 const QueryStateList = styled.div`
   display: flex;
@@ -290,7 +290,7 @@ function App() {
         <button
           onClick={async () => {
             try {
-              refetchAllQueries({ force: true });
+              queryCache.refetchQueries(true);
             } catch {}
           }}
         >

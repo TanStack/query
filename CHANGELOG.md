@@ -1,5 +1,38 @@
 # Changelog
 
+## 1.0.0
+
+**Features & Enhancements**
+
+- `usePaginatedQuery` - A dedicated hook for window-like querying of paginated data or cursor-driven batches of data
+- `useInfiniteQuery` - A dedidated hook for accumulative querying of paginated data or cursor-driven batches of data
+- Synchronous Query Cache Reads/Writes/Upserts/Deletes
+- Improved query key matching for removing and refetching queries
+- External subscriptions to query cache updates
+- Unlimited query key length support
+- Optional Query Variables
+- `onSettled` callback for query and mutation hooks
+- `onSuccess` and `onError` callbacks for mutations
+
+**Breaking Changes**
+
+- Query Keys and Query functions
+  - Query keys in array form are no longer limited to a `[String, Object]` tuple, but can have as many serializable items in them as necessary.
+  - Query functions now receive **all** query key items as parameters (before they only recieved a single variables object if supplied)
+  - Query functions can now also receive optional query variables (passed as an optional second variable to `useQuery`) as parameters. They are applied after the query key parameters
+- `useQuery`
+  - `paginated` has been removed in favor of the new `usePaginatedQuery` and `useInfiniteQuery` hooks. This includes the following options and methods as well:
+    - `isFetchingMore`
+    - `canFetchMore`
+    - `fetchMore`
+- `useMutation`
+  - `refetchQueries` and `updateQuery` options have been removed in favor of `onSuccess`, `onError` and `onSettled` + `queryCache.refetchQueries` and `queryCache.setQueryData`
+- `prefetchQuery` has been removed in favor of `queryCache.prefetchQuery`
+- `refetchQuery` has been removed in favor of `queryCache.refetchQueries`
+- `refetchAllQueries` has been removed in favor of `queryCache.refetchQueries`
+- `updateQuery` has been removed in favor of `queryCache.setQueryData`
+- `clearQueryCache` has been removed in favor of `queryCache.clear` and `queryCache.removeQueries`
+
 ## 0.4.2
 
 - Added a new `setConsole` exported function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used.

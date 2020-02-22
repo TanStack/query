@@ -73,3 +73,7 @@ export function isDocumentVisible() {
 export function isOnline() {
   return navigator.onLine === undefined || navigator.onLine
 }
+
+export function getQueryArgs(args) {
+  return typeof args[2] === 'function' ? args : [args[0], [], ...args.slice(1)]
+}

@@ -3,20 +3,16 @@ import React from 'react'
 //
 
 import { useConfigContext } from './config'
-import { refetchQuery } from './refetchQuery'
-import { setQueryData } from './setQueryData'
 import {
   statusIdle,
   statusLoading,
   statusSuccess,
   statusError,
-  Console,
   useGetLatest,
-  noop,
 } from './utils'
 
 const getDefaultState = () => ({
-  status: 'idle',
+  status: statusIdle,
   data: undefined,
   error: null,
 })
@@ -63,65 +59,47 @@ export function useMutation(
 
   const getMutationFn = useGetLatest(mutationFn)
 
-  const { throwOnError, useErrorBoundary } = {
+  const getConfig = useGetLatest({
     ...useConfigContext(),
     ...config,
-  }
+  })
 
   const mutate = React.useCallback(
-    async (variables, { updateQuery, waitForRefetchQueries = false } = {}) => {
+    async (variables, options = {}) => {
       dispatch({ type: actionMutate })
 
-      const doRefetchQueries = async () => {
-        const refetchPromises = refetchQueries.map(queryKey =>
-          refetchQuery(queryKey, { force: true })
-        )
-        if (waitForRefetchQueries) {
-          await Promise.all(refetchPromises)
-        }
+      const resolvedOptions = {
+        ...getConfig(),
+        ...options,
       }
 
       try {
         const data = await getMutationFn()(variables)
-
-        if (updateQuery) {
-          setQueryData(updateQuery, data, { shouldRefetch: false })
-        }
-
-        if (refetchQueries) {
-          try {
-            await doRefetchQueries()
-          } catch (err) {
-            Console.error(err)
-            // Swallow this error since it is a side-effect
-          }
-        }
-
         dispatch({ type: actionResolve, data })
+        await resolvedOptions.onSuccess(data)
+        await resolvedOptions.onSettled(data, null)
 
         return data
       } catch (error) {
         dispatch({ type: actionReject, error })
+        await resolvedOptions.onError(error)
+        await resolvedOptions.onSettled(undefined, error)
 
-        if (refetchQueriesOnFailure) {
-          doRefetchQueries().catch(noop)
-        }
-
-        if (throwOnError) {
+        if (resolvedOptions.throwOnError) {
           throw error
         }
       }
     },
-    [getMutationFn, refetchQueries, refetchQueriesOnFailure, throwOnError]
+    [getConfig, getMutationFn]
   )
 
   const reset = React.useCallback(() => dispatch({ type: actionReset }), [])
 
   React.useEffect(() => {
-    if (useErrorBoundary && state.error) {
+    if (getConfig().useErrorBoundary && state.error) {
       throw state.error
     }
-  }, [state.error, useErrorBoundary])
+  }, [getConfig, state.error])
 
   return [mutate, { ...state, reset }]
 }

@@ -13,10 +13,11 @@ export const defaultConfigRef = {
     refetchInterval: false,
     suspense: false,
     queryKeySerializerFn: defaultQueryKeySerializerFn,
-    throwOnError: true,
+    throwOnError: false,
     useErrorBoundary: undefined, // this will default to the suspense value
     onSuccess: noop,
     onError: noop,
+    onSettled: noop,
   },
 }
 
@@ -65,26 +66,12 @@ export function defaultQueryKeySerializerFn(queryKey) {
     }
   }
 
-  if (Array.isArray(queryKey)) {
-    let [id, variables] = queryKey
-    const variablesIsObject = isObject(variables)
-
-    if (typeof id !== 'string' || (variables && !variablesIsObject)) {
-      Console.warn('Tuple queryKey:', queryKey)
-      throw new Error(
-        `Invalid query key tuple type: [${typeof id}, and ${typeof variables}]`
-      )
-    }
-
-    const variablesHash = variablesIsObject ? stableStringify(variables) : ''
-
-    return [
-      `${id}${variablesHash ? `_${variablesHash}` : ''}`,
-      id,
-      variablesHash,
-      variables,
-    ]
+  if (typeof queryKey === 'string') {
+    queryKey = [queryKey]
   }
 
-  return [queryKey, queryKey]
+  const queryHash = stableStringify(queryKey)
+  queryKey = JSON.parse(queryHash)
+
+  return [queryHash, queryKey]
 }
