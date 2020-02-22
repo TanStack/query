@@ -2,7 +2,7 @@ import React from 'react'
 import Button from '../components/button'
 import fetch from '../libs/fetch'
 
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
   const [value, setValue] = React.useState('')
@@ -15,12 +15,12 @@ export default () => {
   const [mutateAddTodo] = useMutation(
     value => fetch(`/api/data?add=${value}`),
     {
-      refetchQueries: ['todos'],
+      onSuccess: () => queryCache.refetchQueries('todos'),
     }
   )
 
   const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
-    refetchQueries: ['todos'],
+    onSuccess: () => queryCache.refetchQueries('todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>

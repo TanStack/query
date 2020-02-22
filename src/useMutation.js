@@ -9,6 +9,7 @@ import {
   statusSuccess,
   statusError,
   useGetLatest,
+  Console,
 } from './utils'
 
 const getDefaultState = () => ({
@@ -40,7 +41,7 @@ function mutationReducer(state, action) {
   } else if (state.status === statusLoading && action.type === actionReject) {
     return {
       status: statusError,
-      data: action.error,
+      error: action.error,
     }
   } else {
     throw new Error()
@@ -66,6 +67,9 @@ export function useMutation(
 
   const mutate = React.useCallback(
     async (variables, options = {}) => {
+      if (![statusIdle, statusSuccess, statusError].includes(state.status)) {
+        return
+      }
       dispatch({ type: actionMutate })
 
       const resolvedOptions = {
@@ -81,6 +85,7 @@ export function useMutation(
 
         return data
       } catch (error) {
+        Console.error(error)
         dispatch({ type: actionReject, error })
         await resolvedOptions.onError(error)
         await resolvedOptions.onSettled(undefined, error)
@@ -90,7 +95,7 @@ export function useMutation(
         }
       }
     },
-    [getConfig, getMutationFn]
+    [getConfig, getMutationFn, state.status]
   )
 
   const reset = React.useCallback(() => dispatch({ type: actionReset }), [])

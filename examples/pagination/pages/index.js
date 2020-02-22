@@ -8,7 +8,7 @@ export default () => {
 
   const { status, resolvedData, data, error, isFetching } = usePaginatedQuery(
     ['todos', page],
-    (_, page = 0) => fetch('/api/projects?page=' + page)
+    (key, page = 0) => fetch('/api/projects?page=' + page)
   )
 
   return (

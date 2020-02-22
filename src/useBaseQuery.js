@@ -24,18 +24,9 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   let query = queryCache._buildQuery(queryKey, queryVariables, queryFn, config)
 
   const [queryState, setQueryState] = React.useState(query.state)
-
+  const wasSuspenseRef = React.useRef(false)
   const getLatestConfig = useGetLatest(config)
-
-  const refetch = React.useCallback(
-    options => {
-      if (query.state.isStale) {
-        query.fetch(options)
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [query, ...queryVariables]
-  )
+  const refetch = React.useCallback(query.fetch, [query])
 
   React.useEffect(() => {
     if (
@@ -77,14 +68,20 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       return
     }
 
-    refetch().catch(Console.error)
-  }, [config.suspense, getLatestConfig, refetch])
+    if (query.state.isStale && !wasSuspenseRef.current) {
+      refetch().catch(Console.error)
+    }
+
+    wasSuspenseRef.current = false
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [config.suspense, getLatestConfig, refetch, ...queryVariables])
 
   if (config.suspense) {
     if (queryState.status === statusError) {
       throw queryState.error
     }
     if (queryState.status === statusLoading) {
+      wasSuspenseRef.current = true
       throw refetch()
     }
   }

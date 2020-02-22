@@ -7,7 +7,7 @@ import {
   statusSuccess,
   statusError,
   getQueryArgs,
-  uid,
+  deepIncludes,
   noop,
 } from './utils'
 import { defaultConfigRef } from './config'
@@ -34,9 +34,9 @@ export function makeQueryCache() {
 
   const notifyGlobalListeners = () => {
     listeners.forEach(d => d(cache))
-    cache.isFetching = Object.values(queryCache.queries).filter(
-      query => query.state.isFetching
-    ).length
+    // cache.isFetching = Object.values(queryCache.queries).filter(
+    //   query => query.state.isFetching
+    // ).length
   }
 
   cache.subscribe = cb => {
@@ -53,11 +53,12 @@ export function makeQueryCache() {
 
   const findQueries = (predicate, { exact } = {}) => {
     if (typeof predicate !== 'function') {
-      const [queryHash] = defaultConfigRef.current.queryKeySerializerFn(
-        predicate
-      )
+      const [
+        queryHash,
+        queryKey,
+      ] = defaultConfigRef.current.queryKeySerializerFn(predicate)
       predicate = d =>
-        exact ? d.queryHash === queryHash : d.queryHash.startsWith(queryHash)
+        exact ? d.queryHash === queryHash : deepIncludes(d.queryKey, queryKey)
     }
 
     const found = Object.values(cache.queries).filter(predicate)
@@ -72,7 +73,7 @@ export function makeQueryCache() {
     const foundQueries = findQueries(predicate, { exact })
 
     foundQueries.forEach(query => {
-      delete cache.queries[query.queryhash]
+      delete cache.queries[query.queryHash]
     })
 
     if (foundQueries.length) {
@@ -123,7 +124,7 @@ export function makeQueryCache() {
     return query
   }
 
-  cache.prefetchQuery = async args => {
+  cache.prefetchQuery = async (...args) => {
     let [queryKey, queryVariables, queryFn, config] = getQueryArgs(args)
 
     const query = cache._buildQuery(queryKey, queryVariables, queryFn, {
@@ -175,7 +176,7 @@ export function makeQueryCache() {
       query.isInactive = true
 
       query.cacheTimeout = setTimeout(() => {
-        cache.removeQueries(d => d.queryHash === query.queryhash)
+        cache.removeQueries(d => d.queryHash === query.queryHash)
       }, query.config.cacheTime)
     }
 
@@ -282,6 +283,7 @@ export function makeQueryCache() {
 
     query.fetch = async ({ __queryFn = query.queryFn } = {}) => {
       // Don't refetch fresh queries that don't have a queryHash
+
       if (!query.queryHash) {
         return
       }

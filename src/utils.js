@@ -61,6 +61,18 @@ export function isObject(a) {
   return a && typeof a === 'object' && !Array.isArray(a)
 }
 
+export function deepIncludes(a, b) {
+  if (typeof a !== typeof b) {
+    return false
+  }
+
+  if (typeof a === 'object') {
+    return !Object.keys(b).some(key => !deepIncludes(a[key], b[key]))
+  }
+
+  return a === b
+}
+
 export function isDocumentVisible() {
   return (
     typeof document === 'undefined' ||
