@@ -448,7 +448,10 @@ export function useQuery(queryKey, queryFn, config = {}) {
       query.refetchInterval = setInterval(() => {
         if (isDocumentVisible() || config.refetchIntervalInBackground) {
           try {
-            query.fetch()
+            query.fetch().catch(err => {
+              Console.error(err)
+              // Swallow this error, since it is handled elsewhere
+            })
           } catch (err) {
             Console.error(err)
             // Swallow this error, since it is handled elsewhere
