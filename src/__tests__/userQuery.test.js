@@ -2,7 +2,7 @@ import { cleanup, render, act, waitForElement, fireEvent } from '@testing-librar
 import * as React from 'react'
 
 import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
-import { sleep } from './utils'
+import { sleep } from './shared/utils'
 
 describe('useQuery', () => {
   afterEach(() => {
