@@ -11,19 +11,19 @@ import { sleep } from './utils'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
-    cleanup();
-    queryCache.clear();
+    cleanup()
+    queryCache.clear()
   })
 
   it('should use previous page data before next page is fetched', async () => {
     function Page() {
-      const [page, setPage] = React.useState(1);
+      const [page, setPage] = React.useState(1)
       const { resolvedData } = usePaginatedQuery(
         ['data', page],
         async (queryName, page) => {
-          sleep(1000);
-          return page;
-        },
+          sleep(1000)
+          return page
+        }
       )
 
       return (
@@ -43,7 +43,6 @@ describe('usePaginatedQuery', () => {
     await waitForElement(() => getByTestId('title'))
     expect(getByTestId('title').textContent).toBe('2')
 
-
     fireEvent.click(getByText('next'))
     await waitForElement(() => getByTestId('title'))
     expect(getByTestId('title').textContent).toBe('3')
@@ -51,13 +50,13 @@ describe('usePaginatedQuery', () => {
 
   it('should use previous page data before next page is fetched when initialData provided', async () => {
     function Page() {
-      const [page, setPage] = React.useState(1);
+      const [page, setPage] = React.useState(1)
 
       const { resolvedData } = usePaginatedQuery(
         ['data', { page }],
         async (queryName, { page }) => {
-          sleep(1000);
-          return page;
+          sleep(1000)
+          return page
         },
         { initialData: 1 }
       )

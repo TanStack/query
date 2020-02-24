@@ -1,17 +1,15 @@
-import {
-  cleanup,
-} from '@testing-library/react'
+import { cleanup } from '@testing-library/react'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 
 describe('useQuery SSR', () => {
   beforeEach(() => {
-    const windowSpy = jest.spyOn(global, 'window', 'get');
-    windowSpy.mockImplementation(() => undefined);
+    const windowSpy = jest.spyOn(global, 'window', 'get')
+    windowSpy.mockImplementation(() => undefined)
   })
 
   afterEach(() => {
-    cleanup();
+    cleanup()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/70
@@ -20,11 +18,11 @@ describe('useQuery SSR', () => {
     const { usePaginatedQuery, queryCache } = require('../index')
 
     function Page() {
-      const [page, setPage] = React.useState(1);
+      const [page, setPage] = React.useState(1)
       const { resolvedData } = usePaginatedQuery(
         ['data', page],
         async (queryName, page) => {
-          return page;
+          return page
         },
         { initialData: '1' }
       )
@@ -39,6 +37,6 @@ describe('useQuery SSR', () => {
 
     renderToString(<Page />)
 
-    expect(queryCache.queries).toEqual({});
+    expect(queryCache.queries).toEqual({})
   })
 })

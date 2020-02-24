@@ -1,9 +1,4 @@
-import {
-  cleanup,
-  render,
-  act,
-  waitForElement,
-} from '@testing-library/react'
+import { cleanup, render, act, waitForElement } from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
@@ -11,17 +6,17 @@ import { sleep } from './utils'
 
 describe('useQuery', () => {
   afterEach(() => {
-    cleanup();
-    queryCache.clear();
+    cleanup()
+    queryCache.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
     function Page() {
       const { data = 'default' } = useQuery('test', async () => {
-        await sleep(1000);
-        return 'test';
-      });
+        await sleep(1000)
+        return 'test'
+      })
 
       return (
         <div>
@@ -39,17 +34,13 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', async () => {
     function Page() {
-      const { data: first } = useQuery(
-        false && 'first',
-        () => {},
-        { initialData: 'first' }
-      );
+      const { data: first } = useQuery(false && 'first', () => {}, {
+        initialData: 'first',
+      })
 
-      const { data: second } = useQuery(
-        false && 'second',
-        () => {},
-        { initialData: 'second' }
-      );
+      const { data: second } = useQuery(false && 'second', () => {}, {
+        initialData: 'second',
+      })
 
       return (
         <div>
@@ -61,10 +52,7 @@ describe('useQuery', () => {
 
     const { getByTestId } = render(<Page />)
 
-    await waitForElement(() => [
-      getByTestId('first'),
-      getByTestId('second'),
-    ])
+    await waitForElement(() => [getByTestId('first'), getByTestId('second')])
     expect(getByTestId('first').textContent).toBe('first')
     expect(getByTestId('second').textContent).toBe('second')
   })
@@ -73,9 +61,9 @@ describe('useQuery', () => {
   it('should be in "loading" state by default', async () => {
     function Page() {
       const { status } = useQuery('test', async () => {
-        await sleep(1000);
-        return 'test';
-      });
+        await sleep(1000)
+        return 'test'
+      })
 
       return (
         <div>
@@ -93,12 +81,16 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/144
   it('should be in "success" state by default in manual mode', async () => {
     function Page() {
-      const { status } = useQuery('test', async () => {
-        await sleep(1000);
-        return 'test';
-      }, {
-        manual: true
-      });
+      const { status } = useQuery(
+        'test',
+        async () => {
+          await sleep(1000)
+          return 'test'
+        },
+        {
+          manual: true,
+        }
+      )
 
       return (
         <div>
@@ -115,27 +107,23 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/147
   it('should not pass stringified variables to query function', async () => {
-    const queryFn = jest.fn();
+    const queryFn = jest.fn()
     const promise = Promise.resolve()
-    queryFn.mockImplementation(() => promise);
+    queryFn.mockImplementation(() => promise)
 
-    const variables = { number: 5, boolean: false, object: {}, array: [] };
+    const variables = { number: 5, boolean: false, object: {}, array: [] }
 
     function Page() {
-      useQuery(
-        ['test', variables],
-        queryFn
-      );
+      useQuery(['test', variables], queryFn)
 
-
-      return null;
+      return null
     }
 
     render(<Page />)
 
     // use "act" to wait for state update and prevent console warning
-    await act(() => promise);
+    await act(() => promise)
 
-    expect(queryFn).toHaveBeenCalledWith('test', { number: 5, boolean: false, object: {}, array: [] });
+    expect(queryFn).toHaveBeenCalledWith('test', variables)
   })
 })
