@@ -4,7 +4,7 @@ import {
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 
-describe('useQuery', () => {
+describe('useQuery SSR', () => {
   beforeEach(() => {
     const windowSpy = jest.spyOn(global, 'window', 'get');
     windowSpy.mockImplementation(() => undefined);

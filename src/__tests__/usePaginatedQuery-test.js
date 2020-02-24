@@ -7,12 +7,7 @@ import {
 import * as React from 'react'
 
 import { usePaginatedQuery, queryCache } from '../index'
-
-function sleep(timeout) {
-  return new Promise((resolve, reject) => {
-    setTimeout(resolve, timeout)
-  });
-}
+import { sleep } from './utils'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
