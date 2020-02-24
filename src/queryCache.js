@@ -117,7 +117,10 @@ export function makeQueryCache() {
       query.scheduleGarbageCollection()
 
       if (!isServer) {
-        cache.queries[queryHash] = query
+        // See https://github.com/tannerlinsley/react-query/issues/137
+        if (typeof queryHash !== 'undefined') {
+          cache.queries[queryHash] = query
+        }
       }
     }
 
