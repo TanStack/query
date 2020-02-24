@@ -1,4 +1,10 @@
-import { cleanup, render, act, waitForElement, fireEvent } from '@testing-library/react'
+import {
+  cleanup,
+  render,
+  act,
+  waitForElement,
+  fireEvent,
+} from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
@@ -34,14 +40,22 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', async () => {
     function Page() {
-      const [shouldFetch, setShouldFetch] = React.useState(false);
-      const { data: first } = useQuery(shouldFetch && 'first', () => 'first remote', {
-        initialData: 'first',
-      })
+      const [shouldFetch, setShouldFetch] = React.useState(false)
+      const { data: first } = useQuery(
+        shouldFetch && 'first',
+        () => 'first remote',
+        {
+          initialData: 'first',
+        }
+      )
 
-      const { data: second } = useQuery(shouldFetch && 'second', () => 'second remote', {
-        initialData: 'second',
-      })
+      const { data: second } = useQuery(
+        shouldFetch && 'second',
+        () => 'second remote',
+        {
+          initialData: 'second',
+        }
+      )
 
       return (
         <div>
@@ -58,7 +72,7 @@ describe('useQuery', () => {
     expect(getByTestId('first').textContent).toBe('first')
     expect(getByTestId('second').textContent).toBe('second')
 
-    fireEvent.click(getByText('fetch'));
+    fireEvent.click(getByText('fetch'))
 
     await waitForElement(() => [getByTestId('first'), getByTestId('second')])
     expect(getByTestId('first').textContent).toBe('first remote')
