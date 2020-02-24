@@ -2181,15 +2181,23 @@ const isFetching = useIsFetching()
 import { ReactQueryConfigProvider } from 'react-query'
 
 const queryConfig = {
+  // Global
+  suspense: false,
+  useErrorBoundary: undefined, // Defaults to the value of `suspense` if not defined otherwise
+  throwOnError: false,
+  refetchAllOnWindowFocus: true,
+  queryKeySerializerFn: queryKey => [queryHash, normalizedQueryKey],
+  onSuccess: () => {},
+  onError: () => {},
+  onSettled: () => {},
+
+  // useQuery
   retry: 3,
   retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
   staleTime: 0,
   cacheTime: 5 * 60 * 1000,
-  refetchAllOnWindowFocus: true,
   refetchInterval: false,
-  suspense: false,
-  useErrorBoundary: undefined, // Defaults to the value of `suspense` if not defined otherwise
-  throwOnError: true,
+  queryFnParamsFilter: args => filteredArgs,
 }
 
 function App() {
@@ -2205,7 +2213,7 @@ function App() {
 
 - `config: Object`
   - Must be **stable** or **memoized**. Do not create an inline object!
-  - For a description of all config options, please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
+  - For non global properties please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
 
 ## `setConsole`
 

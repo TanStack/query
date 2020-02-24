@@ -13,6 +13,7 @@ export const cancelledError = {}
 export let globalStateListeners = []
 export const isServer = typeof window === 'undefined'
 export const noop = () => {}
+export const identity = d => d
 export let Console = console || { error: noop, warn: noop, log: noop }
 
 export function useUid() {

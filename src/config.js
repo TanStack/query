@@ -1,5 +1,5 @@
 import React from 'react'
-import { noop, isObject, Console, stableStringify } from './utils'
+import { noop, stableStringify, identity } from './utils'
 
 export const configContext = React.createContext()
 
@@ -13,6 +13,7 @@ export const defaultConfigRef = {
     refetchInterval: false,
     suspense: false,
     queryKeySerializerFn: defaultQueryKeySerializerFn,
+    queryFnParamsFilter: identity,
     throwOnError: false,
     useErrorBoundary: undefined, // this will default to the suspense value
     onSuccess: noop,
