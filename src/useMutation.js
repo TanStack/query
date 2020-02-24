@@ -79,16 +79,16 @@ export function useMutation(
 
       try {
         const data = await getMutationFn()(variables)
-        dispatch({ type: actionResolve, data })
         await resolvedOptions.onSuccess(data)
         await resolvedOptions.onSettled(data, null)
+        dispatch({ type: actionResolve, data })
 
         return data
       } catch (error) {
         Console.error(error)
-        dispatch({ type: actionReject, error })
         await resolvedOptions.onError(error)
         await resolvedOptions.onSettled(undefined, error)
+        dispatch({ type: actionReject, error })
 
         if (resolvedOptions.throwOnError) {
           throw error
