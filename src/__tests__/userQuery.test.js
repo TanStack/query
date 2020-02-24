@@ -6,7 +6,7 @@ import {
 } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, queryCache } from '../index'
+import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
 import { sleep } from './utils'
 
 describe('useQuery', () => {
@@ -70,9 +70,9 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
-  it('should be in loading state by default', async () => {
+  it('should be in "loading" state by default', async () => {
     function Page() {
-      const { data, status } = useQuery('test', async () => {
+      const { status } = useQuery('test', async () => {
         await sleep(1000);
         return 'test';
       });
@@ -87,6 +87,29 @@ describe('useQuery', () => {
     const { getByTestId } = render(<Page />)
 
     await waitForElement(() => getByTestId('status'))
-    expect(getByTestId('status').textContent).toBe('loading')
+    expect(getByTestId('status').textContent).toBe(statusLoading)
+  })
+
+  // See https://github.com/tannerlinsley/react-query/issues/144
+  it('should be in "success" state by default in manual mode', async () => {
+    function Page() {
+      const { status } = useQuery('test', async () => {
+        await sleep(1000);
+        return 'test';
+      }, {
+        manual: true
+      });
+
+      return (
+        <div>
+          <h1 data-testid="status">{status}</h1>
+        </div>
+      )
+    }
+
+    const { getByTestId } = render(<Page />)
+
+    await waitForElement(() => getByTestId('status'))
+    expect(getByTestId('status').textContent).toBe(statusSuccess)
   })
 })
