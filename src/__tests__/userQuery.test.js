@@ -1,7 +1,7 @@
 import {
   cleanup,
   render,
-  fireEvent,
+  act,
   waitForElement,
 } from '@testing-library/react'
 import * as React from 'react'
@@ -111,5 +111,31 @@ describe('useQuery', () => {
 
     await waitForElement(() => getByTestId('status'))
     expect(getByTestId('status').textContent).toBe(statusSuccess)
+  })
+
+  // See https://github.com/tannerlinsley/react-query/issues/147
+  it('should not pass stringified variables to query function', async () => {
+    const queryFn = jest.fn();
+    const promise = Promise.resolve()
+    queryFn.mockImplementation(() => promise);
+
+    const variables = { number: 5, boolean: false, object: {}, array: [] };
+
+    function Page() {
+      useQuery(
+        ['test', variables],
+        queryFn
+      );
+
+
+      return null;
+    }
+
+    render(<Page />)
+
+    // use "act" to wait for state update and prevent console warning
+    await act(() => promise);
+
+    expect(queryFn).toHaveBeenCalledWith('test', { number: 5, boolean: false, object: {}, array: [] });
   })
 })
