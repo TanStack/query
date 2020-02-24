@@ -151,6 +151,11 @@ This library is being built and maintained by me, @tannerlinsley and I am always
         </a>
       </td>
       <td align="center" valign="middle">
+        <a href="https://nozzle.io" target="_blank">
+          <img width='225' src="https://nozzle.io/img/logo-blue.png">
+        </a>
+      </td>
+      <td align="center" valign="middle">
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
           Become a Sponsor!
         </a>
