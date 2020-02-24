@@ -68,4 +68,25 @@ describe('useQuery', () => {
     expect(getByTestId('first').textContent).toBe('first')
     expect(getByTestId('second').textContent).toBe('second')
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/144
+  it('should be in loading state by default', async () => {
+    function Page() {
+      const { data, status } = useQuery('test', async () => {
+        await sleep(1000);
+        return 'test';
+      });
+
+      return (
+        <div>
+          <h1 data-testid="status">{status}</h1>
+        </div>
+      )
+    }
+
+    const { getByTestId } = render(<Page />)
+
+    await waitForElement(() => getByTestId('status'))
+    expect(getByTestId('status').textContent).toBe('loading')
+  })
 })
