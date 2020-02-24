@@ -48,9 +48,7 @@ export function stableStringifyReplacer(_, value) {
             [key]: value[key],
           }))
       )
-    : Array.isArray(value)
-    ? value
-    : String(value)
+    : value
 }
 
 export function stableStringify(obj) {
