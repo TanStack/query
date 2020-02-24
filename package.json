@@ -10,8 +10,8 @@
   "browser": "dist/index.js",
   "unpkg": "dist/index.min.js",
   "scripts": {
-    "test": "jest --testPathIgnorePatterns=__tests__/shared",
-    "test:watch": "yarn test --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",

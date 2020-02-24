@@ -7,7 +7,7 @@ import {
 import * as React from 'react'
 
 import { usePaginatedQuery, queryCache } from '../index'
-import { sleep } from './shared/utils'
+import { sleep } from './utils'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
