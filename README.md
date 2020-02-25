@@ -425,18 +425,25 @@ function Todo({ todoId }) {
 
 ### Optional Variables
 
-In some scenarios, you may find yourself needing to pass extra information to your query that shouldn't (or doesn't need to be) a part of the query key. `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` all support passing an optional array of additional parameters to be tracked and passed to your query function:
+In some scenarios, you may find yourself needing to pass extra information to your query that shouldn't (or doesn't need to be) a part of the query key. `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` all support passing an optional array of additional parameters to be tracked in a `React.useEffect`'s dependency array and be passed to your query function:
+
+> NOTE: It's very important that optional variable items are **memoized**, just as you would with a normal React.useEffect dependency array.
 
 ```js
 function Todo({ todoId, preview }) {
+  const fooBar = React.useMemo(() => ({
+    foo: true,
+    bar: false
+  }), [])
+
   const { status, data, error } = useQuery(
     ['todo', todoId], // These will be used as the query key
-    [{ debug }, 'foo', 'bar'] // these parameters
+    [debug, fooBar] // these parameters
     fetchTodoById
   )
 }
 
-function fetchTodoById (key, todoId, { debug }, foo, bar) {
+function fetchTodoById (key, todoId, debug, { foo, bar }) {
   return new Promise(
     // ...
   )
@@ -1598,9 +1605,10 @@ const {
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
-- `initialData: any`
+- `initialData: any | Function() => any`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
+  - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
 
 ### Returns
 
