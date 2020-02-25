@@ -385,7 +385,10 @@ export function defaultQueryReducer(state, action) {
         failureCount: 0,
         isStale: true,
         isInactive: false,
-        data: action.initialData,
+        data:
+          typeof action.initialData === 'function'
+            ? action.initialData()
+            : action.initialData,
       }
     case actionActivate:
       return {
