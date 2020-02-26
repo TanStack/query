@@ -5,7 +5,7 @@ import {
   waitForElement,
 } from '@testing-library/react'
 import * as React from 'react'
-import { sleep } from './utils';
+import { sleep } from './utils'
 
 import { usePaginatedQuery, queryCache } from '../index'
 
