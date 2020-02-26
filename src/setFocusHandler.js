@@ -36,7 +36,7 @@ export function setFocusHandler(callback) {
 
 setFocusHandler(handleFocus => {
   // Listen to visibillitychange and focus
-  if (!isServer) {
+  if (!isServer && window?.addEventListener) {
     window.addEventListener(visibilityChangeEvent, handleFocus, false)
     window.addEventListener(focusEvent, handleFocus, false)
 
