@@ -30,7 +30,7 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 
 ## Quick Features
 
-- Transport/protocol/backend agnostic data fetching
+- Transport/protocol/backend agnostic data fetching (REST, GraphQL, Streaming, whatever!)
 - Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
 - Parallel + Dependent Queries
 - Mutations + Reactive Query Refetching
@@ -48,28 +48,29 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 
 ## The Challenge
 
-Tools for managing async data and client stores/caches are plentiful these days, but most of these tools:
+Tools for managing "global state" are plentiful these days, but most of these tools:
 
+- Mistake **server cache state** for **global state**
+- Force you to manage async data in a synchronous way
 - Duplicate unnecessary network operations
-- Force normalized or object/id-based caching strategies on your data
-- Do not automatically manage stale-ness or caching
-- Do not offer robust API's around mutation events, invalidation or query management
-- Are built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools], etc.
+- Use naive or over-engineered caching strategies
+- Are too basic to handle large-scale apps or
+- Are too complex or built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools], etc.
+- Do not provide tools for server mutations
+- Either do not provide easy access to the cache or do, but expose overpowered foot-gun APIs to the developer
 
 ## The Solution
 
-React Query exports a set of hooks that attempt to address these issues. Out of the box, React Query:
+React Query exports a set of hooks that address these issues. Out of the box, React Query:
 
-- Flexibly dedupes simultaneous requests to assets
-- Automatically caches data
-- Automatically invalidates stale cache data
-- Optimistically updates stale requests in the background
-- Automatically manages garbage collection
-- Supports automatic retries and exponential or custom back-off delays
-- Provides both declarative and imperative API's for:
-  - Mutations and automatic query syncing
-  - Query Refetching
-  - Atomic and Optimistic query manipulation
+- Separates your **server cache state** from your \*\*global state
+- Provides async aware APIs for reading and updating server state/cache
+- Dedupes both async and sync requests to async resources
+- Automatically caches data, invalidates and refetches stale data, and manages garbage collection of unused data
+- Scales easily as your application grows
+- Is based solely on Promises, making it highly unopinionated and interoperable with any data fetching strategy including REST, GraphQL, and even streaming-based APIs
+- Provides an integrated promise-based mutation API
+- Opt-in Manual or Advance cache management
 
 </details>
 
