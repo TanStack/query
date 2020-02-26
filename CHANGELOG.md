@@ -13,6 +13,15 @@
 - Optional Query Variables
 - `onSettled` callback for query and mutation hooks
 - `onSuccess` and `onError` callbacks for mutations
+- Better SSR support via `config.initialData`
+- `config.initialData` now supports passing an initializer function, similar to React.useState
+- Query status is now automatically inferred based on `initialData` (`success` for non-`undefined` intitial data, `loading` for `undefined` intitial data)
+- Query objects now supply an `updatedAt` property for making better informed decisions about synchronous cache usage
+- Overall, less over-fetching out of the box when using multiple instances of a query.
+- Added a new `config.refetchOnMount` that defaults to `true` and when set to `false` will disable additional instances of a query to trigger background refetches.
+- More reliable suspense support for prefetched queries and background refetching lifecycles
+- Support for errorBoundaries out of the box when using Suspense for both queries and mutations
+- Added a `globalConfig.queryFnParamsFilter` function that allows filtering the parameters that get sent to the query function.
 
 **Breaking Changes**
 
@@ -32,6 +41,10 @@
 - `refetchAllQueries` has been removed in favor of `queryCache.refetchQueries`
 - `updateQuery` has been removed in favor of `queryCache.setQueryData`
 - `clearQueryCache` has been removed in favor of `queryCache.clear` and `queryCache.removeQueries`
+- When `initialData` now resolves to any non-`undefined` value:
+  - `status` will be initially set to `success`
+  - The query will not automatically refetch on mount
+  - `isStale` will initially be set to `true`, and the standard staleTimeout will be applied
 
 ## 0.4.2
 
