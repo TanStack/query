@@ -116,19 +116,18 @@ export function makeQueryCache() {
 
       // If the query started with data, schedule
       // a stale timeout
-      if (query.data) {
+      if (query.state.data) {
         query.scheduleStaleTimeout()
+
+        // Simulate a query healing process
+        query.heal()
+        // Schedule for garbage collection in case
+        // nothing subscribes to this query
+        query.scheduleGarbageCollection()
       }
 
-      // Simulate a query healing process
-      query.heal()
-      // Schedule for garbage collection in case
-      // nothing subscribes to this query
-      query.scheduleGarbageCollection()
-
-      if (!isServer) {
-        // See https://github.com/tannerlinsley/react-query/issues/137
-        if (typeof queryHash !== 'undefined') {
+      if (query.queryHash) {
+        if (!isServer) {
           cache.queries[queryHash] = query
         }
       }
@@ -174,12 +173,18 @@ export function makeQueryCache() {
         ? options.config.initialData()
         : options.config.initialData
 
+    const isStale =
+      typeof options.queryHash === 'undefined'
+        ? true
+        : typeof initialData === 'undefined'
+
     const query = {
       ...options,
       instances: [],
       state: reducer(undefined, {
         type: actionInit,
         initialData,
+        isStale,
         manual: options.config.manual,
       }),
     }
@@ -405,7 +410,7 @@ export function defaultQueryReducer(state, action) {
         isFetching: !action.manual,
         canFetchMore: false,
         failureCount: 0,
-        isStale: !action.initialData,
+        isStale: action.isStale,
         isInactive: false,
         data: action.initialData,
         updatedAt: action.initialData ? Date.now() : 0,

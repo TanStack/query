@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  render,
-  act,
-  waitForElement,
-  fireEvent,
-} from '@testing-library/react'
+import { cleanup, render, act, waitForElement } from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
@@ -41,42 +35,38 @@ describe('useQuery', () => {
   it('should not override initial data in dependent queries', async () => {
     function Page() {
       const [shouldFetch, setShouldFetch] = React.useState(false)
-      const { data: first } = useQuery(
+
+      const { data: first, isStale } = useQuery(
         shouldFetch && 'first',
-        () => 'first remote',
+        () => 'first data',
         {
-          initialData: 'first',
+          initialData: 'first init',
         }
       )
 
       const { data: second } = useQuery(
         shouldFetch && 'second',
-        () => 'second remote',
+        () => 'second data',
         {
-          initialData: 'second',
+          initialData: 'second init',
         }
       )
 
       return (
         <div>
-          <h2 data-testid="first">{first}</h2>
-          <h2 data-testid="second">{second}</h2>
-          <button onClick={() => setShouldFetch(true)}>fetch</button>
+          <h2>{first}</h2>
+          <h2>{second}</h2>
+          {isStale ? (
+            <button onClick={() => setShouldFetch(true)}>fetch</button>
+          ) : null}
         </div>
       )
     }
 
-    const { getByTestId, getByText } = render(<Page />)
+    const rendered = render(<Page />)
 
-    await waitForElement(() => [getByTestId('first'), getByTestId('second')])
-    expect(getByTestId('first').textContent).toBe('first')
-    expect(getByTestId('second').textContent).toBe('second')
-
-    fireEvent.click(getByText('fetch'))
-
-    await waitForElement(() => [getByTestId('first'), getByTestId('second')])
-    expect(getByTestId('first').textContent).toBe('first remote')
-    expect(getByTestId('second').textContent).toBe('second remote')
+    rendered.getByText('first init')
+    rendered.getByText('second init')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
