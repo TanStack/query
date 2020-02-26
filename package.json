@@ -23,7 +23,7 @@
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
     "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write",
-    "doctoc": "npx doctoc README.md"
+    "doctoc": "npx doctoc --maxlevel 2 README.md"
   },
   "peerDependencies": {
     "react": "^16.6.3"
