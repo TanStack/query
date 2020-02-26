@@ -4,7 +4,8 @@
       "@babel/env",
       {
         "modules": false,
-        "loose": true
+        "loose": true,
+        "exclude": ["@babel/plugin-transform-regenerator"]
       }
     ],
     "@babel/react"
@@ -17,7 +18,8 @@
           "@babel/env",
           {
             "modules": "commonjs",
-            "loose": true
+            "loose": true,
+            "exclude": ["@babel/plugin-transform-regenerator"]
           }
         ]
       ]

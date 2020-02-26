@@ -1,5 +1,13 @@
-import Link from 'next/link'
-
 export default () => {
-  return <Link href="/"><a>back</a></Link>
+  return (
+    <a
+      href=""
+      onClick={e => {
+        window.history.back()
+        e.preventDefault()
+      }}
+    >
+      Back
+    </a>
+  )
 }

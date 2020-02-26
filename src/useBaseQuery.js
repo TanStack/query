@@ -24,10 +24,38 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   let query = queryCache._buildQuery(queryKey, queryVariables, queryFn, config)
 
   const [queryState, setQueryState] = React.useState(query.state)
-  const wasSuspenseRef = React.useRef(false)
+  const isMountedRef = React.useRef(false)
   const getLatestConfig = useGetLatest(config)
   const refetch = React.useCallback(query.fetch, [query])
 
+  // Subscribe to the query and maybe trigger fetch
+  React.useEffect(() => {
+    const unsubscribeFromQuery = query.subscribe({
+      id: instanceId,
+      onStateUpdate: newState => setQueryState(newState),
+      onSuccess: data => getLatestConfig().onSuccess(data),
+      onError: err => getLatestConfig().onError(err),
+      onSettled: (data, err) => getLatestConfig().onSettled(data, err),
+    })
+
+    // Perform the initial fetch for this query if necessary
+    if (
+      !query.wasSuspensed && // Don't double fetch for suspense
+      query.state.isStale && // Only refetch if stale
+      // Either first instance or
+      (query.instances.length === 1 ||
+        // refetchOnMount is true
+        getLatestConfig().refetchOnMount)
+    ) {
+      refetch().catch(Console.error)
+    }
+
+    query.wasSuspensed = false
+
+    return unsubscribeFromQuery
+  }, [getLatestConfig, instanceId, query, refetch])
+
+  // Handle refetch interval
   React.useEffect(() => {
     if (
       config.refetchInterval &&
@@ -52,36 +80,29 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     refetch,
   ])
 
+  // // After initial mount, refetch if queryVariables are present and change
+  // React.useEffect(() => {
+  //   if (
+  //     isMountedRef.current && // Must be subscribed
+  //     !wasSuspenseRef.current && // Dont' double fetch suspense
+  //     queryVariables.length // Must have queryVariables
+  //   ) {
+  //     refetch().catch(Console.error)
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [refetch, ...queryVariables])
+
+  // Reset refs
   React.useEffect(() => {
-    const unsubscribeFromQuery = query.subscribe({
-      id: instanceId,
-      onStateUpdate: newState => setQueryState(newState),
-      onSuccess: data => getLatestConfig().onSuccess(data),
-      onError: err => getLatestConfig().onError(err),
-      onSettled: (data, err) => getLatestConfig().onSettled(data, err),
-    })
-    return unsubscribeFromQuery
-  }, [getLatestConfig, instanceId, query])
-
-  React.useEffect(() => {
-    if (getLatestConfig().manual) {
-      return
-    }
-
-    if (query.state.isStale && !wasSuspenseRef.current) {
-      refetch().catch(Console.error)
-    }
-
-    wasSuspenseRef.current = false
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.suspense, getLatestConfig, refetch, ...queryVariables])
+    isMountedRef.current = true
+  })
 
   if (config.suspense) {
     if (queryState.status === statusError) {
       throw queryState.error
     }
     if (queryState.status === statusLoading) {
-      wasSuspenseRef.current = true
+      query.wasSuspensed = true
       throw refetch()
     }
   }

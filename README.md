@@ -238,6 +238,9 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Retries](#retries)
   - [Retry Delay](#retry-delay)
   - [Prefetching](#prefetching)
+  - [Initial Data](#initialdata)
+  - [Initial Data Function](#initialdatafunction)
+  - [Initial Data from Cache](#initialdatafromcache)
   - [SSR & Initial Data](#ssr--initial-data)
   - [Suspense Mode](#suspense-mode)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
@@ -425,28 +428,28 @@ function Todo({ todoId }) {
 
 ### Optional Variables
 
-In some scenarios, you may find yourself needing to pass extra information to your query that shouldn't (or doesn't need to be) a part of the query key. `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` all support passing an optional array of additional parameters to be tracked in a `React.useEffect`'s dependency array and be passed to your query function:
-
-> NOTE: It's very important that optional variable items are **memoized**, just as you would with a normal React.useEffect dependency array.
+In some scenarios, you may find yourself needing to pass extra information to your query that shouldn't (or doesn't need to be) a part of the query key. `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` all support passing an optional array of additional parameters to be passed to your query function:
 
 ```js
 function Todo({ todoId, preview }) {
-  const fooBar = React.useMemo(() => ({
-    foo: true,
-    bar: false
-  }), [])
-
   const { status, data, error } = useQuery(
-    ['todo', todoId], // These will be used as the query key
-    [debug, fooBar] // these parameters
+    // These will be used as the query key
+    ['todo', todoId],
+    // These will get passed directly to our query function
+    [
+      debug,
+      {
+        foo: true,
+        bar: false,
+      },
+    ],
     fetchTodoById
   )
 }
 
-function fetchTodoById (key, todoId, debug, { foo, bar }) {
-  return new Promise(
-    // ...
-  )
+function fetchTodoById(key, todoId, debug, { foo, bar }) {
+  return new Promise()
+  // ...
 }
 ```
 
@@ -852,12 +855,80 @@ The next time a `useQuery` instance is used for a prefetched query, it will use 
 
 Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result
 
+### Initial Data
+
+There may be times when you already have the initial data for a query synchronously available in your app. If and when this is the case, you can use the `config.initialData` option to set the initial data for a query and skip the first round of fetching!
+
+When providing an `initialData` value that is anything other than `undefined`:
+
+- The query `status` will initialize as `success` instead of `loading`
+- The query's `isStale` property will initialize as `true` instead of false
+- The query will not automatically fetch until it is invalidated somehow (eg. window refocus, queryCache refetching, etc)
+
+```js
+function Todos() {
+  const queryInfo = useQuery('todos', () => fetch('/todos'), {
+    initialData: initialTodos,
+  })
+}
+```
+
+### Initial Data Function
+
+If the process for accessing a query's initial data is intensive or just not something you want to perform on every render, you can pass a function as the `initialData` value. This function will be executed only once when the query is initialized, saving you precious memory and cpu:
+
+```js
+function Todos() {
+  const queryInfo = useQuery('todos', () => fetch('/todos'), {
+    initialData: () => {
+      return getExpensiveTodos()
+    },
+  })
+}
+```
+
+### Initial Data from Cache
+
+In some circumstances you may be able to provide the initial data for a query from the cached result of another. A good example of this would be searching the cached data from a todos list query for an individual todo item, then using that as the initial data for your individual todo query:
+
+```js
+function Todo({ todoId }) {
+  const queryInfo = useQuery(['todo', todoId], () => fetch('/todos'), {
+    initialData: () => {
+      // Use a todo from the 'todos' query as the initial data for this todo query
+      return queryCache.getQueryData('todos')?.find(d => d.id === todoId)
+    },
+  })
+}
+```
+
+Most of the time, this pattern works well, but if your source query you're using to look up the intitial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+
+```js
+function Todo({ todoId }) {
+  const queryInfo = useQuery(['todo', todoId], () => fetch('/todos'), {
+    initialData: () => {
+      // Get the query object
+      const query = queryCache.getQuery('todos')
+
+      // If the query exists and has data that is no older than 10 seconds...
+      if (query && Date.now() - query.updatedAt <= 10 * 1000) {
+        // return the individual todo
+        return query.state.data.find(d => d.id === todoId)
+      }
+
+      // Otherwise, return undefined and let it fetch!
+    },
+  })
+}
+```
+
 ### SSR & Initial Data
 
 When using SSR (server-side-rendering) with React Query there are a few things to note:
 
-- Caching is not performed during SSR. This is outside of the scope of React Query and easily leads to out-of-sync data when used with frameworks like Next.js or other SSR strategies.
-- Queries rendered on the server will by default use the initial state of an unfetched query. This means that `data` will be set to `undefined`. To get around this in SSR, you can either pre-seed a query's cache data using the `config.initialData` option:
+- Query caches are not written to memory during SSR. This is outside of the scope of React Query and easily leads to out-of-sync data when used with frameworks like Next.js or other SSR strategies.
+- Queries rendered on the server will by default use the `initialData` of an unfetched query. This means that by default, `data` will be set to `undefined`. To get around this in SSR, you can either pre-seed a query's cache data using the `config.initialData` option:
 
 ```js
 const { status, data, error } = useQuery('todos', fetchTodoList, {
@@ -1322,13 +1393,13 @@ const queryConfig = {
 
     // Make sure object keys are sorted and all values are
     // serializable
-    const normalizedQueryKey = normalizeQueryKey(queryKey)
+    const queryFnArgs = getQueryArgs(queryKey)
 
-    // Hasht the normalize query key to get a string
-    const queryHash = hash(normalizedQueryKey)
+    // Hash the query key args to get a string
+    const queryHash = hash(queryFnArgs)
 
     // Return both the queryHash and normalizedQueryHash as a tuple
-    return [queryHash, normalizedQueryKey]
+    return [queryHash, queryFnArgs]
   },
 }
 
@@ -1344,12 +1415,12 @@ function App() {
 - `userQueryKey: any`
   - This is the queryKey passed in `useQuery` and all other public methods and utilities exported by React Query.
   - It may be a string or an array of serializable values
-  - If a string is passed, it must be wrapped in an array when returned as the `normalizedQueryKey`
+  - If a string is passed, it must be wrapped in an array when returned as the `queryFnArgs`
 - `queryHash: string`
   - This must be a unique `string` representing the entire query key.
   - It must be stable and deterministic and should not change if things like the order of variables are changed or shuffled.
-- `normalizedQueryKey: Array<any>`
-  - This array should be the same format as the queryKey but be deterministically stable and should not change structure if the variables of the query stay the same, but change order within array position.
+- `queryFnArgs: Array<any>`
+  - This array will be spread into to the query function arguments and should be the same format as the queryKey but be deterministically stable and should not change structure if the variables of the query stay the same, but change order within array position.
 
 > An additional `stableStringify` utility is also exported to help with stringifying objects to have sorted keys.
 
@@ -1965,6 +2036,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`setQueryData`](#querycachesetquerydata)
 - [`refetchQueries`](#querycacherefetchqueries)
 - [`removeQueries`](#querycacheremovequeries)
+- [`getQuery`](#querycachegetquery)
 - [`subscribe`](#querycachesubscribe)
 - [`isFetching`](#querycacheisfetching)
 - [`clear`](#querycacheclear)
@@ -2112,6 +2184,28 @@ const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
 
 This function does not return anything
 
+## `queryCache.getQuery`
+
+`getQuery` is an slightly more advanced synchronous function that can be used to get an existing query object from the cache. This object not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
+
+> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
+
+```js
+import { getQuery } from 'react-query'
+
+const query = getQuery(queryKey)
+```
+
+### Options
+
+- `queryKey: QueryKey`
+  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+
+### Returns
+
+- `query: QueryObect`
+  - The query object from the cache
+
 ## `queryCache.isFetching`
 
 This `isFetching` property is an `integer` representing how many queries, if any, in the cache are currently fetching (including backround-fetching, loading new pages, or loading more infinite query results)
@@ -2194,7 +2288,7 @@ const queryConfig = {
   useErrorBoundary: undefined, // Defaults to the value of `suspense` if not defined otherwise
   throwOnError: false,
   refetchAllOnWindowFocus: true,
-  queryKeySerializerFn: queryKey => [queryHash, normalizedQueryKey],
+  queryKeySerializerFn: queryKey => [queryHash, queryFnArgs],
   onSuccess: () => {},
   onError: () => {},
   onSettled: () => {},

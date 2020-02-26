@@ -1,7 +1,6 @@
 import babel from 'rollup-plugin-babel'
 import external from 'rollup-plugin-peer-deps-external'
 import { terser } from 'rollup-plugin-terser'
-import { sizeSnapshot } from 'rollup-plugin-size-snapshot'
 import size from 'rollup-plugin-size'
 import pkg from './package.json'
 
@@ -15,14 +14,10 @@ export default [
     },
     plugins: [
       external(),
-      babel(),
-      size({
-        publish: true,
-        exclude: pkg.main,
-        filename: 'sizes-es.json',
-        writeFile: process.env.CI ? true : false,
+      babel({
+        runtimeHelpers: true,
       }),
-      sizeSnapshot(),
+      size(),
     ],
   },
   {
@@ -38,14 +33,10 @@ export default [
     },
     plugins: [
       external(),
-      babel(),
-      size({
-        publish: true,
-        exclude: pkg.module,
-        filename: 'sizes-cjs.json',
-        writeFile: process.env.CI ? true : false,
+      babel({
+        runtimeHelpers: true,
       }),
-      sizeSnapshot(),
+      size(),
     ],
   },
   {
@@ -59,17 +50,6 @@ export default [
         react: 'React',
       },
     },
-    plugins: [
-      external(),
-      babel(),
-      terser(),
-      size({
-        publish: true,
-        exclude: pkg.module,
-        filename: 'sizes-cjs.json',
-        writeFile: process.env.CI ? true : false,
-      }),
-      sizeSnapshot(),
-    ],
+    plugins: [external(), babel(), terser(), size()],
   },
 ]
