@@ -23,7 +23,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
 
   let query = queryCache._buildQuery(queryKey, queryVariables, queryFn, config)
 
-  const rerender = React.useState(null)[1]
+  const [queryState, setQueryState] = React.useState(query.state)
   const isMountedRef = React.useRef(false)
   const getLatestConfig = useGetLatest(config)
   const refetch = React.useCallback(query.fetch, [query])
@@ -32,7 +32,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   React.useEffect(() => {
     const unsubscribeFromQuery = query.subscribe({
       id: instanceId,
-      onStateUpdate: newState => rerender({}),
+      onStateUpdate: setQueryState,
       onSuccess: data => getLatestConfig().onSuccess(data),
       onError: err => getLatestConfig().onError(err),
       onSettled: (data, err) => getLatestConfig().onSettled(data, err),
@@ -42,10 +42,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     if (
       !query.wasSuspensed && // Don't double fetch for suspense
       query.state.isStale && // Only refetch if stale
-      // Either first instance or
-      (query.instances.length === 1 ||
-        // refetchOnMount is true
-        getLatestConfig().refetchOnMount)
+      (getLatestConfig().refetchOnMount || query.instances.length === 1)
     ) {
       refetch().catch(Console.error)
     }
@@ -53,7 +50,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     query.wasSuspensed = false
 
     return unsubscribeFromQuery
-  }, [getLatestConfig, instanceId, query, refetch, rerender])
+  }, [getLatestConfig, instanceId, query, refetch])
 
   // Handle refetch interval
   React.useEffect(() => {
@@ -98,17 +95,17 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   })
 
   if (config.suspense) {
-    if (query.state.status === statusError) {
-      throw query.state.error
+    if (queryState.status === statusError) {
+      throw queryState.error
     }
-    if (query.state.status === statusLoading) {
+    if (queryState.status === statusLoading) {
       query.wasSuspensed = true
       throw refetch()
     }
   }
 
   return {
-    ...query.state,
+    ...queryState,
     query,
     refetch,
   }

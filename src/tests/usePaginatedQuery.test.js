@@ -18,7 +18,7 @@ describe('usePaginatedQuery', () => {
   it('should use previous page data while fetching the next page', async () => {
     function Page() {
       const [page, setPage] = React.useState(1)
-      const { resolvedData = 'init' } = usePaginatedQuery(
+      const { resolvedData = 'undefined' } = usePaginatedQuery(
         ['data', page],
         async (queryName, page) => {
           await sleep(1000)
@@ -36,7 +36,7 @@ describe('usePaginatedQuery', () => {
 
     const rendered = render(<Page />)
 
-    rendered.getByText('Data init')
+    rendered.getByText('Data undefined')
     await waitForElement(() => rendered.getByText('Data 1'))
 
     fireEvent.click(rendered.getByText('next'))
