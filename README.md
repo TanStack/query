@@ -255,7 +255,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [SSR & Initial Data](#ssr--initial-data)
   - [Suspense Mode](#suspense-mode)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
-  - [Cancelling Query Requests](#cancelling-query-requests)
+  - [Canceling Query Requests](#canceling-query-requests)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -347,7 +347,7 @@ At its core, React Query manages query caching for you and uses a serializable a
 
 ### String-Only Query Keys
 
-The simplest form of a key is actuall not an arry, but just an individual string. When a string query key is passed, it is converted to an array internally with the string as the only item in the query key. This format is useful for:
+The simplest form of a key is actually not an array, but an individual string. When a string query key is passed, it is converted to an array internally with the string as the only item in the query key. This format is useful for:
 
 - Generic List/Index resources
 - Non-hierarchical resources
@@ -576,8 +576,8 @@ Rendering paginated data is a very common UI pattern to avoid overloading bandwi
 
 Consider the following example where we would ideally want to increment a pageIndex (or cursor) for a query. If we were to use `useQuery`, it would technically work fine, but the UI would jump in and out of the `success` and `loading` states as different queries are created and destroyed for each page or cursor. By using `usePaginatedQuery` we get a few new things:
 
-- Instead of `data`, you should use `resolvedData` instead. This is the data from last known successful query result. As new page queries resolve, `resolvedData` remains available to show the last page's data while a new page is requested. When the new page data is received, `resolvedData` get's updated to the new page's data.
-- If you specifically need the data for exact page being requested, `latestData` is available. When the desired page is being requested, `latestData` will be `undefined` until the query resolves, then it will get updated with the latest pages data result.
+- Instead of `data`, you should use `resolvedData` instead. This is the data from the last known successful query result. As new page queries resolve, `resolvedData` remains available to show the last page's data while a new page is requested. When the new page data is received, `resolvedData` get's updated to the new page's data.
+- If you specifically need the data for the exact page being requested, `latestData` is available. When the desired page is being requested, `latestData` will be `undefined` until the query resolves, then it will get updated with the latest pages data result.
 
 ```js
 function Todos() {
@@ -661,7 +661,7 @@ fetch('/api/projects?cursor=9')
 // { data: [...] }
 ```
 
-With this information we can create a "Load More" UI by:
+With this information, we can create a "Load More" UI by:
 
 - Waiting for `useInfiniteQuery` to request the first group of data by default
 - Returning the information for the next query in `getFetchMore`
@@ -724,7 +724,7 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 
 ### What if I need to pass custom information to my query function?
 
-By default the info returned from `getFetchMore` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchMore` function which will override the default info like so:
+By default, the info returned from `getFetchMore` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchMore` function which will override the default info like so:
 
 ```js
 function Projects() {
@@ -889,7 +889,7 @@ function Todos() {
 
 ## Initial Data Function
 
-If the process for accessing a query's initial data is intensive or just not something you want to perform on every render, you can pass a function as the `initialData` value. This function will be executed only once when the query is initialized, saving you precious memory and cpu:
+If the process for accessing a query's initial data is intensive or just not something you want to perform on every render, you can pass a function as the `initialData` value. This function will be executed only once when the query is initialized, saving you precious memory and CPU:
 
 ```js
 function Todos() {
@@ -903,7 +903,7 @@ function Todos() {
 
 ## Initial Data from Cache
 
-In some circumstances you may be able to provide the initial data for a query from the cached result of another. A good example of this would be searching the cached data from a todos list query for an individual todo item, then using that as the initial data for your individual todo query:
+In some circumstances, you may be able to provide the initial data for a query from the cached result of another. A good example of this would be searching the cached data from a todos list query for an individual todo item, then using that as the initial data for your individual todo query:
 
 ```js
 function Todo({ todoId }) {
@@ -916,7 +916,7 @@ function Todo({ todoId }) {
 }
 ```
 
-Most of the time, this pattern works well, but if your source query you're using to look up the intitial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+Most of the time, this pattern works well, but if your source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 ```js
 function Todo({ todoId }) {
@@ -1003,7 +1003,7 @@ In addition to queries behaving differently in suspense mode, mutations also beh
 
 Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. However, if you want to take it to the next level and implement a `Fetch-as-you-render` model, we recommend implementing [Prefetching](#prefetching) on routing and/or user interactions events to initialize queries before they are needed.
 
-## Cancelling Query Requests
+## Canceling Query Requests
 
 By default, queries that become inactive before their promises are resolved are simply ignored instead of cancelled. Why is this?
 
@@ -1124,7 +1124,7 @@ Even with just variables, mutations aren't all that special, but when used with 
 
 ## Invalidate and Refetch Queries from Mutations
 
-When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update locale queries with the new data imperatively, React Query helps you avoids the manual labor that come with maintainig normalized caches and instead prescribes **atomic updates and refetching** instead of direct cache manipulation.
+When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update locale queries with the new data imperatively, React Query helps you avoids the manual labor that comes with maintaining normalized caches and instead prescribes **atomic updates and refetching** instead of direct cache manipulation.
 
 For example, assume we have a mutation to post a new todo:
 
@@ -1242,7 +1242,7 @@ const [mutate] = useMutation(addTodo, {
 mutate(todo)
 ```
 
-You might find that you want to override some of `useMutation`'s optoins at the time of calling `mutate`. To do that, you can optionally override them by sending them through as options to the `mutate` function after your mutation variable. Supported option overrides are include:
+You might find that you want to override some of `useMutation`'s options at the time of calling `mutate`. To do that, you can optionally override them by sending them through as options to the `mutate` function after your mutation variable. Supported option overrides are include:
 
 - `onSuccess`
 - `onSettled`
@@ -2059,7 +2059,7 @@ const promise = mutate(variables, {
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `onSettled: Function(data, error) => Promise | undefined`
   - Optional
-  - This function will fire when the mutation is is either successfully fetched or encounters an error and be passed either the data or error
+  - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `throwOnError`
   - Defaults to `false`
@@ -2133,7 +2133,7 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 
 ## `queryCache.getQueryData`
 
-`getQueryData` is an synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
+`getQueryData` is a synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
 
 ```js
 import { getQueryData } from 'react-query'
@@ -2207,7 +2207,7 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it ouf of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
 - `throwOnError: Boolean`
   - When set to `true`, this function will throw if any of the query refetch tasks fail.
 
@@ -2236,7 +2236,7 @@ const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it ouf of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
 
 ### Returns
 
@@ -2244,7 +2244,7 @@ This function does not return anything
 
 ## `queryCache.getQuery`
 
-`getQuery` is an slightly more advanced synchronous function that can be used to get an existing query object from the cache. This object not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
+`getQuery` is a slightly more advanced synchronous function that can be used to get an existing query object from the cache. This object not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
 
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
@@ -2266,7 +2266,7 @@ const query = getQuery(queryKey)
 
 ## `queryCache.isFetching`
 
-This `isFetching` property is an `integer` representing how many queries, if any, in the cache are currently fetching (including backround-fetching, loading new pages, or loading more infinite query results)
+This `isFetching` property is an `integer` representing how many queries, if any, in the cache are currently fetching (including background-fetching, loading new pages, or loading more infinite query results)
 
 ```js
 import { queryCache } from 'react-query'
@@ -2374,7 +2374,7 @@ function App() {
 
 - `config: Object`
   - Must be **stable** or **memoized**. Do not create an inline object!
-  - For non global properties please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
+  - For non-global properties please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
 
 ## `setConsole`
 
