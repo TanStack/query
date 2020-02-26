@@ -2,12 +2,12 @@ import React from 'react'
 import Button from '../components/button'
 import fetch from '../libs/fetch'
 
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
   const [value, setValue] = React.useState('')
 
-  const { data, isLoading } = useQuery('todos', () => fetch('/api/data'), {
+  const { status, data, error } = useQuery('todos', () => fetch('/api/data'), {
     // Refetch the data every second
     refetchInterval: 1000,
   })
@@ -15,15 +15,16 @@ export default () => {
   const [mutateAddTodo] = useMutation(
     value => fetch(`/api/data?add=${value}`),
     {
-      refetchQueries: ['todos'],
+      onSuccess: () => queryCache.refetchQueries('todos'),
     }
   )
 
   const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
-    refetchQueries: ['todos'],
+    onSuccess: () => queryCache.refetchQueries('todos'),
   })
 
-  if (isLoading) return <h1>Loading...</h1>
+  if (status === 'loading') return <h1>Loading...</h1>
+  if (status === 'error') return <span>Error: {error.message}</span>
 
   return (
     <div>

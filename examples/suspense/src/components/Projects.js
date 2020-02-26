@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery, prefetchQuery } from "react-query";
+import { useQuery, queryCache } from "react-query";
 
 import Button from "./Button";
 import Spinner from "./Spinner";
@@ -17,7 +17,10 @@ export default function Projects({ setActiveProject }) {
           <Button
             onClick={() => {
               // Prefetch the project query
-              prefetchQuery(["project", { id: project.name }], fetchProject);
+              queryCache.prefetchQuery(
+                ["project", { id: project.name }],
+                fetchProject
+              );
               setActiveProject(project.name);
             }}
           >

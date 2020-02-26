@@ -6,10 +6,8 @@ import {
   ReactQueryConfigProvider,
   useQuery,
   useMutation,
-  refetchAllQueries,
   useIsFetching,
-  queries,
-  globalStateListeners
+  queryCache
 } from "react-query";
 
 import "./styles.css";
@@ -63,7 +61,7 @@ let errorRate = 0.05;
 let queryTimeMin = 1000;
 let queryTimeMax = 2000;
 
-const fetchTodos = ({ filter } = {}) => {
+const fetchTodos = (key, { filter } = {}) => {
   console.log("fetchTodos", { filter });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -77,7 +75,7 @@ const fetchTodos = ({ filter } = {}) => {
   });
 };
 
-const fetchTodoById = ({ id }) => {
+const fetchTodoById = (key, { id }) => {
   console.log("fetchTodoById", { id });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -86,7 +84,7 @@ const fetchTodoById = ({ id }) => {
           new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2))
         );
       }
-      resolve(list.find(d => d.id === id));
+      resolve(list.find(d => d.id == id));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 };
@@ -126,18 +124,14 @@ const patchTodo = todo => {
 };
 
 export function useQueries() {
-  const [state, setState] = React.useState({ queries });
+  const [state, setState] = React.useState({
+    queries: Object.values(queryCache.queries)
+  });
 
   React.useEffect(() => {
-    const fn = () => {
-      setState({ queries });
-    };
-
-    globalStateListeners.push(fn);
-
-    return () => {
-      globalStateListeners.splice(globalStateListeners.indexOf(fn), 1);
-    };
+    return queryCache.subscribe(() => {
+      setState({ queries: Object.values(queryCache.queries) });
+    });
   }, []);
 
   return state.queries;
@@ -287,13 +281,7 @@ function App() {
       <br />
       <RefreshingBanner />
       <div>
-        <button
-          onClick={async () => {
-            try {
-              refetchAllQueries({ force: true });
-            } catch {}
-          }}
-        >
+        <button onClick={() => queryCache.refetchQueries(true)}>
           Force Refetch All
         </button>
       </div>
@@ -347,14 +335,10 @@ function RefreshingBanner() {
 function Todos({ initialFilter = "", setEditingIndex }) {
   const [filter, setFilter] = React.useState(initialFilter);
 
-  const {
-    data,
-    isLoading,
-    isFetching,
-    error,
-    failureCount,
-    refetch
-  } = useQuery(["todos", { filter }], fetchTodos);
+  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
+    ["todos", { filter }],
+    fetchTodos
+  );
 
   return (
     <div>
@@ -364,11 +348,12 @@ function Todos({ initialFilter = "", setEditingIndex }) {
           <input value={filter} onChange={e => setFilter(e.target.value)} />
         </label>
       </div>
-      {isLoading ? (
+      {status === "loading" ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
-      ) : error ? (
+      ) : status === "error" ? (
         <span>
-          Error!{" "}
+          Error: {error.message}
+          <br />
           <button onClick={() => refetch({ disableThrow: true })}>Retry</button>
         </span>
       ) : (
@@ -402,45 +387,34 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 
 function EditTodo({ editingIndex, setEditingIndex }) {
   // Don't attempt to query until editingIndex is truthy
-  const {
-    data,
-    isLoading,
-    isFetching,
-    error,
-    failureCount,
-    refetch
-  } = useQuery(
+  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
     editingIndex !== null && ["todo", { id: editingIndex }],
     fetchTodoById
   );
 
-  const [todo, setTodo] = React.useState(data);
+  const [todo, setTodo] = React.useState(data || {});
 
   React.useEffect(() => {
     if (editingIndex !== null && data) {
-      console.log(data);
       setTodo(data);
     } else {
-      setTodo();
+      setTodo({});
     }
   }, [data, editingIndex]);
 
   const [mutate, mutationState] = useMutation(patchTodo, {
-    refetchQueries: ["todos"]
+    onSuccess: data => {
+      // Update `todos` and the individual todo queries when this mutation succeeds
+      console.log("tanner");
+      queryCache.refetchQueries("todos");
+      queryCache.setQueryData(["todo", { id: editingIndex }], data);
+    }
   });
 
-  const onSave = () => {
-    try {
-      mutate(todo, {
-        // Update `todos` and the individual todo queries when this mutation succeeds
-        updateQuery: ["todo", { id: editingIndex }]
-      });
-    } catch {
-      // Errors are shown in the UI
-    }
-  };
+  const onSave = () => mutate(todo);
 
-  const canEditOrSave = isLoading || mutationState.isLoading;
+  const disableEditSave =
+    status === "loading" || mutationState.status === "loading";
 
   return (
     <div>
@@ -453,14 +427,14 @@ function EditTodo({ editingIndex, setEditingIndex }) {
           </>
         ) : null}
       </div>
-      {isLoading ? (
+      {status === "loading" ? (
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : error ? (
         <span>
           Error!{" "}
           <button onClick={() => refetch({ disableThrow: true })}>Retry</button>
         </span>
-      ) : todo ? (
+      ) : (
         <>
           <label>
             Name:{" "}
@@ -470,7 +444,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
                 e.persist() ||
                 setTodo(old => ({ ...old, name: e.target.value }))
               }
-              disabled={canEditOrSave}
+              disabled={disableEditSave}
             />
           </label>
           <label>
@@ -481,22 +455,20 @@ function EditTodo({ editingIndex, setEditingIndex }) {
                 e.persist() ||
                 setTodo(old => ({ ...old, notes: e.target.value }))
               }
-              disabled={canEditOrSave}
+              disabled={disableEditSave}
             />
           </label>
           <div>
-            <button onClick={onSave} disabled={canEditOrSave}>
+            <button onClick={onSave} disabled={disableEditSave}>
               Save
             </button>
           </div>
           <div>
-            {mutationState.isLoading
+            {mutationState.status === "loading"
               ? "Saving..."
-              : mutationState.error
-              ? String(mutationState.error)
-              : mutationState.data
-              ? "Saved!"
-              : null}
+              : mutationState.status === "error"
+              ? mutationState.error.message
+              : "Saved!"}
           </div>
           <div>
             {isFetching ? (
@@ -508,7 +480,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             )}
           </div>
         </>
-      ) : null}
+      )}
     </div>
   );
 }
@@ -516,8 +488,11 @@ function EditTodo({ editingIndex, setEditingIndex }) {
 function AddTodo() {
   const [name, setName] = React.useState("");
 
-  const [mutate, { isLoading, error, data }] = useMutation(postTodo, {
-    refetchQueries: ["todos"]
+  const [mutate, { status, error }] = useMutation(postTodo, {
+    onSuccess: () => {
+      console.log("hello");
+      queryCache.refetchQueries("todos");
+    }
   });
 
   return (
@@ -525,28 +500,20 @@ function AddTodo() {
       <input
         value={name}
         onChange={e => setName(e.target.value)}
-        disabled={isLoading}
+        disabled={status === "loading"}
       />
       <button
-        onClick={async () => {
-          try {
-            await mutate({ name });
-          } catch (error) {
-            console.error(error);
-          }
-        }}
-        disabled={isLoading || !name}
+        onClick={() => mutate({ name })}
+        disabled={status === "loading" || !name}
       >
         Add Todo
       </button>
       <div>
-        {isLoading
+        {status === "loading"
           ? "Saving..."
-          : error
-          ? String(error)
-          : data
-          ? "Saved!"
-          : null}
+          : status === "error"
+          ? error.message
+          : "Saved!"}
       </div>
     </div>
   );

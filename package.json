@@ -1,15 +1,21 @@
 {
   "name": "react-query",
-  "version": "0.4.3",
+  "version": "1.0.0-beta.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
+  "browser": "dist/index.js",
+  "unpkg": "dist/index.min.js",
+  "sideEffects": false,
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest .",
+    "test": "is-ci \"test:ci\" \"test:dev\"",
+    "test:dev": "jest --watch",
+    "test:ci": "yarn test:jest",
+    "test:jest": "jest --coverage",
+    "test:coverage": "yarn test:jest; open coverage/lcov-report/index.html",
     "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
@@ -25,6 +31,7 @@
     "@types/react-query": "^0.3.7"
   },
   "devDependencies": {
+    "@ampproject/rollup-plugin-closure-compiler": "^0.22.2",
     "@babel/core": "^7.8.4",
     "@babel/preset-env": "^7.8.4",
     "@babel/preset-react": "^7.8.3",
@@ -49,6 +56,7 @@
     "eslint-plugin-react": "7.18.3",
     "eslint-plugin-react-hooks": "1.5.0",
     "eslint-plugin-standard": "^4.0.0",
+    "is-ci-cli": "^2.0.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
     "react": "^16.12.0",
@@ -58,6 +66,7 @@
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-prettier": "^0.6.0",
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-size-snapshot": "^0.10.0",
     "rollup-plugin-terser": "^5.2.0"

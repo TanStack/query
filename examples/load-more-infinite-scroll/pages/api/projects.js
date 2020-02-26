@@ -1,6 +1,6 @@
 // an endpoint for getting projects data
 export default (req, res) => {
-  const cursor = parseInt(req.query.cursor || 0)
+  const cursor = parseInt(req.query.cursor) || 0
 
   const data = Array(3)
     .fill(0)

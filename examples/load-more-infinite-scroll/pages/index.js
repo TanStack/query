@@ -2,41 +2,33 @@ import React from 'react'
 import fetch from '../libs/fetch'
 import Link from 'next/link'
 
-import { useQuery } from 'react-query'
+import { useInfiniteQuery } from 'react-query'
 
 export default () => {
   const {
+    status,
     data,
-    isLoading,
+    error,
     isFetching,
     isFetchingMore,
     fetchMore,
     canFetchMore,
-  } = useQuery(
+  } = useInfiniteQuery(
     'projects',
-    ({ nextId } = {}) => fetch('/api/projects?cursor=' + (nextId || 0)),
+    (key, nextId = 0) => fetch('/api/projects?cursor=' + nextId),
     {
-      paginated: true,
-      getCanFetchMore: lastPage => lastPage.nextId,
+      getFetchMore: (lastGroup, allGroups) => lastGroup.nextId,
     }
   )
-
-  const loadMore = async () => {
-    try {
-      const { nextId } = data[data.length - 1]
-
-      await fetchMore({
-        nextId,
-      })
-    } catch {}
-  }
 
   return (
     <div>
       <h1>Pagination</h1>
-      {isLoading ? (
+      {status === 'loading' ? (
         <p>Loading...</p>
-      ) : data ? (
+      ) : status === 'error' ? (
+        <span>Error: {error.message}</span>
+      ) : (
         <>
           {data.map((page, i) => (
             <React.Fragment key={i}>
@@ -55,19 +47,22 @@ export default () => {
             </React.Fragment>
           ))}
           <div>
-            {canFetchMore ? (
-              <button onClick={loadMore} disabled={isFetchingMore}>
-                {isFetchingMore ? 'Loading more...' : 'Load More'}
-              </button>
-            ) : (
-              'Nothing more to fetch.'
-            )}
+            <button
+              onClick={() => fetchMore()}
+              disabled={!canFetchMore || isFetchingMore}
+            >
+              {isFetchingMore
+                ? 'Loading more...'
+                : canFetchMore
+                ? 'Load More'
+                : 'Nothing more to load'}
+            </button>
           </div>
           <div>
             {isFetching && !isFetchingMore ? 'Background Updating...' : null}
           </div>
         </>
-      ) : null}
+      )}
       <hr />
       <Link href="/about">
         <a>Go to another page</a>

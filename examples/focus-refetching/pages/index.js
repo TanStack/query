@@ -3,21 +3,22 @@ import Button from '../components/button'
 import fetch from '../libs/fetch'
 import { login, logout } from '../libs/auth'
 
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
-  const { data, isLoading } = useQuery('user', () => fetch('/api/user'))
+  const { status, data, error } = useQuery('user', () => fetch('/api/user'))
 
   const [logoutMutation] = useMutation(logout, {
-    refetchQueries: ['user'],
+    onSuccess: () => queryCache.refetchQueries('user'),
   })
 
   const [loginMutation] = useMutation(login, {
-    refetchQueries: ['user'],
+    onSuccess: () => queryCache.refetchQueries('user'),
   })
 
-  if (isLoading) return <h1>Loading...</h1>
-  if (data && data.loggedIn) {
+  if (status === 'loading') return <h1>Loading...</h1>
+  if (status === 'error') return <span>Error: {error.message}</span>
+  if (data.loggedIn) {
     return (
       <div>
         <h1>Welcome, {data.name}</h1>

@@ -13,14 +13,14 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const [mutate, mutationResult] = useMutation(() =>
+      const [mutate, { data = '', reset }] = useMutation(() =>
         Promise.resolve('mutation')
       )
 
       return (
         <div>
-          <h1 data-testid="title">{mutationResult.data}</h1>
-          <button onClick={mutationResult.reset}>reset</button>
+          <h1 data-testid="title">{data}</h1>
+          <button onClick={reset}>reset</button>
           <button onClick={mutate}>mutate</button>
         </div>
       )
@@ -46,17 +46,21 @@ describe('useMutation', () => {
   it('should be able to reset `error`', async () => {
     function Page() {
       const [mutate, mutationResult] = useMutation(
-        () => Promise.reject(new Error('something went wrong')),
+        () => {
+          const error = new Error('Expected mock error. All is well!')
+          error.stack = ''
+          return Promise.reject(error)
+        },
         {
-          throwOnError: false
+          throwOnError: false,
         }
       )
 
       return (
         <div>
-          {mutationResult.error &&
+          {mutationResult.error && (
             <h1 data-testid="error">{mutationResult.error.message}</h1>
-          }
+          )}
           <button onClick={mutationResult.reset}>reset</button>
           <button onClick={mutate}>mutate</button>
         </div>
@@ -71,7 +75,9 @@ describe('useMutation', () => {
 
     await waitForElement(() => getByTestId('error'))
 
-    expect(getByTestId('error').textContent).toBe('something went wrong')
+    expect(getByTestId('error').textContent).toBe(
+      'Expected mock error. All is well!'
+    )
 
     fireEvent.click(getByText('reset'))
 

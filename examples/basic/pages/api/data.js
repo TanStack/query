@@ -1,7 +1,10 @@
 import fetch from 'isomorphic-unfetch'
 
 const projects = [
-  'facebook/flipper', 'vuejs/vuepress', 'rust-lang/rust', 'zeit/next.js'
+  'tannerlinsley/react-query',
+  'tannerlinsley/react-table',
+  'facebook/react',
+  'zeit/next.js',
 ]
 
 export default (req, res) => {
@@ -14,7 +17,7 @@ export default (req, res) => {
           res.json(data)
         }, 2000)
       })
-    
+
     return
   }
   setTimeout(() => {

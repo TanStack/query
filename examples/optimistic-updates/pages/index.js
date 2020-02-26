@@ -1,7 +1,7 @@
 import React from 'react'
 import fetch from '../libs/fetch'
 
-import { useQuery, useMutation, setQueryData } from 'react-query'
+import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
   const [text, setText] = React.useState('')
@@ -16,11 +16,10 @@ export default () => {
         body: JSON.stringify({ text }),
       }),
     {
-      refetchQueries: ['todos'],
       // to revalidate the data and ensure the UI doesn't
       // remain in an incorrect state, ALWAYS trigger a
       // a refetch of the data, even on failure
-      refetchQueriesOnFailure: true,
+      onSettled: () => queryCache.refetchQueries('todos'),
     }
   )
 
@@ -30,9 +29,7 @@ export default () => {
     // the fetch below could fail, so we need to revalidate
     // regardless
 
-    setQueryData('todos', [...data, text], {
-      shouldRefetch: false,
-    })
+    queryCache.setQueryData('todos', [...data, text])
 
     try {
       // send text to the API
