@@ -12,4 +12,5 @@ export {
   statusSuccess,
   statusError,
   stableStringify,
+  setConsole,
 } from './utils'
