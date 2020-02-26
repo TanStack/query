@@ -12,7 +12,7 @@ export default [
       format: 'esm',
       sourcemap: true,
     },
-    plugins: [external(), babel(), size()],
+    plugins: [external(), babel()],
   },
   {
     input: 'src/index.js',
@@ -25,7 +25,7 @@ export default [
         react: 'React',
       },
     },
-    plugins: [external(), babel(), size()],
+    plugins: [external(), babel()],
   },
   {
     input: 'src/index.js',
@@ -38,6 +38,13 @@ export default [
         react: 'React',
       },
     },
-    plugins: [external(), babel(), terser(), size()],
+    plugins: [
+      external(),
+      babel(),
+      terser(),
+      size({
+        writeFile: false,
+      }),
+    ],
   },
 ]
