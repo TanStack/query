@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2
+
+- Fixed an issue where React Native would try and call `window.addEventListener`
+- Fixed an issue where `setConsole` was not exported
+
 ## 1.0.1
 
 - Removed outdated external types dependency
