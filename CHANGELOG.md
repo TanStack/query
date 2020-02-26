@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- Removed outdated external types dependency
+
 ## 1.0.0
 
 **Features & Enhancements**
