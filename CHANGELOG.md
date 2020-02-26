@@ -46,6 +46,10 @@
   - The query will not automatically refetch on mount
   - `isStale` will initially be set to `true`, and the standard staleTimeout will be applied
 
+## 0.4.3
+
+- Remove unrelated branch artifacts from dist folder, including types
+
 ## 0.4.2
 
 - Added a new `setConsole` exported function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used.
@@ -58,6 +62,7 @@
 
 - Added the `useMutation.throwOnError` and corresponding `queryConfig.throwOnError` option to configure whether the `mutate` function rethrows errors encountered in the mutation function
 - Added the `useMutation.useErrorBoundary` and corresponding `queryConfig.useErrorBoundary` option to configure whether mutation errors should be thrown during the render function and propagated to the nearest error boundary. This option will default to the same value as `queryConfig.suspense` if not defined otherwise
+- Added a new `reset` function for `useMutation` which will revert the hook's state back to the initial `null` state
 
 ## 0.3.27
 

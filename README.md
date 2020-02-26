@@ -155,6 +155,11 @@ This library is being built and maintained by me, @tannerlinsley and I am always
         </a>
       </td>
       <td align="center" valign="middle">
+        <a href="https://nozzle.io" target="_blank">
+          <img width='225' src="https://nozzle.io/img/logo-blue.png">
+        </a>
+      </td>
+      <td align="center" valign="middle">
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
           Become a Sponsor!
         </a>
@@ -1269,6 +1274,35 @@ mutate(
 const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
+### Resetting Mutation State
+
+It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function to handle this:
+
+```js
+const CreateTodo = () => {
+  const [title, setTitle] = useState('')
+  const [mutate, { error, reset }] = useMutation(createTodo)
+
+  const onCreateTodo = async e => {
+    e.preventDefault()
+    await mutate({ title })
+  }
+
+  return (
+    <form onSubmit={onCreateTodo}>
+      {error && <h5 onClick={() => reset()}>{error}</h5>}
+      <input
+        type="text"
+        value={title}
+        onChange={e => setTitle(e.target.value)}
+      />
+      <br />
+      <button type="submit">Create Todo</button>
+    </form>
+  )
+}
+```
+
 ## Manually or Optimistically Setting Query Data
 
 In rare circumstances, you may want to manually update a query's response with a custom value. To do this, you can again use the [Query Cache's `setQueryData`](#querycachesetquerydata) method:
@@ -2316,7 +2350,7 @@ const queryConfig = {
   cacheTime: 5 * 60 * 1000,
   refetchInterval: false,
   queryFnParamsFilter: args => filteredArgs,
-  refetchOnMount: true
+  refetchOnMount: true,
 }
 
 function App() {
