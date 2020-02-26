@@ -18,7 +18,7 @@
 - Query status is now automatically inferred based on `initialData` (`success` for non-`undefined` intitial data, `loading` for `undefined` intitial data)
 - Query objects now supply an `updatedAt` property for making better informed decisions about synchronous cache usage
 - Overall, less over-fetching out of the box when using multiple instances of a query.
-- Added a new `config.refetchOnMount` that when `true` will use new, non-first instances of a query to trigger background refetches similar to the behavior of pre-v1 versions.
+- Added a new `config.refetchOnMount` that defaults to `true` and when set to `false` will disable additional instances of a query to trigger background refetches.
 - More reliable suspense support for prefetched queries and background refetching lifecycles
 - Support for errorBoundaries out of the box when using Suspense for both queries and mutations
 - Added a `globalConfig.queryFnParamsFilter` function that allows filtering the parameters that get sent to the query function.
@@ -41,12 +41,10 @@
 - `refetchAllQueries` has been removed in favor of `queryCache.refetchQueries`
 - `updateQuery` has been removed in favor of `queryCache.setQueryData`
 - `clearQueryCache` has been removed in favor of `queryCache.clear` and `queryCache.removeQueries`
-- Lifecycle
-  - In previous version, new instances of an existing query would trigger background refetches often resulting in unnecessary overfetching. This is now fixed so that new instances of existing queries do not trigger background refetches by default. You can opt back into this behavior using the `config.refetchOnMount` option.
-  - If `initialData` resolves to any non-`undefined` value:
-    - `status` will be initially set to `success`
-    - The query will not automatically refetch on mount
-    - `isStale` will initially be set to `true`, and the standard staleTimeout will be applied
+- When `initialData` now resolves to any non-`undefined` value:
+  - `status` will be initially set to `success`
+  - The query will not automatically refetch on mount
+  - `isStale` will initially be set to `true`, and the standard staleTimeout will be applied
 
 ## 0.4.2
 

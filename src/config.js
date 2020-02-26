@@ -19,6 +19,7 @@ export const defaultConfigRef = {
     onSuccess: noop,
     onError: noop,
     onSettled: noop,
+    refetchOnMount: true,
   },
 }
 

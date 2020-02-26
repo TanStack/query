@@ -1613,7 +1613,8 @@ const {
   onError,
   onSettled,
   suspense,
-  initialData
+  initialData,
+  refetchOnMount
 })
 ```
 
@@ -1681,6 +1682,10 @@ const {
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
+- `refetchOnMount: Boolean`
+  - Optional
+  - Defaults to `true`
+  - If set to `false`, will disable additional instances of a query to trigger background refetches
 
 ### Returns
 
@@ -1731,7 +1736,8 @@ const {
   onSuccess,
   onError,
   suspense,
-  initialData
+  initialData,
+  refetchOnMount
 })
 ```
 
@@ -1798,6 +1804,10 @@ const {
 - `initialData: any`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
+- `refetchOnMount: Boolean`
+  - Optional
+  - Defaults to `true`
+  - If set to `false`, will disable additional instances of a query to trigger background refetches
 
 ### Returns
 
@@ -1861,7 +1871,8 @@ const {
   onSuccess,
   onError,
   suspense,
-  initialData
+  initialData,
+  refetchOnMount
 })
 ```
 
@@ -1931,6 +1942,10 @@ const {
 - `initialData: any`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
+- `refetchOnMount: Boolean`
+  - Optional
+  - Defaults to `true`
+  - If set to `false`, will disable additional instances of a query to trigger background refetches
 
 ### Returns
 
@@ -2301,6 +2316,7 @@ const queryConfig = {
   cacheTime: 5 * 60 * 1000,
   refetchInterval: false,
   queryFnParamsFilter: args => filteredArgs,
+  refetchOnMount: true
 }
 
 function App() {
