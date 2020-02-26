@@ -271,7 +271,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 - [Custom Query Key Serializers (Experimental)](#custom-query-key-serializers-experimental)
 - [API](#api)
   - [`useQuery`](#usequery)
-  - [`usePaginationQuery`](#usepaginationquery)
+  - [`usePaginatedQuery`](#usepaginatedquery)
   - [`useInfiniteQuery`](#useinfinitequery)
   - [`useMutation`](#usemutation)
   - [`queryCache`](#querycache)
@@ -282,7 +282,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.removeQueries`](#querycacheremovequeries)
   - [`queryCache.getQuery`](#querycachegetquery)
   - [`queryCache.isFetching`](#querycacheisfetching)
-  - [`queryCache.susbscribe`](#querycachesusbscribe)
+  - [`queryCache.subscribe`](#querycachesubscribe)
   - [`queryCache.clear`](#querycacheclear)
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
@@ -1755,7 +1755,7 @@ const {
   - Supports custom data merging (useful for "fetch more" calls).
   - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
 
-## `usePaginationQuery`
+## `usePaginatedQuery`
 
 ```js
 const {
@@ -2279,7 +2279,7 @@ if (queryCache.isFetching) {
 
 React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
-## `queryCache.susbscribe`
+## `queryCache.subscribe`
 
 The `subscribe` method can be used to subscribe to the query cache as a whole and be informed of safe/known updates to the cache like query states changing or queries being updated, added or removed
 
