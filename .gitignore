@@ -9,6 +9,7 @@ build
 dist
 artifacts
 .rpt2_cache
+coverage
 
 # misc
 .DS_Store
