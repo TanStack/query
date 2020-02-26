@@ -66,8 +66,9 @@ export function makeQueryCache() {
     return exact ? found[0] : found
   }
 
-  cache.getQueryData = queryKey =>
-    findQueries(queryKey, { exact: true })?.state.data
+  cache.getQuery = queryKey => findQueries(queryKey, { exact: true })
+
+  cache.getQueryData = queryKey => cache.getQuery(queryKey)?.state.data
 
   cache.removeQueries = (predicate, { exact } = {}) => {
     const foundQueries = findQueries(predicate, { exact })
@@ -113,7 +114,16 @@ export function makeQueryCache() {
         config,
       })
 
+      // If the query started with data, schedule
+      // a stale timeout
+      if (query.data) {
+        query.scheduleStaleTimeout()
+      }
+
+      // Simulate a query healing process
       query.heal()
+      // Schedule for garbage collection in case
+      // nothing subscribes to this query
       query.scheduleGarbageCollection()
 
       if (!isServer) {
@@ -159,12 +169,17 @@ export function makeQueryCache() {
   function makeQuery(options) {
     const reducer = options.config.queryReducer || defaultQueryReducer
 
+    const initialData =
+      typeof options.config.initialData === 'function'
+        ? options.config.initialData()
+        : options.config.initialData
+
     const query = {
       ...options,
       instances: [],
       state: reducer(undefined, {
         type: actionInit,
-        initialData: options.config.initialData,
+        initialData,
         manual: options.config.manual,
       }),
     }
@@ -173,6 +188,14 @@ export function makeQueryCache() {
       query.state = reducer(query.state, action)
       query.instances.forEach(d => d.onStateUpdate(query.state))
       notifyGlobalListeners()
+    }
+
+    query.scheduleStaleTimeout = () => {
+      query.staleTimeout = setTimeout(() => {
+        if (query) {
+          dispatch({ type: actionMarkStale })
+        }
+      }, query.config.staleTime)
     }
 
     query.scheduleGarbageCollection = () => {
@@ -303,11 +326,7 @@ export function makeQueryCache() {
             // Schedule a fresh invalidation, always!
             clearTimeout(query.staleTimeout)
 
-            query.staleTimeout = setTimeout(() => {
-              if (query) {
-                dispatch({ type: actionMarkStale })
-              }
-            }, query.config.staleTime)
+            query.scheduleStaleTimeout()
           }
 
           try {
@@ -386,9 +405,10 @@ export function defaultQueryReducer(state, action) {
         isFetching: !action.manual,
         canFetchMore: false,
         failureCount: 0,
-        isStale: true,
+        isStale: !action.initialData,
         isInactive: false,
         data: action.initialData,
+        updatedAt: action.initialData ? Date.now() : 0,
       }
     case actionActivate:
       return {
@@ -426,6 +446,7 @@ export function defaultQueryReducer(state, action) {
         isStale: false,
         isFetching: false,
         canFetchMore: action.canFetchMore,
+        updatedAt: Date.now(),
       }
     case actionError:
       return {
@@ -441,6 +462,8 @@ export function defaultQueryReducer(state, action) {
       return {
         ...state,
         data: functionalUpdate(action.updater, state.data),
+        isStale: false,
+        updatedAt: Date.now(),
       }
     default:
       throw new Error()

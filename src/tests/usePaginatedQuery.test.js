@@ -15,40 +15,39 @@ describe('usePaginatedQuery', () => {
     queryCache.clear()
   })
 
-  it('should use previous page data before next page is fetched', async () => {
+  it('should use previous page data while fetching the next page', async () => {
     function Page() {
       const [page, setPage] = React.useState(1)
       const { resolvedData } = usePaginatedQuery(
         ['data', page],
         async (queryName, page) => {
-          sleep(1000)
+          await sleep(1000)
           return page
         }
       )
 
       return (
         <div>
-          <h1 data-testid="title">{resolvedData}</h1>
+          <h1 data-testid="title">Data {resolvedData}</h1>
           <button onClick={() => setPage(page + 1)}>next</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = render(<Page />)
+    const rendered = render(<Page />)
 
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('1')
+    rendered.getByText('Data init')
+    await waitForElement(() => rendered.getByText('Data 1'))
 
-    fireEvent.click(getByText('next'))
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('2')
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data 1')
+    await waitForElement(() => rendered.getByText('Data 2'))
 
-    fireEvent.click(getByText('next'))
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('3')
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data 2')
+    await waitForElement(() => rendered.getByText('Data 3'))
   })
-
-  it('should use previous page data before next page is fetched when initialData provided', async () => {
+  it('should use initialData only on the first page, then use previous page data while fetching the next page', async () => {
     function Page() {
       const [page, setPage] = React.useState(1)
 
@@ -58,28 +57,31 @@ describe('usePaginatedQuery', () => {
           sleep(1000)
           return page
         },
-        { initialData: 1 }
+        { initialData: 0 }
       )
 
       return (
         <div>
-          <h1 data-testid="title">{resolvedData}</h1>
+          <h1 data-testid="title">Data {resolvedData}</h1>
           <button onClick={() => setPage(page + 1)}>next</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = render(<Page />)
+    const rendered = render(<Page />)
 
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('1')
+    rendered.getByText('Data 0')
 
-    fireEvent.click(getByText('next'))
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('2')
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data 0')
+    await waitForElement(() => rendered.getByText('Data 2'))
 
-    fireEvent.click(getByText('next'))
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('3')
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data 2')
+    await waitForElement(() => rendered.getByText('Data 3'))
+
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data 3')
+    await waitForElement(() => rendered.getByText('Data 4'))
   })
 })

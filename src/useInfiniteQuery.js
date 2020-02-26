@@ -9,11 +9,6 @@ export function useInfiniteQuery(...args) {
   const queryInfoRef = React.useRef()
   let [queryKey, queryVariables, queryFn, config = {}] = getQueryArgs(args)
 
-  config = {
-    initialData: [],
-    ...config,
-  }
-
   const { getFetchMore } = config
   const getGetFetchMore = useGetLatest(getFetchMore)
 
@@ -35,8 +30,10 @@ export function useInfiniteQuery(...args) {
 
   const queryInfo = useBaseQuery(queryKey, queryVariables, queryFn, config)
   queryInfoRef.current = queryInfo
+
   let {
     refetch,
+    data = [],
     query: { canFetchMore },
   } = queryInfo
 
@@ -79,6 +76,7 @@ export function useInfiniteQuery(...args) {
 
   return {
     ...queryInfo,
+    data,
     canFetchMore,
     fetchMore,
     isFetchingMore,
