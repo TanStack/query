@@ -9,16 +9,10 @@ export default [
     input: 'src/index.js',
     output: {
       file: pkg.module,
-      format: 'es',
+      format: 'esm',
       sourcemap: true,
     },
-    plugins: [
-      external(),
-      babel({
-        runtimeHelpers: true,
-      }),
-      size(),
-    ],
+    plugins: [external(), babel(), size()],
   },
   {
     input: 'src/index.js',
@@ -31,13 +25,7 @@ export default [
         react: 'React',
       },
     },
-    plugins: [
-      external(),
-      babel({
-        runtimeHelpers: true,
-      }),
-      size(),
-    ],
+    plugins: [external(), babel(), size()],
   },
   {
     input: 'src/index.js',

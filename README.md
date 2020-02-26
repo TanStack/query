@@ -33,12 +33,12 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Transport/protocol/backend agnostic data fetching
 - Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
 - Parallel + Dependent Queries
-- Mutations + Declarative Query Refetching
+- Mutations + Reactive Query Refetching
 - Multi-layer Cache + **Automatic Garbage Collection**
 - Paginated + Cursor-based Queries
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
-- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) Support
+- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render w/ Query Prefetching
 - <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
     <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
   </a>
@@ -86,10 +86,11 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 [Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar is spirit and implementation to React Query with a few notable differences:
 
-- React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
-- React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
-- React Query uses query key generation, query variables, and implicit query grouping. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ status: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query key "groups" when defining query refetching configs, eg. you can refetch every query that starts with a `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables, and even use functional filtering to select queries in most places. This architecture is much more robust and forgiving especially for larger apps.
+- Automatic Cache Garbage Collection - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
+- No Default Data Fetcher Function - React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
+- Query Key Generation - React Query uses query key generation, query variables, and implicit query grouping. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ status: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query key "groups" when defining query refetching configs, eg. you can refetch every query that starts with a `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables, and even use functional filtering to select queries in most places. This architecture is much more robust and forgiving especially for larger apps.
 - Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
+- Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps, but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
 - Overall API design opinions
 
 </details>
@@ -530,10 +531,10 @@ React Query caching is automatic out of the box. It uses a `stale-while-revalida
 
 At a glance:
 
-- The cache is keyed on a deterministic has of your query key.
-- By default query results become **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level.
-- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)** or when **new usages/instances** of a query are mounted.
-- By default query results are **always** cached **when in use**.
+- The cache is keyed on a deterministic hash of your query key.
+- By default, query results become **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level.
+- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)**, when they are freshly mounted from not having any instances on the page, or when they are refetched via the query cache manually.
+- Though a query result may be stale, query results are by default **always** _cached_ **when in use**.
 - If and when a query is no longer being used, it becomes **inactive** and by default is cached in the background for **5 minutes**. This time can be configured using the `cacheTime` option at both the global and query-level.
 - After a query is inactive for the `cacheTime` specified (defaults to 5 minutes), the query is deleted and garbage collected.
 
@@ -548,7 +549,6 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
   - A stale invalidation is scheduled using the `staleTime` option as a delay (defaults to `0`, or immediately).
 - A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere.
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
-  - Since the query is stale, it is refetched in the background automatically.
 - Both instances of the `useQuery('todos', fetchTodos)` query are unmounted and no longer in use.
   - Since there are no more active instances to this query, a cache timeout is set using `cacheTime` to delete and garbage collect the query (defaults to **5 minutes**).
 - No more instances of `useQuery('todos', fetchTodos)` appear within **5 minutes**.
