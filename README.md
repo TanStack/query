@@ -34,11 +34,11 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
 - Parallel + Dependent Queries
 - Mutations + Reactive Query Refetching
-- Multi-layer Cache + **Automatic Garbage Collection**
+- Multi-layer Cache + Automatic Garbage Collection
 - Paginated + Cursor-based Queries
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
-- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render w/ Query Prefetching
+- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
 - <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
     <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
   </a>
