@@ -67,9 +67,6 @@ export function useMutation(
 
   const mutate = React.useCallback(
     async (variables, options = {}) => {
-      if (![statusIdle, statusSuccess, statusError].includes(state.status)) {
-        return
-      }
       dispatch({ type: actionMutate })
 
       const resolvedOptions = {
@@ -95,7 +92,7 @@ export function useMutation(
         }
       }
     },
-    [getConfig, getMutationFn, state.status]
+    [getConfig, getMutationFn]
   )
 
   const reset = React.useCallback(() => dispatch({ type: actionReset }), [])
