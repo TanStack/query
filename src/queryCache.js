@@ -14,15 +14,14 @@ import { defaultConfigRef } from './config'
 
 export const queryCache = makeQueryCache()
 
-export const actionInit = {}
-export const actionActivate = {}
-export const actionDeactivate = {}
-export const actionFailed = {}
-export const actionMarkStale = {}
-export const actionFetch = {}
-export const actionSuccess = {}
-export const actionError = {}
-export const actionSetData = {}
+const actionInit = {}
+const actionDeactivate = {}
+const actionFailed = {}
+const actionMarkStale = {}
+const actionFetch = {}
+const actionSuccess = {}
+const actionError = {}
+const actionSetData = {}
 
 export function makeQueryCache() {
   const listeners = []
@@ -216,7 +215,7 @@ export function makeQueryCache() {
 
     query.heal = () => {
       // Mark the query as active
-      dispatch({ type: actionActivate })
+      query.state.isInactive = false
 
       // Stop the query from being garbage collected
       clearTimeout(query.cacheTimeout)
@@ -419,11 +418,6 @@ export function defaultQueryReducer(state, action) {
         isInactive: false,
         data: action.initialData,
         updatedAt: action.initialData ? Date.now() : 0,
-      }
-    case actionActivate:
-      return {
-        ...state,
-        isInactive: false,
       }
     case actionDeactivate:
       return {
