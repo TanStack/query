@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3
+
+- Fixed an issue where the first query rendered on the page would always remount due to a bug in the `useUid` hook
+- Fixed an issue where queries were still refetching on mount if `manual` was `true`
+- Optimized garbage collection for queries that have no data so they will be removed immediately
+- Fixed a potential issue where returned promises in try/catch blocks were not always awaited, yet still worked usually.
+- Fixed a potential issue where a query function that had already been settled would get it's `cancel` function called.
+
 ## 1.0.2
 
 - Fixed an issue where React Native would try and call `window.addEventListener`
@@ -14,7 +22,7 @@
 **Features & Enhancements**
 
 - `usePaginatedQuery` - A dedicated hook for window-like querying of paginated data or cursor-driven batches of data
-- `useInfiniteQuery` - A dedidated hook for accumulative querying of paginated data or cursor-driven batches of data
+- `useInfiniteQuery` - A dedicated hook for accumulative querying of paginated data or cursor-driven batches of data
 - Synchronous Query Cache Reads/Writes/Upserts/Deletes
 - Improved query key matching for removing and refetching queries
 - External subscriptions to query cache updates
