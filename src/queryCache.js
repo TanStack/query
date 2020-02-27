@@ -306,7 +306,7 @@ export function makeQueryCache() {
           })
         }
 
-        // throw error
+        throw error
       }
     }
 
@@ -381,7 +381,7 @@ export function makeQueryCache() {
                   instance.onSettled && instance.onSettled(undefined, error)
               )
 
-              throw error
+              // throw error
             }
           }
         })()
