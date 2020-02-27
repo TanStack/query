@@ -276,7 +276,7 @@ export function makeQueryCache() {
         if (
           // Only retry if the document is visible
           query.config.retry === true ||
-          query.state.failureCount < query.config.retry
+          query.state.failureCount <= query.config.retry
         ) {
           if (!isDocumentVisible()) {
             return new Promise(noop)
