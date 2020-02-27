@@ -77,18 +77,6 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     refetch,
   ])
 
-  // // After initial mount, refetch if queryVariables are present and change
-  // React.useEffect(() => {
-  //   if (
-  //     isMountedRef.current && // Must be subscribed
-  //     !wasSuspenseRef.current && // Dont' double fetch suspense
-  //     queryVariables.length // Must have queryVariables
-  //   ) {
-  //     refetch().catch(Console.error)
-  //   }
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [refetch, ...queryVariables])
-
   // Reset refs
   React.useEffect(() => {
     isMountedRef.current = true

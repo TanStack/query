@@ -82,14 +82,14 @@ export function makeQueryCache() {
     }
   }
 
-  cache.refetchQueries = (predicate, { exact, throwOnError } = {}) => {
+  cache.refetchQueries = async (predicate, { exact, throwOnError } = {}) => {
     const foundQueries = (predicate === true
       ? Object.values(cache.queries)
       : findQueries(predicate, { exact })
     ).filter(query => query.instances.length)
 
     try {
-      return Promise.all(foundQueries.map(query => query.fetch()))
+      return await Promise.all(foundQueries.map(query => query.fetch()))
     } catch (err) {
       if (throwOnError) {
         throw err
@@ -146,7 +146,7 @@ export function makeQueryCache() {
 
     // Trigger a fetch and return the promise
     try {
-      return query.fetch()
+      return await query.fetch()
     } catch (err) {
       if (config.throwOnError) {
         throw err
@@ -266,6 +266,8 @@ export function makeQueryCache() {
 
         query.cancelQueries = () => promise.cancel?.()
 
+        promise.finally(() => delete query.cancelQueries)
+
         const data = await promise
 
         if (query.cancelled) throw query.cancelled
@@ -294,7 +296,7 @@ export function makeQueryCache() {
           )
 
           // Return a new promise with the retry
-          return new Promise((resolve, reject) => {
+          return await new Promise((resolve, reject) => {
             // Keep track of the retry timeout
             setTimeout(async () => {
               if (query.cancelled) return reject(query.cancelled)
@@ -311,7 +313,7 @@ export function makeQueryCache() {
           })
         }
 
-        throw error
+        // throw error
       }
     }
 

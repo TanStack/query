@@ -17,9 +17,7 @@ const onWindowFocus = () => {
           return query.config.refetchOnWindowFocus
         }
       })
-      .catch(error => {
-        Console.error(error.message)
-      })
+      .catch(Console.error)
   }
 }
 
