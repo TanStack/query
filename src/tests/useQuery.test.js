@@ -202,11 +202,11 @@ describe('useQuery', () => {
 
     const rendered = render(<Page />)
 
-    rendered.getByText('loading')
+    await waitForElement(() => rendered.getByText('loading'), { timeout: 20000 })
 
     // query should fail `retry + 1` times, since first time isn't a "retry"
-    await waitForElement(() => rendered.getByText('Failed 2 times'))
+    await waitForElement(() => rendered.getByText('Failed 2 times'), { timeout: 20000 })
 
     expect(queryFn).toHaveBeenCalledTimes(2)
-  })
+  }, 20000)
 })
