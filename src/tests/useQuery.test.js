@@ -138,4 +138,23 @@ describe('useQuery', () => {
 
     expect(queryFn).toHaveBeenCalledWith('test', variables)
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/161
+  it('should not fetch query when `manual` is set to `true`', async () => {
+    const queryFn = jest.fn()
+
+    function Page() {
+      const { data = 'default' } = useQuery('test', queryFn, { manual: true })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+    await waitForElement(() => rendered.getByText('default'))
+    expect(queryFn).not.toHaveBeenCalled()
+  })
 })
