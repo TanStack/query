@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.4
+
+- Silently remove the `query.state.isInactive` boolean. If you somehow relied on this state, then you can still derive it using `const isInactive = !query.instances.length`
+
 ## 1.0.3
 
 - Fixed an issue where the first query rendered on the page would always remount due to a bug in the `useUid` hook

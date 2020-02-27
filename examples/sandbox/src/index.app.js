@@ -250,7 +250,8 @@ function App() {
         {queries.map(query => {
           const {
             queryHash,
-            state: { isFetching, isStale, isInactive }
+            instances,
+            state: { isFetching, isStale }
           } = query;
 
           return (
@@ -258,7 +259,7 @@ function App() {
               key={queryHash}
               isFetching={isFetching}
               isStale={isStale}
-              isInactive={isInactive}
+              isInactive={!instances.length}
               onClick={() => {
                 console.info(query);
               }}

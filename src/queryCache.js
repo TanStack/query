@@ -15,7 +15,6 @@ import { defaultConfigRef } from './config'
 export const queryCache = makeQueryCache()
 
 const actionInit = {}
-const actionDeactivate = {}
 const actionFailed = {}
 const actionMarkStale = {}
 const actionFetch = {}
@@ -203,8 +202,6 @@ export function makeQueryCache() {
     }
 
     query.scheduleGarbageCollection = () => {
-      dispatch({ type: actionDeactivate })
-
       query.cacheTimeout = setTimeout(
         () => {
           cache.removeQueries(d => d.queryHash === query.queryHash)
@@ -214,9 +211,6 @@ export function makeQueryCache() {
     }
 
     query.heal = () => {
-      // Mark the query as active
-      query.state.isInactive = false
-
       // Stop the query from being garbage collected
       clearTimeout(query.cacheTimeout)
 
@@ -415,14 +409,8 @@ export function defaultQueryReducer(state, action) {
         canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,
-        isInactive: false,
         data: action.initialData,
         updatedAt: action.initialData ? Date.now() : 0,
-      }
-    case actionDeactivate:
-      return {
-        ...state,
-        isInactive: true,
       }
     case actionFailed:
       return {
