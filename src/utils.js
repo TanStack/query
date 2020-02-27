@@ -17,10 +17,12 @@ export const identity = d => d
 export let Console = console || { error: noop, warn: noop, log: noop }
 
 export function useUid() {
-  const ref = React.useRef()
-  if (!ref.current) {
+  const ref = React.useRef(null)
+
+  if (ref.current === null) {
     ref.current = uid()
   }
+
   return ref.current
 }
 

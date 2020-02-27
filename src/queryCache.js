@@ -261,7 +261,7 @@ export function makeQueryCache() {
         // Perform the query
         const promise = queryFn(...query.config.queryFnParamsFilter(args))
 
-        query.cancelQueries = () => promise?.cancel?.()
+        query.cancelQueries = () => promise.cancel?.()
 
         const data = await promise
 
