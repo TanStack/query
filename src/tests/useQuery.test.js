@@ -209,5 +209,5 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('Failed 2 times'), { timeout: 20000 })
 
     expect(queryFn).toHaveBeenCalledTimes(2)
-  }, 20000)
+  })
 })
