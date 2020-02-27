@@ -266,14 +266,14 @@ export function makeQueryCache() {
 
         query.cancelQueries = () => promise.cancel?.()
 
-        promise.finally(() => delete query.cancelQueries)
-
         const data = await promise
 
+        delete query.cancelQueries
         if (query.cancelled) throw query.cancelled
 
         return data
       } catch (error) {
+        delete query.cancelQueries
         if (query.cancelled) throw query.cancelled
 
         // If we fail, increase the failureCount
