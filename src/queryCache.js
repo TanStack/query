@@ -204,16 +204,19 @@ export function makeQueryCache() {
     }
 
     query.scheduleGarbageCollection = () => {
-      query.isInactive = true
+      dispatch({ type: actionDeactivate })
 
-      query.cacheTimeout = setTimeout(() => {
-        cache.removeQueries(d => d.queryHash === query.queryHash)
-      }, query.config.cacheTime)
+      query.cacheTimeout = setTimeout(
+        () => {
+          cache.removeQueries(d => d.queryHash === query.queryHash)
+        },
+        typeof query.state.data === 'undefined' ? 0 : query.config.cacheTime
+      )
     }
 
     query.heal = () => {
       // Mark the query as active
-      query.isInactive = false
+      dispatch({ type: actionActivate })
 
       // Stop the query from being garbage collected
       clearTimeout(query.cacheTimeout)
