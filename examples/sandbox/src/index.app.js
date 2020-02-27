@@ -405,7 +405,6 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const [mutate, mutationState] = useMutation(patchTodo, {
     onSuccess: data => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      console.log("tanner");
       queryCache.refetchQueries("todos");
       queryCache.setQueryData(["todo", { id: editingIndex }], data);
     }
@@ -490,7 +489,6 @@ function AddTodo() {
 
   const [mutate, { status, error }] = useMutation(postTodo, {
     onSuccess: () => {
-      console.log("hello");
       queryCache.refetchQueries("todos");
     }
   });
