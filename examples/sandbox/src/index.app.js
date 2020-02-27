@@ -63,7 +63,7 @@ let queryTimeMax = 2000;
 
 const fetchTodos = (key, { filter } = {}) => {
   console.log("fetchTodos", { filter });
-  return new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
         return reject(
@@ -73,6 +73,10 @@ const fetchTodos = (key, { filter } = {}) => {
       resolve(list.filter(d => d.name.includes(filter)));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
+
+  promise.cancel = () => console.log("cancelled", filter);
+
+  return promise;
 };
 
 const fetchTodoById = (key, { id }) => {
