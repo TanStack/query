@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.5
+
+- Fixed a regression where query errors were not thrown properly
+- Fixed an issue where the `mutate` function returned from `useMutation` was not memoized properly
+
 ## 1.0.4
 
 - Silently remove the `query.state.isInactive` boolean. If you somehow relied on this state, then you can still derive it using `const isInactive = !query.instances.length`
