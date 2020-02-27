@@ -234,7 +234,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Queries](#queries)
   - [Query Keys](#query-keys)
@@ -857,10 +856,12 @@ const { status, data, error } = useQuery('todos', fetchTodoList, {
 If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, then you're in luck. You can either use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
 
 ```js
-import { prefetchQuery } from 'react-query'
+import { queryCache } from 'react-query'
 
 const prefetchTodos = async () => {
-  const queryData = await prefetchQuery('todos', () => fetch('/todos'))
+  const queryData = await queryCache.prefetchQuery('todos', () =>
+    fetch('/todos')
+  )
   // The results of this query will be cached like a normal query
 }
 ```
@@ -2106,17 +2107,22 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 > The difference between using `prefetchQuery` and `updateQuery` is that `prefetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
 ```js
-import { prefetchQuery } from 'react-query'
+import { queryCache } from 'react-query'
 
-const data = await prefetchQuery(queryKey, queryFn)
+const data = await queryCache.prefetchQuery(queryKey, queryFn)
 ```
 
 For convenience in syntax, you can also pass optional query variables to `prefetchQuery` just like you can `useQuery`:
 
 ```js
-import { prefetchQuery } from 'react-query'
+import { queryCache } from 'react-query'
 
-const data = await prefetchQuery(queryKey, queryVariables, queryFn, config)
+const data = await queryCache.prefetchQuery(
+  queryKey,
+  queryVariables,
+  queryFn,
+  config
+)
 ```
 
 ### Options
@@ -2136,9 +2142,9 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 `getQueryData` is an synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
 
 ```js
-import { getQueryData } from 'react-query'
+import { queryCache } from 'react-query'
 
-const data = getQueryData(queryKey)
+const data = queryCache.getQueryData(queryKey)
 ```
 
 ### Options
@@ -2158,9 +2164,9 @@ const data = getQueryData(queryKey)
 > The difference between using `setQueryData` and `updateQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `prefetchQuery` to handle the asynchronous fetch.
 
 ```js
-import { setQueryData } from 'react-query'
+import { queryCache } from 'react-query'
 
-setQueryData(queryKey, updater)
+queryCache.setQueryData(queryKey, updater)
 ```
 
 ### Options
@@ -2249,9 +2255,9 @@ This function does not return anything
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```js
-import { getQuery } from 'react-query'
+import { queryCache } from 'react-query'
 
-const query = getQuery(queryKey)
+const query = queryCache.getQuery(queryKey)
 ```
 
 ### Options
