@@ -157,4 +157,26 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('default'))
     expect(queryFn).not.toHaveBeenCalled()
   })
+
+  it('should set status to error if queryFn throws', async () => {
+    function Page() {
+      const { status } = useQuery(
+        'test',
+        () => {
+          return Promise.reject('Error test')
+        },
+        { retry: false },
+      )
+
+      return (
+        <div>
+          <h1>{status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('error'))
+  })
 })
