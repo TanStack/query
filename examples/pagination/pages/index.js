@@ -7,7 +7,7 @@ export default () => {
   const [page, setPage] = React.useState(0)
 
   const { status, resolvedData, data, error, isFetching } = usePaginatedQuery(
-    ['todos', page],
+    ['projects', page],
     (key, page = 0) => fetch('/api/projects?page=' + page)
   )
 
