@@ -13,7 +13,7 @@
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "jest --watch",
-    "test:ci": "yarn test:jest --maxWorkers=2 --testTimeout=50000",
+    "test:ci": "yarn test:jest --runInBand",
     "test:jest": "jest --coverage",
     "test:coverage": "yarn test:jest; open coverage/lcov-report/index.html",
     "build": "NODE_ENV=production rollup -c",

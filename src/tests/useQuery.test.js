@@ -159,6 +159,7 @@ describe('useQuery', () => {
   })
 
   it('should set status to error if queryFn throws', async () => {
+    console.log('should set status to error if queryFn throws')
     function Page() {
       const { status } = useQuery(
         'test',
@@ -181,6 +182,7 @@ describe('useQuery', () => {
   })
 
   it('should retry specified number of times', async () => {
+    console.log('should retry specified number of times')
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => {
       return Promise.reject('Error test')
