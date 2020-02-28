@@ -253,7 +253,6 @@ export function makeQueryCache() {
 
     // Set up the fetch function
     const tryFetchData = async (queryFn, ...args) => {
-      console.log('tryFetchData', query.queryHash, new Date());
       try {
         // Perform the query
         const promise = queryFn(...query.config.queryFnParamsFilter(args))

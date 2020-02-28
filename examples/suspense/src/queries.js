@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function fetchProjects(key) {
-  console.log("fetch projects");
+  console.info("fetch projects");
   let { data } = await axios.get(
     `https://api.github.com/users/tannerlinsley/repos?sort=updated`
   );
@@ -10,7 +10,7 @@ export async function fetchProjects(key) {
 }
 
 export async function fetchProject(key, { id }) {
-  console.log("fetch project id", id);
+  console.info("fetch project id", id);
   let { data } = await axios.get(
     `https://api.github.com/repos/tannerlinsley/${id}`
   );
