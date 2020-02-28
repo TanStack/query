@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.7
+
+- Fixed an issue where failed queries with no data could be unintentionally garbage collected immediately
+- Fixed an issue where queries with falsey query keys would initialize to `loading` instead of `success`
+
 ## 1.0.6
 
 - Fixed an issue where paginated queries, when updated rapidly, would display an unnecessary loading state.

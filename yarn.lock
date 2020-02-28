@@ -1984,13 +1984,6 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-query@^0.3.7":
-  version "0.3.7"
-  resolved "https://registry.yarnpkg.com/@types/react-query/-/react-query-0.3.7.tgz#4ecaa3df749de46b5dadc42a2b97997651b79873"
-  integrity sha512-tmWT9YLwE6ckFKY5n08cg694fRLuuAj1IOzBRL/O3n0QuGFld/hWnE+Ms8kuiyMfe62ESvxAh59cLitXODcaQA==
-  dependencies:
-    "@types/react" "*"
-
 "@types/react@*":
   version "16.9.11"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-16.9.11.tgz#70e0b7ad79058a7842f25ccf2999807076ada120"

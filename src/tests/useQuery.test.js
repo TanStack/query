@@ -36,37 +36,53 @@ describe('useQuery', () => {
     function Page() {
       const [shouldFetch, setShouldFetch] = React.useState(false)
 
-      const { data: first, isStale } = useQuery(
-        shouldFetch && 'first',
-        () => 'first data',
-        {
-          initialData: 'first init',
-        }
-      )
+      const first = useQuery(shouldFetch && 'first', () => 'data', {
+        initialData: 'init',
+      })
 
-      const { data: second } = useQuery(
-        shouldFetch && 'second',
-        () => 'second data',
-        {
-          initialData: 'second init',
-        }
-      )
+      const second = useQuery(shouldFetch && 'second', () => 'data', {
+        initialData: 'init',
+      })
 
       return (
         <div>
-          <h2>{first}</h2>
-          <h2>{second}</h2>
-          {isStale ? (
+          <h2>First Data: {first.data}</h2>
+          <h2>Second Data: {second.data}</h2>
+          {first.isStale ? (
             <button onClick={() => setShouldFetch(true)}>fetch</button>
           ) : null}
+          <div>First Status: {first.status}</div>
+          <div>Second Status: {second.status}</div>
         </div>
       )
     }
 
     const rendered = render(<Page />)
 
-    rendered.getByText('first init')
-    rendered.getByText('second init')
+    rendered.getByText('First Data: init')
+    rendered.getByText('Second Data: init')
+    rendered.getByText('First Status: success')
+    rendered.getByText('Second Status: success')
+  })
+
+  // See https://github.com/tannerlinsley/react-query/issues/170
+  it('should start with status success if falsey query key is supplied', async () => {
+    function Page() {
+      const first = useQuery(false && 'first', () => 'data')
+      const second = useQuery('second', () => 'data')
+
+      return (
+        <div>
+          <div>First Status: {first.status}</div>
+          <div>Second Status: {second.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('First Status: success')
+    await waitForElement(() => rendered.getByText('Second Status: loading'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144

@@ -166,24 +166,29 @@ export function makeQueryCache() {
   function makeQuery(options) {
     const reducer = options.config.queryReducer || defaultQueryReducer
 
+    const noQueryHash = typeof options.queryHash === 'undefined'
+
     const initialData =
       typeof options.config.initialData === 'function'
         ? options.config.initialData()
         : options.config.initialData
 
-    const isStale =
-      typeof options.queryHash === 'undefined'
-        ? true
-        : typeof initialData === 'undefined'
+    const isStale = noQueryHash ? true : typeof initialData === 'undefined'
+
+    const manual = options.config.manual
+
+    const initialStatus =
+      noQueryHash || manual || initialData ? statusSuccess : statusLoading
 
     const query = {
       ...options,
       instances: [],
       state: reducer(undefined, {
         type: actionInit,
+        initialStatus,
         initialData,
         isStale,
-        manual: options.config.manual,
+        manual,
       }),
     }
 
@@ -206,7 +211,10 @@ export function makeQueryCache() {
         () => {
           cache.removeQueries(d => d.queryHash === query.queryHash)
         },
-        (typeof query.state.data === 'undefined' && query.state.status !== 'error') ? 0 : query.config.cacheTime
+        typeof query.state.data === 'undefined' &&
+          query.state.status !== 'error'
+          ? 0
+          : query.config.cacheTime
       )
     }
 
@@ -402,8 +410,7 @@ export function defaultQueryReducer(state, action) {
   switch (action.type) {
     case actionInit:
       return {
-        status:
-          action.manual || action.initialData ? statusSuccess : statusLoading,
+        status: action.initialStatus,
         error: null,
         isFetching: !action.manual,
         canFetchMore: false,
