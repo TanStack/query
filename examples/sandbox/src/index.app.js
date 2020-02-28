@@ -62,7 +62,7 @@ let queryTimeMin = 1000;
 let queryTimeMax = 2000;
 
 const fetchTodos = (key, { filter } = {}) => {
-  console.log("fetchTodos", { filter });
+  console.info("fetchTodos", { filter });
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -74,13 +74,13 @@ const fetchTodos = (key, { filter } = {}) => {
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 
-  promise.cancel = () => console.log("cancelled", filter);
+  promise.cancel = () => console.info("cancelled", filter);
 
   return promise;
 };
 
 const fetchTodoById = (key, { id }) => {
-  console.log("fetchTodoById", { id });
+  console.info("fetchTodoById", { id });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -94,7 +94,7 @@ const fetchTodoById = (key, { id }) => {
 };
 
 const postTodo = ({ name, notes }) => {
-  console.log("postTodo", { name, notes });
+  console.info("postTodo", { name, notes });
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
@@ -110,7 +110,7 @@ const postTodo = ({ name, notes }) => {
 };
 
 const patchTodo = todo => {
-  console.log("patchTodo", todo);
+  console.info("patchTodo", todo);
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {

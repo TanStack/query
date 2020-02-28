@@ -206,7 +206,7 @@ export function makeQueryCache() {
         () => {
           cache.removeQueries(d => d.queryHash === query.queryHash)
         },
-        typeof query.state.data === 'undefined' ? 0 : query.config.cacheTime
+        (typeof query.state.data === 'undefined' && query.state.status !== 'error') ? 0 : query.config.cacheTime
       )
     }
 
@@ -276,7 +276,7 @@ export function makeQueryCache() {
         if (
           // Only retry if the document is visible
           query.config.retry === true ||
-          query.state.failureCount < query.config.retry
+          query.state.failureCount <= query.config.retry
         ) {
           if (!isDocumentVisible()) {
             return new Promise(noop)
