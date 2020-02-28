@@ -30,7 +30,7 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 
 ## Quick Features
 
-- Transport/protocol/backend agnostic data fetching (REST, GraphQL, Streaming, whatever!)
+- Transport/protocol/backend agnostic data fetching (REST, GraphQL, promises, whatever!)
 - Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
 - Parallel + Dependent Queries
 - Mutations + Reactive Query Refetching
@@ -68,7 +68,7 @@ React Query exports a set of hooks that address these issues. Out of the box, Re
 - Dedupes both async and sync requests to async resources
 - Automatically caches data, invalidates and refetches stale data, and manages garbage collection of unused data
 - Scales easily as your application grows
-- Is based solely on Promises, making it highly unopinionated and interoperable with any data fetching strategy including REST, GraphQL, and even streaming-based APIs
+- Is based solely on Promises, making it highly unopinionated and interoperable with any data fetching strategy including REST, GraphQL and other transactional APIs
 - Provides an integrated promise-based mutation API
 - Opt-in Manual or Advance cache management
 
