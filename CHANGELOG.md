@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.6
+
+- Fixed an issue where paginated queries, when updated rapidly, would display an unnecessary loading state.
+
 ## 1.0.5
 
 - Fixed a regression where query errors were not thrown properly
