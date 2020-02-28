@@ -20,7 +20,7 @@ export function usePaginatedQuery(...args) {
   let { data: latestData, status } = queryInfo
 
   React.useEffect(() => {
-    if (status === 'success') {
+    if (status === 'success' && typeof latestData !== 'undefined') {
       lastDataRef.current = latestData
     }
   }, [latestData, status])
