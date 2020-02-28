@@ -206,7 +206,7 @@ export function makeQueryCache() {
         () => {
           cache.removeQueries(d => d.queryHash === query.queryHash)
         },
-        typeof query.state.data === 'undefined' ? 0 : query.config.cacheTime
+        (typeof query.state.data === 'undefined' && query.state.status === 'success') ? 0 : query.config.cacheTime
       )
     }
 
