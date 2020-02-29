@@ -241,6 +241,6 @@ describe('useQuery', () => {
 
     const rendered = render(<Page />)
     await waitForElement(() => rendered.getByTestId('status'))
-    expect(rendered.getByTestId('status').textContent).toBe('success');
+    expect(rendered.getByTestId('status').textContent).toBe('success')
   })
 })
