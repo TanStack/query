@@ -263,11 +263,8 @@ describe('useQuery', () => {
 
     expect(Object.keys(queryCache.queries).length).toEqual(5)
 
-    // wait for garbage collection
-    await sleep(0)
+    await waitForElement(() => rendered.getByText('todo aaaa'))
 
     expect(Object.keys(queryCache.queries).length).toEqual(1)
-
-    await waitForElement(() => rendered.getByText('todo aaaa'))
   })
 })
