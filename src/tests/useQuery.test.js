@@ -1,4 +1,10 @@
-import { cleanup, render, act, waitForElement } from '@testing-library/react'
+import {
+  cleanup,
+  render,
+  act,
+  waitForElement,
+  fireEvent,
+} from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
@@ -225,5 +231,40 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('Failed 2 times'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should garbage collect queries without data immediately', async () => {
+    function Page() {
+      const [filter, setFilter] = React.useState('')
+      const { data } = useQuery(
+        ['todos', { filter }],
+        async (key, { filter } = {}) => {
+          await sleep(1000)
+          return `todo ${filter}`
+        }
+      )
+
+      return (
+        <div>
+          <div>{data}</div>
+          <button onClick={() => setFilter(filter + 'a')}>update</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('update'))
+
+    fireEvent.click(rendered.getByText('update'))
+    fireEvent.click(rendered.getByText('update'))
+    fireEvent.click(rendered.getByText('update'))
+    fireEvent.click(rendered.getByText('update'))
+
+    expect(Object.keys(queryCache.queries).length).toEqual(5)
+
+    await waitForElement(() => rendered.getByText('todo aaaa'))
+
+    expect(Object.keys(queryCache.queries).length).toEqual(1)
   })
 })
