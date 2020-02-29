@@ -1,4 +1,10 @@
-import { cleanup, render, act, waitForElement, fireEvent } from '@testing-library/react'
+import {
+  cleanup,
+  render,
+  act,
+  waitForElement,
+  fireEvent,
+} from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
@@ -229,11 +235,14 @@ describe('useQuery', () => {
 
   it('should garbage collect queries without data immediately', async () => {
     function Page() {
-      const [filter, setFilter] = React.useState('');
-      const { data } = useQuery(['todos', { filter }], async (key, { filter } = {}) => {
-        await sleep(1000);
-        return `todo ${filter}`;
-      })
+      const [filter, setFilter] = React.useState('')
+      const { data } = useQuery(
+        ['todos', { filter }],
+        async (key, { filter } = {}) => {
+          await sleep(1000)
+          return `todo ${filter}`
+        }
+      )
 
       return (
         <div>
@@ -259,6 +268,6 @@ describe('useQuery', () => {
 
     expect(Object.keys(queryCache.queries).length).toEqual(1)
 
-    await waitForElement(() => rendered.getByText('todo aaaa'));
+    await waitForElement(() => rendered.getByText('todo aaaa'))
   })
 })
