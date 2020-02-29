@@ -47,6 +47,7 @@ describe('usePaginatedQuery', () => {
     rendered.getByText('Data 2')
     await waitForElement(() => rendered.getByText('Data 3'))
   })
+
   it('should use initialData only on the first page, then use previous page data while fetching the next page', async () => {
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -54,7 +55,7 @@ describe('usePaginatedQuery', () => {
       const { resolvedData } = usePaginatedQuery(
         ['data', { page }],
         async (queryName, { page }) => {
-          sleep(1000)
+          await sleep(1000)
           return page
         },
         { initialData: 0 }
@@ -83,5 +84,41 @@ describe('usePaginatedQuery', () => {
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data 3')
     await waitForElement(() => rendered.getByText('Data 4'))
+  })
+
+  // See https://github.com/tannerlinsley/react-query/issues/169
+  it('should not trigger unnecessary loading state', async () => {
+    function Page() {
+      const [page, setPage] = React.useState(1)
+
+      const { resolvedData, status } = usePaginatedQuery(
+        ['data', { page }],
+        async (queryName, { page }) => {
+          await sleep(1000)
+          return page
+        },
+        { initialData: 0 }
+      )
+
+      return (
+        <div>
+          <h1 data-testid="title">Data {resolvedData}</h1>
+          <h1 data-testid="status">{status}</h1>
+          <button onClick={() => setPage(page + 1)}>next</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('Data 0')
+
+    fireEvent.click(rendered.getByText('next'))
+    fireEvent.click(rendered.getByText('next'))
+    fireEvent.click(rendered.getByText('next'))
+
+    await waitForElement(() => rendered.getByTestId('status'))
+    expect(rendered.getByTestId('status').textContent).toBe('success')
+    expect(rendered.getByTestId('status').textContent).not.toBe('loading')
   })
 })
