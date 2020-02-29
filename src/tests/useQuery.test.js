@@ -226,4 +226,21 @@ describe('useQuery', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/170
+  it('should initialize in "success" state when queryKey is falsy', async () => {
+    function Page() {
+      const { status } = useQuery(false && 'test', () => {})
+
+      return (
+        <div>
+          <h1 data-testid="status">{status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+    await waitForElement(() => rendered.getByTestId('status'))
+    expect(rendered.getByTestId('status').textContent).toBe('success');
+  })
 })
