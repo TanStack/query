@@ -85,7 +85,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 <summary>How is this different from Zeit's SWR?</summary>
 <br />
 
-[Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar is spirit and implementation to React Query with a few notable differences:
+[Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar in spirit and implementation to React Query with a few notable differences:
 
 - Automatic Cache Garbage Collection - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
 - No Default Data Fetcher Function - React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
@@ -558,7 +558,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 
 - A new instance of `useQuery('todos', fetchTodos)` mounts.
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
-  - It will then cache the data using `'todos'` and `` as the unique identifiers for that cache.
+  - It will then cache the data using `'todos'` and `fetchTodos` as the unique identifiers for that cache.
   - A stale invalidation is scheduled using the `staleTime` option as a delay (defaults to `0`, or immediately).
 - A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere.
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
@@ -917,7 +917,7 @@ function Todo({ todoId }) {
 }
 ```
 
-Most of the time, this pattern works well, but if your source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 ```js
 function Todo({ todoId }) {
@@ -1125,7 +1125,7 @@ Even with just variables, mutations aren't all that special, but when used with 
 
 ## Invalidate and Refetch Queries from Mutations
 
-When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update locale queries with the new data imperatively, React Query helps you avoids the manual labor that comes with maintaining normalized caches and instead prescribes **atomic updates and refetching** instead of direct cache manipulation.
+When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update local queries with the new data imperatively, React Query helps you to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **atomic updates and refetching** instead of direct cache manipulation.
 
 For example, assume we have a mutation to post a new todo:
 
@@ -1243,7 +1243,7 @@ const [mutate] = useMutation(addTodo, {
 mutate(todo)
 ```
 
-You might find that you want to override some of `useMutation`'s options at the time of calling `mutate`. To do that, you can optionally override them by sending them through as options to the `mutate` function after your mutation variable. Supported option overrides are include:
+You might find that you want to override some of `useMutation`'s options at the time of calling `mutate`. To do that, you can optionally override them by sending them through as options to the `mutate` function after your mutation variable. Supported option overrides include:
 
 - `onSuccess`
 - `onSettled`
