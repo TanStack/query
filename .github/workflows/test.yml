@@ -1,4 +1,4 @@
-name: Run Tests
+name: react-query tests
 
 on:
   push:
