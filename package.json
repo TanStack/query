@@ -13,9 +13,8 @@
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "jest --watch",
-    "test:ci": "yarn test:jest",
-    "test:jest": "jest --coverage",
-    "test:coverage": "yarn test:jest; open coverage/lcov-report/index.html",
+    "test:ci": "jest",
+    "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
