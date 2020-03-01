@@ -1,4 +1,4 @@
-name: Compressed Size
+name: Run Tests
 
 on:
   push:
