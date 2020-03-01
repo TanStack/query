@@ -7,5 +7,5 @@ module.exports = {
     //         "statements": -10
     //     }
     // }
-    coverageReporters =["json", "lcov", "text", "clover", "text-summary"]
+    coverageReporters: ["json", "lcov", "text", "clover", "text-summary"]
 }
