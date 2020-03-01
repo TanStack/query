@@ -22,5 +22,5 @@ jobs:
         with:
           fetch-depth: 1
       - run: npm i -g yarn
-      - run: yarn
+      - run: yarn --frozen-lockfile
       - run: yarn test:ci 
