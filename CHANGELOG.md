@@ -2,6 +2,10 @@
 
 ## 1.0.8
 
+- Fixed an issue where query retries would not continue firing if the page was unfocused and refocused again
+
+## 1.0.8
+
 - Fixed an issue where `useIsFetching` would not read properly from the query cache
 - Fixed an issue where `queryCache.setQueryCache` would not match multiple queries and would not partially match queries
 - Removed some unused code from the codebase
