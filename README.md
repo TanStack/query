@@ -9,20 +9,17 @@ Hooks for fetching, caching and updating asynchronous data in React
 </a> -->
 <a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
   <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
-</a>
-<a href="https://npmjs.com/package/react-query" target="\_parent">
+</a><a href="https://github.com/tannerlinsley/react-query/actions?query=workflow%3A%22react-query+tests%22">
+<img src="https://github.com/tannerlinsley/react-query/workflows/react-query%20tests/badge.svg" />
+</a><a href="https://npmjs.com/package/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
-</a>
-<a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
+</a><a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
-</a>
-<a href="https://spectrum.chat/react-query">
+</a><a href="https://spectrum.chat/react-query">
   <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
-</a>
-<a href="https://github.com/tannerlinsley/react-query" target="\_parent">
+</a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
-</a>
-<a href="https://twitter.com/tannerlinsley" target="\_parent">
+</a><a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
 </a>
 
