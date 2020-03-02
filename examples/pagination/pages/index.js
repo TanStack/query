@@ -9,7 +9,7 @@ function Todos() {
     latestData,
     error,
     isFetching,
-  } = usePaginatedQuery(['todos', page], fetchProjects)
+  } = usePaginatedQuery(['projects', page], fetchProjects)
 
   return (
     <div>
