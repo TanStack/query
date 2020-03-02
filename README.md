@@ -63,7 +63,7 @@ Tools for managing "global state" are plentiful these days, but most of these to
 
 React Query exports a set of hooks that address these issues. Out of the box, React Query:
 
-- Separates your **server cache state** from your \*\*global state
+- Separates your **server cache state** from your **global state**
 - Provides async aware APIs for reading and updating server state/cache
 - Dedupes both async and sync requests to async resources
 - Automatically caches data, invalidates and refetches stale data, and manages garbage collection of unused data
@@ -91,7 +91,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - No Default Data Fetcher Function - React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
 - Query Key Generation - React Query uses query key generation, query variables, and implicit query grouping. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ status: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query key "groups" when defining query refetching configs, eg. you can refetch every query that starts with a `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables, and even use functional filtering to select queries in most places. This architecture is much more robust and forgiving especially for larger apps.
 - Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
-- Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps, but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
+- Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
 - Overall API design opinions
 
 </details>
@@ -342,7 +342,7 @@ function Todos() {
 
 ## Query Keys
 
-At its core, React Query manages query caching for you and uses a serializable array or "query key" to do this. Using a query key that is **simple** and **unique to the query's data** is very important. In other similar libraries you'll see the use of URL's and/or GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, React Query Keys can be **strings** or **an array with a string and then any number of serializable primitives and/or objects**.
+At its core, React Query manages query caching for you and uses a serializable array or "query key" to do this. Using a query key that is **simple** and **unique to the query's data** is very important. In other similar libraries, you'll see the use of URLs and/or GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, React Query Keys can be **strings** or **an array with a string and then any number of serializable primitives and/or objects**.
 
 ### String-Only Query Keys
 
@@ -398,7 +398,7 @@ useQuery(['todos', undefined, page, status], ...)
 
 ## Query Key Variables
 
-To use external props, state, or variables in a query function, it's easiest to pass them as an items in your array query keys! All query keys get passed through to your query function as parameters in the order they appear in the array key:
+To use external props, state, or variables in a query function, it's easiest to pass them as items in your array query keys! All query keys get passed through to your query function as parameters in the order they appear in the array key:
 
 ```js
 function Todos({ completed }) {
@@ -476,9 +476,9 @@ React Query makes it easy to make queries that depend on other queries for both:
 
 To do this, you can use the following 2 approaches:
 
-### Pass a falsey query key
+### Pass a falsy query key
 
-If a query isn't ready to be requested yet, just pass a falsey value as the query key or as an item in the query key:
+If a query isn't ready to be requested yet, just pass a falsy value as the query key or as an item in the query key:
 
 ```js
 // Get the user
@@ -486,16 +486,16 @@ const { data: user } = useQuery(['user', { email }], getUserByEmail)
 
 // Then get the user's projects
 const { data: projects } = useQuery(
-  // `user` would be `null` at first (falsey),
+  // `user` would be `null` at first (falsy),
   // so the query will not execute until the user exists
   user && ['projects', { userId: user.id }],
   getProjectsByUser
 )
 ```
 
-### Pass a query key array with a falsey item
+### Pass a query key array with a falsy item
 
-Similar to above, you can also pass falsey items in you query key array:
+Similar to above, you can also pass falsy items in you query key array:
 
 ```js
 // Only get the user when `email` is available
@@ -503,7 +503,7 @@ const { data: user } = useQuery(['user', email], getUserByEmail)
 
 // Then get the user's projects
 const { data: projects } = useQuery(
-  // `user && user.id` would be (falsey) at first,
+  // `user && user.id` would be (falsy) at first,
   // so the query will not execute until the user exists
   ['projects', user && user.id], // You could also do `user?.id` if you're using the latest babel!
   getProjectsByUser
@@ -565,7 +565,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 - Both instances of the `useQuery('todos', fetchTodos)` query are unmounted and no longer in use.
   - Since there are no more active instances to this query, a cache timeout is set using `cacheTime` to delete and garbage collect the query (defaults to **5 minutes**).
 - No more instances of `useQuery('todos', fetchTodos)` appear within **5 minutes**.
-  - This query and its data is deleted and garbage collected.
+  - This query and its data are deleted and garbage collected.
 
 </details>
 
@@ -847,7 +847,7 @@ Though it is not recommended, you can obviously override the `retryDelay` functi
 
 ```js
 const { status, data, error } = useQuery('todos', fetchTodoList, {
-  retryDelay: 10000, // Will always wait 1000ms to retry, regardless of how many retries
+  retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries
 })
 ```
 
@@ -1006,7 +1006,7 @@ Out of the box, React Query in `suspense` mode works really well as a **Fetch-on
 
 ## Canceling Query Requests
 
-By default, queries that become inactive before their promises are resolved are simply ignored instead of cancelled. Why is this?
+By default, queries that become inactive before their promises are resolved are simply ignored instead of canceled. Why is this?
 
 - For most applications, ignoring out-of-date queries is sufficient.
 - Cancellation APIs may not be available for every query function.
@@ -1171,7 +1171,7 @@ const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
 const todoListQuery = useQuery('todos', fetchTodoList)
 ```
 
-The `refetchQueries` API is very flexible, so even if you want to **only** refetch `todos` queries that don't have any more variables or sub keys, you can pass an `exact: true` option to the `refetchQueries` method:
+The `refetchQueries` API is very flexible, so even if you want to **only** refetch `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `refetchQueries` method:
 
 ```js
 const [mutate] = useMutation(addTodo, {
@@ -1188,7 +1188,7 @@ const todoListQuery = useQuery(['todos'], fetchTodoList)
 const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
 ```
 
-If you find yourself wanting **even more** granularity, you can pass a predicate function to the `refetchQueries` method. This function will receive each query object from the queryCache and allow you return `true` or `false` for whether you want to refetch that query:
+If you find yourself wanting **even more** granularity, you can pass a predicate function to the `refetchQueries` method. This function will receive each query object from the queryCache and allow you to return `true` or `false` for whether you want to refetch that query:
 
 ```js
 const [mutate] = useMutation(addTodo, {
@@ -1464,13 +1464,13 @@ function App() {
   - This must be a unique `string` representing the entire query key.
   - It must be stable and deterministic and should not change if things like the order of variables are changed or shuffled.
 - `queryFnArgs: Array<any>`
-  - This array will be spread into to the query function arguments and should be the same format as the queryKey but be deterministically stable and should not change structure if the variables of the query stay the same, but change order within array position.
+  - This array will be spread into the query function arguments and should be the same format as the queryKey but be deterministically stable and should not change structure if the variables of the query stay the same, but change order within array position.
 
 > An additional `stableStringify` utility is also exported to help with stringifying objects to have sorted keys.
 
 ### URL Query Key Serializer Example
 
-The example below shows how to build your own serializer for use with urls and use it with React Query:
+The example below shows how to build your own serializer for use with URLs and use it with React Query:
 
 ```js
 import { ReactQueryConfigProvider, stableStringify } from 'react-query'
@@ -1663,14 +1663,14 @@ const {
 
 ### Options
 
-- `queryKey: String | [String, Variables: Object] | falsey | Function => queryKey`
+- `queryKey: String | [String, Variables: Object] | falsy | Function => queryKey`
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
   - If a `[String, Object]` tuple is passed, they will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
-  - If a falsey value is passed, the query will be disabled and not run automatically.
+  - If a falsy value is passed, the query will be disabled and not run automatically.
   - If a function is passed, it should resolve to any other valid query key type. If the function throws, the query will be disabled and not run automatically.
-  - The query will automatically update when this key changes (if the key is not falsey and if `manual` is not set to `true`).
+  - The query will automatically update when this key changes (if the key is not falsy and if `manual` is not set to `true`).
   - `Variables: Object`
     - If a tuple with variables is passed, this object should be **serializable**.
     - Nested arrays and objects are supported.
@@ -1786,14 +1786,14 @@ const {
 
 ### Options
 
-- `queryKey: String | [String, Variables: Object] | falsey | Function => queryKey`
+- `queryKey: String | [String, Variables: Object] | falsy | Function => queryKey`
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
   - If a `[String, Object]` tuple is passed, they will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
-  - If a falsey value is passed, the query will be disabled and not run automatically.
+  - If a falsy value is passed, the query will be disabled and not run automatically.
   - If a function is passed, it should resolve to any other valid query key type. If the function throws, the query will be disabled and not run automatically.
-  - The query will automatically update when this key changes (if the key is not falsey and if `manual` is not set to `true`).
+  - The query will automatically update when this key changes (if the key is not falsy and if `manual` is not set to `true`).
   - `Variables: Object`
     - If a tuple with variables is passed, this object should be **serializable**.
     - Nested arrays and objects are supported.
@@ -1921,14 +1921,14 @@ const {
 
 ### Options
 
-- `queryKey: String | [String, Variables: Object] | falsey | Function => queryKey`
+- `queryKey: String | [String, Variables: Object] | falsy | Function => queryKey`
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
   - If a `[String, Object]` tuple is passed, they will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
-  - If a falsey value is passed, the query will be disabled and not run automatically.
+  - If a falsy value is passed, the query will be disabled and not run automatically.
   - If a function is passed, it should resolve to any other valid query key type. If the function throws, the query will be disabled and not run automatically.
-  - The query will automatically update when this key changes (if the key is not falsey and if `manual` is not set to `true`).
+  - The query will automatically update when this key changes (if the key is not falsy and if `manual` is not set to `true`).
   - `Variables: Object`
     - If a tuple with variables is passed, this object should be **serializable**.
     - Nested arrays and objects are supported.
@@ -2385,7 +2385,7 @@ function App() {
 
 ## `setConsole`
 
-`setConsole` is an optional utility function that allows you replace the `console` interface used to log errors. By default, the `window.console` object is used. If no global `console` object is found in the environment, nothing will be logged.
+`setConsole` is an optional utility function that allows you to replace the `console` interface used to log errors. By default, the `window.console` object is used. If no global `console` object is found in the environment, nothing will be logged.
 
 ```js
 import { setConsole } from 'react-query'
