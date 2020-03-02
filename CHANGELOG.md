@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.8
+
+- Fixed an issue where `useIsFetching` would not read properly from the query cache
+- Fixed an issue where `queryCache.setQueryCache` would not match multiple queries and would not partially match queries
+- Removed some unused code from the codebase
+
 ## 1.0.7
 
 - Fixed an issue where failed queries with no data could be unintentionally garbage collected immediately

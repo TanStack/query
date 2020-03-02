@@ -32,9 +32,9 @@ export function makeQueryCache() {
 
   const notifyGlobalListeners = () => {
     listeners.forEach(d => d(cache))
-    // cache.isFetching = Object.values(queryCache.queries).filter(
-    //   query => query.state.isFetching
-    // ).length
+    cache.isFetching = Object.values(queryCache.queries).filter(
+      query => query.state.isFetching
+    ).length
   }
 
   cache.subscribe = cb => {
@@ -152,15 +152,21 @@ export function makeQueryCache() {
     }
   }
 
-  cache.setQueryData = (queryKey, updater) => {
-    const query = cache._buildQuery(
-      queryKey,
-      undefined,
-      () => new Promise(noop),
-      defaultConfigRef.current
-    )
+  cache.setQueryData = (queryKey, updater, { exact } = {}) => {
+    let queries = findQueries(queryKey, { exact })
 
-    query.setData(updater)
+    if (!queries) {
+      queries = [
+        cache._buildQuery(
+          queryKey,
+          undefined,
+          () => new Promise(noop),
+          defaultConfigRef.current
+        ),
+      ]
+    }
+
+    queries.forEach(d => d.setData(updater))
   }
 
   function makeQuery(options) {
