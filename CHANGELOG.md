@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.0.8
+## 1.0.9
 
 - Fixed an issue where query retries would not continue firing if the page was unfocused and refocused again
 
