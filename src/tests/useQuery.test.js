@@ -267,4 +267,47 @@ describe('useQuery', () => {
 
     expect(Object.keys(queryCache.queries).length).toEqual(1)
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/160
+  it('should continue retry after focus regain', async () => {
+    const originalVisibilityState = document.visibilityState
+
+    function mockVisibilityState(value) {
+      Object.defineProperty(document, 'visibilityState', {
+        value,
+        configurable: true,
+      })
+    }
+
+    // make page unfocused
+    mockVisibilityState('hidden')
+
+    function Page() {
+      const query = useQuery('test', () => Promise.reject('fetching error'), {
+        retry: 3,
+        retryDelay: 1,
+      })
+
+      return (
+        <div>
+          <div>status {query.status}</div>
+          <div>failureCount {query.failureCount}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('failureCount 1'))
+    await waitForElement(() => rendered.getByText('status loading'))
+
+    act(() => {
+      // reset visibilityState to original value
+      mockVisibilityState(originalVisibilityState)
+      window.dispatchEvent(new Event('focus'))
+    })
+
+    await waitForElement(() => rendered.getByText('failureCount 4'))
+    await waitForElement(() => rendered.getByText('status error'))
+  })
 })
