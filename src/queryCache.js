@@ -32,9 +32,10 @@ export function makeQueryCache() {
 
   const notifyGlobalListeners = () => {
     listeners.forEach(d => d(cache))
-    cache.isFetching = Object.values(queryCache.queries).filter(
-      query => query.state.isFetching
-    ).length
+    cache.isFetching = Object.values(queryCache.queries).reduce(
+      (acc, query) => query.state.isFetching ? acc + 1 : acc,
+      0,
+    )
   }
 
   cache.subscribe = cb => {
