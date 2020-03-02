@@ -2312,8 +2312,6 @@ The `clear` method can be used to clear the queryCache entirely and start fresh.
 ```js
 import { queryCache } from 'react-query'
 
-const callback = cache => {}
-
 queryCache.clear()
 ```
 
