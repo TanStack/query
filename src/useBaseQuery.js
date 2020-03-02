@@ -24,7 +24,6 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   let query = queryCache._buildQuery(queryKey, queryVariables, queryFn, config)
 
   const [queryState, setQueryState] = React.useState(query.state)
-  const isMountedRef = React.useRef(false)
   const getLatestConfig = useGetLatest(config)
   const refetch = React.useCallback(query.fetch, [query])
 
@@ -77,11 +76,6 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     query.refetchInterval,
     refetch,
   ])
-
-  // Reset refs
-  React.useEffect(() => {
-    isMountedRef.current = true
-  })
 
   if (config.suspense) {
     if (queryState.status === statusError) {
