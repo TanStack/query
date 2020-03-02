@@ -299,6 +299,7 @@ describe('useQuery', () => {
     const rendered = render(<Page />)
 
     await waitForElement(() => rendered.getByText('failureCount 1'))
+    await waitForElement(() => rendered.getByText('status loading'))
 
     act(() => {
       // reset visibilityState to original value
