@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.10
+
+- Memory optimizations when determining currently fetching queries
+
 ## 1.0.9
 
 - Fixed an issue where query retries would not continue firing if the page was unfocused and refocused again
