@@ -293,8 +293,12 @@ export function makeQueryCache() {
           query.state.failureCount <= query.config.retry
         ) {
           if (!isDocumentVisible()) {
+            // set this flag to continue fetch retries on focus
+            query.shouldContinueRetryOnFocus = true
             return new Promise(noop)
           }
+
+          delete query.shouldContinueRetryOnFocus
 
           // Determine the retryDelay
           const delay = functionalUpdate(
