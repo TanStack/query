@@ -21,6 +21,7 @@ const actionFetch = {}
 const actionSuccess = {}
 const actionError = {}
 const actionSetData = {}
+const actionResetFailureCount = {}
 
 export function makeQueryCache() {
   const listeners = []
@@ -316,6 +317,7 @@ export function makeQueryCache() {
               try {
                 const data = await tryFetchData(queryFn, ...args)
                 if (query.cancelled) return reject(query.cancelled)
+                dispatch({ type: actionResetFailureCount })
                 resolve(data)
               } catch (error) {
                 if (query.cancelled) return reject(query.cancelled)
@@ -419,6 +421,11 @@ export function makeQueryCache() {
 
 export function defaultQueryReducer(state, action) {
   switch (action.type) {
+    case actionResetFailureCount:
+      return {
+        ...state,
+        failureCount: 0
+      }
     case actionInit:
       return {
         status: action.initialStatus,
