@@ -103,8 +103,8 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [Optimistic Updates](./examples/optimistic-updates)
 - [Pagination](./examples/pagination)
 - [Load-More & Infinite Scroll](./examples/load-more-infinite-scroll)
-- [Suspense CodeSandbox (with Devtools)](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense)
-- [Playground CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
+- [Suspense CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense)
+- [Playground CodeSandbox (with devtools)](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
 
 ## Sponsors
 
@@ -1633,6 +1633,8 @@ refetchQuery([getTodo, { id: 5 }])
 # React Query Devtools
 
 React query has dedicated devtools! Visit the [React Query Devtools Github Repo](https://github.com/tannerlinsley/react-query-devtools) for information on how to install and use them!
+
+To see a demo, [check out the Sandbox example!](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
 
 [![React Query Header](https://github.com/tannerlinsley/react-query-devtools/raw/master/media/screenshot.png)](https://github.com/tannerlinsley/react-query-devtools)
 
