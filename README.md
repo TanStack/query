@@ -36,6 +36,7 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
 - [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
+- [Dedicated Devtools (React Query Devtools)](https://github.com/tannerlinsley/react-query-devtools)
 - <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
     <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
   </a>
@@ -102,7 +103,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [Optimistic Updates](./examples/optimistic-updates)
 - [Pagination](./examples/pagination)
 - [Load-More & Infinite Scroll](./examples/load-more-infinite-scroll)
-- [Suspense CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense)
+- [Suspense CodeSandbox (with Devtools)](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense)
 - [Playground CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
 
 ## Sponsors
@@ -265,6 +266,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Custom Window Focus Event](#custom-window-focus-event)
   - [Ignoring Iframe Focus Events](#ignoring-iframe-focus-events)
 - [Custom Query Key Serializers (Experimental)](#custom-query-key-serializers-experimental)
+- [React Query Devtools](#react-query-devtools)
 - [API](#api)
   - [`useQuery`](#usequery)
   - [`usePaginatedQuery`](#usepaginatedquery)
@@ -1627,6 +1629,12 @@ refetchQuery([getTodo, { id: 5 }])
 ```
 
 </details>
+
+## React Query Devtools
+
+React query has dedicated devtools! Visit the [React Query Devtools Github Repo](https://github.com/tannerlinsley/react-query-devtools) for information on how to install and use them!
+
+[![React Query Header](https://github.com/tannerlinsley/react-query-devtols/raw/master/media/screenshot.png)](https://github.com/tannerlinsley/react-query-devtools)
 
 # API
 
