@@ -1,7 +1,6 @@
 import babel from 'rollup-plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
-import postcss from 'rollup-plugin-postcss'
 
 const external = ['react']
 
@@ -18,7 +17,7 @@ export default [
   //     sourcemap: true,
   //   },
   //   external,
-  //   plugins: [babel(), postcss()],
+  //   plugins: [babel()],
   // },
   {
     input: 'src/index.js',
@@ -30,7 +29,7 @@ export default [
       globals,
     },
     external,
-    plugins: [babel(), postcss()],
+    plugins: [babel()],
   },
   {
     input: 'src/index.js',
