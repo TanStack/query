@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.12
+
+- Fixed an issue where React Table could not be imported properly in dev mode
+
 ## 1.0.11
 
 - Fixed an issue where fresh (non-stale) queries would be refetched when using `queryCache.refetchQueries` or when focusing the window.
