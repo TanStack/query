@@ -153,19 +153,17 @@ export function makeQueryCache() {
 
     const query = cache._buildQuery(queryKey, queryVariables, queryFn, config)
 
-    if (!query.state.isStale && !force) {
-      // Don't prefetch queries that are fresh, unless force is passed
-      return
-    }
-
-    // Trigger a fetch and return the promise
-    try {
-      const res = await query.fetch()
-      query.wasPrefetched = true
-      return res
-    } catch (err) {
-      if (config.throwOnError) {
-        throw err
+    // Don't prefetch queries that are fresh, unless force is passed
+    if (query.state.isStale || force) {
+      // Trigger a fetch and return the promise
+      try {
+        const res = await query.fetch()
+        query.wasPrefetched = true
+        return res
+      } catch (err) {
+        if (config.throwOnError) {
+          throw err
+        }
       }
     }
   }

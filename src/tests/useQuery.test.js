@@ -315,6 +315,9 @@ describe('useQuery', () => {
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => sleep(10))
 
+    const prefetchQueryFn = jest.fn()
+    prefetchQueryFn.mockImplementation(() => sleep(10))
+
     function Page() {
       const query = useQuery('test', queryFn)
 
@@ -325,12 +328,14 @@ describe('useQuery', () => {
       )
     }
 
-    await queryCache.prefetchQuery('test', () => sleep(10))
+    await queryCache.prefetchQuery('test', prefetchQueryFn)
+    await queryCache.prefetchQuery('test', prefetchQueryFn)
 
     const rendered = render(<Page />)
 
     await waitForElement(() => rendered.getByText('status success'))
 
+    expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 })

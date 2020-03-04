@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.14
+
+- Fixed an issue where stale queries would not be prefetched properly
+
 ## 1.0.13
 
 - Fixed an issue where a query that had been prefetched before usage in a `useQuery` instance would result in a double fetch
