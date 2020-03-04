@@ -472,6 +472,7 @@ export function defaultQueryReducer(state, action) {
         isFetching: false,
         canFetchMore: action.canFetchMore,
         updatedAt: Date.now(),
+        failureCount: 0
       }
     case actionError:
       return {
