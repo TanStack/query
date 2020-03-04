@@ -143,7 +143,7 @@ export function makeQueryCache() {
       queryKey,
       queryVariables,
       queryFn,
-      { force, ...config },
+      { force, ...config } = {},
     ] = getQueryArgs(args)
 
     config = {
@@ -160,7 +160,9 @@ export function makeQueryCache() {
 
     // Trigger a fetch and return the promise
     try {
-      return await query.fetch()
+      const res = await query.fetch()
+      query.wasPrefetched = true
+      return res
     } catch (err) {
       if (config.throwOnError) {
         throw err
@@ -472,7 +474,7 @@ export function defaultQueryReducer(state, action) {
         isFetching: false,
         canFetchMore: action.canFetchMore,
         updatedAt: Date.now(),
-        failureCount: 0
+        failureCount: 0,
       }
     case actionError:
       return {

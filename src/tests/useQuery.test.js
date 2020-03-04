@@ -309,4 +309,28 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('failureCount 4'))
     await waitForElement(() => rendered.getByText('status error'))
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/195
+  it('should not refetch immediately after a prefetch', async () => {
+    const queryFn = jest.fn()
+    queryFn.mockImplementation(() => sleep(10))
+
+    function Page() {
+      const query = useQuery('test', queryFn)
+
+      return (
+        <div>
+          <div>status {query.status}</div>
+        </div>
+      )
+    }
+
+    await queryCache.prefetchQuery('test', () => sleep(10))
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('status success'))
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+  })
 })

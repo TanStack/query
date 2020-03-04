@@ -1,8 +1,12 @@
 # Changelog
 
+## 1.0.13
+
+- Fixed an issue where a query that had been prefetched before usage in a `useQuery` instance would result in a double fetch
+
 ## 1.0.12
 
-- Fixed an issue where React Table could not be imported properly in dev mode
+- Fixed an issue where React Query could not be imported properly in dev mode
 
 ## 1.0.11
 

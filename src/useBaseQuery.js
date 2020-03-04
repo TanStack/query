@@ -40,6 +40,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     // Perform the initial fetch for this query if necessary
     if (
       !getLatestConfig().manual && // Don't auto fetch if config is set to manual query
+      !query.wasPrefetched && // Don't double fetch for prefetched queries
       !query.wasSuspensed && // Don't double fetch for suspense
       query.state.isStale && // Only refetch if stale
       (getLatestConfig().refetchOnMount || query.instances.length === 1)
@@ -47,6 +48,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       refetch().catch(Console.error)
     }
 
+    query.wasPrefetched = false
     query.wasSuspensed = false
 
     return unsubscribeFromQuery
