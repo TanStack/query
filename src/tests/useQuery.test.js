@@ -338,4 +338,34 @@ describe('useQuery', () => {
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/190
+  it('should reset failreCount on successful fetch', async () => {
+    function Page() {
+      let counter = 0
+      const query = useQuery(
+        'test',
+        async () => {
+          if (counter === 0) {
+            counter++
+            throw new Error('error')
+          } else {
+            return 'data'
+          }
+        },
+        { retryDelay: 50 }
+      )
+
+      return (
+        <div>
+          <div>failureCount {query.failureCount}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('failureCount 1'))
+    await waitForElement(() => rendered.getByText('failureCount 0'))
+  })
 })
