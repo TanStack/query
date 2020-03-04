@@ -1634,7 +1634,7 @@ refetchQuery([getTodo, { id: 5 }])
 
 React query has dedicated devtools! Visit the [React Query Devtools Github Repo](https://github.com/tannerlinsley/react-query-devtools) for information on how to install and use them!
 
-[![React Query Header](https://github.com/tannerlinsley/react-query-devtols/raw/master/media/screenshot.png)](https://github.com/tannerlinsley/react-query-devtools)
+[![React Query Header](https://github.com/tannerlinsley/react-query-devtools/raw/master/media/screenshot.png)](https://github.com/tannerlinsley/react-query-devtools)
 
 # API
 
