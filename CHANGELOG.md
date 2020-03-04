@@ -1,9 +1,10 @@
 # Changelog
 
-## 1.0.10
+## 1.0.11
 
 - Fixed an issue where fresh (non-stale) queries would be refetched when using `queryCache.refetchQueries` or when focusing the window.
 - Added a `force` option to both `queryCache.refetchQueries` and `queryCache.prefetchQueries` to restore expected functionality with regards to the issue above, allowing the user to bypass the stale safety of a query and force it to be refetched.
+- Fixed an issue where `failureCount` would not get reset when a query succeeds
 
 ## 1.0.10
 
