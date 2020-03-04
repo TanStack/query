@@ -466,6 +466,21 @@ function fetchTodoById(key, todoId, debug, { foo, bar }) {
 }
 ```
 
+## Using a Query Object instead of parameters
+
+Anywhere the `[queryKey, variables, queryFn, config]` options are supported throughout React Query's API, you can also use an object to express the same configuration:
+
+```js
+import { useQuery } from 'react-query'
+
+useQuery({
+  queryKey: ['todo', 7],
+  queryFn: fetchTodos,
+  variables: [],
+  config: {},
+})
+```
+
 ## Dependent Queries
 
 React Query makes it easy to make queries that depend on other queries for both:
@@ -1665,6 +1680,15 @@ const {
   suspense,
   initialData,
   refetchOnMount
+})
+
+// or using the object syntax
+
+const queryInfo = useQuery({
+  queryKey,
+  queryFn,
+  variables,
+  config
 })
 ```
 

@@ -143,7 +143,7 @@ export function makeQueryCache() {
       queryKey,
       queryVariables,
       queryFn,
-      { force, ...config } = {},
+      { force, ...config },
     ] = getQueryArgs(args)
 
     config = {

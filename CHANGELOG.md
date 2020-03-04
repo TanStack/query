@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.15
+
+- Added the ability to configure a query with an object instead of overloaded params
+- Fixed an issue where prefetching a query would result in an error
+
 ## 1.0.14
 
 - Fixed an issue where stale queries would not be prefetched properly
