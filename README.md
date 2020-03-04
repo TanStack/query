@@ -2100,7 +2100,11 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 
 ## `queryCache.prefetchQuery`
 
-`prefetchQuery` is an asynchronous function that can be used to fetch and cache a query response before it is needed or fetched with `useQuery`. If the query does not exist, it will be created and immediately be marked as stale. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
+`prefetchQuery` is an asynchronous function that can be used to fetch and cache a query response before it is needed or fetched with `useQuery`.
+
+- If the query already exists and is fresh (not stale), the call will resolve immediately and no action will be taken.
+  - If you want to force the query to prefetch again, you can pass the `force: true` option in the query config
+- If the query does not exist, it will be created and immediately be marked as stale. **If this created query is not utilized by a query hook in the `cacheTime` (defaults to 5 minutes), the query will be garbage collected**.
 
 > The difference between using `prefetchQuery` and `updateQuery` is that `prefetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
@@ -2191,7 +2195,7 @@ setQueryData(queryKey, oldData => newData)
 
 ## `queryCache.refetchQueries`
 
-The `refetchQueries` method can be used to refetch multiple queries in cache based on their query keys or any other functionally accessible property/state of the query.
+The `refetchQueries` method can be used to refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, queries that are fresh (not stale) will not be refetched, but you can override this by passing the `force: true` option.
 
 ```js
 import { queryCache } from 'react-query'
@@ -2199,6 +2203,7 @@ import { queryCache } from 'react-query'
 const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
   exact,
   throwOnError,
+  force,
 })
 ```
 
@@ -2214,6 +2219,8 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
   - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
 - `throwOnError: Boolean`
   - When set to `true`, this function will throw if any of the query refetch tasks fail.
+- `force: Boolean`
+  - When set to `true`, queries that match the refetch predicate will be refetched regardless if they are stale.
 
 ### Returns
 

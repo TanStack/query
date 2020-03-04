@@ -1,40 +1,41 @@
 import {
-  cleanup,
   render,
   act,
   waitForElement,
   fireEvent,
+  cleanup,
 } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, queryCache, statusLoading, statusSuccess } from '../index'
+import { useQuery, queryCache } from '../index'
 import { sleep } from './utils'
 
 describe('useQuery', () => {
   afterEach(() => {
-    cleanup()
     queryCache.clear()
+    cleanup()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
     function Page() {
       const { data = 'default' } = useQuery('test', async () => {
-        await sleep(1000)
+        await sleep(10)
         return 'test'
       })
 
       return (
         <div>
-          <h1 data-testid="title">{data}</h1>
+          <h1>{data}</h1>
         </div>
       )
     }
 
-    const { getByTestId } = render(<Page />)
+    const rendered = render(<Page />)
 
-    await waitForElement(() => getByTestId('title'))
-    expect(getByTestId('title').textContent).toBe('default')
+    rendered.getByText('default')
+
+    // await waitForElement(() => rendered.getByText('test'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137
@@ -87,15 +88,18 @@ describe('useQuery', () => {
 
     const rendered = render(<Page />)
 
+    // use "act" to wait for state update and prevent console warning
+
     rendered.getByText('First Status: success')
     await waitForElement(() => rendered.getByText('Second Status: loading'))
+    await waitForElement(() => rendered.getByText('Second Status: success'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
   it('should be in "loading" state by default', async () => {
     function Page() {
       const { status } = useQuery('test', async () => {
-        await sleep(1000)
+        await sleep(10)
         return 'test'
       })
 
@@ -109,7 +113,7 @@ describe('useQuery', () => {
     const { getByTestId } = render(<Page />)
 
     await waitForElement(() => getByTestId('status'))
-    expect(getByTestId('status').textContent).toBe(statusLoading)
+    expect(getByTestId('status').textContent).toBe('loading')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
@@ -118,7 +122,7 @@ describe('useQuery', () => {
       const { status } = useQuery(
         'test',
         async () => {
-          await sleep(1000)
+          await sleep(10)
           return 'test'
         },
         {
@@ -128,22 +132,20 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <h1 data-testid="status">{status}</h1>
+          <h1>{status}</h1>
         </div>
       )
     }
 
-    const { getByTestId } = render(<Page />)
+    const rendered = render(<Page />)
 
-    await waitForElement(() => getByTestId('status'))
-    expect(getByTestId('status').textContent).toBe(statusSuccess)
+    rendered.getByText('success')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/147
   it('should not pass stringified variables to query function', async () => {
     const queryFn = jest.fn()
-    const promise = Promise.resolve()
-    queryFn.mockImplementation(() => promise)
+    queryFn.mockImplementation(() => sleep(10))
 
     const variables = { number: 5, boolean: false, object: {}, array: [] }
 
@@ -154,9 +156,6 @@ describe('useQuery', () => {
     }
 
     render(<Page />)
-
-    // use "act" to wait for state update and prevent console warning
-    await act(() => promise)
 
     expect(queryFn).toHaveBeenCalledWith('test', variables)
   })
@@ -239,7 +238,7 @@ describe('useQuery', () => {
       const { data } = useQuery(
         ['todos', { filter }],
         async (key, { filter } = {}) => {
-          await sleep(1000)
+          await sleep(10)
           return `todo ${filter}`
         }
       )

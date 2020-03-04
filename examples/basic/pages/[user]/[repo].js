@@ -9,7 +9,7 @@ export default () => {
     typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
 
   const { status, data, error, isFetching } = useQuery(
-    ['repository', id],
+    ['team', id],
     (key, id) => fetch('/api/data?id=' + id)
   )
 

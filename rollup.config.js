@@ -1,45 +1,48 @@
 import babel from 'rollup-plugin-babel'
-import external from 'rollup-plugin-peer-deps-external'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
-import pkg from './package.json'
+import postcss from 'rollup-plugin-postcss'
+
+const external = ['react']
+
+const globals = {
+  react: 'React',
+}
 
 export default [
+  // {
+  //   input: 'src/index.js',
+  //   output: {
+  //     file: 'dist/react-query.es.js',
+  //     format: 'esm',
+  //     sourcemap: true,
+  //   },
+  //   external,
+  //   plugins: [babel(), postcss()],
+  // },
   {
     input: 'src/index.js',
     output: {
-      file: pkg.module,
-      format: 'esm',
+      name: 'ReactQuery',
+      file: 'dist/react-query.development.js',
+      format: 'umd',
       sourcemap: true,
+      globals,
     },
-    plugins: [external(), babel()],
+    external,
+    plugins: [babel(), postcss()],
   },
   {
     input: 'src/index.js',
     output: {
       name: 'ReactQuery',
-      file: pkg.main,
+      file: 'dist/react-query.production.min.js',
       format: 'umd',
       sourcemap: true,
-      globals: {
-        react: 'React',
-      },
+      globals,
     },
-    plugins: [external(), babel()],
-  },
-  {
-    input: 'src/index.js',
-    output: {
-      name: 'ReactQuery',
-      file: pkg.unpkg,
-      format: 'umd',
-      sourcemap: true,
-      globals: {
-        react: 'React',
-      },
-    },
+    external,
     plugins: [
-      external(),
       babel(),
       terser(),
       size({

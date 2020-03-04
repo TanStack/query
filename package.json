@@ -5,10 +5,7 @@
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "browser": "dist/index.js",
-  "unpkg": "dist/index.min.js",
+  "main": "index.js",
   "sideEffects": false,
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
@@ -24,16 +21,19 @@
     "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write",
     "doctoc": "npx doctoc --maxlevel 2 README.md"
   },
+  "files": [
+    "dist"
+  ],
   "peerDependencies": {
     "react": "^16.6.3"
   },
   "devDependencies": {
-    "@ampproject/rollup-plugin-closure-compiler": "^0.22.2",
-    "@babel/core": "^7.8.4",
-    "@babel/preset-env": "^7.8.4",
+    "@babel/core": "^7.8.6",
+    "@babel/preset-env": "^7.8.6",
     "@babel/preset-react": "^7.8.3",
+    "@rollup/plugin-replace": "^2.3.1",
     "@svgr/rollup": "^4.3.0",
-    "@testing-library/react": "^9.4.0",
+    "@testing-library/react": "^9.4.1",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "9.x",
     "babel-jest": "^24.9.0",
@@ -56,19 +56,17 @@
     "is-ci-cli": "^2.0.0",
     "jest": "^24.9.0",
     "prettier": "^1.19.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "rollup": "^1.31.1",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "rollup": "^1.32.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
+    "rollup-plugin-jscc": "^1.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.2",
     "rollup-plugin-prettier": "^0.6.0",
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-size-snapshot": "^0.10.0",
     "rollup-plugin-terser": "^5.2.0"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

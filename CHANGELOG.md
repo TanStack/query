@@ -2,6 +2,11 @@
 
 ## 1.0.10
 
+- Fixed an issue where fresh (non-stale) queries would be refetched when using `queryCache.refetchQueries` or when focusing the window.
+- Added a `force` option to both `queryCache.refetchQueries` and `queryCache.prefetchQueries` to restore expected functionality with regards to the issue above, allowing the user to bypass the stale safety of a query and force it to be refetched.
+
+## 1.0.10
+
 - Memory optimizations when determining currently fetching queries
 
 ## 1.0.9

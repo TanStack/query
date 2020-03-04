@@ -33,8 +33,8 @@ export function makeQueryCache() {
   const notifyGlobalListeners = () => {
     listeners.forEach(d => d(cache))
     cache.isFetching = Object.values(queryCache.queries).reduce(
-      (acc, query) => query.state.isFetching ? acc + 1 : acc,
-      0,
+      (acc, query) => (query.state.isFetching ? acc + 1 : acc),
+      0
     )
   }
 
@@ -81,11 +81,14 @@ export function makeQueryCache() {
     }
   }
 
-  cache.refetchQueries = async (predicate, { exact, throwOnError } = {}) => {
+  cache.refetchQueries = async (
+    predicate,
+    { exact, throwOnError, force } = {}
+  ) => {
     const foundQueries = (predicate === true
       ? Object.values(cache.queries)
       : findQueries(predicate, { exact })
-    ).filter(query => query.instances.length)
+    ).filter(query => query.instances.length && (force || query.state.isStale))
 
     try {
       return await Promise.all(foundQueries.map(query => query.fetch()))
@@ -136,12 +139,24 @@ export function makeQueryCache() {
   }
 
   cache.prefetchQuery = async (...args) => {
-    let [queryKey, queryVariables, queryFn, config] = getQueryArgs(args)
+    let [
+      queryKey,
+      queryVariables,
+      queryFn,
+      { force, ...config },
+    ] = getQueryArgs(args)
 
-    const query = cache._buildQuery(queryKey, queryVariables, queryFn, {
+    config = {
       ...defaultConfigRef.current,
       ...config,
-    })
+    }
+
+    const query = cache._buildQuery(queryKey, queryVariables, queryFn, config)
+
+    if (!query.state.isStale && !force) {
+      // Don't prefetch queries that are fresh, unless force is passed
+      return
+    }
 
     // Trigger a fetch and return the promise
     try {

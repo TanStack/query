@@ -1,51 +1,19 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import styled from "styled-components";
 
 import {
   ReactQueryConfigProvider,
   useQuery,
   useMutation,
-  useIsFetching,
   queryCache
 } from "react-query";
 
+import {
+  ReactQueryDevtools,
+  ReactQueryDevtoolsPanel
+} from "react-query-devtools";
+
 import "./styles.css";
-
-const QueryStateList = styled.div`
-  display: flex;
-  padding: 0.15rem;
-  flex-wrap: wrap;
-`;
-
-const QueryState = styled.div`
-  margin: 0.3rem;
-  color: white;
-  padding: 0.3rem;
-  font-size: 12px;
-  border-radius: 0.3rem;
-  font-weight: bold;
-  text-shadow: 0 0 10px black;
-
-  background: ${props =>
-    props.isFetching
-      ? "orange"
-      : props.isInactive
-      ? "grey"
-      : props.isStale
-      ? "red"
-      : "green"};
-`;
-
-const QueryKeys = styled.div`
-  font-size: 0.7rem;
-`;
-
-const QueryKey = styled.span`
-  width: 20px;
-  height: 20px;
-  display: inline-block;
-`;
 
 let id = 0;
 let list = [
@@ -60,86 +28,6 @@ let list = [
 let errorRate = 0.05;
 let queryTimeMin = 1000;
 let queryTimeMax = 2000;
-
-const fetchTodos = (key, { filter } = {}) => {
-  console.info("fetchTodos", { filter });
-  const promise = new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(
-          new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2))
-        );
-      }
-      resolve(list.filter(d => d.name.includes(filter)));
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
-  });
-
-  promise.cancel = () => console.info("cancelled", filter);
-
-  return promise;
-};
-
-const fetchTodoById = (key, { id }) => {
-  console.info("fetchTodoById", { id });
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(
-          new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2))
-        );
-      }
-      resolve(list.find(d => d.id == id));
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
-  });
-};
-
-const postTodo = ({ name, notes }) => {
-  console.info("postTodo", { name, notes });
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(
-          new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2))
-        );
-      }
-      const todo = { name, notes, id: id++ };
-      list = [...list, todo];
-      resolve(todo);
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
-  });
-};
-
-const patchTodo = todo => {
-  console.info("patchTodo", todo);
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (Math.random() < errorRate) {
-        return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)));
-      }
-      list = list.map(d => {
-        if (d.id === todo.id) {
-          return todo;
-        }
-        return d;
-      });
-      resolve(todo);
-    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
-  });
-};
-
-export function useQueries() {
-  const [state, setState] = React.useState({
-    queries: Object.values(queryCache.queries)
-  });
-
-  React.useEffect(() => {
-    return queryCache.subscribe(() => {
-      setState({ queries: Object.values(queryCache.queries) });
-    });
-  }, []);
-
-  return state.queries;
-}
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);
@@ -232,6 +120,9 @@ function Root() {
       </div>
       <br />
       <App />
+      <br />
+      <ReactQueryDevtoolsPanel />
+      <ReactQueryDevtools />
     </ReactQueryConfigProvider>
   );
 }
@@ -241,50 +132,8 @@ function App() {
   const [views, setViews] = React.useState(["", "fruit", "grape"]);
   // const [views, setViews] = React.useState([""]);
 
-  const queries = useQueries();
-
   return (
     <div className="App">
-      Queries - <small>Click a query to log to console)</small>
-      <QueryStateList>
-        {queries.map(query => {
-          const {
-            queryHash,
-            instances,
-            state: { isFetching, isStale }
-          } = query;
-
-          return (
-            <QueryState
-              key={queryHash}
-              isFetching={isFetching}
-              isStale={isStale}
-              isInactive={!instances.length}
-              onClick={() => {
-                console.info(query);
-              }}
-            >
-              {queryHash}
-            </QueryState>
-          );
-        })}
-      </QueryStateList>
-      <QueryKeys>
-        <span>
-          <QueryKey style={{ background: "green" }} /> Cached{" "}
-        </span>
-        <span>
-          <QueryKey style={{ background: "orange" }} /> Fetching{" "}
-        </span>
-        <span>
-          <QueryKey style={{ background: "red" }} /> Stale{" "}
-        </span>
-        <span>
-          <QueryKey style={{ background: "gray" }} /> Inactive
-        </span>
-      </QueryKeys>
-      <br />
-      <RefreshingBanner />
       <div>
         <button onClick={() => queryCache.refetchQueries(true)}>
           Force Refetch All
@@ -322,17 +171,6 @@ function App() {
         </>
       ) : null}
       <AddTodo />
-    </div>
-  );
-}
-
-function RefreshingBanner() {
-  const isFetching = useIsFetching();
-  return (
-    <div>
-      Global <code>isFetching</code>: {isFetching.toString()}
-      <br />
-      <br />
     </div>
   );
 }
@@ -520,6 +358,72 @@ function AddTodo() {
       </div>
     </div>
   );
+}
+
+function fetchTodos(key, { filter } = {}) {
+  console.info("fetchTodos", { filter });
+  const promise = new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < errorRate) {
+        return reject(
+          new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2))
+        );
+      }
+      resolve(list.filter(d => d.name.includes(filter)));
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
+  });
+
+  promise.cancel = () => console.info("cancelled", filter);
+
+  return promise;
+}
+
+function fetchTodoById(key, { id }) {
+  console.info("fetchTodoById", { id });
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < errorRate) {
+        return reject(
+          new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2))
+        );
+      }
+      resolve(list.find(d => d.id == id));
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
+  });
+}
+
+function postTodo({ name, notes }) {
+  console.info("postTodo", { name, notes });
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < errorRate) {
+        return reject(
+          new Error(JSON.stringify({ postTodo: { name, notes } }, null, 2))
+        );
+      }
+      const todo = { name, notes, id: id++ };
+      list = [...list, todo];
+      resolve(todo);
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
+  });
+}
+
+function patchTodo(todo) {
+  console.info("patchTodo", todo);
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() < errorRate) {
+        return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)));
+      }
+      list = list.map(d => {
+        if (d.id === todo.id) {
+          return todo;
+        }
+        return d;
+      });
+      resolve(todo);
+    }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
+  });
 }
 
 const rootElement = document.getElementById("root");
