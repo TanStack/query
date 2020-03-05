@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.16
+
+- Fixed an issue where some overloaded query arg signatures would not have proper defaults
+
 ## 1.0.15
 
 - Added the ability to configure a query with an object instead of overloaded params

@@ -89,11 +89,12 @@ export function isOnline() {
 
 export function getQueryArgs(args) {
   if (typeof args[0] === 'function') {
-    const { queryKey, variables, queryFn, config } = args[0]
+    const { queryKey, variables = [], queryFn, config = {} } = args[0]
     return [queryKey, variables, queryFn, config]
   }
   if (typeof args[2] === 'function') {
-    return args
+    const [queryKey, variables = [], queryFn, config = {}] = args
+    return [queryKey, variables, queryFn, config]
   }
 
   const [queryKey, queryFn, config = {}] = args
