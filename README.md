@@ -1781,11 +1781,10 @@ const queryInfo = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: Function({ variables: Object, merge: Function, disableThrow: Boolean })`
-  - A function to manually refetch the query.
-  - Supports custom variables (useful for "fetch more" calls).
-  - Supports custom data merging (useful for "fetch more" calls).
-  - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
+- `refetch: Function({ force, throwOnError }) => void`
+  - A function to manually refetch the query if it is stale.
+  - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
+  - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 
 ## `usePaginatedQuery`
 
@@ -1904,26 +1903,20 @@ const {
 - `isFetching: Boolean`
   - Defaults to `true` so long as `manual` is set to `false`
   - Will be `true` if the query is currently fetching, including background fetching.
-- `isFetchingMore: Boolean`
-  - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
 - `failureCount: Integer`
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: Function({ variables: Object, merge: Function, disableThrow: Boolean })`
-  - A function to manually refetch the query.
-  - Supports custom variables (useful for "fetch more" calls).
-  - Supports custom data merging (useful for "fetch more" calls).
-  - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
-- `fetchMore: Function(variables) => Promise`
-  - If using `paginated` mode, this function allows you to fetch the next "page" of results.
-  - `variables` should be an object that is passed to your query function to retrieve the next page of results.
+- `refetch: Function({ force, throwOnError }) => void`
+  - A function to manually refetch the query if it is stale.
+  - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
+  - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 
 ## `useInfiniteQuery`
 
 ```js
 
-const queryFn = (...queryKey, nextPageVariables) => Promise
+const queryFn = (...queryKey, fetchMoreVariable) => Promise
 
 const {
   status,
@@ -1933,7 +1926,7 @@ const {
   failureCount,
   refetch,
 } = useInfiniteQuery(queryKey, [, queryVariables], queryFn, {
-  getFetchMore: (lastPage, allPages) => nextPageVariables
+  getFetchMore: (lastPage, allPages) => fetchMoreVariable
   manual,
   retry,
   retryDelay,
@@ -1970,10 +1963,11 @@ const {
   - Receives the following variables in the order that they are provided:
     - Query Key Variables
     - Optional Query Variables passed after the key and before the query function
-    - \*\*Optionally, the single variable returned from the `getFetchMore` function, used to fetch the next page
+    - Optionally, the single variable returned from the `getFetchMore` function, used to fetch the next page
   - Must return a promise that will either resolves data or throws an error.
-- `getFetchMore: Function | Boolean`
-  - When new data is received for this query, this function receives both the last page of the infinite list of data and the full
+- `getFetchMore: Function(lastPage, allPages) => fetchMoreVariable | Boolean`
+  - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
+  - It should return a **single variable** that will be passed as the last optional parameter to your query function
 - `manual: Boolean`
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -2043,14 +2037,13 @@ const {
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: Function({ variables: Object, merge: Function, disableThrow: Boolean })`
-  - A function to manually refetch the query.
-  - Supports custom variables (useful for "fetch more" calls).
-  - Supports custom data merging (useful for "fetch more" calls).
-  - Set `disableThrow` to true to disable this function from throwing if an error is encountered.
-- `fetchMore: Function(fetchMoreVariablesOverride) => Promise`
-  - If using `paginated` mode, this function allows you to fetch the next "page" of results.
-  - `variables` should be an object that is passed to your query function to retrieve the next page of results.
+- `refetch: Function({ force, throwOnError }) => void`
+  - A function to manually refetch the query if it is stale.
+  - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
+  - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
+- `fetchMore: Function(fetchMoreVariableOverride) => Promise`
+  - This function allows you to fetch the next "page" of results.
+  - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getCanFetchMore` option to your query function to retrieve the next page of results.
 - `canFetchMore: Boolean`
   - If using `paginated` mode, this will be `true` if there is more data to be fetched (known via the required `getFetchMore` option function).
 

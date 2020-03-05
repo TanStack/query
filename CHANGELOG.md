@@ -3,6 +3,10 @@
 ## 1.0.16
 
 - Fixed an issue where some overloaded query arg signatures would not have proper defaults
+- Added the `force` option to the private `query.fetch` function
+- Added the `force` and `throwOnError` options to the `refetch` method to be in line with documentation and expectations of v0.x functionality
+- Updated documentation to show correct options for `usePaginatedQuery` and `useInfiniteQuery`
+- Improved documentation around `getFetchMore` and fetch more variables
 
 ## 1.0.15
 

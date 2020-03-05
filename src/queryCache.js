@@ -85,13 +85,15 @@ export function makeQueryCache() {
     predicate,
     { exact, throwOnError, force } = {}
   ) => {
-    const foundQueries = (predicate === true
-      ? Object.values(cache.queries)
-      : findQueries(predicate, { exact })
-    ).filter(query => query.instances.length && (force || query.state.isStale))
+    const foundQueries =
+      predicate === true
+        ? Object.values(cache.queries)
+        : findQueries(predicate, { exact })
 
     try {
-      return await Promise.all(foundQueries.map(query => query.fetch()))
+      return await Promise.all(
+        foundQueries.map(query => query.fetch({ force }))
+      )
     } catch (err) {
       if (throwOnError) {
         throw err
@@ -344,10 +346,10 @@ export function makeQueryCache() {
       }
     }
 
-    query.fetch = async ({ __queryFn = query.queryFn } = {}) => {
+    query.fetch = async ({ force, __queryFn = query.queryFn } = {}) => {
       // Don't refetch fresh queries that don't have a queryHash
 
-      if (!query.queryHash) {
+      if (!query.queryHash || (!query.state.isStale && !force)) {
         return
       }
 
