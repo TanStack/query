@@ -23,7 +23,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
 
   let query = queryCache._buildQuery(queryKey, queryVariables, queryFn, config)
 
-  const [queryState, setQueryState] = React.useState(query.state)
+  const [, rerender] = React.useState()
   const getLatestConfig = useGetLatest(config)
   const refetch = React.useCallback(
     async ({ force, throwOnError } = {}) => {
@@ -42,7 +42,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   React.useEffect(() => {
     const unsubscribeFromQuery = query.subscribe({
       id: instanceId,
-      onStateUpdate: setQueryState,
+      onStateUpdate: () => rerender({}),
       onSuccess: data => getLatestConfig().onSuccess(data),
       onError: err => getLatestConfig().onError(err),
       onSettled: (data, err) => getLatestConfig().onSettled(data, err),
@@ -91,17 +91,17 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   ])
 
   if (config.suspense) {
-    if (queryState.status === statusError) {
-      throw queryState.error
+    if (query.state.status === statusError) {
+      throw query.state.error
     }
-    if (queryState.status === statusLoading) {
+    if (query.state.status === statusLoading) {
       query.wasSuspensed = true
       throw refetch()
     }
   }
 
   return {
-    ...queryState,
+    ...query.state,
     query,
     refetch,
   }
