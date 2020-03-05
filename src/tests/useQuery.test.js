@@ -368,4 +368,38 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('failureCount 1'))
     await waitForElement(() => rendered.getByText('failureCount 0'))
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/199
+  it('should use prefetched data for dependent query', async () => {
+    function Page() {
+      const [key, setKey] = React.useState(false)
+      const [isPrefetched, setPrefetched] = React.useState(false)
+
+      const query = useQuery(key, () => {})
+
+      React.useEffect(() => {
+        async function prefetch() {
+          await queryCache.prefetchQuery('key', () =>
+            Promise.resolve('prefetched data')
+          )
+          setPrefetched(true)
+        }
+        prefetch()
+      }, [])
+
+      return (
+        <div>
+          {isPrefetched && <div>isPrefetched</div>}
+          <button onClick={() => setKey('key')}>setKey</button>
+          <div>{query.data}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+    await waitForElement(() => rendered.getByText('isPrefetched'))
+
+    fireEvent.click(rendered.getByText('setKey'))
+    await waitForElement(() => rendered.getByText('prefetched data'))
+  })
 })
