@@ -402,7 +402,7 @@ To use external props, state, or variables in a query function, it's easiest to 
 ```js
 function Todos({ completed }) {
   const { status, data, error } = useQuery(
-    ['todos', { completed, page }],
+    ['todos', { status, page }],
     fetchTodoList
   )
 }
