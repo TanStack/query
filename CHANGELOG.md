@@ -7,6 +7,7 @@
 - Added the `force` and `throwOnError` options to the `refetch` method to be in line with documentation and expectations of v0.x functionality
 - Updated documentation to show correct options for `usePaginatedQuery` and `useInfiniteQuery`
 - Improved documentation around `getFetchMore` and fetch more variables
+- Fixed an issue where query state was not updated correctly. It is now computed from the query instead of manually tracked.
 
 ## 1.0.15
 
