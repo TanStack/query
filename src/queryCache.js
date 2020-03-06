@@ -167,9 +167,9 @@ export function makeQueryCache() {
           throw err
         }
       }
-    } else {
-      return Promise.resolve(query.state.data)
     }
+    
+    return query.state.data
   }
 
   cache.setQueryData = (queryKey, updater, { exact } = {}) => {
