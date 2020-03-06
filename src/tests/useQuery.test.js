@@ -507,7 +507,7 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('isFetching').textContent).toBe('false')
   })
 
-  it('should initialize state properly, when initialData is falsy', async () => {
+  it('should initialize state properly, when initialData is undefined', async () => {
     function Page() {
       const query = useQuery('key', () => {}, { initialData: 0 })
 
