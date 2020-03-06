@@ -1651,7 +1651,7 @@ React query has dedicated devtools! Visit the [React Query Devtools Github Repo]
 
 To see a demo, [check out the Sandbox example!](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
 
-[![React Query Header](https://github.com/tannerlinsley/react-query-devtools/raw/master/media/screenshot.png)](https://github.com/tannerlinsley/react-query-devtools)
+[![React Query Header](https://github.com/tannerlinsley/react-query-devtools/raw/master/media/header.png)](https://github.com/tannerlinsley/react-query-devtools)
 
 # API
 
