@@ -2164,7 +2164,7 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 ### Returns
 
 - `promise: Promise`
-  - A promise is returned that will either resolve with the **query's response data**. It **will not** throw an error if the prefetch fails, but this can be configured by setting the `throwOnError` option to `true`
+  - A promise is returned that will either immediately resolve with the query's cached response data, or resolve to the data returned by the fetch function. It **will not** throw an error if the fetch fails. This can be configured by setting the `throwOnError` option to `true`.
 
 ## `queryCache.getQueryData`
 
