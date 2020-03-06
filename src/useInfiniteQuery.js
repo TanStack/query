@@ -3,7 +3,7 @@ import React from 'react'
 //
 
 import { useBaseQuery } from './useBaseQuery'
-import { getQueryArgs, useGetLatest } from './utils'
+import { getQueryArgs, useGetLatest, statusError, statusLoading } from './utils'
 
 export function useInfiniteQuery(...args) {
   const queryInfoRef = React.useRef()
@@ -72,6 +72,16 @@ export function useInfiniteQuery(...args) {
   const isFetchingMore = React.useMemo(() => {
     return !!queryInfo.query.isFetchingMore
   }, [queryInfo.query.isFetchingMore])
+
+  if (queryInfo.config.suspense) {
+    if (queryInfo.status === statusError) {
+      throw queryInfo.error
+    }
+    if (queryInfo.status === statusLoading) {
+      queryInfo.wasSuspensed = true
+      throw queryInfo.refetch()
+    }
+  }
 
   return {
     ...queryInfo,

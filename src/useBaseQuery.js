@@ -90,18 +90,9 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     refetch,
   ])
 
-  if (config.suspense) {
-    if (query.state.status === statusError) {
-      throw query.state.error
-    }
-    if (query.state.status === statusLoading) {
-      query.wasSuspensed = true
-      throw refetch()
-    }
-  }
-
   return {
     ...query.state,
+    config,
     query,
     refetch,
   }

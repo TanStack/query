@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.19
+
+- Fixed an issue where `usePaginatedQuery` and `useInfiniteQuery` could not be used in suspense mode
+
 ## 1.0.18
 
 - Fixed an issue where useInfiniteQuery could not override the queryFn internally
