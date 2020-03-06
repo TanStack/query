@@ -493,8 +493,6 @@ describe('useQuery', () => {
     function Page() {
       const query = useQuery('key', () => {}, { initialData: 'data' })
 
-      console.log('isFetching', query.isFetching)
-
       return (
         <div>
           <div>{query.data}</div>
