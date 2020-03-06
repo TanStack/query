@@ -168,7 +168,7 @@ export function makeQueryCache() {
         }
       }
     }
-    
+
     return query.state.data
   }
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.20
+
+- Fixed an issue where `useInfiniteQuery`'s `fetchMore` method would not work if the query is in the middle of a normal refetch
+
 ## 1.0.19
 
 - Fixed an issue where `usePaginatedQuery` and `useInfiniteQuery` could not be used in suspense mode

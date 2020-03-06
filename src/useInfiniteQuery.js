@@ -47,6 +47,7 @@ export function useInfiniteQuery(...args) {
   const fetchMore = React.useCallback(
     (fetchMoreInfo = queryInfoRef.current.query.canFetchMore) =>
       refetch({
+        force: true,
         __queryFn: async (...args) => {
           try {
             queryInfoRef.current.query.isFetchingMore = true
