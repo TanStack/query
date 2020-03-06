@@ -23,7 +23,7 @@ describe('queryCache', () => {
   })
 
   test('should notify listeners when new query is added', () => {
-    const callback = jest.fn();
+    const callback = jest.fn()
 
     queryCache.subscribe(callback)
 
@@ -33,7 +33,7 @@ describe('queryCache', () => {
   })
 
   test('should notify subsribers when new query with initialData is added', () => {
-    const callback = jest.fn();
+    const callback = jest.fn()
 
     queryCache.subscribe(callback)
 
