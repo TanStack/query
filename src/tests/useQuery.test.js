@@ -506,4 +506,24 @@ describe('useQuery', () => {
     rendered.getByText('data')
     expect(rendered.getByTestId('isFetching').textContent).toBe('false')
   })
+
+  it('should initialize state properly, when initialData is falsy', async () => {
+    function Page() {
+      const query = useQuery('key', () => {}, { initialData: 0 })
+
+      return (
+        <div>
+          <div>{query.data}</div>
+          <div data-testid="isFetching">{`${query.isFetching}`}</div>
+          <div data-testid="status">{query.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('0')
+    expect(rendered.getByTestId('isFetching').textContent).toBe('false')
+    expect(rendered.getByTestId('status').textContent).toBe('success')
+  })
 })
