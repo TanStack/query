@@ -168,6 +168,8 @@ export function makeQueryCache() {
         }
       }
     }
+    
+    return query.state.data
   }
 
   cache.setQueryData = (queryKey, updater, { exact } = {}) => {

@@ -9,4 +9,12 @@ describe('queryCache', () => {
       }))
     ).not.toThrow()
   })
+
+  test('prefetchQuery returns the cached data on cache hits', async () => {
+    const fetchFn = () => Promise.resolve('data')
+    const first = await queryCache.prefetchQuery('key', fetchFn)
+    const second = await queryCache.prefetchQuery('key', fetchFn)
+
+    expect(second).toBe(first)
+  })
 })
