@@ -30,4 +30,15 @@ describe('queryCache', () => {
     queryCache.prefetchQuery('test', () => 'data')
 
     expect(callback).toHaveBeenCalled()
+  })
+
+  test('should notify subsribers when new query with initialData is added', () => {
+    const callback = jest.fn();
+
+    queryCache.subscribe(callback)
+
+    queryCache.prefetchQuery('test', () => {}, { initialData: 'initial' })
+
+    expect(callback).toHaveBeenCalled()
+  })
 })
