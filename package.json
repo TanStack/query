@@ -16,7 +16,7 @@
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "prepare": "yarn build",
-    "prepublish": "yarn test:ci",
+    "prepublishOnly": "yarn test:ci",
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
     "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write",
