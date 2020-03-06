@@ -10,7 +10,7 @@ describe('queryCache', () => {
     ).not.toThrow()
   })
 
-  test('setQueryData does not crash if query could not be found', async () => {
+  test('prefetchQuery returns the cached data on cache hits', async () => {
     const fetchFn = () => Promise.resolve('data')
     const first = await queryCache.prefetchQuery('key', fetchFn)
     const second = await queryCache.prefetchQuery('key', fetchFn)
