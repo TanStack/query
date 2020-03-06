@@ -168,7 +168,7 @@ export function makeQueryCache() {
         }
       }
     }
-    
+
     return query.state.data
   }
 
@@ -442,7 +442,7 @@ export function defaultQueryReducer(state, action) {
       return {
         status: action.initialStatus,
         error: null,
-        isFetching: !action.manual,
+        isFetching: !action.initialData ? !action.manual : false,
         canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,
