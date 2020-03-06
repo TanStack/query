@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.21
+
+- Fixed an issue where a query would be marked as fetching when using initialData
+
 ## 1.0.20
 
 - Fixed an issue where `useInfiniteQuery`'s `fetchMore` method would not work if the query is in the middle of a normal refetch
