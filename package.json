@@ -24,7 +24,8 @@
     "doctoc": "npx doctoc --maxlevel 2 README.md"
   },
   "files": [
-    "dist"
+    "dist",
+    "index.d.ts"
   ],
   "peerDependencies": {
     "react": "^16.6.3"
