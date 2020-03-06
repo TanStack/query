@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.22
+
+- Fixed an issue where a query would be initialized with wrong state when using falsy initialData
+
 ## 1.0.21
 
 - Fixed an issue where a query would be marked as fetching when using initialData

@@ -199,12 +199,14 @@ export function makeQueryCache() {
         ? options.config.initialData()
         : options.config.initialData
 
-    const isStale = noQueryHash ? true : typeof initialData === 'undefined'
+    const hasInitialData = typeof initialData !== 'undefined'
+
+    const isStale = noQueryHash ? true : !hasInitialData
 
     const manual = options.config.manual
 
     const initialStatus =
-      noQueryHash || manual || initialData ? statusSuccess : statusLoading
+      noQueryHash || manual || hasInitialData ? statusSuccess : statusLoading
 
     const query = {
       ...options,
@@ -213,6 +215,7 @@ export function makeQueryCache() {
         type: actionInit,
         initialStatus,
         initialData,
+        hasInitialData,
         isStale,
         manual,
       }),
@@ -442,12 +445,12 @@ export function defaultQueryReducer(state, action) {
       return {
         status: action.initialStatus,
         error: null,
-        isFetching: !action.initialData ? !action.manual : false,
+        isFetching: action.hasInitialData ? false : !action.manual,
         canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,
         data: action.initialData,
-        updatedAt: action.initialData ? Date.now() : 0,
+        updatedAt: action.hasInitialData ? Date.now() : 0,
       }
     case actionFailed:
       return {

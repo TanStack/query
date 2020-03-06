@@ -1,6 +1,6 @@
 {
   "name": "react-query",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -16,7 +16,7 @@
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "prepare": "yarn build",
-    "prepublish": "yarn test:ci",
+    "prepublishOnly": "yarn test:ci",
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
     "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write",
