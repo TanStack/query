@@ -26,9 +26,9 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   const [, rerender] = React.useState()
   const getLatestConfig = useGetLatest(config)
   const refetch = React.useCallback(
-    async ({ force, throwOnError } = {}) => {
+    async ({ throwOnError, ...rest } = {}) => {
       try {
-        return await query.fetch({ force })
+        return await query.fetch(rest)
       } catch (err) {
         if (throwOnError) {
           throw err

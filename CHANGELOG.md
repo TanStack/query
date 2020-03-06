@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.18
+
+- Fixed an issue where useInfiniteQuery could not override the queryFn internally
+- Fixed an issue where a function could not be used as the query key
+- Fixed an issue where the object syntax for queries could not be used
+
 ## 1.0.17
 
 - Fixed an issue where `queryCache.prefetchQuery` did not resolve the query data if the query was already cached.

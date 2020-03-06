@@ -34,20 +34,17 @@ describe('useQuery', () => {
     const rendered = render(<Page />)
 
     rendered.getByText('default')
-
-    // await waitForElement(() => rendered.getByText('test'))
+    await waitForElement(() => rendered.getByText('test'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', async () => {
     function Page() {
-      const [shouldFetch, setShouldFetch] = React.useState(false)
-
-      const first = useQuery(shouldFetch && 'first', () => 'data', {
+      const first = useQuery(false && 'first', () => 'data', {
         initialData: 'init',
       })
 
-      const second = useQuery(shouldFetch && 'second', () => 'data', {
+      const second = useQuery(false && 'second', () => 'data', {
         initialData: 'init',
       })
 
@@ -55,9 +52,6 @@ describe('useQuery', () => {
         <div>
           <h2>First Data: {first.data}</h2>
           <h2>Second Data: {second.data}</h2>
-          {first.isStale ? (
-            <button onClick={() => setShouldFetch(true)}>fetch</button>
-          ) : null}
           <div>First Status: {first.status}</div>
           <div>Second Status: {second.status}</div>
         </div>
@@ -303,7 +297,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       mockVisibilityState(originalVisibilityState)
-      window.dispatchEvent(new Event('focus'))
+      window.dispatchEvent(new FocusEvent('focus'))
     })
 
     await waitForElement(() => rendered.getByText('failureCount 4'))
@@ -401,5 +395,97 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByText('setKey'))
     await waitForElement(() => rendered.getByText('prefetched data'))
+  })
+
+  it('should support a function that resolves a query key', async () => {
+    function Page() {
+      const { status, data, query } = useQuery(
+        () => 'key',
+        () => 'data'
+      )
+
+      return (
+        <div>
+          <div>Status: {status}</div>
+          <div>Data: {data}</div>
+          <div>Key: {query.queryKey}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('Status: loading')
+    await waitForElement(() => rendered.getByText('Status: success'))
+    rendered.getByText('Data: data')
+    rendered.getByText('Key: key')
+  })
+
+  it('should support dependent query keys via returng falsy in a query key function', async () => {
+    function Page() {
+      const [shouldFetch, setShouldFetch] = React.useState(false)
+
+      const query = useQuery(
+        () => shouldFetch && 'key',
+        () => 'data'
+      )
+
+      return (
+        <div>
+          <div>Status: {query.status}</div>
+          <h2>Data: {query.data || 'no data'}</h2>
+          {query.isStale ? (
+            <button onClick={() => setShouldFetch(true)}>fetch</button>
+          ) : null}
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('Status: success')
+    rendered.getByText('Data: no data')
+
+    fireEvent.click(rendered.getByText('fetch'))
+
+    await waitForElement(() => rendered.getByText('Status: loading'))
+    await waitForElement(() => [
+      rendered.getByText('Status: success'),
+      rendered.getByText('Data: data'),
+    ])
+  })
+
+  it('should support dependent query keys via throwing in a query key function', async () => {
+    function Page() {
+      const [shouldFetch, setShouldFetch] = React.useState()
+
+      const query = useQuery(
+        () => shouldFetch.on && 'key',
+        () => 'data'
+      )
+
+      return (
+        <div>
+          <div>Status: {query.status}</div>
+          <h2>Data: {query.data || 'no data'}</h2>
+          {query.isStale ? (
+            <button onClick={() => setShouldFetch({ on: true })}>fetch</button>
+          ) : null}
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('Status: success')
+    rendered.getByText('Data: no data')
+
+    fireEvent.click(rendered.getByText('fetch'))
+
+    await waitForElement(() => rendered.getByText('Status: loading'))
+    await waitForElement(() => [
+      rendered.getByText('Status: success'),
+      rendered.getByText('Data: data'),
+    ])
   })
 })
