@@ -1,6 +1,10 @@
 import { queryCache } from '../index'
 
 describe('queryCache', () => {
+  afterEach(() => {
+    queryCache.clear();
+  })
+
   test('setQueryData does not crash if query could not be found', () => {
     expect(() =>
       queryCache.setQueryData(['USER', { userId: 1 }], prevUser => ({
@@ -17,4 +21,13 @@ describe('queryCache', () => {
 
     expect(second).toBe(first)
   })
+
+  test('should notify listeners when new query is added', () => {
+    const callback = jest.fn();
+
+    queryCache.subscribe(callback)
+
+    queryCache.prefetchQuery('test', () => 'data')
+
+    expect(callback).toHaveBeenCalled()
 })
