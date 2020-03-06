@@ -488,4 +488,22 @@ describe('useQuery', () => {
       rendered.getByText('Data: data'),
     ])
   })
+
+  it('should not mark query as fetching, when using initialData', async () => {
+    function Page() {
+      const query = useQuery('key', () => {}, { initialData: 'data' })
+
+      return (
+        <div>
+          <div>{query.data}</div>
+          <div data-testid="isFetching">{`${query.isFetching}`}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('data')
+    expect(rendered.getByTestId('isFetching').textContent).toBe('false')
+  })
 })
