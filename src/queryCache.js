@@ -133,6 +133,7 @@ export function makeQueryCache() {
       if (query.queryHash) {
         if (!isServer) {
           cache.queries[queryHash] = query
+          notifyGlobalListeners()
         }
       }
     }
