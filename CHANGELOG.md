@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.17
+
+- Fixed an issue where `queryCache.prefetchQuery` did not resolve the query data if the query was already cached.
+
 ## 1.0.16
 
 - Fixed an issue where some overloaded query arg signatures would not have proper defaults
