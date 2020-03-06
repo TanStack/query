@@ -1,10 +1,3 @@
-// Type definitions for react-query 0.3
-// Project: https://github.com/tannerlinsley/react-query
-// Definitions by: Lukasz Fiszer <https://github.com/lukaszfiszer>
-//                 Jace Hensley <https://github.com/jacehensley>
-//                 Matteo Frana <https://github.com/matteofrana>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-
 import { ComponentType } from "react";
 
 export function useInfiniteQuery<TResult, TVariables extends object>(
