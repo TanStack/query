@@ -167,6 +167,8 @@ export function makeQueryCache() {
           throw err
         }
       }
+    } else {
+      return Promise.resolve(query.state.data)
     }
   }
 
