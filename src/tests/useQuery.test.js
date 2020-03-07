@@ -526,4 +526,39 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('isFetching').textContent).toBe('false')
     expect(rendered.getByTestId('status').textContent).toBe('success')
   })
+
+  it('should not cause infinite loop after query key is changed to falsy', async () => {
+    const callback = jest.fn()
+
+    function Page() {
+      const [shouldFetch, setShouldFetch] = React.useState(true)
+      const query = useQuery(shouldFetch && 'key', () => 'fetched data', {
+        initialData: shouldFetch ? 'initial' : 'initial falsy',
+      })
+
+      const { data } = query
+
+      React.useEffect(() => {
+        callback()
+      }, [query])
+
+      return (
+        <div>
+          <div>{data}</div>
+          <button onClick={() => setShouldFetch(false)}>
+            setShouldFetch(false)
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('initial'))
+    fireEvent.click(rendered.getByText('setShouldFetch(false)'))
+    rendered.getByText('initial falsy')
+    // wait for infinite loop to call mock function a bit
+    await sleep(200)
+    expect(callback.mock.calls.length).toBeLessThan(5)
+  })
 })
