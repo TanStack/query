@@ -21,7 +21,28 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     ...config,
   }
 
-  let query = queryCache._buildQuery(queryKey, queryVariables, queryFn, config)
+  const queryRef = React.useRef()
+
+  const newQuery = queryCache._buildQuery(
+    queryKey,
+    queryVariables,
+    queryFn,
+    config
+  )
+
+  const prevQuery = queryRef.current
+  if (
+    prevQuery &&
+    typeof prevQuery.queryHash === 'undefined' &&
+    typeof newQuery.queryHash === 'undefined'
+  ) {
+    // Do not use new query with undefined queryHash, if previous query also had undefined queryHash.
+    // Otherwise this will cause infinite loop.
+  } else {
+    queryRef.current = newQuery
+  }
+
+  const query = queryRef.current
 
   const [, rerender] = React.useState()
   const getLatestConfig = useGetLatest(config)
