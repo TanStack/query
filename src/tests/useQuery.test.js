@@ -527,6 +527,7 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('status').textContent).toBe('success')
   })
 
+  // See https://github.com/tannerlinsley/react-query/issues/214
   it('should not cause infinite loop after query key is changed to falsy', async () => {
     const callback = jest.fn()
 
