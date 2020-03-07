@@ -107,7 +107,9 @@ describe('useQuery', () => {
     const { getByTestId } = render(<Page />)
 
     await waitForElement(() => getByTestId('status'))
-    expect(getByTestId('status').textContent).toBe('loading')
+    act(() => {
+      expect(getByTestId('status').textContent).toBe('loading')
+    })
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
