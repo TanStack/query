@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.23
+
+- Fixed an issue where a nullish query key would result in an error
+- Fixed an issue where undefined query keys could possibly result in infinite loops
+- Fixed an issue where queries with initial data would not trigger global listeners that that the store had changed
+
 ## 1.0.22
 
 - Fixed an issue where a query would be initialized with wrong state when using falsy initialData
