@@ -89,6 +89,27 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('Second Status: success'))
   })
 
+  // See https://github.com/tannerlinsley/react-query/issues/217
+  it('should start with status success if a null query key is supplied', async () => {
+    function Page() {
+      const first = useQuery(null && 'first', () => 'data')
+      const second = useQuery('second', () => 'data')
+
+      return (
+        <div>
+          <div>First Status: {first.status}</div>
+          <div>Second Status: {second.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('First Status: success')
+    await waitForElement(() => rendered.getByText('Second Status: loading'))
+    await waitForElement(() => rendered.getByText('Second Status: success'))
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/144
   it('should be in "loading" state by default', async () => {
     function Page() {
