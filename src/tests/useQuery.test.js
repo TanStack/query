@@ -582,7 +582,7 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByText('setShouldFetch(false)'))
     rendered.getByText('initial falsy')
     // wait for infinite loop to call mock function a bit
-    await sleep(200)
+    await act(() => sleep(200))
     expect(callback.mock.calls.length).toBeLessThan(5)
   })
 })

@@ -4,14 +4,7 @@ import React from 'react'
 
 import { queryCache } from './queryCache'
 import { useConfigContext } from './config'
-import {
-  useUid,
-  isDocumentVisible,
-  Console,
-  useGetLatest,
-  statusError,
-  statusLoading,
-} from './utils'
+import { useUid, isDocumentVisible, Console, useGetLatest } from './utils'
 
 export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   const instanceId = useUid()
@@ -30,15 +23,14 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     config
   )
 
-  const prevQuery = queryRef.current
-  if (
-    prevQuery &&
-    typeof prevQuery.queryHash === 'undefined' &&
+  const useCachedQuery =
+    queryRef.current &&
+    typeof queryRef.current.queryHash === 'undefined' &&
     typeof newQuery.queryHash === 'undefined'
-  ) {
-    // Do not use new query with undefined queryHash, if previous query also had undefined queryHash.
-    // Otherwise this will cause infinite loop.
-  } else {
+
+  // Do not use new query with undefined queryHash, if previous query also had undefined queryHash.
+  // Otherwise this will cause infinite loop.
+  if (!useCachedQuery) {
     queryRef.current = newQuery
   }
 

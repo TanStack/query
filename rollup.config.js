@@ -9,16 +9,6 @@ const globals = {
 }
 
 export default [
-  // {
-  //   input: 'src/index.js',
-  //   output: {
-  //     file: 'dist/react-query.es.js',
-  //     format: 'esm',
-  //     sourcemap: true,
-  //   },
-  //   external,
-  //   plugins: [babel()],
-  // },
   {
     input: 'src/index.js',
     output: {
@@ -41,12 +31,6 @@ export default [
       globals,
     },
     external,
-    plugins: [
-      babel(),
-      terser(),
-      size({
-        writeFile: false,
-      }),
-    ],
+    plugins: [babel(), terser(), size()],
   },
 ]
