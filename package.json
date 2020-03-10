@@ -6,6 +6,7 @@
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
   "main": "index.js",
+  "module": "dist/react-query.min.mjs",
   "sideEffects": false,
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
