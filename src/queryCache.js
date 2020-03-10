@@ -72,13 +72,17 @@ export function makeQueryCache() {
   cache.removeQueries = (predicate, { exact } = {}) => {
     const foundQueries = findQueries(predicate, { exact })
 
-    foundQueries.forEach(query => {
-      delete cache.queries[query.queryHash]
-    })
+    if (!foundQueries) return
 
-    if (foundQueries.length) {
-      notifyGlobalListeners()
+    if (!!foundQueries && exact) {
+      delete cache.queries[foundQueries.queryHash]
+    } else {
+      foundQueries.forEach(query => {
+        delete cache.queries[query.queryHash]
+      })
     }
+
+    notifyGlobalListeners()
   }
 
   cache.refetchQueries = async (
