@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.24
+
+- Fixed an issue where a falsey query key could not be used in the object syntax
+- Fixed an issue where `queryCache.removeQueries` would crash
+- Fixed an issue where `queryCache.setQueryData` would crash if a functional predicate is used and a query is not found, and thus attempted to be created.
+- Fixed an issue where `queryCache.setQueryData` would mark a query as fresh but would not schedule a stale timeout.
+
 ## 1.0.23
 
 - Fixed an issue where a nullish query key would result in an error

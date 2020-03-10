@@ -171,17 +171,15 @@ export function makeQueryCache() {
     return query.state.data
   }
 
-  cache.setQueryData = (queryKey, updater, { exact } = {}) => {
+  cache.setQueryData = (queryKey, updater, { exact, ...config } = {}) => {
     let queries = findQueries(queryKey, { exact })
 
     if (!queries.length && typeof queryKey !== 'function') {
       queries = [
-        cache._buildQuery(
-          queryKey,
-          undefined,
-          () => new Promise(noop),
-          defaultConfigRef.current
-        ),
+        cache._buildQuery(queryKey, undefined, () => new Promise(noop), {
+          ...defaultConfigRef.current,
+          ...config,
+        }),
       ]
     }
 
@@ -363,15 +361,6 @@ export function makeQueryCache() {
           // If there are any retries pending for this query, kill them
           query.cancelled = null
 
-          const cleanup = () => {
-            delete query.promise
-
-            // Schedule a fresh invalidation, always!
-            clearTimeout(query.staleTimeout)
-
-            query.scheduleStaleTimeout()
-          }
-
           try {
             // Set up the query refreshing state
             dispatch({ type: actionFetch })
@@ -383,11 +372,7 @@ export function makeQueryCache() {
               ...query.queryVariables
             )
 
-            // Set data and mark it as cached
-            dispatch({
-              type: actionSuccess,
-              data,
-            })
+            query.setData(data)
 
             query.instances.forEach(
               instance =>
@@ -399,7 +384,7 @@ export function makeQueryCache() {
                 instance.onSettled && instance.onSettled(query.state.data, null)
             )
 
-            cleanup()
+            delete query.promise
 
             return data
           } catch (error) {
@@ -409,7 +394,7 @@ export function makeQueryCache() {
               error,
             })
 
-            cleanup()
+            delete query.promise
 
             if (error !== query.cancelled) {
               query.instances.forEach(
@@ -430,7 +415,14 @@ export function makeQueryCache() {
       return query.promise
     }
 
-    query.setData = updater => dispatch({ type: actionSetData, updater })
+    query.setData = updater => {
+      // Set data and mark it as cached
+      dispatch({ type: actionSuccess, updater })
+
+      // Schedule a fresh invalidation!
+      clearTimeout(query.staleTimeout)
+      query.scheduleStaleTimeout()
+    }
 
     return query
   }
@@ -472,7 +464,7 @@ export function defaultQueryReducer(state, action) {
       return {
         ...state,
         status: statusSuccess,
-        data: action.data,
+        data: functionalUpdate(action.updater, action.updater),
         error: null,
         isStale: false,
         isFetching: false,
@@ -489,13 +481,6 @@ export function defaultQueryReducer(state, action) {
           error: action.error,
           isStale: true,
         }),
-      }
-    case actionSetData:
-      return {
-        ...state,
-        data: functionalUpdate(action.updater, state.data),
-        isStale: false,
-        updatedAt: Date.now(),
       }
     default:
       throw new Error()

@@ -1,4 +1,6 @@
 import { queryCache } from '../index'
+import { act } from '@testing-library/react'
+import { sleep } from './utils'
 
 describe('queryCache', () => {
   afterEach(() => {
@@ -55,7 +57,6 @@ describe('queryCache', () => {
   })
 
   test('removeQueries does not crash when exact is provided', async () => {
-    const callback = jest.fn()
     const fetchFn = () => Promise.resolve('data')
 
     // check the query was added to the cache
@@ -67,5 +68,20 @@ describe('queryCache', () => {
 
     // check query was successful removed
     expect(queryCache.getQuery('key')).toBeFalsy()
+  })
+
+  test('setQueryData schedules stale timeouts appropriately', async () => {
+    queryCache.setQueryData('key', 'test data', { staleTime: 100 })
+
+    expect(queryCache.getQuery('key').state.data).toEqual('test data')
+    expect(queryCache.getQuery('key').state.isStale).toEqual(false)
+
+    await sleep(50)
+
+    expect(queryCache.getQuery('key').state.isStale).toEqual(false)
+
+    await sleep(100)
+
+    expect(queryCache.getQuery('key').state.isStale).toEqual(true)
   })
 })
