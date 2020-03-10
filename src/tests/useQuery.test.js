@@ -585,4 +585,35 @@ describe('useQuery', () => {
     await act(() => sleep(200))
     expect(callback.mock.calls.length).toBeLessThan(5)
   })
+  it('it should support falsy queryKey in query object syntax', async () => {
+    const queryFn = jest.fn()
+    queryFn.mockImplementation(() => 'data')
+
+    function Page() {
+      useQuery({
+        queryKey: false && 'key',
+        queryFn,
+      })
+      return null
+    }
+    render(<Page />)
+
+    const cachedQueries = Object.keys(queryCache.queries).length
+    expect(queryFn).not.toHaveBeenCalled()
+    expect(cachedQueries).toEqual(0)
+  })
+  it('it should throw when using query syntax and missing required keys', async () => {
+    // mock console.error to avoid the wall of red text,
+    // you could also do this on beforeEach/afterEach
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      const query = useQuery({})
+      return null
+    }
+    expect(() => render(<Page />)).toThrowError(/queryKey|queryFn/)
+
+    console.error.mockRestore()
+  })
 })

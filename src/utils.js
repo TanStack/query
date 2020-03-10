@@ -88,9 +88,16 @@ export function isOnline() {
 }
 
 export function getQueryArgs(args) {
-  if (isObject(args[0]) && args[0].queryKey) {
-    const { queryKey, variables = [], queryFn, config = {} } = args[0]
-    return [queryKey, variables, queryFn, config]
+  if (isObject(args[0])) {
+    if (
+      args[0].hasOwnProperty('queryKey') &&
+      args[0].hasOwnProperty('queryFn')
+    ) {
+      const { queryKey, variables = [], queryFn, config = {} } = args[0]
+      return [queryKey, variables, queryFn, config]
+    } else {
+      throw new Error('queryKey and queryFn keys are required.')
+    }
   }
   if (typeof args[2] === 'function') {
     const [queryKey, variables = [], queryFn, config = {}] = args
