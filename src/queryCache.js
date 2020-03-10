@@ -60,12 +60,10 @@ export function makeQueryCache() {
         exact ? d.queryHash === queryHash : deepIncludes(d.queryKey, queryKey)
     }
 
-    const found = Object.values(cache.queries).filter(predicate)
-
-    return exact ? found[0] : found
+    return Object.values(cache.queries).filter(predicate)
   }
 
-  cache.getQuery = queryKey => findQueries(queryKey, { exact: true })
+  cache.getQuery = queryKey => findQueries(queryKey, { exact: true })[0]
 
   cache.getQueryData = queryKey => cache.getQuery(queryKey)?.state.data
 
@@ -176,7 +174,7 @@ export function makeQueryCache() {
   cache.setQueryData = (queryKey, updater, { exact } = {}) => {
     let queries = findQueries(queryKey, { exact })
 
-    if (!queries || queries.length === 0) {
+    if (!queries.length) {
       queries = [
         cache._buildQuery(
           queryKey,
