@@ -12,8 +12,8 @@ Hooks for fetching, caching and updating asynchronous data in React
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a><a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
-</a><a href="https://spectrum.chat/react-query">
-  <img alt="Join the community on Spectrum" src="https://withspectrum.github.io/badge/badge.svg" />
+</a><a href="https://github.com/tannerlinsley/react-query/discussions">
+  <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
 </a><a href="https://twitter.com/tannerlinsley" target="\_parent">
