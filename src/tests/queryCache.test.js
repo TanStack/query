@@ -2,7 +2,7 @@ import { queryCache } from '../index'
 
 describe('queryCache', () => {
   afterEach(() => {
-    queryCache.clear();
+    queryCache.clear()
   })
 
   test('setQueryData does not crash if query could not be found', () => {
@@ -40,5 +40,17 @@ describe('queryCache', () => {
     queryCache.prefetchQuery('test', () => {}, { initialData: 'initial' })
 
     expect(callback).toHaveBeenCalled()
+  })
+
+  test('setQueryData creates a new query if query was not found, using exact', () => {
+    queryCache.setQueryData('foo', 'bar', { exact: true })
+
+    expect(queryCache.getQueryData('foo')).toBe('bar')
+  })
+
+  test('setQueryData creates a new query if query was not found', () => {
+    queryCache.setQueryData('baz', 'qux')
+
+    expect(queryCache.getQueryData('baz')).toBe('qux')
   })
 })
