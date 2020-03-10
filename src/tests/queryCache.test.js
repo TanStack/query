@@ -2,7 +2,7 @@ import { queryCache } from '../index'
 
 describe('queryCache', () => {
   afterEach(() => {
-    queryCache.clear();
+    queryCache.clear()
   })
 
   test('setQueryData does not crash if query could not be found', () => {
@@ -40,5 +40,20 @@ describe('queryCache', () => {
     queryCache.prefetchQuery('test', () => {}, { initialData: 'initial' })
 
     expect(callback).toHaveBeenCalled()
+  })
+
+  test('removeQueries does not crash when exact is provided', async () => {
+    const callback = jest.fn()
+    const fetchFn = () => Promise.resolve('data')
+
+    // check the query was added to the cache
+    await queryCache.prefetchQuery('key', fetchFn)
+    expect(queryCache.getQuery('key')).toBeTruthy()
+
+    // check the error doesn't occur
+    expect(() => queryCache.removeQueries('key', { exact: true })).not.toThrow()
+
+    // check query was successful removed
+    expect(queryCache.getQuery('key')).toBeFalsy()
   })
 })
