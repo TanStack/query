@@ -174,7 +174,7 @@ export function makeQueryCache() {
   cache.setQueryData = (queryKey, updater, { exact } = {}) => {
     let queries = findQueries(queryKey, { exact })
 
-    if (!queries.length) {
+    if (!queries.length && typeof queryKey !== 'function') {
       queries = [
         cache._buildQuery(
           queryKey,
