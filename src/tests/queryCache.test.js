@@ -42,6 +42,18 @@ describe('queryCache', () => {
     expect(callback).toHaveBeenCalled()
   })
 
+  test('setQueryData creates a new query if query was not found, using exact', () => {
+    queryCache.setQueryData('foo', 'bar', { exact: true })
+
+    expect(queryCache.getQueryData('foo')).toBe('bar')
+  })
+
+  test('setQueryData creates a new query if query was not found', () => {
+    queryCache.setQueryData('baz', 'qux')
+
+    expect(queryCache.getQueryData('baz')).toBe('qux')
+  })
+
   test('removeQueries does not crash when exact is provided', async () => {
     const callback = jest.fn()
     const fetchFn = () => Promise.resolve('data')
