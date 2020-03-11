@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.25
+
+- Added back an es module build of the library
+- Fixed a regression issue where setting data would not work due to using the wrong updater variable
+
 ## 1.0.24
 
 - Fixed an issue where a falsey query key could not be used in the object syntax

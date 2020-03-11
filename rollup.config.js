@@ -12,6 +12,16 @@ export default [
   {
     input: 'src/index.js',
     output: {
+      file: 'dist/react-query.min.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    external,
+    plugins: [babel(), terser()],
+  },
+  {
+    input: 'src/index.js',
+    output: {
       name: 'ReactQuery',
       file: 'dist/react-query.development.js',
       format: 'umd',
@@ -23,20 +33,13 @@ export default [
   },
   {
     input: 'src/index.js',
-    output: [
-      {
-        name: 'ReactQuery',
-        file: 'dist/react-query.production.min.js',
-        format: 'umd',
-        sourcemap: true,
-        globals,
-      },
-      {
-        file: 'dist/react-query.min.mjs',
-        format: 'es',
-        sourcemap: true,
-      },
-    ],
+    output: {
+      name: 'ReactQuery',
+      file: 'dist/react-query.production.min.js',
+      format: 'umd',
+      sourcemap: true,
+      globals,
+    },
     external,
     plugins: [babel(), terser(), size()],
   },
