@@ -2313,7 +2313,6 @@ import { queryCache } from 'react-query'
 
 if (queryCache.isFetching) {
   console.log('At least one query is fetching!')
-  )
 }
 ```
 
