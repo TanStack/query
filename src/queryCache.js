@@ -464,7 +464,7 @@ export function defaultQueryReducer(state, action) {
       return {
         ...state,
         status: statusSuccess,
-        data: functionalUpdate(action.updater, action.updater),
+        data: functionalUpdate(action.updater, state.data),
         error: null,
         isStale: false,
         isFetching: false,
