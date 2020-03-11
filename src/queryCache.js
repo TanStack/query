@@ -225,6 +225,9 @@ export function makeQueryCache() {
     }
 
     query.scheduleStaleTimeout = () => {
+      if (query.config.staleTime === Infinity) {
+        return
+      }
       query.staleTimeout = setTimeout(() => {
         if (query) {
           dispatch({ type: actionMarkStale })
