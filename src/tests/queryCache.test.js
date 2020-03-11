@@ -84,4 +84,16 @@ describe('queryCache', () => {
 
     expect(queryCache.getQuery('key').state.isStale).toEqual(true)
   })
+
+  test('setQueryData updater function works as expected', () => {
+    const updater = jest.fn(oldData => `new data + ${oldData}`);
+
+    queryCache.setQueryData('updater', 'test data')
+    queryCache.setQueryData('updater', updater)
+
+    expect(updater).toHaveBeenCalled()
+    expect(queryCache.getQuery('updater').state.data).toEqual(
+      'new data + test data'
+    )
+  })
 })
