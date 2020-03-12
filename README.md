@@ -2052,7 +2052,7 @@ const {
 ## `useMutation`
 
 ```js
-const [mutate, { status, data, error }] = useMutation(mutationFn, {
+const [mutate, { status, data, error, reset }] = useMutation(mutationFn, {
   onSuccess,
   onSettled,
   onError,
@@ -2094,24 +2094,12 @@ const promise = mutate(variables, {
 
 ### Returns
 
-- `mutate: Function(variables, { status, error, data, reset })`
+- `mutate: Function(variables, { onSuccess, onSettled, onError, throwOnError }) => Promise`
   - The mutation function you can call with variables to trigger the mutation and optionally override the original mutation options.
   - `variables: any`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - `status: String`
-    - Will be:
-      - `idle` initial status prior to the mutation function executing.
-      - `loading` if the mutation is currently executing.
-      - `error` if the last mutation attempt resulted in an error.
-      - `success' if the last mutation attempt was successful.
-  - `data: undefined | Any`
-    - Defaults to `undefined`
-    - The last successfully resolved data for the query.
-  - `error: null | Error`
-    - The error object for the query, if an error was encountered.
-  - `reset: Function`
-    - Function to reset the mutation state.
+  - Remaining options are overrides for the same options described above in the `useMutation` hook
 
 ## `queryCache`
 
