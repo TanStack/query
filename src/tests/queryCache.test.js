@@ -96,4 +96,16 @@ describe('queryCache', () => {
       'new data + test data'
     )
   })
+
+  test('getQueries should return queries that partially match queryKey', async () => {
+    const fetchData1 = () => Promise.resolve('data1')
+    const fetchData2 = () => Promise.resolve('data2')
+    const fetchDifferentData = () => Promise.resolve('data3')
+    await queryCache.prefetchQuery(['data', { page: 1 }], fetchData1)
+    await queryCache.prefetchQuery(['data', { page: 2 }], fetchData2)
+    await queryCache.prefetchQuery(['differentData'], fetchDifferentData)
+    const queries = queryCache.getQueries('data')
+    const data = queries.map(query => query.state.data)
+    expect(data).toEqual(['data1', 'data2'])
+  })
 })

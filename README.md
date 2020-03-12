@@ -280,6 +280,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.setQueryData`](#querycachesetquerydata)
   - [`queryCache.refetchQueries`](#querycacherefetchqueries)
   - [`queryCache.removeQueries`](#querycacheremovequeries)
+  - [`queryCache.getQueries`](#querycachegetqueries)
   - [`queryCache.getQuery`](#querycachegetquery)
   - [`queryCache.isFetching`](#querycacheisfetching)
   - [`queryCache.subscribe`](#querycachesubscribe)
@@ -2110,6 +2111,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`setQueryData`](#querycachesetquerydata)
 - [`refetchQueries`](#querycacherefetchqueries)
 - [`removeQueries`](#querycacheremovequeries)
+- [`getQueries`](#querycachegetqueries)
 - [`getQuery`](#querycachegetquery)
 - [`subscribe`](#querycachesubscribe)
 - [`isFetching`](#querycacheisfetching)
@@ -2289,8 +2291,30 @@ const query = queryCache.getQuery(queryKey)
 
 ### Returns
 
-- `query: QueryObect`
+- `query: QueryObject`
   - The query object from the cache
+
+## `queryCache.getQueries`
+
+`getQueries` is even more advanced synchronous function that can be used to get existing query objects from the cache that partially match query key. If queries do not exist, empty array will be returned.
+
+> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
+
+```js
+import { queryCache } from 'react-query'
+
+const queries = queryCache.getQueries(queryKey)
+```
+
+### Options
+
+- `queryKey: QueryKey`
+  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+
+### Returns
+
+- `queries: QueryObject[]`
+  - Query objects from the cache
 
 ## `queryCache.isFetching`
 
