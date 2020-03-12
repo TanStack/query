@@ -86,7 +86,7 @@ describe('queryCache', () => {
   })
 
   test('setQueryData updater function works as expected', () => {
-    const updater = jest.fn(oldData => `new data + ${oldData}`);
+    const updater = jest.fn(oldData => `new data + ${oldData}`)
 
     queryCache.setQueryData('updater', 'test data')
     queryCache.setQueryData('updater', updater)
