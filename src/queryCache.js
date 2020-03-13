@@ -62,6 +62,8 @@ export function makeQueryCache() {
     return Object.values(cache.queries).filter(predicate)
   }
 
+  cache.getQueries = findQueries
+
   cache.getQuery = queryKey => findQueries(queryKey, { exact: true })[0]
 
   cache.getQueryData = queryKey => cache.getQuery(queryKey)?.state.data
@@ -224,6 +226,9 @@ export function makeQueryCache() {
     }
 
     query.scheduleStaleTimeout = () => {
+      if (query.config.staleTime === Infinity) {
+        return
+      }
       query.staleTimeout = setTimeout(() => {
         if (query) {
           dispatch({ type: actionMarkStale })

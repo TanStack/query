@@ -172,6 +172,11 @@ This library is being built and maintained by me, @tannerlinsley and I am always
         </a>
       </td>
       <td align="center" valign="middle">
+        <a href="https://www.reactbricks.com/" target="_blank">
+          <img width='170' src="https://www.reactbricks.com/reactbricks_vertical.svg">
+        </a>
+      </td>
+      <td align="center" valign="middle">
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
           Become a Sponsor!
         </a>
@@ -275,6 +280,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.setQueryData`](#querycachesetquerydata)
   - [`queryCache.refetchQueries`](#querycacherefetchqueries)
   - [`queryCache.removeQueries`](#querycacheremovequeries)
+  - [`queryCache.getQueries`](#querycachegetqueries)
   - [`queryCache.getQuery`](#querycachegetquery)
   - [`queryCache.isFetching`](#querycacheisfetching)
   - [`queryCache.subscribe`](#querycachesubscribe)
@@ -2047,7 +2053,7 @@ const {
 ## `useMutation`
 
 ```js
-const [mutate, { status, data, error }] = useMutation(mutationFn, {
+const [mutate, { status, data, error, reset }] = useMutation(mutationFn, {
   onSuccess,
   onSettled,
   onError,
@@ -2068,9 +2074,6 @@ const promise = mutate(variables, {
 - `mutationFn: Function(variables) => Promise`
   - **Required**
   - A function that performs an asynchronous task and returns a promise.
-- `variables: any`
-  - Optional
-  - The variables object to pass to the `mutationFn`.
 - `onSuccess: Function(data) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
@@ -2092,21 +2095,12 @@ const promise = mutate(variables, {
 
 ### Returns
 
-- `mutate: Function(variables, { onSuccess, onSettled, onError, throwOnError, })`
+- `mutate: Function(variables, { onSuccess, onSettled, onError, throwOnError }) => Promise`
   - The mutation function you can call with variables to trigger the mutation and optionally override the original mutation options.
-- `status: String`
-  - Will be:
-    - `idle` initial status prior to the mutation function executing.
-    - `loading` if the mutation is currently executing.
-    - `error` if the last mutation attempt resulted in an error.
-    - `success' if the last mutation attempt was successful.
-- `data: undefined | Any`
-  - Defaults to `undefined`
-  - The last successfully resolved data for the query.
-- `error: null | Error`
-  - The error object for the query, if an error was encountered.
-- `promise: Promise`
-  - The promise that is returned by the `mutationFn`.
+  - `variables: any`
+    - Optional
+    - The variables object to pass to the `mutationFn`.
+  - Remaining options are overrides for the same options described above in the `useMutation` hook
 
 ## `queryCache`
 
@@ -2117,6 +2111,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`setQueryData`](#querycachesetquerydata)
 - [`refetchQueries`](#querycacherefetchqueries)
 - [`removeQueries`](#querycacheremovequeries)
+- [`getQueries`](#querycachegetqueries)
 - [`getQuery`](#querycachegetquery)
 - [`subscribe`](#querycachesubscribe)
 - [`isFetching`](#querycacheisfetching)
@@ -2296,8 +2291,30 @@ const query = queryCache.getQuery(queryKey)
 
 ### Returns
 
-- `query: QueryObect`
+- `query: QueryObject`
   - The query object from the cache
+
+## `queryCache.getQueries`
+
+`getQueries` is even more advanced synchronous function that can be used to get existing query objects from the cache that partially match query key. If queries do not exist, empty array will be returned.
+
+> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
+
+```js
+import { queryCache } from 'react-query'
+
+const queries = queryCache.getQueries(queryKey)
+```
+
+### Options
+
+- `queryKey: QueryKey`
+  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+
+### Returns
+
+- `queries: QueryObject[]`
+  - Query objects from the cache
 
 ## `queryCache.isFetching`
 
@@ -2308,7 +2325,6 @@ import { queryCache } from 'react-query'
 
 if (queryCache.isFetching) {
   console.log('At least one query is fetching!')
-  )
 }
 ```
 

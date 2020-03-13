@@ -609,11 +609,55 @@ describe('useQuery', () => {
     console.error.mockImplementation(() => {})
 
     function Page() {
-      const query = useQuery({})
+      useQuery({})
       return null
     }
     expect(() => render(<Page />)).toThrowError(/queryKey|queryFn/)
 
     console.error.mockRestore()
+  })
+
+  test('should schedule stale timeout by default', async () => {
+    function Page() {
+      const query = useQuery('test', () => 'fetched data')
+
+      return (
+        <div>
+          <div>{query.data}</div>
+          <div data-testid="isStale">{`${query.isStale}`}</div>
+          <div data-testid="staleTimeout">{`${query.query.staleTimeout}`}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('fetched data'))
+    expect(rendered.getByTestId('isStale').textContent).toBe('true')
+    expect(rendered.getByTestId('staleTimeout').textContent).not.toBe(
+      'undefined'
+    )
+  })
+
+  test('should not schedule stale timeout, if staleTime is set to `Infinity`', async () => {
+    function Page() {
+      const query = useQuery('test', () => 'fetched data', {
+        staleTime: Infinity,
+      })
+
+      return (
+        <div>
+          <div>{query.data}</div>
+          <div data-testid="isStale">{`${query.isStale}`}</div>
+          <div data-testid="staleTimeout">{`${query.query.staleTimeout}`}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('fetched data'))
+    expect(rendered.getByTestId('isStale').textContent).toBe('false')
+    expect(rendered.getByTestId('staleTimeout').textContent).toBe('undefined')
   })
 })
