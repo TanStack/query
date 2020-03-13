@@ -5154,10 +5154,10 @@ react-is@^16.8.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.11.0.tgz#b85dfecd48ad1ce469ff558a882ca8e8313928fa"
   integrity sha512-gbBVYR2p8mnriqAwWx9LbuUrShnAuSCNnuPGyc7GJrMVQtPDAh8iLpv7FRuMPFb56KkaVZIYSz1PrjI9q0QPCw==
 
-react-query@1.0.7:
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.7.tgz#ce73afc125b8857a3b9c7b6cf554cae94311ed18"
-  integrity sha512-m0of9P+vJofHWt2DJSObFKssvsXICOQJOdcjySjrxAS8q6uIH1i8pwgiGIr339iESsEz75fcQH2HZil6yBWEgg==
+react-query@latest:
+  version "1.0.26"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.26.tgz#0b3b00b180d9922c6db894854dac1f736e9ec710"
+  integrity sha512-jFasFjtnW+j87z3auZsAlZzP8+39lROtL+mez2vTC81pJjEhzsRYyZjX1We5Ni5C+QVzb5yzYA4RK+TyBS62wA==
 
 react@16.13.0:
   version "16.13.0"
