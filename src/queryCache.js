@@ -20,7 +20,6 @@ const actionMarkStale = {}
 const actionFetch = {}
 const actionSuccess = {}
 const actionError = {}
-const actionSetData = {}
 
 export function makeQueryCache() {
   const listeners = []
