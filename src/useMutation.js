@@ -10,6 +10,7 @@ import {
   statusError,
   useGetLatest,
   Console,
+  uid,
 } from './utils'
 
 const getDefaultState = () => ({
@@ -19,17 +20,14 @@ const getDefaultState = () => ({
 })
 
 const actionReset = {}
-const actionMutate = {}
+const actionLoading = {}
 const actionResolve = {}
 const actionReject = {}
 
 function mutationReducer(state, action) {
   if (action.type === actionReset) {
     return getDefaultState()
-  } else if (
-    [statusIdle, statusSuccess, statusError].includes(state.status) &&
-    action.type === actionMutate
-  ) {
+  } else if (action.type === actionLoading) {
     return {
       status: statusLoading,
     }
@@ -48,10 +46,7 @@ function mutationReducer(state, action) {
   }
 }
 
-export function useMutation(
-  mutationFn,
-  { refetchQueries, refetchQueriesOnFailure, ...config } = {}
-) {
+export function useMutation(mutationFn, config = {}) {
   const [state, dispatch] = React.useReducer(
     mutationReducer,
     null,
@@ -65,40 +60,45 @@ export function useMutation(
     ...config,
   })
 
-  const getStatus = useGetLatest(state.status)
+  const latestMutationRef = React.useRef()
 
   const mutate = React.useCallback(
     async (variables, options = {}) => {
-      if (![statusIdle, statusSuccess, statusError].includes(getStatus())) {
-        return
-      }
-
-      dispatch({ type: actionMutate })
-
       const resolvedOptions = {
         ...getConfig(),
         ...options,
       }
 
+      const mutationId = uid()
+      latestMutationRef.current = mutationId
+
+      dispatch({ type: actionLoading })
+
       try {
         const data = await getMutationFn()(variables)
         await resolvedOptions.onSuccess(data)
         await resolvedOptions.onSettled(data, null)
-        dispatch({ type: actionResolve, data })
+
+        if (latestMutationRef.current === mutationId) {
+          dispatch({ type: actionResolve, data })
+        }
 
         return data
       } catch (error) {
         Console.error(error)
         await resolvedOptions.onError(error)
         await resolvedOptions.onSettled(undefined, error)
-        dispatch({ type: actionReject, error })
+
+        if (latestMutationRef.current === mutationId) {
+          dispatch({ type: actionReject, error })
+        }
 
         if (resolvedOptions.throwOnError) {
           throw error
         }
       }
     },
-    [getConfig, getMutationFn, getStatus]
+    [getConfig, getMutationFn]
   )
 
   const reset = React.useCallback(() => dispatch({ type: actionReset }), [])

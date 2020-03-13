@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.27
+
+- Added the ability to use `staleTime: Infinity` for queries that should never go stale
+- Added the `queryCache.getQueries` function
+- `useMutation` can now allow multiple mutation requests at the same.
+
 ## 1.0.26
 
 - Fixed a regression issue where setting data would not work due to using the wrong updater variable
