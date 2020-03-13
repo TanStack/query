@@ -1,7 +1,13 @@
+import { usePaginatedQuery } from 'react-query'
+
 function Todos() {
   const [page, setPage] = React.useState(0)
 
-  const fetchProjects = (key, page = 0) => fetch('/api/projects?page=' + page)
+  const fetchProjects = async (key, page = 0) => {
+    const result = await fetch('/api/projects?page=' + page)
+    const json = await result.json()
+    return json
+  }
 
   const {
     status,
@@ -50,3 +56,5 @@ function Todos() {
     </div>
   )
 }
+
+export default Todos
