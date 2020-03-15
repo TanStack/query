@@ -516,13 +516,13 @@ Similar to above, you can also pass falsy items in you query key array:
 
 ```js
 // Only get the user when `email` is available
-const { data: user } = useQuery(['user', email], getUserByEmail)
+const { data: user } = useQuery(email && ['user', email], getUserByEmail)
 
 // Then get the user's projects
 const { data: projects } = useQuery(
   // `user && user.id` would be (falsy) at first,
   // so the query will not execute until the user exists
-  ['projects', user && user.id], // You could also do `user?.id` if you're using the latest babel!
+  user && user.id && ['projects', user.id], // You could also do `user?.id` if you're using the latest babel!
   getProjectsByUser
 )
 ```
