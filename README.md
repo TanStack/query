@@ -538,7 +538,7 @@ const { data: user } = useQuery(['user', { email }])
 // Then get the user's projects
 const { data: projects } = useQuery(
   // This will throw trying to access property `id` of `undefined` until the `user` is available
-  () => ['projects', { userId: user.id }]
+  () => ['projects', user.id]
 )
 ```
 
@@ -548,11 +548,11 @@ const { data: projects } = useQuery(
 const [ready, setReady] = React.useState(false)
 
 // Get the user when we are `ready`
-const { data: user } = useQuery(ready && ['user', { email }]) // Wait for ready to be truthy
+const { data: user } = useQuery(ready && email && ['user', email]) // Wait for ready to be truthy
 
 // Then get the user's projects
 const { data: projects } = useQuery(
-  () => ['projects', { userId: user.id }] // Wait for user.id to become available (and not throw)
+  () => ['projects', user.id] // Wait for user.id to become available (and not throw)
 ```
 
 ## Caching & Invalidation
