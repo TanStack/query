@@ -2,6 +2,7 @@
 
 ## 1.0.28
 
+- Removed deprecated `updateQuery` docs from README
 - Fixed an issue where inactive queries would also be refetched on window focus
 
 ## 1.0.27

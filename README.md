@@ -2138,7 +2138,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
   - If you want to force the query to prefetch again, you can pass the `force: true` option in the query config
 - If the query does not exist, it will be created and immediately be marked as stale. **If this created query is not utilized by a query hook in the `cacheTime` (defaults to 5 minutes), the query will be garbage collected**.
 
-> The difference between using `prefetchQuery` and `updateQuery` is that `prefetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
+> The difference between using `prefetchQuery` and `setQueryData` is that `prefetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
 ```js
 import { queryCache } from 'react-query'
@@ -2195,7 +2195,7 @@ const data = queryCache.getQueryData(queryKey)
 
 `setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created and immediately be marked as stale. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
 
-> The difference between using `setQueryData` and `updateQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `prefetchQuery` to handle the asynchronous fetch.
+> The difference between using `setQueryData` and `prefetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `prefetchQuery` to handle the asynchronous fetch.
 
 ```js
 import { queryCache } from 'react-query'
