@@ -2,6 +2,7 @@
 
 ## 1.0.28
 
+- Fixed an issue where the documentation displayed deprecated behavior for using falsey query key parts for dependant queries
 - Removed deprecated `updateQuery` docs from README
 - Fixed an issue where inactive queries would also be refetched on window focus
 

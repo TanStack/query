@@ -84,7 +84,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 - Automatic Cache Garbage Collection - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
 - No Default Data Fetcher Function - React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
-- Query Key Generation - React Query uses query key generation, query variables, and implicit query grouping. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ status: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query key "groups" when defining query refetching configs, eg. you can refetch every query that starts with a `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables, and even use functional filtering to select queries in most places. This architecture is much more robust and forgiving especially for larger apps.
+- Query Key Generation - React Query uses query key generation, query variables, and implicit query grouping. The query key and variables that are passed to a query are less URL-based by nature and much more flexible. Both the key (todos) and any variables ({ type: 'done' }) are used to compute the unique key for a query (and it's done in a very stable, deterministic way). This also allows you to use query key "groups" when defining query refetching configs, eg. you can refetch every query that starts with a `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables, and even use functional filtering to select queries in most places. This architecture is much more robust and forgiving especially for larger apps.
 - Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
 - Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
 - Overall API design opinions
@@ -239,6 +239,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Query Keys](#query-keys)
   - [Query Key Variables](#query-key-variables)
   - [Optional Variables](#optional-variables)
+  - [Using a Query Object instead of parameters](#using-a-query-object-instead-of-parameters)
   - [Dependent Queries](#dependent-queries)
   - [Caching & Invalidation](#caching--invalidation)
   - [Paginated Queries with `usePaginatedQuery`](#paginated-queries-with-usepaginatedquery)
@@ -280,8 +281,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.setQueryData`](#querycachesetquerydata)
   - [`queryCache.refetchQueries`](#querycacherefetchqueries)
   - [`queryCache.removeQueries`](#querycacheremovequeries)
-  - [`queryCache.getQueries`](#querycachegetqueries)
   - [`queryCache.getQuery`](#querycachegetquery)
+  - [`queryCache.getQueries`](#querycachegetqueries)
   - [`queryCache.isFetching`](#querycacheisfetching)
   - [`queryCache.subscribe`](#querycachesubscribe)
   - [`queryCache.clear`](#querycacheclear)
@@ -370,7 +371,7 @@ When a query needs more information to uniquely describe its data, you can use a
 
 ```js
 // A list of todos that are "done"
-useQuery(['todos', { status: 'done' }], ...) // queryKey === ['todos', { status: 'done' }]
+useQuery(['todos', { type: 'done' }], ...) // queryKey === ['todos', { type: 'done' }]
 
 // An individual todo
 useQuery(['todos', 5], ...) // queryKey === ['todos', 5]
@@ -499,30 +500,13 @@ If a query isn't ready to be requested yet, just pass a falsy value as the query
 
 ```js
 // Get the user
-const { data: user } = useQuery(['user', { email }], getUserByEmail)
+const { data: user } = useQuery(['user', email], getUserByEmail)
 
 // Then get the user's projects
 const { data: projects } = useQuery(
   // `user` would be `null` at first (falsy),
-  // so the query will not execute until the user exists
-  user && ['projects', { userId: user.id }],
-  getProjectsByUser
-)
-```
-
-### Pass a query key array with a falsy item
-
-Similar to above, you can also pass falsy items in you query key array:
-
-```js
-// Only get the user when `email` is available
-const { data: user } = useQuery(email && ['user', email], getUserByEmail)
-
-// Then get the user's projects
-const { data: projects } = useQuery(
-  // `user && user.id` would be (falsy) at first,
-  // so the query will not execute until the user exists
-  user && user.id && ['projects', user.id], // You could also do `user?.id` if you're using the latest babel!
+  // so the query will not execute while the query key is falsy
+  user && ['projects', user.id],
   getProjectsByUser
 )
 ```
@@ -533,26 +517,13 @@ If a function is passed, the query will not execute until the function can be ca
 
 ```js
 // Get the user
-const { data: user } = useQuery(['user', { email }])
+const { data: user } = useQuery(['user', email])
 
 // Then get the user's projects
 const { data: projects } = useQuery(
   // This will throw trying to access property `id` of `undefined` until the `user` is available
   () => ['projects', user.id]
 )
-```
-
-### Mix them together!
-
-```js
-const [ready, setReady] = React.useState(false)
-
-// Get the user when we are `ready`
-const { data: user } = useQuery(ready && email && ['user', email]) // Wait for ready to be truthy
-
-// Then get the user's projects
-const { data: projects } = useQuery(
-  () => ['projects', user.id] // Wait for user.id to become available (and not throw)
 ```
 
 ## Caching & Invalidation
@@ -828,13 +799,9 @@ You can configure retries both on a global level and an individual query level.
 import { useQuery } from 'react-query'
 
 // Make specific query retry a certain number of times
-const { status, data, error } = useQuery(
-  ['todos', { page: 1 }],
-  fetchTodoList,
-  {
-    retry: 10, // Will retry failed requests 10 times before displaying an error
-  }
-)
+const { status, data, error } = useQuery(['todos', 1], fetchTodoListPage, {
+  retry: 10, // Will retry failed requests 10 times before displaying an error
+})
 ```
 
 ## Retry Delay
@@ -1176,14 +1143,14 @@ You can even refetch queries with specific variables by passing a more specific 
 ```js
 const [mutate] = useMutation(addTodo, {
   onSuccess: () => {
-    queryCache.refetchQueries(['todos', { status: 'done' }])
+    queryCache.refetchQueries(['todos', { type: 'done' }])
   },
 })
 
 mutate(todo)
 
 // The query below will be refetched when the mutation above succeeds
-const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
+const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
 // However, the following query below will NOT be refetched
 const todoListQuery = useQuery('todos', fetchTodoList)
 ```
@@ -1202,7 +1169,7 @@ mutate(todo)
 // The query below will be refetched when the mutation above succeeds
 const todoListQuery = useQuery(['todos'], fetchTodoList)
 // However, the following query below will NOT be refetched
-const todoListQuery = useQuery(['todos', { status: 'done' }], fetchTodoList)
+const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
 ```
 
 If you find yourself wanting **even more** granularity, you can pass a predicate function to the `refetchQueries` method. This function will receive each query object from the queryCache and allow you to return `true` or `false` for whether you want to refetch that query:
@@ -1342,7 +1309,7 @@ queryCache.setQueryData(['todo', { id: 5 }], newTodo)
 // or functional update
 queryCache.setQueryData(['todo', { id: 5 }], previous => ({
   ...previous,
-  status: 'done',
+  type: 'done',
 }))
 ```
 
@@ -1642,7 +1609,7 @@ function Todo({ id }) {
 }
 
 refetchQuery(getTodos)
-refetchQuery([getTodos, { status: 'pending' }])
+refetchQuery([getTodos, { type: 'pending' }])
 refetchQuery([getTodo, { id: 5 }])
 ```
 
