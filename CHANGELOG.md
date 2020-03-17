@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.28
+
+- Fixed an issue where inactive queries would also be refetched on window focus
+
 ## 1.0.27
 
 - Added the ability to use `staleTime: Infinity` for queries that should never go stale

@@ -11,11 +11,16 @@ const onWindowFocus = () => {
   if (isDocumentVisible() && isOnline()) {
     queryCache
       .refetchQueries(query => {
+        if (!query.instances.length) {
+          return false
+        }
+
         if (query.shouldContinueRetryOnFocus) {
           // delete promise, so `fetch` will create new one
           delete query.promise
           return true
         }
+
         if (typeof query.config.refetchOnWindowFocus === 'undefined') {
           return refetchAllOnWindowFocus
         } else {
