@@ -11,6 +11,7 @@ import {
   useGetLatest,
   Console,
   uid,
+  useSafeDispatch,
 } from './utils'
 
 const getDefaultState = () => ({
@@ -47,11 +48,13 @@ function mutationReducer(state, action) {
 }
 
 export function useMutation(mutationFn, config = {}) {
-  const [state, dispatch] = React.useReducer(
+  const [state, unsafeDispatch] = React.useReducer(
     mutationReducer,
     null,
     getDefaultState
   )
+
+  const dispatch = useSafeDispatch(unsafeDispatch)
 
   const getMutationFn = useGetLatest(mutationFn)
 
@@ -98,10 +101,12 @@ export function useMutation(mutationFn, config = {}) {
         }
       }
     },
-    [getConfig, getMutationFn]
+    [dispatch, getConfig, getMutationFn]
   )
 
-  const reset = React.useCallback(() => dispatch({ type: actionReset }), [])
+  const reset = React.useCallback(() => dispatch({ type: actionReset }), [
+    dispatch,
+  ])
 
   React.useEffect(() => {
     if (getConfig().useErrorBoundary && state.error) {
