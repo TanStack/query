@@ -4,7 +4,13 @@ import React from 'react'
 
 import { queryCache } from './queryCache'
 import { useConfigContext } from './config'
-import { useUid, isDocumentVisible, Console, useGetLatest } from './utils'
+import {
+  useUid,
+  isDocumentVisible,
+  Console,
+  useGetLatest,
+  useMountedCallback,
+} from './utils'
 
 export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   const instanceId = useUid()
@@ -36,7 +42,10 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
 
   const query = queryRef.current
 
-  const [, rerender] = React.useState()
+  const [, unsafeRerender] = React.useState()
+
+  const rerender = useMountedCallback(unsafeRerender)
+
   const getLatestConfig = useGetLatest(config)
   const refetch = React.useCallback(
     async ({ throwOnError, ...rest } = {}) => {
@@ -76,7 +85,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     query.wasSuspensed = false
 
     return unsubscribeFromQuery
-  }, [getLatestConfig, instanceId, query, refetch])
+  }, [getLatestConfig, instanceId, query, refetch, rerender])
 
   // Handle refetch interval
   React.useEffect(() => {

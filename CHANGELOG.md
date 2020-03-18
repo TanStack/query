@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.29
+
+- Fixed an issue where dispatch was called on an unmounted component
+
 ## 1.0.28
 
 - Fixed an issue where the documentation displayed deprecated behavior for using falsey query key parts for dependant queries

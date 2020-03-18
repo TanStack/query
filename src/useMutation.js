@@ -11,7 +11,7 @@ import {
   useGetLatest,
   Console,
   uid,
-  useSafeDispatch,
+  useMountedCallback,
 } from './utils'
 
 const getDefaultState = () => ({
@@ -54,7 +54,7 @@ export function useMutation(mutationFn, config = {}) {
     getDefaultState
   )
 
-  const dispatch = useSafeDispatch(unsafeDispatch)
+  const dispatch = useMountedCallback(unsafeDispatch)
 
   const getMutationFn = useGetLatest(mutationFn)
 
