@@ -29,6 +29,14 @@ export function useInfiniteQuery(...args) {
   }
 
   const queryInfo = useBaseQuery(queryKey, queryVariables, queryFn, config)
+
+  if (typeof queryInfo.query.canFetchMore === 'undefined' && typeof queryInfo.data !== 'undefined') {
+    queryInfo.query.canFetchMore = getGetFetchMore()(
+      queryInfo.data[queryInfo.data.length - 1],
+      queryInfo.data
+    )
+  }
+
   queryInfoRef.current = queryInfo
 
   let {
@@ -36,13 +44,6 @@ export function useInfiniteQuery(...args) {
     data = [],
     query: { canFetchMore },
   } = queryInfo
-
-  if (typeof canFetchMore === 'undefined' && typeof queryInfo.data !== 'undefined') {
-    canFetchMore = getGetFetchMore()(
-      queryInfo.data[queryInfo.data.length - 1],
-      queryInfo.data
-    )
-  }
 
   // Here we seed the pageVariabes for the query
   if (!queryInfo.query.pageVariables) {

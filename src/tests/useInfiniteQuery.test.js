@@ -200,13 +200,9 @@ describe('useInfiniteQuery', () => {
 
     const rendered = render(<Page />)
 
-    rendered.getByText('Load More')
-
-    await waitForElement(() => [
-      rendered.getByText('Item: 19'),
-      rendered.getByText('Page 0: 0'),
-      rendered.getByText('Page 1: 0'),
-    ])
+    rendered.getByText('Item: 19')
+    rendered.getByText('Page 0: 0')
+    rendered.getByText('Page 1: 0')
 
     fireEvent.click(rendered.getByText('Load More'))
 
@@ -214,7 +210,7 @@ describe('useInfiniteQuery', () => {
 
     await waitForElement(() => [
       rendered.getByText('Item: 29'),
-      rendered.getByText('Page 2: 1'),
+      rendered.getByText('Page 2: 0'),
     ])
   })
 })
