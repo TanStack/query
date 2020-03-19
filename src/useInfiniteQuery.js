@@ -38,7 +38,7 @@ export function useInfiniteQuery(...args) {
   } = queryInfo
 
   if (typeof canFetchMore === 'undefined' && typeof queryInfo.data !== 'undefined') {
-    queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
+    canFetchMore = getGetFetchMore()(
       queryInfo.data[queryInfo.data.length - 1],
       queryInfo.data
     )
