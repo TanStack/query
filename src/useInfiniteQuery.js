@@ -37,13 +37,13 @@ export function useInfiniteQuery(...args) {
     query: { canFetchMore },
   } = queryInfo
 
-  if (config.initialData) {
-    canFetchMore = getGetFetchMore()(
-      config.initialData[config.initialData.length - 1],
-      config.initialData
+  if (typeof canFetchMore === 'undefined' && typeof queryInfo.data !== 'undefined') {
+    queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
+      queryInfo.data[queryInfo.data.length - 1],
+      queryInfo.data
     )
   }
-  
+
   // Here we seed the pageVariabes for the query
   if (!queryInfo.query.pageVariables) {
     queryInfo.query.pageVariables = [
