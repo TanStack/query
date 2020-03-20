@@ -72,6 +72,7 @@ export function makeQueryCache() {
     const foundQueries = findQueries(predicate, { exact })
 
     foundQueries.forEach(query => {
+      clearTimeout(query.staleTimeout)
       delete cache.queries[query.queryHash]
     })
 
@@ -230,9 +231,7 @@ export function makeQueryCache() {
         return
       }
       query.staleTimeout = setTimeout(() => {
-        if (query) {
-          dispatch({ type: actionMarkStale })
-        }
+        dispatch({ type: actionMarkStale })
       }, query.config.staleTime)
     }
 
