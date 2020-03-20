@@ -108,4 +108,15 @@ describe('queryCache', () => {
     const data = queries.map(query => query.state.data)
     expect(data).toEqual(['data1', 'data2'])
   })
+
+  test('stale timeout dispatch is not called if query is no longer in the query cache', async () => {
+    const queryKey = 'key'
+    const fetchData = () => Promise.resolve('data')
+    await queryCache.prefetchQuery(queryKey, fetchData)
+    const query = queryCache.getQuery(queryKey)
+    expect(query.state.isStale).toBe(false)
+    queryCache.removeQueries(queryKey)
+    await sleep(50)
+    expect(query.state.isStale).toBe(false)
+  })
 })
