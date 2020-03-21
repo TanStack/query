@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.0.32
+
+- Fixed an issue where a query dispatch was attempted on a removed query
+
+## 1.0.31
+
+- Fixed an issue where `queryCache.isFetching` would be one tick behind subscription listener updates
+
+## 1.0.30
+
+- Fixed an issue where a stale timeout could be called on a removed query
+
 ## 1.0.29
 
 - Fixed an issue where dispatch was called on an unmounted component
