@@ -231,7 +231,9 @@ export function makeQueryCache() {
         return
       }
       query.staleTimeout = setTimeout(() => {
-        dispatch({ type: actionMarkStale })
+        if (queryCache.getQuery(query.queryKey)) {
+          dispatch({ type: actionMarkStale })
+        }
       }, query.config.staleTime)
     }
 
