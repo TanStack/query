@@ -1,12 +1,17 @@
 # Changelog
 
+## 1.0.33
+
+- Fixed an issue where `queryCache.isFetching` would be one tick behind subscription listener updates
+- Fixed an issue where a query dispatch was attempted on a removed query
+
 ## 1.0.32
 
-- Fixed an issue where a query dispatch was attempted on a removed query
+- Nothing to see here
 
 ## 1.0.31
 
-- Fixed an issue where `queryCache.isFetching` would be one tick behind subscription listener updates
+- Nothing to see here
 
 ## 1.0.30
 
