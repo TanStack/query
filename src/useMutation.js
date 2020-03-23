@@ -79,8 +79,8 @@ export function useMutation(mutationFn, config = {}) {
 
       try {
         const data = await getMutationFn()(variables)
-        await resolvedOptions.onSuccess(data)
-        await resolvedOptions.onSettled(data, null)
+        await resolvedOptions.onSuccess(data, variables)
+        await resolvedOptions.onSettled(data, null, variables)
 
         if (latestMutationRef.current === mutationId) {
           dispatch({ type: actionResolve, data })
@@ -89,8 +89,8 @@ export function useMutation(mutationFn, config = {}) {
         return data
       } catch (error) {
         Console.error(error)
-        await resolvedOptions.onError(error)
-        await resolvedOptions.onSettled(undefined, error)
+        await resolvedOptions.onError(error, variables)
+        await resolvedOptions.onSettled(undefined, error, variables)
 
         if (latestMutationRef.current === mutationId) {
           dispatch({ type: actionReject, error })
