@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.34
+
+- Added the `variables` argument to `useMutations` `onSuccess`, `onError` and `onSettled` callbacks
+
 ## 1.0.33
 
 - Fixed an issue where `queryCache.isFetching` would be one tick behind subscription listener updates
