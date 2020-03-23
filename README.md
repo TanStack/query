@@ -1075,6 +1075,11 @@ Mutations without variables are not that useful, so let's add some variables to 
 To pass `variables` to your `mutate` function, call `mutate` with an object.
 
 ```js
+
+// Notice how the fetcher function receives an object containing
+// all possible variables
+const createTodo = ({title}) => { /* trigger an http request */ }
+
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
   const [mutate] = useMutation(createTodo)
@@ -1265,6 +1270,23 @@ mutate(
 // The query below will be updated with the response from the
 // successful mutation
 const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
+```
+
+
+You might want to tight the `onSuccess` logic into a reusable mutation, for that you can
+create a custom hook like this:
+
+```js
+
+const useMutateTodo = () => {
+  return useMutate(editTodo, {
+    // Notice the second argument is the variables object that the `mutate` function receives
+    onSuccess: (data, variables) => {
+      queryCache.setQueryData(['todo', { id: variables.id }], data)
+    },
+  })
+}
+
 ```
 
 ## Resetting Mutation State
@@ -2041,15 +2063,16 @@ const promise = mutate(variables, {
 - `mutationFn: Function(variables) => Promise`
   - **Required**
   - A function that performs an asynchronous task and returns a promise.
-- `onSuccess: Function(data) => Promise | undefined`
+  - `variables` is an object that `mutate` will pass to your `mutationFn`
+- `onSuccess: Function(data, variables) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onError: Function(err) => Promise | undefined`
+- `onError: Function(err, variables) => Promise | undefined`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: Function(data, error) => Promise | undefined`
+- `onSettled: Function(data, error, variables) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
