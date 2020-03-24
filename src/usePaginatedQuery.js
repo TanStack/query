@@ -3,7 +3,7 @@ import React from 'react'
 //
 
 import { useBaseQuery } from './useBaseQuery'
-import { getQueryArgs, statusError, statusLoading } from './utils'
+import { getQueryArgs, handleSuspense } from './utils'
 
 export function usePaginatedQuery(...args) {
   let [queryKey, queryVariables, queryFn, config = {}] = getQueryArgs(args)
@@ -35,15 +35,7 @@ export function usePaginatedQuery(...args) {
     status = 'success'
   }
 
-  if (query.config.suspense) {
-    if (query.status === statusError) {
-      throw query.error
-    }
-    if (query.status === statusLoading) {
-      query.wasSuspensed = true
-      throw query.refetch()
-    }
-  }
+  handleSuspense(query)
 
   return {
     ...query,

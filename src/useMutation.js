@@ -12,6 +12,7 @@ import {
   Console,
   uid,
   useMountedCallback,
+  noop,
 } from './utils'
 
 const getDefaultState = () => ({
@@ -66,11 +67,11 @@ export function useMutation(mutationFn, config = {}) {
   const latestMutationRef = React.useRef()
 
   const mutate = React.useCallback(
-    async (variables, options = {}) => {
-      const resolvedOptions = {
-        ...getConfig(),
-        ...options,
-      }
+    async (
+      variables,
+      { onSuccess = noop, onError = noop, onSettled = noop, throwOnError } = {}
+    ) => {
+      const config = getConfig()
 
       const mutationId = uid()
       latestMutationRef.current = mutationId
@@ -79,8 +80,10 @@ export function useMutation(mutationFn, config = {}) {
 
       try {
         const data = await getMutationFn()(variables)
-        await resolvedOptions.onSuccess(data, variables)
-        await resolvedOptions.onSettled(data, null, variables)
+        await onSuccess(data, variables)
+        await config.onSuccess(data, variables)
+        await onSettled(data, null, variables)
+        await config.onSettled(data, null, variables)
 
         if (latestMutationRef.current === mutationId) {
           dispatch({ type: actionResolve, data })
@@ -89,14 +92,16 @@ export function useMutation(mutationFn, config = {}) {
         return data
       } catch (error) {
         Console.error(error)
-        await resolvedOptions.onError(error, variables)
-        await resolvedOptions.onSettled(undefined, error, variables)
+        await onError(error, variables)
+        await config.onError(error, variables)
+        await onSettled(undefined, error, variables)
+        await config.onSettled(undefined, error, variables)
 
         if (latestMutationRef.current === mutationId) {
           dispatch({ type: actionReject, error })
         }
 
-        if (resolvedOptions.throwOnError) {
+        if (throwOnError ?? config.throwOnError) {
           throw error
         }
       }

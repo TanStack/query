@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.0.36
+
+- Fixed an issue where `useErrorBoundary` was only possible when suspense mode is turned on.
+- Fixed an issue where `throwOnError` would not override at the mutate level of `useMutation` if it was set at a higher level.
+
+## 1.0.35
+
+- Fixed an issue where `mutate`-level side effect handlers would override the hook-level handlers. Both will now fire and in the correct order as well.
+
 ## 1.0.34
 
 - Added the `variables` argument to `useMutations` `onSuccess`, `onError` and `onSettled` callbacks

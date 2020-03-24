@@ -1075,10 +1075,11 @@ Mutations without variables are not that useful, so let's add some variables to 
 To pass `variables` to your `mutate` function, call `mutate` with an object.
 
 ```js
-
 // Notice how the fetcher function receives an object containing
 // all possible variables
-const createTodo = ({title}) => { /* trigger an http request */ }
+const createTodo = ({ title }) => {
+  /* trigger an http request */
+}
 
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
@@ -1232,20 +1233,36 @@ const [mutate] = useMutation(addTodo, {
 mutate(todo)
 ```
 
-You might find that you want to override some of `useMutation`'s options at the time of calling `mutate`. To do that, you can optionally override them by sending them through as options to the `mutate` function after your mutation variable. Supported option overrides include:
+You might find that you want to **add on** to some of the `useMutation`'s options at the time of calling `mutate`. To do that, you can provide any of the same options to the `mutate` function after your mutation variable. Supported option overrides include:
 
-- `onSuccess`
-- `onSettled`
-- `onError`
+- `onSuccess` - Will be fired before the `useMutation`-level `onSuccess` handler
+- `onError` - Will be fired before the `useMutation`-level `onError` handler
+- `onSettled` - Will be fired before the `useMutation`-level `onSettled` handler
 - `throwOnError`
 
 ```js
-const [mutate] = useMutation(addTodo)
+const [mutate] = useMutation(addTodo, {
+  onSuccess: (data, mutationVariables) => {
+    // I will fire second
+  },
+  onSettled: (data, error, mutationVariables) => {
+    // I will fire second
+  },
+  onError: (error, mutationVariables) => {
+    // I will fire second
+  },
+})
 
 mutate(todo, {
-  onSuccess: () => {},
-  onSettled: () => {},
-  onError: () => {},
+  onSuccess: (data, mutationVariables) => {
+    // I will fire first!
+  },
+  onSettled: (data, error, mutationVariables) => {
+    // I will fire first!
+  },
+  onError: (error, mutationVariables) => {
+    // I will fire first!
+  },
   throwOnError: true,
 })
 ```
@@ -1255,29 +1272,24 @@ mutate(todo, {
 When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Cache's `setQueryData`](#querycachesetquerydata) method:
 
 ```js
-const [mutate] = useMutation(editTodo)
+const [mutate] = useMutation(editTodo, {
+  onSucess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
+})
 
-mutate(
-  {
-    id: 5,
-    name: 'Do the laundry',
-  },
-  {
-    onSuccess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
-  }
-)
+mutate({
+  id: 5,
+  name: 'Do the laundry',
+})
 
 // The query below will be updated with the response from the
 // successful mutation
 const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
-
 You might want to tight the `onSuccess` logic into a reusable mutation, for that you can
 create a custom hook like this:
 
 ```js
-
 const useMutateTodo = () => {
   return useMutate(editTodo, {
     // Notice the second argument is the variables object that the `mutate` function receives
@@ -1286,7 +1298,6 @@ const useMutateTodo = () => {
     },
   })
 }
-
 ```
 
 ## Resetting Mutation State
@@ -2067,14 +2078,17 @@ const promise = mutate(variables, {
 - `onSuccess: Function(data, variables) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
+  - Fires after the `mutate`-level `onSuccess` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `onError: Function(err, variables) => Promise | undefined`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
+  - Fires after the `mutate`-level `onError` handerl (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `onSettled: Function(data, error, variables) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+  - Fires after the `mutate`-level `onSettled` handerl (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `throwOnError`
   - Defaults to `false`
@@ -2090,7 +2104,8 @@ const promise = mutate(variables, {
   - `variables: any`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - Remaining options are overrides for the same options described above in the `useMutation` hook
+  - Remaining options extend the same options described above in the `useMutation` hook.
+  - Lifecycle callbacks defined here will fire **before** those of the same type defined in the `useMutation`-level options.
 - `status: String`
   - Will be:
     - `idle` initial status prior to the mutation function executing.

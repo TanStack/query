@@ -120,3 +120,18 @@ export function useMountedCallback(callback) {
     [callback]
   )
 }
+
+export function handleSuspense(query) {
+  if (query.config.suspense || query.config.useErrorBoundary) {
+    if (query.status === statusError) {
+      throw query.error
+    }
+  }
+
+  if (query.config.suspense) {
+    if (query.status === statusLoading) {
+      query.wasSuspensed = true
+      throw query.refetch()
+    }
+  }
+}
