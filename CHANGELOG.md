@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1
+
+- Fixed an issue where `useInfiniteQuery`'s `canFetchMore` variable could unexpectedly be `undefined` when using `initialData`
+
 ## 1.1.0
 
 - Added the `onMutate` callback function to `useMutation`. This callback can be used to perform optimistic updates and even supply a roll-back value to the `onError` and `onSettled` callbacks.
