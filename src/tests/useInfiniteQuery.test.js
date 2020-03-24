@@ -15,7 +15,7 @@ const initialItems = (page) => {
   return {
     items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
     nextId: page + 1,
-    ts: 0,
+    ts: page,
   }
 }
 
@@ -150,8 +150,6 @@ describe('useInfiniteQuery', () => {
         }
       )
 
-      expect(canFetchMore).not.toBeUndefined()
-
       return (
         <div>
           <h1>Pagination</h1>
@@ -202,7 +200,7 @@ describe('useInfiniteQuery', () => {
 
     rendered.getByText('Item: 19')
     rendered.getByText('Page 0: 0')
-    rendered.getByText('Page 1: 0')
+    rendered.getByText('Page 1: 1')
 
     fireEvent.click(rendered.getByText('Load More'))
 
@@ -211,6 +209,16 @@ describe('useInfiniteQuery', () => {
     await waitForElement(() => [
       rendered.getByText('Item: 29'),
       rendered.getByText('Page 2: 0'),
+    ])
+
+    fireEvent.click(rendered.getByText('Refetch'))
+
+    await waitForElement(() => rendered.getByText('Background Updating...'))
+    await waitForElement(() => [
+      rendered.getByText('Item: 29'),
+      rendered.getByText('Page 0: 1'),
+      rendered.getByText('Page 1: 2'),
+      rendered.getByText('Page 2: 3'),
     ])
   })
 })
