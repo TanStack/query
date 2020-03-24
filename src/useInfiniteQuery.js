@@ -29,6 +29,14 @@ export function useInfiniteQuery(...args) {
   }
 
   const queryInfo = useBaseQuery(queryKey, queryVariables, queryFn, config)
+
+  if (typeof queryInfo.query.canFetchMore === 'undefined' && typeof queryInfo.data !== 'undefined') {
+    queryInfo.query.canFetchMore = getGetFetchMore()(
+      queryInfo.data[queryInfo.data.length - 1],
+      queryInfo.data
+    )
+  }
+
   queryInfoRef.current = queryInfo
 
   let {
