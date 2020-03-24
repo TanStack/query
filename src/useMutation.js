@@ -78,7 +78,10 @@ export function useMutation(mutationFn, config = {}) {
 
       dispatch({ type: actionLoading })
 
+      let snapshotValue
+
       try {
+        snapshotValue = await config.onMutate(variables)
         const data = await getMutationFn()(variables)
         await onSuccess(data, variables)
         await config.onSuccess(data, variables)
@@ -92,10 +95,10 @@ export function useMutation(mutationFn, config = {}) {
         return data
       } catch (error) {
         Console.error(error)
-        await onError(error, variables)
-        await config.onError(error, variables)
-        await onSettled(undefined, error, variables)
-        await config.onSettled(undefined, error, variables)
+        await onError(error, variables, snapshotValue)
+        await config.onError(error, variables, snapshotValue)
+        await onSettled(undefined, error, variables, snapshotValue)
+        await config.onSettled(undefined, error, variables, snapshotValue)
 
         if (latestMutationRef.current === mutationId) {
           dispatch({ type: actionReject, error })

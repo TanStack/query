@@ -262,7 +262,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Invalidate and Refetch Queries from Mutations](#invalidate-and-refetch-queries-from-mutations)
   - [Query Updates from Mutations](#query-updates-from-mutations)
   - [Resetting Mutation State](#resetting-mutation-state)
-- [Manually or Optimistically Setting Query Data](#manually-or-optimistically-setting-query-data)
+  - [Manually or Optimistically Setting Query Data](#manually-or-optimistically-setting-query-data)
+  - [Automatic Rollback for Failed Mutations](#automatic-rollback-for-failed-mutations)
 - [Displaying Background Fetching Loading States](#displaying-background-fetching-loading-states)
 - [Displaying Global Background Fetching Loading State](#displaying-global-background-fetching-loading-state)
 - [Window-Focus Refetching](#window-focus-refetching)
@@ -1329,11 +1330,11 @@ const CreateTodo = () => {
 }
 ```
 
-# Manually or Optimistically Setting Query Data
+## Manually or Optimistically Setting Query Data
 
 In rare circumstances, you may want to manually update a query's response with a custom value. To do this, you can again use the [Query Cache's `setQueryData`](#querycachesetquerydata) method:
 
-> \*\*It's important to understand that when you manually or optimistically update a query's data value, the potential that you display out-of-sync data to your users is very high. It's recommended that you only do this if you plan to refetch the query very soon or perform a mutation to "commit" your manual changes (and also roll back your eager update if the refetch or mutation fails).
+> **It's important to understand** that when you manually or optimistically update a query's data value, the potential that you display out-of-sync data to your users is very high. It's recommended that you only do this if you plan to refetch the query very soon or perform a mutation to "commit" your manual changes (and also roll back your eager update if the refetch or mutation fails).
 
 ```js
 // Full replacement
@@ -1344,6 +1345,51 @@ queryCache.setQueryData(['todo', { id: 5 }], previous => ({
   ...previous,
   type: 'done',
 }))
+```
+
+## Automatic Rollback for Failed Mutations
+
+When you optimistically update your state before performing a mutation, there is a non-zero chance that the mutation will fail. In most cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to rollback your update.
+
+To do this, `useMutation`'s `onMutate` handler option allows you to return a snapshotted rollback value that will later be passed to both `onError` and `onSettled` handlers as the last argument:
+
+```js
+useMutation(updateTodo, {
+  // When mutate is called:
+  onMutate: (newTodo) => {
+    // Snapshot the previous value
+    const previousTodo = queryCache.getQueryData(['todos', newTodo.id])
+
+    // Optimistically update to the new value
+    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+
+    // Return the snapshotted value
+    return previousTodo
+  },
+  // If the mutation fails, use the value returned from onMutate to roll back
+  onError: (err, newTodo, previousTodo) => {
+    queryCache.setQueryData(['todos', newTodo.id], previousTodo)
+  }
+  // If the mutation was successful:
+  onSuccess: newTodo => {
+    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+  }
+})
+```
+
+You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
+
+```js
+useMutation(updateTodo, {
+  // ...
+  onSettled: (newTodo, error, variables, previousTodo) => {
+    if (error) {
+      queryCache.setQueryData(['todos', newTodo.id], previousTodo)
+    } else {
+      queryCache.setQueryData(['todos', newTodo.id], newTodo)
+    }
+  },
+})
 ```
 
 # Displaying Background Fetching Loading States
@@ -2054,9 +2100,10 @@ const {
 
 ```js
 const [mutate, { status, data, error, reset }] = useMutation(mutationFn, {
+  onMutate
   onSuccess,
-  onSettled,
   onError,
+  onSettled,
   throwOnError,
   useErrorBoundary,
 })
@@ -2075,17 +2122,22 @@ const promise = mutate(variables, {
   - **Required**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
+- `onMutate: Function(variables) => Promise | snapshotValue`
+  - Optional
+  - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
+  - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
+  - The value returned from this function will be passed to both the `onError` and `onSettled` functions and can be useful for rolling back optimistic updates in the event of a mutation failure.
 - `onSuccess: Function(data, variables) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
   - Fires after the `mutate`-level `onSuccess` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onError: Function(err, variables) => Promise | undefined`
+- `onError: Function(err, variables, onMutateValue) => Promise | undefined`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - Fires after the `mutate`-level `onError` handerl (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: Function(data, error, variables) => Promise | undefined`
+- `onSettled: Function(data, error, variables, onMutateValue) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - Fires after the `mutate`-level `onSettled` handerl (if it is defined)
@@ -2414,6 +2466,7 @@ const queryConfig = {
   throwOnError: false,
   refetchAllOnWindowFocus: true,
   queryKeySerializerFn: queryKey => [queryHash, queryFnArgs],
+  onMutate: () => {},
   onSuccess: () => {},
   onError: () => {},
   onSettled: () => {},

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0
+
+- Added the `onMutate` callback function to `useMutation`. This callback can be used to perform optimistic updates and even supply a roll-back value to the `onError` and `onSettled` callbacks.
+- Added the `snapshotValue` parameter (the returned value from `onMutate`) to both the `onError` and `onSettled` callbacks in the `useMutation` hook.
+
 ## 1.0.36
 
 - Fixed an issue where `useErrorBoundary` was only possible when suspense mode is turned on.
