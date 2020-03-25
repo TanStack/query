@@ -26,6 +26,9 @@
   "files": [
     "dist"
   ],
+  "dependencies": {
+    "@scarf/scarf": "^0.1.3"
+  },
   "peerDependencies": {
     "react": "^16.6.3"
   },
