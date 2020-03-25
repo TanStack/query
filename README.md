@@ -302,6 +302,8 @@ $ npm i --save react-query
 $ yarn add react-query
 ```
 
+React Query uses [Scarf](https://www.npmjs.com/package/@scarf/scarf) to collect anonymized installation analytics. These analytics help support the maintainers of this library. However, if you'd like to opt out, you can do so by setting `scarfSettings.enabled = false` in your project's `package.json`. Alternatively, you can set the environment variable `SCARF_ANALYTICS=false` before you install.
+
 # Queries
 
 To make a new query, call the `useQuery` hook with at least:
