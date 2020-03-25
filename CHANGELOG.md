@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3
+
+- Fix publishing issue
+
 ## 1.1.2
 
 - Added anonymous usage analytics to package via Scarf
