@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2
+
+- Added anonymous usage analytics to package via Scarf
+
 ## 1.1.1
 
 - Fixed an issue where `useInfiniteQuery`'s `canFetchMore` variable could unexpectedly be `undefined` when using `initialData`
