@@ -306,7 +306,7 @@ React Query uses [Scarf](https://www.npmjs.com/package/@scarf/scarf) to collect
 anonymized installation analytics. These anlytics help support the maintainers
 of this library. However, if you'd like to opt out, you can do so by setting
 `scarfSettings.enabled = false` in your project's `package.json`. Alternatively,
-you can the environment variable `SCARF_ANALYTICS=false` before you install.
+you can set the environment variable `SCARF_ANALYTICS=false` before you install.
 
 # Queries
 
