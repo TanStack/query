@@ -8,10 +8,7 @@ import {
   queryCache
 } from "react-query";
 
-import {
-  ReactQueryDevtools,
-  ReactQueryDevtoolsPanel
-} from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query-devtools";
 
 import "./styles.css";
 
@@ -121,7 +118,6 @@ function Root() {
       <br />
       <App />
       <br />
-      <ReactQueryDevtoolsPanel />
       <ReactQueryDevtools />
     </ReactQueryConfigProvider>
   );
