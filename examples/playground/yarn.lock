@@ -8158,17 +8158,17 @@ react-is@^16.6.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
   integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
 
-react-query-devtools@^1.0.2:
+react-query-devtools@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-1.0.2.tgz#30e3abdb13411af9e28b2a3d0abfea0f56714830"
   integrity sha512-eaJ+L8kRIx85+O1pefHLk3yaNtGVYlwwLtnIC3uq1OGaEmPUPvkZH+zTL27bubSwhCX3sUzooq20HPqZ4uj1BQ==
   dependencies:
     react-codemirror "^1.0.0"
 
-react-query@latest:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.10.tgz#439311ce6a159637f8243cf9669c3ad1e38e9987"
-  integrity sha512-51UQljqzd9/PrfFy6RQCWdK+MS8kZr/ncLSwWmlzVJQbRPOZlAXXETiapXAsp66FKjYVOHkpf0s4KdABMNRdZA==
+react-query@1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.12.tgz#b355d3e09d5a7844be193b6fddc9e7983c5caa87"
+  integrity sha512-ETLjgJ9E9HhyGNK+NCp0OEfcpf1Y/XRkd+LWX4qmwk9ky1IDbKjsww/VfLDZVwsA14Iq71VPa5moRzJPheqNYg==
 
 react-scripts@3.0.1:
   version "3.0.1"
