@@ -11,14 +11,10 @@ function App() {
   return (
     <>
       <p>
-        As you visit the posts below, you will notice them in a loading state
-        the first time you load them. However, after you return to this list and
-        click on any posts you have already visited again, you will see them
-        load instantly and background refresh right before your eyes!{" "}
-        <strong>
-          (You may need to throttle your network speed to simulate longer
-          loading sequences)
-        </strong>
+        This example is exactly the same as the basic example, but each query
+        has been refactored to be it's own custom hook. This design is the
+        suggested way to use React Query, as it makes it much easier to manage
+        query keys and shared query logic.
       </p>
       {postId > -1 ? (
         <Post postId={postId} setPostId={setPostId} />
