@@ -8,6 +8,6 @@ const getPostById = async (_, postId) => {
   return data;
 };
 
-export default function usePosts(postId) {
+export default function usePost(postId) {
   return useQuery(["post", postId], getPostById);
 }

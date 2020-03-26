@@ -60,7 +60,7 @@ function Posts({ setPostId }) {
 }
 
 function Post({ postId, setPostId }) {
-  const { status, data, error, isFetching } = usePost();
+  const { status, data, error, isFetching } = usePost(postId);
 
   return (
     <div>
