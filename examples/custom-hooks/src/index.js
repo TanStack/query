@@ -2,8 +2,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-import usePosts from ".hooks/usePosts";
-import usePost from ".hooks/usePost";
+import usePosts from "./hooks/usePosts";
+import usePost from "./hooks/usePost";
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
