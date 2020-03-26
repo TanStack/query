@@ -12,6 +12,16 @@ export default [
   {
     input: 'src/index.js',
     output: {
+      file: 'dist/react-query.mjs',
+      format: 'es',
+      sourcemap: true,
+    },
+    external,
+    plugins: [babel()],
+  },
+  {
+    input: 'src/index.js',
+    output: {
       file: 'dist/react-query.min.mjs',
       format: 'es',
       sourcemap: true,
