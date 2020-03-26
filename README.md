@@ -94,15 +94,15 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 ## Examples
 
-- Basic- [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic) [Source](./examples/basic)
-- Custom Hooks - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/custom-hooks) [Source](./examples/custom-hooks)
-- Auto Refetching / Polling / Realtime - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/auto-refetching) [Source](./examples/auto-refetching)
-- Window Refocus Refetching - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/focus-refetching) [Source](./examples/focus-refetching)
-- Optimistic Updates - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/optimistic-updates) [Source](./examples/optimistic-updates)
-- Pagination - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/pagination) [Source](./examples/pagination)
-- Load-More & Infinite Scroll - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/load-more-infinite-scroll) [Source](./examples/load-more-infinite-scroll)
-- Suspense - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) [Source](./examples/suspense)
-- Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) [Source](./examples/playground)
+- Basic - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic) - [Source](./examples/basic)
+- Custom Hooks - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/custom-hooks) - [Source](./examples/custom-hooks)
+- Auto Refetching / Polling / Realtime - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/auto-refetching) - [Source](./examples/auto-refetching)
+- Window Refocus Refetching - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/focus-refetching) - [Source](./examples/focus-refetching)
+- Optimistic Updates - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/optimistic-updates) - [Source](./examples/optimistic-updates)
+- Pagination - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/pagination) - [Source](./examples/pagination)
+- Load-More & Infinite Scroll - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/load-more-infinite-scroll) - [Source](./examples/load-more-infinite-scroll)
+- Suspense - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) - [Source](./examples/suspense)
+- Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) - [Source](./examples/playground)
 
 ## Sponsors
 
