@@ -1662,9 +1662,9 @@ acorn-walk@^6.0.1:
   integrity sha512-7evsyfH1cLOCdAzZAd43Cic04yKydNx0cF+7tiA19p1XnLLPU4dpCQOqpjqwokFe//vS0QqfqqjCS2JkiIs0cA==
 
 acorn@^5.5.3:
-  version "5.7.3"
-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.3.tgz#67aa231bf8812974b85235a96771eb6bd07ea279"
-  integrity sha512-T/zvzYRfbVojPWahDsE5evJdHb3oJoQfFbsrKM7w5Zcs++Tr257tia3BmMP8XYVjp1S9RZXQMh7gao96BlqZOw==
+  version "5.7.4"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-5.7.4.tgz#3e8d8a9947d0599a1796d10225d7432f4a4acf5e"
+  integrity sha512-1D++VG7BhrtvQpNbBzovKNc1FLGGEE/oGe7b9xJm/RFHMBeUaUGpluV9RLjZa47YFdPcDAenEYuq9pQPcMdLJg==
 
 acorn@^6.0.1, acorn@^6.0.4, acorn@^6.0.5, acorn@^6.0.7:
   version "6.4.0"
@@ -8158,17 +8158,17 @@ react-is@^16.6.0, react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.0.tgz#0f37c3613c34fe6b37cd7f763a0d6293ab15c527"
   integrity sha512-GFMtL0vHkiBv9HluwNZTggSn/sCyEt9n02aM0dSAjGGyqyNlAyftYm4phPxdvCigG15JreC5biwxCgTAJZ7yAA==
 
-react-query-devtools@^1.0.2:
+react-query-devtools@1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-1.0.2.tgz#30e3abdb13411af9e28b2a3d0abfea0f56714830"
   integrity sha512-eaJ+L8kRIx85+O1pefHLk3yaNtGVYlwwLtnIC3uq1OGaEmPUPvkZH+zTL27bubSwhCX3sUzooq20HPqZ4uj1BQ==
   dependencies:
     react-codemirror "^1.0.0"
 
-react-query@latest:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.10.tgz#439311ce6a159637f8243cf9669c3ad1e38e9987"
-  integrity sha512-51UQljqzd9/PrfFy6RQCWdK+MS8kZr/ncLSwWmlzVJQbRPOZlAXXETiapXAsp66FKjYVOHkpf0s4KdABMNRdZA==
+react-query@1.0.12:
+  version "1.0.12"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.12.tgz#b355d3e09d5a7844be193b6fddc9e7983c5caa87"
+  integrity sha512-ETLjgJ9E9HhyGNK+NCp0OEfcpf1Y/XRkd+LWX4qmwk9ky1IDbKjsww/VfLDZVwsA14Iq71VPa5moRzJPheqNYg==
 
 react-scripts@3.0.1:
   version "3.0.1"
