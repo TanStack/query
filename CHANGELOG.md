@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4
+
+- Fixed an issue where fetchMore would fire, even if canFetchMore is falsy
+
 ## 1.1.3
 
 - Fix publishing issue
