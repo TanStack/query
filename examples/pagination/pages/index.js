@@ -1,12 +1,13 @@
+import React from 'react'
+import axios from 'axios'
 import { usePaginatedQuery } from 'react-query'
 
 function Todos() {
   const [page, setPage] = React.useState(0)
 
   const fetchProjects = async (key, page = 0) => {
-    const result = await fetch('/api/projects?page=' + page)
-    const json = await result.json()
-    return json
+    const { data } = await axios.get('/api/projects?page=' + page)
+    return data
   }
 
   const {
@@ -19,6 +20,14 @@ function Todos() {
 
   return (
     <div>
+      <p>
+        In this example, each page of data remains visible as the next page is
+        fetched. The buttons and capability to proceed to the next page are also
+        supressed until the next page cursor is known. Each page is cached as a
+        normal query too, so when going to previous pages, you'll see them
+        instantaneously while they are also refetched invisibly in the
+        background.
+      </p>
       {status === 'loading' ? (
         <div>Loading...</div>
       ) : status === 'error' ? (

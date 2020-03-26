@@ -1,8 +1,12 @@
 import React from 'react'
-import fetch from '../libs/fetch'
 import Link from 'next/link'
+import axios from 'axios'
 
 import { useInfiniteQuery } from 'react-query'
+
+//
+
+import useIntersectionObserver from '../hooks/useIntersectionObserver'
 
 export default () => {
   const {
@@ -15,11 +19,21 @@ export default () => {
     canFetchMore,
   } = useInfiniteQuery(
     'projects',
-    (key, nextId = 0) => fetch('/api/projects?cursor=' + nextId),
+    async (key, nextId = 0) => {
+      const { data } = await axios.get('/api/projects?cursor=' + nextId)
+      return data
+    },
     {
-      getFetchMore: (lastGroup, allGroups) => lastGroup.nextId,
+      getFetchMore: lastGroup => lastGroup.nextId,
     }
   )
+
+  const loadMoreButtonRef = React.useRef()
+
+  useIntersectionObserver({
+    target: loadMoreButtonRef,
+    onIntersect: () => fetchMore(),
+  })
 
   return (
     <div>
@@ -48,6 +62,7 @@ export default () => {
           ))}
           <div>
             <button
+              ref={loadMoreButtonRef}
               onClick={() => fetchMore()}
               disabled={!canFetchMore || isFetchingMore}
             >

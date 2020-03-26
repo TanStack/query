@@ -1,17 +1,20 @@
 import React from 'react'
+import axios from 'axios'
 import { useQuery, queryCache } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
 const getCharacters = async () => {
-  const r = await fetch('https://rickandmortyapi.com/api/character/')
-  return r.json()
+  await new Promise(r => setTimeout(r, 500))
+  const { data } = await axios.get('https://rickandmortyapi.com/api/character/')
+  return data
 }
 
 const getCharacter = async (key, selectedChar) => {
-  const r = await fetch(
+  await new Promise(r => setTimeout(r, 500))
+  const { data } = await axios.get(
     `https://rickandmortyapi.com/api/character/${selectedChar}`
   )
-  return r.json()
+  return data
 }
 
 export default function App() {
@@ -37,16 +40,12 @@ export default function App() {
   return (
     <div className="App">
       <p>
-        When selecting a character (ex: 12) it should prefetch characters 11 and
-        13 and load character 12. When selecting the next character (13),
-        characters 12, 13, 14 refetch when they should be cached with a
-        staleTime of 5 minutes
+        When selecting a character (eg. 12) it will also prefetch the sibling
+        characters, too (eg. 11 and 13). When selecting one of the siblings
+        after that (eg. 13), it will be displayed immediately and also refetched
+        in the background.
       </p>
-      <p>
-        Note: In real feature, I don't have data already available. Selecting an
-        object would fire off two other API requests to show different data than
-        the first request
-      </p>
+      <h2>Characters</h2>
       <ul>
         {data?.results.map(char => (
           <li
@@ -56,11 +55,16 @@ export default function App() {
               prefetchNext(char.id)
             }}
           >
-            {char.id} - {char.name}
+            <div>
+              {char.id} - {char.name}
+            </div>
           </li>
         ))}
       </ul>
-      <p>{selectedData?.name}</p>
+      <h3>Selected Character</h3>
+      <p>
+        {selectedData?.name} ({selectedData?.status})
+      </p>
       <ReactQueryDevtools />
     </div>
   )

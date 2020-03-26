@@ -1,16 +1,24 @@
 import React from 'react'
-import Button from '../components/button'
-import fetch from '../libs/fetch'
+import axios from 'axios'
+
+//
 
 import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
   const [value, setValue] = React.useState('')
 
-  const { status, data, error } = useQuery('todos', () => fetch('/api/data'), {
-    // Refetch the data every second
-    refetchInterval: 1000,
-  })
+  const { status, data, error } = useQuery(
+    'todos',
+    async () => {
+      const { data } = await axios.get('/api/data')
+      return data
+    },
+    {
+      // Refetch the data every second
+      refetchInterval: 1000,
+    }
+  )
 
   const [mutateAddTodo] = useMutation(
     value => fetch(`/api/data?add=${value}`),
@@ -29,6 +37,11 @@ export default () => {
   return (
     <div>
       <h1>Auto Refetch with stale-time set to 1s)</h1>
+      <p>
+        This example is best experienced on your own machine, where you can open
+        multiple tabs to the same localhost server and see your changes
+        propagate between the two.
+      </p>
       <h2>Todo List</h2>
       <form
         onSubmit={async ev => {
@@ -50,7 +63,9 @@ export default () => {
           <li key={item}>{item}</li>
         ))}
       </ul>
-      <Button onClick={mutateClear}>Clear All</Button>
+      <div>
+        <button onClick={mutateClear}>Clear All</button>
+      </div>
     </div>
   )
 }

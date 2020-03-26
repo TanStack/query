@@ -1,48 +1,58 @@
 import React from 'react'
-import fetch from '../libs/fetch'
+import axios from 'axios'
 
 import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
   const [text, setText] = React.useState('')
-  const { data, isLoading, isFetching } = useQuery('todos', () =>
-    fetch('/api/data')
-  )
+  const { status, data, error, isFetching } = useQuery('todos', async () => {
+    const { data } = await axios.get('/api/data')
+    return data
+  })
 
   const [mutatePostTodo] = useMutation(
-    text =>
-      fetch('/api/data', {
-        method: 'POST',
-        body: JSON.stringify({ text }),
-      }),
+    text => axios.post('/api/data', { text }),
     {
-      // to revalidate the data and ensure the UI doesn't
-      // remain in an incorrect state, ALWAYS trigger a
-      // a refetch of the data, even on failure
+      // Optimistically update the cache value on mutate, but store
+      // the old value and return it so that it's accessible in case of
+      // an error
+      onMutate: text => {
+        const previousValue = queryCache.getQueryData('todos')
+
+        queryCache.setQueryData('todos', old => ({
+          ...old,
+          items: [...old.items, text],
+        }))
+
+        return previousValue
+      },
+      // On failure, roll back to the previous value
+      onError: (err, variables, previousValue) =>
+        queryCache.setQueryData('todos', previousValue),
+      onSuccess: () => {
+        setText('')
+      },
+      // After success or failure, refetch the todos query
       onSettled: () => queryCache.refetchQueries('todos'),
     }
   )
 
-  async function handleSubmit(event) {
-    event.preventDefault()
-    // mutate current data to optimistically update the UI
-    // the fetch below could fail, so we need to revalidate
-    // regardless
-
-    queryCache.setQueryData('todos', [...data, text])
-
-    try {
-      // send text to the API
-      await mutatePostTodo(text)
-      setText('')
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
   return (
     <div>
-      <form onSubmit={handleSubmit}>
+      <p>
+        In this example, new items can be created using a mutation. The new item
+        will be optimistically added to the list in hopes that the server
+        accepts the item. If it does, the list is refetched with the true items
+        from the list. Every now and then, the mutation may fail though. When
+        that happens, the previous list of items is restored and the list is
+        again refetched from the server.
+      </p>
+      <form
+        onSubmit={e => {
+          e.preventDefault()
+          mutatePostTodo(text)
+        }}
+      >
         <input
           type="text"
           onChange={event => setText(event.target.value)}
@@ -50,16 +60,22 @@ export default () => {
         />
         <button>Create</button>
       </form>
-      <ul>
-        {isLoading ? (
-          'Loading...'
-        ) : (
-          <>
-            {data ? data.map(datum => <li key={datum}>{datum}</li>) : null}
-            <div>{isFetching ? 'Updating in background...' : ' '}</div>
-          </>
-        )}
-      </ul>
+      <br />
+      {status === 'loading' ? (
+        'Loading...'
+      ) : status === 'error' ? (
+        error.message
+      ) : (
+        <>
+          <div>Updated At: {new Date(data.ts).toLocaleTimeString()}</div>
+          <ul>
+            {data.items.map(datum => (
+              <li key={datum}>{datum}</li>
+            ))}
+          </ul>
+          <div>{isFetching ? 'Updating in background...' : ' '}</div>
+        </>
+      )}
     </div>
   )
 }
