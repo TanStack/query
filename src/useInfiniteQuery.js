@@ -30,7 +30,10 @@ export function useInfiniteQuery(...args) {
 
   const queryInfo = useBaseQuery(queryKey, queryVariables, queryFn, config)
 
-  if (typeof queryInfo.query.canFetchMore === 'undefined' && typeof queryInfo.data !== 'undefined') {
+  if (
+    typeof queryInfo.query.canFetchMore === 'undefined' &&
+    typeof queryInfo.data !== 'undefined'
+  ) {
     queryInfo.query.canFetchMore = getGetFetchMore()(
       queryInfo.data[queryInfo.data.length - 1],
       queryInfo.data
@@ -54,27 +57,29 @@ export function useInfiniteQuery(...args) {
 
   const fetchMore = React.useCallback(
     (fetchMoreInfo = queryInfoRef.current.query.canFetchMore) =>
-      refetch({
-        force: true,
-        __queryFn: async (...args) => {
-          try {
-            queryInfoRef.current.query.isFetchingMore = true
-            const newArgs = [...args, fetchMoreInfo]
-            queryInfoRef.current.query.pageVariables.push(newArgs)
-            const data = [
-              ...queryInfoRef.current.data,
-              await originalQueryFn(...newArgs),
-            ]
-            queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
-              data[data.length - 1],
-              data
-            )
-            return data
-          } finally {
-            queryInfoRef.current.query.isFetchingMore = false
-          }
-        },
-      }),
+      queryInfoRef.current.query.canFetchMore
+        ? refetch({
+            force: true,
+            __queryFn: async (...args) => {
+              try {
+                queryInfoRef.current.query.isFetchingMore = true
+                const newArgs = [...args, fetchMoreInfo]
+                queryInfoRef.current.query.pageVariables.push(newArgs)
+                const data = [
+                  ...queryInfoRef.current.data,
+                  await originalQueryFn(...newArgs),
+                ]
+                queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
+                  data[data.length - 1],
+                  data
+                )
+                return data
+              } finally {
+                queryInfoRef.current.query.isFetchingMore = false
+              }
+            },
+          })
+        : void 0,
     [getGetFetchMore, originalQueryFn, refetch]
   )
 
