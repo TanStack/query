@@ -94,15 +94,15 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 ## Examples
 
-- [Basic](./examples/basic)
-- [Custom Hooks](./examples/custom-hooks)
-- [Auto Refetching / Polling / Realtime](./examples/auto-refetching)
-- [Window Refocus Refetching](./examples/focus-refetching)
-- [Optimistic Updates](./examples/optimistic-updates)
-- [Pagination](./examples/pagination)
-- [Load-More & Infinite Scroll](./examples/load-more-infinite-scroll)
-- [Suspense CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense)
-- [Playground CodeSandbox (with devtools)](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
+- [Basic](./examples/basic) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic))
+- [Custom Hooks](./examples/custom-hooks) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/custom-hooks))
+- [Auto Refetching / Polling / Realtime](./examples/auto-refetching) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/auto-refetching))
+- [Window Refocus Refetching](./examples/focus-refetching) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/focus-refetching))
+- [Optimistic Updates](./examples/optimistic-updates) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/optimistic-updates))
+- [Pagination](./examples/pagination) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/pagination))
+- [Load-More & Infinite Scroll](./examples/load-more-infinite-scroll) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/load-more-infinite-scroll))
+- [Suspense CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense))
+- [Playground CodeSandbox (with devtools)](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox) ([CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox))
 
 ## Sponsors
 
