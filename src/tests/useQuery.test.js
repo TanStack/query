@@ -259,7 +259,7 @@ describe('useQuery', () => {
     function Page() {
       const { status, failureCount } = useQuery('test', queryFn, {
         retryDelay: 1,
-        retryChecker: error => error !== 'NoRetry',
+        retry: (failureCount, error) => error !== 'NoRetry',
       })
 
       return (

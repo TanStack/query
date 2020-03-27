@@ -792,14 +792,14 @@ function Todos() {
 
 ## Retries
 
-When a `useQuery` query fails (the function throws an error), React Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`) and the retryChecker function returns true (defaults to `(error) => true`).
+When a `useQuery` query fails (the function throws an error), React Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`) or a function is provided to determine if a retry is allowed.
 
 You can configure retries both on a global level and an individual query level.
 
 - Setting `retry = false` will disable retries.
 - Setting `retry = 6` will retry failing requests 6 times before showing the final error thrown by the function.
 - Setting `retry = true` will infinitely retry failing requests.
-- Setting `retryChecker = (error) => ...` allows to stop retries based on error type (e.g. many HTTP 4XX errors shouldn't be retried)
+- Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed.
 
 ```js
 import { useQuery } from 'react-query'
@@ -807,15 +807,6 @@ import { useQuery } from 'react-query'
 // Make specific query retry a certain number of times
 const { status, data, error } = useQuery(['todos', 1], fetchTodoListPage, {
   retry: 10, // Will retry failed requests 10 times before displaying an error
-})
-```
-
-```js
-import { useQuery } from 'react-query'
-
-// Make specific query no retry if the error thrown is NoRetry
-const { status, data, error } = useQuery(['todos', 1], fetchTodoListPage, {
-  retryChecker: error => error !== 'NoRetry',
 })
 ```
 
