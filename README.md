@@ -1278,7 +1278,7 @@ When dealing with mutations that **update** objects on the server, it's common f
 
 ```js
 const [mutate] = useMutation(editTodo, {
-  onSucess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
+  onSuccess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
 })
 
 mutate({
