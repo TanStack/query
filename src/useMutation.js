@@ -29,23 +29,25 @@ const actionReject = {}
 function mutationReducer(state, action) {
   if (action.type === actionReset) {
     return getDefaultState()
-  } else if (action.type === actionLoading) {
+  }
+  if (action.type === actionLoading) {
     return {
       status: statusLoading,
     }
-  } else if (state.status === statusLoading && action.type === actionResolve) {
+  }
+  if (action.type === actionResolve) {
     return {
       status: statusSuccess,
       data: action.data,
     }
-  } else if (state.status === statusLoading && action.type === actionReject) {
+  }
+  if (action.type === actionReject) {
     return {
       status: statusError,
       error: action.error,
     }
-  } else {
-    throw new Error()
   }
+  throw new Error()
 }
 
 export function useMutation(mutationFn, config = {}) {
@@ -76,36 +78,66 @@ export function useMutation(mutationFn, config = {}) {
       const mutationId = uid()
       latestMutationRef.current = mutationId
 
+      const isLatest = async () => latestMutationRef.current === mutationId
+
       dispatch({ type: actionLoading })
 
       let snapshotValue
 
       try {
         snapshotValue = await config.onMutate(variables)
-        const data = await getMutationFn()(variables)
-        await onSuccess(data, variables)
-        await config.onSuccess(data, variables)
-        await onSettled(data, null, variables)
-        await config.onSettled(data, null, variables)
 
-        if (latestMutationRef.current === mutationId) {
+        let data
+
+        if (isLatest()) {
+          data = await getMutationFn()(variables)
+        }
+
+        if (isLatest()) {
+          await onSuccess(data, variables)
+        }
+
+        if (isLatest()) {
+          await config.onSuccess(data, variables)
+        }
+
+        if (isLatest()) {
+          await onSettled(data, null, variables)
+        }
+
+        if (isLatest()) {
+          await config.onSettled(data, null, variables)
+        }
+
+        if (isLatest()) {
           dispatch({ type: actionResolve, data })
         }
 
         return data
       } catch (error) {
-        Console.error(error)
-        await onError(error, variables, snapshotValue)
-        await config.onError(error, variables, snapshotValue)
-        await onSettled(undefined, error, variables, snapshotValue)
-        await config.onSettled(undefined, error, variables, snapshotValue)
-
-        if (latestMutationRef.current === mutationId) {
-          dispatch({ type: actionReject, error })
+        if (isLatest()) {
+          Console.error(error)
+          await onError(error, variables, snapshotValue)
         }
 
-        if (throwOnError ?? config.throwOnError) {
-          throw error
+        if (isLatest()) {
+          await config.onError(error, variables, snapshotValue)
+        }
+
+        if (isLatest()) {
+          await onSettled(undefined, error, variables, snapshotValue)
+        }
+
+        if (isLatest()) {
+          await config.onSettled(undefined, error, variables, snapshotValue)
+        }
+
+        if (isLatest()) {
+          dispatch({ type: actionReject, error })
+
+          if (throwOnError ?? config.throwOnError) {
+            throw error
+          }
         }
       }
     },

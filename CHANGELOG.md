@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5
+
+- Fixed an issue where multiple mutation attempts would still run side effects for the expired mutation attempts
+
 ## 1.1.4
 
 - Fixed an issue where fetchMore would fire, even if canFetchMore is falsy
