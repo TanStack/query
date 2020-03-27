@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.6
+
+- Fixed an issue where a race condition could exist when using useMutation rapidly
+
 ## 1.1.5
 
 - Fixed an issue where multiple mutation attempts would still run side effects for the expired mutation attempts
