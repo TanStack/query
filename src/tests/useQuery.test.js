@@ -198,7 +198,7 @@ describe('useQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     function Page() {
-      const { status } = useQuery(
+      const { status, error } = useQuery(
         'test',
         () => {
           return Promise.reject('Error test')
@@ -209,6 +209,7 @@ describe('useQuery', () => {
       return (
         <div>
           <h1>{status}</h1>
+          <h2>{error}</h2>
         </div>
       )
     }
@@ -216,6 +217,7 @@ describe('useQuery', () => {
     const rendered = render(<Page />)
 
     await waitForElement(() => rendered.getByText('error'))
+    await waitForElement(() => rendered.getByText('Error test'))
   })
 
   it('should retry specified number of times', async () => {
@@ -249,15 +251,19 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
-  it('should not retry if retryChecker returns `false`', async () => {
+  it('should not retry if retry function `false`', async () => {
     const queryFn = jest.fn()
+
+    queryFn.mockImplementationOnce(() => {
+      return Promise.reject('Error test')
+    })
 
     queryFn.mockImplementation(() => {
       return Promise.reject('NoRetry')
     })
 
     function Page() {
-      const { status, failureCount } = useQuery('test', queryFn, {
+      const { status, failureCount, error } = useQuery('test', queryFn, {
         retryDelay: 1,
         retry: (failureCount, error) => error !== 'NoRetry',
       })
@@ -266,6 +272,7 @@ describe('useQuery', () => {
         <div>
           <h1>{status}</h1>
           <h2>Failed {failureCount} times</h2>
+          <h2>{error}</h2>
         </div>
       )
     }
@@ -275,9 +282,10 @@ describe('useQuery', () => {
     await waitForElement(() => rendered.getByText('loading'))
     await waitForElement(() => rendered.getByText('error'))
 
-    await waitForElement(() => rendered.getByText('Failed 1 times'))
+    await waitForElement(() => rendered.getByText('Failed 2 times'))
+    await waitForElement(() => rendered.getByText('NoRetry'))
 
-    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
   it('should garbage collect queries without data immediately', async () => {

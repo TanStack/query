@@ -314,9 +314,10 @@ export function makeQueryCache() {
         // Do we need to retry the request?
         if (
           query.config.retry === true ||
-          (typeof query.config.retry == 'number' &&
+          (typeof query.config.retry === 'number' &&
             query.state.failureCount <= query.config.retry) ||
-          query.config.retry(query.state.failureCount, error)
+          (typeof query.config.retry === 'function' &&
+            query.config.retry(query.state.failureCount, error))
         ) {
           // Only retry if the document is visible
           if (!isDocumentVisible()) {
