@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.7
+
+- Add unminified esm build
+
 ## 1.1.6
 
 - Fixed an issue where a race condition could exist when using useMutation rapidly
