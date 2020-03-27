@@ -249,6 +249,37 @@ describe('useQuery', () => {
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
 
+  it('should not retry if retryChecker returns `false`', async () => {
+    const queryFn = jest.fn()
+
+    queryFn.mockImplementation(() => {
+      return Promise.reject('NoRetry')
+    })
+
+    function Page() {
+      const { status, failureCount } = useQuery('test', queryFn, {
+        retryDelay: 1,
+        retryChecker: error => error !== 'NoRetry',
+      })
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>Failed {failureCount} times</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('loading'))
+    await waitForElement(() => rendered.getByText('error'))
+
+    await waitForElement(() => rendered.getByText('Failed 1 times'))
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
   it('should garbage collect queries without data immediately', async () => {
     function Page() {
       const [filter, setFilter] = React.useState('')
