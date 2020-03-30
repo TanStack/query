@@ -1769,7 +1769,7 @@ const queryInfo = useQuery({
 - `manual: Boolean`
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-- `retry: Boolean | Int`
+- `retry: Boolean | Int | Function(failureCount, error) => shouldRetry | Boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to an `Int`, e.g. `3`, failed queries will retry until the failed query count meets that number.
@@ -1891,7 +1891,7 @@ const {
 - `manual: Boolean`
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-- `retry: Boolean | Int`
+- `retry: Boolean | Int | Function(failureCount, error) => shouldRetry | Boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to an `Int`, e.g. `3`, failed queries will retry until the failed query count meets that number.
@@ -2024,7 +2024,7 @@ const {
 - `manual: Boolean`
   - Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
   - To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-- `retry: Boolean | Int`
+- `retry: Boolean | Int | Function(failureCount, error) => shouldRetry | Boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to an `Int`, e.g. `3`, failed queries will retry until the failed query count meets that number.
