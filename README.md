@@ -235,6 +235,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
 - [Queries](#queries)
   - [Query Keys](#query-keys)
@@ -264,7 +265,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Query Updates from Mutations](#query-updates-from-mutations)
   - [Resetting Mutation State](#resetting-mutation-state)
   - [Manually or Optimistically Setting Query Data](#manually-or-optimistically-setting-query-data)
-  - [Automatic Rollback for Failed Mutations](#automatic-rollback-for-failed-mutations)
+  - [Optimistic Updates with Automatic Rollback for Failed Mutations](#optimistic-updates-with-automatic-rollback-for-failed-mutations)
 - [Displaying Background Fetching Loading States](#displaying-background-fetching-loading-states)
 - [Displaying Global Background Fetching Loading State](#displaying-global-background-fetching-loading-state)
 - [Window-Focus Refetching](#window-focus-refetching)
@@ -1351,7 +1352,7 @@ queryCache.setQueryData(['todo', { id: 5 }], previous => ({
 }))
 ```
 
-## Automatic Rollback for Failed Mutations
+## Optimistic Updates with Automatic Rollback for Failed Mutations
 
 When you optimistically update your state before performing a mutation, there is a non-zero chance that the mutation will fail. In most cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to rollback your update.
 
