@@ -1381,6 +1381,30 @@ useMutation(updateTodo, {
 })
 ```
 
+An alternative format to doing this is also to just return a rollback function that you can call in case of an error:
+
+```js
+useMutation(updateTodo, {
+  // When mutate is called:
+  onMutate: (newTodo) => {
+    // Snapshot the previous value
+    const previousTodo = queryCache.getQueryData(['todos', newTodo.id])
+
+    // Optimistically update to the new value
+    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+
+    // Return a rollback function
+    return () => queryCache.setQueryData(['todos', newTodo.id], previousTodo)
+  },
+  // If the mutation fails, use the value returned from onMutate to roll back
+  onError: (err, newTodo, rollback) => rollback()
+  // If the mutation was successful:
+  onSuccess: newTodo => {
+    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+  }
+})
+```
+
 You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
 
 ```js
