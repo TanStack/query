@@ -1355,33 +1355,9 @@ queryCache.setQueryData(['todo', { id: 5 }], previous => ({
 
 When you optimistically update your state before performing a mutation, there is a non-zero chance that the mutation will fail. In most cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to rollback your update.
 
-To do this, `useMutation`'s `onMutate` handler option allows you to return a snapshotted rollback value that will later be passed to both `onError` and `onSettled` handlers as the last argument:
+To do this, `useMutation`'s `onMutate` handler option allows you to return a value that will later be passed to both `onError` and `onSettled` handlers as the last argument. In most cases, it is most useful to pass a rollback function.
 
-```js
-useMutation(updateTodo, {
-  // When mutate is called:
-  onMutate: (newTodo) => {
-    // Snapshot the previous value
-    const previousTodos = queryCache.getQueryData('todos')
-
-    // Optimistically update to the new value
-    queryCache.setQueryData('todos', old => [...old, newTodo])
-
-    // Return the snapshotted value
-    return previousTodos
-  },
-  // If the mutation fails, use the value returned from onMutate to roll back
-  onError: (err, newTodo, previousTodos) => {
-    queryCache.setQueryData('todos', previousTodos)
-  }
-  // Always refetch after error or success:
-  onSettled: () => {
-    queryCache.refetchQueries('todos')
-  }
-})
-```
-
-An alternative format to doing this is also to just return a rollback function that you can call in case of an error:
+### Updating a list of todos when adding a new todo
 
 ```js
 useMutation(updateTodo, {
@@ -1405,6 +1381,30 @@ useMutation(updateTodo, {
 })
 ```
 
+### Updating a single todo
+
+```js
+useMutation(updateTodo, {
+  // When mutate is called:
+  onMutate: (newTodo) => {
+    // Snapshot the previous value
+    const previousTodo = queryCache.getQueryData(['todos', newTodo.id], newTodo)
+
+    // Optimistically update to the new value
+    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+
+    // Return a rollback function
+    return () => queryCache.setQueryData(['todos', newTodo.id], previousTodo)
+  },
+  // If the mutation fails, use the rollbac function we returned above
+  onError: (err, newTodo, rollback) => rollback()
+  // Always refetch after error or success:
+  onSettled: () => {
+    queryCache.refetchQueries(['todos', newTodo.id])
+  }
+})
+```
+
 You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
 
 ```js
@@ -1414,7 +1414,6 @@ useMutation(updateTodo, {
     if (error) {
       rollback()
     }
-    queryCache.refetchQueries('todos')
   },
 })
 ```
