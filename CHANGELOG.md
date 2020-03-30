@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- Add function for checking if retries should be performed
+
 ## 1.1.7
 
 - Add unminified esm build
