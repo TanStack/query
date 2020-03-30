@@ -198,7 +198,7 @@ describe('useQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     function Page() {
-      const { status } = useQuery(
+      const { status, error } = useQuery(
         'test',
         () => {
           return Promise.reject('Error test')
@@ -209,6 +209,7 @@ describe('useQuery', () => {
       return (
         <div>
           <h1>{status}</h1>
+          <h2>{error}</h2>
         </div>
       )
     }
@@ -216,6 +217,7 @@ describe('useQuery', () => {
     const rendered = render(<Page />)
 
     await waitForElement(() => rendered.getByText('error'))
+    await waitForElement(() => rendered.getByText('Error test'))
   })
 
   it('should retry specified number of times', async () => {
@@ -245,6 +247,43 @@ describe('useQuery', () => {
 
     // query should fail `retry + 1` times, since first time isn't a "retry"
     await waitForElement(() => rendered.getByText('Failed 2 times'))
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not retry if retry function `false`', async () => {
+    const queryFn = jest.fn()
+
+    queryFn.mockImplementationOnce(() => {
+      return Promise.reject('Error test')
+    })
+
+    queryFn.mockImplementation(() => {
+      return Promise.reject('NoRetry')
+    })
+
+    function Page() {
+      const { status, failureCount, error } = useQuery('test', queryFn, {
+        retryDelay: 1,
+        retry: (failureCount, error) => error !== 'NoRetry',
+      })
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>Failed {failureCount} times</h2>
+          <h2>{error}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('loading'))
+    await waitForElement(() => rendered.getByText('error'))
+
+    await waitForElement(() => rendered.getByText('Failed 2 times'))
+    await waitForElement(() => rendered.getByText('NoRetry'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
   })

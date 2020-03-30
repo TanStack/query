@@ -791,13 +791,14 @@ function Todos() {
 
 ## Retries
 
-When a `useQuery` query fails (the function throws an error), React Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`).
+When a `useQuery` query fails (the function throws an error), React Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`) or a function is provided to determine if a retry is allowed.
 
 You can configure retries both on a global level and an individual query level.
 
 - Setting `retry = false` will disable retries.
 - Setting `retry = 6` will retry failing requests 6 times before showing the final error thrown by the function.
 - Setting `retry = true` will infinitely retry failing requests.
+- Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed.
 
 ```js
 import { useQuery } from 'react-query'
@@ -984,7 +985,7 @@ const { useQuery } from 'react-query'
 useQuery(queryKey, queryFn, { suspense: true })
 ```
 
-When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) for more information on how to set up suspense mode.
+When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) for more information on how to set up suspense mode.
 
 In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `useErrorBoundary` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
 
@@ -1277,7 +1278,7 @@ When dealing with mutations that **update** objects on the server, it's common f
 
 ```js
 const [mutate] = useMutation(editTodo, {
-  onSucess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
+  onSuccess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
 })
 
 mutate({

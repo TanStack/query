@@ -313,10 +313,12 @@ export function makeQueryCache() {
 
         // Do we need to retry the request?
         if (
-          // Only retry if the document is visible
           query.config.retry === true ||
-          query.state.failureCount <= query.config.retry
+          query.state.failureCount <= query.config.retry ||
+          (typeof query.config.retry === 'function' &&
+            query.config.retry(query.state.failureCount, error))
         ) {
+          // Only retry if the document is visible
           if (!isDocumentVisible()) {
             // set this flag to continue fetch retries on focus
             query.shouldContinueRetryOnFocus = true

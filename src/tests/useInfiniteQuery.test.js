@@ -11,7 +11,7 @@ import { sleep } from './utils'
 
 const pageSize = 10
 
-const initialItems = (page) => {
+const initialItems = page => {
   return {
     items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
     nextId: page + 1,
