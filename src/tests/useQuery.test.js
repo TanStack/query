@@ -196,6 +196,29 @@ describe('useQuery', () => {
     expect(queryFn).not.toHaveBeenCalled()
   })
 
+  it('should not refetch query on focus when `manual` is set to `true`', async () => {
+    const queryFn = jest.fn()
+
+    function Page() {
+      const { data = 'default' } = useQuery('test', queryFn, { manual: true })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+    await waitForElement(() => rendered.getByText('default'))
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    expect(queryFn).not.toHaveBeenCalled()
+  })
+
   it('should set status to error if queryFn throws', async () => {
     function Page() {
       const { status, error } = useQuery(
