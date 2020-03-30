@@ -15,6 +15,10 @@ const onWindowFocus = () => {
           return false
         }
 
+        if (query.config.manual === true) {
+          return false
+        }
+
         if (query.shouldContinueRetryOnFocus) {
           // delete promise, so `fetch` will create new one
           delete query.promise
