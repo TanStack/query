@@ -235,7 +235,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Queries](#queries)
   - [Query Keys](#query-keys)
@@ -305,6 +304,14 @@ $ yarn add react-query
 
 React Query uses [Scarf](https://www.npmjs.com/package/@scarf/scarf) to collect anonymized installation analytics. These analytics help support the maintainers of this library. However, if you'd like to opt out, you can do so by setting `scarfSettings.enabled = false` in your project's `package.json`. Alternatively, you can set the environment variable `SCARF_ANALYTICS=false` before you install.
 
+# Defaults to keep in mind!
+
+Out of the box, React Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use React Query:
+
+- Query results that are _currently rendered on the screen_ will become "stale" immediately after they are resolved and will be refetched automatically in the background when they are rendered or used again. To change this, you can alter the default `staleTime` for queries to something other than `0` milliseconds.
+- Query results that become unused (all instances of the query are unmounted) will still be cached in case they are used again for a default of 5 minutes before they are garbage collected. To change this, you can alter the default `cacheTime` for queries to something other than `1000 * 60 * 5` milliseconds.
+- Stale queries will automatically be refetched in the background **when the browser window is refocused by the user**. You can disable this using the `refetchOnWindowFocus` option in queries or the global config.
+
 # Queries
 
 To make a new query, call the `useQuery` hook with at least:
@@ -313,15 +320,14 @@ To make a new query, call the `useQuery` hook with at least:
 - An **asynchronous function (or similar then-able)** to resolve the data
 
 ```js
-const info = useQuery('todos', fetchTodoList)
+import { useQuery } from 'react-query'
+
+function App() {
+  const info = useQuery('todos', fetchTodoList)
+}
 ```
 
 The **unique key** you provide is used internally for refetching, caching, deduping related queries.
-
-This key can be whatever you'd like it to be as long as:
-
-- It changes when your query should be requested again
-- It is consistent across all instances of that specific query in your application
 
 The query `info` returned contains all information about the query and can be easily destructured and used in your component:
 
@@ -371,19 +377,23 @@ useQuery('somethingSpecial', ...) // queryKey === ['somethingSpecial']
 
 When a query needs more information to uniquely describe its data, you can use an array with a string and any number of serializable objects to describe it. This is useful for:
 
+- Specific resources
+  - It's common to pass an ID, index, or other primitive
 - Queries with additional parameters
-- Individual resources
+  - It's common to pass an object of additional options
 
 ```js
-// A list of todos that are "done"
-useQuery(['todos', { type: 'done' }], ...) // queryKey === ['todos', { type: 'done' }]
-
 // An individual todo
-useQuery(['todos', 5], ...) // queryKey === ['todos', 5]
+useQuery(['todo', 5], ...)
+// queryKey === ['todo', 5]
 
 // And individual todo in a "preview" format
-useQuery(['todos', 5, { preview: true }], ...) // queryKey === ['todos', 5, { preview: 'true' } }]
+useQuery(['todo', 5, { preview: true }], ...)
+// queryKey === ['todo', 5, { preview: 'true' } }]
 
+// A list of todos that are "done"
+useQuery(['todos', { type: 'done' }], ...)
+// queryKey === ['todos', { type: 'done' }]
 ```
 
 ### Query Keys are serialized deterministically!
@@ -516,7 +526,7 @@ const { data: projects } = useQuery(
 )
 ```
 
-### Use a query key function
+### Use a query key function that throws an exception
 
 If a function is passed, the query will not execute until the function can be called without throwing:
 
@@ -741,14 +751,15 @@ function Projects() {
 
 ## Scroll Restoration
 
-Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes) and have not been garbage collected, you should never experience any problems with scroll restoration.
+Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes) and have not been garbage collected, scroll restoration will work out of the box all the time.
 
 ## Manual Querying
 
 If you ever want to disable a query from automatically running, you can use the `manual = true` option. When `manual` is set to true:
 
 - The query will start in the `status === 'success'` state
-- The query will not automatically refetch due to changes to their query function or variables.
+- The query will not automatically fetch on mount
+- The query will not automatically refetch due to rerenders, new instances appearcing, or changes to its query key or variables.
 
 > Pro Tip #1: Because manual queries start in the `status === 'success'` state, you should consider supplying an `initialData` option to pre-populate the cache or similarly use a default parameter value when destructuring the query result
 
