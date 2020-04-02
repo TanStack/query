@@ -91,6 +91,21 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 </details>
 
+## Used By
+
+- [Google](https://google.com)
+- [Amazon](https://amazon.com)
+- [PayPal](https://paypal.com)
+- [Walmart](https://walmart.com)
+- [Microsoft](https://microsoft.com)
+- [Volvo](https://volvocars.com)
+- [Major League Baseball Association](https://mlb.com)
+- [Ocado](https://ocado.com)
+- [UPC.ch](https://upc.ch)
+- [EFI.com](https://efi.com)
+
+> _These analytics are made available via the awesome [Scarf](https://www.npmjs.com/package/@scarf/scarf) package analytics library_
+
 ## Examples
 
 - Basic - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic) - [Source](./examples/basic)
