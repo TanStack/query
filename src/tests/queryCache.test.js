@@ -24,6 +24,20 @@ describe('queryCache', () => {
     expect(second).toBe(first)
   })
 
+  test('prefetchQuery should throw error when throwOnError is true', async () => {
+    const fetchFn = () =>
+      new Promise(() => {
+        throw new Error('error')
+      })
+
+    await expect(
+      queryCache.prefetchQuery('key', undefined, fetchFn, {
+        retry: false,
+        throwOnError: true,
+      })
+    ).rejects.toThrow(new Error('error'))
+  })
+
   test('should notify listeners when new query is added', () => {
     const callback = jest.fn()
 
