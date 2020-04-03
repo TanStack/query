@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1
+
+- Fixed an issue where the `throwOnError` option was not working for `queryCache.prefetchQuery`
+- Fixed an issue where the `force` option was not working for `queryCache.prefetchQuery`
+
 ## 1.2.0
 
 - Add function for checking if retries should be performed
