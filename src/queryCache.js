@@ -160,7 +160,7 @@ export function makeQueryCache() {
     if (query.state.isStale || force) {
       // Trigger a fetch and return the promise
       try {
-        const res = await query.fetch()
+        const res = await query.fetch({ force })
         query.wasPrefetched = true
         return res
       } catch (err) {
