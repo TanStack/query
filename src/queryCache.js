@@ -413,7 +413,7 @@ export function makeQueryCache() {
                   instance.onSettled && instance.onSettled(undefined, error)
               )
 
-              // throw error
+              throw error
             }
           }
         })()
