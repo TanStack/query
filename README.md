@@ -775,7 +775,7 @@ If you ever want to disable a query from automatically running, you can use the 
 
 - The query will start in the `status === 'success'` state
 - The query will not automatically fetch on mount
-- The query will not automatically refetch due to rerenders, new instances appearcing, or changes to its query key or variables.
+- The query will not automatically refetch due to rerenders, new instances appearing, or changes to its query key or variables.
 
 > Pro Tip #1: Because manual queries start in the `status === 'success'` state, you should consider supplying an `initialData` option to pre-populate the cache or similarly use a default parameter value when destructuring the query result
 
@@ -1424,7 +1424,7 @@ useMutation(updateTodo, {
     // Return a rollback function
     return () => queryCache.setQueryData(['todos', newTodo.id], previousTodo)
   },
-  // If the mutation fails, use the rollbac function we returned above
+  // If the mutation fails, use the rollback function we returned above
   onError: (err, newTodo, rollback) => rollback()
   // Always refetch after error or success:
   onSettled: () => {
