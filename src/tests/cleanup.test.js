@@ -1,11 +1,15 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
+import { cleanup } from '@testing-library/react/pure'
 import { queryCache } from '..'
 import { Page } from './cleanup'
 
 describe('query cleanup', () => {
   afterEach(() => {
     queryCache.clear()
+    // This will make things pass as it force-flushes the microtask queue twice
+    // but it's a bandaid over an underlying issue
+    // await cleanup()
   })
 
   test('should prefetchQuery by force for first query', async () => {
