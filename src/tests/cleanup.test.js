@@ -1,23 +1,15 @@
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
-import { cleanup } from '@testing-library/react/pure'
 import { queryCache } from '..'
 import { Page } from './cleanup'
 
 describe('query cleanup', () => {
   afterEach(() => {
     queryCache.clear()
-    // This will make things pass as it force-flushes the microtask queue twice
-    // but it's a bandaid over an underlying issue
-    // await cleanup()
   })
 
-  test('should prefetchQuery by force for first query', async () => {
-    await queryCache.prefetchQuery(
-      ['user', 1],
-      () => Promise.resolve({ userId: 1, username: 'Mock User' }),
-      { force: true }
-    )
+  test('should set query data on first test', async () => {
+    queryCache.setQueryData(['user', 1], { userId: 1, username: 'Mock User' })
 
     const { findByTestId, findByText } = render(<Page />)
 
@@ -30,17 +22,9 @@ describe('query cleanup', () => {
     expect(userProfile).toBeDefined()
   })
 
-  test('should prefetch by force for both queries', async () => {
-    await queryCache.prefetchQuery(
-      ['user', 1],
-      () => Promise.resolve({ userId: 1, username: 'Mock User' }),
-      { force: true }
-    )
-    await queryCache.prefetchQuery(
-      ['posts', 1],
-      () => Promise.resolve([{ postId: 1, body: 'World' }]),
-      { force: true }
-    )
+  test('should not garbage collect new initial data', async () => {
+    queryCache.setQueryData(['user', 1], { userId: 1, username: 'Mock 2 User' })
+    queryCache.setQueryData(['posts', 1], [{ postId: 1, body: 'World' }])
 
     const { findByTestId, findByText } = render(<Page />)
 

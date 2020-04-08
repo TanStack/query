@@ -34,7 +34,7 @@ const PostsByUser = () => {
   return null
 }
 
-export const Page = ({ onAfterHide }) => {
+export const Page = () => {
   const [showContent, setShowContent] = React.useState(false)
 
   return (
@@ -59,7 +59,6 @@ export const Page = ({ onAfterHide }) => {
                 data-testid="hideContent"
                 onClick={() => {
                   setShowContent(false)
-                  if (onAfterHide) onAfterHide()
                 }}
               >
                 Close Modal

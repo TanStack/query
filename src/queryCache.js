@@ -238,9 +238,12 @@ export function makeQueryCache() {
     }
 
     query.scheduleGarbageCollection = () => {
+      const scheduledAt = Date.now()
       query.cacheTimeout = setTimeout(
         () => {
-          cache.removeQueries(d => d.queryHash === query.queryHash)
+          cache.removeQueries(
+            d => d.state.updatedAt < scheduledAt && d.queryHash === query.queryHash
+          )
         },
         typeof query.state.data === 'undefined' &&
           query.state.status !== 'error'
