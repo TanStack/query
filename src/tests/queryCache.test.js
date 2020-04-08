@@ -143,4 +143,34 @@ describe('queryCache', () => {
     await sleep(50)
     expect(query.state.isStale).toBe(false)
   })
+
+  test('query is garbage collected when unsubscribed to', async () => {
+    const queryKey = 'key'
+    const fetchData = () => Promise.resolve('data')
+    await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0 })
+    const query = queryCache.getQuery(queryKey)
+    expect(query.state.markedForGarbageCollection).toBe(false)
+    const unsubscribe = query.subscribe(1)
+    unsubscribe()
+    expect(query.state.markedForGarbageCollection).toBe(true)
+    await sleep(1)
+    expect(queryCache.getQuery(queryKey)).toBeUndefined()
+  })
+
+  test('query is not garbage collected unless markedForGarbageCollection is true', async () => {
+    const queryKey = 'key'
+    const fetchData = () => Promise.resolve(undefined)
+    await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0 })
+    const query = queryCache.getQuery(queryKey)
+    expect(query.state.markedForGarbageCollection).toBe(false)
+    const unsubscribe = query.subscribe(1)
+    unsubscribe()
+    expect(query.state.markedForGarbageCollection).toBe(true)
+    queryCache.clear()
+    queryCache.setQueryData(queryKey, 'data')
+    await sleep(1)
+    const newQuery = queryCache.getQuery(queryKey)
+    expect(newQuery.state.markedForGarbageCollection).toBe(false)
+    expect(newQuery.state.data).toBe('data')
+  })
 })
