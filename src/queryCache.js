@@ -17,6 +17,7 @@ export const queryCache = makeQueryCache()
 const actionInit = {}
 const actionFailed = {}
 const actionMarkStale = {}
+const actionMarkGC = {}
 const actionFetch = {}
 const actionSuccess = {}
 const actionError = {}
@@ -238,9 +239,12 @@ export function makeQueryCache() {
     }
 
     query.scheduleGarbageCollection = () => {
+      dispatch({ type: actionMarkGC })
       query.cacheTimeout = setTimeout(
         () => {
-          cache.removeQueries(d => d.queryHash === query.queryHash)
+          cache.removeQueries(
+            d => d.state.markedForGarbageCollection && d.queryHash === query.queryHash
+          )
         },
         typeof query.state.data === 'undefined' &&
           query.state.status !== 'error'
@@ -447,6 +451,7 @@ export function defaultQueryReducer(state, action) {
         canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,
+        markedForGarbageCollection: false,
         data: action.initialData,
         updatedAt: action.hasInitialData ? Date.now() : 0,
       }
@@ -460,6 +465,12 @@ export function defaultQueryReducer(state, action) {
         ...state,
         isStale: true,
       }
+    case actionMarkGC: {
+      return {
+        ...state,
+        markedForGarbageCollection: true,
+      }
+    }
     case actionFetch:
       return {
         ...state,
