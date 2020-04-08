@@ -26,7 +26,12 @@ describe('query cleanup', () => {
     expect(userProfile).toBeDefined()
   })
 
-  test('should prefetch by force for second query only', async () => {
+  test('should prefetch by force for both queries', async () => {
+    await queryCache.prefetchQuery(
+      ['user', 1],
+      () => Promise.resolve({ userId: 1, username: 'Mock User' }),
+      { force: true }
+    )
     await queryCache.prefetchQuery(
       ['posts', 1],
       () => Promise.resolve([{ postId: 1, body: 'World' }]),
