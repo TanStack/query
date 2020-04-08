@@ -3,7 +3,6 @@ import {
   act,
   waitForElement,
   fireEvent,
-  cleanup,
 } from '@testing-library/react'
 import * as React from 'react'
 
@@ -13,7 +12,6 @@ import { sleep } from './utils'
 describe('useQuery', () => {
   afterEach(() => {
     queryCache.clear()
-    cleanup()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
