@@ -1007,7 +1007,7 @@ function App() {
 Query configuration:
 
 ```js
-const { useQuery } from 'react-query'
+import { useQuery } from 'react-query'
 
 // Enable for an individual query
 useQuery(queryKey, queryFn, { suspense: true })
