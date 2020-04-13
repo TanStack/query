@@ -1,9 +1,4 @@
-import {
-  render,
-  act,
-  waitForElement,
-  fireEvent,
-} from '@testing-library/react'
+import { render, act, waitForElement, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache } from '../index'
@@ -152,9 +147,9 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const { findByText } = render(<Page />)
 
-    rendered.getByText('success')
+    await findByText('success')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/147
