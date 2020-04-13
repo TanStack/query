@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.3
+
+- Fixed an issue where cancelled requests would not mark a query as stale, especially if that query had been manually refetched before its stale timeout had lapsed
+
 ## 1.2.2
 
 - Fixed an issue where garbage collection was messing with proper test cleanup

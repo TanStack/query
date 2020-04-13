@@ -501,10 +501,10 @@ export function defaultQueryReducer(state, action) {
       return {
         ...state,
         isFetching: false,
+        isStale: true,
         ...(!action.cancelled && {
           status: statusError,
           error: action.error,
-          isStale: true,
         }),
       }
     default:
