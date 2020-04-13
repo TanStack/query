@@ -134,7 +134,12 @@ export function makeQueryCache() {
       if (query.queryHash) {
         if (!isServer) {
           cache.queries[queryHash] = query
-          notifyGlobalListeners()
+          // Here, we setTimeout so as to not trigger
+          // any setState's in parent components in the
+          // middle of the render phase.
+          setTimeout(() => {
+            notifyGlobalListeners()
+          })
         }
       }
     }
@@ -243,7 +248,9 @@ export function makeQueryCache() {
       query.cacheTimeout = setTimeout(
         () => {
           cache.removeQueries(
-            d => d.state.markedForGarbageCollection && d.queryHash === query.queryHash
+            d =>
+              d.state.markedForGarbageCollection &&
+              d.queryHash === query.queryHash
           )
         },
         typeof query.state.data === 'undefined' &&

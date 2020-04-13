@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.2
+
+- Fixed an issue where garbage collection was messing with proper test cleanup
+- Fixed an issue where tests were giving false positives because of the above
+- Fixed an issue where query creation during the render phase was eventually triggering setState (found via a cache subscription in the `useIsFetching` hook, when used in the same parent component as a query)
+
 ## 1.2.1
 
 - Fixed an issue where the `throwOnError` option was not working for `queryCache.prefetchQuery`
