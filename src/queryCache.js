@@ -244,6 +244,9 @@ export function makeQueryCache() {
     }
 
     query.scheduleGarbageCollection = () => {
+      if (query.config.cacheTime === Infinity) {
+        return
+      }
       dispatch({ type: actionMarkGC })
       query.cacheTimeout = setTimeout(
         () => {
