@@ -1830,8 +1830,9 @@ const queryInfo = useQuery({
 - `staleTime: Int | Infinity`
   - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration.
   - If set to `Infinity`, query will never go stale
-- `cacheTime: Int`
+- `cacheTime: Int | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+  - If set to `Infinity`, will disable garbage collection
 - `refetchInterval: false | Integer`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
@@ -1953,8 +1954,9 @@ const {
 - `staleTime: Int | Infinity`
   - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration.
   - If set to `Infinity`, query will never go stale
-- `cacheTime: Int`
+- `cacheTime: Int | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+  - If set to `Infinity`, will disable garbage collection
 - `refetchInterval: false | Integer`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
@@ -2087,8 +2089,9 @@ const {
 - `staleTime: Int | Infinity`
   - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration.
   - If set to `Infinity`, query will never go stale
-- `cacheTime: Int`
+- `cacheTime: Int | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.
+  - If set to `Infinity`, will disable garbage collection
 - `refetchInterval: false | Integer`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
