@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.5
+
+- Added postinstall message for sponsorship/support
+
 ## 1.2.4
 
 - cacheTime now accepts `Infinity` as a value
