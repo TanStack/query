@@ -118,6 +118,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - Suspense - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) - [Source](./examples/suspense)
 - Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) - [Source](./examples/playground)
 - Star Wars (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/star-wars) - [Source](./examples/star-wars)
+- Rick And Morty (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/rick-morty) - [Source](./examples/rick-morty)
 
 ## Sponsors
 
