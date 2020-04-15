@@ -103,6 +103,8 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [Ocado](https://ocado.com)
 - [UPC.ch](https://upc.ch)
 - [EFI.com](https://efi.com)
+- [ReactBricks](https://www.reactbricks.com/)
+- [Nozzle.io](https://nozzle.io)
 
 > _These analytics are made available via the awesome [Scarf](https://www.npmjs.com/package/@scarf/scarf) package analytics library_
 
