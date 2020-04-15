@@ -94,12 +94,13 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 ## Used By
 
 - [Google](https://google.com)
-- [Amazon](https://amazon.com)
 - [PayPal](https://paypal.com)
+- [Amazon](https://amazon.com)
 - [Walmart](https://walmart.com)
 - [Microsoft](https://microsoft.com)
-- [Volvo](https://volvocars.com)
+- [HP](https://hp.com)
 - [Major League Baseball Association](https://mlb.com)
+- [Volvo](https://volvocars.com)
 - [Ocado](https://ocado.com)
 - [UPC.ch](https://upc.ch)
 - [EFI.com](https://efi.com)
@@ -1393,7 +1394,7 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 ```js
 useMutation(updateTodo, {
   // When mutate is called:
-  onMutate: (newTodo) => {
+  onMutate: newTodo => {
     // Snapshot the previous value
     const previousTodos = queryCache.getQueryData('todos')
 
@@ -1408,7 +1409,7 @@ useMutation(updateTodo, {
   // Always refetch after error or success:
   onSettled: () => {
     queryCache.refetchQueries('todos')
-  }
+  },
 })
 ```
 
@@ -1417,7 +1418,7 @@ useMutation(updateTodo, {
 ```js
 useMutation(updateTodo, {
   // When mutate is called:
-  onMutate: (newTodo) => {
+  onMutate: newTodo => {
     // Snapshot the previous value
     const previousTodo = queryCache.getQueryData(['todos', newTodo.id], newTodo)
 
@@ -1432,7 +1433,7 @@ useMutation(updateTodo, {
   // Always refetch after error or success:
   onSettled: () => {
     queryCache.refetchQueries(['todos', newTodo.id])
-  }
+  },
 })
 ```
 
