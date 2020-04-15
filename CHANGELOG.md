@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.4
+
+- cacheTime now accepts `Infinity` as a value
+- Fixed an issue where useInfiniteQuery's isFetchingMore boolean was updated, but not rerendered
+
 ## 1.2.3
 
 - Fixed an issue where cancelled requests would not mark a query as stale, especially if that query had been manually refetched before its stale timeout had lapsed
