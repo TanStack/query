@@ -1,6 +1,6 @@
 {
   "name": "react-query",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -21,7 +21,8 @@
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
     "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write",
-    "doctoc": "npx doctoc --maxlevel 2 README.md"
+    "doctoc": "npx doctoc --maxlevel 2 README.md",
+    "postinstall": "node ./scripts/postinstall.js || exit 0"
   },
   "files": [
     "dist"
