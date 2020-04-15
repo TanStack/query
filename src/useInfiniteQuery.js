@@ -62,30 +62,36 @@ export function useInfiniteQuery(...args) {
             force: true,
             __queryFn: async (...args) => {
               try {
-                queryInfoRef.current.query.isFetchingMore = true
+                queryInfoRef.current.query.setState(old => ({
+                  ...old,
+                  isFetchingMore: true,
+                }))
+
                 const newArgs = [...args, fetchMoreInfo]
                 queryInfoRef.current.query.pageVariables.push(newArgs)
+
                 const data = [
                   ...queryInfoRef.current.data,
                   await originalQueryFn(...newArgs),
                 ]
+
                 queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
                   data[data.length - 1],
                   data
                 )
+
                 return data
               } finally {
-                queryInfoRef.current.query.isFetchingMore = false
+                queryInfoRef.current.query.setState(old => ({
+                  ...old,
+                  isFetchingMore: false,
+                }))
               }
             },
           })
         : void 0,
     [getGetFetchMore, originalQueryFn, refetch]
   )
-
-  const isFetchingMore = React.useMemo(() => {
-    return !!queryInfo.query.isFetchingMore
-  }, [queryInfo.query.isFetchingMore])
 
   handleSuspense(queryInfo)
 
@@ -94,6 +100,5 @@ export function useInfiniteQuery(...args) {
     data,
     canFetchMore,
     fetchMore,
-    isFetchingMore,
   }
 }

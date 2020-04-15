@@ -21,6 +21,7 @@ const actionMarkGC = {}
 const actionFetch = {}
 const actionSuccess = {}
 const actionError = {}
+const actionSetState = {}
 
 export function makeQueryCache() {
   const listeners = []
@@ -433,6 +434,8 @@ export function makeQueryCache() {
       return query.promise
     }
 
+    query.setState = updater => dispatch({ type: actionSetState, updater })
+
     query.setData = updater => {
       // Set data and mark it as cached
       dispatch({ type: actionSuccess, updater })
@@ -507,6 +510,8 @@ export function defaultQueryReducer(state, action) {
           error: action.error,
         }),
       }
+    case actionSetState:
+      return functionalUpdate(action.updater, state)
     default:
       throw new Error()
   }
