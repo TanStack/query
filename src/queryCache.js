@@ -460,7 +460,10 @@ export function defaultQueryReducer(state, action) {
       return {
         status: action.initialStatus,
         error: null,
-        isFetching: action.hasInitialData ? false : !action.manual,
+        isFetching:
+          action.hasInitialData || action.manual
+            ? false
+            : action.initialStatus === 'loading',
         canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,

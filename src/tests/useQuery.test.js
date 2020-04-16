@@ -715,4 +715,21 @@ describe('useQuery', () => {
     expect(rendered.getByTestId('isStale').textContent).toBe('false')
     expect(rendered.getByTestId('staleTimeout').textContent).toBe('undefined')
   })
+
+  // See https://github.com/tannerlinsley/react-query/issues/360
+  test('should not init to `isFetching === true` when falsey query key is supplied', async () => {
+    function Page() {
+      const query = useQuery(false, () => {})
+
+      return (
+        <div>
+          <div>isFetching === {query.isFetching.toString()}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('isFetching === false'))
+  })
 })
