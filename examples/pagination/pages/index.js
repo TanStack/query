@@ -1,22 +1,29 @@
-import React from 'react'
-import axios from 'axios'
-import { usePaginatedQuery } from 'react-query'
+import React from "react";
+import axios from "axios";
+import { usePaginatedQuery, queryCache } from "react-query";
 
 function Todos() {
-  const [page, setPage] = React.useState(0)
+  const [page, setPage] = React.useState(0);
 
-  const fetchProjects = async (key, page = 0) => {
-    const { data } = await axios.get('/api/projects?page=' + page)
-    return data
-  }
+  const fetchProjects = React.useCallback(async (key, page = 0) => {
+    const { data } = await axios.get("/api/projects?page=" + page);
+    return data;
+  }, []);
 
   const {
     status,
     resolvedData,
     latestData,
     error,
-    isFetching,
-  } = usePaginatedQuery(['projects', page], fetchProjects)
+    isFetching
+  } = usePaginatedQuery(["projects", page], fetchProjects, {});
+
+  // Prefetch the next page!
+  React.useEffect(() => {
+    if (latestData?.hasMore) {
+      queryCache.prefetchQuery(["projects", page + 1], fetchProjects);
+    }
+  }, [latestData, fetchProjects, page]);
 
   return (
     <div>
@@ -28,9 +35,9 @@ function Todos() {
         instantaneously while they are also refetched invisibly in the
         background.
       </p>
-      {status === 'loading' ? (
+      {status === "loading" ? (
         <div>Loading...</div>
-      ) : status === 'error' ? (
+      ) : status === "error" ? (
         <div>Error: {error.message}</div>
       ) : (
         // `resolvedData` will either resolve to the latest page's data
@@ -47,7 +54,7 @@ function Todos() {
         disabled={page === 0}
       >
         Previous Page
-      </button>{' '}
+      </button>{" "}
       <button
         onClick={() =>
           // Here, we use `latestData` so the Next Page
@@ -61,9 +68,9 @@ function Todos() {
       {// Since the last page's data potentially sticks around between page requests,
       // we can use `isFetching` to show a background loading
       // indicator since our `status === 'loading'` state won't be triggered
-      isFetching ? <span> Loading...</span> : null}{' '}
+      isFetching ? <span> Loading...</span> : null}{" "}
     </div>
-  )
+  );
 }
 
-export default Todos
+export default Todos;
