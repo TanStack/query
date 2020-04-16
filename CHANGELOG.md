@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.6
+
+- Fixed an issue where `isFetching` could be `true` when a falsy query key is supplied
+
 ## 1.2.5
 
 - Added postinstall message for sponsorship/support
