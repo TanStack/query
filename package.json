@@ -28,7 +28,7 @@
     "dist"
   ],
   "dependencies": {
-    "@scarf/scarf": "^0.1.3"
+    "@scarf/scarf": "^1.0.0"
   },
   "peerDependencies": {
     "react": "^16.6.3"
