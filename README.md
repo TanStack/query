@@ -355,21 +355,21 @@ The query `info` returned contains all information about the query and can be ea
 function Todos() {
   const { status, data, error } = useQuery('todos', fetchTodoList)
 
+  if (status === 'loading') {
+    return <span>Loading...</span>
+  }
+
+  if (status === 'error') {
+    return <span>Error: {error.message}</span>
+  }
+
+  // also status === 'success', but "else" logic works, too
   return (
-    <div>
-      {status === 'loading' ? (
-        <span>Loading...</span>
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
-      ) : (
-        // also status === 'success', but "else" logic works, too
-        <ul>
-          {data.map(todo => (
-            <li key={todo.id}>{todo.title}</li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul>
+      {data.map(todo => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
   )
 }
 ```
@@ -2579,3 +2579,24 @@ setConsole({
 
 - `console: Object`
   - Must implement the `log`, `warn`, and `error` methods.
+
+
+## Contributors ✨
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://tannerlinsley.com"><img src="https://avatars0.githubusercontent.com/u/5580297?v=4" width="100px;" alt=""/><br /><sub><b>Tanner Linsley</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tannerlinsley" title="Code">💻</a> <a href="#ideas-tannerlinsley" title="Ideas, Planning, & Feedback">🤔</a> <a href="#example-tannerlinsley" title="Examples">💡</a> <a href="#maintenance-tannerlinsley" title="Maintenance">🚧</a> <a href="https://github.com/tannerlinsley/react-query/pulls?q=is%3Apr+reviewed-by%3Atannerlinsley" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="http://cherniavskii.com"><img src="https://avatars2.githubusercontent.com/u/13808724?v=4" width="100px;" alt=""/><br /><sub><b>Andrew Cherniavskii</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=cherniavskii" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Acherniavskii" title="Bug reports">🐛</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
