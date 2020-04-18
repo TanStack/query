@@ -22,7 +22,18 @@
         "maintenance",
         "review"
       ]
+    },
+    {
+      "login": "cherniavskii",
+      "name": "Andrew Cherniavskii",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/13808724?v=4",
+      "profile": "http://cherniavskii.com",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
