@@ -1,0 +1,28 @@
+{
+  "projectName": "react-query",
+  "projectOwner": "tannerlinsley",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "tannerlinsley",
+      "name": "Tanner Linsley",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5580297?v=4",
+      "profile": "https://tannerlinsley.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "example",
+        "maintenance",
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}
