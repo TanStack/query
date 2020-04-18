@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.7
+
+- Imported types from Definitely Typed to repo
+- Upgraded dependency for Scarf
+
 ## 1.2.6
 
 - Fixed an issue where `isFetching` could be `true` when a falsy query key is supplied
