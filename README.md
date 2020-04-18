@@ -254,6 +254,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
@@ -311,7 +312,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
   - [`setConsole`](#setconsole)
-  - [Contributors ✨](#contributors-)
+- [Contributors ✨](#contributors-)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -2582,7 +2583,7 @@ setConsole({
 - `console: Object`
   - Must implement the `log`, `warn`, and `error` methods.
 
-## Contributors ✨
+# Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
