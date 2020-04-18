@@ -355,21 +355,21 @@ The query `info` returned contains all information about the query and can be ea
 function Todos() {
   const { status, data, error } = useQuery('todos', fetchTodoList)
 
+  if (status === 'loading') {
+    return <span>Loading...</span>
+  }
+
+  if (status === 'error') {
+    return <span>Error: {error.message}</span>
+  }
+
+  // also status === 'success', but "else" logic works, too
   return (
-    <div>
-      {status === 'loading' ? (
-        <span>Loading...</span>
-      ) : status === 'error' ? (
-        <span>Error: {error.message}</span>
-      ) : (
-        // also status === 'success', but "else" logic works, too
-        <ul>
-          {data.map(todo => (
-            <li key={todo.id}>{todo.title}</li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <ul>
+      {data.map(todo => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
   )
 }
 ```
