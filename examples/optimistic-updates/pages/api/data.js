@@ -1,25 +1,26 @@
-const data = []
+const items = []
 
-function shouldFail() {
-  return Math.random() > 0.7
-}
+export default async (req, res) => {
+  await new Promise(r => setTimeout(r, 500))
 
-export default (req, res) => {
   if (req.method === 'POST') {
-    const body = JSON.parse(req.body)
+    const { text } = req.body
 
     // sometimes it will fail, this will cause a regression on the UI
 
-    if (shouldFail()) {
-      throw new Error('Could not add item!')
+    if (Math.random() > 0.7) {
+      res.status(500)
+      res.json({ message: 'Could not add item!' })
+      return
     }
 
-    data.push(body.text.toUpperCase())
-    res.json(data)
+    items.push(text.toUpperCase())
+    res.json(text.toUpperCase())
     return
+  } else {
+    res.json({
+      ts: Date.now(),
+      items,
+    })
   }
-
-  setTimeout(() => {
-    res.json(data)
-  }, 300)
 }
