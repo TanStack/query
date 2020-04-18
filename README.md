@@ -255,6 +255,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Installation](#installation)
+- [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
   - [Query Keys](#query-keys)
   - [Query Key Variables](#query-key-variables)
@@ -310,10 +311,11 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
   - [`setConsole`](#setconsole)
+  - [Contributors ✨](#contributors-)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# Installation[⬆](#documentation)<!-- Link generated with jump2header -->
+# Installation
 
 ```bash
 $ npm i --save react-query
@@ -323,7 +325,7 @@ $ yarn add react-query
 
 React Query uses [Scarf](https://www.npmjs.com/package/@scarf/scarf) to collect anonymized installation analytics. These analytics help support the maintainers of this library. However, if you'd like to opt out, you can do so by setting `scarfSettings.enabled = false` in your project's `package.json`. Alternatively, you can set the environment variable `SCARF_ANALYTICS=false` before you install.
 
-# Defaults to keep in mind[⬆](#documentation)<!-- Link generated with jump2header -->
+# Defaults to keep in mind
 
 Out of the box, React Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use React Query:
 
@@ -332,7 +334,7 @@ Out of the box, React Query is configured with **aggressive but sane** defaults.
 - Stale queries will automatically be refetched in the background **when the browser window is refocused by the user**. You can disable this using the `refetchOnWindowFocus` option in queries or the global config.
 - Queries that fail will silently and automatically be retried **3 times, with exponential backoff delay** before capturing and displaying an error to the UI. To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
 
-# Queries[⬆](#documentation)<!-- Link generated with jump2header -->
+# Queries
 
 To make a new query, call the `useQuery` hook with at least:
 
@@ -374,7 +376,7 @@ function Todos() {
 }
 ```
 
-## Query Keys[⬆](#documentation)<!-- Link generated with jump2header -->
+## Query Keys
 
 At its core, React Query manages query caching for you and uses a serializable array or "query key" to do this. Using a query key that is **simple** and **unique to the query's data** is very important. In other similar libraries, you'll see the use of URLs and/or GraphQL query template strings to achieve this, but we believe at scale, this becomes prone to typos and errors. To relieve this issue, React Query Keys can be **strings** or **an array with a string and then any number of serializable primitives and/or objects**.
 
@@ -434,7 +436,7 @@ useQuery(['todos', page, status], ...)
 useQuery(['todos', undefined, page, status], ...)
 ```
 
-## Query Key Variables[⬆](#documentation)<!-- Link generated with jump2header -->
+## Query Key Variables
 
 To use external props, state, or variables in a query function, it's easiest to pass them as items in your array query keys! All query keys get passed through to your query function as parameters in the order they appear in the array key:
 
@@ -478,7 +480,7 @@ function Todo({ todoId }) {
 }
 ```
 
-## Optional Variables[⬆](#documentation)<!-- Link generated with jump2header -->
+## Optional Variables
 
 In some scenarios, you may find yourself needing to pass extra information to your query that shouldn't (or doesn't need to be) a part of the query key. `useQuery`, `usePaginatedQuery` and `useInfiniteQuery` all support passing an optional array of additional parameters to be passed to your query function:
 
@@ -505,7 +507,7 @@ function fetchTodoById(key, todoId, debug, { foo, bar }) {
 }
 ```
 
-## Using a Query Object instead of parameters[⬆](#documentation)<!-- Link generated with jump2header -->
+## Using a Query Object instead of parameters
 
 Anywhere the `[queryKey, variables, queryFn, config]` options are supported throughout React Query's API, you can also use an object to express the same configuration:
 
@@ -520,7 +522,7 @@ useQuery({
 })
 ```
 
-## Dependent Queries[⬆](#documentation)<!-- Link generated with jump2header -->
+## Dependent Queries
 
 React Query makes it easy to make queries that depend on other queries for both:
 
@@ -561,7 +563,7 @@ const { data: projects } = useQuery(
 )
 ```
 
-## Caching & Invalidation[⬆](#documentation)<!-- Link generated with jump2header -->
+## Caching & Invalidation
 
 React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching strategy together with robust query deduping to always ensure a query's data is only cached when it's needed and only cached once even if that query is used multiple times across your application.
 
@@ -592,7 +594,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 
 </details>
 
-## Paginated Queries with `usePaginatedQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## Paginated Queries with `usePaginatedQuery`
 
 Rendering paginated data is a very common UI pattern to avoid overloading bandwidth or even your UI. React Query exposes a `usePaginatedQuery` that is very similar to `useQuery` that helps with this very scenario.
 
@@ -656,7 +658,7 @@ function Todos() {
 }
 ```
 
-## Load-More & Infinite-Scroll with `useInfiniteQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## Load-More & Infinite-Scroll with `useInfiniteQuery`
 
 Rendering lists that can additively "load more" data onto an existing set of data or "infinite scroll" is also a very common UI pattern. React Query supports a useful version of `useQuery` called `useInfiniteQuery` for querying these types of lists.
 
@@ -769,11 +771,11 @@ function Projects() {
 }
 ```
 
-## Scroll Restoration[⬆](#documentation)<!-- Link generated with jump2header -->
+## Scroll Restoration
 
 Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes) and have not been garbage collected, scroll restoration will work out of the box all the time.
 
-## Manual Querying[⬆](#documentation)<!-- Link generated with jump2header -->
+## Manual Querying
 
 If you ever want to disable a query from automatically running, you can use the `manual = true` option. When `manual` is set to true:
 
@@ -821,7 +823,7 @@ function Todos() {
 }
 ```
 
-## Retries[⬆](#documentation)<!-- Link generated with jump2header -->
+## Retries
 
 When a `useQuery` query fails (the function throws an error), React Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`) or a function is provided to determine if a retry is allowed.
 
@@ -841,7 +843,7 @@ const { status, data, error } = useQuery(['todos', 1], fetchTodoListPage, {
 })
 ```
 
-## Retry Delay[⬆](#documentation)<!-- Link generated with jump2header -->
+## Retry Delay
 
 By default, retries in React Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.
 
@@ -872,7 +874,7 @@ const { status, data, error } = useQuery('todos', fetchTodoList, {
 })
 ```
 
-## Prefetching[⬆](#documentation)<!-- Link generated with jump2header -->
+## Prefetching
 
 If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, then you're in luck. You can either use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
 
@@ -891,7 +893,7 @@ The next time a `useQuery` instance is used for a prefetched query, it will use 
 
 Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result
 
-## Initial Data[⬆](#documentation)<!-- Link generated with jump2header -->
+## Initial Data
 
 There may be times when you already have the initial data for a query synchronously available in your app. If and when this is the case, you can use the `config.initialData` option to set the initial data for a query and skip the first round of fetching!
 
@@ -909,7 +911,7 @@ function Todos() {
 }
 ```
 
-## Initial Data Function[⬆](#documentation)<!-- Link generated with jump2header -->
+## Initial Data Function
 
 If the process for accessing a query's initial data is intensive or just not something you want to perform on every render, you can pass a function as the `initialData` value. This function will be executed only once when the query is initialized, saving you precious memory and CPU:
 
@@ -923,7 +925,7 @@ function Todos() {
 }
 ```
 
-## Initial Data from Cache[⬆](#documentation)<!-- Link generated with jump2header -->
+## Initial Data from Cache
 
 In some circumstances, you may be able to provide the initial data for a query from the cached result of another. A good example of this would be searching the cached data from a todos list query for an individual todo item, then using that as the initial data for your individual todo query:
 
@@ -959,7 +961,7 @@ function Todo({ todoId }) {
 }
 ```
 
-## SSR & Initial Data[⬆](#documentation)<!-- Link generated with jump2header -->
+## SSR & Initial Data
 
 When using SSR (server-side-rendering) with React Query there are a few things to note:
 
@@ -985,7 +987,7 @@ const { status, data = [{ id: 0, name: 'Implement SSR!' }], error } = useQuery(
 
 The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, it will continue as normal and request a fresh copy of the query result.
 
-## Suspense Mode[⬆](#documentation)<!-- Link generated with jump2header -->
+## Suspense Mode
 
 React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
 
@@ -1021,11 +1023,11 @@ When using suspense mode, `status` states and `error` objects are not needed and
 
 In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `useErrorBoundary` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
 
-## Fetch-on-render vs Fetch-as-you-render[⬆](#documentation)<!-- Link generated with jump2header -->
+## Fetch-on-render vs Fetch-as-you-render
 
 Out of the box, React Query in `suspense` mode works really well as a **Fetch-on-render** solution with no additional configuration. However, if you want to take it to the next level and implement a `Fetch-as-you-render` model, we recommend implementing [Prefetching](#prefetching) on routing and/or user interactions events to initialize queries before they are needed.
 
-## Canceling Query Requests[⬆](#documentation)<!-- Link generated with jump2header -->
+## Canceling Query Requests
 
 By default, queries that become inactive before their promises are resolved are simply ignored instead of canceled. Why is this?
 
@@ -1080,11 +1082,11 @@ const query = useQuery('todos', () => {
 })
 ```
 
-# Mutations[⬆](#documentation)<!-- Link generated with jump2header -->
+# Mutations
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query exports a `useMutation` hook.
 
-## Basic Mutations[⬆](#documentation)<!-- Link generated with jump2header -->
+## Basic Mutations
 
 Assuming the server implements a ping mutation, that returns "pong" string, here's an example of the most basic mutation:
 
@@ -1107,7 +1109,7 @@ const PingPong = () => {
 
 Mutations without variables are not that useful, so let's add some variables to closer match reality.
 
-## Mutation Variables[⬆](#documentation)<!-- Link generated with jump2header -->
+## Mutation Variables
 
 To pass `variables` to your `mutate` function, call `mutate` with an object.
 
@@ -1150,7 +1152,7 @@ const CreateTodo = () => {
 
 Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) method and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
-## Invalidate and Refetch Queries from Mutations[⬆](#documentation)<!-- Link generated with jump2header -->
+## Invalidate and Refetch Queries from Mutations
 
 When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update local queries with the new data imperatively, React Query helps you to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **atomic updates and refetching** instead of direct cache manipulation.
 
@@ -1304,7 +1306,7 @@ mutate(todo, {
 })
 ```
 
-## Query Updates from Mutations[⬆](#documentation)<!-- Link generated with jump2header -->
+## Query Updates from Mutations
 
 When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Cache's `setQueryData`](#querycachesetquerydata) method:
 
@@ -1337,7 +1339,7 @@ const useMutateTodo = () => {
 }
 ```
 
-## Resetting Mutation State[⬆](#documentation)<!-- Link generated with jump2header -->
+## Resetting Mutation State
 
 It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function to handle this:
 
@@ -1366,7 +1368,7 @@ const CreateTodo = () => {
 }
 ```
 
-## Manually or Optimistically Setting Query Data[⬆](#documentation)<!-- Link generated with jump2header -->
+## Manually or Optimistically Setting Query Data
 
 In rare circumstances, you may want to manually update a query's response with a custom value. To do this, you can again use the [Query Cache's `setQueryData`](#querycachesetquerydata) method:
 
@@ -1383,7 +1385,7 @@ queryCache.setQueryData(['todo', { id: 5 }], previous => ({
 }))
 ```
 
-## Optimistic Updates with Automatic Rollback for Failed Mutations[⬆](#documentation)<!-- Link generated with jump2header -->
+## Optimistic Updates with Automatic Rollback for Failed Mutations
 
 When you optimistically update your state before performing a mutation, there is a non-zero chance that the mutation will fail. In most cases, you can just trigger a refetch for your optimistic queries to revert them to their true server state. In some circumstances though, refetching may not work correctly and the mutation error could represent some type of server issue that won't make it possible to refetch. In this event, you can instead choose to rollback your update.
 
@@ -1450,7 +1452,7 @@ useMutation(updateTodo, {
 })
 ```
 
-# Displaying Background Fetching Loading States[⬆](#documentation)<!-- Link generated with jump2header -->
+# Displaying Background Fetching Loading States
 
 A query's `status === 'loading'` state is sufficient enough to show the initial hard-loading state for a query, but sometimes you may want to display an additional indicator that a query is refetching in the background. To do this, queries also supply you with an `isFetching` boolean that you can use to show that it's in a fetching state, regardless of the state of the `status` variable:
 
@@ -1479,7 +1481,7 @@ function Todos() {
 }
 ```
 
-# Displaying Global Background Fetching Loading State[⬆](#documentation)<!-- Link generated with jump2header -->
+# Displaying Global Background Fetching Loading State
 
 In addition to individual query loading states, if you would like to show a global loading indicator when **any** queries are fetching (including in the background), you can use the `useIsFetching` hook:
 
@@ -1495,7 +1497,7 @@ function GlobalLoadingIndicator() {
 }
 ```
 
-# Window-Focus Refetching[⬆](#documentation)<!-- Link generated with jump2header -->
+# Window-Focus Refetching
 
 If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `ReactQueryConfigProvider`'s `refetchAllOnWindowFocus` option to disable it:
 
@@ -1511,7 +1513,7 @@ function App() {
 }
 ```
 
-## Custom Window Focus Event[⬆](#documentation)<!-- Link generated with jump2header -->
+## Custom Window Focus Event
 
 In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
@@ -1531,7 +1533,7 @@ setFocusHandler(handleFocus => {
 })
 ```
 
-## Ignoring Iframe Focus Events[⬆](#documentation)<!-- Link generated with jump2header -->
+## Ignoring Iframe Focus Events
 
 A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
 
@@ -1542,7 +1544,7 @@ import onWindowFocus from './onWindowFocus' // The gist above
 setFocusHandler(onWindowFocus) // Boom!
 ```
 
-# Custom Query Key Serializers (Experimental)[⬆](#documentation)<!-- Link generated with jump2header -->
+# Custom Query Key Serializers (Experimental)
 
 > **WARNING:** This is an advanced and experimental feature. There be dragons here. Do not change the Query Key Serializer unless you know what you are doing and are fine with encountering edge cases in React Query's API
 
@@ -1752,7 +1754,7 @@ refetchQuery([getTodo, { id: 5 }])
 
 </details>
 
-# React Query Devtools[⬆](#documentation)<!-- Link generated with jump2header -->
+# React Query Devtools
 
 React query has dedicated devtools! Visit the [React Query Devtools Github Repo](https://github.com/tannerlinsley/react-query-devtools) for information on how to install and use them!
 
@@ -1760,9 +1762,9 @@ To see a demo, [check out the Sandbox example!](https://codesandbox.io/s/github/
 
 [![React Query Header](https://github.com/tannerlinsley/react-query-devtools/raw/master/media/header.png)](https://github.com/tannerlinsley/react-query-devtools)
 
-# API[⬆](#documentation)<!-- Link generated with jump2header -->
+# API
 
-## `useQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `useQuery`
 
 ```js
 const {
@@ -1895,7 +1897,7 @@ const queryInfo = useQuery({
   - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 
-## `usePaginatedQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `usePaginatedQuery`
 
 ```js
 const {
@@ -2023,7 +2025,7 @@ const {
   - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 
-## `useInfiniteQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `useInfiniteQuery`
 
 ```js
 
@@ -2160,7 +2162,7 @@ const {
 - `canFetchMore: Boolean`
   - If using `paginated` mode, this will be `true` if there is more data to be fetched (known via the required `getFetchMore` option function).
 
-## `useMutation`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `useMutation`
 
 ```js
 const [mutate, { status, data, error, reset }] = useMutation(mutationFn, {
@@ -2236,7 +2238,7 @@ const promise = mutate(variables, {
 - `promise: Promise`
   - The promise that is returned by the `mutationFn`.
 
-## `queryCache`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache`
 
 The `queryCache` instance is the backbone of React Query that manages all of the state, caching, lifecycle and magic of every query. It supports relatively unrestricted, but safe, access to manipulate query's as you need. Its available properties and methods are:
 
@@ -2251,7 +2253,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`isFetching`](#querycacheisfetching)
 - [`clear`](#querycacheclear)
 
-## `queryCache.prefetchQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.prefetchQuery`
 
 `prefetchQuery` is an asynchronous function that can be used to fetch and cache a query response before it is needed or fetched with `useQuery`.
 
@@ -2292,7 +2294,7 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 - `promise: Promise`
   - A promise is returned that will either immediately resolve with the query's cached response data, or resolve to the data returned by the fetch function. It **will not** throw an error if the fetch fails. This can be configured by setting the `throwOnError` option to `true`.
 
-## `queryCache.getQueryData`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.getQueryData`
 
 `getQueryData` is a synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
 
@@ -2312,7 +2314,7 @@ const data = queryCache.getQueryData(queryKey)
 - `data: any | undefined`
   - The data for the cached query, or `undefined` if the query does not exist.
 
-## `queryCache.setQueryData`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.setQueryData`
 
 `setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created and immediately be marked as stale. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
 
@@ -2346,7 +2348,7 @@ For convenience in syntax, you can also pass an updater function which receives 
 setQueryData(queryKey, oldData => newData)
 ```
 
-## `queryCache.refetchQueries`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.refetchQueries`
 
 The `refetchQueries` method can be used to refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, queries that are fresh (not stale) will not be refetched, but you can override this by passing the `force: true` option.
 
@@ -2379,7 +2381,7 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
 
 This function returns a promise that will resolve when all of the queries are done being refetched. By default, it **will not** throw an error if any of those queries refetches fail, but this can be configured by setting the `throwOnError` option to `true`
 
-## `queryCache.removeQueries`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.removeQueries`
 
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
 
@@ -2406,7 +2408,7 @@ const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
 
 This function does not return anything
 
-## `queryCache.getQuery`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.getQuery`
 
 `getQuery` is a slightly more advanced synchronous function that can be used to get an existing query object from the cache. This object not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
 
@@ -2428,7 +2430,7 @@ const query = queryCache.getQuery(queryKey)
 - `query: QueryObject`
   - The query object from the cache
 
-## `queryCache.getQueries`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.getQueries`
 
 `getQueries` is even more advanced synchronous function that can be used to get existing query objects from the cache that partially match query key. If queries do not exist, empty array will be returned.
 
@@ -2450,7 +2452,7 @@ const queries = queryCache.getQueries(queryKey)
 - `queries: QueryObject[]`
   - Query objects from the cache
 
-## `queryCache.isFetching`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.isFetching`
 
 This `isFetching` property is an `integer` representing how many queries, if any, in the cache are currently fetching (including background-fetching, loading new pages, or loading more infinite query results)
 
@@ -2464,7 +2466,7 @@ if (queryCache.isFetching) {
 
 React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
-## `queryCache.subscribe`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.subscribe`
 
 The `subscribe` method can be used to subscribe to the query cache as a whole and be informed of safe/known updates to the cache like query states changing or queries being updated, added or removed
 
@@ -2486,7 +2488,7 @@ const unsubscribe = queryCache.subscribe(callback)
 - `unsubscribe: Function => void`
   - This function will unsubscribe the callback from the query cache.
 
-## `queryCache.clear`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `queryCache.clear`
 
 The `clear` method can be used to clear the queryCache entirely and start fresh.
 
@@ -2501,7 +2503,7 @@ queryCache.clear()
 - `queries: Array<Query>`
   - This will be an array containing the queries that were found.
 
-## `useIsFetching`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `useIsFetching`
 
 `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or fetching in the background (useful for app-wide loading indicators).
 
@@ -2516,7 +2518,7 @@ const isFetching = useIsFetching()
 - `isFetching: Int`
   - Will be the `number` of the queries that your application is currently loading or fetching in the background.
 
-## `ReactQueryConfigProvider`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `ReactQueryConfigProvider`
 
 `ReactQueryConfigProvider` is an optional provider component and can be used to define defaults for all instances of `useQuery` within it's sub-tree:
 
@@ -2560,7 +2562,7 @@ function App() {
   - Must be **stable** or **memoized**. Do not create an inline object!
   - For non-global properties please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
 
-## `setConsole`[⬆](#documentation)<!-- Link generated with jump2header -->
+## `setConsole`
 
 `setConsole` is an optional utility function that allows you to replace the `console` interface used to log errors. By default, the `window.console` object is used. If no global `console` object is found in the environment, nothing will be logged.
 
@@ -2580,7 +2582,6 @@ setConsole({
 - `console: Object`
   - Must implement the `log`, `warn`, and `error` methods.
 
-
 ## Contributors ✨
 
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
@@ -2597,6 +2598,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
