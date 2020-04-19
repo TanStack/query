@@ -732,4 +732,22 @@ describe('useQuery', () => {
 
     await waitForElement(() => rendered.getByText('isFetching === false'))
   })
+
+  test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
+    function Page() {
+      const query = useQuery('test', () => 'fetched data', {
+        cacheTime: Infinity,
+      })
+      return <div>{query.data}</div>
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('fetched data'))
+
+    rendered.unmount()
+
+    const query = queryCache.getQuery('test')
+    expect(query.cacheTimeout).toBe(undefined)
+  })
 })
