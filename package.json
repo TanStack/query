@@ -30,7 +30,8 @@
   },
   "files": [
     "dist",
-    "types"
+    "types",
+    "scripts"
   ],
   "dependencies": {
     "@scarf/scarf": "^1.0.0",
