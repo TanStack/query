@@ -2,7 +2,6 @@
  * @jest-environment node
  */
 
-import { cleanup } from '@testing-library/react'
 import React from 'react'
 import { renderToString } from 'react-dom/server'
 import { usePaginatedQuery, queryCache } from '../index'
@@ -10,7 +9,6 @@ import { usePaginatedQuery, queryCache } from '../index'
 describe('useQuery SSR', () => {
   afterEach(() => {
     queryCache.clear()
-    cleanup()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/70
