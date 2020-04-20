@@ -5,6 +5,7 @@
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
+  "homepage": "https://github.com/tannerlinsley/react-query#readme",
   "main": "index.js",
   "module": "dist/react-query.mjs",
   "types": "types",
