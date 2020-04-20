@@ -1,6 +1,6 @@
 {
   "name": "react-query",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
