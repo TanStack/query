@@ -122,7 +122,7 @@ export function makeQueryCache() {
 
       // If the query started with data, schedule
       // a stale timeout
-      if (query.state.data) {
+      if (!isServer && query.state.data) {
         query.scheduleStaleTimeout()
 
         // Simulate a query healing process

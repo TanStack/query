@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.8
+
+- Fixed an issue where stale and garbage collection timeouts would fire in server-like environments
+
 ## 1.2.7
 
 - Imported types from Definitely Typed to repo
