@@ -216,6 +216,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
       <td>
         <ul>
           <li><a href="https://github.com/bgazzera">@bgazzera<a></li>
+          <li><a href="https://kentcdodds.com/"> Kent C. Dodds (kentcdodds.com)</a></li>
         </ul>
       </td>
       <td>
@@ -253,7 +254,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
