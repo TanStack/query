@@ -1,22 +1,18 @@
-import { cleanup } from '@testing-library/react'
+/**
+ * @jest-environment node
+ */
+
 import React from 'react'
 import { renderToString } from 'react-dom/server'
+import { usePaginatedQuery, queryCache } from '../index'
 
 describe('useQuery SSR', () => {
-  beforeEach(() => {
-    const windowSpy = jest.spyOn(global, 'window', 'get')
-    windowSpy.mockImplementation(() => undefined)
-  })
-
   afterEach(() => {
-    cleanup()
+    queryCache.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/70
   it('should not cache queries on server', async () => {
-    // import react-query after mocking window
-    const { usePaginatedQuery, queryCache } = require('../index')
-
     function Page() {
       const [page, setPage] = React.useState(1)
       const { resolvedData } = usePaginatedQuery(
