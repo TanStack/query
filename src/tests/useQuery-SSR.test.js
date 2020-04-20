@@ -9,6 +9,7 @@ import { usePaginatedQuery, queryCache } from '../index'
 
 describe('useQuery SSR', () => {
   afterEach(() => {
+    queryCache.clear()
     cleanup()
   })
 
