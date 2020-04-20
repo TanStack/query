@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.9
+
+- Added homepage to readme for link to docs to be displayed in IDEs
+
 ## 1.2.8
 
 - Fixed an issue where stale and garbage collection timeouts would fire in server-like environments
