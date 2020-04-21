@@ -32,6 +32,15 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "tibotiber",
+      "name": "Thibaut Tiberghien",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5635553?v=4",
+      "profile": "http://twitter.com/tibotiber",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
