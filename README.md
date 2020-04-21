@@ -106,6 +106,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [EFI.com](https://efi.com)
 - [ReactBricks](https://www.reactbricks.com/)
 - [Nozzle.io](https://nozzle.io)
+- [Cyberhaven.com](https://cyberhaven.com)
 
 > _These analytics are made available via the awesome [Scarf](https://www.npmjs.com/package/@scarf/scarf) package analytics library_
 
