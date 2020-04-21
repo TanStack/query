@@ -2174,6 +2174,7 @@ const [mutate, { status, data, error, reset }] = useMutation(mutationFn, {
   onSettled,
   throwOnError,
   useErrorBoundary,
+  { ...selectedUseQueryOptions },
 })
 
 const promise = mutate(variables, {
@@ -2216,6 +2217,8 @@ const promise = mutate(variables, {
 - `useErrorBoundary`
   - Defaults to the global query config's `useErrorBoundary` value, which is `false`
   - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
+- `selectedUseQueryOptions`
+  - *Selected* options of `useQuery` are also applicable here. E.g. `retry` and `retryDelay` can be used as described in the [`useQuery` section](#usequery). *Documentation of these options will be improved in the future.*
 
 ### Returns
 
