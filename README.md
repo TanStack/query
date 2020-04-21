@@ -2598,12 +2598,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://tannerlinsley.com"><img src="https://avatars0.githubusercontent.com/u/5580297?v=4" width="100px;" alt=""/><br /><sub><b>Tanner Linsley</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tannerlinsley" title="Code">💻</a> <a href="#ideas-tannerlinsley" title="Ideas, Planning, & Feedback">🤔</a> <a href="#example-tannerlinsley" title="Examples">💡</a> <a href="#maintenance-tannerlinsley" title="Maintenance">🚧</a> <a href="https://github.com/tannerlinsley/react-query/pulls?q=is%3Apr+reviewed-by%3Atannerlinsley" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="http://cherniavskii.com"><img src="https://avatars2.githubusercontent.com/u/13808724?v=4" width="100px;" alt=""/><br /><sub><b>Andrew Cherniavskii</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=cherniavskii" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Acherniavskii" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="http://twitter.com/tibotiber"><img src="https://avatars3.githubusercontent.com/u/5635553?v=4" width="100px;" alt=""/><br /><sub><b>Thibaut Tiberghien</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tibotiber" title="Documentation">📖</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
