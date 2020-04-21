@@ -566,12 +566,23 @@ export type MutationResult<TResult> =
   | ErrorMutationResult<TResult>
   | SuccessMutationResult<TResult>
 
-export interface CachedQuery {
+export interface CachedQueryState<T> {
+  data?: T
+  error?: unknown | null
+  failureCount: number
+  isFetching: boolean
+  canFetchMore?: boolean
+  isStale: boolean
+  status: 'loading' | 'error' | 'success'
+  updatedAt: number
+}
+
+export interface CachedQuery<T> {
   queryKey: AnyQueryKey
   queryVariables: AnyVariables
   queryFn: (...args: any[]) => unknown
   config: QueryOptions<unknown>
-  state: unknown
+  state: CachedQueryState<T>
   setData(
     dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
   ): void
