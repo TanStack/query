@@ -1,0 +1,6 @@
+{
+  "extends": "dtslint/dtslint.json",
+  "rules": {
+    "semicolon": false
+  }
+}

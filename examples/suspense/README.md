@@ -1,3 +1,6 @@
 # Example
 
-To run this example, [Open It In Codesandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/sandbox)
+To run this example:
+
+- `npm install` or `yarn`
+- `npm run start` or `yarn start`

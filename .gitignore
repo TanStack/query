@@ -9,6 +9,7 @@ build
 dist
 artifacts
 .rpt2_cache
+coverage
 
 # misc
 .DS_Store
@@ -23,3 +24,4 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .history
+size-plugin.json

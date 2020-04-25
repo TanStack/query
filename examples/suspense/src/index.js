@@ -1,6 +1,6 @@
 import React, { lazy } from "react";
 import ReactDOM from "react-dom";
-import { ReactQueryConfigProvider, prefetchQuery } from "react-query";
+import { ReactQueryConfigProvider, queryCache } from "react-query";
 
 import "./styles.css";
 
@@ -26,7 +26,7 @@ function App() {
         onClick={() => {
           setShowProjects(old => {
             if (!old) {
-              prefetchQuery("projects", fetchProjects);
+              queryCache.prefetchQuery("projects", fetchProjects);
             }
             return !old;
           });
