@@ -38,6 +38,8 @@ jobs:
         with:
           node-version: 12
           registry-url: https://registry.npmjs.org/
+      - run: npm i -g yarn
+      - run: yarn --frozen-lockfile
       - run: npx semantic-release@17
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
