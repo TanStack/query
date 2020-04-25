@@ -1,7 +1,7 @@
 {
   "name": "reactquery",
   "version": "1.2.9",
-  "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
+  "description": "Hooks for managing, caching and syncing asynchronous and remote data in React, test",
   "author": "gargroh",
   "license": "MIT",
   "repository": "gargroh/react-query",
