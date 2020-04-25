@@ -89,6 +89,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
 
   // Handle refetch interval
   React.useEffect(() => {
+    const query = queryRef.current
     if (
       config.refetchInterval &&
       (!query.refetchInterval || config.refetchInterval < query.refetchInterval)
@@ -105,12 +106,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
         delete query.refetchInterval
       }
     }
-  }, [
-    config.refetchInterval,
-    config.refetchIntervalInBackground,
-    query.refetchInterval,
-    refetch,
-  ])
+  }, [config.refetchInterval, config.refetchIntervalInBackground, refetch])
 
   return {
     ...query.state,
