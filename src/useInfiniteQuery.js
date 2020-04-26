@@ -16,15 +16,36 @@ export function useInfiniteQuery(...args) {
   const originalQueryFn = queryFn
 
   queryFn = async () => {
-    const data = await Promise.all(
-      queryInfoRef.current.query.pageVariables.map(args =>
-        originalQueryFn(...args)
-      )
-    )
+    const data = []
+    const pageVariables = [...queryInfoRef.current.query.pageVariables]
+    const rebuiltPageVariables = []
+
+    do {
+      const args = pageVariables.shift()
+
+      if (!data.length) {
+        // the first page query doesn't need to be rebuilt
+        data.push(await originalQueryFn(...args))
+        rebuiltPageVariables.push(args)
+      } else {
+        const pageArgs = [
+          // remove the last argument (the previously saved cursor)
+          ...args.slice(0, -1),
+          // generate an up-to-date cursor based on the previous data set
+          getGetFetchMore()(data[data.length - 1], data),
+        ]
+
+        data.push(await originalQueryFn(...pageArgs))
+        rebuiltPageVariables.push(pageArgs)
+      }
+    } while (pageVariables.length)
+
     queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
       data[data.length - 1],
       data
     )
+    queryInfoRef.current.query.pageVariables = rebuiltPageVariables
+
     return data
   }
 
