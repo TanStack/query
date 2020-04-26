@@ -25,5 +25,5 @@ export default function useIntersectionObserver({
     return () => {
       observer.unobserve(el)
     }
-  })
+  }, [target.current])
 }
