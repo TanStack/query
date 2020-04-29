@@ -411,6 +411,7 @@ export interface QueryResultBase<TResult> {
   status: 'loading' | 'error' | 'success'
   error: null | unknown
   isFetching: boolean
+  isStale: boolean
   failureCount: number
   refetch: ({
     force,
