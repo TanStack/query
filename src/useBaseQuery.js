@@ -92,18 +92,21 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     const query = queryRef.current
     if (
       config.refetchInterval &&
-      (!query.refetchInterval || config.refetchInterval < query.refetchInterval)
+      (!query.currentRefetchInterval ||
+        // shorter interval should override previous one
+        config.refetchInterval < query.currentRefetchInterval)
     ) {
-      clearInterval(query.refetchInterval)
-      query.refetchInterval = setInterval(() => {
+      query.currentRefetchInterval = config.refetchInterval
+      clearInterval(query.refetchIntervalId)
+      query.refetchIntervalId = setInterval(() => {
         if (isDocumentVisible() || config.refetchIntervalInBackground) {
           refetch().catch(Console.error)
         }
       }, config.refetchInterval)
 
       return () => {
-        clearInterval(query.refetchInterval)
-        delete query.refetchInterval
+        clearInterval(query.refetchIntervalId)
+        delete query.refetchIntervalId
       }
     }
   }, [config.refetchInterval, config.refetchIntervalInBackground, refetch])

@@ -110,7 +110,7 @@ export function makeQueryCache() {
 
     if (query) {
       Object.assign(query, { queryVariables, queryFn })
-      query.config = {...query.config, ...config };
+      query.config = { ...query.config, ...config }
     } else {
       query = makeQuery({
         queryKey,
