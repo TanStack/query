@@ -1,5 +1,10 @@
-import React from 'react'
-import { render, waitForElement, cleanup } from '@testing-library/react'
+import React, { useState } from 'react'
+import {
+  render,
+  waitForElement,
+  cleanup,
+  fireEvent,
+} from '@testing-library/react'
 import { ReactQueryConfigProvider, useQuery, queryCache } from '../index'
 
 import { sleep } from './utils'
@@ -42,7 +47,7 @@ describe('config', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
-  test('should reset to defaults when provider is unmounted', async () => {
+  test('should reset to defaults when all providers are unmounted', async () => {
     const onSuccess = jest.fn()
 
     const config = {
@@ -70,14 +75,13 @@ describe('config', () => {
 
     await waitForElement(() => rendered.getByText('Status: success'))
 
-    const onError = jest.fn();
+    const onError = jest.fn()
     const newConfig = {
-      onError
+      onError,
     }
 
-    rendered.unmount();
-    queryCache.clear();
-    onSuccess.mockClear();
+    rendered.unmount()
+    onSuccess.mockClear()
 
     const renderedAgain = render(
       <ReactQueryConfigProvider config={newConfig}>
@@ -87,6 +91,84 @@ describe('config', () => {
 
     await waitForElement(() => renderedAgain.getByText('Status: success'))
 
-    expect(onSuccess).not.toHaveBeenCalled();
+    expect(onSuccess).not.toHaveBeenCalled()
+  })
+
+  test('should reset to previous config when nested provider is unmounted', async () => {
+    const onParentSuccess = jest.fn()
+    const onChildSuccess = jest.fn()
+    let counterRef = 0
+
+    const parentConfig = {
+      parent: true,
+      onSuccess: onParentSuccess,
+    }
+
+    const childConfig = {
+      child: true,
+      onSuccess: onChildSuccess,
+    }
+
+    function Component() {
+      const { data } = useQuery('test', async () => {
+        await sleep(10)
+        counterRef += 1
+        return String(counterRef)
+      })
+
+      return (
+        <div>
+          <h1>Data: {data}</h1>
+        </div>
+      )
+    }
+
+    function Page() {
+      const [childConfigEnabled, setChildConfigEnabled] = useState(true)
+
+      return (
+        <div>
+          {childConfigEnabled && (
+            <ReactQueryConfigProvider config={childConfig}>
+              <Component />
+            </ReactQueryConfigProvider>
+          )}
+          {!childConfigEnabled && <Component />}
+          <button
+            data-testid="disableChildConfig"
+            onClick={() => setChildConfigEnabled(false)}
+          >
+            Disable Child Config
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <ReactQueryConfigProvider config={parentConfig}>
+        <Page />
+      </ReactQueryConfigProvider>
+    )
+
+    await rendered.findByText('Data: 1')
+
+    expect(queryCache.getQuery('test').config.parent).toBe(true)
+    expect(queryCache.getQuery('test').config.child).toBe(true)
+
+    expect(onChildSuccess).toHaveBeenCalled()
+    expect(onParentSuccess).not.toHaveBeenCalled()
+
+    onChildSuccess.mockClear()
+    onParentSuccess.mockClear()
+
+    fireEvent.click(rendered.getByTestId('disableChildConfig'))
+
+    await rendered.findByText('Data: 2')
+
+    expect(queryCache.getQuery('test').config.parent).toBe(true)
+    expect(queryCache.getQuery('test').config.child).toBeUndefined()
+
+    expect(onChildSuccess).not.toHaveBeenCalled()
+    expect(onParentSuccess).toHaveBeenCalled()
   })
 })

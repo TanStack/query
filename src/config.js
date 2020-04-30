@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { noop, stableStringify, identity } from './utils'
 
 export const configContext = React.createContext()
@@ -32,6 +32,7 @@ export function useConfigContext() {
 
 export function ReactQueryConfigProvider({ config, children }) {
   let configContextValue = React.useContext(configContext)
+  const originalConfigRef = React.useRef(null)
 
   const newConfig = React.useMemo(() => {
     const newConfig = {
@@ -47,12 +48,15 @@ export function ReactQueryConfigProvider({ config, children }) {
     return newConfig
   }, [config, configContextValue])
 
-  useEffect(
-    () => () => {
-      defaultConfigRef.current = DEFAULTS
-    },
-    []
-  )
+  React.useEffect(() => {
+    if (!originalConfigRef.current) {
+      originalConfigRef.current = newConfig
+    }
+
+    return () => {
+      defaultConfigRef.current = originalConfigRef.current || DEFAULTS
+    }
+  }, [originalConfigRef, newConfig])
 
   if (!configContextValue) {
     defaultConfigRef.current = newConfig
