@@ -41,4 +41,52 @@ describe('config', () => {
 
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
+
+  test('should reset to defaults when provider is unmounted', async () => {
+    const onSuccess = jest.fn()
+
+    const config = {
+      onSuccess,
+    }
+
+    function Page() {
+      const { status } = useQuery('test', async () => {
+        await sleep(10)
+        return 'data'
+      })
+
+      return (
+        <div>
+          <h1>Status: {status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <ReactQueryConfigProvider config={config}>
+        <Page />
+      </ReactQueryConfigProvider>
+    )
+
+    await waitForElement(() => rendered.getByText('Status: success'))
+
+    const onError = jest.fn();
+    const newConfig = {
+      onError
+    }
+
+    rendered.unmount();
+    queryCache.clear();
+    onSuccess.mockClear();
+
+    const renderedAgain = render(
+      <ReactQueryConfigProvider config={newConfig}>
+        <Page />
+      </ReactQueryConfigProvider>
+    )
+
+    await waitForElement(() => renderedAgain.getByText('Status: success'))
+
+    expect(onSuccess).not.toHaveBeenCalled();
+  })
 })

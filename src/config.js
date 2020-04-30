@@ -1,27 +1,29 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { noop, stableStringify, identity } from './utils'
 
 export const configContext = React.createContext()
 
+const DEFAULTS = {
+  retry: 3,
+  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+  staleTime: 0,
+  cacheTime: 5 * 60 * 1000,
+  refetchAllOnWindowFocus: true,
+  refetchInterval: false,
+  suspense: false,
+  queryKeySerializerFn: defaultQueryKeySerializerFn,
+  queryFnParamsFilter: identity,
+  throwOnError: false,
+  useErrorBoundary: undefined, // this will default to the suspense value
+  onMutate: noop,
+  onSuccess: noop,
+  onError: noop,
+  onSettled: noop,
+  refetchOnMount: true,
+}
+
 export const defaultConfigRef = {
-  current: {
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 0,
-    cacheTime: 5 * 60 * 1000,
-    refetchAllOnWindowFocus: true,
-    refetchInterval: false,
-    suspense: false,
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
-    queryFnParamsFilter: identity,
-    throwOnError: false,
-    useErrorBoundary: undefined, // this will default to the suspense value
-    onMutate: noop,
-    onSuccess: noop,
-    onError: noop,
-    onSettled: noop,
-    refetchOnMount: true,
-  },
+  current: DEFAULTS,
 }
 
 export function useConfigContext() {
@@ -44,6 +46,13 @@ export function ReactQueryConfigProvider({ config, children }) {
 
     return newConfig
   }, [config, configContextValue])
+
+  useEffect(
+    () => () => {
+      defaultConfigRef.current = DEFAULTS
+    },
+    []
+  )
 
   if (!configContextValue) {
     defaultConfigRef.current = newConfig
