@@ -107,6 +107,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       return () => {
         clearInterval(query.refetchIntervalId)
         delete query.refetchIntervalId
+        delete query.currentRefetchInterval
       }
     }
   }, [config.refetchInterval, config.refetchIntervalInBackground, refetch])
