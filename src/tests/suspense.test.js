@@ -30,4 +30,27 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
+
+  it('should call onSuccess on the first successful call', async () => {
+    const successFn = jest.fn()
+
+    function Page() {
+      useQuery(['test'], () => sleep(10), {
+        suspense: true,
+        onSuccess: successFn,
+      })
+
+      return 'rendered'
+    }
+
+    const rendered = render(
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
+    )
+
+    await waitForElement(() => rendered.getByText('rendered'))
+
+    expect(successFn).toHaveBeenCalledTimes(1)
+  })
 })

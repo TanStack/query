@@ -60,16 +60,21 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     [query]
   )
 
-  // Subscribe to the query and maybe trigger fetch
-  React.useEffect(() => {
-    const unsubscribeFromQuery = query.subscribe({
-      id: instanceId,
-      onStateUpdate: () => rerender({}),
-      onSuccess: data => getLatestConfig().onSuccess(data),
-      onError: err => getLatestConfig().onError(err),
-      onSettled: (data, err) => getLatestConfig().onSettled(data, err),
-    })
+  // Create or update this instance of the query
+  query.updateInstance({
+    id: instanceId,
+    onStateUpdate: () => rerender({}),
+    onSuccess: data => getLatestConfig().onSuccess(data),
+    onError: err => getLatestConfig().onError(err),
+    onSettled: (data, err) => getLatestConfig().onSettled(data, err),
+  })
 
+  // After mount, subscribe to the query
+  React.useEffect(() => {
+    return query.subscribe(instanceId)
+  }, [getLatestConfig, instanceId, query, rerender])
+
+  React.useEffect(() => {
     // Perform the initial fetch for this query if necessary
     if (
       !getLatestConfig().manual && // Don't auto fetch if config is set to manual query
@@ -83,9 +88,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
 
     query.wasPrefetched = false
     query.wasSuspended = false
-
-    return unsubscribeFromQuery
-  }, [getLatestConfig, instanceId, query, refetch, rerender])
+  }, [getLatestConfig, query, refetch])
 
   // Handle refetch interval
   React.useEffect(() => {

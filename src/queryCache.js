@@ -272,7 +272,7 @@ export function makeQueryCache() {
       query.cancelled = null
     }
 
-    query.subscribe = instance => {
+    query.updateInstance = instance => {
       let found = query.instances.find(d => d.id === instance.id)
 
       if (found) {
@@ -284,12 +284,14 @@ export function makeQueryCache() {
         }
         query.instances.push(instance)
       }
+    }
 
+    query.subscribe = instanceId => {
       query.heal()
 
       // Return the unsubscribe function
       return () => {
-        query.instances = query.instances.filter(d => d.id !== instance.id)
+        query.instances = query.instances.filter(d => d.id !== instanceId)
 
         if (!query.instances.length) {
           // Cancel any side-effects
