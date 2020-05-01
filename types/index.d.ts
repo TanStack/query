@@ -391,6 +391,7 @@ export interface BaseQueryOptions {
   refetchOnMount?: boolean
   onError?: (err: unknown) => void
   suspense?: boolean
+  isDataEqual?: (oldData: unknown, newData: unknown) => boolean
 }
 
 export interface QueryOptions<TResult> extends BaseQueryOptions {
@@ -670,7 +671,7 @@ export interface QueryCache {
     queryKeyOrPredicateFn:
       | AnyQueryKey
       | string
-      | ((query: CachedQuery) => boolean),
+      | ((query: CachedQuery<unknown>) => boolean),
     {
       exact,
       throwOnError,
@@ -681,14 +682,14 @@ export interface QueryCache {
     queryKeyOrPredicateFn:
       | AnyQueryKey
       | string
-      | ((query: CachedQuery) => boolean),
+      | ((query: CachedQuery<unknown>) => boolean),
     { exact }?: { exact?: boolean }
   ): Promise<void>
-  getQuery(queryKey: AnyQueryKey): CachedQuery | undefined
-  getQueries(queryKey: AnyQueryKey): CachedQuery[]
+  getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
+  getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): CachedQuery[]
+  clear(): Array<CachedQuery<unknown>>
 }
 
 export const queryCache: QueryCache
@@ -726,6 +727,7 @@ export interface ReactQueryProviderConfig extends BaseQueryOptions {
     error: unknown | null,
     snapshotValue?: unknown
   ) => void
+  isDataEqual?: (oldData: unknown, newData: unknown) => boolean
 }
 
 export type ConsoleFunction = (...args: any[]) => void

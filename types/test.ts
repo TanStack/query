@@ -380,6 +380,7 @@ function globalConfig() {
       log(variables)
     },
     suspense: true,
+    isDataEqual: (oldData, newData) => oldData === newData,
   }
 }
 
