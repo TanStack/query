@@ -99,6 +99,7 @@ export function getQueryArgs(args) {
       throw new Error('queryKey and queryFn keys are required.')
     }
   }
+
   if (typeof args[2] === 'function') {
     const [queryKey, variables = [], queryFn, config = {}] = args
     return [queryKey, variables, queryFn, config]
@@ -121,17 +122,17 @@ export function useMountedCallback(callback) {
   )
 }
 
-export function handleSuspense(query) {
-  if (query.config.suspense || query.config.useErrorBoundary) {
-    if (query.status === statusError) {
-      throw query.error
+export function handleSuspense(queryInfo) {
+  if (queryInfo.config.suspense || queryInfo.config.useErrorBoundary) {
+    if (queryInfo.status === statusError) {
+      throw queryInfo.error
     }
   }
 
-  if (query.config.suspense) {
-    if (query.status === statusLoading) {
-      query.wasSuspensed = true
-      throw query.refetch()
+  if (queryInfo.config.suspense) {
+    if (queryInfo.status === statusLoading) {
+      queryInfo.query.wasSuspended = true
+      throw queryInfo.refetch()
     }
   }
 }
