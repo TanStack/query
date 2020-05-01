@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.0
+
+- Added a new feature where old and new data when fetching is compared for deep equality. When they are equal, the data reference will not be changed and thus keep referential equality and stability for usage in change-detection like useMemo, useCallback, and useEffect.
+- Added the `config.isDataEqual` option to allow customization of the above feature
+- Fixed an issue where query side effects would not fire in suspense mode
+- Fixed an issue where queries would double fetch when using suspense
+- Fixed an issue where cursors would not be rebuilt on infinite query refetches
+- Fixed an issue where refetchInterval could cause an infinite loop
+
 ## 1.2.9
 
 - Added homepage to readme for link to docs to be displayed in IDEs
