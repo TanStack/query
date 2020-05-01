@@ -779,7 +779,6 @@ describe('useQuery', () => {
 
       React.useMemo(() => {
         memoFn()
-        console.log(query.data)
         return query.data
       }, [query.data])
 
