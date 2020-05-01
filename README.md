@@ -34,8 +34,8 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Request Cancellation
 - [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
 - [Dedicated Devtools (React Query Devtools)](https://github.com/tannerlinsley/react-query-devtools)
-- <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
-    <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
+- 4kb - 6kb (depending on features imported) <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
+  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
   </a>
 
 <details>
@@ -255,7 +255,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
@@ -335,6 +334,7 @@ Out of the box, React Query is configured with **aggressive but sane** defaults.
 - Query results that become unused (all instances of the query are unmounted) will still be cached in case they are used again for a default of 5 minutes before they are garbage collected. To change this, you can alter the default `cacheTime` for queries to something other than `1000 * 60 * 5` milliseconds.
 - Stale queries will automatically be refetched in the background **when the browser window is refocused by the user**. You can disable this using the `refetchOnWindowFocus` option in queries or the global config.
 - Queries that fail will silently and automatically be retried **3 times, with exponential backoff delay** before capturing and displaying an error to the UI. To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
+- Query results by default are deep compared to detect if data has actually changed and if not, the data reference remains unchanged to better help with value stabilization with regards to useMemo and useCallback. The default deep compare function use here (`config.isDataEqual`) only supports comparing JSON-compatible primitives. If you are dealing with any non-json compatible values in your query responses OR are seeing performance issues with the deep compare function, you should probably disable it (`config.isDataEqual = () => false`) or customize it to better fit your needs.
 
 # Queries
 
@@ -2218,7 +2218,7 @@ const promise = mutate(variables, {
   - Defaults to the global query config's `useErrorBoundary` value, which is `false`
   - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
 - `selectedUseQueryOptions`
-  - *Selected* options of `useQuery` are also applicable here. E.g. `retry` and `retryDelay` can be used as described in the [`useQuery` section](#usequery). *Documentation of these options will be improved in the future.*
+  - _Selected_ options of `useQuery` are also applicable here. E.g. `retry` and `retryDelay` can be used as described in the [`useQuery` section](#usequery). _Documentation of these options will be improved in the future._
 
 ### Returns
 
@@ -2550,6 +2550,7 @@ const queryConfig = {
   refetchInterval: false,
   queryFnParamsFilter: args => filteredArgs,
   refetchOnMount: true,
+  isDataEqual: (previous, next) => true, // or false
 }
 
 function App() {
@@ -2604,6 +2605,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

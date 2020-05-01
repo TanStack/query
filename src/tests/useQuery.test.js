@@ -750,4 +750,61 @@ describe('useQuery', () => {
     const query = queryCache.getQuery('test')
     expect(query.cacheTimeout).toBe(undefined)
   })
+
+  it('should not cause memo churn when data does not change', async () => {
+    const queryFn = jest.fn()
+    const memoFn = jest.fn()
+    const originalVisibilityState = document.visibilityState
+
+    function mockVisibilityState(value) {
+      Object.defineProperty(document, 'visibilityState', {
+        value,
+        configurable: true,
+      })
+    }
+
+    // make page unfocused
+    mockVisibilityState('hidden')
+
+    function Page() {
+      const query = useQuery(
+        'test',
+        () =>
+          queryFn() || {
+            data: {
+              nested: true,
+            },
+          }
+      )
+
+      React.useMemo(() => {
+        memoFn()
+        console.log(query.data)
+        return query.data
+      }, [query.data])
+
+      return (
+        <div>
+          <div>status {query.status}</div>
+          <div>isFetching {query.isFetching ? 'true' : 'false'}</div>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitForElement(() => rendered.getByText('status loading'))
+    await waitForElement(() => rendered.getByText('status success'))
+
+    act(() => {
+      // reset visibilityState to original value
+      mockVisibilityState(originalVisibilityState)
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await waitForElement(() => rendered.getByText('isFetching true'))
+    await waitForElement(() => rendered.getByText('isFetching false'))
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    expect(memoFn).toHaveBeenCalledTimes(2)
+  })
 })

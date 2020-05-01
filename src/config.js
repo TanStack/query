@@ -1,5 +1,5 @@
 import React from 'react'
-import { noop, stableStringify, identity } from './utils'
+import { noop, stableStringify, identity, deepEqual } from './utils'
 
 export const configContext = React.createContext()
 
@@ -21,6 +21,7 @@ export const defaultConfigRef = {
     onError: noop,
     onSettled: noop,
     refetchOnMount: true,
+    isDataEqual: deepEqual,
   },
 }
 

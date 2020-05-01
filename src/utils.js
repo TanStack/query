@@ -136,3 +136,39 @@ export function handleSuspense(queryInfo) {
     }
   }
 }
+
+// This deep-equal is directly based on https://github.com/epoberezkin/fast-deep-equal.
+// The parts for comparing any non-JSON-supported values has been removed
+export function deepEqual(a, b) {
+  if (a === b) return true
+
+  if (a && b && typeof a == 'object' && typeof b == 'object') {
+    var length, i, keys
+    if (Array.isArray(a)) {
+      length = a.length
+      // eslint-disable-next-line eqeqeq
+      if (length != b.length) return false
+      for (i = length; i-- !== 0; ) if (!deepEqual(a[i], b[i])) return false
+      return true
+    }
+
+    keys = Object.keys(a)
+    length = keys.length
+    if (length !== Object.keys(b).length) return false
+
+    for (i = length; i-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
+
+    for (i = length; i-- !== 0; ) {
+      var key = keys[i]
+
+      if (!deepEqual(a[key], b[key])) return false
+    }
+
+    return true
+  }
+
+  // true if both NaN, false otherwise
+  // eslint-disable-next-line no-self-compare
+  return a !== a && b !== b
+}

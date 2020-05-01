@@ -396,7 +396,9 @@ export function makeQueryCache() {
               ...query.queryVariables
             )
 
-            query.setData(data)
+            query.setData(old =>
+              query.config.isDataEqual(old, data) ? old : data
+            )
 
             query.instances.forEach(
               instance =>
