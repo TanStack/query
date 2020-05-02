@@ -46,15 +46,15 @@ describe('setConsole', () => {
 
 describe('deepEqual', () => {
   it('should return `false` for different dates', () => {
-    const date1 = new Date(2020, 3, 1);
-    const date2 = new Date(2020, 3, 2);
+    const date1 = new Date(2020, 3, 1)
+    const date2 = new Date(2020, 3, 2)
 
     expect(deepEqual(date1, date2)).toEqual(false)
   })
 
   it('should return `true` for equal dates', () => {
-    const date1 = new Date(2020, 3, 1);
-    const date2 = new Date(2020, 3, 1);
+    const date1 = new Date(2020, 3, 1)
+    const date2 = new Date(2020, 3, 1)
 
     expect(deepEqual(date1, date2)).toEqual(true)
   })
