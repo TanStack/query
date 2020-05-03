@@ -98,6 +98,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [Amazon](https://amazon.com)
 - [Walmart](https://walmart.com)
 - [Microsoft](https://microsoft.com)
+- [Target](https://target.com)
 - [HP](https://hp.com)
 - [Major League Baseball Association](https://mlb.com)
 - [Volvo](https://volvocars.com)
