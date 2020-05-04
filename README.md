@@ -1792,7 +1792,8 @@ const {
   onSettled,
   suspense,
   initialData,
-  refetchOnMount
+  refetchOnMount,
+  queryFnParamsFilter
 })
 
 // or using the object syntax
@@ -1875,6 +1876,10 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `true`
   - If set to `false`, will disable additional instances of a query to trigger background refetches
+- `queryFnParamsFilter: Function(args) => filteredArgs`
+  - Optional
+  - This function will filter the params that get passed to `queryFn`.
+  - For example, you can filter out the first query key from the params by using `queryFnParamsFilter: args => args.slice(1)`.
 
 ### Returns
 
