@@ -16,6 +16,14 @@ describe('queryCache', () => {
     ).not.toThrow()
   })
 
+  test('setQueryData does not crash when variable is null', () => {
+    queryCache.setQueryData(['USER', { userId: null }], 'Old Data')
+
+    expect(() =>
+      queryCache.setQueryData(['USER', { userId: null }], 'New Data')
+    ).not.toThrow()
+  })
+
   test('prefetchQuery returns the cached data on cache hits', async () => {
     const fetchFn = () => Promise.resolve('data')
     const first = await queryCache.prefetchQuery('key', fetchFn)
