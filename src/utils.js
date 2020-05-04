@@ -63,6 +63,10 @@ export function isObject(a) {
 }
 
 export function deepIncludes(a, b) {
+  if (a === b) {
+    return true
+  }
+
   if (typeof a !== typeof b) {
     return false
   }
@@ -71,7 +75,7 @@ export function deepIncludes(a, b) {
     return !Object.keys(b).some(key => !deepIncludes(a[key], b[key]))
   }
 
-  return a === b
+  return false
 }
 
 export function isDocumentVisible() {
