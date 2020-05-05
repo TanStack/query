@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.1
+
+- Added semantic release support. So no more changelog entries here! See ya!
+- Fixed an issue where isDataEqual default function did not work with dates
+- Fixed some types
+
 ## 1.3.0
 
 - Added a new feature where old and new data when fetching is compared for deep equality. When they are equal, the data reference will not be changed and thus keep referential equality and stability for usage in change-detection like useMemo, useCallback, and useEffect.
