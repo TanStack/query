@@ -212,13 +212,12 @@ export function makeQueryCache() {
     return query.state
   }
 
-  const fetchNoop = () => Promise.resolve(noop)
   cache.setQueryData = (queryKey, updater, { exact, ...config } = {}) => {
     let queries = findQueries(queryKey, { exact })
 
     if (!queries.length && typeof queryKey !== 'function') {
       queries = [
-        cache._buildQuery(queryKey, undefined, fetchNoop, {
+        cache._buildQuery(queryKey, undefined, () => new Promise(noop), {
           ...defaultConfigRef.current,
           ...config,
         }),
