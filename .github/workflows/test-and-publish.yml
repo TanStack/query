@@ -1,0 +1,46 @@
+name: react-query tests
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  test:
+    name: 'node ${{ matrix.node }} ${{ matrix.os }} '
+    runs-on: '${{ matrix.os }}'
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [12, 10]
+    steps:
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - run: npm i -g yarn
+      - run: yarn --frozen-lockfile
+      - run: yarn test:ci
+
+  publish-module:
+    name: 'Publish Module to NPM'
+    needs: test
+    if: github.ref == 'refs/heads/master' #publish only when merged in master, not on PR
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+          registry-url: https://registry.npmjs.org/
+      - run: npm i -g yarn
+      - run: yarn --frozen-lockfile
+      - run: npx semantic-release@17
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
