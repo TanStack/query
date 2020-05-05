@@ -180,12 +180,45 @@ export function makeQueryCache() {
     return query.state.data
   }
 
+  cache.setQuery = async (...args) => {
+    let [
+      queryKey,
+      queryVariables,
+      queryFn,
+      { force, ...config },
+    ] = getQueryArgs(args)
+    let query = findQueries(queryKey, { exact: true })[0]
+
+    if (!query || query.state.isStale) {
+      // Build at first time or rebuild query if it is stale
+      query = cache._buildQuery(queryKey, queryVariables, queryFn, {
+        ...defaultConfigRef.current,
+        ...config
+      })
+    }
+
+    if (query.state.isStale || force) {
+      // Trigger a fetch and add value to query state
+      try {
+        query.setData(await query.fetch({ force }))
+      } catch (error) {
+        query.setState(oldState => ({ ...oldState, error }))
+        if (config.throwOnError) {
+          throw error
+        }
+      }
+    }
+
+    return query.state
+  }
+
+  const fetchNoop = () => Promise.resolve(noop)
   cache.setQueryData = (queryKey, updater, { exact, ...config } = {}) => {
     let queries = findQueries(queryKey, { exact })
 
     if (!queries.length && typeof queryKey !== 'function') {
       queries = [
-        cache._buildQuery(queryKey, undefined, () => new Promise(noop), {
+        cache._buildQuery(queryKey, undefined, fetchNoop, {
           ...defaultConfigRef.current,
           ...config,
         }),
