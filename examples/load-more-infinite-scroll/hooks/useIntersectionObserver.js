@@ -8,11 +8,15 @@ export default function useIntersectionObserver({
   rootMargin = '0px',
 }) {
   React.useEffect(() => {
-    const observer = new IntersectionObserver(onIntersect, {
-      root: root && root.current,
-      rootMargin,
-      threshold,
-    })
+    const observer = new IntersectionObserver(
+      entries =>
+        entries.forEach(entry => entry.isIntersecting && onIntersect()),
+      {
+        root: root && root.current,
+        rootMargin,
+        threshold,
+      }
+    )
 
     const el = target && target.current
 
