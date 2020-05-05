@@ -84,5 +84,6 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^5.2.0",
     "rollup-plugin-visualizer": "^4.0.4"
-  }
+  },
+  "release": {}
 }
