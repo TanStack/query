@@ -7,6 +7,7 @@ import {
 import * as React from 'react'
 
 import { setConsole, useMutation } from '../index'
+import { deepEqual } from '../utils'
 
 describe('setConsole', () => {
   afterEach(cleanup)
@@ -40,5 +41,21 @@ describe('setConsole', () => {
     expect(mockConsole.error).toHaveBeenCalled()
 
     setConsole(console)
+  })
+})
+
+describe('deepEqual', () => {
+  it('should return `false` for different dates', () => {
+    const date1 = new Date(2020, 3, 1)
+    const date2 = new Date(2020, 3, 2)
+
+    expect(deepEqual(date1, date2)).toEqual(false)
+  })
+
+  it('should return `true` for equal dates', () => {
+    const date1 = new Date(2020, 3, 1)
+    const date2 = new Date(2020, 3, 1)
+
+    expect(deepEqual(date1, date2)).toEqual(true)
   })
 })
