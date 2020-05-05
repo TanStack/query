@@ -258,7 +258,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
@@ -2618,3 +2617,5 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+<!-- Force -->
