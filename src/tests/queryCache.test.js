@@ -181,4 +181,68 @@ describe('queryCache', () => {
     expect(newQuery.state.markedForGarbageCollection).toBe(false)
     expect(newQuery.state.data).toBe('data')
   })
+
+  test('setQuery works as expected', async () => {
+    let result = "data"
+    const fetchFn = jest.fn(() => Promise.resolve(result))
+
+    const first = await queryCache.setQuery(['USER', { userId: null }], fetchFn, {
+      staleTime: 50
+    })
+    result = "data 2"
+    expect(first.data).toBe("data")
+    expect(first.isStale).toBe(false)
+
+    // Check if staleTime is working as expected
+    const second = await queryCache.setQuery(['USER', { userId: null }], fetchFn)
+    expect(second.data).toBe("data")
+
+    // Check if cache is invalidated correctly with time
+    await sleep(50)
+    const third = await queryCache.setQuery(['USER', { userId: null }], fetchFn)
+
+    expect(third.data).toBe("data 2")
+    expect(fetchFn).toHaveBeenCalledTimes(2)
+  })
+
+  test('setQuery set error without throw', async () => {
+    const resolveFn = () => Promise.resolve("User found")
+    const rejectFn = () => Promise.reject("User not found")
+
+    const first = await queryCache.setQuery(['USER', { userId: 1 }], rejectFn, {
+      retry: false
+    })
+    expect(first.error).toBe("User not found")
+    expect(first.data).toBe(undefined)
+    expect(first.status).toBe("error")
+
+    const second = await queryCache.setQuery(['USER', { userId: 1 }], resolveFn)
+    expect(second.error).toBe(null)
+    expect(second.data).toBe("User found")
+    expect(second.status).toBe("success")
+  })
+
+  test('setQuery throw on error', async () => {
+    const fetchFn = () =>
+      new Promise(() => {
+        throw new Error('error')
+      })
+
+    await expect(
+      queryCache.setQuery('USER', undefined, fetchFn, {
+        retry: false,
+        throwOnError: true,
+      })
+    ).rejects.toThrow(new Error('error'))
+  })
+
+  test('setQuery should retry as expected', async () => {
+    const fetchFn = jest.fn(() => Promise.reject("User not found"))
+    const { error } = await queryCache.setQuery(['USER', { userId: null }], fetchFn, {
+      retry: 3,
+      retryDelay: 1
+    })
+    expect(fetchFn).toHaveBeenCalledTimes(4)
+    expect(error).toBe("User not found")
+  })
 })
