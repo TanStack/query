@@ -41,6 +41,15 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "gargroh",
+      "name": "Rohit Garg",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/42495927?v=4",
+      "profile": "https://github.com/gargroh",
+      "contributions": [
+        "tool"
+      ]
     }
   ],
   "contributorsPerLine": 7,
