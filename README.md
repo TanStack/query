@@ -1158,6 +1158,37 @@ const CreateTodo = () => {
 
 Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) method and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
+Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
+
+```js
+// This will not work
+const CreateTodo = () => {
+  const [mutate] = useMutation(event => {
+    event.preventDefault()
+    fetch('/api', new FormData(event.target))
+  })
+
+  return (
+    <form onSubmit={mutate}>...</form>
+  )
+}
+
+// This will work
+const CreateTodo = () => {
+  const [mutate] = useMutation(formData => {
+    fetch('/api', formData)
+  })
+  const onSubmit = event => {
+    event.preventDefault()
+    mutate(new FormData(event.target))
+  }
+
+  return (
+    <form onSubmit={onSubmit}>...</form>
+  )
+}
+```
+
 ## Invalidate and Refetch Queries from Mutations
 
 When a mutation succeeds, it's likely that other queries in your application need to update. Where other libraries that use normalized caches would attempt to update local queries with the new data imperatively, React Query helps you to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **atomic updates and refetching** instead of direct cache manipulation.
