@@ -156,6 +156,9 @@ export function deepEqual(a, b) {
       return true
     }
 
+    if (a.valueOf !== Object.prototype.valueOf)
+      return a.valueOf() === b.valueOf()
+
     keys = Object.keys(a)
     length = keys.length
     if (length !== Object.keys(b).length) return false

@@ -1,14 +1,14 @@
 {
   "name": "react-query",
-  "version": "1.3.0",
+  "version": "0.0.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
   "homepage": "https://github.com/tannerlinsley/react-query#readme",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "module": "dist/react-query.mjs",
-  "types": "types",
   "sideEffects": false,
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
@@ -84,5 +84,6 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^5.2.0",
     "rollup-plugin-visualizer": "^4.0.4"
-  }
+  },
+  "release": {}
 }

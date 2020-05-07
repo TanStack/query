@@ -400,6 +400,10 @@ export interface QueryOptions<TResult> extends BaseQueryOptions {
   initialData?: TResult | (() => TResult | undefined)
 }
 
+export interface PrefetchQueryOptions<TResult> extends QueryOptions<TResult> {
+  force?: boolean
+}
+
 export interface InfiniteQueryOptions<TResult, TMoreVariable>
   extends QueryOptions<TResult[]> {
   getFetchMore: (
@@ -599,7 +603,7 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, TKey>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string>(
@@ -610,7 +614,7 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, [TKey]>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<
@@ -626,7 +630,7 @@ export interface QueryCache {
       | (() => TKey | false | null | undefined),
     variables: TVariables,
     queryFn: QueryFunctionWithVariables<TResult, TKey, TVariables>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string, TVariables extends AnyVariables>(
@@ -638,7 +642,7 @@ export interface QueryCache {
       | (() => TKey | false | null | undefined),
     variables: TVariables,
     queryFn: QueryFunctionWithVariables<TResult, [TKey], TVariables>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<
@@ -659,7 +663,7 @@ export interface QueryCache {
       | (() => TKey | false | null | undefined)
     variables?: TVariables
     queryFn: QueryFunctionWithVariables<TResult, TKey, TVariables>
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   }): Promise<TResult>
 
   getQueryData(key: AnyQueryKey | string): unknown | undefined
