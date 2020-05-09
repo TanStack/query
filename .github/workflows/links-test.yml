@@ -1,0 +1,41 @@
+name: Broken Link Checker
+
+on:
+  push:
+    branches:
+      - 'master'
+  pull_request:
+
+jobs:
+  links-test:
+    name: 'Check all readmes files'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - uses: urlstechie/urlchecker-action@0.2.1
+        with:
+          # A subfolder or path to navigate to in the present or cloned repository
+          subfolder: /github/workspace/
+
+          # A comma-separated list of file types to cover in the URL checks
+          file_types: .md,.mdx
+
+          # Choose whether to include file with no URLs in the prints.
+          print_all: false
+
+          # The timeout seconds to provide to requests, defaults to 5 seconds
+          timeout: 5
+
+          # How many times to retry a failed request (each is logged, defaults to 1)
+          retry_count: 1
+
+          # A comma separated links to exclude during URL checks
+          white_listed_urls:
+
+          # A comma separated patterns to exclude during URL checks
+          white_listed_patterns:
+
+          # choose if the force pass or not
+          force_pass: false
