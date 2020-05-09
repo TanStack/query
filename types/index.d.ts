@@ -402,6 +402,7 @@ export interface QueryOptions<TResult> extends BaseQueryOptions {
 
 export interface PrefetchQueryOptions<TResult> extends QueryOptions<TResult> {
   force?: boolean
+  throwOnError?: boolean
 }
 
 export interface InfiniteQueryOptions<TResult, TMoreVariable>
