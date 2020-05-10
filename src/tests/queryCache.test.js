@@ -1,13 +1,10 @@
-import { queryCache } from '../index'
-import { act } from '@testing-library/react'
+import { makeQueryCache } from '../index'
 import { sleep } from './utils'
 
 describe('queryCache', () => {
-  afterEach(() => {
-    queryCache.clear()
-  })
 
   test('setQueryData does not crash if query could not be found', () => {
+    const queryCache = makeQueryCache();
     expect(() =>
       queryCache.setQueryData(['USER', { userId: 1 }], prevUser => ({
         ...prevUser,
@@ -17,6 +14,7 @@ describe('queryCache', () => {
   })
 
   test('setQueryData does not crash when variable is null', () => {
+    const queryCache = makeQueryCache();
     queryCache.setQueryData(['USER', { userId: null }], 'Old Data')
 
     expect(() =>
@@ -25,6 +23,7 @@ describe('queryCache', () => {
   })
 
   test('prefetchQuery returns the cached data on cache hits', async () => {
+    const queryCache = makeQueryCache();
     const fetchFn = () => Promise.resolve('data')
     const first = await queryCache.prefetchQuery('key', fetchFn)
     const second = await queryCache.prefetchQuery('key', fetchFn)
@@ -33,6 +32,7 @@ describe('queryCache', () => {
   })
 
   test('prefetchQuery should force fetch', async () => {
+    const queryCache = makeQueryCache();
     const fetchFn = () => Promise.resolve('fresh')
     const first = await queryCache.prefetchQuery('key', fetchFn, {
       initialData: 'initial',
@@ -43,6 +43,7 @@ describe('queryCache', () => {
   })
 
   test('prefetchQuery should throw error when throwOnError is true', async () => {
+    const queryCache = makeQueryCache();
     const fetchFn = () =>
       new Promise(() => {
         throw new Error('error')
@@ -57,6 +58,7 @@ describe('queryCache', () => {
   })
 
   test('should notify listeners when new query is added', () => {
+    const queryCache = makeQueryCache();
     const callback = jest.fn()
 
     queryCache.subscribe(callback)
@@ -67,6 +69,7 @@ describe('queryCache', () => {
   })
 
   test('should notify subsribers when new query with initialData is added', () => {
+    const queryCache = makeQueryCache();
     const callback = jest.fn()
 
     queryCache.subscribe(callback)
@@ -77,18 +80,21 @@ describe('queryCache', () => {
   })
 
   test('setQueryData creates a new query if query was not found, using exact', () => {
+    const queryCache = makeQueryCache();
     queryCache.setQueryData('foo', 'bar', { exact: true })
 
     expect(queryCache.getQueryData('foo')).toBe('bar')
   })
 
   test('setQueryData creates a new query if query was not found', () => {
+    const queryCache = makeQueryCache();
     queryCache.setQueryData('baz', 'qux')
 
     expect(queryCache.getQueryData('baz')).toBe('qux')
   })
 
   test('removeQueries does not crash when exact is provided', async () => {
+    const queryCache = makeQueryCache();
     const fetchFn = () => Promise.resolve('data')
 
     // check the query was added to the cache
@@ -103,6 +109,7 @@ describe('queryCache', () => {
   })
 
   test('setQueryData schedules stale timeouts appropriately', async () => {
+    const queryCache = makeQueryCache();
     queryCache.setQueryData('key', 'test data', { staleTime: 100 })
 
     expect(queryCache.getQuery('key').state.data).toEqual('test data')
@@ -118,6 +125,7 @@ describe('queryCache', () => {
   })
 
   test('setQueryData updater function works as expected', () => {
+    const queryCache = makeQueryCache();
     const updater = jest.fn(oldData => `new data + ${oldData}`)
 
     queryCache.setQueryData('updater', 'test data')
@@ -130,6 +138,7 @@ describe('queryCache', () => {
   })
 
   test('getQueries should return queries that partially match queryKey', async () => {
+    const queryCache = makeQueryCache();
     const fetchData1 = () => Promise.resolve('data1')
     const fetchData2 = () => Promise.resolve('data2')
     const fetchDifferentData = () => Promise.resolve('data3')
@@ -142,6 +151,7 @@ describe('queryCache', () => {
   })
 
   test('stale timeout dispatch is not called if query is no longer in the query cache', async () => {
+    const queryCache = makeQueryCache();
     const queryKey = 'key'
     const fetchData = () => Promise.resolve('data')
     await queryCache.prefetchQuery(queryKey, fetchData)
@@ -153,6 +163,7 @@ describe('queryCache', () => {
   })
 
   test('query is garbage collected when unsubscribed to', async () => {
+    const queryCache = makeQueryCache();
     const queryKey = 'key'
     const fetchData = () => Promise.resolve('data')
     await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0 })
@@ -166,6 +177,7 @@ describe('queryCache', () => {
   })
 
   test('query is not garbage collected unless markedForGarbageCollection is true', async () => {
+    const queryCache = makeQueryCache();
     const queryKey = 'key'
     const fetchData = () => Promise.resolve(undefined)
     await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0 })

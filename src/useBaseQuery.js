@@ -2,7 +2,7 @@ import React from 'react'
 
 //
 
-import { queryCache } from './queryCache'
+import { useQueryCache } from './queryCache'
 import { useConfigContext } from './config'
 import {
   useUid,
@@ -19,6 +19,8 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     ...useConfigContext(),
     ...config,
   }
+
+  const queryCache = useQueryCache()
 
   const queryRef = React.useRef()
 

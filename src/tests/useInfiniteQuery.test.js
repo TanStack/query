@@ -6,7 +6,7 @@ import {
 } from '@testing-library/react'
 import * as React from 'react'
 
-import { useInfiniteQuery, queryCache } from '../index'
+import { useInfiniteQuery, ReactQueryCacheProvider, useQueryCache } from '../index'
 import { sleep } from './utils'
 
 const pageSize = 10
@@ -30,7 +30,6 @@ const fetchItems = async (page, ts) => {
 
 describe('useInfiniteQuery', () => {
   afterEach(() => {
-    queryCache.clear()
     cleanup()
   })
 
@@ -100,7 +99,11 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Loading...')
 
@@ -196,7 +199,11 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Item: 9')
     rendered.getByText('Page 0: 0')
@@ -235,6 +242,7 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
+      const queryCache = useQueryCache();
       const fetchCountRef = React.useRef(0)
       const {
         status,
@@ -305,7 +313,11 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Loading...')
 

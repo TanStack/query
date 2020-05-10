@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   isServer,
   functionalUpdate,
@@ -13,6 +14,25 @@ import {
 import { defaultConfigRef } from './config'
 
 export const queryCache = makeQueryCache()
+
+export const defaultQueryCacheRef = {
+  current: queryCache
+}
+
+export const queryCacheContext = React.createContext(queryCache)
+
+export function useQueryCache() {
+  return React.useContext(queryCacheContext)
+}
+
+export function ReactQueryCacheProvider({ queryCache, children }) {
+  defaultQueryCacheRef.current = queryCache || makeQueryCache()
+  return (
+    <queryCacheContext.Provider value={defaultQueryCacheRef.current}>
+      {children}
+    </queryCacheContext.Provider>
+  )
+}
 
 const actionInit = {}
 const actionFailed = {}
@@ -32,7 +52,7 @@ export function makeQueryCache() {
   }
 
   const notifyGlobalListeners = () => {
-    cache.isFetching = Object.values(queryCache.queries).reduce(
+    cache.isFetching = Object.values(cache.queries).reduce(
       (acc, query) => (query.state.isFetching ? acc + 1 : acc),
       0
     )
@@ -129,6 +149,7 @@ export function makeQueryCache() {
       query.config = { ...query.config, ...config }
     } else {
       query = makeQuery({
+        cache,
         queryKey,
         queryHash,
         queryVariables,
@@ -212,6 +233,7 @@ export function makeQueryCache() {
   }
 
   function makeQuery(options) {
+    const queryCache = options.cache
     const reducer = options.config.queryReducer || defaultQueryReducer
 
     const noQueryHash = typeof options.queryHash === 'undefined'
