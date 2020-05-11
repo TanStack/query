@@ -60,19 +60,30 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     [query]
   )
 
-  // Create or update this instance of the query
-  query.updateInstance({
-    id: instanceId,
-    onStateUpdate: () => rerender({}),
-    onSuccess: data => getLatestConfig().onSuccess(data),
-    onError: err => getLatestConfig().onError(err),
-    onSettled: (data, err) => getLatestConfig().onSettled(data, err),
-  })
+  const updateInstance = React.useCallback(
+    isPlaceholder => {
+      query.updateInstance({
+        id: instanceId,
+        isPlaceholder,
+        onStateUpdate: () => rerender({}),
+        onSuccess: data => getLatestConfig().onSuccess(data),
+        onError: err => getLatestConfig().onError(err),
+        onSettled: (data, err) => getLatestConfig().onSettled(data, err),
+      })
+    },
+    [getLatestConfig, instanceId, query, rerender]
+  )
+
+  // Create the placeholder instance of this query (suspense needs this to
+  // to fire things like onSuccess/onError/onSettled)
+  updateInstance(true)
 
   // After mount, subscribe to the query
   React.useEffect(() => {
+    // Update the instance to the query again, but not as a placeholder
+    updateInstance()
     return query.subscribe(instanceId)
-  }, [getLatestConfig, instanceId, query, rerender])
+  }, [getLatestConfig, instanceId, query, rerender, updateInstance])
 
   React.useEffect(() => {
     // Perform the initial fetch for this query if necessary

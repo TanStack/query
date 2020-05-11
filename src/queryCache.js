@@ -273,6 +273,9 @@ export function makeQueryCache() {
     }
 
     query.updateInstance = instance => {
+      // Filter out any placeholder instances created for suspense
+      query.instances = query.instances.filter(d => !d.isPlaceholder)
+
       let found = query.instances.find(d => d.id === instance.id)
 
       if (found) {
@@ -291,7 +294,9 @@ export function makeQueryCache() {
 
       // Return the unsubscribe function
       return () => {
-        query.instances = query.instances.filter(d => d.id !== instanceId)
+        query.instances = query.instances.filter(
+          d => !d.isPlaceholder && d.id !== instanceId
+        )
 
         if (!query.instances.length) {
           // Cancel any side-effects
