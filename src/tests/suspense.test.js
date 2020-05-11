@@ -1,4 +1,4 @@
-import { render, waitForElement, cleanup } from '@testing-library/react'
+import { render, waitForElement, fireEvent, cleanup } from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, queryCache } from '../index'
@@ -29,6 +29,42 @@ describe("useQuery's in Suspense mode", () => {
     await waitForElement(() => rendered.getByText('rendered'))
 
     expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  it('should remove query instance when component unmounted', async () => {
+    const QUERY_KEY = 'test'
+
+    function Page() {
+      useQuery([QUERY_KEY], () => sleep(10), { suspense: true })
+
+      return 'rendered'
+    }
+
+    function App() {
+      const [show, setShow] = React.useState(false)
+
+      return (
+        <>
+          <React.Suspense fallback="loading">{show && <Page />}</React.Suspense>
+          <button aria-label="toggle" onClick={() => setShow(prev => !prev)} />
+        </>
+      )
+    }
+
+    const rendered = render(<App />)
+
+    expect(rendered.queryByText('rendered')).toBeNull()
+    expect(queryCache.getQuery(QUERY_KEY)).toBeFalsy()
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    await waitForElement(() => rendered.getByText('rendered'))
+
+    expect(queryCache.getQuery(QUERY_KEY).instances.length).toBe(1)
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+
+    expect(rendered.queryByText('rendered')).toBeNull()
+    expect(queryCache.getQuery(QUERY_KEY).instances.length).toBe(0)
   })
 
   it('should call onSuccess on the first successful call', async () => {
