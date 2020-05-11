@@ -92,7 +92,8 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       !query.wasPrefetched && // Don't double fetch for prefetched queries
       !query.wasSuspended && // Don't double fetch for suspense
       query.state.isStale && // Only refetch if stale
-      (getLatestConfig().refetchOnMount || query.instances.length === 1)
+      (getLatestConfig().refetchOnMount ||
+        query.instances.filter(d => !d.isPlaceholder).length === 1)
     ) {
       refetch().catch(Console.error)
     }
