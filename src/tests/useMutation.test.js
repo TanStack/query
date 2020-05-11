@@ -44,6 +44,9 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
     function Page() {
       const [mutate, mutationResult] = useMutation(
         () => {
@@ -82,5 +85,7 @@ describe('useMutation', () => {
     fireEvent.click(getByText('reset'))
 
     expect(queryByTestId('error')).toBeNull()
+
+    console.error.mockRestore()
   })
 })

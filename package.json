@@ -74,6 +74,7 @@
     "prettier": "^1.19.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-error-boundary": "^2.2.1",
     "rollup": "^1.32.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",

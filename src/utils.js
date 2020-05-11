@@ -129,6 +129,9 @@ export function useMountedCallback(callback) {
 export function handleSuspense(queryInfo) {
   if (queryInfo.config.suspense || queryInfo.config.useErrorBoundary) {
     if (queryInfo.status === statusError) {
+      setTimeout(() => {
+        queryInfo.query.state.status = 'loading'
+      })
       throw queryInfo.error
     }
   }
