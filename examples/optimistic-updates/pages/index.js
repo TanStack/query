@@ -17,6 +17,8 @@ export default () => {
       // the old value and return it so that it's accessible in case of
       // an error
       onMutate: text => {
+        queryCache.cancelQueries('todos')
+
         const previousValue = queryCache.getQueryData('todos')
 
         queryCache.setQueryData('todos', old => ({
