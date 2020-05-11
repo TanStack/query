@@ -83,6 +83,22 @@ export function makeQueryCache() {
     }
   }
 
+  cache.cancelQueries = (predicate, { exact } = {}) => {
+    const foundQueries = findQueries(predicate, { exact })
+
+    foundQueries.forEach(query => {
+      query.cancelled = cancelledError
+
+      if (query.cancelQueries) {
+        query.cancelQueries()
+      }
+    })
+
+    if (foundQueries.length) {
+      notifyGlobalListeners()
+    }
+  }
+
   cache.refetchQueries = async (
     predicate,
     { exact, throwOnError, force } = {}

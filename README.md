@@ -258,7 +258,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
@@ -1168,9 +1167,7 @@ const CreateTodo = () => {
     fetch('/api', new FormData(event.target))
   })
 
-  return (
-    <form onSubmit={mutate}>...</form>
-  )
+  return <form onSubmit={mutate}>...</form>
 }
 
 // This will work
@@ -1183,9 +1180,7 @@ const CreateTodo = () => {
     mutate(new FormData(event.target))
   }
 
-  return (
-    <form onSubmit={onSubmit}>...</form>
-  )
+  return <form onSubmit={onSubmit}>...</form>
 }
 ```
 
@@ -1434,6 +1429,9 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
+    // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+    queryCache.cancelQueries('todos')
+
     // Snapshot the previous value
     const previousTodos = queryCache.getQueryData('todos')
 
@@ -1458,6 +1456,9 @@ useMutation(updateTodo, {
 useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
+    // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+    queryCache.cancelQueries(['todos', newTodo.id])
+
     // Snapshot the previous value
     const previousTodo = queryCache.getQueryData(['todos', newTodo.id], newTodo)
 
@@ -2426,6 +2427,35 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
 
 This function returns a promise that will resolve when all of the queries are done being refetched. By default, it **will not** throw an error if any of those queries refetches fail, but this can be configured by setting the `throwOnError` option to `true`
 
+## `queryCache.cancelQueries`
+
+The `cancelQueries` method can be used to cancel outgoing queries based on their query keys or any other functionally accessible property/state of the query.
+
+This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
+
+```js
+import { queryCache } from 'react-query'
+
+const queries = queryCache.cancelQueries(queryKeyOrPredicateFn, {
+  exact,
+})
+```
+
+### Options
+
+- `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `function`
+  - `queryKey`
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](#query-keys) for more information.
+  - `Function(query) => Boolean`
+    - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
+    - The `exact` option has no effect with using a function
+- `exact: Boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
+
+### Returns
+
+This function does not return anything
+
 ## `queryCache.removeQueries`
 
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
@@ -2646,6 +2676,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
