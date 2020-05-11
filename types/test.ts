@@ -6,6 +6,7 @@ import {
   useIsFetching,
   setConsole,
   ReactQueryProviderConfig,
+  queryCache,
 } from 'react-query'
 
 function simpleQuery() {
