@@ -193,17 +193,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 
 [![Fans](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/fans.png)](https://github.com/sponsors/tannerlinsley)
 
-<table>
-  <tbody>
-    <tr>
-      <td>
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Get Your Name Here!
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+- Steven Miyakawa (@SamSamskies)
 
 ### [Become a Sponsor](https://github.com/sponsors/tannerlinsley/)
 
