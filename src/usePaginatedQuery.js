@@ -10,7 +10,7 @@ export function usePaginatedQuery(...args) {
 
   const lastDataRef = React.useRef()
 
-  if (config.clearOnNoQuery && !queryKey) {
+  if (!queryKey) {
     lastDataRef.current = undefined
   }
 

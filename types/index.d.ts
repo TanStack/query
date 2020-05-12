@@ -389,7 +389,6 @@ export interface BaseQueryOptions {
   refetchIntervalInBackground?: boolean
   refetchOnWindowFocus?: boolean
   refetchOnMount?: boolean
-  clearOnNoQuery?: boolean
   onError?: (err: unknown) => void
   suspense?: boolean
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean

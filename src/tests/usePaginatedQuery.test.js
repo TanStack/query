@@ -122,7 +122,7 @@ describe('usePaginatedQuery', () => {
     expect(rendered.getByTestId('status').textContent).not.toBe('loading')
   })
 
-  it('should clear resolvedData data while query is falsy and clearOnNoQuery option is set', async () => {
+  it('should clear resolvedData data when query is falsy', async () => {
     function Page() {
       const [searchTerm, setSearchTerm] = React.useState('')
       const [page, setPage] = React.useState(1)
@@ -131,8 +131,7 @@ describe('usePaginatedQuery', () => {
         async (queryName, searchTerm, page) => {
           await sleep(1)
           return `${searchTerm} ${page}`
-        },
-        { clearOnNoQuery: true }
+        }
       )
 
       return (
