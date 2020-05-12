@@ -811,9 +811,8 @@ describe('useQuery', () => {
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
     let succeed = false
-    const mockError = jest.fn()
     jest.spyOn(console, 'error')
-    console.error.mockImplementation(mockError)
+    console.error.mockImplementation(() => {})
 
     function Page() {
       useQuery(
@@ -844,8 +843,6 @@ describe('useQuery', () => {
             <button
               onClick={() => {
                 succeed = true
-                // Uncomment below and it will work
-                // queryCache.clear();
                 resetErrorBoundary()
               }}
             >
@@ -862,12 +859,10 @@ describe('useQuery', () => {
 
     await waitForElement(() => rendered.getByText('error boundary'))
 
-    expect(mockError).toHaveBeenCalledTimes(3)
+    console.error.mockRestore()
 
     fireEvent.click(rendered.getByText('retry'))
 
     await waitForElement(() => rendered.getByText('rendered'))
-
-    console.error.mockRestore()
   })
 })
