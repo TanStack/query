@@ -337,6 +337,8 @@ describe('useQuery', () => {
 
     await waitForElement(() => rendered.getByText('todo aaaa'))
 
+    console.log(queryCache.queries)
+
     // TODO: This passes in node 10 and 12 both locally and in CI,
     // but fails in CI when using node 12.... Not sure what to do here.
 
