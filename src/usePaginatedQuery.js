@@ -10,6 +10,10 @@ export function usePaginatedQuery(...args) {
 
   const lastDataRef = React.useRef()
 
+  if (config.clearOnNoQuery && !queryKey) {
+    lastDataRef.current = undefined
+  }
+
   // If latestData is set, don't use initialData
   if (typeof lastDataRef.current !== 'undefined') {
     delete config.initialData
