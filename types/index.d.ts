@@ -668,9 +668,9 @@ export interface QueryCache {
   }): Promise<TResult>
 
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
-  setQueryData(
+  setQueryData<T = unknown>(
     key: AnyQueryKey | string,
-    dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
+    dataOrUpdater: T | ((oldData: T | undefined) => T)
   ): void
   refetchQueries(
     queryKeyOrPredicateFn:
