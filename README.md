@@ -179,7 +179,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
     <tr>
       <td>
         <a href="https://www.reactbricks.com/" target="_blank">
-          <img width='170' src="https://www.reactbricks.com/reactbricks_vertical.svg">
+          <img width='150' src="https://www.reactbricks.com/reactbricks_vertical.svg">
         </a>
       </td>
     </tr>
