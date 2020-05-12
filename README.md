@@ -130,128 +130,82 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 This library is being built and maintained by me, @tannerlinsley and I am always in need of more support to keep projects like this afloat. If you would like to get premium support, add your logo or name on this README, or simply just contribute to my open source Sponsorship goal, [visit my Github Sponsors page!](https://github.com/sponsors/tannerlinsley/)
 
+[![Diamond Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/diamond.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
+      <td>
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/diamond.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
+          Get Your Logo Here!
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
+[![Gold Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/gold.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley/" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/platinum.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
-       <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
+      <td>
+        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
+          Get Your Logo Here!
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
+[![Silver Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/silver.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley/" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/gold.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
+      <td>
         <a href="https://nozzle.io" target="_blank">
           <img width='225' src="https://nozzle.io/img/logo-blue.png">
         </a>
       </td>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
-        </a>
-      </td>
     </tr>
   </tbody>
 </table>
 
+[![Bronze Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/bronze.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley/" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/silver.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
+      <td>
         <a href="https://www.reactbricks.com/" target="_blank">
           <img width='170' src="https://www.reactbricks.com/reactbricks_vertical.svg">
         </a>
       </td>
-      <td align="center" valign="middle">
+    </tr>
+  </tbody>
+</table>
+
+[![Supporters](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/supporters.png)](https://github.com/sponsors/tannerlinsley)
+
+- <a href="https://github.com/bgazzera">@bgazzera<a></li>
+- <a href="https://kentcdodds.com/"> Kent C. Dodds (kentcdodds.com)</a></li>
+
+[![Fans](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/fans.png)](https://github.com/sponsors/tannerlinsley)
+
+<table>
+  <tbody>
+    <tr>
+      <td>
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
+          Get Your Name Here!
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
-<table>
-  <tbody>
-    <tr>
-      <td valign="top">
-        <a href="https://github.com/sponsors/tannerlinsley/">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/supporters.png" />
-        </a>
-      </td>
-      <td>
-        <ul>
-          <li><a href="https://github.com/bgazzera">@bgazzera<a></li>
-          <li><a href="https://kentcdodds.com/"> Kent C. Dodds (kentcdodds.com)</a></li>
-        </ul>
-      </td>
-      <td>
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Supporter!
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
-
-<table>
-  <tbody>
-    <tr>
-      <td valign="top">
-        <a href="https://github.com/sponsors/tannerlinsley/">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/fans.png" />
-        </a>
-      </td>
-      <!-- <td>
-        <ul>
-        <li></li>
-        </ul>
-      </td> -->
-      <td>
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Fan!
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+### [Become a Sponsor](https://github.com/sponsors/tannerlinsley/)
 
 # Documentation
 
