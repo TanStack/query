@@ -672,7 +672,7 @@ export interface QueryCache {
     key: AnyQueryKey | string,
     dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
   ): void
-  refetchQueries(
+  refetchQueries<TResult>(
     queryKeyOrPredicateFn:
       | AnyQueryKey
       | string
@@ -682,7 +682,7 @@ export interface QueryCache {
       throwOnError,
       force,
     }?: { exact?: boolean; throwOnError?: boolean; force?: boolean }
-  ): Promise<void>
+  ): Promise<TResult>
   removeQueries(
     queryKeyOrPredicateFn:
       | AnyQueryKey
