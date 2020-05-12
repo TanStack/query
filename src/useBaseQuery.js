@@ -60,30 +60,25 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     [query]
   )
 
-  const updateInstance = React.useCallback(
-    isPlaceholder => {
-      query.updateInstance({
-        id: instanceId,
-        isPlaceholder,
-        onStateUpdate: () => rerender({}),
-        onSuccess: data => getLatestConfig().onSuccess(data),
-        onError: err => getLatestConfig().onError(err),
-        onSettled: (data, err) => getLatestConfig().onSettled(data, err),
-      })
-    },
-    [getLatestConfig, instanceId, query, rerender]
-  )
-
-  // Create the placeholder instance of this query (suspense needs this to
-  // to fire things like onSuccess/onError/onSettled)
-  updateInstance(true)
+  query.suspenseInstance = {
+    onSuccess: data => getLatestConfig().onSuccess(data),
+    onError: err => getLatestConfig().onError(err),
+    onSettled: (data, err) => getLatestConfig().onSettled(data, err),
+  }
 
   // After mount, subscribe to the query
   React.useEffect(() => {
     // Update the instance to the query again, but not as a placeholder
-    updateInstance()
+    query.updateInstance({
+      id: instanceId,
+      onStateUpdate: () => rerender({}),
+      onSuccess: data => getLatestConfig().onSuccess(data),
+      onError: err => getLatestConfig().onError(err),
+      onSettled: (data, err) => getLatestConfig().onSettled(data, err),
+    })
+
     return query.subscribe(instanceId)
-  }, [getLatestConfig, instanceId, query, rerender, updateInstance])
+  }, [getLatestConfig, instanceId, query, rerender])
 
   React.useEffect(() => {
     // Perform the initial fetch for this query if necessary
@@ -92,8 +87,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       !query.wasPrefetched && // Don't double fetch for prefetched queries
       !query.wasSuspended && // Don't double fetch for suspense
       query.state.isStale && // Only refetch if stale
-      (getLatestConfig().refetchOnMount ||
-        query.instances.filter(d => !d.isPlaceholder).length === 1)
+      (getLatestConfig().refetchOnMount || query.instances.length === 1)
     ) {
       refetch().catch(Console.error)
     }

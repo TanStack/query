@@ -289,9 +289,6 @@ export function makeQueryCache() {
     }
 
     query.updateInstance = instance => {
-      // Filter out any placeholder instances created for suspense
-      query.instances = query.instances.filter(d => !d.isPlaceholder)
-
       let found = query.instances.find(d => d.id === instance.id)
 
       if (found) {
@@ -310,9 +307,7 @@ export function makeQueryCache() {
 
       // Return the unsubscribe function
       return () => {
-        query.instances = query.instances.filter(
-          d => !d.isPlaceholder && d.id !== instanceId
-        )
+        query.instances = query.instances.filter(d => d.id !== instanceId)
 
         if (!query.instances.length) {
           // Cancel any side-effects
@@ -406,6 +401,12 @@ export function makeQueryCache() {
           // If there are any retries pending for this query, kill them
           query.cancelled = null
 
+          const callbackInstances = [...query.instances]
+
+          if (query.wasSuspended) {
+            callbackInstances.unshift(query.suspenseInstance)
+          }
+
           try {
             // Set up the query refreshing state
             dispatch({ type: actionFetch })
@@ -421,12 +422,12 @@ export function makeQueryCache() {
               query.config.isDataEqual(old, data) ? old : data
             )
 
-            query.instances.forEach(
+            callbackInstances.forEach(
               instance =>
                 instance.onSuccess && instance.onSuccess(query.state.data)
             )
 
-            query.instances.forEach(
+            callbackInstances.forEach(
               instance =>
                 instance.onSettled && instance.onSettled(query.state.data, null)
             )
@@ -444,11 +445,11 @@ export function makeQueryCache() {
             delete query.promise
 
             if (error !== query.cancelled) {
-              query.instances.forEach(
+              callbackInstances.forEach(
                 instance => instance.onError && instance.onError(error)
               )
 
-              query.instances.forEach(
+              callbackInstances.forEach(
                 instance =>
                   instance.onSettled && instance.onSettled(undefined, error)
               )

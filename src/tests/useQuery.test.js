@@ -337,14 +337,7 @@ describe('useQuery', () => {
 
     await waitForElement(() => rendered.getByText('todo aaaa'))
 
-    console.log(queryCache.queries)
-
-    // TODO: This passes in node 10 and 12 both locally and in CI,
-    // but fails in CI when using node 12.... Not sure what to do here.
-
-    // FYI, it thinks that it's equal to 2, not 1
-
-    // expect(Object.keys(queryCache.queries).length).toEqual(1)
+    expect(Object.keys(queryCache.queries).length).toEqual(1)
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/160
