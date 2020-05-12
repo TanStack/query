@@ -24,7 +24,7 @@ function Character(props) {
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
-  console.log({ data, status, error });
+  console.info({ data, status, error });
   const homeworldUrlParts = data.homeworld.split("/").filter(Boolean);
   const homeworldId = homeworldUrlParts[homeworldUrlParts.length - 1];
 

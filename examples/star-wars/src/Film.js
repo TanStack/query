@@ -14,7 +14,7 @@ function Film(props) {
   if (status === "loading") return <p>Loading...</p>;
   // this will not be necessary when v1 is released.
   if (data == null) {
-    console.log("this shouldn't happen but it does 2");
+    console.info("this shouldn't happen but it does 2");
     return <p>Loading...</p>;
   }
   if (status === "error") return <p>Error :(</p>;
