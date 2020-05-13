@@ -692,6 +692,7 @@ export interface QueryCache {
   ): Promise<void>
   getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
   getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
+  getLatestQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
   clear(): Array<CachedQuery<unknown>>
