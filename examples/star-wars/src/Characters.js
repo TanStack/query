@@ -6,7 +6,7 @@ import fetch from "./fetch";
 
 export default function Characters(props) {
   const { status, error, data } = useQuery("characters", () =>
-    fetch(`https://swapi.co/api/people/`)
+    fetch(`https://swapi.dev/api/people/`)
   );
 
   if (status === "loading") return <p>Loading...</p>;
@@ -15,7 +15,7 @@ export default function Characters(props) {
   return (
     <div>
       <Typography variant="h2">Characters</Typography>
-      {data.results.map(person => {
+      {data.results.map((person) => {
         const personUrlParts = person.url.split("/").filter(Boolean);
         const personId = personUrlParts[personUrlParts.length - 1];
         return (

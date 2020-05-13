@@ -6,7 +6,7 @@ import fetch from "./fetch";
 
 export default function Films(props) {
   const { data, status, error } = useQuery("films", () =>
-    fetch("https://swapi.co/api/films/")
+    fetch("https://swapi.dev/api/films/")
   );
 
   if (status === "loading") {
@@ -19,7 +19,7 @@ export default function Films(props) {
   return (
     <div>
       <Typography variant="h2">Films</Typography>
-      {data.results.map(film => {
+      {data.results.map((film) => {
         const filmUrlParts = film.url.split("/").filter(Boolean);
         const filmId = filmUrlParts[filmUrlParts.length - 1];
         return (
