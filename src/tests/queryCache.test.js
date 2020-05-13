@@ -141,6 +141,24 @@ describe('queryCache', () => {
     expect(data).toEqual(['data1', 'data2'])
   })
 
+  test('getLatestQueryData returns the latest data from a partial match query key', async () => {
+    const fetchData1 = () => Promise.resolve('data1')
+    const fetchData2 = () => Promise.resolve('data2')
+    await queryCache.prefetchQuery(['data', { page: 1 }], fetchData1)
+    await queryCache.prefetchQuery(['data', { page: 2 }], fetchData2)
+    const latestQueryData = queryCache.getLatestQueryData('data')
+    expect(latestQueryData).toBe('data2')
+  })
+
+  test("getLatestQueryData returns undefined if a partial key doesn't find a query", async () => {
+    const fetchData1 = () => Promise.resolve('data1')
+    const fetchData2 = () => Promise.resolve('data2')
+    await queryCache.prefetchQuery(['data', { page: 1 }], fetchData1)
+    await queryCache.prefetchQuery(['data', { page: 2 }], fetchData2)
+    const latestQueryData = queryCache.getLatestQueryData('differentData')
+    expect(latestQueryData).toBe(undefined)
+  })
+
   test('stale timeout dispatch is not called if query is no longer in the query cache', async () => {
     const queryKey = 'key'
     const fetchData = () => Promise.resolve('data')

@@ -70,6 +70,16 @@ export function makeQueryCache() {
 
   cache.getQueryData = queryKey => cache.getQuery(queryKey)?.state.data
 
+  cache.getLatestQueryData = partialKey => {
+    const query = findQueries(partialKey).reduce(
+      function(prev, current) {
+        return prev.state.updatedAt > current.state.updatedAt ? prev : current
+      },
+      { state: { updatedAt: 0 } }
+    )
+    return query.state.data
+  }
+
   cache.removeQueries = (predicate, { exact } = {}) => {
     const foundQueries = findQueries(predicate, { exact })
 
