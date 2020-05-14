@@ -134,7 +134,7 @@ describe('ReactQueryCacheProvider', () => {
     expect(cache2.getQuery('test1')).not.toBeDefined()
     expect(cache2.getQuery('test2')).toBeDefined()
   })
-  test.only('when cache changes, previous cache is cleaned', () => {
+  test('when cache changes, previous cache is cleaned', () => {
     let caches = []
     const customCache = makeQueryCache()
 
