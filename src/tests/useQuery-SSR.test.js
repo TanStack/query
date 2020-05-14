@@ -4,12 +4,16 @@
 
 import React from 'react'
 import { renderToString } from 'react-dom/server'
-import { usePaginatedQuery, ReactQueryCacheProvider, makeQueryCache } from '../index'
+import {
+  usePaginatedQuery,
+  ReactQueryCacheProvider,
+  makeQueryCache,
+} from '../index'
 
 describe('useQuery SSR', () => {
   // See https://github.com/tannerlinsley/react-query/issues/70
   it('should not cache queries on server', async () => {
-    const queryCache = makeQueryCache();
+    const queryCache = makeQueryCache()
     function Page() {
       const [page, setPage] = React.useState(1)
       const { resolvedData } = usePaginatedQuery(

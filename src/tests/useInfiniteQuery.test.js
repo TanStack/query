@@ -6,7 +6,11 @@ import {
 } from '@testing-library/react'
 import * as React from 'react'
 
-import { useInfiniteQuery, ReactQueryCacheProvider, useQueryCache } from '../index'
+import {
+  useInfiniteQuery,
+  ReactQueryCacheProvider,
+  useQueryCache,
+} from '../index'
 import { sleep } from './utils'
 
 const pageSize = 10
@@ -242,7 +246,7 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const queryCache = useQueryCache();
+      const queryCache = useQueryCache()
       const fetchCountRef = React.useRef(0)
       const {
         status,

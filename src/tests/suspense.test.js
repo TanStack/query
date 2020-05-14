@@ -1,7 +1,7 @@
 import { render, waitForElement, fireEvent, cleanup } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, ReactQueryCacheProvider } from '../index'
+import { useQuery, ReactQueryCacheProvider, queryCache } from '../index'
 import { sleep } from './utils'
 
 describe("useQuery's in Suspense mode", () => {

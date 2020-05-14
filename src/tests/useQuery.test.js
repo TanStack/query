@@ -2,7 +2,12 @@ import { render, act, waitForElement, fireEvent, cleanup } from '@testing-librar
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { useQuery, useQueryCache, makeQueryCache, ReactQueryCacheProvider } from '../index'
+import {
+  useQuery,
+  useQueryCache,
+  makeQueryCache,
+  ReactQueryCacheProvider,
+} from '../index'
 import { sleep } from './utils'
 
 describe('useQuery', () => {
@@ -525,7 +530,7 @@ describe('useQuery', () => {
           setPrefetched(true)
         }
         prefetch()
-      }, [ queryCache ])
+      }, [queryCache])
 
       return (
         <div>
@@ -768,7 +773,13 @@ describe('useQuery', () => {
       useQuery({})
       return null
     }
-    expect(() => render(<ReactQueryCacheProvider><Page/></ReactQueryCacheProvider>)).toThrowError(/queryKey|queryFn/)
+    expect(() =>
+      render(
+        <ReactQueryCacheProvider>
+          <Page />
+        </ReactQueryCacheProvider>
+      )
+    ).toThrowError(/queryKey|queryFn/)
 
     console.error.mockRestore()
   })

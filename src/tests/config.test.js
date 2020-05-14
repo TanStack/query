@@ -1,6 +1,10 @@
 import React from 'react'
 import { render, waitForElement, cleanup } from '@testing-library/react'
-import { ReactQueryConfigProvider, useQuery, ReactQueryCacheProvider } from '../index'
+import {
+  ReactQueryConfigProvider,
+  useQuery,
+  ReactQueryCacheProvider,
+} from '../index'
 
 import { sleep } from './utils'
 
