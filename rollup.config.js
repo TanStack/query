@@ -32,7 +32,7 @@ export default [
       sourcemap: true,
     },
     external,
-    plugins: [resolve(), babel(), commonJS(), externalDeps()],
+    plugins: [resolve(), babel(), commonJS(), externalDeps(), terser()],
   },
   {
     input: 'src/index.js',
