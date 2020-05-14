@@ -15,20 +15,37 @@ import { defaultConfigRef } from './config'
 
 export const queryCache = makeQueryCache()
 
-export const defaultQueryCacheRef = {
-  current: queryCache
-}
-
 export const queryCacheContext = React.createContext(queryCache)
+
+export const queryCaches = [queryCache]
 
 export function useQueryCache() {
   return React.useContext(queryCacheContext)
 }
 
 export function ReactQueryCacheProvider({ queryCache, children }) {
-  defaultQueryCacheRef.current = queryCache || makeQueryCache()
+  const cache = React.useMemo(() => queryCache || makeQueryCache(), [
+    queryCache,
+  ])
+
+  React.useEffect(() => {
+    queryCaches.push(cache)
+
+    return () => {
+      // remove the cache from the active list
+      const i = queryCaches.indexOf(cache)
+      if (i >= 0) {
+        queryCaches.splice(i, 1)
+      }
+      // if the cache was created by us, we need to tear it down
+      if (queryCache == null) {
+        cache.clear()
+      }
+    }
+  }, [cache, queryCache])
+
   return (
-    <queryCacheContext.Provider value={defaultQueryCacheRef.current}>
+    <queryCacheContext.Provider value={cache}>
       {children}
     </queryCacheContext.Provider>
   )
