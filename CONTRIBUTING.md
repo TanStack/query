@@ -24,7 +24,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 - To run examples, follow their individual directions. Usually this is just `$ yarn && yarn start`.
 - To run examples using your local build, link to the local `react-query` by running `$ yarn link react-query` from the example's directory
 - Document your changes in the appropriate doc page
-- Git stage your required chnages and commit (see below commit guidelines)
+- Git stage your required changes and commit (see below commit guidelines)
 - Submit PR for review
 
 ## Commit message conventions

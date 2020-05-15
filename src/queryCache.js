@@ -1,3 +1,4 @@
+import React from 'react'
 import {
   isServer,
   functionalUpdate,
@@ -13,6 +14,42 @@ import {
 import { defaultConfigRef } from './config'
 
 export const queryCache = makeQueryCache()
+
+export const queryCacheContext = React.createContext(queryCache)
+
+export const queryCaches = [queryCache]
+
+export function useQueryCache() {
+  return React.useContext(queryCacheContext)
+}
+
+export function ReactQueryCacheProvider({ queryCache, children }) {
+  const cache = React.useMemo(() => queryCache || makeQueryCache(), [
+    queryCache,
+  ])
+
+  React.useEffect(() => {
+    queryCaches.push(cache)
+
+    return () => {
+      // remove the cache from the active list
+      const i = queryCaches.indexOf(cache)
+      if (i >= 0) {
+        queryCaches.splice(i, 1)
+      }
+      // if the cache was created by us, we need to tear it down
+      if (queryCache == null) {
+        cache.clear()
+      }
+    }
+  }, [cache, queryCache])
+
+  return (
+    <queryCacheContext.Provider value={cache}>
+      {children}
+    </queryCacheContext.Provider>
+  )
+}
 
 const actionInit = {}
 const actionFailed = {}
@@ -32,7 +69,7 @@ export function makeQueryCache() {
   }
 
   const notifyGlobalListeners = () => {
-    cache.isFetching = Object.values(queryCache.queries).reduce(
+    cache.isFetching = Object.values(cache.queries).reduce(
       (acc, query) => (query.state.isFetching ? acc + 1 : acc),
       0
     )
@@ -129,6 +166,7 @@ export function makeQueryCache() {
       query.config = { ...query.config, ...config }
     } else {
       query = makeQuery({
+        cache,
         queryKey,
         queryHash,
         queryVariables,
@@ -212,6 +250,7 @@ export function makeQueryCache() {
   }
 
   function makeQuery(options) {
+    const queryCache = options.cache
     const reducer = options.config.queryReducer || defaultQueryReducer
 
     const noQueryHash = typeof options.queryHash === 'undefined'

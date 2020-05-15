@@ -1,12 +1,11 @@
 import { render, waitForElement, fireEvent, cleanup } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, queryCache } from '../index'
+import { useQuery, ReactQueryCacheProvider, queryCache } from '../index'
 import { sleep } from './utils'
 
 describe("useQuery's in Suspense mode", () => {
   afterEach(() => {
-    queryCache.clear()
     cleanup()
   })
 
@@ -21,9 +20,11 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     const rendered = render(
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>
+      <ReactQueryCacheProvider>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </ReactQueryCacheProvider>
     )
 
     await waitForElement(() => rendered.getByText('rendered'))
@@ -80,9 +81,11 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     const rendered = render(
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>
+      <ReactQueryCacheProvider>
+        <React.Suspense fallback="loading">
+          <Page />
+        </React.Suspense>
+      </ReactQueryCacheProvider>
     )
 
     await waitForElement(() => rendered.getByText('rendered'))

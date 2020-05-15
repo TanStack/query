@@ -1,13 +1,18 @@
-import { render, act, waitForElement, fireEvent } from '@testing-library/react'
+import { render, act, waitForElement, fireEvent, cleanup } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { useQuery, queryCache } from '../index'
+import {
+  useQuery,
+  useQueryCache,
+  makeQueryCache,
+  ReactQueryCacheProvider,
+} from '../index'
 import { sleep } from './utils'
 
 describe('useQuery', () => {
   afterEach(() => {
-    queryCache.clear()
+    cleanup()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -25,7 +30,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('default')
     await waitForElement(() => rendered.getByText('test'))
@@ -52,7 +61,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('First Data: init')
     rendered.getByText('Second Data: init')
@@ -74,7 +87,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     // use "act" to wait for state update and prevent console warning
 
@@ -97,7 +114,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('First Status: success')
     await waitForElement(() => rendered.getByText('Second Status: loading'))
@@ -119,7 +140,11 @@ describe('useQuery', () => {
       )
     }
 
-    const { getByTestId } = render(<Page />)
+    const { getByTestId } = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => getByTestId('status'))
     act(() => {
@@ -148,7 +173,11 @@ describe('useQuery', () => {
       )
     }
 
-    const { findByText } = render(<Page />)
+    const { findByText } = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await findByText('success')
   })
@@ -166,7 +195,11 @@ describe('useQuery', () => {
       return null
     }
 
-    render(<Page />)
+    render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     expect(queryFn).toHaveBeenCalledWith('test', variables)
   })
@@ -185,7 +218,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
     await waitForElement(() => rendered.getByText('default'))
     expect(queryFn).not.toHaveBeenCalled()
   })
@@ -203,7 +240,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
     await waitForElement(() => rendered.getByText('default'))
 
     act(() => {
@@ -231,7 +272,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('error'))
     await waitForElement(() => rendered.getByText('Error test'))
@@ -257,7 +302,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('loading'))
     await waitForElement(() => rendered.getByText('error'))
@@ -294,7 +343,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('loading'))
     await waitForElement(() => rendered.getByText('error'))
@@ -306,6 +359,7 @@ describe('useQuery', () => {
   })
 
   it('should garbage collect queries without data immediately', async () => {
+    const queryCache = makeQueryCache()
     function Page() {
       const [filter, setFilter] = React.useState('')
       const { data } = useQuery(
@@ -324,7 +378,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider queryCache={queryCache}>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('update'))
 
@@ -368,7 +426,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('failureCount 1'))
     await waitForElement(() => rendered.getByText('status loading'))
@@ -385,6 +447,7 @@ describe('useQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/195
   it('should not refetch immediately after a prefetch', async () => {
+    const queryCache = makeQueryCache()
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => sleep(10))
 
@@ -404,7 +467,11 @@ describe('useQuery', () => {
     await queryCache.prefetchQuery('test', prefetchQueryFn)
     await queryCache.prefetchQuery('test', prefetchQueryFn)
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider queryCache={queryCache}>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('status success'))
 
@@ -436,7 +503,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('failureCount 1'))
     await waitForElement(() => rendered.getByText('failureCount 0'))
@@ -445,6 +516,7 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/199
   it('should use prefetched data for dependent query', async () => {
     function Page() {
+      const queryCache = useQueryCache()
       const [key, setKey] = React.useState(false)
       const [isPrefetched, setPrefetched] = React.useState(false)
 
@@ -458,7 +530,7 @@ describe('useQuery', () => {
           setPrefetched(true)
         }
         prefetch()
-      }, [])
+      }, [queryCache])
 
       return (
         <div>
@@ -469,7 +541,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
     await waitForElement(() => rendered.getByText('isPrefetched'))
 
     fireEvent.click(rendered.getByText('setKey'))
@@ -492,7 +568,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Status: loading')
     await waitForElement(() => rendered.getByText('Status: success'))
@@ -520,7 +600,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Status: success')
     rendered.getByText('Data: no data')
@@ -554,7 +638,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Status: success')
     rendered.getByText('Data: no data')
@@ -580,7 +668,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('data')
     expect(rendered.getByTestId('isFetching').textContent).toBe('false')
@@ -599,7 +691,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('0')
     expect(rendered.getByTestId('isFetching').textContent).toBe('false')
@@ -632,7 +728,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('initial'))
     fireEvent.click(rendered.getByText('setShouldFetch(false)'))
@@ -644,6 +744,7 @@ describe('useQuery', () => {
   it('it should support falsy queryKey in query object syntax', async () => {
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => 'data')
+    const queryCache = makeQueryCache()
 
     function Page() {
       useQuery({
@@ -652,7 +753,11 @@ describe('useQuery', () => {
       })
       return null
     }
-    render(<Page />)
+    render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     const cachedQueries = Object.keys(queryCache.queries).length
     expect(queryFn).not.toHaveBeenCalled()
@@ -668,7 +773,13 @@ describe('useQuery', () => {
       useQuery({})
       return null
     }
-    expect(() => render(<Page />)).toThrowError(/queryKey|queryFn/)
+    expect(() =>
+      render(
+        <ReactQueryCacheProvider>
+          <Page />
+        </ReactQueryCacheProvider>
+      )
+    ).toThrowError(/queryKey|queryFn/)
 
     console.error.mockRestore()
   })
@@ -686,7 +797,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('fetched data'))
     expect(rendered.getByTestId('isStale').textContent).toBe('true')
@@ -710,7 +825,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('fetched data'))
     expect(rendered.getByTestId('isStale').textContent).toBe('false')
@@ -729,7 +848,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('isFetching === false'))
   })
@@ -742,7 +865,13 @@ describe('useQuery', () => {
       return <div>{query.data}</div>
     }
 
-    const rendered = render(<Page />)
+    const queryCache = makeQueryCache()
+
+    const rendered = render(
+      <ReactQueryCacheProvider queryCache={queryCache}>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('fetched data'))
 
@@ -791,7 +920,11 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     await waitForElement(() => rendered.getByText('status loading'))
     await waitForElement(() => rendered.getByText('status success'))

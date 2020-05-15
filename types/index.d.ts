@@ -692,12 +692,33 @@ export interface QueryCache {
   ): Promise<void>
   getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
   getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
+  cancelQueries(
+    queryKeyOrPredicateFn:
+      | AnyQueryKey
+      | string
+      | ((query: CachedQuery<unknown>) => boolean),
+    { exact }?: { exact?: boolean }
+  ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
   clear(): Array<CachedQuery<unknown>>
 }
 
 export const queryCache: QueryCache
+
+/**
+ * a factory that creates a new query cache
+ */
+export function makeQueryCache(): QueryCache
+
+/**
+ * A hook that uses the query cache context
+ */
+export function useQueryCache(): QueryCache
+
+export const ReactQueryCacheProvider: React.ComponentType<{
+  queryCache?: QueryCache
+}>
 
 /**
  * A hook that returns the number of the quiries that your application is loading or fetching in the background

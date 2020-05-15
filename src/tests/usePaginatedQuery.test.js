@@ -7,12 +7,11 @@ import {
 import * as React from 'react'
 import { sleep } from './utils'
 
-import { usePaginatedQuery, queryCache } from '../index'
+import { usePaginatedQuery, ReactQueryCacheProvider } from '../index'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
     cleanup()
-    queryCache.clear()
   })
 
   it('should use previous page data while fetching the next page', async () => {
@@ -34,7 +33,11 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Data undefined')
     await waitForElement(() => rendered.getByText('Data 1'))
@@ -69,7 +72,11 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Data 0')
 
@@ -109,7 +116,11 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Data 0')
 
