@@ -250,6 +250,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.getQueryData`](#querycachegetquerydata)
   - [`queryCache.setQueryData`](#querycachesetquerydata)
   - [`queryCache.refetchQueries`](#querycacherefetchqueries)
+  - [`queryCache.cancelQueries`](#querycachecancelqueries)
   - [`queryCache.removeQueries`](#querycacheremovequeries)
   - [`queryCache.getQuery`](#querycachegetquery)
   - [`queryCache.getQueries`](#querycachegetqueries)
@@ -2236,6 +2237,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
 - [`refetchQueries`](#querycacherefetchqueries)
+- [`cancelQueries`](#querycachecancelqueries)
 - [`removeQueries`](#querycacheremovequeries)
 - [`getQueries`](#querycachegetqueries)
 - [`getQuery`](#querycachegetquery)
@@ -2361,7 +2363,7 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
 - `throwOnError: Boolean`
   - When set to `true`, this function will throw if any of the query refetch tasks fail.
 - `force: Boolean`
@@ -2394,7 +2396,7 @@ const queries = queryCache.cancelQueries(queryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
 
 ### Returns
 
@@ -2421,7 +2423,7 @@ const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
 
 ### Returns
 
