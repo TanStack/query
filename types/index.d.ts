@@ -707,6 +707,20 @@ export interface QueryCache {
 export const queryCache: QueryCache
 
 /**
+ * a factory that creates a new query cache
+ */
+export function makeQueryCache(): QueryCache
+
+/**
+ * A hook that uses the query cache context
+ */
+export function useQueryCache(): QueryCache
+
+export const ReactQueryCacheProvider: React.ComponentType<{
+  queryCache?: QueryCache
+}>
+
+/**
  * A hook that returns the number of the quiries that your application is loading or fetching in the background
  * (useful for app-wide loading indicators).
  * @returns the number of the quiries that your application is currently loading or fetching in the background.
@@ -750,3 +764,5 @@ export interface ConsoleObject {
 }
 
 export function setConsole(consoleObject: ConsoleObject): void
+
+export function deepIncludes(haystack: unknown, needle: unknown): boolean
