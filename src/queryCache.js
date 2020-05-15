@@ -84,6 +84,7 @@ export function makeQueryCache() {
   }
 
   cache.clear = () => {
+    Object.values(cache.queries).forEach(query => query.clear())
     cache.queries = {}
     notifyGlobalListeners()
   }
@@ -514,6 +515,15 @@ export function makeQueryCache() {
       // Schedule a fresh invalidation!
       clearTimeout(query.staleTimeout)
       query.scheduleStaleTimeout()
+    }
+
+    query.clear = () => {
+      clearTimeout(query.staleTimeout)
+      clearTimeout(query.cacheTimeout)
+      if (query.cancelQueries) {
+        query.cancelQueries()
+      }
+      query.cancelled = cancelledError
     }
 
     return query
