@@ -2598,7 +2598,7 @@ function App() {
 
 ## `ReactQueryCacheProvider`
 
-`ReactQueryCacheProvider` is an optional provider component for explicitly setting the query cache used by `useQuery`. This is useful for creating component-level caches that are not completely global, as well as making truly isolated unit tests.
+`ReactQueryCacheProvider` is an optional provider component for explicitly setting the query cache used by React Query. This is useful for creating component-level caches that are not completely global, as well as making truly isolated unit tests.
 
 ```js
 import { ReactQueryCacheProvider, makeQueryCache } from 'react-query';
