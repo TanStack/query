@@ -124,11 +124,7 @@ export function makeQueryCache() {
     const foundQueries = findQueries(predicate, { exact })
 
     foundQueries.forEach(query => {
-      query.cancelled = cancelledError
-
-      if (query.cancelQueries) {
-        query.cancelQueries()
-      }
+      query.cancel()
     })
 
     if (foundQueries.length) {
@@ -327,6 +323,18 @@ export function makeQueryCache() {
       query.cancelled = null
     }
 
+    query.cancel = () => {
+      query.cancelled = cancelledError
+
+      if (query.cancelPromises) {
+        query.cancelPromises()
+      }
+
+      delete query.promise
+
+      notifyGlobalListeners()
+    }
+
     query.updateInstance = instance => {
       let found = query.instances.find(d => d.id === instance.id)
 
@@ -349,12 +357,7 @@ export function makeQueryCache() {
         query.instances = query.instances.filter(d => d.id !== instanceId)
 
         if (!query.instances.length) {
-          // Cancel any side-effects
-          query.cancelled = cancelledError
-
-          if (query.cancelQueries) {
-            query.cancelQueries()
-          }
+          query.cancel()
 
           // Schedule garbage collection
           query.scheduleGarbageCollection()
@@ -368,16 +371,16 @@ export function makeQueryCache() {
         // Perform the query
         const promise = queryFn(...query.config.queryFnParamsFilter(args))
 
-        query.cancelQueries = () => promise.cancel?.()
+        query.cancelPromises = () => promise.cancel?.()
 
         const data = await promise
 
-        delete query.cancelQueries
+        delete query.cancelPromises
         if (query.cancelled) throw query.cancelled
 
         return data
       } catch (error) {
-        delete query.cancelQueries
+        delete query.cancelPromises
         if (query.cancelled) throw query.cancelled
 
         // If we fail, increase the failureCount
