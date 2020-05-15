@@ -13,4 +13,5 @@ export {
   statusError,
   stableStringify,
   setConsole,
+  deepIncludes,
 } from './utils'

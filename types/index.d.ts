@@ -743,3 +743,5 @@ export interface ConsoleObject {
 }
 
 export function setConsole(consoleObject: ConsoleObject): void
+
+export function deepIncludes(haystack: unknown, needle: unknown): boolean
