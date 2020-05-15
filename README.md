@@ -892,7 +892,7 @@ function Todo({ todoId }) {
 }
 ```
 
-Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including a `query.state.updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 ```js
 function Todo({ todoId }) {
@@ -902,7 +902,7 @@ function Todo({ todoId }) {
       const query = queryCache.getQuery('todos')
 
       // If the query exists and has data that is no older than 10 seconds...
-      if (query && Date.now() - query.updatedAt <= 10 * 1000) {
+      if (query && Date.now() - query.state.updatedAt <= 10 * 1000) {
         // return the individual todo
         return query.state.data.find(d => d.id === todoId)
       }
@@ -2435,7 +2435,7 @@ This function does not return anything
 
 `getQuery` is a slightly more advanced synchronous function that can be used to get an existing query object from the cache. This object not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
 
-> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
+> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```js
 import { queryCache } from 'react-query'
@@ -2531,7 +2531,7 @@ queryCache.clear()
 The `useQueryCache` hook returns the current queryCache instance.
 
 ```js
-import { useQueryCache } from 'react-query';
+import { useQueryCache } from 'react-query'
 
 const queryCache = useQueryCache()
 ```
@@ -2603,7 +2603,7 @@ function App() {
 `ReactQueryCacheProvider` is an optional provider component for explicitly setting the query cache used by React Query. This is useful for creating component-level caches that are not completely global, as well as making truly isolated unit tests.
 
 ```js
-import { ReactQueryCacheProvider, makeQueryCache } from 'react-query';
+import { ReactQueryCacheProvider, makeQueryCache } from 'react-query'
 
 const queryCache = makeQueryCache()
 
@@ -2617,6 +2617,7 @@ function App() {
 ```
 
 ### Options
+
 - `queryCache: Object`
   - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
   - If not provided, a new cache will be generated.
