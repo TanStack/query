@@ -1,12 +1,15 @@
 import React from 'react'
 import { render, waitForElement, cleanup } from '@testing-library/react'
-import { ReactQueryConfigProvider, useQuery, queryCache } from '../index'
+import {
+  ReactQueryConfigProvider,
+  useQuery,
+  ReactQueryCacheProvider,
+} from '../index'
 
 import { sleep } from './utils'
 
 describe('config', () => {
   afterEach(() => {
-    queryCache.clear()
     cleanup()
   })
 
@@ -33,7 +36,9 @@ describe('config', () => {
 
     const rendered = render(
       <ReactQueryConfigProvider config={config}>
-        <Page />
+        <ReactQueryCacheProvider>
+          <Page />
+        </ReactQueryCacheProvider>
       </ReactQueryConfigProvider>
     )
 

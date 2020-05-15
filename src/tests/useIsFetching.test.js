@@ -6,13 +6,12 @@ import {
 } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, queryCache, useIsFetching } from '../index'
+import { useQuery, ReactQueryCacheProvider, useIsFetching } from '../index'
 import { sleep } from './utils'
 
 describe('useIsFetching', () => {
   afterEach(() => {
     cleanup()
-    queryCache.clear()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -35,7 +34,11 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('isFetching: 0')
     fireEvent.click(rendered.getByText('setReady'))

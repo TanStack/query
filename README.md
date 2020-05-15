@@ -257,8 +257,10 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.isFetching`](#querycacheisfetching)
   - [`queryCache.subscribe`](#querycachesubscribe)
   - [`queryCache.clear`](#querycacheclear)
+  - [`useQueryCache`](#usequerycache)
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
+  - [`ReactQueryCacheProvider`](#reactquerycacheprovider)
   - [`setConsole`](#setconsole)
 - [Contributors ✨](#contributors-)
 
@@ -2524,6 +2526,18 @@ queryCache.clear()
 - `queries: Array<Query>`
   - This will be an array containing the queries that were found.
 
+## `useQueryCache`
+
+The `useQueryCache` hook returns the current queryCache instance.
+
+```js
+import { useQueryCache } from 'react-query';
+
+const queryCache = useQueryCache()
+```
+
+If you are using the `ReactQueryCacheProvider` to set a custom cache, you cannot simply import `{ queryCache }` any more. This hook will ensure you're getting the correct instance.
+
 ## `useIsFetching`
 
 `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or fetching in the background (useful for app-wide loading indicators).
@@ -2583,6 +2597,29 @@ function App() {
 - `config: Object`
   - Must be **stable** or **memoized**. Do not create an inline object!
   - For non-global properties please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
+
+## `ReactQueryCacheProvider`
+
+`ReactQueryCacheProvider` is an optional provider component for explicitly setting the query cache used by React Query. This is useful for creating component-level caches that are not completely global, as well as making truly isolated unit tests.
+
+```js
+import { ReactQueryCacheProvider, makeQueryCache } from 'react-query';
+
+const queryCache = makeQueryCache()
+
+function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      ...
+    </ReactQueryCacheProvider>
+  )
+}
+```
+
+### Options
+- `queryCache: Object`
+  - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
+  - If not provided, a new cache will be generated.
 
 ## `setConsole`
 
