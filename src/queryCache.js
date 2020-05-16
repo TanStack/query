@@ -520,10 +520,7 @@ export function makeQueryCache() {
     query.clear = () => {
       clearTimeout(query.staleTimeout)
       clearTimeout(query.cacheTimeout)
-      if (query.cancelQueries) {
-        query.cancelQueries()
-      }
-      query.cancelled = cancelledError
+      query.cancel()
     }
 
     return query
