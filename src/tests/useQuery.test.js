@@ -1,4 +1,11 @@
-import { render, act, waitForElement, fireEvent, cleanup, waitForDomChange } from '@testing-library/react'
+import {
+  render,
+  act,
+  waitForElement,
+  fireEvent,
+  cleanup,
+  waitForDomChange,
+} from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
@@ -1013,56 +1020,55 @@ describe('useQuery', () => {
       )
     }
     const { container } = render(<Page />)
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: "`)
-
+    expect(container.firstChild.textContent).toEqual('count: ')
     await waitForDomChange({ container }) // mount
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 0"`)
+    expect(container.firstChild.textContent).toEqual('count: 0')
     await act(() => {
       return new Promise(res => setTimeout(res, 210))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 1"`)
+    expect(container.firstChild.textContent).toEqual('count: 1')
     await act(() => {
       return new Promise(res => setTimeout(res, 50))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 1"`)
+    expect(container.firstChild.textContent).toEqual('count: 1')
     await act(() => {
       return new Promise(res => setTimeout(res, 150))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 2"`)
+    expect(container.firstChild.textContent).toEqual('count: 2')
     await act(() => {
       fireEvent.click(container.firstElementChild)
       // it will clear 200ms timer and setup a new 300ms timer
       return new Promise(res => setTimeout(res, 200))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 2"`)
+    expect(container.firstChild.textContent).toEqual('count: 2')
     await act(() => {
       return new Promise(res => setTimeout(res, 110))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 3"`)
+    expect(container.firstChild.textContent).toEqual('count: 3')
     await act(() => {
       // wait for new 300ms timer
       return new Promise(res => setTimeout(res, 310))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 4"`)
+    expect(container.firstChild.textContent).toEqual('count: 4')
     await act(() => {
       fireEvent.click(container.firstElementChild)
       // it will clear 300ms timer and setup a new 400ms timer
       return new Promise(res => setTimeout(res, 300))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 4"`)
+    expect(container.firstChild.textContent).toEqual('count: 4')
     await act(() => {
       return new Promise(res => setTimeout(res, 110))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 5"`)
+    expect(container.firstChild.textContent).toEqual('count: 5')
     await act(() => {
       fireEvent.click(container.firstElementChild)
       // it will clear 400ms timer and stop
       return new Promise(res => setTimeout(res, 110))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 5"`)
+    expect(container.firstChild.textContent).toEqual('count: 5')
     await act(() => {
       return new Promise(res => setTimeout(res, 110))
     })
-    expect(container.firstChild.textContent).toMatchInlineSnapshot(`"count: 5"`)
+    expect(container.firstChild.textContent).toEqual('count: 5')
   })
 })
