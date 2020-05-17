@@ -593,6 +593,7 @@ export interface CachedQuery<T> {
   setData(
     dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
   ): void
+  clear(): void
 }
 
 export interface QueryCache {
@@ -701,7 +702,7 @@ export interface QueryCache {
   ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): Array<CachedQuery<unknown>>
+  clear(): void
 }
 
 export const queryCache: QueryCache
