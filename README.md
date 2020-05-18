@@ -164,8 +164,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   <tbody>
     <tr>
       <td>
-        <a href="https://nozzle.io" target="_blank">
-          <img width='225' src="https://nozzle.io/img/logo-blue.png">
+        <a href="https://www.reactbricks.com/" target="_blank">
+          <img width='225' src="https://www.reactbricks.com/reactbricks_vertical.svg">
         </a>
       </td>
     </tr>
@@ -178,8 +178,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   <tbody>
     <tr>
       <td>
-        <a href="https://www.reactbricks.com/" target="_blank">
-          <img width='150' src="https://www.reactbricks.com/reactbricks_vertical.svg">
+        <a href="https://nozzle.io" target="_blank">
+          <img width='150' src="https://nozzle.io/img/logo-blue.png">
         </a>
       </td>
     </tr>
