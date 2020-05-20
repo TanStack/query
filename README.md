@@ -1992,7 +1992,7 @@ const {
     - `loading` if the query is in an initial loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`)
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query is in `manual` mode and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
-- `resolveData: Any`
+- `resolvedData: Any`
   - Defaults to `undefined`.
   - The last successfully resolved data for the query.
   - When fetching based on a new query key, the value will resolve to the last known successful value, regardless of query key
