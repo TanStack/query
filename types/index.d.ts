@@ -381,7 +381,7 @@ export interface BaseQueryOptions {
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
-  retry?: boolean | number | ((failureCount: number, error: unknown) => boolean)
+  retry?: boolean | number | ((failureCount: number, error: Error) => boolean)
   retryDelay?: (retryAttempt: number) => number
   staleTime?: number
   cacheTime?: number
@@ -389,14 +389,14 @@ export interface BaseQueryOptions {
   refetchIntervalInBackground?: boolean
   refetchOnWindowFocus?: boolean
   refetchOnMount?: boolean
-  onError?: (err: unknown) => void
+  onError?: (err: Error) => void
   suspense?: boolean
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
 }
 
 export interface QueryOptions<TResult> extends BaseQueryOptions {
   onSuccess?: (data: TResult) => void
-  onSettled?: (data: TResult | undefined, error: unknown | null) => void
+  onSettled?: (data: TResult | undefined, error: Error | null) => void
   initialData?: TResult | (() => TResult | undefined)
 }
 
@@ -415,7 +415,7 @@ export interface InfiniteQueryOptions<TResult, TMoreVariable>
 
 export interface QueryResultBase<TResult> {
   status: 'loading' | 'error' | 'success'
-  error: null | unknown
+  error: null | Error
   isFetching: boolean
   isStale: boolean
   failureCount: number
@@ -431,13 +431,13 @@ export interface QueryResultBase<TResult> {
 export interface QueryLoadingResult<TResult> extends QueryResultBase<TResult> {
   status: 'loading'
   data: TResult | undefined // even when error, data can have stale data
-  error: unknown | null // it still can be error
+  error: null | Error // it still can be error
 }
 
 export interface QueryErrorResult<TResult> extends QueryResultBase<TResult> {
   status: 'error'
   data: TResult | undefined // even when error, data can have stale data
-  error: unknown
+  error: Error
 }
 
 export interface QuerySuccessResult<TResult> extends QueryResultBase<TResult> {
@@ -456,7 +456,7 @@ export interface PaginatedQueryLoadingResult<TResult>
   status: 'loading'
   resolvedData: undefined | TResult // even when error, data can have stale data
   latestData: undefined | TResult // even when error, data can have stale data
-  error: unknown | null // it still can be error
+  error: null | Error // it still can be error
 }
 
 export interface PaginatedQueryErrorResult<TResult>
@@ -464,7 +464,7 @@ export interface PaginatedQueryErrorResult<TResult>
   status: 'error'
   resolvedData: undefined | TResult // even when error, data can have stale data
   latestData: undefined | TResult // even when error, data can have stale data
-  error: unknown
+  error: Error
 }
 
 export interface PaginatedQuerySuccessResult<TResult>
@@ -502,13 +502,13 @@ export type MutationFunction<TResults, TVariables> = (
 export interface MutateOptions<TResult, TVariables> {
   onSuccess?: (data: TResult, variables: TVariables) => Promise<void> | void
   onError?: (
-    error: unknown,
+    error: Error,
     variables: TVariables,
     snapshotValue: unknown
   ) => Promise<void> | void
   onSettled?: (
     data: undefined | TResult,
-    error: unknown | null,
+    error: Error | null,
     variables: TVariables,
     snapshotValue?: unknown
   ) => Promise<void> | void
@@ -534,7 +534,7 @@ export type MutateFunction<TResult, TVariables> = undefined extends TVariables
 export interface MutationResultBase<TResult> {
   status: 'idle' | 'loading' | 'error' | 'success'
   data: undefined | TResult
-  error: null | unknown
+  error: undefined | null | Error
   promise: Promise<TResult>
   reset: () => void
 }
@@ -557,7 +557,7 @@ export interface ErrorMutationResult<TResult>
   extends MutationResultBase<TResult> {
   status: 'error'
   data: undefined
-  error: unknown
+  error: Error
 }
 
 export interface SuccessMutationResult<TResult>
@@ -575,7 +575,7 @@ export type MutationResult<TResult> =
 
 export interface CachedQueryState<T> {
   data?: T
-  error?: unknown | null
+  error?: Error | null
   failureCount: number
   isFetching: boolean
   canFetchMore?: boolean
@@ -748,10 +748,10 @@ export interface ReactQueryProviderConfig extends BaseQueryOptions {
 
   onMutate?: (variables: unknown) => Promise<unknown> | unknown
   onSuccess?: (data: unknown, variables?: unknown) => void
-  onError?: (err: unknown, snapshotValue?: unknown) => void
+  onError?: (err: Error, snapshotValue?: unknown) => void
   onSettled?: (
     data: unknown | undefined,
-    error: unknown | null,
+    error: Error | null,
     snapshotValue?: unknown
   ) => void
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean

@@ -12,7 +12,7 @@ function simpleQuery() {
   // Query - simple case
   const querySimple = useQuery('todos', () => Promise.resolve('test'))
   querySimple.data // $ExpectType string | undefined
-  querySimple.error // $ExpectType unknown
+  querySimple.error // $ExpectType Error | null
   querySimple.isFetching // $ExpectType boolean
   querySimple.refetch() // $ExpectType Promise<string>
   querySimple.fetchMore // $ExpectError
@@ -166,13 +166,13 @@ function paginatedQuery() {
   if (queryPaginated.status === 'loading') {
     queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; } | undefined
     queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; } | undefined
-    queryPaginated.error // $ExpectType unknown
+    queryPaginated.error // $ExpectType Error | null
   }
 
   if (queryPaginated.status === 'error') {
     queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; } | undefined
     queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; } | undefined
-    queryPaginated.error // $ExpectType unknown
+    queryPaginated.error // $ExpectType Error
   }
 
   if (queryPaginated.status === 'success') {
@@ -221,7 +221,7 @@ function simpleInfiniteQuery(condition: boolean) {
     ) {},
     onSettled(
       data, // $ExpectType number[][] | undefined
-      error // $ExpectType unknown
+      error // $ExpectType Error | null
     ) {},
     initialData: () =>
       condition
@@ -331,7 +331,7 @@ function simpleMutation() {
     throwOnError: true,
     onSettled(result, error) {
       result // $ExpectType string[] | undefined
-      error // $ExpectType unknown
+      error // $ExpectType Error | null
     },
   })
 
@@ -396,13 +396,13 @@ function dataDiscriminatedUnion() {
   // Discriminated union over status
   if (queryResult.status === 'loading') {
     queryResult.data // $ExpectType string[] | undefined
-    queryResult.error // $ExpectType unknown
+    queryResult.error // $ExpectType Error | null
   }
 
   if (queryResult.status === 'error') {
     // disabled
     queryResult.data // $ExpectType string[] | undefined
-    queryResult.error // $ExpectType unknown
+    queryResult.error // $ExpectType Error
   }
 
   if (queryResult.status === 'success') {
@@ -437,7 +437,7 @@ function mutationStatusDiscriminatedUnion() {
 
   if (mutationState.status === 'error') {
     mutationState.data // $ExpectType undefined
-    mutationState.error // $ExpectType unknown
+    mutationState.error // $ExpectType Error
   }
 
   if (mutationState.status === 'success') {
