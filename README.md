@@ -827,7 +827,7 @@ const { status, data, error } = useQuery('todos', fetchTodoList, {
 
 ## Prefetching
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, then you're in luck. You can either use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
 
 ```js
 import { queryCache } from 'react-query'
@@ -842,7 +842,7 @@ const prefetchTodos = async () => {
 
 The next time a `useQuery` instance is used for a prefetched query, it will use the cached data! If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
 
-Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result
+Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result.
 
 ## Initial Data
 
@@ -1101,7 +1101,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) method and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
