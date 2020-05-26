@@ -2027,6 +2027,8 @@ const {
   isFetching,
   failureCount,
   refetch,
+  fetchMore,
+  canFetchMore,
 } = useInfiniteQuery(queryKey, [, queryVariables], queryFn, {
   getFetchMore: (lastPage, allPages) => fetchMoreVariable
   manual,
