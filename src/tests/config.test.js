@@ -54,7 +54,7 @@ describe('config', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
-  it.only('should reset to defaults when all providers are unmounted', async () => {
+  it('should reset to defaults when all providers are unmounted', async () => {
     const onSuccess = jest.fn()
 
     const config = {
@@ -109,7 +109,7 @@ describe('config', () => {
 
   it('should reset to previous config when nested provider is unmounted', async () => {
     let counterRef = 0
-    const parentOnSuccess = jest.fn(() => console.log('success callback'))
+    const parentOnSuccess = jest.fn()
 
     const parentConfig = {
       refetchOnMount: false,
@@ -187,17 +187,13 @@ describe('config', () => {
 
     await rendered.findByText('Data: 2')
 
-    await act(async () => {
-      await queryCache.prefetchQuery('test', queryFn, { force: true })
-    })
-
-    console.log('do we get here')
-    expect(parentOnSuccess).toHaveBeenCalledTimes(1)
+    // it should not refetch on mount
+    expect(parentOnSuccess).not.toHaveBeenCalled()
 
     fireEvent.click(rendered.getByTestId('refetch'))
 
     await rendered.findByText('Data: 3')
 
-    expect(parentOnSuccess).toHaveBeenCalledTimes(2)
+    expect(parentOnSuccess).toHaveBeenCalledTimes(1)
   })
 })

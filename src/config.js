@@ -49,8 +49,15 @@ export function ReactQueryConfigProvider({ config, children }) {
   }, [config, configContextValue])
 
   React.useEffect(() => {
+    // restore previous config on unmount
     return () => {
       defaultConfigRef.current = { ...(configContextValue || DEFAULTS) }
+
+      // Default useErrorBoundary to the suspense value
+      if (typeof defaultConfigRef.current.useErrorBoundary === 'undefined') {
+        defaultConfigRef.current.useErrorBoundary =
+          defaultConfigRef.current.suspense
+      }
     }
   }, [configContextValue])
 
