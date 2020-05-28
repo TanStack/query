@@ -5,22 +5,22 @@ export const configContext = React.createContext()
 
 const DEFAULTS = {
   retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 0,
-    cacheTime: 5 * 60 * 1000,
-    refetchAllOnWindowFocus: true,
-    refetchInterval: false,
-    suspense: false,
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
-    queryFnParamsFilter: identity,
-    throwOnError: false,
-    useErrorBoundary: undefined, // this will default to the suspense value
-    onMutate: noop,
-    onSuccess: noop,
-    onError: noop,
-    onSettled: noop,
-    refetchOnMount: true,
-    isDataEqual: deepEqual,
+  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+  staleTime: 0,
+  cacheTime: 5 * 60 * 1000,
+  refetchAllOnWindowFocus: true,
+  refetchInterval: false,
+  suspense: false,
+  queryKeySerializerFn: defaultQueryKeySerializerFn,
+  queryFnParamsFilter: identity,
+  throwOnError: false,
+  useErrorBoundary: undefined, // this will default to the suspense value
+  onMutate: noop,
+  onSuccess: noop,
+  onError: noop,
+  onSettled: noop,
+  refetchOnMount: true,
+  isDataEqual: deepEqual,
 }
 
 export const defaultConfigRef = {
@@ -33,7 +33,6 @@ export function useConfigContext() {
 
 export function ReactQueryConfigProvider({ config, children }) {
   let configContextValue = React.useContext(configContext)
-  const originalConfigRef = React.useRef(null)
 
   const newConfig = React.useMemo(() => {
     const newConfig = {
@@ -50,14 +49,10 @@ export function ReactQueryConfigProvider({ config, children }) {
   }, [config, configContextValue])
 
   React.useEffect(() => {
-    if (!originalConfigRef.current) {
-      originalConfigRef.current = newConfig
-    }
-
     return () => {
-      defaultConfigRef.current = originalConfigRef.current || DEFAULTS
+      defaultConfigRef.current = { ...(configContextValue || DEFAULTS) }
     }
-  }, [originalConfigRef, newConfig])
+  }, [configContextValue])
 
   if (!configContextValue) {
     defaultConfigRef.current = newConfig
