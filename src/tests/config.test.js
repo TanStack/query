@@ -54,7 +54,7 @@ describe('config', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
-  it('should reset to defaults when all providers are unmounted', async () => {
+  it.only('should reset to defaults when all providers are unmounted', async () => {
     const onSuccess = jest.fn()
 
     const config = {
@@ -87,7 +87,9 @@ describe('config', () => {
 
     await rendered.findByText('Data: none')
 
-    await queryCache.prefetchQuery('test', queryFn, { force: true })
+    act(() => {
+      queryCache.prefetchQuery('test', queryFn, { force: true })
+    })
 
     await rendered.findByText('Data: data')
 
