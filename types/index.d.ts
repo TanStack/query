@@ -78,7 +78,7 @@ export function useQuery<
   TResult,
   TKey extends AnyQueryKey,
   TVariables extends AnyVariables,
-TError = Error
+  TError = Error
 >(
   queryKey:
     | TKey
