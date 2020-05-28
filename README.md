@@ -484,7 +484,7 @@ To do this, you can use the following 2 approaches:
 
 ### Pass a falsy query key
 
-If a query isn't ready to be requested yet, just pass a falsy value as the query key or as an item in the query key:
+If a query isn't ready to be requested yet, just pass a falsy value as the query key:
 
 ```js
 // Get the user
