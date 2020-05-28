@@ -63,6 +63,7 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   )
 
   query.suspenseInstance = {
+    onStateUpdate: () => rerender({}),
     onSuccess: data => getLatestConfig().onSuccess(data),
     onError: err => getLatestConfig().onError(err),
     onSettled: (data, err) => getLatestConfig().onSettled(data, err),

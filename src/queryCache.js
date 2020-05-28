@@ -281,7 +281,14 @@ export function makeQueryCache() {
 
     const dispatch = action => {
       query.state = reducer(query.state, action)
-      query.instances.forEach(d => d.onStateUpdate(query.state))
+
+      const callbackInstances = [...query.instances]
+
+      if (query.wasSuspended) {
+        callbackInstances.unshift(query.suspenseInstance)
+      }
+
+      callbackInstances.forEach(d => d.onStateUpdate(query.state))
       notifyGlobalListeners()
     }
 
