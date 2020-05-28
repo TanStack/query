@@ -381,7 +381,7 @@ export interface BaseQueryOptions {
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
-  retry?: boolean | number | ((failureCount: number, error: unknown) => boolean)
+  retry?: boolean | number | ((failureCount: number, error: Error) => boolean)
   retryDelay?: (retryAttempt: number) => number
   staleTime?: number
   cacheTime?: number
@@ -389,14 +389,20 @@ export interface BaseQueryOptions {
   refetchIntervalInBackground?: boolean
   refetchOnWindowFocus?: boolean
   refetchOnMount?: boolean
-  onError?: (err: unknown) => void
+  onError?: (err: Error) => void
   suspense?: boolean
+  isDataEqual?: (oldData: unknown, newData: unknown) => boolean
 }
 
 export interface QueryOptions<TResult> extends BaseQueryOptions {
   onSuccess?: (data: TResult) => void
-  onSettled?: (data: TResult | undefined, error: unknown | null) => void
+  onSettled?: (data: TResult | undefined, error: Error | null) => void
   initialData?: TResult | (() => TResult | undefined)
+}
+
+export interface PrefetchQueryOptions<TResult> extends QueryOptions<TResult> {
+  force?: boolean
+  throwOnError?: boolean
 }
 
 export interface InfiniteQueryOptions<TResult, TMoreVariable>
@@ -409,7 +415,7 @@ export interface InfiniteQueryOptions<TResult, TMoreVariable>
 
 export interface QueryResultBase<TResult> {
   status: 'loading' | 'error' | 'success'
-  error: null | unknown
+  error: null | Error
   isFetching: boolean
   isStale: boolean
   failureCount: number
@@ -425,13 +431,13 @@ export interface QueryResultBase<TResult> {
 export interface QueryLoadingResult<TResult> extends QueryResultBase<TResult> {
   status: 'loading'
   data: TResult | undefined // even when error, data can have stale data
-  error: unknown | null // it still can be error
+  error: null | Error // it still can be error
 }
 
 export interface QueryErrorResult<TResult> extends QueryResultBase<TResult> {
   status: 'error'
   data: TResult | undefined // even when error, data can have stale data
-  error: unknown
+  error: Error
 }
 
 export interface QuerySuccessResult<TResult> extends QueryResultBase<TResult> {
@@ -450,7 +456,7 @@ export interface PaginatedQueryLoadingResult<TResult>
   status: 'loading'
   resolvedData: undefined | TResult // even when error, data can have stale data
   latestData: undefined | TResult // even when error, data can have stale data
-  error: unknown | null // it still can be error
+  error: null | Error // it still can be error
 }
 
 export interface PaginatedQueryErrorResult<TResult>
@@ -458,7 +464,7 @@ export interface PaginatedQueryErrorResult<TResult>
   status: 'error'
   resolvedData: undefined | TResult // even when error, data can have stale data
   latestData: undefined | TResult // even when error, data can have stale data
-  error: unknown
+  error: Error
 }
 
 export interface PaginatedQuerySuccessResult<TResult>
@@ -496,13 +502,13 @@ export type MutationFunction<TResults, TVariables> = (
 export interface MutateOptions<TResult, TVariables> {
   onSuccess?: (data: TResult, variables: TVariables) => Promise<void> | void
   onError?: (
-    error: unknown,
+    error: Error,
     variables: TVariables,
     snapshotValue: unknown
   ) => Promise<void> | void
   onSettled?: (
     data: undefined | TResult,
-    error: unknown | null,
+    error: Error | null,
     variables: TVariables,
     snapshotValue?: unknown
   ) => Promise<void> | void
@@ -528,7 +534,7 @@ export type MutateFunction<TResult, TVariables> = undefined extends TVariables
 export interface MutationResultBase<TResult> {
   status: 'idle' | 'loading' | 'error' | 'success'
   data: undefined | TResult
-  error: null | unknown
+  error: undefined | null | Error
   promise: Promise<TResult>
   reset: () => void
 }
@@ -551,7 +557,7 @@ export interface ErrorMutationResult<TResult>
   extends MutationResultBase<TResult> {
   status: 'error'
   data: undefined
-  error: unknown
+  error: Error
 }
 
 export interface SuccessMutationResult<TResult>
@@ -569,7 +575,7 @@ export type MutationResult<TResult> =
 
 export interface CachedQueryState<T> {
   data?: T
-  error?: unknown | null
+  error?: Error | null
   failureCount: number
   isFetching: boolean
   canFetchMore?: boolean
@@ -587,6 +593,7 @@ export interface CachedQuery<T> {
   setData(
     dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
   ): void
+  clear(): void
 }
 
 export interface QueryCache {
@@ -598,7 +605,7 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, TKey>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string>(
@@ -609,7 +616,7 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, [TKey]>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<
@@ -625,7 +632,7 @@ export interface QueryCache {
       | (() => TKey | false | null | undefined),
     variables: TVariables,
     queryFn: QueryFunctionWithVariables<TResult, TKey, TVariables>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string, TVariables extends AnyVariables>(
@@ -637,7 +644,7 @@ export interface QueryCache {
       | (() => TKey | false | null | undefined),
     variables: TVariables,
     queryFn: QueryFunctionWithVariables<TResult, [TKey], TVariables>,
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   ): Promise<TResult>
 
   prefetchQuery<
@@ -658,40 +665,61 @@ export interface QueryCache {
       | (() => TKey | false | null | undefined)
     variables?: TVariables
     queryFn: QueryFunctionWithVariables<TResult, TKey, TVariables>
-    config?: QueryOptions<TResult>
+    config?: PrefetchQueryOptions<TResult>
   }): Promise<TResult>
 
-  getQueryData(key: AnyQueryKey | string): unknown | undefined
-  setQueryData(
+  getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
+  setQueryData<T = unknown>(
     key: AnyQueryKey | string,
-    dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
+    dataOrUpdater: T | ((oldData: T | undefined) => T)
   ): void
-  refetchQueries(
+  refetchQueries<TResult>(
     queryKeyOrPredicateFn:
       | AnyQueryKey
       | string
-      | ((query: CachedQuery) => boolean),
+      | ((query: CachedQuery<unknown>) => boolean),
     {
       exact,
       throwOnError,
       force,
     }?: { exact?: boolean; throwOnError?: boolean; force?: boolean }
-  ): Promise<void>
+  ): Promise<TResult>
   removeQueries(
     queryKeyOrPredicateFn:
       | AnyQueryKey
       | string
-      | ((query: CachedQuery) => boolean),
+      | ((query: CachedQuery<unknown>) => boolean),
     { exact }?: { exact?: boolean }
   ): Promise<void>
-  getQuery(queryKey: AnyQueryKey): CachedQuery | undefined
-  getQueries(queryKey: AnyQueryKey): CachedQuery[]
+  getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
+  getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
+  cancelQueries(
+    queryKeyOrPredicateFn:
+      | AnyQueryKey
+      | string
+      | ((query: CachedQuery<unknown>) => boolean),
+    { exact }?: { exact?: boolean }
+  ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): CachedQuery[]
+  clear(): void
 }
 
 export const queryCache: QueryCache
+
+/**
+ * a factory that creates a new query cache
+ */
+export function makeQueryCache(): QueryCache
+
+/**
+ * A hook that uses the query cache context
+ */
+export function useQueryCache(): QueryCache
+
+export const ReactQueryCacheProvider: React.ComponentType<{
+  queryCache?: QueryCache
+}>
 
 /**
  * A hook that returns the number of the quiries that your application is loading or fetching in the background
@@ -720,12 +748,13 @@ export interface ReactQueryProviderConfig extends BaseQueryOptions {
 
   onMutate?: (variables: unknown) => Promise<unknown> | unknown
   onSuccess?: (data: unknown, variables?: unknown) => void
-  onError?: (err: unknown, snapshotValue?: unknown) => void
+  onError?: (err: Error, snapshotValue?: unknown) => void
   onSettled?: (
     data: unknown | undefined,
-    error: unknown | null,
+    error: Error | null,
     snapshotValue?: unknown
   ) => void
+  isDataEqual?: (oldData: unknown, newData: unknown) => boolean
 }
 
 export type ConsoleFunction = (...args: any[]) => void
@@ -736,3 +765,5 @@ export interface ConsoleObject {
 }
 
 export function setConsole(consoleObject: ConsoleObject): void
+
+export function deepIncludes(haystack: unknown, needle: unknown): boolean

@@ -32,7 +32,7 @@ export default () => {
 
   useIntersectionObserver({
     target: loadMoreButtonRef,
-    onIntersect: () => fetchMore(),
+    onIntersect: fetchMore,
   })
 
   return (

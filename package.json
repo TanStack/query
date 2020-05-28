@@ -1,14 +1,14 @@
 {
   "name": "react-query",
-  "version": "1.2.9",
+  "version": "0.0.0",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tannerlinsley/react-query",
   "homepage": "https://github.com/tannerlinsley/react-query#readme",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "module": "dist/react-query.mjs",
-  "types": "types",
   "sideEffects": false,
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
@@ -26,6 +26,7 @@
     "formatReadme": "yarn doctoc",
     "doctoc": "npx doctoc --maxlevel 2 README.md",
     "jump2header": "npx @strdr4605/jump2header --header 'documentation' --start 'Installation' -e 2 --silent -l 2",
+    "stats": "open ./stats.html",
     "postinstall": "node ./scripts/postinstall.js || exit 0",
     "dtslint": "dtslint types"
   },
@@ -73,6 +74,7 @@
     "prettier": "^1.19.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.0",
+    "react-error-boundary": "^2.2.1",
     "rollup": "^1.32.0",
     "rollup-plugin-babel": "^4.3.2",
     "rollup-plugin-commonjs": "^10.0.0",
@@ -81,6 +83,8 @@
     "rollup-plugin-peer-deps-external": "^2.2.2",
     "rollup-plugin-prettier": "^0.6.0",
     "rollup-plugin-size": "^0.2.2",
-    "rollup-plugin-terser": "^5.2.0"
-  }
+    "rollup-plugin-terser": "^5.2.0",
+    "rollup-plugin-visualizer": "^4.0.4"
+  },
+  "release": {}
 }

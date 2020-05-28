@@ -29,19 +29,19 @@ export function useInfiniteQuery(...args) {
         rebuiltPageVariables.push(args)
       } else {
         // get an up-to-date cursor based on the previous data set
-        const nextCursor = getGetFetchMore()(data[data.length - 1], data);
+        const nextCursor = getGetFetchMore()(data[data.length - 1], data)
 
         // break early if there's no next cursor
         // otherwise we'll start from the beginning
         // which will cause unwanted duplication
         if (!nextCursor) {
-          break;
+          break
         }
 
         const pageArgs = [
           // remove the last argument (the previously saved cursor)
           ...args.slice(0, -1),
-          nextCursor
+          nextCursor,
         ]
 
         data.push(await originalQueryFn(...pageArgs))

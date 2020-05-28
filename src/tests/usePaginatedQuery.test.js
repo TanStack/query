@@ -7,12 +7,11 @@ import {
 import * as React from 'react'
 import { sleep } from './utils'
 
-import { usePaginatedQuery, queryCache } from '../index'
+import { usePaginatedQuery, ReactQueryCacheProvider } from '../index'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
     cleanup()
-    queryCache.clear()
   })
 
   it('should use previous page data while fetching the next page', async () => {
@@ -34,7 +33,11 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Data undefined')
     await waitForElement(() => rendered.getByText('Data 1'))
@@ -69,7 +72,11 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Data 0')
 
@@ -109,7 +116,11 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
 
     rendered.getByText('Data 0')
 
@@ -120,5 +131,65 @@ describe('usePaginatedQuery', () => {
     await waitForElement(() => rendered.getByTestId('status'))
     expect(rendered.getByTestId('status').textContent).toBe('success')
     expect(rendered.getByTestId('status').textContent).not.toBe('loading')
+  })
+
+  it('should clear resolvedData data when query is falsy', async () => {
+    function Page() {
+      const [searchTerm, setSearchTerm] = React.useState('')
+      const [page, setPage] = React.useState(1)
+      const { resolvedData = 'undefined' } = usePaginatedQuery(
+        searchTerm && ['data', searchTerm, page],
+        async (queryName, searchTerm, page) => {
+          await sleep(1)
+          return `${searchTerm} ${page}`
+        }
+      )
+
+      return (
+        <div>
+          <h1 data-testid="title">Data {resolvedData}</h1>
+          <input
+            name="searchTerm"
+            placeholder="Enter a search term"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.currentTarget.value)}
+          />
+          <button
+            onClick={() => {
+              setSearchTerm('')
+              setPage(1)
+            }}
+          >
+            clear
+          </button>
+          <button onClick={() => setPage(page + 1)}>next</button>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    fireEvent.change(rendered.getByPlaceholderText('Enter a search term'), {
+      target: { value: 'first-search' },
+    })
+    rendered.getByText('Data undefined')
+    await waitForElement(() => rendered.getByText('Data first-search 1'))
+
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data first-search 1')
+    await waitForElement(() => rendered.getByText('Data first-search 2'))
+
+    fireEvent.click(rendered.getByText('clear'))
+    rendered.getByText('Data undefined')
+
+    fireEvent.change(rendered.getByPlaceholderText('Enter a search term'), {
+      target: { value: 'second-search' },
+    })
+    rendered.getByText('Data undefined')
+    await waitForElement(() => rendered.getByText('Data second-search 1'))
+
+    fireEvent.click(rendered.getByText('next'))
+    rendered.getByText('Data second-search 1')
+    await waitForElement(() => rendered.getByText('Data second-search 2'))
   })
 })

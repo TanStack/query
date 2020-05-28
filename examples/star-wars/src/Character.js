@@ -8,7 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
 } from "@material-ui/core";
 import { Link as RouterLink } from "react-router-dom";
 import { withRouter } from "react-router";
@@ -18,13 +18,13 @@ import fetch from "./fetch";
 function Character(props) {
   const characterId = props.match.params.characterId;
   const { status, error, data } = useQuery(`character-${characterId}`, () =>
-    fetch(`https://swapi.co/api/people/${characterId}/`)
+    fetch(`https://swapi.dev/api/people/${characterId}/`)
   );
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
-  console.log({ data, status, error });
+  console.info({ data, status, error });
   const homeworldUrlParts = data.homeworld.split("/").filter(Boolean);
   const homeworldId = homeworldUrlParts[homeworldUrlParts.length - 1];
 
@@ -74,7 +74,7 @@ function Character(props) {
       </TableContainer>
       <br />
       <Typography variant="h4">Films</Typography>
-      {data.films.map(film => {
+      {data.films.map((film) => {
         const filmUrlParts = film.split("/").filter(Boolean);
         const filmId = filmUrlParts[filmUrlParts.length - 1];
         return <Film id={filmId} key={`Film-${filmId}`} />;
@@ -86,7 +86,7 @@ function Character(props) {
 function Film(props) {
   const { id } = props;
   const { data, status, error } = useQuery(`film-${id}`, () =>
-    fetch(`https://swapi.co/api/films/${id}/`)
+    fetch(`https://swapi.dev/api/films/${id}/`)
   );
 
   if (status !== "success") {
@@ -106,7 +106,7 @@ function Film(props) {
 function Homeworld(props) {
   const { id } = props;
   const { data, status } = useQuery(`homeworld-${id}`, () =>
-    fetch(`https://swapi.co/api/planets/${id}/`)
+    fetch(`https://swapi.dev/api/planets/${id}/`)
   );
 
   if (status !== "success") {

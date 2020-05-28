@@ -8,13 +8,13 @@ import fetch from "./fetch";
 function Film(props) {
   const filmId = props.match.params.filmId;
   const { data, status, error } = useQuery(`film-${filmId}`, () =>
-    fetch(`https://swapi.co/api/films/${filmId}/`)
+    fetch(`https://swapi.dev/api/films/${filmId}/`)
   );
 
   if (status === "loading") return <p>Loading...</p>;
   // this will not be necessary when v1 is released.
   if (data == null) {
-    console.log("this shouldn't happen but it does 2");
+    console.info("this shouldn't happen but it does 2");
     return <p>Loading...</p>;
   }
   if (status === "error") return <p>Error :(</p>;
@@ -24,7 +24,7 @@ function Film(props) {
       <Typography variant="body1">{data.opening_crawl}</Typography>
       <br />
       <Typography variant="h4">Characters</Typography>
-      {data.characters.map(character => {
+      {data.characters.map((character) => {
         const characterUrlParts = character.split("/").filter(Boolean);
         const characterId = characterUrlParts[characterUrlParts.length - 1];
         return <Character id={characterId} key={characterId} />;
@@ -36,7 +36,7 @@ function Film(props) {
 function Character(props) {
   const { id } = props;
   const { data, status, error } = useQuery(`character-${id}`, () =>
-    fetch(`https://swapi.co/api/people/${props.id}/`)
+    fetch(`https://swapi.dev/api/people/${props.id}/`)
   );
 
   if (status !== "success") {

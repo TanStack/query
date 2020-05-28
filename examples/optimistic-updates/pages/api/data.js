@@ -1,7 +1,7 @@
 const items = []
 
 export default async (req, res) => {
-  await new Promise(r => setTimeout(r, 500))
+  await new Promise(r => setTimeout(r, 1000))
 
   if (req.method === 'POST') {
     const { text } = req.body

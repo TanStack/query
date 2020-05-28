@@ -1,4 +1,9 @@
-export { queryCache } from './queryCache'
+export {
+  queryCache,
+  makeQueryCache,
+  ReactQueryCacheProvider,
+  useQueryCache,
+} from './queryCache'
 export { ReactQueryConfigProvider } from './config'
 export { setFocusHandler } from './setFocusHandler'
 export { useIsFetching } from './useIsFetching'

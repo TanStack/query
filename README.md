@@ -12,7 +12,9 @@ Hooks for fetching, caching and updating asynchronous data in React
   <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
 </a><a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
-</a><a href="https://github.com/tannerlinsley/react-query/discussions">
+</a><a href="#badge">
+    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
+  </a><a href="https://github.com/tannerlinsley/react-query/discussions">
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
 </a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
@@ -34,8 +36,8 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Request Cancellation
 - [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
 - [Dedicated Devtools (React Query Devtools)](https://github.com/tannerlinsley/react-query-devtools)
-- <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
-    <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
+- 4kb - 6kb (depending on features imported) <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
+  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
   </a>
 
 <details>
@@ -83,7 +85,6 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 [Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar in spirit and implementation to React Query with a few notable differences:
 
 - Automatic Cache Garbage Collection - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
-- No Default Data Fetcher Function - React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
 - `useMutation` - A dedicated hook for handling generic lifecycles around triggering mutations and handling their side-effects in applications. SWR does not ship with anything similar, and you may find yourself reimplementing most if not all of `useMutation`'s functionality in user-land. With this hook, you can extend the lifecycle of your mutations to reliably handle successful refetching strategies, failure rollbacks and error handling.
 - Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
 - Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
@@ -98,9 +99,10 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [Amazon](https://amazon.com)
 - [Walmart](https://walmart.com)
 - [Microsoft](https://microsoft.com)
+- [Target](https://target.com)
 - [HP](https://hp.com)
-- [Major League Baseball Association](https://mlb.com)
-- [Volvo](https://volvocars.com)
+- [Major League Baseball Association](https://www.mlb.com)
+- [Volvo](https://www.volvocars.com)
 - [Ocado](https://ocado.com)
 - [UPC.ch](https://upc.ch)
 - [EFI.com](https://efi.com)
@@ -127,134 +129,77 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 
 This library is being built and maintained by me, @tannerlinsley and I am always in need of more support to keep projects like this afloat. If you would like to get premium support, add your logo or name on this README, or simply just contribute to my open source Sponsorship goal, [visit my Github Sponsors page!](https://github.com/sponsors/tannerlinsley/)
 
+[![Diamond Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/diamond.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
+      <td>
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/diamond.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
+          Get Your Logo Here!
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley/" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/platinum.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
-       <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+[![Gold Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/gold.png)](https://github.com/sponsors/tannerlinsley)
 
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley/" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/gold.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
-        <a href="https://nozzle.io" target="_blank">
-          <img width='225' src="https://nozzle.io/img/logo-blue.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
+      <td>
         <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
+          Get Your Logo Here!
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
+[![Silver Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/silver.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley/" target="_blank">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/silver.png">
-        </a>
-      </td>
-      <td align="center" valign="middle">
+      <td>
         <a href="https://www.reactbricks.com/" target="_blank">
-          <img width='170' src="https://www.reactbricks.com/reactbricks_vertical.svg">
-        </a>
-      </td>
-      <td align="center" valign="middle">
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Sponsor!
+          <img width='225' src="https://www.reactbricks.com/reactbricks_vertical.svg">
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
+[![Bronze Sponsors](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/bronze.png)](https://github.com/sponsors/tannerlinsley)
+
 <table>
   <tbody>
     <tr>
-      <td valign="top">
-        <a href="https://github.com/sponsors/tannerlinsley/">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/supporters.png" />
-        </a>
-      </td>
       <td>
-        <ul>
-          <li><a href="https://github.com/bgazzera">@bgazzera<a></li>
-          <li><a href="https://kentcdodds.com/"> Kent C. Dodds (kentcdodds.com)</a></li>
-        </ul>
-      </td>
-      <td>
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Supporter!
+        <a href="https://nozzle.io" target="_blank">
+          <img width='150' src="https://nozzle.io/img/logo-blue.png">
         </a>
       </td>
     </tr>
   </tbody>
 </table>
 
-<table>
-  <tbody>
-    <tr>
-      <td valign="top">
-        <a href="https://github.com/sponsors/tannerlinsley/">
-          <img width='150' src="https://raw.githubusercontent.com/tannerlinsley/files/master/images/patreon/fans.png" />
-        </a>
-      </td>
-      <!-- <td>
-        <ul>
-        <li></li>
-        </ul>
-      </td> -->
-      <td>
-        <a href="https://github.com/sponsors/tannerlinsley" target="_blank">
-          Become a Fan!
-        </a>
-      </td>
-    </tr>
-  </tbody>
-</table>
+[![Supporters](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/supporters.png)](https://github.com/sponsors/tannerlinsley)
+
+- <a href="https://github.com/bgazzera">@bgazzera<a></li>
+- <a href="https://kentcdodds.com/"> Kent C. Dodds (kentcdodds.com)</a></li>
+
+[![Fans](https://raw.githubusercontent.com/tannerlinsley/files/master/sponsorships/fans.png)](https://github.com/sponsors/tannerlinsley)
+
+- Steven Miyakawa (@SamSamskies)
+
+### [Become a Sponsor](https://github.com/sponsors/tannerlinsley/)
 
 # Documentation
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-
 
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
@@ -304,14 +249,17 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.getQueryData`](#querycachegetquerydata)
   - [`queryCache.setQueryData`](#querycachesetquerydata)
   - [`queryCache.refetchQueries`](#querycacherefetchqueries)
+  - [`queryCache.cancelQueries`](#querycachecancelqueries)
   - [`queryCache.removeQueries`](#querycacheremovequeries)
   - [`queryCache.getQuery`](#querycachegetquery)
   - [`queryCache.getQueries`](#querycachegetqueries)
   - [`queryCache.isFetching`](#querycacheisfetching)
   - [`queryCache.subscribe`](#querycachesubscribe)
   - [`queryCache.clear`](#querycacheclear)
+  - [`useQueryCache`](#usequerycache)
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
+  - [`ReactQueryCacheProvider`](#reactquerycacheprovider)
   - [`setConsole`](#setconsole)
 - [Contributors ✨](#contributors-)
 
@@ -335,6 +283,7 @@ Out of the box, React Query is configured with **aggressive but sane** defaults.
 - Query results that become unused (all instances of the query are unmounted) will still be cached in case they are used again for a default of 5 minutes before they are garbage collected. To change this, you can alter the default `cacheTime` for queries to something other than `1000 * 60 * 5` milliseconds.
 - Stale queries will automatically be refetched in the background **when the browser window is refocused by the user**. You can disable this using the `refetchOnWindowFocus` option in queries or the global config.
 - Queries that fail will silently and automatically be retried **3 times, with exponential backoff delay** before capturing and displaying an error to the UI. To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
+- Query results by default are deep compared to detect if data has actually changed and if not, the data reference remains unchanged to better help with value stabilization with regards to useMemo and useCallback. The default deep compare function use here (`config.isDataEqual`) only supports comparing JSON-compatible primitives. If you are dealing with any non-json compatible values in your query responses OR are seeing performance issues with the deep compare function, you should probably disable it (`config.isDataEqual = () => false`) or customize it to better fit your needs.
 
 # Queries
 
@@ -878,7 +827,7 @@ const { status, data, error } = useQuery('todos', fetchTodoList, {
 
 ## Prefetching
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, then you're in luck. You can either use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
 
 ```js
 import { queryCache } from 'react-query'
@@ -893,7 +842,7 @@ const prefetchTodos = async () => {
 
 The next time a `useQuery` instance is used for a prefetched query, it will use the cached data! If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
 
-Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result
+Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result.
 
 ## Initial Data
 
@@ -942,7 +891,7 @@ function Todo({ todoId }) {
 }
 ```
 
-Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including an `updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryCache.getQuery` method instead to get more information about the source query, including a `query.state.updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 ```js
 function Todo({ todoId }) {
@@ -952,7 +901,7 @@ function Todo({ todoId }) {
       const query = queryCache.getQuery('todos')
 
       // If the query exists and has data that is no older than 10 seconds...
-      if (query && Date.now() - query.updatedAt <= 10 * 1000) {
+      if (query && Date.now() - query.state.updatedAt <= 10 * 1000) {
         // return the individual todo
         return query.state.data.find(d => d.id === todoId)
       }
@@ -1152,7 +1101,34 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) method and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+
+Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
+
+```js
+// This will not work
+const CreateTodo = () => {
+  const [mutate] = useMutation(event => {
+    event.preventDefault()
+    fetch('/api', new FormData(event.target))
+  })
+
+  return <form onSubmit={mutate}>...</form>
+}
+
+// This will work
+const CreateTodo = () => {
+  const [mutate] = useMutation(formData => {
+    fetch('/api', formData)
+  })
+  const onSubmit = event => {
+    event.preventDefault()
+    mutate(new FormData(event.target))
+  }
+
+  return <form onSubmit={onSubmit}>...</form>
+}
+```
 
 ## Invalidate and Refetch Queries from Mutations
 
@@ -1399,6 +1375,9 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
+    // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+    queryCache.cancelQueries('todos')
+
     // Snapshot the previous value
     const previousTodos = queryCache.getQueryData('todos')
 
@@ -1423,6 +1402,9 @@ useMutation(updateTodo, {
 useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
+    // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+    queryCache.cancelQueries(['todos', newTodo.id])
+
     // Snapshot the previous value
     const previousTodo = queryCache.getQueryData(['todos', newTodo.id], newTodo)
 
@@ -1790,7 +1772,8 @@ const {
   onSettled,
   suspense,
   initialData,
-  refetchOnMount
+  refetchOnMount,
+  queryFnParamsFilter
 })
 
 // or using the object syntax
@@ -1873,6 +1856,10 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `true`
   - If set to `false`, will disable additional instances of a query to trigger background refetches
+- `queryFnParamsFilter: Function(args) => filteredArgs`
+  - Optional
+  - This function will filter the params that get passed to `queryFn`.
+  - For example, you can filter out the first query key from the params by using `queryFnParamsFilter: args => args.slice(1)`.
 
 ### Returns
 
@@ -2004,7 +1991,7 @@ const {
     - `loading` if the query is in an initial loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`)
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query is in `manual` mode and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
-- `resolveData: Any`
+- `resolvedData: Any`
   - Defaults to `undefined`.
   - The last successfully resolved data for the query.
   - When fetching based on a new query key, the value will resolve to the last known successful value, regardless of query key
@@ -2040,6 +2027,8 @@ const {
   isFetching,
   failureCount,
   refetch,
+  fetchMore,
+  canFetchMore,
 } = useInfiniteQuery(queryKey, [, queryVariables], queryFn, {
   getFetchMore: (lastPage, allPages) => fetchMoreVariable
   manual,
@@ -2218,7 +2207,7 @@ const promise = mutate(variables, {
   - Defaults to the global query config's `useErrorBoundary` value, which is `false`
   - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
 - `selectedUseQueryOptions`
-  - *Selected* options of `useQuery` are also applicable here. E.g. `retry` and `retryDelay` can be used as described in the [`useQuery` section](#usequery). *Documentation of these options will be improved in the future.*
+  - _Selected_ options of `useQuery` are also applicable here. E.g. `retry` and `retryDelay` can be used as described in the [`useQuery` section](#usequery). _Documentation of these options will be improved in the future._
 
 ### Returns
 
@@ -2251,6 +2240,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
 - [`refetchQueries`](#querycacherefetchqueries)
+- [`cancelQueries`](#querycachecancelqueries)
 - [`removeQueries`](#querycacheremovequeries)
 - [`getQueries`](#querycachegetqueries)
 - [`getQuery`](#querycachegetquery)
@@ -2376,7 +2366,7 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
 - `throwOnError: Boolean`
   - When set to `true`, this function will throw if any of the query refetch tasks fail.
 - `force: Boolean`
@@ -2385,6 +2375,35 @@ const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
 ### Returns
 
 This function returns a promise that will resolve when all of the queries are done being refetched. By default, it **will not** throw an error if any of those queries refetches fail, but this can be configured by setting the `throwOnError` option to `true`
+
+## `queryCache.cancelQueries`
+
+The `cancelQueries` method can be used to cancel outgoing queries based on their query keys or any other functionally accessible property/state of the query.
+
+This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
+
+```js
+import { queryCache } from 'react-query'
+
+const queries = queryCache.cancelQueries(queryKeyOrPredicateFn, {
+  exact,
+})
+```
+
+### Options
+
+- `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `function`
+  - `queryKey`
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](#query-keys) for more information.
+  - `Function(query) => Boolean`
+    - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
+    - The `exact` option has no effect with using a function
+- `exact: Boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
+
+### Returns
+
+This function does not return anything
 
 ## `queryCache.removeQueries`
 
@@ -2407,7 +2426,7 @@ const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
 - `exact: Boolean`
-  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Don't remember to destructure it out of the array!
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
 
 ### Returns
 
@@ -2417,7 +2436,7 @@ This function does not return anything
 
 `getQuery` is a slightly more advanced synchronous function that can be used to get an existing query object from the cache. This object not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
 
-> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
+> Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```js
 import { queryCache } from 'react-query'
@@ -2508,6 +2527,18 @@ queryCache.clear()
 - `queries: Array<Query>`
   - This will be an array containing the queries that were found.
 
+## `useQueryCache`
+
+The `useQueryCache` hook returns the current queryCache instance.
+
+```js
+import { useQueryCache } from 'react-query'
+
+const queryCache = useQueryCache()
+```
+
+If you are using the `ReactQueryCacheProvider` to set a custom cache, you cannot simply import `{ queryCache }` any more. This hook will ensure you're getting the correct instance.
+
 ## `useIsFetching`
 
 `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or fetching in the background (useful for app-wide loading indicators).
@@ -2550,6 +2581,7 @@ const queryConfig = {
   refetchInterval: false,
   queryFnParamsFilter: args => filteredArgs,
   refetchOnMount: true,
+  isDataEqual: (previous, next) => true, // or false
 }
 
 function App() {
@@ -2566,6 +2598,30 @@ function App() {
 - `config: Object`
   - Must be **stable** or **memoized**. Do not create an inline object!
   - For non-global properties please see their usage in both the [`useQuery` hook](#usequery) and the [`useMutation` hook](#usemutation).
+
+## `ReactQueryCacheProvider`
+
+`ReactQueryCacheProvider` is an optional provider component for explicitly setting the query cache used by React Query. This is useful for creating component-level caches that are not completely global, as well as making truly isolated unit tests.
+
+```js
+import { ReactQueryCacheProvider, makeQueryCache } from 'react-query'
+
+const queryCache = makeQueryCache()
+
+function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      ...
+    </ReactQueryCacheProvider>
+  )
+}
+```
+
+### Options
+
+- `queryCache: Object`
+  - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
+  - If not provided, a new cache will be generated.
 
 ## `setConsole`
 
@@ -2599,11 +2655,15 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://tannerlinsley.com"><img src="https://avatars0.githubusercontent.com/u/5580297?v=4" width="100px;" alt=""/><br /><sub><b>Tanner Linsley</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tannerlinsley" title="Code">💻</a> <a href="#ideas-tannerlinsley" title="Ideas, Planning, & Feedback">🤔</a> <a href="#example-tannerlinsley" title="Examples">💡</a> <a href="#maintenance-tannerlinsley" title="Maintenance">🚧</a> <a href="https://github.com/tannerlinsley/react-query/pulls?q=is%3Apr+reviewed-by%3Atannerlinsley" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="http://cherniavskii.com"><img src="https://avatars2.githubusercontent.com/u/13808724?v=4" width="100px;" alt=""/><br /><sub><b>Andrew Cherniavskii</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=cherniavskii" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Acherniavskii" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://twitter.com/tibotiber"><img src="https://avatars3.githubusercontent.com/u/5635553?v=4" width="100px;" alt=""/><br /><sub><b>Thibaut Tiberghien</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tibotiber" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/gargroh"><img src="https://avatars3.githubusercontent.com/u/42495927?v=4" width="100px;" alt=""/><br /><sub><b>Rohit Garg</b></sub></a><br /><a href="#tool-gargroh" title="Tools">🔧</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+<!-- Force Toggle -->

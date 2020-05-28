@@ -63,6 +63,10 @@ export function isObject(a) {
 }
 
 export function deepIncludes(a, b) {
+  if (a === b) {
+    return true
+  }
+
   if (typeof a !== typeof b) {
     return false
   }
@@ -71,7 +75,7 @@ export function deepIncludes(a, b) {
     return !Object.keys(b).some(key => !deepIncludes(a[key], b[key]))
   }
 
-  return a === b
+  return false
 }
 
 export function isDocumentVisible() {
@@ -99,6 +103,7 @@ export function getQueryArgs(args) {
       throw new Error('queryKey and queryFn keys are required.')
     }
   }
+
   if (typeof args[2] === 'function') {
     const [queryKey, variables = [], queryFn, config = {}] = args
     return [queryKey, variables, queryFn, config]
@@ -121,17 +126,59 @@ export function useMountedCallback(callback) {
   )
 }
 
-export function handleSuspense(query) {
-  if (query.config.suspense || query.config.useErrorBoundary) {
-    if (query.status === statusError) {
-      throw query.error
+export function handleSuspense(queryInfo) {
+  if (queryInfo.config.suspense || queryInfo.config.useErrorBoundary) {
+    if (queryInfo.status === statusError) {
+      setTimeout(() => {
+        queryInfo.query.state.status = 'loading'
+      })
+      throw queryInfo.error
     }
   }
 
-  if (query.config.suspense) {
-    if (query.status === statusLoading) {
-      query.wasSuspensed = true
-      throw query.refetch()
+  if (queryInfo.config.suspense) {
+    if (queryInfo.status === statusLoading) {
+      queryInfo.query.wasSuspended = true
+      throw queryInfo.refetch()
     }
   }
+}
+
+// This deep-equal is directly based on https://github.com/epoberezkin/fast-deep-equal.
+// The parts for comparing any non-JSON-supported values has been removed
+export function deepEqual(a, b) {
+  if (a === b) return true
+
+  if (a && b && typeof a == 'object' && typeof b == 'object') {
+    var length, i, keys
+    if (Array.isArray(a)) {
+      length = a.length
+      // eslint-disable-next-line eqeqeq
+      if (length != b.length) return false
+      for (i = length; i-- !== 0; ) if (!deepEqual(a[i], b[i])) return false
+      return true
+    }
+
+    if (a.valueOf !== Object.prototype.valueOf)
+      return a.valueOf() === b.valueOf()
+
+    keys = Object.keys(a)
+    length = keys.length
+    if (length !== Object.keys(b).length) return false
+
+    for (i = length; i-- !== 0; )
+      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
+
+    for (i = length; i-- !== 0; ) {
+      var key = keys[i]
+
+      if (!deepEqual(a[key], b[key])) return false
+    }
+
+    return true
+  }
+
+  // true if both NaN, false otherwise
+  // eslint-disable-next-line no-self-compare
+  return a !== a && b !== b
 }

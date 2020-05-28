@@ -12,7 +12,7 @@ export default function Characters() {
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
 
-  console.log(data);
+  console.info(data);
 
   return (
     <div>

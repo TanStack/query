@@ -2,7 +2,7 @@ import React from 'react'
 
 //
 
-import { queryCache } from './queryCache'
+import { useQueryCache } from './queryCache'
 import { useConfigContext } from './config'
 import {
   useUid,
@@ -19,6 +19,8 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     ...useConfigContext(),
     ...config,
   }
+
+  const queryCache = useQueryCache()
 
   const queryRef = React.useRef()
 
@@ -60,9 +62,16 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     [query]
   )
 
-  // Subscribe to the query and maybe trigger fetch
+  query.suspenseInstance = {
+    onSuccess: data => getLatestConfig().onSuccess(data),
+    onError: err => getLatestConfig().onError(err),
+    onSettled: (data, err) => getLatestConfig().onSettled(data, err),
+  }
+
+  // After mount, subscribe to the query
   React.useEffect(() => {
-    const unsubscribeFromQuery = query.subscribe({
+    // Update the instance to the query again, but not as a placeholder
+    query.updateInstance({
       id: instanceId,
       onStateUpdate: () => rerender({}),
       onSuccess: data => getLatestConfig().onSuccess(data),
@@ -70,11 +79,15 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       onSettled: (data, err) => getLatestConfig().onSettled(data, err),
     })
 
+    return query.subscribe(instanceId)
+  }, [getLatestConfig, instanceId, query, rerender])
+
+  React.useEffect(() => {
     // Perform the initial fetch for this query if necessary
     if (
       !getLatestConfig().manual && // Don't auto fetch if config is set to manual query
       !query.wasPrefetched && // Don't double fetch for prefetched queries
-      !query.wasSuspensed && // Don't double fetch for suspense
+      !query.wasSuspended && // Don't double fetch for suspense
       query.state.isStale && // Only refetch if stale
       (getLatestConfig().refetchOnMount || query.instances.length === 1)
     ) {
@@ -82,35 +95,33 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
     }
 
     query.wasPrefetched = false
-    query.wasSuspensed = false
-
-    return unsubscribeFromQuery
-  }, [getLatestConfig, instanceId, query, refetch, rerender])
+    query.wasSuspended = false
+  }, [getLatestConfig, query, refetch])
 
   // Handle refetch interval
   React.useEffect(() => {
+    const query = queryRef.current
     if (
       config.refetchInterval &&
-      (!query.refetchInterval || config.refetchInterval < query.refetchInterval)
+      (!query.currentRefetchInterval ||
+        // shorter interval should override previous one
+        config.refetchInterval < query.currentRefetchInterval)
     ) {
-      clearInterval(query.refetchInterval)
-      query.refetchInterval = setInterval(() => {
+      query.currentRefetchInterval = config.refetchInterval
+      clearInterval(query.refetchIntervalId)
+      query.refetchIntervalId = setInterval(() => {
         if (isDocumentVisible() || config.refetchIntervalInBackground) {
           refetch().catch(Console.error)
         }
       }, config.refetchInterval)
 
       return () => {
-        clearInterval(query.refetchInterval)
-        delete query.refetchInterval
+        clearInterval(query.refetchIntervalId)
+        delete query.refetchIntervalId
+        delete query.currentRefetchInterval
       }
     }
-  }, [
-    config.refetchInterval,
-    config.refetchIntervalInBackground,
-    query.refetchInterval,
-    refetch,
-  ])
+  }, [config.refetchInterval, config.refetchIntervalInBackground, refetch])
 
   return {
     ...query.state,
