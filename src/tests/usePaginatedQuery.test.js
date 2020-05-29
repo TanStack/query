@@ -192,4 +192,39 @@ describe('usePaginatedQuery', () => {
     rendered.getByText('Data second-search 1')
     await waitForElement(() => rendered.getByText('Data second-search 2'))
   })
+
+  it('should not suspend while fetching the next page', async () => {
+    function Page() {
+      const [page, setPage] = React.useState(1)
+
+      const { resolvedData } = usePaginatedQuery(
+        ['data', { page }],
+        async (queryName, { page }) => {
+          await sleep(1)
+          return page
+        },
+        {
+          initialData: 0,
+          suspense: true,
+        }
+      )
+
+      return (
+        <div>
+          <h1 data-testid="title">Data {resolvedData}</h1>
+          <button onClick={() => setPage(page + 1)}>next</button>
+        </div>
+      )
+    }
+
+    // render will throw if Page is suspended
+    const rendered = render(
+      <ReactQueryCacheProvider>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
+
+    fireEvent.click(rendered.getByText('next'))
+    await waitForElement(() => rendered.getByText('Data 2'))
+  })
 })
