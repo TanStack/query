@@ -604,7 +604,7 @@ export interface CachedQuery<T, TError = unknown> {
   config: QueryOptions<unknown, TError>
   state: CachedQueryState<T>
   setData(
-    dataOrUpdater: unknown | ((oldData: unknown | undefined) => unknown)
+    dataOrUpdater: unknown | undefined | ((oldData: unknown | undefined) => unknown | undefined)
   ): void
   clear(): void
 }
@@ -686,7 +686,7 @@ export interface QueryCache {
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
   setQueryData<T = unknown>(
     key: AnyQueryKey | string,
-    dataOrUpdater: T | ((oldData: T | undefined) => T)
+    dataOrUpdater: T | undefined | ((oldData: T | undefined) => T | undefined)
   ): void
   refetchQueries<TResult>(
     queryKeyOrPredicateFn:
