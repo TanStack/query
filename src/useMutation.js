@@ -78,7 +78,7 @@ export function useMutation(mutationFn, config = {}) {
       const mutationId = uid()
       latestMutationRef.current = mutationId
 
-      const isLatest = async () => latestMutationRef.current === mutationId
+      const isLatest = () => latestMutationRef.current === mutationId
 
       dispatch({ type: actionLoading })
 
