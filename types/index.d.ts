@@ -722,9 +722,9 @@ export const ReactQueryCacheProvider: React.ComponentType<{
 }>
 
 /**
- * A hook that returns the number of the quiries that your application is loading or fetching in the background
+ * A hook that returns the number of the queries that your application is loading or fetching in the background
  * (useful for app-wide loading indicators).
- * @returns the number of the quiries that your application is currently loading or fetching in the background.
+ * @returns the number of the queries that your application is currently loading or fetching in the background.
  */
 export function useIsFetching(): number
 
