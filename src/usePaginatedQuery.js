@@ -39,12 +39,14 @@ export function usePaginatedQuery(...args) {
     status = 'success'
   }
 
-  handleSuspense(query)
-
-  return {
+  const paginatedQuery = {
     ...query,
     resolvedData,
     latestData,
     status,
   }
+
+  handleSuspense(paginatedQuery)
+
+  return paginatedQuery
 }

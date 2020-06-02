@@ -1,4 +1,9 @@
-import { render, waitForElement, fireEvent, cleanup } from '@testing-library/react'
+import {
+  render,
+  waitForElement,
+  fireEvent,
+  cleanup,
+} from '@testing-library/react'
 import * as React from 'react'
 
 import { useQuery, ReactQueryCacheProvider, queryCache } from '../index'

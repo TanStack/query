@@ -3,26 +3,28 @@ import { noop, stableStringify, identity, deepEqual } from './utils'
 
 export const configContext = React.createContext()
 
+const DEFAULTS = {
+  retry: 3,
+  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+  staleTime: 0,
+  cacheTime: 5 * 60 * 1000,
+  refetchAllOnWindowFocus: true,
+  refetchInterval: false,
+  suspense: false,
+  queryKeySerializerFn: defaultQueryKeySerializerFn,
+  queryFnParamsFilter: identity,
+  throwOnError: false,
+  useErrorBoundary: undefined, // this will default to the suspense value
+  onMutate: noop,
+  onSuccess: noop,
+  onError: noop,
+  onSettled: noop,
+  refetchOnMount: true,
+  isDataEqual: deepEqual,
+}
+
 export const defaultConfigRef = {
-  current: {
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 0,
-    cacheTime: 5 * 60 * 1000,
-    refetchAllOnWindowFocus: true,
-    refetchInterval: false,
-    suspense: false,
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
-    queryFnParamsFilter: identity,
-    throwOnError: false,
-    useErrorBoundary: undefined, // this will default to the suspense value
-    onMutate: noop,
-    onSuccess: noop,
-    onError: noop,
-    onSettled: noop,
-    refetchOnMount: true,
-    isDataEqual: deepEqual,
-  },
+  current: DEFAULTS,
 }
 
 export function useConfigContext() {
@@ -45,6 +47,19 @@ export function ReactQueryConfigProvider({ config, children }) {
 
     return newConfig
   }, [config, configContextValue])
+
+  React.useEffect(() => {
+    // restore previous config on unmount
+    return () => {
+      defaultConfigRef.current = { ...(configContextValue || DEFAULTS) }
+
+      // Default useErrorBoundary to the suspense value
+      if (typeof defaultConfigRef.current.useErrorBoundary === 'undefined') {
+        defaultConfigRef.current.useErrorBoundary =
+          defaultConfigRef.current.suspense
+      }
+    }
+  }, [configContextValue])
 
   if (!configContextValue) {
     defaultConfigRef.current = newConfig

@@ -85,7 +85,6 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 [Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar in spirit and implementation to React Query with a few notable differences:
 
 - Automatic Cache Garbage Collection - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
-- No Default Data Fetcher Function - React Query does not ship with a default fetcher (but can easily be wrapped inside of a custom hook to achieve the same functionality)
 - `useMutation` - A dedicated hook for handling generic lifecycles around triggering mutations and handling their side-effects in applications. SWR does not ship with anything similar, and you may find yourself reimplementing most if not all of `useMutation`'s functionality in user-land. With this hook, you can extend the lifecycle of your mutations to reliably handle successful refetching strategies, failure rollbacks and error handling.
 - Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
 - Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
@@ -164,8 +163,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   <tbody>
     <tr>
       <td>
-        <a href="https://nozzle.io" target="_blank">
-          <img width='225' src="https://nozzle.io/img/logo-blue.png">
+        <a href="https://www.reactbricks.com/" target="_blank">
+          <img width='225' src="https://www.reactbricks.com/reactbricks_vertical.svg">
         </a>
       </td>
     </tr>
@@ -178,8 +177,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   <tbody>
     <tr>
       <td>
-        <a href="https://www.reactbricks.com/" target="_blank">
-          <img width='150' src="https://www.reactbricks.com/reactbricks_vertical.svg">
+        <a href="https://nozzle.io" target="_blank">
+          <img width='150' src="https://nozzle.io/img/logo-blue.png">
         </a>
       </td>
     </tr>
@@ -485,7 +484,7 @@ To do this, you can use the following 2 approaches:
 
 ### Pass a falsy query key
 
-If a query isn't ready to be requested yet, just pass a falsy value as the query key or as an item in the query key:
+If a query isn't ready to be requested yet, just pass a falsy value as the query key:
 
 ```js
 // Get the user
@@ -828,7 +827,7 @@ const { status, data, error } = useQuery('todos', fetchTodoList, {
 
 ## Prefetching
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, then you're in luck. You can either use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
 
 ```js
 import { queryCache } from 'react-query'
@@ -843,7 +842,7 @@ const prefetchTodos = async () => {
 
 The next time a `useQuery` instance is used for a prefetched query, it will use the cached data! If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
 
-Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result
+Alternatively, if you already have the data for your query synchronously available, you can use the [Query Cache's `setQueryData` method](#querycachesetquerydata) to directly add or update a query's cached result.
 
 ## Initial Data
 
@@ -1102,7 +1101,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) method and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
@@ -1992,7 +1991,7 @@ const {
     - `loading` if the query is in an initial loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`)
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query is in `manual` mode and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
-- `resolveData: Any`
+- `resolvedData: Any`
   - Defaults to `undefined`.
   - The last successfully resolved data for the query.
   - When fetching based on a new query key, the value will resolve to the last known successful value, regardless of query key
@@ -2028,6 +2027,8 @@ const {
   isFetching,
   failureCount,
   refetch,
+  fetchMore,
+  canFetchMore,
 } = useInfiniteQuery(queryKey, [, queryVariables], queryFn, {
   getFetchMore: (lastPage, allPages) => fetchMoreVariable
   manual,
