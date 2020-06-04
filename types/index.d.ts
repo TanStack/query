@@ -407,18 +407,18 @@ export interface BaseQueryOptions<TError = Error> {
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
 }
 
-export interface QueryOptions<TResult, TError> extends BaseQueryOptions<TError> {
+export interface QueryOptions<TResult, TError = Error> extends BaseQueryOptions<TError> {
   onSuccess?: (data: TResult) => void
   onSettled?: (data: TResult | undefined, error: TError | null) => void
   initialData?: TResult | (() => TResult | undefined)
 }
 
-export interface PrefetchQueryOptions<TResult, TError> extends QueryOptions<TResult, TError> {
+export interface PrefetchQueryOptions<TResult, TError = Error> extends QueryOptions<TResult, TError> {
   force?: boolean
   throwOnError?: boolean
 }
 
-export interface InfiniteQueryOptions<TResult, TMoreVariable, TError>
+export interface InfiniteQueryOptions<TResult, TMoreVariable, TError = Error>
   extends QueryOptions<TResult[], TError> {
   getFetchMore: (
     lastPage: TResult,
@@ -441,13 +441,13 @@ export interface QueryResultBase<TResult, TError = Error> {
   }) => Promise<TResult>
 }
 
-export interface QueryLoadingResult<TResult, TError> extends QueryResultBase<TResult, TError> {
+export interface QueryLoadingResult<TResult, TError = Error> extends QueryResultBase<TResult, TError> {
   status: 'loading'
   data: TResult | undefined // even when error, data can have stale data
   error: TError | null // it still can be error
 }
 
-export interface QueryErrorResult<TResult, TError> extends QueryResultBase<TResult, TError> {
+export interface QueryErrorResult<TResult, TError = Error> extends QueryResultBase<TResult, TError> {
   status: 'error'
   data: TResult | undefined // even when error, data can have stale data
   error: TError
@@ -459,12 +459,12 @@ export interface QuerySuccessResult<TResult> extends QueryResultBase<TResult> {
   error: null
 }
 
-export type QueryResult<TResult, TError> =
+export type QueryResult<TResult, TError = Error> =
   | QueryLoadingResult<TResult, TError>
   | QueryErrorResult<TResult, TError>
   | QuerySuccessResult<TResult>
 
-export interface PaginatedQueryLoadingResult<TResult, TError>
+export interface PaginatedQueryLoadingResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'loading'
   resolvedData: undefined | TResult // even when error, data can have stale data
@@ -472,7 +472,7 @@ export interface PaginatedQueryLoadingResult<TResult, TError>
   error: null | TError // it still can be error
 }
 
-export interface PaginatedQueryErrorResult<TResult, TError>
+export interface PaginatedQueryErrorResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'error'
   resolvedData: undefined | TResult // even when error, data can have stale data
@@ -488,12 +488,12 @@ export interface PaginatedQuerySuccessResult<TResult>
   error: null
 }
 
-export type PaginatedQueryResult<TResult, TError> =
+export type PaginatedQueryResult<TResult, TError = Error> =
   | PaginatedQueryLoadingResult<TResult, TError>
   | PaginatedQueryErrorResult<TResult, TError>
   | PaginatedQuerySuccessResult<TResult>
 
-export interface InfiniteQueryResult<TResult, TMoreVariable, TError>
+export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   extends QueryResultBase<TResult[], TError> {
   data: TResult[]
   isFetchingMore: boolean
@@ -512,7 +512,7 @@ export type MutationFunction<TResults, TVariables> = (
   variables: TVariables
 ) => Promise<TResults>
 
-export interface MutateOptions<TResult, TVariables, TError> {
+export interface MutateOptions<TResult, TVariables, TError = Error> {
   onSuccess?: (data: TResult, variables: TVariables) => Promise<void> | void
   onError?: (
     error: TError,
@@ -528,13 +528,13 @@ export interface MutateOptions<TResult, TVariables, TError> {
   throwOnError?: boolean
 }
 
-export interface MutationOptions<TResult, TVariables, TError>
+export interface MutationOptions<TResult, TVariables, TError = Error>
   extends MutateOptions<TResult, TVariables, TError> {
   onMutate?: (variables: TVariables) => Promise<unknown> | unknown
   useErrorBoundary?: boolean
 }
 
-export type MutateFunction<TResult, TVariables, TError> = undefined extends TVariables
+export type MutateFunction<TResult, TVariables, TError = Error> = undefined extends TVariables
   ? (
       variables?: TVariables,
       options?: MutateOptions<TResult, TVariables, TError>
@@ -552,21 +552,21 @@ export interface MutationResultBase<TResult, TError = Error> {
   reset: () => void
 }
 
-export interface IdleMutationResult<TResult, TError>
+export interface IdleMutationResult<TResult, TError = Error>
   extends MutationResultBase<TResult, TError> {
   status: 'idle'
   data: undefined
   error: null
 }
 
-export interface LoadingMutationResult<TResult, TError>
+export interface LoadingMutationResult<TResult, TError = Error>
   extends MutationResultBase<TResult, TError> {
   status: 'loading'
   data: undefined
   error: undefined
 }
 
-export interface ErrorMutationResult<TResult, TError>
+export interface ErrorMutationResult<TResult, TError = Error>
   extends MutationResultBase<TResult, TError> {
   status: 'error'
   data: undefined
@@ -580,7 +580,7 @@ export interface SuccessMutationResult<TResult>
   error: undefined
 }
 
-export type MutationResult<TResult, TError> =
+export type MutationResult<TResult, TError = Error> =
   | IdleMutationResult<TResult, TError>
   | LoadingMutationResult<TResult, TError>
   | ErrorMutationResult<TResult, TError>
