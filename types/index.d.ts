@@ -743,9 +743,10 @@ export const ReactQueryCacheProvider: React.ComponentType<{
  */
 export function useIsFetching(): number
 
-export const ReactQueryConfigProvider: React.ComponentType<{
-  config?: ReactQueryProviderConfig
-}>
+export function ReactQueryConfigProvider<TError = Error>(props: {
+  config?: ReactQueryProviderConfig<TError>;
+  children?: React.ReactNode;
+}): React.ReactElement;
 
 export interface ReactQueryProviderConfig<TError = Error> extends BaseQueryOptions<TError> {
   /** Defaults to the value of `suspense` if not defined otherwise */
