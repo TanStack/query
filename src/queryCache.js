@@ -375,6 +375,7 @@ export function makeQueryCache() {
         query.cancelPromises = () => promise.cancel?.()
 
         const data = await promise
+        delete query.shouldContinueRetryOnFocus
 
         delete query.cancelPromises
         if (query.cancelled) throw query.cancelled
