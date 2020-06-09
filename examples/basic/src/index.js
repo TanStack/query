@@ -1,18 +1,30 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import axios from "axios";
 import { useQuery } from "react-query";
 
+const fetchUrl = async (url) => {
+  // Step 1: Fetch the data from the given url
+  const response = await fetch(url);
+  try {
+    // Step 2: Grab the contents of the request, here we are assuming
+    // it's in JSON format
+    const json = await response.json();
+    // Step 3: Return the data in the format you want to use in your `react-query`-hooks
+    return { data: json };
+  } catch (error) {
+    // If an error occurred while converting the data to json we return undefined
+    return undefined;
+  }
+};
+
 const getPosts = async () => {
-  const { data } = await axios.get(
-    "https://jsonplaceholder.typicode.com/posts"
-  );
+  const { data } = await fetchUrl("https://jsonplaceholder.typicode.com/posts");
   return data;
 };
 
 const getPostById = async (key, id) => {
-  const { data } = await axios.get(
+  const { data } = await fetchUrl(
     `https://jsonplaceholder.typicode.com/posts/${id}`
   );
   return data;
@@ -56,7 +68,7 @@ function Posts({ setPostId }) {
         ) : (
           <>
             <div>
-              {data.map(post => (
+              {data.map((post) => (
                 <p key={post.id}>
                   <a onClick={() => setPostId(post.id)} href="#">
                     {post.title}
