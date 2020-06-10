@@ -1,0 +1,22 @@
+{
+  "name": "react-query-server-side-rendering-example",
+  "version": "0.1.0",
+  "license": "MIT",
+  "scripts": {
+    "start": "razzle start",
+    "build": "razzle build",
+    "test": "razzle test --env=jsdom",
+    "start:prod": "NODE_ENV=production node build/server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "isomorphic-fetch": "^2.2.1",
+    "razzle": "^3.1.3",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-query": "^1.5.5",
+    "react-router-config": "^5.1.1",
+    "react-router-dom": "^5.2.0",
+    "serialize-javascript": "^4.0.0"
+  }
+}
