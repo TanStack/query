@@ -10,14 +10,7 @@
     ],
     "@babel/react"
   ],
-  "plugins": [
-    [
-      "babel-plugin-transform-async-to-promises",
-      {
-        externalHelpers: true
-      }
-    ]
-  ],
+  "plugins": ["babel-plugin-transform-async-to-promises"],
   "env": {
     "test": {
       "presets": [
