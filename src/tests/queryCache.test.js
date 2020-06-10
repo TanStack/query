@@ -192,4 +192,126 @@ describe('queryCache', () => {
     expect(newQuery.state.markedForGarbageCollection).toBe(false)
     expect(newQuery.state.data).toBe('data')
   })
+
+  describe('dehydration and rehydration', () => {
+    test('should work with serializeable values', async () => {
+      // "Server part"
+      const queryCache = makeQueryCache()
+      const fetchData = value => Promise.resolve(value)
+      await queryCache.prefetchQuery('string', () => fetchData('string'))
+      await queryCache.prefetchQuery('number', () => fetchData(1))
+      await queryCache.prefetchQuery('boolean', () => fetchData(true))
+      await queryCache.prefetchQuery('null', () => fetchData(null))
+      await queryCache.prefetchQuery('array', () => fetchData(['string', 0]))
+      await queryCache.prefetchQuery('nested', () =>
+        fetchData({ key: [{ nestedKey: 1 }] })
+      )
+      const dehydrated = queryCache.dehydrate()
+      const stringified = JSON.stringify(dehydrated)
+
+      // "Client part"
+      const parsed = JSON.parse(stringified)
+      const clientQueryCache = makeQueryCache({ initialQueries: parsed })
+      expect(clientQueryCache.getQuery('string').state.data).toBe('string')
+      expect(clientQueryCache.getQuery('number').state.data).toBe(1)
+      expect(clientQueryCache.getQuery('boolean').state.data).toBe(true)
+      expect(clientQueryCache.getQuery('null').state.data).toBe(null)
+      expect(clientQueryCache.getQuery('array').state.data).toEqual([
+        'string',
+        0,
+      ])
+      expect(clientQueryCache.getQuery('nested').state.data).toEqual({
+        key: [{ nestedKey: 1 }],
+      })
+
+      const fetchDataClientSide = jest.fn()
+      await clientQueryCache.prefetchQuery('string', fetchDataClientSide)
+      await clientQueryCache.prefetchQuery('number', fetchDataClientSide)
+      await clientQueryCache.prefetchQuery('boolean', fetchDataClientSide)
+      await clientQueryCache.prefetchQuery('null', fetchDataClientSide)
+      await clientQueryCache.prefetchQuery('array', fetchDataClientSide)
+      await clientQueryCache.prefetchQuery('nested', fetchDataClientSide)
+      expect(fetchDataClientSide).toHaveBeenCalledTimes(0)
+
+      queryCache.clear()
+      clientQueryCache.clear()
+    })
+
+    test('should schedule initialQueries to become stale', async () => {
+      // "Server part"
+      const queryCache = makeQueryCache()
+      const fetchData = value => Promise.resolve(value)
+      await queryCache.prefetchQuery('string', () => fetchData('string'), {
+        staleTime: 50,
+      })
+      const dehydrated = queryCache.dehydrate()
+      const stringified = JSON.stringify(dehydrated)
+
+      // "Client part"
+      const parsed = JSON.parse(stringified)
+      const clientQueryCache = makeQueryCache({ initialQueries: parsed })
+      expect(clientQueryCache.getQuery('string').state.data).toBe('string')
+      expect(clientQueryCache.getQuery('string').state.isStale).toBe(false)
+      await sleep(10)
+      expect(clientQueryCache.getQuery('string').state.isStale).toBe(false)
+      await sleep(50)
+      expect(clientQueryCache.getQuery('string').state.isStale).toBe(true)
+
+      queryCache.clear()
+      clientQueryCache.clear()
+    })
+
+    test('should schedule garbage collection', async () => {
+      // "Server part"
+      const queryCache = makeQueryCache()
+      const fetchData = value => Promise.resolve(value)
+      await queryCache.prefetchQuery('string', () => fetchData('string'), {
+        cacheTime: 50,
+      })
+      const dehydrated = queryCache.dehydrate()
+      const stringified = JSON.stringify(dehydrated)
+
+      // "Client part"
+      const parsed = JSON.parse(stringified)
+      const clientQueryCache = makeQueryCache({ initialQueries: parsed })
+      expect(clientQueryCache.getQuery('string').state.data).toBe('string')
+      await sleep(10)
+      expect(clientQueryCache.getQuery('string')).toBeTruthy()
+      await sleep(50)
+      expect(clientQueryCache.getQuery('string')).toBeFalsy()
+
+      queryCache.clear()
+      clientQueryCache.clear()
+    })
+
+    test('should work with complex keys', async () => {
+      // "Server part"
+      const queryCache = makeQueryCache()
+      const fetchData = value => Promise.resolve(value)
+      await queryCache.prefetchQuery(
+        ['string', { key: ['string'], key2: 0 }],
+        () => fetchData('string')
+      )
+      const dehydrated = queryCache.dehydrate()
+      const stringified = JSON.stringify(dehydrated)
+
+      // "Client part"
+      const parsed = JSON.parse(stringified)
+      const clientQueryCache = makeQueryCache({ initialQueries: parsed })
+      expect(
+        clientQueryCache.getQuery(['string', { key: ['string'], key2: 0 }])
+          .state.data
+      ).toBe('string')
+
+      const fetchDataClientSide = jest.fn()
+      await clientQueryCache.prefetchQuery(
+        ['string', { key: ['string'], key2: 0 }],
+        fetchDataClientSide
+      )
+      expect(fetchDataClientSide).toHaveBeenCalledTimes(0)
+
+      queryCache.clear()
+      clientQueryCache.clear()
+    })
+  })
 })
