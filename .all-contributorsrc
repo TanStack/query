@@ -50,6 +50,16 @@
       "contributions": [
         "tool"
       ]
+    },
+    {
+      "login": "Avi98",
+      "name": "Avinash",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/26133749?v=4",
+      "profile": "https://github.com/Avi98",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
