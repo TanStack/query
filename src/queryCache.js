@@ -60,7 +60,18 @@ const actionSuccess = {}
 const actionError = {}
 const actionSetState = {}
 
-export function makeQueryCache() {
+export function makeQueryCache(options) {
+  return makeQueryCacheBase(options)
+}
+export function makeServerQueryCache(options) {
+  return makeQueryCacheBase({ ...options, serverEnabled: true })
+}
+
+function makeQueryCacheBase({
+  serverEnabled = false,
+  initialQueries,
+  queryKeyParserFn = JSON.parse,
+} = {}) {
   const listeners = []
 
   const cache = {
@@ -154,6 +165,10 @@ export function makeQueryCache() {
   }
 
   cache._buildQuery = (userQueryKey, queryVariables, queryFn, config) => {
+    if (serverEnabled && config.suspense) {
+      throw new Error('ServerQueryCache does not yet support Suspense')
+    }
+
     let [queryHash, queryKey] = config.queryKeySerializerFn(userQueryKey)
 
     let query = cache.queries[queryHash]
@@ -184,14 +199,17 @@ export function makeQueryCache() {
       }
 
       if (query.queryHash) {
-        if (!isServer) {
+        if (!isServer || serverEnabled) {
           cache.queries[queryHash] = query
-          // Here, we setTimeout so as to not trigger
-          // any setState's in parent components in the
-          // middle of the render phase.
-          setTimeout(() => {
-            notifyGlobalListeners()
-          })
+
+          if (!isServer) {
+            // Here, we setTimeout so as to not trigger
+            // any setState's in parent components in the
+            // middle of the render phase.
+            setTimeout(() => {
+              notifyGlobalListeners()
+            })
+          }
         }
       }
     }
@@ -244,6 +262,17 @@ export function makeQueryCache() {
     }
 
     queries.forEach(d => d.setData(updater))
+  }
+
+  cache.dehydrate = () => {
+    const dehydratedQueries = {}
+    for (const [queryHash, query] of Object.entries(cache.queries)) {
+      if (query.state.status === statusSuccess) {
+        dehydratedQueries[queryHash] = query.dehydrate()
+      }
+    }
+
+    return dehydratedQueries
   }
 
   function makeQuery(options) {
@@ -512,9 +541,35 @@ export function makeQueryCache() {
       // Set data and mark it as cached
       dispatch({ type: actionSuccess, updater })
 
-      // Schedule a fresh invalidation!
-      clearTimeout(query.staleTimeout)
-      query.scheduleStaleTimeout()
+      if (!isServer) {
+        // Schedule a fresh invalidation!
+        clearTimeout(query.staleTimeout)
+        query.scheduleStaleTimeout()
+      }
+    }
+
+    query.dehydrate = () => {
+      const dehydratedQuery = {
+        config: {},
+      }
+
+      // Most config is not dehydrated but instead meant to configure again when
+      // consuming the de/rehydrated data, typically with useQuery on the client.
+      // Sometimes it might make sense to prefetch data on the server and include
+      // in the html-payload, but not consume it on the initial render.
+      // We still schedule stale and garbage collection right away, which means
+      // we need to specifically include staleTime and cacheTime in dehydration.
+      if (query.config.staleTime !== defaultConfigRef.current.staleTime) {
+        dehydratedQuery.config.staleTime = query.config.staleTime
+      }
+      if (query.config.cacheTime !== defaultConfigRef.current.cacheTime) {
+        dehydratedQuery.config.cacheTime = query.config.cacheTime
+      }
+      if (query.state.data !== undefined) {
+        dehydratedQuery.config.initialData = query.state.data
+      }
+
+      return dehydratedQuery
     }
 
     query.clear = () => {
@@ -524,6 +579,34 @@ export function makeQueryCache() {
     }
 
     return query
+  }
+
+  if (initialQueries) {
+    for (const [queryHash, query] of Object.entries(initialQueries)) {
+      const queryKey = queryKeyParserFn(queryHash)
+      const queryConfig = query.config || {}
+
+      const config = {
+        ...defaultConfigRef.current,
+        ...queryConfig,
+      }
+
+      cache.queries[queryHash] = makeQuery({
+        cache,
+        queryKey,
+        queryHash,
+        config,
+      })
+
+      cache.queries[queryHash].wasPrefetched = true
+
+      if (!isServer) {
+        cache.queries[queryHash].scheduleStaleTimeout()
+        // Schedule for garbage collection in case
+        // nothing subscribes to this query
+        cache.queries[queryHash].scheduleGarbageCollection()
+      }
+    }
   }
 
   return cache

@@ -1,6 +1,7 @@
 export {
   queryCache,
   makeQueryCache,
+  makeServerQueryCache,
   ReactQueryCacheProvider,
   useQueryCache,
 } from './queryCache'
