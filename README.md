@@ -124,6 +124,8 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) - [Source](./examples/playground)
 - Star Wars (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/star-wars) - [Source](./examples/star-wars)
 - Rick And Morty (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/rick-morty) - [Source](./examples/rick-morty)
+- Prefetching - [Source](./examples/prefetching)
+- Server Side Rendering - [Source](./examples/server-side-rendering)
 
 ## Sponsors
 
@@ -201,6 +203,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
@@ -220,7 +223,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Initial Data](#initial-data)
   - [Initial Data Function](#initial-data-function)
   - [Initial Data from Cache](#initial-data-from-cache)
-  - [SSR & Initial Data](#ssr--initial-data)
+  - [Server Side Rendering](#server-side-rendering)
   - [Suspense Mode](#suspense-mode)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
   - [Canceling Query Requests](#canceling-query-requests)
@@ -255,7 +258,9 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.getQueries`](#querycachegetqueries)
   - [`queryCache.isFetching`](#querycacheisfetching)
   - [`queryCache.subscribe`](#querycachesubscribe)
+  - [`queryCache.dehydrate`](#querycachedehydrate)
   - [`queryCache.clear`](#querycacheclear)
+  - [`makeQueryCache` & `makeServerQueryCache`](#makequerycache--makeserverquerycache)
   - [`useQueryCache`](#usequerycache)
   - [`useIsFetching`](#useisfetching)
   - [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
@@ -912,12 +917,91 @@ function Todo({ todoId }) {
 }
 ```
 
-## SSR & Initial Data
+## Server Side Rendering
 
-When using SSR (server-side-rendering) with React Query there are a few things to note:
+With React Query, the default is to not cache queries on the server to avoid sensitive information leaking between requests. Also, because rendering on the server is currently a single pass synchronous process, the hooks `useQuery` etc does not trigger any data fetching.
 
-- Query caches are not written to memory during SSR. This is outside of the scope of React Query and easily leads to out-of-sync data when used with frameworks like Next.js or other SSR strategies.
-- Queries rendered on the server will by default use the `initialData` of an unfetched query. This means that by default, `data` will be set to `undefined`. To get around this in SSR, you can either pre-seed a query's cache data using the `config.initialData` option:
+To get around the above limitations, there is some extra setup involved if you want to get Server Side Rendering (SSR) working with React Query. See the example [Server Side Rendering](./examples/server-side-rendering) for a full working example with multiple pages using React Router.
+
+### Server setup
+
+- For every request, create a `serverQueryCache` with `makeServerQueryCache()`
+- Use `serverQueryCache.prefetchQuery` to prime the cache with the data you need to render
+  - `useQuery` and the other hooks will never fetch data on the server
+  - Any query you have not prefetched will instead be fetched on the client after first render
+- Wrap your application in `<ReactQueryCacheProvider queryCache={serverQueryCache}>`
+- Render your application
+- Call `serverQueryCache.dehydrate()`, serialize the result and include that in the markup
+
+Minimal example, imagine `<App>` has a `useQuery('key', fetchAppData)`:
+
+```js
+import { renderToString } from 'react-dom/server'
+import serialize from 'serialize-javascript'
+import { makeServerQueryCache, ReactQueryCacheProvider } from 'react-query'
+import App from './app'
+import fetchAppData from './fetchAppData'
+
+app.use('/*', async (req, res) => {
+  const serverQueryCache = makeServerQueryCache()
+
+  await serverQueryCache.prefetchQuery('key', fetchAppData)
+
+  const markup = renderToString(
+    <ReactQueryCacheProvider queryCache={serverQueryCache}>
+      <App />
+    </ReactQueryCacheProvider>
+  )
+
+  const serializedQueries = serialize(serverQueryCache.dehydrate())
+
+  // Note: Parts of the html-template omitted for brevity
+  res.send(`
+<body>
+  <div id="root">${markup}</div>
+  <script>
+    window.__REACT_QUERY_DATA__ = ${serializedQueries}
+  </script>
+</body>`)
+})
+```
+
+### Client setup
+
+- Parse the dehydrated queries from the markup
+- Create a `queryCache` with `makeQueryCache({ initialQueries })`
+- Wrap your application in `<ReactQueryCacheProvider queryCache={queryCache}>`
+- Hydrate your application
+
+```js
+import { hydrate } from 'react-dom'
+import { makeQueryCache } from 'react-query'
+import App from './app'
+
+const initialQueries = window.__REACT_QUERY_DATA__
+
+const queryCache = makeQueryCache({ initialQueries })
+
+hydrate(
+  <ReactQueryCacheProvider queryCache={queryCache}>
+    <App />
+  </ReactQueryCacheProvider>,
+  document.getElementById('root')
+)
+```
+
+### Caveats (Advanced)
+
+- Only successful queries are dehydrated
+  - If a query fails on the server, that will by default retry again on the client
+  - If you need to fail server rendering when a query fails, use the `throwOnError` option for that query
+- Only the config for `staleTime` and `cacheTime` are dehydrated
+  - All other config is expected to be provided again on the client, for example directly when calling `useQuery()`
+  - `staleTime` and `cacheTime` are included to allow for prefetching queries on the server that do not immediately become stale on the client, for example when prefetching data not immediately used for rendering
+
+### Alternative approach
+
+If all you need is some pre-seeded data for your queries and letting them refetch on the client, you can avoid all the above setup and instead use one of the following approach to provide some `initialData` to a query:
 
 ```js
 const { status, data, error } = useQuery('todos', fetchTodoList, {
@@ -941,6 +1025,8 @@ The query's state will still reflect that it is stale and has not been fetched y
 ## Suspense Mode
 
 React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
+
+Suspense mode currently does not work combined with `makeServerQueryCache`.
 
 Global configuration:
 
@@ -1574,6 +1660,8 @@ function App() {
   - This array will be spread into the query function arguments and should be the same format as the queryKey but be deterministically stable and should not change structure if the variables of the query stay the same, but change order within array position.
 
 > An additional `stableStringify` utility is also exported to help with stringifying objects to have sorted keys.
+
+> If you use `queryKeySerializerFn` together with `queryCache.dehydrate` you also need to pass a `queryKeyParserFn` to `makeQueryCache` like so: `makeQueryCache({ initialQueries, queryKeyParserFn })`
 
 ### URL Query Key Serializer Example
 
@@ -2248,6 +2336,8 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`isFetching`](#querycacheisfetching)
 - [`clear`](#querycacheclear)
 
+The default use of `queryCache` is to import it directly from `react-query`. You can also create one with [`makeQueryCache`](#makequerycache--makeserverquerycache) or [`makeServerQueryCache`](#makequerycache--makeserverquerycache), pass the resulting cache to [`ReactQueryCacheProvider`](#reactquerycacheprovider) and access it via [`useQueryCache`](#usequerycache). This is mainly used for server side rendering or test isolation.
+
 ## `queryCache.prefetchQuery`
 
 `prefetchQuery` is an asynchronous function that can be used to fetch and cache a query response before it is needed or fetched with `useQuery`.
@@ -2512,9 +2602,29 @@ const unsubscribe = queryCache.subscribe(callback)
 - `unsubscribe: Function => void`
   - This function will unsubscribe the callback from the query cache.
 
+## `queryCache.dehydrate`
+
+The `dehydrate` method can be used to get a serializeable representation of all _successful_ queries in the cache. This can be passed in as `initialQueries` to `make(Server)QueryCache` to create a warm cache where some queries are already available. This is mainly used to pass queries from the server to the client when doing server rendering.
+
+Note that the result of this function is not in serialized form. You are responsible for any serialization, passing the data along and parsing.
+
+> Warning: If you include serialized data in html-markup you can in some cases be vulnurable to XSS-injection, make sure you escape dangerous characters.
+
+```js
+import { queryCache } from 'react-query'
+
+const dehydratedQueries = queryCache.dehydrate()
+```
+
+### Returns
+
+- `queries: DehydratedQueries`
+  - Will be an object with the format `[queryHash]: DehydratedQuery`
+  - `DehydratedQuery` is a serializable representation of a query
+
 ## `queryCache.clear`
 
-The `clear` method can be used to clear the queryCache entirely and start fresh.
+The `clear` method can be used to clear the queryCache entirely and start fresh. This function also clears any active timeout and cancels all ongoing requests.
 
 ```js
 import { queryCache } from 'react-query'
@@ -2526,6 +2636,34 @@ queryCache.clear()
 
 - `queries: Array<Query>`
   - This will be an array containing the queries that were found.
+
+## `makeQueryCache` & `makeServerQueryCache`
+
+`makeQueryCache` is a factory function that creates a `queryCache`. Just as with the global cache you can import directly, caches created by this function does not cache data in a server environment.
+
+`makeServerQueryCache` is a factory function that creates a `queryCache` that caches data in a server environment. You should create a new cache per request to avoid leaking sensitive information between requests.
+
+```js
+import { makeQueryCache } from 'react-query'
+
+const queryCache = makeQueryCache({
+  initialQueries,
+  queryKeyParserFn,
+})
+```
+
+### Options
+
+- `initialQueries: DehydratedQueries`
+  - If you provide the optional `initialQueries`, these queries will be warm in the cache from the start
+  - These are obtained by calling `queryCache.dehydrate` on a cache
+- `queryKeyParserFn: Function(queryHash: string) => QueryKey`
+  - This is an optional advanced option that you only need to provide if you use the experimental `queryKeySerializerFn` config-option
+  - This function should parse a `QueryHash` back into a `QueryKey`
+
+### Returns
+
+- `queryCache: QueryCache`
 
 ## `useQueryCache`
 
