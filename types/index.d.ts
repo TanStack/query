@@ -339,17 +339,23 @@ export function useInfiniteQuery<
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
 
+export type DefinedQueryKeyPart = 
+  | string
+  | object
+  | boolean
+  | number
+  | readonly QueryKeyPart[]
+
 export type QueryKeyPart =
   | string
   | object
   | boolean
   | number
-  | null
   | readonly QueryKeyPart[]
   | null
   | undefined
 
-export type AnyQueryKey = readonly [string, ...QueryKeyPart[]] // this forces the key to be inferred as a tuple
+export type AnyQueryKey = readonly [DefinedQueryKeyPart, ...QueryKeyPart[]] // this forces the key to be inferred as a tuple
 
 export type AnyVariables = readonly [] | readonly [any, ...any[]] // this forces the variables to be inferred as a tuple
 
