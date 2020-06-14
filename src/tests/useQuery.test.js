@@ -1004,6 +1004,13 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByText('retry'))
 
+    // Workaround for bug with jsdom re-rendering twice before timeout fires: utils.js > handleSuspense > setTimeout
+    // Timeout behavior works fine in browser but shouldn't be relied upon
+    await sleep(25)
+    if (rendered.queryByText("retry")) {
+      fireEvent.click(rendered.getByText('retry'))
+    }
+
     await waitFor(() => rendered.getByText('rendered'))
   })
 
