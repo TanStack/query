@@ -13,7 +13,9 @@ const Projects = lazy(() => import("./components/Projects"));
 const Project = lazy(() => import("./components/Project"));
 
 const queryConfig = {
-  suspense: true
+  shared: {
+    suspense: true
+  }
 };
 
 function App() {

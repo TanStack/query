@@ -4,6 +4,7 @@ import {
   fireEvent,
   cleanup,
 } from '@testing-library/react'
+import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
 import { useQuery, ReactQueryCacheProvider, queryCache } from '../index'
@@ -96,5 +97,63 @@ describe("useQuery's in Suspense mode", () => {
     await waitForElement(() => rendered.getByText('rendered'))
 
     expect(successFn).toHaveBeenCalledTimes(1)
+  })
+
+  // https://github.com/tannerlinsley/react-query/issues/468
+  it('should reset error state if new component instances are mounted', async () => {
+    let succeed = false
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      useQuery(
+        'test',
+        async () => {
+          await sleep(10)
+
+          if (!succeed) {
+            throw new Error()
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retryDelay: 10,
+          suspense: true,
+        }
+      )
+
+      return <div>rendered</div>
+    }
+
+    const rendered = render(
+      <ErrorBoundary
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            <div>error boundary</div>
+            <button
+              onClick={() => {
+                succeed = true
+                resetErrorBoundary()
+              }}
+            >
+              retry
+            </button>
+          </div>
+        )}
+      >
+        <React.Suspense fallback={'Loading...'}>
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>
+    )
+
+    await waitForElement(() => rendered.getByText('error boundary'))
+
+    console.error.mockRestore()
+
+    fireEvent.click(rendered.getByText('retry'))
+
+    await waitForElement(() => rendered.getByText('rendered'))
   })
 })

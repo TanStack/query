@@ -7,7 +7,7 @@ import { getQueryArgs, useGetLatest, handleSuspense } from './utils'
 
 export function useInfiniteQuery(...args) {
   const queryInfoRef = React.useRef()
-  let [queryKey, queryVariables, queryFn, config = {}] = getQueryArgs(args)
+  let [queryKey, queryFn, config = {}] = getQueryArgs(args)
 
   const { getFetchMore } = config
   const getGetFetchMore = useGetLatest(getFetchMore)
@@ -58,7 +58,7 @@ export function useInfiniteQuery(...args) {
     return data
   }
 
-  const queryInfo = useBaseQuery(queryKey, queryVariables, queryFn, config)
+  const queryInfo = useBaseQuery(queryKey, queryFn, config)
 
   if (
     typeof queryInfo.query.canFetchMore === 'undefined' &&
@@ -73,22 +73,19 @@ export function useInfiniteQuery(...args) {
   queryInfoRef.current = queryInfo
 
   let {
-    refetch,
     data = [],
     query: { canFetchMore },
   } = queryInfo
 
   // Here we seed the pageVariabes for the query
   if (!queryInfo.query.pageVariables) {
-    queryInfo.query.pageVariables = [
-      [...queryInfo.query.queryKey, ...queryInfo.query.queryVariables],
-    ]
+    queryInfo.query.pageVariables = [[...queryInfo.query.queryKey]]
   }
 
   const fetchMore = React.useCallback(
     (fetchMoreInfo = queryInfoRef.current.query.canFetchMore) =>
       queryInfoRef.current.query.canFetchMore
-        ? refetch({
+        ? queryInfoRef.current.refetch({
             force: true,
             __queryFn: async (...args) => {
               try {
@@ -120,7 +117,7 @@ export function useInfiniteQuery(...args) {
             },
           })
         : void 0,
-    [getGetFetchMore, originalQueryFn, refetch]
+    [getGetFetchMore, originalQueryFn]
   )
 
   handleSuspense(queryInfo)

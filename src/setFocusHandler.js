@@ -6,7 +6,9 @@ const visibilityChangeEvent = 'visibilitychange'
 const focusEvent = 'focus'
 
 const onWindowFocus = () => {
-  const { refetchAllOnWindowFocus } = defaultConfigRef.current
+  const {
+    queries: { refetchOnWindowFocus },
+  } = defaultConfigRef.current
 
   if (isDocumentVisible() && isOnline()) {
     queryCaches.forEach(queryCache =>
@@ -16,7 +18,7 @@ const onWindowFocus = () => {
             return false
           }
 
-          if (query.config.manual === true) {
+          if (!query.config.enabled) {
             return false
           }
 
@@ -27,7 +29,7 @@ const onWindowFocus = () => {
           }
 
           if (typeof query.config.refetchOnWindowFocus === 'undefined') {
-            return refetchAllOnWindowFocus
+            return refetchOnWindowFocus
           } else {
             return query.config.refetchOnWindowFocus
           }

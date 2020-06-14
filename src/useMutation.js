@@ -62,7 +62,8 @@ export function useMutation(mutationFn, config = {}) {
   const getMutationFn = useGetLatest(mutationFn)
 
   const getConfig = useGetLatest({
-    ...useConfigContext(),
+    ...useConfigContext().shared,
+    ...useConfigContext().mutations,
     ...config,
   })
 
@@ -149,7 +150,9 @@ export function useMutation(mutationFn, config = {}) {
   ])
 
   React.useEffect(() => {
-    if (getConfig().useErrorBoundary && state.error) {
+    const { suspense, useErrorBoundary } = getConfig()
+
+    if ((useErrorBoundary ?? suspense) && state.error) {
       throw state.error
     }
   }, [getConfig, state.error])

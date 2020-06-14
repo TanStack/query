@@ -1483,10 +1483,10 @@ function GlobalLoadingIndicator() {
 
 # Window-Focus Refetching
 
-If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `ReactQueryConfigProvider`'s `refetchAllOnWindowFocus` option to disable it:
+If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `ReactQueryConfigProvider`'s `refetchOnWindowFocus` option to disable it:
 
 ```js
-const queryConfig = { refetchAllOnWindowFocus: false }
+const queryConfig = { refetchOnWindowFocus: false }
 
 function App() {
   return (
@@ -1758,7 +1758,7 @@ const {
   isFetching,
   failureCount,
   refetch,
-} = useQuery(queryKey, [, queryVariables], queryFn, {
+} = useQuery(queryKey, queryFn, {
   manual,
   retry,
   retryDelay,
@@ -1832,8 +1832,8 @@ const queryInfo = useQuery({
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
 - `refetchOnWindowFocus: Boolean`
   - Optional
-  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `true`).
-  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `false`.
+  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `true`).
+  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `false`.
 - `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data.
@@ -1897,7 +1897,7 @@ const {
   isFetching,
   failureCount,
   refetch,
-} = usePaginatedQuery(queryKey, [, queryVariables], queryFn, {
+} = usePaginatedQuery(queryKey, queryFn, {
   manual,
   retry,
   retryDelay,
@@ -1960,8 +1960,8 @@ const {
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
 - `refetchOnWindowFocus: Boolean`
   - Optional
-  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `true`).
-  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `false`.
+  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `true`).
+  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `false`.
 - `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data and will be passed the new data as a parameter
@@ -2029,7 +2029,7 @@ const {
   refetch,
   fetchMore,
   canFetchMore,
-} = useInfiniteQuery(queryKey, [, queryVariables], queryFn, {
+} = useInfiniteQuery(queryKey, queryFn, {
   getFetchMore: (lastPage, allPages) => fetchMoreVariable
   manual,
   retry,
@@ -2097,8 +2097,8 @@ const {
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
 - `refetchOnWindowFocus: Boolean`
   - Optional
-  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `true`).
-  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchAllOnWindowFocus` is set to `false`.
+  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `true`).
+  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `false`.
 - `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data.
@@ -2269,12 +2269,7 @@ For convenience in syntax, you can also pass optional query variables to `prefet
 ```js
 import { queryCache } from 'react-query'
 
-const data = await queryCache.prefetchQuery(
-  queryKey,
-  queryVariables,
-  queryFn,
-  config
-)
+const data = await queryCache.prefetchQuery(queryKey, queryFn, config)
 ```
 
 ### Options
@@ -2566,7 +2561,7 @@ const queryConfig = {
   suspense: false,
   useErrorBoundary: undefined, // Defaults to the value of `suspense` if not defined otherwise
   throwOnError: false,
-  refetchAllOnWindowFocus: true,
+  refetchOnWindowFocus: true,
   queryKeySerializerFn: queryKey => [queryHash, queryFnArgs],
   onMutate: () => {},
   onSuccess: () => {},

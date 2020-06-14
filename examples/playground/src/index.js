@@ -45,8 +45,10 @@ function Root() {
 
   const queryConfig = React.useMemo(
     () => ({
-      staleTime,
-      cacheTime
+      queries: {
+        staleTime,
+        cacheTime
+      }
     }),
     [cacheTime, staleTime]
   );
@@ -227,8 +229,11 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 function EditTodo({ editingIndex, setEditingIndex }) {
   // Don't attempt to query until editingIndex is truthy
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-    editingIndex !== null && ["todo", { id: editingIndex }],
-    fetchTodoById
+    ["todo", { id: editingIndex }],
+    fetchTodoById,
+    {
+      enabled: editingIndex !== null
+    }
   );
 
   const [todo, setTodo] = React.useState(data || {});

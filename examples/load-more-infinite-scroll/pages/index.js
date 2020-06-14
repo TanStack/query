@@ -51,7 +51,7 @@ export default () => {
                   style={{
                     border: '1px solid gray',
                     borderRadius: '5px',
-                    padding: '5rem 1rem',
+                    padding: '10rem 1rem',
                   }}
                   key={project.id}
                 >

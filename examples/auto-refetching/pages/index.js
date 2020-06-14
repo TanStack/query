@@ -6,9 +6,10 @@ import axios from 'axios'
 import { useQuery, useMutation, queryCache } from 'react-query'
 
 export default () => {
+  const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
-  const { status, data, error } = useQuery(
+  const { status, data, error, isFetching } = useQuery(
     'todos',
     async () => {
       const { data } = await axios.get('/api/data')
@@ -16,7 +17,7 @@ export default () => {
     },
     {
       // Refetch the data every second
-      refetchInterval: 1000,
+      refetchInterval: intervalMs,
     }
   )
 
@@ -42,6 +43,27 @@ export default () => {
         multiple tabs to the same localhost server and see your changes
         propagate between the two.
       </p>
+      <label>
+        Query Interval speed (ms):{' '}
+        <input
+          value={intervalMs}
+          onChange={ev => setIntervalMs(Number(ev.target.value))}
+          type="number"
+          step="100"
+        />{' '}
+        <span
+          style={{
+            display: 'inline-block',
+            marginLeft: '.5rem',
+            width: 10,
+            height: 10,
+            background: isFetching ? 'green' : 'transparent',
+            transition: !isFetching ? 'all .3s ease' : 'none',
+            borderRadius: '100%',
+            transform: 'scale(2)',
+          }}
+        />
+      </label>
       <h2>Todo List</h2>
       <form
         onSubmit={async ev => {

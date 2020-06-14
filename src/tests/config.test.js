@@ -25,7 +25,9 @@ describe('config', () => {
     const onSuccess = jest.fn()
 
     const config = {
-      onSuccess,
+      queries: {
+        onSuccess,
+      },
     }
 
     function Page() {
@@ -58,10 +60,9 @@ describe('config', () => {
     const onSuccess = jest.fn()
 
     const config = {
-      refetchAllOnWindowFocus: false,
+      refetchOnWindowFocus: false,
       refetchOnMount: false,
       retry: false,
-      manual: true,
     }
 
     const queryFn = async () => {
@@ -88,7 +89,7 @@ describe('config', () => {
     await rendered.findByText('Data: none')
 
     act(() => {
-      queryCache.prefetchQuery('test', queryFn, { force: true })
+      queryCache.prefetchQuery('test', queryFn, {}, { force: true })
     })
 
     await rendered.findByText('Data: data')
@@ -112,15 +113,19 @@ describe('config', () => {
     const parentOnSuccess = jest.fn()
 
     const parentConfig = {
-      refetchOnMount: false,
-      onSuccess: parentOnSuccess,
+      queries: {
+        refetchOnMount: false,
+        onSuccess: parentOnSuccess,
+      },
     }
 
     const childConfig = {
-      refetchOnMount: true,
+      queries: {
+        refetchOnMount: true,
 
-      // Override onSuccess of parent, making it a no-op
-      onSuccess: undefined,
+        // Override onSuccess of parent, making it a no-op
+        onSuccess: undefined,
+      },
     }
 
     const queryFn = async () => {

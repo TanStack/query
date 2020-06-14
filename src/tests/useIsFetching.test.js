@@ -21,14 +21,20 @@ describe('useIsFetching', () => {
 
       const isFetching = useIsFetching()
 
-      useQuery(ready && 'test', async () => {
-        await sleep(1000)
-        return 'test'
-      })
+      useQuery(
+        'test',
+        async () => {
+          await sleep(1000)
+          return 'test'
+        },
+        {
+          enabled: ready,
+        }
+      )
 
       return (
         <div>
-          <div>isFetching: {isFetching.toString()}</div>
+          <div>isFetching: {isFetching}</div>
           <button onClick={() => setReady(true)}>setReady</button>
         </div>
       )

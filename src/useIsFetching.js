@@ -8,7 +8,10 @@ export function useIsFetching() {
 
   React.useEffect(() => {
     return queryCache.subscribe(() => setState({}))
-  }, [])
+  }, [queryCache])
 
-  return React.useMemo(() => state && queryCache.isFetching, [state])
+  return React.useMemo(() => state && queryCache.isFetching, [
+    queryCache.isFetching,
+    state,
+  ])
 }

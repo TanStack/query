@@ -97,21 +97,16 @@ export function getQueryArgs(args) {
       args[0].hasOwnProperty('queryKey') &&
       args[0].hasOwnProperty('queryFn')
     ) {
-      const { queryKey, variables = [], queryFn, config = {} } = args[0]
-      return [queryKey, variables, queryFn, config]
+      const { queryKey, queryFn, config = {} } = args[0]
+      return [queryKey, queryFn, config, ...args.slice(1)]
     } else {
       throw new Error('queryKey and queryFn keys are required.')
     }
   }
 
-  if (typeof args[2] === 'function') {
-    const [queryKey, variables = [], queryFn, config = {}] = args
-    return [queryKey, variables, queryFn, config]
-  }
+  const [queryKey, queryFn, config = {}, ...rest] = args
 
-  const [queryKey, queryFn, config = {}] = args
-
-  return [queryKey, [], queryFn, config]
+  return [queryKey, queryFn, config, ...rest]
 }
 
 export function useMountedCallback(callback) {
@@ -127,16 +122,13 @@ export function useMountedCallback(callback) {
 }
 
 export function handleSuspense(queryInfo) {
-  if (queryInfo.config.suspense || queryInfo.config.useErrorBoundary) {
-    if (queryInfo.status === statusError) {
+  if (queryInfo.query.config.suspense) {
+    if (queryInfo.query.state.status === statusError) {
       setTimeout(() => {
         queryInfo.query.state.status = 'loading'
       })
       throw queryInfo.error
     }
-  }
-
-  if (queryInfo.config.suspense) {
     if (queryInfo.status === statusLoading) {
       queryInfo.query.wasSuspended = true
       throw queryInfo.refetch()

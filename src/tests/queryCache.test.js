@@ -1,5 +1,6 @@
 import { makeQueryCache } from '../index'
 import { sleep } from './utils'
+import { act } from '@testing-library/react'
 
 describe('queryCache', () => {
   test('setQueryData does not crash if query could not be found', () => {
@@ -33,27 +34,35 @@ describe('queryCache', () => {
   test('prefetchQuery should force fetch', async () => {
     const queryCache = makeQueryCache()
     const fetchFn = () => Promise.resolve('fresh')
-    const first = await queryCache.prefetchQuery('key', fetchFn, {
-      initialData: 'initial',
-      force: true,
-    })
+    const first = await queryCache.prefetchQuery(
+      'key',
+      fetchFn,
+      {
+        initialData: 'initial',
+      },
+      {
+        force: true,
+      }
+    )
 
     expect(first).toBe('fresh')
   })
 
   test('prefetchQuery should throw error when throwOnError is true', async () => {
     const queryCache = makeQueryCache()
-    const fetchFn = () =>
-      new Promise(() => {
-        throw new Error('error')
-      })
 
     await expect(
-      queryCache.prefetchQuery('key', undefined, fetchFn, {
-        retry: false,
-        throwOnError: true,
-      })
-    ).rejects.toThrow(new Error('error'))
+      queryCache.prefetchQuery(
+        'key',
+        async () => {
+          throw new Error('error')
+        },
+        {
+          retry: false,
+        },
+        { throwOnError: true }
+      )
+    ).rejects.toEqual(new Error('error'))
   })
 
   test('should notify listeners when new query is added', () => {
@@ -168,8 +177,8 @@ describe('queryCache', () => {
     await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0 })
     const query = queryCache.getQuery(queryKey)
     expect(query.state.markedForGarbageCollection).toBe(false)
-    const unsubscribe = query.subscribe(1)
-    unsubscribe()
+    const instance = query.subscribe()
+    instance.unsubscribe()
     expect(query.state.markedForGarbageCollection).toBe(true)
     await sleep(1)
     expect(queryCache.getQuery(queryKey)).toBeUndefined()
@@ -182,8 +191,8 @@ describe('queryCache', () => {
     await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0 })
     const query = queryCache.getQuery(queryKey)
     expect(query.state.markedForGarbageCollection).toBe(false)
-    const unsubscribe = query.subscribe(1)
-    unsubscribe()
+    const instance = query.subscribe()
+    instance.unsubscribe()
     expect(query.state.markedForGarbageCollection).toBe(true)
     queryCache.clear()
     queryCache.setQueryData(queryKey, 'data')

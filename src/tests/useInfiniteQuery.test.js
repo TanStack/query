@@ -116,7 +116,7 @@ describe('useInfiniteQuery', () => {
       rendered.getByText('Page 0: 0'),
     ])
 
-    fireEvent.click(rendered.getByText('Load More'))
+    await fireEvent.click(rendered.getByText('Load More'))
 
     await waitForElement(() => rendered.getByText('Loading more...'))
 
