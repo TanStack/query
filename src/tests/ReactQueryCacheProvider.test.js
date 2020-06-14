@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { render, cleanup, waitForElement } from '@testing-library/react'
+import { render, cleanup, waitFor } from '@testing-library/react'
 import {
   ReactQueryCacheProvider,
   makeQueryCache,
@@ -31,7 +31,7 @@ describe('ReactQueryCacheProvider', () => {
 
     const rendered = render(<Page />)
 
-    await waitForElement(() => rendered.getByText('test'))
+    await waitFor(() => rendered.getByText('test'))
 
     expect(queryCache.getQuery('test')).toBeDefined()
   })
@@ -57,7 +57,7 @@ describe('ReactQueryCacheProvider', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('test'))
+    await waitFor(() => rendered.getByText('test'))
 
     expect(queryCache.getQuery('test')).not.toBeDefined()
     expect(cache.getQuery('test')).toBeDefined()
@@ -82,7 +82,7 @@ describe('ReactQueryCacheProvider', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('test'))
+    await waitFor(() => rendered.getByText('test'))
 
     expect(queryCache.getQuery('test')).not.toBeDefined()
   })
@@ -126,8 +126,8 @@ describe('ReactQueryCacheProvider', () => {
       </>
     )
 
-    await waitForElement(() => rendered.getByText('test1'))
-    await waitForElement(() => rendered.getByText('test2'))
+    await waitFor(() => rendered.getByText('test1'))
+    await waitFor(() => rendered.getByText('test2'))
 
     expect(cache1.getQuery('test1')).toBeDefined()
     expect(cache1.getQuery('test2')).not.toBeDefined()

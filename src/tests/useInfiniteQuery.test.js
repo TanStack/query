@@ -1,6 +1,6 @@
 import {
   render,
-  waitForElement,
+  waitFor,
   fireEvent,
   cleanup,
 } from '@testing-library/react'
@@ -111,29 +111,29 @@ describe('useInfiniteQuery', () => {
 
     rendered.getByText('Loading...')
 
-    await waitForElement(() => [
-      rendered.getByText('Item: 9'),
-      rendered.getByText('Page 0: 0'),
-    ])
+    await waitFor(() => {
+      rendered.getByText('Item: 9')
+      rendered.getByText('Page 0: 0')
+    })
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await waitForElement(() => rendered.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Loading more...'))
 
-    await waitForElement(() => [
-      rendered.getByText('Item: 19'),
-      rendered.getByText('Page 0: 0'),
-      rendered.getByText('Page 1: 1'),
-    ])
+    await waitFor(() => {
+      rendered.getByText('Item: 19')
+      rendered.getByText('Page 0: 0')
+      rendered.getByText('Page 1: 1')
+    })
 
     fireEvent.click(rendered.getByText('Refetch'))
 
-    await waitForElement(() => rendered.getByText('Background Updating...'))
-    await waitForElement(() => [
-      rendered.getByText('Item: 19'),
-      rendered.getByText('Page 0: 2'),
-      rendered.getByText('Page 1: 3'),
-    ])
+    await waitFor(() => rendered.getByText('Background Updating...'))
+    await waitFor(() => {
+      rendered.getByText('Item: 19')
+      rendered.getByText('Page 0: 2')
+      rendered.getByText('Page 1: 3')
+    })
   })
 
   it('should compute canFetchMore correctly using initialData', async () => {
@@ -214,21 +214,21 @@ describe('useInfiniteQuery', () => {
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await waitForElement(() => rendered.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Loading more...'))
 
-    await waitForElement(() => [
-      rendered.getByText('Item: 19'),
-      rendered.getByText('Page 1: 0'),
-    ])
+    await waitFor(() => {
+      rendered.getByText('Item: 19')
+      rendered.getByText('Page 1: 0')
+    })
 
     fireEvent.click(rendered.getByText('Refetch'))
 
-    await waitForElement(() => rendered.getByText('Background Updating...'))
-    await waitForElement(() => [
-      rendered.getByText('Item: 19'),
-      rendered.getByText('Page 0: 1'),
-      rendered.getByText('Page 1: 2'),
-    ])
+    await waitFor(() => rendered.getByText('Background Updating...'))
+    await waitFor(() => {
+      rendered.getByText('Item: 19')
+      rendered.getByText('Page 0: 1')
+      rendered.getByText('Page 1: 2')
+    })
   })
 
   it('should build fresh cursors on refetch', async () => {

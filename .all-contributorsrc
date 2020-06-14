@@ -60,6 +60,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "CreativeTechGuy",
+      "name": "Jason O'Neill",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/12002072?v=4",
+      "profile": "https://github.com/CreativeTechGuy",
+      "contributions": [
+        "maintenance",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

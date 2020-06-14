@@ -2,7 +2,7 @@ import {
   cleanup,
   render,
   fireEvent,
-  waitForElement,
+  waitFor,
 } from '@testing-library/react'
 import * as React from 'react'
 
@@ -42,7 +42,7 @@ describe('useIsFetching', () => {
 
     rendered.getByText('isFetching: 0')
     fireEvent.click(rendered.getByText('setReady'))
-    await waitForElement(() => rendered.getByText('isFetching: 1'))
-    await waitForElement(() => rendered.getByText('isFetching: 0'))
+    await waitFor(() => rendered.getByText('isFetching: 1'))
+    await waitFor(() => rendered.getByText('isFetching: 0'))
   })
 })
