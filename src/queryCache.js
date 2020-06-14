@@ -22,9 +22,7 @@ export const queryCacheContext = React.createContext(queryCache)
 
 export const queryCaches = [queryCache]
 
-export function useQueryCache() {
-  return React.useContext(queryCacheContext)
-}
+export const useQueryCache = () => React.useContext(queryCacheContext)
 
 export function ReactQueryCacheProvider({ queryCache, children }) {
   const resolvedQueryCache = React.useMemo(
@@ -38,7 +36,7 @@ export function ReactQueryCacheProvider({ queryCache, children }) {
     return () => {
       // remove the cache from the active list
       const i = queryCaches.indexOf(resolvedQueryCache)
-      if (i >= 0) {
+      if (i > -1) {
         queryCaches.splice(i, 1)
       }
       // if the resolvedQueryCache was created by us, we need to tear it down
@@ -55,14 +53,14 @@ export function ReactQueryCacheProvider({ queryCache, children }) {
   )
 }
 
-const actionInit = {}
-const actionFailed = {}
-const actionMarkStale = {}
-const actionMarkGC = {}
-const actionFetch = {}
-const actionSuccess = {}
-const actionError = {}
-const actionSetState = {}
+const actionInit = 'Init'
+const actionFailed = 'Failed'
+const actionMarkStale = 'MarkStale'
+const actionMarkGC = 'MarkGC'
+const actionFetch = 'Fetch'
+const actionSuccess = 'Success'
+const actionError = 'Error'
+const actionSetState = 'SetState'
 
 export function makeQueryCache(defaultConfig) {
   const listeners = []
