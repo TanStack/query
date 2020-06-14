@@ -705,7 +705,7 @@ export interface QueryCache {
       | string
       | ((query: CachedQuery<unknown>) => boolean),
     { exact }?: { exact?: boolean }
-  ): Promise<void>
+  ): void
   getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
   getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
   cancelQueries(
