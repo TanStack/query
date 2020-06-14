@@ -33,9 +33,13 @@ function queryWithVariables() {
   queryVariables.refetch({ force: true }) // $ExpectType Promise<boolean>
 }
 
-function invalidSimpleQuery() {
-  // first element in the key must be a string
-  useQuery([10, 'a'], async (id, key) => id) // $ExpectError
+function queryKeyArrayOrder() {
+  // first element in the key must be not null/undefined
+  useQuery([null, 'a'], async (id, key) => id) // $ExpectError
+
+  useQuery([10, 'a'], async (id, key) => id)
+  useQuery([false, 'a'], async (id, key) => id)
+  useQuery([{ complex: { obj: "yes" } }, 'a'], async (id, key) => id)
 }
 
 function conditionalQuery(condition: boolean) {
