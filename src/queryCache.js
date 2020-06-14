@@ -16,7 +16,7 @@ import {
 } from './utils'
 import { defaultConfigRef } from './config'
 
-export const queryCache = makeQueryCache()
+export const queryCache = makeQueryCache({ frozen: isServer })
 
 export const queryCacheContext = React.createContext(queryCache)
 
@@ -62,12 +62,15 @@ const actionSuccess = 'Success'
 const actionError = 'Error'
 const actionSetState = 'SetState'
 
-export function makeQueryCache(defaultConfig) {
+export function makeQueryCache(options = {}) {
   const listeners = []
 
-  const configRef = defaultConfig
-    ? { current: defaultConfig }
+  const configRef = options.defaultConfig
+    ? { current: options.defaultConfig }
     : defaultConfigRef
+
+  // A frozen cache does not add new queries to the cache
+  const frozen = options.frozen || false
 
   const queryCache = {
     queries: {},
@@ -188,14 +191,19 @@ export function makeQueryCache(defaultConfig) {
         query.scheduleGarbageCollection()
       }
 
-      if (!isServer) {
+      if (!frozen) {
         queryCache.queries[queryHash] = query
-        // Here, we setTimeout so as to not trigger
-        // any setState's in parent components in the
-        // middle of the render phase.
-        setTimeout(() => {
+
+        if (isServer) {
           notifyGlobalListeners()
-        })
+        } else {
+          // Here, we setTimeout so as to not trigger
+          // any setState's in parent components in the
+          // middle of the render phase.
+          setTimeout(() => {
+            notifyGlobalListeners()
+          })
+        }
       }
     }
 
@@ -408,8 +416,10 @@ export function makeQueryCache(defaultConfig) {
         if (!query.instances.length) {
           query.cancel()
 
-          // Schedule garbage collection
-          query.scheduleGarbageCollection()
+          if (!isServer) {
+            // Schedule garbage collection
+            query.scheduleGarbageCollection()
+          }
         }
       }
 
@@ -561,9 +571,11 @@ export function makeQueryCache(defaultConfig) {
       // Set data and mark it as cached
       dispatch({ type: actionSuccess, updater })
 
-      // Schedule a fresh invalidation!
-      clearTimeout(query.staleTimeout)
-      query.scheduleStaleTimeout()
+      if (!isServer) {
+        // Schedule a fresh invalidation!
+        clearTimeout(query.staleTimeout)
+        query.scheduleStaleTimeout()
+      }
     }
 
     query.clear = () => {
