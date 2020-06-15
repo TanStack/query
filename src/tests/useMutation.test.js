@@ -2,7 +2,7 @@ import {
   cleanup,
   render,
   fireEvent,
-  waitForElement,
+  waitFor,
 } from '@testing-library/react'
 import * as React from 'react'
 
@@ -32,13 +32,13 @@ describe('useMutation', () => {
 
     fireEvent.click(getByText('mutate'))
 
-    await waitForElement(() => getByTestId('title'))
+    await waitFor(() => getByTestId('title'))
 
     expect(getByTestId('title').textContent).toBe('mutation')
 
     fireEvent.click(getByText('reset'))
 
-    await waitForElement(() => getByTestId('title'))
+    await waitFor(() => getByTestId('title'))
 
     expect(getByTestId('title').textContent).toBe('')
   })
@@ -76,7 +76,7 @@ describe('useMutation', () => {
 
     fireEvent.click(getByText('mutate'))
 
-    await waitForElement(() => getByTestId('error'))
+    await waitFor(() => getByTestId('error'))
 
     expect(getByTestId('error').textContent).toBe(
       'Expected mock error. All is well!'

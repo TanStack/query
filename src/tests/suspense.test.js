@@ -1,6 +1,6 @@
 import {
   render,
-  waitForElement,
+  waitFor,
   fireEvent,
   cleanup,
 } from '@testing-library/react'
@@ -33,7 +33,7 @@ describe("useQuery's in Suspense mode", () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
@@ -64,7 +64,7 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryCache.getQuery(QUERY_KEY)).toBeFalsy()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
-    await waitForElement(() => rendered.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     expect(queryCache.getQuery(QUERY_KEY).instances.length).toBe(1)
 
@@ -94,7 +94,7 @@ describe("useQuery's in Suspense mode", () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('rendered'))
+    await waitFor(() => rendered.getByText('rendered'))
 
     expect(successFn).toHaveBeenCalledTimes(1)
   })
