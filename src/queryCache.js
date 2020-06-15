@@ -119,8 +119,7 @@ export function makeQueryCache(defaultConfig) {
     const foundQueries = findQueries(predicate, { exact })
 
     foundQueries.forEach(query => {
-      clearTimeout(query.staleTimeout)
-      delete queryCache.queries[query.queryHash]
+      query.remove()
     })
 
     if (foundQueries.length) {
@@ -318,6 +317,8 @@ export function makeQueryCache(defaultConfig) {
     }
 
     query.scheduleStaleTimeout = () => {
+      clearTimeout(query.staleTimeout)
+
       if (query.config.staleTime === Infinity) {
         return
       }
@@ -329,7 +330,10 @@ export function makeQueryCache(defaultConfig) {
       }, query.config.staleTime)
     }
 
-    query.invalidate = () => dispatch({ type: actionMarkStale })
+    query.invalidate = () => {
+      clearTimeout(query.staleTimeout)
+      dispatch({ type: actionMarkStale })
+    }
 
     query.scheduleGarbageCollection = () => {
       if (query.config.cacheTime === Infinity) {
@@ -377,6 +381,29 @@ export function makeQueryCache(defaultConfig) {
       clearInterval(query.refetchIntervalId)
       delete query.refetchIntervalId
       delete query.currentRefetchInterval
+    }
+
+    query.setState = updater => dispatch({ type: actionSetState, updater })
+
+    query.setData = updater => {
+      // Set data and mark it as cached
+      dispatch({ type: actionSuccess, updater })
+
+      // Schedule a fresh invalidation!
+      query.scheduleStaleTimeout()
+    }
+
+    query.clear = () => {
+      clearTimeout(query.staleTimeout)
+      clearTimeout(query.cacheTimeout)
+      query.cancel()
+    }
+
+    query.remove = () => {
+      query.cancel()
+      clearTimeout(query.staleTimeout)
+      clearTimeout(query.cacheTimeout)
+      delete queryCache.queries[query.queryHash]
     }
 
     query.subscribe = (onStateUpdate = noop) => {
@@ -566,23 +593,6 @@ export function makeQueryCache(defaultConfig) {
       return query.promise
     }
 
-    query.setState = updater => dispatch({ type: actionSetState, updater })
-
-    query.setData = updater => {
-      // Set data and mark it as cached
-      dispatch({ type: actionSuccess, updater })
-
-      // Schedule a fresh invalidation!
-      clearTimeout(query.staleTimeout)
-      query.scheduleStaleTimeout()
-    }
-
-    query.clear = () => {
-      clearTimeout(query.staleTimeout)
-      clearTimeout(query.cacheTimeout)
-      query.cancel()
-    }
-
     return query
   }
 
@@ -636,7 +646,8 @@ function switchActions(state, action) {
     case actionFetch:
       return {
         ...state,
-        status: state.status === statusSuccess ? state.status : statusLoading,
+        status:
+          typeof state.data !== 'undefined' ? statusSuccess : statusLoading,
         isFetching: true,
         failureCount: 0,
       }
