@@ -24,12 +24,12 @@ export default () => {
   const [mutateAddTodo] = useMutation(
     value => fetch(`/api/data?add=${value}`),
     {
-      onSuccess: () => queryCache.refetchQueries('todos'),
+      onSuccess: () => queryCache.invalidateQueries('todos'),
     }
   )
 
   const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryCache.refetchQueries('todos'),
+    onSuccess: () => queryCache.invalidateQueries('todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>

@@ -131,7 +131,7 @@ export function handleSuspense(queryInfo) {
     }
     if (queryInfo.status === statusLoading) {
       queryInfo.query.wasSuspended = true
-      throw queryInfo.refetch()
+      throw queryInfo.query.fetch()
     }
   }
 }

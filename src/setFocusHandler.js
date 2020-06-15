@@ -13,7 +13,7 @@ const onWindowFocus = () => {
   if (isDocumentVisible() && isOnline()) {
     queryCaches.forEach(queryCache =>
       queryCache
-        .refetchQueries(query => {
+        .invalidateQueries(query => {
           if (!query.instances.length) {
             return false
           }

@@ -666,7 +666,7 @@ export interface QueryCache {
     key: AnyQueryKey | string,
     dataOrUpdater: T | undefined | ((oldData: T | undefined) => T | undefined)
   ): void
-  refetchQueries<TResult>(
+  invalidateQueries<TResult>(
     queryKeyOrPredicateFn:
       | AnyQueryKey
       | string

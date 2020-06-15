@@ -133,7 +133,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryCache.refetchQueries(true)}>
+        <button onClick={() => queryCache.invalidateQueries(true)}>
           Force Refetch All
         </button>
       </div>
@@ -195,7 +195,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
         <span>
           Error: {error.message}
           <br />
-          <button onClick={() => refetch({ disableThrow: true })}>Retry</button>
+          <button onClick={() => refetch()}>Retry</button>
         </span>
       ) : (
         <>
@@ -249,7 +249,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const [mutate, mutationState] = useMutation(patchTodo, {
     onSuccess: data => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryCache.refetchQueries("todos");
+      queryCache.invalidateQueries("todos");
       queryCache.setQueryData(["todo", { id: editingIndex }], data);
     }
   });
@@ -274,8 +274,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
         <span>Loading... (Attempt: {failureCount + 1})</span>
       ) : error ? (
         <span>
-          Error!{" "}
-          <button onClick={() => refetch({ disableThrow: true })}>Retry</button>
+          Error! <button onClick={() => refetch()}>Retry</button>
         </span>
       ) : (
         <>
@@ -333,7 +332,7 @@ function AddTodo() {
 
   const [mutate, { status, error }] = useMutation(postTodo, {
     onSuccess: () => {
-      queryCache.refetchQueries("todos");
+      queryCache.invalidateQueries("todos");
     }
   });
 

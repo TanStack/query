@@ -20,7 +20,7 @@ describe('usePaginatedQuery', () => {
       const { resolvedData = 'undefined' } = usePaginatedQuery(
         ['data', page],
         async (queryName, page) => {
-          await sleep(1)
+          await sleep(10)
           return page
         }
       )
@@ -58,7 +58,7 @@ describe('usePaginatedQuery', () => {
       const { resolvedData } = usePaginatedQuery(
         ['data', { page }],
         async (queryName, { page }) => {
-          await sleep(1)
+          await sleep(10)
           return page
         },
         { initialData: 0 }
@@ -101,7 +101,7 @@ describe('usePaginatedQuery', () => {
       const { resolvedData, status } = usePaginatedQuery(
         ['data', { page }],
         async (queryName, { page }) => {
-          await sleep(1)
+          await sleep(10)
           return page
         },
         { initialData: 0 }
@@ -140,7 +140,7 @@ describe('usePaginatedQuery', () => {
       const { resolvedData = 'undefined' } = usePaginatedQuery(
         ['data', searchTerm, page],
         async (queryName, searchTerm, page) => {
-          await sleep(1)
+          await sleep(10)
           return `${searchTerm} ${page}`
         },
         {
@@ -203,7 +203,7 @@ describe('usePaginatedQuery', () => {
       const { resolvedData } = usePaginatedQuery(
         ['data', { page }],
         async (queryName, { page }) => {
-          await sleep(1)
+          await sleep(10)
           return page
         },
         {

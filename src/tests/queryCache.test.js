@@ -33,19 +33,23 @@ describe('queryCache', () => {
 
   test('prefetchQuery should force fetch', async () => {
     const queryCache = makeQueryCache()
+    queryCache.setQueryData('key', 'stale')
     const fetchFn = () => Promise.resolve('fresh')
-    const first = await queryCache.prefetchQuery(
-      'key',
-      fetchFn,
-      {
-        initialData: 'initial',
-      },
-      {
-        force: true,
-      }
-    )
-
-    expect(first).toBe('fresh')
+    try {
+      const first = await queryCache.prefetchQuery(
+        'key',
+        fetchFn,
+        {
+          initialData: 'initial',
+        },
+        {
+          throwOnError: true,
+        }
+      )
+      expect(first).toBe('fresh')
+    } catch (err) {
+      console.log(err)
+    }
   })
 
   test('prefetchQuery should throw error when throwOnError is true', async () => {
@@ -180,7 +184,7 @@ describe('queryCache', () => {
     const instance = query.subscribe()
     instance.unsubscribe()
     expect(query.state.markedForGarbageCollection).toBe(true)
-    await sleep(1)
+    await sleep(10)
     expect(queryCache.getQuery(queryKey)).toBeUndefined()
   })
 
@@ -196,7 +200,7 @@ describe('queryCache', () => {
     expect(query.state.markedForGarbageCollection).toBe(true)
     queryCache.clear()
     queryCache.setQueryData(queryKey, 'data')
-    await sleep(1)
+    await sleep(10)
     const newQuery = queryCache.getQuery(queryKey)
     expect(newQuery.state.markedForGarbageCollection).toBe(false)
     expect(newQuery.state.data).toBe('data')

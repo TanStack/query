@@ -88,8 +88,7 @@ export function useInfiniteQuery(...args) {
       { previous = false } = {}
     ) =>
       queryInfoRef.current.query.canFetchMore
-        ? queryInfoRef.current.refetch({
-            force: true,
+        ? queryInfoRef.current.query.fetch({
             __queryFn: async (...args) => {
               try {
                 queryInfoRef.current.query.setState(old => ({

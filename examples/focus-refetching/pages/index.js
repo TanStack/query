@@ -10,11 +10,11 @@ export default () => {
   })
 
   const [logoutMutation] = useMutation(logout, {
-    onSuccess: () => queryCache.refetchQueries('user'),
+    onSuccess: () => queryCache.invalidateQueries('user'),
   })
 
   const [loginMutation] = useMutation(login, {
-    onSuccess: () => queryCache.refetchQueries('user'),
+    onSuccess: () => queryCache.invalidateQueries('user'),
   })
 
   return (

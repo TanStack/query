@@ -95,12 +95,17 @@ export function makeQueryCache(defaultConfig) {
     notifyGlobalListeners()
   }
 
-  const findQueries = (predicate, { exact } = {}) => {
+  queryCache.getQueries = (predicate, { exact } = {}) => {
+    if (predicate === true) {
+      return Object.values(queryCache.queries)
+    }
+
     if (typeof predicate !== 'function') {
       const [
         queryHash,
         queryKey,
       ] = configRef.current.shared.queryKeySerializerFn(predicate)
+
       predicate = d =>
         exact ? d.queryHash === queryHash : deepIncludes(d.queryKey, queryKey)
     }
@@ -108,49 +113,33 @@ export function makeQueryCache(defaultConfig) {
     return Object.values(queryCache.queries).filter(predicate)
   }
 
-  queryCache.getQueries = findQueries
-
-  queryCache.getQuery = queryKey => findQueries(queryKey, { exact: true })[0]
+  queryCache.getQuery = queryKey =>
+    queryCache.getQueries(queryKey, { exact: true })[0]
 
   queryCache.getQueryData = queryKey =>
     queryCache.getQuery(queryKey)?.state.data
 
-  queryCache.removeQueries = (predicate, { exact } = {}) => {
-    const foundQueries = findQueries(predicate, { exact })
-
-    foundQueries.forEach(query => {
-      query.remove()
-    })
-
-    if (foundQueries.length) {
-      notifyGlobalListeners()
-    }
+  queryCache.removeQueries = (...args) => {
+    queryCache.getQueries(...args).forEach(query => query.remove())
   }
 
-  queryCache.cancelQueries = (predicate, { exact } = {}) => {
-    const foundQueries = findQueries(predicate, { exact })
-
-    foundQueries.forEach(query => {
-      query.cancel()
-    })
-
-    if (foundQueries.length) {
-      notifyGlobalListeners()
-    }
+  queryCache.cancelQueries = (...args) => {
+    queryCache.getQueries(...args).forEach(query => query.cancel())
   }
 
-  queryCache.refetchQueries = async (
+  queryCache.invalidateQueries = async (
     predicate,
-    { exact, throwOnError, force } = {}
+    { refetchActive = true, exact, throwOnError } = {}
   ) => {
-    const foundQueries =
-      predicate === true
-        ? Object.values(queryCache.queries)
-        : findQueries(predicate, { exact })
-
     try {
       return await Promise.all(
-        foundQueries.map(query => query.refetch({ force }))
+        queryCache.getQueries(predicate, { exact }).map(query => {
+          if (refetchActive && query.instances.length) {
+            return query.fetch()
+          }
+
+          return query.invalidate()
+        })
       )
     } catch (err) {
       if (throwOnError) {
@@ -159,16 +148,13 @@ export function makeQueryCache(defaultConfig) {
     }
   }
 
-  queryCache.invalidateQueries = async (predicate, { exact } = {}) => {
-    const foundQueries =
-      predicate === true
-        ? Object.values(queryCache.queries)
-        : findQueries(predicate, { exact })
+  queryCache.buildQuery = (userQueryKey, queryFn, config = {}) => {
+    config = {
+      ...configRef.current.shared,
+      ...configRef.current.queries,
+      ...config,
+    }
 
-    foundQueries.forEach(query => query.invalidate())
-  }
-
-  queryCache.buildQuery = (userQueryKey, queryFn, config) => {
     let [queryHash, queryKey] = config.queryKeySerializerFn(userQueryKey)
 
     let query = queryCache.queries[queryHash]
@@ -221,7 +207,7 @@ export function makeQueryCache(defaultConfig) {
         query.currentRefetchInterval = config.refetchInterval
         query.refetchIntervalId = setInterval(() => {
           if (isDocumentVisible() || config.refetchIntervalInBackground) {
-            query.refetch()
+            query.fetch()
           }
         }, config.refetchInterval)
       }
@@ -231,32 +217,15 @@ export function makeQueryCache(defaultConfig) {
   }
 
   queryCache.prefetchQuery = async (...args) => {
-    let [
-      queryKey,
-      queryFn,
-      config = {},
-      { force, throwOnError } = {},
-    ] = getQueryArgs(args)
-
-    config = {
-      ...configRef.current.shared,
-      ...configRef.current.queries,
-      ...config,
-    }
+    let [queryKey, queryFn, config, { throwOnError } = {}] = getQueryArgs(args)
 
     const query = queryCache.buildQuery(queryKey, queryFn, config)
 
-    // Don't prefetch queries that are fresh, unless force is passed
-    if (query.state.isStale || force) {
-      // Trigger a refetch and return the promise
-      try {
-        const res = await query.refetch({ force })
-        query.wasPrefetched = true
-        return res
-      } catch (err) {
-        if (throwOnError) {
-          throw err
-        }
+    try {
+      await query.fetch()
+    } catch (err) {
+      if (throwOnError) {
+        throw err
       }
     }
 
@@ -264,15 +233,11 @@ export function makeQueryCache(defaultConfig) {
   }
 
   queryCache.setQueryData = (queryKey, updater, { exact, ...config } = {}) => {
-    let queries = findQueries(queryKey, { exact })
+    let queries = queryCache.getQueries(queryKey, { exact })
 
     if (!queries.length && typeof queryKey !== 'function') {
       queries = [
-        queryCache.buildQuery(queryKey, () => new Promise(noop), {
-          ...configRef.current.shared,
-          ...configRef.current.queries,
-          ...config,
-        }),
+        queryCache.buildQuery(queryKey, () => new Promise(noop), config),
       ]
     }
 
@@ -424,13 +389,13 @@ export function makeQueryCache(defaultConfig) {
         // Perform the refetch for this query if necessary
         if (
           query.config.enabled && // Don't auto refetch if disabled
-          !query.wasPrefetched && // Don't double refetch for prefetched queries
+          // !query.wasPrefetched && // Don't double refetch for prefetched queries
           !query.wasSuspended && // Don't double refetch for suspense
           query.state.isStale && // Only refetch if stale
           (query.config.refetchOnMount || query.instances.length === 1)
         ) {
           try {
-            await query.refetch()
+            await query.fetch()
           } catch (error) {
             Console.error(error)
           }
@@ -520,11 +485,7 @@ export function makeQueryCache(defaultConfig) {
       }
     }
 
-    query.refetch = async ({ force, __queryFn = query.queryFn } = {}) => {
-      if (!query.state.isStale && !force) {
-        return
-      }
-
+    query.fetch = async ({ __queryFn = query.queryFn } = {}) => {
       // Create a new promise for the query cache if necessary
       if (!query.promise) {
         query.promise = (async () => {

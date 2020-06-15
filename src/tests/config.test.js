@@ -88,9 +88,7 @@ describe('config', () => {
 
     await rendered.findByText('Data: none')
 
-    act(() => {
-      queryCache.prefetchQuery('test', queryFn, {}, { force: true })
-    })
+    await act(() => queryCache.prefetchQuery('test', queryFn, {}))
 
     await rendered.findByText('Data: data')
 

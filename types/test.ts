@@ -29,7 +29,6 @@ function queryWithVariables() {
 
   query.data // $ExpectType boolean | undefined
   query.refetch() // $ExpectType Promise<boolean>
-  query.refetch({ force: true }) // $ExpectType Promise<boolean>
 }
 
 function invalidSimpleQuery() {

@@ -302,9 +302,9 @@ describe('useInfiniteQuery', () => {
                   onClick={() => {
                     // Imagine that this mutation happens somewhere else
                     // makes an actual network request
-                    // and calls refetchQueries in an onSuccess
+                    // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    queryCache.refetchQueries('items')
+                    queryCache.invalidateQueries('items')
                   }}
                 >
                   Remove item

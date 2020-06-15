@@ -248,7 +248,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [`queryCache.prefetchQuery`](#querycacheprefetchquery)
   - [`queryCache.getQueryData`](#querycachegetquerydata)
   - [`queryCache.setQueryData`](#querycachesetquerydata)
-  - [`queryCache.refetchQueries`](#querycacherefetchqueries)
+  - [`queryCache.invalidateQueries`](#querycacherefetchqueries)
   - [`queryCache.cancelQueries`](#querycachecancelqueries)
   - [`queryCache.removeQueries`](#querycacheremovequeries)
   - [`queryCache.getQuery`](#querycachegetquery)
@@ -748,7 +748,7 @@ function Todos() {
       initialData: [],
     }
   )
-
+  f
   return (
     <>
       <button onClick={() => refetch()}>Fetch Todos</button>
@@ -1101,7 +1101,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `refetchQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
@@ -1140,7 +1140,7 @@ For example, assume we have a mutation to post a new todo:
 const [mutate] = useMutation(postTodo)
 ```
 
-When a successful `postTodo` mutation happens, we likely want all `todos` queries to get refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `queryCache`'s `refetchQueries`:
+When a successful `postTodo` mutation happens, we likely want all `todos` queries to get refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `queryCache`'s `invalidateQueries`:
 
 ```js
 import { useMutation, queryCache } from 'react-query'
@@ -1148,8 +1148,8 @@ import { useMutation, queryCache } from 'react-query'
 // When this mutation succeeds, refetch any queries with the `todos` or `reminders` query key
 const [mutate] = useMutation(addTodo, {
   onSuccess: () => {
-    queryCache.refetchQueries('todos')
-    queryCache.refetchQueries('reminders')
+    queryCache.invalidateQueries('todos')
+    queryCache.invalidateQueries('reminders')
   },
 })
 
@@ -1161,12 +1161,12 @@ const todoListQuery = useQuery(['todos', { page: 1 }], fetchTodoList)
 const remindersQuery = useQuery('reminders', fetchReminders)
 ```
 
-You can even refetch queries with specific variables by passing a more specific query key to the `refetchQueries` method:
+You can even refetch queries with specific variables by passing a more specific query key to the `invalidateQueries` method:
 
 ```js
 const [mutate] = useMutation(addTodo, {
   onSuccess: () => {
-    queryCache.refetchQueries(['todos', { type: 'done' }])
+    queryCache.invalidateQueries(['todos', { type: 'done' }])
   },
 })
 
@@ -1178,12 +1178,12 @@ const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
 const todoListQuery = useQuery('todos', fetchTodoList)
 ```
 
-The `refetchQueries` API is very flexible, so even if you want to **only** refetch `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `refetchQueries` method:
+The `invalidateQueries` API is very flexible, so even if you want to **only** refetch `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `invalidateQueries` method:
 
 ```js
 const [mutate] = useMutation(addTodo, {
   onSuccess: () => {
-    queryCache.refetchQueries('todos', { exact: true })
+    queryCache.invalidateQueries('todos', { exact: true })
   },
 })
 
@@ -1195,12 +1195,12 @@ const todoListQuery = useQuery(['todos'], fetchTodoList)
 const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
 ```
 
-If you find yourself wanting **even more** granularity, you can pass a predicate function to the `refetchQueries` method. This function will receive each query object from the queryCache and allow you to return `true` or `false` for whether you want to refetch that query:
+If you find yourself wanting **even more** granularity, you can pass a predicate function to the `invalidateQueries` method. This function will receive each query object from the queryCache and allow you to return `true` or `false` for whether you want to refetch that query:
 
 ```js
 const [mutate] = useMutation(addTodo, {
   onSuccess: () => {
-    queryCache.refetchQueries(
+    queryCache.invalidateQueries(
       query => query.queryKey[0] === 'todos' && query.queryKey[1]?.version >= 10
     )
   },
@@ -1222,7 +1222,7 @@ If you prefer that the promise returned from `mutate()` only resolves **after** 
 const [mutate] = useMutation(addTodo, {
   onSuccess: () =>
     // return a promise!
-    queryCache.refetchQueries(
+    queryCache.invalidateQueries(
       query => query.queryKey[0] === 'todos' && query.queryKey[1]?.version >= 10
     ),
 })
@@ -1391,7 +1391,7 @@ useMutation(updateTodo, {
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
   onSettled: () => {
-    queryCache.refetchQueries('todos')
+    queryCache.invalidateQueries('todos')
   },
 })
 ```
@@ -1418,7 +1418,7 @@ useMutation(updateTodo, {
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
   onSettled: () => {
-    queryCache.refetchQueries(['todos', newTodo.id])
+    queryCache.invalidateQueries(['todos', newTodo.id])
   },
 })
 ```
@@ -2239,7 +2239,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`prefetchQuery`](#querycacheprefetchquery)
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
-- [`refetchQueries`](#querycacherefetchqueries)
+- [`invalidateQueries`](#querycacherefetchqueries)
 - [`cancelQueries`](#querycachecancelqueries)
 - [`removeQueries`](#querycacheremovequeries)
 - [`getQueries`](#querycachegetqueries)
@@ -2338,14 +2338,14 @@ For convenience in syntax, you can also pass an updater function which receives 
 setQueryData(queryKey, oldData => newData)
 ```
 
-## `queryCache.refetchQueries`
+## `queryCache.invalidateQueries`
 
-The `refetchQueries` method can be used to refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, queries that are fresh (not stale) will not be refetched, but you can override this by passing the `force: true` option.
+The `invalidateQueries` method can be used to refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, queries that are fresh (not stale) will not be refetched, but you can override this by passing the `force: true` option.
 
 ```js
 import { queryCache } from 'react-query'
 
-const queries = queryCache.refetchQueries(inclusiveQueryKeyOrPredicateFn, {
+const queries = queryCache.invalidateQueries(inclusiveQueryKeyOrPredicateFn, {
   exact,
   throwOnError,
   force,

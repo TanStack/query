@@ -384,26 +384,29 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/195
-  it('should not refetch immediately after a prefetch', async () => {
+  it('should refetch if stale after a prefetch', async () => {
     const queryCache = makeQueryCache()
     const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10))
+    queryFn.mockImplementation(() => sleep(10).then(() => 'data'))
 
     const prefetchQueryFn = jest.fn()
-    prefetchQueryFn.mockImplementation(() => sleep(10))
+    prefetchQueryFn.mockImplementation(() => sleep(16).then(() => 'not yet...'))
+
+    await queryCache.prefetchQuery('test', prefetchQueryFn, {
+      staleTime: 0,
+    })
+
+    await act(() => sleep(1))
 
     function Page() {
       const query = useQuery('test', queryFn)
 
       return (
         <div>
-          <div>status {query.status}</div>
+          <div>{query.data}</div>
         </div>
       )
     }
-
-    await queryCache.prefetchQuery('test', prefetchQueryFn)
-    await queryCache.prefetchQuery('test', prefetchQueryFn)
 
     const rendered = render(
       <ReactQueryCacheProvider queryCache={queryCache}>
@@ -411,14 +414,14 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('status success'))
+    await waitForElement(() => rendered.getByText('data'))
 
-    expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
-    expect(queryFn).toHaveBeenCalledTimes(0)
+    expect(prefetchQueryFn).toHaveBeenCalledTimes(2)
+    expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/190
-  it('should reset failreCount on successful fetch', async () => {
+  it('should reset failureCount on successful fetch', async () => {
     function Page() {
       let counter = 0
       const query = useQuery(
@@ -765,21 +768,10 @@ describe('useQuery', () => {
   it('should not cause memo churn when data does not change', async () => {
     const queryFn = jest.fn()
     const memoFn = jest.fn()
-    const originalVisibilityState = document.visibilityState
-
-    function mockVisibilityState(value) {
-      Object.defineProperty(document, 'visibilityState', {
-        value,
-        configurable: true,
-      })
-    }
-
-    // make page unfocused
-    mockVisibilityState('hidden')
 
     function Page() {
-      const query = useQuery('test', async () => {
-        await sleep(1)
+      const queryInfo = useQuery('test', async () => {
+        await sleep(10)
         return (
           queryFn() || {
             data: {
@@ -791,13 +783,14 @@ describe('useQuery', () => {
 
       React.useMemo(() => {
         memoFn()
-        return query.data
-      }, [query.data])
+        return queryInfo.data
+      }, [queryInfo.data])
 
       return (
         <div>
-          <div>status {query.status}</div>
-          <div>isFetching {query.isFetching ? 'true' : 'false'}</div>
+          <div>status {queryInfo.status}</div>
+          <div>isFetching {queryInfo.isFetching ? 'true' : 'false'}</div>
+          <button onClick={() => queryInfo.refetch()}>refetch</button>
         </div>
       )
     }
@@ -810,13 +803,7 @@ describe('useQuery', () => {
 
     await waitForElement(() => rendered.getByText('status loading'))
     await waitForElement(() => rendered.getByText('status success'))
-
-    act(() => {
-      // reset visibilityState to original value
-      mockVisibilityState(originalVisibilityState)
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
-
+    fireEvent.click(rendered.getByText('refetch'))
     await waitForElement(() => rendered.getByText('isFetching true'))
     await waitForElement(() => rendered.getByText('isFetching false'))
     expect(queryFn).toHaveBeenCalledTimes(2)

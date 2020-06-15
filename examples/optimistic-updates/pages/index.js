@@ -34,7 +34,7 @@ export default () => {
         queryCache.setQueryData('todos', previousValue),
       // After success or failure, refetch the todos query
       onSettled: () => {
-        queryCache.refetchQueries('todos')
+        queryCache.invalidateQueries('todos')
       },
     }
   )
