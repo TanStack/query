@@ -2,7 +2,7 @@ import {
   cleanup,
   render,
   fireEvent,
-  waitForElement,
+  waitFor,
 } from '@testing-library/react'
 import * as React from 'react'
 
@@ -36,7 +36,7 @@ describe('setConsole', () => {
 
     fireEvent.click(getByText('mutate'))
 
-    await waitForElement(() => getByTestId('error'))
+    await waitFor(() => getByTestId('error'))
 
     expect(mockConsole.error).toHaveBeenCalled()
 

@@ -3,7 +3,7 @@ import {
   act,
   fireEvent,
   render,
-  waitForElement,
+  waitFor,
   cleanup,
 } from '@testing-library/react'
 import {
@@ -49,7 +49,7 @@ describe('config', () => {
       </ReactQueryConfigProvider>
     )
 
-    await waitForElement(() => rendered.getByText('Status: success'))
+    await waitFor(() => rendered.getByText('Status: success'))
 
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
@@ -97,7 +97,7 @@ describe('config', () => {
     cleanup()
 
     // wipe query cache/stored config
-    act(() => queryCache.clear())
+    await act(() => queryCache.clear())
     onSuccess.mockClear()
 
     // rerender WITHOUT config provider,

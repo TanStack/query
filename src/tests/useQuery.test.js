@@ -1,10 +1,9 @@
 import {
   render,
   act,
-  waitForElement,
+  waitFor,
   fireEvent,
   cleanup,
-  waitForDomChange,
 } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
@@ -44,7 +43,7 @@ describe('useQuery', () => {
     )
 
     rendered.getByText('default')
-    await waitForElement(() => rendered.getByText('test'))
+    await waitFor(() => rendered.getByText('test'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137
@@ -103,8 +102,8 @@ describe('useQuery', () => {
     // use "act" to wait for state update and prevent console warning
 
     rendered.getByText('First Status: success')
-    await waitForElement(() => rendered.getByText('Second Status: loading'))
-    await waitForElement(() => rendered.getByText('Second Status: success'))
+    await waitFor(() => rendered.getByText('Second Status: loading'))
+    await waitFor(() => rendered.getByText('Second Status: success'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/217
@@ -128,8 +127,8 @@ describe('useQuery', () => {
     )
 
     rendered.getByText('First Status: success')
-    await waitForElement(() => rendered.getByText('Second Status: loading'))
-    await waitForElement(() => rendered.getByText('Second Status: success'))
+    await waitFor(() => rendered.getByText('Second Status: loading'))
+    await waitFor(() => rendered.getByText('Second Status: success'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
@@ -153,7 +152,7 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => getByTestId('status'))
+    await waitFor(() => getByTestId('status'))
     act(() => {
       expect(getByTestId('status').textContent).toBe('loading')
     })
@@ -230,7 +229,7 @@ describe('useQuery', () => {
         <Page />
       </ReactQueryCacheProvider>
     )
-    await waitForElement(() => rendered.getByText('default'))
+    await waitFor(() => rendered.getByText('default'))
     expect(queryFn).not.toHaveBeenCalled()
   })
 
@@ -252,7 +251,7 @@ describe('useQuery', () => {
         <Page />
       </ReactQueryCacheProvider>
     )
-    await waitForElement(() => rendered.getByText('default'))
+    await waitFor(() => rendered.getByText('default'))
 
     act(() => {
       window.dispatchEvent(new FocusEvent('focus'))
@@ -285,8 +284,8 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('error'))
-    await waitForElement(() => rendered.getByText('Error test'))
+    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() => rendered.getByText('Error test'))
   })
 
   it('should retry specified number of times', async () => {
@@ -315,11 +314,11 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('loading'))
-    await waitForElement(() => rendered.getByText('error'))
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('error'))
 
     // query should fail `retry + 1` times, since first time isn't a "retry"
-    await waitForElement(() => rendered.getByText('Failed 2 times'))
+    await waitFor(() => rendered.getByText('Failed 2 times'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
@@ -356,11 +355,11 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('loading'))
-    await waitForElement(() => rendered.getByText('error'))
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('error'))
 
-    await waitForElement(() => rendered.getByText('Failed 2 times'))
-    await waitForElement(() => rendered.getByText('NoRetry'))
+    await waitFor(() => rendered.getByText('Failed 2 times'))
+    await waitFor(() => rendered.getByText('NoRetry'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
@@ -391,7 +390,7 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('update'))
+    await waitFor(() => rendered.getByText('update'))
 
     fireEvent.click(rendered.getByText('update'))
     fireEvent.click(rendered.getByText('update'))
@@ -400,7 +399,7 @@ describe('useQuery', () => {
 
     expect(Object.keys(queryCache.queries).length).toEqual(5)
 
-    await waitForElement(() => rendered.getByText('todo aaaa'))
+    await waitFor(() => rendered.getByText('todo aaaa'))
 
     expect(Object.keys(queryCache.queries).length).toEqual(1)
   })
@@ -439,8 +438,8 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('failureCount 1'))
-    await waitForElement(() => rendered.getByText('status loading'))
+    await waitFor(() => rendered.getByText('failureCount 1'))
+    await waitFor(() => rendered.getByText('status loading'))
 
     act(() => {
       // reset visibilityState to original value
@@ -448,8 +447,8 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitForElement(() => rendered.getByText('failureCount 4'))
-    await waitForElement(() => rendered.getByText('status error'))
+    await waitFor(() => rendered.getByText('failureCount 4'))
+    await waitFor(() => rendered.getByText('status error'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/195
@@ -480,14 +479,14 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('status success'))
+    await waitFor(() => rendered.getByText('status success'))
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/190
-  it('should reset failreCount on successful fetch', async () => {
+  it('should reset failureCount on successful fetch', async () => {
     function Page() {
       let counter = 0
       const query = useQuery(
@@ -516,8 +515,8 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('failureCount 1'))
-    await waitForElement(() => rendered.getByText('failureCount 0'))
+    await waitFor(() => rendered.getByText('failureCount 1'))
+    await waitFor(() => rendered.getByText('failureCount 0'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/199
@@ -553,10 +552,10 @@ describe('useQuery', () => {
         <Page />
       </ReactQueryCacheProvider>
     )
-    await waitForElement(() => rendered.getByText('isPrefetched'))
+    await waitFor(() => rendered.getByText('isPrefetched'))
 
     fireEvent.click(rendered.getByText('setKey'))
-    await waitForElement(() => rendered.getByText('prefetched data'))
+    await waitFor(() => rendered.getByText('prefetched data'))
   })
 
   it('should support a function that resolves a query key', async () => {
@@ -582,7 +581,7 @@ describe('useQuery', () => {
     )
 
     rendered.getByText('Status: loading')
-    await waitForElement(() => rendered.getByText('Status: success'))
+    await waitFor(() => rendered.getByText('Status: success'))
     rendered.getByText('Data: data')
     rendered.getByText('Key: key')
   })
@@ -618,8 +617,8 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByText('fetch'))
 
-    await waitForElement(() => rendered.getByText('Status: loading'))
-    await waitForElement(() => [
+    await waitFor(() => rendered.getByText('Status: loading'))
+    await waitFor(() => [
       rendered.getByText('Status: success'),
       rendered.getByText('Data: data'),
     ])
@@ -656,8 +655,8 @@ describe('useQuery', () => {
 
     fireEvent.click(rendered.getByText('fetch'))
 
-    await waitForElement(() => rendered.getByText('Status: loading'))
-    await waitForElement(() => [
+    await waitFor(() => rendered.getByText('Status: loading'))
+    await waitFor(() => [
       rendered.getByText('Status: success'),
       rendered.getByText('Data: data'),
     ])
@@ -741,11 +740,11 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('initial'))
+    await waitFor(() => rendered.getByText('initial'))
     fireEvent.click(rendered.getByText('setShouldFetch(false)'))
     rendered.getByText('initial falsy')
     // wait for infinite loop to call mock function a bit
-    await act(() => sleep(200))
+    await sleep(200)
     expect(callback.mock.calls.length).toBeLessThan(5)
   })
   it('it should support falsy queryKey in query object syntax', async () => {
@@ -810,8 +809,10 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('fetched data'))
-    expect(rendered.getByTestId('isStale').textContent).toBe('true')
+    await waitFor(() => rendered.getByText('fetched data'))
+    await waitFor(() => {
+      expect(rendered.getByTestId('isStale').textContent).toBe('true')
+    })
     expect(rendered.getByTestId('staleTimeout').textContent).not.toBe(
       'undefined'
     )
@@ -838,7 +839,7 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('fetched data'))
+    await waitFor(() => rendered.getByText('fetched data'))
     expect(rendered.getByTestId('isStale').textContent).toBe('false')
     expect(rendered.getByTestId('staleTimeout').textContent).toBe('undefined')
   })
@@ -861,7 +862,7 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('isFetching === false'))
+    await waitFor(() => rendered.getByText('isFetching === false'))
   })
 
   test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
@@ -880,7 +881,7 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('fetched data'))
+    await waitFor(() => rendered.getByText('fetched data'))
 
     rendered.unmount()
 
@@ -933,8 +934,8 @@ describe('useQuery', () => {
       </ReactQueryCacheProvider>
     )
 
-    await waitForElement(() => rendered.getByText('status loading'))
-    await waitForElement(() => rendered.getByText('status success'))
+    await waitFor(() => rendered.getByText('status loading'))
+    await waitFor(() => rendered.getByText('status success'))
 
     act(() => {
       // reset visibilityState to original value
@@ -942,8 +943,8 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitForElement(() => rendered.getByText('isFetching true'))
-    await waitForElement(() => rendered.getByText('isFetching false'))
+    await waitFor(() => rendered.getByText('isFetching true'))
+    await waitFor(() => rendered.getByText('isFetching false'))
     expect(queryFn).toHaveBeenCalledTimes(2)
     expect(memoFn).toHaveBeenCalledTimes(2)
   })
@@ -997,13 +998,20 @@ describe('useQuery', () => {
       </ErrorBoundary>
     )
 
-    await waitForElement(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('error boundary'))
 
     console.error.mockRestore()
 
     fireEvent.click(rendered.getByText('retry'))
 
-    await waitForElement(() => rendered.getByText('rendered'))
+    // Workaround for bug with jsdom re-rendering twice before timeout fires: utils.js > handleSuspense > setTimeout
+    // Timeout behavior works fine in browser but shouldn't be relied upon
+    await sleep(25)
+    if (rendered.queryByText("retry")) {
+      fireEvent.click(rendered.getByText('retry'))
+    }
+
+    await waitFor(() => rendered.getByText('rendered'))
   })
 
   it('should update data upon interval changes', async () => {
@@ -1021,54 +1029,41 @@ describe('useQuery', () => {
     }
     const { container } = render(<Page />)
     expect(container.firstChild.textContent).toEqual('count: ')
-    await waitForDomChange({ container }) // mount
-    expect(container.firstChild.textContent).toEqual('count: 0')
-    await act(() => {
-      return new Promise(res => setTimeout(res, 210))
+    await waitFor(() => {
+      expect(container.firstChild.textContent).toEqual('count: 0')
     })
+    await sleep(210);
     expect(container.firstChild.textContent).toEqual('count: 1')
-    await act(() => {
-      return new Promise(res => setTimeout(res, 50))
-    })
+    await sleep(50);
     expect(container.firstChild.textContent).toEqual('count: 1')
-    await act(() => {
-      return new Promise(res => setTimeout(res, 150))
-    })
+    await sleep(150);
     expect(container.firstChild.textContent).toEqual('count: 2')
-    await act(() => {
+    act(() => {
       fireEvent.click(container.firstElementChild)
       // it will clear 200ms timer and setup a new 300ms timer
-      return new Promise(res => setTimeout(res, 200))
     })
+    await sleep(200);
     expect(container.firstChild.textContent).toEqual('count: 2')
-    await act(() => {
-      return new Promise(res => setTimeout(res, 110))
-    })
+    await sleep(110);
     expect(container.firstChild.textContent).toEqual('count: 3')
-    await act(() => {
-      // wait for new 300ms timer
-      return new Promise(res => setTimeout(res, 310))
-    })
+    // wait for new 300ms timer
+    await sleep(310);
     expect(container.firstChild.textContent).toEqual('count: 4')
-    await act(() => {
+    act(() => {
       fireEvent.click(container.firstElementChild)
       // it will clear 300ms timer and setup a new 400ms timer
-      return new Promise(res => setTimeout(res, 300))
     })
+    await sleep(300);
     expect(container.firstChild.textContent).toEqual('count: 4')
-    await act(() => {
-      return new Promise(res => setTimeout(res, 110))
-    })
+    await sleep(110);
     expect(container.firstChild.textContent).toEqual('count: 5')
-    await act(() => {
+    act(() => {
       fireEvent.click(container.firstElementChild)
       // it will clear 400ms timer and stop
-      return new Promise(res => setTimeout(res, 110))
     })
+    await sleep(110);
     expect(container.firstChild.textContent).toEqual('count: 5')
-    await act(() => {
-      return new Promise(res => setTimeout(res, 110))
-    })
+    await sleep(110);
     expect(container.firstChild.textContent).toEqual('count: 5')
   })
 })

@@ -2,7 +2,7 @@ import {
   cleanup,
   render,
   fireEvent,
-  waitForElement,
+  waitFor,
 } from '@testing-library/react'
 import * as React from 'react'
 import { sleep } from './utils'
@@ -40,15 +40,15 @@ describe('usePaginatedQuery', () => {
     )
 
     rendered.getByText('Data undefined')
-    await waitForElement(() => rendered.getByText('Data 1'))
+    await waitFor(() => rendered.getByText('Data 1'))
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data 1')
-    await waitForElement(() => rendered.getByText('Data 2'))
+    await waitFor(() => rendered.getByText('Data 2'))
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data 2')
-    await waitForElement(() => rendered.getByText('Data 3'))
+    await waitFor(() => rendered.getByText('Data 3'))
   })
 
   it('should use initialData only on the first page, then use previous page data while fetching the next page', async () => {
@@ -82,15 +82,15 @@ describe('usePaginatedQuery', () => {
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data 0')
-    await waitForElement(() => rendered.getByText('Data 2'))
+    await waitFor(() => rendered.getByText('Data 2'))
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data 2')
-    await waitForElement(() => rendered.getByText('Data 3'))
+    await waitFor(() => rendered.getByText('Data 3'))
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data 3')
-    await waitForElement(() => rendered.getByText('Data 4'))
+    await waitFor(() => rendered.getByText('Data 4'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/169
@@ -128,7 +128,7 @@ describe('usePaginatedQuery', () => {
     fireEvent.click(rendered.getByText('next'))
     fireEvent.click(rendered.getByText('next'))
 
-    await waitForElement(() => rendered.getByTestId('status'))
+    await waitFor(() => rendered.getByTestId('status'))
     expect(rendered.getByTestId('status').textContent).toBe('success')
     expect(rendered.getByTestId('status').textContent).not.toBe('loading')
   })
@@ -173,11 +173,11 @@ describe('usePaginatedQuery', () => {
       target: { value: 'first-search' },
     })
     rendered.getByText('Data undefined')
-    await waitForElement(() => rendered.getByText('Data first-search 1'))
+    await waitFor(() => rendered.getByText('Data first-search 1'))
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data first-search 1')
-    await waitForElement(() => rendered.getByText('Data first-search 2'))
+    await waitFor(() => rendered.getByText('Data first-search 2'))
 
     fireEvent.click(rendered.getByText('clear'))
     rendered.getByText('Data undefined')
@@ -186,11 +186,11 @@ describe('usePaginatedQuery', () => {
       target: { value: 'second-search' },
     })
     rendered.getByText('Data undefined')
-    await waitForElement(() => rendered.getByText('Data second-search 1'))
+    await waitFor(() => rendered.getByText('Data second-search 1'))
 
     fireEvent.click(rendered.getByText('next'))
     rendered.getByText('Data second-search 1')
-    await waitForElement(() => rendered.getByText('Data second-search 2'))
+    await waitFor(() => rendered.getByText('Data second-search 2'))
   })
 
   it('should not suspend while fetching the next page', async () => {
@@ -225,6 +225,6 @@ describe('usePaginatedQuery', () => {
     )
 
     fireEvent.click(rendered.getByText('next'))
-    await waitForElement(() => rendered.getByText('Data 2'))
+    await waitFor(() => rendered.getByText('Data 2'))
   })
 })
