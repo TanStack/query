@@ -36,14 +36,21 @@ export function usePaginatedQuery(...args) {
   }
 
   if (typeof resolvedData !== 'undefined') {
-    status = 'success'
+    const overrides = {
+      status: 'success',
+      isError: false,
+      isLoading: false,
+      isSuccess: true,
+    }
+
+    Object.assign(queryInfo.query.state, overrides)
+    Object.assign(queryInfo, overrides)
   }
 
   const paginatedQueryInfo = {
     ...queryInfo,
     resolvedData,
     latestData,
-    status,
   }
 
   handleSuspense(paginatedQueryInfo)

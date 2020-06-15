@@ -151,13 +151,22 @@ export function makeQueryCache(defaultConfig) {
 
     try {
       return await Promise.all(
-        foundQueries.map(query => query.fetch({ force }))
+        foundQueries.map(query => query.refetch({ force }))
       )
     } catch (err) {
       if (throwOnError) {
         throw err
       }
     }
+  }
+
+  queryCache.invalidateQueries = async (predicate, { exact } = {}) => {
+    const foundQueries =
+      predicate === true
+        ? Object.values(queryCache.queries)
+        : findQueries(predicate, { exact })
+
+    foundQueries.forEach(query => query.invalidate())
   }
 
   queryCache.buildQuery = (userQueryKey, queryFn, config) => {
@@ -213,7 +222,7 @@ export function makeQueryCache(defaultConfig) {
         query.currentRefetchInterval = config.refetchInterval
         query.refetchIntervalId = setInterval(() => {
           if (isDocumentVisible() || config.refetchIntervalInBackground) {
-            query.fetch()
+            query.refetch()
           }
         }, config.refetchInterval)
       }
@@ -240,9 +249,9 @@ export function makeQueryCache(defaultConfig) {
 
     // Don't prefetch queries that are fresh, unless force is passed
     if (query.state.isStale || force) {
-      // Trigger a fetch and return the promise
+      // Trigger a refetch and return the promise
       try {
-        const res = await query.fetch({ force })
+        const res = await query.refetch({ force })
         query.wasPrefetched = true
         return res
       } catch (err) {
@@ -315,10 +324,12 @@ export function makeQueryCache(defaultConfig) {
 
       query.staleTimeout = setTimeout(() => {
         if (queryCache.getQuery(query.queryKey)) {
-          dispatch({ type: actionMarkStale })
+          query.invalidate()
         }
       }, query.config.staleTime)
     }
+
+    query.invalidate = () => dispatch({ type: actionMarkStale })
 
     query.scheduleGarbageCollection = () => {
       if (query.config.cacheTime === Infinity) {
@@ -383,16 +394,16 @@ export function makeQueryCache(defaultConfig) {
       }
 
       instance.run = async () => {
-        // Perform the fetch for this query if necessary
+        // Perform the refetch for this query if necessary
         if (
-          query.config.enabled && // Don't auto fetch if disabled
-          !query.wasPrefetched && // Don't double fetch for prefetched queries
-          !query.wasSuspended && // Don't double fetch for suspense
+          query.config.enabled && // Don't auto refetch if disabled
+          !query.wasPrefetched && // Don't double refetch for prefetched queries
+          !query.wasSuspended && // Don't double refetch for suspense
           query.state.isStale && // Only refetch if stale
           (query.config.refetchOnMount || query.instances.length === 1)
         ) {
           try {
-            await query.fetch()
+            await query.refetch()
           } catch (error) {
             Console.error(error)
           }
@@ -416,7 +427,7 @@ export function makeQueryCache(defaultConfig) {
       return instance
     }
 
-    // Set up the fetch function
+    // Set up the core fetcher function
     const tryFetchData = async (queryFn, ...args) => {
       try {
         // Perform the query
@@ -447,7 +458,7 @@ export function makeQueryCache(defaultConfig) {
         ) {
           // Only retry if the document is visible
           if (!isDocumentVisible()) {
-            // set this flag to continue fetch retries on focus
+            // set this flag to continue retries on focus
             query.shouldContinueRetryOnFocus = true
             return new Promise(noop)
           }
@@ -482,7 +493,7 @@ export function makeQueryCache(defaultConfig) {
       }
     }
 
-    query.fetch = async ({ force, __queryFn = query.queryFn } = {}) => {
+    query.refetch = async ({ force, __queryFn = query.queryFn } = {}) => {
       if (!query.state.isStale && !force) {
         return
       }
@@ -503,7 +514,7 @@ export function makeQueryCache(defaultConfig) {
             // Set up the query refreshing state
             dispatch({ type: actionFetch })
 
-            // Try to fetch
+            // Try to get the data
             let data = await tryFetchData(__queryFn, ...query.queryKey)
 
             query.setData(old =>

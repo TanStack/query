@@ -23,7 +23,7 @@ const onWindowFocus = () => {
           }
 
           if (query.shouldContinueRetryOnFocus) {
-            // delete promise, so `fetch` will create new one
+            // delete promise, so refetching will create new one
             delete query.promise
             return true
           }

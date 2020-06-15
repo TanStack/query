@@ -51,7 +51,7 @@ export function useBaseQuery(queryKey, queryFn, config = {}) {
 
   return {
     query,
-    refetch: query.fetch,
+    refetch: query.refetch,
     ...query.state,
   }
 }
