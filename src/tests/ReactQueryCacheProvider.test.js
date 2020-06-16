@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react'
-import { render, cleanup, waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
 import {
   ReactQueryCacheProvider,
   makeQueryCache,
   queryCache,
   useQuery,
   useQueryCache,
+  queryCaches,
 } from '../index'
 import { sleep } from './utils'
 
 describe('ReactQueryCacheProvider', () => {
   afterEach(() => {
-    cleanup()
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   test('when not used, falls back to global cache', async () => {
@@ -35,6 +35,7 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(queryCache.getQuery('test')).toBeDefined()
   })
+
   test('sets a specific cache for all queries to use', async () => {
     const cache = makeQueryCache()
 
@@ -61,7 +62,9 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(queryCache.getQuery('test')).not.toBeDefined()
     expect(cache.getQuery('test')).toBeDefined()
+    cache.clear()
   })
+
   test('implicitly creates a new cache for all queries to use', async () => {
     function Page() {
       const { data } = useQuery('test', async () => {
@@ -86,6 +89,7 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(queryCache.getQuery('test')).not.toBeDefined()
   })
+
   test('allows multiple caches to be partitioned', async () => {
     const cache1 = makeQueryCache()
     const cache2 = makeQueryCache()
@@ -133,7 +137,11 @@ describe('ReactQueryCacheProvider', () => {
     expect(cache1.getQuery('test2')).not.toBeDefined()
     expect(cache2.getQuery('test1')).not.toBeDefined()
     expect(cache2.getQuery('test2')).toBeDefined()
+
+    cache1.clear()
+    cache2.clear()
   })
+
   test('when cache changes, previous cache is cleaned', () => {
     let caches = []
     const customCache = makeQueryCache()
@@ -173,5 +181,6 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(caches).toHaveLength(2)
     expect(caches[0].clear).toHaveBeenCalled()
+    customCache.clear()
   })
 })

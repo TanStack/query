@@ -1,17 +1,16 @@
-import {
-  cleanup,
-  render,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { sleep } from './utils'
 
-import { usePaginatedQuery, ReactQueryCacheProvider } from '../index'
+import {
+  usePaginatedQuery,
+  ReactQueryCacheProvider,
+  queryCache,
+} from '../index'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
-    cleanup()
+    queryCache.clear()
   })
 
   it('should use previous page data while fetching the next page', async () => {
@@ -33,11 +32,7 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     rendered.getByText('Data undefined')
     await waitFor(() => rendered.getByText('Data 1'))
@@ -72,11 +67,7 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     rendered.getByText('Data 0')
 
@@ -116,11 +107,7 @@ describe('usePaginatedQuery', () => {
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     rendered.getByText('Data 0')
 
@@ -129,8 +116,8 @@ describe('usePaginatedQuery', () => {
     fireEvent.click(rendered.getByText('next'))
 
     await waitFor(() => rendered.getByTestId('status'))
-    expect(rendered.getByTestId('status').textContent).toBe('success')
-    expect(rendered.getByTestId('status').textContent).not.toBe('loading')
+
+    rendered.getByText('success')
   })
 
   it('should clear resolvedData data when query is falsy', async () => {
@@ -221,11 +208,7 @@ describe('usePaginatedQuery', () => {
     }
 
     // render will throw if Page is suspended
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     fireEvent.click(rendered.getByText('next'))
     await waitFor(() => rendered.getByText('Data 2'))

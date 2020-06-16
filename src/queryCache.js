@@ -63,7 +63,7 @@ const actionError = 'Error'
 const actionSetState = 'SetState'
 
 export function makeQueryCache(defaultConfig) {
-  const listeners = []
+  const globalListeners = []
 
   const configRef = defaultConfig
     ? { current: defaultConfig }
@@ -79,20 +79,20 @@ export function makeQueryCache(defaultConfig) {
       (acc, query) => (query.state.isFetching ? acc + 1 : acc),
       0
     )
-    listeners.forEach(d => d(queryCache))
+
+    globalListeners.forEach(d => d(queryCache))
   }
 
   queryCache.subscribe = cb => {
-    listeners.push(cb)
+    globalListeners.push(cb)
     return () => {
-      listeners.splice(listeners.indexOf(cb), 1)
+      globalListeners.splice(globalListeners.indexOf(cb), 1)
     }
   }
 
   queryCache.clear = () => {
     Object.values(queryCache.queries).forEach(query => query.clear())
     queryCache.queries = {}
-    notifyGlobalListeners()
   }
 
   queryCache.getQueries = (predicate, { exact } = {}) => {
@@ -120,7 +120,7 @@ export function makeQueryCache(defaultConfig) {
     queryCache.getQuery(queryKey)?.state.data
 
   queryCache.removeQueries = (...args) => {
-    queryCache.getQueries(...args).forEach(query => query.remove())
+    queryCache.getQueries(...args).forEach(query => query.clear())
   }
 
   queryCache.cancelQueries = (...args) => {
@@ -219,17 +219,15 @@ export function makeQueryCache(defaultConfig) {
   queryCache.prefetchQuery = async (...args) => {
     let [queryKey, queryFn, config, { throwOnError } = {}] = getQueryArgs(args)
 
-    const query = queryCache.buildQuery(queryKey, queryFn, config)
-
     try {
+      const query = queryCache.buildQuery(queryKey, queryFn, config)
       await query.fetch()
+      return query.state.data
     } catch (err) {
       if (throwOnError) {
         throw err
       }
     }
-
-    return query.state.data
   }
 
   queryCache.setQueryData = (queryKey, updater, { exact, ...config } = {}) => {
@@ -260,7 +258,7 @@ export function makeQueryCache(defaultConfig) {
       ? statusLoading
       : statusIdle
 
-    const query = {
+    let query = {
       queryKey,
       queryHash,
       queryFn,
@@ -275,7 +273,7 @@ export function makeQueryCache(defaultConfig) {
       }),
     }
 
-    const dispatch = action => {
+    query.dispatch = action => {
       query.state = queryReducer(query.state, action)
       query.instances.forEach(d => d.onStateUpdate(query.state))
       notifyGlobalListeners()
@@ -297,14 +295,14 @@ export function makeQueryCache(defaultConfig) {
 
     query.invalidate = () => {
       clearTimeout(query.staleTimeout)
-      dispatch({ type: actionMarkStale })
+      query.dispatch({ type: actionMarkStale })
     }
 
     query.scheduleGarbageCollection = () => {
       if (query.config.cacheTime === Infinity) {
         return
       }
-      dispatch({ type: actionMarkGC })
+      query.dispatch({ type: actionMarkGC })
       query.cacheTimeout = setTimeout(
         () => {
           queryCache.removeQueries(
@@ -338,8 +336,6 @@ export function makeQueryCache(defaultConfig) {
       }
 
       delete query.promise
-
-      notifyGlobalListeners()
     }
 
     query.cancelInterval = () => {
@@ -348,11 +344,12 @@ export function makeQueryCache(defaultConfig) {
       delete query.currentRefetchInterval
     }
 
-    query.setState = updater => dispatch({ type: actionSetState, updater })
+    query.setState = updater =>
+      query.dispatch({ type: actionSetState, updater })
 
     query.setData = updater => {
       // Set data and mark it as cached
-      dispatch({ type: actionSuccess, updater })
+      query.dispatch({ type: actionSuccess, updater })
 
       // Schedule a fresh invalidation!
       query.scheduleStaleTimeout()
@@ -362,12 +359,7 @@ export function makeQueryCache(defaultConfig) {
       clearTimeout(query.staleTimeout)
       clearTimeout(query.cacheTimeout)
       query.cancel()
-    }
-
-    query.remove = () => {
-      query.cancel()
-      clearTimeout(query.staleTimeout)
-      clearTimeout(query.cacheTimeout)
+      query.dispatch = noop
       delete queryCache.queries[query.queryHash]
     }
 
@@ -386,23 +378,23 @@ export function makeQueryCache(defaultConfig) {
       }
 
       instance.run = async () => {
-        // Perform the refetch for this query if necessary
-        if (
-          query.config.enabled && // Don't auto refetch if disabled
-          // !query.wasPrefetched && // Don't double refetch for prefetched queries
-          !query.wasSuspended && // Don't double refetch for suspense
-          query.state.isStale && // Only refetch if stale
-          (query.config.refetchOnMount || query.instances.length === 1)
-        ) {
-          try {
+        try {
+          // Perform the refetch for this query if necessary
+          if (
+            query.config.enabled && // Don't auto refetch if disabled
+            // !query.wasPrefetched && // Don't double refetch for prefetched queries
+            !query.wasSuspended && // Don't double refetch for suspense
+            query.state.isStale && // Only refetch if stale
+            (query.config.refetchOnMount || query.instances.length === 1)
+          ) {
             await query.fetch()
-          } catch (error) {
-            Console.error(error)
           }
-        }
 
-        query.wasPrefetched = false
-        query.wasSuspended = false
+          query.wasPrefetched = false
+          query.wasSuspended = false
+        } catch (error) {
+          Console.error(error)
+        }
       }
 
       instance.unsubscribe = () => {
@@ -439,7 +431,7 @@ export function makeQueryCache(defaultConfig) {
         if (query.cancelled) throw query.cancelled
 
         // If we fail, increase the failureCount
-        dispatch({ type: actionFailed })
+        query.dispatch({ type: actionFailed })
 
         // Do we need to retry the request?
         if (
@@ -500,7 +492,7 @@ export function makeQueryCache(defaultConfig) {
 
           try {
             // Set up the query refreshing state
-            dispatch({ type: actionFetch })
+            query.dispatch({ type: actionFetch })
 
             // Try to get the data
             let data = await tryFetchData(__queryFn, ...query.queryKey)
@@ -525,7 +517,7 @@ export function makeQueryCache(defaultConfig) {
 
             return data
           } catch (error) {
-            dispatch({
+            query.dispatch({
               type: actionError,
               cancelled: error === query.cancelled,
               error,

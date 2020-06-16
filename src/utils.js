@@ -111,10 +111,12 @@ export function getQueryArgs(args) {
 
 export function useMountedCallback(callback) {
   const mounted = React.useRef(false)
+
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     mounted.current = true
     return () => (mounted.current = false)
   }, [])
+
   return React.useCallback(
     (...args) => (mounted.current ? callback(...args) : void 0),
     [callback]
@@ -124,11 +126,19 @@ export function useMountedCallback(callback) {
 export function handleSuspense(queryInfo) {
   if (queryInfo.query.config.suspense) {
     if (queryInfo.query.state.status === statusError) {
-      setTimeout(() => {
-        queryInfo.query.state.status = 'loading'
-      })
-      throw queryInfo.error
+      if (!queryInfo.query.suspenseErrorHandled) {
+        queryInfo.query.suspenseErrorHandled = true
+
+        setTimeout(() => {
+          queryInfo.query.state.status = statusLoading
+        }, 0)
+
+        throw queryInfo.error
+      }
     }
+
+    queryInfo.query.suspenseErrorHandled = false
+
     if (queryInfo.status === statusLoading) {
       queryInfo.query.wasSuspended = true
       throw queryInfo.query.fetch()

@@ -1,15 +1,11 @@
-import {
-  render,
-  waitFor,
-  fireEvent,
-  cleanup,
-} from '@testing-library/react'
+import { render, waitFor, fireEvent, cleanup } from '@testing-library/react'
 import * as React from 'react'
 
 import {
   useInfiniteQuery,
   ReactQueryCacheProvider,
   useQueryCache,
+  queryCache,
 } from '../index'
 import { sleep } from './utils'
 
@@ -34,7 +30,7 @@ const fetchItems = async (page, ts) => {
 
 describe('useInfiniteQuery', () => {
   afterEach(() => {
-    cleanup()
+    queryCache.clear()
   })
 
   it('should allow you to fetch more pages', async () => {
@@ -103,11 +99,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     rendered.getByText('Loading...')
 
@@ -203,11 +195,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     rendered.getByText('Item: 9')
     rendered.getByText('Page 0: 0')
@@ -317,39 +305,35 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
     rendered.getByText('Loading...')
 
-    await rendered.findByText('Item: 2')
-    await rendered.findByText('Page 0: 0')
+    await waitFor(() => rendered.findByText('Item: 2'))
+    await waitFor(() => rendered.findByText('Page 0: 0'))
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await rendered.findByText('Loading more...')
-    await rendered.findByText('Item: 5')
-    await rendered.findByText('Page 0: 0')
-    await rendered.findByText('Page 1: 1')
+    await waitFor(() => rendered.findByText('Loading more...'))
+    await waitFor(() => rendered.findByText('Item: 5'))
+    await waitFor(() => rendered.findByText('Page 0: 0'))
+    await waitFor(() => rendered.findByText('Page 1: 1'))
 
     fireEvent.click(rendered.getByText('Load More'))
 
-    await rendered.findByText('Loading more...')
-    await rendered.findByText('Item: 8')
-    await rendered.findByText('Page 0: 0')
-    await rendered.findByText('Page 1: 1')
-    await rendered.findByText('Page 2: 2')
+    await waitFor(() => rendered.findByText('Loading more...'))
+    await waitFor(() => rendered.findByText('Item: 8'))
+    await waitFor(() => rendered.findByText('Page 0: 0'))
+    await waitFor(() => rendered.findByText('Page 1: 1'))
+    await waitFor(() => rendered.findByText('Page 2: 2'))
 
     fireEvent.click(rendered.getByText('Refetch'))
 
-    await rendered.findByText('Background Updating...')
-    await rendered.findByText('Item: 8')
-    await rendered.findByText('Page 0: 3')
-    await rendered.findByText('Page 1: 4')
-    await rendered.findByText('Page 2: 5')
+    await waitFor(() => rendered.findByText('Background Updating...'))
+    await waitFor(() => rendered.findByText('Item: 8'))
+    await waitFor(() => rendered.findByText('Page 0: 3'))
+    await waitFor(() => rendered.findByText('Page 1: 4'))
+    await waitFor(() => rendered.findByText('Page 2: 5'))
 
     // ensure that Item: 4 is rendered before removing it
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(1)
@@ -357,12 +341,12 @@ describe('useInfiniteQuery', () => {
     // remove Item: 4
     fireEvent.click(rendered.getByText('Remove item'))
 
-    await rendered.findByText('Background Updating...')
+    await waitFor(() => rendered.findByText('Background Updating...'))
     // ensure that an additional item is rendered (it means that cursors were properly rebuilt)
-    await rendered.findByText('Item: 9')
-    await rendered.findByText('Page 0: 6')
-    await rendered.findByText('Page 1: 7')
-    await rendered.findByText('Page 2: 8')
+    await waitFor(() => rendered.findByText('Item: 9'))
+    await waitFor(() => rendered.findByText('Page 0: 6'))
+    await waitFor(() => rendered.findByText('Page 1: 7'))
+    await waitFor(() => rendered.findByText('Page 2: 8'))
 
     // ensure that Item: 4 is no longer rendered
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(0)

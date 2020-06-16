@@ -1,18 +1,13 @@
-import {
-  render,
-  waitFor,
-  fireEvent,
-  cleanup,
-} from '@testing-library/react'
+import { render, waitFor, fireEvent, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { useQuery, ReactQueryCacheProvider, queryCache } from '../index'
+import { useQuery, queryCache } from '../index'
 import { sleep } from './utils'
 
 describe("useQuery's in Suspense mode", () => {
   afterEach(() => {
-    cleanup()
+    queryCache.clear()
   })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
@@ -26,11 +21,9 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     const rendered = render(
-      <ReactQueryCacheProvider>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
-      </ReactQueryCacheProvider>
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
     )
 
     await waitFor(() => rendered.getByText('rendered'))
@@ -87,11 +80,9 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     const rendered = render(
-      <ReactQueryCacheProvider>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
-      </ReactQueryCacheProvider>
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
     )
 
     await waitFor(() => rendered.getByText('rendered'))
@@ -112,7 +103,7 @@ describe("useQuery's in Suspense mode", () => {
           await sleep(10)
 
           if (!succeed) {
-            throw new Error()
+            throw new Error('Suspense Error Bingo')
           } else {
             return 'data'
           }
@@ -148,12 +139,16 @@ describe("useQuery's in Suspense mode", () => {
       </ErrorBoundary>
     )
 
-    await waitForElement(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('Loading...'))
 
-    console.error.mockRestore()
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    await act(() => sleep(10))
 
     fireEvent.click(rendered.getByText('retry'))
 
-    await waitForElement(() => rendered.getByText('rendered'))
+    console.error.mockRestore()
+
+    await waitFor(() => rendered.getByText('rendered'))
   })
 })
