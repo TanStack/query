@@ -22,7 +22,6 @@ const DEFAULTS = {
     onError: noop,
     onSuccess: noop,
     onSettled: noop,
-    throwOnError: undefined,
   },
   mutations: {
     throwOnError: false,
