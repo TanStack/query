@@ -124,7 +124,10 @@ export function useMountedCallback(callback) {
 }
 
 export function handleSuspense(queryInfo) {
-  if (queryInfo.query.config.suspense) {
+  if (
+    queryInfo.query.config.suspense ||
+    queryInfo.query.config.useErrorBoundary
+  ) {
     if (queryInfo.query.state.status === statusError) {
       if (!queryInfo.query.suspenseErrorHandled) {
         queryInfo.query.suspenseErrorHandled = true
@@ -139,7 +142,7 @@ export function handleSuspense(queryInfo) {
 
     queryInfo.query.suspenseErrorHandled = false
 
-    if (queryInfo.status === statusLoading) {
+    if (queryInfo.query.config.suspense && queryInfo.status === statusLoading) {
       queryInfo.query.wasSuspended = true
       throw queryInfo.query.fetch()
     }

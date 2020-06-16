@@ -22,6 +22,7 @@ const DEFAULTS = {
     onError: noop,
     onSuccess: noop,
     onSettled: noop,
+    useErrorBoundary: false,
   },
   mutations: {
     throwOnError: false,
