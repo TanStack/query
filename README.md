@@ -600,10 +600,12 @@ function Todos() {
       >
         Next Page
       </button>
-      {// Since the last page's data potentially sticks around between page requests,
-      // we can use `isFetching` to show a background loading
-      // indicator since our `status === 'loading'` state won't be triggered
-      isFetching ? <span> Loading...</span> : null}{' '}
+      {
+        // Since the last page's data potentially sticks around between page requests,
+        // we can use `isFetching` to show a background loading
+        // indicator since our `status === 'loading'` state won't be triggered
+        isFetching ? <span> Loading...</span> : null
+      }{' '}
     </div>
   )
 }
@@ -2663,4 +2665,4 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-<!-- Force -->
+<!-- Force 1 -->
