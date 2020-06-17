@@ -30,6 +30,15 @@
     "postinstall": "node ./scripts/postinstall.js || exit 0",
     "dtslint": "dtslint types"
   },
+  "release": {
+    "branches": [
+      "master",
+      {
+        "name": "next",
+        "prerelease": true
+      }
+    ]
+  },
   "files": [
     "dist",
     "types",
@@ -84,6 +93,5 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-visualizer": "^4.0.4"
-  },
-  "release": {}
+  }
 }
