@@ -157,5 +157,15 @@ export function useMutation(mutationFn, config = {}) {
     }
   }, [getConfig, state.error])
 
-  return [mutate, { ...state, reset }]
+  return [
+    mutate,
+    {
+      ...state,
+      reset,
+      isIdle: state.status === statusIdle,
+      isLoading: state.status === statusLoading,
+      isSuccess: state.status === statusSuccess,
+      isError: state.status === statusError,
+    },
+  ]
 }

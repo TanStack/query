@@ -568,10 +568,10 @@ export function queryReducer(state, action) {
   const newState = switchActions(state, action)
 
   Object.assign(newState, {
-    isLoading: newState.status === 'loading',
-    isSuccess: newState.status === 'success',
-    isError: newState.status === 'error',
-    isIdle: newState.status === 'idle',
+    isLoading: newState.status === statusLoading,
+    isSuccess: newState.status === statusSuccess,
+    isError: newState.status === statusError,
+    isIdle: newState.status === statusIdle,
   })
 
   return newState
