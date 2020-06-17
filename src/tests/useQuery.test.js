@@ -1,12 +1,12 @@
 import { render, act, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, queryCache } from '../index'
+import { useQuery, queryCache, queryCaches } from '../index'
 import { sleep } from './utils'
 
 describe('useQuery', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105

@@ -1,23 +1,17 @@
 import React, { useState } from 'react'
-import {
-  // act,
-  // fireEvent,
-  render,
-  waitFor,
-  // cleanup,
-} from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import {
   ReactQueryConfigProvider,
   useQuery,
   queryCache,
-  ReactQueryCacheProvider,
+  queryCaches,
 } from '../index'
 
 import { sleep } from './utils'
 
 describe('config', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/105
@@ -55,69 +49,69 @@ describe('config', () => {
   })
 
   // TODO: Write a test that doesn't have overlapping act() calls
-  // it('should reset to defaults when all providers are unmounted', async () => {
-  //   const onSuccess = jest.fn()
+  it('should reset to defaults when all providers are unmounted', async () => {
+    const onSuccess = jest.fn()
 
-  //   const config = {
-  //     queries: {
-  //       refetchOnWindowFocus: false,
-  //       refetchOnMount: false,
-  //       retry: false,
-  //     },
-  //   }
+    const config = {
+      queries: {
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        retry: false,
+      },
+    }
 
-  //   const queryFn = async () => {
-  //     await sleep(10)
-  //     return 'data'
-  //   }
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
 
-  //   function Container() {
-  //     const [mounted, setMounted] = React.useState(true)
+    function Container() {
+      const [mounted, setMounted] = React.useState(true)
 
-  //     return (
-  //       <>
-  //         <button onClick={() => setMounted(false)}>unmount</button>
-  //         {mounted ? (
-  //           <ReactQueryConfigProvider config={config}>
-  //             <Page />
-  //           </ReactQueryConfigProvider>
-  //         ) : (
-  //           <Page />
-  //         )}
-  //       </>
-  //     )
-  //   }
+      return (
+        <>
+          <button onClick={() => setMounted(false)}>unmount</button>
+          {mounted ? (
+            <ReactQueryConfigProvider config={config}>
+              <Page />
+            </ReactQueryConfigProvider>
+          ) : (
+            <Page />
+          )}
+        </>
+      )
+    }
 
-  //   function Page() {
-  //     const { data } = useQuery('test', queryFn)
+    function Page() {
+      const { data } = useQuery('test', queryFn)
 
-  //     return (
-  //       <div>
-  //         <h1>Data: {data || 'none'}</h1>
-  //       </div>
-  //     )
-  //   }
+      return (
+        <div>
+          <h1>Data: {data || 'none'}</h1>
+        </div>
+      )
+    }
 
-  //   const rendered = render(<Container />)
+    const rendered = render(<Container />)
 
-  //   await waitFor(() => rendered.findByText('Data: none'))
+    await waitFor(() => rendered.findByText('Data: none'))
 
-  //   await act(() => queryCache.prefetchQuery('test', queryFn))
+    await act(() => queryCache.prefetchQuery('test', queryFn))
 
-  //   await waitFor(() => rendered.findByText('Data: data'))
+    await waitFor(() => rendered.findByText('Data: data'))
 
-  //   // tear down and unmount
-  //   // so we are NOT passing the config above (refetchOnMount should be `true` by default)
-  //   fireEvent.click(rendered.getByText('unmount'))
+    // tear down and unmount
+    // so we are NOT passing the config above (refetchOnMount should be `true` by default)
+    fireEvent.click(rendered.getByText('unmount'))
 
-  //   act(() => {
-  //     // wipe query cache/stored config
-  //     queryCache.clear()
-  //     onSuccess.mockClear()
-  //   })
+    act(() => {
+      // wipe query cache/stored config
+      queryCache.clear()
+      onSuccess.mockClear()
+    })
 
-  //   await waitFor(() => rendered.findByText('Data: data'))
-  // })
+    await waitFor(() => rendered.findByText('Data: data'))
+  })
 
   it('should reset to previous config when nested provider is unmounted', async () => {
     let counterRef = 0

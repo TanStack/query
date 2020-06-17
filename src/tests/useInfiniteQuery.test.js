@@ -1,12 +1,7 @@
-import { render, waitFor, fireEvent, cleanup } from '@testing-library/react'
+import { render, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import {
-  useInfiniteQuery,
-  ReactQueryCacheProvider,
-  useQueryCache,
-  queryCache,
-} from '../index'
+import { useInfiniteQuery, useQueryCache, queryCaches } from '../index'
 import { sleep } from './utils'
 
 const pageSize = 10
@@ -30,7 +25,7 @@ const fetchItems = async (page, ts) => {
 
 describe('useInfiniteQuery', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   it('should allow you to fetch more pages', async () => {

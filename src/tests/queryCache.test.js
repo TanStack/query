@@ -1,9 +1,9 @@
 import { sleep } from './utils'
-import { queryCache } from '../'
+import { queryCache, queryCaches } from '../'
 
 describe('queryCache', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   test('setQueryData does not crash if query could not be found', () => {

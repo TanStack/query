@@ -8,6 +8,7 @@ import {
   usePaginatedQuery,
   ReactQueryCacheProvider,
   queryCache,
+  queryCaches,
   makeQueryCache,
   useQuery,
 } from '../index'
@@ -16,7 +17,7 @@ import { sleep } from './utils'
 describe('Server Side Rendering', () => {
   describe('global cache', () => {
     afterEach(() => {
-      queryCache.clear()
+      queryCaches.forEach(cache => cache.clear())
     })
 
     it('should not trigger fetch', () => {
@@ -74,9 +75,9 @@ describe('Server Side Rendering', () => {
     })
   })
 
-  describe('manually created cache', () => {
+  describe('unfrozen cache', () => {
     it('should not trigger fetch', () => {
-      const queryCache = makeQueryCache()
+      const queryCache = makeQueryCache({ frozen: false })
       const queryFn = jest.fn()
 
       function Page() {
@@ -102,7 +103,7 @@ describe('Server Side Rendering', () => {
     })
 
     it('should add prefetched data to cache', async () => {
-      const queryCache = makeQueryCache()
+      const queryCache = makeQueryCache({ frozen: false })
       const fetchFn = () => Promise.resolve('data')
       const data = await queryCache.prefetchQuery('key', fetchFn)
 
@@ -111,7 +112,7 @@ describe('Server Side Rendering', () => {
     })
 
     it('should return existing data from the cache', async () => {
-      const queryCache = makeQueryCache()
+      const queryCache = makeQueryCache({ frozen: false })
       const queryFn = jest.fn(() => sleep(10))
 
       function Page() {
@@ -139,7 +140,7 @@ describe('Server Side Rendering', () => {
     })
 
     it('should add initialData to the cache', () => {
-      const queryCache = makeQueryCache()
+      const queryCache = makeQueryCache({ frozen: false })
       function Page() {
         const [page, setPage] = React.useState(1)
         const { resolvedData } = usePaginatedQuery(
@@ -170,7 +171,7 @@ describe('Server Side Rendering', () => {
     it('should not call setTimeout', async () => {
       jest.spyOn(global, 'setTimeout')
 
-      const queryCache = makeQueryCache()
+      const queryCache = makeQueryCache({ frozen: false })
       const queryFn = jest.fn(() => Promise.resolve())
 
       function Page() {

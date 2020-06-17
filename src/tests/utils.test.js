@@ -1,12 +1,12 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { setConsole, useMutation, queryCache } from '../index'
+import { setConsole, useMutation, queryCaches } from '../index'
 import { deepEqual } from '../utils'
 
 describe('setConsole', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   it('should override Console object', async () => {

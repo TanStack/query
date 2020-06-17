@@ -1,11 +1,11 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useMutation, queryCache } from '../index'
+import { useMutation, queryCaches } from '../index'
 
 describe('useMutation', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   it('should be able to reset `data`', async () => {

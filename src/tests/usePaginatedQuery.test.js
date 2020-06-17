@@ -2,15 +2,11 @@ import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { sleep } from './utils'
 
-import {
-  usePaginatedQuery,
-  ReactQueryCacheProvider,
-  queryCache,
-} from '../index'
+import { usePaginatedQuery, queryCaches } from '../index'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   it('should use previous page data while fetching the next page', async () => {

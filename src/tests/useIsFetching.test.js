@@ -1,19 +1,13 @@
-import { render, fireEvent, waitFor, act } from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, useIsFetching, queryCache } from '../index'
+import { useQuery, useIsFetching, queryCaches } from '../index'
 import { sleep } from './utils'
 
 describe('useIsFetching', () => {
   afterEach(() => {
-    queryCache.clear()
+    queryCaches.forEach(cache => cache.clear())
   })
-
-  // it('should update as queries start and stop fetching', async () => {
-  //   await act(() => sleep(100))
-  // })
-
-  // return
 
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
@@ -35,7 +29,7 @@ describe('useIsFetching', () => {
 
       return (
         <div>
-          {/* <div>isFetching: {isFetching}</div> */}
+          <div>isFetching: {isFetching}</div>
           <button onClick={() => setReady(true)}>setReady</button>
         </div>
       )
@@ -43,9 +37,9 @@ describe('useIsFetching', () => {
 
     const rendered = render(<Page />)
 
-    // await waitFor(() => rendered.getByText('isFetching: 0'))
-    // fireEvent.click(rendered.getByText('setReady'))
-    // await waitFor(() => rendered.getByText('isFetching: 1'))
-    // await waitFor(() => rendered.getByText('isFetching: 0'))
+    await waitFor(() => rendered.getByText('isFetching: 0'))
+    fireEvent.click(rendered.getByText('setReady'))
+    await waitFor(() => rendered.getByText('isFetching: 1'))
+    await waitFor(() => rendered.getByText('isFetching: 0'))
   })
 })
