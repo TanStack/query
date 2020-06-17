@@ -10,6 +10,7 @@ import {
   getQueryArgs,
   deepIncludes,
   noop,
+  Console,
 } from './utils'
 import { defaultConfigRef } from './config'
 
@@ -324,6 +325,52 @@ export function makeQueryCache() {
       query.cancelled = null
     }
 
+    // These values are used to handle auto refetching.
+    
+    // The result of calling setInterval.
+    let currentRefetchIntervalId = null;
+    // The current interval in milliseconds .
+    let currentRefetchInterval = null;
+    // A map like { instanceId: true, anotherInstanceId: true }.
+    // If an instance ID is present among the keys,
+    // it means that instance expects auto refetching to work
+    // in the background.
+    let instancesRequestingBackgroundRefetch = {}
+    // Each instance writes here its desired interval, like
+    // { instanceId: 300, anotherInstanceId: 500 }
+    let refetchIntervalsRequestedByInstances = {}
+
+    // This function should be called every time some preferences
+    // regarding auto refetching change.
+    // It controls the timing and behavior of auto refetching.
+    const adjustRefreshInterval = () => {
+
+      // The shortest requested interval wins.
+      const requestedInterval = (
+        Object.values(refetchIntervalsRequestedByInstances).length > 0
+          ? Math.min(...Object.values(refetchIntervalsRequestedByInstances))
+          : null
+      );
+
+      // If the interval has changed since the last time we checked.
+      if (requestedInterval !== currentRefetchInterval) {
+        // Stop the old auto refetching.
+        clearInterval(currentRefetchIntervalId);
+
+        // If the new interval is truthy, enable the new auto refetching.
+        if (requestedInterval) {
+          currentRefetchIntervalId = setInterval(() => {
+            // At least one instance expects auto refetching to work in the background.
+            const shouldRefetchInBackground = Object.keys(instancesRequestingBackgroundRefetch).length > 0;
+            if (isDocumentVisible() || shouldRefetchInBackground) {
+              query.refetch().catch(Console.error)
+            }
+          }, requestedInterval);
+          currentRefetchInterval = requestedInterval;
+        }
+      }
+    }
+
     query.cancel = () => {
       query.cancelled = cancelledError
 
@@ -355,9 +402,13 @@ export function makeQueryCache() {
 
       // Return the unsubscribe function
       return () => {
+        delete instancesRequestingBackgroundRefetch[instanceId];
+        delete refetchIntervalsRequestedByInstances[instanceId];
+        adjustRefreshInterval();
         query.instances = query.instances.filter(d => d.id !== instanceId)
 
         if (!query.instances.length) {
+          clearTimeout(currentRefetchIntervalId);
           query.cancel()
 
           // Schedule garbage collection
@@ -505,6 +556,36 @@ export function makeQueryCache() {
       }
 
       return query.promise
+    }
+
+    query.refetch = async ({ throwOnError, ...rest } = {}) => {
+      try {
+        return await query.fetch(rest)
+      } catch (err) {
+        if (throwOnError) {
+          throw err
+        }
+      }
+    }
+
+    query.setRefetchInBackground = (instanceId, shouldRefetchInBackground) => {
+      if (shouldRefetchInBackground) {
+        instancesRequestingBackgroundRefetch[instanceId] = true;
+      } else {
+        delete instancesRequestingBackgroundRefetch[instanceId];
+      }
+
+      adjustRefreshInterval();
+    }
+    
+    query.setRefetchInterval = (instanceId, refetchInterval) => {
+      if (refetchInterval) {
+        refetchIntervalsRequestedByInstances[instanceId] = refetchInterval;
+      } else {
+        delete refetchIntervalsRequestedByInstances[instanceId];
+      }
+      
+      adjustRefreshInterval();
     }
 
     query.setState = updater => dispatch({ type: actionSetState, updater })

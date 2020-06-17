@@ -6,7 +6,6 @@ import { useQueryCache } from './queryCache'
 import { useConfigContext } from './config'
 import {
   useUid,
-  isDocumentVisible,
   Console,
   useGetLatest,
   useMountedCallback,
@@ -49,18 +48,6 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
   const rerender = useMountedCallback(unsafeRerender)
 
   const getLatestConfig = useGetLatest(config)
-  const refetch = React.useCallback(
-    async ({ throwOnError, ...rest } = {}) => {
-      try {
-        return await query.fetch(rest)
-      } catch (err) {
-        if (throwOnError) {
-          throw err
-        }
-      }
-    },
-    [query]
-  )
 
   query.suspenseInstance = {
     onSuccess: data => getLatestConfig().onSuccess(data),
@@ -91,42 +78,27 @@ export function useBaseQuery(queryKey, queryVariables, queryFn, config = {}) {
       query.state.isStale && // Only refetch if stale
       (getLatestConfig().refetchOnMount || query.instances.length === 1)
     ) {
-      refetch().catch(Console.error)
+      query.refetch().catch(Console.error)
     }
 
     query.wasPrefetched = false
     query.wasSuspended = false
-  }, [getLatestConfig, query, refetch])
+  }, [getLatestConfig, query])
 
-  // Handle refetch interval
+  // Save the refetch interval requested by this instance in the shared query object.
   React.useEffect(() => {
-    const query = queryRef.current
-    if (
-      config.refetchInterval &&
-      (!query.currentRefetchInterval ||
-        // shorter interval should override previous one
-        config.refetchInterval < query.currentRefetchInterval)
-    ) {
-      query.currentRefetchInterval = config.refetchInterval
-      clearInterval(query.refetchIntervalId)
-      query.refetchIntervalId = setInterval(() => {
-        if (isDocumentVisible() || config.refetchIntervalInBackground) {
-          refetch().catch(Console.error)
-        }
-      }, config.refetchInterval)
+    query.setRefetchInterval(instanceId, config.refetchInterval);
+  }, [instanceId, query, config.refetchInterval]);
 
-      return () => {
-        clearInterval(query.refetchIntervalId)
-        delete query.refetchIntervalId
-        delete query.currentRefetchInterval
-      }
-    }
-  }, [config.refetchInterval, config.refetchIntervalInBackground, refetch])
+  // Save the background fetching preferences of this instance in the shared query object.
+  React.useEffect(() => {
+    query.setRefetchInBackground(instanceId, config.refetchIntervalInBackground);
+  }, [instanceId, query, config.refetchIntervalInBackground]);
 
   return {
     ...query.state,
     config,
     query,
-    refetch,
+    refetch: query.refetch,
   }
 }
