@@ -316,7 +316,7 @@ export function useInfiniteQuery<
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
 
-export type DefinedQueryKeyPart = 
+export type DefinedQueryKeyPart =
   | string
   | object
   | boolean
@@ -706,10 +706,17 @@ export interface QueryCache {
 
 export const queryCache: QueryCache
 
+export interface MakeQueryCacheOptions {
+  frozen?: boolean
+  defaultConfig?: BaseQueryOptions
+}
+
 /**
  * a factory that creates a new query cache
  */
-export function makeQueryCache(): QueryCache
+export function makeQueryCache(
+  makeQueryCacheOptions: MakeQueryCacheOptions
+): QueryCache
 
 /**
  * A hook that uses the query cache context
