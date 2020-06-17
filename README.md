@@ -916,7 +916,8 @@ function Todo({ todoId }) {
 
 When using SSR (server-side-rendering) with React Query there are a few things to note:
 
-- Query caches are not written to memory during SSR. This is outside of the scope of React Query and easily leads to out-of-sync data when used with frameworks like Next.js or other SSR strategies.
+- If you import and use the global `queryCache` directly, queries are not cached during SSR to avoid leaking sensitive information between requests.
+- If you create a `queryCache` manually with `makeQueryCache`, queries will be cached during SSR. Make sure you create a separate cache per request to avoid leaking data.
 - Queries rendered on the server will by default use the `initialData` of an unfetched query. This means that by default, `data` will be set to `undefined`. To get around this in SSR, you can either pre-seed a query's cache data using the `config.initialData` option:
 
 ```js

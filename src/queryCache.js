@@ -62,7 +62,8 @@ const actionSuccess = 'Success'
 const actionError = 'Error'
 const actionSetState = 'SetState'
 
-export function makeQueryCache(defaultConfig) {
+export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
+  // A frozen cache does not add new queries to the cache
   const globalListeners = []
 
   const configRef = defaultConfig
@@ -182,14 +183,19 @@ export function makeQueryCache(defaultConfig) {
         query.scheduleGarbageCollection()
       }
 
-      if (!isServer) {
+      if (!frozen) {
         queryCache.queries[queryHash] = query
-        // Here, we setTimeout so as to not trigger
-        // any setState's in parent components in the
-        // middle of the render phase.
-        setTimeout(() => {
+
+        if (isServer) {
           notifyGlobalListeners()
-        })
+        } else {
+          // Here, we setTimeout so as to not trigger
+          // any setState's in parent components in the
+          // middle of the render phase.
+          setTimeout(() => {
+            notifyGlobalListeners()
+          })
+        }
       }
     }
 
@@ -280,6 +286,7 @@ export function makeQueryCache(defaultConfig) {
     }
 
     query.scheduleStaleTimeout = () => {
+      if (isServer) return
       clearTimeout(query.staleTimeout)
 
       if (query.config.staleTime === Infinity) {
@@ -403,8 +410,10 @@ export function makeQueryCache(defaultConfig) {
         if (!query.instances.length) {
           query.cancel()
 
-          // Schedule garbage collection
-          query.scheduleGarbageCollection()
+          if (!isServer) {
+            // Schedule garbage collection
+            query.scheduleGarbageCollection()
+          }
         }
       }
 
