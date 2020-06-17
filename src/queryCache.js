@@ -91,9 +91,12 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     }
   }
 
-  queryCache.clear = () => {
+  queryCache.clear = ({ notify = true } = {}) => {
     Object.values(queryCache.queries).forEach(query => query.clear())
     queryCache.queries = {}
+    if (notify) {
+      notifyGlobalListeners()
+    }
   }
 
   queryCache.getQueries = (predicate, { exact } = {}) => {
@@ -199,7 +202,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       }
     }
 
-    query.suspenseInstance = {
+    query.fallbackInstance = {
       config: {
         onSuccess: query.config.onSuccess,
         onError: query.config.onError,
@@ -496,7 +499,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
           const callbackInstances = [...query.instances]
 
           if (query.wasSuspended) {
-            callbackInstances.unshift(query.suspenseInstance)
+            callbackInstances.unshift(query.fallbackInstance)
           }
 
           try {

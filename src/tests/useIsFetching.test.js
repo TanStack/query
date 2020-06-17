@@ -6,7 +6,8 @@ import { sleep } from './utils'
 
 describe('useIsFetching', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    // We notify false because it causes act issue if we notify useIsFetching after it's unmounted
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
