@@ -13,6 +13,7 @@ import {
   useQueryCache,
   makeQueryCache,
   ReactQueryCacheProvider,
+  ReactQueryConfigProvider,
 } from '../index'
 import { sleep } from './utils'
 
@@ -1065,5 +1066,80 @@ describe('useQuery', () => {
     expect(container.firstChild.textContent).toEqual('count: 5')
     await sleep(110);
     expect(container.firstChild.textContent).toEqual('count: 5')
+  })
+
+  it('respects the shortest active refetch interval', async () => {
+      let currentNumber = 0;
+      const fetchNumber = () => {
+        return currentNumber++;
+      }
+  
+      function NumberConsumer1() {
+        const { data: number } = useQuery(
+          ['number'],
+          fetchNumber,
+          { refetchInterval: 300 }
+        );
+        return `consumer 1: ${number}`
+      }
+  
+      function NumberConsumer2() {
+        const { data: number } = useQuery(
+          ['number'],
+          fetchNumber,
+          { refetchInterval: 1000 }
+        );
+        return `consumer 2: ${number}`
+      }
+
+      function Page() {
+        const [consumer1Visible, setConsumer1Visible] = React.useState(true);
+        return (<div>
+          {consumer1Visible && <NumberConsumer1 />}
+          <NumberConsumer2 />
+          <button onClick={() => setConsumer1Visible(false)}>hide consumer 1</button>
+        </div>);
+      }
+
+      const queryConfig = {
+        suspense: true
+      };
+
+      const { container, getByText } = render(
+        <ReactQueryConfigProvider config={queryConfig}>
+          <React.Suspense fallback={"loading"}>
+            <Page />
+          </React.Suspense>
+        </ReactQueryConfigProvider>
+      );
+
+      await waitFor(() => {
+        expect(container.textContent).toMatch(/consumer 1: 0/)
+        expect(container.textContent).toMatch(/consumer 2: 0/)
+      });
+
+      await sleep(301);
+
+      expect(container.textContent).toMatch(/consumer 1: 1/)
+      expect(container.textContent).toMatch(/consumer 2: 1/)
+
+      await sleep(301);
+
+      expect(container.textContent).toMatch(/consumer 1: 2/)
+      expect(container.textContent).toMatch(/consumer 2: 2/)
+
+      fireEvent.click(getByText(/hide consumer 1/))
+
+      await waitFor(() => {
+        expect(container.textContent).not.toMatch(/consumer 1:/)
+      });
+
+      await sleep(301);
+      
+      expect(container.textContent).toMatch(/consumer 2: 2/)
+
+      await sleep(1500);
+
+      expect(container.textContent).toMatch(/consumer 2: 3/)
   })
 })
