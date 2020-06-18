@@ -226,11 +226,18 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
   }
 
   queryCache.prefetchQuery = async (...args) => {
-    let [queryKey, queryFn, config, { throwOnError } = {}] = getQueryArgs(args)
+    let [
+      queryKey,
+      queryFn,
+      config,
+      { force, throwOnError } = {},
+    ] = getQueryArgs(args)
 
     try {
       const query = queryCache.buildQuery(queryKey, queryFn, config)
-      await query.fetch()
+      if (force || query.state.isStale) {
+        await query.fetch()
+      }
       return query.state.data
     } catch (err) {
       if (throwOnError) {
@@ -239,16 +246,14 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     }
   }
 
-  queryCache.setQueryData = (queryKey, updater, { exact, ...config } = {}) => {
-    let queries = queryCache.getQueries(queryKey, { exact })
+  queryCache.setQueryData = (queryKey, updater, config = {}) => {
+    let query = queryCache.getQuery(queryKey)
 
-    if (!queries.length && typeof queryKey !== 'function') {
-      queries = [
-        queryCache.buildQuery(queryKey, () => new Promise(noop), config),
-      ]
+    if (!query) {
+      query = queryCache.buildQuery(queryKey, () => new Promise(noop), config)
     }
 
-    queries.forEach(d => d.setData(updater))
+    query.setData(updater)
   }
 
   function makeQuery({ queryCache, queryKey, queryHash, queryFn, config }) {
