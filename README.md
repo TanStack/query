@@ -36,9 +36,9 @@ Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley
 - Request Cancellation
 - [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
 - [Dedicated Devtools (React Query Devtools)](https://github.com/tannerlinsley/react-query-devtools)
-- 4kb - 6kb (depending on features imported) <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
+- <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
-  </a>
+  </a> (depending on features imported)
 
 <details>
 <summary>Core Issues and Solution</summary>
