@@ -210,18 +210,6 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       },
     }
 
-    if (!isServer) {
-      query.cancelInterval()
-      if (config.refetchInterval) {
-        query.currentRefetchInterval = config.refetchInterval
-        query.refetchIntervalId = setInterval(() => {
-          if (isDocumentVisible() || config.refetchIntervalInBackground) {
-            query.fetch()
-          }
-        }, config.refetchInterval)
-      }
-    }
-
     return query
   }
 
@@ -344,8 +332,6 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     query.cancel = () => {
       query.cancelled = cancelledError
 
-      query.cancelInterval()
-
       if (query.cancelPromises) {
         query.cancelPromises()
       }
@@ -353,10 +339,10 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       delete query.promise
     }
 
-    query.cancelInterval = () => {
-      clearInterval(query.refetchIntervalId)
-      delete query.refetchIntervalId
-      delete query.currentRefetchInterval
+    query.clearIntervals = () => {
+      query.instances.forEach(instance => {
+        instance.clearInterval()
+      })
     }
 
     query.setState = updater =>
@@ -373,6 +359,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     query.clear = () => {
       clearTimeout(query.staleTimeout)
       clearTimeout(query.cacheTimeout)
+      query.clearIntervals()
       query.cancel()
       query.dispatch = noop
       delete queryCache.queries[query.queryHash]
@@ -388,8 +375,40 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
 
       query.heal()
 
+      instance.clearInterval = () => {
+        clearInterval(instance.refetchIntervalId)
+        delete instance.refetchIntervalId
+      }
+
       instance.updateConfig = config => {
+        const oldConfig = instance.config
+
+        // Update the config
         instance.config = config
+
+        if (!isServer) {
+          if (oldConfig?.refetchInterval === config.refetchInterval) {
+            return
+          }
+
+          query.clearIntervals()
+
+          const minInterval = Math.min(
+            ...query.instances.map(d => d.config.refetchInterval || Infinity)
+          )
+
+          if (
+            !instance.refetchIntervalId &&
+            minInterval > 0 &&
+            minInterval < Infinity
+          ) {
+            instance.refetchIntervalId = setInterval(() => {
+              if (isDocumentVisible() || config.refetchIntervalInBackground) {
+                query.fetch()
+              }
+            }, minInterval)
+          }
+        }
       }
 
       instance.run = async () => {
@@ -416,6 +435,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
         query.instances = query.instances.filter(d => d.id !== instance.id)
 
         if (!query.instances.length) {
+          query.clearIntervals()
           query.cancel()
 
           if (!isServer) {

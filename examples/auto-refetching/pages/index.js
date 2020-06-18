@@ -5,7 +5,7 @@ import axios from 'axios'
 
 import { useQuery, useMutation, queryCache } from 'react-query'
 
-export default () => {
+function App() {
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
@@ -91,3 +91,10 @@ export default () => {
     </div>
   )
 }
+
+export default () => (
+  <>
+    <App />
+    <App />
+  </>
+)
