@@ -31,9 +31,9 @@ describe('queryCache', () => {
     expect(second).toBe(first)
   })
 
-  test('prefetchQuery should force fetch', async () => {
-    queryCache.setQueryData('key', 'stale')
-    const fetchFn = () => Promise.resolve('fresh')
+  test('prefetchQuery should not force fetch', async () => {
+    queryCache.setQueryData('key', 'og')
+    const fetchFn = () => Promise.resolve('new')
     const first = await queryCache.prefetchQuery(
       'key',
       fetchFn,
@@ -44,7 +44,7 @@ describe('queryCache', () => {
         throwOnError: true,
       }
     )
-    expect(first).toBe('fresh')
+    expect(first).toBe('og')
   })
 
   test('prefetchQuery should throw error when throwOnError is true', async () => {
