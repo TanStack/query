@@ -100,6 +100,7 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [Walmart](https://walmart.com)
 - [Microsoft](https://microsoft.com)
 - [Target](https://target.com)
+- [CarFAX](https://carfax.com)
 - [HP](https://hp.com)
 - [Major League Baseball Association](https://www.mlb.com)
 - [Volvo](https://www.volvocars.com)
