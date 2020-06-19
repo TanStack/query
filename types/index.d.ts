@@ -348,12 +348,25 @@ export type InfiniteQueryFunction<
   ...keysAndMore: _.List.Append<TKey, TMoreVariable> | TKey
 ) => Promise<TResult>
 
+export interface BaseSharedOptions {
+  suspense: boolean,
+  queryKeySerializerFn?: (
+    queryKey:
+      | QueryKeyPart[]
+      | string
+      | false
+      | undefined
+      | (() => QueryKeyPart[] | string | false | undefined)
+  ) => [string, QueryKeyPart[]] | []
+}
+
 export interface BaseQueryOptions<TError = Error> {
   /**
    * Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    */
-  manual?: boolean
+  manual?: boolean,
+  enabled?: boolean,
   /**
    * If `false`, failed queries will not retry by default.
    * If `true`, failed queries will retry infinitely., failureCount: num
@@ -368,13 +381,16 @@ export interface BaseQueryOptions<TError = Error> {
   refetchIntervalInBackground?: boolean
   refetchOnWindowFocus?: boolean
   refetchOnMount?: boolean
+  onSuccess?: (data: any) => void
   onError?: (err: TError) => void
-  suspense?: boolean
-  isDataEqual?: (oldData: unknown, newData: unknown) => boolean
+  onSettled?: (data: any | undefined, error: TError | null) => void
+  isDataEqual?: (oldData: unknown, newData: unknown) => boolean,
+  useErrorBoundary: boolean,
 }
 
 export interface QueryOptions<TResult, TError = Error>
   extends BaseQueryOptions<TError> {
+  suspense?: boolean,
   onSuccess?: (data: TResult) => void
   onSettled?: (data: TResult | undefined, error: TError | null) => void
   initialData?: TResult | (() => TResult | undefined)
@@ -382,7 +398,7 @@ export interface QueryOptions<TResult, TError = Error>
 
 export interface PrefetchQueryOptions<TResult, TError = Error>
   extends QueryOptions<TResult, TError> {
-  force?: boolean
+  force?: boolean,
   throwOnError?: boolean
 }
 
@@ -394,17 +410,17 @@ export interface InfiniteQueryOptions<TResult, TMoreVariable, TError = Error>
   ) => TMoreVariable | false
 }
 
+export type QueryStatus = 'idle' | 'loading' | 'error' | 'success';
+
 export interface QueryResultBase<TResult, TError = Error> {
-  status: 'loading' | 'error' | 'success'
+  status: QueryStatus,
   error: null | TError
   isFetching: boolean
   isStale: boolean
   failureCount: number
   refetch: ({
-    force,
     throwOnError,
   }?: {
-    force?: boolean
     throwOnError?: boolean
   }) => Promise<TResult>
 }
@@ -498,7 +514,6 @@ export interface MutateOptions<TResult, TVariables, TError = Error> {
     variables: TVariables,
     snapshotValue?: unknown
   ) => Promise<void> | void
-  throwOnError?: boolean
 }
 
 export interface MutationOptions<TResult, TVariables, TError = Error>
@@ -680,8 +695,8 @@ export interface QueryCache {
     {
       exact,
       throwOnError,
-      force,
-    }?: { exact?: boolean; throwOnError?: boolean; force?: boolean }
+      refetchActive,
+    }?: { exact?: boolean; throwOnError?: boolean; refetchActive?: boolean }
   ): Promise<TResult>
   removeQueries(
     queryKeyOrPredicateFn:
@@ -715,7 +730,7 @@ export interface MakeQueryCacheOptions {
  * a factory that creates a new query cache
  */
 export function makeQueryCache(
-  makeQueryCacheOptions: MakeQueryCacheOptions
+  makeQueryCacheOptions?: MakeQueryCacheOptions
 ): QueryCache
 
 /**
@@ -739,30 +754,25 @@ export function ReactQueryConfigProvider<TError = Error>(props: {
   children?: React.ReactNode
 }): React.ReactElement
 
-export interface ReactQueryProviderConfig<TError = Error>
-  extends BaseQueryOptions<TError> {
-  /** Defaults to the value of `suspense` if not defined otherwise */
-  useErrorBoundary?: boolean
-  throwOnError?: boolean
-  refetchOnWindowFocus?: boolean
-  queryKeySerializerFn?: (
-    queryKey:
-      | QueryKeyPart[]
-      | string
-      | false
-      | undefined
-      | (() => QueryKeyPart[] | string | false | undefined)
-  ) => [string, QueryKeyPart[]] | []
-
-  onMutate?: (variables: unknown) => Promise<unknown> | unknown
-  onSuccess?: (data: unknown, variables?: unknown) => void
-  onError?: (err: TError, snapshotValue?: unknown) => void
-  onSettled?: (
-    data: unknown | undefined,
-    error: TError | null,
-    snapshotValue?: unknown
-  ) => void
-  isDataEqual?: (oldData: unknown, newData: unknown) => boolean
+export interface ReactQueryProviderConfig<TError = Error> {
+  queries?: BaseQueryOptions & {
+    /** Defaults to the value of `suspense` if not defined otherwise */
+    useErrorBoundary?: boolean
+    refetchOnWindowFocus?: boolean
+  }
+  shared?: BaseSharedOptions,
+  mutations?: {
+    throwOnError?: boolean,
+    useErrorBoundary?: boolean,
+    onMutate?: (variables: unknown) => Promise<unknown> | unknown
+    onSuccess?: (data: unknown, variables?: unknown) => void
+    onError?: (err: TError, snapshotValue?: unknown) => void
+    onSettled?: (
+      data: unknown | undefined,
+      error: TError | null,
+      snapshotValue?: unknown
+    ) => void,
+  },
 }
 
 export type ConsoleFunction = (...args: any[]) => void
