@@ -339,7 +339,7 @@ export function useInfiniteQuery<
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
 
-export type DefinedQueryKeyPart = 
+export type DefinedQueryKeyPart =
   | string
   | object
   | boolean
@@ -509,13 +509,14 @@ export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   ) => Promise<TResult[]> | undefined
 }
 
-export function useMutation<TResults, TVariables = undefined, TError  = Error>(
-  mutationFn: MutationFunction<TResults, TVariables>,
+export function useMutation<TResults, TVariables = undefined, TError = Error>(
+  mutationFn: MutationFunction<TResults, TVariables, TError>,
   mutationOptions?: MutationOptions<TResults, TVariables, TError>
 ): [MutateFunction<TResults, TVariables, TError>, MutationResult<TResults, TError>]
 
-export type MutationFunction<TResults, TVariables> = (
-  variables: TVariables
+export type MutationFunction<TResults, TVariables, TError = Error> = (
+  variables: TVariables,
+  mutateOptions?: MutateOptions<TResults, TVariables, TError>,
 ) => Promise<TResults>
 
 export interface MutateOptions<TResult, TVariables, TError = Error> {
