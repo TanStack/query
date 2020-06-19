@@ -385,7 +385,7 @@ export interface BaseQueryOptions<TError = Error> {
   onError?: (err: TError) => void
   onSettled?: (data: any | undefined, error: TError | null) => void
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean,
-  useErrorBoundary: boolean,
+  useErrorBoundary?: boolean,
 }
 
 export interface QueryOptions<TResult, TError = Error>
