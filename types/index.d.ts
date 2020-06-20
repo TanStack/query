@@ -415,6 +415,9 @@ export type QueryStatus = 'idle' | 'loading' | 'error' | 'success';
 export interface QueryResultBase<TResult, TError = Error> {
   status: QueryStatus,
   error: null | TError
+  isLoading: boolean
+  isSuccess: boolean
+  isError: boolean
   isFetching: boolean
   isStale: boolean
   failureCount: number
@@ -428,6 +431,9 @@ export interface QueryResultBase<TResult, TError = Error> {
 export interface QueryLoadingResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'loading'
+  isLoading: true
+  isSuccess: false
+  isError: false
   data: TResult | undefined // even when error, data can have stale data
   error: TError | null // it still can be error
 }
@@ -435,12 +441,18 @@ export interface QueryLoadingResult<TResult, TError = Error>
 export interface QueryErrorResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'error'
+  isError: true
+  isLoading: false
+  isSuccess: false
   data: TResult | undefined // even when error, data can have stale data
   error: TError
 }
 
 export interface QuerySuccessResult<TResult> extends QueryResultBase<TResult> {
   status: 'success'
+  isSuccess: true
+  isLoading: false
+  isError: false
   data: TResult
   error: null
 }
@@ -453,6 +465,9 @@ export type QueryResult<TResult, TError = Error> =
 export interface PaginatedQueryLoadingResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'loading'
+  isLoading: true
+  isError: false
+  isSuccess: false
   resolvedData: undefined | TResult // even when error, data can have stale data
   latestData: undefined | TResult // even when error, data can have stale data
   error: null | TError // it still can be error
@@ -461,6 +476,9 @@ export interface PaginatedQueryLoadingResult<TResult, TError = Error>
 export interface PaginatedQueryErrorResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'error'
+  isError: true
+  isLoading: false
+  isSuccess: false
   resolvedData: undefined | TResult // even when error, data can have stale data
   latestData: undefined | TResult // even when error, data can have stale data
   error: TError
@@ -469,6 +487,9 @@ export interface PaginatedQueryErrorResult<TResult, TError = Error>
 export interface PaginatedQuerySuccessResult<TResult>
   extends QueryResultBase<TResult> {
   status: 'success'
+  isSuccess: true
+  isError: false
+  isLoading: false
   resolvedData: TResult
   latestData: TResult
   error: null
