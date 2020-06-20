@@ -7,6 +7,19 @@
 import * as React from 'react'
 import * as _ from 'ts-toolbelt'
 
+  /**
+   * This allows global typing of React query functions
+   * @example
+   *
+   * declare module 'react-query' {
+   *   export interface QueryTypes {
+   *    todos: TodoItem[]
+   *   }
+   * }
+   **/
+  export interface QueryTypes {
+  }
+
 // overloaded useQuery function
 export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>({
   queryKey,
@@ -19,8 +32,8 @@ export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>({
 }): QueryResult<TResult, TError>
 
 export function useQuery<
-  TResult,
-  TSingleKey extends string,
+  TResult extends QueryTypes[TSingleKey],
+  TSingleKey extends keyof QueryTypes,
   TVariables extends AnyVariables = [],
   TError = Error
 >({
@@ -51,7 +64,7 @@ export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
   config?: QueryOptions<TResult, TError>
 ): QueryResult<TResult, TError>
 
-export function useQuery<TResult, TSingleKey extends string, TError = Error>(
+export function useQuery<TResult extends QueryTypes[TSingleKey], TSingleKey extends keyof QueryTypes, TError = Error>(
   queryKey:
     | TSingleKey
     | false
@@ -80,8 +93,8 @@ export function useQuery<
 ): QueryResult<TResult, TError>
 
 export function useQuery<
-  TResult,
-  TKey extends string,
+  TResult extends QueryTypes[TKey],
+  TKey extends keyof QueryTypes,
   TVariables extends AnyVariables,
   TError = Error
 >(

@@ -20,6 +20,28 @@ function simpleQuery() {
   querySimple.isFetchingMore // $ExpectError
 }
 
+interface TodoItem {
+  text: string
+}
+
+
+declare module 'react-query' {
+  export interface QueryTypes {
+    'typed-todo': TodoItem
+  }
+}
+function globallyTyped() {
+  // Query - simple case
+  const querySimple = useQuery('typed-todo', () => Promise.resolve('test'))
+  querySimple.data // $ExpectType string | undefined
+  querySimple.error // $ExpectType Error | null
+  querySimple.isFetching // $ExpectType boolean
+  querySimple.refetch() // $ExpectType Promise<string>
+  querySimple.fetchMore // $ExpectError
+  querySimple.canFetchMore // $ExpectError
+  querySimple.isFetchingMore // $ExpectError
+}
+
 function queryWithVariables() {
   // Query Variables
   const param = 'test'
