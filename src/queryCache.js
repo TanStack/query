@@ -403,7 +403,12 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
             minInterval < Infinity
           ) {
             instance.refetchIntervalId = setInterval(() => {
-              if (isDocumentVisible() || config.refetchIntervalInBackground) {
+              if (
+                isDocumentVisible() ||
+                query.instances.some(
+                  instance => instance.config.refetchIntervalInBackground
+                )
+              ) {
                 query.fetch()
               }
             }, minInterval)
