@@ -1,17 +1,13 @@
-import {
-  render,
-  waitFor,
-  fireEvent,
-  cleanup,
-} from '@testing-library/react'
+import { render, waitFor, fireEvent, act } from '@testing-library/react'
+import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { useQuery, ReactQueryCacheProvider, queryCache } from '../index'
+import { useQuery, queryCache, queryCaches } from '../index'
 import { sleep } from './utils'
 
 describe("useQuery's in Suspense mode", () => {
   afterEach(() => {
-    cleanup()
+    queryCaches.forEach(cache => cache.clear())
   })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
@@ -25,11 +21,9 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     const rendered = render(
-      <ReactQueryCacheProvider>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
-      </ReactQueryCacheProvider>
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
     )
 
     await waitFor(() => rendered.getByText('rendered'))
@@ -86,15 +80,75 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     const rendered = render(
-      <ReactQueryCacheProvider>
-        <React.Suspense fallback="loading">
-          <Page />
-        </React.Suspense>
-      </ReactQueryCacheProvider>
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
     )
 
     await waitFor(() => rendered.getByText('rendered'))
 
     expect(successFn).toHaveBeenCalledTimes(1)
+  })
+
+  // https://github.com/tannerlinsley/react-query/issues/468
+  it('should reset error state if new component instances are mounted', async () => {
+    let succeed = false
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      useQuery(
+        'test',
+        async () => {
+          await sleep(10)
+
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retryDelay: 10,
+          suspense: true,
+        }
+      )
+
+      return <div>rendered</div>
+    }
+
+    const rendered = render(
+      <ErrorBoundary
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            <div>error boundary</div>
+            <button
+              onClick={() => {
+                succeed = true
+                resetErrorBoundary()
+              }}
+            >
+              retry
+            </button>
+          </div>
+        )}
+      >
+        <React.Suspense fallback={'Loading...'}>
+          <Page />
+        </React.Suspense>
+      </ErrorBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    await act(() => sleep(10))
+
+    fireEvent.click(rendered.getByText('retry'))
+
+    console.error.mockRestore()
+
+    await waitFor(() => rendered.getByText('rendered'))
   })
 })

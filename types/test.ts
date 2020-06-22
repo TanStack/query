@@ -23,14 +23,12 @@ function simpleQuery() {
 function queryWithVariables() {
   // Query Variables
   const param = 'test'
-  const queryVariables = useQuery(
-    ['todos', { param }, 10],
-    (key, variables, id) => Promise.resolve(variables.param === 'test')
+  const query = useQuery(['todos', { param }, 10], (key, variables, id) =>
+    Promise.resolve(variables.param === 'test')
   )
 
-  queryVariables.data // $ExpectType boolean | undefined
-  queryVariables.refetch() // $ExpectType Promise<boolean>
-  queryVariables.refetch({ force: true }) // $ExpectType Promise<boolean>
+  query.data // $ExpectType boolean | undefined
+  query.refetch() // $ExpectType Promise<boolean>
 }
 
 function queryKeyArrayOrder() {
@@ -48,16 +46,15 @@ function conditionalQuery(condition: boolean) {
   const queryFn2 = () => Promise.resolve('test')
 
   // Query with falsey query key
-  useQuery(condition && ['foo', { bar: 'baz' }], queryFn1)
-  useQuery(condition && ['foo', { bar: 'baz' }], queryFn2)
+  useQuery(['foo', { bar: 'baz' }], queryFn1, { enabled: condition })
+  useQuery(['foo', { bar: 'baz' }], queryFn2, { enabled: condition })
   useQuery({
-    queryKey: condition && ['foo', { bar: 'baz' }],
+    queryKey: ['foo', { bar: 'baz' }],
     queryFn: queryFn1,
+    config: {
+      enabled: condition,
+    },
   })
-
-  // Query with query key function
-  useQuery(() => ['foo', { bar: 'baz' }], queryFn1)
-  useQuery(() => ['foo', { bar: 'baz' }], queryFn2)
 }
 
 function queryWithObjectSyntax(condition: boolean) {
@@ -68,7 +65,6 @@ function queryWithObjectSyntax(condition: boolean) {
 
   useQuery({
     queryKey: ['key', 10],
-    variables: [true, 20],
     queryFn: async (
       key, // $ExpectType string
       id, // $ExpectType number
@@ -79,7 +75,6 @@ function queryWithObjectSyntax(condition: boolean) {
 
   useQuery({
     queryKey: 'key',
-    variables: [true, 20],
     queryFn: async (
       key, // $ExpectType "key"
       var1, // $ExpectType boolean
@@ -88,10 +83,13 @@ function queryWithObjectSyntax(condition: boolean) {
   }).data // $ExpectType string | undefined
 
   useQuery({
-    queryKey: condition && 'key',
+    queryKey: 'key',
     queryFn: async (
       key // $ExpectType "key"
     ) => 10,
+    config: {
+      enabled: condition,
+    },
   }).data // $ExpectType number | undefined
 }
 
@@ -112,7 +110,7 @@ function queryWithNestedKey() {
 }
 
 function queryWithComplexKeysAndVariables() {
-  useQuery(['key', { a: 1 }], [{ b: { x: 1 } }, { c: { x: 1 } }], (
+  useQuery(['key', { a: 1 }, { b: { x: 1 } }, { c: { x: 1 } }], (
     key1, // $ExpectType string
     key2, // ExpectType { a: number }
     var1, // $ExpectType { b: { x: number; }; }
@@ -180,6 +178,25 @@ function paginatedQuery() {
   }
 
   if (queryPaginated.status === 'success') {
+    queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; }
+    queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; }
+    queryPaginated.error // $ExpectType null
+  }
+
+  // Discriminated union over status flags
+  if (queryPaginated.isLoading) {
+    queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.error // $ExpectType Error | null
+  }
+
+  if (queryPaginated.isError) {
+    queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.error // $ExpectType Error
+  }
+
+  if (queryPaginated.isSuccess) {
     queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; }
     queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; }
     queryPaginated.error // $ExpectType null
@@ -410,6 +427,24 @@ function dataDiscriminatedUnion() {
   }
 
   if (queryResult.status === 'success') {
+    // disabled
+    queryResult.data // $ExpectType string[]
+    queryResult.error // $ExpectType null
+  }
+
+  // Discriminated union over status flags
+  if (queryResult.isLoading) {
+    queryResult.data // $ExpectType string[] | undefined
+    queryResult.error // $ExpectType Error | null
+  }
+
+  if (queryResult.isError) {
+    // disabled
+    queryResult.data // $ExpectType string[] | undefined
+    queryResult.error // $ExpectType Error
+  }
+
+  if (queryResult.isSuccess) {
     // disabled
     queryResult.data // $ExpectType string[]
     queryResult.error // $ExpectType null

@@ -18,6 +18,7 @@ const getCharacter = async (key, selectedChar) => {
 }
 
 export default function App() {
+  const rerender = React.useReducer(d => d + 1)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)
 
   const { data } = useQuery('characters', getCharacters)
@@ -28,13 +29,16 @@ export default function App() {
   )
 
   const prefetchNext = async id => {
-    queryCache.prefetchQuery(['character', id + 1], getCharacter, {
-      staleTime: 5 * 60 * 1000,
-    })
+    await Promise.all([
+      queryCache.prefetchQuery(['character', id + 1], getCharacter, {
+        staleTime: 5 * 60 * 1000,
+      }),
+      queryCache.prefetchQuery(['character', id - 1], getCharacter, {
+        staleTime: 5 * 60 * 1000,
+      }),
+    ])
 
-    queryCache.prefetchQuery(['character', id - 1], getCharacter, {
-      staleTime: 5 * 60 * 1000,
-    })
+    rerender()
   }
 
   return (
@@ -55,7 +59,15 @@ export default function App() {
               prefetchNext(char.id)
             }}
           >
-            <div>
+            <div
+              style={
+                queryCache.getQueryData(['character', char.id])
+                  ? {
+                      fontWeight: 'bold',
+                    }
+                  : {}
+              }
+            >
               {char.id} - {char.name}
             </div>
           </li>

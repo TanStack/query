@@ -6,22 +6,22 @@ import { useBaseQuery } from './useBaseQuery'
 import { getQueryArgs, handleSuspense } from './utils'
 
 export function usePaginatedQuery(...args) {
-  let [queryKey, queryVariables, queryFn, config = {}] = getQueryArgs(args)
+  let [queryKey, queryFn, config = {}] = getQueryArgs(args)
 
   const lastDataRef = React.useRef()
-
-  if (!queryKey) {
-    lastDataRef.current = undefined
-  }
 
   // If latestData is set, don't use initialData
   if (typeof lastDataRef.current !== 'undefined') {
     delete config.initialData
   }
 
-  const query = useBaseQuery(queryKey, queryVariables, queryFn, config)
+  const queryInfo = useBaseQuery(queryKey, queryFn, config)
 
-  let { data: latestData, status } = query
+  if (!queryInfo.query.config.enabled) {
+    lastDataRef.current = undefined
+  }
+
+  let { data: latestData, status } = queryInfo
 
   React.useEffect(() => {
     if (status === 'success' && typeof latestData !== 'undefined') {
@@ -36,17 +36,24 @@ export function usePaginatedQuery(...args) {
   }
 
   if (typeof resolvedData !== 'undefined') {
-    status = 'success'
+    const overrides = {
+      status: 'success',
+      isError: false,
+      isLoading: false,
+      isSuccess: true,
+    }
+
+    Object.assign(queryInfo.query.state, overrides)
+    Object.assign(queryInfo, overrides)
   }
 
-  const paginatedQuery = {
-    ...query,
+  const paginatedQueryInfo = {
+    ...queryInfo,
     resolvedData,
     latestData,
-    status,
   }
 
-  handleSuspense(paginatedQuery)
+  handleSuspense(paginatedQueryInfo)
 
-  return paginatedQuery
+  return paginatedQueryInfo
 }

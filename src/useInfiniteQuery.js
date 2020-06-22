@@ -7,7 +7,7 @@ import { getQueryArgs, useGetLatest, handleSuspense } from './utils'
 
 export function useInfiniteQuery(...args) {
   const queryInfoRef = React.useRef()
-  let [queryKey, queryVariables, queryFn, config = {}] = getQueryArgs(args)
+  let [queryKey, queryFn, config = {}] = getQueryArgs(args)
 
   const { getFetchMore } = config
   const getGetFetchMore = useGetLatest(getFetchMore)
@@ -58,7 +58,7 @@ export function useInfiniteQuery(...args) {
     return data
   }
 
-  const queryInfo = useBaseQuery(queryKey, queryVariables, queryFn, config)
+  const queryInfo = useBaseQuery(queryKey, queryFn, config)
 
   if (
     typeof queryInfo.query.canFetchMore === 'undefined' &&
@@ -73,40 +73,44 @@ export function useInfiniteQuery(...args) {
   queryInfoRef.current = queryInfo
 
   let {
-    refetch,
     data = [],
     query: { canFetchMore },
   } = queryInfo
 
   // Here we seed the pageVariabes for the query
   if (!queryInfo.query.pageVariables) {
-    queryInfo.query.pageVariables = [
-      [...queryInfo.query.queryKey, ...queryInfo.query.queryVariables],
-    ]
+    queryInfo.query.pageVariables = [[...queryInfo.query.queryKey]]
   }
 
   const fetchMore = React.useCallback(
-    (fetchMoreInfo = queryInfoRef.current.query.canFetchMore) =>
+    (
+      fetchMoreInfo = queryInfoRef.current.query.canFetchMore,
+      { previous = false } = {}
+    ) =>
       queryInfoRef.current.query.canFetchMore
-        ? refetch({
-            force: true,
+        ? queryInfoRef.current.query.fetch({
             __queryFn: async (...args) => {
               try {
                 queryInfoRef.current.query.setState(old => ({
                   ...old,
-                  isFetchingMore: true,
+                  isFetchingMore: previous ? 'previous' : 'next',
                 }))
 
-                const newArgs = [...args, fetchMoreInfo]
-                queryInfoRef.current.query.pageVariables.push(newArgs)
+                const newArgs = previous
+                  ? [fetchMoreInfo, ...args]
+                  : [...args, fetchMoreInfo]
+                queryInfoRef.current.query.pageVariables[
+                  previous ? 'unshift' : 'push'
+                ](newArgs)
 
-                const data = [
-                  ...queryInfoRef.current.data,
-                  await originalQueryFn(...newArgs),
-                ]
+                const newData = await originalQueryFn(...newArgs)
+
+                const data = previous
+                  ? [newData, ...queryInfoRef.current.data]
+                  : [...queryInfoRef.current.data, newData]
 
                 queryInfoRef.current.query.canFetchMore = getGetFetchMore()(
-                  data[data.length - 1],
+                  newData,
                   data
                 )
 
@@ -120,7 +124,7 @@ export function useInfiniteQuery(...args) {
             },
           })
         : void 0,
-    [getGetFetchMore, originalQueryFn, refetch]
+    [getGetFetchMore, originalQueryFn]
   )
 
   handleSuspense(queryInfo)

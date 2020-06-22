@@ -1,5 +1,6 @@
 export {
   queryCache,
+  queryCaches,
   makeQueryCache,
   ReactQueryCacheProvider,
   useQueryCache,

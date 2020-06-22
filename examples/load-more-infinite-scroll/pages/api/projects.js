@@ -2,7 +2,7 @@
 export default (req, res) => {
   const cursor = parseInt(req.query.cursor) || 0
 
-  const data = Array(3)
+  const data = Array(5)
     .fill(0)
     .map((_, i) => {
       return {
@@ -11,7 +11,7 @@ export default (req, res) => {
       }
     })
 
-  const nextId = cursor < 9 ? data[data.length - 1].id + 1 : null
+  const nextId = cursor < 10 ? data[data.length - 1].id + 1 : null
 
   setTimeout(() => res.json({ data, nextId }), 1000)
 }

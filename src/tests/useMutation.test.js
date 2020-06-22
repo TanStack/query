@@ -1,15 +1,12 @@
-import {
-  cleanup,
-  render,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useMutation } from '../index'
+import { useMutation, queryCaches } from '../index'
 
 describe('useMutation', () => {
-  afterEach(cleanup)
+  afterEach(() => {
+    queryCaches.forEach(cache => cache.clear())
+  })
 
   it('should be able to reset `data`', async () => {
     function Page() {

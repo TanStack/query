@@ -2,21 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { useQuery } from "react-query";
-
-const getPosts = async () => {
-  const { data } = await axios.get(
-    "https://jsonplaceholder.typicode.com/posts"
-  );
-  return data;
-};
-
-const getPostById = async (key, id) => {
-  const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com/posts/${id}`
-  );
-  return data;
-};
+import { useQuery, queryCache } from "react-query";
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
@@ -42,8 +28,22 @@ function App() {
   );
 }
 
+// This function is not inline to show how query keys are passed to the query function
+// Normally, you can inline them if you want.
+const getPostById = async (key, id) => {
+  const { data } = await axios.get(
+    `https://jsonplaceholder.typicode.com/posts/${id}`
+  );
+  return data;
+};
+
 function Posts({ setPostId }) {
-  const { status, data, error, isFetching } = useQuery("posts", getPosts);
+  const { status, data, error, isFetching } = useQuery("posts", async () => {
+    const { data } = await axios.get(
+      "https://jsonplaceholder.typicode.com/posts"
+    );
+    return data;
+  });
 
   return (
     <div>
@@ -58,7 +58,20 @@ function Posts({ setPostId }) {
             <div>
               {data.map(post => (
                 <p key={post.id}>
-                  <a onClick={() => setPostId(post.id)} href="#">
+                  <a
+                    onClick={() => setPostId(post.id)}
+                    href="#"
+                    style={
+                      // We can use the queryCache here to show bold links for
+                      // ones that are cached
+                      queryCache.getQueryData(["post", post.id])
+                        ? {
+                            fontWeight: "bold",
+                            color: "green"
+                          }
+                        : {}
+                    }
+                  >
                     {post.title}
                   </a>
                 </p>
@@ -74,8 +87,11 @@ function Posts({ setPostId }) {
 
 function Post({ postId, setPostId }) {
   const { status, data, error, isFetching } = useQuery(
-    postId && ["post", postId],
-    getPostById
+    ["post", postId],
+    getPostById,
+    {
+      enabled: postId
+    }
   );
 
   return (

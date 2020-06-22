@@ -1,17 +1,13 @@
-import {
-  cleanup,
-  render,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, ReactQueryCacheProvider, useIsFetching } from '../index'
+import { useQuery, useIsFetching, queryCaches } from '../index'
 import { sleep } from './utils'
 
 describe('useIsFetching', () => {
   afterEach(() => {
-    cleanup()
+    // We notify false because it causes act issue if we notify useIsFetching after it's unmounted
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -21,26 +17,28 @@ describe('useIsFetching', () => {
 
       const isFetching = useIsFetching()
 
-      useQuery(ready && 'test', async () => {
-        await sleep(1000)
-        return 'test'
-      })
+      useQuery(
+        'test',
+        async () => {
+          await sleep(1000)
+          return 'test'
+        },
+        {
+          enabled: ready,
+        }
+      )
 
       return (
         <div>
-          <div>isFetching: {isFetching.toString()}</div>
+          <div>isFetching: {isFetching}</div>
           <button onClick={() => setReady(true)}>setReady</button>
         </div>
       )
     }
 
-    const rendered = render(
-      <ReactQueryCacheProvider>
-        <Page />
-      </ReactQueryCacheProvider>
-    )
+    const rendered = render(<Page />)
 
-    rendered.getByText('isFetching: 0')
+    await waitFor(() => rendered.getByText('isFetching: 0'))
     fireEvent.click(rendered.getByText('setReady'))
     await waitFor(() => rendered.getByText('isFetching: 1'))
     await waitFor(() => rendered.getByText('isFetching: 0'))

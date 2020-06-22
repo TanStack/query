@@ -4,23 +4,34 @@ import { noop, stableStringify, identity, deepEqual } from './utils'
 export const configContext = React.createContext()
 
 const DEFAULTS = {
-  retry: 3,
-  retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-  staleTime: 0,
-  cacheTime: 5 * 60 * 1000,
-  refetchAllOnWindowFocus: true,
-  refetchInterval: false,
-  suspense: false,
-  queryKeySerializerFn: defaultQueryKeySerializerFn,
-  queryFnParamsFilter: identity,
-  throwOnError: false,
-  useErrorBoundary: undefined, // this will default to the suspense value
-  onMutate: noop,
-  onSuccess: noop,
-  onError: noop,
-  onSettled: noop,
-  refetchOnMount: true,
-  isDataEqual: deepEqual,
+  shared: {
+    suspense: false,
+    queryKeySerializerFn: defaultQueryKeySerializerFn,
+  },
+  queries: {
+    enabled: true,
+    retry: 3,
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    staleTime: 0,
+    cacheTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: true,
+    refetchInterval: false,
+    queryFnParamsFilter: identity,
+    refetchOnMount: true,
+    isDataEqual: deepEqual,
+    onError: noop,
+    onSuccess: noop,
+    onSettled: noop,
+    useErrorBoundary: false,
+  },
+  mutations: {
+    throwOnError: false,
+    onMutate: noop,
+    onError: noop,
+    onSuccess: noop,
+    onSettled: noop,
+    useErrorBoundary: false,
+  },
 }
 
 export const defaultConfigRef = {
@@ -32,32 +43,35 @@ export function useConfigContext() {
 }
 
 export function ReactQueryConfigProvider({ config, children }) {
-  let configContextValue = React.useContext(configContext)
+  let configContextValue = useConfigContext()
 
   const newConfig = React.useMemo(() => {
-    const newConfig = {
-      ...(configContextValue || defaultConfigRef.current),
-      ...config,
+    const { shared = {}, queries = {}, mutations = {} } = config
+    const {
+      shared: contextShared = {},
+      queries: contextQueries = {},
+      mutations: contextMutations = {},
+    } = configContextValue
+    return {
+      shared: {
+        ...contextShared,
+        ...shared,
+      },
+      queries: {
+        ...contextQueries,
+        ...queries,
+      },
+      mutations: {
+        ...contextMutations,
+        ...mutations,
+      },
     }
-
-    // Default useErrorBoundary to the suspense value
-    if (typeof newConfig.useErrorBoundary === 'undefined') {
-      newConfig.useErrorBoundary = newConfig.suspense
-    }
-
-    return newConfig
   }, [config, configContextValue])
 
   React.useEffect(() => {
     // restore previous config on unmount
     return () => {
       defaultConfigRef.current = { ...(configContextValue || DEFAULTS) }
-
-      // Default useErrorBoundary to the suspense value
-      if (typeof defaultConfigRef.current.useErrorBoundary === 'undefined') {
-        defaultConfigRef.current.useErrorBoundary =
-          defaultConfigRef.current.suspense
-      }
     }
   }, [configContextValue])
 
@@ -72,25 +86,29 @@ export function ReactQueryConfigProvider({ config, children }) {
   )
 }
 
+function invalidQueryKey() {
+  throw new Error('A valid query key is required!')
+}
+
 export function defaultQueryKeySerializerFn(queryKey) {
   if (!queryKey) {
-    return []
+    invalidQueryKey()
   }
 
-  if (typeof queryKey === 'function') {
-    try {
-      return defaultQueryKeySerializerFn(queryKey())
-    } catch {
-      return []
-    }
-  }
-
-  if (typeof queryKey === 'string') {
+  if (!Array.isArray(queryKey)) {
     queryKey = [queryKey]
+  }
+
+  if (queryKey.some(d => typeof d === 'function')) {
+    invalidQueryKey()
   }
 
   const queryHash = stableStringify(queryKey)
   queryKey = JSON.parse(queryHash)
+
+  if (!queryHash) {
+    invalidQueryKey()
+  }
 
   return [queryHash, queryKey]
 }

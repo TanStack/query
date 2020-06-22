@@ -97,29 +97,26 @@ export function getQueryArgs(args) {
       args[0].hasOwnProperty('queryKey') &&
       args[0].hasOwnProperty('queryFn')
     ) {
-      const { queryKey, variables = [], queryFn, config = {} } = args[0]
-      return [queryKey, variables, queryFn, config]
+      const { queryKey, queryFn, config = {} } = args[0]
+      return [queryKey, queryFn, config, ...args.slice(1)]
     } else {
       throw new Error('queryKey and queryFn keys are required.')
     }
   }
 
-  if (typeof args[2] === 'function') {
-    const [queryKey, variables = [], queryFn, config = {}] = args
-    return [queryKey, variables, queryFn, config]
-  }
+  const [queryKey, queryFn, config = {}, ...rest] = args
 
-  const [queryKey, queryFn, config = {}] = args
-
-  return [queryKey, [], queryFn, config]
+  return [queryKey, queryFn, config, ...rest]
 }
 
 export function useMountedCallback(callback) {
   const mounted = React.useRef(false)
+
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     mounted.current = true
     return () => (mounted.current = false)
   }, [])
+
   return React.useCallback(
     (...args) => (mounted.current ? callback(...args) : void 0),
     [callback]
@@ -127,19 +124,27 @@ export function useMountedCallback(callback) {
 }
 
 export function handleSuspense(queryInfo) {
-  if (queryInfo.config.suspense || queryInfo.config.useErrorBoundary) {
-    if (queryInfo.status === statusError) {
-      setTimeout(() => {
-        queryInfo.query.state.status = 'loading'
-      })
-      throw queryInfo.error
-    }
-  }
+  if (
+    queryInfo.query.config.suspense ||
+    queryInfo.query.config.useErrorBoundary
+  ) {
+    if (queryInfo.query.state.status === statusError) {
+      if (!queryInfo.query.suspenseErrorHandled) {
+        queryInfo.query.suspenseErrorHandled = true
 
-  if (queryInfo.config.suspense) {
-    if (queryInfo.status === statusLoading) {
+        setTimeout(() => {
+          queryInfo.query.state.status = statusLoading
+        }, 0)
+
+        throw queryInfo.error
+      }
+    }
+
+    queryInfo.query.suspenseErrorHandled = false
+
+    if (queryInfo.query.config.suspense && queryInfo.status === statusLoading) {
       queryInfo.query.wasSuspended = true
-      throw queryInfo.refetch()
+      throw queryInfo.query.fetch()
     }
   }
 }

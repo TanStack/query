@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
+import { queryCache } from "react-query";
 
 import usePosts from "./hooks/usePosts";
 import usePost from "./hooks/usePost";
@@ -41,7 +42,20 @@ function Posts({ setPostId }) {
             <div>
               {data.map(post => (
                 <p key={post.id}>
-                  <a onClick={() => setPostId(post.id)} href="#">
+                  <a
+                    onClick={() => setPostId(post.id)}
+                    href="#"
+                    style={
+                      // We can use the queryCache here to show bold links for
+                      // ones that are cached
+                      queryCache.getQueryData(["post", post.id])
+                        ? {
+                            fontWeight: "bold",
+                            color: "green"
+                          }
+                        : {}
+                    }
+                  >
                     {post.title}
                   </a>
                 </p>

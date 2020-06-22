@@ -1,16 +1,13 @@
-import {
-  cleanup,
-  render,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react'
+import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { setConsole, useMutation } from '../index'
+import { setConsole, useMutation, queryCaches } from '../index'
 import { deepEqual } from '../utils'
 
 describe('setConsole', () => {
-  afterEach(cleanup)
+  afterEach(() => {
+    queryCaches.forEach(cache => cache.clear())
+  })
 
   it('should override Console object', async () => {
     const mockConsole = {

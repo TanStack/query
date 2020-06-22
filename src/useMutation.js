@@ -62,7 +62,8 @@ export function useMutation(mutationFn, config = {}) {
   const getMutationFn = useGetLatest(mutationFn)
 
   const getConfig = useGetLatest({
-    ...useConfigContext(),
+    ...useConfigContext().shared,
+    ...useConfigContext().mutations,
     ...config,
   })
 
@@ -94,7 +95,7 @@ export function useMutation(mutationFn, config = {}) {
         }
 
         if (isLatest()) {
-          await onSuccess(data, variables)
+          dispatch({ type: actionResolve, data })
         }
 
         if (isLatest()) {
@@ -102,7 +103,7 @@ export function useMutation(mutationFn, config = {}) {
         }
 
         if (isLatest()) {
-          await onSettled(data, null, variables)
+          await onSuccess(data, variables)
         }
 
         if (isLatest()) {
@@ -110,26 +111,26 @@ export function useMutation(mutationFn, config = {}) {
         }
 
         if (isLatest()) {
-          dispatch({ type: actionResolve, data })
+          await onSettled(data, null, variables)
         }
 
         return data
       } catch (error) {
         if (isLatest()) {
           Console.error(error)
-          await onError(error, variables, snapshotValue)
-        }
-
-        if (isLatest()) {
           await config.onError(error, variables, snapshotValue)
         }
 
         if (isLatest()) {
-          await onSettled(undefined, error, variables, snapshotValue)
+          await onError(error, variables, snapshotValue)
         }
 
         if (isLatest()) {
           await config.onSettled(undefined, error, variables, snapshotValue)
+        }
+
+        if (isLatest()) {
+          await onSettled(undefined, error, variables, snapshotValue)
         }
 
         if (isLatest()) {
@@ -149,10 +150,22 @@ export function useMutation(mutationFn, config = {}) {
   ])
 
   React.useEffect(() => {
-    if (getConfig().useErrorBoundary && state.error) {
+    const { suspense, useErrorBoundary } = getConfig()
+
+    if ((useErrorBoundary ?? suspense) && state.error) {
       throw state.error
     }
   }, [getConfig, state.error])
 
-  return [mutate, { ...state, reset }]
+  return [
+    mutate,
+    {
+      ...state,
+      reset,
+      isIdle: state.status === statusIdle,
+      isLoading: state.status === statusLoading,
+      isSuccess: state.status === statusSuccess,
+      isError: state.status === statusError,
+    },
+  ]
 }
