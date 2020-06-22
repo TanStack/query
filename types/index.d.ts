@@ -424,6 +424,10 @@ export interface PrefetchQueryOptions<TResult, TError = Error> extends QueryOpti
   throwOnError?: boolean
 }
 
+export interface SetQueryDataQueryOptions<TResult, TError = Error> extends QueryOptions<TResult, TError> {
+  exact?: boolean
+}
+
 export interface InfiniteQueryOptions<TResult, TMoreVariable, TError = Error>
   extends QueryOptions<TResult[], TError> {
   getFetchMore: (
@@ -691,9 +695,10 @@ export interface QueryCache {
   }): Promise<TResult>
 
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
-  setQueryData<T = unknown>(
+  setQueryData<TResult, TError>(
     key: AnyQueryKey | string,
-    dataOrUpdater: T | undefined | ((oldData: T | undefined) => T | undefined)
+    dataOrUpdater: TResult | undefined | ((oldData: TResult | undefined) => TResult | undefined),
+    config?: SetQueryDataQueryOptions<TResult, TError>
   ): void
   refetchQueries<TResult>(
     queryKeyOrPredicateFn:
