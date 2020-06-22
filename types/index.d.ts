@@ -357,6 +357,10 @@ export interface PrefetchQueryOptions<TResult, TError = Error>
   throwOnError?: boolean
 }
 
+export interface SetQueryDataQueryOptions<TResult, TError = Error> extends QueryOptions<TResult, TError> {
+  exact?: boolean
+}
+
 export interface InfiniteQueryOptions<TResult, TMoreVariable, TError = Error>
   extends QueryOptions<TResult[], TError> {
   getFetchMore: (
@@ -462,15 +466,16 @@ export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
 }
 
 export function useMutation<TResults, TVariables = undefined, TError = Error>(
-  mutationFn: MutationFunction<TResults, TVariables>,
+  mutationFn: MutationFunction<TResults, TVariables, TError>,
   mutationOptions?: MutationOptions<TResults, TVariables, TError>
 ): [
   MutateFunction<TResults, TVariables, TError>,
   MutationResult<TResults, TError>
 ]
 
-export type MutationFunction<TResults, TVariables> = (
-  variables: TVariables
+export type MutationFunction<TResults, TVariables, TError = Error> = (
+  variables: TVariables,
+  mutateOptions?: MutateOptions<TResults, TVariables, TError>,
 ) => Promise<TResults>
 
 export interface MutateOptions<TResult, TVariables, TError = Error> {
@@ -626,9 +631,10 @@ export interface QueryCache {
   }): Promise<TResult>
 
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
-  setQueryData<T = unknown>(
+  setQueryData<TResult, TError>(
     key: AnyQueryKey | string,
-    dataOrUpdater: T | undefined | ((oldData: T | undefined) => T | undefined)
+    dataOrUpdater: TResult | undefined | ((oldData: TResult | undefined) => TResult | undefined),
+    config?: SetQueryDataQueryOptions<TResult, TError>
   ): void
   invalidateQueries<TResult>(
     queryKeyOrPredicateFn:
