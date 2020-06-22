@@ -359,6 +359,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     query.clear = () => {
       clearTimeout(query.staleTimeout)
       clearTimeout(query.cacheTimeout)
+      clearTimeout(query.retryTimeout)
       query.clearIntervals()
       query.cancel()
       query.dispatch = noop
@@ -500,7 +501,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
           // Return a new promise with the retry
           return await new Promise((resolve, reject) => {
             // Keep track of the retry timeout
-            setTimeout(async () => {
+            query.retryTimeout = setTimeout(async () => {
               if (query.cancelled) return reject(query.cancelled)
 
               try {
