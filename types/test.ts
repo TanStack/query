@@ -182,6 +182,25 @@ function paginatedQuery() {
     queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; }
     queryPaginated.error // $ExpectType null
   }
+
+  // Discriminated union over status flags
+  if (queryPaginated.isLoading) {
+    queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.error // $ExpectType Error | null
+  }
+
+  if (queryPaginated.isError) {
+    queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; } | undefined
+    queryPaginated.error // $ExpectType Error
+  }
+
+  if (queryPaginated.isSuccess) {
+    queryPaginated.resolvedData // $ExpectType { data: number[]; next: boolean; }
+    queryPaginated.latestData // $ExpectType { data: number[]; next: boolean; }
+    queryPaginated.error // $ExpectType null
+  }
 }
 
 function paginatedQueryWithObjectSyntax(condition: boolean) {
@@ -408,6 +427,24 @@ function dataDiscriminatedUnion() {
   }
 
   if (queryResult.status === 'success') {
+    // disabled
+    queryResult.data // $ExpectType string[]
+    queryResult.error // $ExpectType null
+  }
+
+  // Discriminated union over status flags
+  if (queryResult.isLoading) {
+    queryResult.data // $ExpectType string[] | undefined
+    queryResult.error // $ExpectType Error | null
+  }
+
+  if (queryResult.isError) {
+    // disabled
+    queryResult.data // $ExpectType string[] | undefined
+    queryResult.error // $ExpectType Error
+  }
+
+  if (queryResult.isSuccess) {
     // disabled
     queryResult.data // $ExpectType string[]
     queryResult.error // $ExpectType null
