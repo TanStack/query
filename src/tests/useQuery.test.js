@@ -768,4 +768,97 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('count: 5'))
     await waitFor(() => rendered.getByText('count: 5'))
   })
+
+  it('should error when using functions as query keys', () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      const { data } = useQuery(
+        () => {},
+        () => 'data'
+      )
+      return data
+    }
+
+    try {
+      render(<Page />)
+    } catch {}
+
+    expect(console.error).toHaveBeenCalledTimes(2)
+
+    console.error.mockRestore()
+  })
+
+  it('should error when using an empty query key', () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      const { data } = useQuery('', () => 'data')
+      return data
+    }
+
+    try {
+      render(<Page />)
+    } catch {}
+
+    expect(console.error).toHaveBeenCalledTimes(2)
+
+    console.error.mockRestore()
+  })
+
+  it('should error when using an undefined query key', () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      const { data } = useQuery(undefined, () => 'data')
+      return data
+    }
+
+    try {
+      render(<Page />)
+    } catch {}
+
+    expect(console.error).toHaveBeenCalledTimes(2)
+
+    console.error.mockRestore()
+  })
+
+  it('should error when using a falsy query key', () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      const { data } = useQuery(false, () => 'data')
+      return data
+    }
+
+    try {
+      render(<Page />)
+    } catch {}
+
+    expect(console.error).toHaveBeenCalledTimes(2)
+
+    console.error.mockRestore()
+  })
+
+  it('should error when using a null query key', () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    function Page() {
+      const { data } = useQuery(false, () => 'data')
+      return data
+    }
+
+    try {
+      render(<Page />)
+    } catch {}
+
+    expect(console.error).toHaveBeenCalledTimes(2)
+
+    console.error.mockRestore()
+  })
 })
