@@ -7,7 +7,7 @@
   "repository": "tannerlinsley/react-query",
   "homepage": "https://github.com/tannerlinsley/react-query#readme",
   "main": "index.js",
-  "types": "types/index.d.ts",
+  "_temporarily_disabled_types": "types/index.d.ts",
   "module": "dist/react-query.mjs",
   "sideEffects": false,
   "scripts": {
