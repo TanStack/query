@@ -217,7 +217,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Paginated Queries with `usePaginatedQuery`](#paginated-queries-with-usepaginatedquery)
   - [Load-More & Infinite-Scroll with `useInfiniteQuery`](#load-more--infinite-scroll-with-useinfinitequery)
   - [Scroll Restoration](#scroll-restoration)
-  - [Manual Querying](#manual-querying)
   - [Retries](#retries)
   - [Retry Delay](#retry-delay)
   - [Prefetching](#prefetching)
