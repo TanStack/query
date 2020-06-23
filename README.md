@@ -470,7 +470,7 @@ useQuery({
 })
 ```
 
-## Paralle Queries
+## Parallel Queries
 
 React Query is built to require **no extra effort** for making parallel queries. You don't need to do anything special! Just use React Query's hooks and handle all of the loading states and you're good to go!
 
