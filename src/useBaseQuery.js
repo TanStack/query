@@ -3,27 +3,17 @@ import React from 'react'
 //
 
 import { useQueryCache } from './queryCache'
-import { useConfigContext } from './config'
 import { useMountedCallback, Console } from './utils'
 
-export function useBaseQuery(queryKey, queryFn, config = {}) {
+export function useBaseQuery(queryKey, config = {}) {
   // Make a rerender function
   const rerender = useMountedCallback(React.useState()[1])
-
-  // Build the final config
-  const configContext = useConfigContext()
-
-  config = {
-    ...configContext.shared,
-    ...configContext.queries,
-    ...config,
-  }
 
   // Get the query cache
   const queryCache = useQueryCache()
 
   // Build the query for use
-  const query = queryCache.buildQuery(queryKey, queryFn, config)
+  const query = queryCache.buildQuery(queryKey, config)
 
   // Create a query instance ref
   const instanceRef = React.useRef()

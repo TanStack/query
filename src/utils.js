@@ -1,4 +1,5 @@
 import React from 'react'
+import { useConfigContext } from './config'
 
 //
 
@@ -12,8 +13,12 @@ export const uid = () => _uid++
 export const cancelledError = {}
 export let globalStateListeners = []
 export const isServer = typeof window === 'undefined'
-export const noop = () => {}
-export const identity = d => d
+export function noop() {
+  return void 0
+}
+export function identity(d) {
+  return d
+}
 export let Console = console || { error: noop, warn: noop, log: noop }
 
 export function useUid() {
@@ -93,20 +98,33 @@ export function isOnline() {
 
 export function getQueryArgs(args) {
   if (isObject(args[0])) {
-    if (
-      args[0].hasOwnProperty('queryKey') &&
-      args[0].hasOwnProperty('queryFn')
-    ) {
-      const { queryKey, queryFn, config = {} } = args[0]
-      return [queryKey, queryFn, config, ...args.slice(1)]
-    } else {
-      throw new Error('queryKey and queryFn keys are required.')
-    }
+    const { queryKey, queryFn, config } = args[0]
+    args = [queryKey, queryFn, config, ...args.slice(1)]
+  } else if (isObject(args[1])) {
+    const [queryKey, config, ...rest] = args
+    args = [queryKey, undefined, config, ...rest]
   }
 
-  const [queryKey, queryFn, config = {}, ...rest] = args
+  let [queryKey, queryFn, config = {}, ...rest] = args
 
-  return [queryKey, queryFn, config, ...rest]
+  queryFn = queryFn || config.queryFn
+
+  return [queryKey, queryFn ? { ...config, queryFn } : config, ...rest]
+}
+
+export function useQueryArgs(args) {
+  const configContext = useConfigContext()
+
+  let [queryKey, config, ...rest] = getQueryArgs(args)
+
+  // Build the final config
+  config = {
+    ...configContext.shared,
+    ...configContext.queries,
+    ...config,
+  }
+
+  return [queryKey, config, ...rest]
 }
 
 export function useMountedCallback(callback) {

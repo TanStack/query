@@ -158,7 +158,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     })
   }
 
-  queryCache.buildQuery = (userQueryKey, queryFn, config = {}) => {
+  queryCache.buildQuery = (userQueryKey, config = {}) => {
     config = {
       ...configRef.current.shared,
       ...configRef.current.queries,
@@ -170,13 +170,12 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     let query = queryCache.queries[queryHash]
 
     if (query) {
-      Object.assign(query, { queryFn, config })
+      Object.assign(query, { config })
     } else {
       query = makeQuery({
         queryCache,
         queryKey,
         queryHash,
-        queryFn,
         config,
       })
 
@@ -220,15 +219,10 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
   }
 
   queryCache.prefetchQuery = async (...args) => {
-    let [
-      queryKey,
-      queryFn,
-      config,
-      { force, throwOnError } = {},
-    ] = getQueryArgs(args)
+    let [queryKey, config, { force, throwOnError } = {}] = getQueryArgs(args)
 
     try {
-      const query = queryCache.buildQuery(queryKey, queryFn, config)
+      const query = queryCache.buildQuery(queryKey, config)
       if (force || query.state.isStale) {
         await query.fetch()
       }
@@ -250,7 +244,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     query.setData(updater)
   }
 
-  function makeQuery({ queryCache, queryKey, queryHash, queryFn, config }) {
+  function makeQuery({ queryCache, queryKey, queryHash, config }) {
     const initialData =
       typeof config.initialData === 'function'
         ? config.initialData()
@@ -269,7 +263,6 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     let query = {
       queryKey,
       queryHash,
-      queryFn,
       config,
       instances: [],
       state: queryReducer(undefined, {
@@ -460,10 +453,10 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     }
 
     // Set up the core fetcher function
-    const tryFetchData = async (queryFn, ...args) => {
+    const tryFetchData = async (fn, ...args) => {
       try {
         // Perform the query
-        const promise = queryFn(...query.config.queryFnParamsFilter(args))
+        const promise = fn(...query.config.queryFnParamsFilter(args))
 
         query.cancelPromises = () => promise.cancel?.()
 
@@ -510,7 +503,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
               if (query.cancelled) return reject(query.cancelled)
 
               try {
-                const data = await tryFetchData(queryFn, ...args)
+                const data = await tryFetchData(fn, ...args)
                 if (query.cancelled) return reject(query.cancelled)
                 resolve(data)
               } catch (error) {
@@ -525,7 +518,10 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       }
     }
 
-    query.fetch = async ({ __queryFn = query.queryFn } = {}) => {
+    query.fetch = async ({ queryFn = query.config.queryFn } = {}) => {
+      if (!queryFn) {
+        return
+      }
       // Create a new promise for the query cache if necessary
       if (!query.promise) {
         query.promise = (async () => {
@@ -546,7 +542,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
             query.dispatch({ type: actionFetch })
 
             // Try to get the data
-            let data = await tryFetchData(__queryFn, ...query.queryKey)
+            let data = await tryFetchData(queryFn, ...query.queryKey)
 
             query.setData(old =>
               query.config.isDataEqual(old, data) ? old : data

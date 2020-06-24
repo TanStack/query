@@ -609,7 +609,7 @@ describe('useQuery', () => {
       useQuery({})
       return null
     }
-    expect(() => render(<Page />)).toThrowError(/queryKey|queryFn/)
+    expect(() => render(<Page />)).toThrowError(/query key/)
 
     console.error.mockRestore()
   })

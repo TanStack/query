@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react'
 import { sleep } from './utils'
 import { queryCache, queryCaches } from '../'
 
@@ -79,7 +80,7 @@ describe('queryCache', () => {
 
     queryCache.prefetchQuery('test', () => {}, { initialData: 'initial' })
 
-    expect(callback).toHaveBeenCalled()
+    waitFor(() => expect(callback).toHaveBeenCalled())
   })
 
   test('setQueryData creates a new query if query was not found, using exact', () => {
@@ -114,13 +115,15 @@ describe('queryCache', () => {
     expect(queryCache.getQuery('key').state.data).toEqual('test data')
     expect(queryCache.getQuery('key').state.isStale).toEqual(false)
 
-    await sleep(50)
+    await waitFor(
+      () => expect(queryCache.getQuery('key').state.isStale).toEqual(false),
+      { timeout: 50, interval: 5 }
+    )
 
-    expect(queryCache.getQuery('key').state.isStale).toEqual(false)
-
-    await sleep(100)
-
-    expect(queryCache.getQuery('key').state.isStale).toEqual(true)
+    await waitFor(
+      () => expect(queryCache.getQuery('key').state.isStale).toEqual(true),
+      { timeout: 100, interval: 5 }
+    )
   })
 
   test('setQueryData updater function works as expected', () => {

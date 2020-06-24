@@ -3,10 +3,10 @@ import React from 'react'
 //
 
 import { useBaseQuery } from './useBaseQuery'
-import { getQueryArgs, handleSuspense } from './utils'
+import { useQueryArgs, handleSuspense } from './utils'
 
 export function usePaginatedQuery(...args) {
-  let [queryKey, queryFn, config = {}] = getQueryArgs(args)
+  let [queryKey, config = {}] = useQueryArgs(args)
 
   const lastDataRef = React.useRef()
 
@@ -15,7 +15,7 @@ export function usePaginatedQuery(...args) {
     delete config.initialData
   }
 
-  const queryInfo = useBaseQuery(queryKey, queryFn, config)
+  const queryInfo = useBaseQuery(queryKey, config)
 
   if (!queryInfo.query.config.enabled) {
     lastDataRef.current = undefined

@@ -3,12 +3,13 @@ import { noop, stableStringify, identity, deepEqual } from './utils'
 
 export const configContext = React.createContext()
 
-const DEFAULTS = {
+const DEFAULT_CONFIG = {
   shared: {
     suspense: false,
     queryKeySerializerFn: defaultQueryKeySerializerFn,
   },
   queries: {
+    queryFn: undefined,
     enabled: true,
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -35,7 +36,7 @@ const DEFAULTS = {
 }
 
 export const defaultConfigRef = {
-  current: DEFAULTS,
+  current: DEFAULT_CONFIG,
 }
 
 export function useConfigContext() {
@@ -52,6 +53,7 @@ export function ReactQueryConfigProvider({ config, children }) {
       queries: contextQueries = {},
       mutations: contextMutations = {},
     } = configContextValue
+
     return {
       shared: {
         ...contextShared,

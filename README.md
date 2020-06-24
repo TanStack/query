@@ -231,6 +231,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Suspense Mode](#suspense-mode)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
   - [Canceling Query Requests](#canceling-query-requests)
+  - [Using a Defualt Query Function](#using-a-default-query-function)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -1123,6 +1124,51 @@ const query = useQuery('todos', () => {
 })
 ```
 
+## Using a Defualt Query Function
+
+If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to to identify what it should fetch, you can do that by providing a **default query function** to React Query:
+
+```js
+// Define a default query function that will recieve the query key
+const defaultQueryFn = async key => {
+  const { data } = await axios.get(`https://jsonplaceholder.typicode.com${key}`)
+  return data
+}
+
+function App() {
+  // provide the default query function to your app via the config provider
+  return (
+    <ReactQueryConfigProvider
+      config={{
+        queries: {
+          queryFn: defaultQueryFn,
+        },
+      }}
+    >
+      <YourApp />
+    </ReactQueryConfigProvider>
+  )
+}
+
+// All you have to do now is pass a key!
+function Posts() {
+  const { status, data, error, isFetching } = useQuery('/posts')
+
+  // ...
+}
+
+// You can even leave out the queryFn and just go straight into options
+function Post({ postId }) {
+  const { status, data, error, isFetching } = useQuery(`/posts/${postId}`, {
+    enabled: postId,
+  })
+
+  // ...
+}
+```
+
+If you ever want to override the default queryFn, you can just provide your own like you normally would.
+
 # Mutations
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query exports a `useMutation` hook.
@@ -1661,7 +1707,7 @@ const {
   isFetching,
   failureCount,
   refetch,
-} = useQuery(queryKey, queryFn, {
+} = useQuery(queryKey, queryFn?, {
   suspense,
   queryKeySerializerFn,
   enabled,
@@ -1698,7 +1744,7 @@ const queryInfo = useQuery({
   - If a `[String, ...any]` array is passed, each item will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: Function(variables) => Promise(data/error)`
-  - **Required**
+  - **Required, but only if no default query function has been defined**
   - The function that the query will use to request data.
   - Receives the following variables in the order that they are provided:
     - Query Key Variables
@@ -1968,12 +2014,6 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 const data = await queryCache.prefetchQuery(queryKey, queryFn)
 ```
 
-For convenience in syntax, you can also pass optional query variables to `prefetchQuery` just like you can `useQuery`:
-
-```js
-const data = await queryCache.prefetchQuery(queryKey, queryFn, config)
-```
-
 To pass options like `force` or `throwOnError`, use the fourth options object:
 
 ```js
@@ -1981,6 +2021,12 @@ const data = await queryCache.prefetchQuery(queryKey, queryFn, config, {
   force: true,
   throwOnError: true,
 })
+```
+
+You can even use it with a default queryFn in your config!
+
+```js
+const data = await queryCache.prefetchQuery(queryKey)
 ```
 
 ### Options
@@ -2279,6 +2325,7 @@ const queryConfig = {
   },
   queries: {
     ...shared,
+    queryFn,
     enabled: true,
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),

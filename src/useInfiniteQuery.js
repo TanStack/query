@@ -3,19 +3,19 @@ import React from 'react'
 //
 
 import { useBaseQuery } from './useBaseQuery'
-import { getQueryArgs, useGetLatest, handleSuspense } from './utils'
+import { useQueryArgs, useGetLatest, handleSuspense } from './utils'
 
 export function useInfiniteQuery(...args) {
   const queryInfoRef = React.useRef()
-  let [queryKey, queryFn, config = {}] = getQueryArgs(args)
+  let [queryKey, config] = useQueryArgs(args)
 
   const { getFetchMore } = config
   const getGetFetchMore = useGetLatest(getFetchMore)
 
   // The default queryFn will query all pages and map them together
-  const originalQueryFn = queryFn
+  const originalQueryFn = config.queryFn
 
-  queryFn = async () => {
+  config.queryFn = async () => {
     const data = []
     const pageVariables = [...queryInfoRef.current.query.pageVariables]
     const rebuiltPageVariables = []
@@ -58,7 +58,7 @@ export function useInfiniteQuery(...args) {
     return data
   }
 
-  const queryInfo = useBaseQuery(queryKey, queryFn, config)
+  const queryInfo = useBaseQuery(queryKey, config)
 
   if (
     typeof queryInfo.query.canFetchMore === 'undefined' &&
@@ -89,7 +89,7 @@ export function useInfiniteQuery(...args) {
     ) =>
       queryInfoRef.current.query.canFetchMore
         ? queryInfoRef.current.query.fetch({
-            __queryFn: async (...args) => {
+            queryFn: async (...args) => {
               try {
                 queryInfoRef.current.query.setState(old => ({
                   ...old,
