@@ -74,6 +74,7 @@ React Query exports a set of hooks that address these issues. Out of the box, Re
 <details>
 <summary>Inspiration & Hat-Tipping</summary>
 <br />
+  
 A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Vercel's SWR](https://github.com/zeit/swr) and its creators for inspiring even further customizations and examples. You all rock!
 
 </details>
@@ -724,7 +725,7 @@ This will ensure the new data is prepended to the data array instead of appended
 
 ## Scroll Restoration
 
-Out of the bx, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes)o and have not been garbage collected, scroll restoration will work out of the box all the time.
+Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes)o and have not been garbage collected, scroll restoration will work out of the box all the time.
 
 ## Disabling or Pausing a Query
 
@@ -957,7 +958,7 @@ The query's state will still reflect that it is stale and has not been fetched y
 
 ## Suspense Mode
 
-> NOTE: Suspense mode for React Query is experimental, same as Suspense for data fetchign itself. These APIs WILL change and should not be used in production unless you lock both your React and React Query versions to patch-level versions that are compatible with each other.
+> NOTE: Suspense mode for React Query is experimental, same as Suspense for data fetching itself. These APIs WILL change and should not be used in production unless you lock both your React and React Query versions to patch-level versions that are compatible with each other.
 
 React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
 
@@ -2037,12 +2038,12 @@ const promise = mutate(variables, {
 - `onError: Function(err, variables, onMutateValue) => Promise | undefined`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
-  - Fires after the `mutate`-level `onError` handerl (if it is defined)
+  - Fires after the `mutate`-level `onError` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `onSettled: Function(data, error, variables, onMutateValue) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
-  - Fires after the `mutate`-level `onSettled` handerl (if it is defined)
+  - Fires after the `mutate`-level `onSettled` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `throwOnError`
   - Defaults to `false`
