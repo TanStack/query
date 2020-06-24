@@ -28,15 +28,6 @@ function App() {
   );
 }
 
-// This function is not inline to show how query keys are passed to the query function
-// Normally, you can inline them if you want.
-const getPostById = async (key, id) => {
-  const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com/posts/${id}`
-  );
-  return data;
-};
-
 function Posts({ setPostId }) {
   const { status, data, error, isFetching } = useQuery("posts", async () => {
     const { data } = await axios.get(
@@ -56,7 +47,7 @@ function Posts({ setPostId }) {
         ) : (
           <>
             <div>
-              {data.map(post => (
+              {data.map((post) => (
                 <p key={post.id}>
                   <a
                     onClick={() => setPostId(post.id)}
@@ -67,7 +58,7 @@ function Posts({ setPostId }) {
                       queryCache.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
-                            color: "green"
+                            color: "green",
                           }
                         : {}
                     }
@@ -85,12 +76,21 @@ function Posts({ setPostId }) {
   );
 }
 
+// This function is not inline to show how query keys are passed to the query function
+// Normally, you can inline them if you want.
+const getPostById = async (key, id) => {
+  const { data } = await axios.get(
+    `https://jsonplaceholder.typicode.com/posts/${id}`
+  );
+  return data;
+};
+
 function Post({ postId, setPostId }) {
   const { status, data, error, isFetching } = useQuery(
     ["post", postId],
     getPostById,
     {
-      enabled: postId
+      enabled: postId,
     }
   );
 
