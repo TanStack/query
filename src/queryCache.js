@@ -422,7 +422,6 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
           // Perform the refetch for this query if necessary
           if (
             query.config.enabled && // Don't auto refetch if disabled
-            // !query.wasPrefetched && // Don't double refetch for prefetched queries
             !query.wasSuspended && // Don't double refetch for suspense
             query.state.isStale && // Only refetch if stale
             (query.config.refetchOnMount || query.instances.length === 1)
@@ -430,7 +429,6 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
             await query.fetch()
           }
 
-          query.wasPrefetched = false
           query.wasSuspended = false
         } catch (error) {
           Console.error(error)
