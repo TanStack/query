@@ -717,6 +717,7 @@ export interface QueryCache {
 }
 
 export const queryCache: QueryCache
+export const queryCaches: QueryCache[]
 
 export interface MakeQueryCacheOptions {
   frozen?: boolean
