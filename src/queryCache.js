@@ -618,8 +618,7 @@ function switchActions(state, action) {
       return {
         status: action.initialStatus,
         error: null,
-        isFetching:
-          !action.hasInitialData || action.initialStatus === 'loading',
+        isFetching: action.initialStatus === 'loading',
         canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,
