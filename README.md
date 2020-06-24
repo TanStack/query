@@ -958,7 +958,7 @@ The query's state will still reflect that it is stale and has not been fetched y
 
 ## Suspense Mode
 
-> NOTE: Suspense mode for React Query is experimental, same as Suspense for data fetchign itself. These APIs WILL change and should not be used in production unless you lock both your React and React Query versions to patch-level versions that are compatible with each other.
+> NOTE: Suspense mode for React Query is experimental, same as Suspense for data fetching itself. These APIs WILL change and should not be used in production unless you lock both your React and React Query versions to patch-level versions that are compatible with each other.
 
 React Query can also be used with React's new Suspense for Data Fetching API's. To enable this mode, you can set either the global or query level config's `suspense` option to `true`.
 
