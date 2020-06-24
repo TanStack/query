@@ -13,14 +13,17 @@ const onWindowFocus = () => {
             return false
           }
 
-          if (!query.config.enabled) {
+          if (!query.instances.some(instance => instance.config.enabled)) {
+            return false
+          }
+
+          if (!query.state.isStale) {
             return false
           }
 
           if (query.shouldContinueRetryOnFocus) {
             // delete promise, so refetching will create new one
             delete query.promise
-            return true
           }
 
           return query.config.refetchOnWindowFocus
