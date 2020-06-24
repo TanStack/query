@@ -75,6 +75,8 @@ function conditionalQuery(condition: boolean) {
     Promise.resolve(10)
   const queryFn2 = () => Promise.resolve('test')
 
+  useQuery(() => 'foo', queryFn2, { enabled: condition }) // $ExpectError
+
   // Query with falsey query key
   useQuery(['foo', { bar: 'baz' }], queryFn1, { enabled: condition })
   useQuery(['foo', { bar: 'baz' }], queryFn2, { enabled: condition })

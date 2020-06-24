@@ -28,7 +28,6 @@ export function useQuery<TResult, TSingleKey extends string, TError = Error>({
     | false
     | null
     | undefined
-    | (() => TSingleKey | false | null | undefined)
   queryFn: QueryFunction<TResult, [TSingleKey]>
   config?: QueryOptions<TResult, TError>
 }): QueryResult<TResult, TError>
@@ -38,8 +37,7 @@ export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, TKey>,
   config?: QueryOptions<TResult, TError>
 ): QueryResult<TResult, TError>
@@ -49,8 +47,7 @@ export function useQuery<TResult, TSingleKey extends string, TError = Error>(
     | TSingleKey
     | false
     | null
-    | undefined
-    | (() => TSingleKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, [TSingleKey]>,
   config?: QueryOptions<TResult, TError>
 ): QueryResult<TResult, TError>
@@ -60,8 +57,7 @@ export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, TKey>,
   config?: QueryOptions<TResult, TError>
 ): QueryResult<TResult, TError>
@@ -71,8 +67,7 @@ export function useQuery<TResult, TKey extends string, TError = Error>(
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, [TKey]>,
   config?: QueryOptions<TResult, TError>
 ): QueryResult<TResult, TError>
