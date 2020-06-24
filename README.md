@@ -74,6 +74,7 @@ React Query exports a set of hooks that address these issues. Out of the box, Re
 <details>
 <summary>Inspiration & Hat-Tipping</summary>
 <br />
+  
 A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Vercel's SWR](https://github.com/zeit/swr) and its creators for inspiring even further customizations and examples. You all rock!
 
 </details>
