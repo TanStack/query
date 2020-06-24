@@ -375,7 +375,7 @@ export interface QueryResultBase<TResult, TError = Error> {
   failureCount: number
   canFetchMore: boolean
   markedForGarbageCollection: boolean
-  query: Object
+  query: object
   updatedAt: number
   refetch: ({ throwOnError }?: { throwOnError?: boolean }) => Promise<TResult>
 }
