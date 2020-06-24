@@ -152,6 +152,12 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     }
   }
 
+  queryCache.resetErrorBoundaries = () => {
+    queryCache.getQueries(true).forEach(query => {
+      query.state.throwInErrorBoundary = false
+    })
+  }
+
   queryCache.buildQuery = (userQueryKey, queryFn, config = {}) => {
     config = {
       ...configRef.current.shared,
@@ -665,6 +671,7 @@ function switchActions(state, action) {
         ...(!action.cancelled && {
           status: statusError,
           error: action.error,
+          throwInErrorBoundary: true,
         }),
       }
     case actionSetState:

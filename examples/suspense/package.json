@@ -8,7 +8,8 @@
     "axios": "0.19.2",
     "react": "0.0.0-experimental-5faf377df",
     "react-dom": "0.0.0-experimental-5faf377df",
-    "react-query": "latest",
+    "react-error-boundary": "^2.2.3",
+    "react-query": "^2.0.4",
     "react-scripts": "3.0.1"
   },
   "devDependencies": {

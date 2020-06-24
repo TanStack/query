@@ -207,7 +207,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Queries](#queries)
@@ -990,9 +989,30 @@ import { useQuery } from 'react-query'
 useQuery(queryKey, queryFn, { suspense: true })
 ```
 
-When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please see the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) for more information on how to set up suspense mode.
+When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) for more information on how to set up suspense mode.
 
 In addition to queries behaving differently in suspense mode, mutations also behave a bit differently. By default, instead of supplying the `error` variable when a mutation fails, it will be thrown during the next render of the component it's used in and propagate to the nearest error boundary, similar to query errors. If you wish to disable this, you can set the `useErrorBoundary` option to `false`. If you wish that errors are not thrown at all, you can set the `throwOnError` option to `false` as well!
+
+## Resetting Error Boundaries
+
+Whether you are using **suspense** or **useErrorBoundaries** in your queries, you will need to know how to use the `queryCache.resetErrorBoundaries` function to let queries know that you want them to try again when you render them again.
+
+How you trigger this function is up to you, but the most common use case is to do it in something like `react-error-boundary`'s `onReset` callback:
+
+```js
+import { queryCache } from "react-query";
+import { ErrorBoundary } from "react-error-boundary";
+
+<ErrorBoundary
+  onReset={() => queryCache.resetErrorBoundaries()}
+  fallbackRender={({ error, resetErrorBoundary }) => (
+    <div>
+      There was an error!
+      <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+    </div>
+  )}
+>
+```
 
 ## Fetch-on-render vs Fetch-as-you-render
 

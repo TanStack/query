@@ -128,21 +128,14 @@ export function handleSuspense(queryInfo) {
     queryInfo.query.config.suspense ||
     queryInfo.query.config.useErrorBoundary
   ) {
-    if (queryInfo.query.state.status === statusError) {
-      if (!queryInfo.query.suspenseErrorHandled) {
-        queryInfo.query.suspenseErrorHandled = true
-
-        setTimeout(() => {
-          queryInfo.query.state.status = statusLoading
-        }, 0)
-
-        throw queryInfo.error
-      }
+    if (
+      queryInfo.query.state.status === statusError &&
+      queryInfo.query.state.throwInErrorBoundary
+    ) {
+      throw queryInfo.error
     }
 
-    queryInfo.query.suspenseErrorHandled = false
-
-    if (queryInfo.query.config.suspense && queryInfo.status === statusLoading) {
+    if (queryInfo.query.config.suspense && queryInfo.status !== statusSuccess) {
       queryInfo.query.wasSuspended = true
       throw queryInfo.query.fetch()
     }
