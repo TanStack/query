@@ -207,8 +207,10 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
+- [Quick Start](#quick-start)
 - [Queries](#queries)
   - [Query Keys](#query-keys)
   - [Query Key Variables](#query-key-variables)
@@ -229,9 +231,10 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Initial Data from Cache](#initial-data-from-cache)
   - [SSR & Initial Data](#ssr--initial-data)
   - [Suspense Mode](#suspense-mode)
+  - [Resetting Error Boundaries](#resetting-error-boundaries)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
   - [Canceling Query Requests](#canceling-query-requests)
-  - [Using a Defualt Query Function](#using-a-default-query-function)
+  - [Using a Defualt Query Function](#using-a-defualt-query-function)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -247,7 +250,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 - [Window-Focus Refetching](#window-focus-refetching)
   - [Custom Window Focus Event](#custom-window-focus-event)
   - [Ignoring Iframe Focus Events](#ignoring-iframe-focus-events)
-- [Custom Query Key Serializers (Super-duper Advanced)](#custom-query-key-serializers-super-duper-advanced)
 - [React Query Devtools](#react-query-devtools)
 - [API](#api)
   - [`useQuery`](#usequery)
