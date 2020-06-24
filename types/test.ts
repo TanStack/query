@@ -298,6 +298,7 @@ function simpleInfiniteQuery(condition: boolean) {
   infiniteQuery.data // $ExpectType number[][]
   infiniteQuery.fetchMore() // $ExpectType Promise<number[][]> | undefined
   infiniteQuery.fetchMore('next') // $ExpectType Promise<number[][]> | undefined
+  infiniteQuery.fetchMore('next', { previous: true }) // $ExpectType Promise<number[][]> | undefined
 }
 
 function infiniteQueryWithObjectSyntax(condition: boolean) {

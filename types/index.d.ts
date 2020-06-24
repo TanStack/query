@@ -473,7 +473,7 @@ export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   isFetchingMore: false | 'previous' | 'next'
   canFetchMore: boolean | undefined
   fetchMore: (
-    moreVariable?: TMoreVariable | false
+    moreVariable?: TMoreVariable | false, options?: { previous: boolean }
   ) => Promise<TResult[]> | undefined
 }
 
