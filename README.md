@@ -2038,12 +2038,12 @@ const promise = mutate(variables, {
 - `onError: Function(err, variables, onMutateValue) => Promise | undefined`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
-  - Fires after the `mutate`-level `onError` handerl (if it is defined)
+  - Fires after the `mutate`-level `onError` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `onSettled: Function(data, error, variables, onMutateValue) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
-  - Fires after the `mutate`-level `onSettled` handerl (if it is defined)
+  - Fires after the `mutate`-level `onSettled` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `throwOnError`
   - Defaults to `false`
