@@ -356,7 +356,7 @@ function simpleMutation() {
   // Simple mutation
   const mutation = () => Promise.resolve(['foo', 'bar'])
 
-  const [mutate] = useMutation(mutation, {
+  const [mutate, mutationState] = useMutation(mutation, {
     onSuccess(result) {
       result // $ExpectType string[]
     },
@@ -373,6 +373,15 @@ function simpleMutation() {
   // Invalid mutatation funciton
   useMutation((arg1: string, arg2: string) => Promise.resolve()) // $ExpectError
   useMutation((arg1: string) => null) // $ExpectError
+
+  mutationState.data // $ExpectType string[] || undefined
+  mutationState.error// $ExpectType Error | null
+  mutationState.isError// $ExpectType boolean
+  mutationState.isIdle// $ExpectType boolean
+  mutationState.isLoading// $ExpectType boolean
+  mutationState.isSuccess// $ExpectType boolean
+  mutationState.reset// $ExpectType Function
+  mutationState.status// $ExpectType "idle" | 'loading'|'error' | 'success
 }
 
 function mutationWithVariables() {
@@ -476,24 +485,24 @@ function mutationStatusDiscriminatedUnion() {
   mutationState.data // $ExpectType string[] | undefined
 
   // Discriminated union over status
-  if (mutationState.status === 'idle') {
+  if (mutationState.status === 'idle' || mutationState.isIdle) {
     mutationState.data // $ExpectType undefined
     mutationState.error // $ExpectType null
   }
 
-  if (mutationState.status === 'loading') {
+  if (mutationState.status === 'loading' || mutationState.isLoading) {
     mutationState.data // $ExpectType undefined
     // corrected
     // mutationState.error; // $ExpectType null
     mutationState.error // $ExpectType undefined
   }
 
-  if (mutationState.status === 'error') {
+  if (mutationState.status === 'error' || mutationState.isError) {
     mutationState.data // $ExpectType undefined
     mutationState.error // $ExpectType Error
   }
 
-  if (mutationState.status === 'success') {
+  if (mutationState.status === 'success' || mutationState.isSuccess) {
     mutationState.data // $ExpectType string[]
     mutationState.error // $ExpectType undefined
   }

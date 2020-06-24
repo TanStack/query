@@ -525,6 +525,10 @@ export interface MutationResultBase<TResult, TError = Error> {
   status: 'idle' | 'loading' | 'error' | 'success'
   data: undefined | TResult
   error: undefined | null | TError
+  isIdle: boolean
+  isLoading: boolean
+  isSuccess: boolean
+  isError: boolean
   promise: Promise<TResult>
   reset: () => void
 }
@@ -534,6 +538,10 @@ export interface IdleMutationResult<TResult, TError = Error>
   status: 'idle'
   data: undefined
   error: null
+  isIdle: true
+  isLoading: false
+  isSuccess: false
+  isError: false
 }
 
 export interface LoadingMutationResult<TResult, TError = Error>
@@ -541,6 +549,10 @@ export interface LoadingMutationResult<TResult, TError = Error>
   status: 'loading'
   data: undefined
   error: undefined
+  isIdle: false
+  isLoading: true
+  isSuccess: false
+  isError: false
 }
 
 export interface ErrorMutationResult<TResult, TError = Error>
@@ -548,6 +560,10 @@ export interface ErrorMutationResult<TResult, TError = Error>
   status: 'error'
   data: undefined
   error: TError
+  isIdle: false
+  isLoading: false
+  isSuccess: false
+  isError: true
 }
 
 export interface SuccessMutationResult<TResult>
@@ -555,6 +571,10 @@ export interface SuccessMutationResult<TResult>
   status: 'success'
   data: TResult
   error: undefined
+  isIdle: false
+  isLoading: false
+  isSuccess: true
+  isError: false
 }
 
 export type MutationResult<TResult, TError = Error> =
