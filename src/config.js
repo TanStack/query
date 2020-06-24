@@ -6,9 +6,9 @@ export const configContext = React.createContext()
 const DEFAULT_CONFIG = {
   shared: {
     suspense: false,
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
   },
   queries: {
+    queryKeySerializerFn: defaultQueryKeySerializerFn,
     queryFn: undefined,
     enabled: true,
     retry: 3,

@@ -207,7 +207,6 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Quick Start](#quick-start)
@@ -2323,10 +2322,10 @@ import { ReactQueryConfigProvider } from 'react-query'
 const queryConfig = {
   shared: {
     suspense: false,
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
   },
   queries: {
-    ...shared,
+    suspense, // defaults to `shared.suspense`
+    queryKeySerializerFn: defaultQueryKeySerializerFn,
     queryFn,
     enabled: true,
     retry: 3,
@@ -2344,7 +2343,7 @@ const queryConfig = {
     useErrorBoundary: false, // falls back to suspense
   },
   mutations: {
-    ...shared,
+    suspense, // defaults to `shared.suspense`
     throwOnError: false,
     onMutate: noop,
     onError: noop,

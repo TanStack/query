@@ -305,14 +305,6 @@ export type InfiniteQueryFunction<
 
 export interface BaseSharedOptions {
   suspense: boolean
-  queryKeySerializerFn?: (
-    queryKey:
-      | QueryKeyPart[]
-      | string
-      | false
-      | undefined
-      | (() => QueryKeyPart[] | string | false | undefined)
-  ) => [string, QueryKeyPart[]] | []
 }
 
 export interface BaseQueryOptions<TError = Error> {
@@ -357,7 +349,8 @@ export interface PrefetchQueryOptions<TResult, TError = Error>
   throwOnError?: boolean
 }
 
-export interface SetQueryDataQueryOptions<TResult, TError = Error> extends QueryOptions<TResult, TError> {
+export interface SetQueryDataQueryOptions<TResult, TError = Error>
+  extends QueryOptions<TResult, TError> {
   exact?: boolean
 }
 
@@ -475,7 +468,7 @@ export function useMutation<TResults, TVariables = undefined, TError = Error>(
 
 export type MutationFunction<TResults, TVariables, TError = Error> = (
   variables: TVariables,
-  mutateOptions?: MutateOptions<TResults, TVariables, TError>,
+  mutateOptions?: MutateOptions<TResults, TVariables, TError>
 ) => Promise<TResults>
 
 export interface MutateOptions<TResult, TVariables, TError = Error> {
@@ -504,7 +497,10 @@ export type MutateFunction<
   TError = Error
 > = undefined extends TVariables
   ? (options?: MutateOptions<TResult, TVariables, TError>) => Promise<TResult>
-  : (variables: TVariables, options?: MutateOptions<TResult, TVariables, TError>) => Promise<TResult>
+  : (
+      variables: TVariables,
+      options?: MutateOptions<TResult, TVariables, TError>
+    ) => Promise<TResult>
 
 export interface MutationResultBase<TResult, TError = Error> {
   status: 'idle' | 'loading' | 'error' | 'success'
@@ -637,7 +633,10 @@ export interface QueryCache {
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
   setQueryData<TResult, TError>(
     key: AnyQueryKey | string,
-    dataOrUpdater: TResult | undefined | ((oldData: TResult | undefined) => TResult | undefined),
+    dataOrUpdater:
+      | TResult
+      | undefined
+      | ((oldData: TResult | undefined) => TResult | undefined),
     config?: SetQueryDataQueryOptions<TResult, TError>
   ): void
   invalidateQueries<TResult>(
@@ -712,6 +711,14 @@ export interface ReactQueryProviderConfig<TError = Error> {
     /** Defaults to the value of `suspense` if not defined otherwise */
     useErrorBoundary?: boolean
     refetchOnWindowFocus?: boolean
+    queryKeySerializerFn?: (
+      queryKey:
+        | QueryKeyPart[]
+        | string
+        | false
+        | undefined
+        | (() => QueryKeyPart[] | string | false | undefined)
+    ) => [string, QueryKeyPart[]] | []
   }
   shared?: BaseSharedOptions
   mutations?: {

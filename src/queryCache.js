@@ -108,7 +108,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       const [
         queryHash,
         queryKey,
-      ] = configRef.current.shared.queryKeySerializerFn(predicate)
+      ] = configRef.current.queries.queryKeySerializerFn(predicate)
 
       predicate = d =>
         exact ? d.queryHash === queryHash : deepIncludes(d.queryKey, queryKey)
