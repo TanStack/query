@@ -1861,8 +1861,7 @@ const queryInfo = useQuery({
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
 - `refetchOnWindowFocus: Boolean`
   - Optional
-  - Set this to `false` to disable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `true`).
-  - Set this to `true` to enable automatic refetching on window focus (useful, when `refetchOnWindowFocus` is set to `false`.
+  - Set this to `true` or `false` to enable/disable automatic refetching on window focus for this query.
 - `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data.
