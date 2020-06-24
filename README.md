@@ -725,7 +725,7 @@ This will ensure the new data is prepended to the data array instead of appended
 
 ## Scroll Restoration
 
-Out of the bx, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes)o and have not been garbage collected, scroll restoration will work out of the box all the time.
+Out of the box, "scroll restoration" for all queries (including paginated and infinite queries) Just Works™️ in React Query. The reason for this is that query results are cached and able to be retrieved synchronously when a query is rendered. As long as your queries are being cached long enough (the default time is 5 minutes)o and have not been garbage collected, scroll restoration will work out of the box all the time.
 
 ## Disabling or Pausing a Query
 
