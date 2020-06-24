@@ -309,10 +309,9 @@ export interface BaseSharedOptions {
 
 export interface BaseQueryOptions<TError = Error> {
   /**
-   * Set this to `true` to disable automatic refetching when the query mounts or changes query keys.
+   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    */
-  manual?: boolean
   enabled?: boolean
   /**
    * If `false`, failed queries will not retry by default.
@@ -374,12 +373,28 @@ export interface QueryResultBase<TResult, TError = Error> {
   isFetching: boolean
   isStale: boolean
   failureCount: number
+  canFetchMore: boolean
+  markedForGarbageCollection: boolean
+  query: Object
+  updatedAt: number
   refetch: ({ throwOnError }?: { throwOnError?: boolean }) => Promise<TResult>
+}
+
+export interface QueryIdleResult<TResult, TError = Error>
+  extends QueryResultBase<TResult, TError> {
+  status: 'idle'
+  isIdle: true
+  isLoading: false
+  isSuccess: false
+  isError: false
+  data: undefined
+  error: null
 }
 
 export interface QueryLoadingResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'loading'
+  isIdle: false
   isLoading: true
   isSuccess: false
   isError: false
@@ -390,6 +405,7 @@ export interface QueryLoadingResult<TResult, TError = Error>
 export interface QueryErrorResult<TResult, TError = Error>
   extends QueryResultBase<TResult, TError> {
   status: 'error'
+  isIdle: false
   isError: true
   isLoading: false
   isSuccess: false
@@ -399,6 +415,7 @@ export interface QueryErrorResult<TResult, TError = Error>
 
 export interface QuerySuccessResult<TResult> extends QueryResultBase<TResult> {
   status: 'success'
+  isIdle: false
   isSuccess: true
   isLoading: false
   isError: false
@@ -407,6 +424,7 @@ export interface QuerySuccessResult<TResult> extends QueryResultBase<TResult> {
 }
 
 export type QueryResult<TResult, TError = Error> =
+  | QueryIdleResult<TResult, TError>
   | QueryLoadingResult<TResult, TError>
   | QueryErrorResult<TResult, TError>
   | QuerySuccessResult<TResult>

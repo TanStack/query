@@ -10,14 +10,28 @@ import {
 
 function simpleQuery() {
   // Query - simple case
-  const querySimple = useQuery('todos', () => Promise.resolve('test'))
+  const querySimple = useQuery<string, 'todos', Error>('todos', () =>
+    Promise.resolve('test')
+  )
+  querySimple.isFetchingMore // $ExpectError
+  querySimple.fetchMore // $ExpectError
+
+  querySimple.canFetchMore // $ExpectType boolean
   querySimple.data // $ExpectType string | undefined
   querySimple.error // $ExpectType Error | null
+  querySimple.failureCount // $ExpectType number
+  querySimple.isError // $ExpectType boolean
   querySimple.isFetching // $ExpectType boolean
+  querySimple.isIdle // $ExpectType boolean
+  querySimple.isLoading // $ExpectType boolean
+  querySimple.isStale // $ExpectType boolean
+  querySimple.isSuccess // $ExpectType boolean
+  querySimple.markedForGarbageCollection // $ExpectType boolean
+  querySimple.query // $ExpectType Object
+  querySimple.refetch // $ExpectType Function
   querySimple.refetch() // $ExpectType Promise<string>
-  querySimple.fetchMore // $ExpectError
-  querySimple.canFetchMore // $ExpectError
-  querySimple.isFetchingMore // $ExpectError
+  querySimple.status // $ExpectType 'idle' | 'loading' | 'success' | 'error'
+  querySimple.updatedAt // $ExpectType number
 }
 
 function queryWithVariables() {
