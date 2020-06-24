@@ -532,10 +532,13 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
           // If there are any retries pending for this query, kill them
           query.cancelled = null
 
-          const callbackInstances = [...query.instances]
+          const getCallbackInstances = () => {
+            const callbackInstances = [...query.instances]
 
-          if (query.wasSuspended) {
-            callbackInstances.unshift(query.fallbackInstance)
+            if (query.wasSuspended) {
+              callbackInstances.unshift(query.fallbackInstance)
+            }
+            return callbackInstances
           }
 
           try {
@@ -549,13 +552,13 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
               query.config.isDataEqual(old, data) ? old : data
             )
 
-            callbackInstances.forEach(
+            getCallbackInstances().forEach(
               instance =>
                 instance.config.onSuccess &&
                 instance.config.onSuccess(query.state.data)
             )
 
-            callbackInstances.forEach(
+            getCallbackInstances().forEach(
               instance =>
                 instance.config.onSettled &&
                 instance.config.onSettled(query.state.data, null)
@@ -574,12 +577,12 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
             delete query.promise
 
             if (error !== query.cancelled) {
-              callbackInstances.forEach(
+              getCallbackInstances().forEach(
                 instance =>
                   instance.config.onError && instance.config.onError(error)
               )
 
-              callbackInstances.forEach(
+              getCallbackInstances().forEach(
                 instance =>
                   instance.config.onSettled &&
                   instance.config.onSettled(undefined, error)
