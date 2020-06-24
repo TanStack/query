@@ -496,7 +496,8 @@ export interface MutateOptions<TResult, TVariables, TError = Error> {
     data: undefined | TResult,
     error: TError | null,
     snapshotValue?: unknown
-  ) => Promise<void> | void
+  ) => Promise<void> | void,
+  throwOnError?: boolean
 }
 
 export interface MutationOptions<TResult, TVariables, TError = Error>

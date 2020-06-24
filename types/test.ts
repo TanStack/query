@@ -379,8 +379,11 @@ function simpleMutation() {
     onSuccess(result) {
       result // $ExpectType string[]
     },
+    throwOnError: false
   })
   mutate()
+  mutate({ throwOnError: true })
+  
   mutate(undefined, {
     throwOnError: true,
     onSettled(result, error) {
@@ -389,7 +392,7 @@ function simpleMutation() {
     },
   })
 
-  // Invalid mutatation funciton
+  // Invalid mutatation function
   useMutation((arg1: string, arg2: string) => Promise.resolve()) // $ExpectError
   useMutation((arg1: string) => null) // $ExpectError
 
