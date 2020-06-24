@@ -1,12 +1,28 @@
+import * as ReactQuery from 'react-query'
 import {
-  useMutation,
-  useQuery,
-  usePaginatedQuery,
+  ReactQueryProviderConfig,
+  setConsole,
   useInfiniteQuery,
   useIsFetching,
-  setConsole,
-  ReactQueryProviderConfig,
+  useMutation,
+  usePaginatedQuery,
+  useQuery,
 } from 'react-query'
+
+function imports() {
+  ReactQuery.setConsole 
+  ReactQuery.useInfiniteQuery 
+  ReactQuery.useIsFetching 
+  ReactQuery.useMutation 
+  ReactQuery.usePaginatedQuery 
+  ReactQuery.useQuery 
+  ReactQuery.useMutation 
+  ReactQuery.queryCache 
+  ReactQuery.queryCaches 
+  ReactQuery.deepIncludes
+  ReactQuery.useQueryCache
+  ReactQuery.makeQueryCache
+}
 
 function simpleQuery() {
   // Query - simple case
