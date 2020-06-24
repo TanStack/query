@@ -294,6 +294,56 @@ Out of the box, React Query is configured with **aggressive but sane** defaults.
 - Queries that fail will silently be retried **3 times, with exponential backoff delay** before capturing and displaying an error to the UI. To change this, you can alter the default `retry` and `retryDelay` options for queries to something other than `3` and the default exponential backoff function.
 - Query results by default are deep compared to detect if data has actually changed and if not, the data reference remains unchanged to better help with value stabilization with regards to useMemo and useCallback. The default deep compare function use here (`config.isDataEqual`) only supports comparing JSON-compatible primitives. If you are dealing with any non-json compatible values in your query responses OR are seeing performance issues with the deep compare function, you should probably disable it (`config.isDataEqual = () => false`) or customize it to better fit your needs.
 
+# Quick Start
+
+If you're looking to get started as quickly as possible and learn as you code, start here. This pseudo-example very briefly illustrates the 3 core concepts of React Query:
+
+- Queries
+- Mutations
+- Query Invalidation
+
+```js
+import { useQuery, useMutation, queryCache } from 'react-query'
+import { getTodos, postTodo } from '../my-api'
+
+function Todos() {
+  const todosQuery = useQuery('todos', getTodos)
+
+  const [addTodo] = useMutation(postTodo, {
+    onSuccess: () => {
+      queryCache.invalidateQueries('todos')
+    },
+  })
+
+  return (
+    <div>
+      <ul>
+        {todosQuery.data.map(todo => (
+          <li key={todo.id}>{todo.title}</li>
+        ))}
+      </ul>
+
+      <button
+        onClick={() =>
+          addTodo({
+            id: Date.now()
+            title: 'Do Laundry',
+          })
+        }
+      >
+        Add Todo
+      </button>
+    </div>
+  )
+}
+```
+
+These three concepts make up most of the core functionality of React Query, but there is so much more that React Query can do! From here you can take 2 paths to learn the way you want!
+
+- [Read the comprehensive guide and tutorial](#queries)
+- [Explore the examples!](#examples)
+- [Jump to the API documentation](#api)
+
 # Queries
 
 To make a new query, call the `useQuery` hook with at least:
