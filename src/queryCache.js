@@ -308,6 +308,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     }
 
     query.scheduleGarbageCollection = () => {
+      if (!queryCache.queries[query.queryHash]) return
       if (query.config.cacheTime === Infinity) {
         return
       }
