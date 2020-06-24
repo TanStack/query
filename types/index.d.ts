@@ -500,7 +500,7 @@ export type MutateFunction<
   TError = Error
 > = undefined extends TVariables
   ? (options?: MutateOptions<TResult, TVariables, TError>) => Promise<TResult>
-  : (options?: MutateOptions<TResult, TVariables, TError>) => Promise<TResult>
+  : (variables: TVariables, options?: MutateOptions<TResult, TVariables, TError>) => Promise<TResult>
 
 export interface MutationResultBase<TResult, TError = Error> {
   status: 'idle' | 'loading' | 'error' | 'success'
