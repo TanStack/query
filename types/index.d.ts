@@ -87,7 +87,6 @@ export function usePaginatedQuery<
     | false
     | null
     | undefined
-    | (() => TKey | false | null | undefined)
   queryFn: QueryFunction<TResult, TKey>
   config?: QueryOptions<TResult, TError>
 }): PaginatedQueryResult<TResult, TError>
@@ -106,7 +105,6 @@ export function usePaginatedQuery<
     | false
     | null
     | undefined
-    | (() => TSingleKey | false | null | undefined)
   queryFn: QueryFunction<TResult, [TSingleKey]>
   config?: QueryOptions<TResult, TError>
 }): PaginatedQueryResult<TResult, TError>
@@ -120,8 +118,7 @@ export function usePaginatedQuery<
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, TKey>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
@@ -131,8 +128,7 @@ export function usePaginatedQuery<TResult, TKey extends string, TError = Error>(
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, [TKey]>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
@@ -146,8 +142,7 @@ export function usePaginatedQuery<
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, TKey>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
@@ -157,8 +152,7 @@ export function usePaginatedQuery<TResult, TKey extends string, TError = Error>(
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: QueryFunction<TResult, [TKey]>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
@@ -179,7 +173,6 @@ export function useInfiniteQuery<
     | false
     | null
     | undefined
-    | (() => TKey | false | null | undefined)
   queryFn: InfiniteQueryFunction<TResult, TKey, TMoreVariable>
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 }): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -199,7 +192,6 @@ export function useInfiniteQuery<
     | false
     | null
     | undefined
-    | (() => TSingleKey | false | null | undefined)
   queryFn: InfiniteQueryFunction<TResult, [TSingleKey], TMoreVariable>
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 }): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -214,8 +206,7 @@ export function useInfiniteQuery<
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: InfiniteQueryFunction<TResult, TKey, TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -230,8 +221,7 @@ export function useInfiniteQuery<
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: InfiniteQueryFunction<TResult, [TKey], TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -246,8 +236,7 @@ export function useInfiniteQuery<
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: InfiniteQueryFunction<TResult, TKey, TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -262,8 +251,7 @@ export function useInfiniteQuery<
     | TKey
     | false
     | null
-    | undefined
-    | (() => TKey | false | null | undefined),
+    | undefined,
   queryFn: InfiniteQueryFunction<TResult, [TKey], TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -739,7 +727,6 @@ export interface ReactQueryProviderConfig<TError = Error> {
         | string
         | false
         | undefined
-        | (() => QueryKeyPart[] | string | false | undefined)
     ) => [string, QueryKeyPart[]] | []
   }
   shared?: BaseSharedOptions
