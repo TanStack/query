@@ -1407,7 +1407,7 @@ const [mutate] = useMutation(addTodo, {
 })
 ```
 
-The promise returned by `mutate()` can be helpful as well for performing more granualar control flow in your app, and if you prefer that that promise only resolves **after** the `onSuccess` or `onSettled` callbacks, you can return a promise in either!:
+The promise returned by `mutate()` can be helpful as well for performing more granular control flow in your app, and if you prefer that that promise only resolves **after** the `onSuccess` or `onSettled` callbacks, you can return a promise in either!:
 
 ```js
 const [mutate] = useMutation(addTodo, {
@@ -1831,7 +1831,7 @@ const queryInfo = useQuery({
 
 - `status: String`
   - Will be:
-    - `idle` if the query is idle. This only happens if a query is initialized with `enabled: false` and no inital data is available.
+    - `idle` if the query is idle. This only happens if a query is initialized with `enabled: false` and no initial data is available.
     - `loading` if the query is in a "hard" loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query is in `manual` mode and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
