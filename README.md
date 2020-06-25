@@ -204,6 +204,8 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 
 # Documentation
 
+> NOTE: These docs are written for the latest version of React Query. If you are looking for a previous version, please use the branch switcher to pick your version and view the old documentation.
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
