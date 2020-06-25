@@ -235,7 +235,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Resetting Error Boundaries](#resetting-error-boundaries)
   - [Fetch-on-render vs Fetch-as-you-render](#fetch-on-render-vs-fetch-as-you-render)
   - [Canceling Query Requests](#canceling-query-requests)
-  - [Using a Defualt Query Function](#using-a-defualt-query-function)
+  - [Using a Default Query Function](#using-a-default-query-function)
 - [Mutations](#mutations)
   - [Basic Mutations](#basic-mutations)
   - [Mutation Variables](#mutation-variables)
@@ -1127,7 +1127,7 @@ const query = useQuery('todos', () => {
 })
 ```
 
-## Using a Defualt Query Function
+## Using a Default Query Function
 
 If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to to identify what it should fetch, you can do that by providing a **default query function** to React Query:
 
