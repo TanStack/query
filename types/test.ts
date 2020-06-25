@@ -24,6 +24,14 @@ function imports() {
   ReactQuery.makeQueryCache
 }
 
+function queryCache () {
+  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve())
+  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), { retry: 1 })
+  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), { retry: 1 }, { throwOnError: false })
+  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), { throwOnError: true })
+  ReactQuery.queryCache.prefetchQuery(['queryKey'], (key: string) => Promise.resolve(), { throwOnError: true })
+}
+
 function simpleQuery() {
   // Query - simple case
   const querySimple = useQuery<string, 'todos', Error>('todos', () =>

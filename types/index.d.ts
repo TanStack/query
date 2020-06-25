@@ -338,8 +338,7 @@ export interface QueryOptions<TResult, TError = Error>
   initialStale?: boolean | (() => boolean | undefined)
 }
 
-export interface PrefetchQueryOptions<TResult, TError = Error>
-  extends QueryOptions<TResult, TError> {
+export interface PrefetchQueryOptions {
   force?: boolean
   throwOnError?: boolean
 }
@@ -604,50 +603,46 @@ export interface CachedQuery<T, TError = unknown> {
   clear(): void
 }
 
+type QueryKey<TKey> = TKey | false | null | undefined
+
 export interface QueryCache {
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
-    queryKey:
-      | TKey
-      | false
-      | null
-      | undefined,
+    queryKey: QueryKey<TKey>,
     queryFn: QueryFunction<TResult, TKey>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    prefetch?: PrefetchQueryOptions
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string, TError = Error>(
-    queryKey:
-      | TKey
-      | false
-      | null
-      | undefined,
+    queryKey: QueryKey<TKey>,
     queryFn: QueryFunction<TResult, [TKey]>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    prefetch?: PrefetchQueryOptions
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
-    queryKey:
-      | TKey
-      | false
-      | null
-      | undefined,
+    queryKey: QueryKey<TKey>,
     queryFn: QueryFunction<TResult, TKey>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    prefetch?: PrefetchQueryOptions,
+    config?: QueryOptions<TResult, TError>
+  ): Promise<TResult>
+
+  prefetchQuery<TResult, TKey extends string, TError = Error>(
+    queryKey: QueryKey<TKey>,
+    queryFn: QueryFunction<TResult, [TKey]>,
+    prefetch?: PrefetchQueryOptions,
+    config?: QueryOptions<TResult, TError>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>({
     queryKey,
-
     queryFn,
     config,
   }: {
-    queryKey:
-      | TKey
-      | false
-      | null
-      | undefined,
+    queryKey: QueryKey<TKey>
     queryFn: QueryFunction<TResult, TKey>
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>
+    prefetch?: PrefetchQueryOptions
   }): Promise<TResult>
 
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
