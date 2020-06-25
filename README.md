@@ -209,6 +209,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Installation](#installation)
 - [Defaults to keep in mind](#defaults-to-keep-in-mind)
 - [Quick Start](#quick-start)
@@ -230,6 +231,7 @@ This library is being built and maintained by me, @tannerlinsley and I am always
   - [Initial Data](#initial-data)
   - [Initial Data Function](#initial-data-function)
   - [Initial Data from Cache](#initial-data-from-cache)
+  - [Marking Initial Data as stale](#marking-initial-data-as-stale)
   - [SSR & Initial Data](#ssr--initial-data)
   - [Suspense Mode](#suspense-mode)
   - [Resetting Error Boundaries](#resetting-error-boundaries)
