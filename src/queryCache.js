@@ -227,8 +227,8 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
 
   queryCache.prefetchQuery = async (...args) => {
     if (
-      (isObject(args[1]) && args[1].hasOwnProperty('throwOnError')) ||
-      args[1].hasOwnProperty('force')
+      isObject(args[1]) &&
+      (args[1].hasOwnProperty('throwOnError') || args[1].hasOwnProperty('force'))
     ) {
       args[3] = args[1]
       args[1] = undefined
