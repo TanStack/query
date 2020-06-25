@@ -228,7 +228,8 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
   queryCache.prefetchQuery = async (...args) => {
     if (
       isObject(args[1]) &&
-      (args[1].hasOwnProperty('throwOnError') || args[1].hasOwnProperty('force'))
+      (args[1].hasOwnProperty('throwOnError') ||
+        args[1].hasOwnProperty('force'))
     ) {
       args[3] = args[1]
       args[1] = undefined
@@ -268,7 +269,11 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
 
     const hasInitialData = typeof initialData !== 'undefined'
 
-    const isStale = !config.enabled || !hasInitialData
+    const isStale =
+      !config.enabled ||
+      (typeof config.initialStale === 'function'
+        ? config.initialStale()
+        : config.initialStale ?? !hasInitialData)
 
     const initialStatus = hasInitialData
       ? statusSuccess

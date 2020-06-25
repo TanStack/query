@@ -10,6 +10,7 @@ const DEFAULT_CONFIG = {
   queries: {
     queryKeySerializerFn: defaultQueryKeySerializerFn,
     queryFn: undefined,
+    initialStale: undefined,
     enabled: true,
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),

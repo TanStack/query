@@ -920,9 +920,9 @@ There may be times when you already have the initial data for a query synchronou
 
 When providing an `initialData` value that is anything other than `undefined`:
 
-- The query `status` will initialize as `success` instead of `loading`
-- The query's `isStale` property will initialize as `false` instead of `true`
-- The query will not automatically fetch until it is invalidated somehow (eg. window refocus, queryCache refetching, etc)
+- The query `status` will initialize in a `success` state instead of `loading`
+- The query's `isStale` property will initialize as `false` instead of `true`. This can be overridden by setting the `initialStale` option to `true`
+- The query will not automatically fetch until it is invalidated somehow (eg. window refocus, queryCache refetching, `initialStale` is set to `true`, etc)
 
 ```js
 function Todos() {
@@ -981,6 +981,23 @@ function Todo({ todoId }) {
   })
 }
 ```
+
+## Marking Initial Data as stale
+
+By default `initialData` is not considered stale, but sometimes you may want it to be, for instance, if your initial data is only a partial subset of an object and you know you will need to refetch the full version immediately after mounting. For this, you can use the `initialStale: true` options.
+
+By setting `initialStale` to `true`, the `initialData` will be considered `stale` and will cause a refetch when the query mounts for the first time.
+
+```js
+function Todos() {
+  const queryInfo = useQuery('todos', () => fetch('/todos'), {
+    initialData: todoListPreview,
+    initialStale: true,
+  })
+}
+```
+
+> NOTE: Similar to `initialData`, `initialStale` can also be a function for costly calculations, eg. `initialStale: () => isPreview(todoListPreview)`,
 
 ## SSR & Initial Data
 
@@ -1795,6 +1812,10 @@ const queryInfo = useQuery({
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
+- `initialStale: Boolean | Function() => Boolean`
+  - Optional
+  - If set, this will mark the `initialData` any `initialData` provided as stale and will likely cause it to be refetched on mount
+  - If a function is passed, it will be called only when appropriate to resolve the `initialStale` value. This can be useful if your `initialStale` value is costly to calculate.
 - `refetchOnMount: Boolean`
   - Optional
   - Defaults to `true`

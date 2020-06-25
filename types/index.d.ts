@@ -341,6 +341,7 @@ export interface QueryOptions<TResult, TError = Error>
   onSuccess?: (data: TResult) => void
   onSettled?: (data: TResult | undefined, error: TError | null) => void
   initialData?: TResult | (() => TResult | undefined)
+  initialStale?: boolean | (() => boolean | undefined)
 }
 
 export interface PrefetchQueryOptions<TResult, TError = Error>
