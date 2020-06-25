@@ -13,6 +13,7 @@ import {
   uid,
   statusIdle,
   Console,
+  isObject,
 } from './utils'
 import { defaultConfigRef } from './config'
 
@@ -219,6 +220,15 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
   }
 
   queryCache.prefetchQuery = async (...args) => {
+    if (
+      (isObject(args[1]) && args[1].hasOwnProperty('throwOnError')) ||
+      args[1].hasOwnProperty('force')
+    ) {
+      args[3] = args[1]
+      args[1] = undefined
+      args[2] = undefined
+    }
+
     let [queryKey, config, { force, throwOnError } = {}] = getQueryArgs(args)
 
     try {
