@@ -134,13 +134,19 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
 
   queryCache.invalidateQueries = async (
     predicate,
-    { refetchActive = true, exact, throwOnError } = {}
+    { refetchActive = true, refetchInactive = false, exact, throwOnError } = {}
   ) => {
     try {
       return await Promise.all(
         queryCache.getQueries(predicate, { exact }).map(query => {
-          if (refetchActive && query.instances.length) {
-            return query.fetch()
+          if (query.instances.length) {
+            if (refetchActive) {
+              return query.fetch()
+            }
+          } else {
+            if (refetchInactive) {
+              return query.fetch()
+            }
           }
 
           return query.invalidate()

@@ -2104,7 +2104,10 @@ setQueryData(queryKey, oldData => newData)
 
 ## `queryCache.invalidateQueries`
 
-The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as stale and active queries are refetched in the background. If you don't want active queries to refetch, and simply be marked as stale, you can use the `refetchActive: false` option.
+The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as stale and active queries are refetched in the background.
+
+- If you **no not want active queries to refetch**, and simply be marked as stale, you can use the `refetchActive: false` option.
+- If you **want inactive queries to refetch** as well, use the `refetchInactive: true` option
 
 ```js
 import { queryCache } from 'react-query'
@@ -2112,7 +2115,8 @@ import { queryCache } from 'react-query'
 const queries = queryCache.invalidateQueries(inclusiveQueryKeyOrPredicateFn, {
   exact,
   throwOnError,
-  refetchActive,
+  refetchActive = true,
+  refetchInactive = false
 })
 ```
 
@@ -2131,6 +2135,9 @@ const queries = queryCache.invalidateQueries(inclusiveQueryKeyOrPredicateFn, {
 - `refetchActive: Boolean`
   - Defaults to `true`
   - When set to `false`, queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will NOT be refetched in the background, and only marked as stale.
+- `refetchInactive: Boolean`
+  - Defaults to `false`
+  - When set to `true`, queries that match the refetch predicate and are not being rendered via `useQuery` and friends will be both marked as stale and also refetched in the background
 
 ### Returns
 

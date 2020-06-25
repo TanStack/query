@@ -648,7 +648,13 @@ export interface QueryCache {
       exact,
       throwOnError,
       refetchActive,
-    }?: { exact?: boolean; throwOnError?: boolean; refetchActive?: boolean }
+      refetchInactive,
+    }?: {
+      exact?: boolean
+      throwOnError?: boolean
+      refetchActive?: boolean
+      refetchInactive?: boolean
+    }
   ): Promise<TResult>
   removeQueries(
     queryKeyOrPredicateFn:
