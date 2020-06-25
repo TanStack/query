@@ -368,7 +368,7 @@ export interface QueryResultBase<TResult, TError = Error> {
   isFetching: boolean
   isStale: boolean
   failureCount: number
-  canFetchMore: boolean
+  canFetchMore?: boolean
   markedForGarbageCollection: boolean
   query: object
   updatedAt: number
