@@ -391,7 +391,7 @@ function simpleMutation() {
       error // $ExpectType Error | null
     },
   })
-
+  
   // Invalid mutatation function
   useMutation((arg1: string, arg2: string) => Promise.resolve()) // $ExpectError
   useMutation((arg1: string) => null) // $ExpectError
@@ -439,14 +439,21 @@ function helpers() {
 
 function globalConfig() {
   const globalConfig: ReactQueryProviderConfig = {
-    onError(err, snapshot) {
-      log('Error', err, snapshot)
+    queries: {
+      useErrorBoundary: true,
+      refetchOnWindowFocus: true
     },
-    onMutate(variables) {
-      log(variables)
+    shared: {
+      suspense: true,
     },
-    suspense: true,
-    isDataEqual: (oldData, newData) => oldData === newData,
+    mutations: {
+      throwOnError: true,
+      useErrorBoundary: true,
+      onMutate: (variables: unknown) => Promise.resolve(),
+      onSuccess: (data: unknown, variables: unknown) => undefined,
+      onError: (err: Error, snapshotValue: unknown) => undefined,
+      onSettled: (data: unknown, error: Error | null, snapshotValue?: any) => undefined
+    }
   }
 }
 
