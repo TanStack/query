@@ -578,7 +578,8 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, TKey>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    options?: PrefetchQueryOptions<TResult, TError>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string, TError = Error>(
@@ -589,7 +590,8 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, [TKey]>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    options?: PrefetchQueryOptions<TResult, TError>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
@@ -600,7 +602,8 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, TKey>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    options?: PrefetchQueryOptions<TResult, TError>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends string, TError = Error>(
@@ -611,7 +614,8 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, [TKey]>,
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    options?: PrefetchQueryOptions<TResult, TError>
   ): Promise<TResult>
 
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>({
@@ -627,7 +631,8 @@ export interface QueryCache {
       | undefined
       | (() => TKey | false | null | undefined)
     queryFn: QueryFunction<TResult, TKey>
-    config?: PrefetchQueryOptions<TResult, TError>
+    config?: QueryOptions<TResult, TError>,
+    options?: PrefetchQueryOptions<TResult, TError>
   }): Promise<TResult>
 
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
