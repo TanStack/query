@@ -588,7 +588,6 @@ export interface QueryCache {
       | false
       | null
       | undefined
-      | (() => TKey | false | null | undefined),
     queryFn: QueryFunction<TResult, [TKey]>,
     config?: QueryOptions<TResult, TError>,
     options?: PrefetchQueryOptions<TResult, TError>
