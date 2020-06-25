@@ -1,130 +1,26 @@
-![React Query Header](https://github.com/tannerlinsley/react-query/raw/master/media/header.png)
-
 <img src='https://github.com/tannerlinsley/react-query/raw/master/media/logo.png' width='300'/>
 
 Hooks for fetching, caching and updating asynchronous data in React
 
-<a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
-  <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
-</a><a href="https://github.com/tannerlinsley/react-query/actions?query=workflow%3A%22react-query+tests%22">
-<img src="https://github.com/tannerlinsley/react-query/workflows/react-query%20tests/badge.svg" />
-</a><a href="https://npmjs.com/package/react-query" target="\_parent">
-  <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
-</a><a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
-  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
-</a><a href="#badge">
-    <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
-  </a><a href="https://github.com/tannerlinsley/react-query/discussions">
-  <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
-</a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
-  <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
-</a><a href="https://twitter.com/tannerlinsley" target="\_parent">
-  <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
-</a>
-
 Enjoy this library? Try them all! [React Table](https://github.com/tannerlinsley/react-table), [React Form](https://github.com/tannerlinsley/react-form), [React Charts](https://github.com/tannerlinsley/react-charts)
 
-## Quick Features
+# v1.x Documentation
 
-- Transport/protocol/backend agnostic data fetching (REST, GraphQL, promises, whatever!)
-- Auto Caching + Refetching (stale-while-revalidate, Window Refocus, Polling/Realtime)
-- Parallel + Dependent Queries
-- Mutations + Reactive Query Refetching
-- Multi-layer Cache + Automatic Garbage Collection
-- Paginated + Cursor-based Queries
-- Load-More + Infinite Scroll Queries w/ Scroll Recovery
-- Request Cancellation
-- [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
-- [Dedicated Devtools (React Query Devtools)](https://github.com/tannerlinsley/react-query-devtools)
-- 4kb - 6kb (depending on features imported) <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
-  <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
-  </a>
-
-<details>
-<summary>Core Issues and Solution</summary>
-
-## The Challenge
-
-Tools for managing "global state" are plentiful these days, but most of these tools:
-
-- Mistake **server cache state** for **global state**
-- Force you to manage async data in a synchronous way
-- Duplicate unnecessary network operations
-- Use naive or over-engineered caching strategies
-- Are too basic to handle large-scale apps or
-- Are too complex or built for highly-opinionated systems like Redux, GraphQL, [insert proprietary tools], etc.
-- Do not provide tools for server mutations
-- Either do not provide easy access to the cache or do, but expose overpowered foot-gun APIs to the developer
-
-## The Solution
-
-React Query exports a set of hooks that address these issues. Out of the box, React Query:
-
-- Separates your **server cache state** from your **global state**
-- Provides async aware APIs for reading and updating server state/cache
-- Dedupes both async and sync requests to async resources
-- Automatically caches data, invalidates and refetches stale data, and manages garbage collection of unused data
-- Scales easily as your application grows
-- Is based solely on Promises, making it highly unopinionated and interoperable with any data fetching strategy including REST, GraphQL and other transactional APIs
-- Provides an integrated promise-based mutation API
-- Opt-in Manual or Advance cache management
-
-</details>
-
-<details>
-<summary>Inspiration & Hat-Tipping</summary>
-<br />
-A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for inspiring a lot of React Query's original API and documentation and also [Zeit's SWR](https://github.com/zeit/swr) and its creators for inspiring even further customizations and examples. You all rock!
-
-</details>
-
-<details>
-<summary>How is this different from Zeit's SWR?</summary>
-<br />
-
-[Zeit's SWR](https://github.com/zeit/swr) is a great library, and is very similar in spirit and implementation to React Query with a few notable differences:
-
-- Automatic Cache Garbage Collection - React Query handles automatic cache purging for inactive queries and garbage collection. This can mean a much smaller memory footprint for apps that consume a lot of data or data that is changing often in a single session
-- `useMutation` - A dedicated hook for handling generic lifecycles around triggering mutations and handling their side-effects in applications. SWR does not ship with anything similar, and you may find yourself reimplementing most if not all of `useMutation`'s functionality in user-land. With this hook, you can extend the lifecycle of your mutations to reliably handle successful refetching strategies, failure rollbacks and error handling.
-- Prefetching - React Query ships with 1st class prefetching utilities which not only come in handy with non-suspenseful apps but also make fetch-as-you-render patterns possible with React Query. SWR does not come with similar utilities and relies on `<link rel='preload'>` and/or manually fetching and updating the query cache
-- Query cancellation integration is baked into React Query. You can easily use this to wire up request cancellation in most popular fetching libraries, including but not limited to fetch and axios.
-- Query Key Generation - React Query uses query key generation, query variables, and implicit query grouping. The query key and variables that are passed to a query are less URL/Query-based by nature and much more flexible. All items supplied to the query key array are used to compute the unique key for a query (using a stable and deterministic sorting/hashing implementation). This means you can spend less time thinking about precise key matching, but more importantly, allows you to use partial query-key matching when refetching, updating, or removing queries in mass eg. you can refetch every query that starts with a `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables, and even use functional filtering to select queries in most places. This architecture is much more robust and forgiving especially for larger apps.
-
-</details>
-
-## Used By
-
-- [Google](https://google.com)
-- [PayPal](https://paypal.com)
-- [Amazon](https://amazon.com)
-- [Walmart](https://walmart.com)
-- [Microsoft](https://microsoft.com)
-- [Target](https://target.com)
-- [CarFAX](https://carfax.com)
-- [HP](https://hp.com)
-- [Major League Baseball Association](https://www.mlb.com)
-- [Volvo](https://www.volvocars.com)
-- [Ocado](https://ocado.com)
-- [UPC.ch](https://upc.ch)
-- [EFI.com](https://efi.com)
-- [ReactBricks](https://www.reactbricks.com/)
-- [Nozzle.io](https://nozzle.io)
-
-> _These analytics are made available via the awesome [Scarf](https://www.npmjs.com/package/@scarf/scarf) package analytics library_
+This README is for the 1.x version of React Query. Please consider upgrading to the latest version to get the latest bug fixes and features!
 
 ## Examples
 
-- Basic - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic) - [Source](./examples/basic)
-- Custom Hooks - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/custom-hooks) - [Source](./examples/custom-hooks)
-- Auto Refetching / Polling / Realtime - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/auto-refetching) - [Source](./examples/auto-refetching)
-- Window Refocus Refetching - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/focus-refetching) - [Source](./examples/focus-refetching)
-- Optimistic Updates - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/optimistic-updates) - [Source](./examples/optimistic-updates)
-- Pagination - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/pagination) - [Source](./examples/pagination)
-- Load-More & Infinite Scroll - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/load-more-infinite-scroll) - [Source](./examples/load-more-infinite-scroll)
-- Suspense - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/suspense) - [Source](./examples/suspense)
-- Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) - [Source](./examples/playground)
-- Star Wars (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/star-wars) - [Source](./examples/star-wars)
-- Rick And Morty (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/rick-morty) - [Source](./examples/rick-morty)
+- Basic - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/basic) - [Source](./examples/basic)
+- Custom Hooks - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/custom-hooks) - [Source](./examples/custom-hooks)
+- Auto Refetching / Polling / Realtime - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/auto-refetching) - [Source](./examples/auto-refetching)
+- Window Refocus Refetching - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/focus-refetching) - [Source](./examples/focus-refetching)
+- Optimistic Updates - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/optimistic-updates) - [Source](./examples/optimistic-updates)
+- Pagination - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/pagination) - [Source](./examples/pagination)
+- Load-More & Infinite Scroll - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/load-more-infinite-scroll) - [Source](./examples/load-more-infinite-scroll)
+- Suspense - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/suspense) - [Source](./examples/suspense)
+- Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/playground) - [Source](./examples/playground)
+- Star Wars (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/star-wars) - [Source](./examples/star-wars)
+- Rick And Morty (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/1.x/examples/rick-morty) - [Source](./examples/rick-morty)
 
 ## Sponsors
 
@@ -601,10 +497,12 @@ function Todos() {
       >
         Next Page
       </button>
-      {// Since the last page's data potentially sticks around between page requests,
-      // we can use `isFetching` to show a background loading
-      // indicator since our `status === 'loading'` state won't be triggered
-      isFetching ? <span> Loading...</span> : null}{' '}
+      {
+        // Since the last page's data potentially sticks around between page requests,
+        // we can use `isFetching` to show a background loading
+        // indicator since our `status === 'loading'` state won't be triggered
+        isFetching ? <span> Loading...</span> : null
+      }{' '}
     </div>
   )
 }
