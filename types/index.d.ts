@@ -635,16 +635,6 @@ export interface QueryCache {
     config?: PrefetchQueryOptions<TResult, TError>
   ): Promise<TResult>
 
-  prefetchQuery<TResult, TKey extends string, TError = Error>(
-    queryKey:
-      | TKey
-      | false
-      | null
-      | undefined,
-    queryFn: QueryFunction<TResult, [TKey]>,
-    config?: PrefetchQueryOptions<TResult, TError>
-  ): Promise<TResult>
-
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>({
     queryKey,
 
