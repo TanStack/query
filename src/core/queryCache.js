@@ -396,7 +396,9 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
               if (
                 isDocumentVisible() ||
                 query.instances.some(
-                  instance => instance.config.refetchIntervalInBackground
+                  instance =>
+                    instance.config.refetchIntervalInBackground &&
+                    instance.config.enabled
                 )
               ) {
                 query.fetch()
