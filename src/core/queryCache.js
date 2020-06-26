@@ -1,4 +1,3 @@
-import React from 'react'
 import {
   isServer,
   functionalUpdate,
@@ -15,44 +14,12 @@ import {
   Console,
   isObject,
 } from './utils'
+
 import { defaultConfigRef } from './config'
 
 export const queryCache = makeQueryCache()
 
-export const queryCacheContext = React.createContext(queryCache)
-
 export const queryCaches = [queryCache]
-
-export const useQueryCache = () => React.useContext(queryCacheContext)
-
-export function ReactQueryCacheProvider({ queryCache, children }) {
-  const resolvedQueryCache = React.useMemo(
-    () => queryCache || makeQueryCache(),
-    [queryCache]
-  )
-
-  React.useEffect(() => {
-    queryCaches.push(resolvedQueryCache)
-
-    return () => {
-      // remove the cache from the active list
-      const i = queryCaches.indexOf(resolvedQueryCache)
-      if (i > -1) {
-        queryCaches.splice(i, 1)
-      }
-      // if the resolvedQueryCache was created by us, we need to tear it down
-      if (queryCache == null) {
-        resolvedQueryCache.clear()
-      }
-    }
-  }, [resolvedQueryCache, queryCache])
-
-  return (
-    <queryCacheContext.Provider value={resolvedQueryCache}>
-      {children}
-    </queryCacheContext.Provider>
-  )
-}
 
 const actionInit = 'Init'
 const actionFailed = 'Failed'
@@ -248,6 +215,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       if (throwOnError) {
         throw err
       }
+      Console.error(err)
     }
   }
 

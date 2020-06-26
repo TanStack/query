@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useMountedCallback } from './utils'
-import { useQueryCache } from './queryCache'
+import { useQueryCache } from './ReactQueryCacheProvider'
 
 export function useIsFetching() {
   const queryCache = useQueryCache()

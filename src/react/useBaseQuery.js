@@ -2,8 +2,9 @@ import React from 'react'
 
 //
 
-import { useQueryCache } from './queryCache'
-import { useMountedCallback, Console } from './utils'
+import { useQueryCache } from './ReactQueryCacheProvider'
+import { useMountedCallback } from './utils'
+import { Console } from '../core/utils'
 
 export function useBaseQuery(queryKey, config = {}) {
   // Make a rerender function

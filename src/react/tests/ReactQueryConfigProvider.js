@@ -9,13 +9,13 @@ import {
 
 import { sleep } from './utils'
 
-describe('config', () => {
+describe('ReactQueryConfigProvider', () => {
   afterEach(() => {
     queryCaches.forEach(cache => cache.clear())
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/105
-  it('should allow overriding the config with ReactQueryConfigProvider', async () => {
+  it('should allow overriding the config', async () => {
     const onSuccess = jest.fn()
 
     const config = {
@@ -48,8 +48,7 @@ describe('config', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
-  // TODO: Write a test that doesn't have overlapping act() calls
-  it('should reset to defaults when all providers are unmounted', async () => {
+  it('should reset to defaults when unmounted', async () => {
     const onSuccess = jest.fn()
 
     const config = {

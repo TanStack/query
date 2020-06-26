@@ -2,18 +2,17 @@ import React from 'react'
 
 //
 
-import { useConfigContext } from './config'
+import { useConfigContext } from './ReactQueryConfigProvider'
+import { useGetLatest, useMountedCallback } from './utils'
 import {
   statusIdle,
   statusLoading,
   statusSuccess,
   statusError,
-  useGetLatest,
   Console,
   uid,
-  useMountedCallback,
   noop,
-} from './utils'
+} from '../core/utils'
 
 const getDefaultState = () => ({
   status: statusIdle,

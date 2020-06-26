@@ -13,9 +13,11 @@ const globals = {
   react: 'React',
 }
 
+const inputSrc = 'src/react/index.js'
+
 export default [
   {
-    input: 'src/index.js',
+    input: inputSrc,
     output: {
       file: 'dist/react-query.mjs',
       format: 'es',
@@ -25,7 +27,7 @@ export default [
     plugins: [resolve(), babel(), commonJS(), externalDeps()],
   },
   {
-    input: 'src/index.js',
+    input: inputSrc,
     output: {
       file: 'dist/react-query.min.mjs',
       format: 'es',
@@ -35,7 +37,7 @@ export default [
     plugins: [resolve(), babel(), commonJS(), externalDeps(), terser()],
   },
   {
-    input: 'src/index.js',
+    input: inputSrc,
     output: {
       name: 'ReactQuery',
       file: 'dist/react-query.development.js',
@@ -47,7 +49,7 @@ export default [
     plugins: [resolve(), babel(), commonJS(), externalDeps()],
   },
   {
-    input: 'src/index.js',
+    input: inputSrc,
     output: {
       name: 'ReactQuery',
       file: 'dist/react-query.production.min.js',
