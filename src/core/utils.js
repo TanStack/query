@@ -128,3 +128,12 @@ export function deepEqual(a, b) {
   // eslint-disable-next-line no-self-compare
   return a !== a && b !== b
 }
+
+export function getStatusBools(status) {
+  return {
+    isLoading: status === statusLoading,
+    isSuccess: status === statusSuccess,
+    isError: status === statusError,
+    isIdle: status === statusIdle,
+  }
+}

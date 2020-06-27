@@ -13,6 +13,7 @@ import {
   statusIdle,
   Console,
   isObject,
+  getStatusBools,
 } from './utils'
 
 import { defaultConfigRef } from './config'
@@ -152,6 +153,23 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
         queryHash,
         config,
       })
+
+      if (config.infinite) {
+        if (
+          typeof query.state.canFetchMore === 'undefined' &&
+          typeof query.state.data !== 'undefined'
+        ) {
+          query.state.canFetchMore = config.getFetchMore(
+            query.state.data[query.state.data.length - 1],
+            query.state.data
+          )
+        }
+
+        // Here we seed the pageVariabes for the query
+        if (!query.pageVariables) {
+          query.pageVariables = [[...query.queryKey]]
+        }
+      }
 
       // If the query started with data, schedule
       // a stale timeout
@@ -308,6 +326,14 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
           ? 0
           : query.config.cacheTime
       )
+    }
+
+    query.refetch = async () => {
+      try {
+        await query.fetch()
+      } catch (error) {
+        Console.error(error)
+      }
     }
 
     query.heal = () => {
@@ -507,10 +533,98 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       }
     }
 
-    query.fetch = async ({ queryFn = query.config.queryFn } = {}) => {
+    query.fetch = async ({ fetchMore } = {}) => {
+      let queryFn = query.config.queryFn
+
       if (!queryFn) {
         return
       }
+
+      if (query.config.infinite) {
+        const originalQueryFn = queryFn
+
+        queryFn = async () => {
+          const data = []
+          const pageVariables = [...query.pageVariables]
+          const rebuiltPageVariables = []
+
+          do {
+            const args = pageVariables.shift()
+
+            if (!data.length) {
+              // the first page query doesn't need to be rebuilt
+              data.push(await originalQueryFn(...args))
+              rebuiltPageVariables.push(args)
+            } else {
+              // get an up-to-date cursor based on the previous data set
+
+              const nextCursor = query.config.getFetchMore(
+                data[data.length - 1],
+                data
+              )
+
+              // break early if there's no next cursor
+              // otherwise we'll start from the beginning
+              // which will cause unwanted duplication
+              if (!nextCursor) {
+                break
+              }
+
+              const pageArgs = [
+                // remove the last argument (the previously saved cursor)
+                ...args.slice(0, -1),
+                nextCursor,
+              ]
+
+              data.push(await originalQueryFn(...pageArgs))
+              rebuiltPageVariables.push(pageArgs)
+            }
+          } while (pageVariables.length)
+
+          query.state.canFetchMore = query.config.getFetchMore(
+            data[data.length - 1],
+            data
+          )
+          query.pageVariables = rebuiltPageVariables
+
+          return data
+        }
+
+        if (fetchMore) {
+          queryFn = async (...args) => {
+            const { fetchMoreInfo, previous } = fetchMore
+            try {
+              query.setState(old => ({
+                ...old,
+                isFetchingMore: previous ? 'previous' : 'next',
+              }))
+
+              const newArgs = [...args, fetchMoreInfo]
+
+              query.pageVariables[previous ? 'unshift' : 'push'](newArgs)
+
+              const newData = await originalQueryFn(...newArgs)
+
+              const data = previous
+                ? [newData, ...query.state.data]
+                : [...query.state.data, newData]
+
+              query.state.canFetchMore = query.config.getFetchMore(
+                newData,
+                data
+              )
+
+              return data
+            } finally {
+              query.setState(old => ({
+                ...old,
+                isFetchingMore: false,
+              }))
+            }
+          }
+        }
+      }
+
       // Create a new promise for the query cache if necessary
       if (!query.promise) {
         query.promise = (async () => {
@@ -582,6 +696,13 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       return query.promise
     }
 
+    if (query.config.infinite) {
+      query.fetchMore = (
+        fetchMoreInfo = query.state.canFetchMore,
+        { previous = false } = {}
+      ) => query.fetch({ fetchMore: { fetchMoreInfo, previous } })
+    }
+
     return query
   }
 
@@ -591,14 +712,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
 export function queryReducer(state, action) {
   const newState = switchActions(state, action)
 
-  Object.assign(newState, {
-    isLoading: newState.status === statusLoading,
-    isSuccess: newState.status === statusSuccess,
-    isError: newState.status === statusError,
-    isIdle: newState.status === statusIdle,
-  })
-
-  return newState
+  return Object.assign(newState, getStatusBools(newState.status))
 }
 
 function switchActions(state, action) {
@@ -608,7 +722,6 @@ function switchActions(state, action) {
         status: action.initialStatus,
         error: null,
         isFetching: action.initialStatus === 'loading',
-        canFetchMore: false,
         failureCount: 0,
         isStale: action.isStale,
         markedForGarbageCollection: false,
@@ -647,7 +760,6 @@ function switchActions(state, action) {
         error: null,
         isStale: false,
         isFetching: false,
-        canFetchMore: action.canFetchMore,
         updatedAt: Date.now(),
         failureCount: 0,
       }

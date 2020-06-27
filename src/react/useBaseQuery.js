@@ -4,7 +4,6 @@ import React from 'react'
 
 import { useQueryCache } from './ReactQueryCacheProvider'
 import { useMountedCallback } from './utils'
-import { Console } from '../core/utils'
 
 export function useBaseQuery(queryKey, config = {}) {
   // Make a rerender function
@@ -40,17 +39,9 @@ export function useBaseQuery(queryKey, config = {}) {
     instanceRef.current.run()
   }, [config.enabled, query])
 
-  const refetch = React.useCallback(async () => {
-    try {
-      await query.fetch()
-    } catch (error) {
-      Console.error(error)
-    }
-  }, [query])
-
   return {
-    query,
-    refetch,
+    ...query,
     ...query.state,
+    query,
   }
 }
