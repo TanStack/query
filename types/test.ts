@@ -358,37 +358,6 @@ function infiniteQueryWithObjectSyntax() {
 
 function log(...args: any[]) {}
 
-// function infiniteQueryWithVariables() {
-//   async function fetchWithCursor2(
-//     key: string,
-//     debuglog?: (...args: any[]) => void,
-//     cursor?: string
-//   ) {
-//     if (debuglog) debuglog(key, cursor)
-//     return [1, 2, 3]
-//   }
-//   function getFetchMore(last: number[], all: number[][]) {
-//     return last.length ? String(all.length + 1) : false
-//   }
-
-//   useInfiniteQuery<
-//     number[],
-//     [string],
-//     [undefined | ((...args: any[]) => void)],
-//     string
-//   >(
-//     ['key'],
-//     async (
-//       ...a: [string] | [string, [((...args: any[]) => void) | undefined]]
-//     ) => [1, 2, 3],
-//     { getFetchMore: (last, all) => 'next' }
-//   )
-
-//   useInfiniteQuery(['key'], fetchWithCursor2, { getFetchMore })
-//   useInfiniteQuery('key', fetchWithCursor2, { getFetchMore })
-//   useInfiniteQuery('key', fetchWithCursor2, { getFetchMore })
-// }
-
 // Simple mutation
 function simpleMutation() {
   const mutation = () => Promise.resolve(['foo', 'bar'])
