@@ -2,74 +2,48 @@
 //                 Jace Hensley <https://github.com/jacehensley>
 //                 Matteo Frana <https://github.com/matteofrana>
 //                 Igor Oleinikov <https://github.com/igorbek>
-// Minimum TypeScript Version: 3.7
+// Minimum TypeScript Version: 3.9
 
 import * as React from 'react'
 import * as _ from 'ts-toolbelt'
 
 // overloaded useQuery function
+export type UseQueryRest<TResult, TKey extends AnyQueryKey, TError> =
+  | []
+  | [QueryFunction<TResult, TKey>]
+  | [QueryFunction<TResult, TKey>, QueryOptions<TResult, TError>]
+  | [QueryOptions<TResult, TError>]
+
+// Object Syntax
 export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>({
   queryKey,
   queryFn,
   config,
 }: {
   queryKey: TKey
-  queryFn: QueryFunction<TResult, TKey>
+  queryFn?: QueryFunction<TResult, TKey>
   config?: QueryOptions<TResult, TError>
 }): QueryResult<TResult, TError>
 
-export function useQuery<TResult, TSingleKey extends string, TError = Error>({
+export function useQuery<TResult, TKey extends string, TError = Error>({
   queryKey,
   queryFn,
   config,
 }: {
-  queryKey:
-    | TSingleKey
-    | false
-    | null
-    | undefined
-  queryFn: QueryFunction<TResult, [TSingleKey]>
+  queryKey: TKey
+  queryFn?: QueryFunction<TResult, [TKey]>
   config?: QueryOptions<TResult, TError>
 }): QueryResult<TResult, TError>
 
+// Parameters Syntax
 export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
-  queryFn: QueryFunction<TResult, TKey>,
-  config?: QueryOptions<TResult, TError>
-): QueryResult<TResult, TError>
-
-export function useQuery<TResult, TSingleKey extends string, TError = Error>(
-  queryKey:
-    | TSingleKey
-    | false
-    | null
-    | undefined,
-  queryFn: QueryFunction<TResult, [TSingleKey]>,
-  config?: QueryOptions<TResult, TError>
-): QueryResult<TResult, TError>
-
-export function useQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
-  queryFn: QueryFunction<TResult, TKey>,
-  config?: QueryOptions<TResult, TError>
+  queryKey: TKey | false | null | undefined,
+  ...rest: UseQueryRest<TResult, TKey, TError>
 ): QueryResult<TResult, TError>
 
 export function useQuery<TResult, TKey extends string, TError = Error>(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
-  queryFn: QueryFunction<TResult, [TKey]>,
-  config?: QueryOptions<TResult, TError>
+  queryKey: TKey | false | null | undefined,
+  ...rest: UseQueryRest<TResult, [TKey], TError>
 ): QueryResult<TResult, TError>
 
 // usePaginatedQuery
@@ -82,11 +56,7 @@ export function usePaginatedQuery<
   queryFn,
   config,
 }: {
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined
+  queryKey: TKey | false | null | undefined
   queryFn: QueryFunction<TResult, TKey>
   config?: QueryOptions<TResult, TError>
 }): PaginatedQueryResult<TResult, TError>
@@ -100,11 +70,7 @@ export function usePaginatedQuery<
   queryFn,
   config,
 }: {
-  queryKey:
-    | TSingleKey
-    | false
-    | null
-    | undefined
+  queryKey: TSingleKey | false | null | undefined
   queryFn: QueryFunction<TResult, [TSingleKey]>
   config?: QueryOptions<TResult, TError>
 }): PaginatedQueryResult<TResult, TError>
@@ -114,21 +80,13 @@ export function usePaginatedQuery<
   TKey extends AnyQueryKey,
   TError = Error
 >(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: TKey | false | null | undefined,
   queryFn: QueryFunction<TResult, TKey>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
 export function usePaginatedQuery<TResult, TKey extends string, TError = Error>(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: TKey | false | null | undefined,
   queryFn: QueryFunction<TResult, [TKey]>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
@@ -138,26 +96,19 @@ export function usePaginatedQuery<
   TKey extends AnyQueryKey,
   TError = Error
 >(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: TKey | false | null | undefined,
   queryFn: QueryFunction<TResult, TKey>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
 export function usePaginatedQuery<TResult, TKey extends string, TError = Error>(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: TKey | false | null | undefined,
   queryFn: QueryFunction<TResult, [TKey]>,
   config?: QueryOptions<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
 // useInfiniteQuery
+export type InfiniteQueryKey<T> = T | false | null | undefined
 export function useInfiniteQuery<
   TResult,
   TKey extends AnyQueryKey,
@@ -168,12 +119,8 @@ export function useInfiniteQuery<
   queryFn,
   config,
 }: {
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined
-  queryFn: InfiniteQueryFunction<TResult, TKey, TMoreVariable>
+  queryKey: InfiniteQueryKey<TKey>
+  queryFn?: InfiniteQueryFunction<TResult, TKey, TMoreVariable>
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 }): InfiniteQueryResult<TResult, TMoreVariable, TError>
 
@@ -187,12 +134,8 @@ export function useInfiniteQuery<
   queryFn,
   config,
 }: {
-  queryKey:
-    | TSingleKey
-    | false
-    | null
-    | undefined
-  queryFn: InfiniteQueryFunction<TResult, [TSingleKey], TMoreVariable>
+  queryKey: InfiniteQueryKey<TSingleKey>
+  queryFn?: InfiniteQueryFunction<TResult, [TSingleKey], TMoreVariable>
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 }): InfiniteQueryResult<TResult, TMoreVariable, TError>
 
@@ -202,11 +145,7 @@ export function useInfiniteQuery<
   TMoreVariable,
   TError = Error
 >(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: InfiniteQueryKey<TKey>,
   queryFn: InfiniteQueryFunction<TResult, TKey, TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -217,11 +156,7 @@ export function useInfiniteQuery<
   TMoreVariable,
   TError = Error
 >(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: InfiniteQueryKey<TKey>,
   queryFn: InfiniteQueryFunction<TResult, [TKey], TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -232,11 +167,7 @@ export function useInfiniteQuery<
   TMoreVariable,
   TError = Error
 >(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: InfiniteQueryKey<TKey>,
   queryFn: InfiniteQueryFunction<TResult, TKey, TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -247,11 +178,7 @@ export function useInfiniteQuery<
   TMoreVariable,
   TError = Error
 >(
-  queryKey:
-    | TKey
-    | false
-    | null
-    | undefined,
+  queryKey: InfiniteQueryKey<TKey>,
   queryFn: InfiniteQueryFunction<TResult, [TKey], TMoreVariable>,
   config?: InfiniteQueryOptions<TResult, TMoreVariable, TError>
 ): InfiniteQueryResult<TResult, TMoreVariable, TError>
@@ -275,7 +202,7 @@ export type QueryKeyPart =
 export type AnyQueryKey = readonly [DefinedQueryKeyPart, ...QueryKeyPart[]] // this forces the key to be inferred as a tuple
 
 export type QueryFunction<TResult, TKey extends AnyQueryKey> = (
-  ...key: TKey
+  ...key: Readonly<TKey>
 ) => Promise<TResult>
 
 export type InfiniteQueryFunction<
@@ -312,7 +239,7 @@ export interface BaseQueryOptions<TError = Error> {
   refetchOnMount?: boolean
   onSuccess?: (data: any) => void
   onError?: (err: TError) => void
-  onSettled?: (data: any | undefined, error: TError | null) => void
+  onSettled?: (data: any, error: TError | null) => void
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   useErrorBoundary?: boolean
 }
@@ -455,7 +382,8 @@ export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   isFetchingMore: false | 'previous' | 'next'
   canFetchMore: boolean | undefined
   fetchMore: (
-    moreVariable?: TMoreVariable | false, options?: { previous: boolean }
+    moreVariable?: TMoreVariable | false,
+    options?: { previous: boolean }
   ) => Promise<TResult[]> | undefined
 }
 
@@ -483,7 +411,7 @@ export interface MutateOptions<TResult, TVariables, TError = Error> {
     data: undefined | TResult,
     error: TError | null,
     snapshotValue?: unknown
-  ) => Promise<void> | void,
+  ) => Promise<void> | void
   throwOnError?: boolean
 }
 
@@ -591,7 +519,7 @@ export interface CachedQuery<T, TError = unknown> {
   clear(): void
 }
 
-type QueryKey<TKey> = TKey | false | null | undefined
+export type QueryKey<TKey> = TKey | false | null | undefined
 
 export interface QueryCache {
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
@@ -722,11 +650,7 @@ export interface ReactQueryProviderConfig<TError = Error> {
     useErrorBoundary?: boolean
     refetchOnWindowFocus?: boolean
     queryKeySerializerFn?: (
-      queryKey:
-        | QueryKeyPart[]
-        | string
-        | false
-        | undefined
+      queryKey: QueryKeyPart[] | string | false | undefined
     ) => [string, QueryKeyPart[]] | []
   }
   shared?: BaseSharedOptions

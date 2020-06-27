@@ -1,4 +1,3 @@
-import * as ReactQuery from 'react-query'
 import {
   ReactQueryProviderConfig,
   setConsole,
@@ -7,40 +6,42 @@ import {
   useMutation,
   usePaginatedQuery,
   useQuery,
+  queryCache,
 } from 'react-query'
 
-function imports() {
-  ReactQuery.setConsole 
-  ReactQuery.useInfiniteQuery 
-  ReactQuery.useIsFetching 
-  ReactQuery.useMutation 
-  ReactQuery.usePaginatedQuery 
-  ReactQuery.useQuery 
-  ReactQuery.useMutation 
-  ReactQuery.queryCache 
-  ReactQuery.queryCaches 
-  ReactQuery.deepIncludes
-  ReactQuery.useQueryCache
-  ReactQuery.makeQueryCache
-}
+class FooError extends Error {}
 
-function queryCache () {
-  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve())
-  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), { retry: 1 })
-  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), { retry: 1 }, { throwOnError: false })
-  ReactQuery.queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), { throwOnError: true })
-  ReactQuery.queryCache.prefetchQuery(['queryKey'], (key: string) => Promise.resolve(), { throwOnError: true })
+function prefetchQuery() {
+  queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve())
+  queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), {
+    retry: 1,
+  })
+  queryCache.prefetchQuery<number, string, FooError>(
+    'queryKey',
+    (key: string) =>
+      Math.random() > 0.5
+        ? Promise.reject(new FooError())
+        : Promise.resolve(123),
+    { onError: a => false },
+    { throwOnError: false }
+  )
+  queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), {
+    throwOnError: true,
+  })
+  queryCache.prefetchQuery(['queryKey'], (key: string) => Promise.resolve(), {
+    throwOnError: true,
+  })
 }
 
 function simpleQuery() {
   // Query - simple case
-  const querySimple = useQuery<string, 'todos', Error>('todos', () =>
+  const querySimple = useQuery<string, 'todos'>('todos', () =>
     Promise.resolve('test')
   )
   querySimple.isFetchingMore // $ExpectError
   querySimple.fetchMore // $ExpectError
 
-  querySimple.canFetchMore // $ExpectType boolean
+  querySimple.canFetchMore // $ExpectType boolean | undefined
   querySimple.data // $ExpectType string | undefined
   querySimple.error // $ExpectType Error | null
   querySimple.failureCount // $ExpectType number
@@ -51,10 +52,10 @@ function simpleQuery() {
   querySimple.isStale // $ExpectType boolean
   querySimple.isSuccess // $ExpectType boolean
   querySimple.markedForGarbageCollection // $ExpectType boolean
-  querySimple.query // $ExpectType Object
-  querySimple.refetch // $ExpectType Function
+  querySimple.query // $ExpectType object
+  querySimple.refetch // $ExpectType ({ throwOnError }?: { throwOnError?: boolean | undefined; } | undefined) => Promise<string>
   querySimple.refetch() // $ExpectType Promise<string>
-  querySimple.status // $ExpectType 'idle' | 'loading' | 'success' | 'error'
+  querySimple.status // $ExpectType "idle" | "loading" | "error" | "success"
   querySimple.updatedAt // $ExpectType number
 }
 
@@ -69,13 +70,23 @@ function queryWithVariables() {
   query.refetch() // $ExpectType Promise<boolean>
 }
 
+function queryWithReadonlyArray() {
+  useQuery(
+    ['key', 'a'] as const,
+    async (
+      key, // $ExpectType "key"
+      other // $ExpectType "a"
+    ) => key
+  )
+}
+
 function queryKeyArrayOrder() {
   // first element in the key must be not null/undefined
-  useQuery([null, 'a'], async (id, key) => id) // $ExpectError
+  useQuery([null, 'a'], async (key, other) => key) // $ExpectError
 
-  useQuery([10, 'a'], async (id, key) => id)
-  useQuery([false, 'a'], async (id, key) => id)
-  useQuery([{ complex: { obj: "yes" } }, 'a'], async (id, key) => id)
+  useQuery([10, 'a'], async (key, other) => key)
+  useQuery([false, 'a'], async (key, other) => key)
+  useQuery([{ complex: { obj: 'yes' } }, 'a'], async (key, other) => key)
 }
 
 function conditionalQuery(condition: boolean) {
@@ -85,40 +96,50 @@ function conditionalQuery(condition: boolean) {
 
   useQuery(() => 'foo', queryFn2, { enabled: condition }) // $ExpectError
 
-  // Query with falsey query key
+  // Query with falsey enabled
   useQuery(['foo', { bar: 'baz' }], queryFn1, { enabled: condition })
   useQuery(['foo', { bar: 'baz' }], queryFn2, { enabled: condition })
   useQuery({
     queryKey: ['foo', { bar: 'baz' }],
     queryFn: queryFn1,
-    config: {
-      enabled: condition,
-    },
+    config: { enabled: condition },
   })
+}
+
+function queryWithoutFn() {
+  useQuery('key')
+  useQuery(['key'])
+
+  useQuery('key', { suspense: false }) // with QueryOptions
+  useQuery(['key'], { suspense: false }) // with QueryOptions
+
+  useQuery({ queryKey: 'key' })
+  useQuery({ queryKey: ['key'] })
+
+  useQuery({ queryKey: 'key', config: { suspense: false } }) // with QueryOptions
+  useQuery({ queryKey: ['key'], config: { suspense: false } }) // with QueryOptions
 }
 
 function queryWithObjectSyntax(condition: boolean) {
   useQuery({
     queryKey: ['key'],
-    queryFn: async key => key,
+    queryFn: async (
+      key // $ExpectType string
+    ) => key,
   }).data // $ExpectType string | undefined
 
   useQuery({
     queryKey: ['key', 10],
     queryFn: async (
       key, // $ExpectType string
-      id, // $ExpectType number
-      var1, // $ExpectType boolean
-      var2 // $ExpectType number
+      id // $ExpectType number
     ) => 'yay!',
   }).data // $ExpectType string | undefined
 
   useQuery({
     queryKey: 'key',
     queryFn: async (
-      key, // $ExpectType "key"
-      var1, // $ExpectType boolean
-      var2 // $ExpectType number
+      key // $ExpectType "key"
     ) => 'yay!',
   }).data // $ExpectType string | undefined
 
@@ -127,25 +148,16 @@ function queryWithObjectSyntax(condition: boolean) {
     queryFn: async (
       key // $ExpectType "key"
     ) => 10,
-    config: {
-      enabled: condition,
-    },
+    config: { enabled: condition },
   }).data // $ExpectType number | undefined
 }
 
 function queryWithNestedKey() {
   // Query with nested variabes
-  const queryNested = useQuery(
-    [
-      'key',
-      {
-        nested: {
-          props: [1, 2],
-        },
-      },
-    ],
-    (key, variables) => Promise.resolve(variables.nested.props[0])
-  )
+  const queryNested = useQuery(['key', { nested: { props: [1, 2] } }], (
+    key, // $ExpectType string
+    variables // $ExpectType { nested: { props: number[]; }; }
+  ) => Promise.resolve(variables.nested.props[0]))
   queryNested.data // $ExpectType number | undefined
 }
 
@@ -171,16 +183,9 @@ function queryWithComplexKeysAndVariables() {
     ) => 100
   ).data // $ExpectType number | undefined
 
-  const longVariables: [boolean, ...object[]] = [true, {}]
-  useQuery(
-    ['key'],
-    longVariables,
-    async (
-      key, // $ExpectType string
-      var1, // $ExpectType boolean
-      ...vars // $ExpectType object[]
-    ) => 100
-  ).data // $ExpectType number | undefined
+  const longVariables = [true, {}, {}, {}] as const
+  const queryFn = async (key: string, var1: boolean, ...vars: Array<{}>) => 100
+  useQuery(['key', ...longVariables] as const, queryFn).data // $ExpectType number | undefined
 
   // the following example cannot work properly, as it would require concatenating tuples with infinite tails.
   // ts-toolbelt library's `List.Concat` cannot do the job. It would be possible to do with `typescript-tuple` and additional trick.
@@ -243,23 +248,18 @@ function paginatedQuery() {
   }
 }
 
-function paginatedQueryWithObjectSyntax(condition: boolean) {
+function paginatedQueryWithObjectSyntax() {
   usePaginatedQuery({
-    queryKey: condition && ['key', { a: 10 }],
-    variables: [true],
-    queryFn: async (key, { a }, debug) =>
-      key === 'key' && a === 10 && debug ? 'yes' : 'no',
+    queryKey: ['key', { a: 10 }],
+    queryFn: async (key, { a }) => (key === 'key' && a === 10 ? 'yes' : 'no'),
   }).latestData // $ExpectType "yes" | "no" | undefined
   usePaginatedQuery({
     queryKey: 'key',
-    variables: [true],
-    queryFn: async (key, debug) => (key === 'key' && debug ? 'yes' : 'no'),
+    queryFn: async key => (key === 'key' ? 'yes' : 'no'),
   }).latestData // $ExpectType "yes" | "no" | undefined
   usePaginatedQuery({
-    queryKey: condition && (() => condition && 'key'),
-    variables: [10],
-    queryFn: async (key, level) =>
-      key === 'key' && level === 10 ? 'yes' : 'no',
+    queryKey: 'key',
+    queryFn: async key => (key === 'key' ? 'yes' : 'no'),
   }).latestData // $ExpectType "yes" | "no" | undefined
 }
 
@@ -294,7 +294,7 @@ function simpleInfiniteQuery(condition: boolean) {
   })
   useInfiniteQuery(['key'], fetchWithCursor, { getFetchMore })
   useInfiniteQuery('key', fetchWithCursor, { getFetchMore })
-  useInfiniteQuery(() => condition && 'key', fetchWithCursor, { getFetchMore })
+  useInfiniteQuery('key', fetchWithCursor, { getFetchMore })
 
   const infiniteQuery = useInfiniteQuery(['key'], fetchWithCursor, {
     getFetchMore,
@@ -311,7 +311,7 @@ function simpleInfiniteQuery(condition: boolean) {
   infiniteQuery.fetchMore('next', { previous: true }) // $ExpectType Promise<number[][]> | undefined
 }
 
-function infiniteQueryWithObjectSyntax(condition: boolean) {
+function infiniteQueryWithObjectSyntax() {
   useInfiniteQuery({
     queryKey: ['key', 1],
     queryFn: async (key, id, next = 0) => ({ next: next + 1 }),
@@ -320,7 +320,7 @@ function infiniteQueryWithObjectSyntax(condition: boolean) {
     },
   }).data // $ExpectType { next: number; }[]
   useInfiniteQuery({
-    queryKey: condition && (() => condition && ['key', 1]),
+    queryKey: ['key', 1],
     queryFn: async (key, id, next = 0) => ({ next: next + 1 }),
     config: {
       getFetchMore: (last: { next: number }) => last.next, // annotation on this type is required to infer the type
@@ -337,7 +337,7 @@ function infiniteQueryWithObjectSyntax(condition: boolean) {
     },
   }).data // $ExpectType { next: number; }[]
   useInfiniteQuery({
-    queryKey: condition && (() => condition && ('key' as const)),
+    queryKey: 'key',
     queryFn: async (
       key, // $ExpectType "key"
       next = 0
@@ -346,72 +346,88 @@ function infiniteQueryWithObjectSyntax(condition: boolean) {
       getFetchMore: (last: { next: number }) => last.next, // annotation on this type is required to infer the type
     },
   }).data // $ExpectType { next: number; }[]
+
+  useInfiniteQuery<{ next: number }, string, undefined>({
+    queryKey: 'key',
+  }).data // $ExpectType { next: number; }[]
+
+  useInfiniteQuery<{ next: number }, [string], undefined>({
+    queryKey: ['key'],
+  }).data // $ExpectType { next: number; }[]
 }
 
 function log(...args: any[]) {}
 
-function infiniteQueryWithVariables(condition: boolean) {
-  async function fetchWithCursor2(
-    key: string,
-    debuglog?: (...args: any[]) => void,
-    cursor?: string
-  ) {
-    if (debuglog) debuglog(key, cursor)
-    return [1, 2, 3]
-  }
-  function getFetchMore(last: number[], all: number[][]) {
-    return last.length ? String(all.length + 1) : false
-  }
+// function infiniteQueryWithVariables() {
+//   async function fetchWithCursor2(
+//     key: string,
+//     debuglog?: (...args: any[]) => void,
+//     cursor?: string
+//   ) {
+//     if (debuglog) debuglog(key, cursor)
+//     return [1, 2, 3]
+//   }
+//   function getFetchMore(last: number[], all: number[][]) {
+//     return last.length ? String(all.length + 1) : false
+//   }
 
-  useInfiniteQuery<
-    number[],
-    [string],
-    [undefined | ((...args: any[]) => void)],
-    string
-  >(['key'], [undefined], fetchWithCursor2, {
-    getFetchMore: (last, all) => 'next',
-  })
+//   useInfiniteQuery<
+//     number[],
+//     [string],
+//     [undefined | ((...args: any[]) => void)],
+//     string
+//   >(
+//     ['key'],
+//     async (
+//       ...a: [string] | [string, [((...args: any[]) => void) | undefined]]
+//     ) => [1, 2, 3],
+//     { getFetchMore: (last, all) => 'next' }
+//   )
 
-  useInfiniteQuery(['key'], [log], fetchWithCursor2, { getFetchMore })
-  useInfiniteQuery('key', [log], fetchWithCursor2, { getFetchMore })
-  useInfiniteQuery(() => condition && 'key', [log], fetchWithCursor2, {
-    getFetchMore,
-  })
-}
+//   useInfiniteQuery(['key'], fetchWithCursor2, { getFetchMore })
+//   useInfiniteQuery('key', fetchWithCursor2, { getFetchMore })
+//   useInfiniteQuery('key', fetchWithCursor2, { getFetchMore })
+// }
 
+// Simple mutation
 function simpleMutation() {
-  // Simple mutation
   const mutation = () => Promise.resolve(['foo', 'bar'])
 
   const [mutate, mutationState] = useMutation(mutation, {
     onSuccess(result) {
       result // $ExpectType string[]
     },
-    throwOnError: false
+    throwOnError: false,
   })
   mutate()
   mutate({ throwOnError: true })
-  
-  mutate(undefined, {
+
+  mutate({
     throwOnError: true,
     onSettled(result, error) {
       result // $ExpectType string[] | undefined
       error // $ExpectType Error | null
     },
+    onError(
+      error // $ExpectType Error
+    ) {},
+    onSuccess(
+      result // $ExpectType string[]
+    ) {},
   })
-  
+
   // Invalid mutatation function
   useMutation((arg1: string, arg2: string) => Promise.resolve()) // $ExpectError
   useMutation((arg1: string) => null) // $ExpectError
 
-  mutationState.data // $ExpectType string[] || undefined
-  mutationState.error// $ExpectType Error | null
-  mutationState.isError// $ExpectType boolean
-  mutationState.isIdle// $ExpectType boolean
-  mutationState.isLoading// $ExpectType boolean
-  mutationState.isSuccess// $ExpectType boolean
-  mutationState.reset// $ExpectType Function
-  mutationState.status// $ExpectType "idle" | 'loading'|'error' | 'success
+  mutationState.data // $ExpectType string[] | undefined
+  mutationState.error // $ExpectType Error | null | undefined
+  mutationState.isError // $ExpectType boolean
+  mutationState.isIdle // $ExpectType boolean
+  mutationState.isLoading // $ExpectType boolean
+  mutationState.isSuccess // $ExpectType boolean
+  mutationState.reset // $ExpectType () => void
+  mutationState.status // $ExpectType "idle" | "loading" | "error" | "success"
 }
 
 function mutationWithVariables() {
@@ -449,7 +465,7 @@ function globalConfig() {
   const globalConfig: ReactQueryProviderConfig = {
     queries: {
       useErrorBoundary: true,
-      refetchOnWindowFocus: true
+      refetchOnWindowFocus: true,
     },
     shared: {
       suspense: true,
@@ -460,8 +476,9 @@ function globalConfig() {
       onMutate: (variables: unknown) => Promise.resolve(),
       onSuccess: (data: unknown, variables: unknown) => undefined,
       onError: (err: Error, snapshotValue: unknown) => undefined,
-      onSettled: (data: unknown, error: Error | null, snapshotValue?: any) => undefined
-    }
+      onSettled: (data: unknown, error: Error | null, snapshotValue?: any) =>
+        undefined,
+    },
   }
 }
 
@@ -522,24 +539,46 @@ function mutationStatusDiscriminatedUnion() {
   mutationState.data // $ExpectType string[] | undefined
 
   // Discriminated union over status
-  if (mutationState.status === 'idle' || mutationState.isIdle) {
+  if (mutationState.status === 'idle') {
     mutationState.data // $ExpectType undefined
     mutationState.error // $ExpectType null
   }
 
-  if (mutationState.status === 'loading' || mutationState.isLoading) {
+  if (mutationState.status === 'loading') {
     mutationState.data // $ExpectType undefined
     // corrected
     // mutationState.error; // $ExpectType null
     mutationState.error // $ExpectType undefined
   }
 
-  if (mutationState.status === 'error' || mutationState.isError) {
+  if (mutationState.status === 'error') {
     mutationState.data // $ExpectType undefined
     mutationState.error // $ExpectType Error
   }
 
-  if (mutationState.status === 'success' || mutationState.isSuccess) {
+  if (mutationState.status === 'success') {
+    mutationState.data // $ExpectType string[]
+    mutationState.error // $ExpectType undefined
+  }
+
+  if (mutationState.isIdle) {
+    mutationState.data // $ExpectType undefined
+    mutationState.error // $ExpectType null
+  }
+
+  if (mutationState.isLoading) {
+    mutationState.data // $ExpectType undefined
+    // corrected
+    // mutationState.error; // $ExpectType null
+    mutationState.error // $ExpectType undefined
+  }
+
+  if (mutationState.isError) {
+    mutationState.data // $ExpectType undefined
+    mutationState.error // $ExpectType Error
+  }
+
+  if (mutationState.isSuccess) {
     mutationState.data // $ExpectType string[]
     mutationState.error // $ExpectType undefined
   }
