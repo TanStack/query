@@ -151,4 +151,29 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('rendered'))
   })
+
+  it('should not call the queryFn when not enabled', async () => {
+    const queryFn = jest.fn()
+    queryFn.mockImplementation(() => sleep(10))
+
+    function Page() {
+      const [enabled, setEnabled] = React.useState(false)
+      useQuery(['test'], queryFn, { suspense: true, enabled })
+
+      return <button aria-label="fire" onClick={() => setEnabled(true)} />
+    }
+
+    const rendered = render(
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
+    )
+
+    expect(queryFn).toHaveBeenCalledTimes(0)
+
+    fireEvent.click(rendered.getByLabelText('fire'))
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    await waitFor(() => rendered.getByLabelText('fire'))
+  })
 })
