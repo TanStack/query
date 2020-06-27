@@ -80,64 +80,37 @@ export function useMutation(mutationFn, config = {}) {
 
       const isLatest = () => latestMutationRef.current === mutationId
 
-      dispatch({ type: actionLoading })
-
       let snapshotValue
 
       try {
+        dispatch({ type: actionLoading })
         snapshotValue = await config.onMutate(variables)
 
-        let data
-
-        if (isLatest()) {
-          data = await getMutationFn()(variables)
-        }
+        let data = await getMutationFn()(variables)
 
         if (isLatest()) {
           dispatch({ type: actionResolve, data })
         }
 
-        if (isLatest()) {
-          await config.onSuccess(data, variables)
-        }
-
-        if (isLatest()) {
-          await onSuccess(data, variables)
-        }
-
-        if (isLatest()) {
-          await config.onSettled(data, null, variables)
-        }
-
-        if (isLatest()) {
-          await onSettled(data, null, variables)
-        }
+        await config.onSuccess(data, variables)
+        await onSuccess(data, variables)
+        await config.onSettled(data, null, variables)
+        await onSettled(data, null, variables)
 
         return data
       } catch (error) {
-        if (isLatest()) {
-          Console.error(error)
-          await config.onError(error, variables, snapshotValue)
-        }
-
-        if (isLatest()) {
-          await onError(error, variables, snapshotValue)
-        }
-
-        if (isLatest()) {
-          await config.onSettled(undefined, error, variables, snapshotValue)
-        }
-
-        if (isLatest()) {
-          await onSettled(undefined, error, variables, snapshotValue)
-        }
+        Console.error(error)
+        await config.onError(error, variables, snapshotValue)
+        await onError(error, variables, snapshotValue)
+        await config.onSettled(undefined, error, variables, snapshotValue)
+        await onSettled(undefined, error, variables, snapshotValue)
 
         if (isLatest()) {
           dispatch({ type: actionReject, error })
+        }
 
-          if (throwOnError ?? config.throwOnError) {
-            throw error
-          }
+        if (throwOnError ?? config.throwOnError) {
+          throw error
         }
       }
     },
