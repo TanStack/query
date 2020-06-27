@@ -68,7 +68,11 @@ export function handleSuspense(queryInfo) {
       throw queryInfo.error
     }
 
-    if (queryInfo.query.config.suspense && queryInfo.status !== statusSuccess) {
+    if (
+      queryInfo.query.config.suspense &&
+      queryInfo.status !== statusSuccess &&
+      queryInfo.query.config.enabled
+    ) {
       queryInfo.query.wasSuspended = true
       throw queryInfo.query.fetch()
     }
