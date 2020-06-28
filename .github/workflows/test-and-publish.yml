@@ -2,9 +2,6 @@ name: react-query tests
 
 on:
   push:
-    branches:
-      - 'master'
-      - 'next'
   pull_request:
 
 jobs:
@@ -29,7 +26,7 @@ jobs:
   publish-module:
     name: 'Publish Module to NPM'
     needs: test
-    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next' #publish only when merged in master, not on PR
+    if: contains(['refs/heads/master', 'refs/heads/next', 'refs/heads/1.x'], github.ref) #publish only when merged in master, not on PR
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
