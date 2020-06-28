@@ -236,7 +236,7 @@ export function makeQueryCache() {
 
     if (!queries.length && typeof queryKey !== 'function') {
       queries = [
-        cache._buildQuery(queryKey, undefined, () => new Promise(noop), {
+        cache._buildQuery(queryKey, undefined, () => Promise.resolve(), {
           ...defaultConfigRef.current,
           ...config,
         }),

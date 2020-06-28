@@ -192,4 +192,15 @@ describe('queryCache', () => {
     expect(newQuery.state.markedForGarbageCollection).toBe(false)
     expect(newQuery.state.data).toBe('data')
   })
+
+  // this covers bug https://github.com/tannerlinsley/react-query/issues/639
+  test('setQueryData of not instatiated query uses a resolved promise as queryFn', async () => {
+    let promiseIsResolved = false
+    const queryCache = makeQueryCache()
+    const queryKey = 'notInstantiated'
+    queryCache.setQueryData(queryKey, "data")
+    await queryCache.refetchQueries(queryKey, { force: true });
+    promiseIsResolved = true
+    expect(promiseIsResolved).toBe(true)
+  })
 })
