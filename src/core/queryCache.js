@@ -108,7 +108,10 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
       return await Promise.all(
         queryCache.getQueries(predicate, { exact }).map(query => {
           if (query.instances.length) {
-            if (refetchActive) {
+            if (
+              refetchActive &&
+              query.instances.some(instance => instance.config.enabled)
+            ) {
               return query.fetch()
             }
           } else {
@@ -421,10 +424,10 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
             instance.refetchIntervalId = setInterval(() => {
               if (
                 query.instances.some(instance => instance.config.enabled) &&
-                isDocumentVisible() ||
-                query.instances.some(
-                  instance => instance.config.refetchIntervalInBackground
-                )
+                (isDocumentVisible() ||
+                  query.instances.some(
+                    instance => instance.config.refetchIntervalInBackground
+                  ))
               ) {
                 query.fetch()
               }
