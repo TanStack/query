@@ -11,6 +11,10 @@ import {
 
 class FooError extends Error {}
 
+function resetErrorBoundaries() {
+  queryCache.resetErrorBoundaries // $ExpectType () => void
+}
+
 function prefetchQuery() {
   queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve())
   queryCache.prefetchQuery('queryKey', (key: string) => Promise.resolve(), {

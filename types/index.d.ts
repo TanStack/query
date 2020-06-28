@@ -605,7 +605,8 @@ export interface QueryCache {
   ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): void
+  clear(): void,
+  resetErrorBoundaries: () => void
 }
 
 export const queryCache: QueryCache
