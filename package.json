@@ -22,7 +22,7 @@
     "prepublishOnly": "yarn test:ci && yarn formatReadme",
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
-    "format": "prettier {src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx} --write",
+    "format": "prettier {.,src,src/**,example/src,example/src/**}/*.{md,js,jsx,tsx,json} --write",
     "formatReadme": "yarn doctoc",
     "doctoc": "npx doctoc --maxlevel 2 README.md",
     "jump2header": "npx @strdr4605/jump2header --header 'documentation' --start 'Installation' -e 2 --silent -l 2",
