@@ -504,6 +504,8 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
           if (!isDocumentVisible()) {
             // set this flag to continue retries on focus
             query.shouldContinueRetryOnFocus = true
+            // return a never-resolving promise (side-effects
+            // from awaits on this promise should not run)
             return new Promise(noop)
           }
 
