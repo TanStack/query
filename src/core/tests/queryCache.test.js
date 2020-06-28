@@ -122,7 +122,7 @@ describe('queryCache', () => {
 
     await waitFor(
       () => expect(queryCache.getQuery('key').state.isStale).toEqual(true),
-      { timeout: 100, interval: 5 }
+      { timeout: 110, interval: 5 }
     )
   })
 

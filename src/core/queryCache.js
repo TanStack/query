@@ -241,7 +241,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     let query = queryCache.getQuery(queryKey)
 
     if (!query) {
-      query = queryCache.buildQuery(queryKey, () => new Promise(noop), config)
+      query = queryCache.buildQuery(queryKey, config)
     }
 
     query.setData(updater)
