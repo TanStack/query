@@ -525,7 +525,7 @@ import { useQuery } from 'react-query'
 
 useQuery({
   queryKey: ['todo', 7],
-  queryFn: fetchTodos,
+  queryFn: fetchTodo,
   config: {},
 })
 ```
@@ -553,7 +553,8 @@ const { isIdle, data: projects } = useQuery(
   }
 )
 
-// isIdle will be `true` until `enabled` is true and the query begins to fetch. It will then go to the `isLoading` stage and hopefully the `isSuccess` stage :)
+// isIdle will be `true` until `enabled` is true and the query begins to fetch.
+// It will then go to the `isLoading` stage and hopefully the `isSuccess` stage :)
 ```
 
 ## Caching & Invalidation
@@ -668,7 +669,7 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 
 ### Example
 
-Let's assume we have an API that returns pages of `projects` 3 at a time based on a `cursor` index along with a cursor that can be used to fetch the next group of projects
+Let's assume we have an API that returns pages of `projects` 3 at a time based on a `cursor` index along with a cursor that can be used to fetch the next group of projects:
 
 ```js
 fetch('/api/projects?cursor=0')
@@ -769,7 +770,7 @@ function Projects() {
 
 ### What if I want to infinitely load more data in reverse?
 
-Sometimes you may not want to **append** infintely loaded data, but instead **prepend** it. If this is case, you can use `fetchMore`'s `previous` option, eg.
+Sometimes you may not want to **append** infinitely loaded data, but instead **prepend** it. If this is case, you can use `fetchMore`'s `previous` option, eg.
 
 ```js
 fetchMore(previousPageVariables, { previous: true })
@@ -788,7 +789,7 @@ If you ever want to disable a query from automatically running, you can use the 
 When `enabled` is `false`:
 
 - If the query has cached data
-  - The query will initialized in the `status === 'success'` or`isSuccess === true` state.
+  - The query will be initialized in the `status === 'success'` or `isSuccess === true` state.
 - If the query does not have cached data
   - The query will start in the `status === 'idle'` or `isIdle === true` state.
 - The query will not automatically fetch on mount.
@@ -847,7 +848,7 @@ You can configure retries both on a global level and an individual query level.
 ```js
 import { useQuery } from 'react-query'
 
-// Make specific query retry a certain number of times
+// Make a specific query retry a certain number of times
 const queryInfo = useQuery(['todos', 1], fetchTodoListPage, {
   retry: 10, // Will retry failed requests 10 times before displaying an error
 })
@@ -998,7 +999,8 @@ function Todos() {
 }
 ```
 
-> NOTE: Similar to `initialData`, `initialStale` can also be a function for costly calculations, eg. `initialStale: () => isPreview(todoListPreview)`,
+> NOTE: Similar to `initialData`, `initialStale` can also be a function for costly calculations.  
+> eg. `initialStale: () => isPreview(todoListPreview)`
 
 ## SSR & Initial Data
 
