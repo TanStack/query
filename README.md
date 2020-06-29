@@ -1267,7 +1267,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](#querycacheinvalidatequeries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
@@ -2128,7 +2128,7 @@ setQueryData(queryKey, oldData => newData)
 
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as stale and active queries are refetched in the background.
 
-- If you **no not want active queries to refetch**, and simply be marked as stale, you can use the `refetchActive: false` option.
+- If you **do not want active queries to refetch**, and simply be marked as stale, you can use the `refetchActive: false` option.
 - If you **want inactive queries to refetch** as well, use the `refetchInactive: true` option
 
 ```js
