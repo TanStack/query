@@ -217,7 +217,7 @@ export interface BaseSharedOptions {
   suspense: boolean
 }
 
-export interface BaseQueryOptions<TError = Error> {
+export interface BaseQueryOptions<TResult = unknown, TError = Error> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -237,18 +237,16 @@ export interface BaseQueryOptions<TError = Error> {
   refetchIntervalInBackground?: boolean
   refetchOnWindowFocus?: boolean
   refetchOnMount?: boolean
-  onSuccess?: (data: any) => void
+  onSuccess?: (data: TResult) => void
   onError?: (err: TError) => void
-  onSettled?: (data: any, error: TError | null) => void
+  onSettled?: (data: TResult | undefined, error: TError | null) => void
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   useErrorBoundary?: boolean
 }
 
 export interface QueryOptions<TResult, TError = Error>
-  extends BaseQueryOptions<TError> {
+  extends BaseQueryOptions<TResult, TError> {
   suspense?: boolean
-  onSuccess?: (data: TResult) => void
-  onSettled?: (data: TResult | undefined, error: TError | null) => void
   initialData?: TResult | (() => TResult | undefined)
   initialStale?: boolean | (() => boolean | undefined)
 }
