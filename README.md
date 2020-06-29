@@ -2456,13 +2456,14 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://cherniavskii.com"><img src="https://avatars2.githubusercontent.com/u/13808724?v=4" width="100px;" alt=""/><br /><sub><b>Andrew Cherniavskii</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=cherniavskii" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Acherniavskii" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://twitter.com/tibotiber"><img src="https://avatars3.githubusercontent.com/u/5635553?v=4" width="100px;" alt=""/><br /><sub><b>Thibaut Tiberghien</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tibotiber" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/gargroh"><img src="https://avatars3.githubusercontent.com/u/42495927?v=4" width="100px;" alt=""/><br /><sub><b>Rohit Garg</b></sub></a><br /><a href="#tool-gargroh" title="Tools">🔧</a></td>
-    <td align="center"><a href="https://github.com/Avi98"><img src="https://avatars1.githubusercontent.com/u/26133749?v=4" width="100px;" alt=""/><br /><sub><b>Avinash</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=Avi98" title="Code">💻</a> </td>
+    <td align="center"><a href="https://github.com/Avi98"><img src="https://avatars1.githubusercontent.com/u/26133749?v=4" width="100px;" alt=""/><br /><sub><b>Avinash</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=Avi98" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3AAvi98" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/CreativeTechGuy"><img src="https://avatars1.githubusercontent.com/u/12002072?v=4" width="100px;" alt=""/><br /><sub><b>Jason O'Neill</b></sub></a><br /><a href="#maintenance-CreativeTechGuy" title="Maintenance">🚧</a> <a href="https://github.com/tannerlinsley/react-query/commits?author=CreativeTechGuy" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://fb.me/yz"><img src="https://avatars3.githubusercontent.com/u/14841421?v=4" width="100px;" alt=""/><br /><sub><b>Jack Zhao</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=bugzpodder" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Abugzpodder" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
