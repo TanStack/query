@@ -448,9 +448,14 @@ function globalConfig() {
       useErrorBoundary: true,
       onMutate: (variables: unknown) => Promise.resolve(),
       onSuccess: (data: unknown, variables: unknown) => undefined,
-      onError: (err: Error, snapshotValue: unknown) => undefined,
-      onSettled: (data: unknown, error: Error | null, snapshotValue?: any) =>
+      onError: (err: Error, variables: unknown, snapshotValue: unknown) =>
         undefined,
+      onSettled: (
+        data: unknown,
+        error: Error | null,
+        variables: unknown,
+        snapshotValue?: unknown
+      ) => undefined,
     },
   }
 }

@@ -387,37 +387,57 @@ export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   ) => Promise<TResult[]> | undefined
 }
 
-export function useMutation<TResults, TVariables = undefined, TError = Error>(
-  mutationFn: MutationFunction<TResults, TVariables, TError>,
-  mutationOptions?: MutationOptions<TResults, TVariables, TError>
+export function useMutation<
+  TResult,
+  TVariables = undefined,
+  TError = Error,
+  TSnapshot = unknown
+>(
+  mutationFn: MutationFunction<TResult, TVariables, TError, TSnapshot>,
+  mutationOptions?: MutationOptions<TResult, TVariables, TError, TSnapshot>
 ): [
-  MutateFunction<TResults, TVariables, TError>,
-  MutationResult<TResults, TError>
+  MutateFunction<TResult, TVariables, TError>,
+  MutationResult<TResult, TError>
 ]
 
-export type MutationFunction<TResults, TVariables, TError = Error> = (
+export type MutationFunction<
+  TResult,
+  TVariables,
+  TError = Error,
+  TSnapshot = unknown
+> = (
   variables: TVariables,
-  mutateOptions?: MutateOptions<TResults, TVariables, TError>
-) => Promise<TResults>
+  mutateOptions?: MutateOptions<TResult, TVariables, TError, TSnapshot>
+) => Promise<TResult>
 
-export interface MutateOptions<TResult, TVariables, TError = Error> {
+export interface MutateOptions<
+  TResult,
+  TVariables,
+  TError = Error,
+  TSnapshot = unknown
+> {
   onSuccess?: (data: TResult, variables: TVariables) => Promise<void> | void
   onError?: (
     error: TError,
-    snapshotValue: unknown,
-    onMutateValue: (variable: TVariables) => Promise<unknown> | unknown
+    variables: TVariables,
+    snapshotValue: TSnapshot
   ) => Promise<void> | void
   onSettled?: (
     data: undefined | TResult,
     error: TError | null,
-    snapshotValue?: unknown
+    variables: TVariables,
+    snapshotValue?: TSnapshot
   ) => Promise<void> | void
   throwOnError?: boolean
 }
 
-export interface MutationOptions<TResult, TVariables, TError = Error>
-  extends MutateOptions<TResult, TVariables, TError> {
-  onMutate?: (variables: TVariables) => Promise<unknown> | unknown
+export interface MutationOptions<
+  TResult,
+  TVariables,
+  TError = Error,
+  TSnapshot = unknown
+> extends MutateOptions<TResult, TVariables, TError, TSnapshot> {
+  onMutate?: (variables: TVariables) => Promise<TSnapshot> | TSnapshot
   useErrorBoundary?: boolean
 }
 
@@ -605,7 +625,7 @@ export interface QueryCache {
   ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): void,
+  clear(): void
   resetErrorBoundaries: () => void
 }
 
@@ -655,18 +675,7 @@ export interface ReactQueryProviderConfig<TError = Error> {
     ) => [string, QueryKeyPart[]] | []
   }
   shared?: BaseSharedOptions
-  mutations?: {
-    throwOnError?: boolean
-    useErrorBoundary?: boolean
-    onMutate?: (variables: unknown) => Promise<unknown> | unknown
-    onSuccess?: (data: unknown, variables?: unknown) => void
-    onError?: (err: TError, snapshotValue?: unknown) => void
-    onSettled?: (
-      data: unknown | undefined,
-      error: TError | null,
-      snapshotValue?: unknown
-    ) => void
-  }
+  mutations?: MutationOptions<unknown, unknown, TError>
 }
 
 export type ConsoleFunction = (...args: any[]) => void
