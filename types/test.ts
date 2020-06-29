@@ -419,8 +419,20 @@ function mutationWithVariables() {
   mutateWithVars(
     { param: 1 },
     {
-      async onSuccess(data) {
+      onError(error, variables, snapshotValue) {
+        error // $ExpectType Error
+        variables // $ExpectType { param: number; }
+        snapshotValue // $ExpectType unknown
+      },
+      onSuccess(data, variables) {
         data // $ExpectType boolean
+        variables // $ExpectType { param: number; }
+      },
+      onSettled(result, error, variables, snapshotValue) {
+        result // $ExpectType boolean | undefined
+        error // $ExpectType Error | null
+        variables // $ExpectType { param: number; }
+        snapshotValue // $ExpectType unknown
       },
     }
   )
