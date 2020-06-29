@@ -580,7 +580,7 @@ export interface QueryCache {
   }): Promise<TResult>
 
   getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
-  setQueryData<TResult, TError>(
+  setQueryData<TResult, TError = Error>(
     key: AnyQueryKey | string,
     dataOrUpdater:
       | TResult
