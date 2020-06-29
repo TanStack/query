@@ -405,7 +405,7 @@ export interface MutateOptions<TResult, TVariables, TError = Error> {
   onError?: (
     error: TError,
     snapshotValue: unknown,
-    onMutateValue: (variable: TVariables) => Promise<unknown> | unknown
+    onMutateValue: (variable?: TVariables) => Promise<unknown> | unknown
   ) => Promise<void> | void
   onSettled?: (
     data: undefined | TResult,
