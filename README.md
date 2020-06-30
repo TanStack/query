@@ -2464,6 +2464,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/dpyzo0o"><img src="https://avatars1.githubusercontent.com/u/24768249?v=4" width="100px;" alt=""/><br /><sub><b>dpyzo0o</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=dpyzo0o" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jelteliekens"><img src="https://avatars1.githubusercontent.com/u/3418474?v=4" width="100px;" alt=""/><br /><sub><b>Jelte Liekens</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=jelteliekens" title="Code">💻</a></td>
   </tr>
 </table>
 
