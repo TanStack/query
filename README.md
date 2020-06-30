@@ -2462,6 +2462,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/CreativeTechGuy"><img src="https://avatars1.githubusercontent.com/u/12002072?v=4" width="100px;" alt=""/><br /><sub><b>Jason O'Neill</b></sub></a><br /><a href="#maintenance-CreativeTechGuy" title="Maintenance">🚧</a> <a href="https://github.com/tannerlinsley/react-query/commits?author=CreativeTechGuy" title="Tests">⚠️</a></td>
     <td align="center"><a href="http://fb.me/yz"><img src="https://avatars3.githubusercontent.com/u/14841421?v=4" width="100px;" alt=""/><br /><sub><b>Jack Zhao</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=bugzpodder" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Abugzpodder" title="Bug reports">🐛</a></td>
   </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/dpyzo0o"><img src="https://avatars1.githubusercontent.com/u/24768249?v=4" width="100px;" alt=""/><br /><sub><b>dpyzo0o</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=dpyzo0o" title="Code">💻</a></td>
+  </tr>
 </table>
 
 <!-- markdownlint-enable -->
