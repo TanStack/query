@@ -242,6 +242,7 @@ export interface BaseQueryOptions<TResult = unknown, TError = Error> {
   onSettled?: (data: TResult | undefined, error: TError | null) => void
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   useErrorBoundary?: boolean
+  queryFnParamsFilter?: (args: any[]) => any[]
 }
 
 export interface QueryOptions<TResult, TError = Error>
