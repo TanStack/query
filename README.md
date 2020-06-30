@@ -115,8 +115,6 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [ReactBricks](https://www.reactbricks.com/)
 - [Nozzle.io](https://nozzle.io)
 
-> _These analytics are made available via the awesome [Scarf](https://www.npmjs.com/package/@scarf/scarf) package analytics library_
-
 ## Examples
 
 - Basic - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic) - [Source](./examples/basic)
@@ -287,7 +285,6 @@ $ npm i --save react-query
 $ yarn add react-query
 ```
 
-React Query uses [Scarf](https://www.npmjs.com/package/@scarf/scarf) to collect anonymized installation analytics. These analytics help support the maintainers of this library. However, if you'd like to opt out, you can do so by setting `scarfSettings.enabled = false` in your project's `package.json`. Alternatively, you can set the environment variable `SCARF_ANALYTICS=false` before you install.
 
 # Defaults to keep in mind
 
