@@ -444,7 +444,7 @@ export type MutateFunction<
   TResult,
   TVariables,
   TError = Error
-> = undefined extends TVariables
+> = TVariables extends undefined
   ? (options?: MutateOptions<TResult, TVariables, TError>) => Promise<TResult>
   : (
       variables: TVariables,
