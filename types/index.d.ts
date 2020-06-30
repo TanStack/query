@@ -285,7 +285,7 @@ export interface QueryResultBase<TResult, TError = Error> {
   markedForGarbageCollection: boolean
   query: object
   updatedAt: number
-  refetch: ({ throwOnError }?: { throwOnError?: boolean }) => Promise<TResult>
+  refetch: ({ force, throwOnError }?: { force?: boolean; throwOnError?: boolean; }) => Promise<TResult>
 }
 
 export interface QueryIdleResult<TResult, TError = Error>

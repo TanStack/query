@@ -57,7 +57,7 @@ function simpleQuery() {
   querySimple.isSuccess // $ExpectType boolean
   querySimple.markedForGarbageCollection // $ExpectType boolean
   querySimple.query // $ExpectType object
-  querySimple.refetch // $ExpectType ({ throwOnError }?: { throwOnError?: boolean | undefined; } | undefined) => Promise<string>
+  querySimple.refetch // $ExpectType ({ force, throwOnError }?: { force?: boolean | undefined; throwOnError?: boolean | undefined; } | undefined) => Promise<string>
   querySimple.refetch() // $ExpectType Promise<string>
   querySimple.status // $ExpectType "idle" | "loading" | "error" | "success"
   querySimple.updatedAt // $ExpectType number
