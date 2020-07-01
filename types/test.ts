@@ -44,7 +44,6 @@ function getQueries() {
   queryCache.getQueries((query) => true);
 }
 
-
 function simpleQuery() {
   // Query - simple case
   const querySimple = useQuery<string, 'todos'>('todos', () =>
