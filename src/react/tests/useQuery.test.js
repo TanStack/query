@@ -599,14 +599,14 @@ describe('useQuery', () => {
     rendered.getByText('status: idle')
   })
 
-  it('it should throw when using query syntax and missing required keys', async () => {
+  it('it should throw when using a bad query syntax', async () => {
     // mock console.error to avoid the wall of red text,
     // you could also do this on beforeEach/afterEach
     jest.spyOn(console, 'error')
     console.error.mockImplementation(() => {})
 
     function Page() {
-      useQuery({})
+      useQuery(() => {})
       return null
     }
     expect(() => render(<Page />)).toThrowError(/query key/)

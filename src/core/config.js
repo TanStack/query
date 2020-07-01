@@ -39,7 +39,7 @@ export const defaultConfigRef = {
 
 export function defaultQueryKeySerializerFn(queryKey) {
   if (!queryKey) {
-    invalidQueryKey()
+    return []
   }
 
   if (!Array.isArray(queryKey)) {
@@ -47,19 +47,15 @@ export function defaultQueryKeySerializerFn(queryKey) {
   }
 
   if (queryKey.some(d => typeof d === 'function')) {
-    invalidQueryKey()
+    throw new Error('A valid query key is required!')
   }
 
   const queryHash = stableStringify(queryKey)
   queryKey = JSON.parse(queryHash)
 
   if (!queryHash) {
-    invalidQueryKey()
+    return []
   }
 
   return [queryHash, queryKey]
-}
-
-function invalidQueryKey() {
-  throw new Error('A valid query key is required!')
 }
