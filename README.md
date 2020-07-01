@@ -285,7 +285,6 @@ $ npm i --save react-query
 $ yarn add react-query
 ```
 
-
 # Defaults to keep in mind
 
 Out of the box, React Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use React Query:
@@ -1041,7 +1040,7 @@ import { ReactQueryConfigProvider } from 'react-query'
 const queryConfig = {
   shared: {
     suspense: true,
-  }
+  },
 }
 
 function App() {
@@ -1772,8 +1771,9 @@ const queryInfo = useQuery({
   - Receives the following variables in the order that they are provided:
     - Query Key Variables
   - Must return a promise that will either resolves data or throws an error.
-- `enabled: Boolean`
+- `enabled: Boolean | unknown`
   - Set this to `false` to disable this query from automatically running.
+  - Actually it can be anything that will pass a boolean condition. See [Dependent Queries](#dependent-queries) for more information.
 - `retry: Boolean | Int | Function(failureCount, error) => shouldRetry | Boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -2475,6 +2475,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
