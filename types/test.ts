@@ -37,6 +37,14 @@ function prefetchQuery() {
   })
 }
 
+function getQueries() {
+  queryCache.getQueries(['queryKey']);
+  queryCache.getQueries('queryKey');
+  queryCache.getQueries(true);
+  queryCache.getQueries((query) => true);
+}
+
+
 function simpleQuery() {
   // Query - simple case
   const querySimple = useQuery<string, 'todos'>('todos', () =>

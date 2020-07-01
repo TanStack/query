@@ -614,7 +614,14 @@ export interface QueryCache {
     { exact }?: { exact?: boolean }
   ): void
   getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
-  getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
+  getQueries(
+    queryKeyOrPredicateFn:
+      | AnyQueryKey
+      | string
+      | boolean
+      | ((query: CachedQuery<unknown>) => boolean),
+    { exact }?: { exact?: boolean }
+  ): Array<CachedQuery<unknown>>
   cancelQueries(
     queryKeyOrPredicateFn:
       | AnyQueryKey
