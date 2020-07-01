@@ -168,7 +168,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
         query.scheduleGarbageCollection()
       }
 
-      if (!frozen && queryHash) {
+      if (!frozen) {
         queryCache.queries[queryHash] = query
 
         if (isServer) {
