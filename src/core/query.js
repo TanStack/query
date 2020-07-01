@@ -158,6 +158,7 @@ export function makeQuery({
     query.cancel()
     query.dispatch = noop
     delete queryCache.queries[query.queryHash]
+    notifyGlobalListeners()
   }
 
   query.subscribe = (onStateUpdate = noop) => {
