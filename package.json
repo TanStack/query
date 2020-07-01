@@ -22,8 +22,6 @@
     "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
-    "prepare": "yarn build",
-    "prepublishOnly": "yarn test:ci && yarn formatReadme",
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",

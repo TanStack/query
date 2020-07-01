@@ -143,7 +143,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
 
-    await act(() => sleep(10))
+    await act(() => sleep(11))
 
     fireEvent.click(rendered.getByText('retry'))
 
