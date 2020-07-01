@@ -3,7 +3,7 @@ import { deepEqual } from '../utils'
 
 describe('core/utils', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   it('setConsole should override Console object', async () => {

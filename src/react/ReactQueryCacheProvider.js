@@ -24,7 +24,7 @@ export function ReactQueryCacheProvider({ queryCache, children }) {
       }
       // if the resolvedQueryCache was created by us, we need to tear it down
       if (queryCache == null) {
-        resolvedQueryCache.clear()
+        resolvedQueryCache.clear({ notify: false })
       }
     }
   }, [resolvedQueryCache, queryCache])

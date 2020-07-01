@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useMountedCallback } from './utils'
+import { useMountedCallback, useGetLatest } from './utils'
 import { useQueryCache } from './ReactQueryCacheProvider'
 
 export function useIsFetching() {
@@ -8,10 +8,20 @@ export function useIsFetching() {
   const [state, unsafeRerender] = React.useReducer(d => d + 1, 1)
   const rerender = useMountedCallback(unsafeRerender)
 
-  React.useEffect(() => queryCache.subscribe(rerender), [queryCache, rerender])
-
-  return React.useMemo(() => state && queryCache.isFetching, [
+  const isFetching = React.useMemo(() => state && queryCache.isFetching, [
     queryCache.isFetching,
     state,
   ])
+
+  const getIsFetching = useGetLatest(isFetching)
+
+  React.useEffect(
+    () =>
+      queryCache.subscribe(newCache => {
+        if (getIsFetching() !== newCache.isFetching) rerender()
+      }),
+    [getIsFetching, queryCache, rerender]
+  )
+
+  return isFetching
 }

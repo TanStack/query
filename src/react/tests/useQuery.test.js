@@ -6,7 +6,7 @@ import { sleep } from './utils'
 
 describe('useQuery', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/105

@@ -25,7 +25,7 @@ const fetchItems = async (page, ts) => {
 
 describe('useInfiniteQuery', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   it('should allow you to fetch more pages', async () => {

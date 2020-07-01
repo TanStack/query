@@ -12,7 +12,7 @@ import { sleep } from './utils'
 
 describe('ReactQueryCacheProvider', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   test('when not used, falls back to global cache', async () => {
@@ -62,7 +62,7 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(queryCache.getQuery('test')).not.toBeDefined()
     expect(cache.getQuery('test')).toBeDefined()
-    cache.clear()
+    cache.clear({ notify: false })
   })
 
   test('implicitly creates a new cache for all queries to use', async () => {
@@ -138,8 +138,8 @@ describe('ReactQueryCacheProvider', () => {
     expect(cache2.getQuery('test1')).not.toBeDefined()
     expect(cache2.getQuery('test2')).toBeDefined()
 
-    cache1.clear()
-    cache2.clear()
+    cache1.clear({ notify: false })
+    cache2.clear({ notify: false })
   })
 
   test('when cache changes, previous cache is cleaned', () => {
@@ -181,6 +181,6 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(caches).toHaveLength(2)
     expect(caches[0].clear).toHaveBeenCalled()
-    customCache.clear()
+    customCache.clear({ notify: false })
   })
 })

@@ -5,7 +5,7 @@ import { useMutation, queryCaches } from '../index'
 
 describe('useMutation', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   it('should be able to reset `data`', async () => {

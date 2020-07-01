@@ -11,7 +11,7 @@ import { sleep } from './utils'
 
 describe('ReactQueryConfigProvider', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/105
@@ -105,7 +105,7 @@ describe('ReactQueryConfigProvider', () => {
 
     act(() => {
       // wipe query cache/stored config
-      queryCache.clear()
+      queryCache.clear({ notify: false })
       onSuccess.mockClear()
     })
 

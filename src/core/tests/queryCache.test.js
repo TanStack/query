@@ -1,10 +1,9 @@
-import { waitFor } from '@testing-library/react'
 import { sleep } from './utils'
 import { queryCache, queryCaches } from '../'
 
 describe('queryCache', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   test('setQueryData does not crash if query could not be found', () => {
@@ -73,14 +72,16 @@ describe('queryCache', () => {
     expect(callback).toHaveBeenCalled()
   })
 
-  test('should notify subsribers when new query with initialData is added', () => {
+  test('should notify subsribers when new query with initialData is added', async () => {
     const callback = jest.fn()
 
     queryCache.subscribe(callback)
 
     queryCache.prefetchQuery('test', () => {}, { initialData: 'initial' })
 
-    waitFor(() => expect(callback).toHaveBeenCalled())
+    await sleep(100)
+
+    expect(callback).toHaveBeenCalled()
   })
 
   test('setQueryData creates a new query if query was not found, using exact', () => {
@@ -115,15 +116,9 @@ describe('queryCache', () => {
     expect(queryCache.getQuery('key').state.data).toEqual('test data')
     expect(queryCache.getQuery('key').state.isStale).toEqual(false)
 
-    await waitFor(
-      () => expect(queryCache.getQuery('key').state.isStale).toEqual(false),
-      { timeout: 50, interval: 5 }
-    )
+    await new Promise(resolve => setTimeout(resolve, 100))
 
-    await waitFor(
-      () => expect(queryCache.getQuery('key').state.isStale).toEqual(true),
-      { timeout: 110, interval: 5 }
-    )
+    expect(queryCache.getQuery('key').state.isStale).toEqual(true)
   })
 
   test('setQueryData updater function works as expected', () => {
@@ -183,7 +178,7 @@ describe('queryCache', () => {
     const instance = query.subscribe()
     instance.unsubscribe()
     expect(query.state.markedForGarbageCollection).toBe(true)
-    queryCache.clear()
+    queryCache.clear({ notify: false })
     queryCache.setQueryData(queryKey, 'data')
     await sleep(10)
     const newQuery = queryCache.getQuery(queryKey)

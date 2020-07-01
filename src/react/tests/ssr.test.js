@@ -17,7 +17,7 @@ import { sleep } from './utils'
 describe('Server Side Rendering', () => {
   describe('global cache', () => {
     afterEach(() => {
-      queryCaches.forEach(cache => cache.clear())
+      queryCaches.forEach(cache => cache.clear({ notify: false }))
     })
 
     it('should not trigger fetch', () => {

@@ -7,7 +7,7 @@ import { sleep } from './utils'
 
 describe("useQuery's in Suspense mode", () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {

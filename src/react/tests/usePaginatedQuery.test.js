@@ -6,7 +6,7 @@ import { usePaginatedQuery, queryCaches } from '../index'
 
 describe('usePaginatedQuery', () => {
   afterEach(() => {
-    queryCaches.forEach(cache => cache.clear())
+    queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
   it('should use previous page data while fetching the next page', async () => {
