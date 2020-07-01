@@ -119,6 +119,7 @@ describe("useQuery's in Suspense mode", () => {
 
     const rendered = render(
       <ErrorBoundary
+        onReset={queryCache.resetErrorBoundaries}
         fallbackRender={({ resetErrorBoundary }) => (
           <div>
             <div>error boundary</div>
@@ -143,13 +144,13 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
 
-    await act(() => sleep(11))
+    await waitFor(() => rendered.getByText('retry'))
 
     fireEvent.click(rendered.getByText('retry'))
 
-    console.error.mockRestore()
-
     await waitFor(() => rendered.getByText('rendered'))
+
+    console.error.mockRestore()
   })
 
   it('should not call the queryFn when not enabled', async () => {
