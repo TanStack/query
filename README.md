@@ -1918,7 +1918,7 @@ The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#opti
 
 The returned properties for `usePaginatedQuery` are identical to the [`useQuery` hook](#options), with the addition of the following:
 
-- `isFetchingMore: Boolean`
+- `isFetchingMore: false | 'next' | 'previous'`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
 - `fetchMore: Function(fetchMoreVariableOverride) => Promise`
   - This function allows you to fetch the next "page" of results.
