@@ -115,8 +115,6 @@ A big thanks to both [Draqula](https://github.com/vadimdemedes/draqula) for insp
 - [ReactBricks](https://www.reactbricks.com/)
 - [Nozzle.io](https://nozzle.io)
 
-> _These analytics are made available via the awesome [Scarf](https://www.npmjs.com/package/@scarf/scarf) package analytics library_
-
 ## Examples
 
 - Basic - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/basic) - [Source](./examples/basic)
@@ -287,7 +285,6 @@ $ npm i --save react-query
 $ yarn add react-query
 ```
 
-React Query uses [Scarf](https://www.npmjs.com/package/@scarf/scarf) to collect anonymized installation analytics. These analytics help support the maintainers of this library. However, if you'd like to opt out, you can do so by setting `scarfSettings.enabled = false` in your project's `package.json`. Alternatively, you can set the environment variable `SCARF_ANALYTICS=false` before you install.
 
 # Defaults to keep in mind
 
@@ -525,7 +522,7 @@ import { useQuery } from 'react-query'
 
 useQuery({
   queryKey: ['todo', 7],
-  queryFn: fetchTodos,
+  queryFn: fetchTodo,
   config: {},
 })
 ```
@@ -553,7 +550,8 @@ const { isIdle, data: projects } = useQuery(
   }
 )
 
-// isIdle will be `true` until `enabled` is true and the query begins to fetch. It will then go to the `isLoading` stage and hopefully the `isSuccess` stage :)
+// isIdle will be `true` until `enabled` is true and the query begins to fetch.
+// It will then go to the `isLoading` stage and hopefully the `isSuccess` stage :)
 ```
 
 ## Caching & Invalidation
@@ -668,7 +666,7 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 
 ### Example
 
-Let's assume we have an API that returns pages of `projects` 3 at a time based on a `cursor` index along with a cursor that can be used to fetch the next group of projects
+Let's assume we have an API that returns pages of `projects` 3 at a time based on a `cursor` index along with a cursor that can be used to fetch the next group of projects:
 
 ```js
 fetch('/api/projects?cursor=0')
@@ -769,7 +767,7 @@ function Projects() {
 
 ### What if I want to infinitely load more data in reverse?
 
-Sometimes you may not want to **append** infintely loaded data, but instead **prepend** it. If this is case, you can use `fetchMore`'s `previous` option, eg.
+Sometimes you may not want to **append** infinitely loaded data, but instead **prepend** it. If this is case, you can use `fetchMore`'s `previous` option, eg.
 
 ```js
 fetchMore(previousPageVariables, { previous: true })
@@ -788,7 +786,7 @@ If you ever want to disable a query from automatically running, you can use the 
 When `enabled` is `false`:
 
 - If the query has cached data
-  - The query will initialized in the `status === 'success'` or`isSuccess === true` state.
+  - The query will be initialized in the `status === 'success'` or `isSuccess === true` state.
 - If the query does not have cached data
   - The query will start in the `status === 'idle'` or `isIdle === true` state.
 - The query will not automatically fetch on mount.
@@ -847,7 +845,7 @@ You can configure retries both on a global level and an individual query level.
 ```js
 import { useQuery } from 'react-query'
 
-// Make specific query retry a certain number of times
+// Make a specific query retry a certain number of times
 const queryInfo = useQuery(['todos', 1], fetchTodoListPage, {
   retry: 10, // Will retry failed requests 10 times before displaying an error
 })
@@ -998,7 +996,8 @@ function Todos() {
 }
 ```
 
-> NOTE: Similar to `initialData`, `initialStale` can also be a function for costly calculations, eg. `initialStale: () => isPreview(todoListPreview)`,
+> NOTE: Similar to `initialData`, `initialStale` can also be a function for costly calculations.  
+> eg. `initialStale: () => isPreview(todoListPreview)`
 
 ## SSR & Initial Data
 
@@ -1267,7 +1266,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](#querycacherefetchqueries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](#querycacheinvalidatequeries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
@@ -1960,7 +1959,7 @@ const promise = mutate(variables, {
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
   - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
-  - The value returned from this function will be passed to both the `onError` and `onSettled` functions and can be useful for rolling back optimistic updates in the event of a mutation failure.
+  - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
 - `onSuccess: Function(data, variables) => Promise | undefined`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
@@ -2128,7 +2127,7 @@ setQueryData(queryKey, oldData => newData)
 
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as stale and active queries are refetched in the background.
 
-- If you **no not want active queries to refetch**, and simply be marked as stale, you can use the `refetchActive: false` option.
+- If you **do not want active queries to refetch**, and simply be marked as stale, you can use the `refetchActive: false` option.
 - If you **want inactive queries to refetch** as well, use the `refetchInactive: true` option
 
 ```js
@@ -2456,13 +2455,18 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="http://cherniavskii.com"><img src="https://avatars2.githubusercontent.com/u/13808724?v=4" width="100px;" alt=""/><br /><sub><b>Andrew Cherniavskii</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=cherniavskii" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Acherniavskii" title="Bug reports">🐛</a></td>
     <td align="center"><a href="http://twitter.com/tibotiber"><img src="https://avatars3.githubusercontent.com/u/5635553?v=4" width="100px;" alt=""/><br /><sub><b>Thibaut Tiberghien</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=tibotiber" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/gargroh"><img src="https://avatars3.githubusercontent.com/u/42495927?v=4" width="100px;" alt=""/><br /><sub><b>Rohit Garg</b></sub></a><br /><a href="#tool-gargroh" title="Tools">🔧</a></td>
-    <td align="center"><a href="https://github.com/Avi98"><img src="https://avatars1.githubusercontent.com/u/26133749?v=4" width="100px;" alt=""/><br /><sub><b>Avinash</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=Avi98" title="Code">💻</a> </td>
+    <td align="center"><a href="https://github.com/Avi98"><img src="https://avatars1.githubusercontent.com/u/26133749?v=4" width="100px;" alt=""/><br /><sub><b>Avinash</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=Avi98" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3AAvi98" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/CreativeTechGuy"><img src="https://avatars1.githubusercontent.com/u/12002072?v=4" width="100px;" alt=""/><br /><sub><b>Jason O'Neill</b></sub></a><br /><a href="#maintenance-CreativeTechGuy" title="Maintenance">🚧</a> <a href="https://github.com/tannerlinsley/react-query/commits?author=CreativeTechGuy" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://fb.me/yz"><img src="https://avatars3.githubusercontent.com/u/14841421?v=4" width="100px;" alt=""/><br /><sub><b>Jack Zhao</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=bugzpodder" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/issues?q=author%3Abugzpodder" title="Bug reports">🐛</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/dpyzo0o"><img src="https://avatars1.githubusercontent.com/u/24768249?v=4" width="100px;" alt=""/><br /><sub><b>dpyzo0o</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=dpyzo0o" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/jelteliekens"><img src="https://avatars1.githubusercontent.com/u/3418474?v=4" width="100px;" alt=""/><br /><sub><b>Jelte Liekens</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=jelteliekens" title="Code">💻</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

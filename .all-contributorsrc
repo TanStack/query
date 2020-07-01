@@ -70,6 +70,34 @@
         "maintenance",
         "test"
       ]
+    },
+    {
+      "login": "bugzpodder",
+      "name": "Jack Zhao",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/14841421?v=4",
+      "profile": "http://fb.me/yz",
+      "contributions": [
+        "code",
+        "bug"
+      ]
+    },
+    {
+      "login": "dpyzo0o",
+      "name": "dpyzo0o",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/24768249?v=4",
+      "profile": "https://github.com/dpyzo0o",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jelteliekens",
+      "name": "Jelte Liekens",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3418474?v=4",
+      "profile": "https://github.com/jelteliekens",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
