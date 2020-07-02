@@ -394,7 +394,9 @@ export function useMutation<
 >(
   mutationFn: MutationFunction<TResult, TVariables, TError, TSnapshot>,
   mutationOptions?: MutationOptions<TResult, TVariables, TError, TSnapshot>
-): [
+): MutationResultPair<TResult, TVariables, TError>
+
+export type MutationResultPair<TResult, TVariables, TError> = [
   MutateFunction<TResult, TVariables, TError>,
   MutationResult<TResult, TError>
 ]
