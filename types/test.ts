@@ -74,6 +74,8 @@ function simpleQuery() {
   querySimple.fetchMore // $ExpectError
 
   querySimple.canFetchMore // $ExpectType boolean | undefined
+  querySimple.clear // $ExpectType () => void
+  querySimple.clear() // $ExpectType void
   querySimple.data // $ExpectType string | undefined
   querySimple.error // $ExpectType Error | null
   querySimple.failureCount // $ExpectType number
