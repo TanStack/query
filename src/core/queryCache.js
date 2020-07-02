@@ -17,7 +17,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
   const globalListeners = []
 
   const configRef = defaultConfig
-    ? { current: defaultConfig }
+    ? { current: { ...defaultConfigRef.current, ...defaultConfig }}
     : defaultConfigRef
 
   const queryCache = {
