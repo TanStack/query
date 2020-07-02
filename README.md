@@ -1039,7 +1039,9 @@ Global configuration:
 import { ReactQueryConfigProvider } from 'react-query'
 
 const queryConfig = {
-  suspense: true,
+  shared: {
+    suspense: true,
+  }
 }
 
 function App() {
