@@ -98,6 +98,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "jgettings",
+      "name": "Jen Gettings",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4183742?v=4",
+      "profile": "https://github.com/jgettings",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
