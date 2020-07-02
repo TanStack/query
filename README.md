@@ -1138,7 +1138,7 @@ const query = useQuery('todos', () => {
   })
 
   // Cancel the request if React Query calls the `promise.cancel` method
-  promise.cancel = controller.abort
+  promise.cancel = () => controller.abort()
 
   return promise
 })
