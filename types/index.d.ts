@@ -286,6 +286,7 @@ export interface QueryResultBase<TResult, TError = Error> {
   query: object
   updatedAt: number
   refetch: ({ throwOnError }?: { throwOnError?: boolean }) => Promise<TResult>
+  clear: () => void
 }
 
 export interface QueryIdleResult<TResult, TError = Error>
