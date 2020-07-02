@@ -540,6 +540,12 @@ export interface CachedQuery<T, TError = unknown> {
 
 export type QueryKey<TKey> = TKey | false | null | undefined
 
+export type QueryKeyOrPredicateFn =
+  | AnyQueryKey
+  | string
+  | boolean
+  | ((query: CachedQuery<unknown>) => boolean)
+
 export interface QueryCache {
   prefetchQuery<TResult, TKey extends AnyQueryKey, TError = Error>(
     queryKey: QueryKey<TKey>,
@@ -580,9 +586,9 @@ export interface QueryCache {
     prefetch?: PrefetchQueryOptions
   }): Promise<TResult>
 
-  getQueryData<T = unknown>(key: AnyQueryKey | string): T | undefined
+  getQueryData<T = unknown>(key: QueryKeyOrPredicateFn): T | undefined
   setQueryData<TResult, TError = Error>(
-    key: AnyQueryKey | string,
+    queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
     dataOrUpdater:
       | TResult
       | undefined
@@ -590,10 +596,7 @@ export interface QueryCache {
     config?: SetQueryDataQueryOptions<TResult, TError>
   ): void
   invalidateQueries<TResult>(
-    queryKeyOrPredicateFn:
-      | AnyQueryKey
-      | string
-      | ((query: CachedQuery<unknown>) => boolean),
+    queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
     {
       exact,
       throwOnError,
@@ -607,19 +610,16 @@ export interface QueryCache {
     }
   ): Promise<TResult>
   removeQueries(
-    queryKeyOrPredicateFn:
-      | AnyQueryKey
-      | string
-      | ((query: CachedQuery<unknown>) => boolean),
+    queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
     { exact }?: { exact?: boolean }
   ): void
-  getQuery(queryKey: AnyQueryKey): CachedQuery<unknown> | undefined
-  getQueries(queryKey: AnyQueryKey): Array<CachedQuery<unknown>>
+  getQuery(queryKeyOrPredicateFn: QueryKeyOrPredicateFn): CachedQuery<unknown> | undefined
+  getQueries(
+    queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
+    { exact }?: { exact?: boolean }
+  ): Array<CachedQuery<unknown>>
   cancelQueries(
-    queryKeyOrPredicateFn:
-      | AnyQueryKey
-      | string
-      | ((query: CachedQuery<unknown>) => boolean),
+    queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
     { exact }?: { exact?: boolean }
   ): void
   isFetching: number

@@ -37,6 +37,34 @@ function prefetchQuery() {
   })
 }
 
+function getQueryData() {
+  queryCache.getQueryData(['queryKey']);
+  queryCache.getQueryData('queryKey');
+  queryCache.getQueryData(true);
+  queryCache.getQueryData((query) => true);
+}
+
+function setQueryData() {
+  queryCache.setQueryData(['queryKey'], ['data']);
+  queryCache.setQueryData('queryKey', ['data']);
+  queryCache.setQueryData(true, ['data']);
+  queryCache.setQueryData((query) => true, ['data']);
+}
+
+function getQuery() {
+  queryCache.getQuery(['queryKey']);
+  queryCache.getQuery('queryKey');
+  queryCache.getQuery(true);
+  queryCache.getQuery((query) => true);
+}
+
+function getQueries() {
+  queryCache.getQueries(['queryKey']);
+  queryCache.getQueries('queryKey');
+  queryCache.getQueries(true);
+  queryCache.getQueries((query) => true);
+}
+
 function simpleQuery() {
   // Query - simple case
   const querySimple = useQuery<string, 'todos'>('todos', () =>
