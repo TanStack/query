@@ -540,7 +540,7 @@ export interface CachedQuery<T, TError = unknown> {
 
 export type QueryKey<TKey> = TKey | false | null | undefined
 
-type QueryKeyOrPredicateFn =
+export type QueryKeyOrPredicateFn =
   | AnyQueryKey
   | string
   | boolean
