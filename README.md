@@ -1729,6 +1729,7 @@ const {
   isFetching,
   failureCount,
   refetch,
+  clear,
 } = useQuery(queryKey, queryFn?, {
   suspense,
   queryKeySerializerFn,
