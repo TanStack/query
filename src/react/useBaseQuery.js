@@ -31,13 +31,15 @@ export function useBaseQuery(queryKey, config = {}) {
     instanceRef.current.updateConfig(config)
   })
 
+  const enabledBool = Boolean(config.enabled)
+
   // Run the instance when the query or enabled change
   React.useEffect(() => {
-    if (config.enabled && query) {
+    if (enabledBool && query) {
       // Just for change detection
     }
     instanceRef.current.run()
-  }, [config.enabled, query])
+  }, [enabledBool, query])
 
   return {
     ...query,
