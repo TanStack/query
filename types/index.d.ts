@@ -222,7 +222,7 @@ export interface BaseQueryOptions<TResult = unknown, TError = Error> {
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    */
-  enabled?: boolean
+  enabled?: boolean | unknown
   /**
    * If `false`, failed queries will not retry by default.
    * If `true`, failed queries will retry infinitely., failureCount: num
