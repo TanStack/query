@@ -1860,6 +1860,8 @@ const queryInfo = useQuery({
   - A function to manually refetch the query if it is stale.
   - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
+- `clear: Function() => void`
+  - A function to remove the query from the cache.
 
 ## `usePaginatedQuery`
 
