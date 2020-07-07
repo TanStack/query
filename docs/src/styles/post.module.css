@@ -1,0 +1,42 @@
+/* .post :global(video),
+.post :global(img), */
+.post :global(.asset-wrapper) {
+  margin: 2rem auto;
+  /* box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3); */
+  max-width: 100%;
+  display: block;
+}
+
+.post :global(.twitter-tweet) {
+  margin: 2rem auto !important;
+  text-align: center;
+}
+
+.post :global(.callout) {
+  padding: 16px 16px 16px 12px;
+  display: flex;
+  width: 100%;
+  border-radius: 3px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: transparent;
+  background: rgba(235, 236, 237, 0.6);
+  margin-top: 1rem;
+}
+
+.post :global(.callout .text) {
+  margin-left: 8px;
+}
+
+.postPreview :global(.posted) {
+  margin-bottom: 0.5em;
+}
+
+.post :global(hr) {
+  margin-bottom: 2em;
+}
+
+/* .post :global(a + p) {
+  margin-top: 0;
+} */
+/* purgecss end ignore */

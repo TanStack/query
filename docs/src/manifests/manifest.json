@@ -1,0 +1,106 @@
+{
+  "routes": [
+    {
+      "title": "Documentation",
+      "heading": true,
+      "routes": [
+        {
+          "title": "Getting Started",
+          "path": "/docs/overview.md"
+        },
+        {
+          "title": "Tutorial",
+          "path": "/docs/tutorial.md"
+        },
+        {
+          "title": "Resources",
+          "path": "/docs/resources.md"
+        },
+        {
+          "title": "3rd-Party Bindings",
+          "path": "/docs/3rd-party-bindings.md"
+        },
+        {
+          "title": "Migrating from v1.x to v2.x",
+          "path": "/docs/migrating-v2.md"
+        },
+        {
+          "title": "Guides",
+          "open": true,
+          "routes": [
+            {
+              "title": "Validation",
+              "path": "/docs/guides/validation.md"
+            },
+            {
+              "title": "Arrays",
+              "path": "/docs/guides/arrays.md"
+            },
+            {
+              "title": "TypeScript",
+              "path": "/docs/guides/typescript.md"
+            },
+            {
+              "title": "React Native",
+              "path": "/docs/guides/react-native.md"
+            },
+            {
+              "title": "Form Submission",
+              "path": "/docs/guides/form-submission.md"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "API Reference",
+      "heading": true,
+      "routes": [
+        {
+          "title": "connect()",
+          "path": "/docs/api/connect.md"
+        },
+        {
+          "title": "<ErrorMessage />",
+          "path": "/docs/api/errormessage.md"
+        },
+        {
+          "title": "<FastField />",
+          "path": "/docs/api/fastfield.md"
+        },
+        {
+          "title": "<Field />",
+          "path": "/docs/api/field.md"
+        },
+        {
+          "title": "<FieldArray />",
+          "path": "/docs/api/fieldarray.md"
+        },
+        {
+          "title": "<Form />",
+          "path": "/docs/api/form.md"
+        },
+        {
+          "title": "<Formik />",
+          "path": "/docs/api/formik.md"
+        },
+        {
+          "title": "useField()",
+          "path": "/docs/api/useField.md"
+        },
+        {
+          "title": "useFormik()",
+          "path": "/docs/api/useFormik.md"
+        },
+        {
+          "title": "useFormikContext()",
+          "path": "/docs/api/useFormikContext.md"
+        },
+        {
+          "title": "withFormik()",
+          "path": "/docs/api/withFormik.md"
+        }
+      ]
+    }
+  ]
+}
