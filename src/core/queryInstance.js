@@ -70,7 +70,7 @@ export function makeQueryInstance(query, onStateUpdate) {
     query.instances = query.instances.filter(d => d.id !== instance.id)
 
     if (!query.instances.length) {
-      query.clearIntervals()
+      instance.clearInterval()
       query.cancel()
 
       if (!isServer) {

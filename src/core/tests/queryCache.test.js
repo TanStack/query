@@ -72,7 +72,7 @@ describe('queryCache', () => {
     expect(callback).toHaveBeenCalled()
   })
 
-  test('should notify subsribers when new query with initialData is added', async () => {
+  test('should notify subscribers when new query with initialData is added', async () => {
     const callback = jest.fn()
 
     queryCache.subscribe(callback)
@@ -154,6 +154,20 @@ describe('queryCache', () => {
     queryCache.removeQueries(queryKey)
     await sleep(50)
     expect(query.state.isStale).toBe(false)
+  })
+
+  test('query interval is cleared when unsubscribed to a refetchInterval query', async () => {
+    const queryKey = 'key'
+    const fetchData = () => Promise.resolve('data')
+    await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0, refetchInterval: 1 })
+    const query = queryCache.getQuery(queryKey)
+    const instance = query.subscribe()
+    instance.updateConfig(query.config)
+    expect(instance.refetchIntervalId).not.toBeUndefined()
+    instance.unsubscribe()
+    expect(instance.refetchIntervalId).toBeUndefined()
+    await sleep(10)
+    expect(queryCache.getQuery(queryKey)).toBeUndefined()
   })
 
   test('query is garbage collected when unsubscribed to', async () => {
