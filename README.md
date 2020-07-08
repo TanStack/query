@@ -1,7 +1,5 @@
 ![React Query Header](https://github.com/tannerlinsley/react-query/raw/master/media/repo-dark.png)
 
-<img src='https://github.com/tannerlinsley/react-query/raw/master/media/logo-light.png' width='300'/>
-
 Hooks for fetching, caching and updating asynchronous data in React
 
 <a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
