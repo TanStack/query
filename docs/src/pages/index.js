@@ -210,11 +210,14 @@ const Home = props => {
                   Bronze Sponsors
                 </div>
                 <a
-                  href="https://github.com/sponsors/tannerlinsley"
+                  href="https://nozzle.io/"
                   target="_blank"
-                  className="w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 hover:bg-green-500 hover:text-white transition duration-200 ease-out"
+                  className="block w-48 m-auto"
                 >
-                  Become a Sponsor
+                  <img
+                    src="https://nozzle.io/img/logo-blue.png"
+                    alt="Nozzle - Google Keyword Rank Tracker"
+                  ></img>
                 </a>
               </div>
             </div>
@@ -286,7 +289,7 @@ const Home = props => {
               className="shadow-2xl"
               style={{
                 width: '100%',
-                height: '600px',
+                height: '80vh',
                 border: '0',
                 borderRadius: 8,
                 overflow: 'hidden',
