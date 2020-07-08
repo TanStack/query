@@ -9,8 +9,6 @@ export function SidebarNavLink({
   const router = useRouter()
   const onlyHashChange = pathname === router.pathname
 
-  console.log({ onlyHashChange })
-
   return (
     <div
       className={cn('nav-link', {
