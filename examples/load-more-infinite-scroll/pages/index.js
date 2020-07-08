@@ -3,7 +3,7 @@ import Link from 'next/link'
 import axios from 'axios'
 
 import { useInfiniteQuery } from 'react-query'
-import { ReactQueryDevtools } from 'react-query'
+import { ReactQueryDevtools } from 'react-query-devtools'
 
 //
 
