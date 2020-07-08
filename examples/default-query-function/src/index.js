@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import axios from "axios";
 import { useQuery, queryCache, ReactQueryConfigProvider } from "react-query";
 
-// Define a default query function that will recieve the query key
+// Define a default query function that will receive the query key
 const defaultQueryFn = async (key) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com${key}`

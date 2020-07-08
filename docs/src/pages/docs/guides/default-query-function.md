@@ -3,10 +3,10 @@ id: default-query-function
 title: Default Query Function
 ---
 
-If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to to identify what it should fetch, you can do that by providing a **default query function** to React Query:
+If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to identify what it should fetch, you can do that by providing a **default query function** to React Query:
 
 ```js
-// Define a default query function that will recieve the query key
+// Define a default query function that will receive the query key
 const defaultQueryFn = async key => {
   const { data } = await axios.get(`https://jsonplaceholder.typicode.com${key}`)
   return data
