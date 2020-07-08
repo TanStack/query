@@ -71,8 +71,8 @@
             },
             {
               "title": "Infinite Queries",
-              "path": "/docs/guides/paginated-queries",
-              "editUrl": "/docs/guides/paginated-queries.md"
+              "path": "/docs/guides/infinite-queries",
+              "editUrl": "/docs/guides/infinite-queries.md"
             },
             {
               "title": "Initial Query Data",
