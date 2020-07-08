@@ -7,7 +7,7 @@ Rendering paginated data is a very common UI pattern to avoid overloading bandwi
 
 Consider the following example where we would ideally want to increment a pageIndex (or cursor) for a query. If we were to use `useQuery`, it would technically work fine, but the UI would jump in and out of the `success` and `loading` states as different queries are created and destroyed for each page or cursor. By using `usePaginatedQuery` we get a few new things:
 
-- Instead of `data`, you should use `resolvedData` instead. This is the data from the last known successful query result. As new page queries resolve, `resolvedData` remains available to show the last page's data while a new page is requested. When the new page data is received, `resolvedData` get's updated to the new page's data.
+- Instead of `data`, you should use `resolvedData` instead. This is the data from the last known successful query result. As new page queries resolve, `resolvedData` remains available to show the last page's data while a new page is requested. When the new page data is received, `resolvedData` gets updated to the new page's data.
 - If you specifically need the data for the exact page being requested, `latestData` is available. When the desired page is being requested, `latestData` will be `undefined` until the query resolves, then it will get updated with the latest pages data result.
 
 ```js
