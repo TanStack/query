@@ -19,7 +19,6 @@
     "@mdx-js/tag": "^0.20.3",
     "@next/mdx": "^9.4.0",
     "@next/plugin-google-analytics": "^9.4.4",
-    "@next/plugin-sentry": "^9.4.4",
     "@reactions/component": "^2.0.2",
     "@zeit/fetch": "^6.0.0",
     "@zeit/react-jsx-parser": "^2.0.0",
