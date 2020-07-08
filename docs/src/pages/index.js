@@ -398,7 +398,7 @@ const Home = props => {
                   <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
                     <Check />
                   </span>
-                  Fetch-as-you-render
+                  Render-as-you-fetch
                 </a>
                 <a className="mb-2">
                   <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
