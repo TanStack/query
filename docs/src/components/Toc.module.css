@@ -1,0 +1,13 @@
+/* purgecss start ignore */
+.contents__link {
+  @apply text-gray-700;
+}
+
+.contents__link:hover {
+  @apply text-blue-600;
+}
+
+.contents__link--active {
+  @apply font-medium text-coral;
+}
+/* purgecss end ignore */

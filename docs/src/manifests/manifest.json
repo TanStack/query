@@ -1,0 +1,170 @@
+{
+  "routes": [
+    {
+      "title": "Documentation",
+      "heading": true,
+      "routes": [
+        {
+          "title": "Getting Started",
+          "open": true,
+          "routes": [
+            {
+              "title": "Overview",
+              "path": "/docs/overview.md"
+            },
+            {
+              "title": "Installation",
+              "path": "/docs/installation"
+            },
+            {
+              "title": "Devtools",
+              "path": "/docs/devtools"
+            },
+            {
+              "title": "Quick Start",
+              "path": "/docs/quick-start"
+            }
+          ]
+        },
+        {
+          "title": "Concepts",
+          "open": true,
+          "routes": [
+            {
+              "title": "Important Defaults",
+              "path": "/docs/guides/important-defaults"
+            },
+            {
+              "title": "Queries",
+              "path": "/docs/guides/queries"
+            },
+            {
+              "title": "Window Focus Refetching",
+              "path": "/docs/guides/window-focus-refetching"
+            },
+            {
+              "title": "Disabling/Pausing Queries",
+              "path": "/docs/guides/disabling-queries"
+            },
+            {
+              "title": "Query Retries",
+              "path": "/docs/guides/query-retries"
+            },
+            {
+              "title": "Paginated Queries",
+              "path": "/docs/guides/paginated-queries"
+            },
+            {
+              "title": "Infinite Queries",
+              "path": "/docs/guides/paginated-queries"
+            },
+            {
+              "title": "Initial Query Data",
+              "path": "/docs/guides/initial-query-data"
+            },
+            {
+              "title": "Prefetching",
+              "path": "/docs/guides/prefetching"
+            },
+            {
+              "title": "Query Cancellation",
+              "path": "/docs/guides/query-cancellation"
+            },
+            {
+              "title": "Mutations",
+              "path": "/docs/guides/mutations"
+            },
+            {
+              "title": "Query Invalidation",
+              "path": "/docs/guides/query-invalidation"
+            },
+            {
+              "title": "Invalidation from Mutations",
+              "path": "/docs/guides/invalidations-from-mutations"
+            },
+            {
+              "title": "Updates from Mutation Responses",
+              "path": "/docs/guides/updates-from-mutation-responses"
+            },
+            {
+              "title": "Optimistic Updates",
+              "path": "/docs/guides/optimistic-updates"
+            },
+            {
+              "title": "Scroll Restoration",
+              "path": "/docs/guides/scroll-restoration"
+            },
+            {
+              "title": "SSR & Next.js",
+              "path": "/docs/guides/ssr"
+            },
+            {
+              "title": "Caching",
+              "path": "/docs/guides/caching"
+            },
+            {
+              "title": "Default Query Fn",
+              "path": "/docs/guides/default-query-function"
+            },
+            {
+              "title": "Suspense",
+              "path": "/docs/guides/suspense"
+            }
+          ]
+        },
+        {
+          "title": "Examples",
+          "open": true,
+          "routes": [
+            { "title": "Simple", "path": "/docs/examples/simple" },
+            { "title": "Basic", "path": "/docs/examples/basic" },
+            { "title": "Custom Hooks", "path": "/docs/examples/custom-hooks" },
+            {
+              "title": "Auto Refetching / Polling / Realtime",
+              "path": "/docs/examples/auto-refetching"
+            },
+            {
+              "title": "Window Refocus Refetching",
+              "path": "/docs/examples/focus-refetching"
+            },
+            {
+              "title": "Optimistic Updates",
+              "path": "/docs/examples/optimistic-updates"
+            },
+            { "title": "Pagination", "path": "/docs/examples/pagination" },
+            {
+              "title": "Load-More & Infinite Scroll",
+              "path": "/docs/examples/load-more-infinite-scroll"
+            },
+            { "title": "Suspense", "path": "/docs/examples/suspense" },
+            {
+              "title": "Default Query Function",
+              "path": "/docs/examples/default-query-function"
+            },
+            {
+              "title": "Playground (with devtools)",
+              "path": "/docs/examples/playground"
+            },
+            {
+              "title": "Prefetching",
+              "path": "/docs/examples/prefetching"
+            },
+            {
+              "title": "Star Wars (with devtools)",
+              "path": "/docs/examples/star-wars"
+            },
+            {
+              "title": "Rick And Morty (with devtools)",
+              "path": "/docs/examples/rick-morty"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "API Reference",
+      "heading": true,
+      "path": "/docs/api.md"
+    }
+  ]
+}

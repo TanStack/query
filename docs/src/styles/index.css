@@ -1,0 +1,185 @@
+/* purgecss start ignore */
+@tailwind base;
+@tailwind components;
+/* purgecss end ignore */
+
+body,
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.top-24 {
+  top: 6rem;
+}
+
+.focus-ring {
+  outline: none;
+  @apply shadow-outline border-blue-400;
+}
+
+/* purgecss start ignore */
+
+.embed-responsive {
+  position: relative;
+  display: block;
+  height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.embed-responsive .embed-responsive-item,
+.embed-responsive iframe,
+.embed-responsive embed,
+.embed-responsive object,
+.embed-responsive video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+  border: 0;
+}
+
+.aspect-ratio-square {
+  padding-top: 100%;
+}
+
+.aspect-ratio-16-9 {
+  padding-top: 56.25%;
+}
+
+.aspect-ratio-4-3 {
+  padding-top: 75%;
+}
+
+.aspect-ratio-21-9 {
+  padding-top: 42.86%;
+}
+
+.anchor {
+  @apply text-gray-500 absolute ml-2 pr-1 underline;
+}
+
+.anchor::after {
+  content: '#';
+  visibility: hidden;
+}
+
+h1:hover .anchor::after,
+h2:hover .anchor::after,
+h3:hover .anchor::after,
+h4:hover .anchor::after,
+h5:hover .anchor::after,
+h6:hover .anchor::after {
+  visibility: visible;
+}
+
+/* Algolia v3 overrides */
+:root {
+  --docsearch-modal-background: #fff;
+  --docsearch-highlight-color: #1965e0;
+  --docsearch-primary-color: #0052cc;
+  --docsearch-searchbox-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5);
+  --ifm-z-index-fixed: 1000;
+  --docsearch-searchbox-height: 48px;
+  --docsearch-icon-stroke-width: 1.4;
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+  --fds-animation-fade-in: cubic-bezier(0, 0, 1, 1);
+  --fds-animation-fade-out: cubic-bezier(0, 0, 1, 1);
+}
+
+.DocSearch--active #__next {
+  -webkit-filter: blur(2px);
+  filter: blur(2px);
+}
+.DocSearch-SearchBar {
+  @apply mb-2;
+}
+
+.DocSearch-Form {
+  @apply rounded-md;
+}
+
+.DocSearch-Search-Icon {
+  height: 20px;
+  width: 20px;
+  stroke-width: 1.6;
+  @apply text-gray-600;
+}
+
+/* Custom Remark alerts */
+.alert {
+  @apply p-4 border-l-4  mb-4;
+}
+
+.alert.alert-danger {
+  @apply bg-red-50 text-red-800 border-red-500;
+}
+
+.alert.alert-success {
+  @apply bg-green-50 text-green-700 border-green-500;
+}
+
+.alert.alert-warning {
+  @apply bg-yellow-50 text-yellow-800 border-yellow-500;
+}
+
+.alert.alert-info {
+  @apply bg-blue-50 text-blue-800 border-blue-500;
+}
+
+.font-mono {
+  font-family: monospace;
+}
+
+details > p > a,
+details > ul > li > a,
+details > ol > li > a,
+details > ul > li a,
+details > ol > li a,
+details > table > tbody > tr > td > a {
+  @apply text-blue-600 font-semibold transition-colors duration-150 ease-out;
+}
+
+details > p > a:hover,
+details > ul > li > a:hover,
+details > ol > li > a:hover,
+details > table > tbody > tr > td > a:hover {
+  @apply text-blue-800 transition-colors duration-150 ease-out;
+}
+
+details strong {
+  @apply font-bold;
+}
+
+details > p,
+details > ul,
+details > ol,
+details > blockquote,
+details > pre,
+details > div > .code-block {
+  @apply mb-4;
+}
+details > ul,
+details > ul > li > ul {
+  @apply ml-8 list-disc;
+}
+
+details > ol {
+  @apply ml-8 list-decimal;
+}
+details {
+  @apply p-3 bg-gray-50 rounded-md border mb-3  text-sm leading-5 shadow-sm;
+}
+details > p {
+  @apply mt-2;
+}
+details > summary {
+  @apply font-bold text-base;
+}
+
+@tailwind utilities;
+/* purgecss end ignore */
