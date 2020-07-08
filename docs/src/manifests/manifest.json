@@ -32,6 +32,11 @@
               "title": "Videos & Talks",
               "path": "/docs/videos",
               "editUrl": "/docs/videos.mdx"
+            },
+            {
+              "title": "Comparisons",
+              "path": "/docs/comparisons",
+              "editUrl": "/docs/comparisons.md"
             }
           ]
         },
