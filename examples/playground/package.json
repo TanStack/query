@@ -9,8 +9,8 @@
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-query": "1.0.12",
-    "react-query-devtools": "1.0.2",
+    "react-query": "latest",
+    "react-query-devtools": "latest",
     "react-scripts": "3.0.1",
     "stop-runaway-react-effects": "^1.2.0",
     "styled-components": "^4.3.2"

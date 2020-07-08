@@ -1,20 +1,22 @@
 import React from 'react'
-import { Client } from './Client'
 import { users } from 'users'
-const pinnedLogos = users.filter(p => p.pinned)
+
+// const pinnedLogos = users.filter(p => p.pinned)
+
 export const ClientsMarquee = React.memo(props => {
   return (
     <div className="overflow-x-hidden">
       <div className="relative translate-x-1/2" {...props}>
         <div className="wrapper inline-block">
-          {pinnedLogos.map(({ caption, infoLink, image, style }) => (
-            <Client
-              className="mx-8 align-middle opacity-50"
-              key={caption}
-              style={style}
-              name={caption}
-              image={image}
-            />
+          {[...users, ...users, ...users].map((user, i) => (
+            <span
+              key={user + i}
+              className={`text-gray-300 inline-block text-2xl font-black m-1 ${
+                i % 2 && 'text-gray-400'
+              }`}
+            >
+              {user}
+            </span>
           ))}
         </div>
 
@@ -33,7 +35,6 @@ export const ClientsMarquee = React.memo(props => {
             white-space: nowrap;
             display: inline-block;
             animation: slidein 100s linear infinite;
-            filter: grayscale(100%);
           }
         `}</style>
       </div>

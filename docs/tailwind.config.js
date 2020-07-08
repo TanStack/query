@@ -9,7 +9,7 @@ module.exports = {
   },
   purge: {
     enabled: process.env.NODE_ENV !== 'development',
-    content: ['./src/**/*.ts', './src/**/*.tsx'],
+    content: ['./src/**/*.js'],
     options: {
       defaultExtractor: content => content.match(/[\w-/.:]+(?<!:)/g) || [],
     },

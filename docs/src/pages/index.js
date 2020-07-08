@@ -28,54 +28,12 @@ const Home = props => {
           <Nav />
         </Sticky>
         <div className="relative bg-white overflow-hidden">
-          <div className="hidden lg:block lg:absolute lg:inset-0">
-            <svg
-              className="absolute top-0 left-1/2 transform translate-x-64 -translate-y-8"
-              width="640"
-              height="784"
-              fill="none"
-              viewBox="0 0 640 784"
-            >
-              <defs>
-                <pattern
-                  id="9ebea6f4-a1f5-4d96-8c4e-4c2abf658047"
-                  x="118"
-                  y="0"
-                  width="20"
-                  height="20"
-                  patternUnits="userSpaceOnUse"
-                >
-                  <rect
-                    x="0"
-                    y="0"
-                    width="4"
-                    height="4"
-                    className="text-gray-200"
-                    fill="currentColor"
-                  />
-                </pattern>
-              </defs>
-              <rect
-                x="118"
-                width="404"
-                height="784"
-                fill="url(#9ebea6f4-a1f5-4d96-8c4e-4c2abf658047)"
-              />
-            </svg>
-          </div>
-
           <div className="py-24 mx-auto container px-4 sm:mt-12  relative">
-            <picture className="hidden lg:block absolute lg:w-3/5 right-0 lg:-rotate-30    lg:translate-x-1/3 lg:-translate-y-16 md:w-1/2 sm:w-2/3 top-0  transform  -translate-y-12">
-              {/* <source
-                srcSet={require('images/hero6.png?webp')}
-                type="image/webp"
-              /> */}
-              {/* <source srcSet={require('images/hero6.png')} type="image/jpeg" /> */}
-              <img
-                src={require('images/logo-emblem.svg')}
-                alt="React Query Emblem"
-              />
-            </picture>
+            <img
+              src={require('images/emblem-light.svg')}
+              className="absolute transform right-0 top-1/2 h-0 lg:h-full scale-150 translate-x-1/2 xl:translate-x-1/5 -translate-y-1/2"
+              alt="React Query Emblem"
+            />
             <div className="grid grid-cols-12 gap-8">
               <div className="col-span-12 lg:col-span-6 ">
                 <div className="text-center lg:text-left md:max-w-2xl md:mx-auto ">
@@ -113,7 +71,7 @@ const Home = props => {
             </div>
           </div>
         </div>
-        <div className="text-lg border-t border-gray-100 bg-gray-50 ">
+        <div className="text-lg border-t border-gray-200 bg-gray-50 ">
           <div className="py-24  ">
             <div className="mx-auto container">
               <div className="lg:grid lg:grid-cols-3 lg:gap-8">
@@ -164,11 +122,138 @@ const Home = props => {
             </div>
           </div>
           <div className="py-6">
-            <div className="uppercase tracking-wider text-sm font-semibold text-center  text-gray-400">
+            <div className="uppercase tracking-wider text-sm font-semibold text-center text-gray-400 mb-3">
               Trusted in Production by
             </div>
 
             <ClientsMarquee />
+          </div>
+        </div>
+        <div className="relative text-lg border-t border-gray-200 bg-white overflow-hidden">
+          <div className="z-0 lg:block lg:absolute lg:inset-0">
+            <svg
+              className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2"
+              width="2400"
+              height="2400"
+              fill="none"
+              viewBox="0 0 2400 2400"
+            >
+              <defs>
+                <pattern
+                  id="9ebea6f4-a1f5-4d96-8c4e-4c2abf658047"
+                  x="0"
+                  y="0"
+                  width="20"
+                  height="20"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <rect
+                    x="0"
+                    y="0"
+                    width="4"
+                    height="4"
+                    className="text-gray-100"
+                    fill="currentColor"
+                  />
+                </pattern>
+              </defs>
+              <rect
+                x="0"
+                width="2400"
+                height="2400"
+                fill="url(#9ebea6f4-a1f5-4d96-8c4e-4c2abf658047)"
+              />
+            </svg>
+          </div>
+          <div className="py-12 z-10 relative">
+            <div className="uppercase tracking-wider text-4xl font-semibold text-center text-gray-500 m-6">
+              Diamond Sponsors
+            </div>
+
+            <a
+              href="https://github.com/sponsors/tannerlinsley"
+              target="_blank"
+              className="w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 hover:bg-green-500 hover:text-white transition duration-200 ease-out"
+            >
+              Become a Sponsor
+            </a>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3">
+              <div className="mt-10">
+                <div className="uppercase tracking-wider text-3xl font-semibold text-center text-gray-500 mt-10 m-6">
+                  Gold Sponsors
+                </div>
+                <a
+                  href="https://github.com/sponsors/tannerlinsley"
+                  target="_blank"
+                  className="w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 hover:bg-green-500 hover:text-white transition duration-200 ease-out"
+                >
+                  Become a Sponsor
+                </a>
+              </div>
+
+              <div className="mt-10">
+                <div className="uppercase tracking-wider text-3xl font-semibold text-center text-gray-500 mt-10 m-6">
+                  Silver Sponsors
+                </div>
+                <a
+                  href="https://www.reactbricks.com/"
+                  target="_blank"
+                  className="block w-56 m-auto"
+                >
+                  <img src="https://www.reactbricks.com/reactbricks_vertical.svg" />
+                </a>
+              </div>
+
+              <div className="mt-10">
+                <div className="uppercase tracking-wider text-3xl font-semibold text-center text-gray-500 mt-10 m-6">
+                  Bronze Sponsors
+                </div>
+                <a
+                  href="https://github.com/sponsors/tannerlinsley"
+                  target="_blank"
+                  className="w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 hover:bg-green-500 hover:text-white transition duration-200 ease-out"
+                >
+                  Become a Sponsor
+                </a>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <div className="mt-10">
+                <div className="uppercase tracking-wider text-2xl font-semibold text-center text-gray-500 mt-10 m-3">
+                  Supporters
+                </div>
+                <ul className="list-none text-center">
+                  <li className="text-blue-800">
+                    <a href="https://github.com/bgazzera">@bgazzera</a>
+                  </li>
+                  <li className="text-blue-800">
+                    <a href="https://kentcdodds.com/">
+                      Kent C. Dodds (kentcdodds.com)
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-10">
+                <div className="uppercase tracking-wider text-2xl font-semibold text-center text-gray-500 mt-10 m-3">
+                  Fans
+                </div>
+                <ul className="list-none text-center">
+                  <li>Steven Miyakawa (@SamSamskies)</li>
+                </ul>
+              </div>
+            </div>
+            <div className="mt-10 text-center">
+              <a
+                href="https://github.com/sponsors/tannerlinsley"
+                target="_blank"
+                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-500 hover:bg-green-500-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+              >
+                Become a Sponsor
+              </a>
+            </div>
           </div>
         </div>
 
@@ -195,7 +280,10 @@ const Home = props => {
         <section className="bg-gray-900 body-font">
           <div className="container max-w-7xl px-4  mx-auto -mt-72 relative">
             <iframe
-              src="https://codesandbox.io/embed/dazzling-swanson-wne32?autoresize=1&codemirror=1&fontsize=14&hidenavigation=1&theme=dark"
+              src="https://codesandbox.io/embed/github/tannerlinsley/react-query/tree/master/examples/basic?autoresize=1&fontsize=16&theme=dark"
+              title="tannerlinsley/react-query: basic"
+              sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+              className="shadow-2xl"
               style={{
                 width: '100%',
                 height: '600px',
@@ -205,10 +293,6 @@ const Home = props => {
                 position: 'static',
                 zIndex: 0,
               }}
-              className="shadow-2xl"
-              title="dazzling-swanson-wne32"
-              allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
-              sandbox="allow-autoplay allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
             ></iframe>
           </div>
           <div className="py-24 px-4 sm:px-6 lg:px-8  mx-auto container">

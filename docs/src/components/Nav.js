@@ -7,7 +7,7 @@ export const Nav = () => (
   <div className="bg-white border-b border-gray-200">
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-12 md:gap-6">
-        <div className="md:col-span-3 flex items-center pt-4 md:pt-0 md:h-16">
+        <div className="w-60 col-span-3 flex items-center h-16 pt-4 md:pt-0">
           <Link href="/" as="/">
             <a>
               <span className="sr-only">Home</span>
@@ -23,14 +23,19 @@ export const Nav = () => (
               </Link>
             </div>
             <div>
-              <Link href="/blog">
-                <a className="leading-6 font-medium">Blog</a>
+              <Link href="/docs/examples/simple">
+                <a className="leading-6 font-medium">Examples</a>
               </Link>
             </div>
             <div>
-              <Link href="/users">
-                <a className="leading-6 font-medium">Users</a>
+              <Link href="/docs/api">
+                <a className="leading-6 font-medium">API</a>
               </Link>
+            </div>
+            <div>
+              <a href="https://tanstack.com" className="leading-6 font-medium">
+                TanStack ⤴
+              </a>
             </div>
           </div>
           <div>
