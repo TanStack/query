@@ -1,27 +1,34 @@
-import * as React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import cn from 'classnames';
+import * as React from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import cn from 'classnames'
 export function SidebarNavLink({
-  route: {
-    href,
-    pathname,
-    title,
-    selected
-  },
-  onClick
+  route: { href, pathname, title, selected },
+  onClick,
 }) {
-  const router = useRouter();
-  const onlyHashChange = pathname === router.pathname;
-  return <div className={cn('nav-link', {
-    selected
-  })}>
-      {// NOTE: use just anchor element for triggering `hashchange` event
-    onlyHashChange ? <a className={selected ? 'selected' : ''} href={pathname}>
+  const router = useRouter()
+  const onlyHashChange = pathname === router.pathname
+
+  console.log({ onlyHashChange })
+
+  return (
+    <div
+      className={cn('nav-link', {
+        selected,
+      })}
+    >
+      {
+        // NOTE: use just anchor element for triggering `hashchange` event
+        onlyHashChange ? (
+          <a className={selected ? 'selected' : ''} href={pathname}>
             {title}
-          </a> : <Link href={href} as={pathname}>
+          </a>
+        ) : (
+          <Link href={href} as={pathname}>
             <a>{title}</a>
-          </Link>}
+          </Link>
+        )
+      }
       <style jsx>{`
         div.selected {
           box-sizing: border-box;
@@ -64,6 +71,7 @@ export function SidebarNavLink({
           }
         }
       `}</style>
-    </div>;
+    </div>
+  )
 }
-SidebarNavLink.displayName = 'SidebarNavLink';
+SidebarNavLink.displayName = 'SidebarNavLink'
