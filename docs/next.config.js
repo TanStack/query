@@ -89,7 +89,7 @@ module.exports = optimizedImages({
       const entries = {
         ...(await originalEntry()),
       }
-      entries['./scripts/build-rss.js'] = './src/lib/build-rss.js'
+      // entries['./scripts/build-rss.js'] = './src/lib/build-rss.js'
       return entries
     }
 
