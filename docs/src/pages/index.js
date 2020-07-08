@@ -130,7 +130,7 @@ const Home = props => {
           </div>
         </div>
         <div className="relative text-lg border-t border-gray-200 bg-white overflow-hidden">
-          <div className="z-0 lg:block lg:absolute lg:inset-0">
+          <div className="lg:block lg:absolute lg:inset-0">
             <svg
               className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2"
               width="2400"
@@ -165,7 +165,7 @@ const Home = props => {
               />
             </svg>
           </div>
-          <div className="py-12 z-10 relative">
+          <div className="py-12 relative">
             <div className="uppercase tracking-wider text-4xl font-semibold text-center text-gray-500 m-6">
               Diamond Sponsors
             </div>
