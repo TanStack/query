@@ -15,7 +15,7 @@ export const Nav = () => (
             </a>
           </Link>
         </div>
-        <div className="md:col-span-9 items-center flex justify-between md:justify-end  space-x-2 h-16">
+        <div className="md:col-span-9 items-center flex justify-between md:justify-end space-x-4 md:space-x-8 h-16">
           <div className="flex items-center space-x-4 md:space-x-8 text-sm md:text-base">
             <div>
               <Link href="/docs/overview">
