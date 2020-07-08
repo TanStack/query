@@ -38,7 +38,7 @@ function usePosts() {
 }
 
 function Posts({ setPostId }) {
-  const { status, data, error, isFetching } = usePosts;
+  const { status, data, error, isFetching } = usePosts();
 
   return (
     <div>
