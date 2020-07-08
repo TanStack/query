@@ -173,7 +173,7 @@ const Home = props => {
             <a
               href="https://github.com/sponsors/tannerlinsley"
               target="_blank"
-              className="w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 hover:bg-green-500 hover:text-white transition duration-200 ease-out"
+              className="opacity-50 font-bold w-56 h-56 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 border-4 border-transparent hover:border-green-500 hover:text-green-500 transition duration-200 ease-out hover:opacity-100"
             >
               Become a Sponsor
             </a>
@@ -186,7 +186,7 @@ const Home = props => {
                 <a
                   href="https://github.com/sponsors/tannerlinsley"
                   target="_blank"
-                  className="w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 hover:bg-green-500 hover:text-white transition duration-200 ease-out"
+                  className="opacity-50 font-bold w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 border-4 border-transparent hover:border-green-500 hover:text-green-500 transition duration-200 ease-out hover:opacity-100"
                 >
                   Become a Sponsor
                 </a>
@@ -252,7 +252,7 @@ const Home = props => {
               <a
                 href="https://github.com/sponsors/tannerlinsley"
                 target="_blank"
-                className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-green-500 hover:bg-green-500-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                className="text-lg font-bold inline-flex items-center justify-center px-6 py-3 border border-transparent text-base leading-6 font-medium rounded-full text-white bg-green-500 hover:bg-green-500-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
               >
                 Become a Sponsor
               </a>
