@@ -1,4 +1,4 @@
-# Formik Docs
+# React Query Docs
 
 This is source code to react-query.tanstack.com. It is forked from the [Formik](https://formik.org) docs and is built with:
 
