@@ -23,6 +23,10 @@
             {
               "title": "Quick Start",
               "path": "/docs/quick-start"
+            },
+            {
+              "title": "Videos & Talks",
+              "path": "/docs/videos"
             }
           ]
         },
