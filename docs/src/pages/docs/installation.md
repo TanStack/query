@@ -31,6 +31,6 @@ If you're not using a module bundler or package manager we also have a global ("
 <script src="https://unpkg.com/react-query/dist/react-query.production.min.js"></script>
 ```
 
-Once you've added this you will have access to the `window.ReactQuery` object and it's exports.
+Once you've added this you will have access to the `window.ReactQuery` object and its exports.
 
 > This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
