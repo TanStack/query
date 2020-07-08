@@ -16,7 +16,7 @@ export const Nav = () => (
           </Link>
         </div>
         <div className="md:col-span-9 items-center flex justify-between md:justify-end  space-x-8 h-16">
-          <div className="flex items-center  space-x-8">
+          <div className="flex items-center space-x-4 md:space-x-8">
             <div>
               <Link href="/docs/overview">
                 <a className="leading-6 font-medium">Docs</a>
