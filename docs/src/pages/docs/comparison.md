@@ -1,6 +1,6 @@
 ---
-id: comparisons
-title: Comparisons
+id: comparison
+title: Comparison
 ---
 
 This comparison strives to be as accurate as possible. Feel free to suggest changes using the "Edit this page on Github" link at the bottom.
