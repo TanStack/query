@@ -34,7 +34,7 @@ export const Nav = () => (
             </div>
             <div>
               <a href="https://tanstack.com" className="leading-6 font-medium">
-                TanStack ⤴
+                TanStack
               </a>
             </div>
           </div>
