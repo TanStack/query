@@ -5,33 +5,33 @@ title: Comparisons
 
 This comparison strives to be as accurate as possible. Feel free to suggest changes using the "Edit this page on Github" link at the bottom.
 
-| Feature                          | React Query                            | [SWR](https://github.com/vercel/swr) | [Apollo Client](https://github.com/apollographql/apollo-client) |
-| -------------------------------- | -------------------------------------- | ------------------------------------ | --------------------------------------------------------------- |
-| Supported Backend                | HTTP / REST / GQL                      | HTTP / REST / GQL                    | GQL, (HTTP / REST 🔶 plugins required)                          |
-| Supported Query Signatures       | Promise                                | Promise                              | GraphQL Query                                                   |
-| Supported Query Keys             | JSON                                   | JSON                                 | GraphQL Query                                                   |
-| Query Key Change Detection       | Deep Compare (Serialization)           | Referential Equality (===)           | Referential Equality (===)                                      |
-| Bundle Size                      | [![][bp-react-query]][bpl-react-query] | [![][bp-swr]][bpl-swr]               | [![][bp-apollo]][bpl-apollo]                                    |
-| Queries                          | ✅                                     | ✅                                   | ✅                                                              |
-| Caching                          | ✅                                     | ✅                                   | ✅                                                              |
-| Devtools                         | ✅                                     | -                                    | ✅                                                              |
-| Polling/Intervals                | ✅                                     | ✅                                   | ✅                                                              |
-| Parallel Queries                 | ✅                                     | ✅                                   | ✅                                                              |
-| Dependent Queries                | ✅                                     | ✅                                   | ✅                                                              |
-| Paginated Queries                | ✅                                     | 🔶 Previously, yes?                  | ✅                                                              |
-| Infinite/Incremental Queries     | ✅                                     | 🔶 Previously, yes?                  | ✅                                                              |
-| Auto Garbage Collection          | ✅                                     | -                                    |                                                                 |
-| Scroll Recovery                  | ✅                                     | ✅                                   | ✅                                                              |
-| Cache Manipulation               | ✅                                     | ✅                                   | ✅                                                              |
-| Mutation API                     | ✅                                     |                                      | ✅                                                              |
-| Prefetching APIs                 | ✅                                     |                                      | ✅                                                              |
-| Outdated Query Dismisall         | ✅                                     | ✅                                   | ✅                                                              |
-| Query Cancellation               | ✅                                     | -                                    |                                                                 |
-| Network Status Refetching        | -                                      | ✅                                   | -                                                               |
-| Window Focus Refetching          | ✅                                     | ✅                                   | -                                                               |
-| Partial Query Matching           | ✅                                     | -                                    | -                                                               |
-| Automatic Refetch after Mutation | -                                      | -                                    | ✅                                                              |
-| React Suspense (Experimental)    | ✅                                     | ✅                                   | -                                                               |
+| Feature                          | React Query                            | SWR [(Website)](https://github.com/vercel/swr) | Apollo Client [(Website)](https://github.com/apollographql/apollo-client) |
+| -------------------------------- | -------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
+| Supported Backend                | HTTP / REST / GQL                      | HTTP / REST / GQL                              | GQL, (HTTP / REST 🔶 plugins required)                                    |
+| Supported Query Signatures       | Promise                                | Promise                                        | GraphQL Query                                                             |
+| Supported Query Keys             | JSON                                   | JSON                                           | GraphQL Query                                                             |
+| Query Key Change Detection       | Deep Compare (Serialization)           | Referential Equality (===)                     | Referential Equality (===)                                                |
+| Bundle Size                      | [![][bp-react-query]][bpl-react-query] | [![][bp-swr]][bpl-swr]                         | [![][bp-apollo]][bpl-apollo]                                              |
+| Queries                          | ✅                                     | ✅                                             | ✅                                                                        |
+| Caching                          | ✅                                     | ✅                                             | ✅                                                                        |
+| Devtools                         | ✅                                     | -                                              | ✅                                                                        |
+| Polling/Intervals                | ✅                                     | ✅                                             | ✅                                                                        |
+| Parallel Queries                 | ✅                                     | ✅                                             | ✅                                                                        |
+| Dependent Queries                | ✅                                     | ✅                                             | ✅                                                                        |
+| Paginated Queries                | ✅                                     | 🔶 Previously, yes?                            | ✅                                                                        |
+| Infinite/Incremental Queries     | ✅                                     | 🔶 Previously, yes?                            | ✅                                                                        |
+| Auto Garbage Collection          | ✅                                     | -                                              |                                                                           |
+| Scroll Recovery                  | ✅                                     | ✅                                             | ✅                                                                        |
+| Cache Manipulation               | ✅                                     | ✅                                             | ✅                                                                        |
+| Mutation API                     | ✅                                     |                                                | ✅                                                                        |
+| Prefetching APIs                 | ✅                                     |                                                | ✅                                                                        |
+| Outdated Query Dismisall         | ✅                                     | ✅                                             | ✅                                                                        |
+| Query Cancellation               | ✅                                     | -                                              |                                                                           |
+| Network Status Refetching        | -                                      | ✅                                             | -                                                                         |
+| Window Focus Refetching          | ✅                                     | ✅                                             | -                                                                         |
+| Partial Query Matching           | ✅                                     | -                                              | -                                                                         |
+| Automatic Refetch after Mutation | -                                      | -                                              | ✅                                                                        |
+| React Suspense (Experimental)    | ✅                                     | ✅                                             | -                                                                         |
 
 ### Notes
 
