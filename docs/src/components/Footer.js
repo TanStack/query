@@ -50,6 +50,14 @@ export const Footer = props => {
                   </li>
                   <li className="mt-4">
                     <a
+                      href="https://discord.gg/WrRKjPJ"
+                      className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                    >
+                      #TanStack Discord
+                    </a>
+                  </li>
+                  <li className="mt-4">
+                    <a
                       href="http://stackoverflow.com/questions/tagged/react-query"
                       className="text-base leading-6 text-gray-500 hover:text-gray-900"
                     >

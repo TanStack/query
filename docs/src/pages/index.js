@@ -416,16 +416,30 @@ const Home = props => {
             </div>
           </div>
         </section>
+        <div className="bg-gray-200 border-b border-gray-300">
+          <div className="container mx-auto py-12 text-center">
+            <h3 className="text-2xl md:text-5xl mx-auto leading-tight font-extrabold tracking-tight text-gray-800  lg:leading-none mt-2">
+              Feeling Chatty?
+            </h3>
+            <a
+              href="https://discord.gg/WrRKjPJ"
+              target="_blank"
+              className="inline-block bg-gray-800 p-5 text-2xl mx-auto leading-tight font-extrabold tracking-tight text-white mt-12 rounded-full"
+            >
+              Join the #TanStack Discord!
+            </a>
+          </div>
+        </div>
         <div className="bg-gray-50 border-b border-gray-100">
-          <div className="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8 lg:flex lg:items-center lg:justify-between">
+          <div className="container mx-auto py-24 px-4 flex items-center justify-between space-x-8">
             <h2 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
-              Ready to dive in?
+              Wow, you've come a long way!
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
               <div className="inline-flex rounded-md shadow">
                 <Link href="/docs/overview">
                   <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
-                    Get Started
+                    Okay, let's get started!
                   </a>
                 </Link>
               </div>
@@ -434,7 +448,7 @@ const Home = props => {
                   href={siteConfig.repoUrl}
                   className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-coral bg-white hover:text-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
                 >
-                  GitHub
+                  Take me to the GitHub repo.
                 </a>
               </div>
             </div>
