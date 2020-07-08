@@ -22,7 +22,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 
 Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [React Table](https://github.com/tannerlinsley/react-table), [React Form](https://github.com/tannerlinsley/react-form), [React Charts](https://github.com/tannerlinsley/react-charts)
 
-## Visit the official [react-query.tanstack.com](https://react-query.tanstack.com) website for docs, guides, API and more!
+## Visit [react-query.tanstack.com](https://react-query.tanstack.com) for docs, guides, API and more!
 
 ## Quick Features
 
