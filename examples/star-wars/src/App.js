@@ -13,7 +13,7 @@ export default function App() {
     <Router>
       <ThemeProvider theme={theme}>
         <Layout />
-        <ReactQueryDevtools />
+        <ReactQueryDevtools initialIsOpen />
       </ThemeProvider>
     </Router>
   );
@@ -22,22 +22,22 @@ export default function App() {
 const theme = createMuiTheme({
   typography: {
     h1: {
-      fontFamily: "Roboto Mono, monospace"
+      fontFamily: "Roboto Mono, monospace",
     },
     h2: {
-      fontFamily: "Roboto Mono, monospace"
+      fontFamily: "Roboto Mono, monospace",
     },
     h3: {
-      fontFamily: "Roboto Mono, monospace"
+      fontFamily: "Roboto Mono, monospace",
     },
     h4: {
-      fontFamily: "Roboto Mono, monospace"
+      fontFamily: "Roboto Mono, monospace",
     },
     h5: {
-      fontFamily: "Roboto Mono, monospace"
+      fontFamily: "Roboto Mono, monospace",
     },
     h6: {
-      fontFamily: "Roboto Mono, monospace"
-    }
-  }
+      fontFamily: "Roboto Mono, monospace",
+    },
+  },
 });

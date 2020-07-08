@@ -22,7 +22,7 @@ export default function App() {
       <strong>👀 {data.subscribers_count}</strong>{" "}
       <strong>✨ {data.stargazers_count}</strong>{" "}
       <strong>🍴 {data.forks_count}</strong>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   );
 }

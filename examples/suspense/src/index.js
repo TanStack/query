@@ -66,7 +66,7 @@ function App() {
           ) : null}
         </React.Suspense>
       </ErrorBoundary>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </ReactQueryConfigProvider>
   );
 }

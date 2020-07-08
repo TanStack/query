@@ -58,7 +58,7 @@ export default () => {
           </div>
         </div>
       )}
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   )
 }

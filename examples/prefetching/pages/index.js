@@ -77,7 +77,7 @@ export default function App() {
       <p>
         {selectedData?.name} ({selectedData?.status})
       </p>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   )
 }

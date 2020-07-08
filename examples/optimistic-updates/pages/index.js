@@ -79,7 +79,7 @@ export default () => {
           <div>{isFetching ? 'Updating in background...' : ' '}</div>
         </>
       )}
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   )
 }

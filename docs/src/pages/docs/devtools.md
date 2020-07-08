@@ -27,7 +27,7 @@ function App() {
   return (
     <>
       {/* The rest of your application */}
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </>
   )
 }

@@ -5,7 +5,7 @@ import {
   ReactQueryConfigProvider,
   useQuery,
   useMutation,
-  queryCache
+  queryCache,
 } from "react-query";
 
 import { ReactQueryDevtools } from "react-query-devtools";
@@ -19,8 +19,8 @@ let list = [
   "pineapple",
   "grapefruit",
   "dragonfruit",
-  "grapes"
-].map(d => ({ id: id++, name: d, notes: "These are some notes" }));
+  "grapes",
+].map((d) => ({ id: id++, name: d, notes: "These are some notes" }));
 
 let errorRate = 0.05;
 let queryTimeMin = 1000;
@@ -47,8 +47,8 @@ function Root() {
     () => ({
       queries: {
         staleTime,
-        cacheTime
-      }
+        cacheTime,
+      },
     }),
     [cacheTime, staleTime]
   );
@@ -67,7 +67,7 @@ function Root() {
           min="0"
           step="1000"
           value={staleTime}
-          onChange={e => setStaleTime(parseFloat(e.target.value, 10))}
+          onChange={(e) => setStaleTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
       </div>
@@ -78,7 +78,7 @@ function Root() {
           min="0"
           step="1000"
           value={cacheTime}
-          onChange={e => setCacheTime(parseFloat(e.target.value, 10))}
+          onChange={(e) => setCacheTime(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
       </div>
@@ -91,7 +91,7 @@ function Root() {
           max="1"
           step=".05"
           value={localErrorRate}
-          onChange={e => setErrorRate(parseFloat(e.target.value, 10))}
+          onChange={(e) => setErrorRate(parseFloat(e.target.value, 10))}
           style={{ width: "100px" }}
         />
       </div>
@@ -102,7 +102,7 @@ function Root() {
           min="1"
           step="500"
           value={localFetchTimeMin}
-          onChange={e => setLocalFetchTimeMin(parseFloat(e.target.value, 10))}
+          onChange={(e) => setLocalFetchTimeMin(parseFloat(e.target.value, 10))}
           style={{ width: "60px" }}
         />{" "}
       </div>
@@ -113,14 +113,14 @@ function Root() {
           min="1"
           step="500"
           value={localFetchTimeMax}
-          onChange={e => setLocalFetchTimeMax(parseFloat(e.target.value, 10))}
+          onChange={(e) => setLocalFetchTimeMax(parseFloat(e.target.value, 10))}
           style={{ width: "60px" }}
         />
       </div>
       <br />
       <App />
       <br />
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </ReactQueryConfigProvider>
   );
 }
@@ -145,7 +145,7 @@ function App() {
             initialFilter={view}
             setEditingIndex={setEditingIndex}
             onRemove={() => {
-              setViews(old => [...old, ""]);
+              setViews((old) => [...old, ""]);
             }}
           />
           <br />
@@ -153,7 +153,7 @@ function App() {
       ))}
       <button
         onClick={() => {
-          setViews(old => [...old, ""]);
+          setViews((old) => [...old, ""]);
         }}
       >
         Add Filter List
@@ -186,7 +186,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
       <div>
         <label>
           Filter:{" "}
-          <input value={filter} onChange={e => setFilter(e.target.value)} />
+          <input value={filter} onChange={(e) => setFilter(e.target.value)} />
         </label>
       </div>
       {status === "loading" ? (
@@ -201,7 +201,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
         <>
           <ul>
             {data
-              ? data.map(todo => (
+              ? data.map((todo) => (
                   <li key={todo.id}>
                     {todo.name}{" "}
                     <button onClick={() => setEditingIndex(todo.id)}>
@@ -232,7 +232,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
     ["todo", { id: editingIndex }],
     fetchTodoById,
     {
-      enabled: editingIndex !== null
+      enabled: editingIndex !== null,
     }
   );
 
@@ -247,11 +247,11 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   }, [data, editingIndex]);
 
   const [mutate, mutationState] = useMutation(patchTodo, {
-    onSuccess: data => {
+    onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
       queryCache.invalidateQueries("todos");
       queryCache.setQueryData(["todo", { id: editingIndex }], data);
-    }
+    },
   });
 
   const onSave = () => mutate(todo);
@@ -282,9 +282,9 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             Name:{" "}
             <input
               value={todo.name}
-              onChange={e =>
+              onChange={(e) =>
                 e.persist() ||
-                setTodo(old => ({ ...old, name: e.target.value }))
+                setTodo((old) => ({ ...old, name: e.target.value }))
               }
               disabled={disableEditSave}
             />
@@ -293,9 +293,9 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             Notes:{" "}
             <input
               value={todo.notes}
-              onChange={e =>
+              onChange={(e) =>
                 e.persist() ||
-                setTodo(old => ({ ...old, notes: e.target.value }))
+                setTodo((old) => ({ ...old, notes: e.target.value }))
               }
               disabled={disableEditSave}
             />
@@ -333,14 +333,14 @@ function AddTodo() {
   const [mutate, { status, error }] = useMutation(postTodo, {
     onSuccess: () => {
       queryCache.invalidateQueries("todos");
-    }
+    },
   });
 
   return (
     <div>
       <input
         value={name}
-        onChange={e => setName(e.target.value)}
+        onChange={(e) => setName(e.target.value)}
         disabled={status === "loading"}
       />
       <button
@@ -369,7 +369,7 @@ function fetchTodos(key, { filter } = {}) {
           new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2))
         );
       }
-      resolve(list.filter(d => d.name.includes(filter)));
+      resolve(list.filter((d) => d.name.includes(filter)));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 
@@ -387,7 +387,7 @@ function fetchTodoById(key, { id }) {
           new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2))
         );
       }
-      resolve(list.find(d => d.id == id));
+      resolve(list.find((d) => d.id == id));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 }
@@ -415,7 +415,7 @@ function patchTodo(todo) {
       if (Math.random() < errorRate) {
         return reject(new Error(JSON.stringify({ patchTodo: todo }, null, 2)));
       }
-      list = list.map(d => {
+      list = list.map((d) => {
         if (d.id === todo.id) {
           return todo;
         }

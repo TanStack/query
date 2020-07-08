@@ -89,7 +89,7 @@ function App() {
       <div>
         <button onClick={mutateClear}>Clear All</button>
       </div>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   )
 }

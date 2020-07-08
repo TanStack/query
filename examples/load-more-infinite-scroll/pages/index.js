@@ -83,7 +83,7 @@ export default () => {
       <Link href="/about">
         <a>Go to another page</a>
       </Link>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   )
 }

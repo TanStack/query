@@ -72,7 +72,7 @@ function Todos() {
         // indicator since our `status === 'loading'` state won't be triggered
         isFetching ? <span> Loading...</span> : null
       }{' '}
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </div>
   )
 }

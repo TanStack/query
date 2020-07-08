@@ -42,7 +42,7 @@ function App() {
           <Posts setPostId={setPostId} />
         )}
       </ReactQueryConfigProvider>
-      <ReactQueryDevtools />
+      <ReactQueryDevtools initialIsOpen />
     </>
   );
 }
