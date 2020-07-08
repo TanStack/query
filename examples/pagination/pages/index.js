@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { usePaginatedQuery, queryCache } from 'react-query'
+import { ReactQueryDevtools } from 'react-query'
 
 function Todos() {
   const [page, setPage] = React.useState(0)
@@ -65,10 +66,13 @@ function Todos() {
       >
         Next Page
       </button>
-      {// Since the last page's data potentially sticks around between page requests,
-      // we can use `isFetching` to show a background loading
-      // indicator since our `status === 'loading'` state won't be triggered
-      isFetching ? <span> Loading...</span> : null}{' '}
+      {
+        // Since the last page's data potentially sticks around between page requests,
+        // we can use `isFetching` to show a background loading
+        // indicator since our `status === 'loading'` state won't be triggered
+        isFetching ? <span> Loading...</span> : null
+      }{' '}
+      <ReactQueryDevtools />
     </div>
   )
 }

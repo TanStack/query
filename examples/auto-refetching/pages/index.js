@@ -4,6 +4,7 @@ import axios from 'axios'
 //
 
 import { useQuery, useMutation, queryCache } from 'react-query'
+import { ReactQueryDevtools } from 'react-query-devtools'
 
 function App() {
   const [intervalMs, setIntervalMs] = React.useState(1000)
@@ -88,6 +89,7 @@ function App() {
       <div>
         <button onClick={mutateClear}>Clear All</button>
       </div>
+      <ReactQueryDevtools />
     </div>
   )
 }

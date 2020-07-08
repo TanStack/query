@@ -2,6 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { queryCache } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
 
 import usePosts from "./hooks/usePosts";
 import usePost from "./hooks/usePost";
@@ -22,6 +23,7 @@ function App() {
       ) : (
         <Posts setPostId={setPostId} />
       )}
+      <ReactQueryDevtools />
     </>
   );
 }
@@ -40,7 +42,7 @@ function Posts({ setPostId }) {
         ) : (
           <>
             <div>
-              {data.map(post => (
+              {data.map((post) => (
                 <p key={post.id}>
                   <a
                     onClick={() => setPostId(post.id)}
@@ -51,7 +53,7 @@ function Posts({ setPostId }) {
                       queryCache.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
-                            color: "green"
+                            color: "green",
                           }
                         : {}
                     }

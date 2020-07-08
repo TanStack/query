@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { useQuery, queryCache } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
@@ -24,6 +25,7 @@ function App() {
       ) : (
         <Posts setPostId={setPostId} />
       )}
+      <ReactQueryDevtools />
     </>
   );
 }

@@ -196,7 +196,7 @@
               "editUrl": "/docs/examples/default-query-function.mdx"
             },
             {
-              "title": "Playground (with devtools)",
+              "title": "Playground",
               "path": "/docs/examples/playground",
               "editUrl": "/docs/examples/playground.mdx"
             },
@@ -206,12 +206,12 @@
               "editUrl": "/docs/examples/prefetching.mdx"
             },
             {
-              "title": "Star Wars (with devtools)",
+              "title": "Star Wars",
               "path": "/docs/examples/star-wars",
               "editUrl": "/docs/examples/star-wars.mdx"
             },
             {
-              "title": "Rick And Morty (with devtools)",
+              "title": "Rick And Morty",
               "path": "/docs/examples/rick-morty",
               "editUrl": "/docs/examples/rick-morty.mdx"
             }

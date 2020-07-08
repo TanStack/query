@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import { useQuery, queryCache, ReactQueryConfigProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
 
 // Define a default query function that will receive the query key
 const defaultQueryFn = async (key) => {
@@ -16,30 +17,33 @@ function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    // provide the default query function to your app via the config provider
-    <ReactQueryConfigProvider
-      config={{
-        queries: {
-          queryFn: defaultQueryFn,
-        },
-      }}
-    >
-      <p>
-        As you visit the posts below, you will notice them in a loading state
-        the first time you load them. However, after you return to this list and
-        click on any posts you have already visited again, you will see them
-        load instantly and background refresh right before your eyes!{" "}
-        <strong>
-          (You may need to throttle your network speed to simulate longer
-          loading sequences)
-        </strong>
-      </p>
-      {postId > -1 ? (
-        <Post postId={postId} setPostId={setPostId} />
-      ) : (
-        <Posts setPostId={setPostId} />
-      )}
-    </ReactQueryConfigProvider>
+    <>
+      <ReactQueryConfigProvider
+        // provide the default query function to your app via the config provider
+        config={{
+          queries: {
+            queryFn: defaultQueryFn,
+          },
+        }}
+      >
+        <p>
+          As you visit the posts below, you will notice them in a loading state
+          the first time you load them. However, after you return to this list
+          and click on any posts you have already visited again, you will see
+          them load instantly and background refresh right before your eyes!{" "}
+          <strong>
+            (You may need to throttle your network speed to simulate longer
+            loading sequences)
+          </strong>
+        </p>
+        {postId > -1 ? (
+          <Post postId={postId} setPostId={setPostId} />
+        ) : (
+          <Posts setPostId={setPostId} />
+        )}
+      </ReactQueryConfigProvider>
+      <ReactQueryDevtools />
+    </>
   );
 }
 

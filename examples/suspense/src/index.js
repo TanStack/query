@@ -1,6 +1,7 @@
 import React, { lazy } from "react";
 import ReactDOM from "react-dom";
 import { ReactQueryConfigProvider, queryCache } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
 
 import "./styles.css";
@@ -65,6 +66,7 @@ function App() {
           ) : null}
         </React.Suspense>
       </ErrorBoundary>
+      <ReactQueryDevtools />
     </ReactQueryConfigProvider>
   );
 }

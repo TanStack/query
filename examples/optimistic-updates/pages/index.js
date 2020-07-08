@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 
 import { useQuery, useMutation, queryCache } from 'react-query'
+import { ReactQueryDevtools } from 'react-query-devtools'
 
 export default () => {
   const [text, setText] = React.useState('')
@@ -78,6 +79,7 @@ export default () => {
           <div>{isFetching ? 'Updating in background...' : ' '}</div>
         </>
       )}
+      <ReactQueryDevtools />
     </div>
   )
 }

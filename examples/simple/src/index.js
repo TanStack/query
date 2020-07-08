@@ -2,6 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { useQuery } from "react-query";
+import { ReactQueryDevtools } from "react-query-devtools";
 
 export default function App() {
   const { isLoading, error, data } = useQuery("repoData", () =>
@@ -21,6 +22,7 @@ export default function App() {
       <strong>👀 {data.subscribers_count}</strong>{" "}
       <strong>✨ {data.stargazers_count}</strong>{" "}
       <strong>🍴 {data.forks_count}</strong>
+      <ReactQueryDevtools />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 
 import { useQuery, useMutation, queryCache } from 'react-query'
+import { ReactQueryDevtools } from 'react-query-devtools'
 
 export default () => {
   const { status, data, error } = useQuery('user', async () => {
@@ -57,6 +58,7 @@ export default () => {
           </div>
         </div>
       )}
+      <ReactQueryDevtools />
     </div>
   )
 }
