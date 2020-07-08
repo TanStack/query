@@ -5,7 +5,7 @@ title: Comparisons
 
 This comparison strives to be as accurate as possible. Feel free to suggest changes using the "Edit this page on Github" link at the bottom.
 
-| Feature                          | React Query                            | SWR [(Website)](https://github.com/vercel/swr) | Apollo Client [(Website)](https://github.com/apollographql/apollo-client) |
+|                                  | React Query                            | SWR [(Website)](https://github.com/vercel/swr) | Apollo Client [(Website)](https://github.com/apollographql/apollo-client) |
 | -------------------------------- | -------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
 | Supported Backend                | HTTP / REST / GQL                      | HTTP / REST / GQL                              | GQL, (HTTP / REST 🔶 plugins required)                                    |
 | Supported Query Signatures       | Promise                                | Promise                                        | GraphQL Query                                                             |
