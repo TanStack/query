@@ -29,7 +29,7 @@ Feature/Capability Key:
 | Initial Data                                 | ✅                                     | ✅                                             | ✅                                                                        |
 | Scroll Recovery                              | ✅                                     | ✅                                             | ✅                                                                        |
 | Cache Manipulation                           | ✅                                     | ✅                                             | ✅                                                                        |
-| Outdated Query Dismisall                     | ✅                                     | ✅                                             | ✅                                                                        |
+| Outdated Query Dismissal                     | ✅                                     | ✅                                             | ✅                                                                        |
 | Auto Garbage Collection                      | ✅                                     | 🛑                                             | 🛑                                                                        |
 | Mutation Hooks                               | ✅                                     | 🛑                                             | ✅                                                                        |
 | Prefetching APIs                             | ✅                                     | 🔶                                             | ✅                                                                        |
