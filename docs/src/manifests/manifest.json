@@ -34,9 +34,9 @@
               "editUrl": "/docs/videos.mdx"
             },
             {
-              "title": "Comparisons",
-              "path": "/docs/comparisons",
-              "editUrl": "/docs/comparisons.md"
+              "title": "Comparison",
+              "path": "/docs/comparison",
+              "editUrl": "/docs/comparison.md"
             }
           ]
         },
