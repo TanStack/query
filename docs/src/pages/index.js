@@ -228,15 +228,15 @@ const Home = props => {
                   Supporters
                 </div>
                 <ul className="list-none text-center">
-                  <li className="text-blue-800">
+                  <li className="font-bold text-blue-800">
                     <a href="https://kentcdodds.com/">
                       Kent C. Dodds (kentcdodds.com)
                     </a>
                   </li>
-                  <li className="text-blue-800">
+                  <li className="font-bold text-blue-800">
                     <a href="https://github.com/bgazzera">@bgazzera</a>
                   </li>
-                  <li className="text-blue-800">
+                  <li className="font-bold text-blue-800">
                     <a href="https://github.com/gragland">Gabe Ragland</a>
                   </li>
                 </ul>
