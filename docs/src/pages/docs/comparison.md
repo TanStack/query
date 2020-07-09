@@ -7,7 +7,7 @@ This comparison strives to be as accurate as possible. Feel free to suggest chan
 
 |                                    | React Query                            | SWR [(Website)](https://github.com/vercel/swr) | Apollo Client [(Website)](https://github.com/apollographql/apollo-client) |
 | ---------------------------------- | -------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------- |
-| Supported Backend                  | HTTP / REST / GQL                      | HTTP / REST / GQL                              | GQL, (HTTP / REST 🔶 plugins required)                                    |
+| Supported Protocol                 | HTTP                                   | HTTP                                           | GraphQL                                                                   |
 | Supported Query Signatures         | Promise                                | Promise                                        | GraphQL Query                                                             |
 | Supported Query Keys               | JSON                                   | JSON                                           | GraphQL Query                                                             |
 | Query Key Change Detection         | Deep Compare (Serialization)           | Referential Equality (===)                     | Referential Equality (===)                                                |
