@@ -37,6 +37,8 @@ Feature/Capability Key:
 | Window Focus Refetching                      | ✅                                     | ✅                                             | 🛑                                                                        |
 | Partial Query Matching<sup>1</sup>           | ✅                                     | 🛑                                             | 🛑                                                                        |
 | Automatic Refetch after Mutation<sup>2</sup> | 🔶                                     | 🔶                                             | ✅                                                                        |
+| Initial Data                                 | ✅                                     | ✅                                             | ✅                                                                        |
+| Cache Dehydration/Rehydration                | 🛑                                     | 🛑                                             | ✅                                                                        |
 | React Suspense (Experimental)                | ✅                                     | ✅                                             | 🛑                                                                        |
 
 ### Notes
