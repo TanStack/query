@@ -34,7 +34,7 @@ const Home = props => {
               className="absolute transform right-0 top-1/2 h-0 lg:h-full scale-150 translate-x-1/2 xl:translate-x-1/5 -translate-y-1/2"
               alt="React Query Emblem"
             />
-            <div className="grid grid-cols-12 gap-8">
+            <div className="grid grid-cols-12 lg:gap-8">
               <div className="col-span-12 lg:col-span-6 ">
                 <div className="text-center lg:text-left md:max-w-2xl md:mx-auto ">
                   <h1 className="text-4xl tracking-tight leading-10 font-extrabold text-gray-900 sm:leading-none sm:text-6xl lg:text-5xl xl:text-6xl">
