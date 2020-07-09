@@ -17,7 +17,7 @@ Feature/Capability Key:
 | Supported Protocol                           | HTTP                                   | HTTP                                           | GraphQL                                                                   |
 | Supported Query Signatures                   | Promise                                | Promise                                        | GraphQL Query                                                             |
 | Supported Query Keys                         | JSON                                   | JSON                                           | GraphQL Query                                                             |
-| Query Key Change Detection                   | Deep Compare (Serialization)           | Referential Equality (===)                     | Referential Equality (===)                                                |
+| Query Key Change Detection                   | Deep Compare (Serialization)           | Referential Equality (===)                     | Deep Compare (Serialization)                                                |
 | Bundle Size                                  | [![][bp-react-query]][bpl-react-query] | [![][bp-swr]][bpl-swr]                         | [![][bp-apollo]][bpl-apollo]                                              |
 | Queries                                      | ✅                                     | ✅                                             | ✅                                                                        |
 | Caching                                      | ✅                                     | ✅                                             | ✅                                                                        |
