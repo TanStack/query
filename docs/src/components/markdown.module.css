@@ -3,8 +3,8 @@
   @apply leading-relaxed text-gray-800 text-base;
 }
 
-/* 
-  Add fake margin to offset the nav. This technique is stolen right from the Tailwind docs 
+/*
+  Add fake margin to offset the nav. This technique is stolen right from the Tailwind docs
   @see https://tailwindcss.com/docs/customizing-colors/#app
 */
 .markdown > h1:before,
@@ -104,7 +104,7 @@
 }
 
 .markdown > table {
-  @apply mb-6 w-full text-gray-700 text-sm;
+  @apply mb-6 w-full text-gray-700 text-sm block overflow-x-scroll;
 }
 
 .markdown > table > thead > tr {
