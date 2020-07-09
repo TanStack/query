@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { usePaginatedQuery, queryCache } from 'react-query'
-import { ReactQueryDevtools } from 'react-query'
+import { ReactQueryDevtools } from 'react-query-devtools'
 
 function Todos() {
   const [page, setPage] = React.useState(0)

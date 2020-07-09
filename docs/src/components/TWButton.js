@@ -76,7 +76,7 @@ export const TWButton = forwardRefWithAs(({
     }, iconClasses, iconRight?.props.className)
   }) : null;
   const propsToPass = { ...props,
-    className: cx('font-medium inline-flex items-center  focus:outline-none transition duration-150 ease-in-out', {
+    className: cx('font-medium inline-flex items-center justify-center focus:outline-none transition duration-150 ease-in-out', {
       [`shadow-xs  border border-transparent text-white bg-${tailwindColor}-600 hover:bg-${tailwindColor}-500 focus:border-${tailwindColor}-700 focus:shadow-outline-${tailwindColor} active:border-${tailwindColor}-700`]: !!tailwindColor && !minimal,
       [`shadow-xs border border-gray-300 text-gray-700 bg-white hover:text-gray-500  focus:shadow-outline-blue focus:border-blue-300 active:text-gray-800 active:bg-gray-50`]: !tailwindColor && !minimal,
       [`hover:bg-${tailwindColor}-100 active:bg-${tailwindColor}-200 text-${tailwindColor}-700 focus:shadow-outline-${tailwindColor} border-transparent`]: minimal && tailwindColor,
