@@ -57,7 +57,8 @@ const CreateTodo = () => {
     e.preventDefault()
 
     try {
-      await mutate({ title })
+      // Set 'throwOnError: true' to re-throw failed mutations.
+      await mutate({ title }, { throwOnError: true })
       // Todo was successfully created
     } catch (error) {
       // Uh oh, something went wrong
