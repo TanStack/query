@@ -437,14 +437,14 @@ const Home = props => {
           </div>
         </div>
         <div className="bg-gray-50 border-b border-gray-100">
-          <div className="container mx-auto py-24 px-4 flex items-center justify-between space-x-8">
+          <div className="container mx-auto py-24 px-4 flex flex-wrap md:flex-no-wrap items-center justify-between md:space-x-8">
             <h2 className="text-3xl leading-9 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10">
               Wow, you've come a long way!
             </h2>
-            <div className="mt-8 flex lg:flex-shrink-0 lg:mt-0">
+            <div className="mt-8 flex lg:flex-shrink-0 md:mt-0">
               <div className="inline-flex rounded-md shadow">
                 <Link href="/docs/overview">
-                  <a className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                  <a className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
                     Okay, let's get started!
                   </a>
                 </Link>
@@ -452,7 +452,7 @@ const Home = props => {
               <div className="ml-3 inline-flex rounded-md shadow">
                 <a
                   href={siteConfig.repoUrl}
-                  className="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-coral bg-white hover:text-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                  className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-coral bg-white hover:text-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
                 >
                   Take me to the GitHub repo.
                 </a>
