@@ -166,11 +166,11 @@ const {
 
 **Options**
 
-The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#options)
+The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#usequery)
 
 **Returns**
 
-The returned properties for `usePaginatedQuery` are identical to the [`useQuery` hook](#options), with the addition of the following:
+The returned properties for `usePaginatedQuery` are identical to the [`useQuery` hook](#usequery), with the addition of the following:
 
 - `data: undefined`
   - The standard `data` property is not used for paginated queries and is replaced by the `resolvedData` and `latestData` options below.
@@ -202,7 +202,7 @@ const {
 
 **Options**
 
-The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#options) with the addition of the following:
+The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#usequery) with the addition of the following:
 
 - `getFetchMore: Function(lastPage, allPages) => fetchMoreVariable | Boolean`
   - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
@@ -210,7 +210,7 @@ The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#opti
 
 **Returns**
 
-The returned properties for `usePaginatedQuery` are identical to the [`useQuery` hook](#options), with the addition of the following:
+The returned properties for `usePaginatedQuery` are identical to the [`useQuery` hook](#usequery), with the addition of the following:
 
 - `isFetchingMore: false | 'next' | 'previous'`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.

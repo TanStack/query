@@ -125,6 +125,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "zorzysty",
+      "name": "Zorza",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5398733?v=4",
+      "profile": "https://github.com/zorzysty",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
