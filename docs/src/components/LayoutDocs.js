@@ -61,12 +61,12 @@ export const LayoutDocs = props => {
       <div>
         {isMobile ? (
           <>
-          <Nav />
-          <Sticky shadow>
+            <Nav />
+            <Sticky shadow>
               <SidebarMobile>
                 <SidebarRoutes isMobile={true} routes={routes} />
               </SidebarMobile>
-          </Sticky>
+            </Sticky>
           </>
         ) : (
           <Sticky>
@@ -82,9 +82,11 @@ export const LayoutDocs = props => {
 
             <div className="container mx-auto pb-12 pt-6 content">
               <div className="flex relative">
-                <Sidebar fixed>
-                  <SidebarRoutes routes={routes} />
-                </Sidebar>
+                {!isMobile && (
+                  <Sidebar fixed>
+                    <SidebarRoutes routes={routes} />
+                  </Sidebar>
+                )}
 
                 <div className={s['markdown'] + ' w-full docs'}>
                   <h1>{props.meta.title}</h1>
