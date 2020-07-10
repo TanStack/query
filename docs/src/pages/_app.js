@@ -8,9 +8,9 @@ function loadScript(src, attrs = {}) {
     const script = document.createElement('script')
     script.async = true
     script.defer = true
-    Object.keys(attrs).forEach(attr => (script[attr] = attrs[attr]))
+    Object.keys(attrs).forEach(attr => script.setAttribute(attr, attrs[attr]))
     script.src = src
-    document.head.appendChild(script)
+    document.body.appendChild(script)
   }
 }
 
