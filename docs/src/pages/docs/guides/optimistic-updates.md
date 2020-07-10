@@ -44,7 +44,7 @@ useMutation(updateTodo, {
     queryCache.cancelQueries(['todos', newTodo.id])
 
     // Snapshot the previous value
-    const previousTodo = queryCache.getQueryData(['todos', newTodo.id], newTodo)
+    const previousTodo = queryCache.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
     queryCache.setQueryData(['todos', newTodo.id], newTodo)
@@ -55,7 +55,7 @@ useMutation(updateTodo, {
   // If the mutation fails, use the rollback function we returned above
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
-  onSettled: () => {
+  onSettled: newTodo => {
     queryCache.invalidateQueries(['todos', newTodo.id])
   },
 })
