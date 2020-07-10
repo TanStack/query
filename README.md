@@ -65,12 +65,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/jgettings"><img src="https://avatars0.githubusercontent.com/u/4183742?v=4" width="100px;" alt=""/><br /><sub><b>Jen Gettings</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=jgettings" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/justincy"><img src="https://avatars2.githubusercontent.com/u/1037458?v=4" width="100px;" alt=""/><br /><sub><b>Justin</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=justincy" title="Code">💻</a></td>
     <td align="center"><a href="http://www.marceloalves.com"><img src="https://avatars1.githubusercontent.com/u/216782?v=4" width="100px;" alt=""/><br /><sub><b>Marcelo Alves</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=MarceloAlves" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/zorzysty"><img src="https://avatars0.githubusercontent.com/u/5398733?v=4" width="100px;" alt=""/><br /><sub><b>Zorza</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=zorzysty" title="Documentation">📖</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
