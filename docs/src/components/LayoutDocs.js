@@ -176,7 +176,7 @@ function SidebarRoutes({ isMobile, routes: currentRoutes, level = 1 }) {
 
     const pagePath = removeFromLast(path, '.')
     const pathname = addTagToSlug(pagePath, tag)
-    const selected = slug.startsWith(pagePath)
+    const selected = slug === pagePath
     const route = {
       href: pagePath,
       path,
