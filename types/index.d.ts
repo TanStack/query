@@ -378,7 +378,7 @@ export type PaginatedQueryResult<TResult, TError = Error> =
 
 export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   extends QueryResultBase<TResult[], TError> {
-  data: TResult[]
+  data: TResult[] | undefined
   isFetchingMore: false | 'previous' | 'next'
   canFetchMore: boolean | undefined
   fetchMore: (

@@ -339,7 +339,7 @@ function simpleInfiniteQuery(condition: boolean) {
   //     getFetchMore: (last, all) => 'string',
   // });
 
-  infiniteQuery.data // $ExpectType number[][]
+  infiniteQuery.data // $ExpectType number[][] | undefined
   infiniteQuery.fetchMore() // $ExpectType Promise<number[][]> | undefined
   infiniteQuery.fetchMore('next') // $ExpectType Promise<number[][]> | undefined
   infiniteQuery.fetchMore('next', { previous: true }) // $ExpectType Promise<number[][]> | undefined
@@ -352,14 +352,14 @@ function infiniteQueryWithObjectSyntax() {
     config: {
       getFetchMore: (last: { next: number }) => last.next, // annotation on this type is required to infer the type
     },
-  }).data // $ExpectType { next: number; }[]
+  }).data // $ExpectType { next: number; }[] | undefined
   useInfiniteQuery({
     queryKey: ['key', 1],
     queryFn: async (key, id, next = 0) => ({ next: next + 1 }),
     config: {
       getFetchMore: (last: { next: number }) => last.next, // annotation on this type is required to infer the type
     },
-  }).data // $ExpectType { next: number; }[]
+  }).data // $ExpectType { next: number; }[] | undefined
   useInfiniteQuery({
     queryKey: 'key',
     queryFn: async (
@@ -369,7 +369,7 @@ function infiniteQueryWithObjectSyntax() {
     config: {
       getFetchMore: (last: { next: number }) => last.next, // annotation on this type is required to infer the type
     },
-  }).data // $ExpectType { next: number; }[]
+  }).data // $ExpectType { next: number; }[] | undefined
   useInfiniteQuery({
     queryKey: 'key',
     queryFn: async (
@@ -379,15 +379,15 @@ function infiniteQueryWithObjectSyntax() {
     config: {
       getFetchMore: (last: { next: number }) => last.next, // annotation on this type is required to infer the type
     },
-  }).data // $ExpectType { next: number; }[]
+  }).data // $ExpectType { next: number; }[] | undefined
 
   useInfiniteQuery<{ next: number }, string, undefined>({
     queryKey: 'key',
-  }).data // $ExpectType { next: number; }[]
+  }).data // $ExpectType { next: number; }[] | undefined
 
   useInfiniteQuery<{ next: number }, [string], undefined>({
     queryKey: ['key'],
-  }).data // $ExpectType { next: number; }[]
+  }).data // $ExpectType { next: number; }[] | undefined
 }
 
 function log(...args: any[]) {}
