@@ -9,7 +9,7 @@ Feature/Capability Key:
 
 - ✅ 1st-class, built-in, and ready to use with no added configuration or code
 - 🟡 Supported, but as an unoffical 3rd party or community library/contribution
-- 🔶 Supported and documented, but requires extra user-code implement
+- 🔶 Supported and documented, but requires extra user-code to implement
 - 🛑 Not officially supported or documented.
 
 |                                              | React Query                            | SWR [(Website)](https://github.com/vercel/swr) | Apollo Client [(Website)](https://github.com/apollographql/apollo-client) |
