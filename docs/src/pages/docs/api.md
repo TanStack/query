@@ -296,8 +296,6 @@ const promise = mutate(variables, {
   - The last successfully resolved data for the query.
 - `error: null | Error`
   - The error object for the query, if an error was encountered.
-- `promise: Promise`
-  - The promise that is returned by the `mutationFn`.
 
 ## `queryCache`
 

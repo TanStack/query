@@ -378,7 +378,7 @@ export type PaginatedQueryResult<TResult, TError = Error> =
 
 export interface InfiniteQueryResult<TResult, TMoreVariable, TError = Error>
   extends QueryResultBase<TResult[], TError> {
-  data: TResult[]
+  data: TResult[] | undefined
   isFetchingMore: false | 'previous' | 'next'
   canFetchMore: boolean | undefined
   fetchMore: (
@@ -462,7 +462,6 @@ export interface MutationResultBase<TResult, TError = Error> {
   isLoading: boolean
   isSuccess: boolean
   isError: boolean
-  promise: Promise<TResult>
   reset: () => void
 }
 
@@ -627,7 +626,7 @@ export interface QueryCache {
   ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): void
+  clear(options?: { notify?: boolean }): void
   resetErrorBoundaries: () => void
 }
 
