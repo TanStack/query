@@ -29,6 +29,22 @@ function MyApp({ Component, pageProps }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+        @media (max-width: 390px) {
+            .formkit-slide-in {
+              display: none;
+            }
+          }
+          @media (max-height: 740px) {
+            .formkit-slide-in {
+              display: none;
+            }
+          }
+          `,
+          }}
+        />
       </Head>
       <Component {...pageProps} />
     </>
