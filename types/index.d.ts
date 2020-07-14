@@ -626,7 +626,7 @@ export interface QueryCache {
   ): void
   isFetching: number
   subscribe(callback: (queryCache: QueryCache) => void): () => void
-  clear(): void
+  clear(options?: { notify?: boolean }): void
   resetErrorBoundaries: () => void
 }
 
