@@ -462,7 +462,6 @@ export interface MutationResultBase<TResult, TError = Error> {
   isLoading: boolean
   isSuccess: boolean
   isError: boolean
-  promise: Promise<TResult>
   reset: () => void
 }
 
