@@ -431,6 +431,7 @@ function simpleMutation() {
   mutationState.isSuccess // $ExpectType boolean
   mutationState.reset // $ExpectType () => void
   mutationState.status // $ExpectType "idle" | "loading" | "error" | "success"
+  mutationState.promise // $ExpectError
 }
 
 function mutationWithVariables() {
