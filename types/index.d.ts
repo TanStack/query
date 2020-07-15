@@ -667,7 +667,7 @@ export function ReactQueryConfigProvider<TError = Error>(props: {
 }): React.ReactElement
 
 export interface ReactQueryProviderConfig<TError = Error> {
-  queries?: BaseQueryOptions & {
+  queries?: BaseQueryOptions<unknown, TError> & {
     /** Defaults to the value of `suspense` if not defined otherwise */
     useErrorBoundary?: boolean
     refetchOnWindowFocus?: boolean
