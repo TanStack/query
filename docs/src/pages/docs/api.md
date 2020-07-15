@@ -28,12 +28,15 @@ const {
   cacheTime,
   refetchOnWindowFocus,
   refetchInterval,
+  refetchIntervalInBackground,
   queryFnParamsFilter,
   refetchOnMount,
   isDataEqual,
   onError,
   onSuccess,
   onSettled,
+  initialData,
+  initialStale,
   useErrorBoundary,
 })
 
