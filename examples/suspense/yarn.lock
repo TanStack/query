@@ -891,6 +891,13 @@
   dependencies:
     regenerator-runtime "^0.13.2"
 
+"@babel/runtime@^7.10.5":
+  version "7.10.5"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.5.tgz#303d8bd440ecd5a491eae6117fd3367698674c5c"
+  integrity sha512-otddXKhdNn7d0ptoFRHtMLa8LqDxLYwTjB4nYgM1yy5N6gU/MUf8zqyyLltCH3yAVitBzmwK4us+DD0l/MauAg==
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/runtime@^7.9.6":
   version "7.10.3"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.3.tgz#670d002655a7c366540c67f6fd3342cd09500364"
@@ -1171,11 +1178,6 @@
   integrity sha512-9YtdDTiICbUzFpmUnfSJRfeBtNR+T3+5LYiPS7xaNSzmOiVXwWubl5kfEzNQIpcg5xOUknYbkObwyUzd9s3QvQ==
   dependencies:
     ramda "^0.26.0"
-
-"@scarf/scarf@^1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-1.0.6.tgz#52011dfb19187b53b75b7b6eac20da0810ddd88f"
-  integrity sha512-y4+DuXrAd1W5UIY3zTcsosi/1GyYT8k5jGnZ/wG7UUHVrU+MHlH4Mp87KK2/lvMW4+H7HVcdB+aJhqywgXksjA==
 
 "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
   version "4.2.0"
@@ -6068,6 +6070,14 @@ map-visit@^1.0.0:
   dependencies:
     object-visit "^1.0.0"
 
+match-sorter@^4.1.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/match-sorter/-/match-sorter-4.2.0.tgz#70c4e7443dacf5fa2503bc5afc189024092e9d27"
+  integrity sha512-oEvLn8R+a30YZ9l5XdCTkYQuLsOs8frxEqQTAuxoqkQx/qV5pQpx/NqAWvJ5xbYecqfXoF/ZevaIS1+NkbRymg==
+  dependencies:
+    "@babel/runtime" "^7.10.5"
+    remove-accents "0.4.2"
+
 md5.js@^1.3.4:
   version "1.3.5"
   resolved "https://registry.yarnpkg.com/md5.js/-/md5.js-1.3.5.tgz#b5d07b8e3216e3e27cd728d72f70d1e6a342005f"
@@ -8083,12 +8093,18 @@ react-is@^16.8.1, react-is@^16.8.4:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.11.0.tgz#b85dfecd48ad1ce469ff558a882ca8e8313928fa"
   integrity sha512-gbBVYR2p8mnriqAwWx9LbuUrShnAuSCNnuPGyc7GJrMVQtPDAh8iLpv7FRuMPFb56KkaVZIYSz1PrjI9q0QPCw==
 
-react-query@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.0.4.tgz#dcae7518efa4bdd31410e92ccd4f396d7398dfdc"
-  integrity sha512-6+hYuRWvPQlFrzoJgT5ZmlCoSxv3LqpiDXaSzbcAtwsEtcUFWz5DKL6L8EpYoreJS2INAQONEYHtXCt1tT4HlQ==
+react-query-devtools@^2:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.3.0.tgz#26b198965a3d2e4066c70963ae2d34634062a847"
+  integrity sha512-f3MJIxlja6+UwTcBP8kOzdNLd23nmeBEzLMMiJyjAEo6tBNrvPkhJTBZkD8nHv76gcnQf6guEnHyxe14M1BRwA==
   dependencies:
-    "@scarf/scarf" "^1.0.6"
+    match-sorter "^4.1.0"
+
+react-query@^2:
+  version "2.4.17"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.4.17.tgz#4ae342f51e28eaeff4e9d692548a8a3d10a91c3c"
+  integrity sha512-gijWRVwDjEKQNkbv2f803VbnAtpJe03xm9Jjqdt3DYfR0Ssy+DyMzk7LEGqlMjlCTDjWriRlOcBRTdcYn70ajw==
+  dependencies:
     ts-toolbelt "^6.9.4"
 
 react-scripts@3.0.1:
@@ -8321,6 +8337,11 @@ relateurl@0.2.x:
   version "0.2.7"
   resolved "https://registry.yarnpkg.com/relateurl/-/relateurl-0.2.7.tgz#54dbf377e51440aca90a4cd274600d3ff2d888a9"
   integrity sha1-VNvzd+UUQKypCkzSdGANP/LYiKk=
+
+remove-accents@0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/remove-accents/-/remove-accents-0.4.2.tgz#0a43d3aaae1e80db919e07ae254b285d9e1c7bb5"
+  integrity sha1-CkPTqq4egNuRngeuJUsoXZ4ce7U=
 
 remove-trailing-separator@^1.0.1:
   version "1.1.0"

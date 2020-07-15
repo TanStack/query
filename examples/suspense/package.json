@@ -9,8 +9,8 @@
     "react": "0.0.0-experimental-5faf377df",
     "react-dom": "0.0.0-experimental-5faf377df",
     "react-error-boundary": "^2.2.3",
-    "react-query": "latest",
-    "react-query-devtools": "latest",
+    "react-query": "^2",
+    "react-query-devtools": "^2",
     "react-scripts": "3.0.1"
   },
   "devDependencies": {

@@ -8481,17 +8481,19 @@ react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.0, react-is@^16.8.1, react-is
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
 
-react-query-devtools@^1.0.13:
-  version "1.1.17"
-  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-1.1.17.tgz#ea9b51579a5bdbd34518e22efdfb4cb0e0a11eb6"
-  integrity sha512-KlXECp/rs7D3qS8aBSFFbu/ditsOOfbg9d73aSkkOQ488x7UjuK30QoD4dAR9kmz/ke+Hia73b+nkw65nbGtQg==
+react-query-devtools@^2:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-query-devtools/-/react-query-devtools-2.3.0.tgz#26b198965a3d2e4066c70963ae2d34634062a847"
+  integrity sha512-f3MJIxlja6+UwTcBP8kOzdNLd23nmeBEzLMMiJyjAEo6tBNrvPkhJTBZkD8nHv76gcnQf6guEnHyxe14M1BRwA==
   dependencies:
     match-sorter "^4.1.0"
 
-react-query@1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/react-query/-/react-query-1.0.12.tgz#b355d3e09d5a7844be193b6fddc9e7983c5caa87"
-  integrity sha512-ETLjgJ9E9HhyGNK+NCp0OEfcpf1Y/XRkd+LWX4qmwk9ky1IDbKjsww/VfLDZVwsA14Iq71VPa5moRzJPheqNYg==
+react-query@^2:
+  version "2.4.17"
+  resolved "https://registry.yarnpkg.com/react-query/-/react-query-2.4.17.tgz#4ae342f51e28eaeff4e9d692548a8a3d10a91c3c"
+  integrity sha512-gijWRVwDjEKQNkbv2f803VbnAtpJe03xm9Jjqdt3DYfR0Ssy+DyMzk7LEGqlMjlCTDjWriRlOcBRTdcYn70ajw==
+  dependencies:
+    ts-toolbelt "^6.9.4"
 
 react-router-dom@^5.1.2:
   version "5.2.0"
@@ -9937,6 +9939,11 @@ ts-pnp@^1.0.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
+
+ts-toolbelt@^6.9.4:
+  version "6.13.4"
+  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.13.4.tgz#313a1a380341c99db3f669cb8cdbfd33354aa98f"
+  integrity sha512-6DJVcjPYdgF0NR2G80vNrRAChgks16DQ/a49UzQOF9opMixAv61vCQcSUSKX64sXAf2OKqke0gapxtTZGE/qrg==
 
 tslib@^1.8.1, tslib@^1.9.0:
   version "1.13.0"
