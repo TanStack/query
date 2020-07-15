@@ -33,6 +33,23 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('test'))
   })
 
+  it('should memoize the query info object', async () => {
+    const queryKey = Math.random()
+    const states = []
+
+    function Page() {
+      const state = useQuery(queryKey, () => 'test', { enabled: false })
+      states.push(state)
+      return null
+    }
+
+    const rendered = render(<Page />)
+    rendered.rerender(<Page />)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toBe(states[1])
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', async () => {
     const queryKey1 = Math.random()

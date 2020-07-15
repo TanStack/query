@@ -41,9 +41,15 @@ export function useBaseQuery(queryKey, config = {}) {
     instanceRef.current.run()
   }, [enabledBool, query])
 
-  return {
+  const queryState = query.state
+
+  const queryInfoRef = React.useRef({})
+
+  Object.assign(queryInfoRef.current, {
     ...query,
-    ...query.state,
+    ...queryState,
     query,
-  }
+  })
+
+  return queryInfoRef.current
 }
