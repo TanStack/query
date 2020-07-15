@@ -11,7 +11,7 @@ import * as _ from 'ts-toolbelt'
 export type UseQueryRest<TResult, TKey extends AnyQueryKey, TError> =
   | []
   | [QueryFunction<TResult, TKey>]
-  | [QueryFunction<TResult, TKey>, QueryOptions<TResult, TError>]
+  | [QueryFunction<TResult, TKey>, QueryOptions<TResult, TError> | undefined]
   | [QueryOptions<TResult, TError>]
 
 // Object Syntax
