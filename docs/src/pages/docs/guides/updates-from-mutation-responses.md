@@ -20,7 +20,7 @@ mutate({
 const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
 ```
 
-You might want to tight the `onSuccess` logic into a reusable mutation, for that you can
+You might want to tie the `onSuccess` logic into a reusable mutation, for that you can
 create a custom hook like this:
 
 ```js
