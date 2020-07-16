@@ -615,7 +615,9 @@ export interface QueryCache {
     queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
     { exact }?: { exact?: boolean }
   ): void
-  getQuery(queryKeyOrPredicateFn: QueryKeyOrPredicateFn): CachedQuery<unknown> | undefined
+  getQuery(
+    queryKeyOrPredicateFn: QueryKeyOrPredicateFn
+  ): CachedQuery<unknown> | undefined
   getQueries(
     queryKeyOrPredicateFn: QueryKeyOrPredicateFn,
     { exact }?: { exact?: boolean }
@@ -671,6 +673,7 @@ export interface ReactQueryProviderConfig<TError = Error> {
     /** Defaults to the value of `suspense` if not defined otherwise */
     useErrorBoundary?: boolean
     refetchOnWindowFocus?: boolean
+    queryFn?: QueryFunction<unknown, AnyQueryKey>
     queryKeySerializerFn?: (
       queryKey: QueryKeyPart[] | string | false | undefined
     ) => [string, QueryKeyPart[]] | []
