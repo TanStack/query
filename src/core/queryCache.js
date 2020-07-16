@@ -17,7 +17,7 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
   const globalListeners = []
 
   const configRef = defaultConfig
-    ? { current: { ...defaultConfigRef.current, ...defaultConfig }}
+    ? { current: { ...defaultConfigRef.current, ...defaultConfig } }
     : defaultConfigRef
 
   const queryCache = {
@@ -25,13 +25,13 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
     isFetching: 0,
   }
 
-  const notifyGlobalListeners = () => {
+  const notifyGlobalListeners = query => {
     queryCache.isFetching = Object.values(queryCache.queries).reduce(
       (acc, query) => (query.state.isFetching ? acc + 1 : acc),
       0
     )
 
-    globalListeners.forEach(d => d(queryCache))
+    globalListeners.forEach(d => d(queryCache, query))
   }
 
   queryCache.subscribe = cb => {

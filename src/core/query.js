@@ -65,7 +65,7 @@ export function makeQuery({
   query.dispatch = action => {
     query.state = queryReducer(query.state, action)
     query.instances.forEach(d => d.onStateUpdate(query.state))
-    notifyGlobalListeners()
+    notifyGlobalListeners(query)
   }
 
   query.scheduleStaleTimeout = () => {
@@ -158,7 +158,7 @@ export function makeQuery({
     query.cancel()
     query.dispatch = noop
     delete queryCache.queries[query.queryHash]
-    notifyGlobalListeners()
+    notifyGlobalListeners(query)
   }
 
   query.subscribe = (onStateUpdate = noop) => {

@@ -580,15 +580,16 @@ The `subscribe` method can be used to subscribe to the query cache as a whole an
 ```js
 import { queryCache } from 'react-query'
 
-const callback = cache => {}
+const callback = (cache, query) => {}
 
 const unsubscribe = queryCache.subscribe(callback)
 ```
 
 **Options**
 
-- `callback: Function(queryCache) => void`
+- `callback: Function(queryCache, query?) => void`
   - This function will be called with the query cache any time it is updated via its tracked update mechanisms (eg, `query.setState`, `queryCache.removeQueries`, etc). Out of scope mutations to the queryCache are not encouraged and will not fire subscription callbacks
+  - Additionally, for updates to the cache triggered by a specific query, the `query` will be passed as the second argument to the callback
 
 **Returns**
 

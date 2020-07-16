@@ -86,6 +86,17 @@ describe('queryCache', () => {
     expect(callback).toHaveBeenCalled()
   })
 
+  test('should include the queryCache and query when notifying listeners', () => {
+    const callback = jest.fn()
+
+    queryCache.subscribe(callback)
+
+    queryCache.prefetchQuery('test', () => 'data')
+    const query = queryCache.getQuery('test')
+
+    expect(callback).toHaveBeenCalledWith(queryCache, query)
+  })
+
   test('should notify subscribers when new query with initialData is added', async () => {
     const callback = jest.fn()
 
