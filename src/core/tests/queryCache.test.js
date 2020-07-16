@@ -23,6 +23,20 @@ describe('queryCache', () => {
     ).not.toThrow()
   })
 
+  // https://github.com/tannerlinsley/react-query/issues/652
+  test('prefetchQuery should not retry by default', async () => {
+    await expect(
+      queryCache.prefetchQuery(
+        'key',
+        async () => {
+          throw new Error('error')
+        },
+        {},
+        { throwOnError: true }
+      )
+    ).rejects.toEqual(new Error('error'))
+  })
+
   test('prefetchQuery returns the cached data on cache hits', async () => {
     const fetchFn = () => Promise.resolve('data')
     const first = await queryCache.prefetchQuery('key', fetchFn)
