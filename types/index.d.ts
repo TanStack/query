@@ -515,9 +515,9 @@ export type MutationResult<TResult, TError = Error> =
   | ErrorMutationResult<TResult, TError>
   | SuccessMutationResult<TResult>
 
-export interface CachedQueryState<T> {
+export interface CachedQueryState<T, TError = Error> {
   data?: T
-  error?: Error | null
+  error?: TError | null
   failureCount: number
   isFetching: boolean
   canFetchMore?: boolean
@@ -530,7 +530,7 @@ export interface CachedQuery<T, TError = unknown> {
   queryKey: AnyQueryKey
   queryFn: (...args: any[]) => unknown
   config: QueryOptions<unknown, TError>
-  state: CachedQueryState<T>
+  state: CachedQueryState<T, TError>
   setData(
     dataOrUpdater:
       | unknown

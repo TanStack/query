@@ -7,6 +7,7 @@ import {
   usePaginatedQuery,
   useQuery,
   queryCache,
+  CachedQuery,
 } from 'react-query'
 
 class FooError extends Error {}
@@ -63,6 +64,11 @@ function getQueries() {
   queryCache.getQueries('queryKey');
   queryCache.getQueries(true);
   queryCache.getQueries((query) => true);
+}
+
+function cachedQueryErrorState() {
+  const query = queryCache.getQuery(['queryKey']) as CachedQuery<unknown, FooError>
+  const error: FooError | null | undefined = query.state.error;
 }
 
 function simpleQuery() {
