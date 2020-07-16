@@ -208,6 +208,9 @@ export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
 
     let [queryKey, config, { force, throwOnError } = {}] = getQueryArgs(args)
 
+    // https://github.com/tannerlinsley/react-query/issues/652
+    config = { retry: false, ...config }
+
     try {
       const query = queryCache.buildQuery(queryKey, config)
       if (force || query.state.isStale) {
