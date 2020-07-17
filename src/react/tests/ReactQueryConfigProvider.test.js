@@ -48,6 +48,49 @@ describe('ReactQueryConfigProvider', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
+  it('should allow overriding the default config from the outermost provider', async () => {
+    const outerConfig = {
+      queries: {
+        queryFn: jest.fn(async () => {
+          await sleep(10)
+          return 'outer'
+        }),
+      },
+    }
+
+    const innerConfig = {
+      queries: {
+        queryFn: jest.fn(async () => {
+          await sleep(10)
+          return 'inner'
+        }),
+      },
+    }
+
+    function Container() {
+      return (
+        <ReactQueryConfigProvider config={outerConfig}>
+          <ReactQueryConfigProvider config={innerConfig}>
+            <h1>Placeholder</h1>
+          </ReactQueryConfigProvider>
+        </ReactQueryConfigProvider>
+      )
+    }
+
+    const rendered = render(<Container />)
+
+    await waitFor(() => rendered.findByText('Placeholder'))
+
+    await queryCache.prefetchQuery('test')
+
+    expect(outerConfig.queries.queryFn).toHaveBeenCalledWith('test')
+    expect(innerConfig.queries.queryFn).not.toHaveBeenCalled()
+
+    const data = queryCache.getQueryData('test')
+
+    expect(data).toEqual('outer')
+  })
+
   it('should reset to defaults when unmounted', async () => {
     const onSuccess = jest.fn()
 

@@ -10,7 +10,8 @@ export function useConfigContext() {
 }
 
 export function ReactQueryConfigProvider({ config, children }) {
-  let configContextValue = useConfigContext()
+  let configContextValueOrDefault = useConfigContext()
+  let configContextValue = React.useContext(configContext)
 
   const newConfig = React.useMemo(() => {
     const { shared = {}, queries = {}, mutations = {} } = config
@@ -18,7 +19,7 @@ export function ReactQueryConfigProvider({ config, children }) {
       shared: contextShared = {},
       queries: contextQueries = {},
       mutations: contextMutations = {},
-    } = configContextValue
+    } = configContextValueOrDefault
 
     return {
       shared: {
@@ -34,15 +35,18 @@ export function ReactQueryConfigProvider({ config, children }) {
         ...mutations,
       },
     }
-  }, [config, configContextValue])
+  }, [config, configContextValueOrDefault])
 
   React.useEffect(() => {
     // restore previous config on unmount
     return () => {
-      defaultConfigRef.current = { ...(configContextValue || DEFAULT_CONFIG) }
+      defaultConfigRef.current = {
+        ...(configContextValueOrDefault || DEFAULT_CONFIG),
+      }
     }
-  }, [configContextValue])
+  }, [configContextValueOrDefault])
 
+  // If this is the outermost provider, overwrite the shared default config
   if (!configContextValue) {
     defaultConfigRef.current = newConfig
   }
