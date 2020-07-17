@@ -41,7 +41,7 @@ On a more technical note, React Query will likely:
 
 ## Enough talk, show me some code already!
 
-In the example below, you can see React Query in it's most basic and simple form being used to fetch the github stats for the React Query github project itself:
+In the example below, you can see React Query in its most basic and simple form being used to fetch the GitHub stats for the React Query GitHub project itself:
 
 [Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/simple)
 
