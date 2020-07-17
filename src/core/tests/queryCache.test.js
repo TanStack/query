@@ -1,5 +1,6 @@
 import { sleep } from './utils'
 import { queryCache, queryCaches } from '../'
+import { makeQueryCache } from '../queryCache'
 
 describe('queryCache', () => {
   afterEach(() => {
@@ -184,7 +185,10 @@ describe('queryCache', () => {
   test('query interval is cleared when unsubscribed to a refetchInterval query', async () => {
     const queryKey = 'key'
     const fetchData = () => Promise.resolve('data')
-    await queryCache.prefetchQuery(queryKey, fetchData, { cacheTime: 0, refetchInterval: 1 })
+    await queryCache.prefetchQuery(queryKey, fetchData, {
+      cacheTime: 0,
+      refetchInterval: 1,
+    })
     const query = queryCache.getQuery(queryKey)
     const instance = query.subscribe()
     instance.updateConfig(query.config)
@@ -223,5 +227,16 @@ describe('queryCache', () => {
     const newQuery = queryCache.getQuery(queryKey)
     expect(newQuery.state.markedForGarbageCollection).toBe(false)
     expect(newQuery.state.data).toBe('data')
+  })
+
+  test('makeQueryCache merges defaultConfig so providing a queryFn does not overwrite the default queryKeySerializerFn', async () => {
+    const queryFn = () => 'data'
+    const queryCache = makeQueryCache({
+      defaultConfig: { queries: { queryFn } },
+    })
+
+    expect(() => queryCache.buildQuery('test')).not.toThrow(
+      'config.queryKeySerializerFn is not a function'
+    )
   })
 })

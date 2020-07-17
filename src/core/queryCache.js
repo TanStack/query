@@ -17,7 +17,22 @@ export function makeQueryCache({ frozen = false, defaultConfig } = {}) {
   const globalListeners = []
 
   const configRef = defaultConfig
-    ? { current: { ...defaultConfigRef.current, ...defaultConfig } }
+    ? {
+        current: {
+          shared: {
+            ...defaultConfigRef.current.shared,
+            ...defaultConfig.shared,
+          },
+          queries: {
+            ...defaultConfigRef.current.queries,
+            ...defaultConfig.queries,
+          },
+          mutations: {
+            ...defaultConfigRef.current.mutations,
+            ...defaultConfig.mutations,
+          },
+        },
+      }
     : defaultConfigRef
 
   const queryCache = {
