@@ -8,11 +8,11 @@ import {
 import { defaultConfigRef } from './config'
 import { makeQuery } from './query'
 
-export const queryCache = makeQueryCache()
+export const queryCache = makeQueryCache({ frozen: isServer })
 
 export const queryCaches = [queryCache]
 
-export function makeQueryCache({ frozen = isServer, defaultConfig } = {}) {
+export function makeQueryCache({ frozen = false, defaultConfig } = {}) {
   // A frozen cache does not add new queries to the cache
   const globalListeners = []
 

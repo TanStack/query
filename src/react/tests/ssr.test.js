@@ -8,19 +8,44 @@ import {
   usePaginatedQuery,
   ReactQueryCacheProvider,
   queryCache,
-  queryCaches,
   makeQueryCache,
   useQuery,
 } from '../index'
 import { sleep } from './utils'
 
 describe('Server Side Rendering', () => {
-  describe('global cache', () => {
-    afterEach(() => {
-      queryCaches.forEach(cache => cache.clear({ notify: false }))
-    })
+  // A frozen cache does not cache any data. This is the default
+  // for the global cache in a node-environment, since it's
+  // otherwise easy to cache data between separate requests,
+  // which is a security risk.
+  //
+  // See https://github.com/tannerlinsley/react-query/issues/70
+  it('global cache should be frozen by default', async () => {
+    const fetchFn = () => Promise.resolve('data')
+    const data = await queryCache.prefetchQuery('key', fetchFn)
 
+    expect(data).toBe('data')
+    expect(queryCache.getQuery('key')).toBeFalsy()
+
+    queryCache.clear({ notify: false })
+  })
+
+  // When consumers of the library create a cache explicitly by
+  // calling makeQueryCache, they take on the responsibility of
+  // not using that cache to cache data between requests or do so
+  // in a safe way.
+  it('created caches should be unfrozen by default', async () => {
+    const queryCache = makeQueryCache()
+    const fetchFn = () => Promise.resolve('data')
+    const data = await queryCache.prefetchQuery('key', fetchFn)
+
+    expect(data).toBe('data')
+    expect(queryCache.getQuery('key')).toBeTruthy()
+  })
+
+  describe('frozen cache', () => {
     it('should not trigger fetch', () => {
+      const queryCache = makeQueryCache({ frozen: true })
       const queryFn = jest.fn()
 
       function Page() {
@@ -35,14 +60,19 @@ describe('Server Side Rendering', () => {
         )
       }
 
-      const markup = renderToString(<Page />)
+      const markup = renderToString(
+        <ReactQueryCacheProvider queryCache={queryCache}>
+          <Page />
+        </ReactQueryCacheProvider>
+      )
 
       expect(markup).toContain('status loading')
       expect(queryFn).toHaveBeenCalledTimes(0)
     })
 
-    // See https://github.com/tannerlinsley/react-query/issues/70
     it('should not add initialData to the cache', () => {
+      const queryCache = makeQueryCache({ frozen: true })
+
       function Page() {
         const [page, setPage] = React.useState(1)
         const { resolvedData } = usePaginatedQuery(
@@ -54,10 +84,10 @@ describe('Server Side Rendering', () => {
         )
 
         return (
-          <div>
+          <ReactQueryCacheProvider queryCache={queryCache}>
             <h1 data-testid="title">{resolvedData}</h1>
             <button onClick={() => setPage(page + 1)}>next</button>
-          </div>
+          </ReactQueryCacheProvider>
         )
       }
 
@@ -67,6 +97,7 @@ describe('Server Side Rendering', () => {
     })
 
     it('should not add prefetched data to the cache', async () => {
+      const queryCache = makeQueryCache({ frozen: true })
       const fetchFn = () => Promise.resolve('data')
       const data = await queryCache.prefetchQuery('key', fetchFn)
 
