@@ -2,6 +2,7 @@ import React from 'react'
 import '@docsearch/react/dist/style.css'
 import '../styles/index.css'
 import Head from 'next/head'
+import { SearchProvider } from 'components/useSearch'
 
 function loadScript(src, attrs = {}) {
   if (typeof document !== 'undefined') {
@@ -46,7 +47,9 @@ function MyApp({ Component, pageProps }) {
           }}
         />
       </Head>
-      <Component {...pageProps} />
+      <SearchProvider>
+        <Component {...pageProps} />
+      </SearchProvider>
     </>
   )
 }

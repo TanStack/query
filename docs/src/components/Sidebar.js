@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import cn from 'classnames';
-import { Search } from './Search';
-export const Sidebar = ({
-  active,
-  children,
-  fixed
-}) => {
-  const [searching, setSearching] = useState(false);
-  return <aside className={cn('sidebar bg-white top-24 flex-shrink-0 pr-2', {
-    active,
-    ['pb-0 flex flex-col z-1 sticky']: fixed,
-    fixed,
-    searching
-  })}>
-      <div className="sidebar-search my-2">
-        <Search renderModal={false} />
+import { useState } from 'react'
+import cn from 'classnames'
+import { Search } from './Search'
+export const Sidebar = ({ active, children, fixed }) => {
+  const [searching, setSearching] = useState(false)
+  return (
+    <aside
+      className={cn('sidebar bg-white top-24 flex-shrink-0 pr-2', {
+        active,
+        ['pb-0 flex flex-col z-1 sticky']: fixed,
+        fixed,
+        searching,
+      })}
+    >
+      <div className="sidebar-search my-2 lg:hidden">
+        <Search />
       </div>
       <div className="sidebar-content overflow-y-auto pb-4">{children}</div>
       <style jsx>{`
@@ -44,5 +43,6 @@ export const Sidebar = ({
           }
         }
       `}</style>
-    </aside>;
-};
+    </aside>
+  )
+}
