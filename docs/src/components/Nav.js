@@ -12,7 +12,7 @@ export const Nav = () => (
           <Link href="/" as="/">
             <a>
               <span className="sr-only">Home</span>
-              <img src={logoSrc} />
+              <img src={logoSrc} alt="React Query" />
             </a>
           </Link>
         </div>
@@ -21,7 +21,7 @@ export const Nav = () => (
           <Search />
         </div>
 
-        <div className="flex flex-grow items-center justify-between md:justify-end space-x-4 md:space-x-8 h-16">
+        <div className="flex flex-grow items-center justify-between w-3/4 md:w-auto md:justify-end space-x-4 md:space-x-8 h-16">
           <div className="flex space-x-4 md:space-x-8 text-sm md:text-base">
             <div>
               <Link href="/docs/overview">
