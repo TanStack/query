@@ -1,9 +1,7 @@
 import React from 'react'
-import { queryCache, makeQueryCache } from '../core'
+import { queryCache as defaultQueryCache, queryCaches, makeQueryCache } from '../core'
 
-export const queryCacheContext = React.createContext(queryCache)
-
-export const queryCaches = [queryCache]
+export const queryCacheContext = React.createContext(defaultQueryCache)
 
 export const useQueryCache = () => React.useContext(queryCacheContext)
 
