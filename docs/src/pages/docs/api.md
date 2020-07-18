@@ -205,7 +205,7 @@ const {
 
 **Options**
 
-The options for `usePaginatedQuery` are identical to the [`useQuery` hook](#usequery) with the addition of the following:
+The options for `useInfiniteQuery` are identical to the [`useQuery` hook](#usequery) with the addition of the following:
 
 - `getFetchMore: Function(lastPage, allPages) => fetchMoreVariable | Boolean`
   - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
