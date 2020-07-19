@@ -25,9 +25,6 @@
     "release": "yarn publish",
     "releaseNext": "yarn publish --tag next",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
-    "formatReadme": "yarn doctoc",
-    "doctoc": "npx doctoc --maxlevel 2 README.md",
-    "jump2header": "npx @strdr4605/jump2header --header 'documentation' --start 'Installation' -e 2 --silent -l 2",
     "stats": "open ./stats.html",
     "dtslint": "dtslint types"
   },
