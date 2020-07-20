@@ -14,6 +14,7 @@ const {
   isError,
   data,
   error,
+  isStale,
   isFetching,
   failureCount,
   refetch,
@@ -142,6 +143,8 @@ const queryInfo = useQuery({
 - `error: null | Error`
   - Defaults to `null`
   - The error object for the query, if an error was thrown.
+- `isStale: Boolean`
+  - Will be `true` if the cache data is stale.
 - `isFetching: Boolean`
   - Defaults to `true` so long as `manual` is set to `false`
   - Will be `true` if the query is currently fetching, including background fetching.
