@@ -237,6 +237,7 @@ export interface BaseQueryOptions<TResult = unknown, TError = Error> {
   refetchIntervalInBackground?: boolean
   refetchOnWindowFocus?: boolean
   refetchOnMount?: boolean
+  alwaysRefetchOnMount?: boolean
   onSuccess?: (data: TResult) => void
   onError?: (err: TError) => void
   onSettled?: (data: TResult | undefined, error: TError | null) => void

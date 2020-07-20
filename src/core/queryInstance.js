@@ -55,7 +55,7 @@ export function makeQueryInstance(query, onStateUpdate) {
         query.config.enabled && // Don't auto refetch if disabled
         !query.wasSuspended && // Don't double refetch for suspense
         query.state.isStale && // Only refetch if stale
-        (query.config.refetchOnMount || query.instances.length === 1)
+        ((query.config.refetchOnMount || query.instances.length === 1) || query.config.alwaysRefetchOnMount)
       ) {
         await query.fetch()
       }
