@@ -110,7 +110,7 @@ const queryInfo = useQuery({
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
 - `initialStale: Boolean | Function() => Boolean`
   - Optional
-  - If set, this will mark the `initialData` any `initialData` provided as stale and will likely cause it to be refetched on mount
+  - If set, this will mark any `initialData` provided as stale and will likely cause it to be refetched on mount
   - If a function is passed, it will be called only when appropriate to resolve the `initialStale` value. This can be useful if your `initialStale` value is costly to calculate.
 - `refetchOnMount: Boolean`
   - Optional
