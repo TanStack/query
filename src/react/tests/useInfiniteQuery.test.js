@@ -28,6 +28,72 @@ describe('useInfiniteQuery', () => {
     queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
+  it('should return the correct states for a successful query', async () => {
+    let count = 0
+    const states = []
+
+    function Page() {
+      const state = useInfiniteQuery(
+        'items',
+        (key, nextId = 0) => fetchItems(nextId, count++),
+        {
+          getFetchMore: (lastGroup, allGroups) => Boolean(lastGroup.nextId),
+        }
+      )
+
+      states.push(state)
+
+      return (
+        <div>
+          <h1>Status: {state.status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('Status: success'))
+
+    expect(states[0]).toMatchObject({
+      clear: expect.any(Function),
+      data: undefined,
+      error: null,
+      failureCount: 0,
+      fetchMore: expect.any(Function),
+      isError: false,
+      isFetching: true,
+      isIdle: false,
+      isLoading: true,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'loading',
+    })
+
+    expect(states[1]).toMatchObject({
+      clear: expect.any(Function),
+      canFetchMore: true,
+      data: [
+        {
+          items: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+          nextId: 1,
+          ts: 0,
+        },
+      ],
+      error: null,
+      failureCount: 0,
+      fetchMore: expect.any(Function),
+      isError: false,
+      isFetching: false,
+      isIdle: false,
+      isLoading: false,
+      isStale: true,
+      isSuccess: true,
+      refetch: expect.any(Function),
+      status: 'success',
+    })
+  })
+
   it('should allow you to fetch more pages', async () => {
     function Page() {
       const fetchCountRef = React.useRef(0)

@@ -47,7 +47,7 @@ describe('queryCache', () => {
   })
 
   test('prefetchQuery should not force fetch', async () => {
-    queryCache.setQueryData('key', 'og')
+    queryCache.setQueryData('key', 'og', { staleTime: 100 })
     const fetchFn = () => Promise.resolve('new')
     const first = await queryCache.prefetchQuery(
       'key',
@@ -77,23 +77,27 @@ describe('queryCache', () => {
     ).rejects.toEqual(new Error('error'))
   })
 
-  test('should notify listeners when new query is added', () => {
+  test('should notify listeners when new query is added', async () => {
     const callback = jest.fn()
 
     queryCache.subscribe(callback)
 
     queryCache.prefetchQuery('test', () => 'data')
 
+    await sleep(100)
+
     expect(callback).toHaveBeenCalled()
   })
 
-  test('should include the queryCache and query when notifying listeners', () => {
+  test('should include the queryCache and query when notifying listeners', async () => {
     const callback = jest.fn()
 
     queryCache.subscribe(callback)
 
     queryCache.prefetchQuery('test', () => 'data')
     const query = queryCache.getQuery('test')
+
+    await sleep(100)
 
     expect(callback).toHaveBeenCalledWith(queryCache, query)
   })
@@ -136,6 +140,21 @@ describe('queryCache', () => {
     expect(queryCache.getQuery('key')).toBeFalsy()
   })
 
+  test('setQueryData should schedule stale timeout, if staleTime is set', async () => {
+    queryCache.setQueryData('key', 'test data', { staleTime: 10 })
+    expect(queryCache.getQuery('key').staleTimeout).not.toBeUndefined()
+  })
+
+  test('setQueryData should not schedule stale timeout by default', async () => {
+    queryCache.setQueryData('key', 'test data')
+    expect(queryCache.getQuery('key').staleTimeout).toBeUndefined()
+  })
+
+  test('setQueryData should not schedule stale timeout, if staleTime is set to `Infinity`', async () => {
+    queryCache.setQueryData('key', 'test data', { staleTime: Infinity })
+    expect(queryCache.getQuery('key').staleTimeout).toBeUndefined()
+  })
+
   test('setQueryData schedules stale timeouts appropriately', async () => {
     queryCache.setQueryData('key', 'test data', { staleTime: 100 })
 
@@ -174,7 +193,7 @@ describe('queryCache', () => {
   test('stale timeout dispatch is not called if query is no longer in the query cache', async () => {
     const queryKey = 'key'
     const fetchData = () => Promise.resolve('data')
-    await queryCache.prefetchQuery(queryKey, fetchData)
+    await queryCache.prefetchQuery(queryKey, fetchData, { staleTime: 100 })
     const query = queryCache.getQuery(queryKey)
     expect(query.state.isStale).toBe(false)
     queryCache.removeQueries(queryKey)

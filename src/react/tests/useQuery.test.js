@@ -33,21 +33,127 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('test'))
   })
 
-  it('should memoize the query info object', async () => {
+  it('should return the correct states for a successful query', async () => {
     const queryKey = Math.random()
     const states = []
 
     function Page() {
-      const state = useQuery(queryKey, () => 'test', { enabled: false })
+      const state = useQuery(queryKey, () => 'test')
+
       states.push(state)
-      return null
+
+      return (
+        <div>
+          <h1>Status: {state.status}</h1>
+        </div>
+      )
     }
 
     const rendered = render(<Page />)
-    rendered.rerender(<Page />)
 
-    expect(states.length).toBe(2)
-    expect(states[0]).toBe(states[1])
+    await waitFor(() => rendered.getByText('Status: success'))
+
+    expect(states[0]).toMatchObject({
+      clear: expect.any(Function),
+      data: undefined,
+      error: null,
+      failureCount: 0,
+      isError: false,
+      isFetching: true,
+      isIdle: false,
+      isLoading: true,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'loading',
+    })
+
+    expect(states[1]).toMatchObject({
+      clear: expect.any(Function),
+      data: 'test',
+      error: null,
+      failureCount: 0,
+      isError: false,
+      isFetching: false,
+      isIdle: false,
+      isLoading: false,
+      isStale: true,
+      isSuccess: true,
+      refetch: expect.any(Function),
+      status: 'success',
+    })
+  })
+
+  it('should return the correct states for an unsuccessful query', async () => {
+    jest.spyOn(console, 'error')
+    console.error.mockImplementation(() => {})
+
+    const queryKey = Math.random()
+    const states = []
+
+    function Page() {
+      const state = useQuery(queryKey, () => Promise.reject('rejected'), {
+        retry: 1,
+        retryDelay: 1,
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <h1>Status: {state.status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('Status: error'))
+
+    expect(states[0]).toMatchObject({
+      clear: expect.any(Function),
+      data: undefined,
+      error: null,
+      failureCount: 0,
+      isError: false,
+      isFetching: true,
+      isIdle: false,
+      isLoading: true,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'loading',
+    })
+
+    expect(states[1]).toMatchObject({
+      clear: expect.any(Function),
+      data: undefined,
+      error: null,
+      failureCount: 1,
+      isError: false,
+      isFetching: true,
+      isIdle: false,
+      isLoading: true,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'loading',
+    })
+
+    expect(states[2]).toMatchObject({
+      clear: expect.any(Function),
+      data: undefined,
+      error: 'rejected',
+      failureCount: 2,
+      isError: true,
+      isFetching: false,
+      isIdle: false,
+      isLoading: false,
+      isStale: true,
+      isSuccess: false,
+      refetch: expect.any(Function),
+      status: 'error',
+    })
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137
@@ -631,52 +737,6 @@ describe('useQuery', () => {
     console.error.mockRestore()
   })
 
-  test('should schedule stale timeout by default', async () => {
-    function Page() {
-      const query = useQuery('test', () => 'fetched data')
-
-      return (
-        <div>
-          <div>{query.data}</div>
-          <div data-testid="isStale">{`${query.isStale}`}</div>
-          <div data-testid="staleTimeout">{`${query.query.staleTimeout}`}</div>
-        </div>
-      )
-    }
-
-    const rendered = render(<Page />)
-
-    await waitFor(() => rendered.getByText('fetched data'))
-    await waitFor(() => {
-      expect(rendered.getByTestId('isStale').textContent).toBe('true')
-    })
-    expect(rendered.getByTestId('staleTimeout').textContent).not.toBe(
-      'undefined'
-    )
-  })
-
-  test('should not schedule stale timeout, if staleTime is set to `Infinity`', async () => {
-    function Page() {
-      const query = useQuery('test', () => 'fetched data', {
-        staleTime: Infinity,
-      })
-
-      return (
-        <div>
-          <div>{query.data}</div>
-          <div data-testid="isStale">{`${query.isStale}`}</div>
-          <div data-testid="staleTimeout">{`${query.query.staleTimeout}`}</div>
-        </div>
-      )
-    }
-
-    const rendered = render(<Page />)
-
-    await waitFor(() => rendered.getByText('fetched data'))
-    expect(rendered.getByTestId('isStale').textContent).toBe('false')
-    expect(rendered.getByTestId('staleTimeout').textContent).toBe('undefined')
-  })
-
   // See https://github.com/tannerlinsley/react-query/issues/360
   test('should init to status:idle when enabled is falsey', async () => {
     function Page() {
@@ -763,27 +823,22 @@ describe('useQuery', () => {
       const { data } = useQuery('/api', () => count++, {
         refetchInterval: int,
       })
-      return (
-        <div onClick={() => setInt(num => (num < 400 ? num + 100 : 0))}>
-          count: {data}
-        </div>
-      )
+
+      React.useEffect(() => {
+        if (data === 2) {
+          setInt(0)
+        }
+      }, [data])
+
+      return <div>count: {data}</div>
     }
 
     const rendered = render(<Page />)
 
-    rendered.getByText('count:')
-
     // mount
     await waitFor(() => rendered.getByText('count: 0'))
     await waitFor(() => rendered.getByText('count: 1'))
-    await waitFor(() => rendered.getByText('count: 1'))
     await waitFor(() => rendered.getByText('count: 2'))
-    await waitFor(() => rendered.getByText('count: 2'))
-    await waitFor(() => rendered.getByText('count: 3'))
-    await waitFor(() => rendered.getByText('count: 4'))
-    await waitFor(() => rendered.getByText('count: 5'))
-    await waitFor(() => rendered.getByText('count: 5'))
   })
 
   it('should error when using functions as query keys', () => {
