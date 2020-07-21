@@ -9,6 +9,63 @@ describe('usePaginatedQuery', () => {
     queryCaches.forEach(cache => cache.clear({ notify: false }))
   })
 
+  it('should return the correct states for a successful query', async () => {
+    const states = []
+
+    function Page() {
+      const state = usePaginatedQuery(['data', 1], async (queryName, page) => {
+        await sleep(10)
+        return page
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <h1>Status: {state.status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    await waitFor(() => rendered.getByText('Status: success'))
+
+    expect(states[0]).toMatchObject({
+      clear: expect.any(Function),
+      data: undefined,
+      error: null,
+      failureCount: 0,
+      isError: false,
+      isFetching: true,
+      isIdle: false,
+      isLoading: true,
+      isStale: true,
+      isSuccess: false,
+      latestData: undefined,
+      resolvedData: undefined,
+      refetch: expect.any(Function),
+      status: 'loading',
+    })
+
+    expect(states[1]).toMatchObject({
+      clear: expect.any(Function),
+      data: 1,
+      error: null,
+      failureCount: 0,
+      isError: false,
+      isFetching: false,
+      isIdle: false,
+      isLoading: false,
+      isStale: true,
+      isSuccess: true,
+      latestData: 1,
+      resolvedData: 1,
+      refetch: expect.any(Function),
+      status: 'success',
+    })
+  })
+
   it('should use previous page data while fetching the next page', async () => {
     function Page() {
       const [page, setPage] = React.useState(1)

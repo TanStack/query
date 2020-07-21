@@ -14,6 +14,7 @@ const {
   isError,
   data,
   error,
+  isStale,
   isFetching,
   failureCount,
   refetch,
@@ -142,6 +143,8 @@ const queryInfo = useQuery({
 - `error: null | Error`
   - Defaults to `null`
   - The error object for the query, if an error was thrown.
+- `isStale: Boolean`
+  - Will be `true` if the cache data is stale.
 - `isFetching: Boolean`
   - Defaults to `true` so long as `manual` is set to `false`
   - Will be `true` if the query is currently fetching, including background fetching.
@@ -219,7 +222,7 @@ The returned properties for `usePaginatedQuery` are identical to the [`useQuery`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
 - `fetchMore: Function(fetchMoreVariableOverride) => Promise`
   - This function allows you to fetch the next "page" of results.
-  - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getCanFetchMore` option to your query function to retrieve the next page of results.
+  - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getFetchMore` option to your query function to retrieve the next page of results.
 - `canFetchMore: Boolean`
   - If using `paginated` mode, this will be `true` if there is more data to be fetched (known via the required `getFetchMore` option function).
 

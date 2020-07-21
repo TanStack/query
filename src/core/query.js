@@ -10,6 +10,7 @@ import {
   statusIdle,
   Console,
   getStatusBools,
+  shallowEqual,
 } from './utils'
 import { makeQueryInstance } from './queryInstance'
 
@@ -63,9 +64,14 @@ export function makeQuery({
   }
 
   query.dispatch = action => {
-    query.state = queryReducer(query.state, action)
-    query.instances.forEach(d => d.onStateUpdate(query.state))
-    notifyGlobalListeners(query)
+    const newState = queryReducer(query.state, action)
+
+    // Only update state if something has changed
+    if (!shallowEqual(query.state, newState)) {
+      query.state = newState
+      query.instances.forEach(d => d.onStateUpdate(query.state))
+      notifyGlobalListeners(query)
+    }
   }
 
   query.scheduleStaleTimeout = () => {
@@ -143,11 +149,19 @@ export function makeQuery({
   query.setState = updater => query.dispatch({ type: actionSetState, updater })
 
   query.setData = updater => {
-    // Set data and mark it as cached
-    query.dispatch({ type: actionSuccess, updater })
+    const isStale = query.config.staleTime === 0
 
-    // Schedule a fresh invalidation!
-    query.scheduleStaleTimeout()
+    // Set data and mark it as cached
+    query.dispatch({
+      type: actionSuccess,
+      updater,
+      isStale,
+    })
+
+    if (!isStale) {
+      // Schedule a fresh invalidation!
+      query.scheduleStaleTimeout()
+    }
   }
 
   query.clear = () => {
@@ -172,11 +186,11 @@ export function makeQuery({
   const tryFetchData = async (fn, ...args) => {
     try {
       // Perform the query
-      const promise = fn(...query.config.queryFnParamsFilter(args))
+      const promiseOrValue = fn(...query.config.queryFnParamsFilter(args))
 
-      query.cancelPromises = () => promise.cancel?.()
+      query.cancelPromises = () => promiseOrValue?.cancel?.()
 
-      const data = await promise
+      const data = await promiseOrValue
       delete query.shouldContinueRetryOnFocus
 
       delete query.cancelPromises
@@ -187,16 +201,16 @@ export function makeQuery({
       delete query.cancelPromises
       if (query.cancelled) throw query.cancelled
 
-      // If we fail, increase the failureCount
-      query.dispatch({ type: actionFailed })
-
       // Do we need to retry the request?
       if (
         query.config.retry === true ||
-        query.state.failureCount <= query.config.retry ||
+        query.state.failureCount < query.config.retry ||
         (typeof query.config.retry === 'function' &&
           query.config.retry(query.state.failureCount, error))
       ) {
+        // If we retry, increase the failureCount
+        query.dispatch({ type: actionFailed })
+
         // Only retry if the document is visible
         if (!isDocumentVisible()) {
           // set this flag to continue retries on focus
@@ -454,7 +468,7 @@ function switchActions(state, action) {
         status: statusSuccess,
         data: functionalUpdate(action.updater, state.data),
         error: null,
-        isStale: false,
+        isStale: action.isStale,
         isFetching: false,
         updatedAt: Date.now(),
         failureCount: 0,
@@ -462,6 +476,7 @@ function switchActions(state, action) {
     case actionError:
       return {
         ...state,
+        failureCount: state.failureCount + 1,
         isFetching: false,
         isStale: true,
         ...(!action.cancelled && {
