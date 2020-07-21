@@ -3,11 +3,11 @@ import React from 'react'
 //
 
 import { useQueryCache } from './ReactQueryCacheProvider'
-import { useMountedCallback } from './utils'
+import { useRerenderer } from './utils'
 
 export function useBaseQuery(queryKey, config = {}) {
   // Make a rerender function
-  const rerender = useMountedCallback(React.useState()[1])
+  const rerender = useRerenderer()
 
   // Get the query cache
   const queryCache = useQueryCache()
@@ -20,7 +20,9 @@ export function useBaseQuery(queryKey, config = {}) {
 
   // Subscribe to the query when the subscribe function changes
   React.useEffect(() => {
-    instanceRef.current = query.subscribe(() => rerender({}))
+    instanceRef.current = query.subscribe(() => {
+      rerender()
+    })
 
     // Unsubscribe when things change
     return instanceRef.current.unsubscribe
@@ -41,15 +43,9 @@ export function useBaseQuery(queryKey, config = {}) {
     instanceRef.current.run()
   }, [enabledBool, query])
 
-  const queryState = query.state
-
-  const queryInfoRef = React.useRef({})
-
-  Object.assign(queryInfoRef.current, {
+  return {
     ...query,
-    ...queryState,
+    ...query.state,
     query,
-  })
-
-  return queryInfoRef.current
+  }
 }

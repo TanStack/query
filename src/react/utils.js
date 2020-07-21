@@ -56,25 +56,23 @@ export function useMountedCallback(callback) {
   )
 }
 
+export function useRerenderer() {
+  const rerender = useMountedCallback(React.useState()[1])
+  return React.useCallback(() => rerender({}), [rerender])
+}
+
 export function handleSuspense(queryInfo) {
-  if (
-    queryInfo.query.config.suspense ||
-    queryInfo.query.config.useErrorBoundary
-  ) {
-    if (
-      queryInfo.query.state.status === statusError &&
-      queryInfo.query.state.throwInErrorBoundary
-    ) {
-      throw queryInfo.error
+  const { error, query } = queryInfo
+  const { config, state } = query
+
+  if (config.suspense || config.useErrorBoundary) {
+    if (state.status === statusError && state.throwInErrorBoundary) {
+      throw error
     }
 
-    if (
-      queryInfo.query.config.suspense &&
-      queryInfo.status !== statusSuccess &&
-      queryInfo.query.config.enabled
-    ) {
-      queryInfo.query.wasSuspended = true
-      throw queryInfo.query.fetch()
+    if (config.suspense && state.status !== statusSuccess && config.enabled) {
+      query.wasSuspended = true
+      throw query.fetch()
     }
   }
 }

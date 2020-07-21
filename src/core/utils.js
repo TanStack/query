@@ -90,18 +90,33 @@ export function getQueryArgs(args) {
   return [queryKey, queryFn ? { ...config, queryFn } : config, ...rest]
 }
 
+export function deepEqual(a, b) {
+  return equal(a, b, true)
+}
+
+export function shallowEqual(a, b) {
+  return equal(a, b, false)
+}
+
 // This deep-equal is directly based on https://github.com/epoberezkin/fast-deep-equal.
 // The parts for comparing any non-JSON-supported values has been removed
-export function deepEqual(a, b) {
+function equal(a, b, deep, depth = 0) {
   if (a === b) return true
 
-  if (a && b && typeof a == 'object' && typeof b == 'object') {
+  if (
+    (deep || !depth) &&
+    a &&
+    b &&
+    typeof a == 'object' &&
+    typeof b == 'object'
+  ) {
     var length, i, keys
     if (Array.isArray(a)) {
       length = a.length
       // eslint-disable-next-line eqeqeq
       if (length != b.length) return false
-      for (i = length; i-- !== 0; ) if (!deepEqual(a[i], b[i])) return false
+      for (i = length; i-- !== 0; )
+        if (!equal(a[i], b[i], deep, depth + 1)) return false
       return true
     }
 
@@ -118,7 +133,7 @@ export function deepEqual(a, b) {
     for (i = length; i-- !== 0; ) {
       var key = keys[i]
 
-      if (!deepEqual(a[key], b[key])) return false
+      if (!equal(a[key], b[key], deep, depth + 1)) return false
     }
 
     return true
