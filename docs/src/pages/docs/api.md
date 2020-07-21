@@ -222,7 +222,7 @@ The returned properties for `usePaginatedQuery` are identical to the [`useQuery`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
 - `fetchMore: Function(fetchMoreVariableOverride) => Promise`
   - This function allows you to fetch the next "page" of results.
-  - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getCanFetchMore` option to your query function to retrieve the next page of results.
+  - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getFetchMore` option to your query function to retrieve the next page of results.
 - `canFetchMore: Boolean`
   - If using `paginated` mode, this will be `true` if there is more data to be fetched (known via the required `getFetchMore` option function).
 
