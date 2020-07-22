@@ -32,7 +32,7 @@ const {
   refetchIntervalInBackground,
   queryFnParamsFilter,
   refetchOnMount,
-  alwaysRefetchOnMount,
+  neverRefetchOnMount,
   isDataEqual,
   onError,
   onSuccess,
@@ -117,10 +117,10 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `true`
   - If set to `false`, will disable additional instances of a query to trigger background refetches
-- `alwaysRefetchOnMount: Boolean`
+- `neverRefetchOnMount: Boolean`
   - Optional
   - Defaults to `false`
-  - Always refetch on mount sets refetching independent of the number of query instances. If `refetchOnMount` is set to false but only one query instance exists the query would refetch anyway. If `alwaysRefetchOnMount` is set to false though the query will not refetch independent of the number of instances
+  - Allows for disabling refetching on mount independent of the number of query instances. If `refetchOnMount` is set to false but only one query instance exists the query would refetch anyway. If `neverRefetchOnMount` is set to true though the query will not refetch independent of the number of query instances.
 - `queryFnParamsFilter: Function(args) => filteredArgs`
   - Optional
   - This function will filter the params that get passed to `queryFn`.
@@ -670,7 +670,7 @@ const queryConfig = {
     refetchInterval: false,
     queryFnParamsFilter: identity,
     refetchOnMount: true,
-    alwaysRefetchOnMount: false,
+    neverRefetchOnMount: false,
     isDataEqual: deepEqual,
     onError: noop,
     onSuccess: noop,
