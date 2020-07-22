@@ -1,7 +1,5 @@
 import React from 'react'
 
-//
-
 import { useQueryCache } from './ReactQueryCacheProvider'
 import { useRerenderer } from './utils'
 
