@@ -248,6 +248,7 @@ const Home = props => {
                 </div>
                 <ul className="list-none text-center">
                   <li>Steven Miyakawa (@SamSamskies)</li>
+                  <li>Alex Trost (@a-trost)</li>
                 </ul>
               </div>
             </div>
