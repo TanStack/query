@@ -7,7 +7,7 @@ title: SSR & Next.js
 
 If your queries are for data that is frequently updating and you don't necessarily need the data to be preset at render time (for SEO or performance purposes), then you don't need any extra configuration for React Query! Just import `useQuery` and fetch data right from within your components.
 
-This approach works well for applications or user-specific pages that might contain private or non-publi/non-generic information, SEO is usually not relevant to these types of pages and full SSR of data is rarely needed in said situations.
+This approach works well for applications or user-specific pages that might contain private or non-public/non-generic information. SEO is usually not relevant to these types of pages and full SSR of data is rarely needed in said situations.
 
 ## Pre-rendering
 
