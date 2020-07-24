@@ -11,7 +11,7 @@ This approach works well for applications or user-specific pages that might cont
 
 ## Pre-rendering
 
-If the page and its data needs to be rendered on the server, React Query comes build in with mechanisms to support this use case. The exact implementation of these mechanisms may vary from platform to platform, but we recommend starting with Next.js which supports [2 forms of pre-rendering](https://nextjs.org/docs/basic-features/data-fetching):
+If the page and its data needs to be rendered on the server, React Query comes built in with mechanisms to support this use case. The exact implementation of these mechanisms may vary from platform to platform, but we recommend starting with Next.js which supports [2 forms of pre-rendering](https://nextjs.org/docs/basic-features/data-fetching):
 
 - Static Generation (SSG)
 - Server-side Rendering (SSR)
