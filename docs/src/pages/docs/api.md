@@ -31,8 +31,6 @@ const {
   refetchInterval,
   refetchIntervalInBackground,
   queryFnParamsFilter,
-  refetchOnMount,
-  neverRefetchOnMount,
   isDataEqual,
   onError,
   onSuccess,
@@ -113,14 +111,6 @@ const queryInfo = useQuery({
   - Optional
   - If set, this will mark any `initialData` provided as stale and will likely cause it to be refetched on mount
   - If a function is passed, it will be called only when appropriate to resolve the `initialStale` value. This can be useful if your `initialStale` value is costly to calculate.
-- `refetchOnMount: Boolean`
-  - Optional
-  - Defaults to `true`
-  - If set to `false`, will disable additional instances of a query to trigger background refetches
-- `neverRefetchOnMount: Boolean`
-  - Optional
-  - Defaults to `false`
-  - Allows for disabling refetching on mount independent of the number of query instances. If `refetchOnMount` is set to false but only one query instance exists the query would refetch anyway. If `neverRefetchOnMount` is set to true though the query will not refetch independent of the number of query instances.
 - `queryFnParamsFilter: Function(args) => filteredArgs`
   - Optional
   - This function will filter the params that get passed to `queryFn`.
@@ -669,8 +659,6 @@ const queryConfig = {
     refetchOnWindowFocus: true,
     refetchInterval: false,
     queryFnParamsFilter: identity,
-    refetchOnMount: true,
-    neverRefetchOnMount: false,
     isDataEqual: deepEqual,
     onError: noop,
     onSuccess: noop,

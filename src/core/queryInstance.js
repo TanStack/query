@@ -50,16 +50,10 @@ export function makeQueryInstance(query, onStateUpdate) {
 
   instance.run = async () => {
     try {
-
-      // Don't refetch on mount when 'neverRefetchOnMount' is set, otherwise only refetch if either only one instance of the query exists or 'refetchOnMount' is set
-      const shouldRefetchOnMount = query.config.neverRefetchOnMount ? false : (query.config.refetchOnMount || query.instances.length === 1);
-
       if(
-        (!query.state.isSuccess || shouldRefetchOnMount) && // Make sure first load happens, thereafter only if refetch on mount is requested
         query.config.enabled && // Don't auto refetch if disabled
         !query.wasSuspended && // Don't double refetch for suspense
         query.state.isStale // Only refetch if stale
-        
       ) {
         await query.fetch();
       }

@@ -16,8 +16,6 @@ export const DEFAULT_CONFIG = {
     refetchOnWindowFocus: true,
     refetchInterval: false,
     queryFnParamsFilter: identity,
-    refetchOnMount: true,
-    neverRefetchOnMount: false,
     isDataEqual: deepEqual,
     onError: noop,
     onSuccess: noop,

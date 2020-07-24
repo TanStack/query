@@ -97,7 +97,6 @@ describe('ReactQueryConfigProvider', () => {
     const config = {
       queries: {
         refetchOnWindowFocus: false,
-        refetchOnMount: false,
         retry: false,
       },
     }
@@ -143,7 +142,7 @@ describe('ReactQueryConfigProvider', () => {
     await waitFor(() => rendered.findByText('Data: data'))
 
     // tear down and unmount
-    // so we are NOT passing the config above (refetchOnMount should be `true` by default)
+    // so we are NOT passing the config above
     fireEvent.click(rendered.getByText('unmount'))
 
     act(() => {
@@ -161,15 +160,12 @@ describe('ReactQueryConfigProvider', () => {
 
     const parentConfig = {
       queries: {
-        refetchOnMount: false,
         onSuccess: parentOnSuccess,
       },
     }
 
     const childConfig = {
       queries: {
-        refetchOnMount: true,
-
         // Override onSuccess of parent, making it a no-op
         onSuccess: undefined,
       },
