@@ -56,7 +56,7 @@ const queryInfo = useQuery({
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
-  - If a `[String, ...any]` array is passed, each item will be serialized into a stable query key. See [Query Keys](#query-keys) for more information.
+  - If a `[String, ...any]` array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/queries#query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: Function(variables) => Promise(data/error)`
   - **Required, but only if no default query function has been defined**
@@ -66,7 +66,7 @@ const queryInfo = useQuery({
   - Must return a promise that will either resolves data or throws an error.
 - `enabled: Boolean | unknown`
   - Set this to `false` to disable this query from automatically running.
-  - Actually it can be anything that will pass a boolean condition. See [Dependent Queries](#dependent-queries) for more information.
+  - Actually it can be anything that will pass a boolean condition. See [Dependent Queries](./guides/queries#dependent-queries) for more information.
 - `retry: Boolean | Int | Function(failureCount, error) => shouldRetry | Boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -378,7 +378,7 @@ const data = queryCache.getQueryData(queryKey)
 **Options**
 
 - `queryKey: QueryKey`
-  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+  - See [Query Keys](./guides/queries#query-keys) for more information on how to construct and use a query key
 
 **Returns**
 
@@ -400,7 +400,7 @@ queryCache.setQueryData(queryKey, updater, config)
 **Options**
 
 - `queryKey: QueryKey`
-  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+  - See [Query Keys](./guides/queries#query-keys) for more information on how to construct and use a query key
 - `updater: Any | Function(oldData) => newData`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
@@ -443,7 +443,7 @@ const queries = queryCache.invalidateQueries(inclusiveQueryKeyOrPredicateFn, {
 
 - `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `function`
   - `queryKey: QueryKey`
-    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](#query-keys) for more information.
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](./guides/queries#query-keys) for more information.
   - `Function(query) => Boolean`
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
@@ -480,7 +480,7 @@ const queries = queryCache.cancelQueries(queryKeyOrPredicateFn, {
 
 - `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `function`
   - `queryKey`
-    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](#query-keys) for more information.
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](./guides/queries#query-keys) for more information.
   - `Function(query) => Boolean`
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
@@ -507,7 +507,7 @@ const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
 
 - `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `function`
   - `queryKey`
-    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](#query-keys) for more information.
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](./guides/queries#query-keys) for more information.
   - `Function(query) => Boolean`
     - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
     - The `exact` option has no effect with using a function
@@ -533,7 +533,7 @@ const query = queryCache.getQuery(queryKey)
 **Options**
 
 - `queryKey: QueryKey`
-  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+  - See [Query Keys](./guides/queries#query-keys) for more information on how to construct and use a query key
 
 **Returns**
 
@@ -555,7 +555,7 @@ const queries = queryCache.getQueries(queryKey)
 **Options**
 
 - `queryKey: QueryKey`
-  - See [Query Keys](#query-keys) for more information on how to construct and use a query key
+  - See [Query Keys](./guides/queries#query-keys) for more information on how to construct and use a query key
 
 **Returns**
 
