@@ -34,9 +34,13 @@ export const Nav = () => (
               </Link>
             </div>
             <div>
-              <Link href="/docs/api">
-                <a className="leading-6 font-medium">API</a>
-              </Link>
+              <a
+                href="https://learn.tanstack.com/p/react-query-essentials"
+                target="_blank"
+                className="leading-6 font-medium"
+              >
+                Learn
+              </a>
             </div>
             <div>
               <a href="https://tanstack.com" className="leading-6 font-medium">
