@@ -25,7 +25,7 @@ create a custom hook like this:
 
 ```js
 const useMutateTodo = () => {
-  return useMutate(editTodo, {
+  return useMutation(editTodo, {
     // Notice the second argument is the variables object that the `mutate` function receives
     onSuccess: (data, variables) => {
       queryCache.setQueryData(['todo', { id: variables.id }], data)
