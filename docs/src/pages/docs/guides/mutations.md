@@ -78,7 +78,7 @@ const CreateTodo = () => {
 }
 ```
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](#querycacheinvalidatequeries) and the [Query Cache's `setQueryData` method](#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](../api#querycacheinvalidatequeries) and the [Query Cache's `setQueryData` method](../api/#querycachesetquerydata), mutations become a very powerful tool.
 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
