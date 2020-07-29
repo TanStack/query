@@ -72,7 +72,7 @@ const Home = props => {
           </div>
         </div>
         <div className="bg-gray-900 text-white">
-          <div className="py-30">
+          <div className="py-32">
             <div className="mx-auto container text-center">
               <div className="text-xl">ANNOUNCING</div>
               <div className="text-3xl md:text-5xl font-bold">
