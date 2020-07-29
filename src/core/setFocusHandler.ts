@@ -28,7 +28,7 @@ const onWindowFocus: FocusHandler = () => {
             delete query.promise
           }
 
-          return !!query.config.refetchOnWindowFocus
+          return Boolean(query.config.refetchOnWindowFocus)
         })
         .catch(Console.error)
     )
