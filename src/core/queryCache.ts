@@ -118,6 +118,10 @@ export class QueryCache {
     this.globalListeners.forEach(d => d(queryCache, query))
   }
 
+  getDefaultConfig() {
+    return this.configRef.current
+  }
+
   subscribe(listener: QueryCacheListener): () => void {
     this.globalListeners.push(listener)
     return () => {
