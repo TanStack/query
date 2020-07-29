@@ -1,12 +1,14 @@
 import React from 'react'
 import { DEFAULT_CONFIG, defaultConfigRef } from '../core/config'
+import { useQueryCache } from './ReactQueryCacheProvider'
 
 //
 
 const configContext = React.createContext()
 
 export function useConfigContext() {
-  return React.useContext(configContext) || defaultConfigRef.current
+  const queryCache = useQueryCache()
+  return React.useContext(configContext) || queryCache.configRef.current
 }
 
 export function ReactQueryConfigProvider({ config, children }) {

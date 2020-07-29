@@ -49,6 +49,8 @@ export function makeQueryCache({ frozen = false, defaultConfig } = {}) {
     globalListeners.forEach(d => d(queryCache, query))
   }
 
+  queryCache.configRef = configRef;
+
   queryCache.subscribe = cb => {
     globalListeners.push(cb)
     return () => {
@@ -136,9 +138,6 @@ export function makeQueryCache({ frozen = false, defaultConfig } = {}) {
     config = {
       ...configRef.current.shared,
       ...configRef.current.queries,
-
-      // this is already pre-merged with defaultConfigRef via useConfigContext
-      // when it comes in here...
       ...config,
     }
 

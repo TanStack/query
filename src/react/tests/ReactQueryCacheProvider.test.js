@@ -184,7 +184,7 @@ describe('ReactQueryCacheProvider', () => {
     customCache.clear({ notify: false })
   })
 
-  test.only('uses defaultConfig for queries when they don\'t provide their own config', async () => {
+  test('uses defaultConfig for queries when they don\'t provide their own config', async () => {
     const cache = makeQueryCache({
       defaultConfig: {
         queries: {
