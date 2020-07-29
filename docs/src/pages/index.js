@@ -84,9 +84,15 @@ const Home = props => {
               </div>
               <a
                 href="https://learn.tanstack.com"
-                className="inline-block mt-8 rounded shadow-lg bg-white text-red-700 font-bold text-xl px-4 py-3"
+                className="inline-block mt-8 rounded shadow-lg bg-white text-gray-700 font-bold text-xl px-4 py-3"
               >
-                ENROLL NOW
+                BUY NOW
+              </a>
+              <a
+                className="block text-2xl mt-6 underline"
+                href="https://learn.tanstack.com"
+              >
+                <strong>33% OFF</strong> through August 4th
               </a>
             </div>
           </div>
