@@ -8,6 +8,7 @@ import {
   useQuery,
   queryCache,
   CachedQuery,
+  makeQueryCache
 } from 'react-query'
 
 class FooError extends Error {}
@@ -597,4 +598,14 @@ function mutationStatusDiscriminatedUnion() {
     mutationState.data // $ExpectType string[]
     mutationState.error // $ExpectType undefined
   }
+}
+
+function makeQueryCacheTest() {
+  makeQueryCache({ 
+    defaultConfig: { 
+      queries: {
+        refetchOnMount: false
+      }
+    }
+  })
 }
