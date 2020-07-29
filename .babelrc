@@ -8,6 +8,7 @@
         "exclude": ["@babel/plugin-transform-regenerator"]
       }
     ],
+    "@babel/preset-typescript",
     "@babel/react"
   ],
   "plugins": ["babel-plugin-transform-async-to-promises"],

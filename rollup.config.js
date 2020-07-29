@@ -13,7 +13,11 @@ const globals = {
   react: 'React',
 }
 
-const inputSrc = 'src/react/index.js'
+const inputSrc = 'src/index.ts'
+
+const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
+const babelConfig = { extensions }
+const resolveConfig = { extensions }
 
 export default [
   {
@@ -24,7 +28,12 @@ export default [
       sourcemap: true,
     },
     external,
-    plugins: [resolve(), babel(), commonJS(), externalDeps()],
+    plugins: [
+      resolve(resolveConfig),
+      babel(babelConfig),
+      commonJS(),
+      externalDeps(),
+    ],
   },
   {
     input: inputSrc,
@@ -34,7 +43,13 @@ export default [
       sourcemap: true,
     },
     external,
-    plugins: [resolve(), babel(), commonJS(), externalDeps(), terser()],
+    plugins: [
+      resolve(resolveConfig),
+      babel(babelConfig),
+      commonJS(),
+      externalDeps(),
+      terser(),
+    ],
   },
   {
     input: inputSrc,
@@ -46,7 +61,12 @@ export default [
       globals,
     },
     external,
-    plugins: [resolve(), babel(), commonJS(), externalDeps()],
+    plugins: [
+      resolve(resolveConfig),
+      babel(babelConfig),
+      commonJS(),
+      externalDeps(),
+    ],
   },
   {
     input: inputSrc,
@@ -60,8 +80,8 @@ export default [
     external,
     plugins: [
       replace({ 'process.env.NODE_ENV': `"production"`, delimiters: ['', ''] }),
-      resolve(),
-      babel(),
+      resolve(resolveConfig),
+      babel(babelConfig),
       commonJS(),
       externalDeps(),
       terser(),
