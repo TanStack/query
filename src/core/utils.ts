@@ -91,11 +91,8 @@ export function deepIncludes(a: any, b: any): boolean {
 
 export function isDocumentVisible(): boolean {
   const visibilityState = document?.visibilityState as any
-  return (
-    visibilityState === undefined ||
-    visibilityState === 'visible' ||
-    visibilityState === 'prerender'
-  )
+
+  return [undefined, 'visible', 'prerender'].includes(visibilityState)
 }
 
 export function isOnline(): boolean {
