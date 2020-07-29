@@ -136,6 +136,9 @@ export function makeQueryCache({ frozen = false, defaultConfig } = {}) {
     config = {
       ...configRef.current.shared,
       ...configRef.current.queries,
+
+      // this is already pre-merged with defaultConfigRef via useConfigContext
+      // when it comes in here...
       ...config,
     }
 

@@ -258,4 +258,19 @@ describe('queryCache', () => {
       'config.queryKeySerializerFn is not a function'
     )
   })
+
+  test('makeQueryCache merges defaultConfig when query is added to cache', async () => {
+    const queryCache = makeQueryCache({
+      defaultConfig: {
+        queries: { refetchOnMount: false, staleTime: Infinity },
+      },
+    })
+
+    const queryKey = 'key'
+    const fetchData = () => Promise.resolve(undefined)
+    await queryCache.prefetchQuery(queryKey, fetchData)
+    const newQuery = queryCache.getQuery(queryKey)
+    expect(newQuery.config.staleTime).toBe(Infinity)
+    expect(newQuery.config.refetchOnMount).toBe(false)
+  })
 })
