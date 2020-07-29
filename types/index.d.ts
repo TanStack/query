@@ -637,7 +637,7 @@ export const queryCaches: QueryCache[]
 
 export interface MakeQueryCacheOptions<TError = Error> {
   frozen?: boolean
-  defaultConfig?: ReactQueryProviderConfig
+  defaultConfig?: ReactQueryProviderConfig<TError>
 }
 
 /**

@@ -606,7 +606,7 @@ function mutationStatusDiscriminatedUnion() {
 }
 
 function makeQueryCacheTest() {
-  makeQueryCache({
+  makeQueryCache<FooError>({
     defaultConfig: {
       queries: {
         refetchOnMount: false,
