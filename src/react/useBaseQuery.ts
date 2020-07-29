@@ -39,7 +39,7 @@ export function useBaseQuery<TResult, TError>(
     instanceRef.current?.updateConfig(config)
   })
 
-  const enabledBool = !!config.enabled
+  const enabledBool = Boolean(config.enabled)
 
   // Run the instance when the query or enabled change
   React.useEffect(() => {
