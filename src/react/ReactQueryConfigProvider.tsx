@@ -9,7 +9,11 @@ const configContext = React.createContext<ReactQueryConfig | undefined>(
 
 export function useConfigContext() {
   const queryCache = useQueryCache()
-  return React.useContext(configContext) || queryCache.getDefaultConfig()
+  return (
+    React.useContext(configContext) ||
+    queryCache.getDefaultConfig() ||
+    defaultConfigRef.current
+  )
 }
 
 export interface ReactQueryProviderConfig extends ReactQueryConfig {}
