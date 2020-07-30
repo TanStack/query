@@ -115,7 +115,7 @@ export class QueryCache {
       0
     )
 
-    this.globalListeners.forEach(d => d(queryCache, query))
+    this.globalListeners.forEach(d => d(this, query))
   }
 
   getDefaultConfig() {
@@ -246,7 +246,7 @@ export class QueryCache {
 
     if (!query) {
       query = new Query<TResult, TError>({
-        queryCache,
+        queryCache: this,
         queryKey,
         queryHash,
         config,
