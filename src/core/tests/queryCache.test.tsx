@@ -263,36 +263,49 @@ describe('queryCache', () => {
     expect(newQuery.state.data).toBe('data')
   })
 
-  test('makeQueryCache merges defaultConfig so providing a queryFn does not overwrite the default queryKeySerializerFn', async () => {
-    const queryFn = () => 'data'
-    const queryCache = makeQueryCache({
-      defaultConfig: { queries: { queryFn } },
+  describe('makeQueryCache', () => {
+    test('merges defaultConfig so providing a queryFn does not overwrite the default queryKeySerializerFn', async () => {
+      const queryFn = () => 'data'
+      const queryCache = makeQueryCache({
+        defaultConfig: { queries: { queryFn } },
+      })
+
+      expect(() => queryCache.buildQuery('test')).not.toThrow(
+        'config.queryKeySerializerFn is not a function'
+      )
     })
 
-    expect(() => queryCache.buildQuery('test')).not.toThrow(
-      'config.queryKeySerializerFn is not a function'
-    )
-  })
+    test('merges defaultConfig when query is added to cache', async () => {
+      const queryCache = makeQueryCache({
+        defaultConfig: {
+          queries: { refetchOnMount: false, staleTime: Infinity },
+        },
+      })
 
-  test('makeQueryCache merges defaultConfig when query is added to cache', async () => {
-    const queryCache = makeQueryCache({
-      defaultConfig: {
-        queries: { refetchOnMount: false, staleTime: Infinity },
-      },
+      const queryKey = 'key'
+      const fetchData = () => Promise.resolve(undefined)
+      await queryCache.prefetchQuery(queryKey, fetchData)
+      const newQuery = queryCache.getQuery(queryKey)
+      expect(newQuery?.config.staleTime).toBe(Infinity)
+      expect(newQuery?.config.refetchOnMount).toBe(false)
     })
 
-    const queryKey = 'key'
-    const fetchData = () => Promise.resolve(undefined)
-    await queryCache.prefetchQuery(queryKey, fetchData)
-    const newQuery = queryCache.getQuery(queryKey)
-    expect(newQuery?.config.staleTime).toBe(Infinity)
-    expect(newQuery?.config.refetchOnMount).toBe(false)
-  })
+    test('built queries are referencing the correct queryCache', () => {
+      const queryCache = makeQueryCache()
+      const query = queryCache.buildQuery('test')
 
-  test('queries built with a queryCache are associated with them', () => {
-    const queryCache = makeQueryCache()
-    const query = queryCache.buildQuery('test')
+      expect(query.queryCache).toBe(queryCache)
+    })
 
-    expect(query.queryCache).toBe(queryCache)
+    test('notifyGlobalListeners passes the same instance', () => {
+      const queryCache = makeQueryCache()
+      const subscriber = jest.fn()
+      const unsubscribe = queryCache.subscribe(subscriber)
+      const query = queryCache.buildQuery('test')
+      query.setData('foo');
+      expect(subscriber).toHaveBeenCalledWith(queryCache, query)
+
+      unsubscribe()
+    })
   })
 })
