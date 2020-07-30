@@ -216,7 +216,7 @@ describe('ReactQueryCacheProvider', () => {
     await waitFor(() => rendered.getByText('test'))
 
     expect(cache.getQuery('test')).toBeDefined()
-    expect(cache.getQuery('test').config.staleTime).toBe(Infinity)
+    expect(cache.getQuery('test')?.config.staleTime).toBe(Infinity)
     cache.clear({ notify: false })
   })
 })
