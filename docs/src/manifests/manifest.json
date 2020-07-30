@@ -37,6 +37,11 @@
               "title": "Comparison",
               "path": "/docs/comparison",
               "editUrl": "/docs/comparison.md"
+            },
+            {
+              "title": "TypeScript",
+              "path": "/docs/typescript",
+              "editUrl": "/docs/typescript.md"
             }
           ]
         },

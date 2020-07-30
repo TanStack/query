@@ -71,22 +71,28 @@ const Home = props => {
             </div>
           </div>
         </div>
-        <div className="border-t-4 border-white shadow bg-coral text-white">
-          <div className="py-20">
+        <div className="bg-gray-900 text-white">
+          <div className="py-32">
             <div className="mx-auto container text-center">
               <div className="text-xl">ANNOUNCING</div>
               <div className="text-3xl md:text-5xl font-bold">
                 React Query Essentials
               </div>
               <div className="text-xl italic">
-                The <strong>OFFICIAL</strong> React Query course by{' '}
+                The <strong>official</strong> React Query course by{' '}
                 <strong>Tanner Linsley</strong>
               </div>
               <a
                 href="https://learn.tanstack.com"
-                className="inline-block mt-8 rounded shadow-lg bg-white text-red-700 font-bold text-xl px-4 py-3"
+                className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
               >
-                ENROLL NOW
+                BUY NOW
+              </a>
+              <a
+                className="block text-2xl mt-6 underline"
+                href="https://learn.tanstack.com"
+              >
+                <strong>33% OFF</strong> through August 4th
               </a>
             </div>
           </div>
