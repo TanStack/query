@@ -90,9 +90,11 @@ export function deepIncludes(a: any, b: any): boolean {
 }
 
 export function isDocumentVisible(): boolean {
-  const visibilityState = document?.visibilityState as any
-
-  return [undefined, 'visible', 'prerender'].includes(visibilityState)
+  // document global can be unavailable in react native
+  if (typeof document === 'undefined') {
+    return true
+  }
+  return [undefined, 'visible', 'prerender'].includes(document.visibilityState)
 }
 
 export function isOnline(): boolean {
