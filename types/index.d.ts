@@ -635,16 +635,16 @@ export interface QueryCache {
 export const queryCache: QueryCache
 export const queryCaches: QueryCache[]
 
-export interface MakeQueryCacheOptions {
+export interface MakeQueryCacheOptions<TError = Error> {
   frozen?: boolean
-  defaultConfig?: BaseQueryOptions
+  defaultConfig?: ReactQueryProviderConfig<TError>
 }
 
 /**
  * a factory that creates a new query cache
  */
-export function makeQueryCache(
-  makeQueryCacheOptions?: MakeQueryCacheOptions
+export function makeQueryCache<TError = Error>(
+  makeQueryCacheOptions?: MakeQueryCacheOptions<TError>
 ): QueryCache
 
 /**

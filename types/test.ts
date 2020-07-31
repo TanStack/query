@@ -8,9 +8,12 @@ import {
   useQuery,
   queryCache,
   CachedQuery,
+  makeQueryCache,
 } from 'react-query'
 
-class FooError extends Error {}
+class FooError extends Error {
+  foo = true
+}
 
 function resetErrorBoundaries() {
   queryCache.resetErrorBoundaries // $ExpectType () => void
@@ -39,36 +42,39 @@ function prefetchQuery() {
 }
 
 function getQueryData() {
-  queryCache.getQueryData(['queryKey']);
-  queryCache.getQueryData('queryKey');
-  queryCache.getQueryData(true);
-  queryCache.getQueryData((query) => true);
+  queryCache.getQueryData(['queryKey'])
+  queryCache.getQueryData('queryKey')
+  queryCache.getQueryData(true)
+  queryCache.getQueryData(query => true)
 }
 
 function setQueryData() {
-  queryCache.setQueryData(['queryKey'], ['data']);
-  queryCache.setQueryData('queryKey', ['data']);
-  queryCache.setQueryData(true, ['data']);
-  queryCache.setQueryData((query) => true, ['data']);
+  queryCache.setQueryData(['queryKey'], ['data'])
+  queryCache.setQueryData('queryKey', ['data'])
+  queryCache.setQueryData(true, ['data'])
+  queryCache.setQueryData(query => true, ['data'])
 }
 
 function getQuery() {
-  queryCache.getQuery(['queryKey']);
-  queryCache.getQuery('queryKey');
-  queryCache.getQuery(true);
-  queryCache.getQuery((query) => true);
+  queryCache.getQuery(['queryKey'])
+  queryCache.getQuery('queryKey')
+  queryCache.getQuery(true)
+  queryCache.getQuery(query => true)
 }
 
 function getQueries() {
-  queryCache.getQueries(['queryKey']);
-  queryCache.getQueries('queryKey');
-  queryCache.getQueries(true);
-  queryCache.getQueries((query) => true);
+  queryCache.getQueries(['queryKey'])
+  queryCache.getQueries('queryKey')
+  queryCache.getQueries(true)
+  queryCache.getQueries(query => true)
 }
 
 function cachedQueryErrorState() {
-  const query = queryCache.getQuery(['queryKey']) as CachedQuery<unknown, FooError>
-  const error: FooError | null | undefined = query.state.error;
+  const query = queryCache.getQuery(['queryKey']) as CachedQuery<
+    unknown,
+    FooError
+  >
+  const error: FooError | null | undefined = query.state.error
 }
 
 function simpleQuery() {
@@ -597,4 +603,17 @@ function mutationStatusDiscriminatedUnion() {
     mutationState.data // $ExpectType string[]
     mutationState.error // $ExpectType undefined
   }
+}
+
+function makeQueryCacheTest() {
+  makeQueryCache<FooError>({
+    defaultConfig: {
+      queries: {
+        refetchOnMount: false,
+        onError: err => {
+          err.foo
+        },
+      },
+    },
+  })
 }
