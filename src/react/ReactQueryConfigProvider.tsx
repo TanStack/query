@@ -1,14 +1,19 @@
 import React from 'react'
-
 import { DEFAULT_CONFIG, defaultConfigRef } from '../core/config'
 import { ReactQueryConfig } from '../core/types'
+import { useQueryCache } from './ReactQueryCacheProvider'
 
 const configContext = React.createContext<ReactQueryConfig | undefined>(
   undefined
 )
 
 export function useConfigContext() {
-  return React.useContext(configContext) || defaultConfigRef.current
+  const queryCache = useQueryCache()
+  return (
+    React.useContext(configContext) ||
+    queryCache.getDefaultConfig() ||
+    defaultConfigRef.current
+  )
 }
 
 export interface ReactQueryProviderConfig extends ReactQueryConfig {}

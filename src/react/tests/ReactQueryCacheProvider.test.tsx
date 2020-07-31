@@ -184,4 +184,39 @@ describe('ReactQueryCacheProvider', () => {
     expect(caches[0].clear).toHaveBeenCalled()
     customCache.clear({ notify: false })
   })
+
+  test('uses defaultConfig for queries when they don\'t provide their own config', async () => {
+    const cache = makeQueryCache({
+      defaultConfig: {
+        queries: {
+          staleTime: Infinity,
+        },
+      },
+    })
+
+    function Page() {
+      const { data } = useQuery('test', async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const rendered = render(
+      <ReactQueryCacheProvider queryCache={cache}>
+        <Page />
+      </ReactQueryCacheProvider>
+    )
+
+    await waitFor(() => rendered.getByText('test'))
+
+    expect(cache.getQuery('test')).toBeDefined()
+    expect(cache.getQuery('test')?.config.staleTime).toBe(Infinity)
+    cache.clear({ notify: false })
+  })
 })

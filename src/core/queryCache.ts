@@ -115,7 +115,11 @@ export class QueryCache {
       0
     )
 
-    this.globalListeners.forEach(d => d(queryCache, query))
+    this.globalListeners.forEach(d => d(this, query))
+  }
+
+  getDefaultConfig() {
+    return this.configRef.current
   }
 
   subscribe(listener: QueryCacheListener): () => void {
@@ -242,7 +246,7 @@ export class QueryCache {
 
     if (!query) {
       query = new Query<TResult, TError>({
-        queryCache,
+        queryCache: this,
         queryKey,
         queryHash,
         config,
@@ -403,9 +407,9 @@ export class QueryCache {
   }
 }
 
-export const queryCache = makeQueryCache({ frozen: isServer })
-
-export const queryCaches = [queryCache]
+const defaultQueryCache = makeQueryCache({ frozen: isServer })
+export { defaultQueryCache as queryCache }
+export const queryCaches = [defaultQueryCache]
 
 export function makeQueryCache(config?: QueryCacheConfig) {
   return new QueryCache(config)
