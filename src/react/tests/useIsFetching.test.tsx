@@ -1,24 +1,21 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, useIsFetching, queryCaches } from '../index'
-import { sleep } from './utils'
+import { useQuery, useIsFetching } from '../index'
+import { sleep, queryKey } from './utils'
 
 describe('useIsFetching', () => {
-  afterEach(() => {
-    // We notify false because it causes act issue if we notify useIsFetching after it's unmounted
-    queryCaches.forEach(cache => cache.clear({ notify: false }))
-  })
-
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
+    const key = queryKey()
+
     function Page() {
       const [ready, setReady] = React.useState(false)
 
       const isFetching = useIsFetching()
 
       useQuery(
-        'test',
+        key,
         async () => {
           await sleep(1000)
           return 'test'

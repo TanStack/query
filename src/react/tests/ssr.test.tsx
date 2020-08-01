@@ -12,7 +12,7 @@ import {
   makeQueryCache,
   useQuery,
 } from '../index'
-import { sleep } from './utils'
+import { sleep, queryKey } from './utils'
 
 describe('Server Side Rendering', () => {
   // A frozen cache does not cache any data. This is the default
@@ -22,13 +22,13 @@ describe('Server Side Rendering', () => {
   //
   // See https://github.com/tannerlinsley/react-query/issues/70
   it('global cache should be frozen by default', async () => {
+    const key = queryKey()
+
     const fetchFn = () => Promise.resolve('data')
-    const data = await queryCache.prefetchQuery('key', fetchFn)
+    const data = await queryCache.prefetchQuery(key, fetchFn)
 
     expect(data).toBe('data')
-    expect(queryCache.getQuery('key')).toBeFalsy()
-
-    queryCache.clear({ notify: false })
+    expect(queryCache.getQuery(key)).toBeFalsy()
   })
 
   // When consumers of the library create a cache explicitly by
@@ -36,21 +36,25 @@ describe('Server Side Rendering', () => {
   // not using that cache to cache data between requests or do so
   // in a safe way.
   it('created caches should be unfrozen by default', async () => {
+    const key = queryKey()
+
     const queryCache = makeQueryCache()
     const fetchFn = () => Promise.resolve('data')
-    const data = await queryCache.prefetchQuery('key', fetchFn)
+    const data = await queryCache.prefetchQuery(key, fetchFn)
 
     expect(data).toBe('data')
-    expect(queryCache.getQuery('key')).toBeTruthy()
+    expect(queryCache.getQuery(key)).toBeTruthy()
   })
 
   describe('frozen cache', () => {
     it('should not trigger fetch', () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: true })
       const queryFn = jest.fn()
 
       function Page() {
-        const query = useQuery('test', queryFn)
+        const query = useQuery(key, queryFn)
 
         const content = `status ${query.status}`
 
@@ -72,12 +76,14 @@ describe('Server Side Rendering', () => {
     })
 
     it('should not add initialData to the cache', () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: true })
 
       function Page() {
         const [page, setPage] = React.useState(1)
         const { resolvedData } = usePaginatedQuery(
-          ['data', page],
+          [key, page],
           async (_queryName: string, page: number) => {
             return page
           },
@@ -98,22 +104,26 @@ describe('Server Side Rendering', () => {
     })
 
     it('should not add prefetched data to the cache', async () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: true })
       const fetchFn = () => Promise.resolve('data')
-      const data = await queryCache.prefetchQuery('key', fetchFn)
+      const data = await queryCache.prefetchQuery(key, fetchFn)
 
       expect(data).toBe('data')
-      expect(queryCache.getQuery('key')).toBeFalsy()
+      expect(queryCache.getQuery(key)).toBeFalsy()
     })
   })
 
   describe('unfrozen cache', () => {
     it('should not trigger fetch', () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: false })
       const queryFn = jest.fn()
 
       function Page() {
-        const query = useQuery('test', queryFn)
+        const query = useQuery(key, queryFn)
 
         const content = `status ${query.status}`
 
@@ -135,20 +145,24 @@ describe('Server Side Rendering', () => {
     })
 
     it('should add prefetched data to cache', async () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: false })
       const fetchFn = () => Promise.resolve('data')
-      const data = await queryCache.prefetchQuery('key', fetchFn)
+      const data = await queryCache.prefetchQuery(key, fetchFn)
 
       expect(data).toBe('data')
-      expect(queryCache.getQuery('key')?.state.data).toBe('data')
+      expect(queryCache.getQuery(key)?.state.data).toBe('data')
     })
 
     it('should return existing data from the cache', async () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: false })
       const queryFn = jest.fn(() => sleep(10))
 
       function Page() {
-        const query = useQuery('test', queryFn)
+        const query = useQuery(key, queryFn)
 
         const content = `status ${query.status}`
 
@@ -159,7 +173,7 @@ describe('Server Side Rendering', () => {
         )
       }
 
-      await queryCache.prefetchQuery('test', queryFn)
+      await queryCache.prefetchQuery(key, queryFn)
 
       const markup = renderToString(
         <ReactQueryCacheProvider queryCache={queryCache}>
@@ -172,11 +186,13 @@ describe('Server Side Rendering', () => {
     })
 
     it('should add initialData to the cache', () => {
+      const key = queryKey()
+
       const queryCache = makeQueryCache({ frozen: false })
       function Page() {
         const [page, setPage] = React.useState(1)
         const { resolvedData } = usePaginatedQuery(
-          ['data', page],
+          [key, page],
           async (_queryName: string, page: number) => {
             return page
           },
@@ -197,10 +213,12 @@ describe('Server Side Rendering', () => {
         </ReactQueryCacheProvider>
       )
 
-      expect(Object.keys(queryCache.queries)).toEqual(['["data",1]'])
+      expect(Object.keys(queryCache.queries)).toEqual([`["${key}",1]`])
     })
 
     it('should not call setTimeout', async () => {
+      const key = queryKey()
+
       // @ts-ignore
       const setTimeoutMock = jest.spyOn(global, 'setTimeout')
 
@@ -208,7 +226,7 @@ describe('Server Side Rendering', () => {
       const queryFn = jest.fn(() => Promise.resolve())
 
       function Page() {
-        const query = useQuery('test', queryFn)
+        const query = useQuery(key, queryFn)
 
         const content = `status ${query.status}`
 
@@ -219,7 +237,7 @@ describe('Server Side Rendering', () => {
         )
       }
 
-      await queryCache.prefetchQuery('test', queryFn)
+      await queryCache.prefetchQuery(key, queryFn)
 
       const markup = renderToString(
         <ReactQueryCacheProvider queryCache={queryCache}>

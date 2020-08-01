@@ -1,21 +1,18 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { sleep } from './utils'
+import { sleep, queryKey } from './utils'
 
-import { usePaginatedQuery, queryCaches } from '../index'
+import { usePaginatedQuery } from '../index'
 import { PaginatedQueryResult } from '../../core/types'
 
 describe('usePaginatedQuery', () => {
-  afterEach(() => {
-    queryCaches.forEach(cache => cache.clear({ notify: false }))
-  })
-
   it('should return the correct states for a successful query', async () => {
+    const key = queryKey()
     const states: PaginatedQueryResult<number>[] = []
 
     function Page() {
       const state = usePaginatedQuery(
-        ['data', 1],
+        [key, 1],
         async (_queryName, page: number) => {
           await sleep(10)
           return page
@@ -73,10 +70,12 @@ describe('usePaginatedQuery', () => {
   })
 
   it('should use previous page data while fetching the next page', async () => {
+    const key = queryKey()
+
     function Page() {
       const [page, setPage] = React.useState(1)
       const { resolvedData = 'undefined' } = usePaginatedQuery(
-        ['data', page],
+        [key, page],
         async (_queryName: string, page: number) => {
           await sleep(10)
           return page
@@ -106,12 +105,14 @@ describe('usePaginatedQuery', () => {
   })
 
   it('should use initialData only on the first page, then use previous page data while fetching the next page', async () => {
+    const key = queryKey()
+
     function Page() {
       const [page, setPage] = React.useState(1)
       const params = { page }
 
       const { resolvedData } = usePaginatedQuery(
-        ['data', params],
+        [key, params],
         async (_queryName: string, { page }: typeof params) => {
           await sleep(10)
           return page
@@ -146,12 +147,14 @@ describe('usePaginatedQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/169
   it('should not trigger unnecessary loading state', async () => {
+    const key = queryKey()
+
     function Page() {
       const [page, setPage] = React.useState(1)
       const params = { page }
 
       const { resolvedData, status } = usePaginatedQuery(
-        ['data', params],
+        [key, params],
         async (_queryName: string, { page }: typeof params) => {
           await sleep(10)
           return page
@@ -182,11 +185,13 @@ describe('usePaginatedQuery', () => {
   })
 
   it('should clear resolvedData data when query is falsy', async () => {
+    const key = queryKey()
+
     function Page() {
       const [searchTerm, setSearchTerm] = React.useState('')
       const [page, setPage] = React.useState(1)
       const { resolvedData = 'undefined' } = usePaginatedQuery(
-        ['data', searchTerm, page],
+        [key, searchTerm, page],
         async (_queryName: string, searchTerm: string, page: number) => {
           await sleep(10)
           return `${searchTerm} ${page}`
@@ -245,12 +250,14 @@ describe('usePaginatedQuery', () => {
   })
 
   it('should not suspend while fetching the next page', async () => {
+    const key = queryKey()
+
     function Page() {
       const [page, setPage] = React.useState(1)
       const params = { page }
 
       const { resolvedData } = usePaginatedQuery(
-        ['data', params],
+        [key, params],
         async (_queryName: string, { page }: typeof params) => {
           await sleep(10)
           return page

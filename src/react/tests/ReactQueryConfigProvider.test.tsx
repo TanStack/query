@@ -1,21 +1,14 @@
 import React, { useState } from 'react'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
-import {
-  ReactQueryConfigProvider,
-  useQuery,
-  queryCache,
-  queryCaches,
-} from '../index'
+import { ReactQueryConfigProvider, useQuery, queryCache } from '../index'
 
-import { sleep } from './utils'
+import { sleep, queryKey } from './utils'
 
 describe('ReactQueryConfigProvider', () => {
-  afterEach(() => {
-    queryCaches.forEach(cache => cache.clear({ notify: false }))
-  })
-
   // // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow overriding the config', async () => {
+    const key = queryKey()
+
     const onSuccess = jest.fn()
 
     const config = {
@@ -25,7 +18,7 @@ describe('ReactQueryConfigProvider', () => {
     }
 
     function Page() {
-      const { status } = useQuery('test', async () => {
+      const { status } = useQuery(key, async () => {
         await sleep(10)
         return 'data'
       })
@@ -49,6 +42,8 @@ describe('ReactQueryConfigProvider', () => {
   })
 
   it('should allow overriding the default config from the outermost provider', async () => {
+    const key = queryKey()
+
     const outerConfig = {
       queries: {
         queryFn: jest.fn(async () => {
@@ -81,17 +76,19 @@ describe('ReactQueryConfigProvider', () => {
 
     await waitFor(() => rendered.getByText('Placeholder'))
 
-    await queryCache.prefetchQuery('test')
+    await queryCache.prefetchQuery(key)
 
-    expect(outerConfig.queries.queryFn).toHaveBeenCalledWith('test')
+    expect(outerConfig.queries.queryFn).toHaveBeenCalledWith(key)
     expect(innerConfig.queries.queryFn).not.toHaveBeenCalled()
 
-    const data = queryCache.getQueryData('test')
+    const data = queryCache.getQueryData(key)
 
     expect(data).toEqual('outer')
   })
 
   it('should reset to defaults when unmounted', async () => {
+    const key = queryKey()
+
     const onSuccess = jest.fn()
 
     const config = {
@@ -125,7 +122,7 @@ describe('ReactQueryConfigProvider', () => {
     }
 
     function Page() {
-      const { data } = useQuery('test', queryFn)
+      const { data } = useQuery(key, queryFn)
 
       return (
         <div>
@@ -139,7 +136,7 @@ describe('ReactQueryConfigProvider', () => {
     await waitFor(() => rendered.getByText('Data: none'))
 
     act(() => {
-      queryCache.prefetchQuery('test', queryFn)
+      queryCache.prefetchQuery(key, queryFn)
     })
 
     await waitFor(() => rendered.getByText('Data: data'))
@@ -149,8 +146,6 @@ describe('ReactQueryConfigProvider', () => {
     fireEvent.click(rendered.getByText('unmount'))
 
     act(() => {
-      // wipe query cache/stored config
-      queryCache.clear({ notify: false })
       onSuccess.mockClear()
     })
 
@@ -158,6 +153,8 @@ describe('ReactQueryConfigProvider', () => {
   })
 
   it('should reset to previous config when nested provider is unmounted', async () => {
+    const key = queryKey()
+
     let counterRef = 0
     const parentOnSuccess = jest.fn()
 
@@ -184,7 +181,7 @@ describe('ReactQueryConfigProvider', () => {
     }
 
     function Component() {
-      const { data, refetch } = useQuery('test', queryFn)
+      const { data, refetch } = useQuery(key, queryFn)
 
       return (
         <div>

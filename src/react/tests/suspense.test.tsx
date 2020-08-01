@@ -2,20 +2,18 @@ import { render, waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { useQuery, queryCache, queryCaches } from '../index'
-import { sleep } from './utils'
+import { useQuery, queryCache } from '../index'
+import { sleep, queryKey } from './utils'
 
 describe("useQuery's in Suspense mode", () => {
-  afterEach(() => {
-    queryCaches.forEach(cache => cache.clear({ notify: false }))
-  })
-
   it('should not call the queryFn twice when used in Suspense mode', async () => {
+    const key = queryKey()
+
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => sleep(10))
 
     function Page() {
-      useQuery(['test'], queryFn, { suspense: true })
+      useQuery([key], queryFn, { suspense: true })
 
       return <>rendered</>
     }
@@ -32,10 +30,10 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should remove query instance when component unmounted', async () => {
-    const QUERY_KEY = 'test'
+    const key = queryKey()
 
     function Page() {
-      useQuery([QUERY_KEY], () => sleep(10), { suspense: true })
+      useQuery([key], () => sleep(10), { suspense: true })
 
       return <>rendered</>
     }
@@ -54,24 +52,26 @@ describe("useQuery's in Suspense mode", () => {
     const rendered = render(<App />)
 
     expect(rendered.queryByText('rendered')).toBeNull()
-    expect(queryCache.getQuery(QUERY_KEY)).toBeFalsy()
+    expect(queryCache.getQuery(key)).toBeFalsy()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await waitFor(() => rendered.getByText('rendered'))
 
-    expect(queryCache.getQuery(QUERY_KEY)?.instances.length).toBe(1)
+    expect(queryCache.getQuery(key)?.instances.length).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
 
     expect(rendered.queryByText('rendered')).toBeNull()
-    expect(queryCache.getQuery(QUERY_KEY)?.instances.length).toBe(0)
+    expect(queryCache.getQuery(key)?.instances.length).toBe(0)
   })
 
   it('should call onSuccess on the first successful call', async () => {
+    const key = queryKey()
+
     const successFn = jest.fn()
 
     function Page() {
-      useQuery(['test'], () => sleep(10), {
+      useQuery([key], () => sleep(10), {
         suspense: true,
         onSuccess: successFn,
       })
@@ -92,13 +92,15 @@ describe("useQuery's in Suspense mode", () => {
 
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
+    const key = queryKey()
+
     let succeed = false
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
     function Page() {
       useQuery(
-        'test',
+        key,
         async () => {
           await sleep(10)
 
@@ -154,12 +156,14 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should not call the queryFn when not enabled', async () => {
+    const key = queryKey()
+
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => sleep(10))
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      useQuery(['test'], queryFn, { suspense: true, enabled })
+      useQuery([key], queryFn, { suspense: true, enabled })
 
       return <button aria-label="fire" onClick={() => setEnabled(true)} />
     }
