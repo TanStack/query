@@ -154,10 +154,10 @@ export class Query<TResult, TError> {
           infiniteData[infiniteData.length - 1],
           infiniteData
         )
-        this.state.canFetchMore = this.fetchMoreVariable !== false
+        this.state.canFetchMore = Boolean(this.fetchMoreVariable)
       }
 
-      // Here we seed the pageVariabes for the query
+      // Here we seed the pageVariables for the query
       if (!this.pageVariables) {
         this.pageVariables = [[...this.queryKey]]
       }
@@ -460,7 +460,7 @@ export class Query<TResult, TError> {
           data[data.length - 1],
           data
         )
-        this.state.canFetchMore = this.fetchMoreVariable !== false
+        this.state.canFetchMore = Boolean(this.fetchMoreVariable)
         this.pageVariables = rebuiltPageVariables
 
         return (data as unknown) as TResult
@@ -497,7 +497,7 @@ export class Query<TResult, TError> {
             }
 
             this.fetchMoreVariable = infiniteConfig.getFetchMore(newData, data)
-            this.state.canFetchMore = this.fetchMoreVariable !== false
+            this.state.canFetchMore = Boolean(this.fetchMoreVariable)
 
             return (data as unknown) as TResult
           } finally {

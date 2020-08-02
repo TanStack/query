@@ -202,6 +202,84 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should compute canFetchMore correctly for falsy getFetchMore return value', async () => {
+    function Page() {
+      const fetchCountRef = React.useRef(0)
+      const {
+        status,
+        data,
+        error,
+        isFetching,
+        isFetchingMore,
+        fetchMore,
+        canFetchMore,
+        refetch,
+      } = useInfiniteQuery<Result, Error, string>(
+        'items',
+        (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
+        {
+          getFetchMore: (_lastGroup, _allGroups) => undefined,
+        }
+      )
+
+      return (
+        <div>
+          <h1>Pagination</h1>
+          {status === 'loading' ? (
+            'Loading...'
+          ) : status === 'error' ? (
+            <span>Error: {error?.message}</span>
+          ) : (
+            <>
+              <div>Data:</div>
+              {data?.map((page, i) => (
+                <div key={i}>
+                  <div>
+                    Page {i}: {page.ts}
+                  </div>
+                  <div key={i}>
+                    {page.items.map(item => (
+                      <p key={item}>Item: {item}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div>
+                <button
+                  onClick={() => fetchMore()}
+                  disabled={!canFetchMore || Boolean(isFetchingMore)}
+                >
+                  {isFetchingMore
+                    ? 'Loading more...'
+                    : canFetchMore
+                    ? 'Load More'
+                    : 'Nothing more to load'}
+                </button>
+                <button onClick={() => refetch()}>Refetch</button>
+              </div>
+              <div>
+                {isFetching && !isFetchingMore
+                  ? 'Background Updating...'
+                  : null}
+              </div>
+            </>
+          )}
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('Loading...')
+
+    await waitFor(() => {
+      rendered.getByText('Item: 9')
+      rendered.getByText('Page 0: 0')
+    })
+
+    rendered.getByText('Nothing more to load')
+  })
+
   it('should compute canFetchMore correctly using initialData', async () => {
     function Page() {
       const fetchCountRef = React.useRef(0)
@@ -291,6 +369,81 @@ describe('useInfiniteQuery', () => {
       rendered.getByText('Page 0: 1')
       rendered.getByText('Page 1: 2')
     })
+  })
+
+  it('should compute canFetchMore correctly for falsy getFetchMore return value using initialData', async () => {
+    function Page() {
+      const fetchCountRef = React.useRef(0)
+      const {
+        status,
+        data,
+        error,
+        isFetching,
+        isFetchingMore,
+        fetchMore,
+        canFetchMore,
+        refetch,
+      } = useInfiniteQuery<Result, Error, string>(
+        'items',
+        (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
+        {
+          initialData: [initialItems(0)],
+          getFetchMore: (_lastGroup, _allGroups) => undefined,
+        }
+      )
+
+      return (
+        <div>
+          <h1>Pagination</h1>
+          {status === 'loading' ? (
+            'Loading...'
+          ) : status === 'error' ? (
+            <span>Error: {error?.message}</span>
+          ) : (
+            <>
+              <div>Data:</div>
+              {data?.map((page, i) => (
+                <div key={i}>
+                  <div>
+                    Page {i}: {page.ts}
+                  </div>
+                  <div key={i}>
+                    {page.items.map(item => (
+                      <p key={item}>Item: {item}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div>
+                <button
+                  onClick={() => fetchMore()}
+                  disabled={!canFetchMore || Boolean(isFetchingMore)}
+                >
+                  {isFetchingMore
+                    ? 'Loading more...'
+                    : canFetchMore
+                    ? 'Load More'
+                    : 'Nothing more to load'}
+                </button>
+                <button onClick={() => refetch()}>Refetch</button>
+              </div>
+              <div>
+                {isFetching && !isFetchingMore
+                  ? 'Background Updating...'
+                  : null}
+              </div>
+            </>
+          )}
+        </div>
+      )
+    }
+
+    const rendered = render(<Page />)
+
+    rendered.getByText('Item: 9')
+    rendered.getByText('Page 0: 0')
+
+    rendered.getByText('Nothing more to load')
   })
 
   it('should build fresh cursors on refetch', async () => {
