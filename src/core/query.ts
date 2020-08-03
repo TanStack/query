@@ -43,7 +43,6 @@ export interface QueryState<TResult, TError> {
   isLoading: boolean
   isStale: boolean
   isSuccess: boolean
-  markedForGarbageCollection: boolean
   status: QueryStatus
   throwInErrorBoundary?: boolean
   updatedAt: number
@@ -61,7 +60,6 @@ export interface FetchMoreOptions {
 enum ActionType {
   Failed = 'Failed',
   MarkStale = 'MarkStale',
-  MarkGC = 'MarkGC',
   Fetch = 'Fetch',
   Success = 'Success',
   Error = 'Error',
@@ -74,10 +72,6 @@ interface FailedAction {
 
 interface MarkStaleAction {
   type: ActionType.MarkStale
-}
-
-interface MarkGCAction {
-  type: ActionType.MarkGC
 }
 
 interface FetchAction {
@@ -105,7 +99,6 @@ type Action<TResult, TError> =
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
-  | MarkGCAction
   | MarkStaleAction
   | SetStateAction<TResult, TError>
   | SuccessAction<TResult>
@@ -220,14 +213,9 @@ export class Query<TResult, TError> {
       return
     }
 
-    this.dispatch({ type: ActionType.MarkGC })
-
     this.cacheTimeout = setTimeout(
       () => {
-        this.queryCache.removeQueries(
-          d =>
-            d.state.markedForGarbageCollection && d.queryHash === this.queryHash
-        )
+        this.clear()
       },
       typeof this.state.data === 'undefined' &&
         this.state.status !== QueryStatus.Error
@@ -612,7 +600,6 @@ function getDefaultState<TResult, TError>(
     isFetching: initialStatus === QueryStatus.Loading,
     failureCount: 0,
     isStale,
-    markedForGarbageCollection: false,
     data: initialData,
     updatedAt: hasInitialData ? Date.now() : 0,
   }
@@ -633,12 +620,6 @@ export function queryReducer<TResult, TError>(
         ...state,
         isStale: true,
       }
-    case ActionType.MarkGC: {
-      return {
-        ...state,
-        markedForGarbageCollection: true,
-      }
-    }
     case ActionType.Fetch:
       const status =
         typeof state.data !== 'undefined'

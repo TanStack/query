@@ -537,18 +537,16 @@ describe('useQuery', () => {
     const key = queryKey()
 
     const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10).then(() => 'data'))
+    queryFn.mockImplementation(() => 'data')
 
     const prefetchQueryFn = jest.fn()
-    prefetchQueryFn.mockImplementation(() => sleep(16).then(() => 'not yet...'))
+    prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    await act(() =>
-      queryCache.prefetchQuery(key, prefetchQueryFn, {
-        staleTime: 10,
-      })
-    )
+    await queryCache.prefetchQuery(key, prefetchQueryFn, {
+      staleTime: 10,
+    })
 
-    await act(() => sleep(20))
+    await sleep(100)
 
     function Page() {
       const query = useQuery(key, queryFn)
@@ -560,9 +558,9 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    render(<Page />)
 
-    await waitFor(() => rendered.getByText('data'))
+    await sleep(100)
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -572,16 +570,16 @@ describe('useQuery', () => {
     const key = queryKey()
 
     const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10).then(() => 'data'))
+    queryFn.mockImplementation(() => 'data')
 
     const prefetchQueryFn = jest.fn()
-    prefetchQueryFn.mockImplementation(() => sleep(16).then(() => 'not yet...'))
+    prefetchQueryFn.mockImplementation(() => 'not yet...')
 
-    await act(() =>
-      queryCache.prefetchQuery(key, prefetchQueryFn, {
-        staleTime: 1000,
-      })
-    )
+    await queryCache.prefetchQuery(key, prefetchQueryFn, {
+      staleTime: 1000,
+    })
+
+    sleep(100)
 
     function Page() {
       const query = useQuery(key, queryFn)
@@ -593,9 +591,9 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    render(<Page />)
 
-    await waitFor(() => rendered.getByText('data'))
+    sleep(100)
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
