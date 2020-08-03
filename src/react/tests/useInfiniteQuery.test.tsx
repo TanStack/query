@@ -1,8 +1,8 @@
 import { render, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { useInfiniteQuery, useQueryCache, queryCaches } from '../index'
-import { sleep } from './utils'
+import { useInfiniteQuery, useQueryCache } from '../index'
+import { sleep, queryKey } from './utils'
 import { InfiniteQueryResult } from '../../core/types'
 
 interface Result {
@@ -31,17 +31,15 @@ const fetchItems = async (page: number, ts: number): Promise<Result> => {
 }
 
 describe('useInfiniteQuery', () => {
-  afterEach(() => {
-    queryCaches.forEach(cache => cache.clear({ notify: false }))
-  })
-
   it('should return the correct states for a successful query', async () => {
+    const key = queryKey()
+
     let count = 0
     const states: InfiniteQueryResult<Result>[] = []
 
     function Page() {
       const state = useInfiniteQuery(
-        'items',
+        key,
         (_key: string, nextId = 0) => fetchItems(nextId, count++),
         {
           getFetchMore: (lastGroup, _allGroups) => Boolean(lastGroup.nextId),
@@ -108,6 +106,8 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should allow you to fetch more pages', async () => {
+    const key = queryKey()
+
     function Page() {
       const fetchCountRef = React.useRef(0)
       const {
@@ -120,7 +120,7 @@ describe('useInfiniteQuery', () => {
         canFetchMore,
         refetch,
       } = useInfiniteQuery<Result, Error, string>(
-        'items',
+        key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
           getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
@@ -281,6 +281,8 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should compute canFetchMore correctly using initialData', async () => {
+    const key = queryKey()
+
     function Page() {
       const fetchCountRef = React.useRef(0)
       const {
@@ -293,7 +295,7 @@ describe('useInfiniteQuery', () => {
         canFetchMore,
         refetch,
       } = useInfiniteQuery<Result, Error, string>(
-        'items',
+        key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
           initialData: [initialItems(0)],
@@ -447,6 +449,8 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should build fresh cursors on refetch', async () => {
+    const key = queryKey()
+
     const genItems = (size: number) =>
       [...new Array(size)].fill(null).map((_, d) => d)
     const items = genItems(15)
@@ -473,7 +477,7 @@ describe('useInfiniteQuery', () => {
         canFetchMore,
         refetch,
       } = useInfiniteQuery<Result, Error, string>(
-        'items',
+        key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
           getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
@@ -520,7 +524,7 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    queryCache.invalidateQueries('items')
+                    queryCache.invalidateQueries(key)
                   }}
                 >
                   Remove item

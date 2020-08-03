@@ -6,19 +6,16 @@ import {
   queryCache,
   useQuery,
   useQueryCache,
-  queryCaches,
 } from '../index'
-import { sleep } from './utils'
+import { sleep, queryKey } from './utils'
 import { QueryCache } from '../../core/queryCache'
 
 describe('ReactQueryCacheProvider', () => {
-  afterEach(() => {
-    queryCaches.forEach(cache => cache.clear({ notify: false }))
-  })
-
   test('when not used, falls back to global cache', async () => {
+    const key = queryKey()
+
     function Page() {
-      const { data } = useQuery('test', async () => {
+      const { data } = useQuery(key, async () => {
         await sleep(10)
         return 'test'
       })
@@ -34,14 +31,16 @@ describe('ReactQueryCacheProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.getQuery('test')).toBeDefined()
+    expect(queryCache.getQuery(key)).toBeDefined()
   })
 
   test('sets a specific cache for all queries to use', async () => {
+    const key = queryKey()
+
     const cache = makeQueryCache()
 
     function Page() {
-      const { data } = useQuery('test', async () => {
+      const { data } = useQuery(key, async () => {
         await sleep(10)
         return 'test'
       })
@@ -61,14 +60,15 @@ describe('ReactQueryCacheProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.getQuery('test')).not.toBeDefined()
-    expect(cache.getQuery('test')).toBeDefined()
-    cache.clear({ notify: false })
+    expect(queryCache.getQuery(key)).not.toBeDefined()
+    expect(cache.getQuery(key)).toBeDefined()
   })
 
   test('implicitly creates a new cache for all queries to use', async () => {
+    const key = queryKey()
+
     function Page() {
-      const { data } = useQuery('test', async () => {
+      const { data } = useQuery(key, async () => {
         await sleep(10)
         return 'test'
       })
@@ -88,15 +88,18 @@ describe('ReactQueryCacheProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.getQuery('test')).not.toBeDefined()
+    expect(queryCache.getQuery(key)).not.toBeDefined()
   })
 
   test('allows multiple caches to be partitioned', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
     const cache1 = makeQueryCache()
     const cache2 = makeQueryCache()
 
     function Page1() {
-      const { data } = useQuery('test1', async () => {
+      const { data } = useQuery(key1, async () => {
         await sleep(10)
         return 'test1'
       })
@@ -108,7 +111,7 @@ describe('ReactQueryCacheProvider', () => {
       )
     }
     function Page2() {
-      const { data } = useQuery('test2', async () => {
+      const { data } = useQuery(key2, async () => {
         await sleep(10)
         return 'test2'
       })
@@ -134,16 +137,18 @@ describe('ReactQueryCacheProvider', () => {
     await waitFor(() => rendered.getByText('test1'))
     await waitFor(() => rendered.getByText('test2'))
 
-    expect(cache1.getQuery('test1')).toBeDefined()
-    expect(cache1.getQuery('test2')).not.toBeDefined()
-    expect(cache2.getQuery('test1')).not.toBeDefined()
-    expect(cache2.getQuery('test2')).toBeDefined()
+    expect(cache1.getQuery(key1)).toBeDefined()
+    expect(cache1.getQuery(key2)).not.toBeDefined()
+    expect(cache2.getQuery(key1)).not.toBeDefined()
+    expect(cache2.getQuery(key2)).toBeDefined()
 
     cache1.clear({ notify: false })
     cache2.clear({ notify: false })
   })
 
   test('when cache changes, previous cache is cleaned', () => {
+    const key = queryKey()
+
     const caches: QueryCache[] = []
     const customCache = makeQueryCache()
 
@@ -153,7 +158,7 @@ describe('ReactQueryCacheProvider', () => {
         caches.push(queryCache)
       }, [queryCache])
 
-      const { data } = useQuery('test', async () => {
+      const { data } = useQuery(key, async () => {
         await sleep(10)
         return 'test'
       })
@@ -185,7 +190,9 @@ describe('ReactQueryCacheProvider', () => {
     customCache.clear({ notify: false })
   })
 
-  test('uses defaultConfig for queries when they don\'t provide their own config', async () => {
+  test("uses defaultConfig for queries when they don't provide their own config", async () => {
+    const key = queryKey()
+
     const cache = makeQueryCache({
       defaultConfig: {
         queries: {
@@ -195,7 +202,7 @@ describe('ReactQueryCacheProvider', () => {
     })
 
     function Page() {
-      const { data } = useQuery('test', async () => {
+      const { data } = useQuery(key, async () => {
         await sleep(10)
         return 'test'
       })
@@ -215,8 +222,8 @@ describe('ReactQueryCacheProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(cache.getQuery('test')).toBeDefined()
-    expect(cache.getQuery('test')?.config.staleTime).toBe(Infinity)
+    expect(cache.getQuery(key)).toBeDefined()
+    expect(cache.getQuery(key)?.config.staleTime).toBe(Infinity)
     cache.clear({ notify: false })
   })
 })
