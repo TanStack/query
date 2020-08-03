@@ -90,6 +90,43 @@ describe("useQuery's in Suspense mode", () => {
     expect(successFn).toHaveBeenCalledTimes(1)
   })
 
+  it('should call every onSuccess handler within a suspense boundary', async () => {
+    const key = queryKey()
+
+    const successFn1 = jest.fn()
+    const successFn2 = jest.fn()
+
+    function FirstComponent() {
+      useQuery(key, () => sleep(10), {
+        suspense: true,
+        onSuccess: successFn1,
+      })
+
+      return <span>first</span>
+    }
+
+    function SecondComponent() {
+      useQuery(key, () => sleep(20), {
+        suspense: true,
+        onSuccess: successFn2,
+      })
+
+      return <span>second</span>
+    }
+
+    const rendered = render(
+      <React.Suspense fallback="loading">
+        <FirstComponent />
+        <SecondComponent />
+      </React.Suspense>
+    )
+
+    await waitFor(() => rendered.getByText('second'))
+
+    expect(successFn1).toHaveBeenCalledTimes(1)
+    expect(successFn1).toHaveBeenCalledTimes(1)
+  })
+
   // https://github.com/tannerlinsley/react-query/issues/468
   it('should reset error state if new component instances are mounted', async () => {
     const key = queryKey()

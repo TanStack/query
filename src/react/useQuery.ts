@@ -66,7 +66,7 @@ export function useQuery<TResult, TError>(
   const [queryKey, config] = useQueryArgs<TResult, TError>(args)
   const result = useBaseQuery<TResult, TError>(queryKey, config)
 
-  handleSuspense(result)
+  handleSuspense(config, result)
 
   return {
     ...result,

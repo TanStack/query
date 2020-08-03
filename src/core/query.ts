@@ -37,6 +37,7 @@ export interface QueryState<TResult, TError> {
   error: TError | null
   failureCount: number
   isError: boolean
+  isFetched: boolean
   isFetching: boolean
   isFetchingMore?: IsFetchingMoreValue
   isIdle: boolean
@@ -57,7 +58,7 @@ export interface FetchMoreOptions {
   previous: boolean
 }
 
-enum ActionType {
+export enum ActionType {
   Failed = 'Failed',
   MarkStale = 'MarkStale',
   Fetch = 'Fetch',
@@ -95,7 +96,7 @@ interface SetStateAction<TResult, TError> {
   updater: Updater<QueryState<TResult, TError>, QueryState<TResult, TError>>
 }
 
-type Action<TResult, TError> =
+export type Action<TResult, TError> =
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
@@ -112,8 +113,6 @@ export class Query<TResult, TError> {
   config: QueryConfig<TResult, TError>
   instances: QueryInstance<TResult, TError>[]
   state: QueryState<TResult, TError>
-  fallbackInstance?: QueryInstance<TResult, TError>
-  wasSuspended?: boolean
   shouldContinueRetryOnFocus?: boolean
   promise?: Promise<TResult | undefined>
 
@@ -163,7 +162,7 @@ export class Query<TResult, TError> {
     // Only update state if something has changed
     if (!shallowEqual(this.state, newState)) {
       this.state = newState
-      this.instances.forEach(d => d.onStateUpdate?.(this.state))
+      this.instances.forEach(d => d.onStateUpdate(newState, action))
       this.notifyGlobalListeners(this)
     }
   }
@@ -502,15 +501,6 @@ export class Query<TResult, TError> {
       // If there are any retries pending for this query, kill them
       this.cancelled = null
 
-      const getCallbackInstances = () => {
-        const callbackInstances = [...this.instances]
-
-        if (this.wasSuspended && this.fallbackInstance) {
-          callbackInstances.unshift(this.fallbackInstance)
-        }
-        return callbackInstances
-      }
-
       try {
         // Set up the query refreshing state
         this.dispatch({ type: ActionType.Fetch })
@@ -519,14 +509,6 @@ export class Query<TResult, TError> {
         const data = await this.tryFetchData(queryFn!, this.queryKey)
 
         this.setData(old => (this.config.isDataEqual!(old, data) ? old! : data))
-
-        getCallbackInstances().forEach(instance => {
-          instance.config.onSuccess?.(this.state.data!)
-        })
-
-        getCallbackInstances().forEach(instance =>
-          instance.config.onSettled?.(this.state.data, null)
-        )
 
         delete this.promise
 
@@ -541,14 +523,6 @@ export class Query<TResult, TError> {
         delete this.promise
 
         if (error !== this.cancelled) {
-          getCallbackInstances().forEach(instance =>
-            instance.config.onError?.(error)
-          )
-
-          getCallbackInstances().forEach(instance =>
-            instance.config.onSettled?.(undefined, error)
-          )
-
           throw error
         }
 
@@ -597,6 +571,7 @@ function getDefaultState<TResult, TError>(
   return {
     ...getStatusProps(initialStatus),
     error: null,
+    isFetched: false,
     isFetching: initialStatus === QueryStatus.Loading,
     failureCount: 0,
     isStale,
@@ -638,6 +613,7 @@ export function queryReducer<TResult, TError>(
         data: functionalUpdate(action.updater, state.data),
         error: null,
         isStale: action.isStale,
+        isFetched: true,
         isFetching: false,
         updatedAt: Date.now(),
         failureCount: 0,
@@ -646,6 +622,7 @@ export function queryReducer<TResult, TError>(
       return {
         ...state,
         failureCount: state.failureCount + 1,
+        isFetched: true,
         isFetching: false,
         isStale: true,
         ...(!action.cancelled && {

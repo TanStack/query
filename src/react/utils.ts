@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { uid, isServer } from '../core/utils'
-import { QueryResultBase, QueryStatus } from '../core/types'
+import { QueryResultBase, BaseQueryConfig, QueryStatus } from '../core/types'
 
 export function useUid(): number {
   const ref = React.useRef(0)
@@ -40,9 +40,12 @@ export function useRerenderer() {
   return React.useCallback(() => rerender({}), [rerender])
 }
 
-export function handleSuspense(result: QueryResultBase<any, any>) {
+export function handleSuspense(
+  config: BaseQueryConfig<any, any>,
+  result: QueryResultBase<any, any>
+) {
   const { error, query } = result
-  const { config, state } = query
+  const { state } = query
 
   if (config.suspense || config.useErrorBoundary) {
     if (state.status === QueryStatus.Error && state.throwInErrorBoundary) {
@@ -54,7 +57,16 @@ export function handleSuspense(result: QueryResultBase<any, any>) {
       state.status !== QueryStatus.Success &&
       config.enabled
     ) {
-      query.wasSuspended = true
+      const instance = query.subscribe()
+
+      instance.updateConfig({
+        ...config,
+        onSettled: (data, error) => {
+          instance.unsubscribe(true)
+          config.onSettled?.(data, error)
+        },
+      })
+
       throw query.fetch()
     }
   }

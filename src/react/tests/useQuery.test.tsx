@@ -546,21 +546,16 @@ describe('useQuery', () => {
       staleTime: 10,
     })
 
-    await sleep(100)
+    await sleep(11)
 
     function Page() {
-      const query = useQuery(key, queryFn)
-
-      return (
-        <div>
-          <div>{query.data}</div>
-        </div>
-      )
+      useQuery(key, queryFn)
+      return null
     }
 
     render(<Page />)
 
-    await sleep(100)
+    await act(() => sleep(0))
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -579,21 +574,16 @@ describe('useQuery', () => {
       staleTime: 1000,
     })
 
-    sleep(100)
+    await sleep(0)
 
     function Page() {
-      const query = useQuery(key, queryFn)
-
-      return (
-        <div>
-          <div>{query.data}</div>
-        </div>
-      )
+      useQuery(key, queryFn)
+      return null
     }
 
     render(<Page />)
 
-    sleep(100)
+    await sleep(0)
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(0)

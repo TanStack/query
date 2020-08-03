@@ -18,7 +18,6 @@ import {
   TupleQueryFunction,
   TupleQueryKey,
 } from './types'
-import { QueryInstance } from './queryInstance'
 
 // TYPES
 
@@ -282,14 +281,6 @@ export class QueryCache {
         }
       }
     }
-
-    query.fallbackInstance = {
-      config: {
-        onSuccess: query.config.onSuccess,
-        onError: query.config.onError,
-        onSettled: query.config.onSettled,
-      },
-    } as QueryInstance<TResult, TError>
 
     return query
   }
