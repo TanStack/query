@@ -1007,4 +1007,31 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('{"a":"a"}'))
   })
+
+  it('should refetch if any query instance becomes enabled', async () => {
+    const queryFn = jest.fn().mockReturnValue('data')
+
+    function Disabled() {
+      useQuery('test', queryFn, { enabled: false })
+      return null
+    }
+
+    function Page() {
+      const [enabled, setEnabled] = React.useState(false)
+      const result = useQuery('test', queryFn, { enabled })
+      return (
+        <>
+          <Disabled />
+          <div>{result.data}</div>
+          <button onClick={() => setEnabled(true)}>enable</button>
+        </>
+      )
+    }
+
+    const rendered = render(<Page />)
+    expect(queryFn).toHaveBeenCalledTimes(0)
+    fireEvent.click(rendered.getByText('enable'))
+    await waitFor(() => rendered.getByText('data'))
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
 })
