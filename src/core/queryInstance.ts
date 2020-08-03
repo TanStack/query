@@ -59,10 +59,10 @@ export class QueryInstance<TResult, TError> {
       ) {
         this.refetchIntervalId = setInterval(() => {
           if (
-            this.query.instances.some(_ => this.config.enabled) &&
+            this.query.instances.some(d => d.config.enabled) &&
             (isDocumentVisible() ||
               this.query.instances.some(
-                _ => this.config.refetchIntervalInBackground
+                d => d.config.refetchIntervalInBackground
               ))
           ) {
             this.query.fetch()
@@ -76,7 +76,7 @@ export class QueryInstance<TResult, TError> {
     try {
       // Perform the refetch for this query if necessary
       if (
-        this.query.config.enabled && // Don't auto refetch if disabled
+        this.query.instances.some(d => d.config.enabled) && // Don't auto refetch if disabled
         !this.query.wasSuspended && // Don't double refetch for suspense
         this.query.state.isStale && // Only refetch if stale
         (this.query.config.refetchOnMount || this.query.instances.length === 1)
