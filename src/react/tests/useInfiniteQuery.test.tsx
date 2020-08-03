@@ -203,6 +203,8 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should compute canFetchMore correctly for falsy getFetchMore return value', async () => {
+    const key = queryKey()
+
     function Page() {
       const fetchCountRef = React.useRef(0)
       const {
@@ -215,7 +217,7 @@ describe('useInfiniteQuery', () => {
         canFetchMore,
         refetch,
       } = useInfiniteQuery<Result, Error, string>(
-        'items',
+        key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
           getFetchMore: (_lastGroup, _allGroups) => undefined,
@@ -374,6 +376,8 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should compute canFetchMore correctly for falsy getFetchMore return value using initialData', async () => {
+    const key = queryKey()
+
     function Page() {
       const fetchCountRef = React.useRef(0)
       const {
@@ -386,7 +390,7 @@ describe('useInfiniteQuery', () => {
         canFetchMore,
         refetch,
       } = useInfiniteQuery<Result, Error, string>(
-        'items',
+        key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
           initialData: [initialItems(0)],
