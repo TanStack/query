@@ -17,7 +17,7 @@ Feature/Capability Key:
 | Supported Protocol                           | HTTP                                   | HTTP                                           | GraphQL                                                                   |
 | Supported Query Signatures                   | Promise                                | Promise                                        | GraphQL Query                                                             |
 | Supported Query Keys                         | JSON                                   | JSON                                           | GraphQL Query                                                             |
-| Query Key Change Detection                   | Deep Compare (Serialization)           | Referential Equality (===)                     | Deep Compare (Serialization)                                                |
+| Query Key Change Detection                   | Deep Compare (Serialization)           | Referential Equality (===)                     | Deep Compare (Serialization)                                              |
 | Bundle Size                                  | [![][bp-react-query]][bpl-react-query] | [![][bp-swr]][bpl-swr]                         | [![][bp-apollo]][bpl-apollo]                                              |
 | Queries                                      | ✅                                     | ✅                                             | ✅                                                                        |
 | Caching                                      | ✅                                     | ✅                                             | ✅                                                                        |
@@ -25,7 +25,8 @@ Feature/Capability Key:
 | Polling/Intervals                            | ✅                                     | ✅                                             | ✅                                                                        |
 | Parallel Queries                             | ✅                                     | ✅                                             | ✅                                                                        |
 | Dependent Queries                            | ✅                                     | ✅                                             | ✅                                                                        |
-| Paginated/Infinite Queries                   | ✅                                     | ✅ +(~2kb)                                     | ✅                                                                        |
+| Paginated Queries                            | ✅                                     | 🛑<sup>1</sup>                                 | ✅                                                                        |
+| Infinite Queries                             | ✅                                     | ✅<sup>2</sup>                                 | ✅                                                                        |
 | Initial Data                                 | ✅                                     | ✅                                             | ✅                                                                        |
 | Scroll Recovery                              | ✅                                     | ✅                                             | ✅                                                                        |
 | Cache Manipulation                           | ✅                                     | ✅                                             | ✅                                                                        |
@@ -34,18 +35,20 @@ Feature/Capability Key:
 | Mutation Hooks                               | ✅                                     | 🟡                                             | ✅                                                                        |
 | Prefetching APIs                             | ✅                                     | 🔶                                             | ✅                                                                        |
 | Query Cancellation                           | ✅                                     | 🛑                                             | 🛑                                                                        |
-| Partial Query Matching<sup>1</sup>           | ✅                                     | 🛑                                             | 🛑                                                                        |
+| Partial Query Matching<sup>2</sup>           | ✅                                     | 🛑                                             | 🛑                                                                        |
 | Window Focus Refetching                      | ✅                                     | ✅                                             | 🛑                                                                        |
 | Network Status Refetching                    | 🛑                                     | ✅                                             | ✅                                                                        |
-| Automatic Refetch after Mutation<sup>2</sup> | 🔶                                     | 🔶                                             | ✅                                                                        |
+| Automatic Refetch after Mutation<sup>3</sup> | 🔶                                     | 🔶                                             | ✅                                                                        |
 | Cache Dehydration/Rehydration                | 🛑                                     | 🛑                                             | ✅                                                                        |
 | React Suspense (Experimental)                | ✅                                     | ✅                                             | 🛑                                                                        |
 
 ### Notes
 
-> **<sup>1</sup> Partial query matching** - Because React Query uses deterministic query key serialization, this allows you to manipulate variable groups of queries without having to know each individual query-key that you want to match, eg. you can refetch every query that starts with `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables or nested properties, and even use a filter function to only match queries that pass your specific conditions.
+> **<sup>1</sup> Paginated Queries in SWR are not "lazy"** - While React Query provides a way to continue to see an existing pages data while the next page loads, SWR uses component styling/visibility to only prefetch the next page and does not provide the capability to "lag" previous query results while new ones load without much non-trivial hackery.
 
-> **<sup>2</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
+> **<sup>2</sup> Partial query matching** - Because React Query uses deterministic query key serialization, this allows you to manipulate variable groups of queries without having to know each individual query-key that you want to match, eg. you can refetch every query that starts with `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables or nested properties, and even use a filter function to only match queries that pass your specific conditions.
+
+> **<sup>3</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
 
 [bp-react-query]: https://badgen.net/bundlephobia/minzip/react-query?label=%20
 [bp-swr]: https://badgen.net/bundlephobia/minzip/swr?label=%20
