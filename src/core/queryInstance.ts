@@ -1,5 +1,5 @@
 import { uid, isServer, isDocumentVisible, Console } from './utils'
-import { Query, QueryState } from './query'
+import { Query, QueryState, Action, ActionType } from './query'
 import { BaseQueryConfig } from './types'
 
 // TYPES
@@ -13,17 +13,17 @@ export type OnStateUpdateFunction<TResult, TError> = (
 export class QueryInstance<TResult, TError> {
   id: number
   config: BaseQueryConfig<TResult, TError>
-  onStateUpdate?: OnStateUpdateFunction<TResult, TError>
 
   private query: Query<TResult, TError>
   private refetchIntervalId?: number
+  private stateUpdateListener?: OnStateUpdateFunction<TResult, TError>
 
   constructor(
     query: Query<TResult, TError>,
     onStateUpdate?: OnStateUpdateFunction<TResult, TError>
   ) {
     this.id = uid()
-    this.onStateUpdate = onStateUpdate
+    this.stateUpdateListener = onStateUpdate
     this.query = query
     this.config = {}
   }
@@ -77,30 +77,45 @@ export class QueryInstance<TResult, TError> {
       // Perform the refetch for this query if necessary
       if (
         this.query.instances.some(d => d.config.enabled) && // Don't auto refetch if disabled
-        !this.query.wasSuspended && // Don't double refetch for suspense
+        !(this.config.suspense && this.query.state.isFetched) && // Don't refetch if in suspense mode and the data is already fetched
         this.query.state.isStale && // Only refetch if stale
-        (this.query.config.refetchOnMount || this.query.instances.length === 1)
+        (this.config.refetchOnMount || this.query.instances.length === 1)
       ) {
         await this.query.fetch()
       }
-
-      this.query.wasSuspended = false
     } catch (error) {
       Console.error(error)
     }
   }
 
-  unsubscribe(): void {
+  unsubscribe(preventGC?: boolean): void {
     this.query.instances = this.query.instances.filter(d => d.id !== this.id)
 
     if (!this.query.instances.length) {
       this.clearInterval()
       this.query.cancel()
 
-      if (!isServer) {
+      if (!preventGC && !isServer) {
         // Schedule garbage collection
         this.query.scheduleGarbageCollection()
       }
     }
+  }
+
+  onStateUpdate(
+    state: QueryState<TResult, TError>,
+    action: Action<TResult, TError>
+  ): void {
+    if (action.type === ActionType.Success && state.isSuccess) {
+      this.config.onSuccess?.(state.data!)
+      this.config.onSettled?.(state.data!, null)
+    }
+
+    if (action.type === ActionType.Error && state.isError) {
+      this.config.onError?.(state.error!)
+      this.config.onSettled?.(undefined, state.error!)
+    }
+
+    this.stateUpdateListener?.(state)
   }
 }

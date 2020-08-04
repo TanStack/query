@@ -124,7 +124,7 @@ export function usePaginatedQuery<TResult, TError>(
     Object.assign(result, overrides)
   }
 
-  handleSuspense(result)
+  handleSuspense(config, result)
 
   return {
     ...result,

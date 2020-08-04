@@ -80,7 +80,7 @@ export function useInfiniteQuery<TResult, TError>(
   const query = result.query
   const state = result.query.state
 
-  handleSuspense(result)
+  handleSuspense(config, result)
 
   const fetchMore = React.useMemo(() => query.fetchMore.bind(query), [query])
 
