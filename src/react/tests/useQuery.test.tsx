@@ -999,16 +999,18 @@ describe('useQuery', () => {
   })
 
   it('should refetch if any query instance becomes enabled', async () => {
+    const key = queryKey()
+
     const queryFn = jest.fn().mockReturnValue('data')
 
     function Disabled() {
-      useQuery('test', queryFn, { enabled: false })
+      useQuery(key, queryFn, { enabled: false })
       return null
     }
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      const result = useQuery('test', queryFn, { enabled })
+      const result = useQuery(key, queryFn, { enabled })
       return (
         <>
           <Disabled />

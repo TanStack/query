@@ -124,7 +124,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('second'))
 
     expect(successFn1).toHaveBeenCalledTimes(1)
-    expect(successFn1).toHaveBeenCalledTimes(1)
+    expect(successFn2).toHaveBeenCalledTimes(1)
   })
 
   // https://github.com/tannerlinsley/react-query/issues/468
