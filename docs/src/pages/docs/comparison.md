@@ -26,7 +26,7 @@ Feature/Capability Key:
 | Parallel Queries                             | ✅                                     | ✅                                             | ✅                                                                        |
 | Dependent Queries                            | ✅                                     | ✅                                             | ✅                                                                        |
 | Paginated Queries                            | ✅                                     | 🛑<sup>1</sup>                                 | ✅                                                                        |
-| Infinite Queries                             | ✅                                     | ✅<sup>2</sup>                                 | ✅                                                                        |
+| Infinite Queries                             | ✅                                     | ✅                                             | ✅                                                                        |
 | Initial Data                                 | ✅                                     | ✅                                             | ✅                                                                        |
 | Scroll Recovery                              | ✅                                     | ✅                                             | ✅                                                                        |
 | Cache Manipulation                           | ✅                                     | ✅                                             | ✅                                                                        |
