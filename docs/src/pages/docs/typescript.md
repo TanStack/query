@@ -22,3 +22,4 @@ npm install react-query@tsnext --save
 ## Changes
 
 - The query results are no longer discriminated unions, which means you have to check the actual `data` and `error` properties.
+- Requires TypeScript v3.8 or greater
