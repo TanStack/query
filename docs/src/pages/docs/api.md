@@ -310,7 +310,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`prefetchQuery`](#querycacheprefetchquery)
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
-- [`invalidateQueries`](#querycacherefetchqueries)
+- [`invalidateQueries`](#querycacheinvalidatequeries)
 - [`cancelQueries`](#querycachecancelqueries)
 - [`removeQueries`](#querycacheremovequeries)
 - [`getQueries`](#querycachegetqueries)
