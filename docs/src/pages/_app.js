@@ -47,6 +47,8 @@ function MyApp({ Component, pageProps }) {
           }}
         />
       </Head>
+      {/* eslint-disable-next-line jsx-a11y/alt-text */}
+      <img src="https://static.scarf.sh/a.png?x-pxid=c03d3ddd-b47e-4e26-a9b2-9df68b2ac970" />
       <SearchProvider>
         <Component {...pageProps} />
       </SearchProvider>
