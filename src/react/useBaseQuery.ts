@@ -1,70 +1,49 @@
 import React from 'react'
 
-import { useQueryCache } from './ReactQueryCacheProvider'
 import { useRerenderer } from './utils'
-import { QueryInstance } from '../core/queryInstance'
-import { QueryConfig, QueryKey, QueryResultBase } from '../core/types'
+import { QueryObserver } from '../core/queryObserver'
+import { QueryResultBase, QueryObserverConfig } from '../core/types'
 
 export function useBaseQuery<TResult, TError>(
-  queryKey: QueryKey,
-  config: QueryConfig<TResult, TError> = {}
+  config: QueryObserverConfig<TResult, TError> = {}
 ): QueryResultBase<TResult, TError> {
   // Make a rerender function
   const rerender = useRerenderer()
 
-  // Get the query cache
-  const queryCache = useQueryCache()
+  // Create query observer
+  const observerRef = React.useRef<QueryObserver<TResult, TError>>()
+  const firstRender = !observerRef.current
+  const observer = observerRef.current || new QueryObserver(config)
+  observerRef.current = observer
 
-  // Build the query for use
-  const query = queryCache.buildQuery<TResult, TError>(queryKey, config)
-  const state = query.state
+  // Subscribe to the observer
+  React.useEffect(
+    () =>
+      observer.subscribe(() => {
+        Promise.resolve().then(rerender)
+      }),
+    [observer, rerender]
+  )
 
-  // Create a query instance ref
-  const instanceRef = React.useRef<QueryInstance<TResult, TError>>()
-
-  // Subscribe to the query when the subscribe function changes
-  React.useEffect(() => {
-    const instance = query.subscribe(() => {
-      rerender()
-    })
-
-    instanceRef.current = instance
-
-    // Unsubscribe when things change
-    return () => instance.unsubscribe()
-  }, [query, rerender])
-
-  // Always update the config
-  React.useEffect(() => {
-    instanceRef.current?.updateConfig(config)
-  })
-
-  const enabledBool = Boolean(config.enabled)
-
-  // Run the instance when the query or enabled change
-  React.useEffect(() => {
-    if (enabledBool && query) {
-      // Just for change detection
-    }
-    instanceRef.current?.run()
-  }, [enabledBool, query])
-
-  const clear = React.useMemo(() => query.clear.bind(query), [query])
-  const refetch = React.useMemo(() => query.refetch.bind(query), [query])
-
-  return {
-    clear,
-    error: state.error,
-    failureCount: state.failureCount,
-    isError: state.isError,
-    isFetching: state.isFetching,
-    isIdle: state.isIdle,
-    isLoading: state.isLoading,
-    isStale: state.isStale,
-    isSuccess: state.isSuccess,
-    query,
-    refetch,
-    status: state.status,
-    updatedAt: state.updatedAt,
+  // Update config
+  if (!firstRender) {
+    observer.updateConfig(config)
   }
+
+  const result = observer.getCurrentResult()
+
+  // Handle suspense
+  if (config.suspense || config.useErrorBoundary) {
+    if (result.isError && result.query.state.throwInErrorBoundary) {
+      throw result.error
+    }
+
+    if (config.enabled && config.suspense && !result.isSuccess) {
+      throw observer.fetch().finally(() => {
+        observer.unsubscribe(true)
+      })
+    }
+  }
+
+  return result
 }

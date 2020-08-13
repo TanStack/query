@@ -1,7 +1,4 @@
-import React from 'react'
-
 import { useBaseQuery } from './useBaseQuery'
-import { handleSuspense } from './utils'
 import {
   InfiniteQueryConfig,
   InfiniteQueryResult,
@@ -72,24 +69,7 @@ export function useInfiniteQuery<TResult, TError, TKey extends TupleQueryKey>(
 export function useInfiniteQuery<TResult, TError>(
   ...args: any[]
 ): InfiniteQueryResult<TResult, TError> {
-  const [queryKey, config] = useQueryArgs<TResult[], TError>(args)
-
-  config.infinite = true
-
-  const result = useBaseQuery<TResult[], TError>(queryKey, config)
-  const query = result.query
-  const state = result.query.state
-
-  handleSuspense(config, result)
-
-  const fetchMore = React.useMemo(() => query.fetchMore.bind(query), [query])
-
-  return {
-    ...result,
-    data: state.data,
-    canFetchMore: state.canFetchMore,
-    fetchMore,
-    isFetching: state.isFetching,
-    isFetchingMore: state.isFetchingMore,
-  }
+  let config = useQueryArgs<TResult[], TError>(args)[1]
+  config = { ...config, infinite: true }
+  return useBaseQuery<TResult[], TError>(config)
 }

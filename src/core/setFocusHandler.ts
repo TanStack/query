@@ -11,15 +11,7 @@ const onWindowFocus: FocusHandler = () => {
     queryCaches.forEach(queryCache =>
       queryCache
         .invalidateQueries(query => {
-          if (!query.instances.length) {
-            return false
-          }
-
-          if (!query.instances.some(instance => instance.config.enabled)) {
-            return false
-          }
-
-          if (!query.state.isStale) {
+          if (!query.shouldRefetchOnWindowFocus()) {
             return false
           }
 
@@ -28,7 +20,7 @@ const onWindowFocus: FocusHandler = () => {
             delete query.promise
           }
 
-          return Boolean(query.config.refetchOnWindowFocus)
+          return true
         })
         .catch(Console.error)
     )

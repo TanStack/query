@@ -26,9 +26,6 @@ export const isServer = typeof window === 'undefined'
 export function noop(): void {
   return void 0
 }
-export function identity<T>(d: T): T {
-  return d
-}
 export let Console: ConsoleObject = console || {
   error: noop,
   warn: noop,
@@ -121,7 +118,7 @@ export function getQueryArgs<TResult, TError, TOptions = undefined>(
     options = args[3]
   }
 
-  config = config || {}
+  config = config ? { queryKey, ...config } : { queryKey }
 
   if (queryFn) {
     config = { ...config, queryFn }

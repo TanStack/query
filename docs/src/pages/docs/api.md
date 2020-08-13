@@ -27,6 +27,7 @@ const {
   retryDelay,
   staleTime,
   cacheTime,
+  keepPreviousData,
   refetchOnWindowFocus,
   refetchInterval,
   refetchIntervalInBackground,
@@ -112,6 +113,10 @@ const queryInfo = useQuery({
   - Optional
   - If set, this will mark any `initialData` provided as stale and will likely cause it to be refetched on mount
   - If a function is passed, it will be called only when appropriate to resolve the `initialStale` value. This can be useful if your `initialStale` value is costly to calculate.
+- `keepPreviousData: Boolean`
+  - Optional
+  - Defaults to `false`
+  - If set, any previous `data` will be kept when fetching new data because the query key changed.
 - `refetchOnMount: Boolean`
   - Optional
   - Defaults to `true`

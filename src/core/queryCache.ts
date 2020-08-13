@@ -121,6 +121,15 @@ export class QueryCache {
     return this.configRef.current
   }
 
+  getDefaultedConfig<TResult, TError>(config?: QueryConfig<TResult, TError>) {
+    return {
+      ...this.configRef.current.shared!,
+      ...this.configRef.current.queries!,
+      queryCache: this,
+      ...config,
+    } as QueryConfig<TResult, TError>
+  }
+
   subscribe(listener: QueryCacheListener): () => void {
     this.globalListeners.push(listener)
     return () => {
@@ -195,11 +204,8 @@ export class QueryCache {
     try {
       await Promise.all(
         this.getQueries(predicate, options).map(query => {
-          if (query.instances.length) {
-            if (
-              refetchActive &&
-              query.instances.some(instance => instance.config.enabled)
-            ) {
+          if (query.observers.length) {
+            if (refetchActive && query.isEnabled()) {
               return query.fetch()
             }
           } else {
@@ -226,13 +232,9 @@ export class QueryCache {
 
   buildQuery<TResult, TError = unknown>(
     userQueryKey: QueryKey,
-    queryConfig: QueryConfig<TResult, TError> = {}
+    queryConfig?: QueryConfig<TResult, TError>
   ): Query<TResult, TError> {
-    const config = {
-      ...this.configRef.current.shared!,
-      ...this.configRef.current.queries!,
-      ...queryConfig,
-    } as QueryConfig<TResult, TError>
+    const config = this.getDefaultedConfig(queryConfig)
 
     const [queryHash, queryKey] = config.queryKeySerializerFn!(userQueryKey)
 
@@ -240,7 +242,7 @@ export class QueryCache {
 
     if (this.queries[queryHash]) {
       query = this.queries[queryHash] as Query<TResult, TError>
-      query.config = config
+      query.updateConfig(config)
     }
 
     if (!query) {
@@ -253,18 +255,6 @@ export class QueryCache {
           this.notifyGlobalListeners(query)
         },
       })
-
-      // If the query started with data, schedule
-      // a stale timeout
-      if (!isServer && query.state.data) {
-        query.scheduleStaleTimeout()
-
-        // Simulate a query healing process
-        query.heal()
-        // Schedule for garbage collection in case
-        // nothing subscribes to this query
-        query.scheduleGarbageCollection()
-      }
 
       if (!this.config.frozen) {
         this.queries[queryHash] = query
@@ -386,7 +376,7 @@ export class QueryCache {
   setQueryData<TResult, TError = unknown>(
     queryKey: QueryKey,
     updater: Updater<TResult | undefined, TResult>,
-    config: QueryConfig<TResult, TError> = {}
+    config?: QueryConfig<TResult, TError>
   ) {
     let query = this.getQuery<TResult, TError>(queryKey)
 

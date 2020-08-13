@@ -33,11 +33,16 @@ describe('usePaginatedQuery', () => {
     await waitFor(() => rendered.getByText('Status: success'))
 
     expect(states[0]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
+      data: undefined,
       error: null,
       failureCount: 0,
+      fetchMore: expect.any(Function),
       isError: false,
+      isFetched: false,
       isFetching: true,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: true,
       isStale: true,
@@ -51,11 +56,16 @@ describe('usePaginatedQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
+      data: 1,
       error: null,
       failureCount: 0,
+      fetchMore: expect.any(Function),
       isError: false,
+      isFetched: true,
       isFetching: false,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: false,
       isStale: true,
