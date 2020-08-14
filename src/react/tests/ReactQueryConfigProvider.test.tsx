@@ -42,7 +42,8 @@ describe('ReactQueryConfigProvider', () => {
   })
 
   it('should allow overriding the default config from the outermost provider', async () => {
-    const key = queryKey()
+    const key1 = queryKey()
+    const key2 = queryKey()
 
     const outerConfig = {
       queries: {
@@ -65,25 +66,28 @@ describe('ReactQueryConfigProvider', () => {
     function Container() {
       return (
         <ReactQueryConfigProvider config={outerConfig}>
+          <First />
           <ReactQueryConfigProvider config={innerConfig}>
-            <h1>Placeholder</h1>
+            <Second />
           </ReactQueryConfigProvider>
         </ReactQueryConfigProvider>
       )
     }
 
+    function First() {
+      const { data } = useQuery(key1)
+      return <span>First: {String(data)}</span>
+    }
+
+    function Second() {
+      const { data } = useQuery(key2)
+      return <span>Second: {String(data)}</span>
+    }
+
     const rendered = render(<Container />)
 
-    await waitFor(() => rendered.getByText('Placeholder'))
-
-    await queryCache.prefetchQuery(key)
-
-    expect(outerConfig.queries.queryFn).toHaveBeenCalledWith(key)
-    expect(innerConfig.queries.queryFn).not.toHaveBeenCalled()
-
-    const data = queryCache.getQueryData(key)
-
-    expect(data).toEqual('outer')
+    await waitFor(() => rendered.getByText('First: outer'))
+    await waitFor(() => rendered.getByText('Second: inner'))
   })
 
   it('should reset to defaults when unmounted', async () => {

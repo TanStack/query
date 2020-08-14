@@ -134,10 +134,10 @@ describe('useInfiniteQuery', () => {
       React.useEffect(() => {
         setTimeout(() => {
           fetchMore()
-        }, 20)
+        }, 50)
         setTimeout(() => {
           setOrder('asc')
-        }, 40)
+        }, 100)
       }, [fetchMore])
 
       return null

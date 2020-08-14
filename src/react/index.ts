@@ -17,7 +17,4 @@ export type { UseQueryObjectConfig } from './useQuery'
 export type { UseInfiniteQueryObjectConfig } from './useInfiniteQuery'
 export type { UsePaginatedQueryObjectConfig } from './usePaginatedQuery'
 export type { ReactQueryCacheProviderProps } from './ReactQueryCacheProvider'
-export type {
-  ReactQueryConfigProviderProps,
-  ReactQueryProviderConfig,
-} from './ReactQueryConfigProvider'
+export type { ReactQueryConfigProviderProps } from './ReactQueryConfigProvider'

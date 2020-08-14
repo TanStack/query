@@ -9,7 +9,7 @@ import {
   TupleQueryFunction,
   TupleQueryKey,
 } from '../core/types'
-import { useQueryArgs } from './useQueryArgs'
+import { getQueryArgs } from '../core/utils'
 
 // TYPES
 
@@ -62,6 +62,6 @@ export function useQuery<TResult, TError, TKey extends TupleQueryKey>(
 export function useQuery<TResult, TError>(
   ...args: any[]
 ): QueryResult<TResult, TError> {
-  const config = useQueryArgs<TResult, TError>(args)[1]
+  const config = getQueryArgs<TResult, TError>(args)[1]
   return useBaseQuery<TResult, TError>(config)
 }

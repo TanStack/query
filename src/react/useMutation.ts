@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useConfigContext } from './ReactQueryConfigProvider'
+import { useDefaultedMutationConfig } from './useDefaultedMutationConfig'
 import { useGetLatest, useMountedCallback } from './utils'
 import { Console, uid, getStatusProps } from '../core/utils'
 import {
@@ -103,6 +103,9 @@ export function useMutation<
   mutationFn: MutationFunction<TResult, TVariables>,
   config: MutationConfig<TResult, TError, TVariables, TSnapshot> = {}
 ): MutationResultPair<TResult, TError, TVariables, TSnapshot> {
+  config = useDefaultedMutationConfig(config)
+  const getConfig = useGetLatest(config)
+
   const [state, unsafeDispatch] = React.useReducer(
     mutationReducer as Reducer<State<TResult, TError>, Action<TResult, TError>>,
     null,
@@ -112,14 +115,6 @@ export function useMutation<
   const dispatch = useMountedCallback(unsafeDispatch)
 
   const getMutationFn = useGetLatest(mutationFn)
-
-  const contextConfig = useConfigContext()
-
-  const getConfig = useGetLatest({
-    ...contextConfig.shared,
-    ...contextConfig.mutations,
-    ...config,
-  })
 
   const latestMutationRef = React.useRef<number>()
 

@@ -1,74 +1,34 @@
 import React from 'react'
-import { DEFAULT_CONFIG, defaultConfigRef } from '../core/config'
+
+import { mergeReactQueryConfigs } from '../core/config'
 import { ReactQueryConfig } from '../core/types'
-import { useQueryCache } from './ReactQueryCacheProvider'
 
 const configContext = React.createContext<ReactQueryConfig | undefined>(
   undefined
 )
 
-export function useConfigContext() {
-  const queryCache = useQueryCache()
-  return (
-    React.useContext(configContext) ||
-    queryCache.getDefaultConfig() ||
-    defaultConfigRef.current
-  )
+export function useContextConfig() {
+  return React.useContext(configContext)
 }
 
-export interface ReactQueryProviderConfig extends ReactQueryConfig {}
-
 export interface ReactQueryConfigProviderProps {
-  config: ReactQueryProviderConfig
+  config: ReactQueryConfig
 }
 
 export const ReactQueryConfigProvider: React.FC<ReactQueryConfigProviderProps> = ({
   config,
   children,
 }) => {
-  const configContextValueOrDefault = useConfigContext()
-  const configContextValue = React.useContext(configContext)
+  const parentConfig = useContextConfig()
 
-  const newConfig = React.useMemo<ReactQueryConfig>(() => {
-    const { shared = {}, queries = {}, mutations = {} } = config
-    const {
-      shared: contextShared = {},
-      queries: contextQueries = {},
-      mutations: contextMutations = {},
-    } = configContextValueOrDefault
-
-    return {
-      shared: {
-        ...contextShared,
-        ...shared,
-      },
-      queries: {
-        ...contextQueries,
-        ...queries,
-      },
-      mutations: {
-        ...contextMutations,
-        ...mutations,
-      },
-    }
-  }, [config, configContextValueOrDefault])
-
-  React.useEffect(() => {
-    // restore previous config on unmount
-    return () => {
-      defaultConfigRef.current = {
-        ...(configContextValueOrDefault || DEFAULT_CONFIG),
-      }
-    }
-  }, [configContextValueOrDefault])
-
-  // If this is the outermost provider, overwrite the shared default config
-  if (!configContextValue) {
-    defaultConfigRef.current = newConfig
-  }
+  const mergedConfig = React.useMemo(
+    () =>
+      parentConfig ? mergeReactQueryConfigs(parentConfig, config) : config,
+    [config, parentConfig]
+  )
 
   return (
-    <configContext.Provider value={newConfig}>
+    <configContext.Provider value={mergedConfig}>
       {children}
     </configContext.Provider>
   )

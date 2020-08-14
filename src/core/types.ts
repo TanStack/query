@@ -215,6 +215,10 @@ export interface MutationConfig<
   onMutate?: (variables: TVariables) => Promise<TSnapshot> | TSnapshot
   useErrorBoundary?: boolean
   suspense?: boolean
+  /**
+   * By default the query cache from the context is used, but a different cache can be specified.
+   */
+  queryCache?: QueryCache
 }
 
 export type MutationFunction<TResult, TVariables = unknown> = (
