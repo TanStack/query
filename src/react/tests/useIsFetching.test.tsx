@@ -40,4 +40,60 @@ describe('useIsFetching', () => {
     await waitFor(() => rendered.getByText('isFetching: 1'))
     await waitFor(() => rendered.getByText('isFetching: 0'))
   })
+
+  it('should not update state while rendering', async () => {
+    const spy = jest.spyOn(console, 'error')
+
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const isFetchings: number[] = []
+
+    function IsFetching() {
+      const isFetching = useIsFetching()
+      isFetchings.push(isFetching)
+      return null
+    }
+
+    function FirstQuery() {
+      useQuery(key1, async () => {
+        await sleep(100)
+        return 'data'
+      })
+      return null
+    }
+
+    function SecondQuery() {
+      useQuery(key2, async () => {
+        await sleep(100)
+        return 'data'
+      })
+      return null
+    }
+
+    function Page() {
+      const [renderSecond, setRenderSecond] = React.useState(false)
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          setRenderSecond(true)
+        }, 10)
+      }, [])
+
+      return (
+        <>
+          <FirstQuery />
+          {renderSecond && <SecondQuery />}
+          <IsFetching />
+        </>
+      )
+    }
+
+    render(<Page />)
+    await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 1, 0]))
+    expect(spy).not.toHaveBeenCalled()
+    expect(spy.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
+
+    spy.mockRestore()
+  })
 })
