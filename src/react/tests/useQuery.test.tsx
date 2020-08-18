@@ -214,6 +214,60 @@ describe('useQuery', () => {
     })
   })
 
+  it('should share equal data structures between query results', async () => {
+    const key = queryKey()
+
+    const result1 = [
+      { id: '1', done: false },
+      { id: '2', done: false },
+    ]
+
+    const result2 = [
+      { id: '1', done: false },
+      { id: '2', done: true },
+    ]
+
+    const states: QueryResult<typeof result1>[] = []
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => {
+        count++
+        return count === 1 ? result1 : result2
+      })
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          refetch()
+        }, 10)
+      }, [refetch])
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    const todos = states[2].data!
+    const todo1 = todos[0]
+    const todo2 = todos[1]
+
+    const newTodos = states[3].data!
+    const newTodo1 = newTodos[0]
+    const newTodo2 = newTodos[1]
+
+    expect(todos).toEqual(result1)
+    expect(newTodos).toEqual(result2)
+    expect(newTodos).not.toBe(todos)
+    expect(newTodo1).toBe(todo1)
+    expect(newTodo2).not.toBe(todo2)
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', async () => {
     const key1 = queryKey()

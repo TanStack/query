@@ -1,4 +1,4 @@
-import { stableStringify, identity, deepEqual } from './utils'
+import { stableStringify, identity } from './utils'
 import {
   ArrayQueryKey,
   QueryKey,
@@ -44,7 +44,6 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
     refetchInterval: false,
     queryFnParamsFilter: identity,
     refetchOnMount: true,
-    isDataEqual: deepEqual,
     useErrorBoundary: false,
   },
   mutations: {
