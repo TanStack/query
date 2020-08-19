@@ -98,12 +98,16 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Status: success'))
 
     expect(states[0]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
       data: undefined,
       error: null,
       failureCount: 0,
+      fetchMore: expect.any(Function),
       isError: false,
+      isFetched: false,
       isFetching: true,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: true,
       isStale: true,
@@ -115,12 +119,16 @@ describe('useQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
       data: 'test',
       error: null,
       failureCount: 0,
+      fetchMore: expect.any(Function),
       isError: false,
+      isFetched: true,
       isFetching: false,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: false,
       isStale: true,
@@ -163,12 +171,16 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Status: error'))
 
     expect(states[0]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
       data: undefined,
       error: null,
       failureCount: 0,
+      fetchMore: expect.any(Function),
       isError: false,
+      isFetched: false,
       isFetching: true,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: true,
       isStale: true,
@@ -180,12 +192,16 @@ describe('useQuery', () => {
     })
 
     expect(states[1]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
       data: undefined,
       error: null,
       failureCount: 1,
+      fetchMore: expect.any(Function),
       isError: false,
+      isFetched: false,
       isFetching: true,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: true,
       isStale: true,
@@ -197,12 +213,16 @@ describe('useQuery', () => {
     })
 
     expect(states[2]).toEqual({
+      canFetchMore: undefined,
       clear: expect.any(Function),
       data: undefined,
       error: 'rejected',
       failureCount: 2,
+      fetchMore: expect.any(Function),
       isError: true,
+      isFetched: true,
       isFetching: false,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: false,
       isStale: true,
@@ -266,6 +286,113 @@ describe('useQuery', () => {
     expect(newTodos).not.toBe(todos)
     expect(newTodo1).toBe(todo1)
     expect(newTodo2).not.toBe(todo2)
+
+    return null
+  })
+
+  it('should keep the previous data when keepPreviousData is set', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery(
+        [key, count],
+        async () => {
+          await sleep(10)
+          return count
+        },
+        { keepPreviousData: true }
+      )
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          setCount(1)
+        }, 20)
+      }, [])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      isSuccess: true,
+    })
+    expect(states[3]).toMatchObject({
+      data: 1,
+      isFetching: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should use the correct query function when components use different configurations', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+
+    function FirstComponent() {
+      const state = useQuery(key, () => 1)
+      const refetch = state.refetch
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          refetch()
+        }, 10)
+      }, [refetch])
+
+      return null
+    }
+
+    function SecondComponent() {
+      useQuery(key, () => 2)
+      return null
+    }
+
+    function Page() {
+      return (
+        <>
+          <FirstComponent />
+          <SecondComponent />
+        </>
+      )
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+    })
+    expect(states[1]).toMatchObject({
+      data: 1,
+    })
+    expect(states[2]).toMatchObject({
+      data: 1,
+    })
+    // This state should be 1 instead of 2
+    expect(states[3]).toMatchObject({
+      data: 1,
+    })
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/137

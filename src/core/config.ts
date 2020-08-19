@@ -1,4 +1,4 @@
-import { stableStringify, identity } from './utils'
+import { stableStringify } from './utils'
 import {
   ArrayQueryKey,
   QueryKey,
@@ -30,9 +30,6 @@ export const defaultQueryKeySerializerFn: QueryKeySerializerFunction = (
 }
 
 export const DEFAULT_CONFIG: ReactQueryConfig = {
-  shared: {
-    suspense: false,
-  },
   queries: {
     queryKeySerializerFn: defaultQueryKeySerializerFn,
     enabled: true,
@@ -41,14 +38,7 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
     staleTime: 0,
     cacheTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
-    refetchInterval: false,
-    queryFnParamsFilter: identity,
     refetchOnMount: true,
-    useErrorBoundary: false,
-  },
-  mutations: {
-    throwOnError: false,
-    useErrorBoundary: false,
   },
 }
 

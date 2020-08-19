@@ -60,14 +60,16 @@ describe('useInfiniteQuery', () => {
     await waitFor(() => rendered.getByText('Status: success'))
 
     expect(states[0]).toEqual({
+      canFetchmore: undefined,
       clear: expect.any(Function),
       data: undefined,
       error: null,
       failureCount: 0,
       fetchMore: expect.any(Function),
       isError: false,
+      isFetched: false,
       isFetching: true,
-      isFetchingMore: undefined,
+      isFetchingMore: false,
       isIdle: false,
       isLoading: true,
       isStale: true,
@@ -91,8 +93,9 @@ describe('useInfiniteQuery', () => {
       error: null,
       failureCount: 0,
       fetchMore: expect.any(Function),
-      isFetchingMore: undefined,
+      isFetchingMore: false,
       isError: false,
+      isFetched: true,
       isFetching: false,
       isIdle: false,
       isLoading: false,
@@ -102,6 +105,95 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       status: 'success',
       updatedAt: expect.any(Number),
+    })
+  })
+
+  it('should keep the previous data when keepPreviousData is set', async () => {
+    const key = queryKey()
+    const states: InfiniteQueryResult<string>[] = []
+
+    function Page() {
+      const [order, setOrder] = React.useState('desc')
+
+      const state = useInfiniteQuery(
+        [key, order],
+        async (_key, order, page = 0) => {
+          await sleep(10)
+          return `${page}-${order}`
+        },
+        {
+          getFetchMore: (_lastGroup, _allGroups) => 1,
+          keepPreviousData: true,
+        }
+      )
+
+      states.push(state)
+
+      const { fetchMore } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          fetchMore()
+        }, 20)
+        setTimeout(() => {
+          setOrder('asc')
+        }, 40)
+      }, [fetchMore])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(8))
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: ['0-desc'],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: ['0-desc'],
+      isFetching: true,
+      isFetchingMore: 'next',
+      isSuccess: true,
+    })
+    expect(states[3]).toMatchObject({
+      data: ['0-desc'],
+      isFetching: true,
+      isFetchingMore: 'next',
+      isSuccess: true,
+    })
+    expect(states[4]).toMatchObject({
+      data: ['0-desc'],
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[5]).toMatchObject({
+      data: ['0-desc', '1-desc'],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[6]).toMatchObject({
+      data: ['0-desc', '1-desc'],
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[7]).toMatchObject({
+      data: ['0-asc'],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
     })
   })
 
@@ -182,7 +274,7 @@ describe('useInfiniteQuery', () => {
       rendered.getByText('Page 0: 0')
     })
 
-    await fireEvent.click(rendered.getByText('Load More'))
+    fireEvent.click(rendered.getByText('Load More'))
 
     await waitFor(() => rendered.getByText('Loading more...'))
 

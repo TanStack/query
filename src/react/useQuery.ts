@@ -1,5 +1,4 @@
 import { useBaseQuery } from './useBaseQuery'
-import { handleSuspense } from './utils'
 import {
   QueryConfig,
   QueryKey,
@@ -63,13 +62,6 @@ export function useQuery<TResult, TError, TKey extends TupleQueryKey>(
 export function useQuery<TResult, TError>(
   ...args: any[]
 ): QueryResult<TResult, TError> {
-  const [queryKey, config] = useQueryArgs<TResult, TError>(args)
-  const result = useBaseQuery<TResult, TError>(queryKey, config)
-
-  handleSuspense(config, result)
-
-  return {
-    ...result,
-    data: result.query.state.data,
-  }
+  const config = useQueryArgs<TResult, TError>(args)[1]
+  return useBaseQuery<TResult, TError>(config)
 }
