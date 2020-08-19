@@ -6,8 +6,8 @@ import {
   noop,
   Console,
   getStatusProps,
-  shallowEqual,
   Updater,
+  replaceEqualDeep,
 } from './utils'
 import { QueryInstance, OnStateUpdateFunction } from './queryInstance'
 import {
@@ -81,7 +81,7 @@ interface FetchAction {
 
 interface SuccessAction<TResult> {
   type: ActionType.Success
-  updater: Updater<TResult | undefined, TResult>
+  data: TResult | undefined
   isStale: boolean
 }
 
@@ -157,14 +157,9 @@ export class Query<TResult, TError> {
   }
 
   private dispatch(action: Action<TResult, TError>): void {
-    const newState = queryReducer(this.state, action)
-
-    // Only update state if something has changed
-    if (!shallowEqual(this.state, newState)) {
-      this.state = newState
-      this.instances.forEach(d => d.onStateUpdate(newState, action))
-      this.notifyGlobalListeners(this)
-    }
+    this.state = queryReducer(this.state, action)
+    this.instances.forEach(d => d.onStateUpdate(this.state, action))
+    this.notifyGlobalListeners(this)
   }
 
   scheduleStaleTimeout(): void {
@@ -283,11 +278,25 @@ export class Query<TResult, TError> {
   }
 
   setData(updater: Updater<TResult | undefined, TResult>): void {
+    const prevData = this.state.data
+
+    // Get the new data
+    let data: TResult | undefined = functionalUpdate(updater, prevData)
+
+    // Structurally share data between prev and new data
+    data = replaceEqualDeep(prevData, data)
+
+    // Use prev data if an isDataEqual function is defined and returns `true`
+    if (this.config.isDataEqual?.(prevData, data)) {
+      data = prevData
+    }
+
     const isStale = this.config.staleTime === 0
+
     // Set data and mark it as cached
     this.dispatch({
       type: ActionType.Success,
-      updater,
+      data,
       isStale,
     })
 
@@ -502,13 +511,15 @@ export class Query<TResult, TError> {
       this.cancelled = null
 
       try {
-        // Set up the query refreshing state
-        this.dispatch({ type: ActionType.Fetch })
+        // Set to fetching state if not already in it
+        if (!this.state.isFetching) {
+          this.dispatch({ type: ActionType.Fetch })
+        }
 
         // Try to get the data
         const data = await this.tryFetchData(queryFn!, this.queryKey)
 
-        this.setData(old => (this.config.isDataEqual!(old, data) ? old! : data))
+        this.setData(data)
 
         delete this.promise
 
@@ -610,7 +621,7 @@ export function queryReducer<TResult, TError>(
       return {
         ...state,
         ...getStatusProps(QueryStatus.Success),
-        data: functionalUpdate(action.updater, state.data),
+        data: action.data,
         error: null,
         isStale: action.isStale,
         isFetched: true,

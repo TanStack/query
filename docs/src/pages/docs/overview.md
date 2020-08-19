@@ -25,6 +25,7 @@ Once you grasp the nature of server state in your application, **even more chall
 - Reflecting updates to data as quickly as possible
 - Performance optimizations like pagination and lazy loading data
 - Managing memory and garbage collection of server state
+- Memoizing query results with structural sharing
 
 If you're not overwhelmed by that list, then that must mean that you've probably solved all of your server state problems already and deserve an award. However, if you are like a vast majority of people, you either have yet to tackle all or most of these challenges and we're only scratching the surface!
 

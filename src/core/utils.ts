@@ -69,10 +69,6 @@ export function stableStringify(value: any): string {
   return JSON.stringify(value, stableStringifyReplacer)
 }
 
-export function isObject(a: unknown): boolean {
-  return a && typeof a === 'object' && !Array.isArray(a)
-}
-
 export function deepIncludes(a: any, b: any): boolean {
   if (a === b) {
     return true
@@ -135,57 +131,77 @@ export function getQueryArgs<TResult, TError, TOptions = undefined>(
 }
 
 export function deepEqual(a: any, b: any): boolean {
-  return equal(a, b, true)
+  return replaceEqualDeep(a, b) === a
 }
 
-export function shallowEqual(a: any, b: any): boolean {
-  return equal(a, b, false)
+/**
+ * This function returns `a` if `b` is deeply equal.
+ * If not, it will replace any deeply equal children of `b` with those of `a`.
+ * This can be used for structural sharing between JSON values for example.
+ */
+export function replaceEqualDeep<T>(a: unknown, b: T): T
+export function replaceEqualDeep(a: any, b: any): any {
+  if (a === b) {
+    return a
+  }
+
+  const array = Array.isArray(a) && Array.isArray(b)
+
+  if (array || (isPlainObject(a) && isPlainObject(b))) {
+    const aSize = array ? a.length : Object.keys(a).length
+    const bItems = array ? b : Object.keys(b)
+    const bSize = bItems.length
+    const copy: any = array ? [] : {}
+
+    let equalItems = 0
+
+    for (let i = 0; i < bSize; i++) {
+      const key = array ? i : bItems[i]
+      copy[key] = replaceEqualDeep(a[key], b[key])
+      if (copy[key] === a[key]) {
+        equalItems++
+      }
+    }
+
+    return aSize === bSize && equalItems === aSize ? a : copy
+  }
+
+  return b
 }
 
-// This deep-equal is directly based on https://github.com/epoberezkin/fast-deep-equal.
-// The parts for comparing any non-JSON-supported values has been removed
-function equal(a: any, b: any, deep: boolean, depth = 0): boolean {
-  if (a === b) return true
+export function isObject(a: unknown): boolean {
+  return a && typeof a === 'object' && !Array.isArray(a)
+}
 
-  if (
-    (deep || !depth) &&
-    a &&
-    b &&
-    typeof a == 'object' &&
-    typeof b == 'object'
-  ) {
-    let length, i
-    if (Array.isArray(a)) {
-      length = a.length
-      // eslint-disable-next-line eqeqeq
-      if (length != b.length) return false
-      for (i = length; i-- !== 0; )
-        if (!equal(a[i], b[i], deep, depth + 1)) return false
-      return true
-    }
+// Copied from: https://github.com/jonschlinkert/is-plain-object
+function isPlainObject(o: any): o is Object {
+  if (!hasObjectPrototype(o)) {
+    return false
+  }
 
-    if (a.valueOf !== Object.prototype.valueOf)
-      return a.valueOf() === b.valueOf()
-
-    const keys = Object.keys(a)
-    length = keys.length
-    if (length !== Object.keys(b).length) return false
-
-    for (i = length; i-- !== 0; )
-      if (!Object.prototype.hasOwnProperty.call(b, keys[i])) return false
-
-    for (i = length; i-- !== 0; ) {
-      const key = keys[i]
-
-      if (!equal(a[key], b[key], deep, depth + 1)) return false
-    }
-
+  // If has modified constructor
+  const ctor = o.constructor
+  if (typeof ctor === 'undefined') {
     return true
   }
 
-  // true if both NaN, false otherwise
-  // eslint-disable-next-line no-self-compare
-  return a !== a && b !== b
+  // If has modified prototype
+  const prot = ctor.prototype
+  if (!hasObjectPrototype(prot)) {
+    return false
+  }
+
+  // If constructor does not have an Object-specific method
+  if (!prot.hasOwnProperty('isPrototypeOf')) {
+    return false
+  }
+
+  // Most likely a plain Object
+  return true
+}
+
+function hasObjectPrototype(o: any): boolean {
+  return Object.prototype.toString.call(o) === '[object Object]'
 }
 
 export function getStatusProps<T extends QueryStatus>(status: T) {
