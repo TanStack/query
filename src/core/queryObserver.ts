@@ -24,13 +24,14 @@ export class QueryObserver<TResult, TError> {
     this.refetch = this.refetch.bind(this)
     this.fetchMore = this.fetchMore.bind(this)
 
-    // Subscribe to query
+    // Subscribe to the query
     this.updateQuery()
   }
 
   subscribe(listener?: UpdateListener<TResult, TError>): () => void {
     this.started = true
     this.updateListener = listener
+    this.currentQuery.subscribeObserver(this)
     this.optionalFetch()
     this.updateRefetchInterval()
     return this.unsubscribe.bind(this)
@@ -204,10 +205,13 @@ export class QueryObserver<TResult, TError> {
     }
 
     this.previousResult = this.currentResult
-    prevQuery?.unsubscribeObserver(this)
     this.currentQuery = newQuery
-    newQuery.subscribeObserver(this)
     this.currentResult = this.createResult()
+
+    if (this.started) {
+      prevQuery?.unsubscribeObserver(this)
+      this.currentQuery.subscribeObserver(this)
+    }
 
     return true
   }

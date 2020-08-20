@@ -42,6 +42,7 @@ export function useBaseQuery<TResult, TError>(
     }
 
     if (config.enabled && config.suspense && !result.isSuccess) {
+      observer.subscribe()
       throw observer.fetch().finally(() => {
         observer.unsubscribe(true)
       })

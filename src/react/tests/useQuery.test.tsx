@@ -234,6 +234,48 @@ describe('useQuery', () => {
     })
   })
 
+  // https://github.com/tannerlinsley/react-query/issues/896
+  it('should fetch data in Strict mode when refetchOnMount is false', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'test'
+        },
+        {
+          refetchOnMount: false,
+        }
+      )
+      states.push(state)
+      return null
+    }
+
+    render(
+      <React.StrictMode>
+        <Page />
+      </React.StrictMode>
+    )
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+    })
+    expect(states[1]).toMatchObject({
+      data: undefined,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'test',
+    })
+    expect(states[3]).toMatchObject({
+      data: 'test',
+    })
+  })
+
   it('should share equal data structures between query results', async () => {
     const key = queryKey()
 
