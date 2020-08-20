@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
-import { ReactQueryConfigProvider, useQuery, queryCache } from '../index'
 
 import { sleep, queryKey } from './utils'
+import { ReactQueryConfigProvider, useQuery } from '..'
+import { queryCache } from '../../core'
 
 describe('ReactQueryConfigProvider', () => {
   // // See https://github.com/tannerlinsley/react-query/issues/105

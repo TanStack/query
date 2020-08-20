@@ -1,37 +1,27 @@
-import { useBaseQuery } from './useBaseQuery'
 import {
   InfiniteQueryConfig,
   InfiniteQueryResult,
+  QueryFunction,
   QueryKey,
-  QueryKeyWithoutArray,
-  QueryKeyWithoutObject,
-  QueryKeyWithoutObjectAndArray,
-  TupleQueryFunction,
-  TupleQueryKey,
+  TypedQueryFunction,
+  TypedQueryFunctionArgs,
 } from '../core/types'
 import { getQueryArgs } from '../core/utils'
+import { useBaseQuery } from './useBaseQuery'
 
 // TYPES
 
-export interface UseInfiniteQueryObjectConfig<
-  TResult,
-  TError,
-  TKey extends TupleQueryKey
-> {
+export interface UseInfiniteQueryObjectConfig<TResult, TError> {
   queryKey: QueryKey
-  queryFn?: TupleQueryFunction<TResult, TKey>
+  queryFn?: QueryFunction<TResult>
   config?: InfiniteQueryConfig<TResult, TError>
 }
 
 // HOOK
 
 // Parameter syntax with optional config
-export function useInfiniteQuery<
-  TResult,
-  TError,
-  TKey extends QueryKeyWithoutObject
->(
-  queryKey: TKey,
+export function useInfiniteQuery<TResult = unknown, TError = unknown>(
+  queryKey: QueryKey,
   queryConfig?: InfiniteQueryConfig<TResult, TError>
 ): InfiniteQueryResult<TResult, TError>
 
@@ -39,30 +29,22 @@ export function useInfiniteQuery<
 export function useInfiniteQuery<
   TResult,
   TError,
-  TKey extends QueryKeyWithoutObjectAndArray
+  TArgs extends TypedQueryFunctionArgs
 >(
-  queryKey: TKey,
-  queryFn: TupleQueryFunction<TResult, [TKey]>,
+  queryKey: QueryKey,
+  queryFn: TypedQueryFunction<TResult, TArgs>,
   queryConfig?: InfiniteQueryConfig<TResult, TError>
 ): InfiniteQueryResult<TResult, TError>
 
-export function useInfiniteQuery<TResult, TError, TKey extends TupleQueryKey>(
-  queryKey: TKey,
-  queryFn: TupleQueryFunction<TResult, TKey>,
+export function useInfiniteQuery<TResult = unknown, TError = unknown>(
+  queryKey: QueryKey,
+  queryFn: QueryFunction<TResult>,
   queryConfig?: InfiniteQueryConfig<TResult, TError>
 ): InfiniteQueryResult<TResult, TError>
 
 // Object syntax
-export function useInfiniteQuery<
-  TResult,
-  TError,
-  TKey extends QueryKeyWithoutArray
->(
-  config: UseInfiniteQueryObjectConfig<TResult, TError, [TKey]>
-): InfiniteQueryResult<TResult, TError>
-
-export function useInfiniteQuery<TResult, TError, TKey extends TupleQueryKey>(
-  config: UseInfiniteQueryObjectConfig<TResult, TError, TKey>
+export function useInfiniteQuery<TResult = unknown, TError = unknown>(
+  config: UseInfiniteQueryObjectConfig<TResult, TError>
 ): InfiniteQueryResult<TResult, TError>
 
 // Implementation

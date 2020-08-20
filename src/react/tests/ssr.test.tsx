@@ -5,14 +5,10 @@
 import React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
-import {
-  usePaginatedQuery,
-  ReactQueryCacheProvider,
-  queryCache,
-  makeQueryCache,
-  useQuery,
-} from '../index'
+
 import { sleep, queryKey } from './utils'
+import { usePaginatedQuery, ReactQueryCacheProvider, useQuery } from '..'
+import { queryCache, makeQueryCache } from '../../core'
 
 describe('Server Side Rendering', () => {
   // A frozen cache does not cache any data. This is the default

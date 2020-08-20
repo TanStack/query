@@ -28,5 +28,4 @@ size-plugin.json
 stats.html
 .vscode/settings.json
 
-!/types/index.d.ts
-types/**/*.ts
+types

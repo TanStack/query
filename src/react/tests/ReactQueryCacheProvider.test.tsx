@@ -1,14 +1,9 @@
 import React, { useEffect } from 'react'
 import { render, waitFor } from '@testing-library/react'
-import {
-  ReactQueryCacheProvider,
-  makeQueryCache,
-  queryCache,
-  useQuery,
-  useQueryCache,
-} from '../index'
+
 import { sleep, queryKey } from './utils'
-import { QueryCache } from '../../core/queryCache'
+import { ReactQueryCacheProvider, useQuery, useQueryCache } from '..'
+import { makeQueryCache, queryCache, QueryCache } from '../../core'
 
 describe('ReactQueryCacheProvider', () => {
   test('when not used, falls back to global cache', async () => {

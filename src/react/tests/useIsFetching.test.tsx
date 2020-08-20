@@ -1,8 +1,8 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, useIsFetching } from '../index'
 import { sleep, queryKey } from './utils'
+import { useQuery, useIsFetching } from '..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

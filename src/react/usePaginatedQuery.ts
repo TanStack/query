@@ -1,15 +1,13 @@
-import { useBaseQuery } from './useBaseQuery'
 import {
   PaginatedQueryConfig,
   PaginatedQueryResult,
+  QueryFunction,
   QueryKey,
-  QueryKeyWithoutArray,
-  QueryKeyWithoutObject,
-  QueryKeyWithoutObjectAndArray,
-  TupleQueryFunction,
-  TupleQueryKey,
+  TypedQueryFunction,
+  TypedQueryFunctionArgs,
 } from '../core/types'
 import { getQueryArgs } from '../core/utils'
+import { useBaseQuery } from './useBaseQuery'
 
 // A paginated query is more like a "lag" query, which means
 // as the query key changes, we keep the results from the
@@ -18,25 +16,17 @@ import { getQueryArgs } from '../core/utils'
 
 // TYPES
 
-export interface UsePaginatedQueryObjectConfig<
-  TResult,
-  TError,
-  TKey extends TupleQueryKey
-> {
+export interface UsePaginatedQueryObjectConfig<TResult, TError> {
   queryKey: QueryKey
-  queryFn?: TupleQueryFunction<TResult, TKey>
+  queryFn?: QueryFunction<TResult>
   config?: PaginatedQueryConfig<TResult, TError>
 }
 
 // HOOK
 
 // Parameter syntax with optional config
-export function usePaginatedQuery<
-  TResult,
-  TError,
-  TKey extends QueryKeyWithoutObject
->(
-  queryKey: TKey,
+export function usePaginatedQuery<TResult = unknown, TError = unknown>(
+  queryKey: QueryKey,
   queryConfig?: PaginatedQueryConfig<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
@@ -44,30 +34,22 @@ export function usePaginatedQuery<
 export function usePaginatedQuery<
   TResult,
   TError,
-  TKey extends QueryKeyWithoutObjectAndArray
+  TArgs extends TypedQueryFunctionArgs
 >(
-  queryKey: TKey,
-  queryFn: TupleQueryFunction<TResult, [TKey]>,
+  queryKey: QueryKey,
+  queryFn: TypedQueryFunction<TResult, TArgs>,
   queryConfig?: PaginatedQueryConfig<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
-export function usePaginatedQuery<TResult, TError, TKey extends TupleQueryKey>(
-  queryKey: TKey,
-  queryFn: TupleQueryFunction<TResult, TKey>,
+export function usePaginatedQuery<TResult = unknown, TError = unknown>(
+  queryKey: QueryKey,
+  queryFn: QueryFunction<TResult>,
   queryConfig?: PaginatedQueryConfig<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
 // Object syntax
-export function usePaginatedQuery<
-  TResult,
-  TError,
-  TKey extends QueryKeyWithoutArray
->(
-  config: UsePaginatedQueryObjectConfig<TResult, TError, [TKey]>
-): PaginatedQueryResult<TResult, TError>
-
-export function usePaginatedQuery<TResult, TError, TKey extends TupleQueryKey>(
-  config: UsePaginatedQueryObjectConfig<TResult, TError, TKey>
+export function usePaginatedQuery<TResult = unknown, TError = unknown>(
+  config: UsePaginatedQueryObjectConfig<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
 // Implementation

@@ -1,9 +1,9 @@
 import { render, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { useInfiniteQuery, useQueryCache } from '../index'
 import { sleep, queryKey } from './utils'
-import { InfiniteQueryResult } from '../../core/types'
+import { useInfiniteQuery, useQueryCache } from '..'
+import { InfiniteQueryResult } from '../../core'
 
 interface Result {
   items: number[]
@@ -40,7 +40,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        (_key: string, nextId = 0) => fetchItems(nextId, count++),
+        (_key: string, nextId?: number) => fetchItems(nextId || 0, count++),
         {
           getFetchMore: (lastGroup, _allGroups) => Boolean(lastGroup.nextId),
         }
@@ -211,7 +211,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, string>(
+      } = useInfiniteQuery<Result, Error, [string, number]>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
@@ -308,7 +308,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, string>(
+      } = useInfiniteQuery<Result, Error, [string, number]>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
@@ -388,7 +388,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, string>(
+      } = useInfiniteQuery<Result, Error, [string, number]>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
@@ -481,7 +481,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, string>(
+      } = useInfiniteQuery<Result, Error, [string, number]>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
@@ -572,7 +572,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, string>(
+      } = useInfiniteQuery<Result, Error, [string, number]>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {

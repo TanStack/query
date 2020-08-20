@@ -1,7 +1,7 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useMutation } from '../index'
+import { useMutation } from '..'
 
 describe('useMutation', () => {
   it('should be able to reset `data`', async () => {
