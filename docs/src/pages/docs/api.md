@@ -302,11 +302,14 @@ const promise = mutate(variables, {
     - `loading` if the mutation is currently executing.
     - `error` if the last mutation attempt resulted in an error.
     - `success` if the last mutation attempt was successful.
+- `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
 - `data: undefined | Any`
   - Defaults to `undefined`
   - The last successfully resolved data for the query.
 - `error: null | Error`
   - The error object for the query, if an error was encountered.
+- `reset: Function() => void`
+  - A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
 
 ## `queryCache`
 
