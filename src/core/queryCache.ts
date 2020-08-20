@@ -5,6 +5,7 @@ import {
   Console,
   isObject,
   Updater,
+  functionalUpdate,
 } from './utils'
 import { getDefaultedQueryConfig } from './config'
 import { Query } from './query'
@@ -231,17 +232,7 @@ export class QueryCache {
 
       if (!this.config.frozen) {
         this.queries[queryHash] = query
-
-        if (isServer) {
-          this.notifyGlobalListeners()
-        } else {
-          // Here, we setTimeout so as to not trigger
-          // any setState's in parent components in the
-          // middle of the render phase.
-          setTimeout(() => {
-            this.notifyGlobalListeners()
-          })
-        }
+        this.notifyGlobalListeners(query)
       }
     }
 
@@ -333,13 +324,18 @@ export class QueryCache {
     updater: Updater<TResult | undefined, TResult>,
     config?: QueryConfig<TResult, TError>
   ) {
-    let query = this.getQuery<TResult, TError>(queryKey)
+    const query = this.getQuery<TResult, TError>(queryKey)
 
-    if (!query) {
-      query = this.buildQuery<TResult, TError>(queryKey, config)
+    if (query) {
+      query.setData(updater)
+      return
     }
 
-    query.setData(updater)
+    this.buildQuery<TResult, TError>(queryKey, {
+      initialStale: typeof config?.staleTime === 'undefined',
+      initialData: functionalUpdate(updater, undefined),
+      ...config,
+    })
   }
 }
 

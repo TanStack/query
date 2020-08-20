@@ -1,23 +1,19 @@
 import React from 'react'
 
-import { useRerenderer, useGetLatest } from './utils'
 import { useQueryCache } from './ReactQueryCacheProvider'
+import { useSafeState } from './utils'
 
 export function useIsFetching(): number {
   const queryCache = useQueryCache()
-  const rerender = useRerenderer()
-  const isFetching = queryCache.isFetching
 
-  const getIsFetching = useGetLatest(isFetching)
+  const [isFetching, setIsFetching] = useSafeState(queryCache.isFetching)
 
   React.useEffect(
     () =>
-      queryCache.subscribe(newCache => {
-        if (getIsFetching() !== newCache.isFetching) {
-          rerender()
-        }
+      queryCache.subscribe(() => {
+        setIsFetching(queryCache.isFetching)
       }),
-    [getIsFetching, queryCache, rerender]
+    [queryCache, setIsFetching]
   )
 
   return isFetching

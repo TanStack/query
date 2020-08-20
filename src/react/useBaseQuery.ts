@@ -23,7 +23,7 @@ export function useBaseQuery<TResult, TError>(
   React.useEffect(
     () =>
       observer.subscribe(() => {
-        Promise.resolve().then(rerender)
+        rerender()
       }),
     [observer, rerender]
   )
