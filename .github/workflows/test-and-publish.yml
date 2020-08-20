@@ -3,32 +3,32 @@ name: react-query tests
 on:
   push:
     branches:
-      - 'master'
-      - 'next'
-      - '1.x'
+      - "master"
+      - "next"
+      - "1.x"
   pull_request:
 
 jobs:
   test:
-    name: 'node ${{ matrix.node }} ${{ matrix.os }} '
-    runs-on: '${{ matrix.os }}'
+    name: "Node ${{ matrix.node }}"
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        node: [14, 12, 10]
+        node: [10, 12, 14]
     steps:
+      - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node }}
-      - uses: actions/checkout@v2
-      - run: npm i -g yarn
-      - run: yarn --frozen-lockfile
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
       - run: yarn test:ci
 
   publish-module:
-    name: 'Publish Module to NPM'
+    name: "Publish Module to NPM"
     needs: test
-    if: github.repository_owner == 'tannerlinsley' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/1.x') #publish only when merged in master on original repo, not on PR
+    # publish only when merged in master on original repo, not on PR
+    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/1.x')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,10 +36,13 @@ jobs:
         with:
           node-version: 14
           registry-url: https://registry.npmjs.org/
-      - run: npm i -g yarn
-      - run: yarn --frozen-lockfile
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
       - run: yarn build
-      - run: npx semantic-release@17
+      - name: Semantic Release
+        uses: cycjimmy/semantic-release-action@v2
+        with:
+          semantic_version: 17
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
-          GH_TOKEN: ${{secrets.GH_TOKEN}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.npm_token }}
