@@ -87,7 +87,7 @@ Note that since version 1.1.0, the `mutate` function is no longer called synchro
 const CreateTodo = () => {
   const [mutate] = useMutation(event => {
     event.preventDefault()
-    fetch('/api', new FormData(event.target))
+    return fetch('/api', new FormData(event.target))
   })
 
   return <form onSubmit={mutate}>...</form>
@@ -96,7 +96,7 @@ const CreateTodo = () => {
 // This will work
 const CreateTodo = () => {
   const [mutate] = useMutation(formData => {
-    fetch('/api', formData)
+    return fetch('/api', formData)
   })
   const onSubmit = event => {
     event.preventDefault()
