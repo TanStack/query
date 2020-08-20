@@ -1,6 +1,6 @@
 {
   "name": "react-query",
-  "version": "0.0.0",
+  "version": "1.0.0-semantic-release",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -25,8 +25,6 @@
     "build": "NODE_ENV=production rollup -c",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
-    "release": "yarn publish",
-    "releaseNext": "yarn publish --tag next",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
     "stats": "open ./stats.html",
     "dtslint": "dtslint types"
