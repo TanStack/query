@@ -3,10 +3,13 @@ import React from 'react'
 import { useRerenderer } from './utils'
 import { QueryObserver } from '../core/queryObserver'
 import { QueryResultBase, QueryObserverConfig } from '../core/types'
+import { useDefaultedQueryConfig } from './useDefaultedQueryConfig'
 
 export function useBaseQuery<TResult, TError>(
   config: QueryObserverConfig<TResult, TError> = {}
 ): QueryResultBase<TResult, TError> {
+  config = useDefaultedQueryConfig(config)
+
   // Make a rerender function
   const rerender = useRerenderer()
 

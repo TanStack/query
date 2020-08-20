@@ -9,7 +9,7 @@ import {
   TupleQueryFunction,
   TupleQueryKey,
 } from '../core/types'
-import { useQueryArgs } from './useQueryArgs'
+import { getQueryArgs } from '../core/utils'
 
 // TYPES
 
@@ -69,7 +69,6 @@ export function useInfiniteQuery<TResult, TError, TKey extends TupleQueryKey>(
 export function useInfiniteQuery<TResult, TError>(
   ...args: any[]
 ): InfiniteQueryResult<TResult, TError> {
-  let config = useQueryArgs<TResult[], TError>(args)[1]
-  config = { ...config, infinite: true }
-  return useBaseQuery<TResult[], TError>(config)
+  const config = getQueryArgs<TResult[], TError>(args)[1]
+  return useBaseQuery<TResult[], TError>({ ...config, infinite: true })
 }

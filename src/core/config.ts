@@ -4,6 +4,8 @@ import {
   QueryKey,
   QueryKeySerializerFunction,
   ReactQueryConfig,
+  QueryConfig,
+  MutationConfig,
 } from './types'
 
 // TYPES
@@ -29,6 +31,22 @@ export const defaultQueryKeySerializerFn: QueryKeySerializerFunction = (
   }
 }
 
+/**
+ * Config merging strategy
+ *
+ * When using hooks the config will be merged in the following order:
+ *
+ * 1. These defaults.
+ * 2. Defaults from the hook query cache.
+ * 3. Combined defaults from any config providers in the tree.
+ * 4. Query/mutation config provided to the hook.
+ *
+ * When using a query cache directly the config will be merged in the following order:
+ *
+ * 1. These defaults.
+ * 2. Defaults from the query cache.
+ * 3. Query/mutation config provided to the query cache method.
+ */
 export const DEFAULT_CONFIG: ReactQueryConfig = {
   queries: {
     queryKeySerializerFn: defaultQueryKeySerializerFn,
@@ -42,6 +60,63 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
   },
 }
 
-export const defaultConfigRef: ReactQueryConfigRef = {
-  current: DEFAULT_CONFIG,
+export function mergeReactQueryConfigs(
+  a: ReactQueryConfig,
+  b: ReactQueryConfig
+): ReactQueryConfig {
+  return {
+    shared: {
+      ...a.shared,
+      ...b.shared,
+    },
+    queries: {
+      ...a.queries,
+      ...b.queries,
+    },
+    mutations: {
+      ...a.mutations,
+      ...b.mutations,
+    },
+  }
+}
+
+export function getDefaultedQueryConfig<TResult, TError>(
+  queryCacheConfig?: ReactQueryConfig,
+  contextConfig?: ReactQueryConfig,
+  config?: QueryConfig<TResult, TError>,
+  configOverrides?: QueryConfig<TResult, TError>
+): QueryConfig<TResult, TError> {
+  return {
+    ...DEFAULT_CONFIG.shared,
+    ...DEFAULT_CONFIG.queries,
+    ...queryCacheConfig?.shared,
+    ...queryCacheConfig?.queries,
+    ...contextConfig?.shared,
+    ...contextConfig?.queries,
+    ...config,
+    ...configOverrides,
+  } as QueryConfig<TResult, TError>
+}
+
+export function getDefaultedMutationConfig<
+  TResult,
+  TError,
+  TVariables,
+  TSnapshot
+>(
+  queryCacheConfig?: ReactQueryConfig,
+  contextConfig?: ReactQueryConfig,
+  config?: MutationConfig<TResult, TError, TVariables, TSnapshot>,
+  configOverrides?: MutationConfig<TResult, TError, TVariables, TSnapshot>
+): MutationConfig<TResult, TError, TVariables, TSnapshot> {
+  return {
+    ...DEFAULT_CONFIG.shared,
+    ...DEFAULT_CONFIG.mutations,
+    ...queryCacheConfig?.shared,
+    ...queryCacheConfig?.mutations,
+    ...contextConfig?.shared,
+    ...contextConfig?.mutations,
+    ...config,
+    ...configOverrides,
+  } as MutationConfig<TResult, TError, TVariables, TSnapshot>
 }

@@ -9,7 +9,7 @@ import {
   TupleQueryFunction,
   TupleQueryKey,
 } from '../core/types'
-import { useQueryArgs } from './useQueryArgs'
+import { getQueryArgs } from '../core/utils'
 
 // A paginated query is more like a "lag" query, which means
 // as the query key changes, we keep the results from the
@@ -74,9 +74,11 @@ export function usePaginatedQuery<TResult, TError, TKey extends TupleQueryKey>(
 export function usePaginatedQuery<TResult, TError>(
   ...args: any[]
 ): PaginatedQueryResult<TResult, TError> {
-  let config = useQueryArgs<TResult, TError>(args)[1]
-  config = { ...config, keepPreviousData: true }
-  const result = useBaseQuery<TResult, TError>(config)
+  const config = getQueryArgs<TResult, TError>(args)[1]
+  const result = useBaseQuery<TResult, TError>({
+    ...config,
+    keepPreviousData: true,
+  })
   return {
     ...result,
     resolvedData: result.data,

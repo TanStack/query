@@ -6,7 +6,7 @@ import {
   isObject,
   Updater,
 } from './utils'
-import { defaultConfigRef, ReactQueryConfigRef } from './config'
+import { getDefaultedQueryConfig } from './config'
 import { Query } from './query'
 import {
   QueryConfig,
@@ -76,7 +76,6 @@ export class QueryCache {
   isFetching: number
 
   private config: QueryCacheConfig
-  private configRef: ReactQueryConfigRef
   private globalListeners: QueryCacheListener[]
 
   constructor(config?: QueryCacheConfig) {
@@ -84,25 +83,6 @@ export class QueryCache {
 
     // A frozen cache does not add new queries to the cache
     this.globalListeners = []
-
-    this.configRef = this.config.defaultConfig
-      ? {
-          current: {
-            shared: {
-              ...defaultConfigRef.current.shared,
-              ...this.config.defaultConfig.shared,
-            },
-            queries: {
-              ...defaultConfigRef.current.queries,
-              ...this.config.defaultConfig.queries,
-            },
-            mutations: {
-              ...defaultConfigRef.current.mutations,
-              ...this.config.defaultConfig.mutations,
-            },
-          },
-        }
-      : defaultConfigRef
 
     this.queries = {}
     this.isFetching = 0
@@ -118,16 +98,15 @@ export class QueryCache {
   }
 
   getDefaultConfig() {
-    return this.configRef.current
+    return this.config.defaultConfig
   }
 
-  getDefaultedConfig<TResult, TError>(config?: QueryConfig<TResult, TError>) {
-    return {
-      ...this.configRef.current.shared!,
-      ...this.configRef.current.queries!,
+  getDefaultedQueryConfig<TResult, TError>(
+    config?: QueryConfig<TResult, TError>
+  ): QueryConfig<TResult, TError> {
+    return getDefaultedQueryConfig(this.getDefaultConfig(), undefined, config, {
       queryCache: this,
-      ...config,
-    } as QueryConfig<TResult, TError>
+    })
   }
 
   subscribe(listener: QueryCacheListener): () => void {
@@ -158,8 +137,8 @@ export class QueryCache {
     if (typeof predicate === 'function') {
       predicateFn = predicate as QueryPredicateFn
     } else {
-      const [queryHash, queryKey] = this.configRef.current.queries!
-        .queryKeySerializerFn!(predicate)
+      const config = this.getDefaultedQueryConfig()
+      const [queryHash, queryKey] = config.queryKeySerializerFn!(predicate)
 
       predicateFn = d =>
         options?.exact
@@ -234,7 +213,7 @@ export class QueryCache {
     userQueryKey: QueryKey,
     queryConfig?: QueryConfig<TResult, TError>
   ): Query<TResult, TError> {
-    const config = this.getDefaultedConfig(queryConfig)
+    const config = this.getDefaultedQueryConfig(queryConfig)
 
     const [queryHash, queryKey] = config.queryKeySerializerFn!(userQueryKey)
 
@@ -352,6 +331,7 @@ export class QueryCache {
       TError,
       PrefetchQueryOptions | undefined
     >(args)
+
     // https://github.com/tannerlinsley/react-query/issues/652
     const configWithoutRetry = { retry: false, ...config }
 
