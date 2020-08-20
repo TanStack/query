@@ -39,10 +39,7 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - run: yarn build
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
-        with:
-          semantic_version: 17
+      - run: npx semantic-release@17
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.npm_token }}
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
