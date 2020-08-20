@@ -1,6 +1,3 @@
-export * from '../core/index'
-
-// React
 export {
   ReactQueryCacheProvider,
   useQueryCache,

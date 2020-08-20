@@ -1,6 +1,5 @@
 import { sleep, queryKey } from '../../react/tests/utils'
-import { queryCache as defaultQueryCache } from '../'
-import { makeQueryCache } from '../queryCache'
+import { makeQueryCache, queryCache as defaultQueryCache } from '..'
 
 describe('queryCache', () => {
   test('setQueryData does not crash if query could not be found', () => {

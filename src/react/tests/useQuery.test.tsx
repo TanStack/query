@@ -1,55 +1,72 @@
 import { render, act, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { useQuery, queryCache } from '../index'
 import { sleep, expectType, queryKey } from './utils'
-import { QueryResult } from '../../core/types'
+import { useQuery } from '..'
+import { queryCache, QueryResult } from '../../core'
 
 describe('useQuery', () => {
   it('should return the correct types', () => {
-    const key1 = queryKey()
-    const key2 = queryKey()
-    const key3 = queryKey()
-    const key4 = queryKey()
-    const key5 = queryKey()
-    const key6 = queryKey()
+    const key = queryKey()
 
     // @ts-ignore
     // eslint-disable-next-line
     function Page() {
       // unspecified query function should default to unknown
-      const noQueryFn = useQuery(key1)
+      const noQueryFn = useQuery(key)
       expectType<unknown>(noQueryFn.data)
       expectType<unknown>(noQueryFn.error)
 
       // it should infer the result type from the query function
-      const fromQueryFn = useQuery(key2, () => 'test')
+      const fromQueryFn = useQuery(key, () => 'test')
       expectType<string | undefined>(fromQueryFn.data)
       expectType<unknown>(fromQueryFn.error)
 
       // it should be possible to specify the error type
-      const withError = useQuery<string, Error, string>(key3, () => 'test')
+      const withResult = useQuery<string>(key, () => 'test')
+      expectType<string | undefined>(withResult.data)
+      expectType<unknown | null>(withResult.error)
+
+      // it should be possible to specify the error type
+      const withError = useQuery<string, Error>(key, () => 'test')
       expectType<string | undefined>(withError.data)
       expectType<Error | null>(withError.error)
 
-      // unspecified error type should default to unknown
-      const withoutError = useQuery<number, unknown, string>(key4, () => 1)
-      expectType<number | undefined>(withoutError.data)
-      expectType<unknown>(withoutError.error)
+      // it should be possible to specify the query function arguments
+      useQuery<void, string, [string]>(key, arg1 => {
+        expectType<string>(arg1)
+      })
+
+      // the query function arguments should default to unknown
+      useQuery(key, arg1 => {
+        expectType<unknown>(arg1)
+      })
+
+      // the query function arguments should default to any if other generics are provided
+      useQuery<void>(key, arg1 => {
+        expectType<any>(arg1)
+        arg1.someMethod()
+      })
+
+      // it should be possible to specify the query function argument types
+      useQuery(key, (arg1: string) => {
+        expectType<string>(arg1)
+      })
+
+      // it should be possible to specify the query function argument types when generics are provided
+      useQuery<void>(key, (arg1: string) => {
+        expectType<string>(arg1)
+      })
 
       // it should provide the result type in the configuration
-      useQuery([key5], async () => true, {
+      useQuery([key], async () => true, {
         onSuccess: data => expectType<boolean>(data),
         onSettled: data => expectType<boolean | undefined>(data),
       })
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
-      useQuery<number>(key6, () => 'test')
-
-      // should error when a non configuration object is given as first argument
-      // @ts-expect-error
-      useQuery({ a: 'a' }, () => 'test')
+      useQuery<number>(key, () => 'test')
     }
   })
 
@@ -148,7 +165,7 @@ describe('useQuery', () => {
     const states: QueryResult<undefined, string>[] = []
 
     function Page() {
-      const state = useQuery<undefined, string, string>(
+      const state = useQuery<undefined, string, [string]>(
         key,
         () => Promise.reject('rejected'),
         {
@@ -569,7 +586,7 @@ describe('useQuery', () => {
     consoleMock.mockImplementation(() => undefined)
 
     function Page() {
-      const { status, error } = useQuery<undefined, string, string>(
+      const { status, error } = useQuery<undefined, string>(
         key,
         () => {
           return Promise.reject('Error test jaylen')
@@ -649,7 +666,7 @@ describe('useQuery', () => {
       const { status, failureCount, error } = useQuery<
         undefined,
         string,
-        string
+        [string]
       >(key, queryFn, {
         retryDelay: 1,
         retry: (_failureCount, error) => error !== 'NoRetry',
@@ -680,11 +697,16 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
+      type Filters = { filter: string }
       const [filter, setFilter] = React.useState('')
-      const { data } = useQuery([key, { filter }], async (_key, { filter }) => {
-        await sleep(10)
-        return `todo ${filter}`
-      })
+      const filters: Filters = { filter }
+      const { data } = useQuery(
+        [key, filters],
+        async (_key: string, { filter }: Filters) => {
+          await sleep(10)
+          return `todo ${filter}`
+        }
+      )
 
       return (
         <div>
@@ -1143,7 +1165,6 @@ describe('useQuery', () => {
 
     function Page() {
       useQuery(
-        // @ts-expect-error
         () => undefined,
         () => 'data'
       )

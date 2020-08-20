@@ -38,7 +38,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-      - run: yarn build
+      - run: yarn build && yarn build:types
       - run: npx semantic-release@17
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

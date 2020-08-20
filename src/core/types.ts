@@ -1,24 +1,16 @@
 import type { Query, FetchMoreOptions } from './query'
 import type { QueryCache } from './queryCache'
 
-export type QueryKeyObject =
+export type QueryKey =
+  | boolean
+  | null
+  | number
   | object
-  | { [key: string]: QueryKey }
+  | string
+  | undefined
   | { [key: number]: QueryKey }
-
-export type QueryKeyPrimitive = string | boolean | number | null | undefined
-
-export type QueryKeyWithoutObjectAndArray = QueryKeyPrimitive
-
-export type QueryKeyWithoutObject =
-  | QueryKeyWithoutObjectAndArray
+  | { [key: string]: QueryKey }
   | readonly QueryKey[]
-
-export type QueryKeyWithoutArray =
-  | QueryKeyWithoutObjectAndArray
-  | QueryKeyObject
-
-export type QueryKey = QueryKeyWithoutObject | QueryKeyObject
 
 export type ArrayQueryKey = QueryKey[]
 
@@ -26,12 +18,12 @@ export type QueryFunction<TResult> = (
   ...args: any[]
 ) => TResult | Promise<TResult>
 
-// The tuple variants are only to infer types in the public API
-export type TupleQueryKey = readonly [QueryKey, ...QueryKey[]]
+export type TypedQueryFunction<
+  TResult,
+  TArgs extends TypedQueryFunctionArgs = TypedQueryFunctionArgs
+> = (...args: TArgs) => TResult | Promise<TResult>
 
-export type TupleQueryFunction<TResult, TKey extends TupleQueryKey> = (
-  ...args: TKey
-) => TResult | Promise<TResult>
+export type TypedQueryFunctionArgs = readonly [unknown, ...unknown[]]
 
 export type InitialDataFunction<TResult> = () => TResult | undefined
 

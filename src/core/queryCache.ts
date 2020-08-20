@@ -10,13 +10,11 @@ import { getDefaultedQueryConfig } from './config'
 import { Query } from './query'
 import {
   QueryConfig,
+  QueryFunction,
   QueryKey,
-  QueryKeyWithoutObject,
   ReactQueryConfig,
-  QueryKeyWithoutArray,
-  QueryKeyWithoutObjectAndArray,
-  TupleQueryFunction,
-  TupleQueryKey,
+  TypedQueryFunction,
+  TypedQueryFunctionArgs,
 } from './types'
 
 // TYPES
@@ -49,13 +47,9 @@ type QueryPredicate = QueryKey | QueryPredicateFn | true
 
 type QueryPredicateFn = (query: Query<unknown, unknown>) => boolean
 
-export interface PrefetchQueryObjectConfig<
-  TResult,
-  TError,
-  TKey extends TupleQueryKey
-> {
+export interface PrefetchQueryObjectConfig<TResult, TError> {
   queryKey: QueryKey
-  queryFn?: TupleQueryFunction<TResult, TKey>
+  queryFn?: QueryFunction<TResult>
   config?: QueryConfig<TResult, TError>
   options?: PrefetchQueryOptions
 }
@@ -255,61 +249,42 @@ export class QueryCache {
   }
 
   // Parameter syntax with optional prefetch options
-  async prefetchQuery<TResult, TError, TKey extends QueryKeyWithoutObject>(
-    queryKey: TKey,
-    options?: PrefetchQueryOptions
-  ): Promise<TResult | undefined>
-
-  // Parameter syntax with config and optional prefetch options
-  async prefetchQuery<TResult, TError, TKey extends QueryKeyWithoutObject>(
-    queryKey: TKey,
-    config: QueryConfig<TResult, TError>,
+  async prefetchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
     options?: PrefetchQueryOptions
   ): Promise<TResult | undefined>
 
   // Parameter syntax with query function and optional prefetch options
-  async prefetchQuery<
-    TResult,
-    TError,
-    TKey extends QueryKeyWithoutObjectAndArray
-  >(
-    queryKey: TKey,
-    queryFn: TupleQueryFunction<TResult, [TKey]>,
+  async prefetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
+    queryKey: QueryKey,
+    queryFn: TypedQueryFunction<TResult, TArgs>,
     options?: PrefetchQueryOptions
   ): Promise<TResult | undefined>
 
-  async prefetchQuery<TResult, TError, TKey extends TupleQueryKey>(
-    queryKey: TKey,
-    queryFn: TupleQueryFunction<TResult, TKey>,
+  async prefetchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    queryFn: QueryFunction<TResult>,
     options?: PrefetchQueryOptions
   ): Promise<TResult | undefined>
 
   // Parameter syntax with query function, config and optional prefetch options
-  async prefetchQuery<
-    TResult,
-    TError,
-    TKey extends QueryKeyWithoutObjectAndArray
-  >(
-    queryKey: TKey,
-    queryFn: TupleQueryFunction<TResult, [TKey]>,
+  async prefetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
+    queryKey: QueryKey,
+    queryFn: TypedQueryFunction<TResult, TArgs>,
     queryConfig: QueryConfig<TResult, TError>,
     options?: PrefetchQueryOptions
   ): Promise<TResult | undefined>
 
-  async prefetchQuery<TResult, TError, TKey extends TupleQueryKey>(
-    queryKey: TKey,
-    queryFn: TupleQueryFunction<TResult, TKey>,
+  async prefetchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    queryFn: QueryFunction<TResult>,
     queryConfig: QueryConfig<TResult, TError>,
     options?: PrefetchQueryOptions
   ): Promise<TResult | undefined>
 
   // Object syntax
-  async prefetchQuery<TResult, TError, TKey extends QueryKeyWithoutArray>(
-    config: PrefetchQueryObjectConfig<TResult, TError, [TKey]>
-  ): Promise<TResult | undefined>
-
-  async prefetchQuery<TResult, TError, TKey extends TupleQueryKey>(
-    config: PrefetchQueryObjectConfig<TResult, TError, TKey>
+  async prefetchQuery<TResult = unknown, TError = unknown>(
+    config: PrefetchQueryObjectConfig<TResult, TError>
   ): Promise<TResult | undefined>
 
   // Implementation

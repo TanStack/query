@@ -2,8 +2,9 @@ import { render, waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { useQuery, queryCache } from '../index'
 import { sleep, queryKey } from './utils'
+import { useQuery } from '..'
+import { queryCache } from '../../core'
 
 describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {

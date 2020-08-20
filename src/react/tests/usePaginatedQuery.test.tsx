@@ -1,9 +1,9 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { sleep, queryKey } from './utils'
 
-import { usePaginatedQuery } from '../index'
-import { PaginatedQueryResult } from '../../core/types'
+import { sleep, queryKey } from './utils'
+import { usePaginatedQuery } from '..'
+import { PaginatedQueryResult } from '../../core'
 
 describe('usePaginatedQuery', () => {
   it('should return the correct states for a successful query', async () => {

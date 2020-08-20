@@ -17,17 +17,16 @@
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "npm run test:types && npm run test:eslint && jest --watch",
-    "test:ci": "npm run test:types && npm run test:eslint && jest && yarn dtslint",
+    "test:ci": "npm run test:types && npm run test:eslint && jest",
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "gen:types": "tsc --project ./tsconfig.types.json",
     "build": "NODE_ENV=production rollup -c",
+    "build:types": "tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r && replace 'export type' 'export' ./types -r",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
-    "stats": "open ./stats.html",
-    "dtslint": "dtslint types"
+    "stats": "open ./stats.html"
   },
   "release": {
     "branches": [
@@ -44,9 +43,7 @@
     "types",
     "scripts"
   ],
-  "dependencies": {
-    "ts-toolbelt": "^6.9.4"
-  },
+  "dependencies": {},
   "peerDependencies": {
     "react": "^16.8.0"
   },
@@ -66,7 +63,6 @@
     "babel-jest": "^26.0.1",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
     "cross-env": "^7.0.2",
-    "dtslint": "^3.6.12",
     "eslint": "7.x",
     "eslint-config-prettier": "^6.11.0",
     "eslint-config-react-app": "^5.2.1",
@@ -87,6 +83,7 @@
     "react": "^16.13.0",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^2.2.2",
+    "replace": "^1.2.0",
     "rollup": "^2.16.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
