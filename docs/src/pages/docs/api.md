@@ -226,7 +226,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](#usequ
 
 **Returns**
 
-The returned properties for `usePaginatedQuery` are identical to the [`useQuery` hook](#usequery), with the addition of the following:
+The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](#usequery), with the addition of the following:
 
 - `isFetchingMore: false | 'next' | 'previous'`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
