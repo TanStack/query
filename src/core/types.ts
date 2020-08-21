@@ -76,7 +76,7 @@ export interface QueryObserverConfig<TResult, TError = unknown>
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * Defaults to `false`.
    */
-  refetchInterval?: number
+  refetchInterval?: number | false
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.
