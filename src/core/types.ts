@@ -57,6 +57,11 @@ export interface BaseQueryConfig<TResult, TError = unknown> {
   initialData?: TResult | InitialDataFunction<TResult>
   initialStale?: boolean | InitialStaleFunction
   infinite?: true
+  /**
+   * Set this to `false` to disable structural sharing between query results.
+   * Defaults to `true`.
+   */
+  structuralSharing?: boolean
 }
 
 export interface QueryObserverConfig<TResult, TError = unknown>
