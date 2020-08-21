@@ -86,9 +86,9 @@ export class QueryObserver<TResult, TError> {
     return this.currentQuery.clear()
   }
 
-  async refetch(): Promise<void> {
+  async refetch(options?: { throwOnError?: boolean }): Promise<TResult | undefined> {
     this.currentQuery.updateConfig(this.config)
-    return this.currentQuery.refetch()
+    return this.currentQuery.refetch(options)
   }
 
   async fetchMore(

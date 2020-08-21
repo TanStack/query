@@ -160,7 +160,7 @@ export interface QueryResultBase<TResult, TError = unknown> {
   isStale: boolean
   isSuccess: boolean
   query: Query<TResult, TError>
-  refetch: () => Promise<void>
+  refetch: (options?: { throwOnError?: boolean }) => Promise<TResult | undefined>
   status: QueryStatus
   updatedAt: number
 }

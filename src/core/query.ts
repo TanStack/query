@@ -224,12 +224,16 @@ export class Query<TResult, TError> {
     )
   }
 
-  async refetch(): Promise<void> {
+  async refetch(options?: { throwOnError?: boolean }): Promise<TResult | undefined> {
     try {
-      await this.fetch()
+      return await this.fetch()
     } catch (error) {
+      if (options?.throwOnError === true) {
+        return Promise.reject(error);
+      }
       Console.error(error)
     }
+    return;
   }
 
   heal(): void {
