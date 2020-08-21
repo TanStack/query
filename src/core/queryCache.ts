@@ -1,11 +1,10 @@
 import {
-  isServer,
-  getQueryArgs,
-  deepIncludes,
-  Console,
-  isObject,
   Updater,
+  deepIncludes,
   functionalUpdate,
+  getQueryArgs,
+  isObject,
+  isServer,
 } from './utils'
 import { getDefaultedQueryConfig } from './config'
 import { Query } from './query'
@@ -310,11 +309,10 @@ export class QueryCache {
         await query.fetch()
       }
       return query.state.data
-    } catch (err) {
+    } catch (error) {
       if (options?.throwOnError) {
-        throw err
+        throw error
       }
-      Console.error(err)
       return
     }
   }

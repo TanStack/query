@@ -141,7 +141,7 @@ describe('ReactQueryCacheProvider', () => {
     cache2.clear({ notify: false })
   })
 
-  test('when cache changes, previous cache is cleaned', () => {
+  test('when cache changes, previous cache is cleaned', async () => {
     const key = queryKey()
 
     const caches: QueryCache[] = []
@@ -149,6 +149,7 @@ describe('ReactQueryCacheProvider', () => {
 
     function Page() {
       const queryCache = useQueryCache()
+
       useEffect(() => {
         caches.push(queryCache)
       }, [queryCache])
@@ -175,6 +176,8 @@ describe('ReactQueryCacheProvider', () => {
 
     const rendered = render(<App />)
 
+    await waitFor(() => rendered.getByText('test'))
+
     expect(caches).toHaveLength(1)
     jest.spyOn(caches[0], 'clear')
 
@@ -182,6 +185,9 @@ describe('ReactQueryCacheProvider', () => {
 
     expect(caches).toHaveLength(2)
     expect(caches[0].clear).toHaveBeenCalled()
+
+    await waitFor(() => rendered.getByText('test'))
+
     customCache.clear({ notify: false })
   })
 

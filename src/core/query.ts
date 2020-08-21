@@ -1,13 +1,15 @@
 import {
-  isServer,
-  functionalUpdate,
-  cancelledError,
-  isDocumentVisible,
-  noop,
+  CancelledError,
   Console,
-  getStatusProps,
   Updater,
+  functionalUpdate,
+  getStatusProps,
+  isCancelable,
+  isCancelledError,
+  isDocumentVisible,
+  isServer,
   replaceEqualDeep,
+  sleep,
 } from './utils'
 import {
   ArrayQueryKey,
@@ -59,7 +61,7 @@ export interface FetchMoreOptions {
 }
 
 export interface RefetchOptions {
-  throwOnError?: boolean;
+  throwOnError?: boolean
 }
 
 export enum ActionType {
@@ -91,7 +93,6 @@ interface SuccessAction<TResult> {
 
 interface ErrorAction<TError> {
   type: ActionType.Error
-  cancelled: boolean
   error: TError
 }
 
@@ -111,22 +112,21 @@ export type Action<TResult, TError> =
 // CLASS
 
 export class Query<TResult, TError> {
-  queryCache: QueryCache
   queryKey: ArrayQueryKey
   queryHash: string
   config: QueryConfig<TResult, TError>
   observers: QueryObserver<TResult, TError>[]
   state: QueryState<TResult, TError>
-  shouldContinueRetryOnFocus?: boolean
-  promise?: Promise<TResult | undefined>
 
+  private queryCache: QueryCache
+  private promise?: Promise<TResult | undefined>
   private fetchMoreVariable?: unknown
   private pageVariables?: ArrayQueryKey[]
   private cacheTimeout?: number
-  private retryTimeout?: number
   private staleTimeout?: number
-  private cancelPromises?: () => void
-  private cancelled?: typeof cancelledError | null
+  private cancelFetch?: () => void
+  private continueFetch?: () => void
+  private isTransportCancelable?: boolean
   private notifyGlobalListeners: (query: Query<TResult, TError>) => void
 
   constructor(init: QueryInitConfig<TResult, TError>) {
@@ -161,12 +161,9 @@ export class Query<TResult, TError> {
     if (!isServer && this.state.data) {
       this.scheduleStaleTimeout()
 
-      // Simulate a query healing process
-      this.heal()
-
       // Schedule for garbage collection in case
       // nothing subscribes to this query
-      this.scheduleGarbageCollection()
+      this.scheduleCacheTimeout()
     }
   }
 
@@ -180,7 +177,7 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners(this)
   }
 
-  scheduleStaleTimeout(): void {
+  private scheduleStaleTimeout(): void {
     if (isServer) {
       return
     }
@@ -206,7 +203,7 @@ export class Query<TResult, TError> {
     this.dispatch({ type: ActionType.MarkStale })
   }
 
-  scheduleGarbageCollection(): void {
+  private scheduleCacheTimeout(): void {
     if (isServer) {
       return
     }
@@ -217,15 +214,9 @@ export class Query<TResult, TError> {
       return
     }
 
-    this.cacheTimeout = setTimeout(
-      () => {
-        this.clear()
-      },
-      typeof this.state.data === 'undefined' &&
-        this.state.status !== QueryStatus.Error
-        ? 0
-        : this.config.cacheTime
-    )
+    this.cacheTimeout = setTimeout(() => {
+      this.clear()
+    }, this.config.cacheTime)
   }
 
   async refetch(options?: RefetchOptions): Promise<TResult | undefined> {
@@ -233,29 +224,18 @@ export class Query<TResult, TError> {
       return await this.fetch()
     } catch (error) {
       if (options?.throwOnError === true) {
-        throw error;
+        throw error
       }
-      Console.error(error)
+      return undefined
     }
-    return;
-  }
-
-  heal(): void {
-    // Stop the query from being garbage collected
-    this.clearCacheTimeout()
-
-    // Mark the query as not cancelled
-    this.cancelled = null
   }
 
   cancel(): void {
-    this.cancelled = cancelledError
+    this.cancelFetch?.()
+  }
 
-    if (this.cancelPromises) {
-      this.cancelPromises()
-    }
-
-    delete this.promise
+  continue(): void {
+    this.continueFetch?.()
   }
 
   private clearTimersObservers(): void {
@@ -275,13 +255,6 @@ export class Query<TResult, TError> {
     if (this.cacheTimeout) {
       clearTimeout(this.cacheTimeout)
       this.cacheTimeout = undefined
-    }
-  }
-
-  private clearRetryTimeout() {
-    if (this.retryTimeout) {
-      clearTimeout(this.retryTimeout)
-      this.retryTimeout = undefined
     }
   }
 
@@ -325,7 +298,6 @@ export class Query<TResult, TError> {
   clear(): void {
     this.clearStaleTimeout()
     this.clearCacheTimeout()
-    this.clearRetryTimeout()
     this.clearTimersObservers()
     this.cancel()
     delete this.queryCache.queries[this.queryHash]
@@ -360,7 +332,9 @@ export class Query<TResult, TError> {
 
   subscribeObserver(observer: QueryObserver<TResult, TError>): void {
     this.observers.push(observer)
-    this.heal()
+
+    // Stop the query from being garbage collected
+    this.clearCacheTimeout()
   }
 
   unsubscribeObserver(
@@ -370,99 +344,139 @@ export class Query<TResult, TError> {
     this.observers = this.observers.filter(x => x !== observer)
 
     if (!this.observers.length) {
-      this.cancel()
+      // If the transport layer does not support cancellation
+      // we'll let the query continue so the result can be cached
+      if (this.isTransportCancelable) {
+        this.cancel()
+      }
 
       if (!preventGC) {
         // Schedule garbage collection
-        this.scheduleGarbageCollection()
+        this.scheduleCacheTimeout()
       }
     }
   }
 
   // Set up the core fetcher function
-  private async tryFetchData(
+  private async fetchData(
     fn: QueryFunction<TResult>,
     args: ArrayQueryKey
   ): Promise<TResult> {
-    try {
-      // Perform the query
-      const filter = this.config.queryFnParamsFilter
-      const params = filter ? filter(args) : args
+    return new Promise<TResult>((outerResolve, outerReject) => {
+      let resolved = false
+      let continueLoop: () => void
+      let cancelTransport: () => void
 
-      // Perform the query
-      const promiseOrValue = fn(...params)
+      const done = () => {
+        resolved = true
 
-      this.cancelPromises = () => (promiseOrValue as any)?.cancel?.()
+        delete this.cancelFetch
+        delete this.continueFetch
+        delete this.isTransportCancelable
 
-      const data = await promiseOrValue
-      delete this.shouldContinueRetryOnFocus
-
-      delete this.cancelPromises
-      if (this.cancelled) throw this.cancelled
-
-      return data
-    } catch (error) {
-      delete this.cancelPromises
-      if (this.cancelled) throw this.cancelled
-
-      // Do we need to retry the request?
-      if (
-        this.config.retry === true ||
-        this.state.failureCount < this.config.retry! ||
-        (typeof this.config.retry === 'function' &&
-          this.config.retry(this.state.failureCount, error))
-      ) {
-        // If we retry, increase the failureCount
-        this.dispatch({ type: ActionType.Failed })
-
-        // Only retry if the document is visible
-        if (!isDocumentVisible()) {
-          // set this flag to continue retries on focus
-          this.shouldContinueRetryOnFocus = true
-          // Resolve a
-          return new Promise(noop)
-        }
-
-        delete this.shouldContinueRetryOnFocus
-
-        // Determine the retryDelay
-        const delay = functionalUpdate(
-          this.config.retryDelay,
-          this.state.failureCount
-        )
-
-        // Return a new promise with the retry
-        return await new Promise((resolve, reject) => {
-          // Keep track of the retry timeout
-          this.retryTimeout = setTimeout(async () => {
-            if (this.cancelled) return reject(this.cancelled)
-
-            try {
-              const data = await this.tryFetchData(fn, args)
-              if (this.cancelled) return reject(this.cancelled)
-              resolve(data)
-            } catch (error) {
-              if (this.cancelled) return reject(this.cancelled)
-              reject(error)
-            }
-          }, delay)
-        })
+        // End loop if currently paused
+        continueLoop?.()
       }
 
-      throw error
-    }
+      const resolve = (value: any) => {
+        done()
+        outerResolve(value)
+      }
+
+      const reject = (value: any) => {
+        done()
+        outerReject(value)
+      }
+
+      // Create callback to cancel this fetch
+      this.cancelFetch = () => {
+        reject(new CancelledError())
+        try {
+          cancelTransport?.()
+        } catch {}
+      }
+
+      // Create callback to continue this fetch
+      this.continueFetch = () => {
+        continueLoop?.()
+      }
+
+      // Filter the query function arguments if needed
+      const filter = this.config.queryFnParamsFilter
+      args = filter ? filter(args) : args
+
+      // Create loop function
+      const run = async () => {
+        try {
+          // Execute query
+          const promiseOrValue = fn(...args)
+
+          // Check if the transport layer support cancellation
+          if (isCancelable(promiseOrValue)) {
+            cancelTransport = () => {
+              promiseOrValue.cancel()
+            }
+            this.isTransportCancelable = true
+          }
+
+          // Await data
+          resolve(await promiseOrValue)
+        } catch (error) {
+          // Stop if the fetch is already resolved
+          if (resolved) {
+            return
+          }
+
+          // Do we need to retry the request?
+          const { failureCount } = this.state
+          const { retry, retryDelay } = this.config
+
+          const shouldRetry =
+            retry === true ||
+            failureCount < retry! ||
+            (typeof retry === 'function' && retry(failureCount, error))
+
+          if (!shouldRetry) {
+            // We are done if the query does not need to be retried
+            reject(error)
+            return
+          }
+
+          // Increase the failureCount
+          this.dispatch({ type: ActionType.Failed })
+
+          // Delay
+          await sleep(functionalUpdate(retryDelay, failureCount) || 0)
+
+          // Pause retry if the document is not visible
+          if (!isDocumentVisible()) {
+            await new Promise(continueResolve => {
+              continueLoop = continueResolve
+            })
+          }
+
+          // Try again if not resolved yet
+          if (!resolved) {
+            run()
+          }
+        }
+      }
+
+      // Start loop
+      run()
+    })
   }
 
   async fetch(options?: FetchOptions): Promise<TResult | undefined> {
+    // If we are already fetching, return current promise
+    if (this.promise) {
+      return this.promise
+    }
+
     let queryFn = this.config.queryFn
 
     if (!queryFn) {
       return
-    }
-
-    // If we are already fetching, return current promise
-    if (this.promise) {
-      return this.promise
     }
 
     if (this.config.infinite) {
@@ -565,9 +579,6 @@ export class Query<TResult, TError> {
     }
 
     this.promise = (async () => {
-      // If there are any retries pending for this query, kill them
-      this.cancelled = null
-
       try {
         // Set to fetching state if not already in it
         if (!this.state.isFetching) {
@@ -575,27 +586,33 @@ export class Query<TResult, TError> {
         }
 
         // Try to get the data
-        const data = await this.tryFetchData(queryFn!, this.queryKey)
+        const data = await this.fetchData(queryFn, this.queryKey)
 
+        // Set success state
         this.setData(data)
 
+        // Cleanup
         delete this.promise
 
+        // Return data
         return data
       } catch (error) {
+        // Set error state
         this.dispatch({
           type: ActionType.Error,
-          cancelled: error === this.cancelled,
           error,
         })
 
-        delete this.promise
-
-        if (error !== this.cancelled) {
-          throw error
+        // Log error
+        if (!isCancelledError(error)) {
+          Console.error(error)
         }
 
-        return
+        // Cleanup
+        delete this.promise
+
+        // Propagate error
+        throw error
       }
     })()
 
@@ -691,15 +708,13 @@ export function queryReducer<TResult, TError>(
     case ActionType.Error:
       return {
         ...state,
-        failureCount: state.failureCount + 1,
+        ...getStatusProps(QueryStatus.Error),
+        error: action.error,
         isFetched: true,
         isFetching: false,
         isStale: true,
-        ...(!action.cancelled && {
-          ...getStatusProps(QueryStatus.Error),
-          error: action.error,
-          throwInErrorBoundary: true,
-        }),
+        failureCount: state.failureCount + 1,
+        throwInErrorBoundary: true,
       }
     case ActionType.SetState:
       return functionalUpdate(action.updater, state)

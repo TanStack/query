@@ -1,7 +1,7 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { sleep, queryKey } from './utils'
+import { sleep, queryKey, mockConsoleError } from './utils'
 import { useQuery, useIsFetching } from '..'
 
 describe('useIsFetching', () => {
@@ -42,7 +42,7 @@ describe('useIsFetching', () => {
   })
 
   it('should not update state while rendering', async () => {
-    const spy = jest.spyOn(console, 'error')
+    const consoleMock = mockConsoleError()
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -91,9 +91,9 @@ describe('useIsFetching', () => {
 
     render(<Page />)
     await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 1, 0]))
-    expect(spy).not.toHaveBeenCalled()
-    expect(spy.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
+    expect(consoleMock).not.toHaveBeenCalled()
+    expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
 
-    spy.mockRestore()
+    consoleMock.mockRestore()
   })
 })

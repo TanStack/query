@@ -1,6 +1,13 @@
 export { queryCache, queryCaches, makeQueryCache } from './queryCache'
 export { setFocusHandler } from './setFocusHandler'
-export { stableStringify, setConsole, deepIncludes } from './utils'
+export {
+  CancelledError,
+  deepIncludes,
+  isCancelledError,
+  isError,
+  setConsole,
+  stableStringify,
+} from './utils'
 
 // Types
 export * from './types'

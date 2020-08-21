@@ -1,4 +1,4 @@
-import { getStatusProps, isServer, isDocumentVisible, Console } from './utils'
+import { getStatusProps, isServer, isDocumentVisible } from './utils'
 import type { QueryResult, QueryObserverConfig } from './types'
 import type { Query, QueryState, Action, FetchMoreOptions, RefetchOptions } from './query'
 
@@ -101,10 +101,11 @@ export class QueryObserver<TResult, TError> {
 
   async fetch(): Promise<TResult | undefined> {
     this.currentQuery.updateConfig(this.config)
-    return this.currentQuery.fetch().catch(error => {
-      Console.error(error)
+    try {
+      return await this.currentQuery.fetch()
+    } catch (error) {
       return undefined
-    })
+    }
   }
 
   private optionalFetch(): void {
