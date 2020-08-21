@@ -85,6 +85,28 @@ describe('queryCache', () => {
     ).rejects.toEqual(new Error('error'))
   })
 
+  test('prefetchQuery should return undefined when an error is thrown', async () => {
+    const key = queryKey()
+
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    const result = await defaultQueryCache.prefetchQuery(
+      key,
+      async () => {
+        throw new Error('error')
+      },
+      {
+        retry: false,
+      }
+    )
+
+    expect(result).toBeUndefined()
+    expect(consoleMock).toHaveBeenCalled()
+
+    consoleMock.mockRestore()
+  })
+
   test('should notify listeners when new query is added', async () => {
     const key = queryKey()
 

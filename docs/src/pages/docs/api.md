@@ -33,6 +33,7 @@ const {
   refetchIntervalInBackground,
   queryFnParamsFilter,
   refetchOnMount,
+  structuralSharing,
   isDataEqual,
   onError,
   onSuccess,
@@ -125,6 +126,10 @@ const queryInfo = useQuery({
   - Optional
   - This function will filter the params that get passed to `queryFn`.
   - For example, you can filter out the first query key from the params by using `queryFnParamsFilter: args => args.slice(1)`.
+- `structuralSharing: Boolean`
+  - Optional
+  - Defaults to `true`
+  - If set to `false`, structural sharing between query results will be disabled.
 
 **Returns**
 
