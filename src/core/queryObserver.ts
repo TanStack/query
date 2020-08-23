@@ -1,6 +1,6 @@
 import { getStatusProps, isServer, isDocumentVisible, Console } from './utils'
 import type { QueryResult, QueryObserverConfig } from './types'
-import type { Query, QueryState, Action, FetchMoreOptions } from './query'
+import type { Query, QueryState, Action, FetchMoreOptions, RefetchOptions } from './query'
 
 export type UpdateListener<TResult, TError> = (
   result: QueryResult<TResult, TError>
@@ -86,9 +86,9 @@ export class QueryObserver<TResult, TError> {
     return this.currentQuery.clear()
   }
 
-  async refetch(): Promise<void> {
+  async refetch(options?: RefetchOptions): Promise<TResult | undefined> {
     this.currentQuery.updateConfig(this.config)
-    return this.currentQuery.refetch()
+    return this.currentQuery.refetch(options)
   }
 
   async fetchMore(

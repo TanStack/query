@@ -1,4 +1,4 @@
-import type { Query, FetchMoreOptions } from './query'
+import type { Query, FetchMoreOptions, RefetchOptions } from './query';
 import type { QueryCache } from './queryCache'
 
 export type QueryKey =
@@ -165,7 +165,7 @@ export interface QueryResultBase<TResult, TError = unknown> {
   isStale: boolean
   isSuccess: boolean
   query: Query<TResult, TError>
-  refetch: () => Promise<void>
+  refetch: (options?: RefetchOptions) => Promise<TResult | undefined>
   status: QueryStatus
   updatedAt: number
 }

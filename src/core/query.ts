@@ -58,6 +58,10 @@ export interface FetchMoreOptions {
   previous: boolean
 }
 
+export interface RefetchOptions {
+  throwOnError?: boolean;
+}
+
 export enum ActionType {
   Failed = 'Failed',
   MarkStale = 'MarkStale',
@@ -224,12 +228,16 @@ export class Query<TResult, TError> {
     )
   }
 
-  async refetch(): Promise<void> {
+  async refetch(options?: RefetchOptions): Promise<TResult | undefined> {
     try {
-      await this.fetch()
+      return await this.fetch()
     } catch (error) {
+      if (options?.throwOnError === true) {
+        throw error;
+      }
       Console.error(error)
     }
+    return;
   }
 
   heal(): void {
