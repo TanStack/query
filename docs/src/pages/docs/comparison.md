@@ -26,7 +26,7 @@ Feature/Capability Key:
 | Polling/Intervals                            | ✅                                     | ✅                                             | ✅                                                                        |
 | Parallel Queries                             | ✅                                     | ✅                                             | ✅                                                                        |
 | Dependent Queries                            | ✅                                     | ✅                                             | ✅                                                                        |
-| Paginated Queries                            | ✅                                     | 🛑<sup>1</sup>                                 | ✅                                                                        |
+| Paginated Queries                            | ✅                                     | ✅                                             | ✅                                                                        |
 | Infinite Queries                             | ✅                                     | ✅                                             | ✅                                                                        |
 | Initial Data                                 | ✅                                     | ✅                                             | ✅                                                                        |
 | Scroll Recovery                              | ✅                                     | ✅                                             | ✅                                                                        |
@@ -45,11 +45,9 @@ Feature/Capability Key:
 
 ### Notes
 
-> **<sup>1</sup> Paginated Queries in SWR are not "lazy"** - While React Query provides a way to continue to see an existing pages data while the next page loads, SWR uses component styling/visibility to only prefetch the next page and does not provide the capability to "lag" previous query results while new ones load without much non-trivial hackery.
+> **<sup>1</sup> Partial query matching** - Because React Query uses deterministic query key serialization, this allows you to manipulate variable groups of queries without having to know each individual query-key that you want to match, eg. you can refetch every query that starts with `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables or nested properties, and even use a filter function to only match queries that pass your specific conditions.
 
-> **<sup>2</sup> Partial query matching** - Because React Query uses deterministic query key serialization, this allows you to manipulate variable groups of queries without having to know each individual query-key that you want to match, eg. you can refetch every query that starts with `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables or nested properties, and even use a filter function to only match queries that pass your specific conditions.
-
-> **<sup>3</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
+> **<sup>2</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
 
 [bp-react-query]: https://badgen.net/bundlephobia/minzip/react-query?label=%20
 [bp-swr]: https://badgen.net/bundlephobia/minzip/swr?label=%20
