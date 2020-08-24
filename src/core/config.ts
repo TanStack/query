@@ -47,14 +47,16 @@ export const defaultQueryKeySerializerFn: QueryKeySerializerFunction = (
  * 2. Defaults from the query cache.
  * 3. Query/mutation config provided to the query cache method.
  */
+export const DEFAULT_STALE_TIME = 0
+export const DEFAULT_CACHE_TIME = 5 * 60 * 1000
 export const DEFAULT_CONFIG: ReactQueryConfig = {
   queries: {
     queryKeySerializerFn: defaultQueryKeySerializerFn,
     enabled: true,
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 0,
-    cacheTime: 5 * 60 * 1000,
+    staleTime: DEFAULT_STALE_TIME,
+    cacheTime: DEFAULT_CACHE_TIME,
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     refetchOnMount: true,
