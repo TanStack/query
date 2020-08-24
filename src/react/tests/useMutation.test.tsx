@@ -2,6 +2,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import { useMutation } from '..'
+import { mockConsoleError } from './utils'
 
 describe('useMutation', () => {
   it('should be able to reset `data`', async () => {
@@ -37,8 +38,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     function Page() {
       const [mutate, mutationResult] = useMutation<string, Error>(
@@ -128,8 +128,8 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
+
     const onErrorMock = jest.fn()
     const onSettledMock = jest.fn()
     let count = 0
@@ -189,5 +189,7 @@ describe('useMutation', () => {
     )
 
     expect(getByTestId('title').textContent).toBe('3')
+
+    consoleMock.mockRestore()
   })
 })

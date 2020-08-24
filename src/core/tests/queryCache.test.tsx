@@ -1,5 +1,11 @@
-import { sleep, queryKey } from '../../react/tests/utils'
+import {
+  sleep,
+  queryKey,
+  mockVisibilityState,
+  mockConsoleError,
+} from '../../react/tests/utils'
 import { makeQueryCache, queryCache as defaultQueryCache } from '..'
+import { isCancelledError, isError } from '../utils'
 
 describe('queryCache', () => {
   test('setQueryData does not crash if query could not be found', () => {
@@ -26,6 +32,8 @@ describe('queryCache', () => {
 
   // https://github.com/tannerlinsley/react-query/issues/652
   test('prefetchQuery should not retry by default', async () => {
+    const consoleMock = mockConsoleError()
+
     const key = queryKey()
 
     await expect(
@@ -38,6 +46,8 @@ describe('queryCache', () => {
         { throwOnError: true }
       )
     ).rejects.toEqual(new Error('error'))
+
+    consoleMock.mockRestore()
   })
 
   test('prefetchQuery returns the cached data on cache hits', async () => {
@@ -69,6 +79,8 @@ describe('queryCache', () => {
   })
 
   test('prefetchQuery should throw error when throwOnError is true', async () => {
+    const consoleMock = mockConsoleError()
+
     const key = queryKey()
 
     await expect(
@@ -83,13 +95,14 @@ describe('queryCache', () => {
         { throwOnError: true }
       )
     ).rejects.toEqual(new Error('error'))
+
+    consoleMock.mockRestore()
   })
 
   test('prefetchQuery should return undefined when an error is thrown', async () => {
-    const key = queryKey()
+    const consoleMock = mockConsoleError()
 
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const key = queryKey()
 
     const result = await defaultQueryCache.prefetchQuery(
       key,
@@ -354,6 +367,7 @@ describe('queryCache', () => {
       const queryCache = makeQueryCache()
       const query = queryCache.buildQuery(key)
 
+      // @ts-expect-error
       expect(query.queryCache).toBe(queryCache)
     })
 
@@ -368,6 +382,252 @@ describe('queryCache', () => {
       expect(subscriber).toHaveBeenCalledWith(queryCache, query)
 
       unsubscribe()
+    })
+
+    it('should continue retry after focus regain and resolve all promises', async () => {
+      const key = queryKey()
+
+      const originalVisibilityState = document.visibilityState
+
+      // make page unfocused
+      mockVisibilityState('hidden')
+
+      let count = 0
+      let result
+
+      const promise = defaultQueryCache.prefetchQuery(
+        key,
+        async () => {
+          count++
+
+          if (count === 3) {
+            return `data${count}`
+          }
+
+          throw new Error(`error${count}`)
+        },
+        {
+          retry: 3,
+          retryDelay: 1,
+        }
+      )
+
+      promise.then(data => {
+        result = data
+      })
+
+      // Check if we do not have a result
+      expect(result).toBeUndefined()
+
+      // Check if the query is really paused
+      await sleep(50)
+      expect(result).toBeUndefined()
+
+      // Reset visibilityState to original value
+      mockVisibilityState(originalVisibilityState)
+      window.dispatchEvent(new FocusEvent('focus'))
+
+      // There should not be a result yet
+      expect(result).toBeUndefined()
+
+      // By now we should have a value
+      await sleep(50)
+      expect(result).toBe('data3')
+    })
+
+    it('should throw a CancelledError when a paused query is cancelled', async () => {
+      const key = queryKey()
+
+      const originalVisibilityState = document.visibilityState
+
+      // make page unfocused
+      mockVisibilityState('hidden')
+
+      let count = 0
+      let result
+
+      const promise = defaultQueryCache.prefetchQuery(
+        key,
+        async () => {
+          count++
+          throw new Error(`error${count}`)
+        },
+        {
+          retry: 3,
+          retryDelay: 1,
+        },
+        {
+          throwOnError: true,
+        }
+      )
+
+      promise.catch(data => {
+        result = data
+      })
+
+      const query = defaultQueryCache.getQuery(key)!
+
+      // Check if the query is really paused
+      await sleep(50)
+      expect(result).toBeUndefined()
+
+      // Cancel query
+      query.cancel()
+
+      // Check if the error is set to the cancelled error
+      await sleep(0)
+      expect(isCancelledError(result)).toBe(true)
+
+      // Reset visibilityState to original value
+      mockVisibilityState(originalVisibilityState)
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    test('query should continue if cancellation is not supported', async () => {
+      const key = queryKey()
+
+      defaultQueryCache.prefetchQuery(key, async () => {
+        await sleep(100)
+        return 'data'
+      })
+
+      await sleep(10)
+
+      const query = defaultQueryCache.getQuery(key)!
+
+      // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
+      const observer = query.subscribe()
+      observer.unsubscribe()
+
+      await sleep(100)
+
+      expect(query.state).toMatchObject({
+        data: 'data',
+        isLoading: false,
+        isFetched: true,
+      })
+    })
+
+    test('query should not continue if cancellation is supported', async () => {
+      const key = queryKey()
+
+      const cancel = jest.fn()
+
+      defaultQueryCache.prefetchQuery(key, async () => {
+        const promise = new Promise((resolve, reject) => {
+          sleep(100).then(() => resolve('data'))
+          cancel.mockImplementation(() => {
+            reject(new Error('Cancelled'))
+          })
+        }) as any
+        promise.cancel = cancel
+        return promise
+      })
+
+      await sleep(10)
+
+      const query = defaultQueryCache.getQuery(key)!
+
+      // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
+      const observer = query.subscribe()
+      observer.unsubscribe()
+
+      await sleep(100)
+
+      expect(cancel).toHaveBeenCalled()
+      expect(query.state).toMatchObject({
+        data: undefined,
+        isLoading: false,
+        isFetched: true,
+      })
+    })
+
+    test('query should not continue if explicitly cancelled', async () => {
+      const key = queryKey()
+
+      const queryFn = jest.fn()
+
+      queryFn.mockImplementation(async () => {
+        await sleep(10)
+        throw new Error()
+      })
+
+      let error
+
+      const promise = defaultQueryCache.prefetchQuery(
+        key,
+        queryFn,
+        {
+          retry: 3,
+          retryDelay: 10,
+        },
+        {
+          throwOnError: true,
+        }
+      )
+
+      promise.catch(e => {
+        error = e
+      })
+
+      const query = defaultQueryCache.getQuery(key)!
+      query.cancel()
+
+      await sleep(100)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(isCancelledError(error)).toBe(true)
+    })
+
+    test('should be able to refetch a cancelled query', async () => {
+      const key = queryKey()
+
+      const queryFn = jest.fn()
+
+      queryFn.mockImplementation(async () => {
+        await sleep(50)
+        return 'data'
+      })
+
+      defaultQueryCache.prefetchQuery(key, queryFn)
+      const query = defaultQueryCache.getQuery(key)!
+      await sleep(10)
+      query.cancel()
+      await sleep(100)
+
+      expect(queryFn).toHaveBeenCalledTimes(1)
+      expect(isCancelledError(query.state.error)).toBe(true)
+      const result = await query.fetch()
+      expect(result).toBe('data')
+      expect(query.state.error).toBe(null)
+      expect(queryFn).toHaveBeenCalledTimes(2)
+    })
+
+    test('cancelling a resolved query should not have any effect', async () => {
+      const key = queryKey()
+      await defaultQueryCache.prefetchQuery(key, async () => 'data')
+      const query = defaultQueryCache.getQuery(key)!
+      query.cancel()
+      await sleep(10)
+      expect(query.state.data).toBe('data')
+    })
+
+    test('cancelling a rejected query should not have any effect', async () => {
+      const consoleMock = mockConsoleError()
+
+      const key = queryKey()
+
+      await defaultQueryCache.prefetchQuery(key, async () => {
+        throw new Error('error')
+      })
+      const query = defaultQueryCache.getQuery(key)!
+      query.cancel()
+      await sleep(10)
+
+      expect(isError(query.state.error)).toBe(true)
+      expect(isCancelledError(query.state.error)).toBe(false)
+
+      consoleMock.mockRestore()
     })
   })
 })

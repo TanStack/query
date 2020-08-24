@@ -16,16 +16,23 @@ export interface ConsoleObject {
   error: ConsoleFunction
 }
 
+interface Cancelable {
+  cancel(): void
+}
+
+export class CancelledError {}
+
 // UTILS
 
 let _uid = 0
 export const uid = () => _uid++
-export const cancelledError = {}
-export const globalStateListeners = []
+
 export const isServer = typeof window === 'undefined'
-export function noop(): void {
+
+function noop(): void {
   return void 0
 }
+
 export let Console: ConsoleObject = console || {
   error: noop,
   warn: noop,
@@ -199,6 +206,24 @@ function isPlainObject(o: any): o is Object {
 
 function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
+}
+
+export function isCancelable(value: any): value is Cancelable {
+  return typeof value?.cancel === 'function'
+}
+
+export function isError(value: any): value is Error {
+  return value instanceof Error
+}
+
+export function isCancelledError(value: any): value is CancelledError {
+  return value instanceof CancelledError
+}
+
+export function sleep(timeout: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, timeout)
+  })
 }
 
 export function getStatusProps<T extends QueryStatus>(status: T) {
