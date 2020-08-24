@@ -40,9 +40,9 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        (_key: string, nextId?: number) => fetchItems(nextId || 0, count++),
+        (_key: string, nextId: number = 0) => fetchItems(nextId, count++),
         {
-          getFetchMore: (lastGroup, _allGroups) => Boolean(lastGroup.nextId),
+          getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
         }
       )
 
@@ -145,7 +145,7 @@ describe('useInfiniteQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states.length).toBe(8))
+    await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -166,31 +166,236 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
     })
     expect(states[3]).toMatchObject({
-      data: ['0-desc'],
-      isFetching: true,
-      isFetchingMore: 'next',
-      isSuccess: true,
-    })
-    expect(states[4]).toMatchObject({
-      data: ['0-desc'],
-      isFetching: true,
-      isFetchingMore: false,
-      isSuccess: true,
-    })
-    expect(states[5]).toMatchObject({
       data: ['0-desc', '1-desc'],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,
     })
-    expect(states[6]).toMatchObject({
+    expect(states[4]).toMatchObject({
       data: ['0-desc', '1-desc'],
       isFetching: true,
       isFetchingMore: false,
       isSuccess: true,
     })
-    expect(states[7]).toMatchObject({
+    expect(states[5]).toMatchObject({
       data: ['0-asc'],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should prepend pages when the previous option is set to true', async () => {
+    const key = queryKey()
+    const states: InfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const start = 10
+      const state = useInfiniteQuery(
+        key,
+        async (_key, page: number = start) => {
+          await sleep(10)
+          return page
+        },
+        {
+          getFetchMore: (lastPage, _pages) => lastPage - 1,
+        }
+      )
+
+      states.push(state)
+
+      const { fetchMore } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          fetchMore(undefined, { previous: true })
+        }, 20)
+      }, [fetchMore])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      canFetchMore: undefined,
+      data: undefined,
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      canFetchMore: true,
+      data: [10],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[2]).toMatchObject({
+      canFetchMore: true,
+      data: [10],
+      isFetching: true,
+      isFetchingMore: 'previous',
+      isSuccess: true,
+    })
+    expect(states[3]).toMatchObject({
+      canFetchMore: true,
+      data: [9, 10],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should be able to override the cursor in the fetchMore callback', async () => {
+    const key = queryKey()
+    const states: InfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const state = useInfiniteQuery(
+        key,
+        async (_key, page: number = 0) => {
+          await sleep(10)
+          return page
+        },
+        {
+          getFetchMore: (lastPage, _pages) => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      const { fetchMore } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          fetchMore(5)
+        }, 20)
+      }, [fetchMore])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      canFetchMore: undefined,
+      data: undefined,
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      canFetchMore: true,
+      data: [0],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[2]).toMatchObject({
+      canFetchMore: true,
+      data: [0],
+      isFetching: true,
+      isFetchingMore: 'next',
+      isSuccess: true,
+    })
+    expect(states[3]).toMatchObject({
+      canFetchMore: true,
+      data: [0, 5],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should be able to set new pages with the query cache', async () => {
+    const key = queryKey()
+    const states: InfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const cache = useQueryCache()
+      const [firstPage, setFirstPage] = React.useState(0)
+
+      const state = useInfiniteQuery(
+        key,
+        async (_key, page: number = firstPage) => {
+          await sleep(10)
+          return page
+        },
+        {
+          getFetchMore: (lastPage, _pages) => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          cache.setQueryData(key, [7, 8])
+          setFirstPage(7)
+        }, 20)
+
+        setTimeout(() => {
+          refetch()
+        }, 50)
+      }, [cache, refetch])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(6))
+
+    expect(states[0]).toMatchObject({
+      canFetchMore: undefined,
+      data: undefined,
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: false,
+    })
+    // After first fetch
+    expect(states[1]).toMatchObject({
+      canFetchMore: true,
+      data: [0],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    // Update cache
+    expect(states[2]).toMatchObject({
+      canFetchMore: true,
+      data: [7, 8],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    // Set state
+    expect(states[3]).toMatchObject({
+      canFetchMore: true,
+      data: [7, 8],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    // Refetch
+    expect(states[4]).toMatchObject({
+      canFetchMore: true,
+      data: [7, 8],
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    // Refetch done
+    expect(states[5]).toMatchObject({
+      canFetchMore: true,
+      data: [7, 8],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,

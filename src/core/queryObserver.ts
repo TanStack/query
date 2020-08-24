@@ -1,6 +1,12 @@
 import { getStatusProps, isServer, isDocumentVisible } from './utils'
 import type { QueryResult, QueryObserverConfig } from './types'
-import type { Query, QueryState, Action, FetchMoreOptions, RefetchOptions } from './query'
+import type {
+  Query,
+  QueryState,
+  Action,
+  FetchMoreOptions,
+  RefetchOptions,
+} from './query'
 
 export type UpdateListener<TResult, TError> = (
   result: QueryResult<TResult, TError>
@@ -37,11 +43,11 @@ export class QueryObserver<TResult, TError> {
     return this.unsubscribe.bind(this)
   }
 
-  unsubscribe(preventGC?: boolean): void {
+  unsubscribe(): void {
     this.started = false
     this.updateListener = undefined
     this.clearRefetchInterval()
-    this.currentQuery.unsubscribeObserver(this, preventGC)
+    this.currentQuery.unsubscribeObserver(this)
   }
 
   updateConfig(config: QueryObserverConfig<TResult, TError>): void {
