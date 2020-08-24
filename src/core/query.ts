@@ -121,6 +121,7 @@ export class Query<TResult, TError> {
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
   private notifyGlobalListeners: (query: Query<TResult, TError>) => void
+  private enableTimeouts: boolean
 
   constructor(init: QueryInitConfig<TResult, TError>) {
     this.config = init.config
@@ -130,16 +131,13 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners = init.notifyGlobalListeners
     this.observers = []
     this.state = getDefaultState(init.config)
+    this.enableTimeouts = false
+  }
 
-    // If the query started with data, schedule
-    // a stale timeout
-    if (!isServer && this.state.data) {
-      this.scheduleStaleTimeout()
-
-      // Schedule for garbage collection in case
-      // nothing subscribes to this query
-      this.scheduleCacheTimeout()
-    }
+  activateTimeouts(): void {
+    this.enableTimeouts = true
+    this.rescheduleStaleTimeout()
+    this.rescheduleGarbageCollection()
   }
 
   updateConfig(config: QueryConfig<TResult, TError>): void {
@@ -152,20 +150,33 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners(this)
   }
 
-  private scheduleStaleTimeout(): void {
+  private rescheduleStaleTimeout(): void {
     if (isServer) {
       return
     }
 
     this.clearStaleTimeout()
 
-    if (this.state.isStale || this.config.staleTime === Infinity) {
+    if (
+      !this.enableTimeouts ||
+      this.state.isStale ||
+      this.state.status !== QueryStatus.Success ||
+      this.config.staleTime === Infinity
+    ) {
       return
+    }
+
+    const staleTime = this.config.staleTime || 0
+    let timeout = staleTime
+    if (this.state.updatedAt) {
+      const timeElapsed = Date.now() - this.state.updatedAt
+      const timeUntilStale = staleTime - timeElapsed
+      timeout = Math.max(timeUntilStale, 0)
     }
 
     this.staleTimeout = setTimeout(() => {
       this.invalidate()
-    }, this.config.staleTime)
+    }, timeout)
   }
 
   invalidate(): void {
@@ -178,14 +189,18 @@ export class Query<TResult, TError> {
     this.dispatch({ type: ActionType.MarkStale })
   }
 
-  private scheduleCacheTimeout(): void {
+  private rescheduleGarbageCollection(): void {
     if (isServer) {
       return
     }
 
     this.clearCacheTimeout()
 
-    if (this.config.cacheTime === Infinity) {
+    if (
+      !this.enableTimeouts ||
+      this.config.cacheTime === Infinity ||
+      this.observers.length > 0
+    ) {
       return
     }
 
@@ -262,10 +277,7 @@ export class Query<TResult, TError> {
       canFetchMore,
     })
 
-    if (!isStale) {
-      // Schedule a fresh invalidation!
-      this.scheduleStaleTimeout()
-    }
+    this.rescheduleStaleTimeout()
   }
 
   clear(): void {
@@ -337,10 +349,9 @@ export class Query<TResult, TError> {
       if (this.isTransportCancelable) {
         this.cancel()
       }
-
-      // Schedule garbage collection
-      this.scheduleCacheTimeout()
     }
+
+    this.rescheduleGarbageCollection()
   }
 
   private async tryFetchData<T>(

@@ -800,7 +800,10 @@ describe('useQuery', () => {
     queryFn.mockImplementation(() => 'data')
 
     const prefetchQueryFn = jest.fn()
-    prefetchQueryFn.mockImplementation(() => 'not yet...')
+    prefetchQueryFn.mockImplementation(async () => {
+      await sleep(10)
+      return 'not yet...'
+    })
 
     await queryCache.prefetchQuery(key, prefetchQueryFn, {
       staleTime: 1000,
@@ -809,7 +812,9 @@ describe('useQuery', () => {
     await sleep(0)
 
     function Page() {
-      useQuery(key, queryFn)
+      useQuery(key, queryFn, {
+        staleTime: 1000,
+      })
       return null
     }
 

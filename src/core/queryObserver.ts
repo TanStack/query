@@ -211,6 +211,8 @@ export class QueryObserver<TResult, TError> {
       return false
     }
 
+    newQuery.activateTimeouts()
+
     this.previousResult = this.currentResult
     this.currentQuery = newQuery
     this.currentResult = this.createResult()
