@@ -2,7 +2,7 @@ import { render, waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { sleep, queryKey } from './utils'
+import { sleep, queryKey, mockConsoleError } from './utils'
 import { useQuery } from '..'
 import { queryCache } from '../../core'
 
@@ -133,8 +133,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(

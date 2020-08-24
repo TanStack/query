@@ -1,5 +1,18 @@
 let queryKeyCount = 0
 
+export function mockVisibilityState(value: string) {
+  Object.defineProperty(document, 'visibilityState', {
+    value,
+    configurable: true,
+  })
+}
+
+export function mockConsoleError() {
+  const consoleMock = jest.spyOn(console, 'error')
+  consoleMock.mockImplementation(() => undefined)
+  return consoleMock
+}
+
 export function queryKey(): string {
   queryKeyCount++
   return `query_${queryKeyCount}`

@@ -8,22 +8,17 @@ const focusEvent = 'focus'
 
 const onWindowFocus: FocusHandler = () => {
   if (isDocumentVisible() && isOnline()) {
-    queryCaches.forEach(queryCache =>
+    queryCaches.forEach(queryCache => {
+      // Continue any paused queries
+      queryCache.getQueries(query => {
+        query.continue()
+      })
+
+      // Invalidate queries which should refetch on window focus
       queryCache
-        .invalidateQueries(query => {
-          if (!query.shouldRefetchOnWindowFocus()) {
-            return false
-          }
-
-          if (query.shouldContinueRetryOnFocus) {
-            // delete promise, so refetching will create new one
-            delete query.promise
-          }
-
-          return true
-        })
+        .invalidateQueries(query => query.shouldRefetchOnWindowFocus())
         .catch(Console.error)
-    )
+    })
   }
 }
 

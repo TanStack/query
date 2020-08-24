@@ -1,7 +1,13 @@
 import { render, act, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { sleep, expectType, queryKey } from './utils'
+import {
+  sleep,
+  expectType,
+  queryKey,
+  mockVisibilityState,
+  mockConsoleError,
+} from './utils'
 import { useQuery } from '..'
 import { queryCache, QueryResult } from '../../core'
 
@@ -159,8 +165,7 @@ describe('useQuery', () => {
 
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     const states: QueryResult<undefined, string>[] = []
 
@@ -249,6 +254,8 @@ describe('useQuery', () => {
       status: 'error',
       updatedAt: expect.any(Number),
     })
+
+    consoleMock.mockRestore()
   })
 
   // https://github.com/tannerlinsley/react-query/issues/896
@@ -582,8 +589,7 @@ describe('useQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     function Page() {
       const { status, error } = useQuery<undefined, string>(
@@ -612,8 +618,7 @@ describe('useQuery', () => {
 
   it('should retry specified number of times', async () => {
     const key = queryKey()
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => {
@@ -649,8 +654,7 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     const queryFn = jest.fn()
 
@@ -693,69 +697,35 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should garbage collect queries without data immediately', async () => {
+  // See https://github.com/tannerlinsley/react-query/issues/160
+  it('should continue retry after focus regain', async () => {
     const key = queryKey()
 
+    const consoleMock = mockConsoleError()
+
+    const originalVisibilityState = document.visibilityState
+
+    // make page unfocused
+    mockVisibilityState('hidden')
+
+    let count = 0
+
     function Page() {
-      type Filters = { filter: string }
-      const [filter, setFilter] = React.useState('')
-      const filters: Filters = { filter }
-      const { data } = useQuery(
-        [key, filters],
-        async (_key: string, { filter }: Filters) => {
-          await sleep(10)
-          return `todo ${filter}`
+      const query = useQuery(
+        key,
+        () => {
+          count++
+          return Promise.reject(`fetching error ${count}`)
+        },
+        {
+          retry: 3,
+          retryDelay: 1,
         }
       )
 
       return (
         <div>
-          <div>{data}</div>
-          <button onClick={() => setFilter(filter + 'a')}>update</button>
-        </div>
-      )
-    }
-
-    const rendered = render(<Page />)
-
-    await waitFor(() => rendered.getByText('update'))
-
-    fireEvent.click(rendered.getByText('update'))
-    fireEvent.click(rendered.getByText('update'))
-    fireEvent.click(rendered.getByText('update'))
-    fireEvent.click(rendered.getByText('update'))
-
-    expect(queryCache.getQuery([key, { filter: 'a' }])).not.toBeUndefined()
-
-    await waitFor(() => rendered.getByText('todo aaaa'))
-
-    expect(queryCache.getQuery([key, { filter: 'a' }])).toBeUndefined()
-  })
-
-  // See https://github.com/tannerlinsley/react-query/issues/160
-  it('should continue retry after focus regain', async () => {
-    const key = queryKey()
-
-    const originalVisibilityState = document.visibilityState
-
-    function mockVisibilityState(value: string) {
-      Object.defineProperty(document, 'visibilityState', {
-        value,
-        configurable: true,
-      })
-    }
-
-    // make page unfocused
-    mockVisibilityState('hidden')
-
-    function Page() {
-      const query = useQuery(key, () => Promise.reject('fetching error'), {
-        retry: 3,
-        retryDelay: 1,
-      })
-
-      return (
-        <div>
+          <div>error {String(query.error)}</div>
           <div>status {query.status}</div>
           <div>failureCount {query.failureCount}</div>
         </div>
@@ -764,8 +734,14 @@ describe('useQuery', () => {
 
     const rendered = render(<Page />)
 
+    // The query should display the first error result
     await waitFor(() => rendered.getByText('failureCount 1'))
     await waitFor(() => rendered.getByText('status loading'))
+    await waitFor(() => rendered.getByText('error null'))
+
+    // Check if the query really paused
+    await sleep(10)
+    await waitFor(() => rendered.getByText('failureCount 1'))
 
     act(() => {
       // reset visibilityState to original value
@@ -773,8 +749,19 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
+    // Wait for the final result
     await waitFor(() => rendered.getByText('failureCount 4'))
     await waitFor(() => rendered.getByText('status error'))
+    await waitFor(() => rendered.getByText('error fetching error 4'))
+
+    // Check if the query really stopped
+    await sleep(10)
+    await waitFor(() => rendered.getByText('failureCount 4'))
+
+    // Check if the error has been logged in the console
+    expect(consoleMock).toHaveBeenCalledWith('fetching error 4')
+
+    consoleMock.mockRestore()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/195
@@ -838,8 +825,7 @@ describe('useQuery', () => {
   it('should reset failureCount on successful fetch', async () => {
     const key = queryKey()
 
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     function Page() {
       let counter = 0
@@ -1160,8 +1146,7 @@ describe('useQuery', () => {
   })
 
   it('should error when using functions as query keys', () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
