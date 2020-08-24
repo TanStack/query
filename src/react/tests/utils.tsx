@@ -7,6 +7,13 @@ export function mockVisibilityState(value: string) {
   })
 }
 
+export function mockNavigatorOnLine(value: boolean) {
+  Object.defineProperty(navigator, 'onLine', {
+    value,
+    configurable: true,
+  })
+}
+
 export function mockConsoleError() {
   const consoleMock = jest.spyOn(console, 'error')
   consoleMock.mockImplementation(() => undefined)

@@ -1,4 +1,4 @@
-import type { Query, FetchMoreOptions, RefetchOptions } from './query';
+import type { Query, FetchMoreOptions, RefetchOptions } from './query'
 import type { QueryCache } from './queryCache'
 
 export type QueryKey =
@@ -95,6 +95,11 @@ export interface QueryObserverConfig<
    * Defaults to `true`.
    */
   refetchOnWindowFocus?: boolean
+  /**
+   * Set this to `true` or `false` to enable/disable automatic refetching on reconnect for this query.
+   * Defaults to `true`.
+   */
+  refetchOnReconnect?: boolean
   /**
    * If set to `false`, will disable additional instances of a query to trigger background refetches.
    * Defaults to `true`.

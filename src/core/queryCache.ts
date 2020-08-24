@@ -3,7 +3,9 @@ import {
   deepIncludes,
   functionalUpdate,
   getQueryArgs,
+  isDocumentVisible,
   isObject,
+  isOnline,
   isServer,
 } from './utils'
 import { getDefaultedQueryConfig } from './config'
@@ -343,4 +345,18 @@ export const queryCaches = [defaultQueryCache]
 
 export function makeQueryCache(config?: QueryCacheConfig) {
   return new QueryCache(config)
+}
+
+export function onVisibilityOrOnlineChange(isOnlineChange: boolean) {
+  if (isDocumentVisible() && isOnline()) {
+    queryCaches.forEach(queryCache => {
+      queryCache.getQueries(query => {
+        if (isOnlineChange) {
+          query.onOnline()
+        } else {
+          query.onWindowFocus()
+        }
+      })
+    })
+  }
 }

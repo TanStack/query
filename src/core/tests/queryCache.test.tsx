@@ -3,6 +3,7 @@ import {
   queryKey,
   mockVisibilityState,
   mockConsoleError,
+  mockNavigatorOnLine,
 } from '../../react/tests/utils'
 import { makeQueryCache, queryCache as defaultQueryCache } from '..'
 import { isCancelledError, isError } from '../utils'
@@ -426,6 +427,54 @@ describe('queryCache', () => {
       // Reset visibilityState to original value
       mockVisibilityState(originalVisibilityState)
       window.dispatchEvent(new FocusEvent('focus'))
+
+      // There should not be a result yet
+      expect(result).toBeUndefined()
+
+      // By now we should have a value
+      await sleep(50)
+      expect(result).toBe('data3')
+    })
+
+    it('should continue retry after reconnect and resolve all promises', async () => {
+      const key = queryKey()
+
+      mockNavigatorOnLine(false)
+
+      let count = 0
+      let result
+
+      const promise = defaultQueryCache.prefetchQuery(
+        key,
+        async () => {
+          count++
+
+          if (count === 3) {
+            return `data${count}`
+          }
+
+          throw new Error(`error${count}`)
+        },
+        {
+          retry: 3,
+          retryDelay: 1,
+        }
+      )
+
+      promise.then(data => {
+        result = data
+      })
+
+      // Check if we do not have a result
+      expect(result).toBeUndefined()
+
+      // Check if the query is really paused
+      await sleep(50)
+      expect(result).toBeUndefined()
+
+      // Reset navigator to original value
+      mockNavigatorOnLine(true)
+      window.dispatchEvent(new Event('online'))
 
       // There should not be a result yet
       expect(result).toBeUndefined()
