@@ -6,6 +6,6 @@
     "emitDeclarationOnly": true,
     "noEmit": false
   },
-  "files": ["./src/index.ts"],
+  "files": ["./src/index.ts", "./src/hydration/index.ts"],
   "exclude": ["./src/**/*"]
 }

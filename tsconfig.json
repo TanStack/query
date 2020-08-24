@@ -12,7 +12,11 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "strict": true,
-    "types": ["jest"]
+    "types": ["jest"],
+    "baseUrl": "./",
+    "paths": {
+      "react-query": ["src/index.ts"]
+    }
   },
   "include": ["./src"]
 }
