@@ -56,6 +56,7 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
     staleTime: 0,
     cacheTime: 5 * 60 * 1000,
     refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
     refetchOnMount: true,
     structuralSharing: true,
   },

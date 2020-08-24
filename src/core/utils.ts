@@ -235,3 +235,15 @@ export function getStatusProps<T extends QueryStatus>(status: T) {
     isIdle: status === QueryStatus.Idle,
   }
 }
+
+export function createSetHandler(fn: () => void) {
+  let removePreviousHandler: (() => void) | void
+  return (callback: (handler: () => void) => void) => {
+    // Unsub the old handler
+    if (removePreviousHandler) {
+      removePreviousHandler()
+    }
+    // Sub the new handler
+    removePreviousHandler = callback(fn)
+  }
+}

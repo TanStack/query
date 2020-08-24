@@ -29,6 +29,7 @@ const {
   cacheTime,
   keepPreviousData,
   refetchOnWindowFocus,
+  refetchOnReconnect,
   refetchInterval,
   refetchIntervalInBackground,
   queryFnParamsFilter,
@@ -92,6 +93,9 @@ const queryInfo = useQuery({
 - `refetchOnWindowFocus: Boolean`
   - Optional
   - Set this to `true` or `false` to enable/disable automatic refetching on window focus for this query.
+- `refetchOnReconnect: Boolean`
+  - Optional
+  - Set this to `true` or `false` to enable/disable automatic refetching on reconnect for this query.
 - `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data.

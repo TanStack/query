@@ -7,6 +7,7 @@ import {
   isCancelable,
   isCancelledError,
   isDocumentVisible,
+  isOnline,
   isServer,
   replaceEqualDeep,
   sleep,
@@ -208,7 +209,7 @@ export class Query<TResult, TError> {
     this.cancelFetch?.()
   }
 
-  continue(): void {
+  private continue(): void {
     this.continueFetch?.()
   }
 
@@ -280,12 +281,30 @@ export class Query<TResult, TError> {
     return this.observers.some(observer => observer.config.enabled)
   }
 
-  shouldRefetchOnWindowFocus(): boolean {
-    return (
-      this.isEnabled() &&
+  onWindowFocus(): void {
+    if (
       this.state.isStale &&
-      this.observers.some(observer => observer.config.refetchOnWindowFocus)
-    )
+      this.observers.some(
+        observer =>
+          observer.config.enabled && observer.config.refetchOnWindowFocus
+      )
+    ) {
+      this.fetch()
+    }
+    this.continue()
+  }
+
+  onOnline(): void {
+    if (
+      this.state.isStale &&
+      this.observers.some(
+        observer =>
+          observer.config.enabled && observer.config.refetchOnReconnect
+      )
+    ) {
+      this.fetch()
+    }
+    this.continue()
   }
 
   subscribe(
@@ -410,8 +429,8 @@ export class Query<TResult, TError> {
           // Delay
           await sleep(functionalUpdate(retryDelay, failureCount) || 0)
 
-          // Pause retry if the document is not visible
-          if (!isDocumentVisible()) {
+          // Pause retry if the document is not visible or when the device is offline
+          if (!isDocumentVisible() || !isOnline()) {
             await new Promise(continueResolve => {
               continueLoop = continueResolve
             })
