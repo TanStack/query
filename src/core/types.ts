@@ -33,7 +33,7 @@ export type QueryKeySerializerFunction = (
   queryKey: QueryKey
 ) => [string, QueryKey[]]
 
-export interface BaseQueryConfig<TResult, TError = unknown> {
+export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -50,7 +50,7 @@ export interface BaseQueryConfig<TResult, TError = unknown> {
   staleTime?: number
   cacheTime?: number
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
-  queryFn?: QueryFunction<TResult>
+  queryFn?: QueryFunction<TData>
   queryKey?: QueryKey
   queryKeySerializerFn?: QueryKeySerializerFunction
   queryFnParamsFilter?: (args: ArrayQueryKey) => ArrayQueryKey
@@ -62,10 +62,18 @@ export interface BaseQueryConfig<TResult, TError = unknown> {
    * Defaults to `true`.
    */
   structuralSharing?: boolean
+  /**
+   * This function can be set to automatically get the next cursor for infinite queries.
+   * The result will also be used to determine the value of `canFetchMore`.
+   */
+  getFetchMore?: (lastPage: TData, allPages: TData[]) => unknown
 }
 
-export interface QueryObserverConfig<TResult, TError = unknown>
-  extends BaseQueryConfig<TResult, TError> {
+export interface QueryObserverConfig<
+  TResult,
+  TError = unknown,
+  TData = TResult
+> extends BaseQueryConfig<TResult, TError, TData> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -133,9 +141,7 @@ export interface PaginatedQueryConfig<TResult, TError = unknown>
   extends QueryObserverConfig<TResult, TError> {}
 
 export interface InfiniteQueryConfig<TResult, TError = unknown>
-  extends QueryObserverConfig<TResult[], TError> {
-  getFetchMore: (lastPage: TResult, allPages: TResult[]) => unknown
-}
+  extends QueryObserverConfig<TResult[], TError, TResult> {}
 
 export type IsFetchingMoreValue = 'previous' | 'next' | false
 
