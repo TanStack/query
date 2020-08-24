@@ -302,11 +302,9 @@ export class QueryCache {
     // https://github.com/tannerlinsley/react-query/issues/652
     const configWithoutRetry = { retry: false, ...config }
 
+    let query
     try {
-      const query = this.buildQuery<TResult, TError>(
-        queryKey,
-        configWithoutRetry
-      )
+      query = this.buildQuery<TResult, TError>(queryKey, configWithoutRetry)
       if (options?.force || query.state.isStale) {
         await query.fetch()
       }
@@ -316,6 +314,14 @@ export class QueryCache {
         throw error
       }
       return
+    } finally {
+      if (query) {
+        // When prefetching, no observer is tied to the query,
+        // so to avoid immediate garbage collection of the still
+        // empty query, we wait with activating timeouts until
+        // the prefetch is done
+        query.activateTimeouts()
+      }
     }
   }
 
@@ -331,11 +337,13 @@ export class QueryCache {
       return
     }
 
-    this.buildQuery<TResult, TError>(queryKey, {
+    const newQuery = this.buildQuery<TResult, TError>(queryKey, {
       initialStale: typeof config?.staleTime === 'undefined',
       initialData: functionalUpdate(updater, undefined),
       ...config,
     })
+
+    newQuery.activateTimeouts()
   }
 }
 
