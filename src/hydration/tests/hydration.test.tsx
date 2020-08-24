@@ -256,7 +256,8 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const hydrationQueryCache = makeQueryCache()
     hydrate(hydrationQueryCache, parsed, {
-      shouldHydrate: ({ queryKey }) => queryKey[0] !== 'string',
+      shouldHydrate: ({ queryKey }) =>
+        Array.isArray(queryKey) && queryKey[0] !== 'string',
     })
     expect(hydrationQueryCache.getQuery('string')).toBeUndefined()
     expect(hydrationQueryCache.getQuery('number')?.state.data).toBe(1)
