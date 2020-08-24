@@ -128,6 +128,8 @@ export class Query<TResult, TError> {
   private cancelPromises?: () => void
   private cancelled?: typeof cancelledError | null
   private notifyGlobalListeners: (query: Query<TResult, TError>) => void
+  private enableTimeouts: boolean
+  private preventGC: boolean
 
   constructor(init: QueryInitConfig<TResult, TError>) {
     this.config = init.config
@@ -137,6 +139,8 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners = init.notifyGlobalListeners
     this.observers = []
     this.state = getDefaultState(init.config)
+    this.enableTimeouts = false
+    this.preventGC = false
 
     if (init.config.infinite) {
       const infiniteConfig = init.config as InfiniteQueryConfig<TResult, TError>
@@ -155,19 +159,12 @@ export class Query<TResult, TError> {
         this.pageVariables = [[...this.queryKey]]
       }
     }
+  }
 
-    // If the query started with data, schedule
-    // a stale timeout
-    if (!isServer && this.state.data) {
-      this.scheduleStaleTimeout()
-
-      // Simulate a query healing process
-      this.heal()
-
-      // Schedule for garbage collection in case
-      // nothing subscribes to this query
-      this.scheduleGarbageCollection()
-    }
+  activateTimeouts(): void {
+    this.enableTimeouts = true
+    this.rescheduleStaleTimeout()
+    this.rescheduleGarbageCollection()
   }
 
   updateConfig(config: QueryConfig<TResult, TError>): void {
@@ -180,20 +177,33 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners(this)
   }
 
-  scheduleStaleTimeout(): void {
+  private rescheduleStaleTimeout(): void {
     if (isServer) {
       return
     }
 
     this.clearStaleTimeout()
 
-    if (this.state.isStale || this.config.staleTime === Infinity) {
+    if (
+      !this.enableTimeouts ||
+      this.state.isStale ||
+      this.state.status !== QueryStatus.Success ||
+      this.config.staleTime === Infinity
+    ) {
       return
+    }
+
+    const staleTime = this.config.staleTime || 0
+    let timeout = staleTime
+    if (this.state.updatedAt) {
+      const timeElapsed = Date.now() - this.state.updatedAt
+      const timeUntilStale = staleTime - timeElapsed
+      timeout = Math.max(timeUntilStale, 0)
     }
 
     this.staleTimeout = setTimeout(() => {
       this.invalidate()
-    }, this.config.staleTime)
+    }, timeout)
   }
 
   invalidate(): void {
@@ -206,14 +216,19 @@ export class Query<TResult, TError> {
     this.dispatch({ type: ActionType.MarkStale })
   }
 
-  scheduleGarbageCollection(): void {
+  private rescheduleGarbageCollection(): void {
     if (isServer) {
       return
     }
 
     this.clearCacheTimeout()
 
-    if (this.config.cacheTime === Infinity) {
+    if (
+      !this.enableTimeouts ||
+      this.config.cacheTime === Infinity ||
+      this.observers.length > 0 ||
+      this.preventGC
+    ) {
       return
     }
 
@@ -240,7 +255,7 @@ export class Query<TResult, TError> {
     return;
   }
 
-  heal(): void {
+  private heal(): void {
     // Stop the query from being garbage collected
     this.clearCacheTimeout()
 
@@ -316,10 +331,7 @@ export class Query<TResult, TError> {
       isStale,
     })
 
-    if (!isStale) {
-      // Schedule a fresh invalidation!
-      this.scheduleStaleTimeout()
-    }
+    this.rescheduleStaleTimeout()
   }
 
   clear(): void {
@@ -359,6 +371,7 @@ export class Query<TResult, TError> {
   }
 
   subscribeObserver(observer: QueryObserver<TResult, TError>): void {
+    this.preventGC = false
     this.observers.push(observer)
     this.heal()
   }
@@ -367,16 +380,14 @@ export class Query<TResult, TError> {
     observer: QueryObserver<TResult, TError>,
     preventGC?: boolean
   ): void {
+    this.preventGC = this.preventGC || preventGC || false
     this.observers = this.observers.filter(x => x !== observer)
 
     if (!this.observers.length) {
       this.cancel()
-
-      if (!preventGC) {
-        // Schedule garbage collection
-        this.scheduleGarbageCollection()
-      }
     }
+
+    this.rescheduleGarbageCollection()
   }
 
   // Set up the core fetcher function
