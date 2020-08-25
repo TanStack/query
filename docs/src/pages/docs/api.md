@@ -631,6 +631,23 @@ queryCache.clear()
 - `queries: Array<Query>`
   - This will be an array containing the queries that were found.
 
+## `makeQueryCache`
+
+`makeQueryCache` creates an empty `queryCache` manually. This is useful together with `ReactQueryCacheProvider` to have multiple caches in your application.
+
+As opposed to the global cache, caches created by `makeQueryCache` caches data even on the server.
+
+```js
+import { makeQueryCache } from 'react-query'
+
+const queryCache = makeQueryCache()
+```
+
+**Returns**
+
+- `queryCache: QueryCache`
+  - An empty `queryCache`
+
 ## `useQueryCache`
 
 The `useQueryCache` hook returns the current queryCache instance.
@@ -757,3 +774,95 @@ setConsole({
 
 - `console: Object`
   - Must implement the `log`, `warn`, and `error` methods.
+
+## `hydration/dehydrate`
+
+`dehydrate` creates a frozen representation of the queries in a `queryCache` that can later be hydrated with `useHydrate` or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localstorage. It only includes currently successful queries.
+
+```js
+import { dehydrate } from 'react-query/hydration'
+
+const dehydratedQueries = dehydrate(queryCache, {
+  shouldDehydrate
+})
+```
+
+**Options**
+
+- `queryCache: QueryCache`
+  - **Required**
+  - The `queryCache` that should be dehydrated
+- `shouldDehydrate: Function(query: Query) => Boolean`
+  - If provided, this function is called for each currently successful query in the cache
+  - Return `true` to include this query in dehydration, or `false` otherwise
+
+**Returns**
+
+- `dehydratedQueries: DehydratedQueries`
+  - This includes everything that is needed to hydrate the included queries at a later point
+  - You **should not** rely on the exact format of this response, it is not part of the public API and can change at any time
+  - This result is not in serialized form, you need to do that yourself if desired
+
+## `hydration/hydrate`
+
+> Note: This is a low level API with more caveats than `useHydrate`, we recommend you use that instead if you can
+
+`hydrate` adds previously dehydrated queries into a `queryCache` and activates them. If the queries already exist in the cache, `hydrate` does not overwrite them.
+
+```js
+import { hydrate } from 'react-query/hydration'
+
+const activateTimeouts = hydrate(queryCache, dehydratedQueries, {
+  shouldHydrate,
+  activateTimeoutsManually = false,
+  queryKeyParserFn = JSON.parse
+})
+```
+
+**Options**
+
+- `queryCache: QueryCache`
+  - **Required**
+  - The `queryCache` to hydrate the queries into
+- `dehydratedQueries: DehydratedQueries`
+  - **Required**
+  - The queries to hydrate into the cache
+- `shouldHydrate: Function({ queryKey, updatedAt, staleTime, cacheTime, data }) => Boolean`
+  - If provided, this function is called for each dehydrated query
+  - Return `true` to include the query in hydration, or `false` otherwise
+  - To avoid hydrating queries older than an hour: `shouldHydrate: ({ updatedAt }) => Date.now() - updatedAt > 1000 * 60 * 60`
+- `activateTimeoutsManually: Boolean`
+  - Defaults to `false`
+  - If `true`, queries that are hydrated will not be scheduled for staleness or garbage collection automatically
+    - This is an **advanced** option and should not be needed for most usecases, but can be useful for low level API integrations where timing is important
+    - You activate the timeouts of all the hydrated queries manually by calling `activateTimeouts`
+    - Note that individual query timeouts can also be activated in other conditions such as by `useQuery`
+
+**Returns**
+
+- `activateTimeouts: Function() => void`
+  - Only useful with `activateTimeoutsManually: true`
+  - Makes sure hydrated queries have activated and scheduled timeouts for staleness and garbage collection if needed
+
+## `hydration/useHydrate`
+
+`useHydrate` adds previously dehydrated queries into the `queryCache` returned by `useQueryCache` and activates them.
+
+```jsx
+import { useHydrate } from 'react-query/hydration'
+
+useHydrate(dehydratedQueries, {
+  shouldHydrate,
+  queryKeyParserFn = JSON.parse
+})
+```
+
+**Options**
+
+- `dehydratedQueries: DehydratedQueries`
+  - **Required**
+  - The queries to hydrate
+- `shouldHydrate: Function({ queryKey, updatedAt, staleTime, cacheTime, data }) => Boolean`
+  - If provided, this function is called for each dehydrated query
+  - Return `true` to include the query in hydration, or `false` otherwise
+  - To avoid hydrating queries older than an hour: `shouldHydrate: ({ updatedAt }) => Date.now() - updatedAt > 1000 * 60 * 60`
