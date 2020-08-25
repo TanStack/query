@@ -34,7 +34,7 @@ export type ShouldHydrateFunction = <TResult>({
 export interface HydrateConfig {
   queryKeyParserFn?: QueryKeyParserFunction
   shouldHydrate?: ShouldHydrateFunction
-  scheduleTimeoutsManually?: boolean
+  activateTimeoutsManually?: boolean
 }
 
 export type ShouldDehydrateFunction = <TResult, TError = unknown>(
@@ -99,7 +99,7 @@ export function hydrate<TResult>(
   const {
     queryKeyParserFn = JSON.parse,
     shouldHydrate,
-    scheduleTimeoutsManually = false,
+    activateTimeoutsManually = false,
   } = config
   const queriesToInit: string[] = []
 
@@ -130,7 +130,7 @@ export function hydrate<TResult>(
     const query = queryCache.queries[queryHash]
     query.state.updatedAt = dehydratedQuery.updatedAt
 
-    if (scheduleTimeoutsManually) {
+    if (activateTimeoutsManually) {
       // We avoid keeping a reference to the query itself here since
       // that would mean the query could not be garbage collected as
       // long as someone kept a reference to the initQueries-function

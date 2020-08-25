@@ -16,8 +16,8 @@ export function useHydrate(queries: unknown, hydrateConfig?: HydrateConfig) {
         queryCache,
         queries,
         hydrateConfig
-          ? { ...hydrateConfig, scheduleTimeoutsManually: true }
-          : { scheduleTimeoutsManually: true }
+          ? { ...hydrateConfig, activateTimeoutsManually: true }
+          : { activateTimeoutsManually: true }
       )
     }
     return undefined
