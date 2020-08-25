@@ -409,7 +409,7 @@ export class Query<TResult, TError> {
     const config = this.config
 
     // Check if there is a query function
-    if (!config.queryFn) {
+    if (typeof config.queryFn !== 'function') {
       return
     }
 

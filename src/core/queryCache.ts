@@ -313,7 +313,6 @@ export class QueryCache {
       if (options?.throwOnError) {
         throw error
       }
-      return
     }
   }
 
