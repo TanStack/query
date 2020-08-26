@@ -349,6 +349,7 @@ The `queryCache` instance is the backbone of React Query that manages all of the
 - [`hydration/dehydrate`](#hydrationdehydrate)
 - [`hydration/hydrate`](#hydrationhydrate)
 - [`hydration/useHydrate`](#hydrationusehydrate)
+- [`hydration/ReactQueryCacheProvider`](#hydrationreactquerycacheprovider)
 
 ## `queryCache.prefetchQuery`
 
@@ -765,7 +766,7 @@ function App() {
 
 **Options**
 
-- `queryCache: Object`
+- `queryCache: QueryCache`
   - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
   - If not provided, a new cache will be generated.
 
@@ -862,7 +863,34 @@ useHydrate(dehydratedQueries, {
 - `dehydratedQueries: DehydratedQueries`
   - **Required**
   - The queries to hydrate
-- `shouldHydrate: Function({ queryKey, updatedAt, staleTime, cacheTime, data }) => Boolean`
-  - If provided, this function is called for each dehydrated query
-  - Return `true` to include the query in hydration, or `false` otherwise
-  - To avoid hydrating queries older than an hour: `shouldHydrate: ({ updatedAt }) => Date.now() - updatedAt > 1000 * 60 * 60`
+- `shouldHydrate`
+  - See `hydrate`
+
+## `hydration/ReactQueryCacheProvider`
+
+`hydration/ReactQueryCacheProvider` does the same thing as `ReactQueryCacheProvider` but also supports hydrating initial queries into the cache.
+
+```js
+import { ReactQueryCacheProvider } from 'react-query/hydration'
+
+function App() {
+  return (
+    <ReactQueryCacheProvider
+      queryCache={queryCache}
+      initialQueries={initialQueries}
+      hydrationConfig={hydrationConfig}>
+      ...
+    </ReactQueryCacheProvider>
+  )
+}
+```
+
+**Options**
+
+- `queryCache: QueryCache`
+  - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
+  - If not provided, a new cache will be generated.
+- `initialQueries: DehydratedQueries`
+  - Queries to hydrate
+- `hydrationConfig`
+  - Same config as for `hydrate`
