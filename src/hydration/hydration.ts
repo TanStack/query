@@ -34,7 +34,6 @@ export type ShouldHydrateFunction = <TResult>({
 export interface HydrateConfig {
   queryKeyParserFn?: QueryKeyParserFunction
   shouldHydrate?: ShouldHydrateFunction
-  activateTimeoutsManually?: boolean
 }
 
 export type ShouldDehydrateFunction = <TResult, TError = unknown>(
@@ -94,17 +93,11 @@ export function hydrate<TResult>(
   queryCache: QueryCache,
   dehydratedQueries: unknown,
   hydrateConfig?: HydrateConfig
-): () => void {
+): void {
   const config = hydrateConfig || {}
-  const {
-    queryKeyParserFn = JSON.parse,
-    shouldHydrate,
-    activateTimeoutsManually = false,
-  } = config
-  const queriesToInit: string[] = []
-
+  const { queryKeyParserFn = JSON.parse, shouldHydrate } = config
   if (typeof dehydratedQueries !== 'object' || dehydratedQueries === null) {
-    return () => undefined
+    return
   }
 
   for (const [queryHash, dehydratedQuery] of Object.entries(
@@ -129,27 +122,6 @@ export function hydrate<TResult>(
     queryCache.buildQuery(queryKey, queryConfig)
     const query = queryCache.queries[queryHash]
     query.state.updatedAt = dehydratedQuery.updatedAt
-
-    if (activateTimeoutsManually) {
-      // We avoid keeping a reference to the query itself here since
-      // that would mean the query could not be garbage collected as
-      // long as someone kept a reference to the initQueries-function
-      queriesToInit.push(queryHash)
-    } else {
-      query.activateTimeouts()
-    }
-  }
-
-  return function activateTimeouts() {
-    while (queriesToInit.length > 0) {
-      const queryHash = queriesToInit.shift()
-      if (queryHash) {
-        const query = queryCache.queries[queryHash]
-
-        if (query) {
-          query.activateTimeouts()
-        }
-      }
-    }
+    query.activateGarbageCollectionTimeout()
   }
 }

@@ -2,12 +2,19 @@ import { sleep } from '../../react/tests/utils'
 import { makeQueryCache } from '../..'
 import { dehydrate, hydrate } from '../hydration'
 
+import type { QueryCache } from '../..'
+
 const fetchData: <TResult>(
   value: TResult,
   ms?: number
 ) => Promise<TResult> = async (value, ms) => {
   await sleep(ms || 0)
   return value
+}
+
+// It is up to the queryObserver to schedule staleness, this simulates that
+function simulateQueryObserver(queryCache: QueryCache, queryKey: string): void {
+  queryCache.getQuery(queryKey)?.activateStaleTimeout()
 }
 
 describe('dehydration and rehydration', () => {
@@ -54,6 +61,26 @@ describe('dehydration and rehydration', () => {
     hydrationQueryCache.clear({ notify: false })
   })
 
+  test('should not schedule staleness unless observed', async () => {
+    const queryCache = makeQueryCache()
+    await queryCache.prefetchQuery('string', () => fetchData('string'))
+    const dehydrated = dehydrate(queryCache)
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+
+    const parsed = JSON.parse(stringified)
+    const hydrationQueryCache = makeQueryCache()
+    hydrate(hydrationQueryCache, parsed)
+    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
+    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
+    await sleep(10)
+    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
+
+    queryCache.clear({ notify: false })
+    hydrationQueryCache.clear({ notify: false })
+  })
+
   test('should default to scheduling staleness immediately', async () => {
     const queryCache = makeQueryCache()
     await queryCache.prefetchQuery('string', () => fetchData('string'))
@@ -65,6 +92,7 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const hydrationQueryCache = makeQueryCache()
     hydrate(hydrationQueryCache, parsed)
+    simulateQueryObserver(hydrationQueryCache, 'string')
     expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
     expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
     await sleep(10)
@@ -89,6 +117,7 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const hydrationQueryCache = makeQueryCache()
     hydrate(hydrationQueryCache, parsed)
+    simulateQueryObserver(hydrationQueryCache, 'string')
     expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
     expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
     await sleep(10)
@@ -115,6 +144,7 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const hydrationQueryCache = makeQueryCache()
     hydrate(hydrationQueryCache, parsed)
+    simulateQueryObserver(hydrationQueryCache, 'string')
     expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
     expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
     await sleep(10)

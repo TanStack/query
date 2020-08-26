@@ -805,16 +805,13 @@ const dehydratedQueries = dehydrate(queryCache, {
 
 ## `hydration/hydrate`
 
-> Note: This is a low level API with more caveats than `useHydrate`, we recommend you use that instead if you can
-
 `hydrate` adds previously dehydrated queries into a `queryCache` and activates them. If the queries already exist in the cache, `hydrate` does not overwrite them.
 
 ```js
 import { hydrate } from 'react-query/hydration'
 
-const activateTimeouts = hydrate(queryCache, dehydratedQueries, {
+hydrate(queryCache, dehydratedQueries, {
   shouldHydrate,
-  activateTimeoutsManually = false,
   queryKeyParserFn = JSON.parse
 })
 ```
@@ -831,18 +828,6 @@ const activateTimeouts = hydrate(queryCache, dehydratedQueries, {
   - If provided, this function is called for each dehydrated query
   - Return `true` to include the query in hydration, or `false` otherwise
   - To avoid hydrating queries older than an hour: `shouldHydrate: ({ updatedAt }) => Date.now() - updatedAt > 1000 * 60 * 60`
-- `activateTimeoutsManually: Boolean`
-  - Defaults to `false`
-  - If `true`, queries that are hydrated will not be scheduled for staleness or garbage collection automatically
-    - This is an **advanced** option and should not be needed for most usecases, but can be useful for low level API integrations where timing is important
-    - You activate the timeouts of all the hydrated queries manually by calling `activateTimeouts`
-    - Note that individual query timeouts can also be activated in other conditions such as by `useQuery`
-
-**Returns**
-
-- `activateTimeouts: Function() => void`
-  - Only useful with `activateTimeoutsManually: true`
-  - Makes sure hydrated queries have activated and scheduled timeouts for staleness and garbage collection if needed
 
 ## `hydration/useHydrate`
 
