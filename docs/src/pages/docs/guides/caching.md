@@ -26,5 +26,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
 - Both instances of the `useQuery('todos', fetchTodos)` query are unmounted and no longer in use.
   - Since there are no more active instances to this query, a cache timeout is set using `cacheTime` to delete and garbage collect the query (defaults to **5 minutes**).
+- Before the cache timeout has completed another instance of `useQuery('todos', fetchTodos)` mounts. The query immediately returns the available cached value while the `fetchTodos` function is being run in the background to populate the query with a fresh value.
+- The final instance of `useQuery('todos', fetchTodos)` unmounts.
 - No more instances of `useQuery('todos', fetchTodos)` appear within **5 minutes**.
   - This query and its data are deleted and garbage collected.
