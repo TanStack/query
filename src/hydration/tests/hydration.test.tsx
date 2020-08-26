@@ -222,7 +222,7 @@ describe('dehydration and rehydration', () => {
     expect(dehydrated['["string"]'].config.cacheTime).toBe(undefined)
   })
 
-  test('should only hydrate successful queries', async () => {
+  test('should only hydrate successful queries by default', async () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 

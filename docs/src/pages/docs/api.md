@@ -324,17 +324,31 @@ const promise = mutate(variables, {
 
 The `queryCache` instance is the backbone of React Query that manages all of the state, caching, lifecycle and magic of every query. It supports relatively unrestricted, but safe, access to manipulate query's as you need. Its available properties and methods are:
 
-- [`prefetchQuery`](#querycacheprefetchquery)
-- [`getQueryData`](#querycachegetquerydata)
-- [`setQueryData`](#querycachesetquerydata)
-- [`invalidateQueries`](#querycacheinvalidatequeries)
-- [`cancelQueries`](#querycachecancelqueries)
-- [`removeQueries`](#querycacheremovequeries)
-- [`getQueries`](#querycachegetqueries)
-- [`getQuery`](#querycachegetquery)
-- [`subscribe`](#querycachesubscribe)
-- [`isFetching`](#querycacheisfetching)
-- [`clear`](#querycacheclear)
+- [`useQuery`](#usequery)
+- [`usePaginatedQuery`](#usepaginatedquery)
+- [`useInfiniteQuery`](#useinfinitequery)
+- [`useMutation`](#usemutation)
+- [`queryCache`](#querycache)
+- [`queryCache.prefetchQuery`](#querycacheprefetchquery)
+- [`queryCache.getQueryData`](#querycachegetquerydata)
+- [`queryCache.setQueryData`](#querycachesetquerydata)
+- [`queryCache.invalidateQueries`](#querycacheinvalidatequeries)
+- [`queryCache.cancelQueries`](#querycachecancelqueries)
+- [`queryCache.removeQueries`](#querycacheremovequeries)
+- [`queryCache.getQuery`](#querycachegetquery)
+- [`queryCache.getQueries`](#querycachegetqueries)
+- [`queryCache.isFetching`](#querycacheisfetching)
+- [`queryCache.subscribe`](#querycachesubscribe)
+- [`queryCache.clear`](#querycacheclear)
+- [`makeQueryCache`](#makequerycache)
+- [`useQueryCache`](#usequerycache)
+- [`useIsFetching`](#useisfetching)
+- [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
+- [`ReactQueryCacheProvider`](#reactquerycacheprovider)
+- [`setConsole`](#setconsole)
+- [`hydration/dehydrate`](#hydrationdehydrate)
+- [`hydration/hydrate`](#hydrationhydrate)
+- [`hydration/useHydrate`](#hydrationusehydrate)
 
 ## `queryCache.prefetchQuery`
 
@@ -777,7 +791,7 @@ setConsole({
 
 ## `hydration/dehydrate`
 
-`dehydrate` creates a frozen representation of the queries in a `queryCache` that can later be hydrated with `useHydrate` or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localstorage. It only includes currently successful queries.
+`dehydrate` creates a frozen representation of the queries in a `queryCache` that can later be hydrated with `useHydrate` or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localstorage. It only includes currently successful queries by default.
 
 ```js
 import { dehydrate } from 'react-query/hydration'
@@ -793,8 +807,9 @@ const dehydratedQueries = dehydrate(queryCache, {
   - **Required**
   - The `queryCache` that should be dehydrated
 - `shouldDehydrate: Function(query: Query) => Boolean`
-  - If provided, this function is called for each currently successful query in the cache
+  - This function is called for each query in the cache
   - Return `true` to include this query in dehydration, or `false` otherwise
+  - Default version only includes successful queries, do `shouldDehydrate: () => true` to include all queries
 
 **Returns**
 

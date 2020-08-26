@@ -70,18 +70,18 @@ function dehydrateQuery<TResult, TError = unknown>(
   return dehydratedQuery
 }
 
+const defaultShouldDehydrate: ShouldDehydrateFunction = query =>
+  query.state.status === 'success'
+
 export function dehydrate<TResult>(
   queryCache: QueryCache,
   dehydrateConfig?: DehydrateConfig
 ): DehydratedQueries<TResult> {
   const config = dehydrateConfig || {}
-  const { shouldDehydrate } = config
+  const { shouldDehydrate = defaultShouldDehydrate } = config
   const dehydratedQueries: DehydratedQueries<TResult> = {}
   for (const [queryHash, query] of Object.entries(queryCache.queries)) {
-    if (query.state.status === 'success') {
-      if (shouldDehydrate && !shouldDehydrate(query)) {
-        continue
-      }
+    if (shouldDehydrate(query)) {
       dehydratedQueries[queryHash] = dehydrateQuery(query)
     }
   }
