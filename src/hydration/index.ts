@@ -7,8 +7,6 @@ export type {
   DehydratedQuery,
   DehydratedState,
   ShouldDehydrateFunction,
-  ShouldHydrateFunction,
-  HydrateConfig,
   DehydrateConfig,
 } from './hydration'
 export type { HydrationCacheProviderProps } from './react'

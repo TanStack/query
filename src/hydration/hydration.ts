@@ -18,23 +18,6 @@ export interface DehydratedState {
   queries: Array<DehydratedQuery>
 }
 
-export type ShouldHydrateFunction = ({
-  queryKey,
-  updatedAt,
-  staleTime,
-  cacheTime,
-  data,
-}: {
-  queryKey: QueryKey
-  updatedAt: number
-  staleTime: number
-  cacheTime: number
-  data?: unknown
-}) => boolean
-export interface HydrateConfig {
-  shouldHydrate?: ShouldHydrateFunction
-}
-
 export type ShouldDehydrateFunction = <TResult, TError = unknown>(
   query: Query<TResult, TError>
 ) => boolean
@@ -94,11 +77,8 @@ export function dehydrate(
 
 export function hydrate<TResult>(
   queryCache: QueryCache,
-  dehydratedState: unknown,
-  hydrateConfig?: HydrateConfig
+  dehydratedState: unknown
 ): void {
-  const config = hydrateConfig || {}
-  const { shouldHydrate } = config
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
@@ -110,19 +90,6 @@ export function hydrate<TResult>(
     const queryConfig: QueryConfig<TResult> = dehydratedQuery.config as QueryConfig<
       TResult
     >
-
-    if (
-      shouldHydrate &&
-      !shouldHydrate({
-        queryKey,
-        updatedAt: dehydratedQuery.updatedAt,
-        staleTime: queryConfig.staleTime || DEFAULT_STALE_TIME,
-        cacheTime: queryConfig.cacheTime || DEFAULT_CACHE_TIME,
-        data: queryConfig.initialData,
-      })
-    ) {
-      continue
-    }
 
     const query = queryCache.buildQuery(queryKey, queryConfig)
     query.state.updatedAt = dehydratedQuery.updatedAt

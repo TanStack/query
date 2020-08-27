@@ -826,7 +826,7 @@ const dehydratedState = dehydrate(queryCache, {
 ```js
 import { hydrate } from 'react-query/hydration'
 
-hydrate(queryCache, dehydratedState, { shouldHydrate })
+hydrate(queryCache, dehydratedState)
 ```
 
 **Options**
@@ -837,10 +837,6 @@ hydrate(queryCache, dehydratedState, { shouldHydrate })
 - `dehydratedState: DehydratedState`
   - **Required**
   - The state to hydrate into the cache
-- `shouldHydrate: Function({ queryKey, updatedAt, staleTime, cacheTime, data }) => Boolean`
-  - If provided, this function is called for each dehydrated query
-  - Return `true` to include the query in hydration, or `false` otherwise
-  - To avoid hydrating queries older than an hour: `shouldHydrate: ({ updatedAt }) => Date.now() - updatedAt > 1000 * 60 * 60`
 
 ## `hydration/useHydrate`
 
@@ -849,7 +845,7 @@ hydrate(queryCache, dehydratedState, { shouldHydrate })
 ```jsx
 import { useHydrate } from 'react-query/hydration'
 
-useHydrate(dehydratedState, { shouldHydrate })
+useHydrate(dehydratedState)
 ```
 
 **Options**
@@ -857,8 +853,6 @@ useHydrate(dehydratedState, { shouldHydrate })
 - `dehydratedState: DehydratedState`
   - **Required**
   - The state to hydrate
-- `shouldHydrate`
-  - See `hydrate`
 
 ## `hydration/ReactQueryCacheProvider`
 

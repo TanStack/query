@@ -284,26 +284,4 @@ describe('dehydration and rehydration', () => {
     queryCache.clear({ notify: false })
     hydrationQueryCache.clear({ notify: false })
   })
-
-  test('should filter queries via shouldHydrate', async () => {
-    const queryCache = makeQueryCache()
-    await queryCache.prefetchQuery('string', () => fetchData('string'))
-    await queryCache.prefetchQuery('number', () => fetchData(1))
-    const dehydrated = dehydrate(queryCache)
-    const stringified = JSON.stringify(dehydrated)
-
-    // ---
-
-    const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
-    hydrate(hydrationQueryCache, parsed, {
-      shouldHydrate: ({ queryKey }) =>
-        Array.isArray(queryKey) && queryKey[0] !== 'string',
-    })
-    expect(hydrationQueryCache.getQuery('string')).toBeUndefined()
-    expect(hydrationQueryCache.getQuery('number')?.state.data).toBe(1)
-
-    queryCache.clear({ notify: false })
-    hydrationQueryCache.clear({ notify: false })
-  })
 })
