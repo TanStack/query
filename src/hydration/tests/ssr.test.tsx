@@ -69,10 +69,10 @@ describe('Server side rendering with de/rehydration', () => {
       )
     }
 
-    function Page<TResult>({
+    function Page({
       dehydratedQueries,
     }: {
-      dehydratedQueries: DehydratedQueries<TResult>
+      dehydratedQueries: DehydratedQueries
     }) {
       useHydrate(dehydratedQueries)
       return <SuccessComponent />
@@ -145,10 +145,10 @@ describe('Server side rendering with de/rehydration', () => {
       )
     }
 
-    function Page<TResult>({
+    function Page({
       dehydratedQueries,
     }: {
-      dehydratedQueries: DehydratedQueries<TResult>
+      dehydratedQueries: DehydratedQueries
     }) {
       useHydrate(dehydratedQueries)
       return <ErrorComponent />
@@ -223,10 +223,10 @@ describe('Server side rendering with de/rehydration', () => {
       )
     }
 
-    function Page<TResult>({
+    function Page({
       dehydratedQueries,
     }: {
-      dehydratedQueries: DehydratedQueries<TResult>
+      dehydratedQueries: DehydratedQueries
     }) {
       useHydrate(dehydratedQueries)
       return <SuccessComponent />

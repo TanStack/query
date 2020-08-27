@@ -2,23 +2,23 @@ import { DEFAULT_STALE_TIME, DEFAULT_CACHE_TIME } from '../core/config'
 
 import type { Query, QueryCache, QueryKey, QueryConfig } from 'react-query'
 
-export interface DehydratedQueryConfig<TResult> {
+export interface DehydratedQueryConfig {
   staleTime?: number
   cacheTime?: number
-  initialData?: TResult
+  initialData?: unknown
 }
 
-export interface DehydratedQuery<TResult> {
-  config: DehydratedQueryConfig<TResult>
+export interface DehydratedQuery {
+  config: DehydratedQueryConfig
   updatedAt: number
 }
 
-export interface DehydratedQueries<TResult> {
-  [hash: string]: DehydratedQuery<TResult>
+export interface DehydratedQueries {
+  [hash: string]: DehydratedQuery
 }
 
 export type QueryKeyParserFunction = (queryHash: string) => QueryKey
-export type ShouldHydrateFunction = <TResult>({
+export type ShouldHydrateFunction = ({
   queryKey,
   updatedAt,
   staleTime,
@@ -29,7 +29,7 @@ export type ShouldHydrateFunction = <TResult>({
   updatedAt: number
   staleTime: number
   cacheTime: number
-  data?: TResult
+  data?: unknown
 }) => boolean
 export interface HydrateConfig {
   queryKeyParserFn?: QueryKeyParserFunction
@@ -45,8 +45,8 @@ export interface DehydrateConfig {
 
 function dehydrateQuery<TResult, TError = unknown>(
   query: Query<TResult, TError>
-): DehydratedQuery<TResult> {
-  const dehydratedQuery: DehydratedQuery<TResult> = {
+): DehydratedQuery {
+  const dehydratedQuery: DehydratedQuery = {
     config: {},
     updatedAt: query.state.updatedAt,
   }
@@ -73,13 +73,13 @@ function dehydrateQuery<TResult, TError = unknown>(
 const defaultShouldDehydrate: ShouldDehydrateFunction = query =>
   query.state.status === 'success'
 
-export function dehydrate<TResult>(
+export function dehydrate(
   queryCache: QueryCache,
   dehydrateConfig?: DehydrateConfig
-): DehydratedQueries<TResult> {
+): DehydratedQueries {
   const config = dehydrateConfig || {}
   const { shouldDehydrate = defaultShouldDehydrate } = config
-  const dehydratedQueries: DehydratedQueries<TResult> = {}
+  const dehydratedQueries: DehydratedQueries = {}
   for (const [queryHash, query] of Object.entries(queryCache.queries)) {
     if (shouldDehydrate(query)) {
       dehydratedQueries[queryHash] = dehydrateQuery(query)
