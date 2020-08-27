@@ -5,7 +5,7 @@ export { useHydrate, ReactQueryCacheProvider } from './react'
 export type {
   DehydratedQueryConfig,
   DehydratedQuery,
-  DehydratedQueries,
+  DehydratedState,
   QueryKeyParserFunction,
   ShouldDehydrateFunction,
   ShouldHydrateFunction,

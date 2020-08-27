@@ -2,17 +2,10 @@ import * as React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDOMServer from 'react-dom/server'
 import { waitFor } from '@testing-library/react'
-import {
-  ReactQueryCacheProvider,
-  makeQueryCache,
-  useQuery,
-  setConsole,
-} from '../..'
-import { dehydrate, useHydrate } from '../index'
+import { makeQueryCache, useQuery, setConsole } from '../..'
+import { dehydrate, ReactQueryCacheProvider } from '../'
 import * as utils from '../../core/utils'
 import { sleep } from '../../react/tests/utils'
-
-import type { DehydratedQueries } from '../'
 
 jest.useFakeTimers()
 
@@ -69,15 +62,6 @@ describe('Server side rendering with de/rehydration', () => {
       )
     }
 
-    function Page({
-      dehydratedQueries,
-    }: {
-      dehydratedQueries: DehydratedQueries
-    }) {
-      useHydrate(dehydratedQueries)
-      return <SuccessComponent />
-    }
-
     // -- Server part --
     setIsServer(true)
 
@@ -87,13 +71,13 @@ describe('Server side rendering with de/rehydration', () => {
     )
     jest.runOnlyPendingTimers()
     await prefetchPromise
-    const dehydratedQueriesServer = dehydrate(serverPrefetchCache)
+    const dehydratedStateServer = dehydrate(serverPrefetchCache)
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Page dehydratedQueries={dehydratedQueriesServer} />
+      <ReactQueryCacheProvider dehydratedState={dehydratedStateServer}>
+        <SuccessComponent />
       </ReactQueryCacheProvider>
     )
-    const stringifiedQueries = JSON.stringify(dehydratedQueriesServer)
+    const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
 
     expect(markup).toBe('Success SuccessComponent - success')
@@ -101,10 +85,10 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedQueriesClient = JSON.parse(stringifiedQueries)
+    const dehydratedStateClient = JSON.parse(stringifiedState)
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Page dehydratedQueries={dehydratedQueriesClient} />
+      <ReactQueryCacheProvider dehydratedState={dehydratedStateClient}>
+        <SuccessComponent />
       </ReactQueryCacheProvider>,
       el
     )
@@ -145,15 +129,6 @@ describe('Server side rendering with de/rehydration', () => {
       )
     }
 
-    function Page({
-      dehydratedQueries,
-    }: {
-      dehydratedQueries: DehydratedQueries
-    }) {
-      useHydrate(dehydratedQueries)
-      return <ErrorComponent />
-    }
-
     // -- Server part --
     setIsServer(true)
     const serverQueryCache = makeQueryCache()
@@ -162,13 +137,13 @@ describe('Server side rendering with de/rehydration', () => {
     )
     jest.runOnlyPendingTimers()
     await prefetchPromise
-    const dehydratedQueriesServer = dehydrate(serverQueryCache)
+    const dehydratedStateServer = dehydrate(serverQueryCache)
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Page dehydratedQueries={dehydratedQueriesServer} />
+      <ReactQueryCacheProvider dehydratedState={dehydratedStateServer}>
+        <ErrorComponent />
       </ReactQueryCacheProvider>
     )
-    const stringifiedQueries = JSON.stringify(dehydratedQueriesServer)
+    const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
 
     expect(markup).toBe('Loading ErrorComponent')
@@ -176,10 +151,10 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedQueriesClient = JSON.parse(stringifiedQueries)
+    const dehydratedStateClient = JSON.parse(stringifiedState)
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Page dehydratedQueries={dehydratedQueriesClient} />
+      <ReactQueryCacheProvider dehydratedState={dehydratedStateClient}>
+        <ErrorComponent />
       </ReactQueryCacheProvider>,
       el
     )
@@ -223,26 +198,17 @@ describe('Server side rendering with de/rehydration', () => {
       )
     }
 
-    function Page({
-      dehydratedQueries,
-    }: {
-      dehydratedQueries: DehydratedQueries
-    }) {
-      useHydrate(dehydratedQueries)
-      return <SuccessComponent />
-    }
-
     // -- Server part --
     setIsServer(true)
 
     const serverPrefetchCache = makeQueryCache()
-    const dehydratedQueriesServer = dehydrate(serverPrefetchCache)
+    const dehydratedStateServer = dehydrate(serverPrefetchCache)
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Page dehydratedQueries={dehydratedQueriesServer} />
+      <ReactQueryCacheProvider dehydratedState={dehydratedStateServer}>
+        <SuccessComponent />
       </ReactQueryCacheProvider>
     )
-    const stringifiedQueries = JSON.stringify(dehydratedQueriesServer)
+    const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
 
     expect(markup).toBe('Loading SuccessComponent')
@@ -250,10 +216,10 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedQueriesClient = JSON.parse(stringifiedQueries)
+    const dehydratedStateClient = JSON.parse(stringifiedState)
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Page dehydratedQueries={dehydratedQueriesClient} />
+      <ReactQueryCacheProvider dehydratedState={dehydratedStateClient}>
+        <SuccessComponent />
       </ReactQueryCacheProvider>,
       el
     )

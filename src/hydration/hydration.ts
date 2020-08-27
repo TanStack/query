@@ -13,7 +13,7 @@ export interface DehydratedQuery {
   updatedAt: number
 }
 
-export interface DehydratedQueries {
+export interface DehydratedState {
   [hash: string]: DehydratedQuery
 }
 
@@ -76,33 +76,31 @@ const defaultShouldDehydrate: ShouldDehydrateFunction = query =>
 export function dehydrate(
   queryCache: QueryCache,
   dehydrateConfig?: DehydrateConfig
-): DehydratedQueries {
+): DehydratedState {
   const config = dehydrateConfig || {}
   const { shouldDehydrate = defaultShouldDehydrate } = config
-  const dehydratedQueries: DehydratedQueries = {}
+  const dehydratedState: DehydratedState = {}
   for (const [queryHash, query] of Object.entries(queryCache.queries)) {
     if (shouldDehydrate(query)) {
-      dehydratedQueries[queryHash] = dehydrateQuery(query)
+      dehydratedState[queryHash] = dehydrateQuery(query)
     }
   }
 
-  return dehydratedQueries
+  return dehydratedState
 }
 
 export function hydrate<TResult>(
   queryCache: QueryCache,
-  dehydratedQueries: unknown,
+  dehydratedState: unknown,
   hydrateConfig?: HydrateConfig
 ): void {
   const config = hydrateConfig || {}
   const { queryKeyParserFn = JSON.parse, shouldHydrate } = config
-  if (typeof dehydratedQueries !== 'object' || dehydratedQueries === null) {
+  if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
 
-  for (const [queryHash, dehydratedQuery] of Object.entries(
-    dehydratedQueries
-  )) {
+  for (const [queryHash, dehydratedQuery] of Object.entries(dehydratedState)) {
     const queryKey = queryKeyParserFn(queryHash)
     const queryConfig: QueryConfig<TResult> = dehydratedQuery.config
 

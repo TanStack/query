@@ -11,21 +11,21 @@ describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = value =>
     new Promise(res => setTimeout(() => res(value), 10))
   const dataQuery: (key: string) => Promise<string> = key => fetchData(key)
-  let stringifiedQueries: string
+  let stringifiedState: string
 
   beforeAll(async () => {
     const serverQueryCache = makeQueryCache()
     await serverQueryCache.prefetchQuery('string', dataQuery)
     const dehydrated = dehydrate(serverQueryCache)
-    stringifiedQueries = JSON.stringify(dehydrated)
+    stringifiedState = JSON.stringify(dehydrated)
     serverQueryCache.clear({ notify: false })
   })
 
   describe('useHydrate', () => {
     test('should handle global cache case', async () => {
-      const dehydratedQueries = JSON.parse(stringifiedQueries)
+      const dehydratedState = JSON.parse(stringifiedState)
       function Page() {
-        useHydrate(dehydratedQueries)
+        useHydrate(dehydratedState)
         const { data } = useQuery('string', dataQuery)
 
         return (
@@ -41,11 +41,11 @@ describe('React hydration', () => {
     })
 
     test('should hydrate queries to the cache on context', async () => {
-      const dehydratedQueries = JSON.parse(stringifiedQueries)
+      const dehydratedState = JSON.parse(stringifiedState)
       const clientQueryCache = makeQueryCache()
 
       function Page() {
-        useHydrate(dehydratedQueries)
+        useHydrate(dehydratedState)
         const { data } = useQuery('string', dataQuery)
         return (
           <div>
@@ -72,7 +72,7 @@ describe('React hydration', () => {
 
   describe('ReactQueryCacheProvider with hydration support', () => {
     test('should hydrate new queries if queries change', async () => {
-      const dehydratedQueries = JSON.parse(stringifiedQueries)
+      const dehydratedState = JSON.parse(stringifiedState)
       const clientQueryCache = makeQueryCache()
 
       function Page({ queryKey }: { queryKey: string }) {
@@ -87,7 +87,7 @@ describe('React hydration', () => {
       const rendered = render(
         <ReactQueryCacheProvider
           queryCache={clientQueryCache}
-          initialQueries={dehydratedQueries}
+          dehydratedState={dehydratedState}
         >
           <Page queryKey={'string'} />
         </ReactQueryCacheProvider>
@@ -110,7 +110,7 @@ describe('React hydration', () => {
       rendered.rerender(
         <ReactQueryCacheProvider
           queryCache={clientQueryCache}
-          initialQueries={dehydrated}
+          dehydratedState={dehydrated}
         >
           <Page queryKey={'string'} />
           <Page queryKey={'added string'} />
@@ -135,7 +135,7 @@ describe('React hydration', () => {
     })
 
     test('should hydrate queries to new cache if cache changes', async () => {
-      const dehydratedQueries = JSON.parse(stringifiedQueries)
+      const dehydratedState = JSON.parse(stringifiedState)
       const clientQueryCache = makeQueryCache()
 
       function Page() {
@@ -150,7 +150,7 @@ describe('React hydration', () => {
       const rendered = render(
         <ReactQueryCacheProvider
           queryCache={clientQueryCache}
-          initialQueries={dehydratedQueries}
+          dehydratedState={dehydratedState}
         >
           <Page />
         </ReactQueryCacheProvider>
@@ -167,7 +167,7 @@ describe('React hydration', () => {
       rendered.rerender(
         <ReactQueryCacheProvider
           queryCache={newClientQueryCache}
-          initialQueries={dehydratedQueries}
+          dehydratedState={dehydratedState}
         >
           <Page />
         </ReactQueryCacheProvider>

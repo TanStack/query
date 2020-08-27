@@ -23,27 +23,27 @@ export function useHydrate(queries: unknown, hydrateConfig?: HydrateConfig) {
 }
 
 interface HydratorProps {
-  initialQueries?: unknown
+  dehydratedState?: unknown
   hydrationConfig?: HydrateConfig
 }
 
 const Hydrator: React.FC<HydratorProps> = ({
-  initialQueries,
+  dehydratedState,
   hydrationConfig,
   children,
 }) => {
-  useHydrate(initialQueries, hydrationConfig)
+  useHydrate(dehydratedState, hydrationConfig)
   return children as React.ReactElement<any>
 }
 
 export interface HydrationCacheProviderProps
   extends ReactQueryCacheProviderProps {
-  initialQueries?: unknown
+  dehydratedState?: unknown
   hydrationConfig?: HydrateConfig
 }
 
 export const ReactQueryCacheProvider: React.FC<HydrationCacheProviderProps> = ({
-  initialQueries,
+  dehydratedState,
   hydrationConfig,
   children,
   ...rest
@@ -51,7 +51,7 @@ export const ReactQueryCacheProvider: React.FC<HydrationCacheProviderProps> = ({
   return (
     <CacheProvider {...rest}>
       <Hydrator
-        initialQueries={initialQueries}
+        dehydratedState={dehydratedState}
         hydrationConfig={hydrationConfig}
       >
         {children}
