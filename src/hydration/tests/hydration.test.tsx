@@ -218,8 +218,13 @@ describe('dehydration and rehydration', () => {
     // part of the public API, but is important for keeping the payload small
     // Exact shape is not important here, just that staleTime and cacheTime
     // (and any future other config) is not included in it
-    expect(dehydrated['["string"]'].config.staleTime).toBe(undefined)
-    expect(dehydrated['["string"]'].config.cacheTime).toBe(undefined)
+    const dehydratedQuery = dehydrated?.queries.find(
+      dehydratedQuery =>
+        (dehydratedQuery?.config?.queryKey as Array<string>)[0] === 'string'
+    )
+    expect(dehydratedQuery).toBeTruthy()
+    expect(dehydratedQuery?.config.staleTime).toBe(undefined)
+    expect(dehydratedQuery?.config.cacheTime).toBe(undefined)
   })
 
   test('should only hydrate successful queries by default', async () => {
@@ -258,7 +263,13 @@ describe('dehydration and rehydration', () => {
       shouldDehydrate: query => query.queryKey[0] !== 'string',
     })
 
-    expect(dehydrated['["string"]']).toBeUndefined()
+    // This is testing implementation details that can change and are not
+    // part of the public API, but is important for keeping the payload small
+    const dehydratedQuery = dehydrated?.queries.find(
+      dehydratedQuery =>
+        (dehydratedQuery?.config?.queryKey as Array<string>)[0] === 'string'
+    )
+    expect(dehydratedQuery).toBeUndefined()
 
     const stringified = JSON.stringify(dehydrated)
 

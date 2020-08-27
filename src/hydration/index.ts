@@ -6,7 +6,6 @@ export type {
   DehydratedQueryConfig,
   DehydratedQuery,
   DehydratedState,
-  QueryKeyParserFunction,
   ShouldDehydrateFunction,
   ShouldHydrateFunction,
   HydrateConfig,

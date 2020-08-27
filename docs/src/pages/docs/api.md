@@ -826,10 +826,7 @@ const dehydratedState = dehydrate(queryCache, {
 ```js
 import { hydrate } from 'react-query/hydration'
 
-hydrate(queryCache, dehydratedState, {
-  shouldHydrate,
-  queryKeyParserFn = JSON.parse
-})
+hydrate(queryCache, dehydratedState, { shouldHydrate })
 ```
 
 **Options**
@@ -852,10 +849,7 @@ hydrate(queryCache, dehydratedState, {
 ```jsx
 import { useHydrate } from 'react-query/hydration'
 
-useHydrate(dehydratedState, {
-  shouldHydrate,
-  queryKeyParserFn = JSON.parse
-})
+useHydrate(dehydratedState, { shouldHydrate })
 ```
 
 **Options**

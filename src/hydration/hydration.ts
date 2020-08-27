@@ -3,6 +3,7 @@ import { DEFAULT_STALE_TIME, DEFAULT_CACHE_TIME } from '../core/config'
 import type { Query, QueryCache, QueryKey, QueryConfig } from 'react-query'
 
 export interface DehydratedQueryConfig {
+  queryKey: QueryKey
   staleTime?: number
   cacheTime?: number
   initialData?: unknown
@@ -14,10 +15,9 @@ export interface DehydratedQuery {
 }
 
 export interface DehydratedState {
-  [hash: string]: DehydratedQuery
+  queries: Array<DehydratedQuery>
 }
 
-export type QueryKeyParserFunction = (queryHash: string) => QueryKey
 export type ShouldHydrateFunction = ({
   queryKey,
   updatedAt,
@@ -32,7 +32,6 @@ export type ShouldHydrateFunction = ({
   data?: unknown
 }) => boolean
 export interface HydrateConfig {
-  queryKeyParserFn?: QueryKeyParserFunction
   shouldHydrate?: ShouldHydrateFunction
 }
 
@@ -47,7 +46,9 @@ function dehydrateQuery<TResult, TError = unknown>(
   query: Query<TResult, TError>
 ): DehydratedQuery {
   const dehydratedQuery: DehydratedQuery = {
-    config: {},
+    config: {
+      queryKey: query.queryKey,
+    },
     updatedAt: query.state.updatedAt,
   }
 
@@ -79,10 +80,12 @@ export function dehydrate(
 ): DehydratedState {
   const config = dehydrateConfig || {}
   const { shouldDehydrate = defaultShouldDehydrate } = config
-  const dehydratedState: DehydratedState = {}
-  for (const [queryHash, query] of Object.entries(queryCache.queries)) {
+  const dehydratedState: DehydratedState = {
+    queries: [],
+  }
+  for (const query of Object.values(queryCache.queries)) {
     if (shouldDehydrate(query)) {
-      dehydratedState[queryHash] = dehydrateQuery(query)
+      dehydratedState.queries.push(dehydrateQuery(query))
     }
   }
 
@@ -95,14 +98,18 @@ export function hydrate<TResult>(
   hydrateConfig?: HydrateConfig
 ): void {
   const config = hydrateConfig || {}
-  const { queryKeyParserFn = JSON.parse, shouldHydrate } = config
+  const { shouldHydrate } = config
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
 
-  for (const [queryHash, dehydratedQuery] of Object.entries(dehydratedState)) {
-    const queryKey = queryKeyParserFn(queryHash)
-    const queryConfig: QueryConfig<TResult> = dehydratedQuery.config
+  const queries = (dehydratedState as DehydratedState).queries || []
+
+  for (const dehydratedQuery of queries) {
+    const queryKey = dehydratedQuery.config.queryKey
+    const queryConfig: QueryConfig<TResult> = dehydratedQuery.config as QueryConfig<
+      TResult
+    >
 
     if (
       shouldHydrate &&
@@ -117,8 +124,7 @@ export function hydrate<TResult>(
       continue
     }
 
-    queryCache.buildQuery(queryKey, queryConfig)
-    const query = queryCache.queries[queryHash]
+    const query = queryCache.buildQuery(queryKey, queryConfig)
     query.state.updatedAt = dehydratedQuery.updatedAt
     query.activateGarbageCollectionTimeout()
   }
