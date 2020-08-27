@@ -19,6 +19,7 @@ Feature/Capability Key:
 | Supported Query Keys                         | JSON                                   | JSON                       | GraphQL Query                       |
 | Query Key Change Detection                   | Deep Compare (Serialization)           | Referential Equality (===) | Deep Compare (Serialization)        |
 | Query Data Memoization Level                 | Query + Structural Sharing             | Query                      | Query + Entity + Structural Sharing |
+| Stale While Revalidate                       | Server-Side + Client-Side              | Server-Side                | None                                |
 | Bundle Size                                  | [![][bp-react-query]][bpl-react-query] | [![][bp-swr]][bpl-swr]     | [![][bp-apollo]][bpl-apollo]        |
 | Queries                                      | ✅                                     | ✅                         | ✅                                  |
 | Caching                                      | ✅                                     | ✅                         | ✅                                  |

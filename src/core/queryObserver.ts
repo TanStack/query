@@ -19,6 +19,7 @@ export class QueryObserver<TResult, TError> {
   private currentResult!: QueryResult<TResult, TError>
   private previousResult?: QueryResult<TResult, TError>
   private updateListener?: UpdateListener<TResult, TError>
+  private staleTimeoutId?: number
   private refetchIntervalId?: number
   private started?: boolean
 
@@ -39,14 +40,14 @@ export class QueryObserver<TResult, TError> {
     this.updateListener = listener
     this.currentQuery.subscribeObserver(this)
     this.optionalFetch()
-    this.updateRefetchInterval()
+    this.updateTimers()
     return this.unsubscribe.bind(this)
   }
 
   unsubscribe(): void {
     this.started = false
     this.updateListener = undefined
-    this.clearRefetchInterval()
+    this.clearTimers()
     this.currentQuery.unsubscribeObserver(this)
   }
 
@@ -64,13 +65,21 @@ export class QueryObserver<TResult, TError> {
     // If we subscribed to a new query, optionally fetch and update refetch
     if (updated) {
       this.optionalFetch()
-      this.updateRefetchInterval()
+      this.updateTimers()
       return
     }
 
     // Optionally fetch if the query became enabled
     if (config.enabled && !prevConfig.enabled) {
       this.optionalFetch()
+    }
+
+    // Update stale interval if needed
+    if (
+      config.enabled !== prevConfig.enabled ||
+      config.staleTime !== prevConfig.staleTime
+    ) {
+      this.updateStaleTimeout()
     }
 
     // Update refetch interval if needed
@@ -82,6 +91,10 @@ export class QueryObserver<TResult, TError> {
     ) {
       this.updateRefetchInterval()
     }
+  }
+
+  isStale(): boolean {
+    return this.currentResult.isStale
   }
 
   getCurrentResult(): QueryResult<TResult, TError> {
@@ -125,6 +138,37 @@ export class QueryObserver<TResult, TError> {
     }
   }
 
+  private updateIsStale(): void {
+    const isStale = this.currentQuery.isStaleByTime(this.config.staleTime)
+    if (isStale !== this.currentResult.isStale) {
+      this.currentResult = this.createResult()
+      this.updateListener?.(this.currentResult)
+    }
+  }
+
+  private updateStaleTimeout(): void {
+    if (isServer) {
+      return
+    }
+
+    this.clearStaleTimeout()
+
+    const staleTime = this.config.staleTime || 0
+    const { isStale, updatedAt } = this.currentResult
+
+    if (isStale || staleTime === Infinity) {
+      return
+    }
+
+    const timeElapsed = Date.now() - updatedAt
+    const timeUntilStale = staleTime - timeElapsed
+    const timeout = Math.max(timeUntilStale, 0)
+
+    this.staleTimeoutId = setTimeout(() => {
+      this.updateIsStale()
+    }, timeout)
+  }
+
   private updateRefetchInterval(): void {
     if (isServer) {
       return
@@ -148,7 +192,24 @@ export class QueryObserver<TResult, TError> {
     }, this.config.refetchInterval)
   }
 
-  clearRefetchInterval(): void {
+  updateTimers(): void {
+    this.updateStaleTimeout()
+    this.updateRefetchInterval()
+  }
+
+  clearTimers(): void {
+    this.clearStaleTimeout()
+    this.clearRefetchInterval()
+  }
+
+  private clearStaleTimeout(): void {
+    if (this.staleTimeoutId) {
+      clearInterval(this.staleTimeoutId)
+      this.staleTimeoutId = undefined
+    }
+  }
+
+  private clearRefetchInterval(): void {
     if (this.refetchIntervalId) {
       clearInterval(this.refetchIntervalId)
       this.refetchIntervalId = undefined
@@ -156,7 +217,7 @@ export class QueryObserver<TResult, TError> {
   }
 
   private createResult(): QueryResult<TResult, TError> {
-    const { currentQuery, previousResult, config } = this
+    const { currentResult, currentQuery, previousResult, config } = this
 
     const {
       canFetchMore,
@@ -166,7 +227,6 @@ export class QueryObserver<TResult, TError> {
       isFetching,
       isFetchingMore,
       isLoading,
-      isStale,
     } = currentQuery.state
 
     let { data, status, updatedAt } = currentQuery.state
@@ -176,6 +236,22 @@ export class QueryObserver<TResult, TError> {
       data = previousResult.data
       updatedAt = previousResult.updatedAt
       status = previousResult.status
+    }
+
+    let isStale = false
+
+    // When the query has not been fetched yet and this is the initial render,
+    // determine the staleness based on the initialStale or existence of initial data.
+    if (!currentResult && !currentQuery.state.isFetched) {
+      if (typeof config.initialStale === 'function') {
+        isStale = config.initialStale()
+      } else if (typeof config.initialStale === 'boolean') {
+        isStale = config.initialStale
+      } else {
+        isStale = typeof currentQuery.state.data === 'undefined'
+      }
+    } else {
+      isStale = currentQuery.isStaleByTime(config.staleTime)
     }
 
     return {
@@ -211,8 +287,6 @@ export class QueryObserver<TResult, TError> {
       return false
     }
 
-    newQuery.activateTimeouts()
-
     this.previousResult = this.currentResult
     this.currentQuery = newQuery
     this.currentResult = this.createResult()
@@ -236,11 +310,11 @@ export class QueryObserver<TResult, TError> {
     if (action.type === 'Success' && isSuccess) {
       this.config.onSuccess?.(data!)
       this.config.onSettled?.(data!, null)
-      this.updateRefetchInterval()
+      this.updateTimers()
     } else if (action.type === 'Error' && isError) {
       this.config.onError?.(error!)
       this.config.onSettled?.(undefined, error!)
-      this.updateRefetchInterval()
+      this.updateTimers()
     }
 
     this.updateListener?.(this.currentResult)

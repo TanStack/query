@@ -1,3 +1,5 @@
+import { waitFor } from '@testing-library/react'
+
 let queryKeyCount = 0
 
 export function mockVisibilityState(value: string) {
@@ -28,6 +30,15 @@ export function queryKey(): string {
 export function sleep(timeout: number): Promise<void> {
   return new Promise((resolve, _reject) => {
     setTimeout(resolve, timeout)
+  })
+}
+
+export function waitForMs(ms: number) {
+  const end = Date.now() + ms
+  return waitFor(() => {
+    if (Date.now() < end) {
+      throw new Error('Time not elapsed yet')
+    }
   })
 }
 

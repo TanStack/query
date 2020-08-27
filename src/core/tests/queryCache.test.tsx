@@ -71,12 +71,40 @@ describe('queryCache', () => {
       fetchFn,
       {
         initialData: 'initial',
+        staleTime: 100,
       },
       {
         throwOnError: true,
       }
     )
     expect(first).toBe('og')
+  })
+
+  test('prefetchQuery should only fetch if the data is older then the given stale time', async () => {
+    const key = queryKey()
+
+    let count = 0
+    const fetchFn = () => ++count
+
+    defaultQueryCache.setQueryData(key, count)
+    const first = await defaultQueryCache.prefetchQuery(key, fetchFn, {
+      staleTime: 100,
+    })
+    await sleep(11)
+    const second = await defaultQueryCache.prefetchQuery(key, fetchFn, {
+      staleTime: 10,
+    })
+    const third = await defaultQueryCache.prefetchQuery(key, fetchFn, {
+      staleTime: 10,
+    })
+    await sleep(11)
+    const fourth = await defaultQueryCache.prefetchQuery(key, fetchFn, {
+      staleTime: 10,
+    })
+    expect(first).toBe(0)
+    expect(second).toBe(1)
+    expect(third).toBe(1)
+    expect(fourth).toBe(2)
   })
 
   test('prefetchQuery should throw error when throwOnError is true', async () => {
@@ -200,43 +228,6 @@ describe('queryCache', () => {
     expect(defaultQueryCache.getQuery(key)).toBeFalsy()
   })
 
-  test('setQueryData should schedule stale timeout, if staleTime is set', async () => {
-    const key = queryKey()
-
-    defaultQueryCache.setQueryData(key, 'test data', { staleTime: 10 })
-    // @ts-expect-error
-    expect(defaultQueryCache.getQuery(key)!.staleTimeout).not.toBeUndefined()
-  })
-
-  test('setQueryData should not schedule stale timeout by default', async () => {
-    const key = queryKey()
-
-    defaultQueryCache.setQueryData(key, 'test data')
-    // @ts-expect-error
-    expect(defaultQueryCache.getQuery(key)!.staleTimeout).toBeUndefined()
-  })
-
-  test('setQueryData should not schedule stale timeout, if staleTime is set to `Infinity`', async () => {
-    const key = queryKey()
-
-    defaultQueryCache.setQueryData(key, 'test data', { staleTime: Infinity })
-    // @ts-expect-error
-    expect(defaultQueryCache.getQuery(key)!.staleTimeout).toBeUndefined()
-  })
-
-  test('setQueryData schedules stale timeouts appropriately', async () => {
-    const key = queryKey()
-
-    defaultQueryCache.setQueryData(key, 'test data', { staleTime: 100 })
-
-    expect(defaultQueryCache.getQuery(key)!.state.data).toEqual('test data')
-    expect(defaultQueryCache.getQuery(key)!.state.isStale).toEqual(false)
-
-    await new Promise(resolve => setTimeout(resolve, 100))
-
-    expect(defaultQueryCache.getQuery(key)!.state.isStale).toEqual(true)
-  })
-
   test('setQueryData updater function works as expected', () => {
     const key = queryKey()
 
@@ -264,20 +255,6 @@ describe('queryCache', () => {
     const queries = defaultQueryCache.getQueries(key1)
     const data = queries.map(query => query.state.data)
     expect(data).toEqual(['data1', 'data2'])
-  })
-
-  test('stale timeout dispatch is not called if query is no longer in the query cache', async () => {
-    const key = queryKey()
-
-    const fetchData = () => Promise.resolve('data')
-    await defaultQueryCache.prefetchQuery(key, fetchData, {
-      staleTime: 100,
-    })
-    const query = defaultQueryCache.getQuery(key)
-    expect(query!.state.isStale).toBe(false)
-    defaultQueryCache.removeQueries(key)
-    await sleep(50)
-    expect(query!.state.isStale).toBe(false)
   })
 
   test('query interval is cleared when unsubscribed to a refetchInterval query', async () => {
