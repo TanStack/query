@@ -275,6 +275,7 @@ const Home = props => {
                 <ul className="list-none text-center">
                   <li>Steven Miyakawa (@SamSamskies)</li>
                   <li>Alex Trost (@a-trost)</li>
+                  <li>Andrey (@andreyvital)</li>
                 </ul>
               </div>
             </div>
