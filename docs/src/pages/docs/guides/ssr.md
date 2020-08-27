@@ -65,7 +65,7 @@ import { ReactQueryCacheProvider } from 'react-query/hydration'
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <ReactQueryCacheProvider initialQueries={pageProps.initialQueries}>
+    <ReactQueryCacheProvider dehydratedState={pageProps.dehydratedState}>
       <Component {...pageProps} />
     </ReactQueryCacheProvider>
   )
@@ -86,7 +86,7 @@ export async function getStaticProps() {
 
   return {
     props: {
-      initialQueries: dehydrate(queryCache)
+      dehydratedState: dehydrate(queryCache)
     }
   }
 }
@@ -117,19 +117,19 @@ Since there are many different possible setups for SSR, it's hard to give a deta
 - Prefetch data
   - Create a `prefetchQueryCache` specifically for prefetching by calling `const prefetchQueryCache = makeQueryCache()`
   - Call `prefetchQueryCache.prefetchQuery(...)` to prefetch queries
-  - Dehydrate by using `const initialQueries = dehydrate(prefetchQueryCache)`
+  - Dehydrate by using `const dehydratedState = dehydrate(prefetchQueryCache)`
 - Render
-  - Wrap the app in `<ReactQueryCacheProvider>` from `'react-query/hydration'` and pass in `initialQueries`
+  - Wrap the app in `<ReactQueryCacheProvider>` from `'react-query/hydration'` and pass in `dehydratedState`
     - This makes sure a separate `queryCache` is created specifically for rendering
     - **Do not** pass in the `prefetchQueryCache` from the last step, the server and client both needs to render from the dehydrated data to avoid React hydration mismatches. This is because queries with errors are excluded from dehydration by default.
-- Serialize and embed `initialQueries` in the markup
+- Serialize and embed `dehydratedState` in the markup
   - Security note: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 **Client side**
 
-- Parse `initialQueries` from where you put it in the markup
+- Parse `dehydratedState` from where you put it in the markup
 - Render
-  - Wrap the app in `<ReactQueryCacheProvider>` from `'react-query/hydration'` and pass in `initialQueries`
+  - Wrap the app in `<ReactQueryCacheProvider>` from `'react-query/hydration'` and pass in `dehydratedState`
 
 This list aims to be exhaustive, but depending on your current setup, the above steps can take more or less work. Here is a barebones example:
 
@@ -137,10 +137,10 @@ This list aims to be exhaustive, but depending on your current setup, the above 
 // Server
 const prefetchCache = makeQueryCache()
 await prefetchCache.prefetchQuery('key', fn)
-const initialQueries = dehydrate(prefetchCache)
+const dehydratedState = dehydrate(prefetchCache)
 
 const html = ReactDOM.renderToString(
-  <ReactQueryCacheProvider initialQueries={initialQueries}>
+  <ReactQueryCacheProvider dehydratedState={dehydratedState}>
     <App />
   </ReactQueryCacheProvider>
 )
@@ -148,15 +148,15 @@ res.send(`
 <html>
   <body>
     <div id="app">${html}</div>
-    <script>window.__REACT_QUERY_INITIAL_QUERIES__ = ${JSON.stringify(initialQueries)};</script>
+    <script>window.__REACT_QUERY_INITIAL_QUERIES__ = ${JSON.stringify(dehydratedState)};</script>
   </body>
 </html>
 `)
 
 // Client
-const initialQueries = JSON.parse(window.__REACT_QUERY_INITIAL_QUERIES__)
+const dehydratedState = JSON.parse(window.__REACT_QUERY_INITIAL_QUERIES__)
 ReactDOM.hydrate(
-  <ReactQueryCacheProvider initialQueries={initialQueries}>
+  <ReactQueryCacheProvider dehydratedState={dehydratedState}>
     <App />
   </ReactQueryCacheProvider>
 )
