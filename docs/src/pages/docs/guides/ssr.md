@@ -5,20 +5,30 @@ title: SSR & Next.js
 
 ## Client Side Data Fetching
 
-If your queries are for data that is frequently updating and you don't necessarily need the data to be preset at render time (for SEO or performance purposes), then you don't need any extra configuration for React Query! Just import `useQuery` and fetch data right from within your components.
+If your queries are for data that is frequently updating and you don't necessarily need the data to be present at page load time (for SEO or performance purposes), then you don't need any extra configuration for React Query! Just import `useQuery` and fetch data right from within your components.
 
-This approach works well for applications or user-specific pages that might contain private or non-public/non-generic information. SEO is usually not relevant to these types of pages and full SSR of data is rarely needed in said situations.
+This approach works well for applications or user-specific pages that might contain private or non-public/non-generic information. SEO is usually not as relevant to these types of pages and full SSR of data is rarely needed in said situations.
 
-## Pre-rendering
+## Server Side Rendering Overview
 
-If the page and its data needs to be rendered on the server, React Query comes built in with mechanisms to support this use case. The exact implementation of these mechanisms may vary from platform to platform, but we recommend starting with Next.js which supports [2 forms of pre-rendering](https://nextjs.org/docs/basic-features/data-fetching):
+React Query supports two ways of prefetching data on the server and passing that to the client.
+
+* Prefetch the data yourself and pass it in as `initialData`
+  * Quick to set up for simple cases
+  * Has some caveats
+* Prefetch the query via React Query and use de/rehydration
+  * Requires slightly more setup up front
+
+The exact implementation of these mechanisms may vary from platform to platform, but we recommend starting with Next.js which supports [2 forms of pre-rendering](https://nextjs.org/docs/basic-features/data-fetching):
 
 - Static Generation (SSG)
 - Server-side Rendering (SSR)
 
-With React Query and Next.js, you can pre-render a page for SEO and gracefully upgrade that page's queries during hydration to support caching, invalidation and background refetching on the client side.
+React Query supports both of these forms of pre-rendering.
 
-For example, together with Next.js's [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation), you can pass the pre-fetched data for the page to `useQuery`'s' `initialData` option:
+## Prefetch the data yourself and pass it in as `initialData`
+
+Together with Next.js's [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation), you can pass the pre-fetched data for the page to `useQuery`'s' `initialData` option:
 
 ```jsx
 export async function getStaticProps() {
@@ -26,38 +36,144 @@ export async function getStaticProps() {
   return { props: { posts } }
 }
 
-function Props(props) {
+function Posts(props) {
   const { data } = useQuery('posts', getPosts, { initialData: props.posts })
 
   // ...
 }
 ```
 
-This page would be prerendered using the data fetched in `getStaticProps` and be ready for SEO, then, as soon it mounts on the client, will also be cached and refetched/updated in the background as needed.
+The setup is minimal and this can be a perfect solution for some cases, but there are a few tradeoffs compared to the full approach:
 
-## Advanced SSR Concepts
+* If you are calling `useQuery` in a component deeper down in the tree you need to pass the `initialData` down to that point
+* If you are calling `useQuery` with the same query in multiple locations, you need to pass `initialData` to all of them
+* There is no way to know at what time the query was fetched on the server, so `updatedAt` and determining if the query needs refetching is based on when the page loaded instead
 
-When using SSR (server-side-rendering) with React Query there are a few things to note:
+## Prefetch the query via React Query and use de/rehydration
 
-- If you import and use the global `queryCache` directly, queries are not cached during SSR to avoid leaking sensitive information between requests.
-- If you create a `queryCache` manually with `makeQueryCache`, queries will be cached during SSR. Make sure you create a separate cache per request to avoid leaking data.
-- Queries rendered on the server will by default use the `initialData` of an unfetched query. This means that by default, `data` will be set to `undefined`. To get around this in SSR, you can either pre-seed a query's cache data using the `config.initialData` option:
+React Query supports prefetching a query on the server and handing off or _dehydrating_ that query to the client. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, React Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
 
-```js
-const queryInfo = useQuery('todos', fetchTodoList, {
-  initialData: [{ id: 0, name: 'Implement SSR!' }],
-})
+### Integrating with Next.js
 
-// data === [{ id: 0, name: 'Implement SSR!'}]
+To support caching queries on the server and set up hydration, you start with wrapping your application with `<ReactQueryCacheProvider>` in `_app.js`.
+
+> Note: You need to import `ReactQueryCacheProvider` from `'react-query/hydration'` for it to support hydration!
+
+```jsx
+// _app.jsx
+import { ReactQueryCacheProvider } from 'react-query/hydration'
+
+export default function MyApp({ Component, pageProps }) {
+  return (
+    <ReactQueryCacheProvider dehydratedState={pageProps.dehydratedState}>
+      <Component {...pageProps} />
+    </ReactQueryCacheProvider>
+  )
+}
 ```
 
-Or, alternatively you can just destructure from `undefined` in your query results:
+Now you are ready to prefetch some data in your pages with either [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) (for SSG) or [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) (for SSR). From React Query's perspective, these integrate in the same way, `getStaticProps` is shown below:
 
-```js
-const { status, data = [{ id: 0, name: 'Implement SSR!' }], error } = useQuery(
-  'todos',
-  fetchTodoList
+```jsx
+// pages/posts.jsx
+import { makeQueryCache } from 'react-query'
+import { dehydrate } from 'react-query/hydration'
+
+export async function getStaticProps() {
+  const queryCache = makeQueryCache()
+
+  await queryCache.prefetchQuery('posts', getPosts)
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryCache)
+    }
+  }
+}
+
+function Posts() {
+  // This useQuery could just as well happen in some deeper child to
+  // the "Posts"-page, data will be available immediately either way
+  const { data } = useQuery('posts', getPosts)
+
+  // This query was not prefetched on the server and will not start
+  // fetching until on the client, both patterns are fine to mix
+  const { data: otherData } = useQuery('posts-2', getPosts)
+
+  // ...
+}
+```
+
+As demonstrated, it's fine to prefetch some queries and let some fetch on the client. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
+
+### Integrating with custom SSR solutions or other frameworks
+
+Since there are many different possible setups for SSR, it's hard to give a detailed guide for each (contributions are welcome!). Here is a thorough high level overview:
+
+**Server side**
+
+> Note: The global `queryCache` you can import directly from 'react-query' does not cache queries on the server to avoid leaking sensitive information between requests.
+
+- Prefetch data
+  - Create a `prefetchQueryCache` specifically for prefetching by calling `const prefetchQueryCache = makeQueryCache()`
+  - Call `prefetchQueryCache.prefetchQuery(...)` to prefetch queries
+  - Dehydrate by using `const dehydratedState = dehydrate(prefetchQueryCache)`
+- Render
+  - Wrap the app in `<ReactQueryCacheProvider>` from `'react-query/hydration'` and pass in `dehydratedState`
+    - This makes sure a separate `queryCache` is created specifically for rendering
+    - **Do not** pass in the `prefetchQueryCache` from the last step, the server and client both needs to render from the dehydrated data to avoid React hydration mismatches. This is because queries with errors are excluded from dehydration by default.
+- Serialize and embed `dehydratedState` in the markup
+  - Security note: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
+
+**Client side**
+
+- Parse `dehydratedState` from where you put it in the markup
+- Render
+  - Wrap the app in `<ReactQueryCacheProvider>` from `'react-query/hydration'` and pass in `dehydratedState`
+
+This list aims to be exhaustive, but depending on your current setup, the above steps can take more or less work. Here is a barebones example:
+
+```jsx
+// Server
+const prefetchCache = makeQueryCache()
+await prefetchCache.prefetchQuery('key', fn)
+const dehydratedState = dehydrate(prefetchCache)
+
+const html = ReactDOM.renderToString(
+  <ReactQueryCacheProvider dehydratedState={dehydratedState}>
+    <App />
+  </ReactQueryCacheProvider>
+)
+res.send(`
+<html>
+  <body>
+    <div id="app">${html}</div>
+    <script>window.__REACT_QUERY_INITIAL_QUERIES__ = ${JSON.stringify(dehydratedState)};</script>
+  </body>
+</html>
+`)
+
+// Client
+const dehydratedState = JSON.parse(window.__REACT_QUERY_INITIAL_QUERIES__)
+ReactDOM.hydrate(
+  <ReactQueryCacheProvider dehydratedState={dehydratedState}>
+    <App />
+  </ReactQueryCacheProvider>
 )
 ```
 
-The query's state will still reflect that it is stale and has not been fetched yet, and once mounted, it will continue as normal and request a fresh copy of the query result.
+### Tips, Tricks and Caveats
+
+**Only successful queries are included in dehydration**
+
+Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the client. This happens regardless of error.
+
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, pass `throwOnError: true` to the specific `prefetchQuery` to be able to catch and handle those errors manually.
+
+**Staleness is measured from when the query was fetched on the server**
+
+A query is considered stale depending on when it was `updatedAt`. A caveat here is that the server needs to have the correct time for this to work properly, but UTC time is used, so timezones do not factor into this.
+
+Because `staleTime` defaults to `0`, queries will be refetched in the background on page load by default. You might want to use a higher `staleTime` to avoid this double fetching, especially if you don't cache your markup.
+
+This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?

@@ -40,7 +40,7 @@ Feature/Capability Key:
 | Window Focus Refetching                      | ✅                                     | ✅                         | 🛑                                  |
 | Network Status Refetching                    | ✅                                     | ✅                         | ✅                                  |
 | Automatic Refetch after Mutation<sup>3</sup> | 🔶                                     | 🔶                         | ✅                                  |
-| Cache Dehydration/Rehydration                | 🛑 (Coming Soon!)                      | 🛑                         | ✅                                  |
+| Cache Dehydration/Rehydration                | ✅                                     | 🛑                         | ✅                                  |
 | React Suspense (Experimental)                | ✅                                     | ✅                         | 🛑                                  |
 
 ### Notes

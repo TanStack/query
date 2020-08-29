@@ -121,7 +121,8 @@ export class Query<TResult, TError> {
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
   private notifyGlobalListeners: (query: Query<TResult, TError>) => void
-  private enableTimeouts: boolean
+  private enableStaleTimeout: boolean
+  private enableGarbageCollectionTimeout: boolean
 
   constructor(init: QueryInitConfig<TResult, TError>) {
     this.config = init.config
@@ -131,13 +132,23 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners = init.notifyGlobalListeners
     this.observers = []
     this.state = getDefaultState(init.config)
-    this.enableTimeouts = false
+    this.enableStaleTimeout = false
+    this.enableGarbageCollectionTimeout = false
+  }
+
+  activateStaleTimeout(): void {
+    this.enableStaleTimeout = true
+    this.rescheduleStaleTimeout()
+  }
+
+  activateGarbageCollectionTimeout(): void {
+    this.enableGarbageCollectionTimeout = true
+    this.rescheduleGarbageCollection()
   }
 
   activateTimeouts(): void {
-    this.enableTimeouts = true
-    this.rescheduleStaleTimeout()
-    this.rescheduleGarbageCollection()
+    this.activateStaleTimeout()
+    this.activateGarbageCollectionTimeout()
   }
 
   updateConfig(config: QueryConfig<TResult, TError>): void {
@@ -158,7 +169,7 @@ export class Query<TResult, TError> {
     this.clearStaleTimeout()
 
     if (
-      !this.enableTimeouts ||
+      !this.enableStaleTimeout ||
       this.state.isStale ||
       this.state.status !== QueryStatus.Success ||
       this.config.staleTime === Infinity
@@ -197,7 +208,7 @@ export class Query<TResult, TError> {
     this.clearCacheTimeout()
 
     if (
-      !this.enableTimeouts ||
+      !this.enableGarbageCollectionTimeout ||
       this.config.cacheTime === Infinity ||
       this.observers.length > 0
     ) {
