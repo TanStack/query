@@ -96,7 +96,7 @@ describe('Server Side Rendering', () => {
 
       renderToString(<Page />)
 
-      expect(queryCache.queries).toEqual({})
+      expect(queryCache.getQueries().length).toEqual(0)
     })
 
     it('should not add prefetched data to the cache', async () => {
@@ -209,7 +209,9 @@ describe('Server Side Rendering', () => {
         </ReactQueryCacheProvider>
       )
 
-      expect(Object.keys(queryCache.queries)).toEqual([`["${key}",1]`])
+      const keys = queryCache.getQueries().map(query => query.queryHash)
+
+      expect(keys).toEqual([`["${key}",1]`])
     })
 
     it('should not call setTimeout', async () => {

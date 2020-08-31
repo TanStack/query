@@ -40,8 +40,8 @@ function dehydrateQuery<TResult, TError = unknown>(
   // in the html-payload, but not consume it on the initial render.
   // We still schedule stale and garbage collection right away, which means
   // we need to specifically include staleTime and cacheTime in dehydration.
-  if (query.config.cacheTime !== DEFAULT_CACHE_TIME) {
-    dehydratedQuery.config.cacheTime = query.config.cacheTime
+  if (query.cacheTime !== DEFAULT_CACHE_TIME) {
+    dehydratedQuery.config.cacheTime = query.cacheTime
   }
   if (query.state.data !== undefined) {
     dehydratedQuery.config.initialData = query.state.data
@@ -62,7 +62,7 @@ export function dehydrate(
   const dehydratedState: DehydratedState = {
     queries: [],
   }
-  for (const query of Object.values(queryCache.queries)) {
+  for (const query of queryCache.getQueries()) {
     if (shouldDehydrate(query)) {
       dehydratedState.queries.push(dehydrateQuery(query))
     }

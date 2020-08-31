@@ -267,7 +267,6 @@ describe('queryCache', () => {
     })
     const query = defaultQueryCache.getQuery(key)!
     const instance = query.subscribe()
-    instance.updateConfig(query.config)
     // @ts-expect-error
     expect(instance.refetchIntervalId).not.toBeUndefined()
     instance.unsubscribe()
@@ -360,6 +359,21 @@ describe('queryCache', () => {
       expect(subscriber).toHaveBeenCalledWith(queryCache, query)
 
       unsubscribe()
+    })
+
+    test('query should use the longest cache time it has seen', async () => {
+      const key = queryKey()
+      await defaultQueryCache.prefetchQuery(key, () => 'data', {
+        cacheTime: 100,
+      })
+      await defaultQueryCache.prefetchQuery(key, () => 'data', {
+        cacheTime: 200,
+      })
+      await defaultQueryCache.prefetchQuery(key, () => 'data', {
+        cacheTime: 10,
+      })
+      const query = defaultQueryCache.getQuery(key)!
+      expect(query.cacheTime).toBe(200)
     })
 
     it('should continue retry after focus regain and resolve all promises', async () => {
