@@ -711,7 +711,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => setCount(1))
+        setTimeout(() => setCount(1), 10)
       }, [])
 
       return null
