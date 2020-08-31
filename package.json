@@ -41,7 +41,8 @@
   "files": [
     "dist",
     "types",
-    "scripts"
+    "scripts",
+    "hydration"
   ],
   "dependencies": {},
   "peerDependencies": {
