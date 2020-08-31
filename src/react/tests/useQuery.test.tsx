@@ -698,6 +698,38 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should keep initial stale and initial data when the query key changes', async () => {
+    const key = queryKey()
+    const states: QueryResult<{ count: number }>[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      const state = useQuery([key, count], () => ({ count: 10 }), {
+        initialStale: () => false,
+        initialData: () => ({ count }),
+      })
+      states.push(state)
+
+      React.useEffect(() => {
+        setTimeout(() => setCount(1))
+      }, [])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(5))
+
+    expect(states).toMatchObject([
+      { data: { count: 0 } },
+      { data: { count: 0 } },
+      { data: { count: 1 } },
+      { data: { count: 1 } },
+      { data: { count: 10 } },
+    ])
+  })
+
   it('should retry specified number of times', async () => {
     const key = queryKey()
     const consoleMock = mockConsoleError()
