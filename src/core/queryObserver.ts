@@ -277,9 +277,10 @@ export class QueryObserver<TResult, TError> {
 
     // Remove the initial data when there is an existing query
     // because this data should not be used for a new query
-    const config = prevQuery
-      ? { ...this.config, initialData: undefined }
-      : this.config
+    const config =
+      this.config.keepPreviousData && prevQuery
+        ? { ...this.config, initialData: undefined }
+        : this.config
 
     const newQuery = config.queryCache!.buildQuery(config.queryKey, config)
 
