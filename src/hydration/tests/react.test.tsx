@@ -1,12 +1,8 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import {
-  ReactQueryCacheProvider as OriginalCacheProvider,
-  makeQueryCache,
-  useQuery,
-} from '../..'
-import { dehydrate, useHydrate, ReactQueryCacheProvider } from '../'
+import { ReactQueryCacheProvider, makeQueryCache, useQuery } from '../..'
+import { dehydrate, useHydrate, Hydrate } from '../'
 import { waitForMs } from '../../react/tests/utils'
 
 describe('React hydration', () => {
@@ -58,9 +54,9 @@ describe('React hydration', () => {
       }
 
       const rendered = render(
-        <OriginalCacheProvider queryCache={clientQueryCache}>
+        <ReactQueryCacheProvider queryCache={clientQueryCache}>
           <Page />
-        </OriginalCacheProvider>
+        </ReactQueryCacheProvider>
       )
 
       await waitForMs(10)
@@ -84,11 +80,10 @@ describe('React hydration', () => {
       }
 
       const rendered = render(
-        <ReactQueryCacheProvider
-          queryCache={clientQueryCache}
-          dehydratedState={dehydratedState}
-        >
-          <Page queryKey={'string'} />
+        <ReactQueryCacheProvider queryCache={clientQueryCache}>
+          <Hydrate state={dehydratedState}>
+            <Page queryKey={'string'} />
+          </Hydrate>
         </ReactQueryCacheProvider>
       )
 
@@ -104,12 +99,11 @@ describe('React hydration', () => {
       intermediateCache.clear({ notify: false })
 
       rendered.rerender(
-        <ReactQueryCacheProvider
-          queryCache={clientQueryCache}
-          dehydratedState={dehydrated}
-        >
-          <Page queryKey={'string'} />
-          <Page queryKey={'added string'} />
+        <ReactQueryCacheProvider queryCache={clientQueryCache}>
+          <Hydrate state={dehydrated}>
+            <Page queryKey={'string'} />
+            <Page queryKey={'added string'} />
+          </Hydrate>
         </ReactQueryCacheProvider>
       )
 
@@ -137,11 +131,10 @@ describe('React hydration', () => {
       }
 
       const rendered = render(
-        <ReactQueryCacheProvider
-          queryCache={clientQueryCache}
-          dehydratedState={dehydratedState}
-        >
-          <Page />
+        <ReactQueryCacheProvider queryCache={clientQueryCache}>
+          <Hydrate state={dehydratedState}>
+            <Page />
+          </Hydrate>
         </ReactQueryCacheProvider>
       )
 
@@ -151,11 +144,10 @@ describe('React hydration', () => {
       const newClientQueryCache = makeQueryCache()
 
       rendered.rerender(
-        <ReactQueryCacheProvider
-          queryCache={newClientQueryCache}
-          dehydratedState={dehydratedState}
-        >
-          <Page />
+        <ReactQueryCacheProvider queryCache={newClientQueryCache}>
+          <Hydrate state={dehydratedState}>
+            <Page />
+          </Hydrate>
         </ReactQueryCacheProvider>
       )
 

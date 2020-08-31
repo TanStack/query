@@ -792,13 +792,13 @@ setConsole({
 
 ## `hydration/dehydrate`
 
-`dehydrate` creates a frozen representation of a `queryCache` that can later be hydrated with `useHydrate`, `hydrate` or by passing it into `hydration/ReactQueryCacheProvider`. This is useful for passing prefetched queries from server to client or persisting queries to localstorage. It only includes currently successful queries by default.
+`dehydrate` creates a frozen representation of a `queryCache` that can later be hydrated with `useHydrate`, `hydrate` or `Hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localstorage. It only includes currently successful queries by default.
 
 ```js
 import { dehydrate } from 'react-query/hydration'
 
 const dehydratedState = dehydrate(queryCache, {
-  shouldDehydrate
+  shouldDehydrate,
 })
 ```
 
@@ -824,7 +824,7 @@ const dehydratedState = dehydrate(queryCache, {
 `hydrate` adds a previously dehydrated state into a `queryCache`. If the queries included in dehydration already exist in the cache, `hydrate` does not overwrite them.
 
 ```js
-import { hydrate } from 'react-query/hydration'
+import { hydrate } from 'react-query/hydration'
 
 hydrate(queryCache, dehydratedState)
 ```
@@ -854,31 +854,19 @@ useHydrate(dehydratedState)
   - **Required**
   - The state to hydrate
 
-## `hydration/ReactQueryCacheProvider`
+## `hydration/Hydrate`
 
-`hydration/ReactQueryCacheProvider` does the same thing as `ReactQueryCacheProvider` but also supports hydrating an initial state into the cache.
+`hydration/Hydrate` does the same thing as `useHydrate` but exposed as a component.
 
 ```js
-import { ReactQueryCacheProvider } from 'react-query/hydration'
+import { Hydrate } from 'react-query/hydration'
 
 function App() {
-  return (
-    <ReactQueryCacheProvider
-      queryCache={queryCache}
-      dehydratedState={dehydratedState}
-      hydrationConfig={hydrationConfig}>
-      ...
-    </ReactQueryCacheProvider>
-  )
+  return <Hydrate state={dehydratedState}>...</Hydrate>
 }
 ```
 
 **Options**
 
-- `queryCache: QueryCache`
-  - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
-  - If not provided, a new cache will be generated.
-- `dehydratedState: DehydratedState`
+- `state: DehydratedState`
   - The state to hydrate
-- `hydrationConfig`
-  - Same config as for `hydrate`

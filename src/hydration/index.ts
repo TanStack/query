@@ -1,5 +1,5 @@
 export { dehydrate, hydrate } from './hydration'
-export { useHydrate, ReactQueryCacheProvider } from './react'
+export { useHydrate, Hydrate } from './react'
 
 // Types
 export type {
@@ -9,4 +9,4 @@ export type {
   ShouldDehydrateFunction,
   DehydrateConfig,
 } from './hydration'
-export type { HydrationCacheProviderProps } from './react'
+export type { HydrateProps } from './react'

@@ -1,11 +1,7 @@
 import React from 'react'
-import {
-  useQueryCache,
-  ReactQueryCacheProvider as CacheProvider,
-} from 'react-query'
-import { hydrate } from './hydration'
+import { useQueryCache } from 'react-query'
 
-import type { ReactQueryCacheProviderProps } from '../react'
+import { hydrate } from './hydration'
 
 export function useHydrate(queries: unknown) {
   const queryCache = useQueryCache()
@@ -21,28 +17,11 @@ export function useHydrate(queries: unknown) {
   }, [queryCache, queries])
 }
 
-interface HydratorProps {
-  dehydratedState?: unknown
+export interface HydrateProps {
+  state?: unknown
 }
 
-const Hydrator: React.FC<HydratorProps> = ({ dehydratedState, children }) => {
-  useHydrate(dehydratedState)
+export const Hydrate: React.FC<HydrateProps> = ({ state, children }) => {
+  useHydrate(state)
   return children as React.ReactElement<any>
-}
-
-export interface HydrationCacheProviderProps
-  extends ReactQueryCacheProviderProps {
-  dehydratedState?: unknown
-}
-
-export const ReactQueryCacheProvider: React.FC<HydrationCacheProviderProps> = ({
-  dehydratedState,
-  children,
-  ...rest
-}) => {
-  return (
-    <CacheProvider {...rest}>
-      <Hydrator dehydratedState={dehydratedState}>{children}</Hydrator>
-    </CacheProvider>
-  )
 }
