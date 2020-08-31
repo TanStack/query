@@ -189,7 +189,7 @@ export class QueryCache {
             }
           }
 
-          return query.invalidate()
+          return undefined
         })
       )
     } catch (err) {
@@ -305,7 +305,7 @@ export class QueryCache {
     let query
     try {
       query = this.buildQuery<TResult, TError>(queryKey, configWithoutRetry)
-      if (options?.force || query.state.isStale) {
+      if (options?.force || query.isStaleByTime(config.staleTime)) {
         await query.fetch()
       }
       return query.state.data
@@ -314,14 +314,6 @@ export class QueryCache {
         throw error
       }
       return
-    } finally {
-      if (query) {
-        // When prefetching, no observer is tied to the query,
-        // so to avoid immediate garbage collection of the still
-        // empty query, we wait with activating timeouts until
-        // the prefetch is done
-        query.activateTimeouts()
-      }
     }
   }
 
@@ -337,13 +329,11 @@ export class QueryCache {
       return
     }
 
-    const newQuery = this.buildQuery<TResult, TError>(queryKey, {
+    this.buildQuery<TResult, TError>(queryKey, {
       initialStale: typeof config?.staleTime === 'undefined',
       initialData: functionalUpdate(updater, undefined),
       ...config,
     })
-
-    newQuery.activateTimeouts()
   }
 }
 

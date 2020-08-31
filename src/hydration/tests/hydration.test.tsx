@@ -2,19 +2,12 @@ import { sleep } from '../../react/tests/utils'
 import { makeQueryCache } from '../..'
 import { dehydrate, hydrate } from '../hydration'
 
-import type { QueryCache } from '../..'
-
 const fetchData: <TResult>(
   value: TResult,
   ms?: number
 ) => Promise<TResult> = async (value, ms) => {
   await sleep(ms || 0)
   return value
-}
-
-// It is up to the queryObserver to schedule staleness, this simulates that
-function simulateQueryObserver(queryCache: QueryCache, queryKey: string): void {
-  queryCache.getQuery(queryKey)?.activateStaleTimeout()
 }
 
 describe('dehydration and rehydration', () => {
@@ -49,106 +42,27 @@ describe('dehydration and rehydration', () => {
     })
 
     const fetchDataAfterHydration = jest.fn()
-    await hydrationQueryCache.prefetchQuery('string', fetchDataAfterHydration)
-    await hydrationQueryCache.prefetchQuery('number', fetchDataAfterHydration)
-    await hydrationQueryCache.prefetchQuery('boolean', fetchDataAfterHydration)
-    await hydrationQueryCache.prefetchQuery('null', fetchDataAfterHydration)
-    await hydrationQueryCache.prefetchQuery('array', fetchDataAfterHydration)
-    await hydrationQueryCache.prefetchQuery('nested', fetchDataAfterHydration)
+    await hydrationQueryCache.prefetchQuery('string', fetchDataAfterHydration, {
+      staleTime: 100,
+    })
+    await hydrationQueryCache.prefetchQuery('number', fetchDataAfterHydration, {
+      staleTime: 100,
+    })
+    await hydrationQueryCache.prefetchQuery(
+      'boolean',
+      fetchDataAfterHydration,
+      { staleTime: 100 }
+    )
+    await hydrationQueryCache.prefetchQuery('null', fetchDataAfterHydration, {
+      staleTime: 100,
+    })
+    await hydrationQueryCache.prefetchQuery('array', fetchDataAfterHydration, {
+      staleTime: 100,
+    })
+    await hydrationQueryCache.prefetchQuery('nested', fetchDataAfterHydration, {
+      staleTime: 100,
+    })
     expect(fetchDataAfterHydration).toHaveBeenCalledTimes(0)
-
-    queryCache.clear({ notify: false })
-    hydrationQueryCache.clear({ notify: false })
-  })
-
-  test('should not schedule staleness unless observed', async () => {
-    const queryCache = makeQueryCache()
-    await queryCache.prefetchQuery('string', () => fetchData('string'))
-    const dehydrated = dehydrate(queryCache)
-    const stringified = JSON.stringify(dehydrated)
-
-    // ---
-
-    const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
-    hydrate(hydrationQueryCache, parsed)
-    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
-    await sleep(10)
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
-
-    queryCache.clear({ notify: false })
-    hydrationQueryCache.clear({ notify: false })
-  })
-
-  test('should default to scheduling staleness immediately', async () => {
-    const queryCache = makeQueryCache()
-    await queryCache.prefetchQuery('string', () => fetchData('string'))
-    const dehydrated = dehydrate(queryCache)
-    const stringified = JSON.stringify(dehydrated)
-
-    // ---
-
-    const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
-    hydrate(hydrationQueryCache, parsed)
-    simulateQueryObserver(hydrationQueryCache, 'string')
-    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
-    await sleep(10)
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(true)
-
-    queryCache.clear({ notify: false })
-    hydrationQueryCache.clear({ notify: false })
-  })
-
-  test('should respect staleTime, measured from when data was fetched', async () => {
-    const queryCache = makeQueryCache()
-    await queryCache.prefetchQuery('string', () => fetchData('string'), {
-      staleTime: 50,
-    })
-    const dehydrated = dehydrate(queryCache)
-    const stringified = JSON.stringify(dehydrated)
-
-    await sleep(20)
-
-    // ---
-
-    const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
-    hydrate(hydrationQueryCache, parsed)
-    simulateQueryObserver(hydrationQueryCache, 'string')
-    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
-    await sleep(10)
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
-    await sleep(30)
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(true)
-
-    queryCache.clear({ notify: false })
-    hydrationQueryCache.clear({ notify: false })
-  })
-
-  test('should schedule stale immediately if enough time has elapsed between dehydrate and hydrate', async () => {
-    const queryCache = makeQueryCache()
-    await queryCache.prefetchQuery('string', () => fetchData('string'), {
-      staleTime: 20,
-    })
-    const dehydrated = dehydrate(queryCache)
-    const stringified = JSON.stringify(dehydrated)
-
-    await sleep(30)
-
-    // ---
-
-    const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
-    hydrate(hydrationQueryCache, parsed)
-    simulateQueryObserver(hydrationQueryCache, 'string')
-    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(false)
-    await sleep(10)
-    expect(hydrationQueryCache.getQuery('string')?.state.isStale).toBe(true)
 
     queryCache.clear({ notify: false })
     hydrationQueryCache.clear({ notify: false })
@@ -201,7 +115,8 @@ describe('dehydration and rehydration', () => {
     const fetchDataAfterHydration = jest.fn()
     await hydrationQueryCache.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
-      fetchDataAfterHydration
+      fetchDataAfterHydration,
+      { staleTime: 10 }
     )
     expect(fetchDataAfterHydration).toHaveBeenCalledTimes(0)
 
@@ -223,7 +138,6 @@ describe('dehydration and rehydration', () => {
         (dehydratedQuery?.config?.queryKey as Array<string>)[0] === 'string'
     )
     expect(dehydratedQuery).toBeTruthy()
-    expect(dehydratedQuery?.config.staleTime).toBe(undefined)
     expect(dehydratedQuery?.config.cacheTime).toBe(undefined)
   })
 

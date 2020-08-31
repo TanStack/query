@@ -1,11 +1,13 @@
 import React from 'react'
-import { render, waitFor } from '@testing-library/react'
+import { render } from '@testing-library/react'
+
 import {
   ReactQueryCacheProvider as OriginalCacheProvider,
   makeQueryCache,
   useQuery,
 } from '../..'
 import { dehydrate, useHydrate, ReactQueryCacheProvider } from '../'
+import { waitForMs } from '../../react/tests/utils'
 
 describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = value =>
@@ -37,6 +39,7 @@ describe('React hydration', () => {
 
       const rendered = render(<Page />)
 
+      await waitForMs(10)
       rendered.getByText('string')
     })
 
@@ -60,12 +63,8 @@ describe('React hydration', () => {
         </OriginalCacheProvider>
       )
 
+      await waitForMs(10)
       rendered.getByText('string')
-      expect(clientQueryCache.getQuery('string')?.state.isStale).toBe(false)
-      await waitFor(() =>
-        expect(clientQueryCache.getQuery('string')?.state.isStale).toBe(true)
-      )
-
       clientQueryCache.clear({ notify: false })
     })
   })
@@ -93,11 +92,8 @@ describe('React hydration', () => {
         </ReactQueryCacheProvider>
       )
 
+      await waitForMs(10)
       rendered.getByText('string')
-      expect(clientQueryCache.getQuery('string')?.state.isStale).toBe(false)
-      await waitFor(() =>
-        expect(clientQueryCache.getQuery('string')?.state.isStale).toBe(true)
-      )
 
       const intermediateCache = makeQueryCache()
       await intermediateCache.prefetchQuery('string', () =>
@@ -119,17 +115,10 @@ describe('React hydration', () => {
 
       // Existing query data should not be overwritten,
       // so this should still be the original data
+      await waitForMs(10)
       rendered.getByText('string')
       // But new query data should be available immediately
       rendered.getByText('added string')
-      expect(clientQueryCache.getQuery('added string')?.state.isStale).toBe(
-        false
-      )
-      await waitFor(() =>
-        expect(clientQueryCache.getQuery('added string')?.state.isStale).toBe(
-          true
-        )
-      )
 
       clientQueryCache.clear({ notify: false })
     })
@@ -156,11 +145,8 @@ describe('React hydration', () => {
         </ReactQueryCacheProvider>
       )
 
+      await waitForMs(10)
       rendered.getByText('string')
-      expect(clientQueryCache.getQuery('string')?.state.isStale).toBe(false)
-      await waitFor(() =>
-        expect(clientQueryCache.getQuery('string')?.state.isStale).toBe(true)
-      )
 
       const newClientQueryCache = makeQueryCache()
 
@@ -173,11 +159,8 @@ describe('React hydration', () => {
         </ReactQueryCacheProvider>
       )
 
+      await waitForMs(10)
       rendered.getByText('string')
-      expect(newClientQueryCache.getQuery('string')?.state.isStale).toBe(false)
-      await waitFor(() =>
-        expect(newClientQueryCache.getQuery('string')?.state.isStale).toBe(true)
-      )
 
       clientQueryCache.clear({ notify: false })
       newClientQueryCache.clear({ notify: false })

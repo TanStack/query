@@ -461,6 +461,88 @@ describe('useQuery', () => {
     })
   })
 
+  it('should be able to set different stale times for a query', async () => {
+    const key = queryKey()
+    const states1: QueryResult<string>[] = []
+    const states2: QueryResult<string>[] = []
+
+    await queryCache.prefetchQuery(key, () => 'prefetch')
+
+    await sleep(10)
+
+    function FirstComponent() {
+      const state = useQuery(key, () => 'one', {
+        staleTime: 100,
+      })
+      states1.push(state)
+      return null
+    }
+
+    function SecondComponent() {
+      const state = useQuery(key, () => 'two', {
+        staleTime: 5,
+      })
+      states2.push(state)
+      return null
+    }
+
+    function Page() {
+      return (
+        <>
+          <FirstComponent />
+          <SecondComponent />
+        </>
+      )
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states1.length).toBe(4))
+    await waitFor(() => expect(states2.length).toBe(4))
+
+    // First render
+    expect(states1[0]).toMatchObject({
+      data: 'prefetch',
+      isStale: false,
+    })
+    // Second useQuery started fetching
+    expect(states1[1]).toMatchObject({
+      data: 'prefetch',
+      isStale: false,
+    })
+    // Second useQuery data came in
+    expect(states1[2]).toMatchObject({
+      data: 'two',
+      isStale: false,
+    })
+    // Data became stale after 100ms
+    expect(states1[3]).toMatchObject({
+      data: 'two',
+      isStale: true,
+    })
+
+    // First render, data is stale
+    expect(states2[0]).toMatchObject({
+      data: 'prefetch',
+      isStale: true,
+    })
+    // Second useQuery started fetching
+    expect(states2[1]).toMatchObject({
+      data: 'prefetch',
+      isStale: true,
+    })
+    // Second useQuery data came in
+    expect(states2[2]).toMatchObject({
+      data: 'two',
+      isStale: false,
+    })
+    // Data became stale after 5ms
+    expect(states2[3]).toMatchObject({
+      data: 'two',
+      isStale: true,
+    })
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/137
   it('should not override initial data in dependent queries', async () => {
     const key1 = queryKey()
@@ -767,6 +849,7 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/195
   it('should refetch if stale after a prefetch', async () => {
     const key = queryKey()
+    const states: QueryResult<string>[] = []
 
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => 'data')
@@ -781,13 +864,14 @@ describe('useQuery', () => {
     await sleep(11)
 
     function Page() {
-      useQuery(key, queryFn)
+      const state = useQuery(key, queryFn)
+      states.push(state)
       return null
     }
 
     render(<Page />)
 
-    await act(() => sleep(0))
+    await waitFor(() => expect(states.length).toBe(3))
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(1)

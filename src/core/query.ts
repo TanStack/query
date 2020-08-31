@@ -44,7 +44,6 @@ export interface QueryState<TResult, TError> {
   isFetchingMore: IsFetchingMoreValue
   isIdle: boolean
   isLoading: boolean
-  isStale: boolean
   isSuccess: boolean
   status: QueryStatus
   throwInErrorBoundary?: boolean
@@ -66,7 +65,6 @@ export interface RefetchOptions {
 
 export enum ActionType {
   Failed = 'Failed',
-  MarkStale = 'MarkStale',
   Fetch = 'Fetch',
   Success = 'Success',
   Error = 'Error',
@@ -74,10 +72,6 @@ export enum ActionType {
 
 interface FailedAction {
   type: ActionType.Failed
-}
-
-interface MarkStaleAction {
-  type: ActionType.MarkStale
 }
 
 interface FetchAction {
@@ -89,7 +83,6 @@ interface SuccessAction<TResult> {
   type: ActionType.Success
   data: TResult | undefined
   canFetchMore?: boolean
-  isStale: boolean
 }
 
 interface ErrorAction<TError> {
@@ -101,7 +94,6 @@ export type Action<TResult, TError> =
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
-  | MarkStaleAction
   | SuccessAction<TResult>
 
 // CLASS
@@ -115,14 +107,11 @@ export class Query<TResult, TError> {
 
   private queryCache: QueryCache
   private promise?: Promise<TResult | undefined>
-  private cacheTimeout?: number
-  private staleTimeout?: number
+  private gcTimeout?: number
   private cancelFetch?: () => void
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
   private notifyGlobalListeners: (query: Query<TResult, TError>) => void
-  private enableStaleTimeout: boolean
-  private enableGarbageCollectionTimeout: boolean
 
   constructor(init: QueryInitConfig<TResult, TError>) {
     this.config = init.config
@@ -132,23 +121,7 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners = init.notifyGlobalListeners
     this.observers = []
     this.state = getDefaultState(init.config)
-    this.enableStaleTimeout = false
-    this.enableGarbageCollectionTimeout = false
-  }
-
-  activateStaleTimeout(): void {
-    this.enableStaleTimeout = true
-    this.rescheduleStaleTimeout()
-  }
-
-  activateGarbageCollectionTimeout(): void {
-    this.enableGarbageCollectionTimeout = true
-    this.rescheduleGarbageCollection()
-  }
-
-  activateTimeouts(): void {
-    this.activateStaleTimeout()
-    this.activateGarbageCollectionTimeout()
+    this.scheduleGc()
   }
 
   updateConfig(config: QueryConfig<TResult, TError>): void {
@@ -161,61 +134,18 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners(this)
   }
 
-  private rescheduleStaleTimeout(): void {
+  private scheduleGc(): void {
     if (isServer) {
       return
     }
 
-    this.clearStaleTimeout()
+    this.clearGcTimeout()
 
-    if (
-      !this.enableStaleTimeout ||
-      this.state.isStale ||
-      this.state.status !== QueryStatus.Success ||
-      this.config.staleTime === Infinity
-    ) {
+    if (this.config.cacheTime === Infinity || this.observers.length > 0) {
       return
     }
 
-    const staleTime = this.config.staleTime || 0
-    let timeout = staleTime
-    if (this.state.updatedAt) {
-      const timeElapsed = Date.now() - this.state.updatedAt
-      const timeUntilStale = staleTime - timeElapsed
-      timeout = Math.max(timeUntilStale, 0)
-    }
-
-    this.staleTimeout = setTimeout(() => {
-      this.invalidate()
-    }, timeout)
-  }
-
-  invalidate(): void {
-    this.clearStaleTimeout()
-
-    if (this.state.isStale) {
-      return
-    }
-
-    this.dispatch({ type: ActionType.MarkStale })
-  }
-
-  private rescheduleGarbageCollection(): void {
-    if (isServer) {
-      return
-    }
-
-    this.clearCacheTimeout()
-
-    if (
-      !this.enableGarbageCollectionTimeout ||
-      this.config.cacheTime === Infinity ||
-      this.observers.length > 0
-    ) {
-      return
-    }
-
-    this.cacheTimeout = setTimeout(() => {
+    this.gcTimeout = setTimeout(() => {
       this.clear()
     }, this.config.cacheTime)
   }
@@ -241,21 +171,14 @@ export class Query<TResult, TError> {
 
   private clearTimersObservers(): void {
     this.observers.forEach(observer => {
-      observer.clearRefetchInterval()
+      observer.clearTimers()
     })
   }
 
-  private clearStaleTimeout() {
-    if (this.staleTimeout) {
-      clearTimeout(this.staleTimeout)
-      this.staleTimeout = undefined
-    }
-  }
-
-  private clearCacheTimeout() {
-    if (this.cacheTimeout) {
-      clearTimeout(this.cacheTimeout)
-      this.cacheTimeout = undefined
+  private clearGcTimeout() {
+    if (this.gcTimeout) {
+      clearTimeout(this.gcTimeout)
+      this.gcTimeout = undefined
     }
   }
 
@@ -275,8 +198,6 @@ export class Query<TResult, TError> {
       data = prevData
     }
 
-    const isStale = this.config.staleTime === 0
-
     // Try to determine if more data can be fetched
     const canFetchMore = hasMorePages(this.config, data)
 
@@ -284,16 +205,12 @@ export class Query<TResult, TError> {
     this.dispatch({
       type: ActionType.Success,
       data,
-      isStale,
       canFetchMore,
     })
-
-    this.rescheduleStaleTimeout()
   }
 
   clear(): void {
-    this.clearStaleTimeout()
-    this.clearCacheTimeout()
+    this.clearGcTimeout()
     this.clearTimersObservers()
     this.cancel()
     delete this.queryCache.queries[this.queryHash]
@@ -304,12 +221,23 @@ export class Query<TResult, TError> {
     return this.observers.some(observer => observer.config.enabled)
   }
 
+  isStale(): boolean {
+    return this.observers.some(observer => observer.isStale())
+  }
+
+  isStaleByTime(staleTime = 0): boolean {
+    return (
+      !this.state.isSuccess || this.state.updatedAt + staleTime <= Date.now()
+    )
+  }
+
   onWindowFocus(): void {
     if (
-      this.state.isStale &&
       this.observers.some(
         observer =>
-          observer.config.enabled && observer.config.refetchOnWindowFocus
+          observer.isStale() &&
+          observer.config.enabled &&
+          observer.config.refetchOnWindowFocus
       )
     ) {
       this.fetch()
@@ -319,10 +247,11 @@ export class Query<TResult, TError> {
 
   onOnline(): void {
     if (
-      this.state.isStale &&
       this.observers.some(
         observer =>
-          observer.config.enabled && observer.config.refetchOnReconnect
+          observer.isStale() &&
+          observer.config.enabled &&
+          observer.config.refetchOnReconnect
       )
     ) {
       this.fetch()
@@ -348,7 +277,7 @@ export class Query<TResult, TError> {
     this.observers.push(observer)
 
     // Stop the query from being garbage collected
-    this.clearCacheTimeout()
+    this.clearGcTimeout()
   }
 
   unsubscribeObserver(observer: QueryObserver<TResult, TError>): void {
@@ -362,7 +291,7 @@ export class Query<TResult, TError> {
       }
     }
 
-    this.rescheduleGarbageCollection()
+    this.scheduleGc()
   }
 
   private async tryFetchData<T>(
@@ -639,12 +568,6 @@ function getDefaultState<TResult, TError>(
 
   const hasInitialData = typeof initialData !== 'undefined'
 
-  const isStale =
-    !config.enabled ||
-    (typeof config.initialStale === 'function'
-      ? config.initialStale()
-      : config.initialStale ?? !hasInitialData)
-
   const initialStatus = hasInitialData
     ? QueryStatus.Success
     : config.enabled
@@ -658,9 +581,8 @@ function getDefaultState<TResult, TError>(
     isFetching: initialStatus === QueryStatus.Loading,
     isFetchingMore: false,
     failureCount: 0,
-    isStale,
     data: initialData,
-    updatedAt: hasInitialData ? Date.now() : 0,
+    updatedAt: Date.now(),
     canFetchMore: hasMorePages(config, initialData),
   }
 }
@@ -674,11 +596,6 @@ export function queryReducer<TResult, TError>(
       return {
         ...state,
         failureCount: state.failureCount + 1,
-      }
-    case ActionType.MarkStale:
-      return {
-        ...state,
-        isStale: true,
       }
     case ActionType.Fetch:
       const status =
@@ -698,7 +615,6 @@ export function queryReducer<TResult, TError>(
         ...getStatusProps(QueryStatus.Success),
         data: action.data,
         error: null,
-        isStale: action.isStale,
         isFetched: true,
         isFetching: false,
         isFetchingMore: false,
@@ -714,7 +630,6 @@ export function queryReducer<TResult, TError>(
         isFetched: true,
         isFetching: false,
         isFetchingMore: false,
-        isStale: true,
         failureCount: state.failureCount + 1,
         throwInErrorBoundary: true,
       }

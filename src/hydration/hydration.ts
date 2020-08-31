@@ -1,10 +1,9 @@
-import { DEFAULT_STALE_TIME, DEFAULT_CACHE_TIME } from '../core/config'
+import { DEFAULT_CACHE_TIME } from '../core/config'
 
 import type { Query, QueryCache, QueryKey, QueryConfig } from 'react-query'
 
 export interface DehydratedQueryConfig {
   queryKey: QueryKey
-  staleTime?: number
   cacheTime?: number
   initialData?: unknown
 }
@@ -41,9 +40,6 @@ function dehydrateQuery<TResult, TError = unknown>(
   // in the html-payload, but not consume it on the initial render.
   // We still schedule stale and garbage collection right away, which means
   // we need to specifically include staleTime and cacheTime in dehydration.
-  if (query.config.staleTime !== DEFAULT_STALE_TIME) {
-    dehydratedQuery.config.staleTime = query.config.staleTime
-  }
   if (query.config.cacheTime !== DEFAULT_CACHE_TIME) {
     dehydratedQuery.config.cacheTime = query.config.cacheTime
   }
@@ -93,6 +89,5 @@ export function hydrate<TResult>(
 
     const query = queryCache.buildQuery(queryKey, queryConfig)
     query.state.updatedAt = dehydratedQuery.updatedAt
-    query.activateGarbageCollectionTimeout()
   }
 }
