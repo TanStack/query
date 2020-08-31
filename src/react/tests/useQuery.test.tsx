@@ -577,6 +577,30 @@ describe('useQuery', () => {
     rendered.getByText('Second Status: success')
   })
 
+  it('should not override query configuration on render', async () => {
+    const key = queryKey()
+
+    const queryFn1 = async () => {
+      await sleep(10)
+      return 'data1'
+    }
+
+    const queryFn2 = async () => {
+      await sleep(10)
+      return 'data2'
+    }
+
+    function Page() {
+      useQuery(key, queryFn1)
+      useQuery(key, queryFn2)
+      return null
+    }
+
+    render(<Page />)
+
+    expect(queryCache.getQuery(key)!.config.queryFn).toBe(queryFn1)
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/170
   it('should start with status idle if enabled is false', async () => {
     const key1 = queryKey()

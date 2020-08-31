@@ -104,6 +104,7 @@ export class Query<TResult, TError> {
   config: QueryConfig<TResult, TError>
   observers: QueryObserver<TResult, TError>[]
   state: QueryState<TResult, TError>
+  cacheTime: number
 
   private queryCache: QueryCache
   private promise?: Promise<TResult | undefined>
@@ -121,11 +122,13 @@ export class Query<TResult, TError> {
     this.notifyGlobalListeners = init.notifyGlobalListeners
     this.observers = []
     this.state = getDefaultState(init.config)
+    this.cacheTime = init.config.cacheTime!
     this.scheduleGc()
   }
 
-  updateConfig(config: QueryConfig<TResult, TError>): void {
+  private updateConfig(config: QueryConfig<TResult, TError>): void {
     this.config = config
+    this.cacheTime = Math.max(this.cacheTime, config.cacheTime || 0)
   }
 
   private dispatch(action: Action<TResult, TError>): void {
@@ -141,18 +144,21 @@ export class Query<TResult, TError> {
 
     this.clearGcTimeout()
 
-    if (this.config.cacheTime === Infinity || this.observers.length > 0) {
+    if (this.cacheTime === Infinity || this.observers.length > 0) {
       return
     }
 
     this.gcTimeout = setTimeout(() => {
       this.clear()
-    }, this.config.cacheTime)
+    }, this.cacheTime)
   }
 
-  async refetch(options?: RefetchOptions): Promise<TResult | undefined> {
+  async refetch(
+    options?: RefetchOptions,
+    config?: QueryConfig<TResult, TError>
+  ): Promise<TResult | undefined> {
     try {
-      return await this.fetch()
+      return await this.fetch(undefined, config)
     } catch (error) {
       if (options?.throwOnError === true) {
         throw error
@@ -210,11 +216,13 @@ export class Query<TResult, TError> {
   }
 
   clear(): void {
+    this.queryCache.removeQuery(this)
+  }
+
+  destroy(): void {
     this.clearGcTimeout()
     this.clearTimersObservers()
     this.cancel()
-    delete this.queryCache.queries[this.queryHash]
-    this.notifyGlobalListeners(this)
   }
 
   isEnabled(): boolean {
@@ -294,119 +302,21 @@ export class Query<TResult, TError> {
     this.scheduleGc()
   }
 
-  private async tryFetchData<T>(
-    config: QueryConfig<TResult, TError>,
-    fn: QueryFunction<T>
-  ): Promise<T> {
-    return new Promise<T>((outerResolve, outerReject) => {
-      let resolved = false
-      let continueLoop: () => void
-      let cancelTransport: () => void
-
-      const done = () => {
-        resolved = true
-
-        delete this.cancelFetch
-        delete this.continueFetch
-        delete this.isTransportCancelable
-
-        // End loop if currently paused
-        continueLoop?.()
-      }
-
-      const resolve = (value: any) => {
-        done()
-        outerResolve(value)
-      }
-
-      const reject = (value: any) => {
-        done()
-        outerReject(value)
-      }
-
-      // Create callback to cancel this fetch
-      this.cancelFetch = () => {
-        reject(new CancelledError())
-        try {
-          cancelTransport?.()
-        } catch {}
-      }
-
-      // Create callback to continue this fetch
-      this.continueFetch = () => {
-        continueLoop?.()
-      }
-
-      // Create loop function
-      const run = async () => {
-        try {
-          // Execute query
-          const promiseOrValue = fn()
-
-          // Check if the transport layer support cancellation
-          if (isCancelable(promiseOrValue)) {
-            cancelTransport = () => {
-              promiseOrValue.cancel()
-            }
-            this.isTransportCancelable = true
-          }
-
-          // Await data
-          resolve(await promiseOrValue)
-        } catch (error) {
-          // Stop if the fetch is already resolved
-          if (resolved) {
-            return
-          }
-
-          // Do we need to retry the request?
-          const { failureCount } = this.state
-          const { retry, retryDelay } = config
-
-          const shouldRetry =
-            retry === true ||
-            failureCount < retry! ||
-            (typeof retry === 'function' && retry(failureCount, error))
-
-          if (!shouldRetry) {
-            // We are done if the query does not need to be retried
-            reject(error)
-            return
-          }
-
-          // Increase the failureCount
-          this.dispatch({ type: ActionType.Failed })
-
-          // Delay
-          await sleep(functionalUpdate(retryDelay, failureCount) || 0)
-
-          // Pause retry if the document is not visible or when the device is offline
-          if (!isDocumentVisible() || !isOnline()) {
-            await new Promise(continueResolve => {
-              continueLoop = continueResolve
-            })
-          }
-
-          // Try again if not resolved yet
-          if (!resolved) {
-            run()
-          }
-        }
-      }
-
-      // Start loop
-      run()
-    })
-  }
-
-  async fetch(options?: FetchOptions): Promise<TResult | undefined> {
+  async fetch(
+    options?: FetchOptions,
+    config?: QueryConfig<TResult, TError>
+  ): Promise<TResult | undefined> {
     // If we are already fetching, return current promise
     if (this.promise) {
       return this.promise
     }
 
-    // Store reference to the config that initiated this fetch
-    const config = this.config
+    // Update config if passed, otherwise the config from the last execution is used
+    if (config) {
+      this.updateConfig(config)
+    }
+
+    config = this.config
 
     // Check if there is a query function
     if (!config.queryFn) {
@@ -530,16 +440,125 @@ export class Query<TResult, TError> {
     return this.tryFetchData(config, fetchData)
   }
 
+  private async tryFetchData<T>(
+    config: QueryConfig<TResult, TError>,
+    fn: QueryFunction<T>
+  ): Promise<T> {
+    return new Promise<T>((outerResolve, outerReject) => {
+      let resolved = false
+      let continueLoop: () => void
+      let cancelTransport: () => void
+
+      const done = () => {
+        resolved = true
+
+        delete this.cancelFetch
+        delete this.continueFetch
+        delete this.isTransportCancelable
+
+        // End loop if currently paused
+        continueLoop?.()
+      }
+
+      const resolve = (value: any) => {
+        done()
+        outerResolve(value)
+      }
+
+      const reject = (value: any) => {
+        done()
+        outerReject(value)
+      }
+
+      // Create callback to cancel this fetch
+      this.cancelFetch = () => {
+        reject(new CancelledError())
+        try {
+          cancelTransport?.()
+        } catch {}
+      }
+
+      // Create callback to continue this fetch
+      this.continueFetch = () => {
+        continueLoop?.()
+      }
+
+      // Create loop function
+      const run = async () => {
+        try {
+          // Execute query
+          const promiseOrValue = fn()
+
+          // Check if the transport layer support cancellation
+          if (isCancelable(promiseOrValue)) {
+            cancelTransport = () => {
+              promiseOrValue.cancel()
+            }
+            this.isTransportCancelable = true
+          }
+
+          // Await data
+          resolve(await promiseOrValue)
+        } catch (error) {
+          // Stop if the fetch is already resolved
+          if (resolved) {
+            return
+          }
+
+          // Do we need to retry the request?
+          const { failureCount } = this.state
+          const { retry, retryDelay } = config
+
+          const shouldRetry =
+            retry === true ||
+            failureCount < retry! ||
+            (typeof retry === 'function' && retry(failureCount, error))
+
+          if (!shouldRetry) {
+            // We are done if the query does not need to be retried
+            reject(error)
+            return
+          }
+
+          // Increase the failureCount
+          this.dispatch({ type: ActionType.Failed })
+
+          // Delay
+          await sleep(functionalUpdate(retryDelay, failureCount) || 0)
+
+          // Pause retry if the document is not visible or when the device is offline
+          if (!isDocumentVisible() || !isOnline()) {
+            await new Promise(continueResolve => {
+              continueLoop = continueResolve
+            })
+          }
+
+          // Try again if not resolved yet
+          if (!resolved) {
+            run()
+          }
+        }
+      }
+
+      // Start loop
+      run()
+    })
+  }
+
   fetchMore(
     fetchMoreVariable?: unknown,
-    options?: FetchMoreOptions
+    options?: FetchMoreOptions,
+    config?: QueryConfig<TResult, TError>
   ): Promise<TResult | undefined> {
-    return this.fetch({
-      fetchMore: {
-        fetchMoreVariable,
-        previous: options?.previous || false,
+    return this.fetch(
+      {
+        fetchMore: {
+          fetchMoreVariable,
+          previous: options?.previous || false,
+        },
       },
-    })
+      config
+    )
   }
 }
 

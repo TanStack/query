@@ -7,6 +7,7 @@ import type {
   FetchMoreOptions,
   RefetchOptions,
 } from './query'
+import type { QueryCache } from './queryCache'
 
 export type UpdateListener<TResult, TError> = (
   result: QueryResult<TResult, TError>
@@ -15,6 +16,7 @@ export type UpdateListener<TResult, TError> = (
 export class QueryObserver<TResult, TError> {
   config: QueryObserverConfig<TResult, TError>
 
+  private queryCache: QueryCache
   private currentQuery!: Query<TResult, TError>
   private currentResult!: QueryResult<TResult, TError>
   private previousResult?: QueryResult<TResult, TError>
@@ -25,6 +27,7 @@ export class QueryObserver<TResult, TError> {
 
   constructor(config: QueryObserverConfig<TResult, TError>) {
     this.config = config
+    this.queryCache = config.queryCache!
 
     // Bind exposed methods
     this.clear = this.clear.bind(this)
@@ -106,22 +109,19 @@ export class QueryObserver<TResult, TError> {
   }
 
   async refetch(options?: RefetchOptions): Promise<TResult | undefined> {
-    this.currentQuery.updateConfig(this.config)
-    return this.currentQuery.refetch(options)
+    return this.currentQuery.refetch(options, this.config)
   }
 
   async fetchMore(
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions
   ): Promise<TResult | undefined> {
-    this.currentQuery.updateConfig(this.config)
-    return this.currentQuery.fetchMore(fetchMoreVariable, options)
+    return this.currentQuery.fetchMore(fetchMoreVariable, options, this.config)
   }
 
   async fetch(): Promise<TResult | undefined> {
-    this.currentQuery.updateConfig(this.config)
     try {
-      return await this.currentQuery.fetch()
+      return await this.currentQuery.fetch(undefined, this.config)
     } catch (error) {
       return undefined
     }
@@ -282,7 +282,7 @@ export class QueryObserver<TResult, TError> {
         ? { ...this.config, initialData: undefined }
         : this.config
 
-    const newQuery = config.queryCache!.buildQuery(config.queryKey, config)
+    const newQuery = this.queryCache.buildQuery(config.queryKey, config)
 
     if (newQuery === prevQuery) {
       return false

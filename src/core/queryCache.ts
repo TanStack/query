@@ -68,11 +68,12 @@ type QueryCacheListener = (
 // CLASS
 
 export class QueryCache {
-  queries: QueryHashMap
   isFetching: number
 
   private config: QueryCacheConfig
   private globalListeners: QueryCacheListener[]
+  private queries: QueryHashMap
+  private queriesArray: Query<any, any>[]
 
   constructor(config?: QueryCacheConfig) {
     this.config = config || {}
@@ -81,11 +82,12 @@ export class QueryCache {
     this.globalListeners = []
 
     this.queries = {}
+    this.queriesArray = []
     this.isFetching = 0
   }
 
   private notifyGlobalListeners(query?: Query<any, any>) {
-    this.isFetching = Object.values(this.queries).reduce(
+    this.isFetching = this.getQueries().reduce(
       (acc, query) => (query.state.isFetching ? acc + 1 : acc),
       0
     )
@@ -108,24 +110,23 @@ export class QueryCache {
   subscribe(listener: QueryCacheListener): () => void {
     this.globalListeners.push(listener)
     return () => {
-      this.globalListeners.splice(this.globalListeners.indexOf(listener), 1)
+      this.globalListeners = this.globalListeners.filter(x => x !== listener)
     }
   }
 
   clear(options?: ClearOptions): void {
-    Object.values(this.queries).forEach(query => query.clear())
-    this.queries = {}
+    this.removeQueries()
     if (options?.notify) {
       this.notifyGlobalListeners()
     }
   }
 
   getQueries<TResult = unknown, TError = unknown>(
-    predicate: QueryPredicate,
+    predicate?: QueryPredicate,
     options?: QueryPredicateOptions
   ): Query<TResult, TError>[] {
-    if (predicate === true) {
-      return Object.values(this.queries)
+    if (predicate === true || typeof predicate === 'undefined') {
+      return this.queriesArray
     }
 
     let predicateFn: QueryPredicateFn
@@ -142,7 +143,7 @@ export class QueryCache {
           : deepIncludes(d.queryKey, queryKey)
     }
 
-    return Object.values(this.queries).filter(predicateFn)
+    return this.queriesArray.filter(predicateFn)
   }
 
   getQuery<TResult, TError = unknown>(
@@ -155,22 +156,35 @@ export class QueryCache {
     return this.getQuery<TResult>(predicate)?.state.data
   }
 
+  removeQuery(query: Query<any, any>): void {
+    if (this.queries[query.queryHash]) {
+      query.destroy()
+      delete this.queries[query.queryHash]
+      this.queriesArray = this.queriesArray.filter(x => x !== query)
+      this.notifyGlobalListeners(query)
+    }
+  }
+
   removeQueries(
-    predicate: QueryPredicate,
+    predicate?: QueryPredicate,
     options?: QueryPredicateOptions
   ): void {
-    this.getQueries(predicate, options).forEach(query => query.clear())
+    this.getQueries(predicate, options).forEach(query => {
+      this.removeQuery(query)
+    })
   }
 
   cancelQueries(
-    predicate: QueryPredicate,
+    predicate?: QueryPredicate,
     options?: QueryPredicateOptions
   ): void {
-    this.getQueries(predicate, options).forEach(query => query.cancel())
+    this.getQueries(predicate, options).forEach(query => {
+      query.cancel()
+    })
   }
 
   async invalidateQueries(
-    predicate: QueryPredicate,
+    predicate?: QueryPredicate,
     options?: InvalidateQueriesOptions
   ): Promise<void> {
     const { refetchActive = true, refetchInactive = false, throwOnError } =
@@ -200,7 +214,7 @@ export class QueryCache {
   }
 
   resetErrorBoundaries(): void {
-    this.getQueries(true).forEach(query => {
+    this.getQueries().forEach(query => {
       query.state.throwInErrorBoundary = false
     })
   }
@@ -210,31 +224,26 @@ export class QueryCache {
     queryConfig?: QueryConfig<TResult, TError>
   ): Query<TResult, TError> {
     const config = this.getDefaultedQueryConfig(queryConfig)
-
     const [queryHash, queryKey] = config.queryKeySerializerFn!(userQueryKey)
 
-    let query
-
     if (this.queries[queryHash]) {
-      query = this.queries[queryHash] as Query<TResult, TError>
-      query.updateConfig(config)
+      return this.queries[queryHash] as Query<TResult, TError>
     }
 
-    if (!query) {
-      query = new Query<TResult, TError>({
-        queryCache: this,
-        queryKey,
-        queryHash,
-        config,
-        notifyGlobalListeners: query => {
-          this.notifyGlobalListeners(query)
-        },
-      })
-
-      if (!this.config.frozen) {
-        this.queries[queryHash] = query
+    const query = new Query<TResult, TError>({
+      queryCache: this,
+      queryKey,
+      queryHash,
+      config,
+      notifyGlobalListeners: query => {
         this.notifyGlobalListeners(query)
-      }
+      },
+    })
+
+    if (!this.config.frozen) {
+      this.queries[queryHash] = query
+      this.queriesArray.push(query)
+      this.notifyGlobalListeners(query)
     }
 
     return query
@@ -300,13 +309,16 @@ export class QueryCache {
     >(args)
 
     // https://github.com/tannerlinsley/react-query/issues/652
-    const configWithoutRetry = { retry: false, ...config }
+    const configWithoutRetry = this.getDefaultedQueryConfig({
+      retry: false,
+      ...config,
+    })
 
     let query
     try {
       query = this.buildQuery<TResult, TError>(queryKey, configWithoutRetry)
       if (options?.force || query.isStaleByTime(config.staleTime)) {
-        await query.fetch()
+        await query.fetch(undefined, configWithoutRetry)
       }
       return query.state.data
     } catch (error) {
@@ -348,7 +360,7 @@ export function makeQueryCache(config?: QueryCacheConfig) {
 export function onVisibilityOrOnlineChange(isOnlineChange: boolean) {
   if (isDocumentVisible() && isOnline()) {
     queryCaches.forEach(queryCache => {
-      queryCache.getQueries(query => {
+      queryCache.getQueries().forEach(query => {
         if (isOnlineChange) {
           query.onOnline()
         } else {
