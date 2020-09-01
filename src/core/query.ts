@@ -133,7 +133,11 @@ export class Query<TResult, TError> {
 
   private dispatch(action: Action<TResult, TError>): void {
     this.state = queryReducer(this.state, action)
-    this.observers.forEach(d => d.onQueryUpdate(this.state, action))
+
+    this.observers.forEach(observer => {
+      observer.onQueryUpdate(this.state, action)
+    })
+
     this.notifyGlobalListeners(this)
   }
 

@@ -92,7 +92,9 @@ export class QueryCache {
       0
     )
 
-    this.globalListeners.forEach(d => d(this, query))
+    this.globalListeners.forEach(listener => {
+      listener(this, query)
+    })
   }
 
   getDefaultConfig() {
@@ -193,14 +195,10 @@ export class QueryCache {
     try {
       await Promise.all(
         this.getQueries(predicate, options).map(query => {
-          if (query.observers.length) {
-            if (refetchActive && query.isEnabled()) {
-              return query.fetch()
-            }
-          } else {
-            if (refetchInactive) {
-              return query.fetch()
-            }
+          const enabled = query.isEnabled()
+
+          if ((enabled && refetchActive) || (!enabled && refetchInactive)) {
+            return query.fetch()
           }
 
           return undefined
