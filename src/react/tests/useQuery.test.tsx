@@ -356,6 +356,56 @@ describe('useQuery', () => {
     return null
   })
 
+  it.only('should update disabled query when updated with invalidateQueries', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          count++
+          return count
+        },
+        { enabled: false }
+      )
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          queryCache.invalidateQueries(key, { refetchInactive: true })
+        }, 20)
+      }, [])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(3))
+
+    expect(states).toMatchObject([
+      {
+        data: undefined,
+        isFetching: false,
+        isSuccess: false,
+      },
+      {
+        data: undefined,
+        isFetching: true,
+        isSuccess: false,
+      },
+      {
+        data: 1,
+        isFetching: false,
+        isSuccess: true,
+      },
+    ])
+  })
+
   it('should keep the previous data when keepPreviousData is set', async () => {
     const key = queryKey()
     const states: QueryResult<number>[] = []
