@@ -22,6 +22,7 @@ const {
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
   enabled,
+  forceFetchOnMount,
   initialData,
   initialStale,
   isDataEqual,
@@ -128,6 +129,10 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
+- `forceFetchOnMount: Boolean`
+  - Optional
+  - Defaults to `false`
+  - Set this to `true` to always fetch when the component mounts (regardless of staleness).
 - `refetchOnMount: Boolean`
   - Optional
   - Defaults to `true`

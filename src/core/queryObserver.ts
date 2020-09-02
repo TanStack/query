@@ -1,12 +1,6 @@
 import { getStatusProps, isServer, isDocumentVisible } from './utils'
 import type { QueryResult, QueryObserverConfig } from './types'
-import type {
-  Query,
-  QueryState,
-  Action,
-  FetchMoreOptions,
-  RefetchOptions,
-} from './query'
+import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
 import type { QueryCache } from './queryCache'
 
 export type UpdateListener<TResult, TError> = (
@@ -19,7 +13,7 @@ export class QueryObserver<TResult, TError> {
   private queryCache: QueryCache
   private currentQuery!: Query<TResult, TError>
   private currentResult!: QueryResult<TResult, TError>
-  private previousResult?: QueryResult<TResult, TError>
+  private previousQueryResult?: QueryResult<TResult, TError>
   private updateListener?: UpdateListener<TResult, TError>
   private staleTimeoutId?: number
   private refetchIntervalId?: number
@@ -42,7 +36,13 @@ export class QueryObserver<TResult, TError> {
     this.started = true
     this.updateListener = listener
     this.currentQuery.subscribeObserver(this)
-    this.optionalFetch()
+
+    if (this.config.enabled && this.config.forceFetchOnMount) {
+      this.fetch()
+    } else {
+      this.optionalFetch()
+    }
+
     this.updateTimers()
     return this.unsubscribe.bind(this)
   }
@@ -141,9 +141,13 @@ export class QueryObserver<TResult, TError> {
   private updateIsStale(): void {
     const isStale = this.currentQuery.isStaleByTime(this.config.staleTime)
     if (isStale !== this.currentResult.isStale) {
-      this.currentResult = this.createResult()
-      this.updateListener?.(this.currentResult)
+      this.updateResult()
+      this.notify()
     }
+  }
+
+  private notify(): void {
+    this.updateListener?.(this.currentResult)
   }
 
   private updateStaleTimeout(): void {
@@ -216,8 +220,8 @@ export class QueryObserver<TResult, TError> {
     }
   }
 
-  private createResult(): QueryResult<TResult, TError> {
-    const { currentQuery, currentResult, previousResult, config } = this
+  private updateResult(): void {
+    const { currentQuery, currentResult, previousQueryResult, config } = this
     const { state } = currentQuery
     let { data, status, updatedAt } = state
 
@@ -225,30 +229,30 @@ export class QueryObserver<TResult, TError> {
     if (
       config.keepPreviousData &&
       state.isLoading &&
-      previousResult?.isSuccess
+      previousQueryResult?.isSuccess
     ) {
-      data = previousResult.data
-      updatedAt = previousResult.updatedAt
-      status = previousResult.status
+      data = previousQueryResult.data
+      updatedAt = previousQueryResult.updatedAt
+      status = previousQueryResult.status
     }
 
     let isStale = false
 
     // When the query has not been fetched yet and this is the initial render,
     // determine the staleness based on the initialStale or existence of initial data.
-    if (!currentResult && !currentQuery.state.isFetched) {
+    if (!currentResult && !state.isFetched) {
       if (typeof config.initialStale === 'function') {
         isStale = config.initialStale()
       } else if (typeof config.initialStale === 'boolean') {
         isStale = config.initialStale
       } else {
-        isStale = typeof currentQuery.state.data === 'undefined'
+        isStale = typeof state.data === 'undefined'
       }
     } else {
       isStale = currentQuery.isStaleByTime(config.staleTime)
     }
 
-    return {
+    this.currentResult = {
       ...getStatusProps(status),
       canFetchMore: state.canFetchMore,
       clear: this.clear,
@@ -282,9 +286,9 @@ export class QueryObserver<TResult, TError> {
       return false
     }
 
-    this.previousResult = this.currentResult
+    this.previousQueryResult = this.currentResult
     this.currentQuery = newQuery
-    this.currentResult = this.createResult()
+    this.updateResult()
 
     if (this.started) {
       prevQuery?.unsubscribeObserver(this)
@@ -294,39 +298,33 @@ export class QueryObserver<TResult, TError> {
     return true
   }
 
-  onQueryUpdate(
-    _state: QueryState<TResult, TError>,
-    action: Action<TResult, TError>
-  ): void {
-    const { config } = this
-
+  onQueryUpdate(action: Action<TResult, TError>): void {
     // Store current result and get new result
     const prevResult = this.currentResult
-    this.currentResult = this.createResult()
-    const result = this.currentResult
+    this.updateResult()
+
+    const { currentResult, config } = this
 
     // We need to check the action because the state could have
     // transitioned from success to success in case of `setQueryData`.
-    if (action.type === 'Success' && result.isSuccess) {
-      config.onSuccess?.(result.data!)
-      config.onSettled?.(result.data!, null)
+    if (action.type === 'Success' && currentResult.isSuccess) {
+      config.onSuccess?.(currentResult.data!)
+      config.onSettled?.(currentResult.data!, null)
       this.updateTimers()
-    } else if (action.type === 'Error' && result.isError) {
-      config.onError?.(result.error!)
-      config.onSettled?.(undefined, result.error!)
+    } else if (action.type === 'Error' && currentResult.isError) {
+      config.onError?.(currentResult.error!)
+      config.onSettled?.(undefined, currentResult.error!)
       this.updateTimers()
     }
 
-    // Decide if we need to notify the listener
-    const notify =
+    if (
       // Always notify on data or error change
-      result.data !== prevResult.data ||
-      result.error !== prevResult.error ||
+      currentResult.data !== prevResult.data ||
+      currentResult.error !== prevResult.error ||
       // Maybe notify on other changes
       config.notifyOnStatusChange
-
-    if (notify) {
-      this.updateListener?.(result)
+    ) {
+      this.notify()
     }
   }
 }
