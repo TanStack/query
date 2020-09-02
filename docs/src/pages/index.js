@@ -9,7 +9,23 @@ import { ClientsMarquee } from 'components/clients/ClientsMarquee'
 import { Seo } from 'components/Seo'
 import Head from 'next/head'
 
-const Home = props => {
+const supporters = [
+  ['Kent C. Dodds (kentcdodds.com)', 'https://kentcdodds.com/'],
+  ['@bgazzera', 'https://github.com/bgazzera"'],
+  ['Gabe Ragland', 'https://github.com/gragland"'],
+]
+
+const fans = [
+  `Steven Miyakawa (@SamSamskies)`,
+  `Alex Trost (@a-trost)`,
+  `Andrey (@andreyvital)`,
+  'Anoop (@Anoupz)',
+  'Daniel Almaguer (@deini)',
+  'Chris Vaszauskas (@chrisvasz)',
+  'Christian Rudh (@crudh)',
+]
+
+const Home = () => {
   return (
     <>
       <Seo
@@ -254,17 +270,11 @@ const Home = props => {
                   Supporters
                 </div>
                 <ul className="list-none text-center">
-                  <li className="font-bold text-blue-800">
-                    <a href="https://kentcdodds.com/">
-                      Kent C. Dodds (kentcdodds.com)
-                    </a>
-                  </li>
-                  <li className="font-bold text-blue-800">
-                    <a href="https://github.com/bgazzera">@bgazzera</a>
-                  </li>
-                  <li className="font-bold text-blue-800">
-                    <a href="https://github.com/gragland">Gabe Ragland</a>
-                  </li>
+                  {supporters.forEach((supporter, i) => (
+                    <li className="font-bold text-blue-800" key={i}>
+                      <a href={supporter[1]}>{supporter[0]}</a>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
@@ -273,9 +283,9 @@ const Home = props => {
                   Fans
                 </div>
                 <ul className="list-none text-center">
-                  <li>Steven Miyakawa (@SamSamskies)</li>
-                  <li>Alex Trost (@a-trost)</li>
-                  <li>Andrey (@andreyvital)</li>
+                  {fans.forEach(fan => (
+                    <li key={fan}>{fan}</li>
+                  ))}
                 </ul>
               </div>
             </div>
