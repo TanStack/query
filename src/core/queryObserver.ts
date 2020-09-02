@@ -122,8 +122,8 @@ export class QueryObserver<TResult, TError> {
   async fetch(): Promise<TResult | undefined> {
     try {
       return await this.currentQuery.fetch(undefined, this.config)
-    } catch (error) {
-      return undefined
+    } catch {
+      // ignore
     }
   }
 

@@ -157,20 +157,6 @@ export class Query<TResult, TError> {
     }, this.cacheTime)
   }
 
-  async refetch(
-    options?: RefetchOptions,
-    config?: QueryConfig<TResult, TError>
-  ): Promise<TResult | undefined> {
-    try {
-      return await this.fetch(undefined, config)
-    } catch (error) {
-      if (options?.throwOnError === true) {
-        throw error
-      }
-      return undefined
-    }
-  }
-
   cancel(): void {
     this.cancelFetch?.()
   }
@@ -243,7 +229,7 @@ export class Query<TResult, TError> {
     )
   }
 
-  onWindowFocus(): void {
+  async onWindowFocus(): Promise<void> {
     if (
       this.observers.some(
         observer =>
@@ -252,12 +238,17 @@ export class Query<TResult, TError> {
           observer.config.refetchOnWindowFocus
       )
     ) {
-      this.fetch()
+      try {
+        await this.fetch()
+      } catch {
+        // ignore
+      }
     }
+
     this.continue()
   }
 
-  onOnline(): void {
+  async onOnline(): Promise<void> {
     if (
       this.observers.some(
         observer =>
@@ -266,8 +257,13 @@ export class Query<TResult, TError> {
           observer.config.refetchOnReconnect
       )
     ) {
-      this.fetch()
+      try {
+        await this.fetch()
+      } catch {
+        // ignore
+      }
     }
+
     this.continue()
   }
 
@@ -304,6 +300,35 @@ export class Query<TResult, TError> {
     }
 
     this.scheduleGc()
+  }
+
+  async refetch(
+    options?: RefetchOptions,
+    config?: QueryConfig<TResult, TError>
+  ): Promise<TResult | undefined> {
+    try {
+      return await this.fetch(undefined, config)
+    } catch (error) {
+      if (options?.throwOnError === true) {
+        throw error
+      }
+    }
+  }
+
+  async fetchMore(
+    fetchMoreVariable?: unknown,
+    options?: FetchMoreOptions,
+    config?: QueryConfig<TResult, TError>
+  ): Promise<TResult | undefined> {
+    return this.fetch(
+      {
+        fetchMore: {
+          fetchMoreVariable,
+          previous: options?.previous || false,
+        },
+      },
+      config
+    )
   }
 
   async fetch(
@@ -548,22 +573,6 @@ export class Query<TResult, TError> {
       run()
     })
   }
-
-  fetchMore(
-    fetchMoreVariable?: unknown,
-    options?: FetchMoreOptions,
-    config?: QueryConfig<TResult, TError>
-  ): Promise<TResult | undefined> {
-    return this.fetch(
-      {
-        fetchMore: {
-          fetchMoreVariable,
-          previous: options?.previous || false,
-        },
-      },
-      config
-    )
-  }
 }
 
 function getLastPage<TResult>(pages: TResult[], previous?: boolean): TResult {
@@ -578,7 +587,6 @@ function hasMorePages<TResult, TError>(
   if (config.infinite && config.getFetchMore && Array.isArray(pages)) {
     return Boolean(config.getFetchMore(getLastPage(pages, previous), pages))
   }
-  return undefined
 }
 
 function getDefaultState<TResult, TError>(
