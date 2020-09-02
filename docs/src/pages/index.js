@@ -270,7 +270,7 @@ const Home = () => {
                   Supporters
                 </div>
                 <ul className="list-none text-center">
-                  {supporters.forEach((supporter, i) => (
+                  {supporters.map((supporter, i) => (
                     <li className="font-bold text-blue-800" key={i}>
                       <a href={supporter[1]}>{supporter[0]}</a>
                     </li>
@@ -283,7 +283,7 @@ const Home = () => {
                   Fans
                 </div>
                 <ul className="list-none text-center">
-                  {fans.forEach(fan => (
+                  {fans.map(fan => (
                     <li key={fan}>{fan}</li>
                   ))}
                 </ul>
