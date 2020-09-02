@@ -357,7 +357,7 @@ describe('useQuery', () => {
     return null
   })
 
-  it.only('should update disabled query when updated with invalidateQueries', async () => {
+  it('should update disabled query when updated with invalidateQueries', async () => {
     const key = queryKey()
     const states: QueryResult<number>[] = []
     let count = 0
@@ -841,6 +841,78 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Error test jaylen'))
 
     consoleMock.mockRestore()
+  })
+
+  it('should always fetch if forceFetchOnMount is set', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    await queryCache.prefetchQuery(key, () => 'prefetched')
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        forceFetchOnMount: true,
+        staleTime: 100,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(3))
+
+    expect(states).toMatchObject([
+      { data: 'prefetched', isStale: false, isFetching: false },
+      { data: 'prefetched', isStale: false, isFetching: true },
+      { data: 'data', isStale: false, isFetching: false },
+    ])
+  })
+
+  it('should not fetch if initial data is set', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        initialData: 'initial',
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+
+    expect(states).toMatchObject([
+      { data: 'initial', isStale: false },
+      { data: 'initial', isStale: true },
+    ])
+  })
+
+  it('should fetch if initial data is set and initial stale is set to true', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        initialData: 'initial',
+        initialStale: true,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(3))
+
+    expect(states).toMatchObject([
+      { data: 'initial', isStale: true, isFetching: false },
+      { data: 'initial', isStale: true, isFetching: true },
+      { data: 'data', isStale: true, isFetching: false },
+    ])
   })
 
   it('should keep initial stale and initial data when the query key changes', async () => {
