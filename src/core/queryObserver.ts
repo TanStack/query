@@ -217,22 +217,16 @@ export class QueryObserver<TResult, TError> {
   }
 
   private createResult(): QueryResult<TResult, TError> {
-    const { currentResult, currentQuery, previousResult, config } = this
-
-    const {
-      canFetchMore,
-      error,
-      failureCount,
-      isFetched,
-      isFetching,
-      isFetchingMore,
-      isLoading,
-    } = currentQuery.state
-
-    let { data, status, updatedAt } = currentQuery.state
+    const { currentQuery, currentResult, previousResult, config } = this
+    const { state } = currentQuery
+    let { data, status, updatedAt } = state
 
     // Keep previous data if needed
-    if (config.keepPreviousData && isLoading && previousResult?.isSuccess) {
+    if (
+      config.keepPreviousData &&
+      state.isLoading &&
+      previousResult?.isSuccess
+    ) {
       data = previousResult.data
       updatedAt = previousResult.updatedAt
       status = previousResult.status
@@ -256,15 +250,15 @@ export class QueryObserver<TResult, TError> {
 
     return {
       ...getStatusProps(status),
-      canFetchMore,
+      canFetchMore: state.canFetchMore,
       clear: this.clear,
       data,
-      error,
-      failureCount,
+      error: state.error,
+      failureCount: state.failureCount,
       fetchMore: this.fetchMore,
-      isFetched,
-      isFetching,
-      isFetchingMore,
+      isFetched: state.isFetched,
+      isFetching: state.isFetching,
+      isFetchingMore: state.isFetchingMore,
       isStale,
       query: currentQuery,
       refetch: this.refetch,
@@ -304,20 +298,35 @@ export class QueryObserver<TResult, TError> {
     _state: QueryState<TResult, TError>,
     action: Action<TResult, TError>
   ): void {
+    const { config } = this
+
+    // Store current result and get new result
+    const prevResult = this.currentResult
     this.currentResult = this.createResult()
+    const result = this.currentResult
 
-    const { data, error, isSuccess, isError } = this.currentResult
-
-    if (action.type === 'Success' && isSuccess) {
-      this.config.onSuccess?.(data!)
-      this.config.onSettled?.(data!, null)
+    // We need to check the action because the state could have
+    // transitioned from success to success in case of `setQueryData`.
+    if (action.type === 'Success' && result.isSuccess) {
+      config.onSuccess?.(result.data!)
+      config.onSettled?.(result.data!, null)
       this.updateTimers()
-    } else if (action.type === 'Error' && isError) {
-      this.config.onError?.(error!)
-      this.config.onSettled?.(undefined, error!)
+    } else if (action.type === 'Error' && result.isError) {
+      config.onError?.(result.error!)
+      config.onSettled?.(undefined, result.error!)
       this.updateTimers()
     }
 
-    this.updateListener?.(this.currentResult)
+    // Decide if we need to notify the listener
+    const notify =
+      // Always notify on data or error change
+      result.data !== prevResult.data ||
+      result.error !== prevResult.error ||
+      // Maybe notify on other changes
+      config.notifyOnStatusChange
+
+    if (notify) {
+      this.updateListener?.(result)
+    }
   }
 }

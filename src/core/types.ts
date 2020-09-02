@@ -106,6 +106,12 @@ export interface QueryObserverConfig<
    */
   refetchOnMount?: boolean
   /**
+   * Whether a change to the query status should re-render a component.
+   * If set to `false`, the component will only re-render when the actual `data` or `error` changes.
+   * Defaults to `true`.
+   */
+  notifyOnStatusChange?: boolean
+  /**
    * This callback will fire any time the query successfully fetches new data.
    */
   onSuccess?: (data: TResult) => void

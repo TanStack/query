@@ -7,6 +7,7 @@ import {
   queryKey,
   mockVisibilityState,
   mockConsoleError,
+  waitForMs,
 } from './utils'
 import { useQuery } from '..'
 import { queryCache, QueryResult } from '../../core'
@@ -518,7 +519,7 @@ describe('useQuery', () => {
 
     await queryCache.prefetchQuery(key, () => 'prefetch')
 
-    await sleep(10)
+    await sleep(40)
 
     function FirstComponent() {
       const state = useQuery(key, () => 'one', {
@@ -530,7 +531,7 @@ describe('useQuery', () => {
 
     function SecondComponent() {
       const state = useQuery(key, () => 'two', {
-        staleTime: 5,
+        staleTime: 20,
       })
       states2.push(state)
       return null
@@ -590,6 +591,76 @@ describe('useQuery', () => {
     expect(states2[3]).toMatchObject({
       data: 'two',
       isStale: true,
+    })
+  })
+
+  it('should re-render when a query becomes stale', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        staleTime: 50,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(3))
+
+    expect(states[0]).toMatchObject({
+      isStale: true,
+    })
+    expect(states[1]).toMatchObject({
+      isStale: false,
+    })
+    expect(states[2]).toMatchObject({
+      isStale: true,
+    })
+  })
+
+  it('should not re-render when a query status changes and notifyOnStatusChange is false', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(5)
+          return 'test'
+        },
+        {
+          notifyOnStatusChange: false,
+        }
+      )
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setTimeout(refetch, 10)
+      }, [refetch])
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(30)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      status: 'loading',
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'test',
+      status: 'success',
+      isFetching: false,
     })
   })
 

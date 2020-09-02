@@ -60,7 +60,7 @@ describe('useInfiniteQuery', () => {
     await waitFor(() => rendered.getByText('Status: success'))
 
     expect(states[0]).toEqual({
-      canFetchmore: undefined,
+      canFetchMore: undefined,
       clear: expect.any(Function),
       data: undefined,
       error: null,

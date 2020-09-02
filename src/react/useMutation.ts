@@ -172,8 +172,6 @@ export function useMutation<
         if (mutateConfig.throwOnError ?? config.throwOnError) {
           throw error
         }
-
-        return
       }
     },
     [dispatch, getConfig, getMutationFn]

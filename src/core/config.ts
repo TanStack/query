@@ -60,6 +60,7 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     refetchOnMount: true,
+    notifyOnStatusChange: true,
     structuralSharing: true,
   },
 }

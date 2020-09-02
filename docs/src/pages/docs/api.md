@@ -7,40 +7,41 @@ title: API Reference
 
 ```js
 const {
-  status,
-  isIdle,
-  isLoading,
-  isSuccess,
-  isError,
+  clear,
   data,
   error,
-  isStale,
-  isFetching,
   failureCount,
+  isError,
+  isFetching,
+  isIdle,
+  isLoading,
+  isStale,
+  isSuccess,
   refetch,
-  clear,
+  status,
 } = useQuery(queryKey, queryFn?, {
-  suspense,
-  queryKeySerializerFn,
+  cacheTime,
   enabled,
+  initialData,
+  initialStale,
+  isDataEqual,
+  keepPreviousData,
+  notifyOnStatusChange,
+  onError,
+  onSettled,
+  onSuccess,
+  queryFnParamsFilter,
+  queryKeySerializerFn,
+  refetchInterval,
+  refetchIntervalInBackground,
+  refetchOnMount,
+  refetchOnReconnect,
+  refetchOnWindowFocus,
   retry,
   retryDelay,
   staleTime,
-  cacheTime,
-  keepPreviousData,
-  refetchOnWindowFocus,
-  refetchOnReconnect,
-  refetchInterval,
-  refetchIntervalInBackground,
-  queryFnParamsFilter,
-  refetchOnMount,
   structuralSharing,
-  isDataEqual,
-  onError,
-  onSuccess,
-  onSettled,
-  initialData,
-  initialStale,
+  suspense,
   useErrorBoundary,
 })
 
@@ -96,6 +97,11 @@ const queryInfo = useQuery({
 - `refetchOnReconnect: Boolean`
   - Optional
   - Set this to `true` or `false` to enable/disable automatic refetching on reconnect for this query.
+- `notifyOnStatusChange: Boolean`
+  - Optional
+  - Whether a change to the query status should re-render a component.
+  - If set to `false`, the component will only re-render when the actual `data` or `error` changes.
+  - Defaults to `true`.
 - `onSuccess: Function(data) => data`
   - Optional
   - This function will fire any time the query successfully fetches new data.
