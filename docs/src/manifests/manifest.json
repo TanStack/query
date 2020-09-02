@@ -42,6 +42,11 @@
               "title": "TypeScript",
               "path": "/docs/typescript",
               "editUrl": "/docs/typescript.md"
+            },
+            {
+              "title": "React Native",
+              "path": "/docs/react-native",
+              "editUrl": "/docs/react-native.md"
             }
           ]
         },
