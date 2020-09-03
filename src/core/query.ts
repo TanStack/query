@@ -9,6 +9,7 @@ import {
   isDocumentVisible,
   isOnline,
   isServer,
+  noop,
   replaceEqualDeep,
   sleep,
 } from './utils'
@@ -38,6 +39,7 @@ export interface QueryState<TResult, TError> {
   data?: TResult
   error: TError | null
   failureCount: number
+  fetchedCount: number
   isError: boolean
   isFetched: boolean
   isFetching: boolean
@@ -229,7 +231,7 @@ export class Query<TResult, TError> {
     )
   }
 
-  async onWindowFocus(): Promise<void> {
+  onWindowFocus(): void {
     if (
       this.observers.some(
         observer =>
@@ -238,17 +240,13 @@ export class Query<TResult, TError> {
           observer.config.refetchOnWindowFocus
       )
     ) {
-      try {
-        await this.fetch()
-      } catch {
-        // ignore
-      }
+      this.fetch().catch(noop)
     }
 
     this.continue()
   }
 
-  async onOnline(): Promise<void> {
+  onOnline(): void {
     if (
       this.observers.some(
         observer =>
@@ -257,11 +255,7 @@ export class Query<TResult, TError> {
           observer.config.refetchOnReconnect
       )
     ) {
-      try {
-        await this.fetch()
-      } catch {
-        // ignore
-      }
+      this.fetch().catch(noop)
     }
 
     this.continue()
@@ -612,6 +606,7 @@ function getDefaultState<TResult, TError>(
     isFetching: initialStatus === QueryStatus.Loading,
     isFetchingMore: false,
     failureCount: 0,
+    fetchedCount: 0,
     data: initialData,
     updatedAt: Date.now(),
     canFetchMore: hasMorePages(config, initialData),
@@ -646,6 +641,7 @@ export function queryReducer<TResult, TError>(
         ...getStatusProps(QueryStatus.Success),
         data: action.data,
         error: null,
+        fetchedCount: state.fetchedCount + 1,
         isFetched: true,
         isFetching: false,
         isFetchingMore: false,
@@ -658,6 +654,7 @@ export function queryReducer<TResult, TError>(
         ...state,
         ...getStatusProps(QueryStatus.Error),
         error: action.error,
+        fetchedCount: state.fetchedCount + 1,
         isFetched: true,
         isFetching: false,
         isFetchingMore: false,

@@ -37,7 +37,9 @@ export function useBaseQuery<TResult, TError>(
 
   // Handle suspense
   if (config.suspense || config.useErrorBoundary) {
-    if (result.isError && result.query.state.throwInErrorBoundary) {
+    const query = observer.getCurrentQuery()
+
+    if (result.isError && query.state.throwInErrorBoundary) {
       throw result.error
     }
 

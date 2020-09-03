@@ -15,6 +15,7 @@ export class QueryObserver<TResult, TError> {
   private currentResult!: QueryResult<TResult, TError>
   private previousQueryResult?: QueryResult<TResult, TError>
   private updateListener?: UpdateListener<TResult, TError>
+  private initialFetchedCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private started?: boolean
@@ -22,6 +23,7 @@ export class QueryObserver<TResult, TError> {
   constructor(config: QueryObserverConfig<TResult, TError>) {
     this.config = config
     this.queryCache = config.queryCache!
+    this.initialFetchedCount = 0
 
     // Bind exposed methods
     this.clear = this.clear.bind(this)
@@ -98,6 +100,10 @@ export class QueryObserver<TResult, TError> {
 
   isStale(): boolean {
     return this.currentResult.isStale
+  }
+
+  getCurrentQuery(): Query<TResult, TError> {
+    return this.currentQuery
   }
 
   getCurrentResult(): QueryResult<TResult, TError> {
@@ -224,16 +230,18 @@ export class QueryObserver<TResult, TError> {
     const { currentQuery, currentResult, previousQueryResult, config } = this
     const { state } = currentQuery
     let { data, status, updatedAt } = state
+    let isPreviousData = false
 
     // Keep previous data if needed
     if (
       config.keepPreviousData &&
-      state.isLoading &&
+      (state.isIdle || state.isLoading) &&
       previousQueryResult?.isSuccess
     ) {
       data = previousQueryResult.data
       updatedAt = previousQueryResult.updatedAt
       status = previousQueryResult.status
+      isPreviousData = true
     }
 
     let isStale = false
@@ -261,10 +269,11 @@ export class QueryObserver<TResult, TError> {
       failureCount: state.failureCount,
       fetchMore: this.fetchMore,
       isFetched: state.isFetched,
+      isFetchedAfterMount: state.fetchedCount > this.initialFetchedCount,
       isFetching: state.isFetching,
       isFetchingMore: state.isFetchingMore,
+      isPreviousData,
       isStale,
-      query: currentQuery,
       refetch: this.refetch,
       updatedAt,
     }
@@ -288,6 +297,7 @@ export class QueryObserver<TResult, TError> {
 
     this.previousQueryResult = this.currentResult
     this.currentQuery = newQuery
+    this.initialFetchedCount = newQuery.state.fetchedCount
     this.updateResult()
 
     if (this.started) {
