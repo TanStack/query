@@ -68,13 +68,14 @@ describe('useInfiniteQuery', () => {
       fetchMore: expect.any(Function),
       isError: false,
       isFetched: false,
+      isFetchedAfterMount: false,
       isFetching: true,
       isFetchingMore: false,
       isIdle: false,
       isLoading: true,
+      isPreviousData: false,
       isStale: true,
       isSuccess: false,
-      query: expect.any(Object),
       refetch: expect.any(Function),
       status: 'loading',
       updatedAt: expect.any(Number),
@@ -96,12 +97,13 @@ describe('useInfiniteQuery', () => {
       isFetchingMore: false,
       isError: false,
       isFetched: true,
+      isFetchedAfterMount: true,
       isFetching: false,
       isIdle: false,
       isLoading: false,
+      isPreviousData: false,
       isStale: true,
       isSuccess: true,
-      query: expect.any(Object),
       refetch: expect.any(Function),
       status: 'success',
       updatedAt: expect.any(Number),
@@ -152,36 +154,42 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingMore: false,
       isSuccess: false,
+      isPreviousData: false,
     })
     expect(states[1]).toMatchObject({
       data: ['0-desc'],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,
+      isPreviousData: false,
     })
     expect(states[2]).toMatchObject({
       data: ['0-desc'],
       isFetching: true,
       isFetchingMore: 'next',
       isSuccess: true,
+      isPreviousData: false,
     })
     expect(states[3]).toMatchObject({
       data: ['0-desc', '1-desc'],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,
+      isPreviousData: false,
     })
     expect(states[4]).toMatchObject({
       data: ['0-desc', '1-desc'],
       isFetching: true,
       isFetchingMore: false,
       isSuccess: true,
+      isPreviousData: true,
     })
     expect(states[5]).toMatchObject({
       data: ['0-asc'],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,
+      isPreviousData: false,
     })
   })
 

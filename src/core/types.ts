@@ -1,4 +1,4 @@
-import type { Query, FetchMoreOptions, RefetchOptions } from './query'
+import type { FetchMoreOptions, RefetchOptions } from './query'
 import type { QueryCache } from './queryCache'
 
 export type QueryKey =
@@ -34,11 +34,6 @@ export type QueryKeySerializerFunction = (
 ) => [string, QueryKey[]]
 
 export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
-  /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
-   * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-   */
-  enabled?: boolean | unknown
   /**
    * If `false`, failed queries will not retry by default.
    * If `true`, failed queries will retry infinitely., failureCount: num
@@ -180,13 +175,14 @@ export interface QueryResultBase<TResult, TError = unknown> {
   ) => Promise<TResult | undefined>
   isError: boolean
   isFetched: boolean
+  isFetchedAfterMount: boolean
   isFetching: boolean
   isFetchingMore?: IsFetchingMoreValue
   isIdle: boolean
   isLoading: boolean
   isStale: boolean
   isSuccess: boolean
-  query: Query<TResult, TError>
+  isPreviousData: boolean
   refetch: (options?: RefetchOptions) => Promise<TResult | undefined>
   status: QueryStatus
   updatedAt: number

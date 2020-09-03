@@ -12,9 +12,11 @@ const {
   error,
   failureCount,
   isError,
+  isFetchedAfterMount,
   isFetching,
   isIdle,
   isLoading,
+  isPreviousData,
   isStale,
   isSuccess,
   refetch,
@@ -100,8 +102,7 @@ const queryInfo = useQuery({
   - Set this to `true` or `false` to enable/disable automatic refetching on reconnect for this query.
 - `notifyOnStatusChange: Boolean`
   - Optional
-  - Whether a change to the query status should re-render a component.
-  - If set to `false`, the component will only re-render when the actual `data` or `error` changes.
+  - Set this to `false` to only re-render when there are changes to `data` or `error`.
   - Defaults to `true`.
 - `onSuccess: Function(data) => data`
   - Optional
@@ -170,6 +171,11 @@ const queryInfo = useQuery({
   - The error object for the query, if an error was thrown.
 - `isStale: Boolean`
   - Will be `true` if the cache data is stale.
+- `isPreviousData: Boolean`
+  - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
+- `isFetchedAfterMount: Boolean`
+  - Will be `true` if the query has been fetched after the component mounted.
+  - This property can be used to not show any previously cached data.
 - `isFetching: Boolean`
   - Defaults to `true` so long as `manual` is set to `false`
   - Will be `true` if the query is currently fetching, including background fetching.
