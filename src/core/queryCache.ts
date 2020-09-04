@@ -354,15 +354,11 @@ export function makeQueryCache(config?: QueryCacheConfig) {
   return new QueryCache(config)
 }
 
-export function onVisibilityOrOnlineChange(isOnlineChange: boolean) {
+export function onVisibilityOrOnlineChange(type: 'focus' | 'online') {
   if (isDocumentVisible() && isOnline()) {
     queryCaches.forEach(queryCache => {
       queryCache.getQueries().forEach(query => {
-        if (isOnlineChange) {
-          query.onOnline()
-        } else {
-          query.onWindowFocus()
-        }
+        query.onInteraction(type)
       })
     })
   }
