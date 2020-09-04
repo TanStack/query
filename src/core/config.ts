@@ -51,16 +51,16 @@ export const DEFAULT_STALE_TIME = 0
 export const DEFAULT_CACHE_TIME = 5 * 60 * 1000
 export const DEFAULT_CONFIG: ReactQueryConfig = {
   queries: {
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
+    cacheTime: DEFAULT_CACHE_TIME,
     enabled: true,
+    notifyOnStatusChange: true,
+    queryKeySerializerFn: defaultQueryKeySerializerFn,
+    refetchOnMount: true,
+    refetchOnReconnect: true,
+    refetchOnWindowFocus: true,
     retry: 3,
     retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     staleTime: DEFAULT_STALE_TIME,
-    cacheTime: DEFAULT_CACHE_TIME,
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-    refetchOnMount: true,
-    notifyOnStatusChange: true,
     structuralSharing: true,
   },
 }

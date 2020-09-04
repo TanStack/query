@@ -1,4 +1,4 @@
-import type { Query, FetchMoreOptions, RefetchOptions } from './query'
+import type { FetchMoreOptions, RefetchOptions } from './query'
 import type { QueryCache } from './queryCache'
 
 export type QueryKey =
@@ -34,11 +34,6 @@ export type QueryKeySerializerFunction = (
 ) => [string, QueryKey[]]
 
 export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
-  /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
-   * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-   */
-  enabled?: boolean | unknown
   /**
    * If `false`, failed queries will not retry by default.
    * If `true`, failed queries will retry infinitely., failureCount: num
@@ -105,6 +100,11 @@ export interface QueryObserverConfig<
    * Defaults to `true`.
    */
   refetchOnMount?: boolean
+  /**
+   * Set this to `true` to always fetch when the component mounts (regardless of staleness).
+   * Defaults to `false`.
+   */
+  forceFetchOnMount?: boolean
   /**
    * Whether a change to the query status should re-render a component.
    * If set to `false`, the component will only re-render when the actual `data` or `error` changes.
@@ -175,13 +175,14 @@ export interface QueryResultBase<TResult, TError = unknown> {
   ) => Promise<TResult | undefined>
   isError: boolean
   isFetched: boolean
+  isFetchedAfterMount: boolean
   isFetching: boolean
   isFetchingMore?: IsFetchingMoreValue
   isIdle: boolean
   isLoading: boolean
   isStale: boolean
   isSuccess: boolean
-  query: Query<TResult, TError>
+  isPreviousData: boolean
   refetch: (options?: RefetchOptions) => Promise<TResult | undefined>
   status: QueryStatus
   updatedAt: number

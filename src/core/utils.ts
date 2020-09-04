@@ -29,7 +29,7 @@ export const uid = () => _uid++
 
 export const isServer = typeof window === 'undefined'
 
-function noop(): void {
+export function noop(): void {
   return void 0
 }
 
