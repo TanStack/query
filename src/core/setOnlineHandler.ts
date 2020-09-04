@@ -2,7 +2,7 @@ import { createSetHandler, isServer } from './utils'
 import { onVisibilityOrOnlineChange } from './queryCache'
 
 export const setOnlineHandler = createSetHandler(() =>
-  onVisibilityOrOnlineChange(true)
+  onVisibilityOrOnlineChange('online')
 )
 
 setOnlineHandler(handleOnline => {

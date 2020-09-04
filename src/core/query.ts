@@ -231,33 +231,22 @@ export class Query<TResult, TError> {
     )
   }
 
-  onWindowFocus(): void {
-    if (
-      this.observers.some(
-        observer =>
-          observer.isStale() &&
-          observer.config.enabled &&
-          observer.config.refetchOnWindowFocus
-      )
-    ) {
-      this.fetch().catch(noop)
+  onInteraction(type: 'focus' | 'online'): void {
+    // Execute the first observer which is enabled,
+    // stale and wants to refetch on this interaction.
+    const observer = this.observers.find(
+      observer =>
+        observer.isStale() &&
+        observer.config.enabled &&
+        ((observer.config.refetchOnWindowFocus && type === 'focus') ||
+          (observer.config.refetchOnReconnect && type === 'online'))
+    )
+
+    if (observer) {
+      observer.fetch().catch(noop)
     }
 
-    this.continue()
-  }
-
-  onOnline(): void {
-    if (
-      this.observers.some(
-        observer =>
-          observer.isStale() &&
-          observer.config.enabled &&
-          observer.config.refetchOnReconnect
-      )
-    ) {
-      this.fetch().catch(noop)
-    }
-
+    // Continue any paused fetch
     this.continue()
   }
 

@@ -2,7 +2,7 @@ import { createSetHandler, isServer } from './utils'
 import { onVisibilityOrOnlineChange } from './queryCache'
 
 export const setFocusHandler = createSetHandler(() =>
-  onVisibilityOrOnlineChange(false)
+  onVisibilityOrOnlineChange('focus')
 )
 
 setFocusHandler(handleFocus => {

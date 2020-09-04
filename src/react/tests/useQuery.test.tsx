@@ -644,7 +644,7 @@ describe('useQuery', () => {
 
     await queryCache.prefetchQuery(key, () => 'prefetch')
 
-    await sleep(40)
+    await sleep(20)
 
     function FirstComponent() {
       const state = useQuery(key, () => 'one', {
@@ -656,7 +656,7 @@ describe('useQuery', () => {
 
     function SecondComponent() {
       const state = useQuery(key, () => 'two', {
-        staleTime: 20,
+        staleTime: 10,
       })
       states2.push(state)
       return null
@@ -673,50 +673,55 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states1.length).toBe(4))
-    await waitFor(() => expect(states2.length).toBe(4))
+    await waitFor(() =>
+      expect(states1).toMatchObject([
+        // First render
+        {
+          data: 'prefetch',
+          isStale: false,
+        },
+        // Second useQuery started fetching
+        {
+          data: 'prefetch',
+          isStale: false,
+        },
+        // Second useQuery data came in
+        {
+          data: 'two',
+          isStale: false,
+        },
+        // Data became stale after 100ms
+        {
+          data: 'two',
+          isStale: true,
+        },
+      ])
+    )
 
-    // First render
-    expect(states1[0]).toMatchObject({
-      data: 'prefetch',
-      isStale: false,
-    })
-    // Second useQuery started fetching
-    expect(states1[1]).toMatchObject({
-      data: 'prefetch',
-      isStale: false,
-    })
-    // Second useQuery data came in
-    expect(states1[2]).toMatchObject({
-      data: 'two',
-      isStale: false,
-    })
-    // Data became stale after 100ms
-    expect(states1[3]).toMatchObject({
-      data: 'two',
-      isStale: true,
-    })
-
-    // First render, data is stale
-    expect(states2[0]).toMatchObject({
-      data: 'prefetch',
-      isStale: true,
-    })
-    // Second useQuery started fetching
-    expect(states2[1]).toMatchObject({
-      data: 'prefetch',
-      isStale: true,
-    })
-    // Second useQuery data came in
-    expect(states2[2]).toMatchObject({
-      data: 'two',
-      isStale: false,
-    })
-    // Data became stale after 5ms
-    expect(states2[3]).toMatchObject({
-      data: 'two',
-      isStale: true,
-    })
+    await waitFor(() =>
+      expect(states2).toMatchObject([
+        // First render, data is stale
+        {
+          data: 'prefetch',
+          isStale: true,
+        },
+        // Second useQuery started fetching
+        {
+          data: 'prefetch',
+          isStale: true,
+        },
+        // Second useQuery data came in
+        {
+          data: 'two',
+          isStale: false,
+        },
+        // Data became stale after 5ms
+        {
+          data: 'two',
+          isStale: true,
+        },
+      ])
+    )
   })
 
   it('should re-render when a query becomes stale', async () => {
@@ -1216,6 +1221,62 @@ describe('useQuery', () => {
 
     // Check if the error has been logged in the console
     expect(consoleMock).toHaveBeenCalledWith('fetching error 4')
+
+    consoleMock.mockRestore()
+  })
+
+  it('should refetch after focus regain', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+    const consoleMock = mockConsoleError()
+
+    // make page unfocused
+    const originalVisibilityState = document.visibilityState
+    mockVisibilityState('hidden')
+
+    // set data in cache to check if the hook query fn is actually called
+    queryCache.setQueryData(key, 'prefetched')
+
+    function Page() {
+      const state = useQuery(key, () => 'data')
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+
+    act(() => {
+      // reset visibilityState to original value
+      mockVisibilityState(originalVisibilityState)
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states).toMatchObject([
+      {
+        data: 'prefetched',
+        isFetching: false,
+        isStale: false,
+      },
+      {
+        data: 'prefetched',
+        isFetching: false,
+        isStale: true,
+      },
+      {
+        data: 'prefetched',
+        isFetching: true,
+        isStale: true,
+      },
+      {
+        data: 'data',
+        isFetching: false,
+        isStale: true,
+      },
+    ])
 
     consoleMock.mockRestore()
   })
