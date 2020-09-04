@@ -29,7 +29,7 @@ describe('useQuery', () => {
       expectType<string | undefined>(fromQueryFn.data)
       expectType<unknown>(fromQueryFn.error)
 
-      // it should be possible to specify the error type
+      // it should be possible to specify the result type
       const withResult = useQuery<string>(key, () => 'test')
       expectType<string | undefined>(withResult.data)
       expectType<unknown | null>(withResult.error)
