@@ -339,7 +339,7 @@ export class QueryCache {
     }
 
     this.buildQuery<TResult, TError>(queryKey, {
-      initialStale: typeof config?.staleTime === 'undefined',
+      initialFetched: true,
       initialData: functionalUpdate(updater, undefined),
       ...config,
     })

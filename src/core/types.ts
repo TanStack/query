@@ -42,7 +42,6 @@ export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
    */
   retry?: boolean | number | ((failureCount: number, error: TError) => boolean)
   retryDelay?: number | ((retryAttempt: number) => number)
-  staleTime?: number
   cacheTime?: number
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   queryFn?: QueryFunction<TData>
@@ -50,7 +49,7 @@ export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
   queryKeySerializerFn?: QueryKeySerializerFunction
   queryFnParamsFilter?: (args: ArrayQueryKey) => ArrayQueryKey
   initialData?: TResult | InitialDataFunction<TResult>
-  initialStale?: boolean | InitialStaleFunction
+  initialFetched?: boolean
   infinite?: true
   /**
    * Set this to `false` to disable structural sharing between query results.
@@ -75,6 +74,17 @@ export interface QueryObserverConfig<
    * Defaults to `true`.
    */
   enabled?: boolean | unknown
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If set to `Infinity`, the data will never be stale.
+   */
+  staleTime?: number
+  /**
+   * If set, this will mark any `initialData` provided as stale and will likely cause it to be refetched on mount.
+   * If a function is passed, it will be called only when appropriate to resolve the `initialStale` value.
+   * This can be useful if your `initialStale` value is costly to calculate.
+   */
+  initialStale?: boolean | InitialStaleFunction
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * Defaults to `false`.

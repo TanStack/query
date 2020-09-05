@@ -83,10 +83,8 @@ export function hydrate<TResult>(
 
   for (const dehydratedQuery of queries) {
     const queryKey = dehydratedQuery.config.queryKey
-    const queryConfig: QueryConfig<TResult> = dehydratedQuery.config as QueryConfig<
-      TResult
-    >
-
+    const queryConfig = dehydratedQuery.config as QueryConfig<TResult>
+    queryConfig.initialFetched = true
     const query = queryCache.buildQuery(queryKey, queryConfig)
     query.state.updatedAt = dehydratedQuery.updatedAt
   }

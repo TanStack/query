@@ -171,7 +171,7 @@ export class QueryObserver<TResult, TError> {
     }
 
     const timeElapsed = Date.now() - updatedAt
-    const timeUntilStale = staleTime - timeElapsed
+    const timeUntilStale = staleTime - timeElapsed + 1
     const timeout = Math.max(timeUntilStale, 0)
 
     this.staleTimeoutId = setTimeout(() => {
@@ -244,7 +244,7 @@ export class QueryObserver<TResult, TError> {
       isPreviousData = true
     }
 
-    let isStale = false
+    let isStale
 
     // When the query has not been fetched yet and this is the initial render,
     // determine the staleness based on the initialStale or existence of initial data.
