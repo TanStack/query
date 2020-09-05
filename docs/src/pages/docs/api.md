@@ -83,7 +83,7 @@ const queryInfo = useQuery({
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: Int | Infinity`
-  - The time in milliseconds that cache data remains fresh. After a successful cache update, that cache data will become stale after this duration.
+  - The time in milliseconds after data is considered stale.
   - If set to `Infinity`, query will never go stale
 - `cacheTime: Int | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration.

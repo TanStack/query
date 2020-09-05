@@ -591,11 +591,11 @@ function getDefaultState<TResult, TError>(
   return {
     ...getStatusProps(initialStatus),
     error: null,
-    isFetched: false,
+    isFetched: Boolean(config.initialFetched),
     isFetching: initialStatus === QueryStatus.Loading,
     isFetchingMore: false,
     failureCount: 0,
-    fetchedCount: 0,
+    fetchedCount: config.initialFetched ? 1 : 0,
     data: initialData,
     updatedAt: Date.now(),
     canFetchMore: hasMorePages(config, initialData),

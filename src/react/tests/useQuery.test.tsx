@@ -1225,6 +1225,41 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should fetch on mount when a query was already created with setQueryData', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    queryCache.setQueryData(key, 'prefetched')
+
+    function Page() {
+      const state = useQuery(key, () => 'data')
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() =>
+      expect(states).toMatchObject([
+        {
+          data: 'prefetched',
+          isFetching: false,
+          isStale: true,
+        },
+        {
+          data: 'prefetched',
+          isFetching: true,
+          isStale: true,
+        },
+        {
+          data: 'data',
+          isFetching: false,
+          isStale: true,
+        },
+      ])
+    )
+  })
+
   it('should refetch after focus regain', async () => {
     const key = queryKey()
     const states: QueryResult<string>[] = []
@@ -1245,7 +1280,7 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await waitFor(() => expect(states.length).toBe(3))
 
     act(() => {
       // reset visibilityState to original value
@@ -1253,14 +1288,9 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitFor(() => expect(states.length).toBe(4))
+    await waitFor(() => expect(states.length).toBe(5))
 
     expect(states).toMatchObject([
-      {
-        data: 'prefetched',
-        isFetching: false,
-        isStale: false,
-      },
       {
         data: 'prefetched',
         isFetching: false,
@@ -1268,6 +1298,16 @@ describe('useQuery', () => {
       },
       {
         data: 'prefetched',
+        isFetching: true,
+        isStale: true,
+      },
+      {
+        data: 'data',
+        isFetching: false,
+        isStale: true,
+      },
+      {
+        data: 'data',
         isFetching: true,
         isStale: true,
       },
