@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "esModuleInterop": true,
+    "isolatedModules": true,
     "jsx": "react",
     "lib": ["ESNext", "dom"],
     "target": "es5",

@@ -148,11 +148,11 @@ describe('ReactQueryCacheProvider', () => {
     const customCache = makeQueryCache()
 
     function Page() {
-      const queryCache = useQueryCache()
+      const contextCache = useQueryCache()
 
       useEffect(() => {
-        caches.push(queryCache)
-      }, [queryCache])
+        caches.push(contextCache)
+      }, [contextCache])
 
       const { data } = useQuery(key, async () => {
         await sleep(10)

@@ -54,10 +54,10 @@ export function functionalUpdate<TInput, TOutput>(
 
 function stableStringifyReplacer(_key: string, value: any): unknown {
   if (typeof value === 'function') {
-    throw new Error('Cannot stringify non JSON value')
+    throw new Error()
   }
 
-  if (isObject(value)) {
+  if (isPlainObject(value)) {
     return Object.keys(value)
       .sort()
       .reduce((result, key) => {
@@ -89,6 +89,10 @@ export function deepIncludes(a: any, b: any): boolean {
   return false
 }
 
+export function isValidTimeout(value: any): value is number {
+  return typeof value === 'number' && value >= 0 && value !== Infinity
+}
+
 export function isDocumentVisible(): boolean {
   // document global can be unavailable in react native
   if (typeof document === 'undefined') {
@@ -109,12 +113,12 @@ export function getQueryArgs<TResult, TError, TOptions = undefined>(
   let config: QueryConfig<TResult, TError> | undefined
   let options: TOptions
 
-  if (isObject(args[0])) {
+  if (isPlainObject(args[0])) {
     queryKey = args[0].queryKey
     queryFn = args[0].queryFn
     config = args[0].config
     options = args[1]
-  } else if (isObject(args[1])) {
+  } else if (isPlainObject(args[1])) {
     queryKey = args[0]
     config = args[1]
     options = args[2]
@@ -173,12 +177,8 @@ export function replaceEqualDeep(a: any, b: any): any {
   return b
 }
 
-export function isObject(a: unknown): boolean {
-  return a && typeof a === 'object' && !Array.isArray(a)
-}
-
 // Copied from: https://github.com/jonschlinkert/is-plain-object
-function isPlainObject(o: any): o is Object {
+export function isPlainObject(o: any): o is Object {
   if (!hasObjectPrototype(o)) {
     return false
   }

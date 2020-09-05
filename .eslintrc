@@ -25,6 +25,7 @@
       {
         "ignoreParameters": true
       }
-    ]
+    ],
+    "no-shadow": "error"
   }
 }

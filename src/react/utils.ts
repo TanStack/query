@@ -2,12 +2,6 @@ import React from 'react'
 
 import { isServer } from '../core/utils'
 
-export function useGetLatest<T>(obj: T): () => T {
-  const ref = React.useRef<T>(obj)
-  ref.current = obj
-  return React.useCallback(() => ref.current, [])
-}
-
 function useIsMounted(): () => boolean {
   const mountedRef = React.useRef(false)
   const isMounted = React.useCallback(() => mountedRef.current, [])

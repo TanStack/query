@@ -297,6 +297,88 @@ describe('useQuery', () => {
     })
   })
 
+  it('should call onSuccess after a query has been fetched', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  })
+
+  it('should call onError after a query has been fetched with an error', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+    const onError = jest.fn()
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const state = useQuery(key, () => Promise.reject('error'), {
+        retry: false,
+        onError,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+    expect(onError).toHaveBeenCalledTimes(1)
+    expect(onError).toHaveBeenCalledWith('error')
+    consoleMock.mockRestore()
+  })
+
+  it('should call onSettled after a query has been fetched', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+    const onSettled = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSettled })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith('data', null)
+  })
+
+  it('should call onSettled after a query has been fetched with an error', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+    const onSettled = jest.fn()
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const state = useQuery(key, () => Promise.reject('error'), {
+        retry: false,
+        onSettled,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
+    consoleMock.mockRestore()
+  })
+
   // https://github.com/tannerlinsley/react-query/issues/896
   it('should fetch data in Strict mode when refetchOnMount is false', async () => {
     const key = queryKey()
@@ -738,17 +820,13 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states.length).toBe(3))
-
-    expect(states[0]).toMatchObject({
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      isStale: false,
-    })
-    expect(states[2]).toMatchObject({
-      isStale: true,
-    })
+    await waitFor(() =>
+      expect(states).toMatchObject([
+        { isStale: true },
+        { isStale: false },
+        { isStale: true },
+      ])
+    )
   })
 
   it('should not re-render when a query status changes and notifyOnStatusChange is false', async () => {
@@ -1134,7 +1212,7 @@ describe('useQuery', () => {
         [string]
       >(key, queryFn, {
         retryDelay: 1,
-        retry: (_failureCount, error) => error !== 'NoRetry',
+        retry: (_failureCount, err) => err !== 'NoRetry',
       })
 
       return (

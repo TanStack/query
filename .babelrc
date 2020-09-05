@@ -11,7 +11,15 @@
     "@babel/preset-typescript",
     "@babel/react"
   ],
-  "plugins": ["babel-plugin-transform-async-to-promises"],
+  "plugins": [
+    [
+      "const-enum",
+      {
+        "transform": "constObject"
+      }
+    ],
+    "babel-plugin-transform-async-to-promises"
+  ],
   "env": {
     "test": {
       "presets": [
@@ -24,7 +32,15 @@
           }
         ]
       ],
-      "plugins": ["babel-plugin-transform-async-to-promises"]
+      "plugins": [
+        [
+          "const-enum",
+          {
+            "transform": "constObject"
+          }
+        ],
+        "babel-plugin-transform-async-to-promises"
+      ]
     }
   }
 }

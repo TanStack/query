@@ -134,8 +134,7 @@ describe('dehydration and rehydration', () => {
     // Exact shape is not important here, just that staleTime and cacheTime
     // (and any future other config) is not included in it
     const dehydratedQuery = dehydrated?.queries.find(
-      dehydratedQuery =>
-        (dehydratedQuery?.config?.queryKey as Array<string>)[0] === 'string'
+      query => (query?.config?.queryKey as Array<string>)[0] === 'string'
     )
     expect(dehydratedQuery).toBeTruthy()
     expect(dehydratedQuery?.config.cacheTime).toBe(undefined)
@@ -180,8 +179,7 @@ describe('dehydration and rehydration', () => {
     // This is testing implementation details that can change and are not
     // part of the public API, but is important for keeping the payload small
     const dehydratedQuery = dehydrated?.queries.find(
-      dehydratedQuery =>
-        (dehydratedQuery?.config?.queryKey as Array<string>)[0] === 'string'
+      query => (query?.config?.queryKey as Array<string>)[0] === 'string'
     )
     expect(dehydratedQuery).toBeUndefined()
 

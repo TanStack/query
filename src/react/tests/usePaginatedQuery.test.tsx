@@ -11,13 +11,10 @@ describe('usePaginatedQuery', () => {
     const states: PaginatedQueryResult<number>[] = []
 
     function Page() {
-      const state = usePaginatedQuery(
-        [key, 1],
-        async (_queryName, page: number) => {
-          await sleep(10)
-          return page
-        }
-      )
+      const state = usePaginatedQuery([key, 1], async (_, page: number) => {
+        await sleep(10)
+        return page
+      })
 
       states.push(state)
 
@@ -88,9 +85,9 @@ describe('usePaginatedQuery', () => {
       const [page, setPage] = React.useState(1)
       const { resolvedData = 'undefined' } = usePaginatedQuery(
         [key, page],
-        async (_queryName: string, page: number) => {
+        async (_: string, pageArg: number) => {
           await sleep(10)
-          return page
+          return pageArg
         }
       )
 
@@ -125,9 +122,9 @@ describe('usePaginatedQuery', () => {
 
       const { resolvedData } = usePaginatedQuery(
         [key, params],
-        async (_queryName: string, { page }: typeof params) => {
+        async (_: string, paramsArg: typeof params) => {
           await sleep(10)
-          return page
+          return paramsArg.page
         },
         { initialData: 0 }
       )
@@ -167,9 +164,9 @@ describe('usePaginatedQuery', () => {
 
       const { resolvedData, status } = usePaginatedQuery(
         [key, params],
-        async (_queryName: string, { page }: typeof params) => {
+        async (_: string, paramsArg: typeof params) => {
           await sleep(10)
-          return page
+          return paramsArg.page
         },
         { initialData: 0 }
       )
@@ -204,9 +201,9 @@ describe('usePaginatedQuery', () => {
       const [page, setPage] = React.useState(1)
       const { resolvedData = 'undefined' } = usePaginatedQuery(
         [key, searchTerm, page],
-        async (_queryName: string, searchTerm: string, page: number) => {
+        async (_: string, searchTermArg: string, pageArg: number) => {
           await sleep(10)
-          return `${searchTerm} ${page}`
+          return `${searchTermArg} ${pageArg}`
         },
         {
           enabled: searchTerm,
@@ -271,9 +268,9 @@ describe('usePaginatedQuery', () => {
 
       const { resolvedData } = usePaginatedQuery(
         [key, params],
-        async (_queryName: string, { page }: typeof params) => {
+        async (_: string, paramsArg: typeof params) => {
           await sleep(10)
-          return page
+          return paramsArg.page
         },
         {
           initialData: 0,
