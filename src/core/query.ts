@@ -65,6 +65,10 @@ const enum ActionType {
   Error,
 }
 
+interface SetDataOptions {
+  updatedAt?: number
+}
+
 interface FailedAction {
   type: ActionType.Failed
 }
@@ -78,6 +82,7 @@ interface SuccessAction<TResult> {
   type: ActionType.Success
   data: TResult | undefined
   canFetchMore?: boolean
+  updatedAt?: number
 }
 
 interface ErrorAction<TError> {
@@ -175,7 +180,10 @@ export class Query<TResult, TError> {
     }
   }
 
-  setData(updater: Updater<TResult | undefined, TResult>): void {
+  setData(
+    updater: Updater<TResult | undefined, TResult>,
+    options?: SetDataOptions
+  ): void {
     const prevData = this.state.data
 
     // Get the new data
@@ -199,6 +207,7 @@ export class Query<TResult, TError> {
       type: ActionType.Success,
       data,
       canFetchMore,
+      updatedAt: options?.updatedAt,
     })
   }
 
@@ -630,7 +639,7 @@ export function queryReducer<TResult, TError>(
         isFetching: false,
         isFetchingMore: false,
         canFetchMore: action.canFetchMore,
-        updatedAt: Date.now(),
+        updatedAt: action.updatedAt ?? Date.now(),
         failureCount: 0,
       }
     case ActionType.Error:

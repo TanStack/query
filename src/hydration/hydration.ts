@@ -3,14 +3,14 @@ import { DEFAULT_CACHE_TIME } from '../core/config'
 import type { Query, QueryCache, QueryKey, QueryConfig } from 'react-query'
 
 export interface DehydratedQueryConfig {
-  queryKey: QueryKey
   cacheTime?: number
-  initialData?: unknown
 }
 
 export interface DehydratedQuery {
-  config: DehydratedQueryConfig
+  queryKey: QueryKey
+  data?: unknown
   updatedAt: number
+  config: DehydratedQueryConfig
 }
 
 export interface DehydratedState {
@@ -28,9 +28,8 @@ function dehydrateQuery<TResult, TError = unknown>(
   query: Query<TResult, TError>
 ): DehydratedQuery {
   const dehydratedQuery: DehydratedQuery = {
-    config: {
-      queryKey: query.queryKey,
-    },
+    config: {},
+    queryKey: query.queryKey,
     updatedAt: query.state.updatedAt,
   }
 
@@ -44,7 +43,7 @@ function dehydrateQuery<TResult, TError = unknown>(
     dehydratedQuery.config.cacheTime = query.cacheTime
   }
   if (query.state.data !== undefined) {
-    dehydratedQuery.config.initialData = query.state.data
+    dehydratedQuery.data = query.state.data
   }
 
   return dehydratedQuery
@@ -82,10 +81,22 @@ export function hydrate<TResult>(
   const queries = (dehydratedState as DehydratedState).queries || []
 
   for (const dehydratedQuery of queries) {
-    const queryKey = dehydratedQuery.config.queryKey
+    const queryKey = dehydratedQuery.queryKey
     const queryConfig = dehydratedQuery.config as QueryConfig<TResult>
-    queryConfig.initialFetched = true
-    const query = queryCache.buildQuery(queryKey, queryConfig)
-    query.state.updatedAt = dehydratedQuery.updatedAt
+
+    let query = queryCache.getQuery<TResult>(queryKey)
+
+    if (query) {
+      if (query.state.updatedAt < dehydratedQuery.updatedAt) {
+        query.setData(dehydratedQuery.data as TResult, {
+          updatedAt: dehydratedQuery.updatedAt,
+        })
+      }
+    } else {
+      query = queryCache.buildQuery<TResult>(queryKey, queryConfig)
+      query.setData(dehydratedQuery.data as TResult, {
+        updatedAt: dehydratedQuery.updatedAt,
+      })
+    }
   }
 }

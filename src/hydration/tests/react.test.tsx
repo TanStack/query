@@ -92,7 +92,7 @@ describe('React hydration', () => {
 
       const intermediateCache = makeQueryCache()
       await intermediateCache.prefetchQuery('string', () =>
-        dataQuery('should not change')
+        dataQuery('should change')
       )
       await intermediateCache.prefetchQuery('added string', dataQuery)
       const dehydrated = dehydrate(intermediateCache)
@@ -107,11 +107,11 @@ describe('React hydration', () => {
         </ReactQueryCacheProvider>
       )
 
-      // Existing query data should not be overwritten,
-      // so this should still be the original data
+      // Existing query data should be overwritten if older,
+      // so this should have changed
       await waitForMs(10)
-      rendered.getByText('string')
-      // But new query data should be available immediately
+      rendered.getByText('should change')
+      // New query data should be available immediately
       rendered.getByText('added string')
 
       clientQueryCache.clear({ notify: false })

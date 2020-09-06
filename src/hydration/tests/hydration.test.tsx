@@ -43,24 +43,24 @@ describe('dehydration and rehydration', () => {
 
     const fetchDataAfterHydration = jest.fn()
     await hydrationQueryCache.prefetchQuery('string', fetchDataAfterHydration, {
-      staleTime: 100,
+      staleTime: 1000,
     })
     await hydrationQueryCache.prefetchQuery('number', fetchDataAfterHydration, {
-      staleTime: 100,
+      staleTime: 1000,
     })
     await hydrationQueryCache.prefetchQuery(
       'boolean',
       fetchDataAfterHydration,
-      { staleTime: 100 }
+      { staleTime: 1000 }
     )
     await hydrationQueryCache.prefetchQuery('null', fetchDataAfterHydration, {
-      staleTime: 100,
+      staleTime: 1000,
     })
     await hydrationQueryCache.prefetchQuery('array', fetchDataAfterHydration, {
-      staleTime: 100,
+      staleTime: 1000,
     })
     await hydrationQueryCache.prefetchQuery('nested', fetchDataAfterHydration, {
-      staleTime: 100,
+      staleTime: 1000,
     })
     expect(fetchDataAfterHydration).toHaveBeenCalledTimes(0)
 
@@ -134,7 +134,7 @@ describe('dehydration and rehydration', () => {
     // Exact shape is not important here, just that staleTime and cacheTime
     // (and any future other config) is not included in it
     const dehydratedQuery = dehydrated?.queries.find(
-      query => (query?.config?.queryKey as Array<string>)[0] === 'string'
+      query => (query?.queryKey as Array<string>)[0] === 'string'
     )
     expect(dehydratedQuery).toBeTruthy()
     expect(dehydratedQuery?.config.cacheTime).toBe(undefined)
@@ -179,7 +179,7 @@ describe('dehydration and rehydration', () => {
     // This is testing implementation details that can change and are not
     // part of the public API, but is important for keeping the payload small
     const dehydratedQuery = dehydrated?.queries.find(
-      query => (query?.config?.queryKey as Array<string>)[0] === 'string'
+      query => (query?.queryKey as Array<string>)[0] === 'string'
     )
     expect(dehydratedQuery).toBeUndefined()
 
@@ -192,6 +192,54 @@ describe('dehydration and rehydration', () => {
     hydrate(hydrationQueryCache, parsed)
     expect(hydrationQueryCache.getQuery('string')).toBeUndefined()
     expect(hydrationQueryCache.getQuery('number')?.state.data).toBe(1)
+
+    queryCache.clear({ notify: false })
+    hydrationQueryCache.clear({ notify: false })
+  })
+
+  test('should not overwrite query in cache if hydrated query is older', async () => {
+    const queryCache = makeQueryCache()
+    await queryCache.prefetchQuery('string', () => fetchData('string-older', 5))
+    const dehydrated = dehydrate(queryCache)
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+
+    const parsed = JSON.parse(stringified)
+    const hydrationQueryCache = makeQueryCache()
+    await hydrationQueryCache.prefetchQuery('string', () =>
+      fetchData('string-newer', 5)
+    )
+
+    hydrate(hydrationQueryCache, parsed)
+    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe(
+      'string-newer'
+    )
+
+    queryCache.clear({ notify: false })
+    hydrationQueryCache.clear({ notify: false })
+  })
+
+  test('should overwrite query in cache if hydrated query is newer', async () => {
+    const hydrationQueryCache = makeQueryCache()
+    await hydrationQueryCache.prefetchQuery('string', () =>
+      fetchData('string-older', 5)
+    )
+
+    // ---
+
+    const queryCache = makeQueryCache()
+    await queryCache.prefetchQuery('string', () => fetchData('string-newer', 5))
+    const dehydrated = dehydrate(queryCache)
+    const stringified = JSON.stringify(dehydrated)
+
+    // ---
+
+    const parsed = JSON.parse(stringified)
+    hydrate(hydrationQueryCache, parsed)
+    expect(hydrationQueryCache.getQuery('string')?.state.data).toBe(
+      'string-newer'
+    )
 
     queryCache.clear({ notify: false })
     hydrationQueryCache.clear({ notify: false })
