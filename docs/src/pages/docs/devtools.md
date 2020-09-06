@@ -18,6 +18,7 @@ $ yarn add react-query-devtools
 ```
 
 Using React Native? Try [react-query-native-devtools](https://github.com/bgaleotti/react-query-native-devtools) instead.
+
 Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
 
 ```js
