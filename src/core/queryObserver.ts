@@ -1,4 +1,9 @@
-import { getStatusProps, isServer, isDocumentVisible } from './utils'
+import {
+  getStatusProps,
+  isServer,
+  isDocumentVisible,
+  isValidTimeout,
+} from './utils'
 import type { QueryResult, QueryObserverConfig } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
 import type { QueryCache } from './queryCache'
@@ -90,16 +95,10 @@ export class QueryObserver<TResult, TError> {
     // Update refetch interval if needed
     if (
       config.enabled !== prevConfig.enabled ||
-      config.refetchInterval !== prevConfig.refetchInterval ||
-      config.refetchIntervalInBackground !==
-        prevConfig.refetchIntervalInBackground
+      config.refetchInterval !== prevConfig.refetchInterval
     ) {
       this.updateRefetchInterval()
     }
-  }
-
-  isStale(): boolean {
-    return this.currentResult.isStale
   }
 
   getCurrentQuery(): Query<TResult, TError> {
@@ -144,14 +143,6 @@ export class QueryObserver<TResult, TError> {
     }
   }
 
-  private updateIsStale(): void {
-    const isStale = this.currentQuery.isStaleByTime(this.config.staleTime)
-    if (isStale !== this.currentResult.isStale) {
-      this.updateResult()
-      this.notify()
-    }
-  }
-
   private notify(): void {
     this.updateListener?.(this.currentResult)
   }
@@ -163,19 +154,19 @@ export class QueryObserver<TResult, TError> {
 
     this.clearStaleTimeout()
 
-    const staleTime = this.config.staleTime || 0
-    const { isStale, updatedAt } = this.currentResult
-
-    if (isStale || staleTime === Infinity) {
+    if (this.currentResult.isStale || !isValidTimeout(this.config.staleTime)) {
       return
     }
 
-    const timeElapsed = Date.now() - updatedAt
-    const timeUntilStale = staleTime - timeElapsed + 1
+    const timeElapsed = Date.now() - this.currentResult.updatedAt
+    const timeUntilStale = this.config.staleTime - timeElapsed + 1
     const timeout = Math.max(timeUntilStale, 0)
 
     this.staleTimeoutId = setTimeout(() => {
-      this.updateIsStale()
+      if (!this.currentResult.isStale) {
+        this.currentResult = { ...this.currentResult, isStale: true }
+        this.notify()
+      }
     }, timeout)
   }
 
@@ -186,12 +177,7 @@ export class QueryObserver<TResult, TError> {
 
     this.clearRefetchInterval()
 
-    if (
-      !this.config.enabled ||
-      !this.config.refetchInterval ||
-      this.config.refetchInterval < 0 ||
-      this.config.refetchInterval === Infinity
-    ) {
+    if (!this.config.enabled || !isValidTimeout(this.config.refetchInterval)) {
       return
     }
 
@@ -309,6 +295,8 @@ export class QueryObserver<TResult, TError> {
   }
 
   onQueryUpdate(action: Action<TResult, TError>): void {
+    const { type } = action
+
     // Store current result and get new result
     const prevResult = this.currentResult
     this.updateResult()
@@ -317,11 +305,11 @@ export class QueryObserver<TResult, TError> {
 
     // We need to check the action because the state could have
     // transitioned from success to success in case of `setQueryData`.
-    if (action.type === 'Success' && currentResult.isSuccess) {
+    if (type === 2) {
       config.onSuccess?.(currentResult.data!)
       config.onSettled?.(currentResult.data!, null)
       this.updateTimers()
-    } else if (action.type === 'Error' && currentResult.isError) {
+    } else if (type === 3) {
       config.onError?.(currentResult.error!)
       config.onSettled?.(undefined, currentResult.error!)
       this.updateTimers()

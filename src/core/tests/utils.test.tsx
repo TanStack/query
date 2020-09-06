@@ -1,4 +1,9 @@
-import { deepEqual, replaceEqualDeep } from '../utils'
+import {
+  deepEqual,
+  replaceEqualDeep,
+  deepIncludes,
+  isPlainObject,
+} from '../utils'
 import { setConsole, queryCache } from '..'
 import { queryKey } from '../../react/tests/utils'
 
@@ -27,6 +32,38 @@ describe('core/utils', () => {
     expect(mockConsole.error).toHaveBeenCalled()
 
     setConsole(console)
+  })
+
+  describe('isPlainObject', () => {
+    it('should return `true` for a plain object', () => {
+      expect(isPlainObject({})).toEqual(true)
+    })
+
+    it('should return `false` for an array', () => {
+      expect(isPlainObject([])).toEqual(false)
+    })
+
+    it('should return `false` for null', () => {
+      expect(isPlainObject(null)).toEqual(false)
+    })
+
+    it('should return `false` for undefined', () => {
+      expect(isPlainObject(undefined)).toEqual(false)
+    })
+  })
+
+  describe('deepIncludes', () => {
+    it('should return `true` if a includes b', () => {
+      const a = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
+      const b = { a: { b: 'b' }, c: 'c', d: [] }
+      expect(deepIncludes(a, b)).toEqual(true)
+    })
+
+    it('should return `false` if a does not include b', () => {
+      const a = { a: { b: 'b' }, c: 'c', d: [] }
+      const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
+      expect(deepIncludes(a, b)).toEqual(false)
+    })
   })
 
   describe('deepEqual', () => {

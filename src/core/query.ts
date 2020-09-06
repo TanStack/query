@@ -9,6 +9,7 @@ import {
   isDocumentVisible,
   isOnline,
   isServer,
+  isValidTimeout,
   noop,
   replaceEqualDeep,
   sleep,
@@ -25,14 +26,6 @@ import type { QueryCache } from './queryCache'
 import { QueryObserver, UpdateListener } from './queryObserver'
 
 // TYPES
-
-interface QueryInitConfig<TResult, TError> {
-  queryCache: QueryCache
-  queryKey: ArrayQueryKey
-  queryHash: string
-  config: QueryConfig<TResult, TError>
-  notifyGlobalListeners: (query: Query<TResult, TError>) => void
-}
 
 export interface QueryState<TResult, TError> {
   canFetchMore?: boolean
@@ -65,11 +58,11 @@ export interface RefetchOptions {
   throwOnError?: boolean
 }
 
-export enum ActionType {
-  Failed = 'Failed',
-  Fetch = 'Fetch',
-  Success = 'Success',
-  Error = 'Error',
+const enum ActionType {
+  Failed,
+  Fetch,
+  Success,
+  Error,
 }
 
 interface FailedAction {
@@ -114,17 +107,19 @@ export class Query<TResult, TError> {
   private cancelFetch?: () => void
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
-  private notifyGlobalListeners: (query: Query<TResult, TError>) => void
 
-  constructor(init: QueryInitConfig<TResult, TError>) {
-    this.config = init.config
-    this.queryCache = init.queryCache
-    this.queryKey = init.queryKey
-    this.queryHash = init.queryHash
-    this.notifyGlobalListeners = init.notifyGlobalListeners
+  constructor(
+    queryKey: ArrayQueryKey,
+    queryHash: string,
+    config: QueryConfig<TResult, TError>
+  ) {
+    this.config = config
+    this.queryKey = queryKey
+    this.queryHash = queryHash
+    this.queryCache = config.queryCache!
     this.observers = []
-    this.state = getDefaultState(init.config)
-    this.cacheTime = init.config.cacheTime!
+    this.state = getDefaultState(config)
+    this.cacheTime = config.cacheTime!
     this.scheduleGc()
   }
 
@@ -140,7 +135,7 @@ export class Query<TResult, TError> {
       observer.onQueryUpdate(action)
     })
 
-    this.notifyGlobalListeners(this)
+    this.queryCache.notifyGlobalListeners(this)
   }
 
   private scheduleGc(): void {
@@ -150,7 +145,7 @@ export class Query<TResult, TError> {
 
     this.clearGcTimeout()
 
-    if (this.cacheTime === Infinity || this.observers.length > 0) {
+    if (this.observers.length > 0 || !isValidTimeout(this.cacheTime)) {
       return
     }
 
@@ -222,7 +217,7 @@ export class Query<TResult, TError> {
   }
 
   isStale(): boolean {
-    return this.observers.some(observer => observer.isStale())
+    return this.observers.some(observer => observer.getCurrentResult().isStale)
   }
 
   isStaleByTime(staleTime = 0): boolean {
@@ -234,16 +229,16 @@ export class Query<TResult, TError> {
   onInteraction(type: 'focus' | 'online'): void {
     // Execute the first observer which is enabled,
     // stale and wants to refetch on this interaction.
-    const observer = this.observers.find(
+    const staleObserver = this.observers.find(
       observer =>
-        observer.isStale() &&
+        observer.getCurrentResult().isStale &&
         observer.config.enabled &&
         ((observer.config.refetchOnWindowFocus && type === 'focus') ||
           (observer.config.refetchOnReconnect && type === 'online'))
     )
 
-    if (observer) {
-      observer.fetch().catch(noop)
+    if (staleObserver) {
+      staleObserver.fetch().catch(noop)
     }
 
     // Continue any paused fetch
@@ -280,9 +275,9 @@ export class Query<TResult, TError> {
       if (this.isTransportCancelable) {
         this.cancel()
       }
-    }
 
-    this.scheduleGc()
+      this.scheduleGc()
+    }
   }
 
   async refetch(

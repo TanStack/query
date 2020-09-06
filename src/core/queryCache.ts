@@ -4,7 +4,7 @@ import {
   functionalUpdate,
   getQueryArgs,
   isDocumentVisible,
-  isObject,
+  isPlainObject,
   isOnline,
   isServer,
 } from './utils'
@@ -77,18 +77,15 @@ export class QueryCache {
 
   constructor(config?: QueryCacheConfig) {
     this.config = config || {}
-
-    // A frozen cache does not add new queries to the cache
     this.globalListeners = []
-
     this.queries = {}
     this.queriesArray = []
     this.isFetching = 0
   }
 
-  private notifyGlobalListeners(query?: Query<any, any>) {
+  notifyGlobalListeners(query?: Query<any, any>) {
     this.isFetching = this.getQueries().reduce(
-      (acc, query) => (query.state.isFetching ? acc + 1 : acc),
+      (acc, q) => (q.state.isFetching ? acc + 1 : acc),
       0
     )
 
@@ -228,16 +225,9 @@ export class QueryCache {
       return this.queries[queryHash] as Query<TResult, TError>
     }
 
-    const query = new Query<TResult, TError>({
-      queryCache: this,
-      queryKey,
-      queryHash,
-      config,
-      notifyGlobalListeners: query => {
-        this.notifyGlobalListeners(query)
-      },
-    })
+    const query = new Query<TResult, TError>(queryKey, queryHash, config)
 
+    // A frozen cache does not add new queries to the cache
     if (!this.config.frozen) {
       this.queries[queryHash] = query
       this.queriesArray.push(query)
@@ -291,7 +281,7 @@ export class QueryCache {
     ...args: any[]
   ): Promise<TResult | undefined> {
     if (
-      isObject(args[1]) &&
+      isPlainObject(args[1]) &&
       (args[1].hasOwnProperty('throwOnError') ||
         args[1].hasOwnProperty('force'))
     ) {
@@ -312,9 +302,11 @@ export class QueryCache {
       ...config,
     })
 
-    let query
     try {
-      query = this.buildQuery<TResult, TError>(queryKey, configWithoutRetry)
+      const query = this.buildQuery<TResult, TError>(
+        queryKey,
+        configWithoutRetry
+      )
       if (options?.force || query.isStaleByTime(config.staleTime)) {
         await query.fetch(undefined, configWithoutRetry)
       }

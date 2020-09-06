@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useDefaultedMutationConfig } from './useDefaultedMutationConfig'
-import { useGetLatest, useMountedCallback } from './utils'
+import { useMountedCallback } from './utils'
 import { Console, uid, getStatusProps } from '../core/utils'
 import {
   QueryStatus,
@@ -9,6 +9,7 @@ import {
   MutationFunction,
   MutationConfig,
   MutateConfig,
+  MutationResult,
 } from '../core/types'
 
 // TYPES
@@ -25,11 +26,11 @@ interface State<TResult, TError> {
   isError: boolean
 }
 
-enum ActionType {
-  Reset = 'Reset',
-  Loading = 'Loading',
-  Resolve = 'Resolve',
-  Reject = 'Reject',
+const enum ActionType {
+  Reset,
+  Loading,
+  Resolve,
+  Reject,
 }
 
 interface ResetAction {
@@ -58,11 +59,13 @@ type Action<TResult, TError> =
 
 // HOOK
 
-const getDefaultState = (): State<any, any> => ({
-  ...getStatusProps(QueryStatus.Idle),
-  data: undefined,
-  error: null,
-})
+function getDefaultState(): State<any, any> {
+  return {
+    ...getStatusProps(QueryStatus.Idle),
+    data: undefined,
+    error: null,
+  }
+}
 
 function mutationReducer<TResult, TError>(
   state: State<TResult, TError>,
@@ -104,26 +107,26 @@ export function useMutation<
   config: MutationConfig<TResult, TError, TVariables, TSnapshot> = {}
 ): MutationResultPair<TResult, TError, TVariables, TSnapshot> {
   config = useDefaultedMutationConfig(config)
-  const getConfig = useGetLatest(config)
 
   const [state, unsafeDispatch] = React.useReducer(
     mutationReducer as Reducer<State<TResult, TError>, Action<TResult, TError>>,
     null,
     getDefaultState
   )
-
   const dispatch = useMountedCallback(unsafeDispatch)
 
-  const getMutationFn = useGetLatest(mutationFn)
-
   const latestMutationRef = React.useRef<number>()
+  const latestMutationFnRef = React.useRef(mutationFn)
+  latestMutationFnRef.current = mutationFn
+  const latestConfigRef = React.useRef(config)
+  latestConfigRef.current = config
 
   const mutate = React.useCallback(
     async (
       variables?: TVariables,
       mutateConfig: MutateConfig<TResult, TError, TVariables, TSnapshot> = {}
     ): Promise<TResult | undefined> => {
-      const config = getConfig()
+      const latestConfig = latestConfigRef.current
 
       const mutationId = uid()
       latestMutationRef.current = mutationId
@@ -134,25 +137,26 @@ export function useMutation<
 
       try {
         dispatch({ type: ActionType.Loading })
-        snapshotValue = (await config.onMutate?.(variables!)) as TSnapshot
+        snapshotValue = (await latestConfig.onMutate?.(variables!)) as TSnapshot
 
-        const data = await getMutationFn()(variables!)
+        const latestMutationFn = latestMutationFnRef.current
+        const data = await latestMutationFn(variables!)
 
         if (isLatest()) {
           dispatch({ type: ActionType.Resolve, data })
         }
 
-        await config.onSuccess?.(data, variables!)
+        await latestConfig.onSuccess?.(data, variables!)
         await mutateConfig.onSuccess?.(data, variables!)
-        await config.onSettled?.(data, null, variables!)
+        await latestConfig.onSettled?.(data, null, variables!)
         await mutateConfig.onSettled?.(data, null, variables!)
 
         return data
       } catch (error) {
         Console.error(error)
-        await config.onError?.(error, variables!, snapshotValue!)
+        await latestConfig.onError?.(error, variables!, snapshotValue!)
         await mutateConfig.onError?.(error, variables!, snapshotValue!)
-        await config.onSettled?.(
+        await latestConfig.onSettled?.(
           undefined,
           error,
           variables!,
@@ -169,25 +173,30 @@ export function useMutation<
           dispatch({ type: ActionType.Reject, error })
         }
 
-        if (mutateConfig.throwOnError ?? config.throwOnError) {
+        if (mutateConfig.throwOnError || latestConfig.throwOnError) {
           throw error
         }
       }
     },
-    [dispatch, getConfig, getMutationFn]
+    [dispatch]
   )
+
+  React.useEffect(() => {
+    const latestConfig = latestConfigRef.current
+    const { suspense, useErrorBoundary } = latestConfig
+    if ((useErrorBoundary ?? suspense) && state.error) {
+      throw state.error
+    }
+  }, [state.error])
 
   const reset = React.useCallback(() => {
     dispatch({ type: ActionType.Reset })
   }, [dispatch])
 
-  React.useEffect(() => {
-    const { suspense, useErrorBoundary } = getConfig()
+  const result: MutationResult<TResult, TError> = {
+    ...state,
+    reset,
+  }
 
-    if ((useErrorBoundary ?? suspense) && state.error) {
-      throw state.error
-    }
-  }, [getConfig, state.error])
-
-  return [mutate, { ...state, reset }]
+  return [mutate, result]
 }

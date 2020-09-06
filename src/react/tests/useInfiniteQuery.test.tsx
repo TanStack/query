@@ -119,9 +119,9 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery(
         [key, order],
-        async (_key, order, page = 0) => {
+        async (_key, orderArg, pageArg = 0) => {
           await sleep(10)
-          return `${page}-${order}`
+          return `${pageArg}-${orderArg}`
         },
         {
           getFetchMore: (_lastGroup, _allGroups) => 1,
@@ -765,7 +765,7 @@ describe('useInfiniteQuery', () => {
     const items = genItems(15)
     const limit = 3
 
-    const fetchItems = async (cursor = 0, ts: number) => {
+    const fetchItemsWithLimit = async (cursor = 0, ts: number) => {
       await sleep(10)
       return {
         nextId: cursor + limit,
@@ -787,7 +787,8 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery<Result, Error, [string, number]>(
         key,
-        (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
+        (_key, nextId = 0) =>
+          fetchItemsWithLimit(nextId, fetchCountRef.current++),
         {
           getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
         }

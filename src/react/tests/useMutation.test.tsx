@@ -89,7 +89,7 @@ describe('useMutation', () => {
 
     function Page() {
       const [mutate] = useMutation(
-        async ({ count }: { count: number }) => Promise.resolve(count),
+        async (vars: { count: number }) => Promise.resolve(vars.count),
         {
           onSuccess: data => onSuccessMock(data),
           onSettled: data => onSettledMock(data),
@@ -136,8 +136,10 @@ describe('useMutation', () => {
 
     function Page() {
       const [mutate] = useMutation(
-        ({ count }: { count: number }) => {
-          const error = new Error(`Expected mock error. All is well! ${count}`)
+        (vars: { count: number }) => {
+          const error = new Error(
+            `Expected mock error. All is well! ${vars.count}`
+          )
           error.stack = ''
           return Promise.reject(error)
         },
