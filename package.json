@@ -42,7 +42,8 @@
     "dist",
     "types",
     "scripts",
-    "hydration.js"
+    "hydration.js",
+    "hydration.d.ts"
   ],
   "dependencies": {},
   "peerDependencies": {
