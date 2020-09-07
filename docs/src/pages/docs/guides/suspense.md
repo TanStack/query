@@ -43,23 +43,57 @@ In addition to queries behaving differently in suspense mode, mutations also beh
 
 ## Resetting Error Boundaries
 
-Whether you are using **suspense** or **useErrorBoundaries** in your queries, you will need to know how to use the `queryCache.resetErrorBoundaries` function to let queries know that you want them to try again when you render them again.
+Whether you are using **suspense** or **useErrorBoundaries** in your queries, you will need a way to let queries know that you want to try again when re-rendering after some error occured.
 
-How you trigger this function is up to you, but the most common use case is to do it in something like `react-error-boundary`'s `onReset` callback:
+Query errors can be reset with the `ReactQueryErrorResetBoundary` component or with the `useErrorResetBoundary` hook.
+
+When using the component it will reset any query errors within the boundaries of the component:
 
 ```js
-import { queryCache } from "react-query";
-import { ErrorBoundary } from "react-error-boundary";
+import { ReactQueryErrorResetBoundary } from 'react-query'
+import { ErrorBoundary } from 'react-error-boundary'
 
-<ErrorBoundary
-  onReset={() => queryCache.resetErrorBoundaries()}
-  fallbackRender={({ error, resetErrorBoundary }) => (
-    <div>
-      There was an error!
-      <Button onClick={() => resetErrorBoundary()}>Try again</Button>
-    </div>
-  )}
->
+const App: React.FC = () => (
+  <ReactQueryErrorResetBoundary>
+    {({ reset }) => (
+      <ErrorBoundary
+        onReset={reset}
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            There was an error!
+            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )}
+  </ReactQueryErrorResetBoundary>
+)
+```
+
+When using the hook it will reset any query errors within the closest `ReactQueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
+
+```js
+import { useErrorResetBoundary } from 'react-query'
+import { ErrorBoundary } from 'react-error-boundary'
+
+const App: React.FC = () => {
+  const { reset } = useErrorResetBoundary()
+  return (
+    <ErrorBoundary
+      onReset={reset}
+      fallbackRender={({ resetErrorBoundary }) => (
+        <div>
+          There was an error!
+          <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+        </div>
+      )}
+    >
+      <Page />
+    </ErrorBoundary>
+  )
+}
 ```
 
 ## Fetch-on-render vs Render-as-you-fetch
