@@ -1,22 +1,32 @@
 import React from 'react'
 
 import { useRerenderer } from './utils'
+import { getResolvedQueryConfig } from '../core/config'
 import { QueryObserver } from '../core/queryObserver'
-import { QueryResultBase, QueryObserverConfig } from '../core/types'
-import { useDefaultedQueryConfig } from './useDefaultedQueryConfig'
+import { QueryResultBase, QueryConfig, QueryKey } from '../core/types'
+import { useQueryCache } from './ReactQueryCacheProvider'
+import { useContextConfig } from './ReactQueryConfigProvider'
 
 export function useBaseQuery<TResult, TError>(
-  config: QueryObserverConfig<TResult, TError> = {}
+  queryKey: QueryKey,
+  config?: QueryConfig<TResult, TError>
 ): QueryResultBase<TResult, TError> {
-  config = useDefaultedQueryConfig(config)
-
-  // Make a rerender function
   const rerender = useRerenderer()
+  const cache = useQueryCache()
+  const contextConfig = useContextConfig()
+
+  // Get resolved config
+  const resolvedConfig = getResolvedQueryConfig(
+    cache,
+    queryKey,
+    contextConfig,
+    config
+  )
 
   // Create query observer
   const observerRef = React.useRef<QueryObserver<TResult, TError>>()
   const firstRender = !observerRef.current
-  const observer = observerRef.current || new QueryObserver(config)
+  const observer = observerRef.current || new QueryObserver(resolvedConfig)
   observerRef.current = observer
 
   // Subscribe to the observer
@@ -30,20 +40,24 @@ export function useBaseQuery<TResult, TError>(
 
   // Update config
   if (!firstRender) {
-    observer.updateConfig(config)
+    observer.updateConfig(resolvedConfig)
   }
 
   const result = observer.getCurrentResult()
 
   // Handle suspense
-  if (config.suspense || config.useErrorBoundary) {
+  if (resolvedConfig.suspense || resolvedConfig.useErrorBoundary) {
     const query = observer.getCurrentQuery()
 
     if (result.isError && query.state.throwInErrorBoundary) {
       throw result.error
     }
 
-    if (config.enabled && config.suspense && !result.isSuccess) {
+    if (
+      resolvedConfig.enabled &&
+      resolvedConfig.suspense &&
+      !result.isSuccess
+    ) {
       const unsubscribe = observer.subscribe()
       throw observer.fetch().finally(unsubscribe)
     }

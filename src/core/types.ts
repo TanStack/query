@@ -149,10 +149,6 @@ export interface QueryObserverConfig<
    * Defaults to `false`.
    */
   keepPreviousData?: boolean
-  /**
-   * By default the query cache from the context is used, but a different cache can be specified.
-   */
-  queryCache?: QueryCache
 }
 
 export interface QueryConfig<TResult, TError = unknown>
@@ -163,6 +159,17 @@ export interface PaginatedQueryConfig<TResult, TError = unknown>
 
 export interface InfiniteQueryConfig<TResult, TError = unknown>
   extends QueryObserverConfig<TResult[], TError, TResult> {}
+
+export interface ResolvedQueryConfig<TResult, TError = unknown>
+  extends QueryConfig<TResult, TError> {
+  cacheTime: number
+  queryCache: QueryCache
+  queryFn: QueryFunction<TResult>
+  queryHash: string
+  queryKey: ArrayQueryKey
+  queryKeySerializerFn: QueryKeySerializerFunction
+  staleTime: number
+}
 
 export type IsFetchingMoreValue = 'previous' | 'next' | false
 

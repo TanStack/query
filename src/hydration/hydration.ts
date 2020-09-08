@@ -1,6 +1,4 @@
-import { DEFAULT_CACHE_TIME } from '../core/config'
-
-import type { Query, QueryCache, QueryKey, QueryConfig } from 'react-query'
+import type { Query, QueryCache, QueryKey } from 'react-query'
 
 export interface DehydratedQueryConfig {
   cacheTime?: number
@@ -20,57 +18,52 @@ export interface DehydratedState {
 export type ShouldDehydrateFunction = <TResult, TError = unknown>(
   query: Query<TResult, TError>
 ) => boolean
+
 export interface DehydrateConfig {
   shouldDehydrate?: ShouldDehydrateFunction
 }
 
+// Most config is not dehydrated but instead meant to configure again when
+// consuming the de/rehydrated data, typically with useQuery on the client.
+// Sometimes it might make sense to prefetch data on the server and include
+// in the html-payload, but not consume it on the initial render.
 function dehydrateQuery<TResult, TError = unknown>(
   query: Query<TResult, TError>
 ): DehydratedQuery {
-  const dehydratedQuery: DehydratedQuery = {
-    config: {},
+  return {
+    config: {
+      cacheTime: query.cacheTime,
+    },
+    data: query.state.data,
     queryKey: query.queryKey,
     updatedAt: query.state.updatedAt,
   }
-
-  // Most config is not dehydrated but instead meant to configure again when
-  // consuming the de/rehydrated data, typically with useQuery on the client.
-  // Sometimes it might make sense to prefetch data on the server and include
-  // in the html-payload, but not consume it on the initial render.
-  // We still schedule stale and garbage collection right away, which means
-  // we need to specifically include staleTime and cacheTime in dehydration.
-  if (query.cacheTime !== DEFAULT_CACHE_TIME) {
-    dehydratedQuery.config.cacheTime = query.cacheTime
-  }
-  if (query.state.data !== undefined) {
-    dehydratedQuery.data = query.state.data
-  }
-
-  return dehydratedQuery
 }
 
-const defaultShouldDehydrate: ShouldDehydrateFunction = query =>
-  query.state.status === 'success'
+function defaultShouldDehydrate<TResult, TError>(
+  query: Query<TResult, TError>
+) {
+  return query.state.status === 'success'
+}
 
 export function dehydrate(
   queryCache: QueryCache,
   dehydrateConfig?: DehydrateConfig
 ): DehydratedState {
   const config = dehydrateConfig || {}
-  const { shouldDehydrate = defaultShouldDehydrate } = config
-  const dehydratedState: DehydratedState = {
-    queries: [],
-  }
-  for (const query of queryCache.getQueries()) {
-    if (shouldDehydrate(query)) {
-      dehydratedState.queries.push(dehydrateQuery(query))
-    }
-  }
+  const shouldDehydrate = config.shouldDehydrate || defaultShouldDehydrate
+  const queries: DehydratedQuery[] = []
 
-  return dehydratedState
+  queryCache.getQueries().forEach(query => {
+    if (shouldDehydrate(query)) {
+      queries.push(dehydrateQuery(query))
+    }
+  })
+
+  return { queries }
 }
 
-export function hydrate<TResult>(
+export function hydrate(
   queryCache: QueryCache,
   dehydratedState: unknown
 ): void {
@@ -80,23 +73,25 @@ export function hydrate<TResult>(
 
   const queries = (dehydratedState as DehydratedState).queries || []
 
-  for (const dehydratedQuery of queries) {
-    const queryKey = dehydratedQuery.queryKey
-    const queryConfig = dehydratedQuery.config as QueryConfig<TResult>
+  queries.forEach(dehydratedQuery => {
+    const resolvedConfig = queryCache.getResolvedQueryConfig(
+      dehydratedQuery.queryKey,
+      dehydratedQuery.config
+    )
 
-    let query = queryCache.getQuery<TResult>(queryKey)
+    let query = queryCache.getQueryByHash(resolvedConfig.queryHash)
 
-    if (query) {
-      if (query.state.updatedAt < dehydratedQuery.updatedAt) {
-        query.setData(dehydratedQuery.data as TResult, {
-          updatedAt: dehydratedQuery.updatedAt,
-        })
-      }
-    } else {
-      query = queryCache.buildQuery<TResult>(queryKey, queryConfig)
-      query.setData(dehydratedQuery.data as TResult, {
-        updatedAt: dehydratedQuery.updatedAt,
-      })
+    // Do not hydrate if an existing query exists with newer data
+    if (query && query.state.updatedAt >= dehydratedQuery.updatedAt) {
+      return
     }
-  }
+
+    if (!query) {
+      query = queryCache.createQuery(resolvedConfig)
+    }
+
+    query.setData(dehydratedQuery.data, {
+      updatedAt: dehydratedQuery.updatedAt,
+    })
+  })
 }

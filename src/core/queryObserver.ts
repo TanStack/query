@@ -4,30 +4,26 @@ import {
   isDocumentVisible,
   isValidTimeout,
 } from './utils'
-import type { QueryResult, QueryObserverConfig } from './types'
+import type { QueryResult, ResolvedQueryConfig } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
-import type { QueryCache } from './queryCache'
 
 export type UpdateListener<TResult, TError> = (
   result: QueryResult<TResult, TError>
 ) => void
 
 export class QueryObserver<TResult, TError> {
-  config: QueryObserverConfig<TResult, TError>
+  config: ResolvedQueryConfig<TResult, TError>
 
-  private queryCache: QueryCache
   private currentQuery!: Query<TResult, TError>
   private currentResult!: QueryResult<TResult, TError>
   private previousQueryResult?: QueryResult<TResult, TError>
-  private updateListener?: UpdateListener<TResult, TError>
+  private listener?: UpdateListener<TResult, TError>
   private initialFetchedCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
-  private started?: boolean
 
-  constructor(config: QueryObserverConfig<TResult, TError>) {
+  constructor(config: ResolvedQueryConfig<TResult, TError>) {
     this.config = config
-    this.queryCache = config.queryCache!
     this.initialFetchedCount = 0
 
     // Bind exposed methods
@@ -40,8 +36,7 @@ export class QueryObserver<TResult, TError> {
   }
 
   subscribe(listener?: UpdateListener<TResult, TError>): () => void {
-    this.started = true
-    this.updateListener = listener
+    this.listener = listener
     this.currentQuery.subscribeObserver(this)
 
     if (this.config.enabled && this.config.forceFetchOnMount) {
@@ -55,25 +50,25 @@ export class QueryObserver<TResult, TError> {
   }
 
   unsubscribe(): void {
-    this.started = false
-    this.updateListener = undefined
+    this.listener = undefined
     this.clearTimers()
     this.currentQuery.unsubscribeObserver(this)
   }
 
-  updateConfig(config: QueryObserverConfig<TResult, TError>): void {
+  updateConfig(config: ResolvedQueryConfig<TResult, TError>): void {
     const prevConfig = this.config
+    const prevQuery = this.currentQuery
+
     this.config = config
+    this.updateQuery()
 
-    const updated = this.updateQuery()
-
-    // Take no further actions if the observer did not start yet
-    if (!this.started) {
+    // Take no further actions if there is no subscriber
+    if (!this.listener) {
       return
     }
 
     // If we subscribed to a new query, optionally fetch and update refetch
-    if (updated) {
+    if (this.currentQuery !== prevQuery) {
       this.optionalFetch()
       this.updateTimers()
       return
@@ -144,7 +139,7 @@ export class QueryObserver<TResult, TError> {
   }
 
   private notify(): void {
-    this.updateListener?.(this.currentResult)
+    this.listener?.(this.currentResult)
   }
 
   private updateStaleTimeout(): void {
@@ -265,7 +260,7 @@ export class QueryObserver<TResult, TError> {
     }
   }
 
-  private updateQuery(): boolean {
+  private updateQuery(): void {
     const prevQuery = this.currentQuery
 
     // Remove the initial data when there is an existing query
@@ -275,23 +270,27 @@ export class QueryObserver<TResult, TError> {
         ? { ...this.config, initialData: undefined }
         : this.config
 
-    const newQuery = this.queryCache.buildQuery(config.queryKey, config)
+    let query = config.queryCache.getQueryByHash<TResult, TError>(
+      config.queryHash
+    )
 
-    if (newQuery === prevQuery) {
-      return false
+    if (!query) {
+      query = config.queryCache.createQuery(config)
+    }
+
+    if (query === prevQuery) {
+      return
     }
 
     this.previousQueryResult = this.currentResult
-    this.currentQuery = newQuery
-    this.initialFetchedCount = newQuery.state.fetchedCount
+    this.currentQuery = query
+    this.initialFetchedCount = query.state.fetchedCount
     this.updateResult()
 
-    if (this.started) {
+    if (this.listener) {
       prevQuery?.unsubscribeObserver(this)
       this.currentQuery.subscribeObserver(this)
     }
-
-    return true
   }
 
   onQueryUpdate(action: Action<TResult, TError>): void {
