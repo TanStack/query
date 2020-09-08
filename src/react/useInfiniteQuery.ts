@@ -51,6 +51,6 @@ export function useInfiniteQuery<TResult = unknown, TError = unknown>(
 export function useInfiniteQuery<TResult, TError>(
   ...args: any[]
 ): InfiniteQueryResult<TResult, TError> {
-  const config = getQueryArgs<TResult[], TError>(args)[1]
-  return useBaseQuery<TResult[], TError>({ ...config, infinite: true })
+  const [queryKey, config] = getQueryArgs<TResult[], TError>(args)
+  return useBaseQuery(queryKey, { ...config, infinite: true })
 }

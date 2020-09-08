@@ -8,7 +8,7 @@ import {
   isOnline,
   isServer,
 } from './utils'
-import { getDefaultedQueryConfig } from './config'
+import { getResolvedQueryConfig } from './config'
 import { Query } from './query'
 import {
   QueryConfig,
@@ -17,6 +17,7 @@ import {
   ReactQueryConfig,
   TypedQueryFunction,
   TypedQueryFunctionArgs,
+  ResolvedQueryConfig,
 } from './types'
 
 // TYPES
@@ -98,12 +99,11 @@ export class QueryCache {
     return this.config.defaultConfig
   }
 
-  getDefaultedQueryConfig<TResult, TError>(
+  getResolvedQueryConfig<TResult, TError>(
+    queryKey: QueryKey,
     config?: QueryConfig<TResult, TError>
-  ): QueryConfig<TResult, TError> {
-    return getDefaultedQueryConfig(this.getDefaultConfig(), undefined, config, {
-      queryCache: this,
-    })
+  ): ResolvedQueryConfig<TResult, TError> {
+    return getResolvedQueryConfig(this, queryKey, undefined, config)
   }
 
   subscribe(listener: QueryCacheListener): () => void {
@@ -133,13 +133,12 @@ export class QueryCache {
     if (typeof predicate === 'function') {
       predicateFn = predicate as QueryPredicateFn
     } else {
-      const config = this.getDefaultedQueryConfig()
-      const [queryHash, queryKey] = config.queryKeySerializerFn!(predicate)
+      const resolvedConfig = this.getResolvedQueryConfig(predicate)
 
       predicateFn = d =>
         options?.exact
-          ? d.queryHash === queryHash
-          : deepIncludes(d.queryKey, queryKey)
+          ? d.queryHash === resolvedConfig.queryHash
+          : deepIncludes(d.queryKey, resolvedConfig.queryKey)
     }
 
     return this.queriesArray.filter(predicateFn)
@@ -149,6 +148,12 @@ export class QueryCache {
     predicate: QueryPredicate
   ): Query<TResult, TError> | undefined {
     return this.getQueries<TResult, TError>(predicate, { exact: true })[0]
+  }
+
+  getQueryByHash<TResult, TError = unknown>(
+    queryHash: string
+  ): Query<TResult, TError> | undefined {
+    return this.queries[queryHash]
   }
 
   getQueryData<TResult>(predicate: QueryPredicate): TResult | undefined {
@@ -215,21 +220,27 @@ export class QueryCache {
   }
 
   buildQuery<TResult, TError = unknown>(
-    userQueryKey: QueryKey,
-    queryConfig?: QueryConfig<TResult, TError>
+    queryKey: QueryKey,
+    config?: QueryConfig<TResult, TError>
   ): Query<TResult, TError> {
-    const config = this.getDefaultedQueryConfig(queryConfig)
-    const [queryHash, queryKey] = config.queryKeySerializerFn!(userQueryKey)
+    const resolvedConfig = this.getResolvedQueryConfig(queryKey, config)
+    let query = this.getQueryByHash<TResult, TError>(resolvedConfig.queryHash)
 
-    if (this.queries[queryHash]) {
-      return this.queries[queryHash] as Query<TResult, TError>
+    if (!query) {
+      query = this.createQuery(resolvedConfig)
     }
 
-    const query = new Query<TResult, TError>(queryKey, queryHash, config)
+    return query
+  }
+
+  createQuery<TResult, TError = unknown>(
+    config: ResolvedQueryConfig<TResult, TError>
+  ): Query<TResult, TError> {
+    const query = new Query(config)
 
     // A frozen cache does not add new queries to the cache
     if (!this.config.frozen) {
-      this.queries[queryHash] = query
+      this.queries[query.queryHash] = query
       this.queriesArray.push(query)
       this.notifyGlobalListeners(query)
     }
@@ -296,19 +307,21 @@ export class QueryCache {
       PrefetchQueryOptions | undefined
     >(args)
 
-    // https://github.com/tannerlinsley/react-query/issues/652
-    const configWithoutRetry = this.getDefaultedQueryConfig({
+    const resolvedConfig = this.getResolvedQueryConfig(queryKey, {
+      // https://github.com/tannerlinsley/react-query/issues/652
       retry: false,
       ...config,
     })
 
+    let query = this.getQueryByHash<TResult, TError>(resolvedConfig.queryHash)
+
+    if (!query) {
+      query = this.createQuery(resolvedConfig)
+    }
+
     try {
-      const query = this.buildQuery<TResult, TError>(
-        queryKey,
-        configWithoutRetry
-      )
       if (options?.force || query.isStaleByTime(config.staleTime)) {
-        await query.fetch(undefined, configWithoutRetry)
+        await query.fetch(undefined, resolvedConfig)
       }
       return query.state.data
     } catch (error) {
@@ -323,17 +336,18 @@ export class QueryCache {
     updater: Updater<TResult | undefined, TResult>,
     config?: QueryConfig<TResult, TError>
   ) {
-    const query = this.getQuery<TResult, TError>(queryKey)
+    const resolvedConfig = this.getResolvedQueryConfig(queryKey, config)
+    const query = this.getQueryByHash<TResult, TError>(resolvedConfig.queryHash)
 
     if (query) {
       query.setData(updater)
       return
     }
 
-    this.buildQuery<TResult, TError>(queryKey, {
+    this.createQuery({
       initialFetched: true,
       initialData: functionalUpdate(updater, undefined),
-      ...config,
+      ...resolvedConfig,
     })
   }
 }

@@ -25,7 +25,9 @@ export class CancelledError {}
 // UTILS
 
 let _uid = 0
-export const uid = () => _uid++
+export function uid(): number {
+  return _uid++
+}
 
 export const isServer = typeof window === 'undefined'
 
@@ -129,7 +131,7 @@ export function getQueryArgs<TResult, TError, TOptions = undefined>(
     options = args[3]
   }
 
-  config = config ? { queryKey, ...config } : { queryKey }
+  config = config || {}
 
   if (queryFn) {
     config = { ...config, queryFn }

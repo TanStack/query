@@ -10,7 +10,6 @@ import {
   isOnline,
   isServer,
   isValidTimeout,
-  noop,
   replaceEqualDeep,
   sleep,
 } from './utils'
@@ -18,9 +17,9 @@ import {
   ArrayQueryKey,
   InitialDataFunction,
   IsFetchingMoreValue,
-  QueryConfig,
   QueryFunction,
   QueryStatus,
+  ResolvedQueryConfig,
 } from './types'
 import type { QueryCache } from './queryCache'
 import { QueryObserver, UpdateListener } from './queryObserver'
@@ -101,7 +100,7 @@ export type Action<TResult, TError> =
 export class Query<TResult, TError> {
   queryKey: ArrayQueryKey
   queryHash: string
-  config: QueryConfig<TResult, TError>
+  config: ResolvedQueryConfig<TResult, TError>
   observers: QueryObserver<TResult, TError>[]
   state: QueryState<TResult, TError>
   cacheTime: number
@@ -113,24 +112,20 @@ export class Query<TResult, TError> {
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
 
-  constructor(
-    queryKey: ArrayQueryKey,
-    queryHash: string,
-    config: QueryConfig<TResult, TError>
-  ) {
+  constructor(config: ResolvedQueryConfig<TResult, TError>) {
     this.config = config
-    this.queryKey = queryKey
-    this.queryHash = queryHash
-    this.queryCache = config.queryCache!
+    this.queryKey = config.queryKey
+    this.queryHash = config.queryHash
+    this.queryCache = config.queryCache
+    this.cacheTime = config.cacheTime
     this.observers = []
     this.state = getDefaultState(config)
-    this.cacheTime = config.cacheTime!
     this.scheduleGc()
   }
 
-  private updateConfig(config: QueryConfig<TResult, TError>): void {
+  private updateConfig(config: ResolvedQueryConfig<TResult, TError>): void {
     this.config = config
-    this.cacheTime = Math.max(this.cacheTime, config.cacheTime || 0)
+    this.cacheTime = Math.max(this.cacheTime, config.cacheTime)
   }
 
   private dispatch(action: Action<TResult, TError>): void {
@@ -247,7 +242,7 @@ export class Query<TResult, TError> {
     )
 
     if (staleObserver) {
-      staleObserver.fetch().catch(noop)
+      staleObserver.fetch()
     }
 
     // Continue any paused fetch
@@ -257,14 +252,8 @@ export class Query<TResult, TError> {
   subscribe(
     listener?: UpdateListener<TResult, TError>
   ): QueryObserver<TResult, TError> {
-    const observer = new QueryObserver<TResult, TError>({
-      queryCache: this.queryCache,
-      queryKey: this.queryKey,
-      ...this.config,
-    })
-
+    const observer = new QueryObserver(this.config)
     observer.subscribe(listener)
-
     return observer
   }
 
@@ -291,7 +280,7 @@ export class Query<TResult, TError> {
 
   async refetch(
     options?: RefetchOptions,
-    config?: QueryConfig<TResult, TError>
+    config?: ResolvedQueryConfig<TResult, TError>
   ): Promise<TResult | undefined> {
     try {
       return await this.fetch(undefined, config)
@@ -305,7 +294,7 @@ export class Query<TResult, TError> {
   async fetchMore(
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions,
-    config?: QueryConfig<TResult, TError>
+    config?: ResolvedQueryConfig<TResult, TError>
   ): Promise<TResult | undefined> {
     return this.fetch(
       {
@@ -320,7 +309,7 @@ export class Query<TResult, TError> {
 
   async fetch(
     options?: FetchOptions,
-    config?: QueryConfig<TResult, TError>
+    config?: ResolvedQueryConfig<TResult, TError>
   ): Promise<TResult | undefined> {
     // If we are already fetching, return current promise
     if (this.promise) {
@@ -333,11 +322,6 @@ export class Query<TResult, TError> {
     }
 
     config = this.config
-
-    // Check if there is a query function
-    if (typeof config.queryFn !== 'function') {
-      return
-    }
 
     // Get the query function params
     const filter = config.queryFnParamsFilter
@@ -385,12 +369,12 @@ export class Query<TResult, TError> {
   }
 
   private async startFetch(
-    config: QueryConfig<TResult, TError>,
+    config: ResolvedQueryConfig<TResult, TError>,
     params: unknown[],
     _options?: FetchOptions
   ): Promise<TResult> {
     // Create function to fetch the data
-    const fetchData = () => config.queryFn!(...params)
+    const fetchData = () => config.queryFn(...params)
 
     // Set to fetching state if not already in it
     if (!this.state.isFetching) {
@@ -402,7 +386,7 @@ export class Query<TResult, TError> {
   }
 
   private async startInfiniteFetch(
-    config: QueryConfig<TResult, TError>,
+    config: ResolvedQueryConfig<TResult, TError>,
     params: unknown[],
     options?: FetchOptions
   ): Promise<TResult[]> {
@@ -427,7 +411,7 @@ export class Query<TResult, TError> {
         cursor = config.getFetchMore(lastPage, pages)
       }
 
-      const page = await config.queryFn!(...params, cursor)
+      const page = await config.queryFn(...params, cursor)
 
       return prepend ? [page, ...pages] : [...pages, page]
     }
@@ -457,7 +441,7 @@ export class Query<TResult, TError> {
   }
 
   private async tryFetchData<T>(
-    config: QueryConfig<TResult, TError>,
+    config: ResolvedQueryConfig<TResult, TError>,
     fn: QueryFunction<T>
   ): Promise<T> {
     return new Promise<T>((outerResolve, outerReject) => {
@@ -567,7 +551,7 @@ function getLastPage<TResult>(pages: TResult[], previous?: boolean): TResult {
 }
 
 function hasMorePages<TResult, TError>(
-  config: QueryConfig<TResult, TError>,
+  config: ResolvedQueryConfig<TResult, TError>,
   pages: unknown,
   previous?: boolean
 ): boolean | undefined {
@@ -577,7 +561,7 @@ function hasMorePages<TResult, TError>(
 }
 
 function getDefaultState<TResult, TError>(
-  config: QueryConfig<TResult, TError>
+  config: ResolvedQueryConfig<TResult, TError>
 ): QueryState<TResult, TError> {
   const initialData =
     typeof config.initialData === 'function'

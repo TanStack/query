@@ -124,22 +124,6 @@ describe('dehydration and rehydration', () => {
     hydrationQueryCache.clear({ notify: false })
   })
 
-  test('should not include default config in dehydration', async () => {
-    const queryCache = makeQueryCache()
-    await queryCache.prefetchQuery('string', () => fetchData('string'))
-    const dehydrated = dehydrate(queryCache)
-
-    // This is testing implementation details that can change and are not
-    // part of the public API, but is important for keeping the payload small
-    // Exact shape is not important here, just that staleTime and cacheTime
-    // (and any future other config) is not included in it
-    const dehydratedQuery = dehydrated?.queries.find(
-      query => (query?.queryKey as Array<string>)[0] === 'string'
-    )
-    expect(dehydratedQuery).toBeTruthy()
-    expect(dehydratedQuery?.config.cacheTime).toBe(undefined)
-  })
-
   test('should only hydrate successful queries by default', async () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)

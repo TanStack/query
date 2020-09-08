@@ -47,6 +47,6 @@ export function useQuery<TResult = unknown, TError = unknown>(
 export function useQuery<TResult, TError>(
   ...args: any[]
 ): QueryResult<TResult, TError> {
-  const config = getQueryArgs<TResult, TError>(args)[1]
-  return useBaseQuery<TResult, TError>(config)
+  const [queryKey, config] = getQueryArgs<TResult, TError>(args)
+  return useBaseQuery(queryKey, config)
 }

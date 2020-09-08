@@ -1,7 +1,7 @@
 import React from 'react'
 
-import { useDefaultedMutationConfig } from './useDefaultedMutationConfig'
 import { useMountedCallback } from './utils'
+import { getResolvedMutationConfig } from '../core/config'
 import { Console, uid, getStatusProps } from '../core/utils'
 import {
   QueryStatus,
@@ -11,6 +11,8 @@ import {
   MutateConfig,
   MutationResult,
 } from '../core/types'
+import { useQueryCache } from './ReactQueryCacheProvider'
+import { useContextConfig } from './ReactQueryConfigProvider'
 
 // TYPES
 
@@ -59,7 +61,7 @@ type Action<TResult, TError> =
 
 // HOOK
 
-function getDefaultState(): State<any, any> {
+function getDefaultState<TResult, TError>(): State<TResult, TError> {
   return {
     ...getStatusProps(QueryStatus.Idle),
     data: undefined,
@@ -106,7 +108,11 @@ export function useMutation<
   mutationFn: MutationFunction<TResult, TVariables>,
   config: MutationConfig<TResult, TError, TVariables, TSnapshot> = {}
 ): MutationResultPair<TResult, TError, TVariables, TSnapshot> {
-  config = useDefaultedMutationConfig(config)
+  const cache = useQueryCache()
+  const contextConfig = useContextConfig()
+
+  // Get resolved config
+  const resolvedConfig = getResolvedMutationConfig(cache, contextConfig, config)
 
   const [state, unsafeDispatch] = React.useReducer(
     mutationReducer as Reducer<State<TResult, TError>, Action<TResult, TError>>,
@@ -118,8 +124,8 @@ export function useMutation<
   const latestMutationRef = React.useRef<number>()
   const latestMutationFnRef = React.useRef(mutationFn)
   latestMutationFnRef.current = mutationFn
-  const latestConfigRef = React.useRef(config)
-  latestConfigRef.current = config
+  const latestConfigRef = React.useRef(resolvedConfig)
+  latestConfigRef.current = resolvedConfig
 
   const mutate = React.useCallback(
     async (
@@ -184,7 +190,7 @@ export function useMutation<
   React.useEffect(() => {
     const latestConfig = latestConfigRef.current
     const { suspense, useErrorBoundary } = latestConfig
-    if ((useErrorBoundary ?? suspense) && state.error) {
+    if ((useErrorBoundary || suspense) && state.error) {
       throw state.error
     }
   }, [state.error])
