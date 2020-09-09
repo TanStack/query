@@ -2,8 +2,7 @@ import { render, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
 import { sleep, queryKey, waitForMs, mockConsoleError } from './utils'
-import { useInfiniteQuery, useQueryCache } from '..'
-import { InfiniteQueryResult } from '../../core'
+import { useInfiniteQuery, useQueryCache, InfiniteQueryResult } from '../..'
 
 interface Result {
   items: number[]

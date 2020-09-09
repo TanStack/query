@@ -250,3 +250,34 @@ export function createSetHandler(fn: () => void) {
     removePreviousHandler = callback(fn)
   }
 }
+
+/**
+ * Schedules a microtask.
+ * This can be useful to schedule state updates after rendering.
+ */
+export function scheduleMicrotask(callback: () => void): void {
+  Promise.resolve()
+    .then(callback)
+    .catch(error =>
+      setTimeout(() => {
+        throw error
+      })
+    )
+}
+
+type BatchUpdateFunction = (callback: () => void) => void
+
+// Default to a dummy "batch" implementation that just runs the callback
+let batchedUpdates: BatchUpdateFunction = (callback: () => void) => {
+  callback()
+}
+
+// Allow injecting another batching function later
+export function setBatchedUpdates(fn: BatchUpdateFunction) {
+  batchedUpdates = fn
+}
+
+// Supply a getter just to skip dealing with ESM bindings
+export function getBatchedUpdates(): BatchUpdateFunction {
+  return batchedUpdates
+}

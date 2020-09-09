@@ -5,7 +5,7 @@ import {
   mockConsoleError,
   mockNavigatorOnLine,
 } from '../../react/tests/utils'
-import { queryCache as defaultQueryCache, QueryCache } from '..'
+import { QueryCache, queryCache as defaultQueryCache } from '../..'
 import { isCancelledError, isError } from '../utils'
 
 describe('queryCache', () => {
@@ -379,7 +379,7 @@ describe('queryCache', () => {
       expect(query.queryCache).toBe(queryCache)
     })
 
-    test('notifyGlobalListeners passes the same instance', () => {
+    test('notifyGlobalListeners passes the same instance', async () => {
       const key = queryKey()
 
       const queryCache = new QueryCache()
@@ -387,6 +387,7 @@ describe('queryCache', () => {
       const unsubscribe = queryCache.subscribe(subscriber)
       const query = queryCache.buildQuery(key)
       query.setData('foo')
+      await sleep(1)
       expect(subscriber).toHaveBeenCalledWith(queryCache, query)
 
       unsubscribe()

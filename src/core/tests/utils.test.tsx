@@ -1,5 +1,5 @@
 import { replaceEqualDeep, deepIncludes, isPlainObject } from '../utils'
-import { setConsole, queryCache } from '..'
+import { setConsole, queryCache } from '../..'
 import { queryKey } from '../../react/tests/utils'
 
 describe('core/utils', () => {

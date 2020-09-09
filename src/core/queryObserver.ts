@@ -5,6 +5,7 @@ import {
   isValidTimeout,
   noop,
 } from './utils'
+import { notifyManager } from './notifyManager'
 import type { QueryResult, ResolvedQueryConfig } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
 
@@ -149,8 +150,15 @@ export class QueryObserver<TResult, TError> {
     }
   }
 
-  private notify(): void {
-    this.listener?.(this.currentResult)
+  private notify(global?: boolean): void {
+    notifyManager.batch(() => {
+      notifyManager.schedule(() => {
+        this.listener?.(this.currentResult)
+      })
+      if (global) {
+        this.config.queryCache.notifyGlobalListeners(this.currentQuery)
+      }
+    })
   }
 
   private updateStaleTimeout(): void {
@@ -172,8 +180,7 @@ export class QueryObserver<TResult, TError> {
       if (!this.isStale) {
         this.isStale = true
         this.updateResult()
-        this.notify()
-        this.config.queryCache.notifyGlobalListeners(this.currentQuery)
+        this.notify(true)
       }
     }, timeout)
   }
@@ -221,20 +228,19 @@ export class QueryObserver<TResult, TError> {
   }
 
   private updateResult(): void {
-    const { currentQuery, previousQueryResult, config } = this
-    const { state } = currentQuery
+    const { state } = this.currentQuery
     let { data, status, updatedAt } = state
     let isPreviousData = false
 
     // Keep previous data if needed
     if (
-      config.keepPreviousData &&
+      this.config.keepPreviousData &&
       state.isInitialData &&
-      previousQueryResult?.isSuccess
+      this.previousQueryResult?.isSuccess
     ) {
-      data = previousQueryResult.data
-      updatedAt = previousQueryResult.updatedAt
-      status = previousQueryResult.status
+      data = this.previousQueryResult.data
+      updatedAt = this.previousQueryResult.updatedAt
+      status = this.previousQueryResult.status
       isPreviousData = true
     }
 
