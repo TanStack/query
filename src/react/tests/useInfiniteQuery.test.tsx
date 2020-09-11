@@ -1,7 +1,7 @@
 import { render, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { sleep, queryKey } from './utils'
+import { sleep, queryKey, waitForMs } from './utils'
 import { useInfiniteQuery, useQueryCache } from '..'
 import { InfiniteQueryResult } from '../../core'
 
@@ -251,6 +251,131 @@ describe('useInfiniteQuery', () => {
     expect(states[3]).toMatchObject({
       canFetchMore: true,
       data: [9, 10],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should silently cancel any ongoing fetch when fetching more', async () => {
+    const key = queryKey()
+    const states: InfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const start = 10
+      const state = useInfiniteQuery(
+        key,
+        async (_key, page: number = start) => {
+          await sleep(50)
+          return page
+        },
+        {
+          getFetchMore: (lastPage, _pages) => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      const { refetch, fetchMore } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          refetch()
+        }, 100)
+        setTimeout(() => {
+          fetchMore()
+        }, 110)
+      }, [fetchMore, refetch])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(5))
+
+    expect(states[0]).toMatchObject({
+      canFetchMore: undefined,
+      data: undefined,
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      canFetchMore: true,
+      data: [10],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[2]).toMatchObject({
+      canFetchMore: true,
+      data: [10],
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+    expect(states[3]).toMatchObject({
+      canFetchMore: true,
+      data: [10],
+      isFetching: true,
+      isFetchingMore: 'next',
+      isSuccess: true,
+    })
+    expect(states[4]).toMatchObject({
+      canFetchMore: true,
+      data: [10, 11],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
+    const key = queryKey()
+    const states: InfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const start = 10
+      const state = useInfiniteQuery(
+        key,
+        async (_key, page: number = start) => {
+          await sleep(50)
+          return page
+        },
+        {
+          getFetchMore: (lastPage, _pages) => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      const { refetch, fetchMore } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          fetchMore()
+        }, 10)
+      }, [fetchMore, refetch])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(100)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      canFetchMore: undefined,
+      data: undefined,
+      isFetching: true,
+      isFetchingMore: false,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      canFetchMore: true,
+      data: [10],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,
