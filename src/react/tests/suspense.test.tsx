@@ -5,6 +5,10 @@ import * as React from 'react'
 import { sleep, queryKey, mockConsoleError } from './utils'
 import { useQuery } from '..'
 import { queryCache } from '../../core'
+import {
+  ReactQueryErrorResetBoundary,
+  useErrorResetBoundary,
+} from '../ReactQueryErrorResetBoundary'
 
 describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
@@ -187,6 +191,135 @@ describe("useQuery's in Suspense mode", () => {
 
     fireEvent.click(rendered.getByText('retry'))
 
+    await waitFor(() => rendered.getByText('rendered'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should retry fetch if the reset error boundary has been reset', async () => {
+    const key = queryKey()
+
+    let succeed = false
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      return <div>rendered</div>
+    }
+
+    const rendered = render(
+      <ReactQueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <React.Suspense fallback="Loading...">
+              <Page />
+            </React.Suspense>
+          </ErrorBoundary>
+        )}
+      </ReactQueryErrorResetBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    succeed = true
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('rendered'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
+    const key = queryKey()
+
+    let succeed = false
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const { reset } = useErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={({ resetErrorBoundary }) => (
+            <div>
+              <div>error boundary</div>
+              <button
+                onClick={() => {
+                  resetErrorBoundary()
+                }}
+              >
+                retry
+              </button>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = render(<App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    succeed = true
+    fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('rendered'))
 
     consoleMock.mockRestore()

@@ -3,17 +3,19 @@ import React from 'react'
 import { useRerenderer } from './utils'
 import { getResolvedQueryConfig } from '../core/config'
 import { QueryObserver } from '../core/queryObserver'
-import { QueryResultBase, QueryConfig, QueryKey } from '../core/types'
-import { useQueryCache } from './ReactQueryCacheProvider'
+import { QueryResultBase, QueryKey, QueryConfig } from '../core/types'
+import { useErrorResetBoundary } from './ReactQueryErrorResetBoundary'
+import { useQueryCache } from '.'
 import { useContextConfig } from './ReactQueryConfigProvider'
 
 export function useBaseQuery<TResult, TError>(
   queryKey: QueryKey,
   config?: QueryConfig<TResult, TError>
 ): QueryResultBase<TResult, TError> {
-  const rerender = useRerenderer()
   const cache = useQueryCache()
+  const rerender = useRerenderer()
   const contextConfig = useContextConfig()
+  const errorResetBoundary = useErrorResetBoundary()
 
   // Get resolved config
   const resolvedConfig = getResolvedQueryConfig(
@@ -49,7 +51,11 @@ export function useBaseQuery<TResult, TError>(
   if (resolvedConfig.suspense || resolvedConfig.useErrorBoundary) {
     const query = observer.getCurrentQuery()
 
-    if (result.isError && query.state.throwInErrorBoundary) {
+    if (
+      result.isError &&
+      !errorResetBoundary.isReset() &&
+      query.state.throwInErrorBoundary
+    ) {
       throw result.error
     }
 
@@ -58,6 +64,7 @@ export function useBaseQuery<TResult, TError>(
       resolvedConfig.suspense &&
       !result.isSuccess
     ) {
+      errorResetBoundary.clearReset()
       const unsubscribe = observer.subscribe()
       throw observer.fetch().finally(unsubscribe)
     }
