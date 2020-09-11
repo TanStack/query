@@ -10,6 +10,7 @@ import {
   isOnline,
   isServer,
   isValidTimeout,
+  noop,
   replaceEqualDeep,
   sleep,
 } from './utils'
@@ -108,7 +109,7 @@ export class Query<TResult, TError> {
   private queryCache: QueryCache
   private promise?: Promise<TResult | undefined>
   private gcTimeout?: number
-  private cancelFetch?: () => void
+  private cancelFetch?: (silent?: boolean) => void
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
 
@@ -154,8 +155,12 @@ export class Query<TResult, TError> {
     }, this.cacheTime)
   }
 
-  cancel(): void {
-    this.cancelFetch?.()
+  async cancel(silent?: boolean): Promise<void> {
+    const promise = this.promise
+    if (promise && this.cancelFetch) {
+      this.cancelFetch(silent)
+      await promise.catch(noop)
+    }
   }
 
   private continue(): void {
@@ -311,9 +316,14 @@ export class Query<TResult, TError> {
     options?: FetchOptions,
     config?: ResolvedQueryConfig<TResult, TError>
   ): Promise<TResult | undefined> {
-    // If we are already fetching, return current promise
     if (this.promise) {
-      return this.promise
+      if (options?.fetchMore && this.state.data) {
+        // Silently cancel current fetch if the user wants to fetch more
+        await this.cancel(true)
+      } else {
+        // Return current promise if we are already fetching
+        return this.promise
+      }
     }
 
     // Update config if passed, otherwise the config from the last execution is used
@@ -346,11 +356,13 @@ export class Query<TResult, TError> {
         // Return data
         return data
       } catch (error) {
-        // Set error state
-        this.dispatch({
-          type: ActionType.Error,
-          error,
-        })
+        // Set error state if needed
+        if (!(isCancelledError(error) && error.silent)) {
+          this.dispatch({
+            type: ActionType.Error,
+            error,
+          })
+        }
 
         // Log error
         if (!isCancelledError(error)) {
@@ -432,7 +444,10 @@ export class Query<TResult, TError> {
     }
 
     // Set to fetching state if not already in it
-    if (!this.state.isFetching) {
+    if (
+      !this.state.isFetching ||
+      this.state.isFetchingMore !== isFetchingMore
+    ) {
       this.dispatch({ type: ActionType.Fetch, isFetchingMore })
     }
 
@@ -471,11 +486,9 @@ export class Query<TResult, TError> {
       }
 
       // Create callback to cancel this fetch
-      this.cancelFetch = () => {
-        reject(new CancelledError())
-        try {
-          cancelTransport?.()
-        } catch {}
+      this.cancelFetch = silent => {
+        reject(new CancelledError(silent))
+        cancelTransport?.()
       }
 
       // Create callback to continue this fetch
@@ -492,7 +505,9 @@ export class Query<TResult, TError> {
           // Check if the transport layer support cancellation
           if (isCancelable(promiseOrValue)) {
             cancelTransport = () => {
-              promiseOrValue.cancel()
+              try {
+                promiseOrValue.cancel()
+              } catch {}
             }
             this.isTransportCancelable = true
           }

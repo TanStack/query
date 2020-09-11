@@ -20,7 +20,12 @@ interface Cancelable {
   cancel(): void
 }
 
-export class CancelledError {}
+export class CancelledError {
+  silent?: boolean
+  constructor(silent?: boolean) {
+    this.silent = silent
+  }
+}
 
 // UTILS
 
