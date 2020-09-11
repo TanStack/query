@@ -140,10 +140,6 @@ export function getQueryArgs<TResult, TError, TOptions = undefined>(
   return [queryKey, config, options]
 }
 
-export function deepEqual(a: any, b: any): boolean {
-  return replaceEqualDeep(a, b) === a
-}
-
 /**
  * This function returns `a` if `b` is deeply equal.
  * If not, it will replace any deeply equal children of `b` with those of `a`.

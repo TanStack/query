@@ -1,9 +1,4 @@
-import {
-  deepEqual,
-  replaceEqualDeep,
-  deepIncludes,
-  isPlainObject,
-} from '../utils'
+import { replaceEqualDeep, deepIncludes, isPlainObject } from '../utils'
 import { setConsole, queryCache } from '..'
 import { queryKey } from '../../react/tests/utils'
 
@@ -63,26 +58,6 @@ describe('core/utils', () => {
       const a = { a: { b: 'b' }, c: 'c', d: [] }
       const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
       expect(deepIncludes(a, b)).toEqual(false)
-    })
-  })
-
-  describe('deepEqual', () => {
-    it('should return `true` for equal objects', () => {
-      const a = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      expect(deepEqual(a, b)).toEqual(true)
-    })
-
-    it('should return `false` for non equal objects', () => {
-      const a = { a: { b: 'b' }, c: 'c' }
-      const b = { a: { b: 'c' }, c: 'c' }
-      expect(deepEqual(a, b)).toEqual(false)
-    })
-
-    it('return `false` for equal dates', () => {
-      const date1 = new Date(2020, 3, 1)
-      const date2 = new Date(2020, 3, 1)
-      expect(deepEqual(date1, date2)).toEqual(false)
     })
   })
 
