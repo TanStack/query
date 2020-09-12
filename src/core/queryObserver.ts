@@ -1,8 +1,9 @@
 import {
   getStatusProps,
-  isServer,
   isDocumentVisible,
+  isServer,
   isValidTimeout,
+  noop,
 } from './utils'
 import type { QueryResult, ResolvedQueryConfig } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
@@ -108,23 +109,21 @@ export class QueryObserver<TResult, TError> {
     return this.currentQuery.clear()
   }
 
-  async refetch(options?: RefetchOptions): Promise<TResult | undefined> {
+  refetch(options?: RefetchOptions): Promise<TResult | undefined> {
     return this.currentQuery.refetch(options, this.config)
   }
 
-  async fetchMore(
+  fetchMore(
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions
   ): Promise<TResult | undefined> {
-    return this.currentQuery.fetchMore(fetchMoreVariable, options, this.config)
+    return this.currentQuery
+      .fetchMore(fetchMoreVariable, options, this.config)
+      .catch(noop)
   }
 
-  async fetch(): Promise<TResult | undefined> {
-    try {
-      return await this.currentQuery.fetch(undefined, this.config)
-    } catch {
-      // ignore
-    }
+  fetch(): Promise<TResult | undefined> {
+    return this.currentQuery.fetch(undefined, this.config).catch(noop)
   }
 
   private optionalFetch(): void {

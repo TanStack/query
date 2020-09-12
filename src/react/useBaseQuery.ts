@@ -5,7 +5,7 @@ import { getResolvedQueryConfig } from '../core/config'
 import { QueryObserver } from '../core/queryObserver'
 import { QueryResultBase, QueryKey, QueryConfig } from '../core/types'
 import { useErrorResetBoundary } from './ReactQueryErrorResetBoundary'
-import { useQueryCache } from '.'
+import { useQueryCache } from './ReactQueryCacheProvider'
 import { useContextConfig } from './ReactQueryConfigProvider'
 
 export function useBaseQuery<TResult, TError>(

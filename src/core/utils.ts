@@ -36,8 +36,8 @@ export function uid(): number {
 
 export const isServer = typeof window === 'undefined'
 
-export function noop(): void {
-  return void 0
+export function noop(): undefined {
+  return undefined
 }
 
 export let Console: ConsoleObject = console || {
