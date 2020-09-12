@@ -1,7 +1,7 @@
 import { render, waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import { sleep, queryKey, waitForMs } from './utils'
+import { sleep, queryKey, waitForMs, mockConsoleError } from './utils'
 import { useInfiniteQuery, useQueryCache } from '..'
 import { InfiniteQueryResult } from '../../core'
 
@@ -110,6 +110,48 @@ describe('useInfiniteQuery', () => {
       status: 'success',
       updatedAt: expect.any(Number),
     })
+  })
+
+  it('should not throw when fetchMore returns an error', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    let noThrow: boolean
+
+    function Page() {
+      const start = 1
+      const state = useInfiniteQuery(
+        key,
+        async (_key, page: number = start) => {
+          if (page === 2) {
+            throw new Error('error')
+          }
+          return page
+        },
+        {
+          retry: 1,
+          retryDelay: 10,
+          getFetchMore: (lastPage, _pages) => lastPage + 1,
+        }
+      )
+
+      const { fetchMore } = state
+
+      React.useEffect(() => {
+        setTimeout(async () => {
+          try {
+            await fetchMore()
+            noThrow = true
+          } catch (error) {}
+        }, 20)
+      }, [fetchMore])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(noThrow).toBe(true))
+    consoleMock.mockRestore()
   })
 
   it('should keep the previous data when keepPreviousData is set', async () => {

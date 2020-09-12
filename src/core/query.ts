@@ -296,7 +296,7 @@ export class Query<TResult, TError> {
     }
   }
 
-  async fetchMore(
+  fetchMore(
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions,
     config?: ResolvedQueryConfig<TResult, TError>
@@ -380,7 +380,7 @@ export class Query<TResult, TError> {
     return this.promise
   }
 
-  private async startFetch(
+  private startFetch(
     config: ResolvedQueryConfig<TResult, TError>,
     params: unknown[],
     _options?: FetchOptions
@@ -397,7 +397,7 @@ export class Query<TResult, TError> {
     return this.tryFetchData(config, fetchData)
   }
 
-  private async startInfiniteFetch(
+  private startInfiniteFetch(
     config: ResolvedQueryConfig<TResult, TError>,
     params: unknown[],
     options?: FetchOptions
@@ -455,7 +455,7 @@ export class Query<TResult, TError> {
     return this.tryFetchData(config, fetchData)
   }
 
-  private async tryFetchData<T>(
+  private tryFetchData<T>(
     config: ResolvedQueryConfig<TResult, TError>,
     fn: QueryFunction<T>
   ): Promise<T> {
