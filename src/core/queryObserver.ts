@@ -18,13 +18,13 @@ export class QueryObserver<TResult, TError> {
   private currentResult!: QueryResult<TResult, TError>
   private previousQueryResult?: QueryResult<TResult, TError>
   private listener?: UpdateListener<TResult, TError>
-  private initialFetchedCount: number
+  private initialUpdateCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
 
   constructor(config: ResolvedQueryConfig<TResult, TError>) {
     this.config = config
-    this.initialFetchedCount = 0
+    this.initialUpdateCount = 0
 
     // Bind exposed methods
     this.clear = this.clear.bind(this)
@@ -161,6 +161,7 @@ export class QueryObserver<TResult, TError> {
       if (!this.currentResult.isStale) {
         this.currentResult = { ...this.currentResult, isStale: true }
         this.notify()
+        this.config.queryCache.notifyGlobalListeners(this.currentQuery)
       }
     }, timeout)
   }
@@ -229,7 +230,7 @@ export class QueryObserver<TResult, TError> {
 
     // When the query has not been fetched yet and this is the initial render,
     // determine the staleness based on the initialStale or existence of initial data.
-    if (!currentResult && !state.isFetched) {
+    if (!currentResult && state.isInitialData) {
       if (typeof config.initialStale === 'function') {
         isStale = config.initialStale()
       } else if (typeof config.initialStale === 'boolean') {
@@ -249,10 +250,11 @@ export class QueryObserver<TResult, TError> {
       error: state.error,
       failureCount: state.failureCount,
       fetchMore: this.fetchMore,
-      isFetched: state.isFetched,
-      isFetchedAfterMount: state.fetchedCount > this.initialFetchedCount,
+      isFetched: state.updateCount > 0,
+      isFetchedAfterMount: state.updateCount > this.initialUpdateCount,
       isFetching: state.isFetching,
       isFetchingMore: state.isFetchingMore,
+      isInitialData: state.isInitialData,
       isPreviousData,
       isStale,
       refetch: this.refetch,
@@ -284,7 +286,7 @@ export class QueryObserver<TResult, TError> {
 
     this.previousQueryResult = this.currentResult
     this.currentQuery = query
-    this.initialFetchedCount = query.state.fetchedCount
+    this.initialUpdateCount = query.state.updateCount
     this.updateResult()
 
     if (this.listener) {

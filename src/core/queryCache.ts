@@ -1,7 +1,6 @@
 import {
   Updater,
   deepIncludes,
-  functionalUpdate,
   getQueryArgs,
   isDocumentVisible,
   isPlainObject,
@@ -336,19 +335,7 @@ export class QueryCache {
     updater: Updater<TResult | undefined, TResult>,
     config?: QueryConfig<TResult, TError>
   ) {
-    const resolvedConfig = this.getResolvedQueryConfig(queryKey, config)
-    const query = this.getQueryByHash<TResult, TError>(resolvedConfig.queryHash)
-
-    if (query) {
-      query.setData(updater)
-      return
-    }
-
-    this.createQuery({
-      initialFetched: true,
-      initialData: functionalUpdate(updater, undefined),
-      ...resolvedConfig,
-    })
+    this.buildQuery(queryKey, config).setData(updater)
   }
 }
 

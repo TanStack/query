@@ -134,6 +134,7 @@ describe('useQuery', () => {
       isFetching: true,
       isFetchingMore: false,
       isIdle: false,
+      isInitialData: true,
       isLoading: true,
       isPreviousData: false,
       isStale: true,
@@ -156,6 +157,7 @@ describe('useQuery', () => {
       isFetching: false,
       isFetchingMore: false,
       isIdle: false,
+      isInitialData: false,
       isLoading: false,
       isPreviousData: false,
       isStale: true,
@@ -208,6 +210,7 @@ describe('useQuery', () => {
       isFetching: true,
       isFetchingMore: false,
       isIdle: false,
+      isInitialData: true,
       isLoading: true,
       isPreviousData: false,
       isStale: true,
@@ -230,6 +233,7 @@ describe('useQuery', () => {
       isFetching: true,
       isFetchingMore: false,
       isIdle: false,
+      isInitialData: true,
       isLoading: true,
       isPreviousData: false,
       isStale: true,
@@ -252,6 +256,7 @@ describe('useQuery', () => {
       isFetching: false,
       isFetchingMore: false,
       isIdle: false,
+      isInitialData: true,
       isLoading: false,
       isPreviousData: false,
       isStale: true,
@@ -827,6 +832,28 @@ describe('useQuery', () => {
         { isStale: true },
       ])
     )
+  })
+
+  it('should notify query cache when a query becomes stale', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+    const fn = jest.fn()
+
+    const unsubscribe = queryCache.subscribe(fn)
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        staleTime: 10,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(20)
+    unsubscribe()
+    expect(fn).toHaveBeenCalledTimes(3)
   })
 
   it('should not re-render when a query status changes and notifyOnStatusChange is false', async () => {

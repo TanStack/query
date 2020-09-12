@@ -66,6 +66,14 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
   },
 }
 
+export function getDefaultReactQueryConfig() {
+  return {
+    shared: { ...DEFAULT_CONFIG.shared },
+    queries: { ...DEFAULT_CONFIG.queries },
+    mutations: { ...DEFAULT_CONFIG.mutations },
+  }
+}
+
 export function mergeReactQueryConfigs(
   a: ReactQueryConfig,
   b: ReactQueryConfig

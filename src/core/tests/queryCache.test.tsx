@@ -544,7 +544,7 @@ describe('queryCache', () => {
       expect(query.state).toMatchObject({
         data: 'data',
         isLoading: false,
-        isFetched: true,
+        updateCount: 1,
       })
     })
 
@@ -578,7 +578,7 @@ describe('queryCache', () => {
       expect(query.state).toMatchObject({
         data: undefined,
         isLoading: false,
-        isFetched: true,
+        updateCount: 1,
       })
     })
 
