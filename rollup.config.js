@@ -22,7 +22,7 @@ const inputSrc = 'src/index.ts'
 const hydrationSrc = 'src/hydration/index.ts'
 
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
-const babelConfig = { extensions }
+const babelConfig = { extensions, runtimeHelpers: true }
 const resolveConfig = { extensions }
 
 export default [

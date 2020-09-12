@@ -7,6 +7,8 @@ node_modules
 # builds
 build
 dist
+lib
+es
 artifacts
 .rpt2_cache
 coverage

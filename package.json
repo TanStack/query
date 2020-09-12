@@ -10,9 +10,10 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "main": "index.js",
+  "main": "lib/index.js",
+  "unpkg": "dist/react-query.development.js",
   "types": "types/index.d.ts",
-  "module": "dist/react-query.mjs",
+  "module": "es/index.js",
   "sideEffects": false,
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
@@ -21,8 +22,11 @@
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "build": "NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json stats-hydration.json",
-    "build:types": "tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r && replace 'export type' 'export' ./types -r",
+    "build": "yarn build:commonjs && yarn build:es && yarn build:umd",
+    "build:commonjs": "rm -rf ./lib && BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/*.test.tsx ./src --out-dir lib",
+    "build:es": "rm -rf ./es && babel --extensions .ts,.tsx --ignore ./src/**/*.test.tsx ./src --out-dir es",
+    "build:umd": "rm -rf ./dist && NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json stats-hydration.json",
+    "build:types": "rm -rf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r && replace 'export type' 'export' ./types -r",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
@@ -40,19 +44,33 @@
   },
   "files": [
     "dist",
+    "lib",
+    "es",
     "types",
     "scripts",
     "hydration.js",
     "hydration.d.ts"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "@babel/runtime": "^7.5.5"
+  },
   "peerDependencies": {
     "react": "^16.8.0"
   },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  },
   "devDependencies": {
-    "@babel/core": "^7.10.2",
-    "@babel/preset-env": "^7.10.2",
-    "@babel/preset-react": "^7.10.1",
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@rollup/plugin-replace": "^2.3.3",
     "@svgr/rollup": "^5.4.0",
