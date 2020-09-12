@@ -1,3 +1,4 @@
+export { getDefaultReactQueryConfig } from './config'
 export { queryCache, queryCaches, makeQueryCache } from './queryCache'
 export { setFocusHandler } from './setFocusHandler'
 export { setOnlineHandler } from './setOnlineHandler'

@@ -32,16 +32,16 @@ export interface QueryState<TResult, TError> {
   data?: TResult
   error: TError | null
   failureCount: number
-  fetchedCount: number
   isError: boolean
-  isFetched: boolean
   isFetching: boolean
   isFetchingMore: IsFetchingMoreValue
   isIdle: boolean
+  isInitialData: boolean
   isLoading: boolean
   isSuccess: boolean
   status: QueryStatus
   throwInErrorBoundary?: boolean
+  updateCount: number
   updatedAt: number
 }
 
@@ -593,15 +593,15 @@ function getDefaultState<TResult, TError>(
 
   return {
     ...getStatusProps(initialStatus),
+    canFetchMore: hasMorePages(config, initialData),
+    data: initialData,
     error: null,
-    isFetched: Boolean(config.initialFetched),
+    failureCount: 0,
     isFetching: initialStatus === QueryStatus.Loading,
     isFetchingMore: false,
-    failureCount: 0,
-    fetchedCount: config.initialFetched ? 1 : 0,
-    data: initialData,
+    isInitialData: true,
+    updateCount: 0,
     updatedAt: Date.now(),
-    canFetchMore: hasMorePages(config, initialData),
   }
 }
 
@@ -631,27 +631,26 @@ export function queryReducer<TResult, TError>(
       return {
         ...state,
         ...getStatusProps(QueryStatus.Success),
+        canFetchMore: action.canFetchMore,
         data: action.data,
         error: null,
-        fetchedCount: state.fetchedCount + 1,
-        isFetched: true,
+        failureCount: 0,
         isFetching: false,
         isFetchingMore: false,
-        canFetchMore: action.canFetchMore,
+        isInitialData: false,
+        updateCount: state.updateCount + 1,
         updatedAt: action.updatedAt ?? Date.now(),
-        failureCount: 0,
       }
     case ActionType.Error:
       return {
         ...state,
         ...getStatusProps(QueryStatus.Error),
         error: action.error,
-        fetchedCount: state.fetchedCount + 1,
-        isFetched: true,
+        failureCount: state.failureCount + 1,
         isFetching: false,
         isFetchingMore: false,
-        failureCount: state.failureCount + 1,
         throwInErrorBoundary: true,
+        updateCount: state.updateCount + 1,
       }
     default:
       return state

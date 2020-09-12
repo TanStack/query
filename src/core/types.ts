@@ -49,7 +49,6 @@ export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
   queryKeySerializerFn?: QueryKeySerializerFunction
   queryFnParamsFilter?: (args: ArrayQueryKey) => ArrayQueryKey
   initialData?: TResult | InitialDataFunction<TResult>
-  initialFetched?: boolean
   infinite?: true
   /**
    * Set this to `false` to disable structural sharing between query results.
@@ -196,10 +195,11 @@ export interface QueryResultBase<TResult, TError = unknown> {
   isFetching: boolean
   isFetchingMore?: IsFetchingMoreValue
   isIdle: boolean
+  isInitialData: boolean
   isLoading: boolean
+  isPreviousData: boolean
   isStale: boolean
   isSuccess: boolean
-  isPreviousData: boolean
   refetch: (options?: RefetchOptions) => Promise<TResult | undefined>
   status: QueryStatus
   updatedAt: number
