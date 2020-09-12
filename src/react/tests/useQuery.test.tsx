@@ -672,6 +672,86 @@ describe('useQuery', () => {
     })
   })
 
+  it('should keep the previous data on disabled query when keepPreviousData is set and switching query key multiple times', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+
+    queryCache.setQueryData([key, 10], 10)
+
+    await sleep(10)
+
+    function Page() {
+      const [count, setCount] = React.useState(10)
+
+      const state = useQuery(
+        [key, count],
+        async () => {
+          await sleep(10)
+          return count
+        },
+        { enabled: false, keepPreviousData: true }
+      )
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          setCount(11)
+        }, 20)
+        setTimeout(() => {
+          setCount(12)
+        }, 30)
+        setTimeout(() => {
+          refetch()
+        }, 40)
+      }, [refetch])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitFor(() => expect(states.length).toBe(5))
+
+    // Disabled query
+    expect(states[0]).toMatchObject({
+      data: 10,
+      isFetching: false,
+      isSuccess: true,
+      isPreviousData: false,
+    })
+    // Switched query key
+    expect(states[1]).toMatchObject({
+      data: 10,
+      isFetching: false,
+      isSuccess: true,
+      isPreviousData: true,
+    })
+    // Switched query key
+    expect(states[2]).toMatchObject({
+      data: 10,
+      isFetching: false,
+      isSuccess: true,
+      isPreviousData: true,
+    })
+    // Refetch
+    expect(states[3]).toMatchObject({
+      data: 10,
+      isFetching: true,
+      isSuccess: true,
+      isPreviousData: true,
+    })
+    // Refetch done
+    expect(states[4]).toMatchObject({
+      data: 12,
+      isFetching: false,
+      isSuccess: true,
+      isPreviousData: false,
+    })
+  })
+
   it('should use the correct query function when components use different configurations', async () => {
     const key = queryKey()
     const states: QueryResult<number>[] = []
