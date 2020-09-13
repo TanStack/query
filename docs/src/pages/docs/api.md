@@ -59,11 +59,11 @@ const queryInfo = useQuery({
 
 **Options**
 
-- `queryKey: String | [String, ...any] | falsy`
+- `queryKey: String | any[]`
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
-  - If a `[String, ...any]` array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/queries#query-keys) for more information.
+  - If an array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/queries#query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: Function(variables) => Promise(data/error)`
   - **Required, but only if no default query function has been defined**
@@ -183,9 +183,8 @@ const queryInfo = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: Function({ force, throwOnError }) => void`
-  - A function to manually refetch the query if it is stale.
-  - To bypass the stale check, you can pass the `force: true` option and refetch it regardless of it's freshness
+- `refetch: Function({ throwOnError }) => Promise<TResult | undefined>`
+  - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 - `clear: Function() => void`
   - A function to remove the query from the cache.
@@ -251,7 +250,7 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
 
 - `isFetchingMore: false | 'next' | 'previous'`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
-- `fetchMore: Function(fetchMoreVariableOverride) => Promise`
+- `fetchMore: Function(fetchMoreVariableOverride) => Promise<TResult | undefined>`
   - This function allows you to fetch the next "page" of results.
   - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getFetchMore` option to your query function to retrieve the next page of results.
 - `canFetchMore: Boolean`
@@ -786,6 +785,59 @@ function App() {
 - `queryCache: QueryCache`
   - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
   - If not provided, a new cache will be generated.
+
+## `ReactQueryErrorResetBoundary`
+
+When using **suspense** or **useErrorBoundaries** in your queries, you need a way to let queries know that you want to try again when re-rendering after some error occured. With the `ReactQueryErrorResetBoundary` component you can reset any query errors within the boundaries of the component.
+
+```js
+import { ReactQueryErrorResetBoundary } from 'react-query'
+import { ErrorBoundary } from 'react-error-boundary'
+
+const App: React.FC = () => (
+  <ReactQueryErrorResetBoundary>
+    {({ reset }) => (
+      <ErrorBoundary
+        onReset={reset}
+        fallbackRender={({ resetErrorBoundary }) => (
+          <div>
+            There was an error!
+            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )}
+  </ReactQueryErrorResetBoundary>
+)
+```
+
+## `useErrorResetBoundary`
+
+This hook will reset any query errors within the closest `ReactQueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
+
+```js
+import { useErrorResetBoundary } from 'react-query'
+import { ErrorBoundary } from 'react-error-boundary'
+
+const App: React.FC = () => {
+  const { reset } = useErrorResetBoundary()
+  return (
+    <ErrorBoundary
+      onReset={reset}
+      fallbackRender={({ resetErrorBoundary }) => (
+        <div>
+          There was an error!
+          <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+        </div>
+      )}
+    >
+      <Page />
+    </ErrorBoundary>
+  )
+}
+```
 
 ## `setConsole`
 
