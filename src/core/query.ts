@@ -34,6 +34,7 @@ export interface QueryState<TResult, TError> {
   isFetching: boolean
   isFetchingMore: IsFetchingMoreValue
   isInitialData: boolean
+  isInvalidated: boolean
   status: QueryStatus
   throwInErrorBoundary?: boolean
   updateCount: number
@@ -58,6 +59,7 @@ const enum ActionType {
   Fetch,
   Success,
   Error,
+  Invalidate,
 }
 
 interface SetDataOptions {
@@ -85,10 +87,15 @@ interface ErrorAction<TError> {
   error: TError
 }
 
+interface InvalidateAction {
+  type: ActionType.Invalidate
+}
+
 export type Action<TResult, TError> =
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
+  | InvalidateAction
   | SuccessAction<TResult>
 
 // CLASS
@@ -226,16 +233,21 @@ export class Query<TResult, TError> {
     this.cancel()
   }
 
-  isEnabled(): boolean {
+  isActive(): boolean {
     return this.observers.some(observer => observer.config.enabled)
   }
 
   isStale(): boolean {
-    return this.observers.some(observer => observer.getCurrentResult().isStale)
+    return (
+      this.state.isInvalidated ||
+      this.state.status !== QueryStatus.Success ||
+      this.observers.some(observer => observer.getCurrentResult().isStale)
+    )
   }
 
   isStaleByTime(staleTime = 0): boolean {
     return (
+      this.state.isInvalidated ||
       this.state.status !== QueryStatus.Success ||
       this.state.updatedAt + staleTime <= Date.now()
     )
@@ -292,6 +304,12 @@ export class Query<TResult, TError> {
       }
 
       this.scheduleGc()
+    }
+  }
+
+  invalidate(): void {
+    if (!this.state.isInvalidated) {
+      this.dispatch({ type: ActionType.Invalidate })
     }
   }
 
@@ -610,6 +628,7 @@ function getDefaultState<TResult, TError>(
     isFetching: status === QueryStatus.Loading,
     isFetchingMore: false,
     isInitialData: true,
+    isInvalidated: false,
     status,
     updateCount: 0,
     updatedAt: Date.now(),
@@ -647,6 +666,7 @@ export function queryReducer<TResult, TError>(
         isFetching: false,
         isFetchingMore: false,
         isInitialData: false,
+        isInvalidated: false,
         status: QueryStatus.Success,
         updateCount: state.updateCount + 1,
         updatedAt: action.updatedAt ?? Date.now(),
@@ -661,6 +681,11 @@ export function queryReducer<TResult, TError>(
         status: QueryStatus.Error,
         throwInErrorBoundary: true,
         updateCount: state.updateCount + 1,
+      }
+    case ActionType.Invalidate:
+      return {
+        ...state,
+        isInvalidated: true,
       }
     default:
       return state
