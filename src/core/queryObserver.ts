@@ -5,7 +5,7 @@ import {
   isValidTimeout,
   noop,
 } from './utils'
-import { QueryResult, ResolvedQueryConfig, QueryStatus } from './types'
+import type { QueryResult, ResolvedQueryConfig } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
 
 export type UpdateListener<TResult, TError> = (
@@ -19,12 +19,14 @@ export class QueryObserver<TResult, TError> {
   private currentResult!: QueryResult<TResult, TError>
   private previousQueryResult?: QueryResult<TResult, TError>
   private listener?: UpdateListener<TResult, TError>
+  private isStale: boolean
   private initialUpdateCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
 
   constructor(config: ResolvedQueryConfig<TResult, TError>) {
     this.config = config
+    this.isStale = true
     this.initialUpdateCount = 0
 
     // Bind exposed methods
@@ -128,9 +130,9 @@ export class QueryObserver<TResult, TError> {
 
   private optionalFetch(): void {
     if (
-      this.config.enabled && // Don't auto refetch if disabled
+      this.config.enabled && // Only fetch if enabled
+      this.isStale && // Only fetch if stale
       !(this.config.suspense && this.currentResult.isFetched) && // Don't refetch if in suspense mode and the data is already fetched
-      this.currentResult.isStale && // Only refetch if stale
       (this.config.refetchOnMount || this.currentQuery.observers.length === 1)
     ) {
       this.fetch()
@@ -148,7 +150,7 @@ export class QueryObserver<TResult, TError> {
 
     this.clearStaleTimeout()
 
-    if (this.currentResult.isStale || !isValidTimeout(this.config.staleTime)) {
+    if (this.isStale || !isValidTimeout(this.config.staleTime)) {
       return
     }
 
@@ -157,8 +159,9 @@ export class QueryObserver<TResult, TError> {
     const timeout = Math.max(timeUntilStale, 0)
 
     this.staleTimeoutId = setTimeout(() => {
-      if (!this.currentResult.isStale) {
-        this.currentResult = { ...this.currentResult, isStale: true }
+      if (!this.isStale) {
+        this.isStale = true
+        this.updateResult()
         this.notify()
         this.config.queryCache.notifyGlobalListeners(this.currentQuery)
       }
@@ -208,7 +211,7 @@ export class QueryObserver<TResult, TError> {
   }
 
   private updateResult(): void {
-    const { currentQuery, currentResult, previousQueryResult, config } = this
+    const { currentQuery, previousQueryResult, config } = this
     const { state } = currentQuery
     let { data, status, updatedAt } = state
     let isPreviousData = false
@@ -216,30 +219,13 @@ export class QueryObserver<TResult, TError> {
     // Keep previous data if needed
     if (
       config.keepPreviousData &&
-      (state.status === QueryStatus.Idle ||
-        state.status === QueryStatus.Loading) &&
-      previousQueryResult?.status === QueryStatus.Success
+      state.isInitialData &&
+      previousQueryResult?.isSuccess
     ) {
       data = previousQueryResult.data
       updatedAt = previousQueryResult.updatedAt
       status = previousQueryResult.status
       isPreviousData = true
-    }
-
-    let isStale
-
-    // When the query has not been fetched yet and this is the initial render,
-    // determine the staleness based on the initialStale or existence of initial data.
-    if (!currentResult && state.isInitialData) {
-      if (typeof config.initialStale === 'function') {
-        isStale = config.initialStale()
-      } else if (typeof config.initialStale === 'boolean') {
-        isStale = config.initialStale
-      } else {
-        isStale = typeof state.data === 'undefined'
-      }
-    } else {
-      isStale = currentQuery.isStaleByTime(config.staleTime)
     }
 
     this.currentResult = {
@@ -256,21 +242,15 @@ export class QueryObserver<TResult, TError> {
       isFetchingMore: state.isFetchingMore,
       isInitialData: state.isInitialData,
       isPreviousData,
-      isStale,
+      isStale: this.isStale,
       refetch: this.refetch,
       updatedAt,
     }
   }
 
   private updateQuery(): void {
+    const config = this.config
     const prevQuery = this.currentQuery
-
-    // Remove the initial data when there is an existing query
-    // because this data should not be used for a new query
-    const config =
-      this.config.keepPreviousData && prevQuery
-        ? { ...this.config, initialData: undefined }
-        : this.config
 
     let query = config.queryCache.getQueryByHash<TResult, TError>(
       config.queryHash
@@ -287,6 +267,22 @@ export class QueryObserver<TResult, TError> {
     this.previousQueryResult = this.currentResult
     this.currentQuery = query
     this.initialUpdateCount = query.state.updateCount
+
+    // Update stale state on query switch
+    if (query.state.isInitialData) {
+      if (config.keepPreviousData && prevQuery) {
+        this.isStale = true
+      } else if (typeof config.initialStale === 'function') {
+        this.isStale = config.initialStale()
+      } else if (typeof config.initialStale === 'boolean') {
+        this.isStale = config.initialStale
+      } else {
+        this.isStale = typeof query.state.data === 'undefined'
+      }
+    } else {
+      this.isStale = query.isStaleByTime(config.staleTime)
+    }
+
     this.updateResult()
 
     if (this.listener) {
@@ -296,16 +292,20 @@ export class QueryObserver<TResult, TError> {
   }
 
   onQueryUpdate(action: Action<TResult, TError>): void {
+    const { config } = this
     const { type } = action
+
+    // Update stale state on success or error
+    if (type === 2 || type === 3) {
+      this.isStale = this.currentQuery.isStaleByTime(config.staleTime)
+    }
 
     // Store current result and get new result
     const prevResult = this.currentResult
     this.updateResult()
+    const currentResult = this.currentResult
 
-    const { currentResult, config } = this
-
-    // We need to check the action because the state could have
-    // transitioned from success to success in case of `setQueryData`.
+    // Trigger callbacks and timers on success or error
     if (type === 2) {
       config.onSuccess?.(currentResult.data!)
       config.onSettled?.(currentResult.data!, null)

@@ -1198,12 +1198,11 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await waitForMs(10)
 
-    expect(states).toMatchObject([
-      { data: 'initial', isStale: false },
-      { data: 'initial', isStale: true },
-    ])
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 'initial', isStale: false })
+    expect(states[1]).toMatchObject({ data: 'initial', isStale: true })
   })
 
   it('should fetch if initial data is set and initial stale is set to true', async () => {
@@ -1230,6 +1229,47 @@ describe('useQuery', () => {
     ])
   })
 
+  it('should fetch if initial data is set and initial stale is set to true with stale time', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        staleTime: 50,
+        initialData: 'initial',
+        initialStale: true,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(100)
+
+    expect(states.length).toBe(4)
+    expect(states[0]).toMatchObject({
+      data: 'initial',
+      isStale: true,
+      isFetching: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'initial',
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'data',
+      isStale: false,
+      isFetching: false,
+    })
+    expect(states[3]).toMatchObject({
+      data: 'data',
+      isStale: true,
+      isFetching: false,
+    })
+  })
+
   it('should keep initial stale and initial data when the query key changes', async () => {
     const key = queryKey()
     const states: QueryResult<{ count: number }>[] = []
@@ -1251,15 +1291,13 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await waitForMs(100)
 
-    expect(states).toMatchObject([
-      { data: { count: 0 } },
-      { data: { count: 0 } },
-      { data: { count: 1 } },
-      { data: { count: 1 } },
-      { data: { count: 10 } },
-    ])
+    expect(states.length).toBe(4)
+    expect(states[0]).toMatchObject({ data: { count: 0 } })
+    expect(states[1]).toMatchObject({ data: { count: 0 } })
+    expect(states[2]).toMatchObject({ data: { count: 1 } })
+    expect(states[3]).toMatchObject({ data: { count: 1 } })
   })
 
   it('should retry specified number of times', async () => {
