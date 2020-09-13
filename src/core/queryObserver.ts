@@ -5,7 +5,7 @@ import {
   isValidTimeout,
   noop,
 } from './utils'
-import type { QueryResult, ResolvedQueryConfig } from './types'
+import { QueryResult, ResolvedQueryConfig, QueryStatus } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
 
 export type UpdateListener<TResult, TError> = (
@@ -216,8 +216,9 @@ export class QueryObserver<TResult, TError> {
     // Keep previous data if needed
     if (
       config.keepPreviousData &&
-      (state.isIdle || state.isLoading) &&
-      previousQueryResult?.isSuccess
+      (state.status === QueryStatus.Idle ||
+        state.status === QueryStatus.Loading) &&
+      previousQueryResult?.status === QueryStatus.Success
     ) {
       data = previousQueryResult.data
       updatedAt = previousQueryResult.updatedAt

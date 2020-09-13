@@ -3,7 +3,6 @@ import {
   Console,
   Updater,
   functionalUpdate,
-  getStatusProps,
   isCancelable,
   isCancelledError,
   isDocumentVisible,
@@ -32,13 +31,9 @@ export interface QueryState<TResult, TError> {
   data?: TResult
   error: TError | null
   failureCount: number
-  isError: boolean
   isFetching: boolean
   isFetchingMore: IsFetchingMoreValue
-  isIdle: boolean
   isInitialData: boolean
-  isLoading: boolean
-  isSuccess: boolean
   status: QueryStatus
   throwInErrorBoundary?: boolean
   updateCount: number
@@ -231,7 +226,8 @@ export class Query<TResult, TError> {
 
   isStaleByTime(staleTime = 0): boolean {
     return (
-      !this.state.isSuccess || this.state.updatedAt + staleTime <= Date.now()
+      this.state.status !== QueryStatus.Success ||
+      this.state.updatedAt + staleTime <= Date.now()
     )
   }
 
@@ -578,28 +574,27 @@ function hasMorePages<TResult, TError>(
 function getDefaultState<TResult, TError>(
   config: ResolvedQueryConfig<TResult, TError>
 ): QueryState<TResult, TError> {
-  const initialData =
+  const data =
     typeof config.initialData === 'function'
       ? (config.initialData as InitialDataFunction<TResult>)()
       : config.initialData
 
-  const hasInitialData = typeof initialData !== 'undefined'
-
-  const initialStatus = hasInitialData
-    ? QueryStatus.Success
-    : config.enabled
-    ? QueryStatus.Loading
-    : QueryStatus.Idle
+  const status =
+    typeof data !== 'undefined'
+      ? QueryStatus.Success
+      : config.enabled
+      ? QueryStatus.Loading
+      : QueryStatus.Idle
 
   return {
-    ...getStatusProps(initialStatus),
-    canFetchMore: hasMorePages(config, initialData),
-    data: initialData,
+    canFetchMore: hasMorePages(config, data),
+    data,
     error: null,
     failureCount: 0,
-    isFetching: initialStatus === QueryStatus.Loading,
+    isFetching: status === QueryStatus.Loading,
     isFetchingMore: false,
     isInitialData: true,
+    status,
     updateCount: 0,
     updatedAt: Date.now(),
   }
@@ -616,21 +611,19 @@ export function queryReducer<TResult, TError>(
         failureCount: state.failureCount + 1,
       }
     case ActionType.Fetch:
-      const status =
-        typeof state.data !== 'undefined'
-          ? QueryStatus.Success
-          : QueryStatus.Loading
       return {
         ...state,
-        ...getStatusProps(status),
+        failureCount: 0,
         isFetching: true,
         isFetchingMore: action.isFetchingMore || false,
-        failureCount: 0,
+        status:
+          typeof state.data !== 'undefined'
+            ? QueryStatus.Success
+            : QueryStatus.Loading,
       }
     case ActionType.Success:
       return {
         ...state,
-        ...getStatusProps(QueryStatus.Success),
         canFetchMore: action.canFetchMore,
         data: action.data,
         error: null,
@@ -638,17 +631,18 @@ export function queryReducer<TResult, TError>(
         isFetching: false,
         isFetchingMore: false,
         isInitialData: false,
+        status: QueryStatus.Success,
         updateCount: state.updateCount + 1,
         updatedAt: action.updatedAt ?? Date.now(),
       }
     case ActionType.Error:
       return {
         ...state,
-        ...getStatusProps(QueryStatus.Error),
         error: action.error,
         failureCount: state.failureCount + 1,
         isFetching: false,
         isFetchingMore: false,
+        status: QueryStatus.Error,
         throwInErrorBoundary: true,
         updateCount: state.updateCount + 1,
       }
