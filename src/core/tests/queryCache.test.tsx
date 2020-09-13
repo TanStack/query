@@ -543,7 +543,7 @@ describe('queryCache', () => {
 
       expect(query.state).toMatchObject({
         data: 'data',
-        isLoading: false,
+        status: 'success',
         updateCount: 1,
       })
     })
@@ -577,7 +577,7 @@ describe('queryCache', () => {
       expect(cancel).toHaveBeenCalled()
       expect(query.state).toMatchObject({
         data: undefined,
-        isLoading: false,
+        status: 'error',
         updateCount: 1,
       })
     })
