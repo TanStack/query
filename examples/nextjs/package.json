@@ -12,5 +12,8 @@
     "react-dom": "^16.13.1",
     "react-query": "^2.17.2"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "react-query-devtools": "^2.4.7"
+  }
 }
