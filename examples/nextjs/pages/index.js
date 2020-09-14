@@ -1,8 +1,12 @@
 import React from 'react'
-import { Layout } from '../components'
+import { Layout, Header } from '../components'
 
 const Home = () => {
-  return <Layout>test</Layout>
+  return (
+    <Layout>
+      <Header>asd</Header>
+    </Layout>
+  )
 }
 
 export default Home
