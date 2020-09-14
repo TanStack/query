@@ -1129,6 +1129,171 @@ describe('useQuery', () => {
     expect(queryFn).not.toHaveBeenCalled()
   })
 
+  it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to `false`', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => count++, {
+        staleTime: 0,
+        refetchOnWindowFocus: false,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(10)
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+  })
+
+  it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => count++, {
+        staleTime: Infinity,
+        refetchOnWindowFocus: true,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(10)
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+  })
+
+  it('should refetch fresh query on focus when `refetchOnWindowFocus` is set to `always`', async () => {
+    const key = queryKey()
+    const states: QueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => count++, {
+        staleTime: Infinity,
+        refetchOnWindowFocus: 'always',
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(10)
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(4)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
+    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+  })
+
+  it('should refetch fresh query when refetchOnMount is set to always', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    await queryCache.prefetchQuery(key, () => 'prefetched')
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        refetchOnMount: 'always',
+        staleTime: Infinity,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: 'prefetched',
+      isStale: false,
+      isFetching: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'prefetched',
+      isStale: false,
+      isFetching: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'data',
+      isStale: false,
+      isFetching: false,
+    })
+  })
+
+  it('should refetch stale query when refetchOnMount is set to true', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    await queryCache.prefetchQuery(key, () => 'prefetched')
+
+    await sleep(10)
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        refetchOnMount: true,
+        staleTime: 0,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: 'prefetched',
+      isStale: true,
+      isFetching: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'prefetched',
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'data',
+      isStale: true,
+      isFetching: false,
+    })
+  })
+
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
     const consoleMock = mockConsoleError()

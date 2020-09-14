@@ -94,12 +94,24 @@ const queryInfo = useQuery({
 - `refetchIntervalInBackground: Boolean`
   - Optional
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
-- `refetchOnWindowFocus: Boolean`
+- `refetchOnMount: boolean | "always"`
   - Optional
-  - Set this to `true` or `false` to enable/disable automatic refetching on window focus for this query.
-- `refetchOnReconnect: Boolean`
+  - Defaults to `true`
+  - If set to `true`, the query will refetch on mount if the data is stale.
+  - If set to `false`, will disable additional instances of a query to trigger background refetches.
+  - If set to `"always"`, the query will always refetch on mount.
+- `refetchOnWindowFocus: boolean | "always"`
   - Optional
-  - Set this to `true` or `false` to enable/disable automatic refetching on reconnect for this query.
+  - Defaults to `true`
+  - If set to `true`, the query will refetch on window focus if the data is stale.
+  - If set to `false`, the query will not refetch on window focus.
+  - If set to `"always"`, the query will always refetch on window focus.
+- `refetchOnReconnect: boolean | "always"`
+  - Optional
+  - Defaults to `true`
+  - If set to `true`, the query will refetch on reconnect if the data is stale.
+  - If set to `false`, the query will not refetch on reconnect.
+  - If set to `"always"`, the query will always refetch on reconnect.
 - `notifyOnStatusChange: Boolean`
   - Optional
   - Set this to `false` to only re-render when there are changes to `data` or `error`.
@@ -134,10 +146,6 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `false`
   - Set this to `true` to always fetch when the component mounts (regardless of staleness).
-- `refetchOnMount: Boolean`
-  - Optional
-  - Defaults to `true`
-  - If set to `false`, will disable additional instances of a query to trigger background refetches
 - `queryFnParamsFilter: Function(args) => filteredArgs`
   - Optional
   - This function will filter the params that get passed to `queryFn`.

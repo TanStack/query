@@ -42,7 +42,10 @@ export class QueryObserver<TResult, TError> {
     this.listener = listener
     this.currentQuery.subscribeObserver(this)
 
-    if (this.config.enabled && this.config.forceFetchOnMount) {
+    if (
+      this.config.enabled &&
+      (this.config.forceFetchOnMount || this.config.refetchOnMount === 'always')
+    ) {
       this.fetch()
     } else {
       this.optionalFetch()
