@@ -234,13 +234,19 @@ export class Query<TResult, TError> {
   onInteraction(type: 'focus' | 'online'): void {
     // Execute the first observer which is enabled,
     // stale and wants to refetch on this interaction.
-    const staleObserver = this.observers.find(
-      observer =>
-        observer.getCurrentResult().isStale &&
-        observer.config.enabled &&
-        ((observer.config.refetchOnWindowFocus && type === 'focus') ||
-          (observer.config.refetchOnReconnect && type === 'online'))
-    )
+    const staleObserver = this.observers.find(observer => {
+      const { config } = observer
+      const { isStale } = observer.getCurrentResult()
+      return (
+        config.enabled &&
+        ((type === 'focus' &&
+          (config.refetchOnWindowFocus === 'always' ||
+            (config.refetchOnWindowFocus && isStale))) ||
+          (type === 'online' &&
+            (config.refetchOnReconnect === 'always' ||
+              (config.refetchOnReconnect && isStale))))
+      )
+    })
 
     if (staleObserver) {
       staleObserver.fetch()

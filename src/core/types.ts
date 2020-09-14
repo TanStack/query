@@ -95,20 +95,26 @@ export interface QueryObserverConfig<
    */
   refetchIntervalInBackground?: boolean
   /**
-   * Set this to `true` or `false` to enable/disable automatic refetching on window focus for this query.
+   * If set to `true`, the query will refetch on window focus if the data is stale.
+   * If set to `false`, the query will not refetch on window focus.
+   * If set to `'always'`, the query will always refetch on window focus.
    * Defaults to `true`.
    */
-  refetchOnWindowFocus?: boolean
+  refetchOnWindowFocus?: boolean | 'always'
   /**
-   * Set this to `true` or `false` to enable/disable automatic refetching on reconnect for this query.
+   * If set to `true`, the query will refetch on reconnect if the data is stale.
+   * If set to `false`, the query will not refetch on reconnect.
+   * If set to `'always'`, the query will always refetch on reconnect.
    * Defaults to `true`.
    */
-  refetchOnReconnect?: boolean
+  refetchOnReconnect?: boolean | 'always'
   /**
+   * If set to `true`, the query will refetch on mount if the data is stale.
    * If set to `false`, will disable additional instances of a query to trigger background refetches.
+   * If set to `'always'`, the query will always refetch on mount.
    * Defaults to `true`.
    */
-  refetchOnMount?: boolean
+  refetchOnMount?: boolean | 'always'
   /**
    * Set this to `true` to always fetch when the component mounts (regardless of staleness).
    * Defaults to `false`.
