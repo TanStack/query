@@ -1,10 +1,20 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import { useQuery } from "react-query";
+import { useQuery, QueryCache, ReactQueryCacheProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
+const queryCache = new QueryCache();
+
 export default function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Example />
+    </ReactQueryCacheProvider>
+  );
+}
+
+function Example() {
   const { isLoading, error, data } = useQuery("repoData", () =>
     fetch(
       "https://api.github.com/repos/tannerlinsley/react-query"

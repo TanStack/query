@@ -3,19 +3,24 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 
+import { QueryCache, ReactQueryCacheProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
 import "./styles.css";
 import Layout from "./Layout";
 
+const queryCache = new QueryCache();
+
 export default function App() {
   return (
-    <Router>
-      <ThemeProvider theme={theme}>
-        <Layout />
-        <ReactQueryDevtools initialIsOpen />
-      </ThemeProvider>
-    </Router>
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Router>
+        <ThemeProvider theme={theme}>
+          <Layout />
+          <ReactQueryDevtools initialIsOpen />
+        </ThemeProvider>
+      </Router>
+    </ReactQueryCacheProvider>
   );
 }
 

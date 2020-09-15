@@ -339,10 +339,13 @@ export class QueryCache {
   }
 }
 
-const defaultQueryCache = makeQueryCache({ frozen: isServer })
+const defaultQueryCache = new QueryCache({ frozen: isServer })
 export { defaultQueryCache as queryCache }
 export const queryCaches = [defaultQueryCache]
 
+/**
+ * @deprecated
+ */
 export function makeQueryCache(config?: QueryCacheConfig) {
   return new QueryCache(config)
 }

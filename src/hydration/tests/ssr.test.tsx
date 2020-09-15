@@ -4,10 +4,10 @@ import ReactDOMServer from 'react-dom/server'
 import { waitFor } from '@testing-library/react'
 
 import {
-  makeQueryCache,
   useQuery,
   setConsole,
   ReactQueryCacheProvider,
+  QueryCache,
 } from '../..'
 import { dehydrate, Hydrate } from '../'
 import * as utils from '../../core/utils'
@@ -71,7 +71,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const serverPrefetchCache = makeQueryCache()
+    const serverPrefetchCache = new QueryCache()
     const prefetchPromise = serverPrefetchCache.prefetchQuery('success', () =>
       fetchDataSuccess('success')
     )
@@ -141,7 +141,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Server part --
     setIsServer(true)
-    const serverQueryCache = makeQueryCache()
+    const serverQueryCache = new QueryCache()
     const prefetchPromise = serverQueryCache.prefetchQuery('error', () =>
       fetchDataError()
     )
@@ -215,7 +215,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const serverPrefetchCache = makeQueryCache()
+    const serverPrefetchCache = new QueryCache()
     const dehydratedStateServer = dehydrate(serverPrefetchCache)
     const markup = ReactDOMServer.renderToString(
       <ReactQueryCacheProvider>

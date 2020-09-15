@@ -5,7 +5,7 @@ import {
   mockConsoleError,
   mockNavigatorOnLine,
 } from '../../react/tests/utils'
-import { makeQueryCache, queryCache as defaultQueryCache } from '..'
+import { queryCache as defaultQueryCache, QueryCache } from '..'
 import { isCancelledError, isError } from '../utils'
 
 describe('queryCache', () => {
@@ -308,12 +308,12 @@ describe('queryCache', () => {
     expect(defaultQueryCache.getQuery(key)).toBeDefined()
   })
 
-  describe('makeQueryCache', () => {
+  describe('QueryCache', () => {
     test('merges defaultConfig so providing a queryFn does not overwrite the default queryKeySerializerFn', async () => {
       const key = queryKey()
 
       const queryFn = () => 'data'
-      const queryCache = makeQueryCache({
+      const queryCache = new QueryCache({
         defaultConfig: { queries: { queryFn } },
       })
 
@@ -325,7 +325,7 @@ describe('queryCache', () => {
     test('merges defaultConfig when query is added to cache', async () => {
       const key = queryKey()
 
-      const queryCache = makeQueryCache({
+      const queryCache = new QueryCache({
         defaultConfig: {
           queries: { refetchOnMount: false, staleTime: Infinity },
         },
@@ -341,7 +341,7 @@ describe('queryCache', () => {
     test('built queries are referencing the correct queryCache', () => {
       const key = queryKey()
 
-      const queryCache = makeQueryCache()
+      const queryCache = new QueryCache()
       const query = queryCache.buildQuery(key)
 
       // @ts-expect-error
@@ -351,7 +351,7 @@ describe('queryCache', () => {
     test('notifyGlobalListeners passes the same instance', () => {
       const key = queryKey()
 
-      const queryCache = makeQueryCache()
+      const queryCache = new QueryCache()
       const subscriber = jest.fn()
       const unsubscribe = queryCache.subscribe(subscriber)
       const query = queryCache.buildQuery(key)

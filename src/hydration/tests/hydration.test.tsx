@@ -1,5 +1,5 @@
 import { sleep } from '../../react/tests/utils'
-import { makeQueryCache } from '../..'
+import { QueryCache } from '../..'
 import { dehydrate, hydrate } from '../hydration'
 
 const fetchData: <TResult>(
@@ -12,7 +12,7 @@ const fetchData: <TResult>(
 
 describe('dehydration and rehydration', () => {
   test('should work with serializeable values', async () => {
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery('string', () => fetchData('string'))
     await queryCache.prefetchQuery('number', () => fetchData(1))
     await queryCache.prefetchQuery('boolean', () => fetchData(true))
@@ -27,7 +27,7 @@ describe('dehydration and rehydration', () => {
     // ---
 
     const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     hydrate(hydrationQueryCache, parsed)
     expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
     expect(hydrationQueryCache.getQuery('number')?.state.data).toBe(1)
@@ -69,7 +69,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should schedule garbage collection, measured from hydration', async () => {
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery('string', () => fetchData('string'), {
       cacheTime: 50,
     })
@@ -81,7 +81,7 @@ describe('dehydration and rehydration', () => {
     // ---
 
     const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     hydrate(hydrationQueryCache, parsed)
     expect(hydrationQueryCache.getQuery('string')?.state.data).toBe('string')
     await sleep(40)
@@ -94,7 +94,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should work with complex keys', async () => {
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
       () => fetchData('string')
@@ -105,7 +105,7 @@ describe('dehydration and rehydration', () => {
     // ---
 
     const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     hydrate(hydrationQueryCache, parsed)
     expect(
       hydrationQueryCache.getQuery(['string', { key: ['string'], key2: 0 }])
@@ -128,7 +128,7 @@ describe('dehydration and rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery('success', () => fetchData('success'))
     queryCache.prefetchQuery('loading', () => fetchData('loading', 10000))
     await queryCache.prefetchQuery('error', () => {
@@ -140,7 +140,7 @@ describe('dehydration and rehydration', () => {
     // ---
 
     const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     hydrate(hydrationQueryCache, parsed)
 
     expect(hydrationQueryCache.getQuery('success')).toBeTruthy()
@@ -153,7 +153,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should filter queries via shouldDehydrate', async () => {
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery('string', () => fetchData('string'))
     await queryCache.prefetchQuery('number', () => fetchData(1))
     const dehydrated = dehydrate(queryCache, {
@@ -172,7 +172,7 @@ describe('dehydration and rehydration', () => {
     // ---
 
     const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     hydrate(hydrationQueryCache, parsed)
     expect(hydrationQueryCache.getQuery('string')).toBeUndefined()
     expect(hydrationQueryCache.getQuery('number')?.state.data).toBe(1)
@@ -182,7 +182,7 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should not overwrite query in cache if hydrated query is older', async () => {
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery('string', () => fetchData('string-older', 5))
     const dehydrated = dehydrate(queryCache)
     const stringified = JSON.stringify(dehydrated)
@@ -190,7 +190,7 @@ describe('dehydration and rehydration', () => {
     // ---
 
     const parsed = JSON.parse(stringified)
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     await hydrationQueryCache.prefetchQuery('string', () =>
       fetchData('string-newer', 5)
     )
@@ -205,14 +205,14 @@ describe('dehydration and rehydration', () => {
   })
 
   test('should overwrite query in cache if hydrated query is newer', async () => {
-    const hydrationQueryCache = makeQueryCache()
+    const hydrationQueryCache = new QueryCache()
     await hydrationQueryCache.prefetchQuery('string', () =>
       fetchData('string-older', 5)
     )
 
     // ---
 
-    const queryCache = makeQueryCache()
+    const queryCache = new QueryCache()
     await queryCache.prefetchQuery('string', () => fetchData('string-newer', 5))
     const dehydrated = dehydrate(queryCache)
     const stringified = JSON.stringify(dehydrated)

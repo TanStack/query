@@ -1,21 +1,39 @@
 import React from 'react'
 import axios from 'axios'
 
-import { useQuery, useMutation, queryCache } from 'react-query'
+import {
+  useQuery,
+  useQueryCache,
+  useMutation,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-export default () => {
+const queryCache = new QueryCache()
+
+export default function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Example />
+    </ReactQueryCacheProvider>
+  )
+}
+
+function Example() {
+  const cache = useQueryCache()
+
   const { status, data, error } = useQuery('user', async () => {
     const { data } = await axios.get('/api/user')
     return data
   })
 
   const [logoutMutation] = useMutation(logout, {
-    onSuccess: () => queryCache.invalidateQueries('user'),
+    onSuccess: () => cache.invalidateQueries('user'),
   })
 
   const [loginMutation] = useMutation(login, {
-    onSuccess: () => queryCache.invalidateQueries('user'),
+    onSuccess: () => cache.invalidateQueries('user'),
   })
 
   return (

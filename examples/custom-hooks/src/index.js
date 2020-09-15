@@ -1,17 +1,23 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import { queryCache } from "react-query";
+import {
+  useQueryCache,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
 import usePosts from "./hooks/usePosts";
 import usePost from "./hooks/usePost";
 
+const queryCache = new QueryCache();
+
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <>
+    <ReactQueryCacheProvider queryCache={queryCache}>
       <p>
         This example is exactly the same as the basic example, but each query
         has been refactored to be it's own custom hook. This design is the
@@ -24,11 +30,12 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </>
+    </ReactQueryCacheProvider>
   );
 }
 
 function Posts({ setPostId }) {
+  const cache = useQueryCache();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -50,7 +57,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryCache.getQueryData(["post", post.id])
+                      cache.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

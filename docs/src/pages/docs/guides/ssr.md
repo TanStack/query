@@ -59,12 +59,14 @@ To support caching queries on the server and set up hydration, you start with wr
 
 ```jsx
 // _app.jsx
-import { ReactQueryCacheProvider } from 'react-query'
+import { ReactQueryCacheProvider, QueryCache } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
+
+const queryCache = new QueryCache()
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <ReactQueryCacheProvider>
+    <ReactQueryCacheProvider queryCache={queryCache}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
@@ -77,11 +79,11 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 
 ```jsx
 // pages/posts.jsx
-import { makeQueryCache } from 'react-query'
+import { QueryCache } from 'react-query'
 import { dehydrate } from 'react-query/hydration'
 
 export async function getStaticProps() {
-  const queryCache = makeQueryCache()
+  const queryCache = new QueryCache()
 
   await queryCache.prefetchQuery('posts', getPosts)
 
@@ -116,37 +118,38 @@ Since there are many different possible setups for SSR, it's hard to give a deta
 > Note: The global `queryCache` you can import directly from 'react-query' does not cache queries on the server to avoid leaking sensitive information between requests.
 
 - Prefetch data
-  - Create a `prefetchQueryCache` specifically for prefetching by calling `const prefetchQueryCache = makeQueryCache()`
+  - Create a `prefetchQueryCache` specifically for prefetching by calling `const prefetchQueryCache = new QueryCache()`
   - Call `prefetchQueryCache.prefetchQuery(...)` to prefetch queries
   - Dehydrate by using `const dehydratedState = dehydrate(prefetchQueryCache)`
 - Render
-  - Wrap the app in `<ReactQueryCacheProvider>` and `<Hydrate>` to create a new cache and hydrate the state
-    - This makes sure a separate `queryCache` is created specifically for rendering
-    - **Do not** pass in the `prefetchQueryCache` from the last step, the server and client both needs to render from the dehydrated data to avoid React hydration mismatches. This is because queries with errors are excluded from dehydration by default.
+  - Create a new render query cache and hydrate the state. Use this query cache to render your app.
+    - **Do not** use the `prefetchQueryCache` to render your app, the server and client both needs to render from the dehydrated data to avoid React hydration mismatches. This is because queries with errors are excluded from dehydration by default.
 - Serialize and embed `dehydratedState` in the markup
   - Security note: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 **Client side**
 
 - Parse `dehydratedState` from where you put it in the markup
+- Create a cache and hydrate the state
 - Render
-  - Wrap the app in `<Hydrate>` from `'react-query/hydration'` and pass in the dehyrated state.
 
 This list aims to be exhaustive, but depending on your current setup, the above steps can take more or less work. Here is a barebones example:
 
 ```jsx
 // Server
-const prefetchCache = makeQueryCache()
+const prefetchCache = new QueryCache()
 await prefetchCache.prefetchQuery('key', fn)
 const dehydratedState = dehydrate(prefetchCache)
 
+const renderCache = new QueryCache()
+hydrate(renderCache, dehydratedState)
+
 const html = ReactDOM.renderToString(
-  <ReactQueryCacheProvider>
-    <Hydrate state={dehyratedState}>
-      <App />
-    </Hydrate>
+  <ReactQueryCacheProvider queryCache={renderCache}>
+    <App />
   </ReactQueryCacheProvider>
 )
+
 res.send(`
 <html>
   <body>
@@ -160,11 +163,13 @@ res.send(`
 
 // Client
 const dehydratedState = JSON.parse(window.__REACT_QUERY_INITIAL_QUERIES__)
+
+const queryCache = new QueryCache()
+hydrate(queryCache, dehydratedState)
+
 ReactDOM.hydrate(
-  <ReactQueryCacheProvider>
-    <Hydrate state={dehyratedState}>
-      <App />
-    </Hydrate>
+  <ReactQueryCacheProvider queryCache={queryCache}>
+    <App />
   </ReactQueryCacheProvider>
 )
 ```

@@ -3,10 +3,27 @@ import axios from 'axios'
 
 //
 
-import { useQuery, useMutation, queryCache } from 'react-query'
+import {
+  useQuery,
+  useQueryCache,
+  useMutation,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-function App() {
+const queryCache = new QueryCache()
+
+export default function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Example />
+    </ReactQueryCacheProvider>
+  )
+}
+
+function Example() {
+  const cache = useQueryCache()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
@@ -25,12 +42,12 @@ function App() {
   const [mutateAddTodo] = useMutation(
     value => fetch(`/api/data?add=${value}`),
     {
-      onSuccess: () => queryCache.invalidateQueries('todos'),
+      onSuccess: () => cache.invalidateQueries('todos'),
     }
   )
 
   const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryCache.invalidateQueries('todos'),
+    onSuccess: () => cache.invalidateQueries('todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>
@@ -93,10 +110,3 @@ function App() {
     </div>
   )
 }
-
-export default () => (
-  <>
-    <App />
-    <App />
-  </>
-)
