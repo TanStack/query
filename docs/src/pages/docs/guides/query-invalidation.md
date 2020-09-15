@@ -6,8 +6,6 @@ title: Query Invalidation
 Waiting for queries to become stale before they are fetched again doesn't always work, especially when you know for a fact that a query needs to get refetched. For that purpose, the `queryCache` has an `invalidateQueries` method that lets you manually mark queries as stale and potentially refetch them too!
 
 ```js
-import { queryCache } from 'react-query'
-
 queryCache.invalidateQueries('todos')
 ```
 
@@ -25,7 +23,10 @@ When using APIs like `invalidateQueries` and `removeQueries` (and others that su
 In this example, we can use the `todos` prefix to invalidate any queries that start with `todos` in their query key:
 
 ```js
-import { queryCache, useQuery } from 'react-query'
+import { useQuery, useQueryCache } from 'react-query'
+
+// Get QueryCache from the context
+const queryCache = useQueryCache()
 
 queryCache.invalidateQueries('todos')
 

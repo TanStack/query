@@ -3,7 +3,7 @@ import { render, waitFor } from '@testing-library/react'
 
 import { sleep, queryKey } from './utils'
 import { ReactQueryCacheProvider, useQuery, useQueryCache } from '..'
-import { makeQueryCache, queryCache, QueryCache } from '../../core'
+import { queryCache, QueryCache } from '../../core'
 
 describe('ReactQueryCacheProvider', () => {
   test('when not used, falls back to global cache', async () => {
@@ -32,7 +32,7 @@ describe('ReactQueryCacheProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
-    const cache = makeQueryCache()
+    const cache = new QueryCache()
 
     function Page() {
       const { data } = useQuery(key, async () => {
@@ -90,8 +90,8 @@ describe('ReactQueryCacheProvider', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    const cache1 = makeQueryCache()
-    const cache2 = makeQueryCache()
+    const cache1 = new QueryCache()
+    const cache2 = new QueryCache()
 
     function Page1() {
       const { data } = useQuery(key1, async () => {
@@ -145,7 +145,7 @@ describe('ReactQueryCacheProvider', () => {
     const key = queryKey()
 
     const caches: QueryCache[] = []
-    const customCache = makeQueryCache()
+    const customCache = new QueryCache()
 
     function Page() {
       const contextCache = useQueryCache()
@@ -194,7 +194,7 @@ describe('ReactQueryCacheProvider', () => {
   test("uses defaultConfig for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
-    const cache = makeQueryCache({
+    const cache = new QueryCache({
       defaultConfig: {
         queries: {
           staleTime: Infinity,

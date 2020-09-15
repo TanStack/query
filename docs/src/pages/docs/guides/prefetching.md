@@ -6,8 +6,6 @@ title: Prefetching
 If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
 
 ```js
-import { queryCache } from 'react-query'
-
 const prefetchTodos = async () => {
   const queryData = await queryCache.prefetchQuery('todos', () =>
     fetch('/todos')
@@ -25,7 +23,5 @@ If a prefetched query is rendered after the `staleTime` for a prefetched query, 
 Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Cache's `setQueryData` method](../api/#querycachesetquerydata) to directly add or update a query's cached result.
 
 ```js
-import { queryCache } from 'react-query'
-
 queryCache.setQueryData('todos', todos)
 ```

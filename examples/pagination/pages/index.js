@@ -1,9 +1,25 @@
 import React from 'react'
 import axios from 'axios'
-import { usePaginatedQuery, queryCache } from 'react-query'
+import {
+  usePaginatedQuery,
+  useQueryCache,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-function Todos() {
+const queryCache = new QueryCache()
+
+export default function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Example />
+    </ReactQueryCacheProvider>
+  )
+}
+
+function Example() {
+  const cache = useQueryCache()
   const [page, setPage] = React.useState(0)
 
   const fetchProjects = React.useCallback(async (key, page = 0) => {
@@ -22,7 +38,7 @@ function Todos() {
   // Prefetch the next page!
   React.useEffect(() => {
     if (latestData?.hasMore) {
-      queryCache.prefetchQuery(['projects', page + 1], fetchProjects)
+      cache.prefetchQuery(['projects', page + 1], fetchProjects)
     }
   }, [latestData, fetchProjects, page])
 
@@ -76,5 +92,3 @@ function Todos() {
     </div>
   )
 }
-
-export default Todos

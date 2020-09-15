@@ -1,6 +1,10 @@
 import React, { lazy } from "react";
 import ReactDOM from "react-dom";
-import { ReactQueryConfigProvider, queryCache } from "react-query";
+import {
+  useQueryCache,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -13,26 +17,37 @@ import Button from "./components/Button";
 const Projects = lazy(() => import("./components/Projects"));
 const Project = lazy(() => import("./components/Project"));
 
-const queryConfig = {
-  shared: {
-    suspense: true,
+const queryCache = new QueryCache({
+  defaultConfig: {
+    shared: {
+      suspense: true,
+    },
+    queries: {
+      retry: 0,
+    },
   },
-  queries: {
-    retry: 0,
-  },
-};
+});
 
 function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Example />
+    </ReactQueryCacheProvider>
+  );
+}
+
+function Example() {
+  const cache = useQueryCache();
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
   return (
-    <ReactQueryConfigProvider config={queryConfig}>
+    <>
       <Button
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              queryCache.prefetchQuery("projects", fetchProjects);
+              cache.prefetchQuery("projects", fetchProjects);
             }
             return !old;
           });
@@ -51,7 +66,7 @@ function App() {
             <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
           </div>
         )}
-        onReset={() => queryCache.resetErrorBoundaries()}
+        onReset={() => cache.resetErrorBoundaries()}
       >
         <React.Suspense fallback={<h1>Loading projects...</h1>}>
           {showProjects ? (
@@ -67,7 +82,7 @@ function App() {
         </React.Suspense>
       </ErrorBoundary>
       <ReactQueryDevtools initialIsOpen />
-    </ReactQueryConfigProvider>
+    </>
   );
 }
 

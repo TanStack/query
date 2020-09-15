@@ -2,14 +2,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { useQuery, queryCache } from "react-query";
+import {
+  useQuery,
+  useQueryCache,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
+
+const queryCache = new QueryCache();
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <>
+    <ReactQueryCacheProvider queryCache={queryCache}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -26,7 +33,7 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </>
+    </ReactQueryCacheProvider>
   );
 }
 
@@ -40,6 +47,7 @@ function usePosts() {
 }
 
 function Posts({ setPostId }) {
+  const cache = useQueryCache();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -61,7 +69,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryCache.getQueryData(["post", post.id])
+                      cache.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

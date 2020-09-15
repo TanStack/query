@@ -14,7 +14,9 @@ const [mutate] = useMutation(postTodo)
 When a successful `postTodo` mutation happens, we likely want all `todos` queries to get invalidated and possibly refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `queryCache`'s `invalidateQueries` function:
 
 ```js
-import { useMutation, queryCache } from 'react-query'
+import { useMutation, useQueryCache } from 'react-query'
+
+const queryCache = useQueryCache()
 
 // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
 const [mutate] = useMutation(addTodo, {

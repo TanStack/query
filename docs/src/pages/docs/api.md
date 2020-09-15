@@ -344,36 +344,41 @@ const promise = mutate(variables, {
 - `reset: Function() => void`
   - A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
 
-## `queryCache`
+## `QueryCache`
 
-The `queryCache` instance is the backbone of React Query that manages all of the state, caching, lifecycle and magic of every query. It supports relatively unrestricted, but safe, access to manipulate query's as you need. Its available properties and methods are:
+The `QueryCache` is the backbone of React Query that manages all of the state, caching, lifecycle and magic of every query. It supports relatively unrestricted, but safe, access to manipulate query's as you need.
 
-- [`useQuery`](#usequery)
-- [`usePaginatedQuery`](#usepaginatedquery)
-- [`useInfiniteQuery`](#useinfinitequery)
-- [`useMutation`](#usemutation)
-- [`queryCache`](#querycache)
-- [`queryCache.prefetchQuery`](#querycacheprefetchquery)
-- [`queryCache.getQueryData`](#querycachegetquerydata)
-- [`queryCache.setQueryData`](#querycachesetquerydata)
-- [`queryCache.invalidateQueries`](#querycacheinvalidatequeries)
-- [`queryCache.cancelQueries`](#querycachecancelqueries)
-- [`queryCache.removeQueries`](#querycacheremovequeries)
-- [`queryCache.getQuery`](#querycachegetquery)
-- [`queryCache.getQueries`](#querycachegetqueries)
-- [`queryCache.isFetching`](#querycacheisfetching)
-- [`queryCache.subscribe`](#querycachesubscribe)
-- [`queryCache.clear`](#querycacheclear)
-- [`makeQueryCache`](#makequerycache)
-- [`useQueryCache`](#usequerycache)
-- [`useIsFetching`](#useisfetching)
-- [`ReactQueryConfigProvider`](#reactqueryconfigprovider)
-- [`ReactQueryCacheProvider`](#reactquerycacheprovider)
-- [`setConsole`](#setconsole)
-- [`hydration/dehydrate`](#hydrationdehydrate)
-- [`hydration/hydrate`](#hydrationhydrate)
-- [`hydration/useHydrate`](#hydrationusehydrate)
-- [`hydration/ReactQueryCacheProvider`](#hydrationreactquerycacheprovider)
+```js
+import { QueryCache } from 'react-query'
+
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+})
+```
+
+Its available properties and methods are:
+
+- [`prefetchQuery`](#querycacheprefetchquery)
+- [`getQueryData`](#querycachegetquerydata)
+- [`setQueryData`](#querycachesetquerydata)
+- [`invalidateQueries`](#querycacheinvalidatequeries)
+- [`cancelQueries`](#querycachecancelqueries)
+- [`removeQueries`](#querycacheremovequeries)
+- [`getQuery`](#querycachegetquery)
+- [`getQueries`](#querycachegetqueries)
+- [`isFetching`](#querycacheisfetching)
+- [`subscribe`](#querycachesubscribe)
+- [`clear`](#querycacheclear)
+
+**Options**
+
+- `defaultConfig: QueryQueryConfig`
+  - Optional
+  - Define defaults for all queries and mutations using this query cache.
 
 ## `queryCache.prefetchQuery`
 
@@ -426,8 +431,6 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 `getQueryData` is a synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
 
 ```js
-import { queryCache } from 'react-query'
-
 const data = queryCache.getQueryData(queryKey)
 ```
 
@@ -448,8 +451,6 @@ const data = queryCache.getQueryData(queryKey)
 > The difference between using `setQueryData` and `prefetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `prefetchQuery` to handle the asynchronous fetch.
 
 ```js
-import { queryCache } from 'react-query'
-
 queryCache.setQueryData(queryKey, updater, config)
 ```
 
@@ -485,8 +486,6 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 - If you **want inactive queries to refetch** as well, use the `refetchInactive: true` option
 
 ```js
-import { queryCache } from 'react-query'
-
 const queries = queryCache.invalidateQueries(inclusiveQueryKeyOrPredicateFn, {
   exact,
   throwOnError,
@@ -525,8 +524,6 @@ The `cancelQueries` method can be used to cancel outgoing queries based on their
 This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
 
 ```js
-import { queryCache } from 'react-query'
-
 const queries = queryCache.cancelQueries(queryKeyOrPredicateFn, {
   exact,
 })
@@ -552,8 +549,6 @@ This function does not return anything
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
 
 ```js
-import { queryCache } from 'react-query'
-
 const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
   exact,
 })
@@ -581,8 +576,6 @@ This function does not return anything
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.updatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```js
-import { queryCache } from 'react-query'
-
 const query = queryCache.getQuery(queryKey)
 ```
 
@@ -603,8 +596,6 @@ const query = queryCache.getQuery(queryKey)
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
 ```js
-import { queryCache } from 'react-query'
-
 const queries = queryCache.getQueries(queryKey)
 ```
 
@@ -623,8 +614,6 @@ const queries = queryCache.getQueries(queryKey)
 This `isFetching` property is an `integer` representing how many queries, if any, in the cache are currently fetching (including background-fetching, loading new pages, or loading more infinite query results)
 
 ```js
-import { queryCache } from 'react-query'
-
 if (queryCache.isFetching) {
   console.log('At least one query is fetching!')
 }
@@ -637,8 +626,6 @@ React Query also exports a handy [`useIsFetching`](#useisfetching) hook that wil
 The `subscribe` method can be used to subscribe to the query cache as a whole and be informed of safe/known updates to the cache like query states changing or queries being updated, added or removed
 
 ```js
-import { queryCache } from 'react-query'
-
 const callback = (cache, query) => {}
 
 const unsubscribe = queryCache.subscribe(callback)
@@ -660,8 +647,6 @@ const unsubscribe = queryCache.subscribe(callback)
 The `clear` method can be used to clear the queryCache entirely and start fresh.
 
 ```js
-import { queryCache } from 'react-query'
-
 queryCache.clear()
 ```
 
@@ -672,20 +657,7 @@ queryCache.clear()
 
 ## `makeQueryCache`
 
-`makeQueryCache` creates an empty `queryCache` manually. This is useful together with `ReactQueryCacheProvider` to have multiple caches in your application.
-
-As opposed to the global cache, caches created by `makeQueryCache` caches data even on the server.
-
-```js
-import { makeQueryCache } from 'react-query'
-
-const queryCache = makeQueryCache()
-```
-
-**Returns**
-
-- `queryCache: QueryCache`
-  - An empty `queryCache`
+The `makeQueryCache` factory function has been deprecated in favor of `new QueryCache()`.
 
 ## `useQueryCache`
 
@@ -696,8 +668,6 @@ import { useQueryCache } from 'react-query'
 
 const queryCache = useQueryCache()
 ```
-
-If you are using the `ReactQueryCacheProvider` to set a custom cache, you cannot simply import `{ queryCache }` any more. This hook will ensure you're getting the correct instance.
 
 ## `useIsFetching`
 
@@ -772,12 +742,12 @@ function App() {
 
 ## `ReactQueryCacheProvider`
 
-`ReactQueryCacheProvider` is an optional provider component for explicitly setting the query cache used by React Query. This is useful for creating component-level caches that are not completely global, as well as making truly isolated unit tests.
+The query cache can be connected to React with the `ReactQueryCacheProvider`. This component puts the cache on the context, which enables you to access it from anywhere in your component tree.
 
 ```js
-import { ReactQueryCacheProvider, makeQueryCache } from 'react-query'
+import { ReactQueryCacheProvider, QueryCache } from 'react-query'
 
-const queryCache = makeQueryCache()
+const queryCache = new QueryCache()
 
 function App() {
   return (
@@ -791,8 +761,7 @@ function App() {
 **Options**
 
 - `queryCache: QueryCache`
-  - In instance of queryCache, you can use the `makeQueryCache` factory to create this.
-  - If not provided, a new cache will be generated.
+  - Instance of QueryCache.
 
 ## `ReactQueryErrorResetBoundary`
 

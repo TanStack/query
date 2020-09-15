@@ -8,7 +8,7 @@ import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey } from './utils'
 import { usePaginatedQuery, ReactQueryCacheProvider, useQuery } from '..'
-import { queryCache, makeQueryCache } from '../../core'
+import { queryCache, QueryCache } from '../../core'
 
 describe('Server Side Rendering', () => {
   // A frozen cache does not cache any data. This is the default
@@ -28,13 +28,13 @@ describe('Server Side Rendering', () => {
   })
 
   // When consumers of the library create a cache explicitly by
-  // calling makeQueryCache, they take on the responsibility of
+  // creating a QueryCache, they take on the responsibility of
   // not using that cache to cache data between requests or do so
   // in a safe way.
   it('created caches should be unfrozen by default', async () => {
     const key = queryKey()
 
-    const cache = makeQueryCache()
+    const cache = new QueryCache()
     const fetchFn = () => Promise.resolve('data')
     const data = await cache.prefetchQuery(key, fetchFn)
 
@@ -46,7 +46,7 @@ describe('Server Side Rendering', () => {
     it('should not trigger fetch', () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: true })
+      const cache = new QueryCache({ frozen: true })
       const queryFn = jest.fn()
 
       function Page() {
@@ -74,7 +74,7 @@ describe('Server Side Rendering', () => {
     it('should not add initialData to the cache', () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: true })
+      const cache = new QueryCache({ frozen: true })
 
       function Page() {
         const [page, setPage] = React.useState(1)
@@ -102,7 +102,7 @@ describe('Server Side Rendering', () => {
     it('should not add prefetched data to the cache', async () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: true })
+      const cache = new QueryCache({ frozen: true })
       const fetchFn = () => Promise.resolve('data')
       const data = await cache.prefetchQuery(key, fetchFn)
 
@@ -115,7 +115,7 @@ describe('Server Side Rendering', () => {
     it('should not trigger fetch', () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: false })
+      const cache = new QueryCache({ frozen: false })
       const queryFn = jest.fn()
 
       function Page() {
@@ -143,7 +143,7 @@ describe('Server Side Rendering', () => {
     it('should add prefetched data to cache', async () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: false })
+      const cache = new QueryCache({ frozen: false })
       const fetchFn = () => Promise.resolve('data')
       const data = await cache.prefetchQuery(key, fetchFn)
 
@@ -154,7 +154,7 @@ describe('Server Side Rendering', () => {
     it('should return existing data from the cache', async () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: false })
+      const cache = new QueryCache({ frozen: false })
       const queryFn = jest.fn(() => sleep(10))
 
       function Page() {
@@ -184,7 +184,7 @@ describe('Server Side Rendering', () => {
     it('should add initialData to the cache', () => {
       const key = queryKey()
 
-      const cache = makeQueryCache({ frozen: false })
+      const cache = new QueryCache({ frozen: false })
       function Page() {
         const [page, setPage] = React.useState(1)
         const { resolvedData } = usePaginatedQuery(
@@ -220,7 +220,7 @@ describe('Server Side Rendering', () => {
       // @ts-ignore
       const setTimeoutMock = jest.spyOn(global, 'setTimeout')
 
-      const cache = makeQueryCache({ frozen: false })
+      const cache = new QueryCache({ frozen: false })
       const queryFn = jest.fn(() => Promise.resolve())
 
       function Page() {
