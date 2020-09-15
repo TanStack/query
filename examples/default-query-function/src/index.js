@@ -2,7 +2,12 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
-import { useQuery, queryCache, ReactQueryConfigProvider } from "react-query";
+import {
+  useQuery,
+  useQueryCache,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
 // Define a default query function that will receive the query key
@@ -13,41 +18,43 @@ const defaultQueryFn = async (key) => {
   return data;
 };
 
+// provide the default query function to your app via the config provider
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      queryFn: defaultQueryFn,
+    },
+  },
+});
+
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <>
-      <ReactQueryConfigProvider
-        // provide the default query function to your app via the config provider
-        config={{
-          queries: {
-            queryFn: defaultQueryFn,
-          },
-        }}
-      >
-        <p>
-          As you visit the posts below, you will notice them in a loading state
-          the first time you load them. However, after you return to this list
-          and click on any posts you have already visited again, you will see
-          them load instantly and background refresh right before your eyes!{" "}
-          <strong>
-            (You may need to throttle your network speed to simulate longer
-            loading sequences)
-          </strong>
-        </p>
-        {postId > -1 ? (
-          <Post postId={postId} setPostId={setPostId} />
-        ) : (
-          <Posts setPostId={setPostId} />
-        )}
-      </ReactQueryConfigProvider>
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <p>
+        As you visit the posts below, you will notice them in a loading state
+        the first time you load them. However, after you return to this list and
+        click on any posts you have already visited again, you will see them
+        load instantly and background refresh right before your eyes!{" "}
+        <strong>
+          (You may need to throttle your network speed to simulate longer
+          loading sequences)
+        </strong>
+      </p>
+      {postId > -1 ? (
+        <Post postId={postId} setPostId={setPostId} />
+      ) : (
+        <Posts setPostId={setPostId} />
+      )}
       <ReactQueryDevtools initialIsOpen />
-    </>
+    </ReactQueryCacheProvider>
   );
 }
 
 function Posts({ setPostId }) {
+  const cache = useQueryCache();
+
   // All you have to do now is pass a key!
   const { status, data, error, isFetching } = useQuery("/posts");
 
@@ -70,7 +77,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryCache.getQueryData(["post", post.id])
+                      cache.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

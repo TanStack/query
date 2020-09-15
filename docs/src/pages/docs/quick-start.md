@@ -10,10 +10,23 @@ This example very briefly illustrates the 3 core concepts of React Query:
 - Query Invalidation
 
 ```js
-import { useQuery, useMutation, queryCache } from 'react-query'
+import { useQuery, useMutation, useQueryCache, QueryCache, ReactQueryCacheProvider } from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
+const queryCache = new QueryCache()
+
+function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Todos />
+    </ReactQueryCacheProvider>
+  );
+}
+
 function Todos() {
+  // Cache
+  const cache = useQueryCache()
+
   // Queries
   const todosQuery = useQuery('todos', getTodos)
 
@@ -21,7 +34,7 @@ function Todos() {
   const [addTodo] = useMutation(postTodo, {
     onSuccess: () => {
       // Query Invalidations
-      queryCache.invalidateQueries('todos')
+      cache.invalidateQueries('todos')
     },
   })
 
@@ -46,6 +59,8 @@ function Todos() {
     </div>
   )
 }
+
+render(<App />, document.getElementById('root'));
 ```
 
 These three concepts make up most of the core functionality of React Query. The next sections of the documentation will go over each of these core concepts in great detail.

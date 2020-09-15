@@ -1,10 +1,27 @@
 import React from 'react'
 import axios from 'axios'
 
-import { useQuery, useMutation, queryCache } from 'react-query'
+import {
+  useQuery,
+  useQueryCache,
+  useMutation,
+  QueryCache,
+  ReactQueryCacheProvider,
+} from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-export default () => {
+const queryCache = new QueryCache()
+
+export default function App() {
+  return (
+    <ReactQueryCacheProvider queryCache={queryCache}>
+      <Example />
+    </ReactQueryCacheProvider>
+  )
+}
+
+function Example() {
+  const cache = useQueryCache()
   const [text, setText] = React.useState('')
   const { status, data, error, isFetching } = useQuery('todos', async () => {
     const { data } = await axios.get('/api/data')
@@ -19,11 +36,11 @@ export default () => {
       // an error
       onMutate: text => {
         setText('')
-        queryCache.cancelQueries('todos')
+        cache.cancelQueries('todos')
 
-        const previousValue = queryCache.getQueryData('todos')
+        const previousValue = cache.getQueryData('todos')
 
-        queryCache.setQueryData('todos', old => ({
+        cache.setQueryData('todos', old => ({
           ...old,
           items: [...old.items, text],
         }))
@@ -32,10 +49,10 @@ export default () => {
       },
       // On failure, roll back to the previous value
       onError: (err, variables, previousValue) =>
-        queryCache.setQueryData('todos', previousValue),
+        cache.setQueryData('todos', previousValue),
       // After success or failure, refetch the todos query
       onSettled: () => {
-        queryCache.invalidateQueries('todos')
+        cache.invalidateQueries('todos')
       },
     }
   )
