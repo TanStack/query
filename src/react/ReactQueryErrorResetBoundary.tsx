@@ -9,7 +9,7 @@ interface ReactQueryErrorResetBoundaryValue {
 }
 
 function createValue(): ReactQueryErrorResetBoundaryValue {
-  let isReset = true
+  let isReset = false
   return {
     clearReset: () => {
       isReset = false
