@@ -3,8 +3,8 @@ import {
   deepIncludes,
   getQueryArgs,
   isDocumentVisible,
-  isPlainObject,
   isOnline,
+  isPlainObject,
   isServer,
 } from './utils'
 import { getResolvedQueryConfig } from './config'
@@ -35,14 +35,19 @@ interface PrefetchQueryOptions {
   throwOnError?: boolean
 }
 
-interface InvalidateQueriesOptions extends QueryPredicateOptions {
-  refetchActive?: boolean
-  refetchInactive?: boolean
+interface RefetchQueriesOptions extends QueryPredicateOptions {
   throwOnError?: boolean
 }
 
+interface InvalidateQueriesOptions extends RefetchQueriesOptions {
+  refetchActive?: boolean
+  refetchInactive?: boolean
+}
+
 interface QueryPredicateOptions {
+  active?: boolean
   exact?: boolean
+  stale?: boolean
 }
 
 type QueryPredicate = QueryKey | QueryPredicateFn | true
@@ -123,7 +128,7 @@ export class QueryCache {
     predicate?: QueryPredicate,
     options?: QueryPredicateOptions
   ): Query<TResult, TError>[] {
-    if (predicate === true || typeof predicate === 'undefined') {
+    if (!options && (predicate === true || typeof predicate === 'undefined')) {
       return this.queriesArray
     }
 
@@ -134,10 +139,19 @@ export class QueryCache {
     } else {
       const resolvedConfig = this.getResolvedQueryConfig(predicate)
 
-      predicateFn = d =>
-        options?.exact
-          ? d.queryHash === resolvedConfig.queryHash
-          : deepIncludes(d.queryKey, resolvedConfig.queryKey)
+      predicateFn = query => {
+        if (
+          options &&
+          ((options.exact && query.queryHash !== resolvedConfig.queryHash) ||
+            (typeof options.active === 'boolean' &&
+              query.isActive() !== options.active) ||
+            (typeof options.stale === 'boolean' &&
+              query.isStale() !== options.stale))
+        ) {
+          return false
+        }
+        return deepIncludes(query.queryKey, resolvedConfig.queryKey)
+      }
     }
 
     return this.queriesArray.filter(predicateFn)
@@ -186,30 +200,62 @@ export class QueryCache {
     })
   }
 
-  async invalidateQueries(
+  /**
+   * @return Promise resolving to an array with the invalidated queries.
+   */
+  invalidateQueries(
     predicate?: QueryPredicate,
     options?: InvalidateQueriesOptions
-  ): Promise<void> {
-    const { refetchActive = true, refetchInactive = false, throwOnError } =
-      options || {}
+  ): Promise<Query<unknown, unknown>[]> {
+    const queries = this.getQueries(predicate, options)
 
-    try {
-      await Promise.all(
-        this.getQueries(predicate, options).map(query => {
-          const enabled = query.isEnabled()
+    queries.forEach(query => {
+      query.invalidate()
+    })
 
-          if ((enabled && refetchActive) || (!enabled && refetchInactive)) {
-            return query.fetch()
-          }
+    const { refetchActive = true, refetchInactive = false } = options || {}
 
-          return undefined
-        })
-      )
-    } catch (err) {
-      if (throwOnError) {
-        throw err
-      }
+    if (!refetchInactive && !refetchActive) {
+      return Promise.resolve(queries)
     }
+
+    const refetchOptions: RefetchQueriesOptions = { ...options }
+
+    if (refetchActive && !refetchInactive) {
+      refetchOptions.active = true
+    } else if (refetchInactive && !refetchActive) {
+      refetchOptions.active = false
+    }
+
+    let promise = this.refetchQueries(predicate, refetchOptions)
+
+    if (!options?.throwOnError) {
+      promise = promise.catch(() => queries)
+    }
+
+    return promise.then(() => queries)
+  }
+
+  /**
+   * @return Promise resolving to an array with the refetched queries.
+   */
+  refetchQueries(
+    predicate?: QueryPredicate,
+    options?: RefetchQueriesOptions
+  ): Promise<Query<unknown, unknown>[]> {
+    const promises: Promise<Query<unknown, unknown>>[] = []
+
+    this.getQueries(predicate, options).forEach(query => {
+      let promise = query.fetch().then(() => query)
+
+      if (!options?.throwOnError) {
+        promise = promise.catch(() => query)
+      }
+
+      promises.push(promise)
+    })
+
+    return Promise.all(promises)
   }
 
   resetErrorBoundaries(): void {

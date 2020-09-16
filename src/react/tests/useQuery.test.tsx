@@ -487,6 +487,52 @@ describe('useQuery', () => {
     return null
   })
 
+  it('should update query stale state when invalidated with invalidateQueries', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { staleTime: Infinity })
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          queryCache.invalidateQueries(key, {
+            refetchActive: false,
+            refetchInactive: false,
+          })
+        }, 10)
+      }, [])
+
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(100)
+
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isFetching: false,
+      isSuccess: true,
+      isStale: false,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'data',
+      isFetching: false,
+      isSuccess: true,
+      isStale: true,
+    })
+  })
+
   it('should update disabled query when updated with invalidateQueries', async () => {
     const key = queryKey()
     const states: QueryResult<number>[] = []
@@ -516,25 +562,27 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() => expect(states.length).toBe(3))
+    await waitForMs(100)
 
-    expect(states).toMatchObject([
-      {
-        data: undefined,
-        isFetching: false,
-        isSuccess: false,
-      },
-      {
-        data: undefined,
-        isFetching: true,
-        isSuccess: false,
-      },
-      {
-        data: 1,
-        isFetching: false,
-        isSuccess: true,
-      },
-    ])
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: false,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: 1,
+      isFetching: false,
+      isSuccess: true,
+      isStale: true,
+    })
   })
 
   it('should keep the previous data when keepPreviousData is set', async () => {
@@ -910,13 +958,11 @@ describe('useQuery', () => {
 
     render(<Page />)
 
-    await waitFor(() =>
-      expect(states).toMatchObject([
-        { isStale: true },
-        { isStale: false },
-        { isStale: true },
-      ])
-    )
+    await waitForMs(100)
+
+    expect(states[0]).toMatchObject({ isStale: true })
+    expect(states[1]).toMatchObject({ isStale: false })
+    expect(states[2]).toMatchObject({ isStale: true })
   })
 
   it('should notify query cache when a query becomes stale', async () => {
