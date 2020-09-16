@@ -7,6 +7,8 @@
     "start": "next start"
   },
   "dependencies": {
+    "ky": "^0.23.0",
+    "ky-universal": "^0.8.2",
     "next": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

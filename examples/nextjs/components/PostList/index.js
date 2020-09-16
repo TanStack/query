@@ -1,24 +1,25 @@
 import React from 'react'
+import { usePosts } from '../../hooks/usePosts'
 
 export const PostList = () => {
   let error = false
-  let loading = false
+  const { data, isLoading } = usePosts()
 
   // if (error) return <ErrorMessage message="Error loading posts." />
-  if (loading) return <div>Loading</div>
+  if (isLoading) return <div>Loading</div>
 
   return (
     <section>
       <ul>
-        {/* {allPosts.map((post, index) => (
+        {data?.map((post, index) => (
           <li key={post.id}>
             <div>
               <span>{index + 1}. </span>
-              <a href={post.url}>{post.title}</a>
-              <PostUpvoter id={post.id} votes={post.votes} />
+              <a href="#">{post.title}</a>
+              {/* <PostUpvoter id={post.id} votes={post.votes} /> */}
             </div>
           </li>
-        ))} */}
+        ))}
         <li>
           <div>
             <span>1</span>
