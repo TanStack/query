@@ -182,6 +182,11 @@
               "editUrl": "/docs/examples/basic.mdx"
             },
             {
+              "title": "Basic w/ GraphQL-Request",
+              "path": "/docs/examples/basic-graphql-request",
+              "editUrl": "/docs/examples/basic-graphql-request.mdx"
+            },
+            {
               "title": "Custom Hooks",
               "path": "/docs/examples/custom-hooks",
               "editUrl": "/docs/examples/custom-hooks.mdx"
