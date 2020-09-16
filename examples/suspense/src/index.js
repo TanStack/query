@@ -19,11 +19,9 @@ const Project = lazy(() => import("./components/Project"));
 
 const queryCache = new QueryCache({
   defaultConfig: {
-    shared: {
-      suspense: true,
-    },
     queries: {
       retry: 0,
+      suspense: true,
     },
   },
 });

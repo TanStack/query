@@ -692,11 +692,8 @@ const isFetching = useIsFetching()
 import { ReactQueryConfigProvider } from 'react-query'
 
 const queryConfig = {
-  shared: {
-    suspense: false,
-  },
   queries: {
-    suspense, // defaults to `shared.suspense`
+    suspense: false,
     queryKeySerializerFn: defaultQueryKeySerializerFn,
     queryFn,
     enabled: true,
@@ -715,7 +712,7 @@ const queryConfig = {
     useErrorBoundary: false, // falls back to suspense
   },
   mutations: {
-    suspense, // defaults to `shared.suspense`
+    suspense: false,
     throwOnError: false,
     onMutate: noop,
     onError: noop,
