@@ -146,7 +146,7 @@ export class Query<TResult, TError> {
     }
 
     this.gcTimeout = setTimeout(() => {
-      this.clear()
+      this.remove()
     }, this.cacheTime)
   }
 
@@ -206,7 +206,17 @@ export class Query<TResult, TError> {
     })
   }
 
+  /**
+   * @deprecated
+   */
   clear(): void {
+    Console.warn(
+      'react-query: clear() has been deprecated, please use remove() instead'
+    )
+    this.remove()
+  }
+
+  remove(): void {
     this.queryCache.removeQuery(this)
   }
 
