@@ -3,13 +3,11 @@ id: prefetching
 title: Prefetching
 ---
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` function to prefetch the results of a query to be placed into the cache:
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `fetchQuery` or `prefetchQuery` methods to prefetch the results of a query to be placed into the cache:
 
 ```js
 const prefetchTodos = async () => {
-  const queryData = await queryCache.prefetchQuery('todos', () =>
-    fetch('/todos')
-  )
+  await queryCache.prefetchQuery('todos', () => fetch('/todos'))
   // The results of this query will be cached like a normal query
 }
 ```
