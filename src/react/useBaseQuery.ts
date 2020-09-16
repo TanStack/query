@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useRerenderer } from './utils'
+import { useIsMounted } from './utils'
 import { getResolvedQueryConfig } from '../core/config'
 import { QueryObserver } from '../core/queryObserver'
 import { QueryResultBase, QueryKey, QueryConfig } from '../core/types'
@@ -12,8 +12,9 @@ export function useBaseQuery<TResult, TError>(
   queryKey: QueryKey,
   config?: QueryConfig<TResult, TError>
 ): QueryResultBase<TResult, TError> {
+  const [, rerender] = React.useReducer(c => c + 1, 0)
+  const isMounted = useIsMounted()
   const cache = useQueryCache()
-  const rerender = useRerenderer()
   const contextConfig = useContextConfig()
   const errorResetBoundary = useErrorResetBoundary()
 
@@ -35,9 +36,11 @@ export function useBaseQuery<TResult, TError>(
   React.useEffect(
     () =>
       observer.subscribe(() => {
-        rerender()
+        if (isMounted()) {
+          rerender()
+        }
       }),
-    [observer, rerender]
+    [isMounted, observer, rerender]
   )
 
   // Update config

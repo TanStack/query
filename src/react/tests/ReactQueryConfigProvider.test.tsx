@@ -2,8 +2,7 @@ import React, { useState } from 'react'
 import { act, fireEvent, render, waitFor } from '@testing-library/react'
 
 import { sleep, queryKey } from './utils'
-import { ReactQueryConfigProvider, useQuery } from '..'
-import { queryCache } from '../../core'
+import { ReactQueryConfigProvider, useQuery, queryCache } from '../..'
 
 describe('ReactQueryConfigProvider', () => {
   // // See https://github.com/tannerlinsley/react-query/issues/105

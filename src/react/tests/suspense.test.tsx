@@ -3,12 +3,12 @@ import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
 import { sleep, queryKey, mockConsoleError } from './utils'
-import { useQuery } from '..'
-import { queryCache } from '../../core'
 import {
+  useQuery,
+  queryCache,
   ReactQueryErrorResetBoundary,
   useErrorResetBoundary,
-} from '../ReactQueryErrorResetBoundary'
+} from '../..'
 
 describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {

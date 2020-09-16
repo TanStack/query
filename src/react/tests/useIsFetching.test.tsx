@@ -2,7 +2,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import { sleep, queryKey, mockConsoleError } from './utils'
-import { useQuery, useIsFetching } from '..'
+import { useQuery, useIsFetching } from '../..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

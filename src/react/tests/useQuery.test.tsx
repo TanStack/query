@@ -9,8 +9,7 @@ import {
   mockConsoleError,
   waitForMs,
 } from './utils'
-import { useQuery } from '..'
-import { queryCache, QueryResult } from '../../core'
+import { useQuery, queryCache, QueryResult } from '../..'
 
 describe('useQuery', () => {
   it('should return the correct types', () => {
@@ -1086,6 +1085,31 @@ describe('useQuery', () => {
     render(<Page />)
 
     expect(queryCache.getQuery(key)!.config.queryFn).toBe(queryFn1)
+  })
+
+  it('should batch re-renders', async () => {
+    const key = queryKey()
+
+    let renders = 0
+
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
+
+    function Page() {
+      useQuery(key, queryFn)
+      useQuery(key, queryFn)
+      renders++
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(20)
+
+    // Should be 2 instead of 3
+    expect(renders).toBe(2)
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/170
