@@ -140,6 +140,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'loading',
       updatedAt: expect.any(Number),
     })
@@ -163,6 +164,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'success',
       updatedAt: expect.any(Number),
     })
@@ -216,6 +218,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'loading',
       updatedAt: expect.any(Number),
     })
@@ -239,6 +242,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'loading',
       updatedAt: expect.any(Number),
     })
@@ -262,6 +266,7 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'error',
       updatedAt: expect.any(Number),
     })

@@ -50,6 +50,7 @@ describe('usePaginatedQuery', () => {
       latestData: undefined,
       resolvedData: undefined,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'loading',
       updatedAt: expect.any(Number),
     })
@@ -75,6 +76,7 @@ describe('usePaginatedQuery', () => {
       latestData: 1,
       resolvedData: 1,
       refetch: expect.any(Function),
+      remove: expect.any(Function),
       status: 'success',
       updatedAt: expect.any(Number),
     })

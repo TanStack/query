@@ -7,7 +7,6 @@ title: API Reference
 
 ```js
 const {
-  clear,
   data,
   error,
   failureCount,
@@ -20,6 +19,7 @@ const {
   isStale,
   isSuccess,
   refetch,
+  remove,
   status,
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
@@ -194,7 +194,7 @@ const queryInfo = useQuery({
 - `refetch: Function({ throwOnError }) => Promise<TResult | undefined>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
-- `clear: Function() => void`
+- `remove: Function() => void`
   - A function to remove the query from the cache.
 
 ## `usePaginatedQuery`

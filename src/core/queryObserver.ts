@@ -30,7 +30,7 @@ export class QueryObserver<TResult, TError> {
     this.initialUpdateCount = 0
 
     // Bind exposed methods
-    this.clear = this.clear.bind(this)
+    this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
     this.fetchMore = this.fetchMore.bind(this)
 
@@ -110,8 +110,15 @@ export class QueryObserver<TResult, TError> {
     return this.currentResult
   }
 
+  /**
+   * @deprecated
+   */
   clear(): void {
-    return this.currentQuery.clear()
+    this.remove()
+  }
+
+  remove(): void {
+    this.currentQuery.remove()
   }
 
   refetch(options?: RefetchOptions): Promise<TResult | undefined> {
@@ -234,7 +241,7 @@ export class QueryObserver<TResult, TError> {
     this.currentResult = {
       ...getStatusProps(status),
       canFetchMore: state.canFetchMore,
-      clear: this.clear,
+      clear: this.remove,
       data,
       error: state.error,
       failureCount: state.failureCount,
@@ -247,6 +254,7 @@ export class QueryObserver<TResult, TError> {
       isPreviousData,
       isStale: this.isStale,
       refetch: this.refetch,
+      remove: this.remove,
       updatedAt,
     }
   }
