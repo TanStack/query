@@ -306,8 +306,8 @@ export class QueryObserver<TResult, TError> {
     const { config } = this
     const { type } = action
 
-    // Update stale state on success or error
-    if (type === 2 || type === 3) {
+    // Update stale state on success, error or invalidation
+    if (type === 2 || type === 3 || type === 4) {
       this.isStale = this.currentQuery.isStaleByTime(config.staleTime)
     }
 
@@ -316,15 +316,23 @@ export class QueryObserver<TResult, TError> {
     this.updateResult()
     const currentResult = this.currentResult
 
-    // Trigger callbacks and timers on success or error
+    // Update timers on success, error or invalidation
+    if (type === 2 || type === 3 || type === 4) {
+      this.updateTimers()
+    }
+
+    // Trigger callbacks on success or error
     if (type === 2) {
       config.onSuccess?.(currentResult.data!)
       config.onSettled?.(currentResult.data!, null)
-      this.updateTimers()
     } else if (type === 3) {
       config.onError?.(currentResult.error!)
       config.onSettled?.(undefined, currentResult.error!)
-      this.updateTimers()
+    }
+
+    // Do not notify if the query was invalidated but the stale state did not changed
+    if (type === 4 && currentResult.isStale === prevResult.isStale) {
+      return
     }
 
     if (

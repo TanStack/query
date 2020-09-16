@@ -257,6 +257,37 @@ describe('queryCache', () => {
     expect(data).toEqual(['data1', 'data2'])
   })
 
+  test('getQueries should filter correctly', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const cache = defaultQueryCache
+
+    await cache.prefetchQuery(key1, () => 'data1')
+    await cache.prefetchQuery(key2, () => 'data2')
+    await cache.invalidateQueries(key2)
+    const query1 = cache.getQuery(key1)!
+    const query2 = cache.getQuery(key2)!
+
+    expect(cache.getQueries(key1)).toEqual([query1])
+    expect(cache.getQueries(key1, {})).toEqual([query1])
+    expect(cache.getQueries(key1, { active: false })).toEqual([query1])
+    expect(cache.getQueries(key1, { active: true })).toEqual([])
+    expect(cache.getQueries(key1, { stale: true })).toEqual([])
+    expect(cache.getQueries(key1, { stale: false })).toEqual([query1])
+    expect(cache.getQueries(key1, { stale: false, active: true })).toEqual([])
+    expect(cache.getQueries(key1, { stale: false, active: false })).toEqual([
+      query1,
+    ])
+    expect(
+      cache.getQueries(key1, { stale: false, active: false, exact: true })
+    ).toEqual([query1])
+
+    expect(cache.getQueries(key2)).toEqual([query2])
+    expect(cache.getQueries(key2, { stale: undefined })).toEqual([query2])
+    expect(cache.getQueries(key2, { stale: true })).toEqual([query2])
+    expect(cache.getQueries(key2, { stale: false })).toEqual([])
+  })
+
   test('query interval is cleared when unsubscribed to a refetchInterval query', async () => {
     const key = queryKey()
 
