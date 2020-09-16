@@ -23,6 +23,7 @@ import {
 } from './types'
 import type { QueryCache } from './queryCache'
 import { QueryObserver, UpdateListener } from './queryObserver'
+import { notifyManager } from './notifyManager'
 
 // TYPES
 
@@ -134,11 +135,13 @@ export class Query<TResult, TError> {
   private dispatch(action: Action<TResult, TError>): void {
     this.state = queryReducer(this.state, action)
 
-    this.observers.forEach(observer => {
-      observer.onQueryUpdate(action)
-    })
+    notifyManager.batch(() => {
+      this.observers.forEach(observer => {
+        observer.onQueryUpdate(action)
+      })
 
-    this.queryCache.notifyGlobalListeners(this)
+      this.queryCache.notifyGlobalListeners(this)
+    })
   }
 
   private scheduleGc(): void {

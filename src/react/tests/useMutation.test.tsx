@@ -1,7 +1,7 @@
 import { render, fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { useMutation } from '..'
+import { useMutation } from '../..'
 import { mockConsoleError } from './utils'
 
 describe('useMutation', () => {

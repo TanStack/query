@@ -7,11 +7,12 @@ import commonJS from 'rollup-plugin-commonjs'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 
-const external = ['react']
+const external = ['react', 'react-dom']
 const hydrationExternal = [...external, 'react-query']
 
 const globals = {
   react: 'React',
+  'react-dom': 'ReactDOM',
 }
 const hydrationGlobals = {
   ...globals,

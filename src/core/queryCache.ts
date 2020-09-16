@@ -18,6 +18,7 @@ import {
   TypedQueryFunctionArgs,
   ResolvedQueryConfig,
 } from './types'
+import { notifyManager } from './notifyManager'
 
 // TYPES
 
@@ -94,8 +95,12 @@ export class QueryCache {
       0
     )
 
-    this.globalListeners.forEach(listener => {
-      listener(this, query)
+    notifyManager.batch(() => {
+      this.globalListeners.forEach(listener => {
+        notifyManager.schedule(() => {
+          listener(this, query)
+        })
+      })
     })
   }
 
@@ -209,8 +214,10 @@ export class QueryCache {
   ): Promise<Query<unknown, unknown>[]> {
     const queries = this.getQueries(predicate, options)
 
-    queries.forEach(query => {
-      query.invalidate()
+    notifyManager.batch(() => {
+      queries.forEach(query => {
+        query.invalidate()
+      })
     })
 
     const { refetchActive = true, refetchInactive = false } = options || {}
@@ -245,14 +252,16 @@ export class QueryCache {
   ): Promise<Query<unknown, unknown>[]> {
     const promises: Promise<Query<unknown, unknown>>[] = []
 
-    this.getQueries(predicate, options).forEach(query => {
-      let promise = query.fetch().then(() => query)
+    notifyManager.batch(() => {
+      this.getQueries(predicate, options).forEach(query => {
+        let promise = query.fetch().then(() => query)
 
-      if (!options?.throwOnError) {
-        promise = promise.catch(() => query)
-      }
+        if (!options?.throwOnError) {
+          promise = promise.catch(() => query)
+        }
 
-      promises.push(promise)
+        promises.push(promise)
+      })
     })
 
     return Promise.all(promises)
@@ -398,9 +407,11 @@ export function makeQueryCache(config?: QueryCacheConfig) {
 
 export function onVisibilityOrOnlineChange(type: 'focus' | 'online') {
   if (isDocumentVisible() && isOnline()) {
-    queryCaches.forEach(queryCache => {
-      queryCache.getQueries().forEach(query => {
-        query.onInteraction(type)
+    notifyManager.batch(() => {
+      queryCaches.forEach(queryCache => {
+        queryCache.getQueries().forEach(query => {
+          query.onInteraction(type)
+        })
       })
     })
   }
