@@ -68,7 +68,6 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
 
 export function getDefaultReactQueryConfig() {
   return {
-    shared: { ...DEFAULT_CONFIG.shared },
     queries: { ...DEFAULT_CONFIG.queries },
     mutations: { ...DEFAULT_CONFIG.mutations },
   }
@@ -103,7 +102,6 @@ export function getResolvedQueryConfig<TResult, TError>(
   const queryCacheConfig = queryCache.getDefaultConfig()
 
   const resolvedConfig = {
-    ...DEFAULT_CONFIG.shared,
     ...DEFAULT_CONFIG.queries,
     ...queryCacheConfig?.shared,
     ...queryCacheConfig?.queries,
@@ -133,7 +131,6 @@ export function getResolvedMutationConfig<
 ): MutationConfig<TResult, TError, TVariables, TSnapshot> {
   const queryCacheConfig = queryCache.getDefaultConfig()
   return {
-    ...DEFAULT_CONFIG.shared,
     ...DEFAULT_CONFIG.mutations,
     ...queryCacheConfig?.shared,
     ...queryCacheConfig?.mutations,
