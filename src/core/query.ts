@@ -110,7 +110,7 @@ export class Query<TResult, TError> {
   cacheTime: number
 
   private queryCache: QueryCache
-  private promise?: Promise<TResult | undefined>
+  private promise?: Promise<TResult>
   private gcTimeout?: number
   private cancelFetch?: (silent?: boolean) => void
   private continueFetch?: () => void
@@ -160,12 +160,15 @@ export class Query<TResult, TError> {
     }, this.cacheTime)
   }
 
-  async cancel(silent?: boolean): Promise<void> {
+  cancel(silent?: boolean): Promise<undefined> {
     const promise = this.promise
+
     if (promise && this.cancelFetch) {
       this.cancelFetch(silent)
-      await promise.catch(noop)
+      return promise.then(noop).catch(noop)
     }
+
+    return Promise.resolve(undefined)
   }
 
   private continue(): void {
@@ -316,17 +319,17 @@ export class Query<TResult, TError> {
     }
   }
 
-  async refetch(
+  refetch(
     options?: RefetchOptions,
     config?: ResolvedQueryConfig<TResult, TError>
   ): Promise<TResult | undefined> {
-    try {
-      return await this.fetch(undefined, config)
-    } catch (error) {
-      if (options?.throwOnError === true) {
-        throw error
-      }
+    let promise: Promise<TResult | undefined> = this.fetch(undefined, config)
+
+    if (!options?.throwOnError) {
+      promise = promise.catch(noop)
     }
+
+    return promise
   }
 
   fetchMore(
@@ -348,7 +351,7 @@ export class Query<TResult, TError> {
   async fetch(
     options?: FetchOptions,
     config?: ResolvedQueryConfig<TResult, TError>
-  ): Promise<TResult | undefined> {
+  ): Promise<TResult> {
     if (this.promise) {
       if (options?.fetchMore && this.state.data) {
         // Silently cancel current fetch if the user wants to fetch more

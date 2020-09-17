@@ -113,27 +113,30 @@ export function isOnline(): boolean {
 }
 
 export function getQueryArgs<TResult, TError, TOptions = undefined>(
-  args: any[]
+  arg1: any,
+  arg2?: any,
+  arg3?: any,
+  arg4?: any
 ): [QueryKey, QueryConfig<TResult, TError>, TOptions] {
   let queryKey: QueryKey
   let queryFn: QueryFunction<TResult> | undefined
   let config: QueryConfig<TResult, TError> | undefined
   let options: TOptions
 
-  if (isPlainObject(args[0])) {
-    queryKey = args[0].queryKey
-    queryFn = args[0].queryFn
-    config = args[0].config
-    options = args[1]
-  } else if (isPlainObject(args[1])) {
-    queryKey = args[0]
-    config = args[1]
-    options = args[2]
+  if (isPlainObject(arg1)) {
+    queryKey = arg1.queryKey
+    queryFn = arg1.queryFn
+    config = arg1.config
+    options = arg2
+  } else if (isPlainObject(arg2)) {
+    queryKey = arg1
+    config = arg2
+    options = arg3
   } else {
-    queryKey = args[0]
-    queryFn = args[1]
-    config = args[2]
-    options = args[3]
+    queryKey = arg1
+    queryFn = arg2
+    config = arg3
+    options = arg4
   }
 
   config = config || {}

@@ -24,7 +24,6 @@ const {
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
   enabled,
-  forceFetchOnMount,
   initialData,
   initialStale,
   isDataEqual,
@@ -142,10 +141,6 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
-- `forceFetchOnMount: Boolean`
-  - Optional
-  - Defaults to `false`
-  - Set this to `true` to always fetch when the component mounts (regardless of staleness).
 - `queryFnParamsFilter: Function(args) => filteredArgs`
   - Optional
   - This function will filter the params that get passed to `queryFn`.
@@ -362,6 +357,7 @@ const queryCache = new QueryCache({
 
 Its available properties and methods are:
 
+- [`fetchQuery`](#querycachefetchquery)
 - [`prefetchQuery`](#querycacheprefetchquery)
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
@@ -380,9 +376,25 @@ Its available properties and methods are:
   - Optional
   - Define defaults for all queries and mutations using this query cache.
 
+## `queryCache.fetchQuery`
+
+`fetchQuery` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Specify a `staleTime` to only trigger a fetch when the data is stale. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
+
+```js
+try {
+  const data = await queryCache.fetchQuery(queryKey, queryFn)
+} catch (error) {
+  console.log(error)
+}
+```
+
+**Returns**
+
+- `Promise<TResult>`
+
 ## `queryCache.prefetchQuery`
 
-`prefetchQuery` is an asynchronous function that can be used to fetch and cache a query response before it is needed or rendered with `useQuery` and friends.
+`prefetchQuery` is an asynchronous method that can be used to fetch and cache a query response before it is needed or rendered with `useQuery` and friends.
 
 - If either:
   - The query does not exist or
@@ -394,13 +406,13 @@ Its available properties and methods are:
 > The difference between using `prefetchQuery` and `setQueryData` is that `prefetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
 ```js
-const data = await queryCache.prefetchQuery(queryKey, queryFn)
+await queryCache.prefetchQuery(queryKey, queryFn)
 ```
 
 To pass options like `force` or `throwOnError`, use the fourth options object:
 
 ```js
-const data = await queryCache.prefetchQuery(queryKey, queryFn, config, {
+await queryCache.prefetchQuery(queryKey, queryFn, config, {
   force: true,
   throwOnError: true,
 })
@@ -409,7 +421,7 @@ const data = await queryCache.prefetchQuery(queryKey, queryFn, config, {
 You can even use it with a default queryFn in your config!
 
 ```js
-const data = await queryCache.prefetchQuery(queryKey)
+await queryCache.prefetchQuery(queryKey)
 ```
 
 **Options**
@@ -423,7 +435,7 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 
 **Returns**
 
-- `promise: Promise`
+- `Promise<TResult | undefined>`
   - A promise is returned that will either immediately resolve with the query's cached response data, or resolve to the data returned by the fetch function. It **will not** throw an error if the fetch fails. This can be configured by setting the `throwOnError` option to `true`.
 
 ## `queryCache.getQueryData`
