@@ -1112,6 +1112,45 @@ describe('useQuery', () => {
     expect(renders).toBe(2)
   })
 
+  it('should batch re-renders including hook callbacks', async () => {
+    const key = queryKey()
+
+    let renders = 0
+    let renderedCount = 0
+
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+      useQuery(key, queryFn, {
+        onSuccess: () => {
+          setCount(x => x + 1)
+        },
+      })
+      useQuery(key, queryFn, {
+        onSuccess: () => {
+          setCount(x => x + 1)
+        },
+      })
+      renders++
+      renderedCount = count
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(20)
+
+    // Should be 2 instead of 5
+    expect(renders).toBe(2)
+
+    // Both callbacks should have been executed
+    expect(renderedCount).toBe(2)
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/170
   it('should start with status idle if enabled is false', async () => {
     const key1 = queryKey()

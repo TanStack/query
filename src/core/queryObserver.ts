@@ -13,6 +13,13 @@ export type UpdateListener<TResult, TError> = (
   result: QueryResult<TResult, TError>
 ) => void
 
+interface NotifyOptions {
+  globalListeners?: boolean
+  listener?: boolean
+  onError?: boolean
+  onSuccess?: boolean
+}
+
 export class QueryObserver<TResult, TError> {
   config: ResolvedQueryConfig<TResult, TError>
 
@@ -150,13 +157,46 @@ export class QueryObserver<TResult, TError> {
     }
   }
 
-  private notify(global?: boolean): void {
+  private notify(options: NotifyOptions): void {
+    const { config, currentResult, currentQuery, listener } = this
+    const { onSuccess, onSettled, onError } = config
+
     notifyManager.batch(() => {
-      notifyManager.schedule(() => {
-        this.listener?.(this.currentResult)
-      })
-      if (global) {
-        this.config.queryCache.notifyGlobalListeners(this.currentQuery)
+      // First trigger the configuration callbacks
+      if (options.onSuccess) {
+        if (onSuccess) {
+          notifyManager.schedule(() => {
+            onSuccess(currentResult.data!)
+          })
+        }
+        if (onSettled) {
+          notifyManager.schedule(() => {
+            onSettled(currentResult.data!, null)
+          })
+        }
+      } else if (options.onError) {
+        if (onError) {
+          notifyManager.schedule(() => {
+            onError(currentResult.error!)
+          })
+        }
+        if (onSettled) {
+          notifyManager.schedule(() => {
+            onSettled(undefined, currentResult.error!)
+          })
+        }
+      }
+
+      // Then trigger the listener
+      if (options.listener && listener) {
+        notifyManager.schedule(() => {
+          listener(currentResult)
+        })
+      }
+
+      // Then the global listeners
+      if (options.globalListeners) {
+        config.queryCache.notifyGlobalListeners(currentQuery)
       }
     })
   }
@@ -180,7 +220,7 @@ export class QueryObserver<TResult, TError> {
       if (!this.isStale) {
         this.isStale = true
         this.updateResult()
-        this.notify(true)
+        this.notify({ listener: true, globalListeners: true })
       }
     }, timeout)
   }
@@ -327,28 +367,30 @@ export class QueryObserver<TResult, TError> {
       this.updateTimers()
     }
 
-    // Trigger callbacks on success or error
-    if (type === 2) {
-      config.onSuccess?.(currentResult.data!)
-      config.onSettled?.(currentResult.data!, null)
-    } else if (type === 3) {
-      config.onError?.(currentResult.error!)
-      config.onSettled?.(undefined, currentResult.error!)
-    }
-
     // Do not notify if the query was invalidated but the stale state did not changed
     if (type === 4 && currentResult.isStale === prevResult.isStale) {
       return
     }
 
-    if (
-      // Always notify on data or error change
-      currentResult.data !== prevResult.data ||
-      currentResult.error !== prevResult.error ||
-      // Maybe notify on other changes
-      config.notifyOnStatusChange
-    ) {
-      this.notify()
+    // Determine which callbacks to trigger
+    const notifyOptions: NotifyOptions = {}
+
+    if (type === 2) {
+      notifyOptions.onSuccess = true
+    } else if (type === 3) {
+      notifyOptions.onError = true
     }
+
+    if (
+      // Always notify if notifyOnStatusChange is set
+      config.notifyOnStatusChange ||
+      // Otherwise only notify on data or error change
+      currentResult.data !== prevResult.data ||
+      currentResult.error !== prevResult.error
+    ) {
+      notifyOptions.listener = true
+    }
+
+    this.notify(notifyOptions)
   }
 }

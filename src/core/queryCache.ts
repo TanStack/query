@@ -133,7 +133,9 @@ export class QueryCache {
     predicate?: QueryPredicate,
     options?: QueryPredicateOptions
   ): Query<TResult, TError>[] {
-    if (!options && (predicate === true || typeof predicate === 'undefined')) {
+    const anyKey = predicate === true || typeof predicate === 'undefined'
+
+    if (anyKey && !options) {
       return this.queriesArray
     }
 
@@ -142,20 +144,36 @@ export class QueryCache {
     if (typeof predicate === 'function') {
       predicateFn = predicate as QueryPredicateFn
     } else {
+      const { exact, active, stale } = options || {}
       const resolvedConfig = this.getResolvedQueryConfig(predicate)
 
       predicateFn = query => {
-        if (
-          options &&
-          ((options.exact && query.queryHash !== resolvedConfig.queryHash) ||
-            (typeof options.active === 'boolean' &&
-              query.isActive() !== options.active) ||
-            (typeof options.stale === 'boolean' &&
-              query.isStale() !== options.stale))
-        ) {
+        // Check query key if needed
+        if (!anyKey) {
+          if (exact) {
+            // Check if the query key matches exactly
+            if (query.queryHash !== resolvedConfig.queryHash) {
+              return false
+            }
+          } else {
+            // Check if the query key matches partially
+            if (!deepIncludes(query.queryKey, resolvedConfig.queryKey)) {
+              return false
+            }
+          }
+        }
+
+        // Check active state if needed
+        if (typeof active === 'boolean' && query.isActive() !== active) {
           return false
         }
-        return deepIncludes(query.queryKey, resolvedConfig.queryKey)
+
+        // Check stale state if needed
+        if (typeof stale === 'boolean' && query.isStale() !== stale) {
+          return false
+        }
+
+        return true
       }
     }
 
