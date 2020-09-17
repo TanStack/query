@@ -6,6 +6,7 @@ import {
   isOnline,
   isPlainObject,
   isServer,
+  noop,
 } from './utils'
 import { getResolvedQueryConfig } from './config'
 import { Query } from './query'
@@ -54,6 +55,12 @@ interface QueryPredicateOptions {
 type QueryPredicate = QueryKey | QueryPredicateFn | true
 
 type QueryPredicateFn = (query: Query<unknown, unknown>) => boolean
+
+export interface FetchQueryObjectConfig<TResult, TError> {
+  queryKey: QueryKey
+  queryFn?: QueryFunction<TResult>
+  config?: QueryConfig<TResult, TError>
+}
 
 export interface PrefetchQueryObjectConfig<TResult, TError> {
   queryKey: QueryKey
@@ -320,64 +327,37 @@ export class QueryCache {
     return query
   }
 
-  // Parameter syntax with optional prefetch options
-  async prefetchQuery<TResult = unknown, TError = unknown>(
+  // Parameter syntax
+  fetchQuery<TResult = unknown, TError = unknown>(
     queryKey: QueryKey,
-    options?: PrefetchQueryOptions
-  ): Promise<TResult | undefined>
+    queryConfig?: QueryConfig<TResult, TError>
+  ): Promise<TResult>
 
-  // Parameter syntax with query function and optional prefetch options
-  async prefetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
+  // Parameter syntax with query function
+  fetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
     queryKey: QueryKey,
     queryFn: TypedQueryFunction<TResult, TArgs>,
-    options?: PrefetchQueryOptions
-  ): Promise<TResult | undefined>
+    queryConfig?: QueryConfig<TResult, TError>
+  ): Promise<TResult>
 
-  async prefetchQuery<TResult = unknown, TError = unknown>(
+  fetchQuery<TResult = unknown, TError = unknown>(
     queryKey: QueryKey,
     queryFn: QueryFunction<TResult>,
-    options?: PrefetchQueryOptions
-  ): Promise<TResult | undefined>
-
-  // Parameter syntax with query function, config and optional prefetch options
-  async prefetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
-    queryKey: QueryKey,
-    queryFn: TypedQueryFunction<TResult, TArgs>,
-    queryConfig: QueryConfig<TResult, TError>,
-    options?: PrefetchQueryOptions
-  ): Promise<TResult | undefined>
-
-  async prefetchQuery<TResult = unknown, TError = unknown>(
-    queryKey: QueryKey,
-    queryFn: QueryFunction<TResult>,
-    queryConfig: QueryConfig<TResult, TError>,
-    options?: PrefetchQueryOptions
-  ): Promise<TResult | undefined>
+    queryConfig?: QueryConfig<TResult, TError>
+  ): Promise<TResult>
 
   // Object syntax
-  async prefetchQuery<TResult = unknown, TError = unknown>(
-    config: PrefetchQueryObjectConfig<TResult, TError>
-  ): Promise<TResult | undefined>
+  fetchQuery<TResult = unknown, TError = unknown>(
+    config: FetchQueryObjectConfig<TResult, TError>
+  ): Promise<TResult>
 
   // Implementation
-  async prefetchQuery<TResult, TError>(
-    ...args: any[]
-  ): Promise<TResult | undefined> {
-    if (
-      isPlainObject(args[1]) &&
-      (args[1].hasOwnProperty('throwOnError') ||
-        args[1].hasOwnProperty('force'))
-    ) {
-      args[3] = args[1]
-      args[1] = undefined
-      args[2] = undefined
-    }
-
-    const [queryKey, config, options] = getQueryArgs<
-      TResult,
-      TError,
-      PrefetchQueryOptions | undefined
-    >(args)
+  fetchQuery<TResult, TError>(
+    arg1: any,
+    arg2?: any,
+    arg3?: any
+  ): Promise<TResult> {
+    const [queryKey, config] = getQueryArgs<TResult, TError>(arg1, arg2, arg3)
 
     const resolvedConfig = this.getResolvedQueryConfig(queryKey, {
       // https://github.com/tannerlinsley/react-query/issues/652
@@ -391,16 +371,91 @@ export class QueryCache {
       query = this.createQuery(resolvedConfig)
     }
 
-    try {
-      if (options?.force || query.isStaleByTime(config.staleTime)) {
-        await query.fetch(undefined, resolvedConfig)
-      }
-      return query.state.data
-    } catch (error) {
-      if (options?.throwOnError) {
-        throw error
-      }
+    if (!query.isStaleByTime(config.staleTime)) {
+      return Promise.resolve(query.state.data as TResult)
     }
+
+    return query.fetch(undefined, resolvedConfig)
+  }
+
+  /**
+   * @deprecated
+   */
+  // Parameter syntax with optional prefetch options
+  prefetchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    options?: PrefetchQueryOptions
+  ): Promise<TResult | undefined>
+
+  // Parameter syntax with query function and optional prefetch options
+  prefetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
+    queryKey: QueryKey,
+    queryFn: TypedQueryFunction<TResult, TArgs>,
+    options?: PrefetchQueryOptions
+  ): Promise<TResult | undefined>
+
+  prefetchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    queryFn: QueryFunction<TResult>,
+    options?: PrefetchQueryOptions
+  ): Promise<TResult | undefined>
+
+  // Parameter syntax with query function, config and optional prefetch options
+  prefetchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
+    queryKey: QueryKey,
+    queryFn: TypedQueryFunction<TResult, TArgs>,
+    queryConfig: QueryConfig<TResult, TError>,
+    options?: PrefetchQueryOptions
+  ): Promise<TResult | undefined>
+
+  prefetchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    queryFn: QueryFunction<TResult>,
+    queryConfig: QueryConfig<TResult, TError>,
+    options?: PrefetchQueryOptions
+  ): Promise<TResult | undefined>
+
+  // Object syntax
+  prefetchQuery<TResult = unknown, TError = unknown>(
+    config: PrefetchQueryObjectConfig<TResult, TError>
+  ): Promise<TResult | undefined>
+
+  // Implementation
+  prefetchQuery<TResult, TError>(
+    arg1: any,
+    arg2?: any,
+    arg3?: any,
+    arg4?: any
+  ): Promise<TResult | undefined> {
+    if (
+      isPlainObject(arg2) &&
+      (arg2.hasOwnProperty('throwOnError') || arg2.hasOwnProperty('force'))
+    ) {
+      arg4 = arg2
+      arg2 = undefined
+      arg3 = undefined
+    }
+
+    const [queryKey, config, options] = getQueryArgs<
+      TResult,
+      TError,
+      PrefetchQueryOptions | undefined
+    >(arg1, arg2, arg3, arg4)
+
+    if (options?.force) {
+      config.staleTime = 0
+    }
+
+    let promise: Promise<TResult | undefined> = this.fetchQuery(
+      queryKey,
+      config
+    )
+
+    if (!options?.throwOnError) {
+      promise = promise.catch(noop)
+    }
+
+    return promise
   }
 
   setQueryData<TResult, TError = unknown>(

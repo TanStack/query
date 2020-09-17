@@ -118,12 +118,12 @@ Since there are many different possible setups for SSR, it's hard to give a deta
 > Note: The global `queryCache` you can import directly from 'react-query' does not cache queries on the server to avoid leaking sensitive information between requests.
 
 - Prefetch data
-  - Create a `prefetchQueryCache` specifically for prefetching by calling `const prefetchQueryCache = new QueryCache()`
-  - Call `prefetchQueryCache.prefetchQuery(...)` to prefetch queries
-  - Dehydrate by using `const dehydratedState = dehydrate(prefetchQueryCache)`
+  - Create a `prefetchCache` specifically for prefetching by calling `const prefetchCache = new QueryCache()`
+  - Call `prefetchCache.prefetchQuery(...)` to prefetch queries
+  - Dehydrate by using `const dehydratedState = dehydrate(prefetchCache)`
 - Render
-  - Create a new render query cache and hydrate the state. Use this query cache to render your app.
-    - **Do not** use the `prefetchQueryCache` to render your app, the server and client both needs to render from the dehydrated data to avoid React hydration mismatches. This is because queries with errors are excluded from dehydration by default.
+  - Create a new query cache for rendering and hydrate the state. Use this query cache to render your app.
+    - **Do not** use the `prefetchCache` to render your app, the server and client both needs to render from the dehydrated data to avoid React hydration mismatches. This is because queries with errors are excluded from dehydration by default.
 - Serialize and embed `dehydratedState` in the markup
   - Security note: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
@@ -180,7 +180,7 @@ ReactDOM.hydrate(
 
 Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the client. This happens regardless of error.
 
-Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, pass `throwOnError: true` to the specific `prefetchQuery` to be able to catch and handle those errors manually.
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
 
 **Staleness is measured from when the query was fetched on the server**
 
