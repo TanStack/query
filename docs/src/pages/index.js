@@ -104,14 +104,34 @@ const Home = () => {
                 href="https://learn.tanstack.com"
                 className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
               >
-                BUY NOW
+                ENROLL NOW
               </a>
-              <a
-                className="block text-2xl mt-6 underline"
-                href="https://learn.tanstack.com"
-              >
-                <strong>33% OFF</strong> through August 4th
-              </a>
+              <div className="grid pt-8 text-white max-w-screen-lg mx-auto text-lg">
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  50+ Lessons
+                </a>
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  3+ Hours of Live-Code Training
+                </a>
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  Lesson Source Code
+                </a>
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  Full API coverage
+                </a>
+              </div>
             </div>
           </div>
         </div>
