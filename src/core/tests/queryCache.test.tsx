@@ -7,6 +7,7 @@ import {
 } from '../../react/tests/utils'
 import { QueryCache, queryCache as defaultQueryCache } from '../..'
 import { isCancelledError, isError } from '../utils'
+import { QueryObserver } from '../queryObserver'
 
 describe('queryCache', () => {
   test('setQueryData does not crash if query could not be found', () => {
@@ -228,6 +229,89 @@ describe('queryCache', () => {
     expect(defaultQueryCache.getQuery(key)!.state.data).toEqual(
       'new data + test data'
     )
+  })
+
+  test('refetchQueries should refetch all queries when no arguments are given', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const cache = new QueryCache()
+    await cache.fetchQuery(key1, queryFn1)
+    await cache.fetchQuery(key2, queryFn2)
+    await cache.refetchQueries()
+    cache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(2)
+  })
+
+  test('refetchQueries should be able to refetch all fresh queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const cache = new QueryCache()
+    await cache.fetchQuery(key1, queryFn1)
+    await cache.fetchQuery(key2, queryFn2)
+    await cache.refetchQueries([], { stale: false })
+    cache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(2)
+  })
+
+  test('refetchQueries should be able to refetch all stale queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const cache = new QueryCache()
+    await cache.fetchQuery(key1, queryFn1)
+    await cache.fetchQuery(key2, queryFn2)
+    cache.getQuery(key1)!.invalidate()
+    await cache.refetchQueries([], { stale: true })
+    cache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+  })
+
+  test('refetchQueries should be able to refetch all stale and active queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const cache = new QueryCache()
+    await cache.fetchQuery(key1, queryFn1)
+    await cache.fetchQuery(key2, queryFn2)
+    const query1 = cache.getQuery(key1)!
+    query1.invalidate()
+    const observer = query1.subscribe()
+    await cache.refetchQueries([], { active: true, stale: true })
+    observer.unsubscribe()
+    cache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+  })
+
+  test('refetchQueries should be able to refetch all inactive queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const cache = new QueryCache()
+    await cache.fetchQuery(key1, queryFn1)
+    await cache.fetchQuery(key2, queryFn2)
+    const query1 = cache.getQuery(key1)!
+    const observer = new QueryObserver({
+      ...query1.config,
+      staleTime: Infinity,
+    })
+    const unsubscribe = observer.subscribe()
+    await cache.refetchQueries([], { active: false })
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    unsubscribe()
+    cache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    expect(queryFn2).toHaveBeenCalledTimes(2)
   })
 
   test('getQueries should return queries that partially match queryKey', async () => {

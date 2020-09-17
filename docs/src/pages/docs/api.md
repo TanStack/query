@@ -361,6 +361,7 @@ Its available properties and methods are:
 - [`prefetchQuery`](#querycacheprefetchquery)
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
+- [`refetchQueries`](#querycacherefetchqueries)
 - [`invalidateQueries`](#querycacheinvalidatequeries)
 - [`cancelQueries`](#querycachecancelqueries)
 - [`removeQueries`](#querycacheremovequeries)
@@ -489,6 +490,52 @@ For convenience in syntax, you can also pass an updater function which receives 
 ```js
 setQueryData(queryKey, oldData => newData)
 ```
+
+## `queryCache.refetchQueries`
+
+The `refetchQueries` method can be used to refetch queries based on certain conditions.
+
+Examples:
+
+```js
+// refetch all queries:
+await queryCache.refetchQueries()
+
+// refetch all stale queries:
+await queryCache.refetchQueries([], { stale: true })
+
+// refetch all stale and active queries:
+await queryCache.refetchQueries([], { stale: true, active: true })
+
+// refetch all queries partially matching a query key:
+await queryCache.refetchQueries(['posts'])
+
+// refetch all queries exactly matching a query key:
+await queryCache.refetchQueries(['posts', 1], { exact: true })
+```
+
+**Options**
+
+- `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `Function`
+  - `queryKey: QueryKey`
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](./guides/queries#query-keys) for more information.
+  - `query => boolean`
+    - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
+    - The `exact` option has no effect when using a function
+- `exact?: boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
+- `active?: boolean`
+  - When set to `true` it will refetch active queries.
+  - When set to `false` it will refetch inactive queries.
+- `stale?: boolean`
+  - When set to `true` it will match on stale queries.
+  - When set to `false` it will match on fresh queries.
+- `throwOnError?: boolean`
+  - When set to `true`, this method will throw if any of the query refetch tasks fail.
+
+**Returns**
+
+This function returns a promise that will resolve when all of the queries are done being refetched. By default, it **will not** throw an error if any of those queries refetches fail, but this can be configured by setting the `throwOnError` option to `true`
 
 ## `queryCache.invalidateQueries`
 
