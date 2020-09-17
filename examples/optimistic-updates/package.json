@@ -9,8 +9,8 @@
     "next": "9.2.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
-    "react-query": "^2",
-    "react-query-devtools": "latest"
+    "react-query": "^2.21.2",
+    "react-query-devtools": "^2.4.7"
   },
   "scripts": {
     "dev": "next",
