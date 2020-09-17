@@ -51,7 +51,9 @@ describe('dehydration and rehydration', () => {
     await hydrationQueryCache.prefetchQuery(
       'boolean',
       fetchDataAfterHydration,
-      { staleTime: 1000 }
+      {
+        staleTime: 1000,
+      }
     )
     await hydrationQueryCache.prefetchQuery('null', fetchDataAfterHydration, {
       staleTime: 1000,

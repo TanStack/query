@@ -12,7 +12,7 @@ Feature/Capability Key:
 - 🔶 Supported and documented, but requires extra user-code to implement
 - 🛑 Not officially supported or documented.
 
-|                                              | React Query                            | SWR [_(Website)_](swr)     | Apollo Client [_(Website)_](apollo)   |
+|                                              | React Query                            | SWR [_(Website)_][swr]     | Apollo Client [_(Website)_][apollo]   |
 | -------------------------------------------- | -------------------------------------- | -------------------------- | ------------------------------------- |
 | Supported Query Syntax                       | Promise, REST, GraphQL                 | Promise, REST, GraphQL     | GraphQL                               |
 | Supported Query Keys                         | JSON                                   | JSON                       | GraphQL Query                         |

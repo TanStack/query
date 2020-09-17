@@ -24,7 +24,6 @@ const {
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
   enabled,
-  forceFetchOnMount,
   initialData,
   initialStale,
   isDataEqual,
@@ -142,10 +141,6 @@ const queryInfo = useQuery({
   - Optional
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
-- `forceFetchOnMount: Boolean`
-  - Optional
-  - Defaults to `false`
-  - Set this to `true` to always fetch when the component mounts (regardless of staleness).
 - `queryFnParamsFilter: Function(args) => filteredArgs`
   - Optional
   - This function will filter the params that get passed to `queryFn`.
@@ -362,9 +357,11 @@ const queryCache = new QueryCache({
 
 Its available properties and methods are:
 
+- [`fetchQuery`](#querycachefetchquery)
 - [`prefetchQuery`](#querycacheprefetchquery)
 - [`getQueryData`](#querycachegetquerydata)
 - [`setQueryData`](#querycachesetquerydata)
+- [`refetchQueries`](#querycacherefetchqueries)
 - [`invalidateQueries`](#querycacheinvalidatequeries)
 - [`cancelQueries`](#querycachecancelqueries)
 - [`removeQueries`](#querycacheremovequeries)
@@ -380,9 +377,25 @@ Its available properties and methods are:
   - Optional
   - Define defaults for all queries and mutations using this query cache.
 
+## `queryCache.fetchQuery`
+
+`fetchQuery` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Specify a `staleTime` to only trigger a fetch when the data is stale. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
+
+```js
+try {
+  const data = await queryCache.fetchQuery(queryKey, queryFn)
+} catch (error) {
+  console.log(error)
+}
+```
+
+**Returns**
+
+- `Promise<TResult>`
+
 ## `queryCache.prefetchQuery`
 
-`prefetchQuery` is an asynchronous function that can be used to fetch and cache a query response before it is needed or rendered with `useQuery` and friends.
+`prefetchQuery` is an asynchronous method that can be used to fetch and cache a query response before it is needed or rendered with `useQuery` and friends.
 
 - If either:
   - The query does not exist or
@@ -394,13 +407,13 @@ Its available properties and methods are:
 > The difference between using `prefetchQuery` and `setQueryData` is that `prefetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
 ```js
-const data = await queryCache.prefetchQuery(queryKey, queryFn)
+await queryCache.prefetchQuery(queryKey, queryFn)
 ```
 
 To pass options like `force` or `throwOnError`, use the fourth options object:
 
 ```js
-const data = await queryCache.prefetchQuery(queryKey, queryFn, config, {
+await queryCache.prefetchQuery(queryKey, queryFn, config, {
   force: true,
   throwOnError: true,
 })
@@ -409,7 +422,7 @@ const data = await queryCache.prefetchQuery(queryKey, queryFn, config, {
 You can even use it with a default queryFn in your config!
 
 ```js
-const data = await queryCache.prefetchQuery(queryKey)
+await queryCache.prefetchQuery(queryKey)
 ```
 
 **Options**
@@ -423,7 +436,7 @@ The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#u
 
 **Returns**
 
-- `promise: Promise`
+- `Promise<TResult | undefined>`
   - A promise is returned that will either immediately resolve with the query's cached response data, or resolve to the data returned by the fetch function. It **will not** throw an error if the fetch fails. This can be configured by setting the `throwOnError` option to `true`.
 
 ## `queryCache.getQueryData`
@@ -477,6 +490,52 @@ For convenience in syntax, you can also pass an updater function which receives 
 ```js
 setQueryData(queryKey, oldData => newData)
 ```
+
+## `queryCache.refetchQueries`
+
+The `refetchQueries` method can be used to refetch queries based on certain conditions.
+
+Examples:
+
+```js
+// refetch all queries:
+await queryCache.refetchQueries()
+
+// refetch all stale queries:
+await queryCache.refetchQueries([], { stale: true })
+
+// refetch all stale and active queries:
+await queryCache.refetchQueries([], { stale: true, active: true })
+
+// refetch all queries partially matching a query key:
+await queryCache.refetchQueries(['posts'])
+
+// refetch all queries exactly matching a query key:
+await queryCache.refetchQueries(['posts', 1], { exact: true })
+```
+
+**Options**
+
+- `queryKeyOrPredicateFn` can either be a [Query Key](#query-keys) or a `Function`
+  - `queryKey: QueryKey`
+    - If a query key is passed, queries will be filtered to those where this query key is included in the existing query's query key. This means that if you passed a query key of `'todos'`, it would match queries with the `todos`, `['todos']`, and `['todos', 5]`. See [Query Keys](./guides/queries#query-keys) for more information.
+  - `query => boolean`
+    - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
+    - The `exact` option has no effect when using a function
+- `exact?: boolean`
+  - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed. Remember to destructure it out of the array!
+- `active?: boolean`
+  - When set to `true` it will refetch active queries.
+  - When set to `false` it will refetch inactive queries.
+- `stale?: boolean`
+  - When set to `true` it will match on stale queries.
+  - When set to `false` it will match on fresh queries.
+- `throwOnError?: boolean`
+  - When set to `true`, this method will throw if any of the query refetch tasks fail.
+
+**Returns**
+
+This function returns a promise that will resolve when all of the queries are done being refetched. By default, it **will not** throw an error if any of those queries refetches fail, but this can be configured by setting the `throwOnError` option to `true`
 
 ## `queryCache.invalidateQueries`
 
@@ -549,7 +608,7 @@ This function does not return anything
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
 
 ```js
-const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
+queryCache.removeQueries(queryKeyOrPredicateFn, {
   exact,
 })
 ```

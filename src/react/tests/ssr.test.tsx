@@ -26,7 +26,7 @@ describe('Server Side Rendering', () => {
     const key = queryKey()
 
     const fetchFn = () => Promise.resolve('data')
-    const data = await queryCache.prefetchQuery(key, fetchFn)
+    const data = await queryCache.fetchQuery(key, fetchFn)
 
     expect(data).toBe('data')
     expect(queryCache.getQuery(key)).toBeFalsy()
@@ -41,7 +41,7 @@ describe('Server Side Rendering', () => {
 
     const cache = new QueryCache()
     const fetchFn = () => Promise.resolve('data')
-    const data = await cache.prefetchQuery(key, fetchFn)
+    const data = await cache.fetchQuery(key, fetchFn)
 
     expect(data).toBe('data')
     expect(cache.getQuery(key)).toBeTruthy()
@@ -109,7 +109,7 @@ describe('Server Side Rendering', () => {
 
       const cache = new QueryCache({ frozen: true })
       const fetchFn = () => Promise.resolve('data')
-      const data = await cache.prefetchQuery(key, fetchFn)
+      const data = await cache.fetchQuery(key, fetchFn)
 
       expect(data).toBe('data')
       expect(cache.getQuery(key)).toBeFalsy()
@@ -150,7 +150,7 @@ describe('Server Side Rendering', () => {
 
       const cache = new QueryCache({ frozen: false })
       const fetchFn = () => Promise.resolve('data')
-      const data = await cache.prefetchQuery(key, fetchFn)
+      const data = await cache.fetchQuery(key, fetchFn)
 
       expect(data).toBe('data')
       expect(cache.getQuery(key)?.state.data).toBe('data')
