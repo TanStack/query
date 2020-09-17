@@ -89,52 +89,6 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="bg-gray-900 text-white">
-          <div className="py-32">
-            <div className="mx-auto container text-center">
-              <div className="text-xl">ANNOUNCING</div>
-              <div className="text-3xl md:text-5xl font-bold">
-                React Query Essentials
-              </div>
-              <div className="text-xl italic">
-                The <strong>official</strong> React Query course by{' '}
-                <strong>Tanner Linsley</strong>
-              </div>
-              <a
-                href="https://learn.tanstack.com"
-                className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
-              >
-                ENROLL NOW
-              </a>
-              <div className="grid pt-8 text-white max-w-screen-lg mx-auto text-lg">
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  50+ Lessons
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  3+ Hours of Live-Code Training
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Lesson Source Code
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Full API coverage
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
         <div className="text-lg border-t border-gray-200 bg-gray-50 ">
           <div className="py-24  ">
             <div className="mx-auto container">
@@ -191,6 +145,52 @@ const Home = () => {
             </div>
 
             <ClientsMarquee />
+          </div>
+        </div>
+        <div className="bg-gray-900 text-white">
+          <div className="py-32">
+            <div className="mx-auto container text-center">
+              <div className="text-xl">ANNOUNCING</div>
+              <div className="text-3xl md:text-5xl font-bold">
+                React Query Essentials
+              </div>
+              <div className="text-xl italic">
+                The <strong>official</strong> React Query course by{' '}
+                <strong>Tanner Linsley</strong>
+              </div>
+              <a
+                href="https://learn.tanstack.com"
+                className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
+              >
+                ENROLL NOW
+              </a>
+              <div className="grid pt-8 text-white max-w-screen-lg mx-auto text-lg">
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  50+ Lessons
+                </a>
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  3+ Hours of Live-Code Training
+                </a>
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  Lesson Source Code
+                </a>
+                <a className="mb-2">
+                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                    <Check />
+                  </span>
+                  Full API coverage
+                </a>
+              </div>
+            </div>
           </div>
         </div>
         <div className="relative text-lg border-t border-gray-200 bg-white overflow-hidden">
