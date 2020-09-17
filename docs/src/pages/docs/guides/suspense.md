@@ -11,19 +11,21 @@ Global configuration:
 
 ```js
 // Configure for all queries
-import { ReactQueryConfigProvider } from 'react-query'
+import { QueryCache, ReactQueryCacheProvider } from 'react-query'
 
-const queryConfig = {
-  queries: {
-    suspense: true,
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      suspense: true,
+    },
   },
-}
+})
 
 function App() {
   return (
-    <ReactQueryConfigProvider config={queryConfig}>
+    <ReactQueryCacheProvider queryCache={queryCache}>
       ...
-    </ReactQueryConfigProvider>
+    </ReactQueryCacheProvider>
   )
 }
 ```

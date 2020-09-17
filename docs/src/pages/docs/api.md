@@ -689,44 +689,62 @@ const isFetching = useIsFetching()
 `ReactQueryConfigProvider` is an optional provider component and can be used to define defaults for all instances of `useQuery` within it's sub-tree:
 
 ```js
-import { ReactQueryConfigProvider } from 'react-query'
+import {
+  QueryCache,
+  ReactQueryCacheProvider,
+  ReactQueryConfigProvider,
+} from 'react-query'
 
-const queryConfig = {
+const queryCache = new QueryCache({
+  defaultConfig: {
+    queries: {
+      suspense: false,
+      queryKeySerializerFn: defaultQueryKeySerializerFn,
+      queryFn,
+      enabled: true,
+      retry: 3,
+      retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+      staleTime: 0,
+      cacheTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: true,
+      refetchInterval: false,
+      queryFnParamsFilter: identity,
+      refetchOnMount: true,
+      isDataEqual: deepEqual,
+      onError: noop,
+      onSuccess: noop,
+      onSettled: noop,
+      useErrorBoundary: false, // falls back to suspense
+    },
+    mutations: {
+      suspense: false,
+      throwOnError: false,
+      onMutate: noop,
+      onError: noop,
+      onSuccess: noop,
+      onSettled: noop,
+      useErrorBoundary: false, // falls back to suspense
+    },
+  },
+})
+
+const overrides = {
   queries: {
-    suspense: false,
-    queryKeySerializerFn: defaultQueryKeySerializerFn,
-    queryFn,
-    enabled: true,
-    retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
-    staleTime: 0,
-    cacheTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: true,
-    refetchInterval: false,
-    queryFnParamsFilter: identity,
-    refetchOnMount: true,
-    isDataEqual: deepEqual,
-    onError: noop,
-    onSuccess: noop,
-    onSettled: noop,
-    useErrorBoundary: false, // falls back to suspense
+    suspense: true,
   },
   mutations: {
-    suspense: false,
-    throwOnError: false,
-    onMutate: noop,
-    onError: noop,
-    onSuccess: noop,
-    onSettled: noop,
-    useErrorBoundary: false, // falls back to suspense
+    suspense: true,
   },
 }
 
 function App() {
   return (
-    <ReactQueryConfigProvider config={queryConfig}>
+    <ReactQueryCacheProvider queryCache={queryCache}>
       ...
-    </ReactQueryConfigProvider>
+      <ReactQueryConfigProvider config={overrides}>
+        ...
+      </ReactQueryConfigProvider>
+    </ReactQueryCacheProvider>
   )
 }
 ```
