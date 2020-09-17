@@ -549,7 +549,7 @@ This function does not return anything
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
 
 ```js
-const queries = queryCache.removeQueries(queryKeyOrPredicateFn, {
+queryCache.removeQueries(queryKeyOrPredicateFn, {
   exact,
 })
 ```
