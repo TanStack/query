@@ -378,9 +378,6 @@ export class QueryCache {
     return query.fetch(undefined, resolvedConfig)
   }
 
-  /**
-   * @deprecated
-   */
   // Parameter syntax with optional prefetch options
   prefetchQuery<TResult = unknown, TError = unknown>(
     queryKey: QueryKey,

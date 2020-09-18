@@ -11,8 +11,8 @@ import Head from 'next/head'
 
 const supporters = [
   ['Kent C. Dodds (kentcdodds.com)', 'https://kentcdodds.com/'],
-  ['@bgazzera', 'https://github.com/bgazzera"'],
-  ['Gabe Ragland', 'https://github.com/gragland"'],
+  ['@bgazzera', 'https://github.com/bgazzera'],
+  ['Gabe Ragland', 'https://github.com/gragland'],
 ]
 
 const fans = [

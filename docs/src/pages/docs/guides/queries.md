@@ -109,7 +109,7 @@ useQuery(['todo', 5], ...)
 
 // And individual todo in a "preview" format
 useQuery(['todo', 5, { preview: true }], ...)
-// queryKey === ['todo', 5, { preview: 'true' } }]
+// queryKey === ['todo', 5, { preview: true }]
 
 // A list of todos that are "done"
 useQuery(['todos', { type: 'done' }], ...)
@@ -200,7 +200,7 @@ const { data: user } = useQuery(['user', email], getUserByEmail)
 
 // Then get the user's projects
 const { isIdle, data: projects } = useQuery(
-  ['projects', user.id],
+  ['projects', user?.id],
   getProjectsByUser,
   {
     // `user` would be `null` at first (falsy),
