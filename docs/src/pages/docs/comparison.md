@@ -42,9 +42,10 @@ Feature/Capability Key:
 | Stale Time Configuration                     | ✅                                     | 🛑                         | 🛑                                    |
 | Window Focus Refetching                      | ✅                                     | ✅                         | 🛑                                    |
 | Network Status Refetching                    | ✅                                     | ✅                         | ✅                                    |
-| Automatic Refetch after Mutation<sup>4</sup> | 🔶                                     | 🔶                         | ✅                                    |
 | Cache Dehydration/Rehydration                | ✅                                     | 🛑                         | ✅                                    |
 | React Suspense (Experimental)                | ✅                                     | ✅                         | 🛑                                    |
+| Automatic Refetch after Mutation<sup>4</sup> | 🔶                                     | 🔶                         | ✅                                    |
+| Normalized Caching<sup>5</sup>               | 🛑                                     | 🛑                         | ✅                                    |
 
 ### Notes
 
@@ -55,6 +56,8 @@ Feature/Capability Key:
 > **<sup>3</sup> Partial query matching** - Because React Query uses deterministic query key serialization, this allows you to manipulate variable groups of queries without having to know each individual query-key that you want to match, eg. you can refetch every query that starts with `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables or nested properties, and even use a filter function to only match queries that pass your specific conditions.
 
 > **<sup>4</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
+
+> **<sup>5</sup> Normalized Caching** - React Query and SWR do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
 
 [swr]: https://github.com/vercel/swr
 [apollo]: https://github.com/apollographql/apollo-client
