@@ -13,6 +13,7 @@ const supporters = [
   ['Kent C. Dodds (kentcdodds.com)', 'https://kentcdodds.com/'],
   ['@bgazzera', 'https://github.com/bgazzera'],
   ['Gabe Ragland', 'https://github.com/gragland'],
+  ['Matt Wood', 'https://github.com/mattwoodnyc'],
 ]
 
 const fans = [
@@ -25,6 +26,11 @@ const fans = [
   'Christian Rudh (@crudh)',
   'Vianney Carel (@vcarel)',
   'Freddie (@fdjones)',
+  'Johnny Bell (@johnnyxbell)',
+  'Garrett Fritz (@gfritzdev)',
+  'Juliano Farias (@frontendwizard)',
+  'Kristóf Poduszló (@kripod)',
+  'Peter Pistorius (@peterp)',
 ]
 
 const Home = () => {
