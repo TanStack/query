@@ -33,15 +33,14 @@ export function useBaseQuery<TResult, TError>(
   observerRef.current = observer
 
   // Subscribe to the observer
-  React.useEffect(
-    () =>
-      observer.subscribe(() => {
-        if (isMounted()) {
-          rerender()
-        }
-      }),
-    [isMounted, observer, rerender]
-  )
+  React.useEffect(() => {
+    errorResetBoundary.clearReset()
+    return observer.subscribe(() => {
+      if (isMounted()) {
+        rerender()
+      }
+    })
+  }, [isMounted, observer, rerender, errorResetBoundary])
 
   // Update config
   if (!firstRender) {
