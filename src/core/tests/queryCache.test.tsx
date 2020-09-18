@@ -7,7 +7,7 @@ import {
 } from '../../react/tests/utils'
 import { QueryCache, queryCache as defaultQueryCache } from '../..'
 import { isCancelledError, isError } from '../utils'
-import { QueryObserver } from '../queryObserver'
+import { QueryResult } from '../types'
 
 describe('queryCache', () => {
   test('setQueryData does not crash if query could not be found', () => {
@@ -231,6 +231,74 @@ describe('queryCache', () => {
     )
   })
 
+  test('watchQuery should trigger a fetch when subscribed', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+    const cache = new QueryCache()
+    const observer = cache.watchQuery(key, queryFn)
+    observer.subscribe()
+    await sleep(1)
+    observer.unsubscribe()
+    cache.clear()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+  })
+
+  test('watchQuery should not trigger a fetch when subscribed and disabled', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+    const cache = new QueryCache()
+    const observer = cache.watchQuery(key, queryFn, { enabled: false })
+    observer.subscribe()
+    await sleep(1)
+    observer.unsubscribe()
+    cache.clear()
+    expect(queryFn).toHaveBeenCalledTimes(0)
+  })
+
+  test('watchQuery should not trigger a fetch when not subscribed', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+    const cache = new QueryCache()
+    cache.watchQuery(key, queryFn)
+    await sleep(1)
+    cache.clear()
+    expect(queryFn).toHaveBeenCalledTimes(0)
+  })
+
+  test('watchQuery should be able to watch a query without defining a query function', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+    const callback = jest.fn()
+    const cache = new QueryCache()
+    const observer = cache.watchQuery(key)
+    observer.subscribe(callback)
+    await cache.fetchQuery(key, queryFn)
+    observer.unsubscribe()
+    cache.clear()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(callback).toHaveBeenCalledTimes(1)
+  })
+
+  test('watchQuery should accept unresolved query config in update function', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+    const cache = new QueryCache()
+    const observer = cache.watchQuery(key)
+    const results: QueryResult<unknown>[] = []
+    observer.subscribe(x => {
+      results.push(x)
+    })
+    observer.updateConfig({ staleTime: 10 })
+    await cache.fetchQuery(key, queryFn)
+    await sleep(100)
+    observer.unsubscribe()
+    cache.clear()
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject({ isStale: false })
+    expect(results[1]).toMatchObject({ isStale: true })
+  })
+
   test('refetchQueries should refetch all queries when no arguments are given', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
@@ -282,9 +350,9 @@ describe('queryCache', () => {
     const cache = new QueryCache()
     await cache.fetchQuery(key1, queryFn1)
     await cache.fetchQuery(key2, queryFn2)
-    const query1 = cache.getQuery(key1)!
-    query1.invalidate()
-    const observer = query1.subscribe()
+    await cache.invalidateQueries(key1)
+    const observer = cache.watchQuery(key1)
+    observer.subscribe()
     await cache.refetchQueries([], { active: true, stale: true })
     observer.unsubscribe()
     cache.clear()
@@ -300,15 +368,11 @@ describe('queryCache', () => {
     const cache = new QueryCache()
     await cache.fetchQuery(key1, queryFn1)
     await cache.fetchQuery(key2, queryFn2)
-    const query1 = cache.getQuery(key1)!
-    const observer = new QueryObserver({
-      ...query1.config,
-      staleTime: Infinity,
-    })
-    const unsubscribe = observer.subscribe()
+    const observer = cache.watchQuery(key1, { staleTime: Infinity })
+    observer.subscribe()
     await cache.refetchQueries([], { active: false })
     expect(queryFn1).toHaveBeenCalledTimes(1)
-    unsubscribe()
+    observer.unsubscribe()
     cache.clear()
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(2)
@@ -322,9 +386,7 @@ describe('queryCache', () => {
     const cache = new QueryCache()
     await cache.fetchQuery(key1, queryFn1)
     await cache.fetchQuery(key2, queryFn2)
-    const query1 = cache.getQuery(key1)!
-    const observer = new QueryObserver({
-      ...query1.config,
+    const observer = cache.watchQuery(key1, {
       enabled: false,
       staleTime: Infinity,
     })
@@ -386,46 +448,43 @@ describe('queryCache', () => {
     const key = queryKey()
 
     const fetchData = () => Promise.resolve('data')
-    await defaultQueryCache.prefetchQuery(key, fetchData, {
+    const observer = defaultQueryCache.watchQuery(key, fetchData, {
       cacheTime: 0,
       refetchInterval: 1,
     })
-    const query = defaultQueryCache.getQuery(key)!
-    const instance = query.subscribe()
+    observer.subscribe()
     // @ts-expect-error
-    expect(instance.refetchIntervalId).not.toBeUndefined()
-    instance.unsubscribe()
+    expect(observer.refetchIntervalId).not.toBeUndefined()
+    observer.unsubscribe()
     // @ts-expect-error
-    expect(instance.refetchIntervalId).toBeUndefined()
+    expect(observer.refetchIntervalId).toBeUndefined()
     await sleep(10)
     expect(defaultQueryCache.getQuery(key)).toBeUndefined()
   })
 
   test('query is garbage collected when unsubscribed to', async () => {
     const key = queryKey()
-
-    const fetchData = () => Promise.resolve('data')
-    await defaultQueryCache.prefetchQuery(key, fetchData, { cacheTime: 0 })
+    const observer = defaultQueryCache.watchQuery(key, async () => 'data', {
+      cacheTime: 0,
+    })
     expect(defaultQueryCache.getQuery(key)).toBeDefined()
-    const query = defaultQueryCache.getQuery(key)!
-    const instance = query.subscribe()
-    instance.unsubscribe()
+    observer.subscribe()
+    observer.unsubscribe()
     expect(defaultQueryCache.getQuery(key)).toBeDefined()
     await sleep(100)
     expect(defaultQueryCache.getQuery(key)).toBeUndefined()
   })
 
-  test('query is not garbage collected unless markedForGarbageCollection is true', async () => {
+  test('query is not garbage collected unless there are no subscribers', async () => {
     const key = queryKey()
-
-    const fetchData = () => Promise.resolve(undefined)
-    await defaultQueryCache.prefetchQuery(key, fetchData, { cacheTime: 0 })
+    const observer = defaultQueryCache.watchQuery(key, async () => 'data', {
+      cacheTime: 0,
+    })
     expect(defaultQueryCache.getQuery(key)).toBeDefined()
-    const query = defaultQueryCache.getQuery(key)!
-    const instance = query.subscribe()
+    observer.subscribe()
     await sleep(100)
     expect(defaultQueryCache.getQuery(key)).toBeDefined()
-    instance.unsubscribe()
+    observer.unsubscribe()
     await sleep(100)
     expect(defaultQueryCache.getQuery(key)).toBeUndefined()
     defaultQueryCache.setQueryData(key, 'data')
@@ -656,13 +715,14 @@ describe('queryCache', () => {
 
       await sleep(10)
 
-      const query = defaultQueryCache.getQuery(key)!
-
       // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-      const observer = query.subscribe()
+      const observer = defaultQueryCache.watchQuery(key)
+      observer.subscribe()
       observer.unsubscribe()
 
       await sleep(100)
+
+      const query = defaultQueryCache.getQuery(key)!
 
       expect(query.state).toMatchObject({
         data: 'data',
@@ -689,13 +749,14 @@ describe('queryCache', () => {
 
       await sleep(10)
 
-      const query = defaultQueryCache.getQuery(key)!
-
       // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-      const observer = query.subscribe()
+      const observer = defaultQueryCache.watchQuery(key)
+      observer.subscribe()
       observer.unsubscribe()
 
       await sleep(100)
+
+      const query = defaultQueryCache.getQuery(key)!
 
       expect(cancel).toHaveBeenCalled()
       expect(query.state).toMatchObject({

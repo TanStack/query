@@ -6,8 +6,9 @@ import {
   noop,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import type { QueryResult, ResolvedQueryConfig } from './types'
+import type { QueryConfig, QueryResult, ResolvedQueryConfig } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
+import { DEFAULT_CONFIG, isResolvedQueryConfig } from './config'
 
 export type UpdateListener<TResult, TError> = (
   result: QueryResult<TResult, TError>
@@ -41,13 +42,14 @@ export class QueryObserver<TResult, TError> {
     this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
     this.fetchMore = this.fetchMore.bind(this)
+    this.unsubscribe = this.unsubscribe.bind(this)
 
     // Subscribe to the query
     this.updateQuery()
   }
 
   subscribe(listener?: UpdateListener<TResult, TError>): () => void {
-    this.listener = listener
+    this.listener = listener || noop
     this.currentQuery.subscribeObserver(this)
 
     if (
@@ -60,7 +62,8 @@ export class QueryObserver<TResult, TError> {
     }
 
     this.updateTimers()
-    return this.unsubscribe.bind(this)
+
+    return this.unsubscribe
   }
 
   unsubscribe(): void {
@@ -69,11 +72,19 @@ export class QueryObserver<TResult, TError> {
     this.currentQuery.unsubscribeObserver(this)
   }
 
-  updateConfig(config: ResolvedQueryConfig<TResult, TError>): void {
+  updateConfig(
+    config: QueryConfig<TResult, TError> | ResolvedQueryConfig<TResult, TError>
+  ): void {
     const prevConfig = this.config
     const prevQuery = this.currentQuery
 
-    this.config = config
+    this.config = isResolvedQueryConfig(config)
+      ? config
+      : this.config.queryCache.getResolvedQueryConfig(
+          this.config.queryKey,
+          config
+        )
+
     this.updateQuery()
 
     // Take no further actions if there is no subscriber
@@ -143,6 +154,11 @@ export class QueryObserver<TResult, TError> {
   }
 
   fetch(): Promise<TResult | undefined> {
+    // Never try to fetch if no query function has been set
+    if (this.config.queryFn === DEFAULT_CONFIG.queries?.queryFn) {
+      return Promise.resolve(this.currentResult.data)
+    }
+
     return this.currentQuery.fetch(undefined, this.config).catch(noop)
   }
 
@@ -155,50 +171,6 @@ export class QueryObserver<TResult, TError> {
     ) {
       this.fetch()
     }
-  }
-
-  private notify(options: NotifyOptions): void {
-    const { config, currentResult, currentQuery, listener } = this
-    const { onSuccess, onSettled, onError } = config
-
-    notifyManager.batch(() => {
-      // First trigger the configuration callbacks
-      if (options.onSuccess) {
-        if (onSuccess) {
-          notifyManager.schedule(() => {
-            onSuccess(currentResult.data!)
-          })
-        }
-        if (onSettled) {
-          notifyManager.schedule(() => {
-            onSettled(currentResult.data!, null)
-          })
-        }
-      } else if (options.onError) {
-        if (onError) {
-          notifyManager.schedule(() => {
-            onError(currentResult.error!)
-          })
-        }
-        if (onSettled) {
-          notifyManager.schedule(() => {
-            onSettled(undefined, currentResult.error!)
-          })
-        }
-      }
-
-      // Then trigger the listener
-      if (options.listener && listener) {
-        notifyManager.schedule(() => {
-          listener(currentResult)
-        })
-      }
-
-      // Then the global listeners
-      if (options.globalListeners) {
-        config.queryCache.notifyGlobalListeners(currentQuery)
-      }
-    })
   }
 
   private updateStaleTimeout(): void {
@@ -392,5 +364,49 @@ export class QueryObserver<TResult, TError> {
     }
 
     this.notify(notifyOptions)
+  }
+
+  private notify(options: NotifyOptions): void {
+    const { config, currentResult, currentQuery, listener } = this
+    const { onSuccess, onSettled, onError } = config
+
+    notifyManager.batch(() => {
+      // First trigger the configuration callbacks
+      if (options.onSuccess) {
+        if (onSuccess) {
+          notifyManager.schedule(() => {
+            onSuccess(currentResult.data!)
+          })
+        }
+        if (onSettled) {
+          notifyManager.schedule(() => {
+            onSettled(currentResult.data!, null)
+          })
+        }
+      } else if (options.onError) {
+        if (onError) {
+          notifyManager.schedule(() => {
+            onError(currentResult.error!)
+          })
+        }
+        if (onSettled) {
+          notifyManager.schedule(() => {
+            onSettled(undefined, currentResult.error!)
+          })
+        }
+      }
+
+      // Then trigger the listener
+      if (options.listener && listener) {
+        notifyManager.schedule(() => {
+          listener(currentResult)
+        })
+      }
+
+      // Then the global listeners
+      if (options.globalListeners) {
+        config.queryCache.notifyGlobalListeners(currentQuery)
+      }
+    })
   }
 }
