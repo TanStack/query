@@ -284,6 +284,9 @@ export class Query<TResult, TError> {
     this.continue()
   }
 
+  /**
+   * @deprectated
+   */
   subscribe(
     listener?: UpdateListener<TResult, TError>
   ): QueryObserver<TResult, TError> {
@@ -319,6 +322,9 @@ export class Query<TResult, TError> {
     }
   }
 
+  /**
+   * @deprectated
+   */
   refetch(
     options?: RefetchOptions,
     config?: ResolvedQueryConfig<TResult, TError>
@@ -332,6 +338,9 @@ export class Query<TResult, TError> {
     return promise
   }
 
+  /**
+   * @deprectated
+   */
   fetchMore(
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions,

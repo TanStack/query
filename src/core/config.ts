@@ -119,6 +119,12 @@ export function getResolvedQueryConfig<TResult, TError>(
   return resolvedConfig
 }
 
+export function isResolvedQueryConfig<TResult, TError>(
+  config: any
+): config is ResolvedQueryConfig<TResult, TError> {
+  return Boolean(config.queryHash)
+}
+
 export function getResolvedMutationConfig<
   TResult,
   TError,
