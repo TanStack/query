@@ -14,7 +14,6 @@
   "unpkg": "dist/react-query.development.js",
   "types": "types/index.d.ts",
   "module": "es/index.js",
-  "sideEffects": false,
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "npm run test:types && npm run test:eslint && jest --watch",
