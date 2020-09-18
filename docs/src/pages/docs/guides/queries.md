@@ -200,7 +200,7 @@ const { data: user } = useQuery(['user', email], getUserByEmail)
 
 // Then get the user's projects
 const { isIdle, data: projects } = useQuery(
-  ['projects', user.id],
+  ['projects', user?.id],
   getProjectsByUser,
   {
     // `user` would be `null` at first (falsy),
