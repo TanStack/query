@@ -314,6 +314,28 @@ describe('queryCache', () => {
     expect(queryFn2).toHaveBeenCalledTimes(2)
   })
 
+  test('invalidateQueries should not refetch inactive queries by default', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const cache = new QueryCache()
+    await cache.fetchQuery(key1, queryFn1)
+    await cache.fetchQuery(key2, queryFn2)
+    const query1 = cache.getQuery(key1)!
+    const observer = new QueryObserver({
+      ...query1.config,
+      enabled: false,
+      staleTime: Infinity,
+    })
+    observer.subscribe()
+    await cache.invalidateQueries(key1)
+    observer.unsubscribe()
+    cache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(1)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+  })
+
   test('getQueries should return queries that partially match queryKey', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
