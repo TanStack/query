@@ -20,6 +20,7 @@ import {
   ResolvedQueryConfig,
 } from './types'
 import { notifyManager } from './notifyManager'
+import { QueryObserver } from './queryObserver'
 
 // TYPES
 
@@ -453,6 +454,36 @@ export class QueryCache {
     }
 
     return promise
+  }
+
+  // Parameter syntax
+  watchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    queryConfig?: QueryConfig<TResult, TError>
+  ): QueryObserver<TResult, TError>
+
+  // Parameter syntax with query function
+  watchQuery<TResult, TError, TArgs extends TypedQueryFunctionArgs>(
+    queryKey: QueryKey,
+    queryFn: TypedQueryFunction<TResult, TArgs>,
+    queryConfig?: QueryConfig<TResult, TError>
+  ): QueryObserver<TResult, TError>
+
+  watchQuery<TResult = unknown, TError = unknown>(
+    queryKey: QueryKey,
+    queryFn: QueryFunction<TResult>,
+    queryConfig?: QueryConfig<TResult, TError>
+  ): QueryObserver<TResult, TError>
+
+  // Implementation
+  watchQuery<TResult, TError>(
+    arg1: any,
+    arg2?: any,
+    arg3?: any
+  ): QueryObserver<TResult, TError> {
+    const [queryKey, config] = getQueryArgs<TResult, TError>(arg1, arg2, arg3)
+    const resolvedConfig = this.getResolvedQueryConfig(queryKey, config)
+    return new QueryObserver(resolvedConfig)
   }
 
   setQueryData<TResult, TError = unknown>(
