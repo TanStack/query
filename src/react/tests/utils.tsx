@@ -1,6 +1,13 @@
-import { waitFor } from '@testing-library/react'
+import { render, waitFor } from '@testing-library/react'
+import React from 'react'
+
+import { QueryClient, QueryClientProvider } from '../..'
 
 let queryKeyCount = 0
+
+export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
+  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+}
 
 export function mockVisibilityState(value: string) {
   Object.defineProperty(document, 'visibilityState', {

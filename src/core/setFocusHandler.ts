@@ -1,9 +1,7 @@
 import { createSetHandler, isServer } from './utils'
-import { onVisibilityOrOnlineChange } from './queryCache'
+import { onExternalEvent } from './queryClient'
 
-export const setFocusHandler = createSetHandler(() =>
-  onVisibilityOrOnlineChange('focus')
-)
+export const setFocusHandler = createSetHandler(() => onExternalEvent('focus'))
 
 setFocusHandler(handleFocus => {
   if (isServer || !window?.addEventListener) {

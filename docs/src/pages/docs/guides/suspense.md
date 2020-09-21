@@ -47,16 +47,16 @@ In addition to queries behaving differently in suspense mode, mutations also beh
 
 Whether you are using **suspense** or **useErrorBoundaries** in your queries, you will need a way to let queries know that you want to try again when re-rendering after some error occured.
 
-Query errors can be reset with the `ReactQueryErrorResetBoundary` component or with the `useErrorResetBoundary` hook.
+Query errors can be reset with the `QueryErrorResetBoundary` component or with the `useQueryErrorResetBoundary` hook.
 
 When using the component it will reset any query errors within the boundaries of the component:
 
 ```js
-import { ReactQueryErrorResetBoundary } from 'react-query'
+import { QueryErrorResetBoundary } from 'react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
 const App: React.FC = () => (
-  <ReactQueryErrorResetBoundary>
+  <QueryErrorResetBoundary>
     {({ reset }) => (
       <ErrorBoundary
         onReset={reset}
@@ -70,18 +70,18 @@ const App: React.FC = () => (
         <Page />
       </ErrorBoundary>
     )}
-  </ReactQueryErrorResetBoundary>
+  </QueryErrorResetBoundary>
 )
 ```
 
-When using the hook it will reset any query errors within the closest `ReactQueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
+When using the hook it will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
 
 ```js
-import { useErrorResetBoundary } from 'react-query'
+import { useQueryErrorResetBoundary } from 'react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
 const App: React.FC = () => {
-  const { reset } = useErrorResetBoundary()
+  const { reset } = useQueryErrorResetBoundary()
   return (
     <ErrorBoundary
       onReset={reset}

@@ -1,70 +1,62 @@
 import React from 'react'
 
 import { useIsMounted } from './utils'
-import { getResolvedQueryConfig } from '../core/config'
 import { QueryObserver } from '../core/queryObserver'
-import { QueryResultBase, QueryKey, QueryConfig } from '../core/types'
-import { useErrorResetBoundary } from './ReactQueryErrorResetBoundary'
-import { useQueryCache } from './ReactQueryCacheProvider'
-import { useContextConfig } from './ReactQueryConfigProvider'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { useQueryClient } from './QueryClientProvider'
+import { UseQueryOptions, UseQueryResult } from './types'
 
-export function useBaseQuery<TResult, TError>(
-  queryKey: QueryKey,
-  config?: QueryConfig<TResult, TError>
-): QueryResultBase<TResult, TError> {
-  const [, rerender] = React.useReducer(c => c + 1, 0)
+export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
+  options: UseQueryOptions<TData, TError, TQueryFnData, TQueryData>
+): UseQueryResult<TData, TError> {
+  const client = useQueryClient()
   const isMounted = useIsMounted()
-  const cache = useQueryCache()
-  const contextConfig = useContextConfig()
-  const errorResetBoundary = useErrorResetBoundary()
+  const errorResetBoundary = useQueryErrorResetBoundary()
+  const defaultedOptions = client.defaultQueryObserverOptions(options)
 
-  // Get resolved config
-  const resolvedConfig = getResolvedQueryConfig(
-    cache,
-    queryKey,
-    contextConfig,
-    config
-  )
+  // Always set stale time when using suspense
+  if (defaultedOptions.suspense && defaultedOptions.staleTime === 0) {
+    options.staleTime = 5000
+  }
 
   // Create query observer
-  const observerRef = React.useRef<QueryObserver<TResult, TError>>()
+  const observerRef = React.useRef<
+    QueryObserver<TData, TError, TQueryFnData, TQueryData>
+  >()
   const firstRender = !observerRef.current
-  const observer = observerRef.current || new QueryObserver(resolvedConfig)
+  const observer = observerRef.current || client.watchQuery(options)
   observerRef.current = observer
+
+  // Update options
+  if (!firstRender) {
+    observer.setOptions(options)
+  }
+
+  const [currentResult, setCurrentResult] = React.useState(() =>
+    observer.getCurrentResult()
+  )
+  const currentOptions = observer.options
 
   // Subscribe to the observer
   React.useEffect(() => {
     errorResetBoundary.clearReset()
-    return observer.subscribe(() => {
+    return observer.subscribe(result => {
       if (isMounted()) {
-        rerender()
+        setCurrentResult(result)
       }
     })
-  }, [isMounted, observer, rerender, errorResetBoundary])
-
-  // Update config
-  if (!firstRender) {
-    observer.updateConfig(resolvedConfig)
-  }
-
-  const result = observer.getCurrentResult()
+  }, [isMounted, observer, setCurrentResult, errorResetBoundary])
 
   // Handle suspense
-  if (resolvedConfig.suspense || resolvedConfig.useErrorBoundary) {
-    const query = observer.getCurrentQuery()
-
-    if (
-      result.isError &&
-      !errorResetBoundary.isReset() &&
-      query.state.throwInErrorBoundary
-    ) {
-      throw result.error
+  if (currentOptions.suspense || currentOptions.useErrorBoundary) {
+    if (currentResult.isError && !errorResetBoundary.isReset()) {
+      throw currentResult.error
     }
 
     if (
-      resolvedConfig.enabled &&
-      resolvedConfig.suspense &&
-      !result.isSuccess
+      currentOptions.enabled &&
+      currentOptions.suspense &&
+      !currentResult.isSuccess
     ) {
       errorResetBoundary.clearReset()
       const unsubscribe = observer.subscribe()
@@ -72,5 +64,5 @@ export function useBaseQuery<TResult, TError>(
     }
   }
 
-  return result
+  return currentResult
 }

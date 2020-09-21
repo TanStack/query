@@ -1,4 +1,4 @@
-import * as React from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDOMServer from 'react-dom/server'
 import { waitFor } from '@testing-library/react'
@@ -6,10 +6,11 @@ import { waitFor } from '@testing-library/react'
 import {
   useQuery,
   setConsole,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
   QueryCache,
 } from '../..'
-import { dehydrate, Hydrate } from '../'
+import { dehydrate, hydrate } from '../'
 import * as utils from '../../core/utils'
 import { sleep } from '../../react/tests/utils'
 
@@ -22,10 +23,7 @@ function setIsServer(isServer: boolean) {
   utils.isServer = isServer
 }
 
-const fetchData: <TResult>(
-  value: TResult,
-  ms?: number
-) => Promise<TResult> = async (value, ms) => {
+async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 1)
   return value
 }
@@ -71,19 +69,21 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const serverPrefetchCache = new QueryCache()
-    const prefetchPromise = serverPrefetchCache.prefetchQuery('success', () =>
+    const prefetchCache = new QueryCache()
+    const prefetchClient = new QueryClient({ cache: prefetchCache })
+    const prefetchPromise = prefetchClient.prefetchQuery('success', () =>
       fetchDataSuccess('success')
     )
     jest.runOnlyPendingTimers()
     await prefetchPromise
-    const dehydratedStateServer = dehydrate(serverPrefetchCache)
+    const dehydratedStateServer = dehydrate(prefetchCache)
+    const renderCache = new QueryCache()
+    hydrate(renderCache, dehydratedStateServer)
+    const renderClient = new QueryClient({ cache: renderCache })
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateServer}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
@@ -93,13 +93,15 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedStateClient = JSON.parse(stringifiedState)
+
+    const cache = new QueryCache()
+    hydrate(cache, JSON.parse(stringifiedState))
+    const client = new QueryClient({ cache })
+
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateClient}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>,
+      <QueryClientProvider client={client}>
+        <SuccessComponent />
+      </QueryClientProvider>,
       el
     )
 
@@ -141,19 +143,21 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Server part --
     setIsServer(true)
-    const serverQueryCache = new QueryCache()
-    const prefetchPromise = serverQueryCache.prefetchQuery('error', () =>
+    const prefetchCache = new QueryCache()
+    const prefetchClient = new QueryClient({ cache: prefetchCache })
+    const prefetchPromise = prefetchClient.prefetchQuery('error', () =>
       fetchDataError()
     )
     jest.runOnlyPendingTimers()
     await prefetchPromise
-    const dehydratedStateServer = dehydrate(serverQueryCache)
+    const dehydratedStateServer = dehydrate(prefetchCache)
+    const renderCache = new QueryCache()
+    hydrate(renderCache, dehydratedStateServer)
+    const renderClient = new QueryClient({ cache: renderCache })
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateServer}>
-          <ErrorComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>
+      <QueryClientProvider client={renderClient}>
+        <ErrorComponent />
+      </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
@@ -163,13 +167,15 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedStateClient = JSON.parse(stringifiedState)
+
+    const cache = new QueryCache()
+    hydrate(cache, JSON.parse(stringifiedState))
+    const client = new QueryClient({ cache })
+
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateClient}>
-          <ErrorComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>,
+      <QueryClientProvider client={client}>
+        <ErrorComponent />
+      </QueryClientProvider>,
       el
     )
 
@@ -215,14 +221,15 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const serverPrefetchCache = new QueryCache()
-    const dehydratedStateServer = dehydrate(serverPrefetchCache)
+    const prefetchCache = new QueryCache()
+    const dehydratedStateServer = dehydrate(prefetchCache)
+    const renderCache = new QueryCache()
+    hydrate(renderCache, dehydratedStateServer)
+    const renderClient = new QueryClient({ cache: renderCache })
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateServer}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
@@ -232,13 +239,15 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedStateClient = JSON.parse(stringifiedState)
+
+    const cache = new QueryCache()
+    hydrate(cache, JSON.parse(stringifiedState))
+    const client = new QueryClient({ cache })
+
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateClient}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>,
+      <QueryClientProvider client={client}>
+        <SuccessComponent />
+      </QueryClientProvider>,
       el
     )
 

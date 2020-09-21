@@ -4,6 +4,6 @@ module.exports = {
   testMatch: ['<rootDir>/src/**/*.test.tsx'],
   testPathIgnorePatterns: ['<rootDir>/types/'],
   moduleNameMapper: {
-    'react-query': '<rootDir>/src/react/index.ts',
+    'react-query': '<rootDir>/src/index.ts',
   },
 }

@@ -1,8 +1,19 @@
-import { render, waitFor, fireEvent } from '@testing-library/react'
-import * as React from 'react'
+import { waitFor, fireEvent } from '@testing-library/react'
+import React from 'react'
 
-import { sleep, queryKey, waitForMs, mockConsoleError } from './utils'
-import { useInfiniteQuery, useQueryCache, InfiniteQueryResult } from '../..'
+import {
+  sleep,
+  queryKey,
+  waitForMs,
+  mockConsoleError,
+  renderWithClient,
+} from './utils'
+import {
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+  QueryClient,
+  QueryCache,
+} from '../..'
 
 interface Result {
   items: number[]
@@ -30,11 +41,14 @@ const fetchItems = async (page: number, ts: number): Promise<Result> => {
 }
 
 describe('useInfiniteQuery', () => {
+  const cache = new QueryCache()
+  const client = new QueryClient({ cache })
+
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
 
     let count = 0
-    const states: InfiniteQueryResult<Result>[] = []
+    const states: UseInfiniteQueryResult<Result>[] = []
 
     function Page() {
       const state = useInfiniteQuery(
@@ -54,13 +68,12 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     await waitFor(() => rendered.getByText('Status: success'))
 
     expect(states[0]).toEqual({
       canFetchMore: undefined,
-      clear: expect.any(Function),
       data: undefined,
       error: null,
       failureCount: 0,
@@ -71,7 +84,6 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingMore: false,
       isIdle: false,
-      isInitialData: true,
       isLoading: true,
       isPreviousData: false,
       isStale: true,
@@ -83,7 +95,6 @@ describe('useInfiniteQuery', () => {
     })
 
     expect(states[1]).toEqual({
-      clear: expect.any(Function),
       canFetchMore: true,
       data: [
         {
@@ -101,7 +112,6 @@ describe('useInfiniteQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isIdle: false,
-      isInitialData: false,
       isLoading: false,
       isPreviousData: false,
       isStale: true,
@@ -149,7 +159,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
     await waitFor(() => expect(noThrow).toBe(true))
     consoleMock.mockRestore()
@@ -157,7 +167,7 @@ describe('useInfiniteQuery', () => {
 
   it('should keep the previous data when keepPreviousData is set', async () => {
     const key = queryKey()
-    const states: InfiniteQueryResult<string>[] = []
+    const states: UseInfiniteQueryResult<string>[] = []
 
     function Page() {
       const [order, setOrder] = React.useState('desc')
@@ -190,9 +200,9 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(6))
+    await waitFor(() => expect(states.length).toBe(7))
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -222,14 +232,22 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
       isPreviousData: false,
     })
+    // Set state
     expect(states[4]).toMatchObject({
+      data: ['0-desc', '1-desc'],
+      isFetching: false,
+      isFetchingMore: false,
+      isSuccess: true,
+      isPreviousData: false,
+    })
+    expect(states[5]).toMatchObject({
       data: ['0-desc', '1-desc'],
       isFetching: true,
       isFetchingMore: false,
       isSuccess: true,
       isPreviousData: true,
     })
-    expect(states[5]).toMatchObject({
+    expect(states[6]).toMatchObject({
       data: ['0-asc'],
       isFetching: false,
       isFetchingMore: false,
@@ -238,9 +256,35 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should be able to select a part of the data', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<string>[] = []
+
+    function Page() {
+      const state = useInfiniteQuery(key, () => ({ count: 1 }), {
+        select: data => data.map(x => `count: ${x.count}`),
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(client, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(2))
+
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: ['count: 1'],
+      isSuccess: true,
+    })
+  })
+
   it('should prepend pages when the previous option is set to true', async () => {
     const key = queryKey()
-    const states: InfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
       const start = 10
@@ -268,7 +312,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -304,7 +348,7 @@ describe('useInfiniteQuery', () => {
 
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
-    const states: InfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
       const start = 10
@@ -335,7 +379,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
     await waitFor(() => expect(states.length).toBe(5))
 
@@ -378,7 +422,7 @@ describe('useInfiniteQuery', () => {
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
     const key = queryKey()
-    const states: InfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
       const start = 10
@@ -406,7 +450,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
     await waitForMs(100)
 
@@ -429,7 +473,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to override the cursor in the fetchMore callback', async () => {
     const key = queryKey()
-    const states: InfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
       const state = useInfiniteQuery(
@@ -456,7 +500,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -490,12 +534,11 @@ describe('useInfiniteQuery', () => {
     })
   })
 
-  it('should be able to set new pages with the query cache', async () => {
+  it('should be able to set new pages with the query client', async () => {
     const key = queryKey()
-    const states: InfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const cache = useQueryCache()
       const [firstPage, setFirstPage] = React.useState(0)
 
       const state = useInfiniteQuery(
@@ -515,19 +558,19 @@ describe('useInfiniteQuery', () => {
 
       React.useEffect(() => {
         setTimeout(() => {
-          cache.setQueryData(key, [7, 8])
+          client.setQueryData(key, [7, 8])
           setFirstPage(7)
         }, 20)
 
         setTimeout(() => {
           refetch()
         }, 50)
-      }, [cache, refetch])
+      }, [refetch])
 
       return null
     }
 
-    render(<Page />)
+    renderWithClient(client, <Page />)
 
     await waitFor(() => expect(states.length).toBe(6))
 
@@ -546,15 +589,15 @@ describe('useInfiniteQuery', () => {
       isFetchingMore: false,
       isSuccess: true,
     })
-    // Update cache
+    // Set state
     expect(states[2]).toMatchObject({
       canFetchMore: true,
-      data: [7, 8],
+      data: [0],
       isFetching: false,
       isFetchingMore: false,
       isSuccess: true,
     })
-    // Set state
+    // Cache update
     expect(states[3]).toMatchObject({
       canFetchMore: true,
       data: [7, 8],
@@ -594,7 +637,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, [string, number]>(
+      } = useInfiniteQuery<Result, Error>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
@@ -648,7 +691,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     rendered.getByText('Loading...')
 
@@ -745,7 +788,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     rendered.getByText('Loading...')
 
@@ -771,10 +814,11 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, [string, number]>(
+      } = useInfiniteQuery<Result, Error>(
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
+          staleTime: 1000,
           initialData: [initialItems(0)],
           getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
         }
@@ -826,7 +870,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     rendered.getByText('Item: 9')
     rendered.getByText('Page 0: 0')
@@ -868,6 +912,7 @@ describe('useInfiniteQuery', () => {
         key,
         (_key, nextId = 0) => fetchItems(nextId, fetchCountRef.current++),
         {
+          staleTime: 1000,
           initialData: [initialItems(0)],
           getFetchMore: (_lastGroup, _allGroups) => undefined,
         }
@@ -919,7 +964,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     rendered.getByText('Item: 9')
     rendered.getByText('Page 0: 0')
@@ -945,7 +990,6 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const queryCache = useQueryCache()
       const fetchCountRef = React.useRef(0)
       const {
         status,
@@ -955,7 +999,7 @@ describe('useInfiniteQuery', () => {
         fetchMore,
         canFetchMore,
         refetch,
-      } = useInfiniteQuery<Result, Error, [string, number]>(
+      } = useInfiniteQuery<Result, Error>(
         key,
         (_key, nextId = 0) =>
           fetchItemsWithLimit(nextId, fetchCountRef.current++),
@@ -1004,7 +1048,7 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    queryCache.invalidateQueries(key)
+                    client.invalidateQueries(key)
                   }}
                 >
                   Remove item
@@ -1017,7 +1061,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     rendered.getByText('Loading...')
 

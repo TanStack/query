@@ -1,58 +1,52 @@
-import {
-  InfiniteQueryConfig,
-  InfiniteQueryResult,
-  QueryFunction,
-  QueryKey,
-  TypedQueryFunction,
-  TypedQueryFunctionArgs,
-} from '../core/types'
-import { getQueryArgs } from '../core/utils'
+import { QueryFunction, QueryKey } from '../core/types'
+import { parseQueryArgs } from '../core/utils'
+import { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
-
-// TYPES
-
-export interface UseInfiniteQueryObjectConfig<TResult, TError> {
-  queryKey: QueryKey
-  queryFn?: QueryFunction<TResult>
-  config?: InfiniteQueryConfig<TResult, TError>
-}
 
 // HOOK
 
-// Parameter syntax with optional config
-export function useInfiniteQuery<TResult = unknown, TError = unknown>(
-  queryKey: QueryKey,
-  queryConfig?: InfiniteQueryConfig<TResult, TError>
-): InfiniteQueryResult<TResult, TError>
-
-// Parameter syntax with query function and optional config
 export function useInfiniteQuery<
-  TResult,
-  TError,
-  TArgs extends TypedQueryFunctionArgs
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData,
+  TQueryData = TQueryFnData[]
+>(
+  options: UseInfiniteQueryOptions<TData, TError, TQueryFnData, TQueryData>
+): UseInfiniteQueryResult<TData, TError>
+export function useInfiniteQuery<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData,
+  TQueryData = TQueryFnData[]
 >(
   queryKey: QueryKey,
-  queryFn: TypedQueryFunction<TResult, TArgs>,
-  queryConfig?: InfiniteQueryConfig<TResult, TError>
-): InfiniteQueryResult<TResult, TError>
-
-export function useInfiniteQuery<TResult = unknown, TError = unknown>(
+  options?: UseInfiniteQueryOptions<TData, TError, TQueryFnData, TQueryData>
+): UseInfiniteQueryResult<TData, TError>
+export function useInfiniteQuery<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData,
+  TQueryData = TQueryFnData[]
+>(
   queryKey: QueryKey,
-  queryFn: QueryFunction<TResult>,
-  queryConfig?: InfiniteQueryConfig<TResult, TError>
-): InfiniteQueryResult<TResult, TError>
-
-// Object syntax
-export function useInfiniteQuery<TResult = unknown, TError = unknown>(
-  config: UseInfiniteQueryObjectConfig<TResult, TError>
-): InfiniteQueryResult<TResult, TError>
-
-// Implementation
-export function useInfiniteQuery<TResult, TError>(
-  arg1: any,
-  arg2?: any,
-  arg3?: any
-): InfiniteQueryResult<TResult, TError> {
-  const [queryKey, config] = getQueryArgs<TResult[], TError>(arg1, arg2, arg3)
-  return useBaseQuery(queryKey, { ...config, infinite: true })
+  queryFn: QueryFunction<TQueryFnData | TData>,
+  options?: UseInfiniteQueryOptions<TData, TError, TQueryFnData, TQueryData>
+): UseInfiniteQueryResult<TData, TError>
+export function useInfiniteQuery<
+  TData,
+  TError,
+  TQueryFnData = TData,
+  TQueryData = TQueryFnData[]
+>(
+  arg1:
+    | QueryKey
+    | UseInfiniteQueryOptions<TData, TError, TQueryFnData, TQueryData>,
+  arg2?:
+    | QueryFunction<TQueryFnData | TData>
+    | UseInfiniteQueryOptions<TData, TError, TQueryFnData, TQueryData>,
+  arg3?: UseInfiniteQueryOptions<TData, TError, TQueryFnData, TQueryData>
+): UseInfiniteQueryResult<TData, TError> {
+  const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
+  parsedOptions.infinite = true
+  return useBaseQuery(parsedOptions) as UseInfiniteQueryResult<TData, TError>
 }

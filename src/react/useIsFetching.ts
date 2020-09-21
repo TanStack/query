@@ -1,21 +1,21 @@
 import React from 'react'
 
-import { useQueryCache } from './ReactQueryCacheProvider'
+import { useQueryClient } from './QueryClientProvider'
 import { useIsMounted } from './utils'
 
 export function useIsFetching(): number {
+  const client = useQueryClient()
   const isMounted = useIsMounted()
-  const queryCache = useQueryCache()
-  const [isFetching, setIsFetching] = React.useState(queryCache.isFetching)
+  const [isFetching, setIsFetching] = React.useState(client.isFetching())
 
   React.useEffect(
     () =>
-      queryCache.subscribe(() => {
+      client.getCache().subscribe(() => {
         if (isMounted()) {
-          setIsFetching(queryCache.isFetching)
+          setIsFetching(client.isFetching())
         }
       }),
-    [queryCache, setIsFetching, isMounted]
+    [client, setIsFetching, isMounted]
   )
 
   return isFetching

@@ -1,10 +1,13 @@
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import * as React from 'react'
+import { fireEvent, waitFor } from '@testing-library/react'
+import React from 'react'
 
-import { sleep, queryKey, mockConsoleError } from './utils'
-import { useQuery, useIsFetching } from '../..'
+import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
+import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
 
 describe('useIsFetching', () => {
+  const cache = new QueryCache()
+  const client = new QueryClient({ cache })
+
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const key = queryKey()
@@ -33,7 +36,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(client, <Page />)
 
     await waitFor(() => rendered.getByText('isFetching: 0'))
     fireEvent.click(rendered.getByText('setReady'))
@@ -89,8 +92,8 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(<Page />)
-    await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 1, 0]))
+    renderWithClient(client, <Page />)
+    await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 2, 1, 0]))
     expect(consoleMock).not.toHaveBeenCalled()
     expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
 

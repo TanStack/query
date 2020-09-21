@@ -1,10 +1,13 @@
 import { replaceEqualDeep, deepIncludes, isPlainObject } from '../utils'
-import { setConsole, queryCache } from '../..'
+import { QueryClient, QueryCache, setConsole } from '../..'
 import { queryKey } from '../../react/tests/utils'
 
 describe('core/utils', () => {
   it('setConsole should override Console object', async () => {
     const key = queryKey()
+
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
 
     const mockConsole = {
       error: jest.fn(),
@@ -14,7 +17,7 @@ describe('core/utils', () => {
 
     setConsole(mockConsole)
 
-    await queryCache.prefetchQuery(
+    await client.prefetchQuery(
       key,
       async () => {
         throw new Error('Test')
