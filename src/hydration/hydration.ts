@@ -4,9 +4,9 @@ export interface DehydratedQueryConfig {
   cacheTime?: number
 }
 
-export interface DehydratedQuery {
+export interface DehydratedQuery<TResult = unknown> {
   queryKey: QueryKey
-  data?: unknown
+  data?: TResult
   updatedAt: number
   config: DehydratedQueryConfig
 }
@@ -29,7 +29,7 @@ export interface DehydrateConfig {
 // in the html-payload, but not consume it on the initial render.
 function dehydrateQuery<TResult, TError = unknown>(
   query: Query<TResult, TError>
-): DehydratedQuery {
+): DehydratedQuery<TResult> {
   return {
     config: {
       cacheTime: query.cacheTime,

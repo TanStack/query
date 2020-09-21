@@ -113,6 +113,28 @@ export function isOnline(): boolean {
 }
 
 export function getQueryArgs<TResult, TError, TOptions = undefined>(
+  query: {
+    queryKey: QueryKey
+    queryFn: QueryFunction<TResult>
+    config: QueryConfig<TResult, TError>
+  },
+  options: TOptions
+): [QueryKey, QueryConfig<TResult, TError>, TOptions]
+
+export function getQueryArgs<TResult, TError, TOptions = undefined>(
+  queryKey: QueryKey,
+  config: QueryConfig<TResult, TError>,
+  options: TOptions
+): [QueryKey, QueryConfig<TResult, TError>, TOptions]
+
+export function getQueryArgs<TResult, TError, TOptions = undefined>(
+  queryKey: QueryKey,
+  queryFn: QueryFunction<TResult>,
+  config: QueryConfig<TResult, TError>,
+  options: TOptions
+): [QueryKey, QueryConfig<TResult, TError>, TOptions]
+
+export function getQueryArgs<TResult, TError, TOptions = undefined>(
   arg1: any,
   arg2?: any,
   arg3?: any,

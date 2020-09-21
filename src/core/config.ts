@@ -120,9 +120,9 @@ export function getResolvedQueryConfig<TResult, TError>(
 }
 
 export function isResolvedQueryConfig<TResult, TError>(
-  config: any
+  config: QueryConfig<TResult, TError> | ResolvedQueryConfig<TResult, TError>
 ): config is ResolvedQueryConfig<TResult, TError> {
-  return Boolean(config.queryHash)
+  return 'queryHash' in config
 }
 
 export function getResolvedMutationConfig<

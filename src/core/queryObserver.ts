@@ -78,7 +78,7 @@ export class QueryObserver<TResult, TError> {
     const prevConfig = this.config
     const prevQuery = this.currentQuery
 
-    this.config = isResolvedQueryConfig(config)
+    this.config = isResolvedQueryConfig<TResult, TError>(config)
       ? config
       : this.config.queryCache.getResolvedQueryConfig(
           this.config.queryKey,

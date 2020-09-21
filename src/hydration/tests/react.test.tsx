@@ -2,7 +2,7 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import { ReactQueryCacheProvider, QueryCache, useQuery } from '../..'
-import { dehydrate, useHydrate, Hydrate } from '../'
+import { dehydrate, useHydrate, Hydrate, DehydratedState } from '../'
 import { waitForMs } from '../../react/tests/utils'
 
 describe('React hydration', () => {
@@ -21,7 +21,7 @@ describe('React hydration', () => {
 
   describe('useHydrate', () => {
     test('should handle global cache case', async () => {
-      const dehydratedState = JSON.parse(stringifiedState)
+      const dehydratedState: DehydratedState = JSON.parse(stringifiedState)
       function Page() {
         useHydrate(dehydratedState)
         const { data } = useQuery('string', dataQuery)
@@ -40,7 +40,7 @@ describe('React hydration', () => {
     })
 
     test('should hydrate queries to the cache on context', async () => {
-      const dehydratedState = JSON.parse(stringifiedState)
+      const dehydratedState: DehydratedState = JSON.parse(stringifiedState)
       const clientQueryCache = new QueryCache()
 
       function Page() {
@@ -67,7 +67,7 @@ describe('React hydration', () => {
 
   describe('ReactQueryCacheProvider with hydration support', () => {
     test('should hydrate new queries if queries change', async () => {
-      const dehydratedState = JSON.parse(stringifiedState)
+      const dehydratedState: DehydratedState = JSON.parse(stringifiedState)
       const clientQueryCache = new QueryCache()
 
       function Page({ queryKey }: { queryKey: string }) {
@@ -118,7 +118,7 @@ describe('React hydration', () => {
     })
 
     test('should hydrate queries to new cache if cache changes', async () => {
-      const dehydratedState = JSON.parse(stringifiedState)
+      const dehydratedState: DehydratedState = JSON.parse(stringifiedState)
       const clientQueryCache = new QueryCache()
 
       function Page() {
