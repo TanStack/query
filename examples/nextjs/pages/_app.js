@@ -1,11 +1,13 @@
 import React from 'react'
-import { ReactQueryCacheProvider } from 'react-query'
+import { ReactQueryCacheProvider, QueryCache } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Hydrate } from 'react-query/hydration'
 
+const queryCache = new QueryCache()
+
 export default function App({ Component, pageProps }) {
   return (
-    <ReactQueryCacheProvider>
+    <ReactQueryCacheProvider queryCache={queryCache}>
       <Hydrate state={pageProps.dehydratedState}>
         <ReactQueryDevtools initialIsOpen={true} />
         <Component {...pageProps} />
