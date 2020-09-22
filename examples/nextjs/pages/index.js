@@ -9,14 +9,14 @@ const Home = () => {
     <Layout>
       <Header />
       <InfoBox>ℹ️ This page shows how to use SSG with React-Query.</InfoBox>
-      <PostList />
+      <PostList isClient={false} />
     </Layout>
   )
 }
 
 export async function getStaticProps() {
   const queryCache = new QueryCache()
-  await queryCache.prefetchQuery('posts', fetchPosts)
+  await queryCache.prefetchQuery(['posts', 10], fetchPosts)
 
   return {
     props: {
