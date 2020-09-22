@@ -49,10 +49,10 @@ The promise returned by `mutate()` can be helpful as well for performing more gr
 const [mutate] = useMutation(addTodo, {
   onSuccess: async () => {
     console.log("I'm first!")
-  }),
+  },
   onSettled: async () => {
     console.log("I'm second!")
-  })
+  }
 })
 
 const run = async () => {
