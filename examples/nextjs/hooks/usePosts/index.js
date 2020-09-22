@@ -1,13 +1,14 @@
 import ky from 'ky-universal'
 import { useQuery } from 'react-query'
 
-const fetchPosts = async () => {
+const fetchPosts = async (_, limit) => {
   const parsed = await ky('https://jsonplaceholder.typicode.com/posts').json()
-  return parsed
+  const result = parsed.filter(x => x.id <= limit ?? 10)
+  return result
 }
 
-const usePosts = () => {
-  const query = useQuery('posts', fetchPosts)
+const usePosts = limit => {
+  const query = useQuery(['posts', limit], fetchPosts)
   return { ...query }
 }
 

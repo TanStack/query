@@ -1,12 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { usePosts } from '../../hooks/usePosts'
 
 export const PostList = () => {
-  let error = false
-  const { data, isLoading } = usePosts()
+  const [postCount, setPostCount] = useState(10)
+  const { data, isFetching } = usePosts(postCount)
 
   // if (error) return <ErrorMessage message="Error loading posts." />
-  if (isLoading) return <div>Loading</div>
+  if (isFetching) return <div>Loading</div>
 
   return (
     <section>
@@ -16,22 +16,18 @@ export const PostList = () => {
             <div>
               <span>{index + 1}. </span>
               <a href="#">{post.title}</a>
-              {/* <PostUpvoter id={post.id} votes={post.votes} /> */}
             </div>
           </li>
         ))}
-        <li>
-          <div>
-            <span>1</span>
-            <a href="#">Title</a>
-          </div>
-        </li>
       </ul>
-      {/* {areMorePosts && (
-        <button onClick={() => loadMorePosts()} disabled={loadingMorePosts}>
-          {loadingMorePosts ? 'Loading...' : 'Show More'}
+      {postCount <= 90 && (
+        <button
+          onClick={() => setPostCount(postCount + 10)}
+          disabled={isFetching}
+        >
+          {isFetching ? 'Loading...' : 'Show More'}
         </button>
-      )} */}
+      )}
       <style jsx>{`
         section {
           padding-bottom: 20px;
