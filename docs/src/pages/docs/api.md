@@ -583,7 +583,7 @@ The `cancelQueries` method can be used to cancel outgoing queries based on their
 This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
 
 ```js
-const queries = queryCache.cancelQueries(queryKeyOrPredicateFn, {
+queryCache.cancelQueries(queryKeyOrPredicateFn, {
   exact,
 })
 ```
