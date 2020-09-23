@@ -5,7 +5,7 @@ title: Does React Query replace Redux, MobX or other global state managers?
 
 Well, let's start with a few important items:
 
-- React Query is a **server-state** library that
+- React Query is a **server-state** library, responsible for managing asynchronous operations between your server and client
 - Redux, MobX, Zustand, etc. are **client-state** libraries that _can be used to store asynchronous data, albeit inefficiently when compared to a tool like React Query_
 
 With those points in mind, the short answer is that React Query will likely replace _almost all of your **asynchronous** code that you currently pipe through your **client** state management library_.
