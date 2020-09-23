@@ -47,8 +47,10 @@ This also means that with a few hook calls to `useQuery` and `useMutation`, we a
 - Loading/Error/Result states
 - Contexts
 
-With all of those things removed, you may ask yourself, \*\*"Is it worth it to keep using our client state manager for this tiny global state?"
+With all of those things removed, you may ask yourself, **"Is it worth it to keep using our client state manager for this tiny global state?"**
 
-That's up to you! But React Query's role is clear. It removes asynchronous wiring and boilerplate from your application and replaces it with just a few lines of code.
+**And that's up to you!**
+
+But React Query's role is clear. It removes asynchronous wiring and boilerplate from your application and replaces it with just a few lines of code.
 
 What are you waiting for, give it a go already!
