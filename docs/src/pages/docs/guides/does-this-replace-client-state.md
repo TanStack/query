@@ -8,13 +8,13 @@ Well, let's start with a few important items:
 - React Query is a **server-state** library, responsible for managing asynchronous operations between your server and client
 - Redux, MobX, Zustand, etc. are **client-state** libraries that _can be used to store asynchronous data, albeit inefficiently when compared to a tool like React Query_
 
-With those points in mind, the short answer is that React Query will likely replace _almost all of your **asynchronous** code that you currently pipe through your **client** state management library_.
+With those points in mind, the short answer is that React Query **replaces the boilerplate code and related wiring used to manage cache data in your client-state and replaces it with just a few lines of code.**
 
-For a vast majority of applications, the **client** state that is left over after migrating all of your async code to React Query is usually very miniscule. In rare cicurmstances, an application might indeed have a massive amount of synchronous client-only state (like a visual designer or music production application), in which case, you will probably still want a client state manager. And that's fine, you can use React Query along side client state managers without any issues!
+For a vast majority of applications, the truly **globally accessible client state** that is left over after migrating all of your async code to React Query is usually very tiny.
 
-So as _probable side-effect_, **yes**. React Query can replace Redux, MobX or any other global state manager, if you are primarily using it to cache your server-side data.
+> There are still some cicurmstances where an application might indeed have a massive amount of synchronous client-only state (like a visual designer or music production application), in which case, you will probably still want a client state manager. In this situation it's important to note that **React Query is not a replacement for local/client state management**. However, you can use React Query along side most client state managers with zero issues.
 
-## A more detailed example
+## A Contrived Example
 
 Here we have some "global" state being managed by a global state library:
 
@@ -25,7 +25,7 @@ const globalState = {
   tasks,
   users,
   themeMode,
-  sidebarOpen,
+  sidebarStatus,
 }
 ```
 
@@ -34,7 +34,7 @@ Currently, the global state manager is caching 4 types of server-state: `project
 ```js
 const globalState = {
   themeMode,
-  sidebarOpen,
+  sidebarStatus,
 }
 ```
 
