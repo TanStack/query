@@ -12,7 +12,14 @@
   },
   "main": "lib/index.js",
   "unpkg": "dist/react-query.development.js",
-  "types": "types/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "*": [
+        "types/*",
+        "types/*/index"
+      ]
+    }
+  },
   "module": "es/index.js",
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
