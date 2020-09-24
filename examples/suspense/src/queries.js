@@ -1,13 +1,13 @@
 import axios from "axios";
 
-let count = 0;
+// let count = 0;
 
 export async function fetchProjects(key) {
   console.info("fetch projects");
-  if (count < 4) {
-    count++;
-    throw new Error("testing");
-  }
+  // if (count < 4) {
+  //   count++;
+  //   throw new Error("testing");
+  // }
   let { data } = await axios.get(
     `https://api.github.com/users/tannerlinsley/repos?sort=updated`
   );
