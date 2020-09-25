@@ -64,6 +64,7 @@
 .markdown > p > a,
 .markdown > ul > li > a,
 .markdown > ol > li > a,
+.markdown > blockquote > p > a,
 .markdown > table > tbody > tr > td > a {
   @apply text-blue-600 font-semibold transition-colors duration-150 ease-out;
 }
@@ -71,6 +72,7 @@
 .markdown > p > a:hover,
 .markdown > ul > li > a:hover,
 .markdown > ol > li > a:hover,
+.markdown > blockquote > p > a:hover,
 .markdown > table > tbody > tr > td > a:hover {
   @apply text-blue-800 transition-colors duration-150 ease-out;
 }
