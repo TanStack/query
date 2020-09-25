@@ -12,11 +12,12 @@
   },
   "main": "lib/index.js",
   "unpkg": "dist/react-query.development.js",
+  "types": "types/index.d.ts",
   "typesVersions": {
     "*": {
-      "*": [
+      "es/*": [
         "types/*",
-        "types/*/index"
+        "types/*/index.d.ts"
       ]
     }
   },
