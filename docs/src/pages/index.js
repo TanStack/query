@@ -14,6 +14,7 @@ const supporters = [
   ['@bgazzera', 'https://github.com/bgazzera'],
   ['Gabe Ragland', 'https://github.com/gragland'],
   ['Matt Wood', 'https://github.com/mattwoodnyc'],
+  ['Joshua Turner', 'https://github.com/joshua-turner'],
 ]
 
 const fans = [
