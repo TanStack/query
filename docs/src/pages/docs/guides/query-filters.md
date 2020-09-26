@@ -6,9 +6,15 @@ title: Query Filters
 Some methods within React Query accept a `QueryFilters` object. A query filter is an object with certain conditions to match a query with:
 
 ```js
-await client.refetchQueries({ active: true, inactive: true })
-await client.refetchQueries('posts', { active: true, inactive: true })
+// Only invalidate inactive queries
+await client.invaliateQueries('posts', { active: false, inactive: true })
+// Refetch all active queries
+await client.refetchQueries({ active: true, inactive: false })
+// Refetch all active queries that begin with `post` in the key
+await client.refetchQueries('posts', { active: true, inactive: false })
 ```
+
+// TODO: Niek - Verify these options are correct
 
 A query filter object supports the following properties:
 
