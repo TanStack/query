@@ -70,6 +70,31 @@
               "editUrl": "/docs/guides/queries.md"
             },
             {
+              "title": "Query Keys",
+              "path": "/docs/guides/query-keys",
+              "editUrl": "/docs/guides/query-keys.md"
+            },
+            {
+              "title": "Query Functions",
+              "path": "/docs/guides/query-functions",
+              "editUrl": "/docs/guides/query-functions.md"
+            },
+            {
+              "title": "Parallel Queries",
+              "path": "/docs/guides/parallel-queries",
+              "editUrl": "/docs/guides/parallel-queries.md"
+            },
+            {
+              "title": "Dependent Queries",
+              "path": "/docs/guides/dependent-queries",
+              "editUrl": "/docs/guides/dependent-queries.md"
+            },
+            {
+              "title": "Background Fetching Indicators",
+              "path": "/docs/guides/background-fetching-indicators",
+              "editUrl": "/docs/guides/background-fetching-indicators.md"
+            },
+            {
               "title": "Window Focus Refetching",
               "path": "/docs/guides/window-focus-refetching",
               "editUrl": "/docs/guides/window-focus-refetching.md"
@@ -138,6 +163,11 @@
               "title": "Scroll Restoration",
               "path": "/docs/guides/scroll-restoration",
               "editUrl": "/docs/guides/scroll-restoration.md"
+            },
+            {
+              "title": "Query Filters",
+              "path": "/docs/guides/query-filters",
+              "editUrl": "/docs/guides/query-filters.md"
             },
             {
               "title": "SSR & Next.js",
