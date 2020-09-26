@@ -70,13 +70,3 @@ function Todos({ completed }) {
   const queryInfo = useQuery(['todos', todoId], () => fetchTodoById(todoId))
 }
 ```
-
-## Query Keys are Dynamic!
-
-When a query's key changes, the query automatically updates to reflect the change. In the following example, new and old queries are automatically create and archived whenever the `todoId` changes:
-
-```js
-function Todo({ todoId }) {
-  const queryInfo = useQuery(['todo', todoId], fetchTodo)
-}
-```
