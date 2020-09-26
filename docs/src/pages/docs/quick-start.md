@@ -13,11 +13,14 @@ This example very briefly illustrates the 3 core concepts of React Query:
 import { useQuery, useMutation, useQueryClient, QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
+// Create a cache
 const cache = new QueryCache()
+// Creat a client
 const client = new QueryClient({ cache })
 
 function App() {
   return (
+    // Provide the client to your App
     <QueryClientProvider client={client}>
       <Todos />
     </QueryClientProvider>
@@ -25,7 +28,7 @@ function App() {
 }
 
 function Todos() {
-  // Client
+  // Access the client
   const client = useQueryClient()
 
   // Queries
@@ -34,7 +37,7 @@ function Todos() {
   // Mutations
   const [addTodo] = useMutation(postTodo, {
     onSuccess: () => {
-      // Refetch
+      // Invalidate/Refetch
       client.invalidateQueries('todos')
     },
   })
