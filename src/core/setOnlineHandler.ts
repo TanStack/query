@@ -1,8 +1,8 @@
 import { createSetHandler, isServer } from './utils'
-import { onVisibilityOrOnlineChange } from './queryCache'
+import { onExternalEvent } from './queryClient'
 
 export const setOnlineHandler = createSetHandler(() =>
-  onVisibilityOrOnlineChange('online')
+  onExternalEvent('online')
 )
 
 setOnlineHandler(handleOnline => {

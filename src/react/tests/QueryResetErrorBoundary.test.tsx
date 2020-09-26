@@ -1,11 +1,19 @@
-import { render, waitFor, fireEvent } from '@testing-library/react'
+import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import * as React from 'react'
+import React from 'react'
 
-import { sleep, queryKey, mockConsoleError } from './utils'
-import { useQuery, ReactQueryErrorResetBoundary } from '../..'
+import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
+import {
+  useQuery,
+  QueryClient,
+  QueryCache,
+  QueryErrorResetBoundary,
+} from '../..'
 
-describe('ReactQueryResetErrorBoundary', () => {
+describe('QueryErrorResetBoundary', () => {
+  const cache = new QueryCache()
+  const client = new QueryClient({ cache })
+
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const key = queryKey()
 
@@ -31,8 +39,9 @@ describe('ReactQueryResetErrorBoundary', () => {
       return <div>{data}</div>
     }
 
-    const rendered = render(
-      <ReactQueryErrorResetBoundary>
+    const rendered = renderWithClient(
+      client,
+      <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
             onReset={reset}
@@ -52,7 +61,7 @@ describe('ReactQueryResetErrorBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </ReactQueryErrorResetBoundary>
+      </QueryErrorResetBoundary>
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -85,8 +94,9 @@ describe('ReactQueryResetErrorBoundary', () => {
       return <div>{data}</div>
     }
 
-    const rendered = render(
-      <ReactQueryErrorResetBoundary>
+    const rendered = renderWithClient(
+      client,
+      <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
             onReset={reset}
@@ -106,7 +116,7 @@ describe('ReactQueryResetErrorBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </ReactQueryErrorResetBoundary>
+      </QueryErrorResetBoundary>
     )
 
     await waitFor(() => rendered.getByText('error boundary'))

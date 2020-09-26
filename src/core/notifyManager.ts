@@ -1,8 +1,10 @@
-import { getBatchedUpdates, scheduleMicrotask } from './utils'
+import { scheduleMicrotask } from './utils'
 
 // TYPES
 
 type NotifyCallback = () => void
+
+type BatchUpdateFunction = (callback: () => void) => void
 
 // CLASS
 
@@ -49,6 +51,23 @@ export class NotifyManager {
       })
     }
   }
+}
+
+// GETTERS AND SETTERS
+
+// Default to a dummy "batch" implementation that just runs the callback
+let batchedUpdates: BatchUpdateFunction = (callback: () => void) => {
+  callback()
+}
+
+// Allow injecting another batching function later
+export function setBatchedUpdates(fn: BatchUpdateFunction) {
+  batchedUpdates = fn
+}
+
+// Supply a getter just to skip dealing with ESM bindings
+export function getBatchedUpdates(): BatchUpdateFunction {
+  return batchedUpdates
 }
 
 // SINGLETON

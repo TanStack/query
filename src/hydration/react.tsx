@@ -1,20 +1,20 @@
 import React from 'react'
-import { useQueryCache } from 'react-query'
 
+import { useQueryClient } from '../react'
 import { hydrate } from './hydration'
 
 export function useHydrate(queries: unknown) {
-  const queryCache = useQueryCache()
+  const client = useQueryClient()
+  const cache = client.getCache()
 
   // Running hydrate again with the same queries is safe,
   // it wont overwrite or initialize existing queries,
   // relying on useMemo here is only a performance optimization
   React.useMemo(() => {
     if (queries) {
-      hydrate(queryCache, queries)
+      hydrate(cache, queries)
     }
-    return undefined
-  }, [queryCache, queries])
+  }, [cache, queries])
 }
 
 export interface HydrateProps {

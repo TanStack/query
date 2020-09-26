@@ -1,26 +1,23 @@
 import React from 'react'
 
 import { useMountedCallback } from './utils'
-import { getResolvedMutationConfig } from '../core/config'
-import { Console, uid, getStatusProps } from '../core/utils'
+import { getStatusProps } from '../core/utils'
+import { getConsole } from '../core/setConsole'
+import { MutateOptions, MutationOptions } from '../core/types'
+import { useQueryClient } from './QueryClientProvider'
 import {
-  QueryStatus,
-  MutationResultPair,
   MutationFunction,
-  MutationConfig,
-  MutateConfig,
-  MutationResult,
-} from '../core/types'
-import { useQueryCache } from './ReactQueryCacheProvider'
-import { useContextConfig } from './ReactQueryConfigProvider'
+  MutationStatus,
+  UseMutationResultPair,
+} from './types'
 
 // TYPES
 
 type Reducer<S, A> = (prevState: S, action: A) => S
 
-interface State<TResult, TError> {
-  status: QueryStatus
-  data: TResult | undefined
+interface State<TData, TError> {
+  status: MutationStatus
+  data: TData | undefined
   error: TError | null
   isIdle: boolean
   isLoading: boolean
@@ -28,69 +25,68 @@ interface State<TResult, TError> {
   isError: boolean
 }
 
-const enum ActionType {
-  Reset,
-  Loading,
-  Resolve,
-  Reject,
-}
-
 interface ResetAction {
-  type: ActionType.Reset
+  type: 'reset'
 }
 
 interface LoadingAction {
-  type: ActionType.Loading
+  type: 'loading'
 }
 
-interface ResolveAction<TResult> {
-  type: ActionType.Resolve
-  data: TResult
+interface ResolveAction<TData> {
+  type: 'resolve'
+  data: TData
 }
 
 interface RejectAction<TError> {
-  type: ActionType.Reject
+  type: 'reject'
   error: TError
 }
 
-type Action<TResult, TError> =
+type Action<TData, TError> =
   | ResetAction
   | LoadingAction
-  | ResolveAction<TResult>
+  | ResolveAction<TData>
   | RejectAction<TError>
 
 // HOOK
 
-function getDefaultState<TResult, TError>(): State<TResult, TError> {
+let _uid = 0
+
+function uid(): number {
+  return _uid++
+}
+
+function getDefaultState<TData, TError>(): State<TData, TError> {
   return {
-    ...getStatusProps(QueryStatus.Idle),
+    ...getStatusProps('idle'),
     data: undefined,
     error: null,
   }
 }
 
-function mutationReducer<TResult, TError>(
-  state: State<TResult, TError>,
-  action: Action<TResult, TError>
-): State<TResult, TError> {
+function mutationReducer<TData, TError>(
+  state: State<TData, TError>,
+  action: Action<TData, TError>
+): State<TData, TError> {
   switch (action.type) {
-    case ActionType.Reset:
+    case 'reset':
       return getDefaultState()
-    case ActionType.Loading:
+    case 'loading':
       return {
-        ...getStatusProps(QueryStatus.Loading),
+        ...getStatusProps('loading'),
         data: undefined,
         error: null,
       }
-    case ActionType.Resolve:
+    case 'resolve':
       return {
-        ...getStatusProps(QueryStatus.Success),
+        ...getStatusProps('success'),
         data: action.data,
         error: null,
       }
-    case ActionType.Reject:
+    case 'reject':
       return {
-        ...getStatusProps(QueryStatus.Error),
+        ...getStatusProps('error'),
         data: undefined,
         error: action.error,
       }
@@ -100,39 +96,39 @@ function mutationReducer<TResult, TError>(
 }
 
 export function useMutation<
-  TResult,
+  TData,
   TError = unknown,
   TVariables = undefined,
   TSnapshot = unknown
 >(
-  mutationFn: MutationFunction<TResult, TVariables>,
-  config: MutationConfig<TResult, TError, TVariables, TSnapshot> = {}
-): MutationResultPair<TResult, TError, TVariables, TSnapshot> {
-  const cache = useQueryCache()
-  const contextConfig = useContextConfig()
+  mutationFn: MutationFunction<TData, TVariables>,
+  options: MutationOptions<TData, TError, TVariables, TSnapshot> = {}
+): UseMutationResultPair<TData, TError, TVariables, TSnapshot> {
+  const client = useQueryClient()
 
-  // Get resolved config
-  const resolvedConfig = getResolvedMutationConfig(cache, contextConfig, config)
+  // Get defaulted options
+  const defaultedOptions = client.defaultMutationOptions(options)
 
   const [state, unsafeDispatch] = React.useReducer(
-    mutationReducer as Reducer<State<TResult, TError>, Action<TResult, TError>>,
+    mutationReducer as Reducer<State<TData, TError>, Action<TData, TError>>,
     null,
     getDefaultState
   )
+
   const dispatch = useMountedCallback(unsafeDispatch)
 
   const latestMutationRef = React.useRef<number>()
   const latestMutationFnRef = React.useRef(mutationFn)
   latestMutationFnRef.current = mutationFn
-  const latestConfigRef = React.useRef(resolvedConfig)
-  latestConfigRef.current = resolvedConfig
+  const latestOptionsRef = React.useRef(defaultedOptions)
+  latestOptionsRef.current = defaultedOptions
 
   const mutate = React.useCallback(
     async (
-      variables?: TVariables,
-      mutateConfig: MutateConfig<TResult, TError, TVariables, TSnapshot> = {}
-    ): Promise<TResult | undefined> => {
-      const latestConfig = latestConfigRef.current
+      variables: TVariables,
+      mutateOptions: MutateOptions<TData, TError, TVariables, TSnapshot> = {}
+    ): Promise<TData | undefined> => {
+      const latestOptions = latestOptionsRef.current
 
       const mutationId = uid()
       latestMutationRef.current = mutationId
@@ -142,44 +138,44 @@ export function useMutation<
       let snapshotValue: TSnapshot | undefined
 
       try {
-        dispatch({ type: ActionType.Loading })
-        snapshotValue = (await latestConfig.onMutate?.(variables!)) as TSnapshot
+        dispatch({ type: 'loading' })
+        snapshotValue = await latestOptions.onMutate?.(variables)
 
         const latestMutationFn = latestMutationFnRef.current
-        const data = await latestMutationFn(variables!)
+        const data = await latestMutationFn(variables)
 
         if (isLatest()) {
-          dispatch({ type: ActionType.Resolve, data })
+          dispatch({ type: 'resolve', data })
         }
 
-        await latestConfig.onSuccess?.(data, variables!)
-        await mutateConfig.onSuccess?.(data, variables!)
-        await latestConfig.onSettled?.(data, null, variables!)
-        await mutateConfig.onSettled?.(data, null, variables!)
+        await latestOptions.onSuccess?.(data, variables)
+        await mutateOptions.onSuccess?.(data, variables)
+        await latestOptions.onSettled?.(data, null, variables)
+        await mutateOptions.onSettled?.(data, null, variables)
 
         return data
       } catch (error) {
-        Console.error(error)
-        await latestConfig.onError?.(error, variables!, snapshotValue!)
-        await mutateConfig.onError?.(error, variables!, snapshotValue!)
-        await latestConfig.onSettled?.(
+        getConsole().error(error)
+        await latestOptions.onError?.(error, variables, snapshotValue)
+        await mutateOptions.onError?.(error, variables, snapshotValue)
+        await latestOptions.onSettled?.(
           undefined,
           error,
-          variables!,
-          snapshotValue as TSnapshot
+          variables,
+          snapshotValue
         )
-        await mutateConfig.onSettled?.(
+        await mutateOptions.onSettled?.(
           undefined,
           error,
-          variables!,
+          variables,
           snapshotValue
         )
 
         if (isLatest()) {
-          dispatch({ type: ActionType.Reject, error })
+          dispatch({ type: 'reject', error })
         }
 
-        if (mutateConfig.throwOnError || latestConfig.throwOnError) {
+        if (mutateOptions.throwOnError || latestOptions.throwOnError) {
           throw error
         }
       }
@@ -188,21 +184,20 @@ export function useMutation<
   )
 
   React.useEffect(() => {
-    const latestConfig = latestConfigRef.current
-    const { suspense, useErrorBoundary } = latestConfig
+    const latestOptions = latestOptionsRef.current
+    const { suspense, useErrorBoundary } = latestOptions
     if ((useErrorBoundary || suspense) && state.error) {
       throw state.error
     }
   }, [state.error])
 
   const reset = React.useCallback(() => {
-    dispatch({ type: ActionType.Reset })
+    dispatch({ type: 'reset' })
   }, [dispatch])
 
-  const result: MutationResult<TResult, TError> = {
-    ...state,
+  return React.useMemo(() => [mutate, { ...state, reset }], [
+    mutate,
+    state,
     reset,
-  }
-
-  return [mutate, result]
+  ])
 }

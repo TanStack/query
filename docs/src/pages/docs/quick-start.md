@@ -10,22 +10,23 @@ This example very briefly illustrates the 3 core concepts of React Query:
 - Query Invalidation
 
 ```js
-import { useQuery, useMutation, useQueryCache, QueryCache, ReactQueryCacheProvider } from 'react-query'
+import { useQuery, useMutation, useQueryClient, QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
 
 function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Todos />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }
 
 function Todos() {
-  // Cache
-  const cache = useQueryCache()
+  // Client
+  const client = useQueryClient()
 
   // Queries
   const todosQuery = useQuery('todos', getTodos)
@@ -33,8 +34,8 @@ function Todos() {
   // Mutations
   const [addTodo] = useMutation(postTodo, {
     onSuccess: () => {
-      // Query Invalidations
-      cache.invalidateQueries('todos')
+      // Refetch
+      client.invalidateQueries('todos')
     },
   })
 

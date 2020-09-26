@@ -1,22 +1,25 @@
+import { setBatchedUpdates, setConsole } from '../core'
+import { Console } from './Console'
+import { unstable_batchedUpdates } from './reactBatchedUpdates'
+
+setBatchedUpdates(unstable_batchedUpdates)
+
+if (Console) {
+  setConsole(Console)
+}
+
+export { QueryClientProvider, useQueryClient } from './QueryClientProvider'
 export {
-  ReactQueryCacheProvider,
-  useQueryCache,
-} from './ReactQueryCacheProvider'
-export { ReactQueryConfigProvider } from './ReactQueryConfigProvider'
-export {
-  ReactQueryErrorResetBoundary,
-  useErrorResetBoundary,
-} from './ReactQueryErrorResetBoundary'
+  QueryErrorResetBoundary,
+  useQueryErrorResetBoundary,
+} from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
 export { useMutation } from './useMutation'
 export { useQuery } from './useQuery'
-export { usePaginatedQuery } from './usePaginatedQuery'
+export { useQueries } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
 
 // Types
-export type { UseQueryObjectConfig } from './useQuery'
-export type { UseInfiniteQueryObjectConfig } from './useInfiniteQuery'
-export type { UsePaginatedQueryObjectConfig } from './usePaginatedQuery'
-export type { ReactQueryCacheProviderProps } from './ReactQueryCacheProvider'
-export type { ReactQueryConfigProviderProps } from './ReactQueryConfigProvider'
-export type { ReactQueryErrorResetBoundaryProps } from './ReactQueryErrorResetBoundary'
+export * from './types'
+export type { QueryClientProviderProps } from './QueryClientProvider'
+export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'

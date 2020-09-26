@@ -21,11 +21,11 @@
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "build": "yarn build:commonjs && yarn build:es && yarn build:umd",
+    "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
     "build:commonjs": "rm -rf ./lib && BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/*.test.tsx ./src --out-dir lib",
     "build:es": "rm -rf ./es && babel --extensions .ts,.tsx --ignore ./src/**/*.test.tsx ./src --out-dir es",
-    "build:umd": "rm -rf ./dist && NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json stats-hydration.json",
-    "build:types": "rm -rf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r && replace 'export type' 'export' ./types -r",
+    "build:umd": "rm -rf ./dist && NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json",
+    "build:types": "rm -rf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
@@ -42,13 +42,14 @@
     ]
   },
   "files": [
+    "core",
     "dist",
-    "lib",
     "es",
-    "types",
+    "hydration",
+    "lib",
+    "react",
     "scripts",
-    "hydration.js",
-    "hydration.d.ts"
+    "types"
   ],
   "dependencies": {
     "@babel/runtime": "^7.5.5"

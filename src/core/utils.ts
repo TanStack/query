@@ -1,20 +1,49 @@
-import { QueryConfig, QueryStatus, QueryKey, QueryFunction } from './types'
+import type { Query } from './query'
+import type {
+  QueryOptions,
+  QueryFunction,
+  QueryKey,
+  QueryStatus,
+} from './types'
 
 // TYPES
+
+export interface QueryFilters {
+  /**
+   * Include or exclude active queries
+   */
+  active?: boolean
+  /**
+   * Match query key exactly
+   */
+  exact?: boolean
+  /**
+   * Include or exclude fresh queries
+   */
+  fresh?: boolean
+  /**
+   * Include or exclude inactive queries
+   */
+  inactive?: boolean
+  /**
+   * Include queries matching this predicate function
+   */
+  predicate?: (query: Query) => boolean
+  /**
+   * Include queries matching this query key
+   */
+  queryKey?: QueryKey
+  /**
+   * Include or exclude stale queries
+   */
+  stale?: boolean
+}
 
 export type DataUpdateFunction<TInput, TOutput> = (input: TInput) => TOutput
 
 export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
-
-type ConsoleFunction = (...args: any[]) => void
-
-export interface ConsoleObject {
-  log: ConsoleFunction
-  warn: ConsoleFunction
-  error: ConsoleFunction
-}
 
 interface Cancelable {
   cancel(): void
@@ -29,25 +58,10 @@ export class CancelledError {
 
 // UTILS
 
-let _uid = 0
-export function uid(): number {
-  return _uid++
-}
-
 export const isServer = typeof window === 'undefined'
 
 export function noop(): undefined {
   return undefined
-}
-
-export let Console: ConsoleObject = console || {
-  error: noop,
-  warn: noop,
-  log: noop,
-}
-
-export function setConsole(c: ConsoleObject) {
-  Console = c
 }
 
 export function functionalUpdate<TInput, TOutput>(
@@ -76,8 +90,25 @@ function stableStringifyReplacer(_key: string, value: any): unknown {
   return value
 }
 
-export function stableStringify(value: any): string {
+function stableStringify(value: any): string {
   return JSON.stringify(value, stableStringifyReplacer)
+}
+
+export function defaultQueryKeySerializerFn(queryKey: QueryKey): string {
+  try {
+    return stableStringify(queryKey)
+  } catch {
+    throw new Error('Failed to serialize query key')
+  }
+}
+
+export function hashQueryKey(
+  queryKey: QueryKey,
+  options?: QueryOptions<any, any>
+): string {
+  return options?.queryKeySerializerFn
+    ? options.queryKeySerializerFn(queryKey)
+    : defaultQueryKeySerializerFn(queryKey)
 }
 
 export function deepIncludes(a: any, b: any): boolean {
@@ -112,40 +143,101 @@ export function isOnline(): boolean {
   return navigator.onLine === undefined || navigator.onLine
 }
 
-export function getQueryArgs<TResult, TError, TOptions = undefined>(
-  arg1: any,
-  arg2?: any,
-  arg3?: any,
-  arg4?: any
-): [QueryKey, QueryConfig<TResult, TError>, TOptions] {
-  let queryKey: QueryKey
-  let queryFn: QueryFunction<TResult> | undefined
-  let config: QueryConfig<TResult, TError> | undefined
-  let options: TOptions
+export function ensureArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value]
+}
 
-  if (isPlainObject(arg1)) {
-    queryKey = arg1.queryKey
-    queryFn = arg1.queryFn
-    config = arg1.config
-    options = arg2
-  } else if (isPlainObject(arg2)) {
-    queryKey = arg1
-    config = arg2
-    options = arg3
-  } else {
-    queryKey = arg1
-    queryFn = arg2
-    config = arg3
-    options = arg4
+export function uniq<T>(array: T[]): T[] {
+  return array.filter((value, i) => array.indexOf(value) === i)
+}
+
+export function difference<T>(array1: T[], array2: T[]): T[] {
+  return array1.filter(x => array2.indexOf(x) === -1)
+}
+
+export function replaceAt<T>(array: T[], index: number, value: T): T[] {
+  const copy = array.slice(0)
+  copy[index] = value
+  return copy
+}
+
+export function timeUntilStale(updatedAt: number, staleTime: number): number {
+  return Math.max(updatedAt + staleTime - Date.now(), 0)
+}
+
+export function parseQueryArgs<TOptions extends QueryOptions<any, any>>(
+  arg1: QueryKey | TOptions,
+  arg2?: QueryFunction<any> | TOptions,
+  arg3?: TOptions
+): TOptions {
+  if (!isQueryKey(arg1)) {
+    return arg1 as TOptions
   }
 
-  config = config || {}
-
-  if (queryFn) {
-    config = { ...config, queryFn }
+  if (typeof arg2 === 'function') {
+    return { ...arg3, queryKey: arg1, queryFn: arg2 } as TOptions
   }
 
-  return [queryKey, config, options]
+  return { ...arg2, queryKey: arg1 } as TOptions
+}
+
+export function parseFilterArgs<
+  TFilters extends QueryFilters,
+  TOptions = unknown
+>(
+  arg1?: QueryKey | TFilters,
+  arg2?: TFilters | TOptions,
+  arg3?: TOptions
+): [TFilters, TOptions | undefined] {
+  return (isQueryKey(arg1)
+    ? [{ ...arg2, queryKey: arg1 }, arg3]
+    : [arg1 || {}, arg2]) as [TFilters, TOptions]
+}
+
+export function matchQuery(
+  filters: QueryFilters,
+  query: Query<any, any>
+): boolean {
+  const { active, exact, fresh, inactive, predicate, queryKey, stale } = filters
+
+  if (
+    queryKey &&
+    (exact
+      ? query.queryHash !== hashQueryKey(queryKey, query.options)
+      : !deepIncludes(query.queryKey, queryKey))
+  ) {
+    return false
+  }
+
+  let isActive
+
+  if (inactive === false || (active && !inactive)) {
+    isActive = true
+  } else if (active === false || (inactive && !active)) {
+    isActive = false
+  }
+
+  if (typeof isActive === 'boolean' && query.isActive() !== isActive) {
+    return false
+  }
+
+  let isStale
+
+  if (fresh === false || (stale && !fresh)) {
+    isStale = true
+  } else if (stale === false || (fresh && !stale)) {
+    isStale = false
+  }
+
+  if (typeof isStale === 'boolean' && query.isStale() !== isStale) {
+    return false
+  }
+
+  if (predicate && !predicate(query)) {
+    return false
+  }
+
+  return true
 }
 
 /**
@@ -214,6 +306,10 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
+export function isQueryKey(value: any): value is QueryKey {
+  return typeof value === 'string' || Array.isArray(value)
+}
+
 export function isCancelable(value: any): value is Cancelable {
   return typeof value?.cancel === 'function'
 }
@@ -235,10 +331,10 @@ export function sleep(timeout: number): Promise<void> {
 export function getStatusProps<T extends QueryStatus>(status: T) {
   return {
     status,
-    isLoading: status === QueryStatus.Loading,
-    isSuccess: status === QueryStatus.Success,
-    isError: status === QueryStatus.Error,
-    isIdle: status === QueryStatus.Idle,
+    isLoading: status === 'loading',
+    isSuccess: status === 'success',
+    isError: status === 'error',
+    isIdle: status === 'idle',
   }
 }
 
@@ -266,21 +362,4 @@ export function scheduleMicrotask(callback: () => void): void {
         throw error
       })
     )
-}
-
-type BatchUpdateFunction = (callback: () => void) => void
-
-// Default to a dummy "batch" implementation that just runs the callback
-let batchedUpdates: BatchUpdateFunction = (callback: () => void) => {
-  callback()
-}
-
-// Allow injecting another batching function later
-export function setBatchedUpdates(fn: BatchUpdateFunction) {
-  batchedUpdates = fn
-}
-
-// Supply a getter just to skip dealing with ESM bindings
-export function getBatchedUpdates(): BatchUpdateFunction {
-  return batchedUpdates
 }

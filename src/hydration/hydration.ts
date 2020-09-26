@@ -1,11 +1,12 @@
-import type { Query, QueryCache, QueryKey } from 'react-query'
+import { Query, QueryCache, QueryKey } from '../core'
 
 export interface DehydratedQueryConfig {
-  cacheTime?: number
+  cacheTime: number
 }
 
 export interface DehydratedQuery {
   queryKey: QueryKey
+  queryHash: string
   data?: unknown
   updatedAt: number
   config: DehydratedQueryConfig
@@ -15,9 +16,7 @@ export interface DehydratedState {
   queries: Array<DehydratedQuery>
 }
 
-export type ShouldDehydrateFunction = <TResult, TError = unknown>(
-  query: Query<TResult, TError>
-) => boolean
+export type ShouldDehydrateFunction = (query: Query) => boolean
 
 export interface DehydrateConfig {
   shouldDehydrate?: ShouldDehydrateFunction
@@ -27,34 +26,31 @@ export interface DehydrateConfig {
 // consuming the de/rehydrated data, typically with useQuery on the client.
 // Sometimes it might make sense to prefetch data on the server and include
 // in the html-payload, but not consume it on the initial render.
-function dehydrateQuery<TResult, TError = unknown>(
-  query: Query<TResult, TError>
-): DehydratedQuery {
+function dehydrateQuery(query: Query): DehydratedQuery {
   return {
     config: {
       cacheTime: query.cacheTime,
     },
     data: query.state.data,
     queryKey: query.queryKey,
+    queryHash: query.queryHash,
     updatedAt: query.state.updatedAt,
   }
 }
 
-function defaultShouldDehydrate<TResult, TError>(
-  query: Query<TResult, TError>
-) {
+function defaultShouldDehydrate(query: Query) {
   return query.state.status === 'success'
 }
 
 export function dehydrate(
-  queryCache: QueryCache,
+  cache: QueryCache,
   dehydrateConfig?: DehydrateConfig
 ): DehydratedState {
   const config = dehydrateConfig || {}
   const shouldDehydrate = config.shouldDehydrate || defaultShouldDehydrate
   const queries: DehydratedQuery[] = []
 
-  queryCache.getQueries().forEach(query => {
+  cache.getAll().forEach(query => {
     if (shouldDehydrate(query)) {
       queries.push(dehydrateQuery(query))
     }
@@ -63,10 +59,7 @@ export function dehydrate(
   return { queries }
 }
 
-export function hydrate(
-  queryCache: QueryCache,
-  dehydratedState: unknown
-): void {
+export function hydrate(cache: QueryCache, dehydratedState: unknown): void {
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
@@ -74,12 +67,7 @@ export function hydrate(
   const queries = (dehydratedState as DehydratedState).queries || []
 
   queries.forEach(dehydratedQuery => {
-    const resolvedConfig = queryCache.getResolvedQueryConfig(
-      dehydratedQuery.queryKey,
-      dehydratedQuery.config
-    )
-
-    let query = queryCache.getQueryByHash(resolvedConfig.queryHash)
+    let query = cache.get(dehydratedQuery.queryHash)
 
     // Do not hydrate if an existing query exists with newer data
     if (query && query.state.updatedAt >= dehydratedQuery.updatedAt) {
@@ -87,7 +75,15 @@ export function hydrate(
     }
 
     if (!query) {
-      query = queryCache.createQuery(resolvedConfig)
+      query = new Query({
+        cache: cache,
+        queryKey: dehydratedQuery.queryKey,
+        queryHash: dehydratedQuery.queryHash,
+        options: {
+          cacheTime: dehydratedQuery.config.cacheTime,
+        },
+      })
+      cache.add(query)
     }
 
     query.setData(dehydratedQuery.data, {

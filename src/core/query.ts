@@ -1,8 +1,9 @@
 import {
   CancelledError,
-  Console,
   Updater,
+  ensureArray,
   functionalUpdate,
+  hashQueryKey,
   isCancelable,
   isCancelledError,
   isDocumentVisible,
@@ -12,55 +13,49 @@ import {
   noop,
   replaceEqualDeep,
   sleep,
+  timeUntilStale,
 } from './utils'
-import {
-  ArrayQueryKey,
+import type {
+  FetchMoreOptions,
   InitialDataFunction,
   IsFetchingMoreValue,
   QueryFunction,
+  QueryKey,
+  QueryOptions,
   QueryStatus,
-  ResolvedQueryConfig,
 } from './types'
 import type { QueryCache } from './queryCache'
-import { QueryObserver, UpdateListener } from './queryObserver'
+import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
+import { getConsole } from './setConsole'
+import { DEFAULT_OPTIONS } from './config'
 
 // TYPES
 
-export interface QueryState<TResult, TError> {
+export interface QueryConfig<TData, TError, TQueryFnData> {
+  cache: QueryCache
+  queryKey: QueryKey
+  queryHash?: string
+  options?: QueryOptions<TData, TError, TQueryFnData>
+}
+
+export interface QueryState<TData, TError> {
   canFetchMore?: boolean
-  data?: TResult
+  data?: TData
+  dataUpdateCount: number
   error: TError | null
+  errorUpdateCount: number
   failureCount: number
   isFetching: boolean
   isFetchingMore: IsFetchingMoreValue
-  isInitialData: boolean
   isInvalidated: boolean
   status: QueryStatus
-  throwInErrorBoundary?: boolean
-  updateCount: number
   updatedAt: number
 }
 
-interface FetchOptions {
+export interface FetchOptions {
   fetchMore?: FetchMoreOptions
-}
-
-export interface FetchMoreOptions {
-  fetchMoreVariable?: unknown
-  previous: boolean
-}
-
-export interface RefetchOptions {
   throwOnError?: boolean
-}
-
-const enum ActionType {
-  Failed,
-  Fetch,
-  Success,
-  Error,
-  Invalidate,
 }
 
 interface SetDataOptions {
@@ -68,71 +63,82 @@ interface SetDataOptions {
 }
 
 interface FailedAction {
-  type: ActionType.Failed
+  type: 'failed'
 }
 
 interface FetchAction {
-  type: ActionType.Fetch
+  type: 'fetch'
   isFetchingMore?: IsFetchingMoreValue
 }
 
-interface SuccessAction<TResult> {
-  type: ActionType.Success
-  data: TResult | undefined
+interface SuccessAction<TData> {
+  type: 'success'
+  data: TData | undefined
   canFetchMore?: boolean
   updatedAt?: number
 }
 
 interface ErrorAction<TError> {
-  type: ActionType.Error
+  type: 'error'
   error: TError
 }
 
 interface InvalidateAction {
-  type: ActionType.Invalidate
+  type: 'invalidate'
 }
 
-export type Action<TResult, TError> =
+export type Action<TData, TError> =
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
   | InvalidateAction
-  | SuccessAction<TResult>
+  | SuccessAction<TData>
 
 // CLASS
 
-export class Query<TResult, TError> {
-  queryKey: ArrayQueryKey
+export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
+  queryKey: QueryKey
   queryHash: string
-  config: ResolvedQueryConfig<TResult, TError>
-  observers: QueryObserver<TResult, TError>[]
-  state: QueryState<TResult, TError>
-  cacheTime: number
+  options!: QueryOptions<TData, TError, TQueryFnData>
+  defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
+  observers: QueryObserver<any, any, any, any>[]
+  state: QueryState<TData, TError>
+  cacheTime!: number
 
-  private queryCache: QueryCache
-  private promise?: Promise<TResult>
+  private cache: QueryCache
+  private promise?: Promise<TData>
   private gcTimeout?: number
   private cancelFetch?: (silent?: boolean) => void
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
 
-  constructor(config: ResolvedQueryConfig<TResult, TError>) {
-    this.config = config
-    this.queryKey = config.queryKey
-    this.queryHash = config.queryHash
-    this.queryCache = config.queryCache
-    this.cacheTime = config.cacheTime
+  constructor(config: QueryConfig<TData, TError, TQueryFnData>) {
+    this.setOptions(config.options)
     this.observers = []
-    this.state = getDefaultState(config)
+    this.cache = config.cache
+    this.queryKey = config.queryKey
+    this.queryHash =
+      config.queryHash ?? hashQueryKey(config.queryKey, this.options)
+    this.state = getDefaultState(this.options)
     this.scheduleGc()
   }
 
-  private updateConfig(config: ResolvedQueryConfig<TResult, TError>): void {
-    this.config = config
-    this.cacheTime = Math.max(this.cacheTime, config.cacheTime)
+  private setOptions(
+    options?: QueryOptions<TData, TError, TQueryFnData>
+  ): void {
+    this.options = {
+      ...DEFAULT_OPTIONS.queries,
+      ...this.defaultOptions,
+      ...options,
+    }
+    this.cacheTime = Math.max(this.cacheTime || 0, this.options.cacheTime!)
   }
 
-  private dispatch(action: Action<TResult, TError>): void {
+  setDefaultOptions(options: QueryOptions<TData, TError, TQueryFnData>): void {
+    this.defaultOptions = options
+  }
+
+  private dispatch(action: Action<TData, TError>): void {
     this.state = queryReducer(this.state, action)
 
     notifyManager.batch(() => {
@@ -140,18 +146,18 @@ export class Query<TResult, TError> {
         observer.onQueryUpdate(action)
       })
 
-      this.queryCache.notifyGlobalListeners(this)
+      this.cache.notify(this)
     })
   }
 
   private scheduleGc(): void {
-    if (isServer) {
-      return
-    }
-
     this.clearGcTimeout()
 
-    if (this.observers.length > 0 || !isValidTimeout(this.cacheTime)) {
+    if (
+      isServer ||
+      this.observers.length > 0 ||
+      !isValidTimeout(this.cacheTime)
+    ) {
       return
     }
 
@@ -160,7 +166,7 @@ export class Query<TResult, TError> {
     }, this.cacheTime)
   }
 
-  cancel(silent?: boolean): Promise<undefined> {
+  cancel(silent?: boolean): Promise<void> {
     const promise = this.promise
 
     if (promise && this.cancelFetch) {
@@ -171,10 +177,6 @@ export class Query<TResult, TError> {
     return Promise.resolve(undefined)
   }
 
-  private continue(): void {
-    this.continueFetch?.()
-  }
-
   private clearTimersObservers(): void {
     this.observers.forEach(observer => {
       observer.clearTimers()
@@ -182,55 +184,45 @@ export class Query<TResult, TError> {
   }
 
   private clearGcTimeout() {
-    if (this.gcTimeout) {
-      clearTimeout(this.gcTimeout)
-      this.gcTimeout = undefined
-    }
+    clearTimeout(this.gcTimeout)
+    this.gcTimeout = undefined
   }
 
   setData(
-    updater: Updater<TResult | undefined, TResult>,
+    updater: Updater<TData | undefined, TData>,
     options?: SetDataOptions
-  ): void {
+  ): TData {
     const prevData = this.state.data
 
     // Get the new data
-    let data: TResult | undefined = functionalUpdate(updater, prevData)
+    let data = functionalUpdate(updater, prevData)
 
     // Structurally share data between prev and new data if needed
-    if (this.config.structuralSharing) {
+    if (this.options.structuralSharing) {
       data = replaceEqualDeep(prevData, data)
     }
 
     // Use prev data if an isDataEqual function is defined and returns `true`
-    if (this.config.isDataEqual?.(prevData, data)) {
-      data = prevData
+    if (this.options.isDataEqual?.(prevData, data)) {
+      data = prevData as TData
     }
 
     // Try to determine if more data can be fetched
-    const canFetchMore = hasMorePages(this.config, data)
+    const canFetchMore = hasMorePages(this.options, data)
 
     // Set data and mark it as cached
     this.dispatch({
-      type: ActionType.Success,
+      type: 'success',
       data,
       canFetchMore,
       updatedAt: options?.updatedAt,
     })
-  }
 
-  /**
-   * @deprecated
-   */
-  clear(): void {
-    Console.warn(
-      'react-query: clear() has been deprecated, please use remove() instead'
-    )
-    this.remove()
+    return data
   }
 
   remove(): void {
-    this.queryCache.removeQuery(this)
+    this.cache.remove(this)
   }
 
   destroy(): void {
@@ -240,13 +232,13 @@ export class Query<TResult, TError> {
   }
 
   isActive(): boolean {
-    return this.observers.some(observer => observer.config.enabled)
+    return this.observers.some(observer => observer.options.enabled)
   }
 
   isStale(): boolean {
     return (
       this.state.isInvalidated ||
-      this.state.status !== QueryStatus.Success ||
+      !this.state.updatedAt ||
       this.observers.some(observer => observer.getCurrentResult().isStale)
     )
   }
@@ -254,55 +246,63 @@ export class Query<TResult, TError> {
   isStaleByTime(staleTime = 0): boolean {
     return (
       this.state.isInvalidated ||
-      this.state.status !== QueryStatus.Success ||
-      this.state.updatedAt + staleTime <= Date.now()
+      !this.state.updatedAt ||
+      !timeUntilStale(this.state.updatedAt, staleTime)
     )
   }
 
-  onInteraction(type: 'focus' | 'online'): void {
-    // Execute the first observer which is enabled,
-    // stale and wants to refetch on this interaction.
-    const staleObserver = this.observers.find(observer => {
-      const { config } = observer
+  onFocus(): void {
+    this.onExternalEvent('focus')
+  }
+
+  onOnline(): void {
+    this.onExternalEvent('online')
+  }
+
+  private onExternalEvent(type: 'focus' | 'online'): void {
+    // Execute the first observer that wants to fetch on this event
+    const fetchObserver = this.observers.find(observer => {
+      const {
+        enabled,
+        refetchOnWindowFocus,
+        refetchOnReconnect,
+      } = observer.options
+
       const { isStale } = observer.getCurrentResult()
+
       return (
-        config.enabled &&
+        enabled &&
         ((type === 'focus' &&
-          (config.refetchOnWindowFocus === 'always' ||
-            (config.refetchOnWindowFocus && isStale))) ||
+          (refetchOnWindowFocus === 'always' ||
+            (refetchOnWindowFocus && isStale))) ||
           (type === 'online' &&
-            (config.refetchOnReconnect === 'always' ||
-              (config.refetchOnReconnect && isStale))))
+            (refetchOnReconnect === 'always' ||
+              (refetchOnReconnect && isStale))))
       )
     })
 
-    if (staleObserver) {
-      staleObserver.fetch()
+    if (fetchObserver) {
+      fetchObserver.fetch()
     }
 
     // Continue any paused fetch
-    this.continue()
+    this.continueFetch?.()
   }
 
-  /**
-   * @deprectated
-   */
-  subscribe(
-    listener?: UpdateListener<TResult, TError>
-  ): QueryObserver<TResult, TError> {
-    const observer = new QueryObserver(this.config)
-    observer.subscribe(listener)
-    return observer
-  }
+  subscribeObserver(observer: QueryObserver<any, any, any, any>): void {
+    if (this.observers.indexOf(observer) !== -1) {
+      return
+    }
 
-  subscribeObserver(observer: QueryObserver<TResult, TError>): void {
     this.observers.push(observer)
 
     // Stop the query from being garbage collected
     this.clearGcTimeout()
+
+    this.cache.notify(this)
   }
 
-  unsubscribeObserver(observer: QueryObserver<TResult, TError>): void {
+  unsubscribeObserver(observer: QueryObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
 
     if (!this.observers.length) {
@@ -314,55 +314,22 @@ export class Query<TResult, TError> {
 
       this.scheduleGc()
     }
+
+    this.cache.notify(this)
   }
 
   invalidate(): void {
     if (!this.state.isInvalidated) {
-      this.dispatch({ type: ActionType.Invalidate })
+      this.dispatch({ type: 'invalidate' })
     }
-  }
-
-  /**
-   * @deprectated
-   */
-  refetch(
-    options?: RefetchOptions,
-    config?: ResolvedQueryConfig<TResult, TError>
-  ): Promise<TResult | undefined> {
-    let promise: Promise<TResult | undefined> = this.fetch(undefined, config)
-
-    if (!options?.throwOnError) {
-      promise = promise.catch(noop)
-    }
-
-    return promise
-  }
-
-  /**
-   * @deprectated
-   */
-  fetchMore(
-    fetchMoreVariable?: unknown,
-    options?: FetchMoreOptions,
-    config?: ResolvedQueryConfig<TResult, TError>
-  ): Promise<TResult | undefined> {
-    return this.fetch(
-      {
-        fetchMore: {
-          fetchMoreVariable,
-          previous: options?.previous || false,
-        },
-      },
-      config
-    )
   }
 
   async fetch(
-    options?: FetchOptions,
-    config?: ResolvedQueryConfig<TResult, TError>
-  ): Promise<TResult> {
+    options?: QueryOptions<TData, TError, TQueryFnData>,
+    fetchOptions?: FetchOptions
+  ): Promise<TData> {
     if (this.promise) {
-      if (options?.fetchMore && this.state.data) {
+      if (fetchOptions?.fetchMore && this.state.data) {
         // Silently cancel current fetch if the user wants to fetch more
         await this.cancel(true)
       } else {
@@ -372,24 +339,35 @@ export class Query<TResult, TError> {
     }
 
     // Update config if passed, otherwise the config from the last execution is used
-    if (config) {
-      this.updateConfig(config)
+    if (options) {
+      this.setOptions(options)
     }
 
-    config = this.config
+    // Use the options from the first observer with a query function if no function is found.
+    // This can happen when the query is hydrated or created with setQueryData.
+    if (!this.options.queryFn) {
+      const observer = this.observers.find(x => x.options.queryFn)
+      if (observer) {
+        this.setOptions(observer.options)
+      }
+    }
+
+    options = this.options
 
     // Get the query function params
-    const filter = config.queryFnParamsFilter
-    const params = filter ? filter(this.queryKey) : this.queryKey
+    let params = ensureArray(this.queryKey)
+
+    const filter = options.queryFnParamsFilter
+    params = filter ? filter(params) : params
 
     this.promise = (async () => {
       try {
         let data: any
 
-        if (config.infinite) {
-          data = await this.startInfiniteFetch(config, params, options)
+        if (options.infinite) {
+          data = await this.startInfiniteFetch(options, params, fetchOptions)
         } else {
-          data = await this.startFetch(config, params, options)
+          data = await this.startFetch(options, params)
         }
 
         // Set success state
@@ -404,14 +382,14 @@ export class Query<TResult, TError> {
         // Set error state if needed
         if (!(isCancelledError(error) && error.silent)) {
           this.dispatch({
-            type: ActionType.Error,
+            type: 'error',
             error,
           })
         }
 
         // Log error
         if (!isCancelledError(error)) {
-          Console.error(error)
+          getConsole().error(error)
         }
 
         // Cleanup
@@ -426,35 +404,35 @@ export class Query<TResult, TError> {
   }
 
   private startFetch(
-    config: ResolvedQueryConfig<TResult, TError>,
-    params: unknown[],
-    _options?: FetchOptions
-  ): Promise<TResult> {
+    options: QueryOptions<TData, TError, TQueryFnData>,
+    params: unknown[]
+  ): Promise<TData> {
     // Create function to fetch the data
-    const fetchData = () => config.queryFn(...params)
+    const queryFn = options.queryFn || defaultQueryFn
+    const fetchData = () => queryFn(...params)
 
     // Set to fetching state if not already in it
     if (!this.state.isFetching) {
-      this.dispatch({ type: ActionType.Fetch })
+      this.dispatch({ type: 'fetch' })
     }
 
     // Try to fetch the data
-    return this.tryFetchData(config, fetchData)
+    return this.tryFetchData(options, fetchData)
   }
 
   private startInfiniteFetch(
-    config: ResolvedQueryConfig<TResult, TError>,
+    options: QueryOptions<TData, TError, TQueryFnData>,
     params: unknown[],
-    options?: FetchOptions
-  ): Promise<TResult[]> {
-    const fetchMore = options?.fetchMore
+    fetchOptions?: FetchOptions
+  ): Promise<TData> {
+    const fetchMore = fetchOptions?.fetchMore
     const { previous, fetchMoreVariable } = fetchMore || {}
     const isFetchingMore = fetchMore ? (previous ? 'previous' : 'next') : false
-    const prevPages: TResult[] = (this.state.data as any) || []
+    const prevPages: TQueryFnData[] = (this.state.data as any) || []
 
     // Create function to fetch a page
     const fetchPage = async (
-      pages: TResult[],
+      pages: TQueryFnData[],
       prepend?: boolean,
       cursor?: unknown
     ) => {
@@ -463,12 +441,13 @@ export class Query<TResult, TError> {
       if (
         typeof cursor === 'undefined' &&
         typeof lastPage !== 'undefined' &&
-        config.getFetchMore
+        options.getFetchMore
       ) {
-        cursor = config.getFetchMore(lastPage, pages)
+        cursor = options.getFetchMore(lastPage, pages)
       }
 
-      const page = await config.queryFn(...params, cursor)
+      const queryFn = options.queryFn || defaultQueryFn
+      const page = await queryFn(...params, cursor)
 
       return prepend ? [page, ...pages] : [...pages, page]
     }
@@ -493,18 +472,18 @@ export class Query<TResult, TError> {
       !this.state.isFetching ||
       this.state.isFetchingMore !== isFetchingMore
     ) {
-      this.dispatch({ type: ActionType.Fetch, isFetchingMore })
+      this.dispatch({ type: 'fetch', isFetchingMore })
     }
 
     // Try to get the data
-    return this.tryFetchData(config, fetchData)
+    return this.tryFetchData(options, fetchData)
   }
 
-  private tryFetchData<T>(
-    config: ResolvedQueryConfig<TResult, TError>,
-    fn: QueryFunction<T>
-  ): Promise<T> {
-    return new Promise<T>((outerResolve, outerReject) => {
+  private tryFetchData(
+    options: QueryOptions<TData, TError, TQueryFnData>,
+    fn: QueryFunction
+  ): Promise<TData> {
+    return new Promise<TData>((outerResolve, outerReject) => {
       let resolved = false
       let continueLoop: () => void
       let cancelTransport: () => void
@@ -558,7 +537,10 @@ export class Query<TResult, TError> {
           }
 
           // Await data
-          resolve(await promiseOrValue)
+          const data = await promiseOrValue
+
+          // Resolve with data
+          resolve(data)
         } catch (error) {
           // Stop if the fetch is already resolved
           if (resolved) {
@@ -567,7 +549,7 @@ export class Query<TResult, TError> {
 
           // Do we need to retry the request?
           const { failureCount } = this.state
-          const { retry, retryDelay } = config
+          const { retry, retryDelay } = options
 
           const shouldRetry =
             retry === true ||
@@ -581,7 +563,7 @@ export class Query<TResult, TError> {
           }
 
           // Increase the failureCount
-          this.dispatch({ type: ActionType.Failed })
+          this.dispatch({ type: 'failed' })
 
           // Delay
           await sleep(functionalUpdate(retryDelay, failureCount) || 0)
@@ -606,98 +588,102 @@ export class Query<TResult, TError> {
   }
 }
 
-function getLastPage<TResult>(pages: TResult[], previous?: boolean): TResult {
+function defaultQueryFn() {
+  return Promise.reject()
+}
+
+function getLastPage<TQueryFnData>(
+  pages: TQueryFnData[],
+  previous?: boolean
+): TQueryFnData {
   return previous ? pages[0] : pages[pages.length - 1]
 }
 
-function hasMorePages<TResult, TError>(
-  config: ResolvedQueryConfig<TResult, TError>,
+function hasMorePages<TData, TError, TQueryFnData>(
+  options: QueryOptions<TData, TError, TQueryFnData>,
   pages: unknown,
   previous?: boolean
 ): boolean | undefined {
-  if (config.infinite && config.getFetchMore && Array.isArray(pages)) {
-    return Boolean(config.getFetchMore(getLastPage(pages, previous), pages))
+  if (options.infinite && options.getFetchMore && Array.isArray(pages)) {
+    return Boolean(options.getFetchMore(getLastPage(pages, previous), pages))
   }
 }
 
-function getDefaultState<TResult, TError>(
-  config: ResolvedQueryConfig<TResult, TError>
-): QueryState<TResult, TError> {
+function getDefaultState<TData, TError, TQueryFnData>(
+  options: QueryOptions<TData, TError, TQueryFnData>
+): QueryState<TData, TError> {
   const data =
-    typeof config.initialData === 'function'
-      ? (config.initialData as InitialDataFunction<TResult>)()
-      : config.initialData
+    typeof options.initialData === 'function'
+      ? (options.initialData as InitialDataFunction<TData>)()
+      : options.initialData
+
+  const hasData = typeof data !== 'undefined'
 
   const status =
-    typeof data !== 'undefined'
-      ? QueryStatus.Success
-      : config.enabled
-      ? QueryStatus.Loading
-      : QueryStatus.Idle
+    hasData && options.staleTime
+      ? 'success'
+      : options.enabled
+      ? 'loading'
+      : 'idle'
 
   return {
-    canFetchMore: hasMorePages(config, data),
+    canFetchMore: hasMorePages(options, data),
     data,
+    dataUpdateCount: 0,
     error: null,
+    errorUpdateCount: 0,
     failureCount: 0,
-    isFetching: status === QueryStatus.Loading,
+    isFetching: status === 'loading',
     isFetchingMore: false,
-    isInitialData: true,
     isInvalidated: false,
     status,
-    updateCount: 0,
-    updatedAt: Date.now(),
+    updatedAt: hasData ? Date.now() : 0,
   }
 }
 
-export function queryReducer<TResult, TError>(
-  state: QueryState<TResult, TError>,
-  action: Action<TResult, TError>
-): QueryState<TResult, TError> {
+export function queryReducer<TData, TError>(
+  state: QueryState<TData, TError>,
+  action: Action<TData, TError>
+): QueryState<TData, TError> {
   switch (action.type) {
-    case ActionType.Failed:
+    case 'failed':
       return {
         ...state,
         failureCount: state.failureCount + 1,
       }
-    case ActionType.Fetch:
+    case 'fetch':
       return {
         ...state,
         failureCount: 0,
         isFetching: true,
         isFetchingMore: action.isFetchingMore || false,
-        status:
-          typeof state.data !== 'undefined'
-            ? QueryStatus.Success
-            : QueryStatus.Loading,
+        status: typeof state.data === 'undefined' ? 'loading' : 'success',
       }
-    case ActionType.Success:
+    case 'success':
       return {
         ...state,
         canFetchMore: action.canFetchMore,
         data: action.data,
+        dataUpdateCount: state.dataUpdateCount + 1,
         error: null,
         failureCount: 0,
         isFetching: false,
         isFetchingMore: false,
-        isInitialData: false,
         isInvalidated: false,
-        status: QueryStatus.Success,
-        updateCount: state.updateCount + 1,
+        status: 'success',
         updatedAt: action.updatedAt ?? Date.now(),
       }
-    case ActionType.Error:
+    case 'error':
       return {
         ...state,
         error: action.error,
+        errorUpdateCount: state.errorUpdateCount + 1,
         failureCount: state.failureCount + 1,
         isFetching: false,
         isFetchingMore: false,
-        status: QueryStatus.Error,
-        throwInErrorBoundary: true,
-        updateCount: state.updateCount + 1,
+        status: 'error',
       }
-    case ActionType.Invalidate:
+    case 'invalidate':
       return {
         ...state,
         isInvalidated: true,

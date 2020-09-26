@@ -1,10 +1,13 @@
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import * as React from 'react'
+import { fireEvent, waitFor } from '@testing-library/react'
+import React from 'react'
 
-import { useMutation } from '../..'
-import { mockConsoleError } from './utils'
+import { useMutation, QueryClient, QueryCache } from '../..'
+import { mockConsoleError, renderWithClient } from './utils'
 
 describe('useMutation', () => {
+  const cache = new QueryCache()
+  const client = new QueryClient({ cache })
+
   it('should be able to reset `data`', async () => {
     function Page() {
       const [mutate, { data = '', reset }] = useMutation(() =>
@@ -15,12 +18,12 @@ describe('useMutation', () => {
         <div>
           <h1 data-testid="title">{data}</h1>
           <button onClick={() => reset()}>reset</button>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutate(undefined)}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = render(<Page />)
+    const { getByTestId, getByText } = renderWithClient(client, <Page />)
 
     expect(getByTestId('title').textContent).toBe('')
 
@@ -58,12 +61,15 @@ describe('useMutation', () => {
             <h1 data-testid="error">{mutationResult.error.message}</h1>
           )}
           <button onClick={() => mutationResult.reset()}>reset</button>
-          <button onClick={() => mutate()}>mutate</button>
+          <button onClick={() => mutate(undefined)}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText, queryByTestId } = render(<Page />)
+    const { getByTestId, getByText, queryByTestId } = renderWithClient(
+      client,
+      <Page />
+    )
 
     expect(queryByTestId('error')).toBeNull()
 
@@ -104,7 +110,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText } = render(<Page />)
+    const { getByTestId, getByText } = renderWithClient(client, <Page />)
 
     expect(getByTestId('title').textContent).toBe('0')
 
@@ -158,7 +164,7 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText } = render(<Page />)
+    const { getByTestId, getByText } = renderWithClient(client, <Page />)
 
     expect(getByTestId('title').textContent).toBe('0')
 

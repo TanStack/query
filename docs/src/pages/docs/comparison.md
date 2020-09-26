@@ -28,6 +28,7 @@ Feature/Capability Key:
 | Paginated Queries                            | ✅                                     | ✅                         | ✅                                    |
 | Infinite Queries                             | ✅                                     | ✅                         | ✅                                    |
 | Lagged / "Lazy" Queries<sup>1</sup>          | ✅                                     | 🛑                         | 🛑                                    |
+| Selectors                                    | ✅                                     | 🛑                         | ✅                                    |
 | Initial Data                                 | ✅                                     | ✅                         | ✅                                    |
 | Scroll Recovery                              | ✅                                     | ✅                         | ✅                                    |
 | Cache Manipulation                           | ✅                                     | ✅                         | ✅                                    |

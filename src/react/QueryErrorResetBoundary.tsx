@@ -2,13 +2,13 @@ import React from 'react'
 
 // CONTEXT
 
-interface ReactQueryErrorResetBoundaryValue {
+interface QueryErrorResetBoundaryValue {
   clearReset: () => void
   isReset: () => boolean
   reset: () => void
 }
 
-function createValue(): ReactQueryErrorResetBoundaryValue {
+function createValue(): QueryErrorResetBoundaryValue {
   let isReset = false
   return {
     clearReset: () => {
@@ -27,17 +27,17 @@ const context = React.createContext(createValue())
 
 // HOOK
 
-export const useErrorResetBoundary = () => React.useContext(context)
+export const useQueryErrorResetBoundary = () => React.useContext(context)
 
 // COMPONENT
 
-export interface ReactQueryErrorResetBoundaryProps {
+export interface QueryErrorResetBoundaryProps {
   children:
-    | ((value: ReactQueryErrorResetBoundaryValue) => React.ReactNode)
+    | ((value: QueryErrorResetBoundaryValue) => React.ReactNode)
     | React.ReactNode
 }
 
-export const ReactQueryErrorResetBoundary: React.FC<ReactQueryErrorResetBoundaryProps> = ({
+export const QueryErrorResetBoundary: React.FC<QueryErrorResetBoundaryProps> = ({
   children,
 }) => {
   const value = React.useMemo(() => createValue(), [])

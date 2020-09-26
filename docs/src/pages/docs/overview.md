@@ -47,15 +47,21 @@ In the example below, you can see React Query in its most basic and simple form 
 [Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/simple)
 
 ```js
-import { useQuery, QueryCache, ReactQueryCacheProvider } from 'react-query'
+import {
+  useQuery,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 

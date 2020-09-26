@@ -1,0 +1,1 @@
+export const Console = console
