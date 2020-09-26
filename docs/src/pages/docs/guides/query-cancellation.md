@@ -3,7 +3,7 @@ id: query-cancellation
 title: Query Cancellation
 ---
 
-By default, queries that become inactive before their promises are resolved are simply ignored instead of canceled. Why is this?
+By default, queries that unmount or become unused before their promises are resolved are simply ignored instead of canceled. Why is this?
 
 - For most applications, ignoring out-of-date queries is sufficient.
 - Cancellation APIs may not be available for every query function.

@@ -1,14 +1,27 @@
 ---
 id: paginated-queries
-title: Paginated Queries
+title: Paginated / Lagged Queries
 ---
 
-Rendering paginated data is a very common UI pattern to avoid overloading bandwidth or even your UI. React Query exposes a `usePaginatedQuery` that is very similar to `useQuery` that helps with this very scenario.
+Rendering paginated data is a very common UI pattern and in React Query, it "just works" by including the page information in the query key:
 
-Consider the following example where we would ideally want to increment a pageIndex (or cursor) for a query. If we were to use `useQuery`, it would technically work fine, but the UI would jump in and out of the `success` and `loading` states as different queries are created and destroyed for each page or cursor. By using `usePaginatedQuery` we get a few new things:
+```js
+const queryInfo = useQuery(['projects', page], fetchProjects)
+```
 
-- Instead of `data`, you should use `resolvedData` instead. This is the data from the last known successful query result. As new page queries resolve, `resolvedData` remains available to show the last page's data while a new page is requested. When the new page data is received, `resolvedData` gets updated to the new page's data.
-- If you specifically need the data for the exact page being requested, `latestData` is available. When the desired page is being requested, `latestData` will be `undefined` until the query resolves, then it will get updated with the latest pages data result.
+However, if you run this simple example, you might notice something strange:
+
+**The UI jumps in and out of the `success` and `loading` states because each new page is treated like a brand new query.**
+
+This experience is not optimal and unfortunately is how many tools today insist on working. But not React Query! As you may have guessed, React Query comes with an awesome featured called `keepPreviousData` that allows us to get around this.
+
+## Better Paginated Queries with `keepPreviousData`
+
+Consider the following example where we would ideally want to increment a pageIndex (or cursor) for a query. If we were to use `useQuery`, **it would still technically work fine**, but the UI would jump in and out of the `success` and `loading` states as different queries are created and destroyed for each page or cursor. By setting `keepPreviousData` to `true` we get a few new things:
+
+- **The data from the last successful fetch available while new data is being requested, even though the query key has changed**.
+- When the new data arrives, the previous `data` is seamlessly swapped to show the new data.
+- `isPreviousData` is made available to know what data the query is currently providing you
 
 ```js
 function Todos() {
@@ -20,10 +33,10 @@ function Todos() {
     isLoading,
     isError,
     error,
-    resolvedData,
-    latestData,
+    data,
     isFetching,
-  } = usePaginatedQuery(['projects', page], fetchProjects)
+    isPreviousData,
+  } = useQuery(['projects', page], fetchProjects)
 
   return (
     <div>
@@ -32,10 +45,8 @@ function Todos() {
       ) : isError ? (
         <div>Error: {error.message}</div>
       ) : (
-        // `resolvedData` will either resolve to the latest page's data
-        // or if fetching a new page, the last successful page's data
         <div>
-          {resolvedData.projects.map(project => (
+          {data.projects.map(project => (
             <p key={project.id}>{project.name}</p>
           ))}
         </div>
@@ -48,22 +59,22 @@ function Todos() {
         Previous Page
       </button>{' '}
       <button
-        onClick={() =>
-          // Here, we use `latestData` so the Next Page
-          // button isn't relying on potentially old data
-          setPage(old => (!latestData || !latestData.hasMore ? old : old + 1))
-        }
-        disabled={!latestData || !latestData.hasMore}
+        onClick={() => {
+          if (!isPreviousData && data.hasMore) {
+            setPage(old => old + 1)
+          }
+        }}
+        // Disable the Next Page button until we know a next page is available
+        disabled={isPreviousData || !data.hasMore}
       >
         Next Page
       </button>
-      {
-        // Since the last page's data potentially sticks around between page requests,
-        // we can use `isFetching` to show a background loading
-        // indicator since our `status === 'loading'` state won't be triggered
-        isFetching ? <span> Loading...</span> : null
-      }{' '}
+      {isFetching ? <span> Loading...</span> : null}{' '}
     </div>
   )
 }
 ```
+
+## Lagging Infinite Query results with `keepPreviousData`
+
+While not as common, the `keepPreviousData` option also works flawlessly with the `useInfiniteQuery` hook, so you can seamlessly allow your users to continue to see cached data while infinite query keys change over time.

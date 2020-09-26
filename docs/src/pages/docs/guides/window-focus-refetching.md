@@ -3,9 +3,12 @@ id: window-focus-refetching
 title: Window Focus Refetching
 ---
 
-If a user leaves your application and returns to stale data, you may want to trigger an update in the background to update any stale queries. Thankfully, **React Query does this automatically for you**, but if you choose to disable it, you can use the `refetchOnWindowFocus` option to disable it:
+If a user leaves your application and returns to stale data, **React Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
+
+#### Disabling Globally
 
 ```js
+//
 const queryCache = new QueryCache({
   defaultConfig: {
     queries: {
@@ -21,6 +24,12 @@ function App() {
     </ReactQueryCacheProvider>
   )
 }
+```
+
+#### Disabling Per-Query
+
+```js
+useQuery('todos', fetchTodos, { refetchOnWindowFocus: false })
 ```
 
 ## Custom Window Focus Event

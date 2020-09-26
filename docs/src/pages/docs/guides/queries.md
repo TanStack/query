@@ -39,8 +39,8 @@ The `queryInfo` object contains a few very important states you'll need to be aw
 
 Beyond those primary state, more information is available depending on the state the query:
 
-- `error` - If the query is in an `isError` state, the error is accessible via the `error` property.
-- `data` - If the query is in a `success` state, the data is accessible via the `data` property.
+- `error` - If the query is in an `isError` state, the error is available via the `error` property.
+- `data` - If the query is in a `success` state, the data is available via the `data` property.
 - `isFetching` - In any state, if the query is fetching at any time (including background refetching) `isFetching` will be `true`.
 
 For **most** queries, it's usually sufficient to check for the `isLoading` state, then the `isError` state, then finally, assume that the data is avaiable and render the successful state:

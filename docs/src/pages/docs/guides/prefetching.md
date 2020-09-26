@@ -3,23 +3,23 @@ id: prefetching
 title: Prefetching
 ---
 
-If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `fetchQuery` or `prefetchQuery` methods to prefetch the results of a query to be placed into the cache:
+If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` method to prefetch the results of a query to be placed into the cache:
 
 ```js
 const prefetchTodos = async () => {
-  await queryCache.prefetchQuery('todos', () => fetch('/todos'))
   // The results of this query will be cached like a normal query
+  await queryClient.prefetchQuery('todos', fetchTodos)
 }
 ```
 
-The next time a `useQuery` instance is used for a prefetched query, it will use the cached data! If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
-
-If a prefetched query is rendered after the `staleTime` for a prefetched query, it will still render, but will be automatically refetched in the background! Cool right?!
+- If data for this query is already in the cache and is **not stale**, the data will not be fetched
+- If a `staleTime` is passed eg. `prefetchQuery('todos', fn, { staleTime: 5000 })` and the data is older than the specified staleTime, the query will be fetched
+- If no instances of `useQuery` appear for a prefetched query, it will be deleted and garbage collected after the time specified in `cacheTime`.
 
 ## Manually Priming a Query
 
-Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Cache's `setQueryData` method](../api/#querycachesetquerydata) to directly add or update a query's cached result.
+Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../api/#queryclientesetquerydata) to directly add or update a query's cached result by key.
 
 ```js
-queryCache.setQueryData('todos', todos)
+queryClient.setQueryData('todos', todos)
 ```

@@ -130,11 +130,6 @@
               "editUrl": "/docs/guides/prefetching.md"
             },
             {
-              "title": "Query Cancellation",
-              "path": "/docs/guides/query-cancellation",
-              "editUrl": "/docs/guides/query-cancellation.md"
-            },
-            {
               "title": "Mutations",
               "path": "/docs/guides/mutations",
               "editUrl": "/docs/guides/mutations.md"
@@ -158,6 +153,11 @@
               "title": "Optimistic Updates",
               "path": "/docs/guides/optimistic-updates",
               "editUrl": "/docs/guides/optimistic-updates.md"
+            },
+            {
+              "title": "Query Cancellation",
+              "path": "/docs/guides/query-cancellation",
+              "editUrl": "/docs/guides/query-cancellation.md"
             },
             {
               "title": "Scroll Restoration",

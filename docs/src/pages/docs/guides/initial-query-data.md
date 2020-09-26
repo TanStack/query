@@ -5,13 +5,7 @@ title: Initial Query Data
 
 ## Initial Data
 
-There may be times when you already have the initial data for a query synchronously available in your app. If and when this is the case, you can use the `config.initialData` option to set the initial data for a query and skip the first round of fetching!
-
-When providing an `initialData` value that is anything other than `undefined`:
-
-- The query `status` will initialize in a `success` state instead of `loading`
-- The query's `isStale` property will initialize as `false` instead of `true`. This can be overridden by setting the `initialStale` option to `true`
-- The query will not automatically fetch until it is invalidated somehow (eg. window refocus, queryCache refetching, `initialStale` is set to `true`, etc)
+There may be times when you already have the initial data for a query synchronously available in your app. If and when this is the case, you can use the `config.initialData` option to set the initial data for a query and skip the initial loading state!
 
 ```js
 function Todos() {
@@ -20,6 +14,23 @@ function Todos() {
   })
 }
 ```
+
+## Using Initial Data with `staleTime`
+
+`initialData` is treated exactly the same as normal data, which means that is follows the same rules and expectations of `staleTime`.
+
+- If you configure your query instance with a `staleTime` of `10000`, for example, the `initialData` you provide will be considered fresh for that same amount of time, just like your normal data.
+
+```js
+function Todos() {
+  const queryInfo = useQuery('todos', () => fetch('/todos'), {
+    initialData: initialTodos,
+    staleTime: 10000,
+  })
+}
+```
+
+> If you would rather treat your data as **prefetched data**, we recommend that you use the `prefetchQuery` or `fetchQuery` APIs to populate the cache beforehand, thus letting you configure your `staleTime` independently from your initialData
 
 ## Initial Data Function
 
@@ -70,21 +81,3 @@ function Todo({ todoId }) {
   })
 }
 ```
-
-## Marking Initial Data as stale
-
-By default `initialData` is not considered stale, but sometimes you may want it to be, for instance, if your initial data is only a partial subset of an object and you know you will need to refetch the full version immediately after mounting. For this, you can use the `initialStale: true` options.
-
-By setting `initialStale` to `true`, the `initialData` will be considered `stale` and will cause a refetch when the query mounts for the first time.
-
-```js
-function Todos() {
-  const queryInfo = useQuery('todos', () => fetch('/todos'), {
-    initialData: todoListPreview,
-    initialStale: true,
-  })
-}
-```
-
-> NOTE: Similar to `initialData`, `initialStale` can also be a function for costly calculations.  
-> eg. `initialStale: () => isPreview(todoListPreview)`
