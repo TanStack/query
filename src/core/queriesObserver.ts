@@ -1,4 +1,4 @@
-import { difference, hashQueryKey, noop, replaceAt } from './utils'
+import { difference, hashQueryKey, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
@@ -16,37 +16,49 @@ export class QueriesObserver {
   private result: QueryObserverResult[]
   private queries: QueryObserverOptions[]
   private observers: QueryObserver[]
-  private listener?: QueriesObserverListener
+  private listeners: QueriesObserverListener[]
 
   constructor(config: QueriesObserverConfig) {
     this.client = config.client
     this.queries = config.queries || []
     this.result = []
     this.observers = []
-
-    // Bind exposed methods
-    this.unsubscribe = this.unsubscribe.bind(this)
+    this.listeners = []
 
     // Subscribe to queries
     this.updateObservers()
   }
 
   subscribe(listener?: QueriesObserverListener): () => void {
-    this.listener = listener || noop
+    const callback = listener || (() => undefined)
+    this.listeners.push(callback)
+    if (this.listeners.length === 1) {
+      this.onMount()
+    }
+    return () => {
+      this.unsubscribe(callback)
+    }
+  }
 
+  private unsubscribe(listener: QueriesObserverListener): void {
+    this.listeners = this.listeners.filter(x => x !== listener)
+    if (!this.listeners.length) {
+      this.clear()
+    }
+  }
+
+  onMount(): void {
     this.observers.forEach(observer => {
       observer.subscribe(result => {
         this.onUpdate(observer, result)
       })
     })
-
-    return this.unsubscribe
   }
 
-  unsubscribe(): void {
-    this.listener = undefined
+  clear(): void {
+    this.listeners = []
     this.observers.forEach(observer => {
-      observer.unsubscribe()
+      observer.clear()
     })
   }
 
@@ -97,12 +109,12 @@ export class QueriesObserver {
     this.observers = newObservers
     this.result = newObservers.map(observer => observer.getCurrentResult())
 
-    if (!this.listener) {
+    if (!this.listeners.length) {
       return
     }
 
     difference(prevObservers, newObservers).forEach(observer => {
-      observer.unsubscribe()
+      observer.clear()
     })
 
     difference(newObservers, prevObservers).forEach(observer => {
@@ -123,11 +135,11 @@ export class QueriesObserver {
   }
 
   private notify(): void {
-    const { result, listener } = this
-    if (listener) {
+    const { result, listeners } = this
+    listeners.forEach(listener => {
       notifyManager.schedule(() => {
         listener(result)
       })
-    }
+    })
   }
 }

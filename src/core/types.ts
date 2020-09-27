@@ -139,9 +139,11 @@ export interface QueryObserverOptions<
   keepPreviousData?: boolean
 }
 
-export interface RefetchOptions {
+export interface ResultOptions {
   throwOnError?: boolean
 }
+
+export interface RefetchOptions extends ResultOptions {}
 
 export interface InvalidateQueryFilters extends QueryFilters {
   refetchActive?: boolean
@@ -152,7 +154,7 @@ export interface InvalidateOptions {
   throwOnError?: boolean
 }
 
-export interface FetchMoreOptions {
+export interface FetchMoreOptions extends ResultOptions {
   fetchMoreVariable?: unknown
   previous?: boolean
 }
@@ -169,7 +171,7 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   fetchMore: (
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions
-  ) => Promise<TData | undefined>
+  ) => Promise<QueryObserverResult<TData, TError>>
   isError: boolean
   isFetched: boolean
   isFetchedAfterMount: boolean
@@ -180,7 +182,9 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   isPreviousData: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: (options?: RefetchOptions) => Promise<TData | undefined>
+  refetch: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
   updatedAt: number

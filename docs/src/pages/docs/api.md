@@ -185,7 +185,7 @@ const result = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: (options: { throwOnError: boolean }) => Promise<TData | undefined>`
+- `refetch: (options: { throwOnError: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 - `remove: () => void`
@@ -241,7 +241,7 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
 
 - `isFetchingMore: false | 'next' | 'previous'`
   - If using `paginated` mode, this will be `true` when fetching more results using the `fetchMore` function.
-- `fetchMore: (fetchMoreVariableOverride) => Promise<TData | undefined>`
+- `fetchMore: (fetchMoreVariableOverride) => Promise<UseInfiniteQueryResult>`
   - This function allows you to fetch the next "page" of results.
   - `fetchMoreVariableOverride` allows you to optionally override the fetch more variable returned from your `getFetchMore` option to your query function to retrieve the next page of results.
 - `canFetchMore: boolean`

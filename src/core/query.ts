@@ -235,6 +235,10 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     return this.observers.some(observer => observer.options.enabled)
   }
 
+  isFetching(): boolean {
+    return Boolean(this.promise)
+  }
+
   isStale(): boolean {
     return (
       this.state.isInvalidated ||
