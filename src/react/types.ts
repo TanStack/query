@@ -26,26 +26,26 @@ export interface UseInfiniteQueryResult<TData = unknown, TError = unknown>
 
 export type MutationStatus = 'idle' | 'loading' | 'error' | 'success'
 
-export type MutationFunction<TData, TVariables = unknown> = (
+export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables
 ) => Promise<TData>
 
 export type MutateFunction<
-  TData,
+  TData = unknown,
   TError = unknown,
   TVariables = unknown,
-  TSnapshot = unknown
+  TContext = unknown
 > = (
   variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TSnapshot>
+  options?: MutateOptions<TData, TError, TVariables, TContext>
 ) => Promise<TData | undefined>
 
-export type UseMutationResultPair<TData, TError, TVariables, TSnapshot> = [
-  MutateFunction<TData, TError, TVariables, TSnapshot>,
+export type UseMutationResultPair<TData, TError, TVariables, TContext> = [
+  MutateFunction<TData, TError, TVariables, TContext>,
   UseMutationResult<TData, TError>
 ]
 
-export interface UseMutationResult<TData, TError = unknown> {
+export interface UseMutationResult<TData = unknown, TError = unknown> {
   status: MutationStatus
   data: TData | undefined
   error: TError | null

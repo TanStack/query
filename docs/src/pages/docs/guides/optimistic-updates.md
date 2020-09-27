@@ -22,11 +22,13 @@ useMutation(updateTodo, {
     // Optimistically update to the new value
     client.setQueryData('todos', old => [...old, newTodo])
 
-    // Return the snapshotted value
-    return () => client.setQueryData('todos', previousTodos)
+    // Return a context object with the snapshotted value
+    return { previousTodos }
   },
-  // If the mutation fails, use the value returned from onMutate to roll back
-  onError: (err, newTodo, rollback) => rollback(),
+  // If the mutation fails, use the context returned from onMutate to roll back
+  onError: (err, newTodo, context) => {
+    client.setQueryData('todos', context.previousTodos)
+  },
   // Always refetch after error or success:
   onSettled: () => {
     client.invalidateQueries('todos')
@@ -49,11 +51,17 @@ useMutation(updateTodo, {
     // Optimistically update to the new value
     client.setQueryData(['todos', newTodo.id], newTodo)
 
-    // Return a rollback function
-    return () => client.setQueryData(['todos', newTodo.id], previousTodo)
+    // Return a context object containing a function to rollback
+    return {
+      rollback: () => {
+        client.setQueryData(['todos', newTodo.id], previousTodo)
+      },
+    }
   },
   // If the mutation fails, use the rollback function we returned above
-  onError: (err, newTodo, rollback) => rollback(),
+  onError: (err, newTodo, context) => {
+    context.rollback()
+  },
   // Always refetch after error or success:
   onSettled: newTodo => {
     client.invalidateQueries(['todos', newTodo.id])
@@ -66,9 +74,9 @@ You can also use the `onSettled` function in place of the separate `onError` and
 ```js
 useMutation(updateTodo, {
   // ...
-  onSettled: (newTodo, error, variables, rollback) => {
+  onSettled: (newTodo, error, variables, context) => {
     if (error) {
-      rollback()
+      context.rollback()
     }
   },
 })

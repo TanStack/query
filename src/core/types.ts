@@ -191,33 +191,33 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
 }
 
 export interface MutateOptions<
-  TData,
+  TData = unknown,
   TError = unknown,
   TVariables = unknown,
-  TSnapshot = unknown
+  TContext = unknown
 > {
   onSuccess?: (data: TData, variables: TVariables) => Promise<void> | void
   onError?: (
     error: TError,
     variables: TVariables,
-    snapshotValue?: TSnapshot
+    context?: TContext
   ) => Promise<void> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
-    snapshotValue?: TSnapshot
+    context?: TContext
   ) => Promise<void> | void
   throwOnError?: boolean
 }
 
 export interface MutationOptions<
-  TData,
+  TData = unknown,
   TError = unknown,
   TVariables = unknown,
-  TSnapshot = unknown
-> extends MutateOptions<TData, TError, TVariables, TSnapshot> {
-  onMutate?: (variables: TVariables) => Promise<TSnapshot> | TSnapshot
+  TContext = unknown
+> extends MutateOptions<TData, TError, TVariables, TContext> {
+  onMutate?: (variables: TVariables) => Promise<TContext> | TContext
   useErrorBoundary?: boolean
   suspense?: boolean
 }

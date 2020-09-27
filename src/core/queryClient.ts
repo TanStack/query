@@ -316,13 +316,13 @@ export class QueryClient {
     } as QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
   }
 
-  defaultMutationOptions<TData, TError, TVariables, TSnapshot>(
-    options?: MutationOptions<TData, TError, TVariables, TSnapshot>
-  ): MutationOptions<TData, TError, TVariables, TSnapshot> {
+  defaultMutationOptions<TData, TError, TVariables, TContext>(
+    options?: MutationOptions<TData, TError, TVariables, TContext>
+  ): MutationOptions<TData, TError, TVariables, TContext> {
     return {
       ...this.defaultOptions.queries,
       ...options,
-    } as MutationOptions<TData, TError, TVariables, TSnapshot>
+    } as MutationOptions<TData, TError, TVariables, TContext>
   }
 }
 

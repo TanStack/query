@@ -72,25 +72,25 @@ You might find that you want to **add additional side-effects** to some of the `
 
 ```js
 const [mutate] = useMutation(addTodo, {
-  onSuccess: (data, mutationVariables) => {
+  onSuccess: (data, variables) => {
     // I will fire first
   },
-  onSettled: (data, error, mutationVariables) => {
+  onSettled: (data, error, variables) => {
     // I will fire first
   },
-  onError: (error, mutationVariables) => {
+  onError: (error, variables) => {
     // I will fire first
   },
 })
 
 mutate(todo, {
-  onSuccess: (data, mutationVariables) => {
+  onSuccess: (data, variables) => {
     // I will fire second!
   },
-  onSettled: (data, error, mutationVariables) => {
+  onSettled: (data, error, variables) => {
     // I will fire second!
   },
-  onError: (error, mutationVariables) => {
+  onError: (error, variables) => {
     // I will fire second!
   },
   throwOnError: true,

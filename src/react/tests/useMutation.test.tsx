@@ -97,8 +97,12 @@ describe('useMutation', () => {
       const [mutate] = useMutation(
         async (vars: { count: number }) => Promise.resolve(vars.count),
         {
-          onSuccess: data => onSuccessMock(data),
-          onSettled: data => onSettledMock(data),
+          onSuccess: data => {
+            onSuccessMock(data)
+          },
+          onSettled: data => {
+            onSettledMock(data)
+          },
         }
       )
 
@@ -150,8 +154,12 @@ describe('useMutation', () => {
           return Promise.reject(error)
         },
         {
-          onError: (error: Error) => onErrorMock(error.message),
-          onSettled: (_data, error) => onSettledMock(error?.message),
+          onError: (error: Error) => {
+            onErrorMock(error.message)
+          },
+          onSettled: (_data, error) => {
+            onSettledMock(error?.message)
+          },
           throwOnError: false,
         }
       )

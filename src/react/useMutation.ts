@@ -51,12 +51,6 @@ type Action<TData, TError> =
 
 // HOOK
 
-let _uid = 0
-
-function uid(): number {
-  return _uid++
-}
-
 function getDefaultState<TData, TError>(): State<TData, TError> {
   return {
     ...getStatusProps('idle'),
@@ -65,7 +59,7 @@ function getDefaultState<TData, TError>(): State<TData, TError> {
   }
 }
 
-function mutationReducer<TData, TError>(
+function reducer<TData, TError>(
   state: State<TData, TError>,
   action: Action<TData, TError>
 ): State<TData, TError> {
@@ -99,25 +93,21 @@ export function useMutation<
   TData,
   TError = unknown,
   TVariables = undefined,
-  TSnapshot = unknown
+  TContext = unknown
 >(
   mutationFn: MutationFunction<TData, TVariables>,
-  options: MutationOptions<TData, TError, TVariables, TSnapshot> = {}
-): UseMutationResultPair<TData, TError, TVariables, TSnapshot> {
-  const client = useQueryClient()
-
-  // Get defaulted options
-  const defaultedOptions = client.defaultMutationOptions(options)
-
+  options: MutationOptions<TData, TError, TVariables, TContext> = {}
+): UseMutationResultPair<TData, TError, TVariables, TContext> {
   const [state, unsafeDispatch] = React.useReducer(
-    mutationReducer as Reducer<State<TData, TError>, Action<TData, TError>>,
+    reducer as Reducer<State<TData, TError>, Action<TData, TError>>,
     null,
     getDefaultState
   )
-
   const dispatch = useMountedCallback(unsafeDispatch)
 
-  const latestMutationRef = React.useRef<number>()
+  const client = useQueryClient()
+  const defaultedOptions = client.defaultMutationOptions(options)
+  const latestMutationRef = React.useRef(0)
   const latestMutationFnRef = React.useRef(mutationFn)
   latestMutationFnRef.current = mutationFn
   const latestOptionsRef = React.useRef(defaultedOptions)
@@ -126,22 +116,17 @@ export function useMutation<
   const mutate = React.useCallback(
     async (
       variables: TVariables,
-      mutateOptions: MutateOptions<TData, TError, TVariables, TSnapshot> = {}
+      mutateOptions: MutateOptions<TData, TError, TVariables, TContext> = {}
     ): Promise<TData | undefined> => {
+      const mutationId = ++latestMutationRef.current
       const latestOptions = latestOptionsRef.current
-
-      const mutationId = uid()
-      latestMutationRef.current = mutationId
-
+      const latestMutationFn = latestMutationFnRef.current
       const isLatest = () => latestMutationRef.current === mutationId
-
-      let snapshotValue: TSnapshot | undefined
+      let context: TContext | undefined
 
       try {
         dispatch({ type: 'loading' })
-        snapshotValue = await latestOptions.onMutate?.(variables)
-
-        const latestMutationFn = latestMutationFnRef.current
+        context = await latestOptions.onMutate?.(variables)
         const data = await latestMutationFn(variables)
 
         if (isLatest()) {
@@ -156,20 +141,10 @@ export function useMutation<
         return data
       } catch (error) {
         getConsole().error(error)
-        await latestOptions.onError?.(error, variables, snapshotValue)
-        await mutateOptions.onError?.(error, variables, snapshotValue)
-        await latestOptions.onSettled?.(
-          undefined,
-          error,
-          variables,
-          snapshotValue
-        )
-        await mutateOptions.onSettled?.(
-          undefined,
-          error,
-          variables,
-          snapshotValue
-        )
+        await latestOptions.onError?.(error, variables, context)
+        await mutateOptions.onError?.(error, variables, context)
+        await latestOptions.onSettled?.(undefined, error, variables, context)
+        await mutateOptions.onSettled?.(undefined, error, variables, context)
 
         if (isLatest()) {
           dispatch({ type: 'reject', error })
