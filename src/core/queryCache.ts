@@ -14,7 +14,7 @@ interface QueryHashMap {
   [hash: string]: Query<any, any>
 }
 
-type QueryCacheListener = (cache: QueryCache, query?: Query) => void
+type QueryCacheListener = (query?: Query) => void
 
 // CLASS
 
@@ -113,7 +113,7 @@ export class QueryCache {
     notifyManager.batch(() => {
       this.listeners.forEach(listener => {
         notifyManager.schedule(() => {
-          listener(this, query)
+          listener(query)
         })
       })
     })

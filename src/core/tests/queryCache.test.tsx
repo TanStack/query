@@ -167,7 +167,7 @@ describe('queryCache', () => {
 
     await sleep(100)
 
-    expect(callback).toHaveBeenCalledWith(cache, query)
+    expect(callback).toHaveBeenCalledWith(query)
   })
 
   test('should notify subscribers when new query with initialData is added', async () => {
@@ -883,7 +883,7 @@ describe('queryCache', () => {
       expect(newQuery?.options.cacheTime).toBe(Infinity)
     })
 
-    test('notifyGlobalListeners passes the same instance', async () => {
+    test('subscribe passes the correct query', async () => {
       const key = queryKey()
       const testCache = new QueryCache()
       const testClient = new QueryClient({ cache: testCache })
@@ -892,7 +892,7 @@ describe('queryCache', () => {
       testClient.setQueryData(key, 'foo')
       const query = testCache.find(key)
       await sleep(1)
-      expect(subscriber).toHaveBeenCalledWith(testCache, query)
+      expect(subscriber).toHaveBeenCalledWith(query)
       unsubscribe()
     })
 
