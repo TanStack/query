@@ -193,20 +193,24 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
 export interface MutateOptions<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown
 > {
-  onSuccess?: (data: TData, variables: TVariables) => Promise<void> | void
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    context: TContext | undefined
+  ) => Promise<void> | void
   onError?: (
     error: TError,
     variables: TVariables,
-    context?: TContext
+    context: TContext | undefined
   ) => Promise<void> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
-    context?: TContext
+    context: TContext | undefined
   ) => Promise<void> | void
   throwOnError?: boolean
 }
@@ -214,7 +218,7 @@ export interface MutateOptions<
 export interface MutationOptions<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown
 > extends MutateOptions<TData, TError, TVariables, TContext> {
   onMutate?: (variables: TVariables) => Promise<TContext> | TContext

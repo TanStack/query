@@ -18,7 +18,7 @@ describe('useMutation', () => {
         <div>
           <h1 data-testid="title">{data}</h1>
           <button onClick={() => reset()}>reset</button>
-          <button onClick={() => mutate(undefined)}>mutate</button>
+          <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
@@ -61,7 +61,7 @@ describe('useMutation', () => {
             <h1 data-testid="error">{mutationResult.error.message}</h1>
           )}
           <button onClick={() => mutationResult.reset()}>reset</button>
-          <button onClick={() => mutate(undefined)}>mutate</button>
+          <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }

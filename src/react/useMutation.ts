@@ -3,9 +3,10 @@ import React from 'react'
 import { useMountedCallback } from './utils'
 import { getStatusProps } from '../core/utils'
 import { getConsole } from '../core/setConsole'
-import { MutateOptions, MutationOptions } from '../core/types'
+import { MutationOptions } from '../core/types'
 import { useQueryClient } from './QueryClientProvider'
 import {
+  MutateFunction,
   MutationFunction,
   MutationStatus,
   UseMutationResultPair,
@@ -33,21 +34,21 @@ interface LoadingAction {
   type: 'loading'
 }
 
-interface ResolveAction<TData> {
-  type: 'resolve'
+interface SuccessAction<TData> {
+  type: 'success'
   data: TData
 }
 
-interface RejectAction<TError> {
-  type: 'reject'
+interface ErrorAction<TError> {
+  type: 'error'
   error: TError
 }
 
 type Action<TData, TError> =
-  | ResetAction
+  | ErrorAction<TError>
   | LoadingAction
-  | ResolveAction<TData>
-  | RejectAction<TError>
+  | ResetAction
+  | SuccessAction<TData>
 
 // HOOK
 
@@ -72,13 +73,13 @@ function reducer<TData, TError>(
         data: undefined,
         error: null,
       }
-    case 'resolve':
+    case 'success':
       return {
         ...getStatusProps('success'),
         data: action.data,
         error: null,
       }
-    case 'reject':
+    case 'error':
       return {
         ...getStatusProps('error'),
         data: undefined,
@@ -90,9 +91,9 @@ function reducer<TData, TError>(
 }
 
 export function useMutation<
-  TData,
+  TData = unknown,
   TError = unknown,
-  TVariables = undefined,
+  TVariables = void,
   TContext = unknown
 >(
   mutationFn: MutationFunction<TData, TVariables>,
@@ -113,11 +114,12 @@ export function useMutation<
   const latestOptionsRef = React.useRef(defaultedOptions)
   latestOptionsRef.current = defaultedOptions
 
-  const mutate = React.useCallback(
-    async (
-      variables: TVariables,
-      mutateOptions: MutateOptions<TData, TError, TVariables, TContext> = {}
-    ): Promise<TData | undefined> => {
+  const mutate = React.useCallback<
+    MutateFunction<TData, TError, TVariables, TContext>
+  >(
+    async (variables, mutateOptions = {}): Promise<TData | undefined> => {
+      dispatch({ type: 'loading' })
+
       const mutationId = ++latestMutationRef.current
       const latestOptions = latestOptionsRef.current
       const latestMutationFn = latestMutationFnRef.current
@@ -125,18 +127,18 @@ export function useMutation<
       let context: TContext | undefined
 
       try {
-        dispatch({ type: 'loading' })
         context = await latestOptions.onMutate?.(variables)
         const data = await latestMutationFn(variables)
 
-        if (isLatest()) {
-          dispatch({ type: 'resolve', data })
-        }
+        await latestOptions.onSuccess?.(data, variables, context)
+        await mutateOptions.onSuccess?.(data, variables, context)
+        await latestOptions.onSettled?.(data, null, variables, context)
+        await mutateOptions.onSettled?.(data, null, variables, context)
 
-        await latestOptions.onSuccess?.(data, variables)
-        await mutateOptions.onSuccess?.(data, variables)
-        await latestOptions.onSettled?.(data, null, variables)
-        await mutateOptions.onSettled?.(data, null, variables)
+        // Dispatch after handlers as the mutation could still fail
+        if (isLatest()) {
+          dispatch({ type: 'success', data })
+        }
 
         return data
       } catch (error) {
@@ -147,7 +149,7 @@ export function useMutation<
         await mutateOptions.onSettled?.(undefined, error, variables, context)
 
         if (isLatest()) {
-          dispatch({ type: 'reject', error })
+          dispatch({ type: 'error', error })
         }
 
         if (mutateOptions.throwOnError || latestOptions.throwOnError) {
@@ -160,8 +162,10 @@ export function useMutation<
 
   React.useEffect(() => {
     const latestOptions = latestOptionsRef.current
-    const { suspense, useErrorBoundary } = latestOptions
-    if ((useErrorBoundary || suspense) && state.error) {
+    if (
+      state.error &&
+      (latestOptions.useErrorBoundary || latestOptions.suspense)
+    ) {
       throw state.error
     }
   }, [state.error])
