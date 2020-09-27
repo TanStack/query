@@ -23,12 +23,6 @@ export interface QueryOptions<
   TQueryFnData = TData
 > {
   /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
-   * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-   * Defaults to `true`.
-   */
-  enabled?: boolean
-  /**
    * If `false`, failed queries will not retry by default.
    * If `true`, failed queries will retry infinitely., failureCount: num
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
@@ -68,6 +62,12 @@ export interface QueryObserverOptions<
   TQueryFnData = TData,
   TQueryData = TQueryFnData
 > extends QueryOptions<TData, TError, TQueryFnData> {
+  /**
+   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * Defaults to `true`.
+   */
+  enabled?: boolean
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * Defaults to `false`.

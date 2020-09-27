@@ -4,6 +4,7 @@ import {
   isServer,
   isValidTimeout,
   noop,
+  shallowEqualObjects,
   timeUntilStale,
 } from './utils'
 import { notifyManager } from './notifyManager'
@@ -94,18 +95,28 @@ export class QueryObserver<
   private onMount(): void {
     this.currentQuery.subscribeObserver(this)
 
-    if (this.options.enabled) {
-      if (this.options.refetchOnMount === 'always') {
-        this.executeFetch()
-      } else if (
-        this.options.refetchOnMount ||
-        !this.currentQuery.state.updatedAt
-      ) {
-        this.optionalFetch()
-      }
+    if (this.shouldFetchOnMount()) {
+      this.executeFetch()
     }
 
     this.updateTimers()
+  }
+
+  private shouldFetchOnMount(): boolean {
+    return Boolean(
+      this.options.enabled &&
+        (!this.currentQuery.state.updatedAt ||
+          this.options.refetchOnMount === 'always' ||
+          (this.options.refetchOnMount &&
+            this.currentQuery.isStaleByTime(this.options.staleTime)))
+    )
+  }
+
+  private shouldFetchOptionally(): boolean {
+    return Boolean(
+      this.options.enabled &&
+        this.currentQuery.isStaleByTime(this.options.staleTime)
+    )
   }
 
   clear(): void {
@@ -229,7 +240,7 @@ export class QueryObserver<
   }
 
   private optionalFetch(): void {
-    if (this.options.enabled && this.currentResult.isStale) {
+    if (this.shouldFetchOptionally()) {
       this.executeFetch()
     }
   }
@@ -317,11 +328,19 @@ export class QueryObserver<
     return this.options as QueryOptions<TQueryData, TError, TQueryFnData>
   }
 
-  private updateResult(): void {
+  private updateResult(willFetch?: boolean): void {
     const { state } = this.currentQuery
-    let { status, updatedAt } = state
+    let { status, isFetching, updatedAt } = state
     let isPreviousData = false
-    let data
+    let data: TData | undefined
+
+    // Already set the status to loading if we are going to fetch
+    if (willFetch) {
+      isFetching = true
+      if (status === 'idle') {
+        status = 'loading'
+      }
+    }
 
     // Keep previous data if needed
     if (
@@ -336,10 +355,10 @@ export class QueryObserver<
     } else if (this.options.select && typeof state.data !== 'undefined') {
       data = this.options.select(state.data)
     } else {
-      data = state.data as any
+      data = (state.data as unknown) as TData
     }
 
-    this.currentResult = {
+    const result: QueryObserverResult<TData, TError> = {
       ...getStatusProps(status),
       canFetchMore: state.canFetchMore,
       data,
@@ -348,13 +367,21 @@ export class QueryObserver<
       fetchMore: this.fetchMore,
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
-      isFetching: state.isFetching,
+      isFetching,
       isFetchingMore: state.isFetchingMore,
       isPreviousData,
       isStale: this.currentQuery.isStaleByTime(this.options.staleTime),
       refetch: this.refetch,
       remove: this.remove,
       updatedAt,
+    }
+
+    // Only update if something has changed
+    if (
+      !this.currentResult ||
+      !shallowEqualObjects(this.currentResult, result)
+    ) {
+      this.currentResult = result
     }
   }
 
@@ -372,7 +399,11 @@ export class QueryObserver<
     this.currentQuery = query
     this.initialDataUpdateCount = query.state.dataUpdateCount
 
-    this.updateResult()
+    const willFetch = prevQuery
+      ? this.shouldFetchOptionally()
+      : this.shouldFetchOnMount()
+
+    this.updateResult(willFetch)
 
     if (!this.listeners.length) {
       return
@@ -400,8 +431,8 @@ export class QueryObserver<
       this.updateTimers()
     }
 
-    // Do not notify if the query was invalidated but the stale state did not changed
-    if (type === 'invalidate' && currentResult.isStale === prevResult.isStale) {
+    // Do not notify if the nothing has changed
+    if (prevResult === currentResult) {
       return
     }
 

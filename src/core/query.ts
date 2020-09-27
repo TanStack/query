@@ -623,13 +623,6 @@ function getDefaultState<TData, TError, TQueryFnData>(
 
   const hasData = typeof data !== 'undefined'
 
-  const status =
-    hasData && options.staleTime
-      ? 'success'
-      : options.enabled
-      ? 'loading'
-      : 'idle'
-
   return {
     canFetchMore: hasMorePages(options, data),
     data,
@@ -637,10 +630,10 @@ function getDefaultState<TData, TError, TQueryFnData>(
     error: null,
     errorUpdateCount: 0,
     failureCount: 0,
-    isFetching: status === 'loading',
+    isFetching: false,
     isFetchingMore: false,
     isInvalidated: false,
-    status,
+    status: hasData ? 'success' : 'idle',
     updatedAt: hasData ? Date.now() : 0,
   }
 }

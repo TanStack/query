@@ -93,7 +93,7 @@ describe('useIsFetching', () => {
     }
 
     renderWithClient(client, <Page />)
-    await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 2, 1, 0]))
+    await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 2, 1, 0]))
     expect(consoleMock).not.toHaveBeenCalled()
     expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
 

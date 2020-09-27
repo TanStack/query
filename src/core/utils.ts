@@ -275,6 +275,18 @@ export function replaceEqualDeep(a: any, b: any): any {
   return b
 }
 
+/**
+ * Shallow compare objects. Only works with objects that always have the same properties.
+ */
+export function shallowEqualObjects<T>(a: T, b: T): boolean {
+  for (const key in a) {
+    if (a[key] !== b[key]) {
+      return false
+    }
+  }
+  return true
+}
+
 // Copied from: https://github.com/jonschlinkert/is-plain-object
 export function isPlainObject(o: any): o is Object {
   if (!hasObjectPrototype(o)) {
