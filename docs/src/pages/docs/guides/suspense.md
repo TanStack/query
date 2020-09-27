@@ -10,11 +10,12 @@ React Query can also be used with React's new Suspense for Data Fetching API's. 
 Global configuration:
 
 ```js
-// Configure for all queries
-import { QueryCache, ReactQueryCacheProvider } from 'react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 
-const queryCache = new QueryCache({
-  defaultConfig: {
+const cache = new QueryCache()
+const client = new QueryClient({
+  cache,
+  defaultOptions: {
     queries: {
       suspense: true,
     },
@@ -22,11 +23,7 @@ const queryCache = new QueryCache({
 })
 
 function App() {
-  return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      ...
-    </ReactQueryCacheProvider>
-  )
+  return <QueryClientProvider client={client}>...</QueryClientProvider>
 }
 ```
 

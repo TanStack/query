@@ -3,11 +3,11 @@ id: updates-from-mutation-responses
 title: Updates from Mutation Responses
 ---
 
-When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Cache's `setQueryData`](../api#querycachesetquerydata) method:
+When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Client's `setQueryData`](../api#clientsetquerydata) method:
 
 ```js
 const [mutate] = useMutation(editTodo, {
-  onSuccess: data => queryCache.setQueryData(['todo', { id: 5 }], data),
+  onSuccess: data => client.setQueryData(['todo', { id: 5 }], data),
 })
 
 mutate({
@@ -28,7 +28,7 @@ const useMutateTodo = () => {
   return useMutation(editTodo, {
     // Notice the second argument is the variables object that the `mutate` function receives
     onSuccess: (data, variables) => {
-      queryCache.setQueryData(['todo', { id: variables.id }], data)
+      client.setQueryData(['todo', { id: variables.id }], data)
     },
   })
 }

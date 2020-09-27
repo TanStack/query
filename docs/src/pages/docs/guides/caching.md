@@ -8,8 +8,8 @@ React Query caching is automatic out of the box. It uses a `stale-while-revalida
 At a glance:
 
 - The cache is keyed on a deterministic hash of your query key.
-- By default, query results become **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level.
-- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)**, when they are freshly mounted from not having any instances on the page, or when they are refetched via the query cache manually.
+- By default, query data is considered **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level.
+- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)**, when they are freshly mounted from not having any instances on the page, or when they are refetched manually.
 - Though a query result may be stale, query results are by default **always** _cached_ **when in use**.
 - If and when a query is no longer being used, it becomes **inactive** and by default is cached in the background for **5 minutes**. This time can be configured using the `cacheTime` option at both the global and query-level.
 - After a query is inactive for the `cacheTime` specified (defaults to 5 minutes), the query is deleted and garbage collected.
@@ -21,7 +21,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 - A new instance of `useQuery('todos', fetchTodos)` mounts.
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
   - It will then cache the data using `'todos'` and `fetchTodos` as the unique identifiers for that cache.
-  - A stale state is scheduled using the `staleTime` option as a delay (defaults to `0`, or immediately).
+  - The hook will mark itself as stale after the configured `staleTime` (defaults to `0`, or immediately).
 - A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere.
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
 - A background refetch is triggered for both queries (but only one request), since a new instance appeared on screen.

@@ -50,7 +50,7 @@ Query keys are not just for uniquely identifying the data you are fetching, but 
 
 ```js
 function Todos({ completed }) {
-  const queryInfo = useQuery(['todos', { status, page }], fetchTodoList)
+  const result = useQuery(['todos', { status, page }], fetchTodoList)
 }
 
 // Access the key, status and page variables in your query function!
@@ -64,7 +64,7 @@ If you send through more items in your query key, they will also be available in
 
 ```js
 function Todo({ todoId, preview }) {
-  const queryInfo = useQuery(['todo', todoId, { preview }], fetchTodoById)
+  const result = useQuery(['todo', todoId, { preview }], fetchTodoById)
 }
 
 // Access status and page in your query function!

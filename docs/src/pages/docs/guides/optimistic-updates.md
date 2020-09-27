@@ -14,22 +14,22 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    queryCache.cancelQueries('todos')
+    client.cancelQueries('todos')
 
     // Snapshot the previous value
-    const previousTodos = queryCache.getQueryData('todos')
+    const previousTodos = client.getQueryData('todos')
 
     // Optimistically update to the new value
-    queryCache.setQueryData('todos', old => [...old, newTodo])
+    client.setQueryData('todos', old => [...old, newTodo])
 
     // Return the snapshotted value
-    return () => queryCache.setQueryData('todos', previousTodos)
+    return () => client.setQueryData('todos', previousTodos)
   },
   // If the mutation fails, use the value returned from onMutate to roll back
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
   onSettled: () => {
-    queryCache.invalidateQueries('todos')
+    client.invalidateQueries('todos')
   },
 })
 ```
@@ -41,22 +41,22 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    queryCache.cancelQueries(['todos', newTodo.id])
+    client.cancelQueries(['todos', newTodo.id])
 
     // Snapshot the previous value
-    const previousTodo = queryCache.getQueryData(['todos', newTodo.id])
+    const previousTodo = client.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
-    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+    client.setQueryData(['todos', newTodo.id], newTodo)
 
     // Return a rollback function
-    return () => queryCache.setQueryData(['todos', newTodo.id], previousTodo)
+    return () => client.setQueryData(['todos', newTodo.id], previousTodo)
   },
   // If the mutation fails, use the rollback function we returned above
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
   onSettled: newTodo => {
-    queryCache.invalidateQueries(['todos', newTodo.id])
+    client.invalidateQueries(['todos', newTodo.id])
   },
 })
 ```

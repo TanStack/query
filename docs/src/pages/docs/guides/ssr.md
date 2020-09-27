@@ -55,22 +55,23 @@ React Query supports prefetching a query on the server and handing off or _dehyd
 
 ### Integrating with Next.js
 
-To support caching queries on the server and set up hydration, you start with wrapping your application with `<ReactQueryCacheProvider>` and `<Hydrate>` in `_app.js`.
+To support caching queries on the server and set up hydration, you start with wrapping your application with `<QueryClientProvider>` and `<Hydrate>` in `_app.js`.
 
 ```jsx
 // _app.jsx
-import { ReactQueryCacheProvider, QueryCache } from 'react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 ```
@@ -79,17 +80,16 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 
 ```jsx
 // pages/posts.jsx
-import { QueryCache } from 'react-query'
+import { QueryCache, QueryClient } from 'react-query'
 import { dehydrate } from 'react-query/hydration'
 
 export async function getStaticProps() {
-  const queryCache = new QueryCache()
-
-  await queryCache.prefetchQuery('posts', getPosts)
-
+  const cache = new QueryCache()
+  const client = new QueryClient({ cache })
+  await client.prefetchQuery('posts', getPosts)
   return {
     props: {
-      dehydratedState: dehydrate(queryCache),
+      dehydratedState: dehydrate(cache),
     },
   }
 }
@@ -115,11 +115,10 @@ Since there are many different possible setups for SSR, it's hard to give a deta
 
 **Server side**
 
-> Note: The global `queryCache` you can import directly from 'react-query' does not cache queries on the server to avoid leaking sensitive information between requests.
-
 - Prefetch data
-  - Create a `prefetchCache` specifically for prefetching by calling `const prefetchCache = new QueryCache()`
-  - Call `prefetchCache.prefetchQuery(...)` to prefetch queries
+  - Create a `prefetchCache` by calling `const prefetchCache = new QueryCache()`
+  - Create a `prefetchClient` by calling `const prefetchClient = new QueryClient({ cache: prefetchCache })`
+  - Call `prefetchClient.prefetchQuery(...)` to prefetch queries
   - Dehydrate by using `const dehydratedState = dehydrate(prefetchCache)`
 - Render
   - Create a new query cache for rendering and hydrate the state. Use this query cache to render your app.
@@ -138,23 +137,25 @@ This list aims to be exhaustive, but depending on your current setup, the above 
 ```jsx
 // Server
 const prefetchCache = new QueryCache()
-await prefetchCache.prefetchQuery('key', fn)
+const prefetchClient = new QueryClient({ cache: prefetchCache })
+await prefetchClient.prefetchQuery('key', fn)
 const dehydratedState = dehydrate(prefetchCache)
 
 const renderCache = new QueryCache()
+const renderClient = new QueryClient({ cache: renderCache })
 hydrate(renderCache, dehydratedState)
 
 const html = ReactDOM.renderToString(
-  <ReactQueryCacheProvider queryCache={renderCache}>
+  <QueryClientProvider client={renderClient}>
     <App />
-  </ReactQueryCacheProvider>
+  </QueryClientProvider>
 )
 
 res.send(`
 <html>
   <body>
     <div id="app">${html}</div>
-    <script>window.__REACT_QUERY_INITIAL_QUERIES__ = ${JSON.stringify(
+    <script>window.__REACT_QUERY_STATE__ = ${JSON.stringify(
       dehydratedState
     )};</script>
   </body>
@@ -162,15 +163,15 @@ res.send(`
 `)
 
 // Client
-const dehydratedState = JSON.parse(window.__REACT_QUERY_INITIAL_QUERIES__)
-
-const queryCache = new QueryCache()
-hydrate(queryCache, dehydratedState)
+const state = JSON.parse(window.__REACT_QUERY_STATE__)
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
+hydrate(cache, state)
 
 ReactDOM.hydrate(
-  <ReactQueryCacheProvider queryCache={queryCache}>
+  <QueryClientProvider client={client}>
     <App />
-  </ReactQueryCacheProvider>
+  </QueryClientProvider>
 )
 ```
 
@@ -180,7 +181,7 @@ ReactDOM.hydrate(
 
 Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the client. This happens regardless of error.
 
-Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQueryData` and catch any errors to handle those manually.
 
 **Staleness is measured from when the query was fetched on the server**
 

@@ -214,9 +214,9 @@ The `client.watchQuery()` method can be used to create and/or watch a query:
 ```js
 const observer = client.watchQuery('posts')
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -230,9 +230,9 @@ const observer = client.watchQueries([
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 

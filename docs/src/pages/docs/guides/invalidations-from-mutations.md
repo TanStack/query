@@ -11,18 +11,18 @@ For example, assume we have a mutation to post a new todo:
 const [mutate] = useMutation(postTodo)
 ```
 
-When a successful `postTodo` mutation happens, we likely want all `todos` queries to get invalidated and possibly refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `queryCache`'s `invalidateQueries` function:
+When a successful `postTodo` mutation happens, we likely want all `todos` queries to get invalidated and possibly refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `QueryClient`'s `invalidateQueries` function:
 
 ```js
-import { useMutation, useQueryCache } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 
-const queryCache = useQueryCache()
+const client = useQueryClient()
 
 // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
 const [mutate] = useMutation(addTodo, {
   onSuccess: () => {
-    queryCache.invalidateQueries('todos')
-    queryCache.invalidateQueries('reminders')
+    client.invalidateQueries('todos')
+    client.invalidateQueries('reminders')
   },
 })
 ```
@@ -52,7 +52,7 @@ const [mutate] = useMutation(addTodo, {
   },
   onSettled: async () => {
     console.log("I'm second!")
-  }
+  },
 })
 
 const run = async () => {

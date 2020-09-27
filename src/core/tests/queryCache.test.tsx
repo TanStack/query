@@ -296,7 +296,7 @@ describe('queryCache', () => {
     ])
     const results: QueryObserverResult[][] = []
     results.push(observer.getCurrentResult())
-    observer.subscribe(result => {
+    const unsubscribe = observer.subscribe(result => {
       results.push(result)
     })
     await sleep(1)
@@ -304,7 +304,7 @@ describe('queryCache', () => {
     await sleep(1)
     expect(testCache.find(key1, { active: true })).toBeUndefined()
     expect(testCache.find(key2, { active: true })).toBeDefined()
-    observer.unsubscribe()
+    unsubscribe()
     expect(testCache.find(key1, { active: true })).toBeUndefined()
     expect(testCache.find(key2, { active: true })).toBeUndefined()
     testCache.clear()

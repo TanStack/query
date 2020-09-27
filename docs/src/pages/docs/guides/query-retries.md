@@ -16,7 +16,7 @@ You can configure retries both on a global level and an individual query level.
 import { useQuery } from 'react-query'
 
 // Make a specific query retry a certain number of times
-const queryInfo = useQuery(['todos', 1], fetchTodoListPage, {
+const result = useQuery(['todos', 1], fetchTodoListPage, {
   retry: 10, // Will retry failed requests 10 times before displaying an error
 })
 ```
@@ -29,10 +29,12 @@ The default `retryDelay` is set to double (starting at `1000`ms) with each attem
 
 ```js
 // Configure for all queries
-import { QueryCache, ReactQueryCacheProvider } from 'react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 
-const queryCache = new QueryCache({
-  defaultConfig: {
+const cache = new QueryCache()
+const client = new QueryClient({
+  cache,
+  defaultOptions: {
     queries: {
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
@@ -40,18 +42,14 @@ const queryCache = new QueryCache({
 })
 
 function App() {
-  return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      ...
-    </ReactQueryCacheProvider>
-  )
+  return <QueryClientProvider client={client}>...</QueryClientProvider>
 }
 ```
 
 Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
 
 ```js
-const queryInfo = useQuery('todos', fetchTodoList, {
+const result = useQuery('todos', fetchTodoList, {
   retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries
 })
 ```

@@ -48,7 +48,7 @@ const {
 
 // or using the object syntax
 
-const queryInfo = useQuery({
+const result = useQuery({
   queryKey,
   queryFn,
   enabled,
@@ -61,7 +61,7 @@ const queryInfo = useQuery({
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
-  - If an array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/queries#query-keys) for more information.
+  - If an array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (...params: unknown[]) => Promise<TData>`
   - **Required, but only if no default query function has been defined**
@@ -81,8 +81,8 @@ const queryInfo = useQuery({
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: number | Infinity`
-  - The time in milliseconds after data is considered stale. This only applies to the hook it is defined on.
-  - If set to `Infinity`, query will never go stale
+  - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
+  - If set to `Infinity`, the data will never be considered stale
 - `cacheTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
@@ -220,9 +220,9 @@ const {
   isFetchingMore,
   fetchMore,
   canFetchMore,
-  ...queryInfo
+  ...result
 } = useInfiniteQuery(queryKey, queryFn, {
-  ...queryOptions,
+  ...options,
   getFetchMore: (lastPage, allPages) => fetchMoreVariable
 })
 ```
@@ -372,9 +372,9 @@ Its available methods are:
 
 ## `client.fetchQueryData`
 
-`fetchQueryData` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Specify a `staleTime` to only trigger a fetch when the data is stale. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
+`fetchQueryData` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
 
-If the query exists and the data is not invalidated and also not older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
+If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
 > The difference between using `fetchQueryData` and `setQueryData` is that `fetchQueryData` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
@@ -386,7 +386,7 @@ try {
 }
 ```
 
-Set a stale time to only fetch when the data is older than the specified time:
+Specify a `staleTime` to only fetch when the data is older than a certain amount of time:
 
 ```js
 try {
@@ -439,8 +439,8 @@ const data = client.getQueryData(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -459,7 +459,7 @@ client.setQueryData(queryKey, updater)
 
 **Options**
 
-- `queryKey: QueryKey` [Query Keys](./guides/queries#query-keys)
+- `queryKey: QueryKey` [Query Keys](./guides/query-keys)
 - `updater: unknown | (oldData: TData | undefined) => TData`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
@@ -478,6 +478,37 @@ For convenience in syntax, you can also pass an updater function which receives 
 setQueryData(queryKey, oldData => newData)
 ```
 
+## `client.getQueryState`
+
+`getQueryState` is a synchronous function that can be used to get an existing query's state. If the query does not exist, `undefined` will be returned.
+
+```js
+const state = client.getQueryState(queryKey)
+console.log(state.updatedAt)
+```
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+
+## `client.setQueryDefaults`
+
+`setQueryDefaults` is a synchronous method to set default options for a specific query. If the query does not exist yet it will create it.
+
+```js
+client.setQueryDefaults('posts', fetchPosts)
+
+function Component() {
+  const { data } = useQuery('posts')
+}
+```
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+
 ## `client.invalidateQueries`
 
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as invalid and active queries are refetched in the background.
@@ -486,7 +517,7 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 - If you **want inactive queries to refetch** as well, use the `refetchInactive: true` option
 
 ```js
-await queryCache.invalidateQueries('posts', {
+await client.invalidateQueries('posts', {
   exact,
   refetchActive = true,
   refetchInactive = false
@@ -495,8 +526,8 @@ await queryCache.invalidateQueries('posts', {
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
   - `refetchActive: Boolean`
     - Defaults to `true`
     - When set to `false`, queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will NOT be refetched in the background, and only marked as invalid.
@@ -529,8 +560,8 @@ await client.refetchQueries(['posts', 1], { active: true, exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 - `refetchOptions?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -551,8 +582,8 @@ await client.cancelQueries('posts', { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -568,8 +599,8 @@ client.removeQueries(queryKey, { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -582,9 +613,9 @@ The `watchQuery` method returns a `QueryObserver` instance which can be used to 
 ```js
 const observer = client.watchQuery('posts')
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -606,9 +637,9 @@ const observer = client.watchQueries([
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -631,23 +662,6 @@ if (client.isFetching()) {
 ```
 
 React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
-
-## `client.setQueryDefaults`
-
-`setQueryDefaults` is a synchronous method to set default options for a specific query. If the query does not exist yet it will create it.
-
-```js
-client.setQueryDefaults('posts', fetchPosts)
-
-function Component() {
-  const { data } = useQuery('posts')
-}
-```
-
-**Options**
-
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
 
 ## `QueryCache`
 
@@ -679,8 +693,8 @@ const query = cache.find(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -699,8 +713,8 @@ const queries = cache.findAll(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 

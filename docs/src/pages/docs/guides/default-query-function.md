@@ -12,9 +12,11 @@ const defaultQueryFn = async key => {
   return data
 }
 
-// provide the default query function to your app with defaultConfig
-const queryCache = new QueryCache({
-  defaultConfig: {
+// provide the default query function to your app with defaultOptions
+const cache = new QueryCache()
+const client = new QueryClient({
+  cache,
+  defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
     },
@@ -23,9 +25,9 @@ const queryCache = new QueryCache({
 
 function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <YourApp />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
@@ -39,7 +41,7 @@ function Posts() {
 // You can even leave out the queryFn and just go straight into options
 function Post({ postId }) {
   const { status, data, error, isFetching } = useQuery(`/posts/${postId}`, {
-    enabled: postId,
+    enabled: !!postId,
   })
 
   // ...

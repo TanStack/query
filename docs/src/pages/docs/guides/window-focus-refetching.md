@@ -9,8 +9,8 @@ If a user leaves your application and returns to stale data, **React Query autom
 
 ```js
 //
-const queryCache = new QueryCache({
-  defaultConfig: {
+const client = new QueryClient({
+  defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
     },
@@ -18,11 +18,7 @@ const queryCache = new QueryCache({
 })
 
 function App() {
-  return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      ...
-    </ReactQueryCacheProvider>
-  )
+  return <QueryClientProvider client={client}>...</QueryClientProvider>
 }
 ```
 

@@ -6,15 +6,18 @@ title: Query Filters
 Some methods within React Query accept a `QueryFilters` object. A query filter is an object with certain conditions to match a query with:
 
 ```js
-// Only invalidate inactive queries
-await client.invaliateQueries('posts', { active: false, inactive: true })
-// Refetch all active queries
-await client.refetchQueries({ active: true, inactive: false })
-// Refetch all active queries that begin with `post` in the key
-await client.refetchQueries('posts', { active: true, inactive: false })
-```
+// Cancel all queries
+await client.cancelQueries()
 
-// TODO: Niek - Verify these options are correct
+// Remove all inactive queries
+client.removeQueries('posts', { inactive: true })
+
+// Refetch all active queries
+await client.refetchQueries({ active: true })
+
+// Refetch all active queries that begin with `post` in the key
+await client.refetchQueries('posts', { active: true })
+```
 
 A query filter object supports the following properties:
 
@@ -24,14 +27,14 @@ A query filter object supports the following properties:
   - When set to `true` it will match active queries.
   - When set to `false` it will match inactive queries.
 - `inactive?: boolean`
-  - When set to `true` it will match active queries.
-  - When set to `false` it will match inactive queries.
+  - When set to `true` it will match inactive queries.
+  - When set to `false` it will match active queries.
 - `stale?: boolean`
   - When set to `true` it will match stale queries.
-  - When set to `false` it will not match stale queries.
+  - When set to `false` it will match fresh queries.
 - `fresh?: boolean`
   - When set to `true` it will match fresh queries.
-  - When set to `false` it will not match fresh queries.
+  - When set to `false` it will match stale queries.
 - `predicate?: (query: Query) => boolean`
   - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
 - `queryKey?: QueryKey`

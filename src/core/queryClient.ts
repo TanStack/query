@@ -21,9 +21,10 @@ import type {
   RefetchOptions,
 } from './types'
 import { notifyManager } from './notifyManager'
+import { QueriesObserver } from './queriesObserver'
 import { QueryCache } from './queryCache'
 import { QueryObserver } from './queryObserver'
-import { QueriesObserver } from './queriesObserver'
+import { QueryState } from './query'
 
 // TYPES
 
@@ -87,7 +88,7 @@ export class QueryClient {
     this.cache.build(defaultedOptions).setDefaultOptions(defaultedOptions)
   }
 
-  getQueryData<TData>(
+  getQueryData<TData = unknown>(
     queryKey: QueryKey,
     filters?: QueryFilters
   ): TData | undefined {
@@ -101,6 +102,13 @@ export class QueryClient {
     const parsedOptions = parseQueryArgs(queryKey)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     return this.cache.build(defaultedOptions).setData(updater)
+  }
+
+  getQueryState<TData = unknown, TError = undefined>(
+    queryKey: QueryKey,
+    filters?: QueryFilters
+  ): QueryState<TData, TError> | undefined {
+    return this.cache.find<TData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void
@@ -142,8 +150,9 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const refetchFilters: QueryFilters = {
+      ...filters,
       active: filters.refetchActive ?? true,
-      inactive: filters.refetchInactive,
+      inactive: filters.refetchInactive ?? false,
     }
 
     return notifyManager.batch(() => {
