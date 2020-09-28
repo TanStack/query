@@ -48,7 +48,7 @@ Beyond those primary state, more information is available depending on the state
 
 In the example above, you also saw that you can pass variables to your mutations function by calling the `mutate` function with a **single variable or object**.
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Cache's `invalidateQueries` method](../api#querycacheinvalidatequeries) and the [Query Cache's `setQueryData` method](../api/#querycachesetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#clientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#clientsetquerydata), mutations become a very powerful tool.
 
 > IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
