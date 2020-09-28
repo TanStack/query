@@ -13,7 +13,9 @@ const defaultQueryFn = async key => {
 }
 
 // provide the default query function to your app with defaultConfig
-const queryCache = new QueryCache({
+const cache = new QueryCache()
+const client = new QueryClient({
+  cache,
   defaultConfig: {
     queries: {
       queryFn: defaultQueryFn,
@@ -23,9 +25,9 @@ const queryCache = new QueryCache({
 
 function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <ReactQueryClientProvider client={client}>
       <YourApp />
-    </ReactQueryCacheProvider>
+    </ReactQueryClientProvider>
   )
 }
 

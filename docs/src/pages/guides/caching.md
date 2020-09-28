@@ -1,20 +1,18 @@
 ---
 id: caching
-title: Caching
+title: Caching Examples
 ---
 
-React Query caching is automatic out of the box. It uses a `stale-while-revalidate` in-memory caching strategy (popularized by [HTTP RFC 5861](https://tools.ietf.org/html/rfc5861)) and a very robust query deduping strategy to always ensure a query's data is always readily available, only cached when it's needed, even if that query is used multiple times across your application and updated in the background when possible.
+> Please thoroughly read the [Important Defaults](../important-defauls) before reading this guide
 
-At a glance:
+## Basic Example
 
-- The cache is keyed on a deterministic hash of your query key.
-- By default, query results become **stale** immediately after a successful fetch. This can be configured using the `staleTime` option at both the global and query-level.
-- Stale queries are automatically refetched whenever their **query keys change (this includes variables used in query key tuples)**, when they are freshly mounted from not having any instances on the page, or when they are refetched via the query cache manually.
-- Though a query result may be stale, query results are by default **always** _cached_ **when in use**.
-- If and when a query is no longer being used, it becomes **inactive** and by default is cached in the background for **5 minutes**. This time can be configured using the `cacheTime` option at both the global and query-level.
-- After a query is inactive for the `cacheTime` specified (defaults to 5 minutes), the query is deleted and garbage collected.
+This caching example illustrates the story and lifecycle of:
 
-## A Detailed Caching Example
+- Query Instances with and without cache data
+- Background Refetching
+- Inactive Queries
+- Garbage Collection
 
 Let's assume we are using the default `cacheTime` of **5 minutes** and the default `staleTime` of `0`.
 

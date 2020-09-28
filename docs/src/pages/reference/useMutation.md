@@ -1,0 +1,82 @@
+---
+id: useMutation
+title: useMutation
+---
+
+```js
+const [
+  mutate,
+  { status, isIdle, isLoading, isSuccess, isError, data, error, reset },
+] = useMutation(mutationFn, {
+  onMutate,
+  onSuccess,
+  onError,
+  onSettled,
+  throwOnError,
+  useErrorBoundary,
+})
+
+const promise = mutate(variables, {
+  onSuccess,
+  onSettled,
+  onError,
+  throwOnError,
+})
+```
+
+**Options**
+
+- `mutationFn: (variables) => Promise`
+  - **Required**
+  - A function that performs an asynchronous task and returns a promise.
+  - `variables` is an object that `mutate` will pass to your `mutationFn`
+- `onMutate: (variables) => Promise | snapshotValue`
+  - Optional
+  - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
+  - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
+  - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
+- `onSuccess: (data, variables) => Promise | undefined`
+  - Optional
+  - This function will fire when the mutation is successful and will be passed the mutation's result.
+  - Fires after the `mutate`-level `onSuccess` handler (if it is defined)
+  - If a promise is returned, it will be awaited and resolved before proceeding
+- `onError: (err, variables, onMutateValue) => Promise | undefined`
+  - Optional
+  - This function will fire if the mutation encounters an error and will be passed the error.
+  - Fires after the `mutate`-level `onError` handler (if it is defined)
+  - If a promise is returned, it will be awaited and resolved before proceeding
+- `onSettled: (data, error, variables, onMutateValue) => Promise | undefined`
+  - Optional
+  - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+  - Fires after the `mutate`-level `onSettled` handler (if it is defined)
+  - If a promise is returned, it will be awaited and resolved before proceeding
+- `throwOnError`
+  - Defaults to `false`
+  - Set this to `true` if failed mutations should re-throw errors from the mutation function to the `mutate` function.
+- `useErrorBoundary`
+  - Defaults to the global query config's `useErrorBoundary` value, which is `false`
+  - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
+
+**Returns**
+
+- `mutate: (variables, { onSuccess, onSettled, onError, throwOnError }) => Promise`
+  - The mutation function you can call with variables to trigger the mutation and optionally override the original mutation options.
+  - `variables: any`
+    - Optional
+    - The variables object to pass to the `mutationFn`.
+  - Remaining options extend the same options described above in the `useMutation` hook.
+  - Lifecycle callbacks defined here will fire **after** those of the same type defined in the `useMutation`-level options.
+- `status: String`
+  - Will be:
+    - `idle` initial status prior to the mutation function executing.
+    - `loading` if the mutation is currently executing.
+    - `error` if the last mutation attempt resulted in an error.
+    - `success` if the last mutation attempt was successful.
+- `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
+- `data: undefined | unknown`
+  - Defaults to `undefined`
+  - The last successfully resolved data for the query.
+- `error: null | TError`
+  - The error object for the query, if an error was encountered.
+- `reset: () => void`
+  - A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).

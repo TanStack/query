@@ -11,9 +11,11 @@ Global configuration:
 
 ```js
 // Configure for all queries
-import { QueryCache, ReactQueryCacheProvider } from 'react-query'
+import { QueryCache, ReactQueryClientProvider } from 'react-query'
 
-const queryCache = new QueryCache({
+const cache = new QueryCache()
+const client = new QueryClient({
+  cache,
   defaultConfig: {
     queries: {
       suspense: true,
@@ -21,11 +23,11 @@ const queryCache = new QueryCache({
   },
 })
 
-function App() {
+function Root() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      ...
-    </ReactQueryCacheProvider>
+    <ReactQueryClientProvider client={client}>
+      <App />
+    </ReactQueryClientProvider>
   )
 }
 ```

@@ -10,26 +10,28 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 ## Updating a list of todos when adding a new todo
 
 ```js
+const queryClient = useQueryClient()
+
 useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    queryCache.cancelQueries('todos')
+    queryClient.cancelQueries('todos')
 
     // Snapshot the previous value
-    const previousTodos = queryCache.getQueryData('todos')
+    const previousTodos = queryClient.getQueryData('todos')
 
     // Optimistically update to the new value
-    queryCache.setQueryData('todos', old => [...old, newTodo])
+    queryClient.setQueryData('todos', old => [...old, newTodo])
 
     // Return the snapshotted value
-    return () => queryCache.setQueryData('todos', previousTodos)
+    return () => queryClient.setQueryData('todos', previousTodos)
   },
   // If the mutation fails, use the value returned from onMutate to roll back
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
   onSettled: () => {
-    queryCache.invalidateQueries('todos')
+    queryClient.invalidateQueries('todos')
   },
 })
 ```
@@ -41,22 +43,22 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    queryCache.cancelQueries(['todos', newTodo.id])
+    queryClient.cancelQueries(['todos', newTodo.id])
 
     // Snapshot the previous value
-    const previousTodo = queryCache.getQueryData(['todos', newTodo.id])
+    const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
-    queryCache.setQueryData(['todos', newTodo.id], newTodo)
+    queryClient.setQueryData(['todos', newTodo.id], newTodo)
 
     // Return a rollback function
-    return () => queryCache.setQueryData(['todos', newTodo.id], previousTodo)
+    return () => queryClient.setQueryData(['todos', newTodo.id], previousTodo)
   },
   // If the mutation fails, use the rollback function we returned above
   onError: (err, newTodo, rollback) => rollback(),
   // Always refetch after error or success:
   onSettled: newTodo => {
-    queryCache.invalidateQueries(['todos', newTodo.id])
+    queryClient.invalidateQueries(['todos', newTodo.id])
   },
 })
 ```

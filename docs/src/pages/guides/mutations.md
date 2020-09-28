@@ -105,3 +105,79 @@ const CreateTodo = () => {
   )
 }
 ```
+
+## Mutation Side Effects
+
+`useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](../invalidations-from-mutations) and even [optimistic updates](../optimistic-updates)
+
+```js
+const [mutate] = useMutation(addTodo, {
+  onMutate: (variables) => {
+    // A mutation is about to happen!
+
+    // Optionally return a rollbackVariable
+    return () => {
+      // do some rollback logic
+    }
+  }
+  onError: (error, variables, rollbackVariable) => {
+    // An error happened!
+    if (rollbackVariable) rollbackVariable()
+  },
+  onSuccess: (data, variables, rollbackVariable) => {
+    // Boom baby!
+  },
+  onSettled: (data, error, variables, rollbackVariable) => {
+    // Error or success... doesn't matter!
+  },
+})
+```
+
+The promise returned by `mutate()` can be helpful as well for performing more granular control flow in your app, and if you prefer that that promise only resolves **after** the `onSuccess` or `onSettled` callbacks, you can return a promise in either!:
+
+```js
+const [mutate] = useMutation(addTodo, {
+  onSuccess: async () => {
+    console.log("I'm first!")
+  },
+  onSettled: async () => {
+    console.log("I'm second!")
+  },
+})
+
+mutate(todo)
+```
+
+You might find that you want to **add additional side-effects** to some of the `useMutation` lifecycle at the time of calling `mutate`. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported option overrides include:
+
+- `onSuccess` - Will be fired after the `useMutation`-level `onSuccess` handler
+- `onError` - Will be fired after the `useMutation`-level `onError` handler
+- `onSettled` - Will be fired after the `useMutation`-level `onSettled` handler
+- `throwOnError` - Indicates that the `mutate` function should throw an error if one is encountered
+
+```js
+const [mutate] = useMutation(addTodo, {
+  onSuccess: (data, mutationVariables) => {
+    // I will fire first
+  },
+  onError: (error, mutationVariables) => {
+    // I will fire first
+  },
+  onSettled: (data, error, mutationVariables) => {
+    // I will fire first
+  },
+})
+
+mutate(todo, {
+  onSuccess: (data, mutationVariables) => {
+    // I will fire second!
+  },
+  onError: (error, mutationVariables) => {
+    // I will fire second!
+  },
+  onSettled: (data, error, mutationVariables) => {
+    // I will fire second!
+  },
+  throwOnError: true,
+})
+```

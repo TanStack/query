@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
-import IObserver from './intersection-observer';
-import cn from 'classnames';
+import React, { Component } from 'react'
+import IObserver from './intersection-observer'
+import cn from 'classnames'
 
 // import VideoComponent from '../styleguide/video';
 
@@ -15,30 +15,28 @@ import cn from 'classnames';
 
 class Image extends Component {
   constructor(props) {
-    super(props);
+    super(props)
   }
 
   static defaultProps = {
     lazy: true,
-  };
+  }
 
   state = {
     src: !this.props.lazy ? this.props.videoSrc || this.props.src : undefined,
-  };
+  }
 
-  handleIntersect = (entry) => {
+  handleIntersect = entry => {
     if (entry.isIntersecting) {
-      console.log('intersected');
-      this.setState({ src: this.props.src });
+      this.setState({ src: this.props.src })
     }
-  };
+  }
 
   onLoad = () => {
-    console.log('loaded');
     this.setState({
       loaded: true,
-    });
-  };
+    })
+  }
 
   render() {
     const {
@@ -57,17 +55,17 @@ class Image extends Component {
       className,
       children,
       ...props
-    } = this.props;
-    const height = parseInt(origHeight);
-    const width = parseInt(origWidth);
+    } = this.props
+    const height = parseInt(origHeight)
+    const width = parseInt(origWidth)
 
-    const aspectRatio = String((height / width) * 100) + '%';
+    const aspectRatio = String((height / width) * 100) + '%'
 
     // if (video || videoSrc) {
     //   return <VideoComponent src={videoSrc} {...this.props} />;
     // }
 
-    let src = this.state.src;
+    let src = this.state.src
 
     // if (src && src.indexOf('assets.zeit.co') > -1) {
     //   if (src.indexOf('/q_auto') === -1) {
@@ -183,10 +181,10 @@ class Image extends Component {
           `}</style>
         </figure>
       </IObserver>
-    );
+    )
   }
 }
 
 // export const Video = (props) => <Image {...props} video />;
 
-export default Image;
+export default Image
