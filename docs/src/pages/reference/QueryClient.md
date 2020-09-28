@@ -3,7 +3,9 @@ id: QueryClient
 title: QueryClient
 ---
 
-The `QueryClient` is the preferred tool for imperatively interactive with a cache.
+## `QueryClient`
+
+The `QueryClient` can be used to interact with a cache:
 
 ```js
 import { QueryClient, QueryCache } from 'react-query'
@@ -27,6 +29,8 @@ Its available methods are:
 - [`prefetchQuery`](#clientprefetchquery)
 - [`getQueryData`](#clientgetquerydata)
 - [`setQueryData`](#clientsetquerydata)
+- [`getQueryState`](#clientgetquerystate)
+- [`setQueryDefaults`](#clientsetquerydefaults)
 - [`refetchQueries`](#clientrefetchqueries)
 - [`invalidateQueries`](#clientinvalidatequeries)
 - [`cancelQueries`](#clientcancelqueries)
@@ -34,7 +38,8 @@ Its available methods are:
 - [`watchQuery`](#clientwatchquery)
 - [`watchQueries`](#clientwatchqueries)
 - [`isFetching`](#queryclientisfetching)
-- [`setQueryDefaults`](#clientsetquerydefaults)
+- [`getDefaultOptions`](#clientsetdefaultoptions)
+- [`setDefaultOptions`](#clientgetdefaultoptions)
 
 **Options**
 
@@ -46,9 +51,9 @@ Its available methods are:
 
 ## `client.fetchQueryData`
 
-`fetchQueryData` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Specify a `staleTime` to only trigger a fetch when the data is stale. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
+`fetchQueryData` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
 
-If the query exists and the data is not invalidated and also not older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
+If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
 > The difference between using `fetchQueryData` and `setQueryData` is that `fetchQueryData` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
@@ -60,7 +65,7 @@ try {
 }
 ```
 
-Set a stale time to only fetch when the data is older than the specified time:
+Specify a `staleTime` to only fetch when the data is older than a certain amount of time:
 
 ```js
 try {
@@ -113,8 +118,8 @@ const data = client.getQueryData(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -133,7 +138,7 @@ client.setQueryData(queryKey, updater)
 
 **Options**
 
-- `queryKey: QueryKey` [Query Keys](./guides/queries#query-keys)
+- `queryKey: QueryKey` [Query Keys](./guides/query-keys)
 - `updater: unknown | (oldData: TData | undefined) => TData`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
@@ -152,6 +157,37 @@ For convenience in syntax, you can also pass an updater function which receives 
 setQueryData(queryKey, oldData => newData)
 ```
 
+## `client.getQueryState`
+
+`getQueryState` is a synchronous function that can be used to get an existing query's state. If the query does not exist, `undefined` will be returned.
+
+```js
+const state = client.getQueryState(queryKey)
+console.log(state.updatedAt)
+```
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+
+## `client.setQueryDefaults`
+
+`setQueryDefaults` is a synchronous method to set default options for a specific query. If the query does not exist yet it will create it.
+
+```js
+client.setQueryDefaults('posts', fetchPosts)
+
+function Component() {
+  const { data } = useQuery('posts')
+}
+```
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+
 ## `client.invalidateQueries`
 
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as invalid and active queries are refetched in the background.
@@ -169,8 +205,8 @@ await client.invalidateQueries('posts', {
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
   - `refetchActive: Boolean`
     - Defaults to `true`
     - When set to `false`, queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will NOT be refetched in the background, and only marked as invalid.
@@ -203,8 +239,8 @@ await client.refetchQueries(['posts', 1], { active: true, exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 - `refetchOptions?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -225,8 +261,8 @@ await client.cancelQueries('posts', { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -242,8 +278,8 @@ client.removeQueries(queryKey, { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 
@@ -256,9 +292,9 @@ The `watchQuery` method returns a `QueryObserver` instance which can be used to 
 ```js
 const observer = client.watchQuery('posts')
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -280,9 +316,9 @@ const observer = client.watchQueries([
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -306,19 +342,31 @@ if (client.isFetching()) {
 
 React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
-## `client.setQueryDefaults`
-
-`setQueryDefaults` is a synchronous method to set default options for a specific query. If the query does not exist yet it will create it.
-
-```js
-client.setQueryDefaults('posts', fetchPosts)
-
-function Component() {
-  const { data } = useQuery('posts')
-}
-```
-
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+
+**Returns**
+
+This method returns the number of fetching queries.
+
+## `client.getDefaultOptions`
+
+The `getDefaultOptions` method returns the default options which have been set when creating the client or with `setDefaultOptions`.
+
+```js
+const defaultOptions = client.getDefaultOptions()
+```
+
+## `client.setDefaultOptions`
+
+The `setDefaultOptions` method can be used to dynamically set the default options for this client.
+
+```js
+client.setDefaultOptions({
+  queries: {
+    staleTime: Infinity,
+  },
+})
+```

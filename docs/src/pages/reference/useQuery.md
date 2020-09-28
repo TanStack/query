@@ -46,7 +46,7 @@ const {
 
 // or using the object syntax
 
-const queryInfo = useQuery({
+const result = useQuery({
   queryKey,
   queryFn,
   enabled,
@@ -59,7 +59,7 @@ const queryInfo = useQuery({
   - **Required**
   - The query key to use for this query.
   - If a string is passed, it will be used as the query key.
-  - If an array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/queries#query-keys) for more information.
+  - If an array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (...params: unknown[]) => Promise<TData>`
   - **Required, but only if no default query function has been defined**
@@ -67,7 +67,7 @@ const queryInfo = useQuery({
   - Receives the following variables in the order that they are provided:
     - Query Key parameters
   - Must return a promise that will either resolves data or throws an error.
-- `enabled: boolean | unknown`
+- `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
   - Actually it can be anything that will pass a boolean condition. See [Dependent Queries](./guides/queries#dependent-queries) for more information.
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
@@ -79,8 +79,8 @@ const queryInfo = useQuery({
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: number | Infinity`
-  - The time in milliseconds after data is considered stale. This only applies to the hook it is defined on.
-  - If set to `Infinity`, query will never go stale
+  - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
+  - If set to `Infinity`, the data will never be considered stale
 - `cacheTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
@@ -129,7 +129,7 @@ const queryInfo = useQuery({
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
-- `initialData: unnown | () => unknown`
+- `initialData: unknown | () => unknown`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
@@ -183,7 +183,7 @@ const queryInfo = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: (options: { throwOnError: boolean }) => Promise<TData | undefined>`
+- `refetch: (options: { throwOnError: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
 - `remove: () => void`

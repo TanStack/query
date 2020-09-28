@@ -7,9 +7,16 @@ title: useIsFetching
 
 ```js
 import { useIsFetching } from 'react-query'
-
+// How many queries are fetching?
 const isFetching = useIsFetching()
+// How many queries matching the posts prefix are fetching?
+const isFetchingPosts = useIsFetching(['posts'])
 ```
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 

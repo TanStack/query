@@ -26,26 +26,26 @@ const promise = mutate(variables, {
 
 **Options**
 
-- `mutationFn: (variables) => Promise`
+- `mutationFn: (variables: TVariables) => Promise<TData>`
   - **Required**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
-- `onMutate: (variables) => Promise | snapshotValue`
+- `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
   - Useful to perform optimistic updates to a resource in hopes that the mutation succeeds
   - The value returned from this function will be passed to both the `onError` and `onSettled` functions in the event of a mutation failure and can be useful for rolling back optimistic updates.
-- `onSuccess: (data, variables) => Promise | undefined`
+- `onSuccess: (data: TData, variables: TVariables, context: TContext) => Promise<void> | void`
   - Optional
   - This function will fire when the mutation is successful and will be passed the mutation's result.
   - Fires after the `mutate`-level `onSuccess` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onError: (err, variables, onMutateValue) => Promise | undefined`
+- `onError: (err: TError, variables: TVariables, context?: TContext) => Promise<void> | void`
   - Optional
   - This function will fire if the mutation encounters an error and will be passed the error.
   - Fires after the `mutate`-level `onError` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `onSettled: (data, error, variables, onMutateValue) => Promise | undefined`
+- `onSettled: (data: TData, error: TError, variables: TVariables, context?: TContext) => Promise<void> | void`
   - Optional
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - Fires after the `mutate`-level `onSettled` handler (if it is defined)
@@ -59,14 +59,14 @@ const promise = mutate(variables, {
 
 **Returns**
 
-- `mutate: (variables, { onSuccess, onSettled, onError, throwOnError }) => Promise`
+- `mutate: (variables: TVariables, { onSuccess, onSettled, onError, throwOnError }) => Promise<TData>`
   - The mutation function you can call with variables to trigger the mutation and optionally override the original mutation options.
-  - `variables: any`
+  - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
   - Remaining options extend the same options described above in the `useMutation` hook.
   - Lifecycle callbacks defined here will fire **after** those of the same type defined in the `useMutation`-level options.
-- `status: String`
+- `status: string`
   - Will be:
     - `idle` initial status prior to the mutation function executing.
     - `loading` if the mutation is currently executing.
