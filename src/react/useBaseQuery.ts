@@ -52,7 +52,11 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
       throw currentResult.error
     }
 
-    if (observer.options.suspense && observer.willFetchOnMount()) {
+    if (
+      observer.options.suspense &&
+      firstRender &&
+      observer.willFetchOnMount()
+    ) {
       errorResetBoundary.clearReset()
       throw observer.getNextResult({ throwOnError: true })
     }
