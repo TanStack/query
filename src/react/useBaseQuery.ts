@@ -4,10 +4,10 @@ import { useIsMounted } from './utils'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
-import { UseQueryOptions, UseQueryResult } from './types'
+import { UseBaseQueryOptions, UseQueryResult } from './types'
 
 export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
-  options: UseQueryOptions<TData, TError, TQueryFnData, TQueryData>
+  options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>
 ): UseQueryResult<TData, TError> {
   const client = useQueryClient()
   const isMounted = useIsMounted()
@@ -16,7 +16,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
 
   // Always set stale time when using suspense
   if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
-    options.staleTime = 5000
+    defaultedOptions.staleTime = 5000
   }
 
   // Create query observer
@@ -24,18 +24,17 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
     QueryObserver<TData, TError, TQueryFnData, TQueryData>
   >()
   const firstRender = !observerRef.current
-  const observer = observerRef.current || client.watchQuery(options)
+  const observer = observerRef.current || client.watchQuery(defaultedOptions)
   observerRef.current = observer
 
   // Update options
   if (!firstRender) {
-    observer.setOptions(options)
+    observer.setOptions(defaultedOptions)
   }
 
   const [currentResult, setCurrentResult] = React.useState(() =>
     observer.getCurrentResult()
   )
-  const currentOptions = observer.options
 
   // Subscribe to the observer
   React.useEffect(() => {
@@ -48,19 +47,14 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   }, [isMounted, observer, setCurrentResult, errorResetBoundary])
 
   // Handle suspense
-  if (currentOptions.suspense || currentOptions.useErrorBoundary) {
+  if (observer.options.suspense || observer.options.useErrorBoundary) {
     if (currentResult.isError && !errorResetBoundary.isReset()) {
       throw currentResult.error
     }
 
-    if (
-      currentOptions.enabled !== false &&
-      currentOptions.suspense &&
-      !currentResult.isSuccess
-    ) {
+    if (observer.options.suspense && observer.willFetchOnMount()) {
       errorResetBoundary.clearReset()
-      const unsubscribe = observer.subscribe()
-      throw observer.fetch().finally(unsubscribe)
+      throw observer.getNextResult({ throwOnError: true })
     }
   }
 

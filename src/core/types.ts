@@ -15,6 +15,11 @@ export type ShouldRetryFunction<TError = unknown> = (
   error: TError
 ) => boolean
 
+export type GetFetchMoreVariableFunction<TQueryFnData = unknown> = (
+  lastPage: TQueryFnData,
+  allPages: TQueryFnData[]
+) => unknown
+
 export type RetryDelayFunction = (attempt: number) => number
 
 export interface QueryOptions<
@@ -31,11 +36,6 @@ export interface QueryOptions<
   retry?: boolean | number | ShouldRetryFunction<TError>
   retryDelay?: number | RetryDelayFunction
   cacheTime?: number
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If set to `Infinity`, the data will never be stale.
-   */
-  staleTime?: number
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   queryFn?: QueryFunction<TQueryFnData>
   queryKey?: QueryKey
@@ -53,7 +53,19 @@ export interface QueryOptions<
    * This function can be set to automatically get the next cursor for infinite queries.
    * The result will also be used to determine the value of `canFetchMore`.
    */
-  getFetchMore?: (lastPage: TQueryFnData, allPages: TQueryFnData[]) => unknown
+  getFetchMore?: GetFetchMoreVariableFunction<TQueryFnData>
+}
+
+export interface FetchQueryOptions<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData
+> extends QueryOptions<TData, TError, TQueryFnData> {
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If set to `Infinity`, the data will never be considered stale.
+   */
+  staleTime?: number
 }
 
 export interface QueryObserverOptions<
@@ -61,7 +73,7 @@ export interface QueryObserverOptions<
   TError = unknown,
   TQueryFnData = TData,
   TQueryData = TQueryFnData
-> extends QueryOptions<TData, TError, TQueryFnData> {
+> extends FetchQueryOptions<TData, TError, TQueryFnData> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -155,7 +167,6 @@ export interface InvalidateOptions {
 }
 
 export interface FetchMoreOptions extends ResultOptions {
-  fetchMoreVariable?: unknown
   previous?: boolean
 }
 

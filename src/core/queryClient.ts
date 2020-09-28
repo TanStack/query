@@ -10,6 +10,7 @@ import {
 } from './utils'
 import type {
   DefaultOptions,
+  FetchQueryOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationOptions,
@@ -36,11 +37,15 @@ interface QueryClientConfig {
 
 export class QueryClient {
   private cache: QueryCache
-  private defaultOptions?: DefaultOptions
+  private defaultOptions: DefaultOptions
 
   constructor(config: QueryClientConfig) {
     this.cache = config.cache
-    this.defaultOptions = config.defaultOptions
+    this.defaultOptions = config.defaultOptions || {}
+  }
+
+  getDefaultOptions(): DefaultOptions {
+    return this.defaultOptions
   }
 
   setDefaultOptions(options: DefaultOptions): void {
@@ -237,23 +242,23 @@ export class QueryClient {
   }
 
   fetchQueryData<TData = unknown, TError = unknown, TQueryFnData = TData>(
-    options: QueryOptions<TData, TError, TQueryFnData>
+    options: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData>
   fetchQueryData<TData = unknown, TError = unknown, TQueryFnData = TData>(
     queryKey: QueryKey,
-    options?: QueryOptions<TData, TError, TQueryFnData>
+    options?: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData>
   fetchQueryData<TData = unknown, TError = unknown, TQueryFnData = TData>(
     queryKey: QueryKey,
     queryFn: QueryFunction<TQueryFnData | TData>,
-    options?: QueryOptions<TData, TError, TQueryFnData>
+    options?: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData>
   fetchQueryData<TData, TError, TQueryFnData = TData>(
-    arg1: QueryKey | QueryOptions<TData, TError, TQueryFnData>,
+    arg1: QueryKey | FetchQueryOptions<TData, TError, TQueryFnData>,
     arg2?:
       | QueryFunction<TQueryFnData | TData>
-      | QueryOptions<TData, TError, TQueryFnData>,
-    arg3?: QueryOptions<TData, TError, TQueryFnData>
+      | FetchQueryOptions<TData, TError, TQueryFnData>,
+    arg3?: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
 
@@ -277,17 +282,17 @@ export class QueryClient {
     return query.fetch(defaultedOptions)
   }
 
-  prefetchQuery(options: QueryOptions): Promise<void>
-  prefetchQuery(queryKey: QueryKey, options?: QueryOptions): Promise<void>
+  prefetchQuery(options: FetchQueryOptions): Promise<void>
+  prefetchQuery(queryKey: QueryKey, options?: FetchQueryOptions): Promise<void>
   prefetchQuery(
     queryKey: QueryKey,
     queryFn: QueryFunction,
-    options?: QueryOptions
+    options?: FetchQueryOptions
   ): Promise<void>
   prefetchQuery(
-    arg1: QueryKey | QueryOptions,
-    arg2?: QueryFunction | QueryOptions,
-    arg3?: QueryOptions
+    arg1: QueryKey | FetchQueryOptions,
+    arg2?: QueryFunction | FetchQueryOptions,
+    arg3?: FetchQueryOptions
   ): Promise<void> {
     return this.fetchQueryData(arg1 as any, arg2 as any, arg3)
       .then(noop)
@@ -298,31 +303,20 @@ export class QueryClient {
     return this.cache
   }
 
-  defaultQueryOptions<TData, TError, TQueryFnData>(
-    options?: QueryOptions<TData, TError, TQueryFnData>
-  ): QueryOptions<TData, TError, TQueryFnData> {
-    return {
-      ...this.defaultOptions?.queries,
-      ...options,
-    } as QueryOptions<TData, TError, TQueryFnData>
+  defaultQueryOptions<T extends QueryOptions<any, any>>(options?: T): T {
+    return { ...this.defaultOptions.queries, ...options } as T
   }
 
-  defaultQueryObserverOptions<TData, TError, TQueryFnData, TQueryData>(
-    options?: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
-  ): QueryObserverOptions<TData, TError, TQueryFnData, TQueryData> {
-    return {
-      ...this.defaultOptions?.queries,
-      ...options,
-    } as QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
+  defaultQueryObserverOptions<T extends QueryObserverOptions<any, any>>(
+    options?: T
+  ): T {
+    return { ...this.defaultOptions.queries, ...options } as T
   }
 
-  defaultMutationOptions<TData, TError, TVariables, TContext>(
-    options?: MutationOptions<TData, TError, TVariables, TContext>
-  ): MutationOptions<TData, TError, TVariables, TContext> {
-    return {
-      ...this.defaultOptions?.queries,
-      ...options,
-    } as MutationOptions<TData, TError, TVariables, TContext>
+  defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(
+    options?: T
+  ): T {
+    return { ...this.defaultOptions.mutations, ...options } as T
   }
 }
 

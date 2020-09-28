@@ -131,7 +131,7 @@ const result = useQuery({
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
-- `initialData: unnown | () => unknown`
+- `initialData: unknown | () => unknown`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
@@ -353,6 +353,8 @@ Its available methods are:
 - [`prefetchQuery`](#clientprefetchquery)
 - [`getQueryData`](#clientgetquerydata)
 - [`setQueryData`](#clientsetquerydata)
+- [`getQueryState`](#clientgetquerystate)
+- [`setQueryDefaults`](#clientsetquerydefaults)
 - [`refetchQueries`](#clientrefetchqueries)
 - [`invalidateQueries`](#clientinvalidatequeries)
 - [`cancelQueries`](#clientcancelqueries)
@@ -360,7 +362,8 @@ Its available methods are:
 - [`watchQuery`](#clientwatchquery)
 - [`watchQueries`](#clientwatchqueries)
 - [`isFetching`](#queryclientisfetching)
-- [`setQueryDefaults`](#clientsetquerydefaults)
+- [`getDefaultOptions`](#clientsetdefaultoptions)
+- [`setDefaultOptions`](#clientgetdefaultoptions)
 
 **Options**
 
@@ -662,6 +665,26 @@ if (client.isFetching()) {
 ```
 
 React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+
+## `client.getDefaultOptions`
+
+The `getDefaultOptions` method returns the default options which have been set when creating the client or with `setDefaultOptions`.
+
+```js
+const defaultOptions = client.getDefaultOptions()
+```
+
+## `client.setDefaultOptions`
+
+The `setDefaultOptions` method can be used to dynamically set the default options for this client.
+
+```js
+client.setDefaultOptions({
+  queries: {
+    staleTime: Infinity,
+  },
+})
+```
 
 ## `QueryCache`
 

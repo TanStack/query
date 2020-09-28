@@ -95,14 +95,14 @@ export class QueryObserver<
   private onMount(): void {
     this.currentQuery.subscribeObserver(this)
 
-    if (this.shouldFetchOnMount()) {
+    if (this.willFetchOnMount()) {
       this.executeFetch()
     }
 
     this.updateTimers()
   }
 
-  private shouldFetchOnMount(): boolean {
+  willFetchOnMount(): boolean {
     return (
       this.options.enabled !== false &&
       (!this.currentQuery.state.updatedAt ||
@@ -111,7 +111,7 @@ export class QueryObserver<
     )
   }
 
-  private shouldFetchOptionally(): boolean {
+  willFetchOptionally(): boolean {
     return this.options.enabled !== false && this.isStale()
   }
 
@@ -131,10 +131,12 @@ export class QueryObserver<
     const prevOptions = this.options
     const prevQuery = this.currentQuery
 
-    this.options = this.client.defaultQueryObserverOptions({
-      ...prevOptions,
-      ...options,
-    })
+    this.options = this.client.defaultQueryObserverOptions(options)
+
+    // Keep previous query key if the user does not supply one
+    if (!this.options.queryKey) {
+      this.options.queryKey = prevOptions.queryKey
+    }
 
     this.updateQuery()
 
@@ -240,7 +242,7 @@ export class QueryObserver<
   }
 
   private optionalFetch(): void {
-    if (this.shouldFetchOptionally()) {
+    if (this.willFetchOptionally()) {
       this.executeFetch()
     }
   }
@@ -399,8 +401,8 @@ export class QueryObserver<
     this.initialDataUpdateCount = query.state.dataUpdateCount
 
     const willFetch = prevQuery
-      ? this.shouldFetchOptionally()
-      : this.shouldFetchOnMount()
+      ? this.willFetchOptionally()
+      : this.willFetchOnMount()
 
     this.updateResult(willFetch)
 

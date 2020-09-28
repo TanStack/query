@@ -3,12 +3,12 @@ import React from 'react'
 import { useMountedCallback } from './utils'
 import { getStatusProps } from '../core/utils'
 import { getConsole } from '../core/setConsole'
-import { MutationOptions } from '../core/types'
 import { useQueryClient } from './QueryClientProvider'
 import {
   MutateFunction,
   MutationFunction,
   MutationStatus,
+  UseMutationOptions,
   UseMutationResultPair,
 } from './types'
 
@@ -97,7 +97,7 @@ export function useMutation<
   TContext = unknown
 >(
   mutationFn: MutationFunction<TData, TVariables>,
-  options: MutationOptions<TData, TError, TVariables, TContext> = {}
+  options: UseMutationOptions<TData, TError, TVariables, TContext> = {}
 ): UseMutationResultPair<TData, TError, TVariables, TContext> {
   const [state, unsafeDispatch] = React.useReducer(
     reducer as Reducer<State<TData, TError>, Action<TData, TError>>,

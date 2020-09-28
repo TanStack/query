@@ -1,28 +1,37 @@
 import {
   MutateOptions,
+  MutationOptions,
   QueryObserverOptions,
   QueryObserverResult,
 } from '../core/types'
 
-export interface UseQueryOptions<
+export interface UseBaseQueryOptions<
   TData = unknown,
   TError = unknown,
   TQueryFnData = TData,
   TQueryData = TQueryFnData
 > extends QueryObserverOptions<TData, TError, TQueryFnData, TQueryData> {}
 
-export interface UseQueryResult<TData = unknown, TError = unknown>
-  extends QueryObserverResult<TData, TError> {}
+export interface UseQueryOptions<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData
+> extends UseBaseQueryOptions<TData, TError, TQueryFnData> {}
 
 export interface UseInfiniteQueryOptions<
   TData = unknown,
   TError = unknown,
-  TQueryFnData = TData,
-  TQueryData = TQueryFnData[]
-> extends QueryObserverOptions<TData[], TError, TQueryFnData, TQueryData> {}
+  TQueryFnData = TData
+> extends UseBaseQueryOptions<TData[], TError, TQueryFnData, TQueryFnData[]> {}
+
+export interface UseBaseQueryResult<TData = unknown, TError = unknown>
+  extends QueryObserverResult<TData, TError> {}
+
+export interface UseQueryResult<TData = unknown, TError = unknown>
+  extends UseBaseQueryResult<TData, TError> {}
 
 export interface UseInfiniteQueryResult<TData = unknown, TError = unknown>
-  extends QueryObserverResult<TData[], TError> {}
+  extends UseBaseQueryResult<TData[], TError> {}
 
 export type MutationStatus = 'idle' | 'loading' | 'error' | 'success'
 
@@ -39,6 +48,9 @@ export type MutateFunction<
   variables: TVariables,
   options?: MutateOptions<TData, TError, TVariables, TContext>
 ) => Promise<TData | undefined>
+
+export interface UseMutationOptions<TData, TError, TVariables, TContext>
+  extends MutationOptions<TData, TError, TVariables, TContext> {}
 
 export type UseMutationResultPair<TData, TError, TVariables, TContext> = [
   MutateFunction<TData, TError, TVariables, TContext>,

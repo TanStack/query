@@ -147,6 +147,11 @@ The `queryCache.getQueries()` method has been replaced by `cache.findAll()`.
 
 The `queryCache.isFetching` property has been replaced by `client.isFetching()`.
 
+### QueryOptions.enabled
+
+The `enabled` query option will now only disable a query when the value is `false`.
+If needed, values can be casted with `!!userId` or `Boolean(userId)`.
+
 ### QueryOptions.initialStale
 
 The `initialStale` query option has been removed and initial data is now treated as regular data.

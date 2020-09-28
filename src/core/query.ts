@@ -17,7 +17,6 @@ import {
   timeUntilStale,
 } from './utils'
 import type {
-  FetchMoreOptions,
   InitialDataFunction,
   IsFetchingMoreValue,
   QueryFunction,
@@ -56,6 +55,11 @@ export interface QueryState<TData, TError> {
 export interface FetchOptions {
   fetchMore?: FetchMoreOptions
   throwOnError?: boolean
+}
+
+interface FetchMoreOptions {
+  fetchMoreVariable?: unknown
+  previous?: boolean
 }
 
 interface SetDataOptions {
