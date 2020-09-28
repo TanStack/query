@@ -3,7 +3,7 @@ id: query-functions
 title: Query Functions
 ---
 
-A query function can be literally any function that **returns a promise**. The promise that is returned should either **resolve or return the data** or **throw an error**.
+A query function can be literally any function that **returns a promise**. The promise that is returned should either **resolve the data** or **throw an error**.
 
 All of the following are valid query function configurations:
 
