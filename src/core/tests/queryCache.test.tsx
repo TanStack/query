@@ -23,6 +23,18 @@ describe('queryCache', () => {
     expect(data).toBeUndefined()
   })
 
+  test('setQueryDefaults should be able to override defaults', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const queryFn = jest.fn().mockRejectedValue('reject')
+    client.setQueryDefaults(key, queryFn, { retry: 1 })
+    const observer = client.watchQuery(key)
+    const { error } = await observer.getNextResult({ throwOnError: false })
+    expect(error).toBe('reject')
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    consoleMock.mockRestore()
+  })
+
   test('setQueryData does not crash if query could not be found', () => {
     const key = queryKey()
 

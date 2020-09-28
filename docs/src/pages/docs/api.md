@@ -69,7 +69,7 @@ const result = useQuery({
   - Receives the following variables in the order that they are provided:
     - Query Key parameters
   - Must return a promise that will either resolves data or throws an error.
-- `enabled: boolean | unknown`
+- `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
   - Actually it can be anything that will pass a boolean condition. See [Dependent Queries](./guides/queries#dependent-queries) for more information.
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`

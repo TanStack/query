@@ -8,7 +8,6 @@ import {
   parseQueryArgs,
   uniq,
 } from './utils'
-import { DEFAULT_OPTIONS, mergeDefaultOptions } from './config'
 import type {
   DefaultOptions,
   InvalidateOptions,
@@ -37,14 +36,15 @@ interface QueryClientConfig {
 
 export class QueryClient {
   private cache: QueryCache
-  private defaultOptions: DefaultOptions
+  private defaultOptions?: DefaultOptions
 
   constructor(config: QueryClientConfig) {
     this.cache = config.cache
-    this.defaultOptions = mergeDefaultOptions(
-      DEFAULT_OPTIONS,
-      config.defaultOptions
-    )
+    this.defaultOptions = config.defaultOptions
+  }
+
+  setDefaultOptions(options: DefaultOptions): void {
+    this.defaultOptions = options
   }
 
   mount(): void {
@@ -302,7 +302,7 @@ export class QueryClient {
     options?: QueryOptions<TData, TError, TQueryFnData>
   ): QueryOptions<TData, TError, TQueryFnData> {
     return {
-      ...this.defaultOptions.queries,
+      ...this.defaultOptions?.queries,
       ...options,
     } as QueryOptions<TData, TError, TQueryFnData>
   }
@@ -311,7 +311,7 @@ export class QueryClient {
     options?: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
   ): QueryObserverOptions<TData, TError, TQueryFnData, TQueryData> {
     return {
-      ...this.defaultOptions.queries,
+      ...this.defaultOptions?.queries,
       ...options,
     } as QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
   }
@@ -320,7 +320,7 @@ export class QueryClient {
     options?: MutationOptions<TData, TError, TVariables, TContext>
   ): MutationOptions<TData, TError, TVariables, TContext> {
     return {
-      ...this.defaultOptions.queries,
+      ...this.defaultOptions?.queries,
       ...options,
     } as MutationOptions<TData, TError, TVariables, TContext>
   }

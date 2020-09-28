@@ -1,6 +1,7 @@
 import {
   CancelledError,
   Updater,
+  defaultRetryDelay,
   ensureArray,
   functionalUpdate,
   hashQueryKey,
@@ -28,7 +29,6 @@ import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getConsole } from './setConsole'
-import { DEFAULT_OPTIONS } from './config'
 
 // TYPES
 
@@ -126,12 +126,13 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private setOptions(
     options?: QueryOptions<TData, TError, TQueryFnData>
   ): void {
-    this.options = {
-      ...DEFAULT_OPTIONS.queries,
-      ...this.defaultOptions,
-      ...options,
-    }
-    this.cacheTime = Math.max(this.cacheTime || 0, this.options.cacheTime!)
+    this.options = { ...this.defaultOptions, ...options }
+
+    // Default to 5 minutes if not cache time is set
+    this.cacheTime = Math.max(
+      this.cacheTime || 0,
+      this.options.cacheTime ?? 5 * 60 * 1000
+    )
   }
 
   setDefaultOptions(options: QueryOptions<TData, TError, TQueryFnData>): void {
@@ -198,7 +199,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     let data = functionalUpdate(updater, prevData)
 
     // Structurally share data between prev and new data if needed
-    if (this.options.structuralSharing) {
+    if (this.options.structuralSharing !== false) {
       data = replaceEqualDeep(prevData, data)
     }
 
@@ -232,7 +233,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   isActive(): boolean {
-    return this.observers.some(observer => observer.options.enabled)
+    return this.observers.some(observer => observer.options.enabled !== false)
   }
 
   isFetching(): boolean {
@@ -275,13 +276,13 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       const { isStale } = observer.getCurrentResult()
 
       return (
-        enabled &&
+        enabled !== false &&
         ((type === 'focus' &&
           (refetchOnWindowFocus === 'always' ||
-            (refetchOnWindowFocus && isStale))) ||
+            (refetchOnWindowFocus !== false && isStale))) ||
           (type === 'online' &&
             (refetchOnReconnect === 'always' ||
-              (refetchOnReconnect && isStale))))
+              (refetchOnReconnect !== false && isStale))))
       )
     })
 
@@ -553,7 +554,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
           // Do we need to retry the request?
           const { failureCount } = this.state
-          const { retry, retryDelay } = options
+          const retry = options.retry ?? 3
+          const retryDelay = options.retryDelay ?? defaultRetryDelay
 
           const shouldRetry =
             retry === true ||

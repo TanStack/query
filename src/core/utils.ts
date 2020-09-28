@@ -94,6 +94,10 @@ function stableStringify(value: any): string {
   return JSON.stringify(value, stableStringifyReplacer)
 }
 
+export function defaultRetryDelay(attempt: number) {
+  return Math.min(1000 * 2 ** attempt, 30000)
+}
+
 export function defaultQueryKeySerializerFn(queryKey: QueryKey): string {
   try {
     return stableStringify(queryKey)
@@ -161,8 +165,8 @@ export function replaceAt<T>(array: T[], index: number, value: T): T[] {
   return copy
 }
 
-export function timeUntilStale(updatedAt: number, staleTime: number): number {
-  return Math.max(updatedAt + staleTime - Date.now(), 0)
+export function timeUntilStale(updatedAt: number, staleTime?: number): number {
+  return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
 
 export function parseQueryArgs<TOptions extends QueryOptions<any, any>>(

@@ -15,7 +15,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   const defaultedOptions = client.defaultQueryObserverOptions(options)
 
   // Always set stale time when using suspense
-  if (defaultedOptions.suspense && defaultedOptions.staleTime === 0) {
+  if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
     options.staleTime = 5000
   }
 
@@ -54,7 +54,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
     }
 
     if (
-      currentOptions.enabled &&
+      currentOptions.enabled !== false &&
       currentOptions.suspense &&
       !currentResult.isSuccess
     ) {

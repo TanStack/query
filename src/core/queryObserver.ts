@@ -103,20 +103,20 @@ export class QueryObserver<
   }
 
   private shouldFetchOnMount(): boolean {
-    return Boolean(
-      this.options.enabled &&
-        (!this.currentQuery.state.updatedAt ||
-          this.options.refetchOnMount === 'always' ||
-          (this.options.refetchOnMount &&
-            this.currentQuery.isStaleByTime(this.options.staleTime)))
+    return (
+      this.options.enabled !== false &&
+      (!this.currentQuery.state.updatedAt ||
+        this.options.refetchOnMount === 'always' ||
+        (this.options.refetchOnMount !== false && this.isStale()))
     )
   }
 
   private shouldFetchOptionally(): boolean {
-    return Boolean(
-      this.options.enabled &&
-        this.currentQuery.isStaleByTime(this.options.staleTime)
-    )
+    return this.options.enabled !== false && this.isStale()
+  }
+
+  private isStale(): boolean {
+    return this.currentQuery.isStaleByTime(this.options.staleTime)
   }
 
   clear(): void {
@@ -151,7 +151,7 @@ export class QueryObserver<
     }
 
     // Optionally fetch if the query became enabled
-    if (this.options.enabled && !prevOptions.enabled) {
+    if (this.options.enabled !== false && prevOptions.enabled === false) {
       this.optionalFetch()
     }
 
@@ -247,8 +247,7 @@ export class QueryObserver<
 
   private executeFetch(fetchOptions?: FetchOptions): void {
     if (this.canFetch()) {
-      const queryOptions = this.getQueryOptions()
-      this.currentQuery.fetch(queryOptions, fetchOptions).catch(noop)
+      this.currentQuery.fetch(this.getQueryOptions(), fetchOptions).catch(noop)
     }
   }
 
@@ -291,7 +290,7 @@ export class QueryObserver<
 
     if (
       isServer ||
-      !this.options.enabled ||
+      this.options.enabled === false ||
       !isValidTimeout(this.options.refetchInterval)
     ) {
       return
@@ -370,7 +369,7 @@ export class QueryObserver<
       isFetching,
       isFetchingMore: state.isFetchingMore,
       isPreviousData,
-      isStale: this.currentQuery.isStaleByTime(this.options.staleTime),
+      isStale: this.isStale(),
       refetch: this.refetch,
       remove: this.remove,
       updatedAt,
@@ -412,7 +411,7 @@ export class QueryObserver<
     prevQuery?.unsubscribeObserver(this)
     this.currentQuery.subscribeObserver(this)
 
-    if (this.options.notifyOnStatusChange) {
+    if (this.options.notifyOnStatusChange !== false) {
       this.notify({ listeners: true })
     }
   }
@@ -447,7 +446,7 @@ export class QueryObserver<
 
     if (
       // Always notify if notifyOnStatusChange is set
-      options.notifyOnStatusChange ||
+      options.notifyOnStatusChange !== false ||
       // Otherwise only notify on data or error change
       currentResult.data !== prevResult.data ||
       currentResult.error !== prevResult.error
