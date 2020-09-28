@@ -3,7 +3,7 @@ id: query-invalidation
 title: Query Invalidation
 ---
 
-Waiting for queries to become stale before they are fetched again doesn't always work, especially when you know for a fact that a query's data is out of date because of something the user has done. For that purpose, the `queryClient` has an `invalidateQueries` method that lets you intelligently mark queries as stale and potentially refetch them too!
+Waiting for queries to become stale before they are fetched again doesn't always work, especially when you know for a fact that a query's data is out of date because of something the user has done. For that purpose, the `QueryClient` has an `invalidateQueries` method that lets you intelligently mark queries as stale and potentially refetch them too!
 
 ```js
 // Invalidate every query in the cache

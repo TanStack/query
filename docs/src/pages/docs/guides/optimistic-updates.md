@@ -10,7 +10,7 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 ## Updating a list of todos when adding a new todo
 
 ```js
-const queryClient = useQueryClient()
+const client = useQueryClient()
 
 useMutation(updateTodo, {
   // When mutate is called:
