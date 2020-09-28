@@ -63,10 +63,12 @@ export class QueryClient {
     }
   }
 
-  isFetching(): number {
-    return this.cache
-      .getAll()
-      .reduce((acc, q) => (q.state.isFetching ? acc + 1 : acc), 0)
+  isFetching(filters?: QueryFilters): number
+  isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
+  isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
+    const [filters] = parseFilterArgs(arg1, arg2)
+    filters.fetching = true
+    return this.cache.findAll(filters).length
   }
 
   setQueryDefaults<TData = unknown, TError = unknown, TQueryFnData = TData>(

@@ -666,6 +666,15 @@ if (client.isFetching()) {
 
 React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+
+**Returns**
+
+This method returns the number of fetching queries.
+
 ## `client.getDefaultOptions`
 
 The `getDefaultOptions` method returns the default options which have been set when creating the client or with `setDefaultOptions`.
@@ -792,8 +801,17 @@ const client = useQueryClient()
 ```js
 import { useIsFetching } from 'react-query'
 
+// How many queries are fetching?
 const isFetching = useIsFetching()
+
+// How many queries matching the posts prefix are fetching?
+const isFetchingPosts = useIsFetching(['posts'])
 ```
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
 
 **Returns**
 

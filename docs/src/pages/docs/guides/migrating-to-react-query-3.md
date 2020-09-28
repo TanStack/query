@@ -253,6 +253,14 @@ function Component() {
 }
 ```
 
+#### useIsFetching()
+
+The `useIsFetching()` hook now accepts filters which can be used to for example only show a spinner for certain type of queries:
+
+```js
+const fetches = useIsFetching(['posts'])
+```
+
 #### React Native error screens
 
 To prevent showing error screens in React Native when a query fails it was necessary to manually change the Console:

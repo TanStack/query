@@ -35,6 +35,9 @@ A query filter object supports the following properties:
 - `fresh?: boolean`
   - When set to `true` it will match fresh queries.
   - When set to `false` it will match stale queries.
+- `fetching?: boolean`
+  - When set to `true` it will match queries that are currently fetching.
+  - When set to `false` it will match queries that are not fetching.
 - `predicate?: (query: Query) => boolean`
   - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
 - `queryKey?: QueryKey`

@@ -37,6 +37,10 @@ export interface QueryFilters {
    * Include or exclude stale queries
    */
   stale?: boolean
+  /**
+   * Include or exclude fetching queries
+   */
+  fetching?: boolean
 }
 
 export type DataUpdateFunction<TInput, TOutput> = (input: TInput) => TOutput
@@ -202,7 +206,16 @@ export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any>
 ): boolean {
-  const { active, exact, fresh, inactive, predicate, queryKey, stale } = filters
+  const {
+    active,
+    exact,
+    fetching,
+    fresh,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+  } = filters
 
   if (
     queryKey &&
@@ -234,6 +247,10 @@ export function matchQuery(
   }
 
   if (typeof isStale === 'boolean' && query.isStale() !== isStale) {
+    return false
+  }
+
+  if (typeof fetching === 'boolean' && query.isFetching() !== fetching) {
     return false
   }
 
