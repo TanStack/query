@@ -16,7 +16,7 @@ import type {
   RefetchOptions,
   ResultOptions,
 } from './types'
-import type { Query, Action, FetchOptions } from './query'
+import type { Query, QueryState, Action, FetchOptions } from './query'
 import { QueryClient } from './queryClient'
 
 export interface QueryObserverConfig<
@@ -51,6 +51,7 @@ export class QueryObserver<
   private client: QueryClient
   private currentQuery!: Query<TQueryData, TError, TQueryFnData>
   private currentResult!: QueryObserverResult<TData, TError>
+  private currentState?: QueryState<TQueryData, TError>
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private listeners: QueryObserverListener<TData, TError>[]
   private initialDataUpdateCount: number
@@ -354,7 +355,12 @@ export class QueryObserver<
       status = this.previousQueryResult.status
       isPreviousData = true
     } else if (this.options.select && typeof state.data !== 'undefined') {
-      data = this.options.select(state.data)
+      // Use the previous select result if the query data did not change
+      if (this.currentResult && state.data === this.currentState?.data) {
+        data = this.currentResult.data
+      } else {
+        data = this.options.select(state.data)
+      }
     } else {
       data = (state.data as unknown) as TData
     }
@@ -376,6 +382,9 @@ export class QueryObserver<
       remove: this.remove,
       updatedAt,
     }
+
+    // Keep reference to the current state on which the current result is based on
+    this.currentState = state
 
     // Only update if something has changed
     if (

@@ -44,7 +44,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
         setCurrentResult(result)
       }
     })
-  }, [isMounted, observer, setCurrentResult, errorResetBoundary])
+  }, [isMounted, observer, errorResetBoundary])
 
   // Handle suspense
   if (observer.options.suspense || observer.options.useErrorBoundary) {

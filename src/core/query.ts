@@ -291,7 +291,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     })
 
     if (fetchObserver) {
-      fetchObserver.fetch()
+      fetchObserver.refetch()
     }
 
     // Continue any paused fetch

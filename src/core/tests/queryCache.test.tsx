@@ -498,6 +498,44 @@ describe('queryCache', () => {
     expect(observerResult).toMatchObject({ data: { myCount: 1 } })
   })
 
+  test('watchQuery should run the selector again if the data changed', async () => {
+    const key = queryKey()
+    const testCache = new QueryCache()
+    const testClient = new QueryClient({ cache: testCache })
+    let count = 0
+    const observer = testClient.watchQuery(key, () => ({ count }), {
+      select: data => {
+        count++
+        return { myCount: data.count }
+      },
+    })
+    const observerResult1 = await observer.fetch()
+    const observerResult2 = await observer.fetch()
+    testCache.clear()
+    expect(count).toBe(2)
+    expect(observerResult1.data).toMatchObject({ myCount: 0 })
+    expect(observerResult2.data).toMatchObject({ myCount: 1 })
+  })
+
+  test('watchQuery should not run the selector again if the data did not change', async () => {
+    const key = queryKey()
+    const testCache = new QueryCache()
+    const testClient = new QueryClient({ cache: testCache })
+    let count = 0
+    const observer = testClient.watchQuery(key, () => ({ count: 1 }), {
+      select: data => {
+        count++
+        return { myCount: data.count }
+      },
+    })
+    const observerResult1 = await observer.fetch()
+    const observerResult2 = await observer.fetch()
+    testCache.clear()
+    expect(count).toBe(1)
+    expect(observerResult1.data).toMatchObject({ myCount: 1 })
+    expect(observerResult2.data).toMatchObject({ myCount: 1 })
+  })
+
   test('watchQuery should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
     const queryFn = jest.fn()
