@@ -185,44 +185,92 @@ export enum QueryStatus {
   Success = 'success',
 }
 
-export interface QueryResultBase<TResult, TError = unknown> {
+interface QueryResultBaseCommon<TResult> {
   canFetchMore: boolean | undefined
   clear: () => void
-  data: TResult | undefined
-  error: TError | null
   failureCount: number
   fetchMore: (
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions
   ) => Promise<TResult | undefined>
-  isError: boolean
   isFetched: boolean
   isFetchedAfterMount: boolean
   isFetching: boolean
   isFetchingMore?: IsFetchingMoreValue
-  isIdle: boolean
   isInitialData: boolean
-  isLoading: boolean
   isPreviousData: boolean
   isStale: boolean
-  isSuccess: boolean
   refetch: (options?: RefetchOptions) => Promise<TResult | undefined>
   remove: () => void
-  status: QueryStatus
   updatedAt: number
 }
 
-export interface QueryResult<TResult, TError = unknown>
-  extends QueryResultBase<TResult, TError> {}
+interface QueryResultBaseIdle<TResult> extends QueryResultBaseCommon<TResult> {
+  status: QueryStatus.Idle
+  isIdle: true
+  isLoading: false
+  isSuccess: false
+  isError: false
+  data?: undefined
+  error: null
+}
 
-export interface PaginatedQueryResult<TResult, TError = unknown>
-  extends QueryResultBase<TResult, TError> {
+interface QueryResultBaseLoading<TResult>
+  extends QueryResultBaseCommon<TResult> {
+  status: QueryStatus.Loading
+  isIdle: false
+  isLoading: true
+  isSuccess: false
+  isError: false
+  data?: undefined
+  error: null
+}
+
+interface QueryResultBaseSuccess<TResult>
+  extends QueryResultBaseCommon<TResult> {
+  status: QueryStatus.Success
+  isIdle: false
+  isLoading: false
+  isSuccess: true
+  isError: false
+  data: TResult
+  error: null
+}
+
+interface QueryResultBaseError<TResult, TError = unknown>
+  extends QueryResultBaseCommon<TResult> {
+  status: QueryStatus.Error
+  isIdle: false
+  isLoading: false
+  isSuccess: false
+  isError: true
+  data?: undefined
+  error: TError
+}
+
+export type QueryResultBase<TResult, TError = unknown> =
+  | QueryResultBaseIdle<TResult>
+  | QueryResultBaseLoading<TResult>
+  | QueryResultBaseSuccess<TResult>
+  | QueryResultBaseError<TResult, TError>
+
+export type QueryResult<TResult, TError = unknown> = QueryResultBase<
+  TResult,
+  TError
+>
+
+export type PaginatedQueryResult<TResult, TError = unknown> = QueryResultBase<
+  TResult,
+  TError
+> & {
   resolvedData: TResult | undefined
   latestData: TResult | undefined
 }
 
-export interface InfiniteQueryResult<TResult, TError = unknown>
-  extends QueryResultBase<TResult[], TError> {}
+export type InfiniteQueryResult<TResult, TError = unknown> = QueryResultBase<
+  TResult[],
+  TError
+>
 
 export interface MutateConfig<
   TResult,

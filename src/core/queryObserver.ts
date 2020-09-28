@@ -274,7 +274,7 @@ export class QueryObserver<TResult, TError> {
       refetch: this.refetch,
       remove: this.remove,
       updatedAt,
-    }
+    } as QueryResult<TResult, TError>
   }
 
   private updateQuery(): void {
