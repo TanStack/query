@@ -518,6 +518,48 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
+  it('should be able to remove a query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const [, rerender] = React.useState({})
+      const state = useQuery(key, () => ++count)
+
+      states.push(state)
+
+      const { remove } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          remove()
+        }, 5)
+        setTimeout(() => {
+          rerender({})
+        }, 10)
+      }, [remove, rerender])
+
+      return null
+    }
+
+    renderWithClient(client, <Page />)
+
+    await waitForMs(20)
+
+    expect(states.length).toBe(5)
+    // Initial
+    expect(states[0]).toMatchObject({ data: undefined })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Rerender
+    expect(states[2]).toMatchObject({ data: 1 })
+    // Switch
+    expect(states[3]).toMatchObject({ data: undefined })
+    // Fetched
+    expect(states[4]).toMatchObject({ data: 2 })
+  })
+
   it('should share equal data structures between query results', async () => {
     const key = queryKey()
 
