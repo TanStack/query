@@ -6,7 +6,7 @@ title: Paginated / Lagged Queries
 Rendering paginated data is a very common UI pattern and in React Query, it "just works" by including the page information in the query key:
 
 ```js
-const queryInfo = useQuery(['projects', page], fetchProjects)
+const result = useQuery(['projects', page], fetchProjects)
 ```
 
 However, if you run this simple example, you might notice something strange:

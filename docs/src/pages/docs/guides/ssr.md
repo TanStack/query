@@ -58,7 +58,7 @@ To support caching queries on the server and set up hydration:
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
 const client = new QueryClient({ cache })
 
 export default function MyApp({ Component, pageProps }) {
@@ -190,7 +190,7 @@ ReactDOM.hydrate(
 
 Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the client. This happens regardless of error.
 
-Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQueryData` and catch any errors to handle those manually.
 
 ### Staleness is measured from when the query was fetched on the server
 

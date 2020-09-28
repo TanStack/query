@@ -27,10 +27,10 @@ The **unique key** you provide is used internally for refetching, caching, and s
 The query results returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
 ```js
-const queryInfo = useQuery('todos', fetchTodoList)
+const result = useQuery('todos', fetchTodoList)
 ```
 
-The `queryInfo` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
+The `result` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
 
 - `isLoading` or `status === 'loading' - The query has no data and is currently fetching
 - `isError` or `status === 'error'` - The query encountered an error

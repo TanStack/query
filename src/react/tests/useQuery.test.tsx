@@ -281,7 +281,8 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(3))
+    await waitForMs(10)
+    expect(states.length).toBe(2)
 
     expect(states[0]).toMatchObject({
       data: 'prefetched',
@@ -289,11 +290,6 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
     })
     expect(states[1]).toMatchObject({
-      data: 'prefetched',
-      isFetched: true,
-      isFetchedAfterMount: false,
-    })
-    expect(states[2]).toMatchObject({
       data: 'data',
       isFetched: true,
       isFetchedAfterMount: true,
@@ -520,6 +516,48 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
+  it('should be able to remove a query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const [, rerender] = React.useState({})
+      const state = useQuery(key, () => ++count)
+
+      states.push(state)
+
+      const { remove } = state
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          remove()
+        }, 5)
+        setTimeout(() => {
+          rerender({})
+        }, 10)
+      }, [remove, rerender])
+
+      return null
+    }
+
+    renderWithClient(client, <Page />)
+
+    await waitForMs(20)
+
+    expect(states.length).toBe(5)
+    // Initial
+    expect(states[0]).toMatchObject({ data: undefined })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Rerender
+    expect(states[2]).toMatchObject({ data: 1 })
+    // Switch
+    expect(states[3]).toMatchObject({ data: undefined })
+    // Fetched
+    expect(states[4]).toMatchObject({ data: 2 })
   })
 
   it('should share equal data structures between query results', async () => {
@@ -852,7 +890,7 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({
       data: 99,
       isFetching: true,
-      isSuccess: false,
+      isSuccess: true,
       isPreviousData: false,
     })
     // Fetched
@@ -1157,55 +1195,51 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() =>
-      expect(states1).toMatchObject([
-        // First render
-        {
-          data: 'prefetch',
-          isStale: false,
-        },
-        // Second useQuery started fetching
-        {
-          data: 'prefetch',
-          isStale: false,
-        },
-        // Second useQuery data came in
-        {
-          data: 'two',
-          isStale: false,
-        },
-        // Data became stale after 100ms
-        {
-          data: 'two',
-          isStale: true,
-        },
-      ])
-    )
+    await waitForMs(200)
 
-    await waitFor(() =>
-      expect(states2).toMatchObject([
-        // First render, data is stale
-        {
-          data: 'prefetch',
-          isStale: true,
-        },
-        // Second useQuery started fetching
-        {
-          data: 'prefetch',
-          isStale: true,
-        },
-        // Second useQuery data came in
-        {
-          data: 'two',
-          isStale: false,
-        },
-        // Data became stale after 5ms
-        {
-          data: 'two',
-          isStale: true,
-        },
-      ])
-    )
+    expect(states1.length).toBe(4)
+    expect(states2.length).toBe(3)
+
+    expect(states1).toMatchObject([
+      // First render
+      {
+        data: 'prefetch',
+        isStale: false,
+      },
+      // Second useQuery started fetching
+      {
+        data: 'prefetch',
+        isStale: false,
+      },
+      // Second useQuery data came in
+      {
+        data: 'two',
+        isStale: false,
+      },
+      // Data became stale after 100ms
+      {
+        data: 'two',
+        isStale: true,
+      },
+    ])
+
+    expect(states2).toMatchObject([
+      // First render, data is stale and starts fetching
+      {
+        data: 'prefetch',
+        isStale: true,
+      },
+      // Second useQuery data came in
+      {
+        data: 'two',
+        isStale: false,
+      },
+      // Data became stale after 5ms
+      {
+        data: 'two',
+        isStale: true,
+      },
+    ])
   })
 
   it('should re-render when a query becomes stale', async () => {
@@ -1252,9 +1286,10 @@ describe('useQuery', () => {
 
     // 1. Subscribe observer
     // 2. Query init
-    // 3. Query stale
-    // 4. Unsubscribe observer
-    expect(fn).toHaveBeenCalledTimes(4)
+    // 3. Query fetch
+    // 4. Query stale
+    // 5. Unsubscribe observer
+    expect(fn).toHaveBeenCalledTimes(5)
   })
 
   it('should not re-render when a query status changes and notifyOnStatusChange is false', async () => {
@@ -1330,8 +1365,8 @@ describe('useQuery', () => {
 
     rendered.getByText('First Data: init')
     rendered.getByText('Second Data: init')
-    rendered.getByText('First Status: idle')
-    rendered.getByText('Second Status: idle')
+    rendered.getByText('First Status: success')
+    rendered.getByText('Second Status: success')
   })
 
   it('should not override query configuration on render', async () => {
@@ -1622,18 +1657,13 @@ describe('useQuery', () => {
 
     await waitForMs(10)
 
-    expect(states.length).toBe(3)
+    expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
-      data: 'prefetched',
-      isStale: false,
-      isFetching: false,
-    })
-    expect(states[1]).toMatchObject({
       data: 'prefetched',
       isStale: false,
       isFetching: true,
     })
-    expect(states[2]).toMatchObject({
+    expect(states[1]).toMatchObject({
       data: 'data',
       isStale: false,
       isFetching: false,
@@ -1661,18 +1691,13 @@ describe('useQuery', () => {
 
     await waitForMs(10)
 
-    expect(states.length).toBe(3)
+    expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
-      data: 'prefetched',
-      isStale: true,
-      isFetching: false,
-    })
-    expect(states[1]).toMatchObject({
       data: 'prefetched',
       isStale: true,
       isFetching: true,
     })
-    expect(states[2]).toMatchObject({
+    expect(states[1]).toMatchObject({
       data: 'data',
       isStale: true,
       isFetching: false,
@@ -1717,7 +1742,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(key, () => 'data', {
         refetchOnMount: 'always',
-        staleTime: 100,
+        staleTime: 50,
       })
       states.push(state)
       return null
@@ -1725,13 +1750,23 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(3))
-
-    expect(states).toMatchObject([
-      { data: 'prefetched', isStale: false, isFetching: false },
-      { data: 'prefetched', isStale: false, isFetching: true },
-      { data: 'data', isStale: false, isFetching: false },
-    ])
+    await waitForMs(100)
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: 'prefetched',
+      isStale: false,
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isStale: false,
+      isFetching: false,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'data',
+      isStale: true,
+      isFetching: false,
+    })
   })
 
   it('should fetch if initial data is set', async () => {
@@ -1988,25 +2023,21 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() =>
-      expect(states).toMatchObject([
-        {
-          data: 'prefetched',
-          isFetching: false,
-          isStale: true,
-        },
-        {
-          data: 'prefetched',
-          isFetching: true,
-          isStale: true,
-        },
-        {
-          data: 'data',
-          isFetching: false,
-          isStale: true,
-        },
-      ])
-    )
+    await waitForMs(10)
+
+    expect(states.length).toBe(2)
+    expect(states).toMatchObject([
+      {
+        data: 'prefetched',
+        isFetching: true,
+        isStale: true,
+      },
+      {
+        data: 'data',
+        isFetching: false,
+        isStale: true,
+      },
+    ])
   })
 
   it('should refetch after focus regain', async () => {
@@ -2029,7 +2060,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(3))
+    await waitFor(() => expect(states.length).toBe(2))
 
     act(() => {
       // reset visibilityState to original value
@@ -2037,14 +2068,9 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await waitFor(() => expect(states.length).toBe(4))
 
     expect(states).toMatchObject([
-      {
-        data: 'prefetched',
-        isFetching: false,
-        isStale: true,
-      },
       {
         data: 'prefetched',
         isFetching: true,
@@ -2095,7 +2121,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(3))
+    await waitFor(() => expect(states.length).toBe(2))
 
     expect(prefetchQueryFn).toHaveBeenCalledTimes(1)
     expect(queryFn).toHaveBeenCalledTimes(1)

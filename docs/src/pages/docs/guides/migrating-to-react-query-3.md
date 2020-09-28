@@ -147,6 +147,11 @@ The `queryCache.getQueries()` method has been replaced by `cache.findAll()`.
 
 The `queryCache.isFetching` property has been replaced by `client.isFetching()`.
 
+### QueryOptions.enabled
+
+The `enabled` query option will now only disable a query when the value is `false`.
+If needed, values can be casted with `!!userId` or `Boolean(userId)`.
+
 ### QueryOptions.initialStale
 
 The `initialStale` query option has been removed and initial data is now treated as regular data.
@@ -214,9 +219,9 @@ The `client.watchQuery()` method can be used to create and/or watch a query:
 ```js
 const observer = client.watchQuery('posts')
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -230,9 +235,9 @@ const observer = client.watchQueries([
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
 
-observer.subscribe(result => {
+const unsubscribe = observer.subscribe(result => {
   console.log(result)
-  observer.unsubscribe()
+  unsubscribe()
 })
 ```
 
@@ -246,6 +251,14 @@ client.setQueryDefaults('posts', fetchPosts)
 function Component() {
   const { data } = useQuery('posts')
 }
+```
+
+#### useIsFetching()
+
+The `useIsFetching()` hook now accepts filters which can be used to for example only show a spinner for certain type of queries:
+
+```js
+const fetches = useIsFetching(['posts'])
 ```
 
 #### React Native error screens

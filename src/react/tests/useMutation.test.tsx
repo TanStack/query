@@ -18,7 +18,7 @@ describe('useMutation', () => {
         <div>
           <h1 data-testid="title">{data}</h1>
           <button onClick={() => reset()}>reset</button>
-          <button onClick={() => mutate(undefined)}>mutate</button>
+          <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
@@ -61,7 +61,7 @@ describe('useMutation', () => {
             <h1 data-testid="error">{mutationResult.error.message}</h1>
           )}
           <button onClick={() => mutationResult.reset()}>reset</button>
-          <button onClick={() => mutate(undefined)}>mutate</button>
+          <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
@@ -97,8 +97,12 @@ describe('useMutation', () => {
       const [mutate] = useMutation(
         async (vars: { count: number }) => Promise.resolve(vars.count),
         {
-          onSuccess: data => onSuccessMock(data),
-          onSettled: data => onSettledMock(data),
+          onSuccess: data => {
+            onSuccessMock(data)
+          },
+          onSettled: data => {
+            onSettledMock(data)
+          },
         }
       )
 
@@ -150,8 +154,12 @@ describe('useMutation', () => {
           return Promise.reject(error)
         },
         {
-          onError: (error: Error) => onErrorMock(error.message),
-          onSettled: (_data, error) => onSettledMock(error?.message),
+          onError: (error: Error) => {
+            onErrorMock(error.message)
+          },
+          onSettled: (_data, error) => {
+            onSettledMock(error?.message)
+          },
           throwOnError: false,
         }
       )

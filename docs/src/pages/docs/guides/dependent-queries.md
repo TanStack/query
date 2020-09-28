@@ -17,7 +17,7 @@ const { isIdle, data: projects } = useQuery(
   getProjectsByUser,
   {
     // The query will not execute until the userId exists
-    enabled: userId,
+    enabled: !!userId,
   }
 )
 

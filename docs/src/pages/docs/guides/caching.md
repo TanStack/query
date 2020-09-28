@@ -19,7 +19,7 @@ Let's assume we are using the default `cacheTime` of **5 minutes** and the defau
 - A new instance of `useQuery('todos', fetchTodos)` mounts.
   - Since no other queries have been made with this query + variable combination, this query will show a hard loading state and make a network request to fetch the data.
   - It will then cache the data using `'todos'` and `fetchTodos` as the unique identifiers for that cache.
-  - A stale state is scheduled using the `staleTime` option as a delay (defaults to `0`, or immediately).
+  - The hook will mark itself as stale after the configured `staleTime` (defaults to `0`, or immediately).
 - A second instance of `useQuery('todos', fetchTodos)` mounts elsewhere.
   - Because this exact data exist in the cache from the first instance of this query, that data is immediately returned from the cache.
 - A background refetch is triggered for both queries (but only one request), since a new instance appeared on screen.

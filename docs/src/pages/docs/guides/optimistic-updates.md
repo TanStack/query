@@ -16,22 +16,24 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    queryClient.cancelQueries('todos')
+    client.cancelQueries('todos')
 
     // Snapshot the previous value
-    const previousTodos = queryClient.getQueryData('todos')
+    const previousTodos = client.getQueryData('todos')
 
     // Optimistically update to the new value
-    queryClient.setQueryData('todos', old => [...old, newTodo])
+    client.setQueryData('todos', old => [...old, newTodo])
 
-    // Return the snapshotted value
-    return () => queryClient.setQueryData('todos', previousTodos)
+    // Return a context object with the snapshotted value
+    return { previousTodos }
   },
-  // If the mutation fails, use the value returned from onMutate to roll back
-  onError: (err, newTodo, rollback) => rollback(),
+  // If the mutation fails, use the context returned from onMutate to roll back
+  onError: (err, newTodo, context) => {
+    client.setQueryData('todos', context.previousTodos)
+  },
   // Always refetch after error or success:
   onSettled: () => {
-    queryClient.invalidateQueries('todos')
+    client.invalidateQueries('todos')
   },
 })
 ```
@@ -43,22 +45,28 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    queryClient.cancelQueries(['todos', newTodo.id])
+    client.cancelQueries(['todos', newTodo.id])
 
     // Snapshot the previous value
-    const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
+    const previousTodo = client.getQueryData(['todos', newTodo.id])
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos', newTodo.id], newTodo)
+    client.setQueryData(['todos', newTodo.id], newTodo)
 
-    // Return a rollback function
-    return () => queryClient.setQueryData(['todos', newTodo.id], previousTodo)
+    // Return a context object containing a function to rollback
+    return {
+      rollback: () => {
+        client.setQueryData(['todos', newTodo.id], previousTodo)
+      },
+    }
   },
   // If the mutation fails, use the rollback function we returned above
-  onError: (err, newTodo, rollback) => rollback(),
+  onError: (err, newTodo, context) => {
+    context.rollback()
+  },
   // Always refetch after error or success:
   onSettled: newTodo => {
-    queryClient.invalidateQueries(['todos', newTodo.id])
+    client.invalidateQueries(['todos', newTodo.id])
   },
 })
 ```
@@ -68,9 +76,9 @@ You can also use the `onSettled` function in place of the separate `onError` and
 ```js
 useMutation(updateTodo, {
   // ...
-  onSettled: (newTodo, error, variables, rollback) => {
+  onSettled: (newTodo, error, variables, context) => {
     if (error) {
-      rollback()
+      context.rollback()
     }
   },
 })

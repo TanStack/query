@@ -15,6 +15,11 @@ export type ShouldRetryFunction<TError = unknown> = (
   error: TError
 ) => boolean
 
+export type GetFetchMoreVariableFunction<TQueryFnData = unknown> = (
+  lastPage: TQueryFnData,
+  allPages: TQueryFnData[]
+) => unknown
+
 export type RetryDelayFunction = (attempt: number) => number
 
 export interface QueryOptions<
@@ -22,12 +27,6 @@ export interface QueryOptions<
   TError = unknown,
   TQueryFnData = TData
 > {
-  /**
-   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
-   * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
-   * Defaults to `true`.
-   */
-  enabled?: boolean
   /**
    * If `false`, failed queries will not retry by default.
    * If `true`, failed queries will retry infinitely., failureCount: num
@@ -37,11 +36,6 @@ export interface QueryOptions<
   retry?: boolean | number | ShouldRetryFunction<TError>
   retryDelay?: number | RetryDelayFunction
   cacheTime?: number
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If set to `Infinity`, the data will never be stale.
-   */
-  staleTime?: number
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   queryFn?: QueryFunction<TQueryFnData>
   queryKey?: QueryKey
@@ -59,7 +53,19 @@ export interface QueryOptions<
    * This function can be set to automatically get the next cursor for infinite queries.
    * The result will also be used to determine the value of `canFetchMore`.
    */
-  getFetchMore?: (lastPage: TQueryFnData, allPages: TQueryFnData[]) => unknown
+  getFetchMore?: GetFetchMoreVariableFunction<TQueryFnData>
+}
+
+export interface FetchQueryOptions<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData
+> extends QueryOptions<TData, TError, TQueryFnData> {
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If set to `Infinity`, the data will never be considered stale.
+   */
+  staleTime?: number
 }
 
 export interface QueryObserverOptions<
@@ -67,7 +73,13 @@ export interface QueryObserverOptions<
   TError = unknown,
   TQueryFnData = TData,
   TQueryData = TQueryFnData
-> extends QueryOptions<TData, TError, TQueryFnData> {
+> extends FetchQueryOptions<TData, TError, TQueryFnData> {
+  /**
+   * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
+   * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
+   * Defaults to `true`.
+   */
+  enabled?: boolean
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * Defaults to `false`.
@@ -139,9 +151,11 @@ export interface QueryObserverOptions<
   keepPreviousData?: boolean
 }
 
-export interface RefetchOptions {
+export interface ResultOptions {
   throwOnError?: boolean
 }
+
+export interface RefetchOptions extends ResultOptions {}
 
 export interface InvalidateQueryFilters extends QueryFilters {
   refetchActive?: boolean
@@ -152,8 +166,7 @@ export interface InvalidateOptions {
   throwOnError?: boolean
 }
 
-export interface FetchMoreOptions {
-  fetchMoreVariable?: unknown
+export interface FetchMoreOptions extends ResultOptions {
   previous?: boolean
 }
 
@@ -169,7 +182,7 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   fetchMore: (
     fetchMoreVariable?: unknown,
     options?: FetchMoreOptions
-  ) => Promise<TData | undefined>
+  ) => Promise<QueryObserverResult<TData, TError>>
   isError: boolean
   isFetched: boolean
   isFetchedAfterMount: boolean
@@ -180,40 +193,46 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   isPreviousData: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: (options?: RefetchOptions) => Promise<TData | undefined>
+  refetch: (
+    options?: RefetchOptions
+  ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
   updatedAt: number
 }
 
 export interface MutateOptions<
-  TData,
+  TData = unknown,
   TError = unknown,
-  TVariables = unknown,
-  TSnapshot = unknown
+  TVariables = void,
+  TContext = unknown
 > {
-  onSuccess?: (data: TData, variables: TVariables) => Promise<void> | void
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    context: TContext | undefined
+  ) => Promise<void> | void
   onError?: (
     error: TError,
     variables: TVariables,
-    snapshotValue?: TSnapshot
+    context: TContext | undefined
   ) => Promise<void> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
-    snapshotValue?: TSnapshot
+    context: TContext | undefined
   ) => Promise<void> | void
   throwOnError?: boolean
 }
 
 export interface MutationOptions<
-  TData,
+  TData = unknown,
   TError = unknown,
-  TVariables = unknown,
-  TSnapshot = unknown
-> extends MutateOptions<TData, TError, TVariables, TSnapshot> {
-  onMutate?: (variables: TVariables) => Promise<TSnapshot> | TSnapshot
+  TVariables = void,
+  TContext = unknown
+> extends MutateOptions<TData, TError, TVariables, TContext> {
+  onMutate?: (variables: TVariables) => Promise<TContext> | TContext
   useErrorBoundary?: boolean
   suspense?: boolean
 }

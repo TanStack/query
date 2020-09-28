@@ -37,6 +37,10 @@ export interface QueryFilters {
    * Include or exclude stale queries
    */
   stale?: boolean
+  /**
+   * Include or exclude fetching queries
+   */
+  fetching?: boolean
 }
 
 export type DataUpdateFunction<TInput, TOutput> = (input: TInput) => TOutput
@@ -92,6 +96,10 @@ function stableStringifyReplacer(_key: string, value: any): unknown {
 
 function stableStringify(value: any): string {
   return JSON.stringify(value, stableStringifyReplacer)
+}
+
+export function defaultRetryDelay(attempt: number) {
+  return Math.min(1000 * 2 ** attempt, 30000)
 }
 
 export function defaultQueryKeySerializerFn(queryKey: QueryKey): string {
@@ -161,8 +169,8 @@ export function replaceAt<T>(array: T[], index: number, value: T): T[] {
   return copy
 }
 
-export function timeUntilStale(updatedAt: number, staleTime: number): number {
-  return Math.max(updatedAt + staleTime - Date.now(), 0)
+export function timeUntilStale(updatedAt: number, staleTime?: number): number {
+  return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
 
 export function parseQueryArgs<TOptions extends QueryOptions<any, any>>(
@@ -198,7 +206,16 @@ export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any>
 ): boolean {
-  const { active, exact, fresh, inactive, predicate, queryKey, stale } = filters
+  const {
+    active,
+    exact,
+    fetching,
+    fresh,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+  } = filters
 
   if (
     queryKey &&
@@ -230,6 +247,10 @@ export function matchQuery(
   }
 
   if (typeof isStale === 'boolean' && query.isStale() !== isStale) {
+    return false
+  }
+
+  if (typeof fetching === 'boolean' && query.isFetching() !== fetching) {
     return false
   }
 
@@ -273,6 +294,18 @@ export function replaceEqualDeep(a: any, b: any): any {
   }
 
   return b
+}
+
+/**
+ * Shallow compare objects. Only works with objects that always have the same properties.
+ */
+export function shallowEqualObjects<T>(a: T, b: T): boolean {
+  for (const key in a) {
+    if (a[key] !== b[key]) {
+      return false
+    }
+  }
+  return true
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object

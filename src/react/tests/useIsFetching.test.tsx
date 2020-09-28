@@ -1,15 +1,20 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
-import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
+import {
+  mockConsoleError,
+  queryKey,
+  renderWithClient,
+  sleep,
+  waitForMs,
+} from './utils'
 import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
 
 describe('useIsFetching', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
-
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
     const key = queryKey()
 
     function Page() {
@@ -46,6 +51,8 @@ describe('useIsFetching', () => {
 
   it('should not update state while rendering', async () => {
     const consoleMock = mockConsoleError()
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -93,10 +100,63 @@ describe('useIsFetching', () => {
     }
 
     renderWithClient(client, <Page />)
-    await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 2, 1, 0]))
+    await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
     expect(consoleMock).not.toHaveBeenCalled()
     expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
 
     consoleMock.mockRestore()
+  })
+
+  it('should be able to filter', async () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const isFetchings: number[] = []
+
+    function One() {
+      useQuery(key1, async () => {
+        await sleep(10)
+        return 'test'
+      })
+      return null
+    }
+
+    function Two() {
+      useQuery(key2, async () => {
+        await sleep(20)
+        return 'test'
+      })
+      return null
+    }
+
+    function Page() {
+      const [started, setStarted] = React.useState(false)
+      const isFetching = useIsFetching(key1)
+      isFetchings.push(isFetching)
+
+      React.useEffect(() => {
+        setTimeout(() => {
+          setStarted(true)
+        }, 5)
+      }, [])
+
+      if (!started) {
+        return null
+      }
+
+      return (
+        <div>
+          <One />
+          <Two />
+        </div>
+      )
+    }
+
+    renderWithClient(client, <Page />)
+
+    await waitForMs(100)
+    expect(isFetchings).toEqual([0, 0, 1, 0])
   })
 })

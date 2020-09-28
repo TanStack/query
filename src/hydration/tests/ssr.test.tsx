@@ -28,21 +28,8 @@ async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   return value
 }
 
-function PrintStateComponent({
-  componentName,
-  isFetching,
-  isError,
-  data,
-}: any): any {
-  if (isFetching) {
-    return `Loading ${componentName}`
-  }
-
-  if (isError) {
-    return `Error ${componentName}`
-  }
-
-  return `Success ${componentName} - ${data}`
+function PrintStateComponent({ componentName, result }: any): any {
+  return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
 }
 
 describe('Server side rendering with de/rehydration', () => {
@@ -53,16 +40,9 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const { isFetching, isError, data } = useQuery('success', () =>
-        fetchDataSuccess('success!')
-      )
+      const result = useQuery('success', () => fetchDataSuccess('success!'))
       return (
-        <PrintStateComponent
-          componentName="SuccessComponent"
-          isFetching={isFetching}
-          isError={isError}
-          data={data}
-        />
+        <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
     }
 
@@ -88,7 +68,10 @@ describe('Server side rendering with de/rehydration', () => {
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
 
-    expect(markup).toBe('Success SuccessComponent - success')
+    const expectedMarkup =
+      'SuccessComponent - status:success fetching:true data:success'
+
+    expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
     const el = document.createElement('div')
@@ -108,7 +91,7 @@ describe('Server side rendering with de/rehydration', () => {
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
-    expect(el.innerHTML).toBe('Success SuccessComponent - success')
+    expect(el.innerHTML).toBe(expectedMarkup)
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
@@ -128,16 +111,9 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function ErrorComponent() {
-      const { isFetching, isError, data } = useQuery('error', () =>
-        fetchDataError()
-      )
+      const result = useQuery('error', () => fetchDataError())
       return (
-        <PrintStateComponent
-          componentName="ErrorComponent"
-          isFetching={isFetching}
-          isError={isError}
-          data={data}
-        />
+        <PrintStateComponent componentName="ErrorComponent" result={result} />
       )
     }
 
@@ -162,7 +138,10 @@ describe('Server side rendering with de/rehydration', () => {
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
 
-    expect(markup).toBe('Loading ErrorComponent')
+    const expectedMarkup =
+      'ErrorComponent - status:loading fetching:true data:undefined'
+
+    expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
     const el = document.createElement('div')
@@ -182,12 +161,16 @@ describe('Server side rendering with de/rehydration', () => {
     // We expect exactly one console.error here, which is from the
     expect(consoleMock).toHaveBeenCalledTimes(0)
     expect(fetchDataError).toHaveBeenCalledTimes(1)
-    expect(el.innerHTML).toBe('Loading ErrorComponent')
+    expect(el.innerHTML).toBe(expectedMarkup)
 
     jest.runOnlyPendingTimers()
 
     expect(fetchDataError).toHaveBeenCalledTimes(2)
-    await waitFor(() => expect(el.innerHTML).toBe('Error ErrorComponent'))
+    await waitFor(() =>
+      expect(el.innerHTML).toBe(
+        'ErrorComponent - status:error fetching:false data:undefined'
+      )
+    )
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
@@ -205,16 +188,9 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const { isFetching, isError, data } = useQuery('success', () =>
-        fetchDataSuccess('success!')
-      )
+      const result = useQuery('success', () => fetchDataSuccess('success!'))
       return (
-        <PrintStateComponent
-          componentName="SuccessComponent"
-          isFetching={isFetching}
-          isError={isError}
-          data={data}
-        />
+        <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
     }
 
@@ -234,7 +210,10 @@ describe('Server side rendering with de/rehydration', () => {
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     setIsServer(false)
 
-    expect(markup).toBe('Loading SuccessComponent')
+    const expectedMarkup =
+      'SuccessComponent - status:loading fetching:true data:undefined'
+
+    expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
     const el = document.createElement('div')
@@ -254,13 +233,15 @@ describe('Server side rendering with de/rehydration', () => {
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(0)
-    expect(el.innerHTML).toBe('Loading SuccessComponent')
+    expect(el.innerHTML).toBe(expectedMarkup)
 
     jest.runOnlyPendingTimers()
 
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     await waitFor(() =>
-      expect(el.innerHTML).toBe('Success SuccessComponent - success!')
+      expect(el.innerHTML).toBe(
+        'SuccessComponent - status:success fetching:false data:success!'
+      )
     )
 
     ReactDOM.unmountComponentAtNode(el)

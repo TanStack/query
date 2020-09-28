@@ -67,6 +67,6 @@ Since query keys uniquely describe the data they are fetching, they should inclu
 
 ```js
 function Todos({ completed }) {
-  const queryInfo = useQuery(['todos', todoId], () => fetchTodoById(todoId))
+  const result = useQuery(['todos', todoId], () => fetchTodoById(todoId))
 }
 ```

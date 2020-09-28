@@ -15,7 +15,8 @@ import { getTodos, postTodo } from '../my-api'
 
 // Create a cache
 const cache = new QueryCache()
-// Creat a client
+
+// Create a client
 const client = new QueryClient({ cache })
 
 function App() {
@@ -37,7 +38,7 @@ function Todos() {
   // Mutations
   const [addTodo] = useMutation(postTodo, {
     onSuccess: () => {
-      // Invalidate/Refetch
+      // Invalidate and refetch
       client.invalidateQueries('todos')
     },
   })
