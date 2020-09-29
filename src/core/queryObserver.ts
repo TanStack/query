@@ -4,6 +4,7 @@ import {
   isServer,
   isValidTimeout,
   noop,
+  replaceEqualDeep,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
@@ -51,7 +52,7 @@ export class QueryObserver<
   private client: QueryClient
   private currentQuery!: Query<TQueryData, TError, TQueryFnData>
   private currentResult!: QueryObserverResult<TData, TError>
-  private currentState?: QueryState<TQueryData, TError>
+  private currentResultState?: QueryState<TQueryData, TError>
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private listeners: QueryObserverListener<TData, TError>[]
   private initialDataUpdateCount: number
@@ -356,10 +357,13 @@ export class QueryObserver<
       isPreviousData = true
     } else if (this.options.select && typeof state.data !== 'undefined') {
       // Use the previous select result if the query data did not change
-      if (this.currentResult && state.data === this.currentState?.data) {
+      if (this.currentResult && state.data === this.currentResultState?.data) {
         data = this.currentResult.data
       } else {
         data = this.options.select(state.data)
+        if (this.options.structuralSharing !== false) {
+          data = replaceEqualDeep(this.currentResult?.data, data)
+        }
       }
     } else {
       data = (state.data as unknown) as TData
@@ -384,7 +388,7 @@ export class QueryObserver<
     }
 
     // Keep reference to the current state on which the current result is based on
-    this.currentState = state
+    this.currentResultState = state
 
     // Only update if something has changed
     if (

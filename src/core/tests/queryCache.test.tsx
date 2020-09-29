@@ -536,6 +536,21 @@ describe('queryCache', () => {
     expect(observerResult2.data).toMatchObject({ myCount: 1 })
   })
 
+  test('watchQuery should structurally share the selector', async () => {
+    const key = queryKey()
+    const testCache = new QueryCache()
+    const testClient = new QueryClient({ cache: testCache })
+    let count = 0
+    const observer = testClient.watchQuery(key, () => ({ count: ++count }), {
+      select: () => ({ myCount: 1 }),
+    })
+    const observerResult1 = await observer.fetch()
+    const observerResult2 = await observer.fetch()
+    testCache.clear()
+    expect(count).toBe(2)
+    expect(observerResult1.data).toBe(observerResult2.data)
+  })
+
   test('watchQuery should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
     const queryFn = jest.fn()
