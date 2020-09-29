@@ -338,7 +338,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     fetchOptions?: FetchOptions
   ): Promise<TData> {
     if (this.promise) {
-      if (fetchOptions?.fetchMore && this.state.data) {
+      if (fetchOptions?.fetchMore && this.state.updatedAt) {
         // Silently cancel current fetch if the user wants to fetch more
         await this.cancel(true)
       } else {
@@ -371,7 +371,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
     this.promise = (async () => {
       try {
-        let data: any
+        let data: TData
 
         if (options.infinite) {
           data = await this.startInfiniteFetch(options, params, fetchOptions)
@@ -563,7 +563,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
           const shouldRetry =
             retry === true ||
-            failureCount < retry! ||
+            (typeof retry === 'number' && failureCount < retry) ||
             (typeof retry === 'function' && retry(failureCount, error))
 
           if (!shouldRetry) {
@@ -660,7 +660,7 @@ export function queryReducer<TData, TError>(
         failureCount: 0,
         isFetching: true,
         isFetchingMore: action.isFetchingMore || false,
-        status: typeof state.data === 'undefined' ? 'loading' : 'success',
+        status: state.updatedAt ? 'success' : 'loading',
       }
     case 'success':
       return {
