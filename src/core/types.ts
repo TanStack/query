@@ -327,16 +327,50 @@ export type MutationResultPair<TResult, TError, TVariables, TSnapshot> = [
   MutationResult<TResult, TError>
 ]
 
-export interface MutationResult<TResult, TError = unknown> {
-  status: QueryStatus
-  data: TResult | undefined
-  error: TError | null
-  isIdle: boolean
-  isLoading: boolean
-  isSuccess: boolean
-  isError: boolean
+interface MutationResultCommon {
   reset: () => void
 }
+interface MutationResultIdle extends MutationResultCommon {
+  status: QueryStatus.Idle
+  data?: undefined
+  error?: null
+  isIdle: true
+  isLoading: false
+  isSuccess: false
+  isError: false
+}
+interface MutationResultLoading extends MutationResultCommon {
+  status: QueryStatus.Loading
+  data?: undefined
+  error?: null
+  isIdle: false
+  isLoading: true
+  isSuccess: false
+  isError: false
+}
+interface MutationResultSuccess<TResult> extends MutationResultCommon {
+  status: QueryStatus
+  data: TResult
+  error?: null
+  isIdle: false
+  isLoading: false
+  isSuccess: true
+  isError: false
+}
+interface MutationResultError<TError> extends MutationResultCommon {
+  status: QueryStatus
+  data?: undefined
+  error: TError
+  isIdle: false
+  isLoading: false
+  isSuccess: true
+  isError: false
+}
+export type MutationResult<TResult, TError = unknown> =
+  | MutationResultIdle
+  | MutationResultLoading
+  | MutationResultSuccess<TResult>
+  | MutationResultError<TError>
 
 export interface ReactQueryConfig<TResult = unknown, TError = unknown> {
   queries?: ReactQueryQueriesConfig<TResult, TError>

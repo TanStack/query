@@ -199,10 +199,7 @@ export function useMutation<
     dispatch({ type: ActionType.Reset })
   }, [dispatch])
 
-  const result: MutationResult<TResult, TError> = {
-    ...state,
-    reset,
-  }
+  const result = { ...state, reset } as MutationResult<TResult, TError>
 
   return [mutate, result]
 }
