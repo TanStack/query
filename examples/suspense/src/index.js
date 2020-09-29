@@ -1,9 +1,11 @@
 import React, { lazy } from "react";
 import ReactDOM from "react-dom";
 import {
-  useQueryCache,
+  useQueryClient,
   QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
+  QueryErrorResetBoundary,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
@@ -17,8 +19,10 @@ import Button from "./components/Button";
 const Projects = lazy(() => import("./components/Projects"));
 const Project = lazy(() => import("./components/Project"));
 
-const queryCache = new QueryCache({
-  defaultConfig: {
+const cache = new QueryCache();
+const client = new QueryClient({
+  cache,
+  defaultOptions: {
     queries: {
       retry: 0,
       suspense: true,
@@ -28,14 +32,14 @@ const queryCache = new QueryCache({
 
 function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }
 
 function Example() {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
@@ -45,7 +49,7 @@ function Example() {
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              cache.prefetchQuery("projects", fetchProjects);
+              queryClient.prefetchQuery("projects", fetchProjects);
             }
             return !old;
           });
@@ -56,29 +60,33 @@ function Example() {
 
       <hr />
 
-      <ErrorBoundary
-        fallbackRender={({ error, resetErrorBoundary }) => (
-          <div>
-            There was an error!{" "}
-            <Button onClick={() => resetErrorBoundary()}>Try again</Button>
-            <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
-          </div>
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            fallbackRender={({ error, resetErrorBoundary }) => (
+              <div>
+                There was an error!{" "}
+                <Button onClick={() => resetErrorBoundary()}>Try again</Button>
+                <pre style={{ whiteSpace: "normal" }}>{error.message}</pre>
+              </div>
+            )}
+            onReset={reset}
+          >
+            <React.Suspense fallback={<h1>Loading projects...</h1>}>
+              {showProjects ? (
+                activeProject ? (
+                  <Project
+                    activeProject={activeProject}
+                    setActiveProject={setActiveProject}
+                  />
+                ) : (
+                  <Projects setActiveProject={setActiveProject} />
+                )
+              ) : null}
+            </React.Suspense>
+          </ErrorBoundary>
         )}
-        onReset={() => cache.resetErrorBoundaries()}
-      >
-        <React.Suspense fallback={<h1>Loading projects...</h1>}>
-          {showProjects ? (
-            activeProject ? (
-              <Project
-                activeProject={activeProject}
-                setActiveProject={setActiveProject}
-              />
-            ) : (
-              <Projects setActiveProject={setActiveProject} />
-            )
-          ) : null}
-        </React.Suspense>
-      </ErrorBoundary>
+      </QueryErrorResetBoundary>
       <ReactQueryDevtools initialIsOpen />
     </>
   );

@@ -3,25 +3,27 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryCache,
+  useQueryClient,
   useMutation,
   QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
 function Example() {
-  const cache = useQueryCache()
+  const queryClient = useQueryClient()
   const [text, setText] = React.useState('')
   const { status, data, error, isFetching } = useQuery('todos', async () => {
     const { data } = await axios.get('/api/data')
@@ -36,11 +38,11 @@ function Example() {
       // an error
       onMutate: text => {
         setText('')
-        cache.cancelQueries('todos')
+        queryClient.cancelQueries('todos')
 
-        const previousValue = cache.getQueryData('todos')
+        const previousValue = queryClient.getQueryData('todos')
 
-        cache.setQueryData('todos', old => ({
+        queryClient.setQueryData('todos', old => ({
           ...old,
           items: [...old.items, text],
         }))
@@ -49,10 +51,10 @@ function Example() {
       },
       // On failure, roll back to the previous value
       onError: (err, variables, previousValue) =>
-        cache.setQueryData('todos', previousValue),
+        queryClient.setQueryData('todos', previousValue),
       // After success or failure, refetch the todos query
       onSettled: () => {
-        cache.invalidateQueries('todos')
+        queryClient.invalidateQueries('todos')
       },
     }
   )

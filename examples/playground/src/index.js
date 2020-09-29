@@ -2,10 +2,10 @@ import React from "react";
 import ReactDOM from "react-dom";
 
 import {
-  ReactQueryCacheProvider,
-  ReactQueryConfigProvider,
+  QueryClient,
+  QueryClientProvider,
   useQuery,
-  useQueryCache,
+  useQueryClient,
   useMutation,
   QueryCache,
 } from "react-query";
@@ -28,7 +28,8 @@ let errorRate = 0.05;
 let queryTimeMin = 1000;
 let queryTimeMax = 2000;
 
-const queryCache = new QueryCache();
+const cache = new QueryCache();
+const client = new QueryClient({ cache });
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);
@@ -47,96 +48,89 @@ function Root() {
     queryTimeMax = localFetchTimeMax;
   }, [localErrorRate, localFetchTimeMax, localFetchTimeMin]);
 
-  const queryConfig = React.useMemo(
-    () => ({
+  React.useEffect(() => {
+    client.setDefaultOptions({
       queries: {
         staleTime,
         cacheTime,
       },
-    }),
-    [cacheTime, staleTime]
-  );
+    });
+  }, [cacheTime, staleTime]);
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
-      <ReactQueryConfigProvider config={queryConfig}>
-        <p>
-          The "staleTime" and "cacheTime" durations have been altered in this
-          example to show how query stale-ness and query caching work on a
-          granular level
-        </p>
-        <div>
-          Stale Time:{" "}
-          <input
-            type="number"
-            min="0"
-            step="1000"
-            value={staleTime}
-            onChange={(e) => setStaleTime(parseFloat(e.target.value, 10))}
-            style={{ width: "100px" }}
-          />
-        </div>
-        <div>
-          Cache Time:{" "}
-          <input
-            type="number"
-            min="0"
-            step="1000"
-            value={cacheTime}
-            onChange={(e) => setCacheTime(parseFloat(e.target.value, 10))}
-            style={{ width: "100px" }}
-          />
-        </div>
-        <br />
-        <div>
-          Error Rate:{" "}
-          <input
-            type="number"
-            min="0"
-            max="1"
-            step=".05"
-            value={localErrorRate}
-            onChange={(e) => setErrorRate(parseFloat(e.target.value, 10))}
-            style={{ width: "100px" }}
-          />
-        </div>
-        <div>
-          Fetch Time Min:{" "}
-          <input
-            type="number"
-            min="1"
-            step="500"
-            value={localFetchTimeMin}
-            onChange={(e) =>
-              setLocalFetchTimeMin(parseFloat(e.target.value, 10))
-            }
-            style={{ width: "60px" }}
-          />{" "}
-        </div>
-        <div>
-          Fetch Time Max:{" "}
-          <input
-            type="number"
-            min="1"
-            step="500"
-            value={localFetchTimeMax}
-            onChange={(e) =>
-              setLocalFetchTimeMax(parseFloat(e.target.value, 10))
-            }
-            style={{ width: "60px" }}
-          />
-        </div>
-        <br />
-        <App />
-        <br />
-        <ReactQueryDevtools initialIsOpen />
-      </ReactQueryConfigProvider>
-    </ReactQueryCacheProvider>
+    <QueryClientProvider client={client}>
+      <p>
+        The "staleTime" and "cacheTime" durations have been altered in this
+        example to show how query stale-ness and query caching work on a
+        granular level
+      </p>
+      <div>
+        Stale Time:{" "}
+        <input
+          type="number"
+          min="0"
+          step="1000"
+          value={staleTime}
+          onChange={(e) => setStaleTime(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <div>
+        Cache Time:{" "}
+        <input
+          type="number"
+          min="0"
+          step="1000"
+          value={cacheTime}
+          onChange={(e) => setCacheTime(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <br />
+      <div>
+        Error Rate:{" "}
+        <input
+          type="number"
+          min="0"
+          max="1"
+          step=".05"
+          value={localErrorRate}
+          onChange={(e) => setErrorRate(parseFloat(e.target.value, 10))}
+          style={{ width: "100px" }}
+        />
+      </div>
+      <div>
+        Fetch Time Min:{" "}
+        <input
+          type="number"
+          min="1"
+          step="500"
+          value={localFetchTimeMin}
+          onChange={(e) => setLocalFetchTimeMin(parseFloat(e.target.value, 10))}
+          style={{ width: "60px" }}
+        />{" "}
+      </div>
+      <div>
+        Fetch Time Max:{" "}
+        <input
+          type="number"
+          min="1"
+          step="500"
+          value={localFetchTimeMax}
+          onChange={(e) => setLocalFetchTimeMax(parseFloat(e.target.value, 10))}
+          style={{ width: "60px" }}
+        />
+      </div>
+      <br />
+      <App />
+      <br />
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   );
 }
 
 function App() {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
   const [editingIndex, setEditingIndex] = React.useState(null);
   const [views, setViews] = React.useState(["", "fruit", "grape"]);
   // const [views, setViews] = React.useState([""]);
@@ -144,7 +138,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => cache.invalidateQueries(true)}>
+        <button onClick={() => queryClient.invalidateQueries(true)}>
           Force Refetch All
         </button>
       </div>
@@ -238,7 +232,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 }
 
 function EditTodo({ editingIndex, setEditingIndex }) {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
 
   // Don't attempt to query until editingIndex is truthy
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
@@ -262,8 +256,8 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const [mutate, mutationState] = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      cache.invalidateQueries("todos");
-      cache.setQueryData(["todo", { id: editingIndex }], data);
+      queryClient.invalidateQueries("todos");
+      queryClient.setQueryData(["todo", { id: editingIndex }], data);
     },
   });
 
@@ -341,12 +335,12 @@ function EditTodo({ editingIndex, setEditingIndex }) {
 }
 
 function AddTodo() {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
   const [name, setName] = React.useState("");
 
   const [mutate, { status, error }] = useMutation(postTodo, {
     onSuccess: () => {
-      cache.invalidateQueries("todos");
+      queryClient.invalidateQueries("todos");
     },
   });
 

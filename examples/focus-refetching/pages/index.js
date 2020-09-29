@@ -3,25 +3,27 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryCache,
+  useQueryClient,
   useMutation,
   QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
 function Example() {
-  const cache = useQueryCache()
+  const queryClient = useQueryClient()
 
   const { status, data, error } = useQuery('user', async () => {
     const { data } = await axios.get('/api/user')
@@ -29,11 +31,11 @@ function Example() {
   })
 
   const [logoutMutation] = useMutation(logout, {
-    onSuccess: () => cache.invalidateQueries('user'),
+    onSuccess: () => queryClient.invalidateQueries('user'),
   })
 
   const [loginMutation] = useMutation(login, {
-    onSuccess: () => cache.invalidateQueries('user'),
+    onSuccess: () => queryClient.invalidateQueries('user'),
   })
 
   return (

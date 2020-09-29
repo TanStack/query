@@ -1,25 +1,27 @@
 import React from 'react'
 import axios from 'axios'
 import {
-  usePaginatedQuery,
-  useQueryCache,
+  useQuery,
+  useQueryClient,
   QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
+const cache = new QueryCache()
+const client = new QueryClient({ cache })
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={client}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
 function Example() {
-  const cache = useQueryCache()
+  const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
   const fetchProjects = React.useCallback(async (key, page = 0) => {
@@ -27,20 +29,18 @@ function Example() {
     return data
   }, [])
 
-  const {
-    status,
-    resolvedData,
-    latestData,
-    error,
-    isFetching,
-  } = usePaginatedQuery(['projects', page], fetchProjects, {})
+  const { status, data, error, isFetching, isPreviousData } = useQuery(
+    ['projects', page],
+    fetchProjects,
+    { keepPreviousData: true }
+  )
 
   // Prefetch the next page!
   React.useEffect(() => {
-    if (latestData?.hasMore) {
-      cache.prefetchQuery(['projects', page + 1], fetchProjects)
+    if (data?.hasMore) {
+      queryClient.prefetchQuery(['projects', page + 1], fetchProjects)
     }
-  }, [latestData, fetchProjects, page])
+  }, [data, fetchProjects, page])
 
   return (
     <div>
@@ -57,10 +57,10 @@ function Example() {
       ) : status === 'error' ? (
         <div>Error: {error.message}</div>
       ) : (
-        // `resolvedData` will either resolve to the latest page's data
+        // `data` will either resolve to the latest page's data
         // or if fetching a new page, the last successful page's data
         <div>
-          {resolvedData.projects.map(project => (
+          {data.projects.map(project => (
             <p key={project.id}>{project.name}</p>
           ))}
         </div>
@@ -73,12 +73,10 @@ function Example() {
         Previous Page
       </button>{' '}
       <button
-        onClick={() =>
-          // Here, we use `latestData` so the Next Page
-          // button isn't relying on potentially old data
-          setPage(old => (!latestData || !latestData.hasMore ? old : old + 1))
-        }
-        disabled={!latestData || !latestData.hasMore}
+        onClick={() => {
+          setPage(old => (data?.hasMore ? old + 1 : old))
+        }}
+        disabled={isPreviousData || !data?.hasMore}
       >
         Next Page
       </button>
