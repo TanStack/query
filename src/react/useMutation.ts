@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useMountedCallback } from './utils'
 import { getStatusProps } from '../core/utils'
-import { getConsole } from '../core/setConsole'
+import { getLogger } from '../core/logger'
 import { useQueryClient } from './QueryClientProvider'
 import {
   MutateFunction,
@@ -142,7 +142,7 @@ export function useMutation<
 
         return data
       } catch (error) {
-        getConsole().error(error)
+        getLogger().error(error)
         await latestOptions.onError?.(error, variables, context)
         await mutateOptions.onError?.(error, variables, context)
         await latestOptions.onSettled?.(undefined, error, variables, context)

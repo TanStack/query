@@ -1,21 +1,21 @@
 import { replaceEqualDeep, partialDeepEqual, isPlainObject } from '../utils'
-import { QueryClient, QueryCache, setConsole } from '../..'
+import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
 
 describe('core/utils', () => {
-  it('setConsole should override Console object', async () => {
+  it('setLogger should override the default logger', async () => {
     const key = queryKey()
 
     const cache = new QueryCache()
     const client = new QueryClient({ cache })
 
-    const mockConsole = {
+    const logger: Logger = {
       error: jest.fn(),
       log: jest.fn(),
       warn: jest.fn(),
     }
 
-    setConsole(mockConsole)
+    setLogger(logger)
 
     await client.prefetchQuery(
       key,
@@ -27,9 +27,9 @@ describe('core/utils', () => {
       }
     )
 
-    expect(mockConsole.error).toHaveBeenCalled()
+    expect(logger.error).toHaveBeenCalled()
 
-    setConsole(console)
+    setLogger(console)
   })
 
   describe('isPlainObject', () => {

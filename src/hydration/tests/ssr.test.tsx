@@ -5,7 +5,7 @@ import { waitFor } from '@testing-library/react'
 
 import {
   useQuery,
-  setConsole,
+  setLogger,
   QueryClient,
   QueryClientProvider,
   QueryCache,
@@ -98,7 +98,7 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on error', async () => {
-    setConsole({
+    setLogger({
       log: console.log,
       warn: console.warn,
       error: () => undefined,
@@ -174,7 +174,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
-    setConsole({
+    setLogger({
       log: console.log,
       warn: console.warn,
       error: console.error,

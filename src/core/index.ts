@@ -7,7 +7,7 @@ export {
   setBatchUpdatesFn,
   setUpdateFn,
 } from './notifyManager'
-export { setConsole } from './setConsole'
+export { setLogger } from './logger'
 export { setFocusHandler } from './setFocusHandler'
 export { setOnlineHandler } from './setOnlineHandler'
 export {
@@ -19,4 +19,4 @@ export {
 
 // Types
 export * from './types'
-export type { ConsoleObject } from './setConsole'
+export type { Logger } from './logger'

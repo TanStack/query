@@ -1,11 +1,11 @@
-import { setBatchUpdatesFn, setConsole } from '../core'
-import { Console } from './Console'
+import { setBatchUpdatesFn, setLogger } from '../core'
+import { logger } from './logger'
 import { unstable_batchedUpdates } from './reactBatchedUpdates'
 
 setBatchUpdatesFn(unstable_batchedUpdates)
 
-if (Console) {
-  setConsole(Console)
+if (logger) {
+  setLogger(logger)
 }
 
 export { QueryClientProvider, useQueryClient } from './QueryClientProvider'

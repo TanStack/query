@@ -333,9 +333,9 @@
           "editUrl": "/reference/useQueryErrorResetBoundary.md"
         },
         {
-          "title": "setConsole",
-          "path": "/reference/setConsole",
-          "editUrl": "/reference/setConsole.md"
+          "title": "setLogger",
+          "path": "/reference/setLogger",
+          "editUrl": "/reference/setLogger.md"
         },
         {
           "title": "hydration/Hydrate",

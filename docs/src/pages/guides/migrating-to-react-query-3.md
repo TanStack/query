@@ -171,6 +171,38 @@ In version 3 only the component where the option has been set will not refetch o
 
 The `QueryResult.clear()` method has been renamed to `QueryResult.remove()`.
 
+### setConsole
+
+The `setConsole` function has been replaced by `setLogger`:
+
+```js
+import { setLogger } from 'react-query'
+
+// Log with Sentry
+setLogger({
+  error: error => {
+    Sentry.captureException(error)
+  },
+})
+
+// Log with Winston
+setLogger(winston.createLogger())
+```
+
+To prevent showing error screens in React Native when a query fails it was necessary to manually change the Console:
+
+```js
+import { setConsole } from 'react-query'
+
+setConsole({
+  log: console.log,
+  warn: console.warn,
+  error: console.warn,
+})
+```
+
+In version 3 this is done automatically when React Query is used in React Native.
+
 ### New features
 
 Some new features have also been added besides the API changes, performance improvements and file size reduction.
@@ -260,22 +292,6 @@ The `useIsFetching()` hook now accepts filters which can be used to for example 
 ```js
 const fetches = useIsFetching(['posts'])
 ```
-
-#### React Native error screens
-
-To prevent showing error screens in React Native when a query fails it was necessary to manually change the Console:
-
-```js
-import { setConsole } from 'react-query'
-
-setConsole({
-  log: console.log,
-  warn: console.warn,
-  error: console.warn,
-})
-```
-
-In version 3 this is done automatically when React Query is used in React Native.
 
 #### Core separation
 

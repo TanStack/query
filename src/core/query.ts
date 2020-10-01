@@ -26,7 +26,7 @@ import type {
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
-import { getConsole } from './setConsole'
+import { getLogger } from './logger'
 
 // TYPES
 
@@ -396,7 +396,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
         // Log error
         if (!isCancelledError(error)) {
-          getConsole().error(error)
+          getLogger().error(error)
         }
 
         // Cleanup
