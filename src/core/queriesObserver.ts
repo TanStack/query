@@ -134,9 +134,11 @@ export class QueriesObserver {
 
   private notify(): void {
     const { result, listeners } = this
-    listeners.forEach(listener => {
-      notifyManager.schedule(() => {
-        listener(result)
+    notifyManager.batch(() => {
+      listeners.forEach(listener => {
+        notifyManager.schedule(() => {
+          listener(result)
+        })
       })
     })
   }

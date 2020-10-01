@@ -5,8 +5,8 @@ import {
   mockConsoleError,
   queryKey,
   renderWithClient,
+  setActTimeout,
   sleep,
-  waitForMs,
 } from './utils'
 import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
 
@@ -85,7 +85,7 @@ describe('useIsFetching', () => {
       const [renderSecond, setRenderSecond] = React.useState(false)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setRenderSecond(true)
         }, 10)
       }, [])
@@ -137,7 +137,7 @@ describe('useIsFetching', () => {
       isFetchings.push(isFetching)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setStarted(true)
         }, 5)
       }, [])
@@ -156,7 +156,7 @@ describe('useIsFetching', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
     expect(isFetchings).toEqual([0, 0, 1, 0])
   })
 })

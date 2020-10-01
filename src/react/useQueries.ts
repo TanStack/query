@@ -32,7 +32,7 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
           setCurrentResult(result)
         }
       }),
-    [isMounted, observer, setCurrentResult]
+    [isMounted, observer]
   )
 
   return currentResult

@@ -2,13 +2,13 @@ import { act, waitFor, fireEvent } from '@testing-library/react'
 import React from 'react'
 
 import {
-  sleep,
   expectType,
   queryKey,
   mockVisibilityState,
   mockConsoleError,
-  waitForMs,
+  sleep,
   renderWithClient,
+  setActTimeout,
 } from './utils'
 import { useQuery, QueryClient, UseQueryResult, QueryCache } from '../..'
 
@@ -281,7 +281,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
     expect(states.length).toBe(2)
 
     expect(states[0]).toMatchObject({
@@ -392,7 +392,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -413,7 +413,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -436,7 +436,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({ data: 'prefetched' })
@@ -456,7 +456,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -479,7 +479,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -501,7 +501,7 @@ describe('useQuery', () => {
       const { refetch } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 5)
       }, [refetch])
@@ -511,7 +511,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -532,10 +532,10 @@ describe('useQuery', () => {
       const { remove } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           remove()
         }, 5)
-        setTimeout(() => {
+        setActTimeout(() => {
           rerender({})
         }, 10)
       }, [remove, rerender])
@@ -545,7 +545,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(20)
+    await sleep(20)
 
     expect(states.length).toBe(5)
     // Initial
@@ -588,7 +588,7 @@ describe('useQuery', () => {
       const { refetch } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 10)
       }, [refetch])
@@ -628,7 +628,7 @@ describe('useQuery', () => {
       results.push(result)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           client.refetchQueries(key)
         }, 10)
       }, [])
@@ -638,7 +638,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(50)
+    await sleep(50)
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'set', isFetching: false })
@@ -656,7 +656,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           client.invalidateQueries(key)
         }, 10)
       }, [])
@@ -666,7 +666,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
@@ -714,7 +714,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           client.refetchQueries({ queryKey: key })
         }, 20)
       }, [])
@@ -724,7 +724,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({
@@ -766,7 +766,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           client.invalidateQueries(key)
         }, 20)
       }, [])
@@ -776,7 +776,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
@@ -806,7 +806,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setCount(1)
         }, 20)
       }, [])
@@ -874,7 +874,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setCount(1)
         }, 20)
       }, [])
@@ -946,11 +946,11 @@ describe('useQuery', () => {
       React.useEffect(() => {
         refetch()
 
-        setTimeout(() => {
+        setActTimeout(() => {
           setCount(1)
         }, 20)
 
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 30)
       }, [refetch])
@@ -1038,13 +1038,13 @@ describe('useQuery', () => {
       const { refetch } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setCount(11)
         }, 20)
-        setTimeout(() => {
+        setActTimeout(() => {
           setCount(12)
         }, 30)
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 40)
       }, [refetch])
@@ -1118,7 +1118,7 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 10)
       }, [refetch])
@@ -1195,7 +1195,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(200)
+    await sleep(200)
 
     expect(states1.length).toBe(4)
     expect(states2.length).toBe(3)
@@ -1256,7 +1256,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({ isStale: true })
@@ -1281,7 +1281,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(20)
+    await sleep(20)
     unsubscribe()
 
     // 1. Subscribe observer
@@ -1313,14 +1313,16 @@ describe('useQuery', () => {
       const { refetch } = state
 
       React.useEffect(() => {
-        setTimeout(refetch, 10)
+        setActTimeout(() => {
+          refetch()
+        }, 10)
       }, [refetch])
       return null
     }
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(30)
+    await sleep(30)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1412,7 +1414,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(20)
+    await sleep(20)
 
     // Should be 2 instead of 3
     expect(renders).toBe(2)
@@ -1448,7 +1450,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(20)
+    await sleep(20)
 
     // Should be 2 instead of 5
     expect(renders).toBe(2)
@@ -1565,13 +1567,13 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     act(() => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
@@ -1594,13 +1596,13 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     act(() => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
@@ -1623,13 +1625,13 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     act(() => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
@@ -1655,7 +1657,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1689,7 +1691,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1750,7 +1752,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
     expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({
       data: 'prefetched',
@@ -1783,7 +1785,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(50)
+    await sleep(50)
 
     expect(states.length).toBe(2)
 
@@ -1814,7 +1816,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -1842,7 +1844,9 @@ describe('useQuery', () => {
       states.push(state)
 
       React.useEffect(() => {
-        setTimeout(() => setCount(1), 10)
+        setActTimeout(() => {
+          setCount(1)
+        }, 10)
       }, [])
 
       return null
@@ -1850,7 +1854,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(3)
     // Initial
@@ -2023,7 +2027,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(states.length).toBe(2)
     expect(states).toMatchObject([
@@ -2282,7 +2286,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject({ data: 'data', isFetching: true })
@@ -2301,7 +2305,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject({ data: 0, isFetching: true })
@@ -2324,7 +2328,7 @@ describe('useQuery', () => {
       results.push(result)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setShouldFetch(false)
         }, 5)
       }, [])
@@ -2334,7 +2338,7 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(50)
+    await sleep(50)
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })

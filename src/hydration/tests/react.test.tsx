@@ -3,7 +3,7 @@ import { render } from '@testing-library/react'
 
 import { QueryClient, QueryClientProvider, QueryCache, useQuery } from '../..'
 import { dehydrate, useHydrate, Hydrate } from '../'
-import { waitForMs } from '../../react/tests/utils'
+import { sleep } from '../../react/tests/utils'
 
 describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = value =>
@@ -42,7 +42,7 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      await waitForMs(10)
+      await sleep(10)
       rendered.getByText('string')
       cache.clear()
     })
@@ -71,7 +71,7 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      await waitForMs(10)
+      await sleep(10)
       rendered.getByText('string')
 
       const intermediateCache = new QueryCache()
@@ -94,7 +94,7 @@ describe('React hydration', () => {
 
       // Existing query data should be overwritten if older,
       // so this should have changed
-      await waitForMs(10)
+      await sleep(10)
       rendered.getByText('should change')
       // New query data should be available immediately
       rendered.getByText('added string')
@@ -124,7 +124,7 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      await waitForMs(10)
+      await sleep(10)
       rendered.getByText('string')
 
       const newClientQueryCache = new QueryCache()
@@ -140,7 +140,7 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      await waitForMs(10)
+      await sleep(10)
       rendered.getByText('string')
 
       cache.clear()

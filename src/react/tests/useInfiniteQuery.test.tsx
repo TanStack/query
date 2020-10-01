@@ -2,11 +2,11 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import React from 'react'
 
 import {
-  sleep,
   queryKey,
-  waitForMs,
+  sleep,
   mockConsoleError,
   renderWithClient,
+  setActTimeout,
 } from './utils'
 import {
   useInfiniteQuery,
@@ -148,11 +148,12 @@ describe('useInfiniteQuery', () => {
       const { fetchMore } = state
 
       React.useEffect(() => {
-        setTimeout(async () => {
-          try {
-            await fetchMore()
-            noThrow = true
-          } catch (error) {}
+        setActTimeout(() => {
+          fetchMore()
+            .then(() => {
+              noThrow = true
+            })
+            .catch(() => undefined)
         }, 20)
       }, [fetchMore])
 
@@ -189,10 +190,10 @@ describe('useInfiniteQuery', () => {
       const { fetchMore } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           fetchMore()
         }, 50)
-        setTimeout(() => {
+        setActTimeout(() => {
           setOrder('asc')
         }, 100)
       }, [fetchMore])
@@ -304,7 +305,7 @@ describe('useInfiniteQuery', () => {
       const { fetchMore } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           fetchMore(undefined, { previous: true })
         }, 20)
       }, [fetchMore])
@@ -368,10 +369,10 @@ describe('useInfiniteQuery', () => {
       const { refetch, fetchMore } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 100)
-        setTimeout(() => {
+        setActTimeout(() => {
           fetchMore()
         }, 110)
       }, [fetchMore, refetch])
@@ -442,7 +443,7 @@ describe('useInfiniteQuery', () => {
       const { refetch, fetchMore } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           fetchMore()
         }, 10)
       }, [fetchMore, refetch])
@@ -452,7 +453,7 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(100)
+    await sleep(100)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -492,7 +493,7 @@ describe('useInfiniteQuery', () => {
       const { fetchMore } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           fetchMore(5)
         }, 20)
       }, [fetchMore])
@@ -557,12 +558,12 @@ describe('useInfiniteQuery', () => {
       const { refetch } = state
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           client.setQueryData(key, [7, 8])
           setFirstPage(7)
         }, 20)
 
-        setTimeout(() => {
+        setActTimeout(() => {
           refetch()
         }, 50)
       }, [refetch])

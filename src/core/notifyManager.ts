@@ -4,7 +4,45 @@ import { scheduleMicrotask } from './utils'
 
 type NotifyCallback = () => void
 
-type BatchUpdateFunction = (callback: () => void) => void
+type UpdateFunction = (callback: () => void) => void
+
+type BatchUpdatesFunction = (callback: () => void) => void
+
+// GETTERS AND SETTERS
+
+// Default to a dummy "update" implementation that just runs the callback
+let updateFn: UpdateFunction = (callback: () => void) => {
+  callback()
+}
+
+// Default to a dummy "batch update" implementation that just runs the callback
+let batchUpdatesFn: BatchUpdatesFunction = (callback: () => void) => {
+  callback()
+}
+
+/**
+ * Use this function to set a custom update function.
+ * This can be used to for example wrap updates with `React.act` while running tests.
+ */
+export function setUpdateFn(fn: UpdateFunction) {
+  updateFn = fn
+}
+
+export function getUpdateFn(): UpdateFunction {
+  return updateFn
+}
+
+/**
+ * Use this function to set a custom batch function to batch updates together into a single render pass.
+ * By default React Query will use the batch function provided by ReactDOM or React Native.
+ */
+export function setBatchUpdatesFn(fn: BatchUpdatesFunction) {
+  batchUpdatesFn = fn
+}
+
+export function getBatchUpdatesFn(): BatchUpdatesFunction {
+  return batchUpdatesFn
+}
 
 // CLASS
 
@@ -32,7 +70,7 @@ export class NotifyManager {
       this.queue.push(notify)
     } else {
       scheduleMicrotask(() => {
-        notify()
+        updateFn(notify)
       })
     }
   }
@@ -42,32 +80,14 @@ export class NotifyManager {
     this.queue = []
     if (queue.length) {
       scheduleMicrotask(() => {
-        const batchedUpdates = getBatchedUpdates()
-        batchedUpdates(() => {
+        batchUpdatesFn(() => {
           queue.forEach(notify => {
-            notify()
+            updateFn(notify)
           })
         })
       })
     }
   }
-}
-
-// GETTERS AND SETTERS
-
-// Default to a dummy "batch" implementation that just runs the callback
-let batchedUpdates: BatchUpdateFunction = (callback: () => void) => {
-  callback()
-}
-
-// Allow injecting another batching function later
-export function setBatchedUpdates(fn: BatchUpdateFunction) {
-  batchedUpdates = fn
-}
-
-// Supply a getter just to skip dealing with ESM bindings
-export function getBatchedUpdates(): BatchUpdateFunction {
-  return batchedUpdates
 }
 
 // SINGLETON

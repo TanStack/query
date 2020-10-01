@@ -1,9 +1,7 @@
-import { render, waitFor } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import React from 'react'
 
 import { QueryClient, QueryClientProvider } from '../..'
-
-let queryKeyCount = 0
 
 export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
   return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
@@ -29,6 +27,7 @@ export function mockConsoleError() {
   return consoleMock
 }
 
+let queryKeyCount = 0
 export function queryKey(): string {
   queryKeyCount++
   return `query_${queryKeyCount}`
@@ -40,13 +39,10 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-export function waitForMs(ms: number) {
-  const end = Date.now() + ms
-  return waitFor(() => {
-    if (Date.now() < end) {
-      throw new Error('Time not elapsed yet')
-    }
-  })
+export function setActTimeout(fn: () => void, ms?: number) {
+  setTimeout(() => {
+    act(fn)
+  }, ms)
 }
 
 /**

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { queryKey, renderWithClient, waitForMs } from './utils'
+import { queryKey, renderWithClient, sleep } from './utils'
 import { useQueries, QueryClient, UseQueryResult, QueryCache } from '../..'
 
 describe('useQueries', () => {
@@ -23,7 +23,7 @@ describe('useQueries', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitForMs(10)
+    await sleep(10)
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])

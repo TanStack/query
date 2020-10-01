@@ -1,8 +1,8 @@
-import { setBatchedUpdates, setConsole } from '../core'
+import { setBatchUpdatesFn, setConsole } from '../core'
 import { Console } from './Console'
 import { unstable_batchedUpdates } from './reactBatchedUpdates'
 
-setBatchedUpdates(unstable_batchedUpdates)
+setBatchUpdatesFn(unstable_batchedUpdates)
 
 if (Console) {
   setConsole(Console)
