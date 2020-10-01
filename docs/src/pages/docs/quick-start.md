@@ -49,8 +49,8 @@ function Todos() {
       <button
         onClick={() =>
           addTodo({
-            id: Date.now()
-            title: 'Do Laundry',
+            id: Date.now(),
+            title: 'Do Laundry'
           })
         }
       >
