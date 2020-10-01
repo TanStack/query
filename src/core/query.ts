@@ -474,17 +474,18 @@ export class Query<TResult, TError> {
     }
 
     // Create function to fetch the data
-    const fetchData = () => {
+    const fetchData = async () => {
       if (isFetchingMore) {
         return fetchPage(prevPages, previous, fetchMoreVariable)
       } else if (!prevPages.length) {
         return fetchPage([])
       } else {
-        let promise = fetchPage([])
-        for (let i = 1; i < prevPages.length; i++) {
-          promise = promise.then(fetchPage)
+        let pages: TResult[] = []
+        for (let i = 0; i < prevPages.length; i++) {
+          pages = await fetchPage(pages)
+          if (!hasMorePages(config, pages)) break
         }
-        return promise
+        return pages
       }
     }
 
