@@ -30,7 +30,7 @@ const {
   onSettled,
   onSuccess,
   queryFnParamsFilter,
-  queryKeySerializerFn,
+  queryKeyHashFn,
   refetchInterval,
   refetchIntervalInBackground,
   refetchOnMount,
@@ -58,8 +58,7 @@ const result = useQuery({
 - `queryKey: string | unknown[]`
   - **Required**
   - The query key to use for this query.
-  - If a string is passed, it will be used as the query key.
-  - If an array is passed, each item will be serialized into a stable query key. See [Query Keys](./guides/query-keys) for more information.
+  - The query key will be hashed into a stable hash. See [Query Keys](./guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (...params: unknown[]) => Promise<TData>`
   - **Required, but only if no default query function has been defined**

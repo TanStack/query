@@ -1,8 +1,9 @@
 import type { Query } from './query'
 import type {
-  QueryOptions,
   QueryFunction,
   QueryKey,
+  QueryKeyHashFunction,
+  QueryOptions,
   QueryStatus,
 } from './types'
 
@@ -77,62 +78,8 @@ export function functionalUpdate<TInput, TOutput>(
     : updater
 }
 
-function stableStringifyReplacer(_key: string, value: any): unknown {
-  if (typeof value === 'function') {
-    throw new Error()
-  }
-
-  if (isPlainObject(value)) {
-    return Object.keys(value)
-      .sort()
-      .reduce((result, key) => {
-        result[key] = value[key]
-        return result
-      }, {} as any)
-  }
-
-  return value
-}
-
-function stableStringify(value: any): string {
-  return JSON.stringify(value, stableStringifyReplacer)
-}
-
 export function defaultRetryDelay(attempt: number) {
   return Math.min(1000 * 2 ** attempt, 30000)
-}
-
-export function defaultQueryKeySerializerFn(queryKey: QueryKey): string {
-  try {
-    return stableStringify(queryKey)
-  } catch {
-    throw new Error('Failed to serialize query key')
-  }
-}
-
-export function hashQueryKey(
-  queryKey: QueryKey,
-  options?: QueryOptions<any, any>
-): string {
-  return options?.queryKeySerializerFn
-    ? options.queryKeySerializerFn(queryKey)
-    : defaultQueryKeySerializerFn(queryKey)
-}
-
-export function deepIncludes(a: any, b: any): boolean {
-  if (a === b) {
-    return true
-  }
-
-  if (typeof a !== typeof b) {
-    return false
-  }
-
-  if (typeof a === 'object') {
-    return !Object.keys(b).some(key => !deepIncludes(a[key], b[key]))
-  }
-
-  return false
 }
 
 export function isValidTimeout(value: any): value is number {
@@ -217,13 +164,15 @@ export function matchQuery(
     stale,
   } = filters
 
-  if (
-    queryKey &&
-    (exact
-      ? query.queryHash !== hashQueryKey(queryKey, query.options)
-      : !deepIncludes(query.queryKey, queryKey))
-  ) {
-    return false
+  if (isQueryKey(queryKey)) {
+    if (exact) {
+      const hashFn = getQueryKeyHashFn(query.options)
+      if (query.queryHash !== hashFn(queryKey)) {
+        return false
+      }
+    } else if (!partialDeepEqual(query.queryKey, queryKey)) {
+      return false
+    }
   }
 
   let isActive
@@ -259,6 +208,54 @@ export function matchQuery(
   }
 
   return true
+}
+
+export function getQueryKeyHashFn(
+  options?: QueryOptions<any, any>
+): QueryKeyHashFunction {
+  return options?.queryKeyHashFn || hashQueryKey
+}
+
+/**
+ * Default query keys hash function.
+ */
+export function hashQueryKey(queryKey: QueryKey): string {
+  return stableValueHash(queryKey)
+}
+
+/**
+ * Hashes the value into a stable hash.
+ */
+export function stableValueHash(value: any): string {
+  return JSON.stringify(value, (_, val) =>
+    isPlainObject(val)
+      ? Object.keys(val)
+          .sort()
+          .reduce((result, key) => {
+            result[key] = val[key]
+            return result
+          }, {} as any)
+      : val
+  )
+}
+
+/**
+ * Checks if `b` partially matches with `a`.
+ */
+export function partialDeepEqual(a: any, b: any): boolean {
+  if (a === b) {
+    return true
+  }
+
+  if (typeof a !== typeof b) {
+    return false
+  }
+
+  if (typeof a === 'object') {
+    return !Object.keys(b).some(key => !partialDeepEqual(a[key], b[key]))
+  }
+
+  return false
 }
 
 /**

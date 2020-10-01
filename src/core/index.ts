@@ -7,9 +7,9 @@ export { setFocusHandler } from './setFocusHandler'
 export { setOnlineHandler } from './setOnlineHandler'
 export {
   CancelledError,
+  hashQueryKey,
   isCancelledError,
   isError,
-  defaultQueryKeySerializerFn,
 } from './utils'
 
 // Types

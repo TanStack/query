@@ -1,6 +1,6 @@
 import {
   QueryFilters,
-  hashQueryKey,
+  getQueryKeyHashFn,
   matchQuery,
   parseFilterArgs,
 } from './utils'
@@ -32,8 +32,9 @@ export class QueryCache {
   build<TData, TError, TQueryFnData>(
     options: QueryOptions<TData, TError, TQueryFnData>
   ): Query<TData, TError, TQueryFnData> {
+    const hashFn = getQueryKeyHashFn(options)
     const queryKey = options.queryKey!
-    const queryHash = options.queryHash || hashQueryKey(queryKey, options)
+    const queryHash = options.queryHash ?? hashFn(queryKey)
     let query = this.get<TData, TError, TQueryFnData>(queryHash)
 
     if (!query) {

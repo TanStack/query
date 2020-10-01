@@ -105,9 +105,9 @@ describe('Server Side Rendering', () => {
       </QueryClientProvider>
     )
 
-    const keys = customCache.getAll().map(query => query.queryHash)
+    const keys = customCache.getAll().map(query => query.queryKey)
 
-    expect(keys).toEqual([`["${key}",1]`])
+    expect(keys).toEqual([[key, 1]])
   })
 
   it('should not call setTimeout', async () => {

@@ -8,7 +8,7 @@ export type InitialDataFunction<T> = () => T | undefined
 
 export type InitialStaleFunction = () => boolean
 
-export type QueryKeySerializerFunction = (queryKey: QueryKey) => string
+export type QueryKeyHashFunction = (queryKey: QueryKey) => string
 
 export type ShouldRetryFunction<TError = unknown> = (
   failureCount: number,
@@ -38,9 +38,9 @@ export interface QueryOptions<
   cacheTime?: number
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   queryFn?: QueryFunction<TQueryFnData>
-  queryKey?: QueryKey
   queryHash?: string
-  queryKeySerializerFn?: QueryKeySerializerFunction
+  queryKey?: QueryKey
+  queryKeyHashFn?: QueryKeyHashFunction
   queryFnParamsFilter?: (args: unknown[]) => unknown[]
   initialData?: TData | InitialDataFunction<TData>
   infinite?: true

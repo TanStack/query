@@ -43,9 +43,9 @@ useQuery(['todos', { type: 'done' }], ...)
 // queryKey === ['todos', { type: 'done' }]
 ```
 
-### Query Keys are serialized deterministically!
+### Query Keys are hashed deterministically!
 
-This means that no matter the order of keys in objects, all of the following queries would result in the same final query key of `['todos', { page, status }]`:
+This means that no matter the order of keys in objects, all of the following queries are considered equal:
 
 ```js
 useQuery(['todos', { status, page }], ...)

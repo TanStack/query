@@ -920,7 +920,7 @@ describe('queryCache', () => {
   })
 
   describe('QueryCache', () => {
-    test('merges defaultOptions so providing a queryFn does not overwrite the default queryKeySerializerFn', async () => {
+    test('merges defaultOptions', async () => {
       const key = queryKey()
 
       const queryFn = () => 'data'

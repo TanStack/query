@@ -1,4 +1,4 @@
-import { difference, hashQueryKey, replaceAt } from './utils'
+import { difference, getQueryKeyHashFn, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
@@ -79,14 +79,12 @@ export class QueriesObserver {
       let observer: QueryObserver | undefined = prevObservers[i]
 
       const defaultedOptions = this.client.defaultQueryObserverOptions(options)
-
-      defaultedOptions.queryHash = hashQueryKey(
-        defaultedOptions.queryKey!,
-        defaultedOptions
-      )
+      const hashFn = getQueryKeyHashFn(defaultedOptions)
+      defaultedOptions.queryHash = hashFn(defaultedOptions.queryKey!)
 
       if (
-        observer?.getCurrentQuery().queryHash !== defaultedOptions.queryHash
+        !observer ||
+        observer.getCurrentQuery().queryHash !== defaultedOptions.queryHash
       ) {
         hasIndexChange = true
         observer = prevObservers.find(

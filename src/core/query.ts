@@ -4,7 +4,6 @@ import {
   defaultRetryDelay,
   ensureArray,
   functionalUpdate,
-  hashQueryKey,
   isCancelable,
   isCancelledError,
   isDocumentVisible,
@@ -34,7 +33,7 @@ import { getConsole } from './setConsole'
 export interface QueryConfig<TData, TError, TQueryFnData> {
   cache: QueryCache
   queryKey: QueryKey
-  queryHash?: string
+  queryHash: string
   options?: QueryOptions<TData, TError, TQueryFnData>
 }
 
@@ -121,8 +120,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     this.observers = []
     this.cache = config.cache
     this.queryKey = config.queryKey
-    this.queryHash =
-      config.queryHash ?? hashQueryKey(config.queryKey, this.options)
+    this.queryHash = config.queryHash
     this.state = getDefaultState(this.options)
     this.scheduleGc()
   }

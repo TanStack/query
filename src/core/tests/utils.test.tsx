@@ -1,4 +1,4 @@
-import { replaceEqualDeep, deepIncludes, isPlainObject } from '../utils'
+import { replaceEqualDeep, partialDeepEqual, isPlainObject } from '../utils'
 import { QueryClient, QueryCache, setConsole } from '../..'
 import { queryKey } from '../../react/tests/utils'
 
@@ -50,17 +50,17 @@ describe('core/utils', () => {
     })
   })
 
-  describe('deepIncludes', () => {
+  describe('partialDeepEqual', () => {
     it('should return `true` if a includes b', () => {
       const a = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
       const b = { a: { b: 'b' }, c: 'c', d: [] }
-      expect(deepIncludes(a, b)).toEqual(true)
+      expect(partialDeepEqual(a, b)).toEqual(true)
     })
 
     it('should return `false` if a does not include b', () => {
       const a = { a: { b: 'b' }, c: 'c', d: [] }
       const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      expect(deepIncludes(a, b)).toEqual(false)
+      expect(partialDeepEqual(a, b)).toEqual(false)
     })
   })
 
