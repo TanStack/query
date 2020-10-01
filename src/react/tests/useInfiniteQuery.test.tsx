@@ -20,11 +20,11 @@ const initialItems = (page: number): Result => {
   }
 }
 
-const fetchItems = async (page: number, ts: number): Promise<Result> => {
+const fetchItems = async (page: number, ts: number, nextId?: any): Promise<Result> => {
   await sleep(10)
   return {
     items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
-    nextId: page + 1,
+    nextId: nextId ?? page + 1,
     ts,
   }
 }
@@ -1062,5 +1062,138 @@ describe('useInfiniteQuery', () => {
 
     // ensure that Item: 4 is no longer rendered
     expect(rendered.queryAllByText('Item: 4')).toHaveLength(0)
+  })
+
+  it('should compute canFetchMore correctly for falsy getFetchMore return value on refetching', async () => {
+    const key = queryKey()
+    const MAX = 2
+  
+    function Page() {
+      const fetchCountRef = React.useRef(0)
+      const [isRemovedLastPage, setIsRemovedLastPage] = React.useState<boolean>(
+        false
+      )
+      const {
+        status,
+        data,
+        error,
+        isFetching,
+        isFetchingMore,
+        fetchMore,
+        canFetchMore,
+        refetch,
+      } = useInfiniteQuery<Result, Error, [string, number]>(
+        key,
+        (_key, nextId = 0) =>
+          fetchItems(
+            nextId,
+            fetchCountRef.current++,
+            nextId === MAX || (nextId === MAX - 1 && isRemovedLastPage)
+              ? false
+              : undefined
+          ),
+        {
+          getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
+        }
+      )
+  
+      return (
+        <div>
+          <h1>Pagination</h1>
+          {status === 'loading' ? (
+            'Loading...'
+          ) : status === 'error' ? (
+            <span>Error: {error?.message}</span>
+          ) : (
+            <>
+              <div>Data:</div>
+              {data?.map((page, i) => (
+                <div key={i}>
+                  <div>
+                    Page {i}: {page.ts}
+                  </div>
+                  <div key={i}>
+                    {page.items.map(item => (
+                      <p key={item}>Item: {item}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div>
+                <button
+                  onClick={() => fetchMore()}
+                  disabled={!canFetchMore || Boolean(isFetchingMore)}
+                >
+                  {isFetchingMore
+                    ? 'Loading more...'
+                    : canFetchMore
+                    ? 'Load More'
+                    : 'Nothing more to load'}
+                </button>
+                <button onClick={() => refetch()}>Refetch</button>
+                <button onClick={() => setIsRemovedLastPage(true)}>
+                  Remove Last Page
+                </button>
+              </div>
+              <div>
+                {isFetching && !isFetchingMore
+                  ? 'Background Updating...'
+                  : null}
+              </div>
+            </>
+          )}
+        </div>
+      )
+    }
+  
+    const rendered = render(<Page />)
+  
+    rendered.getByText('Loading...')
+  
+    await waitFor(() => {
+      rendered.getByText('Item: 9')
+      rendered.getByText('Page 0: 0')
+    })
+  
+    fireEvent.click(rendered.getByText('Load More'))
+  
+    await waitFor(() => rendered.getByText('Loading more...'))
+  
+    await waitFor(() => {
+      rendered.getByText('Item: 19')
+      rendered.getByText('Page 0: 0')
+      rendered.getByText('Page 1: 1')
+    })
+  
+    fireEvent.click(rendered.getByText('Load More'))
+  
+    await waitFor(() => rendered.getByText('Loading more...'))
+  
+    await waitFor(() => {
+      rendered.getByText('Item: 29')
+      rendered.getByText('Page 0: 0')
+      rendered.getByText('Page 1: 1')
+      rendered.getByText('Page 2: 2')
+    })
+  
+    rendered.getByText('Nothing more to load')
+  
+    fireEvent.click(rendered.getByText('Remove Last Page'))
+
+    await waitForMs(10)
+
+    fireEvent.click(rendered.getByText('Refetch'))
+
+    await waitFor(() => rendered.getByText('Background Updating...'))
+  
+    await waitFor(() => {
+      rendered.getByText('Page 0: 3')
+      rendered.getByText('Page 1: 4')
+    })
+  
+    expect(rendered.queryByText('Item: 29')).toBeNull()
+    expect(rendered.queryByText('Page 2: 5')).toBeNull()
+  
+    rendered.getByText('Nothing more to load')
   })
 })
