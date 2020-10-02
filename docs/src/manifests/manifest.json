@@ -189,6 +189,11 @@
           "title": "Does this replace [Redux, MobX, etc]?",
           "path": "/guides/does-this-replace-client-state",
           "editUrl": "/guides/does-this-replace-client-state.md"
+        },
+        {
+          "title": "Migrating to React Query 3",
+          "path": "/guides/migrating-to-react-query-3",
+          "editUrl": "/guides/migrating-to-react-query-3.md"
         }
       ]
     },
@@ -303,14 +308,14 @@
           "editUrl": "/reference/useIsFetching.md"
         },
         {
-          "title": "QueryCache",
-          "path": "/reference/QueryCache",
-          "editUrl": "/reference/QueryCache.md"
-        },
-        {
           "title": "QueryClient",
           "path": "/reference/QueryClient",
           "editUrl": "/reference/QueryClient.md"
+        },
+        {
+          "title": "QueryClientProvider",
+          "path": "/reference/QueryClientProvider",
+          "editUrl": "/reference/QueryClientProvider.md"
         },
         {
           "title": "useQueryClient",
@@ -318,9 +323,9 @@
           "editUrl": "/reference/useQueryClient.md"
         },
         {
-          "title": "QueryClientProvider",
-          "path": "/reference/QueryClientProvider",
-          "editUrl": "/reference/QueryClientProvider.md"
+          "title": "QueryCache",
+          "path": "/reference/QueryCache",
+          "editUrl": "/reference/QueryCache.md"
         },
         {
           "title": "QueryErrorResetBoundary",
