@@ -15,6 +15,7 @@ const supporters = [
   ['Gabe Ragland', 'https://github.com/gragland'],
   ['Matt Wood', 'https://github.com/mattwoodnyc'],
   ['Joshua Turner', 'https://github.com/joshua-turner'],
+  ['Fillip Peyton', 'https://github.com/fillippeyton'],
 ]
 
 const fans = [
@@ -32,6 +33,7 @@ const fans = [
   'Juliano Farias (@frontendwizard)',
   'Kristóf Poduszló (@kripod)',
   'Peter Pistorius (@peterp)',
+  'Agustín Villalobos (@agustin-v)',
 ]
 
 const Home = () => {
