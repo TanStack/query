@@ -452,40 +452,47 @@ export class Query<TResult, TError> {
     const isFetchingMore = fetchMore ? (previous ? 'previous' : 'next') : false
     const prevPages: TResult[] = (this.state.data as any) || []
 
-    // Create function to fetch a page
-    const fetchPage = async (
+    // Create function to fetch pages
+    const fetchPages = async (
       pages: TResult[],
+      numberOfPages: number,
       prepend?: boolean,
-      cursor?: unknown
+      initialCursor?: unknown
     ) => {
-      const lastPage = getLastPage(pages, prepend)
+      let i = 0
+      let newPages = [...pages]
+      let lastPage = getLastPage(newPages, prepend)
+      let cursor = initialCursor
 
       if (
         typeof cursor === 'undefined' &&
         typeof lastPage !== 'undefined' &&
         config.getFetchMore
       ) {
-        cursor = config.getFetchMore(lastPage, pages)
+        cursor = config.getFetchMore(lastPage, newPages)
       }
 
-      const page = await config.queryFn(...params, cursor)
+      while (i < numberOfPages) {
+        lastPage = await config.queryFn(...params, cursor)
+        newPages = prepend ? [lastPage, ...newPages] : [...newPages, lastPage]
 
-      return prepend ? [page, ...pages] : [...pages, page]
+        cursor = config.getFetchMore
+          ? config.getFetchMore(lastPage, newPages)
+          : undefined
+
+        if (!hasMorePages(config, newPages)) break
+        else i += 1
+      }
+
+      return newPages
     }
 
     // Create function to fetch the data
     const fetchData = async () => {
       if (isFetchingMore) {
-        return fetchPage(prevPages, previous, fetchMoreVariable)
-      } else if (!prevPages.length) {
-        return fetchPage([])
+        return fetchPages(prevPages, 1, previous, fetchMoreVariable)
       } else {
-        let pages: TResult[] = []
-        for (let i = 0; i < prevPages.length; i++) {
-          pages = await fetchPage(pages)
-          if (!hasMorePages(config, pages)) break
-        }
-        return pages
+        return fetchPages([], prevPages.length || 1)
       }
     }
 
