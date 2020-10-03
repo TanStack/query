@@ -468,12 +468,13 @@ export class Query<TResult, TError> {
         cursor = config.getFetchMore(lastPage, pages)
       }
 
-      if (Boolean(cursor) || typeof lastPage === 'undefined') {
-        const page = await config.queryFn(...params, cursor)
-        return prepend ? [page, ...pages] : [...pages, page]
+      if (!Boolean(cursor) && typeof lastPage !== 'undefined') {
+        return pages
       }
 
-      return pages
+      const page = await config.queryFn(...params, cursor)
+
+      return prepend ? [page, ...pages] : [...pages, page]
     }
 
     // Create function to fetch the data
