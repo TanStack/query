@@ -468,6 +468,10 @@ export class Query<TResult, TError> {
         cursor = config.getFetchMore(lastPage, pages)
       }
 
+      if (!Boolean(cursor) && typeof lastPage !== 'undefined') {
+        return pages
+      }
+
       const page = await config.queryFn(...params, cursor)
 
       return prepend ? [page, ...pages] : [...pages, page]
