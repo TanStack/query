@@ -452,47 +452,42 @@ export class Query<TResult, TError> {
     const isFetchingMore = fetchMore ? (previous ? 'previous' : 'next') : false
     const prevPages: TResult[] = (this.state.data as any) || []
 
-    // Create function to fetch pages
-    const fetchPages = async (
+    // Create function to fetch a page
+    const fetchPage = async (
       pages: TResult[],
-      numberOfPages: number,
       prepend?: boolean,
-      initialCursor?: unknown
+      cursor?: unknown
     ) => {
-      let i = 0
-      let newPages = [...pages]
-      let lastPage = getLastPage(newPages, prepend)
-      let cursor = initialCursor
+      const lastPage = getLastPage(pages, prepend)
 
       if (
         typeof cursor === 'undefined' &&
         typeof lastPage !== 'undefined' &&
         config.getFetchMore
       ) {
-        cursor = config.getFetchMore(lastPage, newPages)
+        cursor = config.getFetchMore(lastPage, pages)
       }
 
-      while (i < numberOfPages) {
-        lastPage = await config.queryFn(...params, cursor)
-        newPages = prepend ? [lastPage, ...newPages] : [...newPages, lastPage]
-
-        cursor = config.getFetchMore
-          ? config.getFetchMore(lastPage, newPages)
-          : undefined
-
-        if (!hasMorePages(config, newPages)) break
-        else i += 1
+      if (Boolean(cursor) || typeof lastPage === 'undefined') {
+        const page = await config.queryFn(...params, cursor)
+        return prepend ? [page, ...pages] : [...pages, page]
       }
 
-      return newPages
+      return pages
     }
 
     // Create function to fetch the data
-    const fetchData = async () => {
+    const fetchData = () => {
       if (isFetchingMore) {
-        return fetchPages(prevPages, 1, previous, fetchMoreVariable)
+        return fetchPage(prevPages, previous, fetchMoreVariable)
+      } else if (!prevPages.length) {
+        return fetchPage([])
       } else {
-        return fetchPages([], prevPages.length || 1)
+        let promise = fetchPage([])
+        for (let i = 1; i < prevPages.length; i++) {
+          promise = promise.then(fetchPage)
+        }
+        return promise
       }
     }
 
