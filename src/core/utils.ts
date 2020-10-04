@@ -170,7 +170,9 @@ export function matchQuery(
       if (query.queryHash !== hashFn(queryKey)) {
         return false
       }
-    } else if (!partialDeepEqual(query.queryKey, queryKey)) {
+    } else if (
+      !partialDeepEqual(ensureArray(query.queryKey), ensureArray(queryKey))
+    ) {
       return false
     }
   }

@@ -822,14 +822,17 @@ describe('queryCache', () => {
     await testClient.prefetchQuery(key1, () => 'data1')
     await testClient.prefetchQuery(key2, () => 'data2')
     await testClient.prefetchQuery([{ a: 'a', b: 'b' }], () => 'data3')
+    await testClient.prefetchQuery(['posts', 1], () => 'data4')
     testClient.invalidateQueries(key2)
     const query1 = testCache.find(key1)!
     const query2 = testCache.find(key2)!
     const query3 = testCache.find([{ a: 'a', b: 'b' }])!
+    const query4 = testCache.find(['posts', 1])!
 
     expect(testCache.findAll(key1)).toEqual([query1])
-    expect(testCache.findAll()).toEqual([query1, query2, query3])
-    expect(testCache.findAll({})).toEqual([query1, query2, query3])
+    expect(testCache.findAll([key1])).toEqual([query1])
+    expect(testCache.findAll()).toEqual([query1, query2, query3, query4])
+    expect(testCache.findAll({})).toEqual([query1, query2, query3, query4])
     expect(testCache.findAll(key1, { active: false })).toEqual([query1])
     expect(testCache.findAll(key1, { active: true })).toEqual([])
     expect(testCache.findAll(key1, { stale: true })).toEqual([])
@@ -869,6 +872,7 @@ describe('queryCache', () => {
     expect(
       testCache.findAll({ predicate: query => query === query3 })
     ).toEqual([query3])
+    expect(testCache.findAll('posts')).toEqual([query4])
   })
 
   test('query interval is cleared when unsubscribed to a refetchInterval query', async () => {
