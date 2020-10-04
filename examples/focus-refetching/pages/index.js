@@ -26,15 +26,15 @@ function Example() {
   const client = useQueryClient()
 
   const { status, data, error } = useQuery('user', async () => {
-    const { data } = await axios.get('/api/user')
-    return data
+    const res = await axios.get('/api/user')
+    return res.data
   })
 
-  const [logoutMutation] = useMutation(logout, {
+  const logoutMutation = useMutation(logout, {
     onSuccess: () => client.invalidateQueries('user'),
   })
 
-  const [loginMutation] = useMutation(login, {
+  const loginMutation = useMutation(login, {
     onSuccess: () => client.invalidateQueries('user'),
   })
 
@@ -57,7 +57,7 @@ function Example() {
           <div>
             <button
               onClick={() => {
-                logoutMutation()
+                logoutMutation.mutate()
               }}
             >
               Logout
@@ -70,7 +70,7 @@ function Example() {
           <div>
             <button
               onClick={() => {
-                loginMutation()
+                loginMutation.mutate()
               }}
             >
               Login

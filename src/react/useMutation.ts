@@ -1,15 +1,17 @@
 import React from 'react'
 
-import { useMountedCallback } from './utils'
-import { getStatusProps } from '../core/utils'
+import { useIsMounted } from './utils'
+import { getStatusProps, noop } from '../core/utils'
 import { getLogger } from '../core/logger'
+import { notifyManager } from '../core/notifyManager'
 import { useQueryClient } from './QueryClientProvider'
 import {
+  MutateAsyncFunction,
   MutateFunction,
   MutationFunction,
   MutationStatus,
   UseMutationOptions,
-  UseMutationResultPair,
+  UseMutationResult,
 } from './types'
 
 // TYPES
@@ -98,32 +100,42 @@ export function useMutation<
 >(
   mutationFn: MutationFunction<TData, TVariables>,
   options: UseMutationOptions<TData, TError, TVariables, TContext> = {}
-): UseMutationResultPair<TData, TError, TVariables, TContext> {
-  const [state, unsafeDispatch] = React.useReducer(
+): UseMutationResult<TData, TError, TVariables, TContext> {
+  const isMounted = useIsMounted()
+  const [state, dispatch] = React.useReducer(
     reducer as Reducer<State<TData, TError>, Action<TData, TError>>,
     null,
     getDefaultState
   )
-  const dispatch = useMountedCallback(unsafeDispatch)
+
+  const safeDispatch = React.useCallback<typeof dispatch>(
+    value => {
+      notifyManager.schedule(() => {
+        if (isMounted()) {
+          dispatch(value)
+        }
+      })
+    },
+    [dispatch, isMounted]
+  )
 
   const client = useQueryClient()
   const defaultedOptions = client.defaultMutationOptions(options)
-  const latestMutationRef = React.useRef(0)
+  const latestMutationIdRef = React.useRef(0)
   const latestMutationFnRef = React.useRef(mutationFn)
   latestMutationFnRef.current = mutationFn
   const latestOptionsRef = React.useRef(defaultedOptions)
   latestOptionsRef.current = defaultedOptions
 
-  const mutate = React.useCallback<
-    MutateFunction<TData, TError, TVariables, TContext>
+  const mutateAsync = React.useCallback<
+    MutateAsyncFunction<TData, TError, TVariables, TContext>
   >(
-    async (variables, mutateOptions = {}): Promise<TData | undefined> => {
-      dispatch({ type: 'loading' })
+    async (variables, mutateOptions = {}): Promise<TData> => {
+      safeDispatch({ type: 'loading' })
 
-      const mutationId = ++latestMutationRef.current
+      const mutationId = ++latestMutationIdRef.current
       const latestOptions = latestOptionsRef.current
       const latestMutationFn = latestMutationFnRef.current
-      const isLatest = () => latestMutationRef.current === mutationId
       let context: TContext | undefined
 
       try {
@@ -136,8 +148,8 @@ export function useMutation<
         await mutateOptions.onSettled?.(data, null, variables, context)
 
         // Dispatch after handlers as the mutation could still fail
-        if (isLatest()) {
-          dispatch({ type: 'success', data })
+        if (latestMutationIdRef.current === mutationId) {
+          safeDispatch({ type: 'success', data })
         }
 
         return data
@@ -148,17 +160,28 @@ export function useMutation<
         await latestOptions.onSettled?.(undefined, error, variables, context)
         await mutateOptions.onSettled?.(undefined, error, variables, context)
 
-        if (isLatest()) {
-          dispatch({ type: 'error', error })
+        if (latestMutationIdRef.current === mutationId) {
+          safeDispatch({ type: 'error', error })
         }
 
-        if (mutateOptions.throwOnError || latestOptions.throwOnError) {
-          throw error
-        }
+        throw error
       }
     },
-    [dispatch]
+    [safeDispatch]
   )
+
+  const mutate = React.useCallback<
+    MutateFunction<TData, TError, TVariables, TContext>
+  >(
+    (variables, mutateOptions) => {
+      mutateAsync(variables, mutateOptions).catch(noop)
+    },
+    [mutateAsync]
+  )
+
+  const reset = React.useCallback(() => {
+    safeDispatch({ type: 'reset' })
+  }, [safeDispatch])
 
   React.useEffect(() => {
     const latestOptions = latestOptionsRef.current
@@ -170,13 +193,5 @@ export function useMutation<
     }
   }, [state.error])
 
-  const reset = React.useCallback(() => {
-    dispatch({ type: 'reset' })
-  }, [dispatch])
-
-  return React.useMemo(() => [mutate, { ...state, reset }], [
-    mutate,
-    state,
-    reset,
-  ])
+  return { ...state, mutate, mutateAsync, reset }
 }

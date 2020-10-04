@@ -26,11 +26,11 @@ function Example() {
   const client = useQueryClient()
   const [text, setText] = React.useState('')
   const { status, data, error, isFetching } = useQuery('todos', async () => {
-    const { data } = await axios.get('/api/data')
-    return data
+    const res = await axios.get('/api/data')
+    return res.data
   })
 
-  const [mutatePostTodo] = useMutation(
+  const addTodoMutation = useMutation(
     text => axios.post('/api/data', { text }),
     {
       // Optimistically update the cache value on mutate, but store
@@ -72,7 +72,7 @@ function Example() {
       <form
         onSubmit={e => {
           e.preventDefault()
-          mutatePostTodo(text)
+          addTodoMutation.mutate(text)
         }}
       >
         <input

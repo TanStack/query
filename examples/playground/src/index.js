@@ -253,7 +253,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
     }
   }, [data, editingIndex]);
 
-  const [mutate, mutationState] = useMutation(patchTodo, {
+  const saveMutation = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
       client.invalidateQueries("todos");
@@ -261,10 +261,12 @@ function EditTodo({ editingIndex, setEditingIndex }) {
     },
   });
 
-  const onSave = () => mutate(todo);
+  const onSave = () => {
+    saveMutation.mutate(todo);
+  };
 
   const disableEditSave =
-    status === "loading" || mutationState.status === "loading";
+    status === "loading" || saveMutation.status === "loading";
 
   return (
     <div>
@@ -313,10 +315,10 @@ function EditTodo({ editingIndex, setEditingIndex }) {
             </button>
           </div>
           <div>
-            {mutationState.status === "loading"
+            {saveMutation.status === "loading"
               ? "Saving..."
-              : mutationState.status === "error"
-              ? mutationState.error.message
+              : saveMutation.status === "error"
+              ? saveMutation.error.message
               : "Saved!"}
           </div>
           <div>
@@ -338,7 +340,7 @@ function AddTodo() {
   const client = useQueryClient();
   const [name, setName] = React.useState("");
 
-  const [mutate, { status, error }] = useMutation(postTodo, {
+  const addMutation = useMutation(postTodo, {
     onSuccess: () => {
       client.invalidateQueries("todos");
     },
@@ -349,19 +351,21 @@ function AddTodo() {
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        disabled={status === "loading"}
+        disabled={addMutation.status === "loading"}
       />
       <button
-        onClick={() => mutate({ name })}
-        disabled={status === "loading" || !name}
+        onClick={() => {
+          addMutation.mutate({ name });
+        }}
+        disabled={addMutation.status === "loading" || !name}
       >
         Add Todo
       </button>
       <div>
-        {status === "loading"
+        {addMutation.status === "loading"
           ? "Saving..."
-          : status === "error"
-          ? error.message
+          : addMutation.status === "error"
+          ? addMutation.error.message
           : "Saved!"}
       </div>
     </div>

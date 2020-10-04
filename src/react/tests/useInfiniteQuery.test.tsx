@@ -207,8 +207,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(7))
+    await sleep(300)
 
+    expect(states.length).toBe(7)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
@@ -275,8 +276,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await sleep(10)
 
+    expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
@@ -319,8 +321,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(4))
+    await sleep(100)
 
+    expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
       canFetchMore: undefined,
       data: undefined,
@@ -386,8 +389,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await sleep(300)
 
+    expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
       canFetchMore: undefined,
       data: undefined,
@@ -507,8 +511,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(4))
+    await sleep(100)
 
+    expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
       canFetchMore: undefined,
       data: undefined,
@@ -577,8 +582,9 @@ describe('useInfiniteQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(6))
+    await sleep(100)
 
+    expect(states.length).toBe(6)
     expect(states[0]).toMatchObject({
       canFetchMore: undefined,
       data: undefined,

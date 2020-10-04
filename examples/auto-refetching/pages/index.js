@@ -32,8 +32,8 @@ function Example() {
   const { status, data, error, isFetching } = useQuery(
     'todos',
     async () => {
-      const { data } = await axios.get('/api/data')
-      return data
+      const res = await axios.get('/api/data')
+      return res.data
     },
     {
       // Refetch the data every second
@@ -41,14 +41,11 @@ function Example() {
     }
   )
 
-  const [mutateAddTodo] = useMutation(
-    value => fetch(`/api/data?add=${value}`),
-    {
-      onSuccess: () => client.invalidateQueries('todos'),
-    }
-  )
+  const addMutation = useMutation(value => fetch(`/api/data?add=${value}`), {
+    onSuccess: () => client.invalidateQueries('todos'),
+  })
 
-  const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
+  const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
     onSuccess: () => client.invalidateQueries('todos'),
   })
 
@@ -86,12 +83,13 @@ function Example() {
       </label>
       <h2>Todo List</h2>
       <form
-        onSubmit={async ev => {
-          ev.preventDefault()
-          try {
-            await mutateAddTodo(value)
-            setValue('')
-          } catch {}
+        onSubmit={event => {
+          event.preventDefault()
+          addMutation.mutate(value, {
+            onSuccess: () => {
+              setValue('')
+            },
+          })
         }}
       >
         <input
@@ -106,7 +104,13 @@ function Example() {
         ))}
       </ul>
       <div>
-        <button onClick={mutateClear}>Clear All</button>
+        <button
+          onClick={() => {
+            clearMutation.mutate()
+          }}
+        >
+          Clear All
+        </button>
       </div>
       <ReactQueryDevtools initialIsOpen />
     </div>

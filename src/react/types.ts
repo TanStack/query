@@ -47,23 +47,35 @@ export type MutateFunction<
 > = (
   variables: TVariables,
   options?: MutateOptions<TData, TError, TVariables, TContext>
-) => Promise<TData | undefined>
+) => void
+
+export type MutateAsyncFunction<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown
+> = (
+  variables: TVariables,
+  options?: MutateOptions<TData, TError, TVariables, TContext>
+) => Promise<TData>
 
 export interface UseMutationOptions<TData, TError, TVariables, TContext>
   extends MutationOptions<TData, TError, TVariables, TContext> {}
 
-export type UseMutationResultPair<TData, TError, TVariables, TContext> = [
-  MutateFunction<TData, TError, TVariables, TContext>,
-  UseMutationResult<TData, TError>
-]
-
-export interface UseMutationResult<TData = unknown, TError = unknown> {
-  status: MutationStatus
+export interface UseMutationResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown
+> {
   data: TData | undefined
   error: TError | null
+  isError: boolean
   isIdle: boolean
   isLoading: boolean
   isSuccess: boolean
-  isError: boolean
+  mutate: MutateFunction<TData, TError, TVariables, TContext>
+  mutateAsync: MutateAsyncFunction<TData, TError, TVariables, TContext>
   reset: () => void
+  status: MutationStatus
 }
