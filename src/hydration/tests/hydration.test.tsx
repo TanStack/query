@@ -79,9 +79,9 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     hydrate(hydrationCache, parsed)
     expect(hydrationCache.find('string')?.state.data).toBe('string')
-    await sleep(40)
+    await sleep(30)
     expect(hydrationCache.find('string')).toBeTruthy()
-    await sleep(20)
+    await sleep(30)
     expect(hydrationCache.find('string')).toBeFalsy()
 
     cache.clear()
