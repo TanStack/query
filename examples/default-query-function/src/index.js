@@ -105,7 +105,7 @@ function Posts({ setPostId }) {
 function Post({ postId, setPostId }) {
   // You can even leave out the queryFn and just go straight into options
   const { status, data, error, isFetching } = useQuery(`/posts/${postId}`, {
-    enabled: postId,
+    enabled: !!postId,
   });
 
   return (

@@ -10,7 +10,8 @@ import {
 } from './utils'
 import { notifyManager } from './notifyManager'
 import type {
-  FetchMoreOptions,
+  FetchNextPageOptions,
+  FetchPreviousPageOptions,
   QueryObserverOptions,
   QueryObserverResult,
   QueryOptions,
@@ -70,7 +71,8 @@ export class QueryObserver<
     // Bind exposed methods
     this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
-    this.fetchMore = this.fetchMore.bind(this)
+    this.fetchNextPage = this.fetchNextPage.bind(this)
+    this.fetchPreviousPage = this.fetchPreviousPage.bind(this)
 
     // Subscribe to the query
     this.updateQuery()
@@ -222,13 +224,21 @@ export class QueryObserver<
     return this.fetch(options)
   }
 
-  fetchMore(
-    fetchMoreVariable?: unknown,
-    options?: FetchMoreOptions
+  fetchNextPage(
+    options?: FetchNextPageOptions
   ): Promise<QueryObserverResult<TData, TError>> {
     return this.fetch({
       throwOnError: options?.throwOnError,
-      fetchMore: { previous: options?.previous, fetchMoreVariable },
+      fetchMore: { direction: 'forward', pageParam: options?.pageParam },
+    })
+  }
+
+  fetchPreviousPage(
+    options?: FetchPreviousPageOptions
+  ): Promise<QueryObserverResult<TData, TError>> {
+    return this.fetch({
+      throwOnError: options?.throwOnError,
+      fetchMore: { direction: 'backward', pageParam: options?.pageParam },
     })
   }
 
@@ -371,15 +381,18 @@ export class QueryObserver<
 
     const result: QueryObserverResult<TData, TError> = {
       ...getStatusProps(status),
-      canFetchMore: state.canFetchMore,
       data,
       error: state.error,
       failureCount: state.failureCount,
-      fetchMore: this.fetchMore,
+      fetchNextPage: this.fetchNextPage,
+      fetchPreviousPage: this.fetchPreviousPage,
+      hasNextPage: state.hasNextPage,
+      hasPreviousPage: state.hasPreviousPage,
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
       isFetching,
-      isFetchingMore: state.isFetchingMore,
+      isFetchingNextPage: state.isFetchingNextPage,
+      isFetchingPreviousPage: state.isFetchingPreviousPage,
       isPreviousData,
       isStale: this.isStale(),
       refetch: this.refetch,

@@ -8,10 +8,11 @@ Rendering lists that can additively "load more" data onto an existing set of dat
 When using `useInfiniteQuery`, you'll notice a few things are different:
 
 - `data` is now an array of arrays that contain query group results, instead of the query results themselves
-- A `fetchMore` function is now available
-- A `getFetchMore` option is available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function (which can optionally be overridden when calling the `fetchMore` function)
-- A `canFetchMore` boolean is now available and is `true` if `getFetchMore` returns a truthy value
-- An `isFetchingMore` boolean is now available to distinguish between a background refresh state and a loading more state
+- The `fetchNextPage` and `fetchPreviousPage` functions are now available
+- The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function (which can optionally be overridden when calling the `fetchNextPage` or `fetchPreviousPage` functions)
+- A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `undefined`.
+- A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `undefined`.
+- The `isFetchingNextPage` and `isFetchingPreviousPage` booleans are now available to distinguish between a background refresh state and a loading more state
 
 ## Example
 
@@ -31,10 +32,10 @@ fetch('/api/projects?cursor=9')
 With this information, we can create a "Load More" UI by:
 
 - Waiting for `useInfiniteQuery` to request the first group of data by default
-- Returning the information for the next query in `getFetchMore`
-- Calling `fetchMore` function
+- Returning the information for the next query in `getNextPageParam`
+- Calling `fetchNextPage` function
 
-> Note: It's very important you do not call `fetchMore` with arguments unless you want them to override the `fetchMoreInfo` data returned from the `getFetchMore` function. eg. Do not do this: `<button onClick={fetchMore} />` as this would send the onClick event to the `fetchMore` function.
+> Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. eg. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
 
 ```js
 import { useInfiniteQuery } from 'react-query'
@@ -44,14 +45,14 @@ function Projects() {
     fetch('/api/projects?cursor=' + cursor)
 
   const {
-    status,
     data,
+    fetchNextPage,
+    hasNextPage,
     isFetching,
-    isFetchingMore,
-    fetchMore,
-    canFetchMore,
+    isFetchingNextPage,
+    status,
   } = useInfiniteQuery('projects', fetchProjects, {
-    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
   return status === 'loading' ? (
@@ -69,17 +70,17 @@ function Projects() {
       ))}
       <div>
         <button
-          onClick={() => fetchMore()}
-          disabled={!canFetchMore || isFetchingMore}
+          onClick={() => fetchNextPage()}
+          disabled={!hasNextPage || isFetchingNextPage}
         >
-          {isFetchingMore
+          {isFetchingNextPage
             ? 'Loading more...'
-            : canFetchMore
+            : hasNextPage
             ? 'Load More'
             : 'Nothing more to load'}
         </button>
       </div>
-      <div>{isFetching && !isFetchingMore ? 'Fetching...' : null}</div>
+      <div>{isFetching && !isFetchingNextPage ? 'Fetching...' : null}</div>
     </>
   )
 }
@@ -91,7 +92,7 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 
 ## What if I need to pass custom information to my query function?
 
-By default, the info returned from `getFetchMore` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchMore` function which will override the default info like so:
+By default, the variable returned from `getNextPageParam` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchNextPage` function which will override the default variable like so:
 
 ```js
 function Projects() {
@@ -102,24 +103,35 @@ function Projects() {
     status,
     data,
     isFetching,
-    isFetchingMore,
-    fetchMore,
-    canFetchMore,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
   } = useInfiniteQuery('projects', fetchProjects, {
-    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
-  // Pass your own custom fetchMoreInfo
-  const skipToCursor50 = () => fetchMore(50)
+  // Pass your own page param
+  const skipToCursor50 = () => fetchNextPage({ pageParam: 50 })
 }
 ```
 
-## What if I want to infinitely load more data in reverse?
+## What if I want to implement a bi-directional infinite list?
 
-Sometimes you may not want to **append** infinitely loaded data, but instead **prepend** it. If this is case, you can use `fetchMore`'s `previous` option, eg.
+Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
 
 ```js
-fetchMore(previousPageVariables, { previous: true })
+useInfiniteQuery('projects', fetchProjects, {
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+})
 ```
 
-This will ensure the new data is prepended to the data array instead of appended.
+## What if I want to show the pages in reversed order?
+
+Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
+
+```js
+useInfiniteQuery('projects', fetchProjects, {
+  select: pages => [...pages].reverse(),
+})
+```
