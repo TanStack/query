@@ -439,6 +439,10 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         cursor = options.getFetchMore(lastPage, pages)
       }
 
+      if (!cursor && typeof lastPage !== 'undefined') {
+        return Promise.resolve(pages)
+      }
+
       const queryFn = options.queryFn || defaultQueryFn
 
       return Promise.resolve()
