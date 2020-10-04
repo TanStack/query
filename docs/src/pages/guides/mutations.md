@@ -130,7 +130,7 @@ useMutation(addTodo, {
   onError: (error, variables, context) => {
     // An error happened!
     if (context.rollback) {
-      rollbac()
+      context.rollback()
     }
   },
   onSuccess: (data, variables, context) => {
