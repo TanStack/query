@@ -5,7 +5,7 @@ title: Queries
 
 ## Query Basics
 
-In React Query, a query is a declarative dependency on some asynchronous source of data.
+In React Query, a query is a declarative dependency on some asynchronous source of data. A query can be used with any Promise based method (including GET and POST methods) to fetch data from a server. If your method modifies data on the server, we recommend using [Mutations](https://react-query.tanstack.com/docs/guides/mutations) instead.
 
 To make a new query, call the `useQuery` hook with at least:
 
