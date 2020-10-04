@@ -9,7 +9,7 @@ const Home = () => {
     <Layout>
       <Header />
       <InfoBox>ℹ️ This page shows how to use SSG with React-Query.</InfoBox>
-      <PostList isClient={false} />
+      <PostList />
     </Layout>
   )
 }

@@ -5,11 +5,8 @@ const ClientOnly = () => {
   return (
     <Layout>
       <Header />
-      <InfoBox>
-        ℹ️ If you reload this page, you will see a loader since we didn't fetch
-        any data on the server.
-      </InfoBox>
-      <PostList isClient={true} />
+      <InfoBox>ℹ️ This data is loaded on client and not prefetched</InfoBox>
+      <PostList />
     </Layout>
   )
 }

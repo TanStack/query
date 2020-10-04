@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
+import { useQueryCache } from 'react-query'
 import { usePosts } from '../../hooks/usePosts'
 
 export const PostList = ({ isClient }) => {
   const [postCount, setPostCount] = useState(10)
   const { data, isFetching } = usePosts(postCount, isClient)
-
-  // if (error) return <ErrorMessage message="Error loading posts." />
   if (isFetching) return <div>Loading</div>
 
   return (
