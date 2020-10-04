@@ -67,11 +67,13 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('toggle'))
     await waitFor(() => rendered.getByText('rendered'))
 
+    // @ts-expect-error
     expect(cache.find(key)?.observers.length).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
 
     expect(rendered.queryByText('rendered')).toBeNull()
+    // @ts-expect-error
     expect(cache.find(key)?.observers.length).toBe(0)
   })
 

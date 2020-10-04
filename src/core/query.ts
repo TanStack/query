@@ -104,7 +104,6 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   queryHash: string
   options!: QueryOptions<TData, TError, TQueryFnData>
   defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
-  observers: QueryObserver<any, any, any, any>[]
   state: QueryState<TData, TError>
   cacheTime!: number
 
@@ -114,6 +113,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private cancelFetch?: (silent?: boolean) => void
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
+  private observers: QueryObserver<any, any, any, any>[]
 
   constructor(config: QueryConfig<TData, TError, TQueryFnData>) {
     this.setOptions(config.options)
@@ -171,11 +171,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
   cancel(silent?: boolean): Promise<void> {
     const promise: Promise<any> = this.promise || Promise.resolve()
-
-    if (this.cancelFetch) {
-      this.cancelFetch(silent)
-    }
-
+    this.cancelFetch?.(silent)
     return promise.then(noop).catch(noop)
   }
 
