@@ -37,7 +37,7 @@ function App() {
 }
 
 function Posts({ setPostId }) {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -59,7 +59,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(["post", post.id])
+                      client.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

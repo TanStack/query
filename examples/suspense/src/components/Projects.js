@@ -7,7 +7,7 @@ import Spinner from "./Spinner";
 import { fetchProjects, fetchProject } from "../queries";
 
 export default function Projects({ setActiveProject }) {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
   const { data, isFetching } = useQuery("projects", fetchProjects);
 
   return (
@@ -18,7 +18,7 @@ export default function Projects({ setActiveProject }) {
           <Button
             onClick={() => {
               // Prefetch the project query
-              queryClient.prefetchQuery(
+              client.prefetchQuery(
                 ["project", { id: project.name }],
                 fetchProject
               );

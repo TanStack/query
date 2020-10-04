@@ -21,7 +21,7 @@ export default function App() {
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const client = useQueryClient()
   const [page, setPage] = React.useState(0)
 
   const fetchProjects = React.useCallback(async (key, page = 0) => {
@@ -38,7 +38,7 @@ function Example() {
   // Prefetch the next page!
   React.useEffect(() => {
     if (data?.hasMore) {
-      queryClient.prefetchQuery(['projects', page + 1], fetchProjects)
+      client.prefetchQuery(['projects', page + 1], fetchProjects)
     }
   }, [data, fetchProjects, page])
 

@@ -130,7 +130,7 @@ function Root() {
 }
 
 function App() {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
   const [editingIndex, setEditingIndex] = React.useState(null);
   const [views, setViews] = React.useState(["", "fruit", "grape"]);
   // const [views, setViews] = React.useState([""]);
@@ -138,7 +138,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries(true)}>
+        <button onClick={() => client.invalidateQueries(true)}>
           Force Refetch All
         </button>
       </div>
@@ -232,7 +232,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 }
 
 function EditTodo({ editingIndex, setEditingIndex }) {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
 
   // Don't attempt to query until editingIndex is truthy
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
@@ -256,8 +256,8 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const [mutate, mutationState] = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries("todos");
-      queryClient.setQueryData(["todo", { id: editingIndex }], data);
+      client.invalidateQueries("todos");
+      client.setQueryData(["todo", { id: editingIndex }], data);
     },
   });
 
@@ -335,12 +335,12 @@ function EditTodo({ editingIndex, setEditingIndex }) {
 }
 
 function AddTodo() {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
   const [name, setName] = React.useState("");
 
   const [mutate, { status, error }] = useMutation(postTodo, {
     onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+      client.invalidateQueries("todos");
     },
   });
 

@@ -39,7 +39,7 @@ function App() {
 }
 
 function Example() {
-  const queryClient = useQueryClient();
+  const client = useQueryClient();
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
@@ -49,7 +49,7 @@ function Example() {
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              queryClient.prefetchQuery("projects", fetchProjects);
+              client.prefetchQuery("projects", fetchProjects);
             }
             return !old;
           });

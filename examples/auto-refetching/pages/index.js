@@ -25,7 +25,7 @@ export default function App() {
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const client = useQueryClient()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
@@ -44,12 +44,12 @@ function Example() {
   const [mutateAddTodo] = useMutation(
     value => fetch(`/api/data?add=${value}`),
     {
-      onSuccess: () => queryClient.invalidateQueries('todos'),
+      onSuccess: () => client.invalidateQueries('todos'),
     }
   )
 
   const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryClient.invalidateQueries('todos'),
+    onSuccess: () => client.invalidateQueries('todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>
