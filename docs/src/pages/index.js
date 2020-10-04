@@ -17,7 +17,7 @@ const supporters = [
 ]
 
 const fans = [
-  `Steven Miyakawa (@SamSamskies)`,
+  `Steven Miyakawa (@SamSamskies)`,
   `Alex Trost (@a-trost)`,
   `Andrey (@andreyvital)`,
   'Anoop (@Anoupz)',
