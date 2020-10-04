@@ -1,5 +1,5 @@
 import React from 'react'
-import { ReactQueryCacheProvider, QueryCache } from 'react-query'
+import { ReactQueryCacheProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 import { Hydrate } from 'react-query/hydration'
 

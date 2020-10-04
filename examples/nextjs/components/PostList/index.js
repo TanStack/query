@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useQueryCache } from 'react-query'
 import { usePosts } from '../../hooks/usePosts'
 
 export const PostList = ({ isClient }) => {
