@@ -4,23 +4,29 @@ title: useMutation
 ---
 
 ```js
-const [
+const {
+  data,
+  error,
+  isError,
+  isIdle,
+  isLoading,
+  isSuccess,
   mutate,
-  { status, isIdle, isLoading, isSuccess, isError, data, error, reset },
-] = useMutation(mutationFn, {
-  onMutate,
-  onSuccess,
+  mutateAsync,
+  reset,
+  status,
+} = useMutation(mutationFn, {
   onError,
+  onMutate,
   onSettled,
-  throwOnError,
+  onSuccess,
   useErrorBoundary,
 })
 
-const promise = mutate(variables, {
-  onSuccess,
-  onSettled,
+mutate(variables, {
   onError,
-  throwOnError,
+  onSettled,
+  onSuccess,
 })
 ```
 
@@ -50,22 +56,21 @@ const promise = mutate(variables, {
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - Fires after the `mutate`-level `onSettled` handler (if it is defined)
   - If a promise is returned, it will be awaited and resolved before proceeding
-- `throwOnError`
-  - Defaults to `false`
-  - Set this to `true` if failed mutations should re-throw errors from the mutation function to the `mutate` function.
 - `useErrorBoundary`
   - Defaults to the global query config's `useErrorBoundary` value, which is `false`
   - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
 
 **Returns**
 
-- `mutate: (variables: TVariables, { onSuccess, onSettled, onError, throwOnError }) => Promise<TData>`
+- `mutate: (variables: TVariables, { onSuccess, onSettled, onError }) => void`
   - The mutation function you can call with variables to trigger the mutation and optionally override the original mutation options.
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
   - Remaining options extend the same options described above in the `useMutation` hook.
   - Lifecycle callbacks defined here will fire **after** those of the same type defined in the `useMutation`-level options.
+- `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
+  - Similar to `mutate` but returns a promise which can be awaited.
 - `status: string`
   - Will be:
     - `idle` initial status prior to the mutation function executing.

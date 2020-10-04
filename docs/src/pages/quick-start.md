@@ -10,7 +10,14 @@ This example very briefly illustrates the 3 core concepts of React Query:
 - Query Invalidation
 
 ```js
-import { useQuery, useMutation, useQueryClient, QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
 // Create a cache
@@ -25,7 +32,7 @@ function App() {
     <QueryClientProvider client={client}>
       <Todos />
     </QueryClientProvider>
-  );
+  )
 }
 
 function Todos() {
@@ -33,10 +40,10 @@ function Todos() {
   const client = useQueryClient()
 
   // Queries
-  const todosQuery = useQuery('todos', getTodos)
+  const query = useQuery('todos', getTodos)
 
   // Mutations
-  const [addTodo] = useMutation(postTodo, {
+  const mutation = useMutation(postTodo, {
     onSuccess: () => {
       // Invalidate and refetch
       client.invalidateQueries('todos')
@@ -46,18 +53,18 @@ function Todos() {
   return (
     <div>
       <ul>
-        {todosQuery.data.map(todo => (
+        {query.data.map(todo => (
           <li key={todo.id}>{todo.title}</li>
         ))}
       </ul>
 
       <button
-        onClick={() =>
-          addTodo({
+        onClick={() => {
+          mutation.mutate({
             id: Date.now(),
-            title: 'Do Laundry'
+            title: 'Do Laundry',
           })
-        }
+        }}
       >
         Add Todo
       </button>
@@ -65,7 +72,7 @@ function Todos() {
   )
 }
 
-render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById('root'))
 ```
 
 These three concepts make up most of the core functionality of React Query. The next sections of the documentation will go over each of these core concepts in great detail.

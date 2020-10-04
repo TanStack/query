@@ -16,15 +16,3 @@ export function useIsMounted(): () => boolean {
 
   return isMounted
 }
-
-export function useMountedCallback<T extends Function>(callback: T): T {
-  const isMounted = useIsMounted()
-  return (React.useCallback(
-    (...args: any[]) => {
-      if (isMounted()) {
-        return callback(...args)
-      }
-    },
-    [callback, isMounted]
-  ) as any) as T
-}

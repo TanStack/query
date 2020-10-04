@@ -8,11 +8,11 @@ When dealing with mutations that **update** objects on the server, it's common f
 ```js
 const client = useQueryClient()
 
-const [mutate] = useMutation(editTodo, {
+const mutation = useMutation(editTodo, {
   onSuccess: data => client.setQueryData(['todo', { id: 5 }], data),
 })
 
-mutate({
+mutation.mutate({
   id: 5,
   name: 'Do the laundry',
 })

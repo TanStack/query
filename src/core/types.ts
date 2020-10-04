@@ -223,7 +223,6 @@ export interface MutateOptions<
     variables: TVariables,
     context: TContext | undefined
   ) => Promise<void> | void
-  throwOnError?: boolean
 }
 
 export interface MutationOptions<

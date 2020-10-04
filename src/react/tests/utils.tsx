@@ -41,7 +41,9 @@ export function sleep(timeout: number): Promise<void> {
 
 export function setActTimeout(fn: () => void, ms?: number) {
   setTimeout(() => {
-    act(fn)
+    act(() => {
+      fn()
+    })
   }, ms)
 }
 
