@@ -14,9 +14,9 @@ const client = useQueryClient()
 
 useMutation(updateTodo, {
   // When mutate is called:
-  onMutate: newTodo => {
+  onMutate: async newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    client.cancelQueries('todos')
+    await client.cancelQueries('todos')
 
     // Snapshot the previous value
     const previousTodos = client.getQueryData('todos')
@@ -43,9 +43,9 @@ useMutation(updateTodo, {
 ```js
 useMutation(updateTodo, {
   // When mutate is called:
-  onMutate: newTodo => {
+  onMutate: async newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    client.cancelQueries(['todos', newTodo.id])
+    await client.cancelQueries(['todos', newTodo.id])
 
     // Snapshot the previous value
     const previousTodo = client.getQueryData(['todos', newTodo.id])

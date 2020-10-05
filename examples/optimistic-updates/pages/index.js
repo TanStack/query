@@ -36,9 +36,9 @@ function Example() {
       // Optimistically update the cache value on mutate, but store
       // the old value and return it so that it's accessible in case of
       // an error
-      onMutate: text => {
+      onMutate: async text => {
         setText('')
-        client.cancelQueries('todos')
+        await client.cancelQueries('todos')
 
         const previousValue = client.getQueryData('todos')
 
