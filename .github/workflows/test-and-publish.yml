@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - 'master'
-      - 'next'
+      - 'beta'
       - '1.x'
   pull_request:
 
