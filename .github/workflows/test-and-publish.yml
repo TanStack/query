@@ -3,14 +3,14 @@ name: react-query tests
 on:
   push:
     branches:
-      - "master"
-      - "next"
-      - "1.x"
+      - 'master'
+      - 'next'
+      - '1.x'
   pull_request:
 
 jobs:
   test:
-    name: "Node ${{ matrix.node }}"
+    name: 'Node ${{ matrix.node }}'
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -25,10 +25,10 @@ jobs:
       - run: yarn test:ci
 
   publish-module:
-    name: "Publish Module to NPM"
+    name: 'Publish Module to NPM'
     needs: test
     # publish only when merged in master on original repo, not on PR
-    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/1.x')
+    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/1.x')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

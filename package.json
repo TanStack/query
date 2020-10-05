@@ -35,10 +35,7 @@
     "branches": [
       "1.x",
       "master",
-      {
-        "name": "next",
-        "prerelease": true
-      }
+      "beta"
     ]
   },
   "files": [
