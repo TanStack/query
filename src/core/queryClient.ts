@@ -147,11 +147,11 @@ export class QueryClient {
       cancelOptions.revert = true
     }
 
-    notifyManager.batch(() => {
+    const promises = notifyManager.batch(() =>
       this.cache.findAll(filters).map(query => query.cancel(cancelOptions))
-    })
+    )
 
-    return Promise.resolve().then(noop)
+    return Promise.all(promises).then(noop).catch(noop)
   }
 
   invalidateQueries(

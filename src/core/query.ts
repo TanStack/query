@@ -541,8 +541,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       }
 
       // Create callback to cancel this fetch
-      this.cancelFetch = silent => {
-        reject(new CancelledError(silent))
+      this.cancelFetch = cancelOptions => {
+        reject(new CancelledError(cancelOptions))
         cancelTransport?.()
       }
 
