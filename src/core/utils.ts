@@ -54,10 +54,17 @@ interface Cancelable {
   cancel(): void
 }
 
-export class CancelledError {
+export interface CancelOptions {
+  revert?: boolean
   silent?: boolean
-  constructor(silent?: boolean) {
-    this.silent = silent
+}
+
+export class CancelledError {
+  revert?: boolean
+  silent?: boolean
+  constructor(options?: CancelOptions) {
+    this.revert = options?.revert
+    this.silent = options?.silent
   }
 }
 

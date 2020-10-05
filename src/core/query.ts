@@ -1,4 +1,5 @@
 import {
+  CancelOptions,
   CancelledError,
   Updater,
   defaultRetryDelay,
@@ -116,7 +117,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private cache: QueryCache
   private promise?: Promise<TData>
   private gcTimeout?: number
-  private cancelFetch?: (silent?: boolean) => void
+  private cancelFetch?: (options?: CancelOptions) => void
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
   private observers: QueryObserver<any, any, any, any>[]
@@ -175,9 +176,9 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     }, this.cacheTime)
   }
 
-  cancel(silent?: boolean): Promise<void> {
+  cancel(options?: CancelOptions): Promise<void> {
     const promise: Promise<any> = this.promise || Promise.resolve()
-    this.cancelFetch?.(silent)
+    this.cancelFetch?.(options)
     return promise.then(noop).catch(noop)
   }
 
@@ -338,7 +339,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     if (this.state.isFetching)
       if (fetchOptions?.fetchMore && this.state.updatedAt) {
         // Silently cancel current fetch if the user wants to fetch more
-        this.cancel(true)
+        this.cancel({ silent: true })
       } else if (this.promise) {
         // Return current promise if we are already fetching
         return this.promise
@@ -737,9 +738,22 @@ export function queryReducer<TData, TError>(
         updatedAt: action.updatedAt ?? Date.now(),
       }
     case 'error':
+      const error = action.error as unknown
+
+      if (isCancelledError(error) && error.revert) {
+        return {
+          ...state,
+          failureCount: 0,
+          isFetching: false,
+          isFetchingNextPage: false,
+          isFetchingPreviousPage: false,
+          status: state.error ? 'error' : state.updatedAt ? 'success' : 'idle',
+        }
+      }
+
       return {
         ...state,
-        error: action.error,
+        error: error as TError,
         errorUpdateCount: state.errorUpdateCount + 1,
         failureCount: state.failureCount + 1,
         isFetching: false,

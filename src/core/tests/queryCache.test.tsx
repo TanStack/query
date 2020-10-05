@@ -671,6 +671,57 @@ describe('queryCache', () => {
     consoleMock.mockRestore()
   })
 
+  test('cancelQueries should revert queries to their previous state', async () => {
+    const consoleMock = mockConsoleError()
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const testCache = new QueryCache()
+    const testClient = new QueryClient({ cache: testCache })
+    await testClient.fetchQueryData(key1, async () => {
+      return 'data'
+    })
+    try {
+      await testClient.fetchQueryData(key2, async () => {
+        return Promise.reject('err')
+      })
+    } catch {}
+    testClient.fetchQueryData(key1, async () => {
+      await sleep(1000)
+      return 'data2'
+    })
+    try {
+      testClient.fetchQueryData(key2, async () => {
+        await sleep(1000)
+        return Promise.reject('err2')
+      })
+    } catch {}
+    testClient.fetchQueryData(key3, async () => {
+      await sleep(1000)
+      return 'data3'
+    })
+    await sleep(10)
+    await testClient.cancelQueries()
+    const state1 = testClient.getQueryState(key1)
+    const state2 = testClient.getQueryState(key2)
+    const state3 = testClient.getQueryState(key3)
+    testCache.clear()
+    expect(state1).toMatchObject({
+      data: 'data',
+      status: 'success',
+    })
+    expect(state2).toMatchObject({
+      data: undefined,
+      error: 'err',
+      status: 'error',
+    })
+    expect(state3).toMatchObject({
+      data: undefined,
+      status: 'idle',
+    })
+    consoleMock.mockRestore()
+  })
+
   test('refetchQueries should refetch all queries when no arguments are given', async () => {
     const key1 = queryKey()
     const key2 = queryKey()

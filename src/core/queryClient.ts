@@ -1,4 +1,5 @@
 import {
+  CancelOptions,
   QueryFilters,
   Updater,
   isDocumentVisible,
@@ -128,16 +129,29 @@ export class QueryClient {
     })
   }
 
-  cancelQueries(filters?: QueryFilters): Promise<void>
-  cancelQueries(queryKey?: QueryKey, filters?: QueryFilters): Promise<void>
+  cancelQueries(filters?: QueryFilters, options?: CancelOptions): Promise<void>
+  cancelQueries(
+    queryKey?: QueryKey,
+    filters?: QueryFilters,
+    options?: CancelOptions
+  ): Promise<void>
   cancelQueries(
     arg1?: QueryKey | QueryFilters,
-    arg2?: QueryFilters
+    arg2?: QueryFilters | CancelOptions,
+    arg3?: CancelOptions
   ): Promise<void> {
-    const promises = notifyManager.batch(() =>
-      this.cache.findAll(arg1, arg2).map(query => query.cancel())
-    )
-    return Promise.all(promises).then(noop)
+    const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
+    const cancelOptions = options || {}
+
+    if (typeof cancelOptions.revert === 'undefined') {
+      cancelOptions.revert = true
+    }
+
+    notifyManager.batch(() => {
+      this.cache.findAll(filters).map(query => query.cancel(cancelOptions))
+    })
+
+    return Promise.resolve().then(noop)
   }
 
   invalidateQueries(
