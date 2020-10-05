@@ -27,6 +27,7 @@ Feature/Capability Key:
 | Dependent Queries                            | ✅                                     | ✅                         | ✅                                    |
 | Paginated Queries                            | ✅                                     | ✅                         | ✅                                    |
 | Infinite Queries                             | ✅                                     | ✅                         | ✅                                    |
+| Bi-directional Infinite Queries              | ✅                                     | 🔶                         | 🔶                                    |
 | Lagged / "Lazy" Queries<sup>1</sup>          | ✅                                     | 🛑                         | 🛑                                    |
 | Selectors                                    | ✅                                     | 🛑                         | ✅                                    |
 | Initial Data                                 | ✅                                     | ✅                         | ✅                                    |
