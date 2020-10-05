@@ -101,7 +101,7 @@ const getPostById = async (key, id) => {
 
 function usePost(postId) {
   return useQuery(["post", postId], getPostById, {
-    enabled: postId,
+    enabled: !!postId,
   });
 }
 

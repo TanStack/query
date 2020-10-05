@@ -81,6 +81,98 @@ function Page({ page }) {
 }
 ```
 
+### useInfiniteQuery()
+
+The `useInfiniteQuery()` interface has changed to fully support bi-directional infinite lists.
+
+One direction:
+
+```js
+const {
+  data,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+} = useInfiniteQuery('projects', fetchProjects, {
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+})
+```
+
+Both directions:
+
+```js
+const {
+  data,
+  fetchNextPage,
+  fetchPreviousPage,
+  hasNextPage,
+  hasPreviousPage,
+  isFetchingNextPage,
+  isFetchingPreviousPage,
+} = useInfiniteQuery('projects', fetchProjects, {
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+})
+```
+
+One direction reversed:
+
+```js
+const {
+  data,
+  fetchNextPage,
+  hasNextPage,
+  isFetchingNextPage,
+} = useInfiniteQuery('projects', fetchProjects, {
+  select: pages => [...pages].reverse(),
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+})
+```
+
+### useMutation()
+
+The `useMutation()` hook now returns an object instead of an array:
+
+```js
+// Old:
+const [mutate, { status, reset }] = useMutation()
+
+// New:
+const { mutate, status, reset } = useMutation()
+```
+
+Previously the `mutate` function returned a promise which resolved to `undefined` if a mutation failed instead of throwing.
+We got a lot of questions regarding this behavior as users expected the promise to behave like a regular promise.
+Because of this the `mutate` function is now split into a `mutate` and `mutateAsync` function.
+
+The `mutate` function can be used when using callbacks:
+
+```js
+const { mutate } = useMutation(addTodo)
+
+mutate('todo', {
+  onSuccess: data => {
+    console.log(data)
+  },
+  onError: error => {
+    console.error(error)
+  },
+})
+```
+
+The `mutateAsync` function can be used when using async/await:
+
+```js
+const { mutateAsync } = useMutation(addTodo)
+
+try {
+  const data = await mutateAsync('todo')
+  console.log(data)
+} catch (error) {
+  console.error(error)
+}
+```
+
 ### Query object syntax
 
 The object syntax has been collapsed:

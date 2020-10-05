@@ -17,7 +17,6 @@ import {
 } from './utils'
 import type {
   InitialDataFunction,
-  IsFetchingMoreValue,
   QueryFunction,
   QueryKey,
   QueryOptions,
@@ -38,15 +37,18 @@ export interface QueryConfig<TData, TError, TQueryFnData> {
 }
 
 export interface QueryState<TData, TError> {
-  canFetchMore?: boolean
-  data?: TData
+  data: TData | undefined
   dataUpdateCount: number
   error: TError | null
   errorUpdateCount: number
   failureCount: number
+  hasNextPage: boolean | undefined
+  hasPreviousPage: boolean | undefined
   isFetching: boolean
-  isFetchingMore: IsFetchingMoreValue
+  isFetchingNextPage: boolean
+  isFetchingPreviousPage: boolean
   isInvalidated: boolean
+  pageParams: unknown[] | undefined
   status: QueryStatus
   updatedAt: number
 }
@@ -57,11 +59,12 @@ export interface FetchOptions {
 }
 
 interface FetchMoreOptions {
-  fetchMoreVariable?: unknown
-  previous?: boolean
+  pageParam?: unknown
+  direction: 'forward' | 'backward'
 }
 
 interface SetDataOptions {
+  pageParams?: unknown[]
   updatedAt?: number
 }
 
@@ -71,13 +74,16 @@ interface FailedAction {
 
 interface FetchAction {
   type: 'fetch'
-  isFetchingMore?: IsFetchingMoreValue
+  isFetchingNextPage?: boolean
+  isFetchingPreviousPage?: boolean
 }
 
 interface SuccessAction<TData> {
-  type: 'success'
   data: TData | undefined
-  canFetchMore?: boolean
+  hasNextPage?: boolean
+  hasPreviousPage?: boolean
+  pageParams?: unknown[]
+  type: 'success'
   updatedAt?: number
 }
 
@@ -205,14 +211,13 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       data = prevData as TData
     }
 
-    // Try to determine if more data can be fetched
-    const canFetchMore = hasMorePages(this.options, data)
-
     // Set data and mark it as cached
     this.dispatch({
-      type: 'success',
       data,
-      canFetchMore,
+      hasNextPage: hasNextPage(this.options, data),
+      hasPreviousPage: hasPreviousPage(this.options, data),
+      pageParams: options?.pageParams,
+      type: 'success',
       updatedAt: options?.updatedAt,
     })
 
@@ -363,31 +368,23 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       ? this.startInfiniteFetch(this.options, params, fetchOptions)
       : this.startFetch(this.options, params)
 
-    this.promise = promise
-      .then(data => {
-        // Set success state
-        this.setData(data)
+    this.promise = promise.catch(error => {
+      // Set error state if needed
+      if (!(isCancelledError(error) && error.silent)) {
+        this.dispatch({
+          type: 'error',
+          error,
+        })
+      }
 
-        // Return data
-        return data
-      })
-      .catch(error => {
-        // Set error state if needed
-        if (!(isCancelledError(error) && error.silent)) {
-          this.dispatch({
-            type: 'error',
-            error,
-          })
-        }
+      // Log error
+      if (!isCancelledError(error)) {
+        getLogger().error(error)
+      }
 
-        // Log error
-        if (!isCancelledError(error)) {
-          getLogger().error(error)
-        }
-
-        // Propagate error
-        throw error
-      })
+      // Propagate error
+      throw error
+    })
 
     return this.promise
   }
@@ -406,7 +403,9 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     }
 
     // Try to fetch the data
-    return this.tryFetchData(options, fetchData)
+    return this.tryFetchData(options, fetchData).then(data =>
+      this.setData(data)
+    )
   }
 
   private startInfiniteFetch(
@@ -414,63 +413,100 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     params: unknown[],
     fetchOptions?: FetchOptions
   ): Promise<TData> {
+    const queryFn = options.queryFn || defaultQueryFn
     const fetchMore = fetchOptions?.fetchMore
-    const { previous, fetchMoreVariable } = fetchMore || {}
-    const isFetchingMore = fetchMore ? (previous ? 'previous' : 'next') : false
-    const prevPages: TQueryFnData[] = (this.state.data as any) || []
+    const pageParam = fetchMore?.pageParam
+    const isFetchingNextPage = fetchMore?.direction === 'forward'
+    const isFetchingPreviousPage = fetchMore?.direction === 'backward'
+    const oldPages = (this.state.data || []) as TQueryFnData[]
+    const oldPageParams = this.state.pageParams || []
+    let newPageParams = oldPageParams
 
     // Create function to fetch a page
     const fetchPage = (
       pages: TQueryFnData[],
-      prepend?: boolean,
-      cursor?: unknown
+      manual?: boolean,
+      param?: unknown,
+      previous?: boolean
     ): Promise<TQueryFnData[]> => {
-      const lastPage = getLastPage(pages, prepend)
-
-      if (
-        typeof cursor === 'undefined' &&
-        typeof lastPage !== 'undefined' &&
-        options.getFetchMore
-      ) {
-        cursor = options.getFetchMore(lastPage, pages)
-      }
-
-      if (!cursor && typeof lastPage !== 'undefined') {
+      if (typeof param === 'undefined' && !manual && pages.length) {
         return Promise.resolve(pages)
       }
 
-      const queryFn = options.queryFn || defaultQueryFn
-
       return Promise.resolve()
-        .then(() => queryFn(...params, cursor))
-        .then(page => (prepend ? [page, ...pages] : [...pages, page]))
+        .then(() => queryFn(...params, param))
+        .then(page => {
+          newPageParams = previous
+            ? [param, ...newPageParams]
+            : [...newPageParams, param]
+          return previous ? [page, ...pages] : [...pages, page]
+        })
     }
 
     // Create function to fetch the data
     const fetchData = (): Promise<TQueryFnData[]> => {
-      if (isFetchingMore) {
-        return fetchPage(prevPages, previous, fetchMoreVariable)
-      } else if (!prevPages.length) {
+      // Reset new page params
+      newPageParams = oldPageParams
+
+      // Fetch first page?
+      if (!oldPages.length) {
         return fetchPage([])
-      } else {
-        let promise = fetchPage([])
-        for (let i = 1; i < prevPages.length; i++) {
-          promise = promise.then(fetchPage)
-        }
-        return promise
       }
+
+      // Fetch next page?
+      if (isFetchingNextPage) {
+        const manual = typeof pageParam !== 'undefined'
+        const param = manual ? pageParam : getNextPageParam(options, oldPages)
+        return fetchPage(oldPages, manual, param)
+      }
+
+      // Fetch previous page?
+      if (isFetchingPreviousPage) {
+        const manual = typeof pageParam !== 'undefined'
+        const param = manual
+          ? pageParam
+          : getPreviousPageParam(options, oldPages)
+        return fetchPage(oldPages, manual, param, true)
+      }
+
+      // Refetch pages
+      newPageParams = []
+
+      const manual = typeof options.getNextPageParam === 'undefined'
+
+      // Fetch first page
+      let promise = fetchPage([], manual, oldPageParams[0])
+
+      // Fetch remaining pages
+      for (let i = 1; i < oldPages.length; i++) {
+        promise = promise.then(pages => {
+          const param = manual
+            ? oldPageParams[i]
+            : getNextPageParam(options, pages)
+          return fetchPage(pages, manual, param)
+        })
+      }
+
+      return promise
     }
 
     // Set to fetching state if not already in it
     if (
       !this.state.isFetching ||
-      this.state.isFetchingMore !== isFetchingMore
+      this.state.isFetchingNextPage !== isFetchingNextPage ||
+      this.state.isFetchingPreviousPage !== isFetchingPreviousPage
     ) {
-      this.dispatch({ type: 'fetch', isFetchingMore })
+      this.dispatch({
+        type: 'fetch',
+        isFetchingNextPage,
+        isFetchingPreviousPage,
+      })
     }
 
     // Try to get the data
-    return this.tryFetchData(options, fetchData)
+    return this.tryFetchData(options, fetchData).then(data =>
+      this.setData(data, { pageParams: newPageParams })
+    )
   }
 
   private tryFetchData(
@@ -596,21 +632,44 @@ function defaultQueryFn() {
   return Promise.reject()
 }
 
-function getLastPage<TQueryFnData>(
-  pages: TQueryFnData[],
-  previous?: boolean
-): TQueryFnData {
-  return previous ? pages[0] : pages[pages.length - 1]
+function getNextPageParam<TData, TError, TQueryFnData>(
+  options: QueryOptions<TData, TError, TQueryFnData>,
+  pages: TQueryFnData[]
+): unknown | undefined {
+  return options.getNextPageParam?.(pages[pages.length - 1], pages)
 }
 
-function hasMorePages<TData, TError, TQueryFnData>(
+function getPreviousPageParam<TData, TError, TQueryFnData>(
   options: QueryOptions<TData, TError, TQueryFnData>,
-  pages: unknown,
-  previous?: boolean
+  pages: TQueryFnData[]
+): unknown | undefined {
+  return options.getPreviousPageParam?.(pages[0], pages)
+}
+
+/**
+ * Checks if there is a next page.
+ * Returns `undefined` if it cannot be determined.
+ */
+function hasNextPage<TData, TError, TQueryFnData>(
+  options: QueryOptions<TData, TError, TQueryFnData>,
+  pages: unknown
 ): boolean | undefined {
-  if (options.infinite && options.getFetchMore && Array.isArray(pages)) {
-    return Boolean(options.getFetchMore(getLastPage(pages, previous), pages))
-  }
+  return options.getNextPageParam && Array.isArray(pages)
+    ? typeof getNextPageParam(options, pages) !== 'undefined'
+    : undefined
+}
+
+/**
+ * Checks if there is a previous page.
+ * Returns `undefined` if it cannot be determined.
+ */
+function hasPreviousPage<TData, TError, TQueryFnData>(
+  options: QueryOptions<TData, TError, TQueryFnData>,
+  pages: unknown
+): boolean | undefined {
+  return options.getPreviousPageParam && Array.isArray(pages)
+    ? typeof getPreviousPageParam(options, pages) !== 'undefined'
+    : undefined
 }
 
 function getDefaultState<TData, TError, TQueryFnData>(
@@ -624,15 +683,18 @@ function getDefaultState<TData, TError, TQueryFnData>(
   const hasData = typeof data !== 'undefined'
 
   return {
-    canFetchMore: hasMorePages(options, data),
     data,
     dataUpdateCount: 0,
     error: null,
     errorUpdateCount: 0,
     failureCount: 0,
+    hasNextPage: hasNextPage(options, data),
+    hasPreviousPage: hasPreviousPage(options, data),
     isFetching: false,
-    isFetchingMore: false,
+    isFetchingNextPage: false,
+    isFetchingPreviousPage: false,
     isInvalidated: false,
+    pageParams: undefined,
     status: hasData ? 'success' : 'idle',
     updatedAt: hasData ? Date.now() : 0,
   }
@@ -653,19 +715,23 @@ export function queryReducer<TData, TError>(
         ...state,
         failureCount: 0,
         isFetching: true,
-        isFetchingMore: action.isFetchingMore || false,
+        isFetchingNextPage: action.isFetchingNextPage || false,
+        isFetchingPreviousPage: action.isFetchingPreviousPage || false,
         status: state.updatedAt ? 'success' : 'loading',
       }
     case 'success':
       return {
         ...state,
-        canFetchMore: action.canFetchMore,
         data: action.data,
         dataUpdateCount: state.dataUpdateCount + 1,
         error: null,
         failureCount: 0,
+        hasNextPage: action.hasNextPage,
+        hasPreviousPage: action.hasPreviousPage,
+        pageParams: action.pageParams,
         isFetching: false,
-        isFetchingMore: false,
+        isFetchingNextPage: false,
+        isFetchingPreviousPage: false,
         isInvalidated: false,
         status: 'success',
         updatedAt: action.updatedAt ?? Date.now(),
@@ -677,7 +743,8 @@ export function queryReducer<TData, TError>(
         errorUpdateCount: state.errorUpdateCount + 1,
         failureCount: state.failureCount + 1,
         isFetching: false,
-        isFetchingMore: false,
+        isFetchingNextPage: false,
+        isFetchingPreviousPage: false,
         status: 'error',
       }
     case 'invalidate':

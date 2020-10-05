@@ -31,14 +31,14 @@ function Example() {
     data,
     error,
     isFetching,
-    isFetchingMore,
-    fetchMore,
-    canFetchMore,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
   } = useInfiniteQuery(
     'projects',
-    async (key, nextId = 0) => {
-      const { data } = await axios.get('/api/projects?cursor=' + nextId)
-      return data
+    async (_key, nextId = 0) => {
+      const res = await axios.get('/api/projects?cursor=' + nextId)
+      return res.data
     },
     {
       getFetchMore: lastGroup => lastGroup.nextId,
@@ -49,8 +49,8 @@ function Example() {
 
   useIntersectionObserver({
     target: loadMoreButtonRef,
-    onIntersect: fetchMore,
-    enabled: canFetchMore,
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage,
   })
 
   return (
@@ -81,18 +81,20 @@ function Example() {
           <div>
             <button
               ref={loadMoreButtonRef}
-              onClick={() => fetchMore()}
-              disabled={!canFetchMore || isFetchingMore}
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
             >
-              {isFetchingMore
+              {isFetchingNextPage
                 ? 'Loading more...'
-                : canFetchMore
+                : hasNextPage
                 ? 'Load More'
                 : 'Nothing more to load'}
             </button>
           </div>
           <div>
-            {isFetching && !isFetchingMore ? 'Background Updating...' : null}
+            {isFetching && !isFetchingNextPage
+              ? 'Background Updating...'
+              : null}
           </div>
         </>
       )}

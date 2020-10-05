@@ -126,7 +126,7 @@ function usePost(postId) {
       return post;
     },
     {
-      enabled: postId,
+      enabled: !!postId,
     }
   );
 }
