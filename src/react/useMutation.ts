@@ -109,10 +109,10 @@ export function useMutation<
   )
 
   const safeDispatch = React.useCallback<typeof dispatch>(
-    value => {
+    action => {
       notifyManager.schedule(() => {
         if (isMounted()) {
-          dispatch(value)
+          dispatch(action)
         }
       })
     },
@@ -121,51 +121,58 @@ export function useMutation<
 
   const client = useQueryClient()
   const defaultedOptions = client.defaultMutationOptions(options)
-  const latestMutationIdRef = React.useRef(0)
-  const latestMutationFnRef = React.useRef(mutationFn)
-  latestMutationFnRef.current = mutationFn
-  const latestOptionsRef = React.useRef(defaultedOptions)
-  latestOptionsRef.current = defaultedOptions
+  const lastMutationIdRef = React.useRef(0)
+  const lastMutationFnRef = React.useRef(mutationFn)
+  lastMutationFnRef.current = mutationFn
+  const lastOptionsRef = React.useRef(defaultedOptions)
+  lastOptionsRef.current = defaultedOptions
 
   const mutateAsync = React.useCallback<
     MutateAsyncFunction<TData, TError, TVariables, TContext>
   >(
-    async (variables, mutateOptions = {}): Promise<TData> => {
+    (vars, mutateOpts = {}): Promise<TData> => {
+      const mutationId = ++lastMutationIdRef.current
+      const mutationOpts = lastOptionsRef.current
+      const lastMutationFn = lastMutationFnRef.current
+
+      let ctx: TContext | undefined
+      let data: TData
+
       safeDispatch({ type: 'loading' })
 
-      const mutationId = ++latestMutationIdRef.current
-      const latestOptions = latestOptionsRef.current
-      const latestMutationFn = latestMutationFnRef.current
-      let context: TContext | undefined
-
-      try {
-        context = await latestOptions.onMutate?.(variables)
-        const data = await latestMutationFn(variables)
-
-        await latestOptions.onSuccess?.(data, variables, context)
-        await mutateOptions.onSuccess?.(data, variables, context)
-        await latestOptions.onSettled?.(data, null, variables, context)
-        await mutateOptions.onSettled?.(data, null, variables, context)
-
-        // Dispatch after handlers as the mutation could still fail
-        if (latestMutationIdRef.current === mutationId) {
-          safeDispatch({ type: 'success', data })
-        }
-
-        return data
-      } catch (error) {
-        getLogger().error(error)
-        await latestOptions.onError?.(error, variables, context)
-        await mutateOptions.onError?.(error, variables, context)
-        await latestOptions.onSettled?.(undefined, error, variables, context)
-        await mutateOptions.onSettled?.(undefined, error, variables, context)
-
-        if (latestMutationIdRef.current === mutationId) {
-          safeDispatch({ type: 'error', error })
-        }
-
-        throw error
-      }
+      return Promise.resolve()
+        .then(() => mutationOpts.onMutate?.(vars))
+        .then(context => {
+          ctx = context
+        })
+        .then(() => lastMutationFn(vars))
+        .then(result => {
+          data = result
+        })
+        .then(() => mutationOpts.onSuccess?.(data, vars, ctx))
+        .then(() => mutationOpts.onSettled?.(data, null, vars, ctx))
+        .then(() => mutateOpts.onSuccess?.(data, vars, ctx))
+        .then(() => mutateOpts.onSettled?.(data, null, vars, ctx))
+        .then(() => {
+          if (lastMutationIdRef.current === mutationId) {
+            safeDispatch({ type: 'success', data })
+          }
+          return data
+        })
+        .catch(error => {
+          getLogger().error(error)
+          return Promise.resolve()
+            .then(() => mutationOpts.onError?.(error, vars, ctx))
+            .then(() => mutationOpts.onSettled?.(undefined, error, vars, ctx))
+            .then(() => mutateOpts.onError?.(error, vars, ctx))
+            .then(() => mutateOpts.onSettled?.(undefined, error, vars, ctx))
+            .then(() => {
+              if (lastMutationIdRef.current === mutationId) {
+                safeDispatch({ type: 'error', error })
+              }
+              throw error
+            })
+        })
     },
     [safeDispatch]
   )
@@ -184,11 +191,8 @@ export function useMutation<
   }, [safeDispatch])
 
   React.useEffect(() => {
-    const latestOptions = latestOptionsRef.current
-    if (
-      state.error &&
-      (latestOptions.useErrorBoundary || latestOptions.suspense)
-    ) {
+    const lastOptions = lastOptionsRef.current
+    if (state.error && (lastOptions.useErrorBoundary || lastOptions.suspense)) {
       throw state.error
     }
   }, [state.error])

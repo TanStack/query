@@ -244,8 +244,8 @@ describe('useMutation', () => {
 
     expect(callbacks).toEqual([
       'useMutation.onSuccess',
-      'mutateAsync.onSuccess',
       'useMutation.onSettled',
+      'mutateAsync.onSuccess',
       'mutateAsync.onSettled',
       'mutateAsync.result:todo',
     ])
@@ -295,8 +295,8 @@ describe('useMutation', () => {
 
     expect(callbacks).toEqual([
       'useMutation.onError',
-      'mutateAsync.onError',
       'useMutation.onSettled',
+      'mutateAsync.onError',
       'mutateAsync.onSettled',
       'mutateAsync.error:oops',
     ])
