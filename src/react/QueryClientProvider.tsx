@@ -2,11 +2,11 @@ import React from 'react'
 
 import { QueryClient } from '../core'
 
-const queryClientContext = React.createContext<QueryClient | undefined>(
+const QueryClientContext = React.createContext<QueryClient | undefined>(
   undefined
 )
 
-export const useQueryClient = () => React.useContext(queryClientContext)!
+export const useQueryClient = () => React.useContext(QueryClientContext)!
 
 export interface QueryClientProviderProps {
   client: QueryClient
@@ -24,8 +24,8 @@ export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
   }, [client])
 
   return (
-    <queryClientContext.Provider value={client}>
+    <QueryClientContext.Provider value={client}>
       {children}
-    </queryClientContext.Provider>
+    </QueryClientContext.Provider>
   )
 }

@@ -19,7 +19,7 @@ import type {
   ResultOptions,
 } from './types'
 import type { Query, QueryState, Action, FetchOptions } from './query'
-import { QueryClient } from './queryClient'
+import type { QueryClient } from './queryClient'
 
 export interface QueryObserverConfig<
   TData = unknown,

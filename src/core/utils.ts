@@ -377,18 +377,6 @@ export function getStatusProps<T extends QueryStatus>(status: T) {
   }
 }
 
-export function createSetHandler(fn: () => void) {
-  let removePreviousHandler: (() => void) | void
-  return (callback: (handler: () => void) => void) => {
-    // Unsub the old handler
-    if (removePreviousHandler) {
-      removePreviousHandler()
-    }
-    // Sub the new handler
-    removePreviousHandler = callback(fn)
-  }
-}
-
 /**
  * Schedules a microtask.
  * This can be useful to schedule state updates after rendering.

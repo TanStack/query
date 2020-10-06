@@ -23,11 +23,12 @@ function createValue(): QueryErrorResetBoundaryValue {
   }
 }
 
-const context = React.createContext(createValue())
+const QueryErrorResetBoundaryContext = React.createContext(createValue())
 
 // HOOK
 
-export const useQueryErrorResetBoundary = () => React.useContext(context)
+export const useQueryErrorResetBoundary = () =>
+  React.useContext(QueryErrorResetBoundaryContext)
 
 // COMPONENT
 
@@ -42,10 +43,10 @@ export const QueryErrorResetBoundary: React.FC<QueryErrorResetBoundaryProps> = (
 }) => {
   const value = React.useMemo(() => createValue(), [])
   return (
-    <context.Provider value={value}>
+    <QueryErrorResetBoundaryContext.Provider value={value}>
       {typeof children === 'function'
         ? (children as Function)(value)
         : children}
-    </context.Provider>
+    </QueryErrorResetBoundaryContext.Provider>
   )
 }
