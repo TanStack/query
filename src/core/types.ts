@@ -1,4 +1,4 @@
-import { QueryFilters } from './utils'
+import type { QueryFilters } from './utils'
 
 export type QueryKey = string | unknown[]
 

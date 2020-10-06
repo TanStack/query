@@ -21,11 +21,13 @@ import type {
   QueryOptions,
   RefetchOptions,
 } from './types'
-import { notifyManager } from './notifyManager'
+import type { QueryState } from './query'
+import type { QueryCache } from './queryCache'
 import { QueriesObserver } from './queriesObserver'
-import { QueryCache } from './queryCache'
 import { QueryObserver } from './queryObserver'
-import { QueryState } from './query'
+import { initFocusHandler } from './focusHandler'
+import { initOnlineHandler } from './onlineHandler'
+import { notifyManager } from './notifyManager'
 
 // TYPES
 
@@ -55,6 +57,8 @@ export class QueryClient {
 
   mount(): void {
     mountedClients.push(this)
+    initFocusHandler(onFocus)
+    initOnlineHandler(onOnline)
   }
 
   unmount(): void {
@@ -338,7 +342,15 @@ export class QueryClient {
 
 const mountedClients: QueryClient[] = []
 
-export function onExternalEvent(type: 'focus' | 'online') {
+function onFocus() {
+  onExternalEvent('focus')
+}
+
+function onOnline() {
+  onExternalEvent('online')
+}
+
+function onExternalEvent(type: 'focus' | 'online') {
   if (isDocumentVisible() && isOnline()) {
     notifyManager.batch(() => {
       uniq(mountedClients.map(x => x.getCache())).forEach(cache => {

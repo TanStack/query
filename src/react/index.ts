@@ -1,12 +1,6 @@
-import { setBatchUpdatesFn, setLogger } from '../core'
-import { logger } from './logger'
-import { unstable_batchedUpdates } from './reactBatchedUpdates'
-
-setBatchUpdatesFn(unstable_batchedUpdates)
-
-if (logger) {
-  setLogger(logger)
-}
+// Side effects
+import './setBatchUpdatesFn'
+import './setLogger'
 
 export { QueryClientProvider, useQueryClient } from './QueryClientProvider'
 export {

@@ -88,6 +88,22 @@ describe('dehydration and rehydration', () => {
     hydrationCache.clear()
   })
 
+  test('should serialize the cacheTime correctly', async () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
+    await client.prefetchQuery('string', () => fetchData('string'), {
+      cacheTime: Infinity,
+    })
+    const dehydrated = dehydrate(cache)
+    const stringified = JSON.stringify(dehydrated)
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    hydrate(hydrationCache, parsed)
+    expect(hydrationCache.find('string')?.cacheTime).toBe(Infinity)
+    cache.clear()
+    hydrationCache.clear()
+  })
+
   test('should work with complex keys', async () => {
     const cache = new QueryCache()
     const client = new QueryClient({ cache })

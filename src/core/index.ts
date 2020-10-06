@@ -8,8 +8,8 @@ export {
   setUpdateFn,
 } from './notifyManager'
 export { setLogger } from './logger'
-export { setFocusHandler } from './setFocusHandler'
-export { setOnlineHandler } from './setOnlineHandler'
+export { setFocusHandler } from './focusHandler'
+export { setOnlineHandler } from './onlineHandler'
 export {
   CancelledError,
   hashQueryKey,

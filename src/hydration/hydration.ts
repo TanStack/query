@@ -22,6 +22,14 @@ export interface DehydrateConfig {
   shouldDehydrate?: ShouldDehydrateFunction
 }
 
+function serializePositiveNumber(value: number): number {
+  return value === Infinity ? -1 : value
+}
+
+function deserializePositiveNumber(value: number): number {
+  return value === -1 ? Infinity : value
+}
+
 // Most config is not dehydrated but instead meant to configure again when
 // consuming the de/rehydrated data, typically with useQuery on the client.
 // Sometimes it might make sense to prefetch data on the server and include
@@ -29,7 +37,7 @@ export interface DehydrateConfig {
 function dehydrateQuery(query: Query): DehydratedQuery {
   return {
     config: {
-      cacheTime: query.cacheTime,
+      cacheTime: serializePositiveNumber(query.cacheTime),
     },
     data: query.state.data,
     queryKey: query.queryKey,
@@ -80,7 +88,9 @@ export function hydrate(cache: QueryCache, dehydratedState: unknown): void {
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
         options: {
-          cacheTime: dehydratedQuery.config.cacheTime,
+          cacheTime: deserializePositiveNumber(
+            dehydratedQuery.config.cacheTime
+          ),
         },
       })
       cache.add(query)
