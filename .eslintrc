@@ -28,6 +28,7 @@
       }
     ],
     "no-shadow": "error",
-    "import/no-cycle": "error"
+    "import/no-cycle": "error",
+    "import/no-unused-modules": ["off", { "unusedExports": true }]
   }
 }

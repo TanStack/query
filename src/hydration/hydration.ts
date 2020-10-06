@@ -1,4 +1,6 @@
-import { Query, QueryCache, QueryKey } from '../core'
+import { Query } from '../core/query'
+import { QueryCache } from '../core/queryCache'
+import { QueryKey } from '../core/types'
 
 export interface DehydratedQueryConfig {
   cacheTime: number

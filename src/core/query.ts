@@ -30,7 +30,7 @@ import { getLogger } from './logger'
 
 // TYPES
 
-export interface QueryConfig<TData, TError, TQueryFnData> {
+interface QueryConfig<TData, TError, TQueryFnData> {
   cache: QueryCache
   queryKey: QueryKey
   queryHash: string
@@ -701,7 +701,7 @@ function getDefaultState<TData, TError, TQueryFnData>(
   }
 }
 
-export function queryReducer<TData, TError>(
+function queryReducer<TData, TError>(
   state: QueryState<TData, TError>,
   action: Action<TData, TError>
 ): QueryState<TData, TError> {

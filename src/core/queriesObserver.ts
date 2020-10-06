@@ -4,7 +4,7 @@ import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
 
-export interface QueriesObserverConfig {
+interface QueriesObserverConfig {
   client: QueryClient
   queries?: QueryObserverOptions[]
 }

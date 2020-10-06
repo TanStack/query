@@ -28,10 +28,6 @@ export function setUpdateFn(fn: UpdateFunction) {
   updateFn = fn
 }
 
-export function getUpdateFn(): UpdateFunction {
-  return updateFn
-}
-
 /**
  * Use this function to set a custom batch function to batch updates together into a single render pass.
  * By default React Query will use the batch function provided by ReactDOM or React Native.
@@ -40,13 +36,9 @@ export function setBatchUpdatesFn(fn: BatchUpdatesFunction) {
   batchUpdatesFn = fn
 }
 
-export function getBatchUpdatesFn(): BatchUpdatesFunction {
-  return batchUpdatesFn
-}
-
 // CLASS
 
-export class NotifyManager {
+class NotifyManager {
   private queue: NotifyCallback[]
   private transactions: number
 

@@ -1,22 +1,13 @@
-export { Query } from './query'
 export { QueryCache } from './queryCache'
 export { QueryClient } from './queryClient'
-export {
-  getBatchUpdatesFn,
-  getUpdateFn,
-  setBatchUpdatesFn,
-  setUpdateFn,
-} from './notifyManager'
+export { setBatchUpdatesFn, setUpdateFn } from './notifyManager'
 export { setLogger } from './logger'
 export { setFocusHandler } from './focusHandler'
 export { setOnlineHandler } from './onlineHandler'
-export {
-  CancelledError,
-  hashQueryKey,
-  isCancelledError,
-  isError,
-} from './utils'
+export { hashQueryKey, isCancelledError, isError } from './utils'
 
 // Types
 export * from './types'
+export type { CancelledError } from './utils'
+export type { Query } from './query'
 export type { Logger } from './logger'

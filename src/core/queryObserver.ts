@@ -21,7 +21,7 @@ import type {
 import type { Query, QueryState, Action, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 
-export interface QueryObserverConfig<
+interface QueryObserverConfig<
   TData = unknown,
   TError = unknown,
   TQueryFnData = TData,
