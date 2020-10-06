@@ -28,7 +28,7 @@ Feature/Capability Key:
 | Paginated Queries                            | ✅                                     | ✅                         | ✅                                    |
 | Infinite Queries                             | ✅                                     | ✅                         | ✅                                    |
 | Bi-directional Infinite Queries              | ✅                                     | 🔶                         | 🔶                                    |
-| Lagged / "Lazy" Queries<sup>1</sup>          | ✅                                     | 🛑                         | 🛑                                    |
+| Lagged Query Data<sup>1</sup>                | ✅                                     | 🛑                         | 🛑                                    |
 | Selectors                                    | ✅                                     | 🛑                         | ✅                                    |
 | Initial Data                                 | ✅                                     | ✅                         | ✅                                    |
 | Scroll Recovery                              | ✅                                     | ✅                         | ✅                                    |
@@ -51,7 +51,7 @@ Feature/Capability Key:
 
 ### Notes
 
-> **<sup>1</sup> Lagged / "Lazy" Queries** - React Query provides a way to continue to see an existing query's data while the next query loads (similar to the same UX that suspense will soon provide natively). This is extremely important when writing pagination UIs or infinite loading UIs where you do not want to show a hard loading state whenever a new query is requested. Other libraries do not have this capability and render a hard loading state for the new query (unless it has been prefetched), while the new query loads.
+> **<sup>1</sup> Lagged Query Data** - React Query provides a way to continue to see an existing query's data while the next query loads (similar to the same UX that suspense will soon provide natively). This is extremely important when writing pagination UIs or infinite loading UIs where you do not want to show a hard loading state whenever a new query is requested. Other libraries do not have this capability and render a hard loading state for the new query (unless it has been prefetched), while the new query loads.
 
 > **<sup>2</sup> Render Optimization** - React Query has excellent rendering performance. It will only re-render your components when a query is updated. For example because it has new data, or to indicate it is fetching. React Query also batches updates together to make sure your application only re-renders once when multiple components are using the same query. If you are only interested in the `data` or `error` properties, you can reduce the number of renders even more by setting `notifyOnStatusChange` to `false`.
 
