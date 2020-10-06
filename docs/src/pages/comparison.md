@@ -28,6 +28,7 @@ Feature/Capability Key:
 | Paginated Queries                            | ✅                                     | ✅                         | ✅                                    |
 | Infinite Queries                             | ✅                                     | ✅                         | ✅                                    |
 | Bi-directional Infinite Queries              | ✅                                     | 🔶                         | 🔶                                    |
+| Infinite Query Refetching                    | ✅                                     | ✅                         | 🛑                                    |
 | Lagged Query Data<sup>1</sup>                | ✅                                     | 🛑                         | 🛑                                    |
 | Selectors                                    | ✅                                     | 🛑                         | ✅                                    |
 | Initial Data                                 | ✅                                     | ✅                         | ✅                                    |
