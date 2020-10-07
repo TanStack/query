@@ -51,7 +51,7 @@ Feature/Capability Key:
 | Persisted Queries (APQ)                      | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
 | GraphQL Connections                          | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
 | Data masking                                 | 🛑                                     | 🛑                         | 🛑                                    | ✅                                    |
-| Generated type safety for input & response   | 🛑                                     | 🛑                         | 🟡                                    | 🟡                                    |
+| Generated type safety for input & response   | 🛑                                     | 🛑                         | 🟡                                    | ✅                                    |
 | Offline support                              | 🛑                                     | 🛑                         | 🛑                                    | 🟡                                    |
 
 ### Notes
