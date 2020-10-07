@@ -29,7 +29,7 @@ Feature/Capability Key:
 | Infinite Queries                             | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Lagged / "Lazy" Queries<sup>1</sup>          | ✅                                     | 🛑                         | 🛑                                    | ✅                                    |
 | Initial Data                                 | ✅                                     | ✅                         | ✅                                    | ✅                                    |
-| Scroll Recovery                              | ✅                                     | ✅                         | ✅                                    | 🛑                                    |
+| Scroll Recovery                              | ✅                                     | ✅                         | 🛑                                    | 🛑                                    |
 | Cache Manipulation                           | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Outdated Query Dismissal                     | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Render Optimization<sup>2</sup>              | ✅                                     | 🛑                         | 🛑                                    | ✅                                    |
@@ -46,13 +46,15 @@ Feature/Capability Key:
 | React Suspense (Experimental)                | ✅                                     | ✅                         | 🛑                                    | ✅                                    |
 | Automatic Refetch after Mutation<sup>4</sup> | 🔶                                     | 🔶                         | ✅                                    | ✅                                    |
 | Normalized Caching<sup>5</sup>               | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
-| GraphQL Fragments                            | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
-| GraphQL Subscriptions                        | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
+| GraphQL Fragments                            | 🟡                                     | 🛑                         | ✅                                    | ✅                                    |
+| GraphQL Subscriptions                        | 🟡                                     | 🛑                         | ✅                                    | ✅                                    |
 | Persisted Queries (APQ)                      | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
-| GraphQL Connections                          | 🛑                                     | 🛑                         | ✅                                    | ✅                                    |
+| GraphQL Connections                          | 🟡                                     | 🛑                         | ✅                                    | ✅                                    |
 | Data masking                                 | 🛑                                     | 🛑                         | 🛑                                    | ✅                                    |
-| Generated type safety for input & response   | 🛑                                     | 🛑                         | 🟡                                    | ✅                                    |
+| Generated type definitions                   | 🛑                                     | 🛑                         | 🟡                                    | ✅                                    |
+| Compile-time Optimisations                   | 🛑                                     | 🛑                         | 🛑                                    | ✅                                    |
 | Offline support                              | 🛑                                     | 🛑                         | 🛑                                    | 🟡                                    |
+
 
 ### Notes
 
