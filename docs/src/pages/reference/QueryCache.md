@@ -33,8 +33,8 @@ const query = cache.find(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 
@@ -53,8 +53,8 @@ const queries = cache.findAll(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/queries#query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/queries#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 

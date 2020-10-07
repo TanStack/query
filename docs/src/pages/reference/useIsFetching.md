@@ -15,8 +15,8 @@ const isFetchingPosts = useIsFetching(['posts'])
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 

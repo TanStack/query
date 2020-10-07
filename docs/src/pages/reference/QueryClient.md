@@ -118,8 +118,8 @@ const data = client.getQueryData(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 
@@ -168,8 +168,8 @@ console.log(state.updatedAt)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 ## `client.setQueryDefaults`
 
@@ -185,8 +185,8 @@ function Component() {
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 ## `client.invalidateQueries`
 
@@ -205,8 +205,8 @@ await client.invalidateQueries('posts', {
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
   - `refetchActive: Boolean`
     - Defaults to `true`
     - When set to `false`, queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will NOT be refetched in the background, and only marked as invalid.
@@ -239,8 +239,8 @@ await client.refetchQueries(['posts', 1], { active: true, exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 - `refetchOptions?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -261,8 +261,8 @@ await client.cancelQueries('posts', { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 
@@ -278,8 +278,8 @@ client.removeQueries(queryKey, { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 
@@ -344,8 +344,8 @@ React Query also exports a handy [`useIsFetching`](#useisfetching) hook that wil
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](#./guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](./guides/query-filters)
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
 
 **Returns**
 
