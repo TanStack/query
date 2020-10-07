@@ -64,7 +64,7 @@ interface FetchMoreOptions {
   direction: 'forward' | 'backward'
 }
 
-interface SetDataOptions {
+export interface SetDataOptions {
   pageParams?: unknown[]
   updatedAt?: number
 }

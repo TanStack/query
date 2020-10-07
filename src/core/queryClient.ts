@@ -21,7 +21,7 @@ import type {
   QueryOptions,
   RefetchOptions,
 } from './types'
-import type { QueryState } from './query'
+import type { QueryState, SetDataOptions } from './query'
 import type { QueryCache } from './queryCache'
 import { QueriesObserver } from './queriesObserver'
 import { QueryObserver } from './queryObserver'
@@ -109,11 +109,12 @@ export class QueryClient {
 
   setQueryData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData>
+    updater: Updater<TData | undefined, TData>,
+    options?: SetDataOptions
   ): TData {
     const parsedOptions = parseQueryArgs(queryKey)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
-    return this.cache.build(defaultedOptions).setData(updater)
+    return this.cache.build(defaultedOptions).setData(updater, options)
   }
 
   getQueryState<TData = unknown, TError = undefined>(
