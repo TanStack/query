@@ -1,6 +1,6 @@
 export { QueryCache } from './queryCache'
 export { QueryClient } from './queryClient'
-export { setBatchUpdatesFn, setUpdateFn } from './notifyManager'
+export { setBatchNotifyFn, setNotifyFn } from './notifyManager'
 export { setLogger } from './logger'
 export { setFocusHandler } from './focusHandler'
 export { setOnlineHandler } from './onlineHandler'

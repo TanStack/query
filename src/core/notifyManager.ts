@@ -4,36 +4,36 @@ import { scheduleMicrotask } from './utils'
 
 type NotifyCallback = () => void
 
-type UpdateFunction = (callback: () => void) => void
+type NotifyFunction = (callback: () => void) => void
 
-type BatchUpdatesFunction = (callback: () => void) => void
+type BatchNotifyFunction = (callback: () => void) => void
 
 // GETTERS AND SETTERS
 
-// Default to a dummy "update" implementation that just runs the callback
-let updateFn: UpdateFunction = (callback: () => void) => {
+// Default to a dummy "notify" implementation that just runs the callback
+let notifyFn: NotifyFunction = (callback: () => void) => {
   callback()
 }
 
-// Default to a dummy "batch update" implementation that just runs the callback
-let batchUpdatesFn: BatchUpdatesFunction = (callback: () => void) => {
+// Default to a dummy "batch notify" implementation that just runs the callback
+let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
   callback()
 }
 
 /**
- * Use this function to set a custom update function.
- * This can be used to for example wrap updates with `React.act` while running tests.
+ * Use this function to set a custom notify function.
+ * This can be used to for example wrap notifications with `React.act` while running tests.
  */
-export function setUpdateFn(fn: UpdateFunction) {
-  updateFn = fn
+export function setNotifyFn(fn: NotifyFunction) {
+  notifyFn = fn
 }
 
 /**
- * Use this function to set a custom batch function to batch updates together into a single render pass.
+ * Use this function to set a custom function to batch notifications together into a single tick.
  * By default React Query will use the batch function provided by ReactDOM or React Native.
  */
-export function setBatchUpdatesFn(fn: BatchUpdatesFunction) {
-  batchUpdatesFn = fn
+export function setBatchNotifyFn(fn: BatchNotifyFunction) {
+  batchNotifyFn = fn
 }
 
 // CLASS
@@ -57,12 +57,12 @@ class NotifyManager {
     return result
   }
 
-  schedule(notify: NotifyCallback): void {
+  schedule(callback: NotifyCallback): void {
     if (this.transactions) {
-      this.queue.push(notify)
+      this.queue.push(callback)
     } else {
       scheduleMicrotask(() => {
-        updateFn(notify)
+        notifyFn(callback)
       })
     }
   }
@@ -72,9 +72,9 @@ class NotifyManager {
     this.queue = []
     if (queue.length) {
       scheduleMicrotask(() => {
-        batchUpdatesFn(() => {
-          queue.forEach(notify => {
-            updateFn(notify)
+        batchNotifyFn(() => {
+          queue.forEach(callback => {
+            notifyFn(callback)
           })
         })
       })
