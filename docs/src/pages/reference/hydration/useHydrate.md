@@ -8,7 +8,7 @@ title: hydration/useHydrate
 ```jsx
 import { useHydrate } from 'react-query/hydration'
 
-useHydrate(dehydratedState)
+useHydrate(dehydratedState, options)
 ```
 
 **Options**
@@ -16,3 +16,7 @@ useHydrate(dehydratedState)
 - `dehydratedState: DehydratedState`
   - **Required**
   - The state to hydrate
+- `options: HydrateOptions`
+  - Optional
+  - `defaultOptions: QueryOptions`
+    - The default query options to use for the hydrated queries.

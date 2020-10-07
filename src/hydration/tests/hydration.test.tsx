@@ -104,6 +104,20 @@ describe('dehydration and rehydration', () => {
     hydrationCache.clear()
   })
 
+  test('should be able to provide default options for the hydrated queries', async () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
+    await client.prefetchQuery('string', () => fetchData('string'))
+    const dehydrated = dehydrate(cache)
+    const stringified = JSON.stringify(dehydrated)
+    const parsed = JSON.parse(stringified)
+    const hydrationCache = new QueryCache()
+    hydrate(hydrationCache, parsed, { defaultOptions: { retry: 10 } })
+    expect(hydrationCache.find('string')?.options.retry).toBe(10)
+    cache.clear()
+    hydrationCache.clear()
+  })
+
   test('should work with complex keys', async () => {
     const cache = new QueryCache()
     const client = new QueryClient({ cache })

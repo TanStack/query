@@ -8,7 +8,7 @@ title: hydration/hydrate
 ```js
 import { hydrate } from 'react-query/hydration'
 
-hydrate(cache, dehydratedState)
+hydrate(cache, dehydratedState, options)
 ```
 
 **Options**
@@ -19,3 +19,7 @@ hydrate(cache, dehydratedState)
 - `dehydratedState: DehydratedState`
   - **Required**
   - The state to hydrate into the cache
+- `options: HydrateOptions`
+  - Optional
+  - `defaultOptions: QueryOptions`
+    - The default query options to use for the hydrated queries.

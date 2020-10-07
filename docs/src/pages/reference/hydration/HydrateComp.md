@@ -17,3 +17,7 @@ function App() {
 
 - `state: DehydratedState`
   - The state to hydrate
+- `options: HydrateOptions`
+  - Optional
+  - `defaultOptions: QueryOptions`
+    - The default query options to use for the hydrated queries.

@@ -18,10 +18,12 @@ const dehydratedState = dehydrate(cache, {
 - `cache: QueryCache`
   - **Required**
   - The `cache` that should be dehydrated
-- `shouldDehydrate: (query: Query) => boolean`
-  - This function is called for each query in the cache
-  - Return `true` to include this query in dehydration, or `false` otherwise
-  - Default version only includes successful queries, do `shouldDehydrate: () => true` to include all queries
+- `options: DehydrateOptions`
+  - Optional
+  - `shouldDehydrate: (query: Query) => boolean`
+    - This function is called for each query in the cache
+    - Return `true` to include this query in dehydration, or `false` otherwise
+    - Default version only includes successful queries, do `shouldDehydrate: () => true` to include all queries
 
 **Returns**
 

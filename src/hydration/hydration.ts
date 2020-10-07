@@ -1,12 +1,22 @@
 import { Query } from '../core/query'
 import { QueryCache } from '../core/queryCache'
-import { QueryKey } from '../core/types'
+import { QueryKey, QueryOptions } from '../core/types'
 
-export interface DehydratedQueryConfig {
+// TYPES
+
+export interface DehydrateOptions {
+  shouldDehydrate?: ShouldDehydrateFunction
+}
+
+export interface HydrateOptions {
+  defaultOptions?: QueryOptions
+}
+
+interface DehydratedQueryConfig {
   cacheTime: number
 }
 
-export interface DehydratedQuery {
+interface DehydratedQuery {
   queryKey: QueryKey
   queryHash: string
   data?: unknown
@@ -20,9 +30,7 @@ export interface DehydratedState {
 
 export type ShouldDehydrateFunction = (query: Query) => boolean
 
-export interface DehydrateConfig {
-  shouldDehydrate?: ShouldDehydrateFunction
-}
+// FUNCTIONS
 
 function serializePositiveNumber(value: number): number {
   return value === Infinity ? -1 : value
@@ -54,10 +62,11 @@ function defaultShouldDehydrate(query: Query) {
 
 export function dehydrate(
   cache: QueryCache,
-  dehydrateConfig?: DehydrateConfig
+  options?: DehydrateOptions
 ): DehydratedState {
-  const config = dehydrateConfig || {}
-  const shouldDehydrate = config.shouldDehydrate || defaultShouldDehydrate
+  options = options || {}
+
+  const shouldDehydrate = options.shouldDehydrate || defaultShouldDehydrate
   const queries: DehydratedQuery[] = []
 
   cache.getAll().forEach(query => {
@@ -69,11 +78,16 @@ export function dehydrate(
   return { queries }
 }
 
-export function hydrate(cache: QueryCache, dehydratedState: unknown): void {
+export function hydrate(
+  cache: QueryCache,
+  dehydratedState: unknown,
+  options?: HydrateOptions
+): void {
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
 
+  const defaultOptions = options?.defaultOptions || {}
   const queries = (dehydratedState as DehydratedState).queries || []
 
   queries.forEach(dehydratedQuery => {
@@ -90,6 +104,7 @@ export function hydrate(cache: QueryCache, dehydratedState: unknown): void {
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
         options: {
+          ...defaultOptions,
           cacheTime: deserializePositiveNumber(
             dehydratedQuery.config.cacheTime
           ),
