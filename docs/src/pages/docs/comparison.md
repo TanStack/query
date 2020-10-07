@@ -29,7 +29,7 @@ Feature/Capability Key:
 | Infinite Queries                             | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Lagged / "Lazy" Queries<sup>1</sup>          | ✅                                     | 🛑                         | 🛑                                    | ✅                                    |
 | Initial Data                                 | ✅                                     | ✅                         | ✅                                    | ✅                                    |
-| Scroll Recovery                              | ✅                                     | ✅                         | 🛑                                    | 🛑                                    |
+| Scroll Recovery                              | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Cache Manipulation                           | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Outdated Query Dismissal                     | ✅                                     | ✅                         | ✅                                    | ✅                                    |
 | Render Optimization<sup>2</sup>              | ✅                                     | 🛑                         | 🛑                                    | ✅                                    |
