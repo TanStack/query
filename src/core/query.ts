@@ -24,9 +24,11 @@ import type {
   QueryStatus,
 } from './types'
 import type { QueryCache } from './queryCache'
+import type { QueryClient } from './queryClient'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
+import { composeOnQuery, OnQueryContext } from './plugins'
 
 // TYPES
 
@@ -110,10 +112,10 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   queryKey: QueryKey
   queryHash: string
   options!: QueryOptions<TData, TError, TQueryFnData>
-  defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
   state: QueryState<TData, TError>
   cacheTime!: number
 
+  private defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
   private cache: QueryCache
   private promise?: Promise<TData>
   private gcTimeout?: number
@@ -333,6 +335,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   fetch(
+    client: QueryClient,
     options?: QueryOptions<TData, TError, TQueryFnData>,
     fetchOptions?: FetchOptions
   ): Promise<TData> {
@@ -366,8 +369,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     params = filter ? filter(params) : params
 
     const promise = this.options.infinite
-      ? this.startInfiniteFetch(this.options, params, fetchOptions)
-      : this.startFetch(this.options, params)
+      ? this.startInfiniteFetch(client, this.options, params, fetchOptions)
+      : this.startFetch(client, this.options, params)
 
     this.promise = promise.catch(error => {
       // Set error state if needed
@@ -390,13 +393,34 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     return this.promise
   }
 
+  private executeQueryFn(
+    client: QueryClient,
+    options: QueryOptions<TData, TError, TQueryFnData>,
+    params: unknown[]
+  ): Promise<TQueryFnData> {
+    const queryFn = options.queryFn || defaultQueryFn
+
+    const onQueryContext: OnQueryContext = {
+      client,
+      query: this,
+      options,
+      params,
+    }
+
+    const fn = composeOnQuery<TQueryFnData>(client.getPlugins())
+
+    return fn(onQueryContext, () =>
+      Promise.resolve(queryFn(...onQueryContext.params))
+    )
+  }
+
   private startFetch(
+    client: QueryClient,
     options: QueryOptions<TData, TError, TQueryFnData>,
     params: unknown[]
   ): Promise<TData> {
     // Create function to fetch the data
-    const queryFn = options.queryFn || defaultQueryFn
-    const fetchData = () => queryFn(...params)
+    const fetchData = () => this.executeQueryFn(client, options, params)
 
     // Set to fetching state if not already in it
     if (!this.state.isFetching) {
@@ -410,11 +434,11 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   private startInfiniteFetch(
+    client: QueryClient,
     options: QueryOptions<TData, TError, TQueryFnData>,
     params: unknown[],
     fetchOptions?: FetchOptions
   ): Promise<TData> {
-    const queryFn = options.queryFn || defaultQueryFn
     const fetchMore = fetchOptions?.fetchMore
     const pageParam = fetchMore?.pageParam
     const isFetchingNextPage = fetchMore?.direction === 'forward'
@@ -434,14 +458,14 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         return Promise.resolve(pages)
       }
 
-      return Promise.resolve()
-        .then(() => queryFn(...params, param))
-        .then(page => {
+      return this.executeQueryFn(client, options, [...params, param]).then(
+        page => {
           newPageParams = previous
             ? [param, ...newPageParams]
             : [...newPageParams, param]
           return previous ? [page, ...pages] : [...pages, page]
-        })
+        }
+      )
     }
 
     // Create function to fetch the data

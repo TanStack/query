@@ -247,9 +247,43 @@ export interface MutationOptions<
   TVariables = void,
   TContext = unknown
 > extends MutateOptions<TData, TError, TVariables, TContext> {
+  mutationFn?: MutationFunction<TData, TVariables>
   onMutate?: (variables: TVariables) => Promise<TContext> | TContext
   useErrorBoundary?: boolean
   suspense?: boolean
+}
+
+export type MutateFunction<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> = (
+  variables: TVariables,
+  options?: MutateOptions<TData, TError, TVariables, TContext>
+) => Promise<TData>
+
+export type MutationFunction<TData = unknown, TVariables = void> = (
+  variables: TVariables
+) => TData | Promise<TData>
+
+export type MutationStatus = 'idle' | 'loading' | 'error' | 'success'
+
+export interface MutationObserverResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> {
+  data: TData | undefined
+  error: TError | null
+  isError: boolean
+  isIdle: boolean
+  isLoading: boolean
+  isSuccess: boolean
+  mutate: MutateFunction<TData, TError, TVariables, TContext>
+  reset: () => void
+  status: MutationStatus
 }
 
 export interface DefaultOptions<TError = unknown> {

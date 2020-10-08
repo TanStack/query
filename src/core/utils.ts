@@ -1,5 +1,7 @@
 import type { Query } from './query'
 import type {
+  MutationFunction,
+  MutationOptions,
   QueryFunction,
   QueryKey,
   QueryKeyHashFunction,
@@ -125,6 +127,14 @@ export function replaceAt<T>(array: T[], index: number, value: T): T[] {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+}
+
+export function parseMutationArgs<
+  TOptions extends MutationOptions<any, any, any, any>
+>(arg1: MutationFunction<any, any> | TOptions, arg2?: TOptions): TOptions {
+  return (typeof arg1 === 'function'
+    ? { ...arg2, mutationFn: arg1 }
+    : arg1) as TOptions
 }
 
 export function parseQueryArgs<TOptions extends QueryOptions<any, any>>(
@@ -359,6 +369,10 @@ export function isError(value: any): value is Error {
 
 export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
+}
+
+export function isDefined<T>(value: T | undefined): value is T {
+  return typeof value !== 'undefined'
 }
 
 export function sleep(timeout: number): Promise<void> {

@@ -245,9 +245,6 @@ export class QueryObserver<
   fetch(
     fetchOptions?: FetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
-    if (!this.canFetch()) {
-      return this.getCurrentOrNextResult()
-    }
     const promise = this.getNextResult(fetchOptions)
     this.executeFetch(fetchOptions)
     return promise
@@ -260,15 +257,9 @@ export class QueryObserver<
   }
 
   private executeFetch(fetchOptions?: FetchOptions): void {
-    if (this.canFetch()) {
-      this.currentQuery.fetch(this.getQueryOptions(), fetchOptions).catch(noop)
-    }
-  }
-
-  private canFetch(): boolean {
-    return Boolean(
-      this.options.queryFn || this.currentQuery.defaultOptions?.queryFn
-    )
+    this.currentQuery
+      .fetch(this.client, this.getQueryOptions(), fetchOptions)
+      .catch(noop)
   }
 
   private updateStaleTimeout(): void {

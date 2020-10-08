@@ -1,6 +1,7 @@
 import {
   MutateOptions,
   MutationOptions,
+  MutationStatus,
   QueryObserverOptions,
   QueryObserverResult,
 } from '../core/types'
@@ -33,26 +34,20 @@ export interface UseQueryResult<TData = unknown, TError = unknown>
 export interface UseInfiniteQueryResult<TData = unknown, TError = unknown>
   extends UseBaseQueryResult<TData[], TError> {}
 
-export type MutationStatus = 'idle' | 'loading' | 'error' | 'success'
-
-export type MutationFunction<TData = unknown, TVariables = unknown> = (
-  variables: TVariables
-) => Promise<TData>
-
-export type MutateFunction<
+export type UseMutateFunction<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown
 > = (
   variables: TVariables,
   options?: MutateOptions<TData, TError, TVariables, TContext>
 ) => void
 
-export type MutateAsyncFunction<
+export type UseMutateAsyncFunction<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown
 > = (
   variables: TVariables,
@@ -65,7 +60,7 @@ export interface UseMutationOptions<TData, TError, TVariables, TContext>
 export interface UseMutationResult<
   TData = unknown,
   TError = unknown,
-  TVariables = unknown,
+  TVariables = void,
   TContext = unknown
 > {
   data: TData | undefined
@@ -74,8 +69,8 @@ export interface UseMutationResult<
   isIdle: boolean
   isLoading: boolean
   isSuccess: boolean
-  mutate: MutateFunction<TData, TError, TVariables, TContext>
-  mutateAsync: MutateAsyncFunction<TData, TError, TVariables, TContext>
+  mutate: UseMutateFunction<TData, TError, TVariables, TContext>
+  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
   reset: () => void
   status: MutationStatus
 }

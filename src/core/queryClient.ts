@@ -6,6 +6,7 @@ import {
   isOnline,
   noop,
   parseFilterArgs,
+  parseMutationArgs,
   parseQueryArgs,
   uniq,
 } from './utils'
@@ -14,6 +15,8 @@ import type {
   FetchQueryOptions,
   InvalidateOptions,
   InvalidateQueryFilters,
+  MutateOptions,
+  MutationFunction,
   MutationOptions,
   QueryFunction,
   QueryKey,
@@ -23,16 +26,19 @@ import type {
 } from './types'
 import type { QueryState, SetDataOptions } from './query'
 import type { QueryCache } from './queryCache'
+import { MutationObserver } from './mutationObserver'
 import { QueriesObserver } from './queriesObserver'
 import { QueryObserver } from './queryObserver'
 import { initFocusHandler } from './focusHandler'
 import { initOnlineHandler } from './onlineHandler'
 import { notifyManager } from './notifyManager'
+import { Plugin } from './plugins'
 
 // TYPES
 
 interface QueryClientConfig {
   cache: QueryCache
+  plugins?: Plugin[]
   defaultOptions?: DefaultOptions
 }
 
@@ -40,11 +46,17 @@ interface QueryClientConfig {
 
 export class QueryClient {
   private cache: QueryCache
+  private plugins: Plugin[]
   private defaultOptions: DefaultOptions
 
   constructor(config: QueryClientConfig) {
     this.cache = config.cache
+    this.plugins = config.plugins || []
     this.defaultOptions = config.defaultOptions || {}
+  }
+
+  getPlugins(): Plugin[] {
+    return this.plugins
   }
 
   getDefaultOptions(): DefaultOptions {
@@ -206,7 +218,7 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.cache.findAll(filters).map(query => query.fetch())
+      this.cache.findAll(filters).map(query => query.fetch(this))
     )
 
     let promise = Promise.all(promises).then(noop)
@@ -300,7 +312,7 @@ export class QueryClient {
       return Promise.resolve(query.state.data as TData)
     }
 
-    return query.fetch(defaultedOptions)
+    return query.fetch(this, defaultedOptions)
   }
 
   prefetchQuery(options: FetchQueryOptions): Promise<void>
@@ -318,6 +330,57 @@ export class QueryClient {
     return this.fetchQueryData(arg1 as any, arg2 as any, arg3)
       .then(noop)
       .catch(noop)
+  }
+
+  mutate<
+    TData = unknown,
+    TError = unknown,
+    TVariables = void,
+    TContext = unknown
+  >(
+    mutationFn: MutationFunction<TData, TVariables>,
+    variables: TVariables,
+    options?: MutationOptions<TData, TError, TVariables, TContext>,
+    mutateOptions?: MutateOptions<TData, TError, TVariables, TContext>
+  ): Promise<TData> {
+    const mutation = this.watchMutation<TData, TError, TVariables, TContext>(
+      mutationFn,
+      options
+    )
+    return mutation.mutate(variables, mutateOptions)
+  }
+
+  watchMutation<
+    TData = unknown,
+    TError = unknown,
+    TVariables = void,
+    TContext = unknown
+  >(
+    options: MutationOptions<TData, TError, TVariables, TContext>
+  ): MutationObserver<TData, TError, TVariables, TContext>
+  watchMutation<
+    TData = unknown,
+    TError = unknown,
+    TVariables = void,
+    TContext = unknown
+  >(
+    mutationFn: MutationFunction<TData, TVariables>,
+    options?: MutationOptions<TData, TError, TVariables, TContext>
+  ): MutationObserver<TData, TError, TVariables, TContext>
+  watchMutation<
+    TData = unknown,
+    TError = unknown,
+    TVariables = void,
+    TContext = unknown
+  >(
+    arg1:
+      | MutationFunction<TData, TVariables>
+      | MutationOptions<TData, TError, TVariables, TContext>,
+    arg2?: MutationOptions<TData, TError, TVariables, TContext>
+  ): MutationObserver<TData, TError, TVariables, TContext> {
+    const parsedOptions = parseMutationArgs(arg1, arg2)
+    const defaultedOptions = this.defaultMutationOptions(parsedOptions)
+    return new MutationObserver({ client: this, options: defaultedOptions })
   }
 
   getCache(): QueryCache {
