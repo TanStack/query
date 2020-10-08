@@ -9,14 +9,10 @@ You can install React Query with [NPM](https://npmjs.com),
 
 ### NPM
 
-```sh
-npm install react-query
-```
-
-or
-
-```sh
-yarn add react-query
+```bash
+$ npm i react-query
+# or
+$ yarn add react-query
 ```
 
 React Query is compatible with React v16.8+ and works with ReactDOM and React Native.
