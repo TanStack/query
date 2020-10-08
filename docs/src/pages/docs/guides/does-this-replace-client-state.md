@@ -12,7 +12,7 @@ With those points in mind, the short answer is that React Query **replaces the b
 
 For a vast majority of applications, the truly **globally accessible client state** that is left over after migrating all of your async code to React Query is usually very tiny.
 
-> There are still some cicurmstances where an application might indeed have a massive amount of synchronous client-only state (like a visual designer or music production application), in which case, you will probably still want a client state manager. In this situation it's important to note that **React Query is not a replacement for local/client state management**. However, you can use React Query along side most client state managers with zero issues.
+> There are still some circumstances where an application might indeed have a massive amount of synchronous client-only state (like a visual designer or music production application), in which case, you will probably still want a client state manager. In this situation it's important to note that **React Query is not a replacement for local/client state management**. However, you can use React Query along side most client state managers with zero issues.
 
 ## A Contrived Example
 
