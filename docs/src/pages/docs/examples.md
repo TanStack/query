@@ -15,3 +15,4 @@ title: Examples
 - Playground (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/playground) - [Source](./examples/playground)
 - Star Wars (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/star-wars) - [Source](./examples/star-wars)
 - Rick And Morty (with devtools) - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/rick-morty) - [Source](./examples/rick-morty)
+- Nextjs - [CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/nextjs) - [Source](./examples/nextjs)
