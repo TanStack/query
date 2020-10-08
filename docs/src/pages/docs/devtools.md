@@ -12,7 +12,7 @@ When you begin your React Query journey, you'll want these devtools by your side
 To get going as fast as possible, do the following:
 
 ```bash
-$ npm i --save react-query-devtools
+$ npm i react-query-devtools
 # or
 $ yarn add react-query-devtools
 ```
