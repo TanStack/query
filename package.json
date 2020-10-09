@@ -41,7 +41,10 @@
     "branches": [
       "1.x",
       "master",
-      "beta"
+      {
+        "name": "beta",
+        "prerelease": true
+      }
     ]
   },
   "files": [
