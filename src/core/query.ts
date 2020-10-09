@@ -149,7 +149,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   private dispatch(action: Action<TData, TError>): void {
-    this.state = queryReducer(this.state, action)
+    this.state = reducer(this.state, action)
 
     notifyManager.batch(() => {
       this.observers.forEach(observer => {
@@ -298,32 +298,32 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   subscribeObserver(observer: QueryObserver<any, any, any, any>): void {
-    if (this.observers.indexOf(observer) !== -1) {
-      return
+    if (this.observers.indexOf(observer) === -1) {
+      this.observers.push(observer)
+
+      // Stop the query from being garbage collected
+      this.clearGcTimeout()
+
+      this.cache.notify(this)
     }
-
-    this.observers.push(observer)
-
-    // Stop the query from being garbage collected
-    this.clearGcTimeout()
-
-    this.cache.notify(this)
   }
 
   unsubscribeObserver(observer: QueryObserver<any, any, any, any>): void {
-    this.observers = this.observers.filter(x => x !== observer)
+    if (this.observers.indexOf(observer) !== -1) {
+      this.observers = this.observers.filter(x => x !== observer)
 
-    if (!this.observers.length) {
-      // If the transport layer does not support cancellation
-      // we'll let the query continue so the result can be cached
-      if (this.isTransportCancelable) {
-        this.cancel()
+      if (!this.observers.length) {
+        // If the transport layer does not support cancellation
+        // we'll let the query continue so the result can be cached
+        if (this.isTransportCancelable) {
+          this.cancel()
+        }
+
+        this.scheduleGc()
       }
 
-      this.scheduleGc()
+      this.cache.notify(this)
     }
-
-    this.cache.notify(this)
   }
 
   invalidate(): void {
@@ -516,18 +516,19 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   ): Promise<TData> {
     return new Promise<TData>((outerResolve, outerReject) => {
       let resolved = false
-      let continueLoop: () => void
-      let cancelTransport: () => void
 
       const done = () => {
-        resolved = true
+        if (!resolved) {
+          resolved = true
 
-        delete this.cancelFetch
-        delete this.continueFetch
-        delete this.isTransportCancelable
+          // End loop if currently paused
+          this.continueFetch?.()
 
-        // End loop if currently paused
-        continueLoop?.()
+          // Cleanup
+          delete this.cancelFetch
+          delete this.continueFetch
+          delete this.isTransportCancelable
+        }
       }
 
       const resolve = (value: any) => {
@@ -538,17 +539,6 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       const reject = (value: any) => {
         done()
         outerReject(value)
-      }
-
-      // Create callback to cancel this fetch
-      this.cancelFetch = cancelOptions => {
-        reject(new CancelledError(cancelOptions))
-        cancelTransport?.()
-      }
-
-      // Create callback to continue this fetch
-      this.continueFetch = () => {
-        continueLoop?.()
       }
 
       // Create loop function
@@ -568,20 +558,22 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         }
 
         // Check if the transport layer support cancellation
-        if (isCancelable(promiseOrValue)) {
-          cancelTransport = () => {
+        this.isTransportCancelable = isCancelable(promiseOrValue)
+
+        // Create callback to cancel this fetch
+        this.cancelFetch = cancelOptions => {
+          reject(new CancelledError(cancelOptions))
+
+          // Cancel transport if supported
+          if (isCancelable(promiseOrValue)) {
             try {
               promiseOrValue.cancel()
             } catch {}
           }
-          this.isTransportCancelable = true
         }
 
         Promise.resolve(promiseOrValue)
-          .then(data => {
-            // Resolve with data
-            resolve(data)
-          })
+          .then(resolve)
           .catch(error => {
             // Stop if the fetch is already resolved
             if (resolved) {
@@ -614,7 +606,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
                 // Pause retry if the document is not visible or when the device is offline
                 if (!isDocumentVisible() || !isOnline()) {
                   return new Promise(continueResolve => {
-                    continueLoop = continueResolve
+                    this.continueFetch = continueResolve
                   })
                 }
               })
@@ -701,7 +693,7 @@ function getDefaultState<TData, TError, TQueryFnData>(
   }
 }
 
-function queryReducer<TData, TError>(
+function reducer<TData, TError>(
   state: QueryState<TData, TError>,
   action: Action<TData, TError>
 ): QueryState<TData, TError> {
