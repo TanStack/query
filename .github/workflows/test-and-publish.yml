@@ -28,7 +28,7 @@ jobs:
     name: 'Publish Module to NPM'
     needs: test
     # publish only when merged in master on original repo, not on PR
-    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/1.x')
+    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/1.x')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - run: yarn build
-      - run: npx semantic-release@17
+      - run: npx semantic-release@17 -d
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
