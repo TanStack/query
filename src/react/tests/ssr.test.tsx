@@ -10,10 +10,9 @@ import { sleep, queryKey } from './utils'
 import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
 
 describe('Server Side Rendering', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
-
   it('should not trigger fetch', () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
     const key = queryKey()
     const queryFn = jest.fn()
 
@@ -37,17 +36,23 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status loading')
     expect(queryFn).toHaveBeenCalledTimes(0)
+    cache.clear()
   })
 
   it('should add prefetched data to cache', async () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
     const data = await client.fetchQueryData(key, fetchFn)
     expect(data).toBe('data')
     expect(client.getCache().find(key)?.state.data).toBe('data')
+    cache.clear()
   })
 
   it('should return existing data from the cache', async () => {
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
     const key = queryKey()
     const queryFn = jest.fn(() => sleep(10))
 
@@ -73,13 +78,14 @@ describe('Server Side Rendering', () => {
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
+    cache.clear()
   })
 
   it('should add initialData to the cache', () => {
     const key = queryKey()
 
-    const customCache = new QueryCache()
-    const customClient = new QueryClient({ cache: customCache })
+    const cache = new QueryCache()
+    const client = new QueryClient({ cache })
 
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -100,48 +106,14 @@ describe('Server Side Rendering', () => {
     }
 
     renderToString(
-      <QueryClientProvider client={customClient}>
-        <Page />
-      </QueryClientProvider>
-    )
-
-    const keys = customCache.getAll().map(query => query.queryKey)
-
-    expect(keys).toEqual([[key, 1]])
-  })
-
-  it('should not call setTimeout', async () => {
-    const key = queryKey()
-
-    // @ts-ignore
-    const setTimeoutMock = jest.spyOn(global, 'setTimeout')
-
-    const queryFn = jest.fn(() => Promise.resolve())
-
-    function Page() {
-      const query = useQuery(key, queryFn)
-
-      const content = `status ${query.status}`
-
-      return (
-        <div>
-          <div>{content}</div>
-        </div>
-      )
-    }
-
-    await client.prefetchQuery(key, queryFn)
-
-    const markup = renderToString(
       <QueryClientProvider client={client}>
         <Page />
       </QueryClientProvider>
     )
 
-    expect(markup).toContain('status success')
-    expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(setTimeoutMock).toHaveBeenCalledTimes(0)
+    const keys = cache.getAll().map(query => query.queryKey)
 
-    setTimeoutMock.mockRestore()
+    expect(keys).toEqual([[key, 1]])
+    cache.clear()
   })
 })

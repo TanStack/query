@@ -34,7 +34,7 @@ export function useIsFetching(
           }
         }
       }),
-    [client, setIsFetching, isMounted]
+    [client, isMounted]
   )
 
   return isFetching

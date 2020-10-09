@@ -7,10 +7,8 @@ import {
   functionalUpdate,
   isCancelable,
   isCancelledError,
-  isDocumentVisible,
-  isOnline,
-  isServer,
   isValidTimeout,
+  isVisibleAndOnline,
   noop,
   replaceEqualDeep,
   sleep,
@@ -163,29 +161,17 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (
-      isServer ||
-      this.observers.length > 0 ||
-      !isValidTimeout(this.cacheTime)
-    ) {
-      return
+    if (!this.observers.length && isValidTimeout(this.cacheTime)) {
+      this.gcTimeout = setTimeout(() => {
+        this.remove()
+      }, this.cacheTime)
     }
-
-    this.gcTimeout = setTimeout(() => {
-      this.remove()
-    }, this.cacheTime)
   }
 
   cancel(options?: CancelOptions): Promise<void> {
-    const promise: Promise<any> = this.promise || Promise.resolve()
+    const promise = this.promise
     this.cancelFetch?.(options)
-    return promise.then(noop).catch(noop)
-  }
-
-  private clearTimersObservers(): void {
-    this.observers.forEach(observer => {
-      observer.clearTimers()
-    })
+    return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
 
   private clearGcTimeout() {
@@ -231,7 +217,6 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
   destroy(): void {
     this.clearGcTimeout()
-    this.clearTimersObservers()
     this.cancel()
   }
 
@@ -293,7 +278,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       fetchObserver.refetch()
     }
 
-    // Continue any paused fetch
+    // Continue fetch if currently paused
     this.continueFetch?.()
   }
 
@@ -395,8 +380,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     params: unknown[]
   ): Promise<TData> {
     // Create function to fetch the data
-    const queryFn = options.queryFn || defaultQueryFn
-    const fetchData = () => queryFn(...params)
+    const fetchData = () => this.executeQueryFn(options, params)
 
     // Set to fetching state if not already in it
     if (!this.state.isFetching) {
@@ -414,7 +398,6 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     params: unknown[],
     fetchOptions?: FetchOptions
   ): Promise<TData> {
-    const queryFn = options.queryFn || defaultQueryFn
     const fetchMore = fetchOptions?.fetchMore
     const pageParam = fetchMore?.pageParam
     const isFetchingNextPage = fetchMore?.direction === 'forward'
@@ -434,14 +417,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         return Promise.resolve(pages)
       }
 
-      return Promise.resolve()
-        .then(() => queryFn(...params, param))
-        .then(page => {
-          newPageParams = previous
-            ? [param, ...newPageParams]
-            : [...newPageParams, param]
-          return previous ? [page, ...pages] : [...pages, page]
-        })
+      return this.executeQueryFn(options, [...params, param]).then(page => {
+        newPageParams = previous
+          ? [param, ...newPageParams]
+          : [...newPageParams, param]
+        return previous ? [page, ...pages] : [...pages, page]
+      })
     }
 
     // Create function to fetch the data
@@ -508,6 +489,15 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     return this.tryFetchData(options, fetchData).then(data =>
       this.setData(data, { pageParams: newPageParams })
     )
+  }
+
+  private executeQueryFn(
+    options: QueryOptions<TData, TError, TQueryFnData>,
+    params: unknown[]
+  ): Promise<TQueryFnData> {
+    return options.queryFn
+      ? Promise.resolve(options.queryFn(...params))
+      : Promise.reject()
   }
 
   private tryFetchData(
@@ -604,8 +594,9 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
               // Pause if needed
               .then(() => {
                 // Pause retry if the document is not visible or when the device is offline
-                if (!isDocumentVisible() || !isOnline()) {
+                if (!isVisibleAndOnline()) {
                   return new Promise(continueResolve => {
+                    // Create callback to continue this fetch
                     this.continueFetch = continueResolve
                   })
                 }
@@ -619,10 +610,6 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       run()
     })
   }
-}
-
-function defaultQueryFn() {
-  return Promise.reject()
 }
 
 function getNextPageParam<TData, TError, TQueryFnData>(

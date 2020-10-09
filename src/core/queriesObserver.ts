@@ -31,10 +31,17 @@ export class QueriesObserver {
 
   subscribe(listener?: QueriesObserverListener): () => void {
     const callback = listener || (() => undefined)
+
     this.listeners.push(callback)
+
     if (this.listeners.length === 1) {
-      this.onMount()
+      this.observers.forEach(observer => {
+        observer.subscribe(result => {
+          this.onUpdate(observer, result)
+        })
+      })
     }
+
     return () => {
       this.unsubscribe(callback)
     }
@@ -43,22 +50,14 @@ export class QueriesObserver {
   private unsubscribe(listener: QueriesObserverListener): void {
     this.listeners = this.listeners.filter(x => x !== listener)
     if (!this.listeners.length) {
-      this.clear()
+      this.destroy()
     }
   }
 
-  onMount(): void {
-    this.observers.forEach(observer => {
-      observer.subscribe(result => {
-        this.onUpdate(observer, result)
-      })
-    })
-  }
-
-  clear(): void {
+  destroy(): void {
     this.listeners = []
     this.observers.forEach(observer => {
-      observer.clear()
+      observer.destroy()
     })
   }
 
@@ -112,7 +111,7 @@ export class QueriesObserver {
     }
 
     difference(prevObservers, newObservers).forEach(observer => {
-      observer.clear()
+      observer.destroy()
     })
 
     difference(newObservers, prevObservers).forEach(observer => {
@@ -133,9 +132,9 @@ export class QueriesObserver {
   }
 
   private notify(): void {
-    const { result, listeners } = this
+    const { result } = this
     notifyManager.batch(() => {
-      listeners.forEach(listener => {
+      this.listeners.forEach(listener => {
         notifyManager.schedule(() => {
           listener(result)
         })

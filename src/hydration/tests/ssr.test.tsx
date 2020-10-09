@@ -1,20 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDOMServer from 'react-dom/server'
-import { waitFor } from '@testing-library/react'
 
-import {
-  useQuery,
-  setLogger,
-  QueryClient,
-  QueryClientProvider,
-  QueryCache,
-} from '../..'
+import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
 import { dehydrate, hydrate } from '../'
 import * as utils from '../../core/utils'
-import { sleep } from '../../react/tests/utils'
-
-jest.useFakeTimers()
+import { mockConsoleError, sleep } from '../../react/tests/utils'
 
 // This monkey-patches the isServer-value from utils,
 // so that we can pretend to be in a server environment
@@ -34,8 +25,7 @@ function PrintStateComponent({ componentName, result }: any): any {
 
 describe('Server side rendering with de/rehydration', () => {
   it('should not mismatch on success', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
@@ -51,11 +41,9 @@ describe('Server side rendering with de/rehydration', () => {
 
     const prefetchCache = new QueryCache()
     const prefetchClient = new QueryClient({ cache: prefetchCache })
-    const prefetchPromise = prefetchClient.prefetchQuery('success', () =>
+    await prefetchClient.prefetchQuery('success', () =>
       fetchDataSuccess('success')
     )
-    jest.runOnlyPendingTimers()
-    await prefetchPromise
     const dehydratedStateServer = dehydrate(prefetchCache)
     const renderCache = new QueryCache()
     hydrate(renderCache, dehydratedStateServer)
@@ -66,6 +54,7 @@ describe('Server side rendering with de/rehydration', () => {
       </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderCache.clear()
     setIsServer(false)
 
     const expectedMarkup =
@@ -95,23 +84,18 @@ describe('Server side rendering with de/rehydration', () => {
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
+    cache.clear()
   })
 
   it('should not mismatch on error', async () => {
-    setLogger({
-      log: console.log,
-      warn: console.warn,
-      error: () => undefined,
-    })
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
     const fetchDataError = jest.fn(() => {
-      throw new Error()
+      throw new Error('fetchDataError')
     })
 
     // -- Shared part --
     function ErrorComponent() {
-      const result = useQuery('error', () => fetchDataError())
+      const result = useQuery('error', () => fetchDataError(), { retry: false })
       return (
         <PrintStateComponent componentName="ErrorComponent" result={result} />
       )
@@ -121,11 +105,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(true)
     const prefetchCache = new QueryCache()
     const prefetchClient = new QueryClient({ cache: prefetchCache })
-    const prefetchPromise = prefetchClient.prefetchQuery('error', () =>
-      fetchDataError()
-    )
-    jest.runOnlyPendingTimers()
-    await prefetchPromise
+    await prefetchClient.prefetchQuery('error', () => fetchDataError())
     const dehydratedStateServer = dehydrate(prefetchCache)
     const renderCache = new QueryCache()
     hydrate(renderCache, dehydratedStateServer)
@@ -136,6 +116,7 @@ describe('Server side rendering with de/rehydration', () => {
       </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderCache.clear()
     setIsServer(false)
 
     const expectedMarkup =
@@ -159,31 +140,22 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // We expect exactly one console.error here, which is from the
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(fetchDataError).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
-
-    jest.runOnlyPendingTimers()
-
+    await sleep(10)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
-    await waitFor(() =>
-      expect(el.innerHTML).toBe(
-        'ErrorComponent - status:error fetching:false data:undefined'
-      )
+    expect(el.innerHTML).toBe(
+      'ErrorComponent - status:error fetching:false data:undefined'
     )
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
-    setLogger({
-      log: console.log,
-      warn: console.warn,
-      error: console.error,
-    })
+    cache.clear()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
@@ -208,6 +180,7 @@ describe('Server side rendering with de/rehydration', () => {
       </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderCache.clear()
     setIsServer(false)
 
     const expectedMarkup =
@@ -234,17 +207,14 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(0)
     expect(el.innerHTML).toBe(expectedMarkup)
-
-    jest.runOnlyPendingTimers()
-
+    await sleep(10)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
-    await waitFor(() =>
-      expect(el.innerHTML).toBe(
-        'SuccessComponent - status:success fetching:false data:success!'
-      )
+    expect(el.innerHTML).toBe(
+      'SuccessComponent - status:success fetching:false data:success!'
     )
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
+    cache.clear()
   })
 })

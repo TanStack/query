@@ -2,8 +2,7 @@ import {
   CancelOptions,
   QueryFilters,
   Updater,
-  isDocumentVisible,
-  isOnline,
+  isVisibleAndOnline,
   noop,
   parseFilterArgs,
   parseQueryArgs,
@@ -21,7 +20,7 @@ import type {
   QueryOptions,
   RefetchOptions,
 } from './types'
-import type { QueryState, SetDataOptions } from './query'
+import type { Query, QueryState, SetDataOptions } from './query'
 import type { QueryCache } from './queryCache'
 import { QueriesObserver } from './queriesObserver'
 import { QueryObserver } from './queryObserver'
@@ -343,25 +342,28 @@ export class QueryClient {
 
 const mountedClients: QueryClient[] = []
 
+function getAllQueries() {
+  return uniq(mountedClients.map(client => client.getCache())).reduce<Query[]>(
+    (queries, cache) => queries.concat(cache.getAll()),
+    []
+  )
+}
+
 function onFocus() {
-  onExternalEvent('focus')
+  if (isVisibleAndOnline()) {
+    notifyManager.batch(() => {
+      getAllQueries().forEach(query => {
+        query.onFocus()
+      })
+    })
+  }
 }
 
 function onOnline() {
-  onExternalEvent('online')
-}
-
-function onExternalEvent(type: 'focus' | 'online') {
-  if (isDocumentVisible() && isOnline()) {
+  if (isVisibleAndOnline()) {
     notifyManager.batch(() => {
-      uniq(mountedClients.map(x => x.getCache())).forEach(cache => {
-        cache.getAll().forEach(query => {
-          if (type === 'focus') {
-            query.onFocus()
-          } else {
-            query.onOnline()
-          }
-        })
+      getAllQueries().forEach(query => {
+        query.onOnline()
       })
     })
   }

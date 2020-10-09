@@ -22,6 +22,6 @@ export function getLogger(): Logger {
   return logger
 }
 
-export function setLogger(c: Logger) {
-  logger = c
+export function setLogger(newLogger: Logger) {
+  logger = newLogger
 }

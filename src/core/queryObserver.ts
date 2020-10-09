@@ -80,10 +80,19 @@ export class QueryObserver<
 
   subscribe(listener?: QueryObserverListener<TData, TError>): () => void {
     const callback = listener || (() => undefined)
+
     this.listeners.push(callback)
+
     if (this.listeners.length === 1) {
-      this.onMount()
+      this.currentQuery.subscribeObserver(this)
+
+      if (this.willFetchOnMount()) {
+        this.executeFetch()
+      }
+
+      this.updateTimers()
     }
+
     return () => {
       this.unsubscribe(callback)
     }
@@ -92,18 +101,8 @@ export class QueryObserver<
   private unsubscribe(listener: QueryObserverListener<TData, TError>): void {
     this.listeners = this.listeners.filter(x => x !== listener)
     if (!this.listeners.length) {
-      this.clear()
+      this.destroy()
     }
-  }
-
-  private onMount(): void {
-    this.currentQuery.subscribeObserver(this)
-
-    if (this.willFetchOnMount()) {
-      this.executeFetch()
-    }
-
-    this.updateTimers()
   }
 
   willFetchOnMount(): boolean {
@@ -123,7 +122,7 @@ export class QueryObserver<
     return this.currentQuery.isStaleByTime(this.options.staleTime)
   }
 
-  clear(): void {
+  destroy(): void {
     this.listeners = []
     this.clearTimers()
     this.currentQuery.unsubscribeObserver(this)
@@ -257,7 +256,16 @@ export class QueryObserver<
   }
 
   private executeFetch(fetchOptions?: FetchOptions): void {
-    this.currentQuery.fetch(this.getQueryOptions(), fetchOptions).catch(noop)
+    // Make sure we reference the latest query as the current one might have been removed
+    this.updateQuery()
+
+    // Fetch
+    this.currentQuery
+      .fetch(
+        this.options as QueryOptions<TQueryData, TError, TQueryFnData>,
+        fetchOptions
+      )
+      .catch(noop)
   }
 
   private updateStaleTimeout(): void {
@@ -326,17 +334,13 @@ export class QueryObserver<
     this.refetchIntervalId = undefined
   }
 
-  private getQueryOptions(): QueryOptions<TQueryData, TError, TQueryFnData> {
-    return this.options as QueryOptions<TQueryData, TError, TQueryFnData>
-  }
-
   private updateResult(willFetch?: boolean): void {
     const { state } = this.currentQuery
     let { status, isFetching, updatedAt } = state
     let isPreviousData = false
     let data: TData | undefined
 
-    // Already set the status to loading if we are going to fetch
+    // Optimistically set status to loading if we will start fetching
     if (willFetch) {
       isFetching = true
       if (status === 'idle') {
@@ -393,19 +397,16 @@ export class QueryObserver<
     this.currentResultState = state
 
     // Only update if something has changed
-    if (
-      !this.currentResult ||
-      !shallowEqualObjects(this.currentResult, result)
-    ) {
+    if (!shallowEqualObjects(result, this.currentResult)) {
       this.currentResult = result
     }
   }
 
   private updateQuery(): void {
     const prevQuery = this.currentQuery
-
-    const queryOptions = this.getQueryOptions()
-    const query = this.client.getCache().build(queryOptions)
+    const query = this.client
+      .getCache()
+      .build(this.options as QueryOptions<TQueryData, TError, TQueryFnData>)
 
     if (query === prevQuery) {
       return
@@ -434,18 +435,13 @@ export class QueryObserver<
   }
 
   onQueryUpdate(action: Action<TData, TError>): void {
-    const { options } = this
-    const { type } = action
-
     // Store current result and get new result
     const prevResult = this.currentResult
     this.updateResult()
     const currentResult = this.currentResult
 
-    // Update timers if needed
-    if (type === 'success' || type === 'error' || type === 'invalidate') {
-      this.updateTimers()
-    }
+    // Update timers
+    this.updateTimers()
 
     // Do not notify if the nothing has changed
     if (prevResult === currentResult) {
@@ -455,15 +451,15 @@ export class QueryObserver<
     // Determine which callbacks to trigger
     const notifyOptions: NotifyOptions = {}
 
-    if (type === 'success') {
+    if (action.type === 'success') {
       notifyOptions.onSuccess = true
-    } else if (type === 'error') {
+    } else if (action.type === 'error') {
       notifyOptions.onError = true
     }
 
     if (
       // Always notify if notifyOnStatusChange is set
-      options.notifyOnStatusChange !== false ||
+      this.options.notifyOnStatusChange !== false ||
       // Otherwise only notify on data or error change
       currentResult.data !== prevResult.data ||
       currentResult.error !== prevResult.error
@@ -475,8 +471,8 @@ export class QueryObserver<
   }
 
   private notify(notifyOptions: NotifyOptions): void {
-    const { options, currentResult, currentQuery, listeners } = this
-    const { onSuccess, onSettled, onError } = options
+    const { currentResult, currentQuery, listeners } = this
+    const { onSuccess, onSettled, onError } = this.options
 
     notifyManager.batch(() => {
       // First trigger the configuration callbacks
