@@ -39,7 +39,7 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - run: yarn build
-      - run: npx semantic-release@17 -d
+      - run: npx semantic-release@17
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
           GH_TOKEN: ${{secrets.GH_TOKEN}}
