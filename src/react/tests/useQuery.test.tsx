@@ -324,7 +324,36 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await sleep(10)
+    expect(states.length).toBe(2)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  })
+
+  it('should call onSuccess after a disabled query has been fetched', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { enabled: false, onSuccess })
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 10)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(client, <Page />)
+
+    await sleep(50)
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
@@ -346,7 +375,8 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await sleep(10)
+    expect(states.length).toBe(2)
     expect(onError).toHaveBeenCalledTimes(1)
     expect(onError).toHaveBeenCalledWith('error')
     consoleMock.mockRestore()
@@ -365,7 +395,8 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await sleep(10)
+    expect(states.length).toBe(2)
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSettled).toHaveBeenCalledWith('data', null)
   })
@@ -387,7 +418,8 @@ describe('useQuery', () => {
 
     renderWithClient(client, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(2))
+    await sleep(10)
+    expect(states.length).toBe(2)
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
     consoleMock.mockRestore()

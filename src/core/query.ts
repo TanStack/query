@@ -110,7 +110,6 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   queryKey: QueryKey
   queryHash: string
   options!: QueryOptions<TData, TError, TQueryFnData>
-  defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
   state: QueryState<TData, TError>
   cacheTime!: number
 
@@ -121,6 +120,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private continueFetch?: () => void
   private isTransportCancelable?: boolean
   private observers: QueryObserver<any, any, any, any>[]
+  private defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
 
   constructor(config: QueryConfig<TData, TError, TQueryFnData>) {
     this.setOptions(config.options)

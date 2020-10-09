@@ -581,13 +581,13 @@ describe('queryCache', () => {
     const callback = jest.fn()
     const testCache = new QueryCache()
     const testClient = new QueryClient({ cache: testCache })
-    const observer = testClient.watchQuery(key)
+    const observer = testClient.watchQuery(key, { enabled: false })
     const unsubscribe = observer.subscribe(callback)
     await testClient.fetchQueryData(key, queryFn)
     unsubscribe()
     testCache.clear()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(callback).toHaveBeenCalledTimes(1)
+    expect(callback).toHaveBeenCalledTimes(2)
   })
 
   test('watchQuery should accept unresolved query config in update function', async () => {
@@ -595,20 +595,21 @@ describe('queryCache', () => {
     const queryFn = jest.fn()
     const testCache = new QueryCache()
     const testClient = new QueryClient({ cache: testCache })
-    const observer = testClient.watchQuery(key)
+    const observer = testClient.watchQuery(key, { enabled: false })
     const results: QueryObserverResult<unknown>[] = []
     const unsubscribe = observer.subscribe(x => {
       results.push(x)
     })
-    observer.setOptions({ staleTime: 10 })
+    observer.setOptions({ enabled: false, staleTime: 10 })
     await testClient.fetchQueryData(key, queryFn)
     await sleep(100)
     unsubscribe()
     testCache.clear()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ isStale: false })
-    expect(results[1]).toMatchObject({ isStale: true })
+    expect(results.length).toBe(3)
+    expect(results[0]).toMatchObject({ isStale: true })
+    expect(results[1]).toMatchObject({ isStale: false })
+    expect(results[2]).toMatchObject({ isStale: true })
   })
 
   test('watchQuery should be able to handle multiple subscribers', async () => {
@@ -616,7 +617,7 @@ describe('queryCache', () => {
     const queryFn = jest.fn().mockReturnValue('data')
     const testCache = new QueryCache()
     const testClient = new QueryClient({ cache: testCache })
-    const observer = testClient.watchQuery<string>(key)
+    const observer = testClient.watchQuery<string>(key, { enabled: false })
     const results1: QueryObserverResult<string>[] = []
     const results2: QueryObserverResult<string>[] = []
     const unsubscribe1 = observer.subscribe(x => {
@@ -631,10 +632,12 @@ describe('queryCache', () => {
     unsubscribe2()
     testCache.clear()
     expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(results1.length).toBe(1)
-    expect(results2.length).toBe(1)
-    expect(results1[0]).toMatchObject({ data: 'data' })
-    expect(results1[0]).toMatchObject({ data: 'data' })
+    expect(results1.length).toBe(2)
+    expect(results2.length).toBe(2)
+    expect(results1[0]).toMatchObject({ data: undefined })
+    expect(results1[1]).toMatchObject({ data: 'data' })
+    expect(results2[0]).toMatchObject({ data: undefined })
+    expect(results2[1]).toMatchObject({ data: 'data' })
   })
 
   test('watchQuery should be able to resolve a promise', async () => {
@@ -642,7 +645,7 @@ describe('queryCache', () => {
     const queryFn = jest.fn().mockReturnValue('data')
     const testCache = new QueryCache()
     const testClient = new QueryClient({ cache: testCache })
-    const observer = testClient.watchQuery<string>(key)
+    const observer = testClient.watchQuery<string>(key, { enabled: false })
     let value
     observer.getNextResult().then(x => {
       value = x
@@ -659,7 +662,7 @@ describe('queryCache', () => {
     const key = queryKey()
     const testCache = new QueryCache()
     const testClient = new QueryClient({ cache: testCache })
-    const observer = testClient.watchQuery<string>(key)
+    const observer = testClient.watchQuery<string>(key, { enabled: false })
     let error
     observer.getNextResult({ throwOnError: true }).catch(e => {
       error = e
@@ -731,8 +734,8 @@ describe('queryCache', () => {
     const testClient = new QueryClient({ cache: testCache })
     await testClient.fetchQueryData(key1, queryFn1)
     await testClient.fetchQueryData(key2, queryFn2)
-    const observer1 = testClient.watchQuery(key1)
-    const observer2 = testClient.watchQuery(key2)
+    const observer1 = testClient.watchQuery(key1, { enabled: false })
+    const observer2 = testClient.watchQuery(key2, { enabled: false })
     observer1.subscribe()
     observer2.subscribe()
     await testClient.refetchQueries()
@@ -752,7 +755,9 @@ describe('queryCache', () => {
     const testClient = new QueryClient({ cache: testCache })
     await testClient.fetchQueryData(key1, queryFn1)
     await testClient.fetchQueryData(key2, queryFn2)
-    const observer = testClient.watchQuery(key1, { staleTime: Infinity })
+    const observer = testClient.watchQuery(key1, queryFn1, {
+      staleTime: Infinity,
+    })
     const unsubscribe = observer.subscribe()
     await testClient.refetchQueries({ active: true, stale: false })
     unsubscribe()
@@ -770,7 +775,7 @@ describe('queryCache', () => {
     const testClient = new QueryClient({ cache: testCache })
     await testClient.fetchQueryData(key1, queryFn1)
     await testClient.fetchQueryData(key2, queryFn2)
-    const observer = testClient.watchQuery(key1)
+    const observer = testClient.watchQuery(key1, queryFn1)
     const unsubscribe = observer.subscribe()
     testClient.invalidateQueries(key1)
     await testClient.refetchQueries({ stale: true })
@@ -790,7 +795,7 @@ describe('queryCache', () => {
     await testClient.fetchQueryData(key1, queryFn1)
     await testClient.fetchQueryData(key2, queryFn2)
     testClient.invalidateQueries(key1)
-    const observer = testClient.watchQuery(key1)
+    const observer = testClient.watchQuery(key1, queryFn1)
     const unsubscribe = observer.subscribe()
     await testClient.refetchQueries({ active: true, stale: true })
     unsubscribe()
@@ -808,7 +813,9 @@ describe('queryCache', () => {
     const testClient = new QueryClient({ cache: testCache })
     await testClient.fetchQueryData(key1, queryFn1)
     await testClient.fetchQueryData(key2, queryFn2)
-    const observer = testClient.watchQuery(key1, { staleTime: Infinity })
+    const observer = testClient.watchQuery(key1, queryFn1, {
+      staleTime: Infinity,
+    })
     const unsubscribe = observer.subscribe()
     await testClient.refetchQueries()
     unsubscribe()
@@ -826,7 +833,9 @@ describe('queryCache', () => {
     const testClient = new QueryClient({ cache: testCache })
     await testClient.fetchQueryData(key1, queryFn1)
     await testClient.fetchQueryData(key2, queryFn2)
-    const observer = testClient.watchQuery(key1, { staleTime: Infinity })
+    const observer = testClient.watchQuery(key1, queryFn1, {
+      staleTime: Infinity,
+    })
     const unsubscribe = observer.subscribe()
     await testClient.refetchQueries({ active: true, inactive: true })
     unsubscribe()
@@ -1186,7 +1195,7 @@ describe('queryCache', () => {
       await sleep(10)
 
       // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-      const observer = client.watchQuery(key)
+      const observer = client.watchQuery(key, { enabled: false })
       const unsubscribe = observer.subscribe()
       unsubscribe()
 
@@ -1220,7 +1229,7 @@ describe('queryCache', () => {
       await sleep(10)
 
       // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-      const observer = client.watchQuery(key)
+      const observer = client.watchQuery(key, { enabled: false })
       const unsubscribe = observer.subscribe()
       unsubscribe()
 
