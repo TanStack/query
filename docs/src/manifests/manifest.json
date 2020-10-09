@@ -275,6 +275,11 @@
           "title": "Rick And Morty",
           "path": "/examples/rick-morty",
           "editUrl": "/examples/rick-morty.mdx"
+        },
+        {
+          "title": "Next.js",
+          "path": "/examples/nextjs",
+          "editUrl": "/examples/nextjs.mdx"
         }
       ]
     },

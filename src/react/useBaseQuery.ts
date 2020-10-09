@@ -16,7 +16,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
 
   // Always set stale time when using suspense
   if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
-    defaultedOptions.staleTime = 5000
+    defaultedOptions.staleTime = 2000
   }
 
   // Create query observer
