@@ -1,0 +1,18 @@
+tasks:
+  - name: Auto Build
+    init: |
+      yarn install
+      gp sync-done boot
+    command: yarn run start
+
+  - name: Docs
+    before: cd docs/
+    init: |
+      gp sync-await boot
+      yarn install
+    command: yarn dev
+    openMode: split-right
+
+ports:
+  - port: 3000
+    onOpen: open-preview
