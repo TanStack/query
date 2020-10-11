@@ -26,6 +26,7 @@ export type TypedQueryFunction<
 export type TypedQueryFunctionArgs = readonly [unknown, ...unknown[]]
 
 export type InitialDataFunction<TResult> = () => TResult | undefined
+export type PlaceholderDataFunction<TResult> = () => TResult | undefined
 
 export type InitialStaleFunction = () => boolean
 
@@ -174,6 +175,7 @@ export interface ResolvedQueryConfig<TResult, TError = unknown>
   queryKey: ArrayQueryKey
   queryKeySerializerFn: QueryKeySerializerFunction
   staleTime: number
+  placeholderData?: TResult | PlaceholderDataFunction<TResult> | unknown
 }
 
 export type IsFetchingMoreValue = 'previous' | 'next' | false
