@@ -34,6 +34,7 @@ const fans = [
   'Kristóf Poduszló (@kripod)',
   'Peter Pistorius (@peterp)',
   'Agustín Villalobos (@agustin-v)',
+  'Panigo (@rangigo)',
 ]
 
 const Home = () => {
