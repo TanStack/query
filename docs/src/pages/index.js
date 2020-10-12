@@ -35,6 +35,7 @@ const fans = [
   'Peter Pistorius (@peterp)',
   'Agustín Villalobos (@agustin-v)',
   'Panigo (@rangigo)',
+  'Jesse Jafa, (@awareness481)',
 ]
 
 const Home = () => {
