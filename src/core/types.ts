@@ -50,6 +50,7 @@ export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
   queryKeySerializerFn?: QueryKeySerializerFunction
   queryFnParamsFilter?: (args: ArrayQueryKey) => ArrayQueryKey
   initialData?: TResult | InitialDataFunction<TResult>
+  placeholderData?: TResult | InitialDataFunction<TResult>
   infinite?: true
   /**
    * Set this to `false` to disable structural sharing between query results.
@@ -175,7 +176,6 @@ export interface ResolvedQueryConfig<TResult, TError = unknown>
   queryKey: ArrayQueryKey
   queryKeySerializerFn: QueryKeySerializerFunction
   staleTime: number
-  placeholderData?: TResult | PlaceholderDataFunction<TResult> | unknown
 }
 
 export type IsFetchingMoreValue = 'previous' | 'next' | false
