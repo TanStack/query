@@ -136,6 +136,7 @@ describe('useQuery', () => {
       isInitialData: true,
       isLoading: true,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -160,6 +161,7 @@ describe('useQuery', () => {
       isInitialData: false,
       isLoading: false,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
@@ -214,6 +216,7 @@ describe('useQuery', () => {
       isInitialData: true,
       isLoading: true,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -238,6 +241,7 @@ describe('useQuery', () => {
       isInitialData: true,
       isLoading: true,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -262,6 +266,7 @@ describe('useQuery', () => {
       isInitialData: true,
       isLoading: false,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -2365,25 +2370,37 @@ describe('useQuery', () => {
   it('should use placeholder data while the query loads', async () => {
     const key1 = queryKey()
 
+    const states: QueryResult<string>[] = []
+
     function Page() {
-      const first = useQuery(key1, () => 'data', {
+      const state = useQuery(key1, () => 'data', {
         placeholderData: 'placeholder',
       })
 
+      states.push(state)
+
       return (
         <div>
-          <h2>Data: {first.data}</h2>
-          <div>Status: {first.status}</div>
+          <h2>Data: {state.data}</h2>
+          <div>Status: {state.status}</div>
         </div>
       )
     }
 
     const rendered = render(<Page />)
-
-    rendered.getByText('Data: placeholder')
-    rendered.getByText('Data: data')
-
     await waitFor(() => rendered.getByText('Data: data'))
-    rendered.getByText('Status: success')
+
+    expect(states).toMatchObject([
+      {
+        isSuccess: true,
+        isPlaceholderData: true,
+        data: 'placeholder',
+      },
+      {
+        isSuccess: true,
+        isPlaceholderData: false,
+        data: 'data',
+      },
+    ])
   })
 })

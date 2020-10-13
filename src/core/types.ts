@@ -206,6 +206,7 @@ export interface QueryResultBase<TResult, TError = unknown> {
   isInitialData: boolean
   isLoading: boolean
   isPreviousData: boolean
+  isPlaceholderData: boolean
   isStale: boolean
   isSuccess: boolean
   refetch: (options?: RefetchOptions) => Promise<TResult | undefined>

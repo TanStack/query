@@ -249,6 +249,7 @@ export class QueryObserver<TResult, TError> {
     const { state } = this.currentQuery
     let { data, status, updatedAt } = state
     let isPreviousData = false
+    let isPlaceholderData = false
 
     // Keep previous data if needed
     if (
@@ -266,11 +267,12 @@ export class QueryObserver<TResult, TError> {
       const placeholderData =
         typeof this.config.placeholderData === 'function'
           ? (this.config.placeholderData as PlaceholderDataFunction<TResult>)()
-          : (this.config.placeholderData as TResult)
+          : this.config.placeholderData
 
       if (typeof placeholderData !== 'undefined') {
         status = QueryStatus.Success
         data = placeholderData
+        isPlaceholderData = true
       }
     }
 
@@ -288,6 +290,7 @@ export class QueryObserver<TResult, TError> {
       isFetchingMore: state.isFetchingMore,
       isInitialData: state.isInitialData,
       isPreviousData,
+      isPlaceholderData,
       isStale: this.isStale,
       refetch: this.refetch,
       remove: this.remove,
