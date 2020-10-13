@@ -183,6 +183,8 @@ const queryInfo = useQuery({
   - Will be `true` if the cache data is stale.
 - `isPreviousData: Boolean`
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
+- `isPlaceholderData: Boolean`
+  - Will be `true` if and when the query's `data` is equal to the result of the `placeholderData` option.
 - `isFetchedAfterMount: Boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
