@@ -54,7 +54,7 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
     cacheTime: 5 * 60 * 1000,
     enabled: true,
     notifyOnStatusChange: true,
-    queryFn: () => Promise.reject(),
+    queryFn: () => Promise.reject(new Error('react-query: missing queryFn')),
     queryKeySerializerFn: defaultQueryKeySerializerFn,
     refetchOnMount: true,
     refetchOnReconnect: true,
