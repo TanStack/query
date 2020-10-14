@@ -1,4 +1,4 @@
-import { setBatchNotifyFn } from '../core'
+import { notifyManager } from '../core'
 import { unstable_batchedUpdates } from './reactBatchedUpdates'
 
-setBatchNotifyFn(unstable_batchedUpdates)
+notifyManager.setBatchNotifyFunction(unstable_batchedUpdates)

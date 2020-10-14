@@ -9,12 +9,12 @@ import { ReactQueryDevtools } from "react-query-devtools";
 import "./styles.css";
 import Layout from "./Layout";
 
-const cache = new QueryCache();
-const client = new QueryClient({ cache });
+const queryCache = new QueryCache();
+const queryClient = new QueryClient({ queryCache });
 
 export default function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Router>
         <ThemeProvider theme={theme}>
           <Layout />

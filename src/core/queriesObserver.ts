@@ -2,12 +2,7 @@ import { difference, getQueryKeyHashFn, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
-import type { QueryObserver } from './queryObserver'
-
-interface QueriesObserverConfig {
-  client: QueryClient
-  queries?: QueryObserverOptions[]
-}
+import { QueryObserver } from './queryObserver'
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 
@@ -18,9 +13,9 @@ export class QueriesObserver {
   private observers: QueryObserver[]
   private listeners: QueriesObserverListener[]
 
-  constructor(config: QueriesObserverConfig) {
-    this.client = config.client
-    this.queries = config.queries || []
+  constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
+    this.client = client
+    this.queries = queries || []
     this.result = []
     this.observers = []
     this.listeners = []
@@ -96,7 +91,7 @@ export class QueriesObserver {
         return observer
       }
 
-      return this.client.watchQuery(defaultedOptions)
+      return new QueryObserver(this.client, defaultedOptions)
     })
 
     if (prevObservers.length === newObservers.length && !hasIndexChange) {

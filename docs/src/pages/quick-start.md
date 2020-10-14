@@ -21,15 +21,15 @@ import {
 import { getTodos, postTodo } from '../my-api'
 
 // Create a cache
-const cache = new QueryCache()
+const queryCache = new QueryCache()
 
 // Create a client
-const client = new QueryClient({ cache })
+const queryClient = new QueryClient({ queryCache })
 
 function App() {
   return (
     // Provide the client to your App
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Todos />
     </QueryClientProvider>
   )
@@ -37,7 +37,7 @@ function App() {
 
 function Todos() {
   // Access the client
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
 
   // Queries
   const query = useQuery('todos', getTodos)
@@ -46,7 +46,7 @@ function Todos() {
   const mutation = useMutation(postTodo, {
     onSuccess: () => {
       // Invalidate and refetch
-      client.invalidateQueries('todos')
+      queryClient.invalidateQueries('todos')
     },
   })
 

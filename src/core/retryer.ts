@@ -1,0 +1,164 @@
+import { focusManager } from './focusManager'
+import { onlineManager } from './onlineManager'
+import {
+  CancelOptions,
+  CancelledError,
+  functionalUpdate,
+  isCancelable,
+  sleep,
+} from './utils'
+
+// TYPES
+
+interface RetryerConfig<TData = unknown, TError = unknown> {
+  fn: () => TData | Promise<TData>
+  onFail?: (failureCount: number, error: TError) => void
+  onPause?: () => void
+  onContinue?: () => void
+  retry?: RetryValue<TError>
+  retryDelay?: RetryDelayValue
+}
+
+export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
+
+type ShouldRetryFunction<TError = unknown> = (
+  failureCount: number,
+  error: TError
+) => boolean
+
+export type RetryDelayValue = number | RetryDelayFunction
+
+type RetryDelayFunction = (failureCount: number) => number
+
+function defaultRetryDelay(failureCount: number) {
+  return Math.min(1000 * 2 ** failureCount, 30000)
+}
+
+// CLASS
+
+export class Retryer<TData = unknown, TError = unknown> {
+  cancel: (options?: CancelOptions) => void
+  continue: () => void
+  failureCount: number
+  isPaused: boolean
+  isResolved: boolean
+  isTransportCancelable: boolean
+  promise: Promise<TData>
+
+  constructor(config: RetryerConfig<TData, TError>) {
+    let cancelFn: ((options?: CancelOptions) => void) | undefined
+    let continueFn: (() => void) | undefined
+    let promiseResolve: (data: TData) => void
+    let promiseReject: (error: TError) => void
+
+    this.cancel = cancelOptions => cancelFn?.(cancelOptions)
+    this.continue = () => continueFn?.()
+    this.failureCount = 0
+    this.isPaused = false
+    this.isResolved = false
+    this.isTransportCancelable = false
+    this.promise = new Promise<TData>((outerResolve, outerReject) => {
+      promiseResolve = outerResolve
+      promiseReject = outerReject
+    })
+
+    const resolve = (value: any) => {
+      this.isResolved = true
+      continueFn?.()
+      promiseResolve(value)
+    }
+
+    const reject = (value: any) => {
+      this.isResolved = true
+      continueFn?.()
+      promiseReject(value)
+    }
+
+    const pause = () => {
+      return new Promise(continueResolve => {
+        continueFn = continueResolve
+        this.isPaused = true
+        config.onPause?.()
+      }).then(() => {
+        continueFn = undefined
+        this.isPaused = false
+        config.onContinue?.()
+      })
+    }
+
+    // Create loop function
+    const run = () => {
+      // Do nothing if already resolved
+      if (this.isResolved) {
+        return
+      }
+
+      let promiseOrValue: any
+
+      // Execute query
+      try {
+        promiseOrValue = config.fn()
+      } catch (error) {
+        promiseOrValue = Promise.reject(error)
+      }
+
+      // Create callback to cancel this fetch
+      cancelFn = cancelOptions => {
+        reject(new CancelledError(cancelOptions))
+
+        // Cancel transport if supported
+        if (isCancelable(promiseOrValue)) {
+          try {
+            promiseOrValue.cancel()
+          } catch {}
+        }
+      }
+
+      // Check if the transport layer support cancellation
+      this.isTransportCancelable = isCancelable(promiseOrValue)
+
+      Promise.resolve(promiseOrValue)
+        .then(resolve)
+        .catch(error => {
+          // Stop if the fetch is already resolved
+          if (this.isResolved) {
+            return
+          }
+
+          // Do we need to retry the request?
+          const retry = config.retry ?? 3
+          const retryDelay = config.retryDelay ?? defaultRetryDelay
+          const delay = functionalUpdate(retryDelay, this.failureCount) || 0
+          const shouldRetry =
+            retry === true ||
+            (typeof retry === 'number' && this.failureCount < retry) ||
+            (typeof retry === 'function' && retry(this.failureCount, error))
+
+          if (!shouldRetry) {
+            // We are done if the query does not need to be retried
+            reject(error)
+            return
+          }
+
+          this.failureCount++
+
+          // Notify on fail
+          config.onFail?.(this.failureCount, error)
+
+          // Delay
+          sleep(delay)
+            // Pause if the document is not visible or when the device is offline
+            .then(() => {
+              if (!focusManager.isFocused() || !onlineManager.isOnline()) {
+                return pause()
+              }
+            })
+            // Try again
+            .then(run)
+        })
+    }
+
+    // Start loop
+    run()
+  }
+}

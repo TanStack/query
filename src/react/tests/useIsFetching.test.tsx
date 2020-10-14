@@ -13,8 +13,8 @@ import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
 
     function Page() {
@@ -41,7 +41,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = renderWithClient(client, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('isFetching: 0'))
     fireEvent.click(rendered.getByText('setReady'))
@@ -51,8 +51,8 @@ describe('useIsFetching', () => {
 
   it('should not update state while rendering', async () => {
     const consoleMock = mockConsoleError()
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -99,7 +99,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
     await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
     expect(consoleMock).not.toHaveBeenCalled()
     expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
@@ -108,8 +108,8 @@ describe('useIsFetching', () => {
   })
 
   it('should be able to filter', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -154,7 +154,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
     expect(isFetchings).toEqual([0, 0, 1, 0])

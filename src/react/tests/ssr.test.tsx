@@ -11,8 +11,8 @@ import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn()
 
@@ -29,30 +29,30 @@ describe('Server Side Rendering', () => {
     }
 
     const markup = renderToString(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     )
 
     expect(markup).toContain('status loading')
     expect(queryFn).toHaveBeenCalledTimes(0)
-    cache.clear()
+    queryCache.clear()
   })
 
   it('should add prefetched data to cache', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
-    const data = await client.fetchQueryData(key, fetchFn)
+    const data = await queryClient.fetchQueryData(key, fetchFn)
     expect(data).toBe('data')
-    expect(client.getCache().find(key)?.state.data).toBe('data')
-    cache.clear()
+    expect(queryCache.find(key)?.state.data).toBe('data')
+    queryCache.clear()
   })
 
   it('should return existing data from the cache', async () => {
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn(() => sleep(10))
 
@@ -68,24 +68,24 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await client.prefetchQuery(key, queryFn)
+    await queryClient.prefetchQuery(key, queryFn)
 
     const markup = renderToString(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     )
 
     expect(markup).toContain('status success')
     expect(queryFn).toHaveBeenCalledTimes(1)
-    cache.clear()
+    queryCache.clear()
   })
 
   it('should add initialData to the cache', () => {
     const key = queryKey()
 
-    const cache = new QueryCache()
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
 
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -106,14 +106,14 @@ describe('Server Side Rendering', () => {
     }
 
     renderToString(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <Page />
       </QueryClientProvider>
     )
 
-    const keys = cache.getAll().map(query => query.queryKey)
+    const keys = queryCache.getAll().map(query => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
-    cache.clear()
+    queryCache.clear()
   })
 })

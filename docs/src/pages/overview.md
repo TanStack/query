@@ -54,12 +54,12 @@ import {
   QueryClientProvider,
 } from 'react-query'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
 
 export default function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   )

@@ -7,16 +7,16 @@ Some methods within React Query accept a `QueryFilters` object. A query filter i
 
 ```js
 // Cancel all queries
-await client.cancelQueries()
+await queryClient.cancelQueries()
 
 // Remove all inactive queries
-client.removeQueries('posts', { inactive: true })
+queryClient.removeQueries('posts', { inactive: true })
 
 // Refetch all active queries
-await client.refetchQueries({ active: true })
+await queryClient.refetchQueries({ active: true })
 
 // Refetch all active queries that begin with `post` in the key
-await client.refetchQueries('posts', { active: true })
+await queryClient.refetchQueries('posts', { active: true })
 ```
 
 A query filter object supports the following properties:
@@ -32,9 +32,6 @@ A query filter object supports the following properties:
 - `stale?: boolean`
   - When set to `true` it will match stale queries.
   - When set to `false` it will match fresh queries.
-- `fresh?: boolean`
-  - When set to `true` it will match fresh queries.
-  - When set to `false` it will match stale queries.
 - `fetching?: boolean`
   - When set to `true` it will match queries that are currently fetching.
   - When set to `false` it will match queries that are not fetching.

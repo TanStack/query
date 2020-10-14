@@ -11,14 +11,14 @@ import {
 } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
-const cache = new QueryCache();
-const client = new QueryClient({ cache });
+const queryCache = new QueryCache();
+const queryClient = new QueryClient({ queryCache });
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -49,7 +49,7 @@ function usePosts() {
 }
 
 function Posts({ setPostId }) {
-  const client = useQueryClient();
+  const queryClient = useQueryClient();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -71,7 +71,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      client.getQueryData(["post", post.id])
+                      queryClient.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

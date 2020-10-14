@@ -1,10 +1,9 @@
-import React from "react";
-import { Card, Text, Box, Flex, Img } from "sriracha-ui";
-import { Link } from "react-router-dom";
-import { gql } from "graphql-request";
-import { client } from "../utils";
-import { useQuery } from "react-query";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React from 'react'
+import { Card, Text, Box, Flex, Img } from 'sriracha-ui'
+import { gql } from 'graphql-request'
+import { client } from '../utils'
+import { useQuery } from 'react-query'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const query = gql`
   query GetPubFiles {
@@ -17,29 +16,29 @@ const query = gql`
       body
     }
   }
-`;
+`
 
 export default function Home() {
-  const { data, isLoading } = useQuery("posts", async () => {
-    const res = await client.request(query);
-    return res;
-  });
-  const files = data?.getPubFiles;
+  const { data, isLoading } = useQuery('posts', async () => {
+    const res = await client.request(query)
+    return res
+  })
+  const files = data?.getPubFiles
   return (
     <Card maxW={9} w="96%" shade>
       <Text color="red6" size="5xl" as="h1" tac font="Raleway">
         Welcome To My Blog!
       </Text>
       <Text color="indigo6" size="xl" as="h2" tac font="Raleway">
-        Powered by{" "}
+        Powered by{' '}
         <Text as="a" size="xl" href="https://sriracha-docs.vercel.app/">
           Sriracha UI
         </Text>
-        ,{" "}
+        ,{' '}
         <Text as="a" size="xl" href="https://www.bestmarkdowneditor.com/">
-          Best Markdown Editor{" "}
+          Best Markdown Editor{' '}
         </Text>
-        and{" "}
+        and{' '}
         <Text as="a" size="xl" href="https://react-query.tanstack.com/">
           React Query
         </Text>
@@ -51,7 +50,7 @@ export default function Home() {
           <FontAwesomeIcon icon="spinner" spin size="3x" />
         ) : (
           <>
-            {files?.map((file) => (
+            {files?.map(file => (
               <Card
                 as="a"
                 href={`/${file.slug}`}
@@ -82,5 +81,5 @@ export default function Home() {
         )}
       </Flex>
     </Card>
-  );
+  )
 }

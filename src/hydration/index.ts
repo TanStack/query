@@ -6,6 +6,6 @@ export type {
   DehydrateOptions,
   DehydratedState,
   HydrateOptions,
-  ShouldDehydrateFunction,
+  ShouldDehydrateQueryFunction,
 } from './hydration'
 export type { HydrateProps } from './react'

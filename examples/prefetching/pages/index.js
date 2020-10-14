@@ -23,19 +23,19 @@ const getCharacter = async (key, selectedChar) => {
   return data
 }
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
 
 export default function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   )
 }
 
 function Example() {
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
   const rerender = React.useReducer(d => d + 1)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)
 
@@ -48,10 +48,10 @@ function Example() {
 
   const prefetchNext = async id => {
     await Promise.all([
-      client.prefetchQuery(['character', id + 1], getCharacter, {
+      queryClient.prefetchQuery(['character', id + 1], getCharacter, {
         staleTime: 5 * 60 * 1000,
       }),
-      client.prefetchQuery(['character', id - 1], getCharacter, {
+      queryClient.prefetchQuery(['character', id - 1], getCharacter, {
         staleTime: 5 * 60 * 1000,
       }),
     ])
@@ -79,7 +79,7 @@ function Example() {
           >
             <div
               style={
-                client.getQueryData(['character', char.id])
+                queryClient.getQueryData(['character', char.id])
                   ? {
                       fontWeight: 'bold',
                     }

@@ -1,17 +1,12 @@
 import {
   CancelOptions,
-  CancelledError,
   Updater,
-  defaultRetryDelay,
   ensureArray,
   functionalUpdate,
-  isCancelable,
   isCancelledError,
   isValidTimeout,
-  isVisibleAndOnline,
   noop,
   replaceEqualDeep,
-  sleep,
   timeUntilStale,
 } from './utils'
 import type {
@@ -25,6 +20,7 @@ import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
+import { Retryer } from './retryer'
 
 // TYPES
 
@@ -33,9 +29,11 @@ interface QueryConfig<TData, TError, TQueryFnData> {
   queryKey: QueryKey
   queryHash: string
   options?: QueryOptions<TData, TError, TQueryFnData>
+  defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
+  state?: QueryState<TData, TError>
 }
 
-export interface QueryState<TData, TError> {
+export interface QueryState<TData = unknown, TError = unknown> {
   data: TData | undefined
   dataUpdateCount: number
   error: TError | null
@@ -47,6 +45,7 @@ export interface QueryState<TData, TError> {
   isFetchingNextPage: boolean
   isFetchingPreviousPage: boolean
   isInvalidated: boolean
+  isPaused: boolean
   pageParams: unknown[] | undefined
   status: QueryStatus
   updatedAt: number
@@ -95,11 +94,27 @@ interface InvalidateAction {
   type: 'invalidate'
 }
 
+interface PauseAction {
+  type: 'pause'
+}
+
+interface ContinueAction {
+  type: 'continue'
+}
+
+interface SetStateAction<TData, TError> {
+  type: 'setState'
+  state: QueryState<TData, TError>
+}
+
 export type Action<TData, TError> =
+  | ContinueAction
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
   | InvalidateAction
+  | PauseAction
+  | SetStateAction<TData, TError>
   | SuccessAction<TData>
 
 // CLASS
@@ -114,19 +129,18 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private cache: QueryCache
   private promise?: Promise<TData>
   private gcTimeout?: number
-  private cancelFetch?: (options?: CancelOptions) => void
-  private continueFetch?: () => void
-  private isTransportCancelable?: boolean
+  private retryer?: Retryer<unknown, TError>
   private observers: QueryObserver<any, any, any, any>[]
   private defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
 
   constructor(config: QueryConfig<TData, TError, TQueryFnData>) {
+    this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
     this.cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.state = getDefaultState(this.options)
+    this.state = config.state || getDefaultState(this.options)
     this.scheduleGc()
   }
 
@@ -170,7 +184,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
   cancel(options?: CancelOptions): Promise<void> {
     const promise = this.promise
-    this.cancelFetch?.(options)
+    this.retryer?.cancel(options)
     return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
 
@@ -209,6 +223,10 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     })
 
     return data
+  }
+
+  setState(state: QueryState<TData, TError>): void {
+    this.dispatch({ type: 'setState', state })
   }
 
   remove(): void {
@@ -279,10 +297,10 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     }
 
     // Continue fetch if currently paused
-    this.continueFetch?.()
+    this.retryer?.continue()
   }
 
-  subscribeObserver(observer: QueryObserver<any, any, any, any>): void {
+  addObserver(observer: QueryObserver<any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
 
@@ -293,15 +311,15 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     }
   }
 
-  unsubscribeObserver(observer: QueryObserver<any, any, any, any>): void {
+  removeObserver(observer: QueryObserver<any, any, any, any>): void {
     if (this.observers.indexOf(observer) !== -1) {
       this.observers = this.observers.filter(x => x !== observer)
 
       if (!this.observers.length) {
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
-        if (this.isTransportCancelable) {
-          this.cancel()
+        if (this.retryer && this.retryer.isTransportCancelable) {
+          this.retryer.cancel()
         }
 
         this.scheduleGc()
@@ -388,8 +406,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     }
 
     // Try to fetch the data
-    return this.tryFetchData(options, fetchData).then(data =>
-      this.setData(data)
+    return this.executeFetch(options, fetchData).then(data =>
+      this.setData(data as TData)
     )
   }
 
@@ -486,8 +504,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     }
 
     // Try to get the data
-    return this.tryFetchData(options, fetchData).then(data =>
-      this.setData(data, { pageParams: newPageParams })
+    return this.executeFetch(options, fetchData).then(data =>
+      this.setData(data as TData, { pageParams: newPageParams })
     )
   }
 
@@ -497,118 +515,29 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   ): Promise<TQueryFnData> {
     return options.queryFn
       ? Promise.resolve(options.queryFn(...params))
-      : Promise.reject()
+      : Promise.reject('No queryFn found')
   }
 
-  private tryFetchData(
+  private executeFetch(
     options: QueryOptions<TData, TError, TQueryFnData>,
-    fn: QueryFunction
-  ): Promise<TData> {
-    return new Promise<TData>((outerResolve, outerReject) => {
-      let resolved = false
-
-      const done = () => {
-        if (!resolved) {
-          resolved = true
-
-          // End loop if currently paused
-          this.continueFetch?.()
-
-          // Cleanup
-          delete this.cancelFetch
-          delete this.continueFetch
-          delete this.isTransportCancelable
-        }
-      }
-
-      const resolve = (value: any) => {
-        done()
-        outerResolve(value)
-      }
-
-      const reject = (value: any) => {
-        done()
-        outerReject(value)
-      }
-
-      // Create loop function
-      const run = () => {
-        // Do nothing if already resolved
-        if (resolved) {
-          return
-        }
-
-        let promiseOrValue: any
-
-        // Execute query
-        try {
-          promiseOrValue = fn()
-        } catch (error) {
-          promiseOrValue = Promise.reject(error)
-        }
-
-        // Check if the transport layer support cancellation
-        this.isTransportCancelable = isCancelable(promiseOrValue)
-
-        // Create callback to cancel this fetch
-        this.cancelFetch = cancelOptions => {
-          reject(new CancelledError(cancelOptions))
-
-          // Cancel transport if supported
-          if (isCancelable(promiseOrValue)) {
-            try {
-              promiseOrValue.cancel()
-            } catch {}
-          }
-        }
-
-        Promise.resolve(promiseOrValue)
-          .then(resolve)
-          .catch(error => {
-            // Stop if the fetch is already resolved
-            if (resolved) {
-              return
-            }
-
-            // Do we need to retry the request?
-            const { failureCount } = this.state
-            const retry = options.retry ?? 3
-            const retryDelay = options.retryDelay ?? defaultRetryDelay
-
-            const shouldRetry =
-              retry === true ||
-              (typeof retry === 'number' && failureCount < retry) ||
-              (typeof retry === 'function' && retry(failureCount, error))
-
-            if (!shouldRetry) {
-              // We are done if the query does not need to be retried
-              reject(error)
-              return
-            }
-
-            // Increase the failureCount
-            this.dispatch({ type: 'failed' })
-
-            // Delay
-            sleep(functionalUpdate(retryDelay, failureCount) || 0)
-              // Pause if needed
-              .then(() => {
-                // Pause retry if the document is not visible or when the device is offline
-                if (!isVisibleAndOnline()) {
-                  return new Promise(continueResolve => {
-                    // Create callback to continue this fetch
-                    this.continueFetch = continueResolve
-                  })
-                }
-              })
-              // Try again
-              .then(run)
-          })
-      }
-
-      // Start loop
-      run()
+    queryFn: QueryFunction
+  ): Promise<unknown> {
+    this.retryer = new Retryer({
+      fn: queryFn,
+      onFail: () => {
+        this.dispatch({ type: 'failed' })
+      },
+      onPause: () => {
+        this.dispatch({ type: 'pause' })
+      },
+      onContinue: () => {
+        this.dispatch({ type: 'continue' })
+      },
+      retry: options.retry,
+      retryDelay: options.retryDelay,
     })
+
+    return this.retryer.promise
   }
 }
 
@@ -674,6 +603,7 @@ function getDefaultState<TData, TError, TQueryFnData>(
     isFetchingNextPage: false,
     isFetchingPreviousPage: false,
     isInvalidated: false,
+    isPaused: false,
     pageParams: undefined,
     status: hasData ? 'success' : 'idle',
     updatedAt: hasData ? Date.now() : 0,
@@ -690,6 +620,16 @@ function reducer<TData, TError>(
         ...state,
         failureCount: state.failureCount + 1,
       }
+    case 'pause':
+      return {
+        ...state,
+        isPaused: true,
+      }
+    case 'continue':
+      return {
+        ...state,
+        isPaused: false,
+      }
     case 'fetch':
       return {
         ...state,
@@ -697,6 +637,7 @@ function reducer<TData, TError>(
         isFetching: true,
         isFetchingNextPage: action.isFetchingNextPage || false,
         isFetchingPreviousPage: action.isFetchingPreviousPage || false,
+        isPaused: false,
         status: state.updatedAt ? 'success' : 'loading',
       }
     case 'success':
@@ -713,6 +654,7 @@ function reducer<TData, TError>(
         isFetchingNextPage: false,
         isFetchingPreviousPage: false,
         isInvalidated: false,
+        isPaused: false,
         status: 'success',
         updatedAt: action.updatedAt ?? Date.now(),
       }
@@ -726,6 +668,7 @@ function reducer<TData, TError>(
           isFetching: false,
           isFetchingNextPage: false,
           isFetchingPreviousPage: false,
+          isPaused: false,
           status: state.error ? 'error' : state.updatedAt ? 'success' : 'idle',
         }
       }
@@ -738,12 +681,18 @@ function reducer<TData, TError>(
         isFetching: false,
         isFetchingNextPage: false,
         isFetchingPreviousPage: false,
+        isPaused: false,
         status: 'error',
       }
     case 'invalidate':
       return {
         ...state,
         isInvalidated: true,
+      }
+    case 'setState':
+      return {
+        ...state,
+        ...action.state,
       }
     default:
       return state

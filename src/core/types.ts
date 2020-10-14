@@ -1,3 +1,5 @@
+import type { MutationState } from './mutation'
+import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
 export type QueryKey = string | unknown[]
@@ -10,11 +12,6 @@ export type InitialStaleFunction = () => boolean
 
 export type QueryKeyHashFunction = (queryKey: QueryKey) => string
 
-export type ShouldRetryFunction<TError = unknown> = (
-  failureCount: number,
-  error: TError
-) => boolean
-
 export type GetPreviousPageParamFunction<TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
   allPages: TQueryFnData[]
@@ -24,8 +21,6 @@ export type GetNextPageParamFunction<TQueryFnData = unknown> = (
   lastPage: TQueryFnData,
   allPages: TQueryFnData[]
 ) => unknown | undefined
-
-export type RetryDelayFunction = (attempt: number) => number
 
 export interface QueryOptions<
   TData = unknown,
@@ -38,8 +33,8 @@ export interface QueryOptions<
    * If set to an integer number, e.g. 3, failed queries will retry until the failed query count meets that number.
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
-  retry?: boolean | number | ShouldRetryFunction<TError>
-  retryDelay?: number | RetryDelayFunction
+  retry?: RetryValue<TError>
+  retryDelay?: RetryDelayValue
   cacheTime?: number
   isDataEqual?: (oldData: unknown, newData: unknown) => boolean
   queryFn?: QueryFunction<TQueryFnData>
@@ -217,6 +212,53 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   updatedAt: number
 }
 
+export type MutationKey = string | unknown[]
+
+export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
+
+export type MutationFunction<TData = unknown, TVariables = unknown> = (
+  variables: TVariables
+) => Promise<TData>
+
+export interface MutationOptions<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> {
+  mutationFn?: MutationFunction<TData, TVariables>
+  mutationKey?: string | unknown[]
+  variables?: TVariables
+  onMutate?: (variables: TVariables) => Promise<TContext> | TContext
+  onSuccess?: (
+    data: TData,
+    variables: TVariables,
+    context: TContext | undefined
+  ) => Promise<void> | void
+  onError?: (
+    error: TError,
+    variables: TVariables,
+    context: TContext | undefined
+  ) => Promise<void> | void
+  onSettled?: (
+    data: TData | undefined,
+    error: TError | null,
+    variables: TVariables,
+    context: TContext | undefined
+  ) => Promise<void> | void
+  retry?: RetryValue<TError>
+  retryDelay?: RetryDelayValue
+}
+
+export interface MutationObserverOptions<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationOptions<TData, TError, TVariables, TContext> {
+  useErrorBoundary?: boolean
+}
+
 export interface MutateOptions<
   TData = unknown,
   TError = unknown,
@@ -241,18 +283,31 @@ export interface MutateOptions<
   ) => Promise<void> | void
 }
 
-export interface MutationOptions<
+export type MutateFunction<
   TData = unknown,
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> extends MutateOptions<TData, TError, TVariables, TContext> {
-  onMutate?: (variables: TVariables) => Promise<TContext> | TContext
-  useErrorBoundary?: boolean
-  suspense?: boolean
+> = (
+  variables: TVariables,
+  options?: MutateOptions<TData, TError, TVariables, TContext>
+) => Promise<TData>
+
+export interface MutationObserverResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationState<TData, TError, TVariables, TContext> {
+  isError: boolean
+  isIdle: boolean
+  isLoading: boolean
+  isSuccess: boolean
+  mutate: MutateFunction<TData, TError, TVariables, TContext>
+  reset: () => void
 }
 
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>
-  mutations?: MutationOptions<unknown, TError, unknown, unknown>
+  mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
 }

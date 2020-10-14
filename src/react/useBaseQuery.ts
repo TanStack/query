@@ -9,10 +9,10 @@ import { UseBaseQueryOptions, UseQueryResult } from './types'
 export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>
 ): UseQueryResult<TData, TError> {
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
   const isMounted = useIsMounted()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedOptions = client.defaultQueryObserverOptions(options)
+  const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
 
   // Always set stale time when using suspense
   if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
@@ -24,7 +24,8 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
     QueryObserver<TData, TError, TQueryFnData, TQueryData>
   >()
   const firstRender = !observerRef.current
-  const observer = observerRef.current || client.watchQuery(defaultedOptions)
+  const observer =
+    observerRef.current || new QueryObserver(queryClient, defaultedOptions)
   observerRef.current = observer
 
   // Update options

@@ -88,7 +88,7 @@ function Projects() {
 
 ## What happens when an infinite query needs to be refetched?
 
-When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the cache, the pagination restarts at the initial state with only the initial group being requested.
+When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
 
 ## What if I need to pass custom information to my query function?
 

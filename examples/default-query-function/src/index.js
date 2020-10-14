@@ -19,11 +19,11 @@ const defaultQueryFn = async (key) => {
   return data;
 };
 
-const cache = new QueryCache();
+const queryCache = new QueryCache();
 
 // provide the default query function to your app via the query client
-const client = new QueryClient({
-  cache,
+const queryClient = new QueryClient({
+  queryCache,
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
@@ -35,7 +35,7 @@ function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -57,7 +57,7 @@ function App() {
 }
 
 function Posts({ setPostId }) {
-  const client = useQueryClient();
+  const queryClient = useQueryClient();
 
   // All you have to do now is pass a key!
   const { status, data, error, isFetching } = useQuery("/posts");
@@ -81,7 +81,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      client.getQueryData(["post", post.id])
+                      queryClient.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

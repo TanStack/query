@@ -9,19 +9,19 @@ import {
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
 
 export default function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   )
 }
 
 function Example() {
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
   const fetchProjects = React.useCallback(async (key, page = 0) => {
@@ -38,7 +38,7 @@ function Example() {
   // Prefetch the next page!
   React.useEffect(() => {
     if (data?.hasMore) {
-      client.prefetchQuery(['projects', page + 1], fetchProjects)
+      queryClient.prefetchQuery(['projects', page + 1], fetchProjects)
     }
   }, [data, fetchProjects, page])
 

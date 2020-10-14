@@ -14,10 +14,12 @@ export function useIsFetching(
   arg1?: QueryKey | QueryFilters,
   arg2?: QueryFilters
 ): number {
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
   const isMounted = useIsMounted()
   const [filters] = parseFilterArgs(arg1, arg2)
-  const [isFetching, setIsFetching] = React.useState(client.isFetching(filters))
+  const [isFetching, setIsFetching] = React.useState(
+    queryClient.isFetching(filters)
+  )
 
   const filtersRef = React.useRef(filters)
   filtersRef.current = filters
@@ -26,15 +28,15 @@ export function useIsFetching(
 
   React.useEffect(
     () =>
-      client.getCache().subscribe(() => {
+      queryClient.getQueryCache().subscribe(() => {
         if (isMounted()) {
-          const newIsFetching = client.isFetching(filtersRef.current)
+          const newIsFetching = queryClient.isFetching(filtersRef.current)
           if (isFetchingRef.current !== newIsFetching) {
             setIsFetching(newIsFetching)
           }
         }
       }),
-    [client, isMounted]
+    [queryClient, isMounted]
   )
 
   return isFetching

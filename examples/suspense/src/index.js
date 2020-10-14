@@ -19,9 +19,9 @@ import Button from "./components/Button";
 const Projects = lazy(() => import("./components/Projects"));
 const Project = lazy(() => import("./components/Project"));
 
-const cache = new QueryCache();
-const client = new QueryClient({
-  cache,
+const queryCache = new QueryCache();
+const queryClient = new QueryClient({
+  queryCache,
   defaultOptions: {
     queries: {
       retry: 0,
@@ -32,14 +32,14 @@ const client = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   );
 }
 
 function Example() {
-  const client = useQueryClient();
+  const queryClient = useQueryClient();
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
@@ -49,7 +49,7 @@ function Example() {
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              client.prefetchQuery("projects", fetchProjects);
+              queryClient.prefetchQuery("projects", fetchProjects);
             }
             return !old;
           });

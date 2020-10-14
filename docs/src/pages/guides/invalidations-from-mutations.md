@@ -16,13 +16,13 @@ When a successful `postTodo` mutation happens, we likely want all `todos` querie
 ```js
 import { useMutation, useQueryClient } from 'react-query'
 
-const client = useQueryClient()
+const queryClient = useQueryClient()
 
 // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
 const mutation = useMutation(addTodo, {
   onSuccess: () => {
-    client.invalidateQueries('todos')
-    client.invalidateQueries('reminders')
+    queryClient.invalidateQueries('todos')
+    queryClient.invalidateQueries('reminders')
   },
 })
 ```
