@@ -6,13 +6,14 @@ import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
 export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
   const isMounted = useIsMounted()
 
   // Create queries observer
   const observerRef = React.useRef<QueriesObserver>()
   const firstRender = !observerRef.current
-  const observer = observerRef.current || client.watchQueries(queries)
+  const observer =
+    observerRef.current || new QueriesObserver(queryClient, queries)
   observerRef.current = observer
 
   // Update queries

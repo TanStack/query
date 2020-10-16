@@ -333,6 +333,16 @@
           "editUrl": "/reference/QueryCache.md"
         },
         {
+          "title": "QueryObserver",
+          "path": "/reference/QueryObserver",
+          "editUrl": "/reference/QueryObserver.md"
+        },
+        {
+          "title": "QueriesObserver",
+          "path": "/reference/QueriesObserver",
+          "editUrl": "/reference/QueriesObserver.md"
+        },
+        {
           "title": "QueryErrorResetBoundary",
           "path": "/reference/QueryErrorResetBoundary",
           "editUrl": "/reference/QueryErrorResetBoundary.md"

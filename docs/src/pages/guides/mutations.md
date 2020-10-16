@@ -51,7 +51,7 @@ Beyond those primary state, more information is available depending on the state
 
 In the example above, you also saw that you can pass variables to your mutations function by calling the `mutate` function with a **single variable or object**.
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#clientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#clientsetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
 
 > IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
@@ -120,18 +120,12 @@ useMutation(addTodo, {
   onMutate: variables => {
     // A mutation is about to happen!
 
-    // Optionally return a context object with a rollback function
-    return {
-      rollback: () => {
-        // do some rollback logic
-      },
-    }
+    // Optionally return a context containing data to use when for example rolling back
+    return { id: 1 }
   },
   onError: (error, variables, context) => {
     // An error happened!
-    if (context.rollback) {
-      context.rollback()
-    }
+    console.log(`rolling back optimistic update with id ${context.id}`)
   },
   onSuccess: (data, variables, context) => {
     // Boom baby!
@@ -155,41 +149,37 @@ useMutation(addTodo, {
 })
 ```
 
-You might find that you want to **add additional side-effects** to some of the `useMutation` lifecycle at the time of calling `mutate`. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported option overrides include:
-
-- `onSuccess` - Will be fired after the `useMutation`-level `onSuccess` handler
-- `onError` - Will be fired after the `useMutation`-level `onError` handler
-- `onSettled` - Will be fired after the `useMutation`-level `onSettled` handler
+You might find that you want to **trigger different callbacks** then the ones defined on `useMutation` when calling `mutate`. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`.
 
 ```js
 useMutation(addTodo, {
   onSuccess: (data, variables, context) => {
-    // I will fire first
+    // I will not fire
   },
   onError: (error, variables, context) => {
-    // I will fire first
+    // I will not fire
   },
   onSettled: (data, error, variables, context) => {
-    // I will fire first
+    // I will not fire
   },
 })
 
 mutate(todo, {
   onSuccess: (data, variables, context) => {
-    // I will fire second!
+    // I will fire instead!
   },
   onError: (error, variables, context) => {
-    // I will fire second!
+    // I will fire instead!
   },
   onSettled: (data, error, variables, context) => {
-    // I will fire second!
+    // I will fire instead!
   },
 })
 ```
 
 ## Promises
 
-Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error:
+Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
 
 ```js
 const mutation = useMutation(addTodo)
@@ -199,5 +189,19 @@ try {
   console.log(todo)
 } catch (error) {
   console.error(error)
+} finally {
+  console.log('done')
 }
 ```
+
+## Retry
+
+By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
+
+```js
+const mutation = useMutation(addTodo, {
+  retry: 3,
+})
+```
+
+If mutations fail because the device is offline, they will be retried in the same order when the device reconnects.

@@ -14,12 +14,12 @@ import { ReactQueryDevtools } from 'react-query-devtools'
 
 import useIntersectionObserver from '../hooks/useIntersectionObserver'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
 
 export default function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   )

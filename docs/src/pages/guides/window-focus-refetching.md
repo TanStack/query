@@ -9,7 +9,7 @@ If a user leaves your application and returns to stale data, **React Query autom
 
 ```js
 //
-const client = new QueryClient({
+const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
@@ -18,7 +18,7 @@ const client = new QueryClient({
 })
 
 function App() {
-  return <QueryClientProvider client={client}>...</QueryClientProvider>
+  return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
 }
 ```
 
@@ -30,10 +30,10 @@ useQuery('todos', fetchTodos, { refetchOnWindowFocus: false })
 
 ## Custom Window Focus Event
 
-In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
+In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `focusManager.setHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
 ```js
-setFocusHandler(handleFocus => {
+focusManager.setHandler(handleFocus => {
   // Listen to visibillitychange and focus
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
@@ -53,10 +53,10 @@ setFocusHandler(handleFocus => {
 A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
 
 ```js
-import { setFocusHandler } from 'react-query'
+import { focusManager } from 'react-query'
 import onWindowFocus from './onWindowFocus' // The gist above
 
-setFocusHandler(onWindowFocus) // Boom!
+focusManager.setHandler(onWindowFocus) // Boom!
 ```
 
 ## Managing Focus in React Native
@@ -64,10 +64,10 @@ setFocusHandler(onWindowFocus) // Boom!
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```js
-import { setFocusHandler } from 'react-query'
+import { focusManager } from 'react-query'
 import { AppState } from 'react-native'
 
-setFocusHandler(handleFocus => {
+focusManager.setHandler(handleFocus => {
   const handleAppStateChange = appState => {
     if (appState === 'active') {
       handleFocus()

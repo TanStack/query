@@ -40,8 +40,8 @@ const fetchItems = async (
 }
 
 describe('useInfiniteQuery', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
@@ -59,7 +59,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -152,7 +152,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await waitFor(() => expect(noThrow).toBe(true))
     consoleMock.mockRestore()
@@ -193,7 +193,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(300)
 
@@ -262,7 +262,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(10)
 
@@ -303,7 +303,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -356,7 +356,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -428,7 +428,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -520,7 +520,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -612,7 +612,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(300)
 
@@ -684,7 +684,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -734,7 +734,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -793,7 +793,7 @@ describe('useInfiniteQuery', () => {
 
       React.useEffect(() => {
         setActTimeout(() => {
-          client.setQueryData(key, [7, 8])
+          queryClient.setQueryData(key, [7, 8])
           setFirstPage(7)
         }, 20)
 
@@ -805,7 +805,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -873,7 +873,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -909,7 +909,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -945,7 +945,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(100)
 
@@ -1042,7 +1042,7 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    client.invalidateQueries(key)
+                    queryClient.invalidateQueries(key)
                   }}
                 >
                   Remove item
@@ -1055,7 +1055,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(client, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
     rendered.getByText('Loading...')
 
@@ -1182,7 +1182,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(client, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
     rendered.getByText('Loading...')
 

@@ -8,26 +8,26 @@ title: hydration/dehydrate
 ```js
 import { dehydrate } from 'react-query/hydration'
 
-const dehydratedState = dehydrate(cache, {
-  shouldDehydrate,
+const dehydratedState = dehydrate(queryClient, {
+  shouldDehydrateQuery,
 })
 ```
 
 **Options**
 
-- `cache: QueryCache`
+- `client: QueryClient`
   - **Required**
-  - The `cache` that should be dehydrated
+  - The `queryClient` that should be dehydrated
 - `options: DehydrateOptions`
   - Optional
-  - `shouldDehydrate: (query: Query) => boolean`
+  - `shouldDehydrateQuery: (query: Query) => boolean`
     - This function is called for each query in the cache
     - Return `true` to include this query in dehydration, or `false` otherwise
-    - Default version only includes successful queries, do `shouldDehydrate: () => true` to include all queries
+    - Default version only includes successful queries, do `shouldDehydrateQuery: () => true` to include all queries
 
 **Returns**
 
 - `dehydratedState: DehydratedState`
-  - This includes everything that is needed to hydrate the `cache` at a later point
+  - This includes everything that is needed to hydrate the `queryClient` at a later point
   - You **should not** rely on the exact format of this response, it is not part of the public API and can change at any time
   - This result is not in serialized form, you need to do that yourself if desired

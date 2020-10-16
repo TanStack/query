@@ -8,7 +8,7 @@ If you're lucky enough, you may know enough about what your users will do to be 
 ```js
 const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
-  await client.prefetchQuery('todos', fetchTodos)
+  await queryClient.prefetchQuery('todos', fetchTodos)
 }
 ```
 
@@ -21,5 +21,5 @@ const prefetchTodos = async () => {
 Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../api/#queryclientesetquerydata) to directly add or update a query's cached result by key.
 
 ```js
-client.setQueryData('todos', todos)
+queryClient.setQueryData('todos', todos)
 ```

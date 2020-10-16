@@ -40,21 +40,21 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(true)
 
     const prefetchCache = new QueryCache()
-    const prefetchClient = new QueryClient({ cache: prefetchCache })
+    const prefetchClient = new QueryClient({ queryCache: prefetchCache })
     await prefetchClient.prefetchQuery('success', () =>
       fetchDataSuccess('success')
     )
-    const dehydratedStateServer = dehydrate(prefetchCache)
+    const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    hydrate(renderCache, dehydratedStateServer)
-    const renderClient = new QueryClient({ cache: renderCache })
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
       </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
-    renderCache.clear()
+    renderClient.clear()
     setIsServer(false)
 
     const expectedMarkup =
@@ -66,12 +66,12 @@ describe('Server side rendering with de/rehydration', () => {
     const el = document.createElement('div')
     el.innerHTML = markup
 
-    const cache = new QueryCache()
-    hydrate(cache, JSON.parse(stringifiedState))
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, JSON.parse(stringifiedState))
 
     ReactDOM.hydrate(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <SuccessComponent />
       </QueryClientProvider>,
       el
@@ -84,7 +84,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
-    cache.clear()
+    queryClient.clear()
   })
 
   it('should not mismatch on error', async () => {
@@ -104,19 +104,19 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
     const prefetchCache = new QueryCache()
-    const prefetchClient = new QueryClient({ cache: prefetchCache })
+    const prefetchClient = new QueryClient({ queryCache: prefetchCache })
     await prefetchClient.prefetchQuery('error', () => fetchDataError())
-    const dehydratedStateServer = dehydrate(prefetchCache)
+    const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    hydrate(renderCache, dehydratedStateServer)
-    const renderClient = new QueryClient({ cache: renderCache })
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <ErrorComponent />
       </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
-    renderCache.clear()
+    renderClient.clear()
     setIsServer(false)
 
     const expectedMarkup =
@@ -128,12 +128,12 @@ describe('Server side rendering with de/rehydration', () => {
     const el = document.createElement('div')
     el.innerHTML = markup
 
-    const cache = new QueryCache()
-    hydrate(cache, JSON.parse(stringifiedState))
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, JSON.parse(stringifiedState))
 
     ReactDOM.hydrate(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <ErrorComponent />
       </QueryClientProvider>,
       el
@@ -151,7 +151,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
-    cache.clear()
+    queryClient.clear()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
@@ -170,17 +170,18 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(true)
 
     const prefetchCache = new QueryCache()
-    const dehydratedStateServer = dehydrate(prefetchCache)
+    const prefetchClient = new QueryClient({ queryCache: prefetchCache })
+    const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
-    hydrate(renderCache, dehydratedStateServer)
-    const renderClient = new QueryClient({ cache: renderCache })
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
       </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
-    renderCache.clear()
+    renderClient.clear()
     setIsServer(false)
 
     const expectedMarkup =
@@ -192,12 +193,12 @@ describe('Server side rendering with de/rehydration', () => {
     const el = document.createElement('div')
     el.innerHTML = markup
 
-    const cache = new QueryCache()
-    hydrate(cache, JSON.parse(stringifiedState))
-    const client = new QueryClient({ cache })
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, JSON.parse(stringifiedState))
 
     ReactDOM.hydrate(
-      <QueryClientProvider client={client}>
+      <QueryClientProvider client={queryClient}>
         <SuccessComponent />
       </QueryClientProvider>,
       el
@@ -215,6 +216,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
-    cache.clear()
+    queryClient.clear()
   })
 })

@@ -11,8 +11,8 @@ import {
 } from '../..'
 
 describe('QueryErrorResetBoundary', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({ queryCache })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const key = queryKey()
@@ -40,7 +40,7 @@ describe('QueryErrorResetBoundary', () => {
     }
 
     const rendered = renderWithClient(
-      client,
+      queryClient,
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
@@ -95,7 +95,7 @@ describe('QueryErrorResetBoundary', () => {
     }
 
     const rendered = renderWithClient(
-      client,
+      queryClient,
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary

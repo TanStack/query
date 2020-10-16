@@ -4,8 +4,8 @@ import { queryKey, renderWithClient, sleep } from './utils'
 import { useQueries, QueryClient, UseQueryResult, QueryCache } from '../..'
 
 describe('useQueries', () => {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()
@@ -21,7 +21,7 @@ describe('useQueries', () => {
       return null
     }
 
-    renderWithClient(client, <Page />)
+    renderWithClient(queryClient, <Page />)
 
     await sleep(10)
 

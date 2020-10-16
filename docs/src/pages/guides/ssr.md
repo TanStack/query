@@ -3,7 +3,7 @@ id: ssr
 title: SSR
 ---
 
-React Query supports two ways of prefetching data on the server and passing that to the client.
+React Query supports two ways of prefetching data on the server and passing that to the queryClient.
 
 - Prefetch the data yourself and pass it in as `initialData`
   - Quick to set up for simple cases
@@ -45,7 +45,7 @@ The setup is minimal and this can be a quick solution for some cases, but there 
 
 ### Using Hydration
 
-React Query supports prefetching multiple queries on the server in Next.js and then _dehydrating_ those queries to the client. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, React Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
+React Query supports prefetching multiple queries on the server in Next.js and then _dehydrating_ those queries to the queryClient. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, React Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
 
 To support caching queries on the server and set up hydration:
 
@@ -58,12 +58,12 @@ To support caching queries on the server and set up hydration:
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
@@ -84,10 +84,10 @@ import { QueryCache, QueryClient, useQuery } from 'react-query'
 import { dehydrate } from 'react-query/hydration'
 
 export async function getStaticProps() {
-  const cache = new QueryCache()
-  const client = new QueryClient({ cache })
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({ queryCache })
 
-  await client.prefetchQuery('posts', getPosts)
+  await queryClient.prefetchQuery('posts', getPosts)
 
   return {
     props: {
@@ -109,7 +109,7 @@ function Posts() {
 }
 ```
 
-As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
+As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
 
 ## Using Other Frameworks or Custom SSR Frameworks
 
@@ -119,10 +119,9 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 
 ### On the Server
 
-- Create a new `QueryCache` instance
 - Create a new `QueryClient` instance
 - Using the client, prefetch any data you need
-- Dehydrate the cache
+- Dehydrate the client
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 - Serialize and embed the dehydrated cache to be sent to the client with the HTML
 
@@ -132,13 +131,13 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { dehydrate, Hydrate } from 'react-query/hydration'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
-await client.prefetchQuery('key', fn)
-const dehydratedState = dehydrate(cache)
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
+await queryClient.prefetchQuery('key', fn)
+const dehydratedState = dehydrate(client)
 
 const html = ReactDOM.renderToString(
-  <ReactQueryClientProvider client={client}>
+  <ReactQueryClientProvider client={queryClient}>
     <Hydrate state={dehydratedState}>
       <App />
     </Hydrate>
@@ -150,9 +149,7 @@ res.send(`
     <body>
       <div id="app">${html}</div>
       <script>
-        window.__REACT_QUERY_INITIAL_QUERIES__ = ${JSON.stringify(
-          dehydratedState
-        )};
+        window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};
       </script>
     </body>
   </html>
@@ -170,13 +167,13 @@ res.send(`
 import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const dehydratedState = JSON.parse(window.__REACT_QUERY_INITIAL_QUERIES__)
+const dehydratedState = JSON.parse(window.__REACT_QUERY_STATE__)
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache })
 
 ReactDOM.hydrate(
-  <ReactQueryClientProvider client={client}>
+  <ReactQueryClientProvider client={queryClient}>
     <Hydrate state={dehydratedState}>
       <App />
     </Hydrate>
@@ -188,7 +185,7 @@ ReactDOM.hydrate(
 
 ### Only successful queries are included in dehydration
 
-Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the client. This happens regardless of error.
+Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the queryClient. This happens regardless of error.
 
 Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQueryData` and catch any errors to handle those manually.
 

@@ -1,9 +1,13 @@
 export { QueryCache } from './queryCache'
 export { QueryClient } from './queryClient'
-export { setBatchNotifyFn, setNotifyFn } from './notifyManager'
+export { QueryObserver } from './queryObserver'
+export { QueriesObserver } from './queriesObserver'
+export { MutationCache } from './mutationCache'
+export { MutationObserver } from './mutationObserver'
 export { setLogger } from './logger'
-export { setFocusHandler } from './focusHandler'
-export { setOnlineHandler } from './onlineHandler'
+export { notifyManager } from './notifyManager'
+export { focusManager } from './focusManager'
+export { onlineManager } from './onlineManager'
 export { hashQueryKey, isCancelledError, isError } from './utils'
 
 // Types

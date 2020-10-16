@@ -7,25 +7,27 @@ import {
   useQuery,
   useQueryClient,
   useMutation,
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const cache = new QueryCache()
-const client = new QueryClient({ cache })
+const queryCache = new QueryCache()
+const mutationCache = new MutationCache()
+const queryClient = new QueryClient({ queryCache, mutationCache })
 
 export default function App() {
   return (
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   )
 }
 
 function Example() {
-  const client = useQueryClient()
+  const queryClient = useQueryClient()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
@@ -42,11 +44,11 @@ function Example() {
   )
 
   const addMutation = useMutation(value => fetch(`/api/data?add=${value}`), {
-    onSuccess: () => client.invalidateQueries('todos'),
+    onSuccess: () => queryClient.invalidateQueries('todos'),
   })
 
   const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
-    onSuccess: () => client.invalidateQueries('todos'),
+    onSuccess: () => queryClient.invalidateQueries('todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>
