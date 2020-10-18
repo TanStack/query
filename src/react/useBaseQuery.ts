@@ -5,14 +5,10 @@ import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
-import { QueryClient, QueryObserverOptions } from '../core'
 
 export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>,
-  createObserver: (
-    queryClient: QueryClient,
-    options: QueryObserverOptions<any, any, any, any>
-  ) => QueryObserver<any, any, any, any>
+  Observer: typeof QueryObserver
 ) {
   const queryClient = useQueryClient()
   const isMounted = useIsMounted()
@@ -27,7 +23,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   // Create query observer
   const observerRef = React.useRef<QueryObserver<any, any, any, any>>()
   const observer =
-    observerRef.current || createObserver(queryClient, defaultedOptions)
+    observerRef.current || new Observer(queryClient, defaultedOptions)
   observerRef.current = observer
 
   // Update options

@@ -38,8 +38,5 @@ export function useQuery<TData, TError, TQueryFnData = TData>(
   arg3?: UseQueryOptions<TData, TError, TQueryFnData>
 ): UseQueryResult<TData, TError> {
   const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-  return useBaseQuery(
-    parsedOptions,
-    (client, defaultedOptions) => new QueryObserver(client, defaultedOptions)
-  )
+  return useBaseQuery(parsedOptions, QueryObserver)
 }
