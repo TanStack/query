@@ -122,17 +122,6 @@ describe('queryCache', () => {
     expect(fourth).toBe(2)
   })
 
-  test('fetchQueryData should be able to perform an infinite query', async () => {
-    const key = queryKey()
-    const fetchFn = () => Promise.resolve('data')
-    const data = await queryClient.fetchQueryData<string[], unknown, string>(
-      key,
-      fetchFn,
-      { infinite: true }
-    )
-    expect(data).toMatchObject(['data'])
-  })
-
   test('prefetchQuery should return undefined when an error is thrown', async () => {
     const consoleMock = mockConsoleError()
 
@@ -456,33 +445,10 @@ describe('queryCache', () => {
       queryFn: () => ({ count: 1 }),
       select: data => ({ myCount: data.count }),
     })
-    const observerResult = await observer.fetch()
+    const observerResult = await observer.refetch()
     testCache.clear()
     expectType<{ myCount: number } | undefined>(observerResult.data)
     expect(observerResult.data).toMatchObject({ myCount: 1 })
-  })
-
-  test('QueryObserver should be able to fetch an infinite query with selector', async () => {
-    const key = queryKey()
-    const testCache = new QueryCache()
-    const testClient = new QueryClient({ queryCache: testCache })
-    const observer = new QueryObserver<string[], unknown, number, number[]>(
-      testClient,
-      {
-        queryKey: key,
-        queryFn: () => 1,
-        select: data => data.map(x => `${x}`),
-        infinite: true,
-      }
-    )
-    let observerResult
-    const unsubscribe = observer.subscribe(result => {
-      observerResult = result
-    })
-    await sleep(1)
-    unsubscribe()
-    testCache.clear()
-    expect(observerResult).toMatchObject({ data: ['1'] })
   })
 
   test('QueryObserver should be able to fetch with a selector and object syntax', async () => {
@@ -517,8 +483,8 @@ describe('queryCache', () => {
         return { myCount: data.count }
       },
     })
-    const observerResult1 = await observer.fetch()
-    const observerResult2 = await observer.fetch()
+    const observerResult1 = await observer.refetch()
+    const observerResult2 = await observer.refetch()
     testCache.clear()
     expect(count).toBe(2)
     expect(observerResult1.data).toMatchObject({ myCount: 0 })
@@ -538,8 +504,8 @@ describe('queryCache', () => {
         return { myCount: data.count }
       },
     })
-    const observerResult1 = await observer.fetch()
-    const observerResult2 = await observer.fetch()
+    const observerResult1 = await observer.refetch()
+    const observerResult2 = await observer.refetch()
     testCache.clear()
     expect(count).toBe(1)
     expect(observerResult1.data).toMatchObject({ myCount: 1 })
@@ -556,8 +522,8 @@ describe('queryCache', () => {
       queryFn: () => ({ count: ++count }),
       select: () => ({ myCount: 1 }),
     })
-    const observerResult1 = await observer.fetch()
-    const observerResult2 = await observer.fetch()
+    const observerResult1 = await observer.refetch()
+    const observerResult2 = await observer.refetch()
     testCache.clear()
     expect(count).toBe(2)
     expect(observerResult1.data).toBe(observerResult2.data)

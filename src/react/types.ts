@@ -1,5 +1,7 @@
 import { RetryValue, RetryDelayValue } from '../core/retryer'
 import {
+  InfiniteQueryObserverOptions,
+  InfiniteQueryObserverResult,
   MutateOptions,
   MutationStatus,
   QueryObserverOptions,
@@ -22,8 +24,15 @@ export interface UseQueryOptions<
 export interface UseInfiniteQueryOptions<
   TData = unknown,
   TError = unknown,
-  TQueryFnData = TData
-> extends UseBaseQueryOptions<TData[], TError, TQueryFnData, TQueryFnData[]> {}
+  TQueryFnData = TData,
+  TQueryData = TQueryFnData
+>
+  extends InfiniteQueryObserverOptions<
+    TData,
+    TError,
+    TQueryFnData,
+    TQueryData
+  > {}
 
 export interface UseBaseQueryResult<TData = unknown, TError = unknown>
   extends QueryObserverResult<TData, TError> {}
@@ -32,7 +41,7 @@ export interface UseQueryResult<TData = unknown, TError = unknown>
   extends UseBaseQueryResult<TData, TError> {}
 
 export interface UseInfiniteQueryResult<TData = unknown, TError = unknown>
-  extends UseBaseQueryResult<TData[], TError> {}
+  extends InfiniteQueryObserverResult<TData, TError> {}
 
 export interface UseMutationOptions<TData, TError, TVariables, TContext> {
   mutationKey?: string | unknown[]

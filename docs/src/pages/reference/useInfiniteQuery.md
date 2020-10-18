@@ -39,6 +39,10 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](#usequ
 
 The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](#usequery), with the addition of the following:
 
+- `data.pages: TData[]`
+  - Array containing all pages.
+- `data.pageParams: unknown[]`
+  - Array containing all page params.
 - `isFetchingNextPage: boolean`
   - Will be `true` while fetching the next page with `fetchNextPage`.
 - `isFetchingPreviousPage: boolean`

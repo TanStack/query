@@ -7,7 +7,9 @@ Rendering lists that can additively "load more" data onto an existing set of dat
 
 When using `useInfiniteQuery`, you'll notice a few things are different:
 
-- `data` is now an array of arrays that contain query group results, instead of the query results themselves
+- `data` is now an object containing infinite query data:
+- `data.pages` array containing the fetched pages
+- `data.pageParams` array containing the page params used to fetch the pages
 - The `fetchNextPage` and `fetchPreviousPage` functions are now available
 - The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function (which can optionally be overridden when calling the `fetchNextPage` or `fetchPreviousPage` functions)
 - A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `undefined`.
@@ -61,7 +63,7 @@ function Projects() {
     <p>Error: {error.message}</p>
   ) : (
     <>
-      {data.map((group, i) => (
+      {data.pages.map((group, i) => (
         <React.Fragment key={i}>
           {group.projects.map(project => (
             <p key={project.id}>{project.name}</p>
@@ -132,6 +134,20 @@ Sometimes you may want to show the pages in reversed order. If this is case, you
 
 ```js
 useInfiniteQuery('projects', fetchProjects, {
-  select: pages => [...pages].reverse(),
+  select: data => ({
+    pages: [...data.pages].reverse(),
+    pageParams: [...data.pageParams].reverse(),
+  }),
 })
+```
+
+## What if I want to manually update the infinite query?
+
+Manually removing first page:
+
+```js
+queryClient.setQueryData('projects', data => ({
+  pages: data.pages.slice(1),
+  pageParams: data.pageParams.slice(1),
+}))
 ```

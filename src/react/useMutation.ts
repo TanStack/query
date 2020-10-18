@@ -73,13 +73,12 @@ export function useMutation<
   const observerRef = React.useRef<
     MutationObserver<TData, TError, TVariables, TContext>
   >()
-  const firstRender = !observerRef.current
   const observer =
     observerRef.current || new MutationObserver(queryClient, options)
   observerRef.current = observer
 
   // Update options
-  if (!firstRender) {
+  if (observer.hasListeners()) {
     observer.setOptions(options)
   }
 

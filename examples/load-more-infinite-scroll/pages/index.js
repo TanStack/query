@@ -62,7 +62,7 @@ function Example() {
         <span>Error: {error.message}</span>
       ) : (
         <>
-          {data.map((page, i) => (
+          {data.pages.map((page, i) => (
             <React.Fragment key={i}>
               {page.data.map(project => (
                 <p

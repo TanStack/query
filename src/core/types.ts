@@ -1,4 +1,5 @@
 import type { MutationState } from './mutation'
+import type { QueryBehavior } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
@@ -22,6 +23,11 @@ export type GetNextPageParamFunction<TQueryFnData = unknown> = (
   allPages: TQueryFnData[]
 ) => unknown | undefined
 
+export interface InfiniteData<TData> {
+  pages: TData[]
+  pageParams: unknown[]
+}
+
 export interface QueryOptions<
   TData = unknown,
   TError = unknown,
@@ -43,7 +49,7 @@ export interface QueryOptions<
   queryKeyHashFn?: QueryKeyHashFunction
   queryFnParamsFilter?: (args: unknown[]) => unknown[]
   initialData?: TData | InitialDataFunction<TData>
-  infinite?: true
+  behavior?: QueryBehavior<TData, TError, TQueryFnData>
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Defaults to `true`.
@@ -156,6 +162,19 @@ export interface QueryObserverOptions<
   keepPreviousData?: boolean
 }
 
+export interface InfiniteQueryObserverOptions<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData,
+  TQueryData = TQueryFnData
+>
+  extends QueryObserverOptions<
+    InfiniteData<TData>,
+    TError,
+    TQueryFnData,
+    InfiniteData<TQueryData>
+  > {}
+
 export interface ResultOptions {
   throwOnError?: boolean
 }
@@ -185,20 +204,10 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   data: TData | undefined
   error: TError | null
   failureCount: number
-  fetchNextPage: (
-    options?: FetchNextPageOptions
-  ) => Promise<QueryObserverResult<TData, TError>>
-  fetchPreviousPage: (
-    options?: FetchPreviousPageOptions
-  ) => Promise<QueryObserverResult<TData, TError>>
-  hasNextPage?: boolean
-  hasPreviousPage?: boolean
   isError: boolean
   isFetched: boolean
   isFetchedAfterMount: boolean
   isFetching: boolean
-  isFetchingNextPage?: boolean
-  isFetchingPreviousPage?: boolean
   isIdle: boolean
   isLoading: boolean
   isPreviousData: boolean
@@ -210,6 +219,20 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   remove: () => void
   status: QueryStatus
   updatedAt: number
+}
+
+export interface InfiniteQueryObserverResult<TData = unknown, TError = unknown>
+  extends QueryObserverResult<InfiniteData<TData>, TError> {
+  fetchNextPage: (
+    options?: FetchNextPageOptions
+  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  fetchPreviousPage: (
+    options?: FetchPreviousPageOptions
+  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  hasNextPage?: boolean
+  hasPreviousPage?: boolean
+  isFetchingNextPage: boolean
+  isFetchingPreviousPage: boolean
 }
 
 export type MutationKey = string | unknown[]

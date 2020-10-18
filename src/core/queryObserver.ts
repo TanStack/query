@@ -9,8 +9,6 @@ import {
 } from './utils'
 import { notifyManager } from './notifyManager'
 import type {
-  FetchNextPageOptions,
-  FetchPreviousPageOptions,
   QueryObserverOptions,
   QueryObserverResult,
   QueryOptions,
@@ -30,6 +28,10 @@ interface NotifyOptions {
   listeners?: boolean
   onError?: boolean
   onSuccess?: boolean
+}
+
+export interface ObserverFetchOptions extends FetchOptions {
+  throwOnError?: boolean
 }
 
 export class QueryObserver<
@@ -55,18 +57,23 @@ export class QueryObserver<
     options: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
   ) {
     this.client = client
-    this.options = client.defaultQueryObserverOptions(options)
+    this.options = options
     this.listeners = []
     this.initialDataUpdateCount = 0
 
     // Bind exposed methods
     this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
-    this.fetchNextPage = this.fetchNextPage.bind(this)
-    this.fetchPreviousPage = this.fetchPreviousPage.bind(this)
 
-    // Subscribe to the query
-    this.updateQuery()
+    // Initialize
+    this.init(options)
+  }
+
+  protected init(
+    options: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
+  ) {
+    // Set options
+    this.setOptions(options)
   }
 
   subscribe(listener?: QueryObserverListener<TData, TError>): () => void {
@@ -96,6 +103,10 @@ export class QueryObserver<
     }
   }
 
+  hasListeners(): boolean {
+    return this.listeners.length > 0
+  }
+
   willFetchOnMount(): boolean {
     return (
       this.options.enabled !== false &&
@@ -105,7 +116,7 @@ export class QueryObserver<
     )
   }
 
-  willFetchOptionally(): boolean {
+  private willFetchOptionally(): boolean {
     return this.options.enabled !== false && this.isStale()
   }
 
@@ -214,26 +225,8 @@ export class QueryObserver<
     return this.fetch(options)
   }
 
-  fetchNextPage(
-    options?: FetchNextPageOptions
-  ): Promise<QueryObserverResult<TData, TError>> {
-    return this.fetch({
-      throwOnError: options?.throwOnError,
-      fetchMore: { direction: 'forward', pageParam: options?.pageParam },
-    })
-  }
-
-  fetchPreviousPage(
-    options?: FetchPreviousPageOptions
-  ): Promise<QueryObserverResult<TData, TError>> {
-    return this.fetch({
-      throwOnError: options?.throwOnError,
-      fetchMore: { direction: 'backward', pageParam: options?.pageParam },
-    })
-  }
-
-  fetch(
-    fetchOptions?: FetchOptions
+  protected fetch(
+    fetchOptions?: ObserverFetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
     const promise = this.getNextResult(fetchOptions)
     this.executeFetch(fetchOptions)
@@ -246,7 +239,7 @@ export class QueryObserver<
     }
   }
 
-  private executeFetch(fetchOptions?: FetchOptions): void {
+  private executeFetch(fetchOptions?: ObserverFetchOptions): void {
     // Make sure we reference the latest query as the current one might have been removed
     this.updateQuery()
 
@@ -308,12 +301,12 @@ export class QueryObserver<
     }, this.options.refetchInterval)
   }
 
-  updateTimers(): void {
+  private updateTimers(): void {
     this.updateStaleTimeout()
     this.updateRefetchInterval()
   }
 
-  clearTimers(): void {
+  private clearTimers(): void {
     this.clearStaleTimeout()
     this.clearRefetchInterval()
   }
@@ -328,7 +321,9 @@ export class QueryObserver<
     this.refetchIntervalId = undefined
   }
 
-  private updateResult(willFetch?: boolean): void {
+  protected getNewResult(
+    willFetch?: boolean
+  ): QueryObserverResult<TData, TError> {
     const { state } = this.currentQuery
     let { status, isFetching, updatedAt } = state
     let isPreviousData = false
@@ -366,29 +361,27 @@ export class QueryObserver<
       data = (state.data as unknown) as TData
     }
 
-    const result: QueryObserverResult<TData, TError> = {
+    return {
       ...getStatusProps(status),
       data,
       error: state.error,
       failureCount: state.failureCount,
-      fetchNextPage: this.fetchNextPage,
-      fetchPreviousPage: this.fetchPreviousPage,
-      hasNextPage: state.hasNextPage,
-      hasPreviousPage: state.hasPreviousPage,
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
       isFetching,
-      isFetchingNextPage: state.isFetchingNextPage,
-      isFetchingPreviousPage: state.isFetchingPreviousPage,
       isPreviousData,
       isStale: this.isStale(),
       refetch: this.refetch,
       remove: this.remove,
       updatedAt,
     }
+  }
+
+  private updateResult(willFetch?: boolean): void {
+    const result = this.getNewResult(willFetch)
 
     // Keep reference to the current state on which the current result is based on
-    this.currentResultState = state
+    this.currentResultState = this.currentQuery.state
 
     // Only update if something has changed
     if (!shallowEqualObjects(result, this.currentResult)) {

@@ -22,7 +22,7 @@ class OnlineManager {
     }
   }
 
-  setOnlineHandler(init: (onOnline: () => void) => () => void): void {
+  setHandler(init: (onOnline: () => void) => () => void): void {
     if (this.removeHandler) {
       this.removeHandler()
     }
@@ -43,7 +43,7 @@ class OnlineManager {
 
   private setDefaultHandler() {
     if (!isServer && window?.addEventListener) {
-      this.setOnlineHandler(onOnline => {
+      this.setHandler(onOnline => {
         // Listen to online
         window.addEventListener('online', onOnline, false)
 

@@ -11,13 +11,12 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
 
   // Create queries observer
   const observerRef = React.useRef<QueriesObserver>()
-  const firstRender = !observerRef.current
   const observer =
     observerRef.current || new QueriesObserver(queryClient, queries)
   observerRef.current = observer
 
   // Update queries
-  if (!firstRender) {
+  if (observer.hasListeners()) {
     observer.setQueries(queries)
   }
 

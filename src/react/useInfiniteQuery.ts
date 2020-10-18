@@ -1,3 +1,4 @@
+import { InfiniteQueryObserver } from '../core/infiniteQueryObserver'
 import { QueryFunction, QueryKey } from '../core/types'
 import { parseQueryArgs } from '../core/utils'
 import { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
@@ -36,7 +37,10 @@ export function useInfiniteQuery<TData, TError, TQueryFnData = TData>(
     | UseInfiniteQueryOptions<TData, TError, TQueryFnData>,
   arg3?: UseInfiniteQueryOptions<TData, TError, TQueryFnData>
 ): UseInfiniteQueryResult<TData, TError> {
-  const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-  parsedOptions.infinite = true
-  return useBaseQuery(parsedOptions) as UseInfiniteQueryResult<TData, TError>
+  const options = parseQueryArgs(arg1, arg2, arg3)
+  return useBaseQuery(
+    options,
+    (client, defaultedOptions) =>
+      new InfiniteQueryObserver(client, defaultedOptions)
+  ) as UseInfiniteQueryResult<TData, TError>
 }

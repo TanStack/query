@@ -89,7 +89,9 @@ function Page({ page }) {
 
 ### useInfiniteQuery()
 
-The `useInfiniteQuery()` interface has changed to fully support bi-directional infinite lists.
+The `useInfiniteQuery()` interface has changed to fully support bi-directional infinite lists and manual updates.
+
+The `data` of an infinite query is now an object containing the `pages` and the `pageParams` used to fetch the pages.
 
 One direction:
 
@@ -130,9 +132,21 @@ const {
   hasNextPage,
   isFetchingNextPage,
 } = useInfiniteQuery('projects', fetchProjects, {
-  select: pages => [...pages].reverse(),
+  select: data => ({
+    pages: [...data.pages].reverse(),
+    pageParams: [...data.pageParams].reverse(),
+  }),
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
 })
+```
+
+Manually removing the first page:
+
+```js
+queryClient.setQueryData('projects', data => ({
+  pages: data.pages.slice(1),
+  pageParams: data.pageParams.slice(1),
+}))
 ```
 
 ### useMutation()

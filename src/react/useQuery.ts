@@ -1,3 +1,4 @@
+import { QueryObserver } from '../core'
 import { QueryFunction, QueryKey } from '../core/types'
 import { parseQueryArgs } from '../core/utils'
 import { UseQueryOptions, UseQueryResult } from './types'
@@ -37,5 +38,8 @@ export function useQuery<TData, TError, TQueryFnData = TData>(
   arg3?: UseQueryOptions<TData, TError, TQueryFnData>
 ): UseQueryResult<TData, TError> {
   const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-  return useBaseQuery(parsedOptions)
+  return useBaseQuery(
+    parsedOptions,
+    (client, defaultedOptions) => new QueryObserver(client, defaultedOptions)
+  )
 }

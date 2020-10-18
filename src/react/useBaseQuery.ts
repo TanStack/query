@@ -4,11 +4,16 @@ import { useIsMounted } from './utils'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
-import { UseBaseQueryOptions, UseQueryResult } from './types'
+import { UseBaseQueryOptions } from './types'
+import { QueryClient, QueryObserverOptions } from '../core'
 
 export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
-  options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>
-): UseQueryResult<TData, TError> {
+  options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>,
+  createObserver: (
+    queryClient: QueryClient,
+    options: QueryObserverOptions<any, any, any, any>
+  ) => QueryObserver<any, any, any, any>
+) {
   const queryClient = useQueryClient()
   const isMounted = useIsMounted()
   const errorResetBoundary = useQueryErrorResetBoundary()
@@ -20,16 +25,13 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   }
 
   // Create query observer
-  const observerRef = React.useRef<
-    QueryObserver<TData, TError, TQueryFnData, TQueryData>
-  >()
-  const firstRender = !observerRef.current
+  const observerRef = React.useRef<QueryObserver<any, any, any, any>>()
   const observer =
-    observerRef.current || new QueryObserver(queryClient, defaultedOptions)
+    observerRef.current || createObserver(queryClient, defaultedOptions)
   observerRef.current = observer
 
   // Update options
-  if (!firstRender) {
+  if (observer.hasListeners()) {
     observer.setOptions(defaultedOptions)
   }
 
@@ -55,7 +57,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
 
     if (
       observer.options.suspense &&
-      firstRender &&
+      !observer.hasListeners() &&
       observer.willFetchOnMount()
     ) {
       errorResetBoundary.clearReset()
