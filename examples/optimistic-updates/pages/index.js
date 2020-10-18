@@ -3,29 +3,34 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryClient,
+  useEnvironment,
   useMutation,
   MutationCache,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
+  cancelQueries,
+  getQueryData,
+  setQueryData,
+  invalidateQueries,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
-const mutationCache = new MutationCache()
-const queryClient = new QueryClient({ queryCache, mutationCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+  mutationCache: new MutationCache(),
+})
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const [text, setText] = React.useState('')
   const { status, data, error, isFetching } = useQuery('todos', async () => {
     const res = await axios.get('/api/data')
@@ -40,11 +45,11 @@ function Example() {
       // an error
       onMutate: async text => {
         setText('')
-        await queryClient.cancelQueries('todos')
+        await cancelQueries(environment, 'todos')
 
-        const previousValue = queryClient.getQueryData('todos')
+        const previousValue = getQueryData(environment, 'todos')
 
-        queryClient.setQueryData('todos', old => ({
+        setQueryData(environment, 'todos', old => ({
           ...old,
           items: [...old.items, text],
         }))
@@ -53,10 +58,10 @@ function Example() {
       },
       // On failure, roll back to the previous value
       onError: (err, variables, previousValue) =>
-        queryClient.setQueryData('todos', previousValue),
+        setQueryData(environment, 'todos', previousValue),
       // After success or failure, refetch the todos query
       onSettled: () => {
-        queryClient.invalidateQueries('todos')
+        invalidateQueries(environment, 'todos')
       },
     }
   )

@@ -1,4 +1,4 @@
-import { QueryObserver } from '../core'
+import { QueryObserver } from '../core/queryObserver'
 import { QueryFunction, QueryKey } from '../core/types'
 import { parseQueryArgs } from '../core/utils'
 import { UseQueryOptions, UseQueryResult } from './types'

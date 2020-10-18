@@ -288,6 +288,31 @@
       "heading": true,
       "routes": [
         {
+          "title": "Environment",
+          "path": "/reference/Environment",
+          "editUrl": "/reference/Environment.md"
+        },
+        {
+          "title": "EnvironmentProvider",
+          "path": "/reference/EnvironmentProvider",
+          "editUrl": "/reference/EnvironmentProvider.md"
+        },
+        {
+          "title": "QueryCache",
+          "path": "/reference/QueryCache",
+          "editUrl": "/reference/QueryCache.md"
+        },
+        {
+          "title": "QueryErrorResetBoundary",
+          "path": "/reference/QueryErrorResetBoundary",
+          "editUrl": "/reference/QueryErrorResetBoundary.md"
+        },
+        {
+          "title": "useEnvironment",
+          "path": "/reference/useEnvironment",
+          "editUrl": "/reference/useEnvironment.md"
+        },
+        {
           "title": "useQuery",
           "path": "/reference/useQuery",
           "editUrl": "/reference/useQuery.md"
@@ -313,44 +338,89 @@
           "editUrl": "/reference/useIsFetching.md"
         },
         {
-          "title": "QueryClient",
-          "path": "/reference/QueryClient",
-          "editUrl": "/reference/QueryClient.md"
-        },
-        {
-          "title": "QueryClientProvider",
-          "path": "/reference/QueryClientProvider",
-          "editUrl": "/reference/QueryClientProvider.md"
-        },
-        {
-          "title": "useQueryClient",
-          "path": "/reference/useQueryClient",
-          "editUrl": "/reference/useQueryClient.md"
-        },
-        {
-          "title": "QueryCache",
-          "path": "/reference/QueryCache",
-          "editUrl": "/reference/QueryCache.md"
-        },
-        {
-          "title": "QueryObserver",
-          "path": "/reference/QueryObserver",
-          "editUrl": "/reference/QueryObserver.md"
-        },
-        {
-          "title": "QueriesObserver",
-          "path": "/reference/QueriesObserver",
-          "editUrl": "/reference/QueriesObserver.md"
-        },
-        {
-          "title": "QueryErrorResetBoundary",
-          "path": "/reference/QueryErrorResetBoundary",
-          "editUrl": "/reference/QueryErrorResetBoundary.md"
-        },
-        {
           "title": "useQueryErrorResetBoundary",
           "path": "/reference/useQueryErrorResetBoundary",
           "editUrl": "/reference/useQueryErrorResetBoundary.md"
+        },
+        {
+          "title": "cancelQueries",
+          "path": "/reference/cancelQueries",
+          "editUrl": "/reference/cancelQueries.md"
+        },
+        {
+          "title": "fetchQuery",
+          "path": "/reference/fetchQuery",
+          "editUrl": "/reference/fetchQuery.md"
+        },
+        {
+          "title": "fetchInfiniteQuery",
+          "path": "/reference/fetchInfiniteQuery",
+          "editUrl": "/reference/fetchInfiniteQuery.md"
+        },
+        {
+          "title": "findQuery",
+          "path": "/reference/findQuery",
+          "editUrl": "/reference/findQuery.md"
+        },
+        {
+          "title": "findQueries",
+          "path": "/reference/findQueries",
+          "editUrl": "/reference/findQueries.md"
+        },
+        {
+          "title": "getQueryData",
+          "path": "/reference/getQueryData",
+          "editUrl": "/reference/getQueryData.md"
+        },
+        {
+          "title": "invalidateQueries",
+          "path": "/reference/invalidateQueries",
+          "editUrl": "/reference/invalidateQueries.md"
+        },
+        {
+          "title": "isFetching",
+          "path": "/reference/isFetching",
+          "editUrl": "/reference/isFetching.md"
+        },
+        {
+          "title": "prefetchQuery",
+          "path": "/reference/prefetchQuery",
+          "editUrl": "/reference/prefetchQuery.md"
+        },
+        {
+          "title": "prefetchInfiniteQuery",
+          "path": "/reference/prefetchInfiniteQuery",
+          "editUrl": "/reference/prefetchInfiniteQuery.md"
+        },
+        {
+          "title": "refetchQueries",
+          "path": "/reference/refetchQueries",
+          "editUrl": "/reference/refetchQueries.md"
+        },
+        {
+          "title": "removeQueries",
+          "path": "/reference/removeQueries",
+          "editUrl": "/reference/removeQueries.md"
+        },
+        {
+          "title": "setQueryData",
+          "path": "/reference/setQueryData",
+          "editUrl": "/reference/setQueryData.md"
+        },
+        {
+          "title": "watchQuery",
+          "path": "/reference/watchQuery",
+          "editUrl": "/reference/watchQuery.md"
+        },
+        {
+          "title": "watchInfiniteQuery",
+          "path": "/reference/watchInfiniteQuery",
+          "editUrl": "/reference/watchInfiniteQuery.md"
+        },
+        {
+          "title": "watchQueries",
+          "path": "/reference/watchQueries",
+          "editUrl": "/reference/watchQueries.md"
         },
         {
           "title": "setLogger",

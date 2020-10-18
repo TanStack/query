@@ -55,20 +55,20 @@ function Todo({ todoId }) {
   const result = useQuery(['todo', todoId], () => fetch('/todos'), {
     initialData: () => {
       // Use a todo from the 'todos' query as the initial data for this todo query
-      return queryClient.getQueryData('todos')?.find(d => d.id === todoId)
+      return getQueryData(environment, 'todos')?.find(d => d.id === todoId)
     },
   })
 }
 ```
 
-Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryClient.getQueryState` method instead to get more information about the source query, including a `state.updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `getQueryState` method instead to get more information about the source query, including a `state.updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 ```js
 function Todo({ todoId }) {
   const result = useQuery(['todo', todoId], () => fetch('/todos'), {
     initialData: () => {
       // Get the query state
-      const state = queryClient.getQueryState('todos')
+      const state = getQueryState(environment, 'todos')
 
       // If the query exists and has data that is no older than 10 seconds...
       if (state && Date.now() - state.updatedAt <= 10 * 1000) {

@@ -2,17 +2,17 @@ import React from 'react'
 
 import { useIsMounted } from './utils'
 import { QueriesObserver } from '../core/queriesObserver'
-import { useQueryClient } from './QueryClientProvider'
+import { useEnvironment } from './EnvironmentProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
 export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const isMounted = useIsMounted()
 
   // Create queries observer
   const observerRef = React.useRef<QueriesObserver>()
   const observer =
-    observerRef.current || new QueriesObserver(queryClient, queries)
+    observerRef.current || new QueriesObserver(environment, queries)
   observerRef.current = observer
 
   // Update queries

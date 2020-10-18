@@ -13,9 +13,8 @@ const defaultQueryFn = async key => {
 }
 
 // provide the default query function to your app with defaultOptions
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({
-  queryCache,
+const environment = new Environment({
+  queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
@@ -25,9 +24,9 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <YourApp />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 

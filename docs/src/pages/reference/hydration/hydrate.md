@@ -3,19 +3,19 @@ id: hydration/hydrate
 title: hydration/hydrate
 ---
 
-`hydrate` adds a previously dehydrated state into a `cache`. If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them.
+`hydrate` adds a previously dehydrated state into a `cache`. If the queries included in dehydration already exist in the cache, `hydrate` does not overwrite them.
 
 ```js
 import { hydrate } from 'react-query/hydration'
 
-hydrate(queryClient, dehydratedState, options)
+hydrate(environment, dehydratedState, options)
 ```
 
 **Options**
 
-- `client: QueryClient`
+- `environment: Environment`
   - **Required**
-  - The `queryClient` to hydrate the state into
+  - The `environment` to hydrate the state into
 - `dehydratedState: DehydratedState`
   - **Required**
   - The state to hydrate into the client

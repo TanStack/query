@@ -5,14 +5,16 @@ import {
   queryKey,
   sleep,
   mockConsoleError,
-  renderWithClient,
+  renderWithEnvironment,
   setActTimeout,
 } from './utils'
 import {
-  useInfiniteQuery,
-  UseInfiniteQueryResult,
-  QueryClient,
+  Environment,
   QueryCache,
+  UseInfiniteQueryResult,
+  invalidateQueries,
+  setQueryData,
+  useInfiniteQuery,
 } from '../..'
 
 interface Result {
@@ -41,7 +43,7 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const environment = new Environment({ queryCache })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
@@ -59,7 +61,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -152,7 +154,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await waitFor(() => expect(noThrow).toBe(true))
     consoleMock.mockRestore()
@@ -193,7 +195,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(300)
 
@@ -265,7 +267,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(10)
 
@@ -309,7 +311,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -362,7 +364,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -434,7 +436,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -526,7 +528,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -618,7 +620,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(300)
 
@@ -690,7 +692,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -740,7 +742,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -799,7 +801,7 @@ describe('useInfiniteQuery', () => {
 
       React.useEffect(() => {
         setActTimeout(() => {
-          queryClient.setQueryData(key, { pages: [7, 8], pageParams: [7, 8] })
+          setQueryData(environment, key, { pages: [7, 8], pageParams: [7, 8] })
           setFirstPage(7)
         }, 20)
 
@@ -811,7 +813,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -879,7 +881,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -915,7 +917,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -951,7 +953,7 @@ describe('useInfiniteQuery', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -1048,7 +1050,7 @@ describe('useInfiniteQuery', () => {
                     // makes an actual network request
                     // and calls invalidateQueries in an onSuccess
                     items.splice(4, 1)
-                    queryClient.invalidateQueries(key)
+                    invalidateQueries(environment, key)
                   }}
                 >
                   Remove item
@@ -1061,7 +1063,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    const rendered = renderWithEnvironment(environment, <Page />)
 
     rendered.getByText('Loading...')
 
@@ -1188,7 +1190,7 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    const rendered = renderWithEnvironment(environment, <Page />)
 
     rendered.getByText('Loading...')
 

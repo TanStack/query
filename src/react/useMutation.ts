@@ -3,7 +3,7 @@ import React from 'react'
 import { useIsMounted } from './utils'
 import { noop, parseMutationArgs } from '../core/utils'
 import { MutationObserver } from '../core/mutationObserver'
-import { useQueryClient } from './QueryClientProvider'
+import { useEnvironment } from './EnvironmentProvider'
 import {
   UseMutateFunction,
   UseMutationOptions,
@@ -67,14 +67,14 @@ export function useMutation<
   const options = parseMutationArgs(arg1, arg2, arg3)
 
   const isMounted = useIsMounted()
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
 
   // Create mutation observer
   const observerRef = React.useRef<
     MutationObserver<TData, TError, TVariables, TContext>
   >()
   const observer =
-    observerRef.current || new MutationObserver(queryClient, options)
+    observerRef.current || new MutationObserver(environment, options)
   observerRef.current = observer
 
   // Update options

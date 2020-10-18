@@ -16,7 +16,7 @@ import type {
   ResultOptions,
 } from './types'
 import type { Query, QueryState, Action, FetchOptions } from './query'
-import type { QueryClient } from './queryClient'
+import type { Environment } from './environment'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 
@@ -43,7 +43,7 @@ export class QueryObserver<
 > extends Subscribable<QueryObserverListener<TData, TError>> {
   options: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
 
-  private client: QueryClient
+  private environment: Environment
   private currentQuery!: Query<TQueryData, TError, TQueryFnData>
   private currentResult!: QueryObserverResult<TData, TError>
   private currentResultState?: QueryState<TQueryData, TError>
@@ -53,12 +53,11 @@ export class QueryObserver<
   private refetchIntervalId?: number
 
   constructor(
-    client: QueryClient,
+    environment: Environment,
     options: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
   ) {
     super()
-
-    this.client = client
+    this.environment = environment
     this.options = options
     this.initialDataUpdateCount = 0
     this.bindMethods()
@@ -117,7 +116,7 @@ export class QueryObserver<
     const prevOptions = this.options
     const prevQuery = this.currentQuery
 
-    this.options = this.client.defaultQueryObserverOptions(options)
+    this.options = this.environment.defaultQueryObserverOptions(options)
 
     // Keep previous query key if the user does not supply one
     if (!this.options.queryKey) {
@@ -373,10 +372,10 @@ export class QueryObserver<
   private updateQuery(): void {
     const prevQuery = this.currentQuery
 
-    const query = this.client
+    const query = this.environment
       .getQueryCache()
       .build(
-        this.client,
+        this.environment,
         this.options as QueryOptions<TQueryData, TError, TQueryFnData>
       )
 
@@ -483,7 +482,7 @@ export class QueryObserver<
 
       // Then the cache listeners
       if (notifyOptions.cache) {
-        this.client.getQueryCache().notify(currentQuery)
+        this.environment.getQueryCache().notify(currentQuery)
       }
     })
   }

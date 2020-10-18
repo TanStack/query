@@ -7,12 +7,20 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey } from './utils'
-import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
+import {
+  Environment,
+  EnvironmentProvider,
+  QueryCache,
+  fetchQuery,
+  findQuery,
+  prefetchQuery,
+  useQuery,
+} from '../..'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const environment = new Environment({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn()
 
@@ -29,9 +37,9 @@ describe('Server Side Rendering', () => {
     }
 
     const markup = renderToString(
-      <QueryClientProvider client={queryClient}>
+      <EnvironmentProvider environment={environment}>
         <Page />
-      </QueryClientProvider>
+      </EnvironmentProvider>
     )
 
     expect(markup).toContain('status loading')
@@ -41,18 +49,21 @@ describe('Server Side Rendering', () => {
 
   it('should add prefetched data to cache', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const environment = new Environment({ queryCache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
-    const data = await queryClient.fetchQueryData(key, fetchFn)
+    const data = await fetchQuery(environment, {
+      queryKey: key,
+      queryFn: fetchFn,
+    })
     expect(data).toBe('data')
-    expect(queryCache.find(key)?.state.data).toBe('data')
+    expect(findQuery(environment, key)?.state.data).toBe('data')
     queryCache.clear()
   })
 
   it('should return existing data from the cache', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const environment = new Environment({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn(() => sleep(10))
 
@@ -68,12 +79,12 @@ describe('Server Side Rendering', () => {
       )
     }
 
-    await queryClient.prefetchQuery(key, queryFn)
+    await prefetchQuery(environment, { queryKey: key, queryFn })
 
     const markup = renderToString(
-      <QueryClientProvider client={queryClient}>
+      <EnvironmentProvider environment={environment}>
         <Page />
-      </QueryClientProvider>
+      </EnvironmentProvider>
     )
 
     expect(markup).toContain('status success')
@@ -85,7 +96,7 @@ describe('Server Side Rendering', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const environment = new Environment({ queryCache })
 
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -106,9 +117,9 @@ describe('Server Side Rendering', () => {
     }
 
     renderToString(
-      <QueryClientProvider client={queryClient}>
+      <EnvironmentProvider environment={environment}>
         <Page />
-      </QueryClientProvider>
+      </EnvironmentProvider>
     )
 
     const keys = queryCache.getAll().map(query => query.queryKey)

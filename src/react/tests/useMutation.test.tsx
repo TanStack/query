@@ -1,13 +1,13 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
-import { useMutation, QueryClient, QueryCache, MutationCache } from '../..'
+import { useMutation, Environment, QueryCache, MutationCache } from '../..'
 import { UseMutationResult } from '../types'
 import {
   mockConsoleError,
   mockNavigatorOnLine,
   queryKey,
-  renderWithClient,
+  renderWithEnvironment,
   setActTimeout,
   sleep,
 } from './utils'
@@ -15,7 +15,7 @@ import {
 describe('useMutation', () => {
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
-  const queryClient = new QueryClient({ queryCache, mutationCache })
+  const environment = new Environment({ queryCache, mutationCache })
 
   it('should be able to reset `data`', async () => {
     function Page() {
@@ -32,7 +32,10 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByTestId, getByText } = renderWithEnvironment(
+      environment,
+      <Page />
+    )
 
     expect(getByTestId('title').textContent).toBe('')
 
@@ -68,8 +71,8 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText, queryByTestId } = renderWithClient(
-      queryClient,
+    const { getByTestId, getByText, queryByTestId } = renderWithEnvironment(
+      environment,
       <Page />
     )
 
@@ -116,7 +119,10 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByTestId, getByText } = renderWithEnvironment(
+      environment,
+      <Page />
+    )
 
     expect(getByTestId('title').textContent).toBe('0')
 
@@ -173,7 +179,10 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByTestId, getByText } = renderWithEnvironment(
+      environment,
+      <Page />
+    )
 
     expect(getByTestId('title').textContent).toBe('0')
 
@@ -242,7 +251,7 @@ describe('useMutation', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -291,7 +300,7 @@ describe('useMutation', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -307,7 +316,7 @@ describe('useMutation', () => {
   it('should be able to use mutation defaults', async () => {
     const key = queryKey()
 
-    queryClient.setMutationDefaults(key, {
+    environment.setMutationDefaults(key, {
       mutationFn: async (text: string) => text,
     })
 
@@ -329,7 +338,7 @@ describe('useMutation', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -365,7 +374,7 @@ describe('useMutation', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(100)
 
@@ -406,7 +415,7 @@ describe('useMutation', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(50)
 

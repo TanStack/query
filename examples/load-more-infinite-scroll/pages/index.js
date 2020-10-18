@@ -5,8 +5,8 @@ import axios from 'axios'
 import {
   useInfiniteQuery,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
@@ -14,14 +14,15 @@ import { ReactQueryDevtools } from 'react-query-devtools'
 
 import useIntersectionObserver from '../hooks/useIntersectionObserver'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 

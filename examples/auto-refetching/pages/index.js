@@ -5,29 +5,31 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryClient,
+  useEnvironment,
   useMutation,
   MutationCache,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
+  invalidateQueries,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
-const mutationCache = new MutationCache()
-const queryClient = new QueryClient({ queryCache, mutationCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+  mutationCache: new MutationCache(),
+})
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
@@ -44,11 +46,11 @@ function Example() {
   )
 
   const addMutation = useMutation(value => fetch(`/api/data?add=${value}`), {
-    onSuccess: () => queryClient.invalidateQueries('todos'),
+    onSuccess: () => invalidateQueries(environment, 'todos'),
   })
 
   const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryClient.invalidateQueries('todos'),
+    onSuccess: () => invalidateQueries(environment, 'todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>

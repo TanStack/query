@@ -1,5 +1,11 @@
 import { replaceEqualDeep, partialDeepEqual, isPlainObject } from '../utils'
-import { QueryClient, QueryCache, setLogger, Logger } from '../..'
+import {
+  Environment,
+  Logger,
+  QueryCache,
+  prefetchQuery,
+  setLogger,
+} from '../..'
 import { queryKey } from '../../react/tests/utils'
 
 describe('core/utils', () => {
@@ -7,7 +13,7 @@ describe('core/utils', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const environment = new Environment({ queryCache })
 
     const logger: Logger = {
       error: jest.fn(),
@@ -17,15 +23,13 @@ describe('core/utils', () => {
 
     setLogger(logger)
 
-    await queryClient.prefetchQuery(
-      key,
-      async () => {
+    await prefetchQuery(environment, {
+      queryKey: key,
+      queryFn: async () => {
         throw new Error('Test')
       },
-      {
-        retry: 0,
-      }
-    )
+      retry: 0,
+    })
 
     expect(logger.error).toHaveBeenCalled()
 

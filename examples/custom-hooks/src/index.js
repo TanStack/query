@@ -2,24 +2,25 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import {
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
 import usePosts from "./hooks/usePosts";
 import usePost from "./hooks/usePost";
 
-const queryCache = new QueryCache();
-const queryClient = new QueryClient({ queryCache });
+const environment = new Environment({
+  queryCache: new QueryCache(),
+});
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <p>
         This example is exactly the same as the basic example, but each query
         has been refactored to be it's own custom hook. This design is the
@@ -32,12 +33,12 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   );
 }
 
 function Posts({ setPostId }) {
-  const queryClient = useQueryClient();
+  const environment = useEnvironment();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -59,7 +60,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(["post", post.id])
+                      getQueryData(environment, ["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

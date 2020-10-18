@@ -1,10 +1,10 @@
 import React from 'react'
 
-import { useQueryClient } from '../react'
+import { useEnvironment } from '../react'
 import { hydrate, HydrateOptions } from './hydration'
 
 export function useHydrate(state: unknown, options?: HydrateOptions) {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
 
   const optionsRef = React.useRef(options)
   optionsRef.current = options
@@ -14,9 +14,9 @@ export function useHydrate(state: unknown, options?: HydrateOptions) {
   // relying on useMemo here is only a performance optimization
   React.useMemo(() => {
     if (state) {
-      hydrate(queryClient, state, optionsRef.current)
+      hydrate(environment, state, optionsRef.current)
     }
-  }, [queryClient, state])
+  }, [environment, state])
 }
 
 export interface HydrateProps {

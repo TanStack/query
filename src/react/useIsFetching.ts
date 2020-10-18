@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { QueryKey } from '../core'
+import { isFetching, QueryKey } from '../core'
 import { parseFilterArgs, QueryFilters } from '../core/utils'
-import { useQueryClient } from './QueryClientProvider'
+import { useEnvironment } from './EnvironmentProvider'
 import { useIsMounted } from './utils'
 
 export function useIsFetching(filters?: QueryFilters): number
@@ -14,30 +14,30 @@ export function useIsFetching(
   arg1?: QueryKey | QueryFilters,
   arg2?: QueryFilters
 ): number {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const isMounted = useIsMounted()
   const [filters] = parseFilterArgs(arg1, arg2)
-  const [isFetching, setIsFetching] = React.useState(
-    queryClient.isFetching(filters)
+  const [fetching, setFetching] = React.useState(
+    isFetching(environment, filters)
   )
 
   const filtersRef = React.useRef(filters)
   filtersRef.current = filters
-  const isFetchingRef = React.useRef(isFetching)
-  isFetchingRef.current = isFetching
+  const isFetchingRef = React.useRef(fetching)
+  isFetchingRef.current = fetching
 
   React.useEffect(
     () =>
-      queryClient.getQueryCache().subscribe(() => {
+      environment.getQueryCache().subscribe(() => {
         if (isMounted()) {
-          const newIsFetching = queryClient.isFetching(filtersRef.current)
+          const newIsFetching = isFetching(environment, filtersRef.current)
           if (isFetchingRef.current !== newIsFetching) {
-            setIsFetching(newIsFetching)
+            setFetching(newIsFetching)
           }
         }
       }),
-    [queryClient, isMounted]
+    [environment, isMounted]
   )
 
-  return isFetching
+  return fetching
 }

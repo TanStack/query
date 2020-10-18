@@ -2,18 +2,24 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import React from 'react'
 
-import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
 import {
-  useQuery,
-  QueryClient,
+  sleep,
+  queryKey,
+  mockConsoleError,
+  renderWithEnvironment,
+} from './utils'
+import {
+  Environment,
   QueryCache,
   QueryErrorResetBoundary,
+  findQuery,
+  useQuery,
   useQueryErrorResetBoundary,
 } from '../..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const environment = new Environment({ queryCache })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
@@ -27,8 +33,8 @@ describe("useQuery's in Suspense mode", () => {
       return <>rendered</>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>
@@ -59,22 +65,22 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = renderWithEnvironment(environment, <App />)
 
     expect(rendered.queryByText('rendered')).toBeNull()
-    expect(queryCache.find(key)).toBeFalsy()
+    expect(findQuery(environment, key)).toBeFalsy()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await waitFor(() => rendered.getByText('rendered'))
 
     // @ts-expect-error
-    expect(queryCache.find(key)?.observers.length).toBe(1)
+    expect(findQuery(environment, key)?.observers.length).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
 
     expect(rendered.queryByText('rendered')).toBeNull()
     // @ts-expect-error
-    expect(queryCache.find(key)?.observers.length).toBe(0)
+    expect(findQuery(environment, key)?.observers.length).toBe(0)
   })
 
   it('should call onSuccess on the first successful call', async () => {
@@ -91,8 +97,8 @@ describe("useQuery's in Suspense mode", () => {
       return <>rendered</>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>
@@ -127,8 +133,8 @@ describe("useQuery's in Suspense mode", () => {
       return <span>second</span>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <React.Suspense fallback="loading">
         <FirstComponent />
         <SecondComponent />
@@ -169,8 +175,8 @@ describe("useQuery's in Suspense mode", () => {
       return <div>rendered</div>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
@@ -235,8 +241,8 @@ describe("useQuery's in Suspense mode", () => {
       return <div>rendered</div>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
@@ -325,7 +331,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />)
+    const rendered = renderWithEnvironment(environment, <App />)
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
@@ -353,8 +359,8 @@ describe("useQuery's in Suspense mode", () => {
       return <button aria-label="fire" onClick={() => setEnabled(true)} />
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>

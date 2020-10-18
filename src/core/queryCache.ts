@@ -1,14 +1,9 @@
-import {
-  QueryFilters,
-  getQueryKeyHashFn,
-  matchQuery,
-  parseFilterArgs,
-} from './utils'
+import { getQueryKeyHashFn } from './utils'
 import { Query, QueryState } from './query'
-import type { QueryKey, QueryOptions } from './types'
+import type { QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
-import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
+import type { Environment } from './environment'
 
 // TYPES
 
@@ -32,7 +27,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   build<TData, TError, TQueryFnData>(
-    client: QueryClient,
+    environment: Environment,
     options: QueryOptions<TData, TError, TQueryFnData>,
     state?: QueryState<TData, TError>
   ): Query<TData, TError, TQueryFnData> {
@@ -46,9 +41,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         cache: this,
         queryKey,
         queryHash,
-        options: client.defaultQueryOptions(options),
+        options: environment.defaultQueryOptions(options),
         state,
-        defaultOptions: client.getQueryDefaults(queryKey),
+        defaultOptions: environment.getQueryDefaults(queryKey),
       })
       this.add(query)
     }
@@ -89,24 +84,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   getAll(): Query[] {
     return this.queries
-  }
-
-  find<TData = unknown, TError = unknown, TQueryFnData = TData>(
-    arg1: QueryKey,
-    arg2?: QueryFilters
-  ): Query<TData, TError, TQueryFnData> | undefined {
-    const [filters] = parseFilterArgs(arg1, arg2)
-    return this.queries.find(query => matchQuery(filters, query))
-  }
-
-  findAll(queryKey?: QueryKey, filters?: QueryFilters): Query[]
-  findAll(filters?: QueryFilters): Query[]
-  findAll(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): Query[]
-  findAll(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): Query[] {
-    const [filters] = parseFilterArgs(arg1, arg2)
-    return filters
-      ? this.queries.filter(query => matchQuery(filters, query))
-      : this.queries
   }
 
   notify(query?: Query<any, any>) {

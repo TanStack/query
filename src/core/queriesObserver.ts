@@ -1,22 +1,22 @@
 import { difference, getQueryKeyHashFn, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
-import type { QueryClient } from './queryClient'
+import type { Environment } from './environment'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 
 export class QueriesObserver extends Subscribable<QueriesObserverListener> {
-  private client: QueryClient
+  private environment: Environment
   private result: QueryObserverResult[]
   private queries: QueryObserverOptions[]
   private observers: QueryObserver[]
 
-  constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
+  constructor(environment: Environment, queries?: QueryObserverOptions[]) {
     super()
 
-    this.client = client
+    this.environment = environment
     this.queries = queries || []
     this.result = []
     this.observers = []
@@ -64,7 +64,9 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     const newObservers = this.queries.map((options, i) => {
       let observer: QueryObserver | undefined = prevObservers[i]
 
-      const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+      const defaultedOptions = this.environment.defaultQueryObserverOptions(
+        options
+      )
       const hashFn = getQueryKeyHashFn(defaultedOptions)
       defaultedOptions.queryHash = hashFn(defaultedOptions.queryKey!)
 
@@ -83,7 +85,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         return observer
       }
 
-      return new QueryObserver(this.client, defaultedOptions)
+      return new QueryObserver(this.environment, defaultedOptions)
     })
 
     if (prevObservers.length === newObservers.length && !hasIndexChange) {

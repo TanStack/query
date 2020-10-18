@@ -1,5 +1,5 @@
 import type { MutationOptions } from './types'
-import type { QueryClient } from './queryClient'
+import type { Environment } from './environment'
 import { notifyManager } from './notifyManager'
 import { Mutation, MutationState } from './mutation'
 import { noop } from './utils'
@@ -22,17 +22,17 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   build<TData, TError, TVariables, TContext>(
-    client: QueryClient,
+    environment: Environment,
     options: MutationOptions<TData, TError, TVariables, TContext>,
     state?: MutationState<TData, TError, TVariables, TContext>
   ): Mutation<TData, TError, TVariables, TContext> {
     const mutation = new Mutation({
       mutationCache: this,
       mutationId: ++this.mutationId,
-      options: client.defaultMutationOptions(options),
+      options: environment.defaultMutationOptions(options),
       state,
       defaultOptions: options.mutationKey
-        ? client.getMutationDefaults(options.mutationKey)
+        ? environment.getMutationDefaults(options.mutationKey)
         : undefined,
     })
 

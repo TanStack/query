@@ -3,22 +3,24 @@ import React from "react";
 import ReactDOM from "react-dom";
 import axios from "axios";
 import {
+  getQueryData,
   useQuery,
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
-const queryCache = new QueryCache();
-const queryClient = new QueryClient({ queryCache });
+const environment = new Environment({
+  queryCache: new QueryCache(),
+});
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -35,7 +37,7 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   );
 }
 
@@ -49,7 +51,7 @@ function usePosts() {
 }
 
 function Posts({ setPostId }) {
-  const queryClient = useQueryClient();
+  const environment = useEnvironment();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -71,7 +73,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(["post", post.id])
+                      getQueryData(environment, ["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

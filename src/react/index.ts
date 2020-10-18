@@ -2,7 +2,7 @@
 import './setBatchUpdatesFn'
 import './setLogger'
 
-export { QueryClientProvider, useQueryClient } from './QueryClientProvider'
+export { EnvironmentProvider, useEnvironment } from './EnvironmentProvider'
 export {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
@@ -15,5 +15,5 @@ export { useInfiniteQuery } from './useInfiniteQuery'
 
 // Types
 export * from './types'
-export type { QueryClientProviderProps } from './QueryClientProvider'
+export type { EnvironmentProviderProps } from './EnvironmentProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'

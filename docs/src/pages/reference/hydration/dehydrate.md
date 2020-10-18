@@ -8,16 +8,16 @@ title: hydration/dehydrate
 ```js
 import { dehydrate } from 'react-query/hydration'
 
-const dehydratedState = dehydrate(queryClient, {
+const dehydratedState = dehydrate(environment, {
   shouldDehydrateQuery,
 })
 ```
 
 **Options**
 
-- `client: QueryClient`
+- `environment: Environment`
   - **Required**
-  - The `queryClient` that should be dehydrated
+  - The `environment` that should be dehydrated
 - `options: DehydrateOptions`
   - Optional
   - `shouldDehydrateQuery: (query: Query) => boolean`
@@ -28,6 +28,6 @@ const dehydratedState = dehydrate(queryClient, {
 **Returns**
 
 - `dehydratedState: DehydratedState`
-  - This includes everything that is needed to hydrate the `queryClient` at a later point
+  - This includes everything that is needed to hydrate the `environment` at a later point
   - You **should not** rely on the exact format of this response, it is not part of the public API and can change at any time
   - This result is not in serialized form, you need to do that yourself if desired

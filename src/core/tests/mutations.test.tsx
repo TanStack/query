@@ -1,5 +1,6 @@
-import { QueryCache, QueryClient } from '../..'
+import { QueryCache, Environment } from '../..'
 import { mockConsoleError, queryKey, sleep } from '../../react/tests/utils'
+import { runMutation } from '../api'
 import { MutationState } from '../mutation'
 import { MutationCache } from '../mutationCache'
 import { MutationObserver } from '../mutationObserver'
@@ -7,11 +8,11 @@ import { MutationObserver } from '../mutationObserver'
 describe('mutations', () => {
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
-  const queryClient = new QueryClient({ queryCache, mutationCache })
-  queryClient.mount()
+  const environment = new Environment({ queryCache, mutationCache })
+  environment.mount()
 
   test('mutate should trigger a mutation', async () => {
-    const result = await queryClient.mutate({
+    const result = await runMutation(environment, {
       mutationFn: async (text: string) => text,
       variables: 'todo',
     })
@@ -22,11 +23,11 @@ describe('mutations', () => {
   test('setMutationDefaults should be able to set defaults', async () => {
     const key = queryKey()
 
-    queryClient.setMutationDefaults(key, {
+    environment.setMutationDefaults(key, {
       mutationFn: async (text: string) => text,
     })
 
-    const result = await queryClient.mutate({
+    const result = await runMutation(environment, {
       mutationKey: key,
       variables: 'todo',
     })
@@ -35,7 +36,7 @@ describe('mutations', () => {
   })
 
   test('mutation should set correct success states', async () => {
-    const mutation = new MutationObserver(queryClient, {
+    const mutation = new MutationObserver(environment, {
       mutationFn: async (text: string) => {
         await sleep(10)
         return text
@@ -126,7 +127,7 @@ describe('mutations', () => {
   test('mutation should set correct error states', async () => {
     const consoleMock = mockConsoleError()
 
-    const mutation = new MutationObserver(queryClient, {
+    const mutation = new MutationObserver(environment, {
       mutationFn: async () => {
         await sleep(20)
         return Promise.reject('err')
@@ -227,17 +228,17 @@ describe('mutations', () => {
     const onSuccess = jest.fn()
     const onSettled = jest.fn()
 
-    queryClient.setMutationDefaults(key, {
+    environment.setMutationDefaults(key, {
       mutationFn: async (text: string) => text,
       onMutate,
       onSuccess,
       onSettled,
     })
 
-    const mutation = queryClient
+    const mutation = environment
       .getMutationCache()
       .build<string, unknown, string, string>(
-        queryClient,
+        environment,
         {
           mutationKey: key,
         },
@@ -262,7 +263,7 @@ describe('mutations', () => {
       variables: 'todo',
     })
 
-    await queryClient.getMutationCache().continueMutations()
+    await environment.getMutationCache().continueMutations()
 
     expect(mutation.state).toEqual({
       context: 'todo',

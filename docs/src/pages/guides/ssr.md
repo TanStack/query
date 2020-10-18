@@ -3,7 +3,7 @@ id: ssr
 title: SSR
 ---
 
-React Query supports two ways of prefetching data on the server and passing that to the queryClient.
+React Query supports two ways of prefetching data on the server and passing that to the environment.
 
 - Prefetch the data yourself and pass it in as `initialData`
   - Quick to set up for simple cases
@@ -45,53 +45,55 @@ The setup is minimal and this can be a quick solution for some cases, but there 
 
 ### Using Hydration
 
-React Query supports prefetching multiple queries on the server in Next.js and then _dehydrating_ those queries to the queryClient. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, React Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
+React Query supports prefetching multiple queries on the server in Next.js and then _dehydrating_ those queries to the environment. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, React Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
 
 To support caching queries on the server and set up hydration:
 
-- Create a new `QueryCache` and `QueryClient` instance
-- Wrap your app component with `<QueryClientProvider>` and pass it the client instance
+- Create a new `QueryCache` and `Environment` instance
+- Wrap your app component with `<EnvironmentProvider>` and pass it the environment instance
 - Wrapp your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
 
 ```js
 // _app.jsx
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { Environment, EnvironmentProvider, QueryCache } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
 
 export default function MyApp({ Component, pageProps }) {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 ```
 
 Now you are ready to prefetch some data in your pages with either [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) (for SSG) or [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) (for SSR). From React Query's perspective, these integrate in the same way, `getStaticProps` is shown below.
 
-- Create a new `QueryCache` and `QueryClient` instance for each page request
+- Create a new `QueryCache` and `Environment` instance for each page request
 - Prefetch the data using the clients `prefetchQuery` method and wait for it to complete
 - Use `dehydrate` to dehydrate the query cache and pass it to the page via the `dehydratedState` prop. This is the same prop that the cache will be picked up from in your `_app.js`
 
 ```js
 // pages/posts.jsx
-import { QueryCache, QueryClient, useQuery } from 'react-query'
+import { Environment, QueryCache, useQuery, prefetchQuery } from 'react-query'
 import { dehydrate } from 'react-query/hydration'
 
 export async function getStaticProps() {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const environment = new Environment({
+    queryCache: new QueryCache(),
+  })
 
-  await queryClient.prefetchQuery('posts', getPosts)
+  await prefetchQuery(environment, { queryKey: 'posts', queryFn: getPosts })
 
   return {
     props: {
-      dehydratedState: dehydrate(cache),
+      dehydratedState: dehydrate(environment),
     },
   }
 }
@@ -109,7 +111,7 @@ function Posts() {
 }
 ```
 
-As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
+As demonstrated, it's fine to prefetch some queries and let others fetch on the environment. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
 
 ## Using Other Frameworks or Custom SSR Frameworks
 
@@ -119,29 +121,37 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 
 ### On the Server
 
-- Create a new `QueryClient` instance
-- Using the client, prefetch any data you need
-- Dehydrate the client
-- Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
+- Create a new `Environment` instance
+- Using the environment, prefetch any data you need
+- Dehydrate the environment
+- Render your app with the environment provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 - Serialize and embed the dehydrated cache to be sent to the client with the HTML
 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```js
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import {
+  Environment,
+  EnvironmentProvider,
+  QueryCache,
+  prefetchQuery,
+} from 'react-query'
 import { dehydrate, Hydrate } from 'react-query/hydration'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
-await queryClient.prefetchQuery('key', fn)
-const dehydratedState = dehydrate(client)
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
+
+await prefetchQuery(environment, { queryKey: 'key', queryFn })
+
+const state = dehydrate(environment)
 
 const html = ReactDOM.renderToString(
-  <ReactQueryClientProvider client={queryClient}>
-    <Hydrate state={dehydratedState}>
+  <EnvironmentProvider environment={environment}>
+    <Hydrate state={state}>
       <App />
     </Hydrate>
-  </ReactQueryClientProvider>
+  </EnvironmentProvider>
 )
 
 res.send(`
@@ -149,7 +159,7 @@ res.send(`
     <body>
       <div id="app">${html}</div>
       <script>
-        window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};
+        window.__REACT_QUERY_STATE__ = ${JSON.stringify(state)};
       </script>
     </body>
   </html>
@@ -160,24 +170,25 @@ res.send(`
 
 - Parse the dehydrated cache state that was sent to the client with the HTML
 - Create a new `QueryCache` instance
-- Create a new `QueryClient` instance
-- Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
+- Create a new `Environment` instance
+- Render your app with the environment provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```js
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { Environment, EnvironmentProvider, QueryCache } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const dehydratedState = JSON.parse(window.__REACT_QUERY_STATE__)
+const state = JSON.parse(window.__REACT_QUERY_STATE__)
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
 
 ReactDOM.hydrate(
-  <ReactQueryClientProvider client={queryClient}>
-    <Hydrate state={dehydratedState}>
+  <EnvironmentProvider environment={environment}>
+    <Hydrate state={state}>
       <App />
     </Hydrate>
-  </ReactQueryClientProvider>
+  </EnvironmentProvider>
 )
 ```
 
@@ -185,9 +196,9 @@ ReactDOM.hydrate(
 
 ### Only successful queries are included in dehydration
 
-Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the queryClient. This happens regardless of error.
+Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the environment. This happens regardless of error.
 
-Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQueryData` and catch any errors to handle those manually.
+Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
 
 ### Staleness is measured from when the query was fetched on the server
 

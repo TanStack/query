@@ -3,29 +3,31 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryClient,
+  useEnvironment,
   useMutation,
   MutationCache,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
+  invalidateQueries,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
-const mutationCache = new MutationCache()
-const queryClient = new QueryClient({ queryCache, mutationCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+  mutationCache: new MutationCache(),
+})
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
 
   const { status, data, error } = useQuery('user', async () => {
     const res = await axios.get('/api/user')
@@ -33,11 +35,11 @@ function Example() {
   })
 
   const logoutMutation = useMutation(logout, {
-    onSuccess: () => queryClient.invalidateQueries('user'),
+    onSuccess: () => invalidateQueries(environment, 'user'),
   })
 
   const loginMutation = useMutation(login, {
-    onSuccess: () => queryClient.invalidateQueries('user'),
+    onSuccess: () => invalidateQueries(environment, 'user'),
   })
 
   return (

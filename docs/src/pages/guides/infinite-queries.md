@@ -146,7 +146,7 @@ useInfiniteQuery('projects', fetchProjects, {
 Manually removing first page:
 
 ```js
-queryClient.setQueryData('projects', data => ({
+setQueryData(environment, 'projects', data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))

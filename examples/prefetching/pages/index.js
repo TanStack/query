@@ -2,10 +2,12 @@ import React from 'react'
 import axios from 'axios'
 import {
   useQuery,
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
+  prefetchQuery,
+  getQueryData,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
@@ -23,19 +25,20 @@ const getCharacter = async (key, selectedChar) => {
   return data
 }
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const rerender = React.useReducer(d => d + 1)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)
 
@@ -48,10 +51,14 @@ function Example() {
 
   const prefetchNext = async id => {
     await Promise.all([
-      queryClient.prefetchQuery(['character', id + 1], getCharacter, {
+      prefetchQuery(environment, {
+        queryKey: ['character', id + 1],
+        queryFn: getCharacter,
         staleTime: 5 * 60 * 1000,
       }),
-      queryClient.prefetchQuery(['character', id - 1], getCharacter, {
+      prefetchQuery(environment, {
+        queryKey: ['character', id - 1],
+        queryFn: getCharacter,
         staleTime: 5 * 60 * 1000,
       }),
     ])
@@ -79,7 +86,7 @@ function Example() {
           >
             <div
               style={
-                queryClient.getQueryData(['character', char.id])
+                getQueryData(environment, ['character', char.id])
                   ? {
                       fontWeight: 'bold',
                     }

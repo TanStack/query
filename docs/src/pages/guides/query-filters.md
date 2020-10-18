@@ -7,16 +7,16 @@ Some methods within React Query accept a `QueryFilters` object. A query filter i
 
 ```js
 // Cancel all queries
-await queryClient.cancelQueries()
+await cancelQueries(environment)
 
 // Remove all inactive queries
-queryClient.removeQueries('posts', { inactive: true })
+removeQueries(environment, 'posts', { inactive: true })
 
 // Refetch all active queries
-await queryClient.refetchQueries({ active: true })
+await refetchQueries(environment, { active: true })
 
 // Refetch all active queries that begin with `post` in the key
-await queryClient.refetchQueries('posts', { active: true })
+await refetchQueries(environment, 'posts', { active: true })
 ```
 
 A query filter object supports the following properties:

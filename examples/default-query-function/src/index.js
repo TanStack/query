@@ -4,10 +4,11 @@ import ReactDOM from "react-dom";
 import axios from "axios";
 import {
   useQuery,
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
+  getQueryData,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
@@ -19,11 +20,9 @@ const defaultQueryFn = async (key) => {
   return data;
 };
 
-const queryCache = new QueryCache();
-
-// provide the default query function to your app via the query client
-const queryClient = new QueryClient({
-  queryCache,
+// provide the default query function to your app via the environment
+const environment = new Environment({
+  queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
@@ -35,7 +34,7 @@ function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -52,12 +51,12 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   );
 }
 
 function Posts({ setPostId }) {
-  const queryClient = useQueryClient();
+  const environment = useEnvironment();
 
   // All you have to do now is pass a key!
   const { status, data, error, isFetching } = useQuery("/posts");
@@ -81,7 +80,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(["post", post.id])
+                      getQueryData(environment, ["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

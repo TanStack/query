@@ -13,7 +13,7 @@ When `enabled` is `false`:
   - The query will start in the `status === 'idle'` or `isIdle` state.
 - The query will not automatically fetch on mount.
 - The query will not automatically refetch in the background when new instances mount or new instances appearing
-- The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
+- The query will ignore `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` can be used to manually trigger the query to fetch.
 
 ```js

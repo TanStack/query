@@ -11,11 +11,10 @@ Global configuration:
 
 ```js
 // Configure for all queries
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { Environment, EnvironmentProvider, QueryCache } from 'react-query'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({
-  queryCache,
+const environment = new Environment({
+  queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
       suspense: true,
@@ -25,9 +24,9 @@ const queryClient = new QueryClient({
 
 function Root() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <App />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 ```

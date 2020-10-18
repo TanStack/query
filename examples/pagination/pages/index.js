@@ -2,26 +2,28 @@ import React from 'react'
 import axios from 'axios'
 import {
   useQuery,
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
+  prefetchQuery,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
 
 export default function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 
 function Example() {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const [page, setPage] = React.useState(0)
 
   const fetchProjects = React.useCallback(async (key, page = 0) => {
@@ -38,9 +40,12 @@ function Example() {
   // Prefetch the next page!
   React.useEffect(() => {
     if (data?.hasMore) {
-      queryClient.prefetchQuery(['projects', page + 1], fetchProjects)
+      prefetchQuery(environment, {
+        queryKey: ['projects', page + 1],
+        queryFn: fetchProjects,
+      })
     }
-  }, [data, fetchProjects, page])
+  }, [environment, data, fetchProjects, page])
 
   return (
     <div>

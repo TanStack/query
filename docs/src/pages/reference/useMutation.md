@@ -39,7 +39,7 @@ mutate(variables, {
   - `variables` is an object that `mutate` will pass to your `mutationFn`
 - `mutationKey: string`
   - Optional
-  - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults` or to identify the mutation in the devtools.
+  - A mutation key can be set to inherit defaults set with `environment.setMutationDefaults` or to identify the mutation in the devtools.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive

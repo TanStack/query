@@ -1,11 +1,11 @@
 import React from 'react'
 
-import { queryKey, renderWithClient, sleep } from './utils'
-import { useQueries, QueryClient, UseQueryResult, QueryCache } from '../..'
+import { queryKey, renderWithEnvironment, sleep } from './utils'
+import { useQueries, Environment, UseQueryResult, QueryCache } from '../..'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const environment = new Environment({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()
@@ -21,7 +21,7 @@ describe('useQueries', () => {
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    renderWithEnvironment(environment, <Page />)
 
     await sleep(10)
 

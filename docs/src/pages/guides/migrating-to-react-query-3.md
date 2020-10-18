@@ -7,51 +7,47 @@ title: Migrating to React Query 3
 
 This article explains how to migrate your application to React Query 3.
 
-### QueryClient
+### Environment
 
-The `QueryCache` has been split into a `QueryClient`, `QueryCache` and `MutationCache`.
-The `QueryCache` contains all queries, the `MutationCache` contains all mutations, and the `QueryClient` can be used to set configuration and to interact with them.
+The original `QueryCache` has been split into an `Environment`, `QueryCache`, and `MutationCache`.
+The `QueryCache` contains all queries, the `MutationCache` contains all mutations, and the `Environment` is used to bundle together configuration and caches.
 
 This has some benefits:
 
 - Allows for different type of caches.
-- Multiple clients with different configurations can use the same cache.
-- Clients can be used to track queries, which can be used for shared caches on SSR.
-- The client API is more focused towards general usage.
-- Easier to test the individual components.
+- Multiple environments with different configurations can use the same caches.
+- Environments can be used to track queries, which can be used for shared caches on SSR.
 
-Use the `QueryClientProvider` component to connect a `QueryClient` to your application:
+Use the `EnvironmentProvider` component to connect a `Environment` to your application:
 
 ```js
-import { QueryClient, QueryClientProvider, QueryCache } from 'react-query'
+import { Environment, EnvironmentProvider, QueryCache } from 'react-query'
 
-// Create query cache
-const queryCache = new QueryCache()
-
-// Create mutation cache (can be omitted to reduce file size when not using mutations)
-const mutationCache = new MutationCache()
-
-// Create client
-const queryClient = new QueryClient({ queryCache, mutationCache })
+const environment = new Environment({
+  queryCache: new QueryCache(),
+  mutationCache: new MutationCache(), // can be omitted to reduce file size when not using mutations
+})
 
 function App() {
-  return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
+  return (
+    <EnvironmentProvider environment={environment}>...</EnvironmentProvider>
+  )
 }
 ```
 
 ### useQueryCache()
 
-The `useQueryCache()` hook has been replaced by the `useQueryClient()` hook:
+The `useQueryCache()` hook has been replaced by the `useEnvironment()` hook:
 
 ```js
 import { useCallback } from 'react'
-import { useQueryClient } from 'react-query'
+import { useEnvironment } from 'react-query'
 
 function Todo() {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
 
   const onClickButton = useCallback(() => {
-    queryClient.invalidateQueries('posts')
+    invalidateQueries(environment, 'posts')
   }, [client])
 
   return <button onClick={onClickButton}>Refetch</button>
@@ -60,11 +56,11 @@ function Todo() {
 
 ### ReactQueryConfigProvider
 
-The `ReactQueryConfigProvider` component has been removed. Default options for queries and mutations can now be specified in `QueryClient`:
+The `ReactQueryConfigProvider` component has been removed. Default options for queries and mutations can now be specified in `Environment`:
 
 ```js
-const queryClient = new QueryClient({
-  queryCache,
+const environment = new Environment({
+  queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
       staleTime: Infinity,
@@ -143,7 +139,7 @@ const {
 Manually removing the first page:
 
 ```js
-queryClient.setQueryData('projects', data => ({
+setQueryData(environment, 'projects', data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
@@ -223,17 +219,23 @@ useQuery({
 
 ### queryCache.prefetchQuery()
 
-The `queryClient.prefetchQuery()` method should now only be used for prefetching scenarios where the result is not relevant.
+The `prefetchQuery` function should now only be used for prefetching scenarios where the result is not relevant.
 
-Use the `queryClient.fetchQueryData()` method to get the query data or error:
+Use the `fetchQuery` method to get the query data or error:
 
 ```js
 // Prefetch a query:
-await queryClient.prefetchQuery('posts', fetchPosts)
+await prefetchQuery(environment, {
+  queryKey: 'posts',
+  queryFn: fetchPosts,
+})
 
 // Fetch a query:
 try {
-  const data = await queryClient.fetchQueryData('posts', fetchPosts)
+  const data = await fetchQuery(environment, {
+    queryKey: 'posts',
+    queryFn: fetchPosts,
+  })
 } catch (error) {
   // Error handling
 }
@@ -241,7 +243,7 @@ try {
 
 ### ReactQueryCacheProvider
 
-The `ReactQueryCacheProvider` component has been replaced by the `QueryClientProvider` component.
+The `ReactQueryCacheProvider` component has been replaced by the `EnvironmentProvider` component.
 
 ### makeQueryCache()
 
@@ -255,17 +257,49 @@ The `ReactQueryErrorResetBoundary` component has been renamed to `QueryErrorRese
 
 The `queryCache.resetErrorBoundaries()` method has been replaced by the `QueryErrorResetBoundary` component.
 
+### queryCache.fetchQuery()
+
+The `queryCache.fetchQuery()` method has been replaced by `fetchQuery()`.
+
+### queryCache.prefetchQuery()
+
+The `queryCache.prefetchQuery()` method has been replaced by `prefetchQuery()`.
+
+### queryCache.invalidateQueries()
+
+The `queryCache.invalidateQueries()` method has been replaced by `invalidateQueries()`.
+
+### queryCache.refetchQueries()
+
+The `queryCache.refetchQueries()` method has been replaced by `refetchQueries()`.
+
+### queryCache.cancelQueries()
+
+The `queryCache.cancelQueries()` method has been replaced by `cancelQueries()`.
+
+### queryCache.removeQueries()
+
+The `queryCache.removeQueries()` method has been replaced by `removeQueries()`.
+
+### queryCache.setQueryData()
+
+The `queryCache.setQueryData()` method has been replaced by `setQueryData()`.
+
+### queryCache.getQueryData()
+
+The `queryCache.getQueryData()` method has been replaced by `getQueryData()`.
+
 ### queryCache.getQuery()
 
-The `queryCache.getQuery()` method has been replaced by `cache.find()`.
+The `queryCache.getQuery()` method has been replaced by `findQuery()`.
 
 ### queryCache.getQueries()
 
-The `queryCache.getQueries()` method has been replaced by `cache.findAll()`.
+The `queryCache.getQueries()` method has been replaced by `findQueries()`.
 
 ### queryCache.isFetching
 
-The `queryCache.isFetching` property has been replaced by `queryClient.isFetching()`.
+The `queryCache.isFetching` property has been replaced by `isFetching()`.
 
 ### QueryOptions.enabled
 
@@ -364,12 +398,12 @@ function Overview() {
 }
 ```
 
-#### QueryObserver
+#### watchQuery
 
-A `QueryObserver` can be used to create and/or watch a query:
+The `wachtQuery` function can be used to create and/or watch a query:
 
 ```js
-const observer = new QueryObserver(queryClient, { queryKey: 'posts' })
+const observer = watchQuery(environment, { queryKey: 'posts' })
 
 const unsubscribe = observer.subscribe(result => {
   console.log(result)
@@ -377,12 +411,12 @@ const unsubscribe = observer.subscribe(result => {
 })
 ```
 
-#### QueriesObserver
+#### watchQueries
 
-A `QueriesObserver` can be used to create and/or watch multiple queries:
+The `watchQueries` function can be used to create and/or watch multiple queries:
 
 ```js
-const observer = new QueriesObserver(queryClient, [
+const observer = watchQueries(environment, [
   { queryKey: ['post', 1], queryFn: fetchPost },
   { queryKey: ['post', 2], queryFn: fetchPost },
 ])
@@ -393,24 +427,24 @@ const unsubscribe = observer.subscribe(result => {
 })
 ```
 
-## `queryClient.setQueryDefaults`
+## `environment.setQueryDefaults`
 
-The `queryClient.setQueryDefaults()` method can be used to set default options for specific queries:
+The `environment.setQueryDefaults()` method can be used to set default options for specific queries:
 
 ```js
-queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
+environment.setQueryDefaults('posts', { queryFn: fetchPosts })
 
 function Component() {
   const { data } = useQuery('posts')
 }
 ```
 
-## `queryClient.setMutationDefaults`
+## `environment.setMutationDefaults`
 
-The `queryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
+The `environment.setMutationDefaults()` method can be used to set default options for specific mutations:
 
 ```js
-queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
+environment.setMutationDefaults('addPost', { mutationFn: addPost })
 
 function Component() {
   const { mutate } = useMutation('addPost')
@@ -425,10 +459,20 @@ The `useIsFetching()` hook now accepts filters which can be used to for example 
 const fetches = useIsFetching(['posts'])
 ```
 
+#### Mutations offline support
+
+Mutations now accept the `retry` and `retryDelay` options. When set and mutations fail, they will be retried in the same order when the client reconnects:
+
+```js
+const mutation = useMutation(addTodo, {
+  retry: 3,
+})
+```
+
 #### Core separation
 
 The core of React Query is now fully separated from React, which means it can also be used standalone or in other frameworks. Use the `react-query/core` entrypoint to only import the core functionality:
 
 ```js
-import { QueryClient } from 'react-query/core'
+import { Environment } from 'react-query/core'
 ```

@@ -3,17 +3,17 @@ import React from 'react'
 import { useIsMounted } from './utils'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
-import { useQueryClient } from './QueryClientProvider'
+import { useEnvironment } from './EnvironmentProvider'
 import { UseBaseQueryOptions } from './types'
 
 export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>,
   Observer: typeof QueryObserver
 ) {
-  const queryClient = useQueryClient()
+  const environment = useEnvironment()
   const isMounted = useIsMounted()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
+  const defaultedOptions = environment.defaultQueryObserverOptions(options)
 
   // Always set stale time when using suspense
   if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
@@ -23,7 +23,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   // Create query observer
   const observerRef = React.useRef<QueryObserver<any, any, any, any>>()
   const observer =
-    observerRef.current || new Observer(queryClient, defaultedOptions)
+    observerRef.current || new Observer(environment, defaultedOptions)
   observerRef.current = observer
 
   // Update options

@@ -1,10 +1,15 @@
 import { act, render } from '@testing-library/react'
 import React from 'react'
 
-import { QueryClient, QueryClientProvider } from '../..'
+import { Environment, EnvironmentProvider } from '../..'
 
-export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+export function renderWithEnvironment(
+  environment: Environment,
+  ui: React.ReactElement
+) {
+  return render(
+    <EnvironmentProvider environment={environment}>{ui}</EnvironmentProvider>
+  )
 }
 
 export function mockVisibilityState(value: string) {

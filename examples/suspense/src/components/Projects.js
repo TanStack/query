@@ -1,5 +1,5 @@
 import React from "react";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useEnvironment } from "react-query";
 
 import Button from "./Button";
 import Spinner from "./Spinner";
@@ -7,7 +7,7 @@ import Spinner from "./Spinner";
 import { fetchProjects, fetchProject } from "../queries";
 
 export default function Projects({ setActiveProject }) {
-  const queryClient = useQueryClient();
+  const environment = useEnvironment();
   const { data, isFetching } = useQuery("projects", fetchProjects);
 
   return (
@@ -18,7 +18,8 @@ export default function Projects({ setActiveProject }) {
           <Button
             onClick={() => {
               // Prefetch the project query
-              queryClient.prefetchQuery(
+              prefetchQuery(
+                environment,
                 ["project", { id: project.name }],
                 fetchProject
               );

@@ -29,11 +29,10 @@ The default `retryDelay` is set to double (starting at `1000`ms) with each attem
 
 ```js
 // Configure for all queries
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { Environment, EnvironmentProvider, QueryCache } from 'react-query'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({
-  queryCache,
+const environment = new Environment({
+  queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
       retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
@@ -42,7 +41,9 @@ const queryClient = new QueryClient({
 })
 
 function App() {
-  return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
+  return (
+    <EnvironmentProvider environment={environment}>...</EnvironmentProvider>
+  )
 }
 ```
 

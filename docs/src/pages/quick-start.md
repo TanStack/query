@@ -13,31 +13,30 @@ This example very briefly illustrates the 3 core concepts of React Query:
 import {
   useQuery,
   useMutation,
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
 } from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
-// Create a cache
-const queryCache = new QueryCache()
-
-// Create a client
-const queryClient = new QueryClient({ queryCache })
+// Create an environment
+const environment = new Environment({
+  queryCache: new QueryCache(),
+})
 
 function App() {
   return (
-    // Provide the client to your App
-    <QueryClientProvider client={queryClient}>
+    // Provide the environment to your app
+    <EnvironmentProvider environment={environment}>
       <Todos />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   )
 }
 
 function Todos() {
-  // Access the client
-  const queryClient = useQueryClient()
+  // Access the environment
+  const environment = useEnvironment()
 
   // Queries
   const query = useQuery('todos', getTodos)
@@ -46,7 +45,7 @@ function Todos() {
   const mutation = useMutation(postTodo, {
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries('todos')
+      invalidateQueries(environment, 'todos')
     },
   })
 

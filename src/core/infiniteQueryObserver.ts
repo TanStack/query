@@ -5,7 +5,7 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
 } from './types'
-import type { QueryClient } from './queryClient'
+import type { Environment } from './environment'
 import { ObserverFetchOptions, QueryObserver } from './queryObserver'
 import {
   hasNextPage,
@@ -43,7 +43,7 @@ export class InfiniteQueryObserver<
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
-    client: QueryClient,
+    environment: Environment,
     options: InfiniteQueryObserverOptions<
       TData,
       TError,
@@ -51,7 +51,7 @@ export class InfiniteQueryObserver<
       TQueryData
     >
   ) {
-    super(client, options)
+    super(environment, options)
   }
 
   protected bindMethods(): void {

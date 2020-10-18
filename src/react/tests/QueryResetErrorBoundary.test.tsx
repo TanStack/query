@@ -2,17 +2,22 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import React from 'react'
 
-import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
+import {
+  sleep,
+  queryKey,
+  mockConsoleError,
+  renderWithEnvironment,
+} from './utils'
 import {
   useQuery,
-  QueryClient,
+  Environment,
   QueryCache,
   QueryErrorResetBoundary,
 } from '../..'
 
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const environment = new Environment({ queryCache })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const key = queryKey()
@@ -39,8 +44,8 @@ describe('QueryErrorResetBoundary', () => {
       return <div>{data}</div>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
@@ -94,8 +99,8 @@ describe('QueryErrorResetBoundary', () => {
       return <div>{data}</div>
     }
 
-    const rendered = renderWithClient(
-      queryClient,
+    const rendered = renderWithEnvironment(
+      environment,
       <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary

@@ -1,4 +1,4 @@
-import type { QueryClient } from '../core/queryClient'
+import type { Environment } from '../core/environment'
 import { Query, QueryState } from '../core/query'
 import type { QueryKey, QueryOptions } from '../core/types'
 
@@ -53,7 +53,7 @@ function defaultShouldDehydrate(query: Query) {
 }
 
 export function dehydrate(
-  client: QueryClient,
+  environment: Environment,
   options?: DehydrateOptions
 ): DehydratedState {
   options = options || {}
@@ -63,7 +63,7 @@ export function dehydrate(
 
   const queries: DehydratedQuery[] = []
 
-  client
+  environment
     .getQueryCache()
     .getAll()
     .forEach(query => {
@@ -76,7 +76,7 @@ export function dehydrate(
 }
 
 export function hydrate(
-  client: QueryClient,
+  environment: Environment,
   dehydratedState: unknown,
   options?: HydrateOptions
 ): void {
@@ -84,7 +84,7 @@ export function hydrate(
     return
   }
 
-  const queryCache = client.getQueryCache()
+  const queryCache = environment.getQueryCache()
   const queries = (dehydratedState as DehydratedState).queries || []
 
   queries.forEach(dehydratedQuery => {
@@ -100,7 +100,7 @@ export function hydrate(
 
     // Restore query
     queryCache.build(
-      client,
+      environment,
       {
         ...options?.defaultOptions,
         queryKey: dehydratedQuery.queryKey,

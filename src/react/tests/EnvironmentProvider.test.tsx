@@ -2,14 +2,20 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
 import { sleep, queryKey } from './utils'
-import { QueryClient, QueryClientProvider, QueryCache, useQuery } from '../..'
+import {
+  Environment,
+  EnvironmentProvider,
+  QueryCache,
+  findQuery,
+  useQuery,
+} from '../..'
 
-describe('QueryClientProvider', () => {
+describe('EnvironmentProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const environment = new Environment({ queryCache })
 
     function Page() {
       const { data } = useQuery(key, async () => {
@@ -25,14 +31,14 @@ describe('QueryClientProvider', () => {
     }
 
     const rendered = render(
-      <QueryClientProvider client={queryClient}>
+      <EnvironmentProvider environment={environment}>
         <Page />
-      </QueryClientProvider>
+      </EnvironmentProvider>
     )
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.find(key)).toBeDefined()
+    expect(findQuery(environment, key)).toBeDefined()
   })
 
   test('allows multiple caches to be partitioned', async () => {
@@ -42,8 +48,8 @@ describe('QueryClientProvider', () => {
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
 
-    const queryClient1 = new QueryClient({ queryCache: queryCache1 })
-    const queryClient2 = new QueryClient({ queryCache: queryCache2 })
+    const environment1 = new Environment({ queryCache: queryCache1 })
+    const environment2 = new Environment({ queryCache: queryCache2 })
 
     function Page1() {
       const { data } = useQuery(key1, async () => {
@@ -72,29 +78,29 @@ describe('QueryClientProvider', () => {
 
     const rendered = render(
       <>
-        <QueryClientProvider client={queryClient1}>
+        <EnvironmentProvider environment={environment1}>
           <Page1 />
-        </QueryClientProvider>
-        <QueryClientProvider client={queryClient2}>
+        </EnvironmentProvider>
+        <EnvironmentProvider environment={environment2}>
           <Page2 />
-        </QueryClientProvider>
+        </EnvironmentProvider>
       </>
     )
 
     await waitFor(() => rendered.getByText('test1'))
     await waitFor(() => rendered.getByText('test2'))
 
-    expect(queryCache1.find(key1)).toBeDefined()
-    expect(queryCache1.find(key2)).not.toBeDefined()
-    expect(queryCache2.find(key1)).not.toBeDefined()
-    expect(queryCache2.find(key2)).toBeDefined()
+    expect(findQuery(environment1, key1)).toBeDefined()
+    expect(findQuery(environment1, key2)).not.toBeDefined()
+    expect(findQuery(environment2, key1)).not.toBeDefined()
+    expect(findQuery(environment2, key2)).toBeDefined()
   })
 
   test("uses defaultOptions for queries when they don't provide their own config", async () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({
+    const environment = new Environment({
       queryCache,
       defaultOptions: {
         queries: {
@@ -117,14 +123,14 @@ describe('QueryClientProvider', () => {
     }
 
     const rendered = render(
-      <QueryClientProvider client={queryClient}>
+      <EnvironmentProvider environment={environment}>
         <Page />
-      </QueryClientProvider>
+      </EnvironmentProvider>
     )
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.find(key)).toBeDefined()
-    expect(queryCache.find(key)?.options.cacheTime).toBe(Infinity)
+    expect(findQuery(environment, key)).toBeDefined()
+    expect(findQuery(environment, key)?.options.cacheTime).toBe(Infinity)
   })
 })

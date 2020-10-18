@@ -1,11 +1,12 @@
 import React, { lazy } from "react";
 import ReactDOM from "react-dom";
 import {
-  useQueryClient,
+  useEnvironment,
   QueryCache,
-  QueryClient,
-  QueryClientProvider,
+  Environment,
+  EnvironmentProvider,
   QueryErrorResetBoundary,
+  prefetchQuery,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
@@ -19,9 +20,8 @@ import Button from "./components/Button";
 const Projects = lazy(() => import("./components/Projects"));
 const Project = lazy(() => import("./components/Project"));
 
-const queryCache = new QueryCache();
-const queryClient = new QueryClient({
-  queryCache,
+const environment = new Environment({
+  queryCache: new QueryCache(),
   defaultOptions: {
     queries: {
       retry: 0,
@@ -32,14 +32,14 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <EnvironmentProvider environment={environment}>
       <Example />
-    </QueryClientProvider>
+    </EnvironmentProvider>
   );
 }
 
 function Example() {
-  const queryClient = useQueryClient();
+  const environment = useEnvironment();
   const [showProjects, setShowProjects] = React.useState(false);
   const [activeProject, setActiveProject] = React.useState(null);
 
@@ -49,7 +49,10 @@ function Example() {
         onClick={() => {
           setShowProjects((old) => {
             if (!old) {
-              queryClient.prefetchQuery("projects", fetchProjects);
+              prefetchQuery(environment, {
+                queryKey: "projects",
+                queryFn: fetchProjects,
+              });
             }
             return !old;
           });
