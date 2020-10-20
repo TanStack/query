@@ -15,3 +15,14 @@ npm install react-query --save
 
 - The query results are no longer discriminated unions, which means you have to check the actual `data` and `error` properties.
 - Requires TypeScript v3.8 or greater
+
+## Defining Custom Hooks
+
+When defining a custom hook you need to specify the result and error types, for example:
+
+    export function useGroups() {
+      return useQuery<Group[], Error>(
+        'list-groups',
+        () => fetch(`/api/groups`).then(res => res.json())
+      )
+    }
