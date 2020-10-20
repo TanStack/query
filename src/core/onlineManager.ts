@@ -1,24 +1,12 @@
+import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
-type OnlineListener = () => void
-
-class OnlineManager {
-  private listeners: OnlineListener[]
+class OnlineManager extends Subscribable {
   private removeHandler?: () => void
 
-  constructor() {
-    this.listeners = []
-  }
-
-  subscribe(listener: OnlineListener): () => void {
+  protected onSubscribe(): void {
     if (!this.removeHandler) {
       this.setDefaultHandler()
-    }
-
-    this.listeners.push(listener)
-
-    return () => {
-      this.listeners = this.listeners.filter(x => x === listener)
     }
   }
 

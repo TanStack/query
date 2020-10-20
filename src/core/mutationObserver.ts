@@ -1,6 +1,7 @@
 import { getDefaultState, Mutation } from './mutation'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
+import { Subscribable } from './subscribable'
 import type {
   MutateOptions,
   MutationObserverResult,
@@ -21,6 +22,8 @@ export class MutationObserver<
   TError = unknown,
   TVariables = void,
   TContext = unknown
+> extends Subscribable<
+  MutationObserverListener<TData, TError, TVariables, TContext>
 > {
   options!: MutationObserverOptions<TData, TError, TVariables, TContext>
 
@@ -32,19 +35,14 @@ export class MutationObserver<
     TContext
   >
   private currentMutation?: Mutation<TData, TError, TVariables, TContext>
-  private listeners: MutationObserverListener<
-    TData,
-    TError,
-    TVariables,
-    TContext
-  >[]
 
   constructor(
     client: QueryClient,
     options: MutationObserverOptions<TData, TError, TVariables, TContext>
   ) {
+    super()
+
     this.client = client
-    this.listeners = []
     this.setOptions(options)
 
     // Bind exposed methods
@@ -61,20 +59,7 @@ export class MutationObserver<
     this.options = this.client.defaultMutationOptions(options)
   }
 
-  subscribe(
-    listener?: MutationObserverListener<TData, TError, TVariables, TContext>
-  ): () => void {
-    const callback = listener || (() => undefined)
-    this.listeners.push(callback)
-    return () => {
-      this.unsubscribe(callback)
-    }
-  }
-
-  private unsubscribe(
-    listener: MutationObserverListener<TData, TError, TVariables, TContext>
-  ): void {
-    this.listeners = this.listeners.filter(x => x !== listener)
+  protected onUnsubscribe(): void {
     if (!this.listeners.length) {
       this.currentMutation?.removeObserver(this)
     }

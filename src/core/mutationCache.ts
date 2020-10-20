@@ -3,6 +3,7 @@ import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import { Mutation, MutationState } from './mutation'
 import { noop } from './utils'
+import { Subscribable } from './subscribable'
 
 // TYPES
 
@@ -10,13 +11,12 @@ type MutationCacheListener = (mutation?: Mutation) => void
 
 // CLASS
 
-export class MutationCache {
-  private listeners: MutationCacheListener[]
+export class MutationCache extends Subscribable<MutationCacheListener> {
   private mutations: Mutation<any, any, any, any>[]
   private mutationId: number
 
   constructor() {
-    this.listeners = []
+    super()
     this.mutations = []
     this.mutationId = 0
   }
@@ -61,13 +61,6 @@ export class MutationCache {
 
   getAll(): Mutation[] {
     return this.mutations
-  }
-
-  subscribe(listener: MutationCacheListener): () => void {
-    this.listeners.push(listener)
-    return () => {
-      this.listeners = this.listeners.filter(x => x !== listener)
-    }
   }
 
   notify(mutation?: Mutation<any, any, any, any>) {

@@ -8,6 +8,7 @@ import { Query, QueryState } from './query'
 import type { QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
+import { Subscribable } from './subscribable'
 
 // TYPES
 
@@ -19,13 +20,13 @@ type QueryCacheListener = (query?: Query) => void
 
 // CLASS
 
-export class QueryCache {
-  private listeners: QueryCacheListener[]
+export class QueryCache extends Subscribable<QueryCacheListener> {
   private queries: Query<any, any>[]
   private queriesMap: QueryHashMap
 
   constructor() {
-    this.listeners = []
+    super()
+
     this.queries = []
     this.queriesMap = {}
   }
@@ -106,13 +107,6 @@ export class QueryCache {
     return filters
       ? this.queries.filter(query => matchQuery(filters, query))
       : this.queries
-  }
-
-  subscribe(listener: QueryCacheListener): () => void {
-    this.listeners.push(listener)
-    return () => {
-      this.listeners = this.listeners.filter(x => x !== listener)
-    }
   }
 
   notify(query?: Query<any, any>) {

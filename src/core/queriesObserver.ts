@@ -3,32 +3,29 @@ import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
 import { QueryObserver } from './queryObserver'
+import { Subscribable } from './subscribable'
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 
-export class QueriesObserver {
+export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   private client: QueryClient
   private result: QueryObserverResult[]
   private queries: QueryObserverOptions[]
   private observers: QueryObserver[]
-  private listeners: QueriesObserverListener[]
 
   constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
+    super()
+
     this.client = client
     this.queries = queries || []
     this.result = []
     this.observers = []
-    this.listeners = []
 
     // Subscribe to queries
     this.updateObservers()
   }
 
-  subscribe(listener?: QueriesObserverListener): () => void {
-    const callback = listener || (() => undefined)
-
-    this.listeners.push(callback)
-
+  protected onSubscribe(): void {
     if (this.listeners.length === 1) {
       this.observers.forEach(observer => {
         observer.subscribe(result => {
@@ -36,14 +33,9 @@ export class QueriesObserver {
         })
       })
     }
-
-    return () => {
-      this.unsubscribe(callback)
-    }
   }
 
-  private unsubscribe(listener: QueriesObserverListener): void {
-    this.listeners = this.listeners.filter(x => x !== listener)
+  protected onUnsubscribe(): void {
     if (!this.listeners.length) {
       this.destroy()
     }
