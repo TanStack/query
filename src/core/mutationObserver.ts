@@ -44,13 +44,13 @@ export class MutationObserver<
 
     this.client = client
     this.setOptions(options)
+    this.bindMethods()
+    this.updateResult()
+  }
 
-    // Bind exposed methods
+  protected bindMethods(): void {
     this.mutate = this.mutate.bind(this)
     this.reset = this.reset.bind(this)
-
-    // Update result
-    this.updateResult()
   }
 
   setOptions(

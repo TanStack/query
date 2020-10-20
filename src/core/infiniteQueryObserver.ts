@@ -54,17 +54,10 @@ export class InfiniteQueryObserver<
     super(client, options)
   }
 
-  protected init(
-    options: InfiniteQueryObserverOptions<
-      TData,
-      TError,
-      TQueryFnData,
-      TQueryData
-    >
-  ) {
+  protected bindMethods(): void {
+    super.bindMethods()
     this.fetchNextPage = this.fetchNextPage.bind(this)
     this.fetchPreviousPage = this.fetchPreviousPage.bind(this)
-    super.init(options)
   }
 
   setOptions(

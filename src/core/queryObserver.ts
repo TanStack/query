@@ -61,20 +61,13 @@ export class QueryObserver<
     this.client = client
     this.options = options
     this.initialDataUpdateCount = 0
-
-    // Bind exposed methods
-    this.remove = this.remove.bind(this)
-    this.refetch = this.refetch.bind(this)
-
-    // Initialize
-    this.init(options)
+    this.bindMethods()
+    this.setOptions(options)
   }
 
-  protected init(
-    options: QueryObserverOptions<TData, TError, TQueryFnData, TQueryData>
-  ) {
-    // Set options
-    this.setOptions(options)
+  protected bindMethods(): void {
+    this.remove = this.remove.bind(this)
+    this.refetch = this.refetch.bind(this)
   }
 
   protected onSubscribe(): void {

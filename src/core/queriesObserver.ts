@@ -41,10 +41,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     }
   }
 
-  hasListeners(): boolean {
-    return this.listeners.length > 0
-  }
-
   destroy(): void {
     this.listeners = []
     this.observers.forEach(observer => {
