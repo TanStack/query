@@ -20,6 +20,10 @@ export class Subscribable<TListener = Listener> {
     }
   }
 
+  hasListeners(): boolean {
+    return this.listeners.length > 0
+  }
+
   protected onSubscribe(): void {
     // Do nothing
   }

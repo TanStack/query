@@ -65,10 +65,6 @@ export class MutationObserver<
     }
   }
 
-  hasListeners(): boolean {
-    return this.listeners.length > 0
-  }
-
   onMutationUpdate(): void {
     this.updateResult()
     this.notify()

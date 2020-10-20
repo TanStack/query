@@ -95,10 +95,6 @@ export class QueryObserver<
     }
   }
 
-  hasListeners(): boolean {
-    return this.listeners.length > 0
-  }
-
   willFetchOnMount(): boolean {
     return (
       this.options.enabled !== false &&
