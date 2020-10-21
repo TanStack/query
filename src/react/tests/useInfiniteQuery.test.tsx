@@ -20,7 +20,11 @@ const initialItems = (page: number): Result => {
   }
 }
 
-const fetchItems = async (page: number, ts: number, nextId?: any): Promise<Result> => {
+const fetchItems = async (
+  page: number,
+  ts: number,
+  nextId?: any
+): Promise<Result> => {
   await sleep(10)
   return {
     items: [...new Array(10)].fill(null).map((_, d) => page * pageSize + d),
@@ -74,6 +78,7 @@ describe('useInfiniteQuery', () => {
       isInitialData: true,
       isLoading: true,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -104,6 +109,7 @@ describe('useInfiniteQuery', () => {
       isInitialData: false,
       isLoading: false,
       isPreviousData: false,
+      isPlaceholderData: false,
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
@@ -1067,7 +1073,7 @@ describe('useInfiniteQuery', () => {
   it('should compute canFetchMore correctly for falsy getFetchMore return value on refetching', async () => {
     const key = queryKey()
     const MAX = 2
-  
+
     function Page() {
       const fetchCountRef = React.useRef(0)
       const [isRemovedLastPage, setIsRemovedLastPage] = React.useState<boolean>(
@@ -1096,7 +1102,7 @@ describe('useInfiniteQuery', () => {
           getFetchMore: (lastGroup, _allGroups) => lastGroup.nextId,
         }
       )
-  
+
       return (
         <div>
           <h1>Pagination</h1>
@@ -1145,39 +1151,39 @@ describe('useInfiniteQuery', () => {
         </div>
       )
     }
-  
+
     const rendered = render(<Page />)
-  
+
     rendered.getByText('Loading...')
-  
+
     await waitFor(() => {
       rendered.getByText('Item: 9')
       rendered.getByText('Page 0: 0')
     })
-  
+
     fireEvent.click(rendered.getByText('Load More'))
-  
+
     await waitFor(() => rendered.getByText('Loading more...'))
-  
+
     await waitFor(() => {
       rendered.getByText('Item: 19')
       rendered.getByText('Page 0: 0')
       rendered.getByText('Page 1: 1')
     })
-  
+
     fireEvent.click(rendered.getByText('Load More'))
-  
+
     await waitFor(() => rendered.getByText('Loading more...'))
-  
+
     await waitFor(() => {
       rendered.getByText('Item: 29')
       rendered.getByText('Page 0: 0')
       rendered.getByText('Page 1: 1')
       rendered.getByText('Page 2: 2')
     })
-  
+
     rendered.getByText('Nothing more to load')
-  
+
     fireEvent.click(rendered.getByText('Remove Last Page'))
 
     await waitForMs(10)
@@ -1185,15 +1191,15 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(rendered.getByText('Refetch'))
 
     await waitFor(() => rendered.getByText('Background Updating...'))
-  
+
     await waitFor(() => {
       rendered.getByText('Page 0: 3')
       rendered.getByText('Page 1: 4')
     })
-  
+
     expect(rendered.queryByText('Item: 29')).toBeNull()
     expect(rendered.queryByText('Page 2: 5')).toBeNull()
-  
+
     rendered.getByText('Nothing more to load')
   })
 })

@@ -26,6 +26,7 @@ export type TypedQueryFunction<
 export type TypedQueryFunctionArgs = readonly [unknown, ...unknown[]]
 
 export type InitialDataFunction<TResult> = () => TResult | undefined
+export type PlaceholderDataFunction<TResult> = () => TResult | undefined
 
 export type InitialStaleFunction = () => boolean
 
@@ -49,6 +50,7 @@ export interface BaseQueryConfig<TResult, TError = unknown, TData = TResult> {
   queryKeySerializerFn?: QueryKeySerializerFunction
   queryFnParamsFilter?: (args: ArrayQueryKey) => ArrayQueryKey
   initialData?: TResult | InitialDataFunction<TResult>
+  placeholderData?: TResult | InitialDataFunction<TResult>
   infinite?: true
   /**
    * Set this to `false` to disable structural sharing between query results.
@@ -204,6 +206,7 @@ export interface QueryResultBase<TResult, TError = unknown> {
   isInitialData: boolean
   isLoading: boolean
   isPreviousData: boolean
+  isPlaceholderData: boolean
   isStale: boolean
   isSuccess: boolean
   refetch: (options?: RefetchOptions) => Promise<TResult | undefined>

@@ -26,6 +26,7 @@ const {
   enabled,
   initialData,
   initialStale,
+  placeholderData,
   isDataEqual,
   keepPreviousData,
   notifyOnStatusChange,
@@ -137,6 +138,12 @@ const queryInfo = useQuery({
   - Optional
   - If set, this will mark any `initialData` provided as stale and will likely cause it to be refetched on mount
   - If a function is passed, it will be called only when appropriate to resolve the `initialStale` value. This can be useful if your `initialStale` value is costly to calculate.
+  - `initialData` **is persisted** to the cache
+- `placeholderData: any | Function() => any`
+  - Optional
+  - If set, this value will be used as the placeholder data for this particular query instance while the query is still in the `loading` data and no initialData has been provided.
+  - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
+  - `placeholderData` is **not persisted** to the cache
 - `keepPreviousData: Boolean`
   - Optional
   - Defaults to `false`
@@ -176,6 +183,8 @@ const queryInfo = useQuery({
   - Will be `true` if the cache data is stale.
 - `isPreviousData: Boolean`
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
+- `isPlaceholderData: Boolean`
+  - Will be `true` if and when the query's `data` is equal to the result of the `placeholderData` option.
 - `isFetchedAfterMount: Boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.

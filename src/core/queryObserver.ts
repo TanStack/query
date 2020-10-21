@@ -6,7 +6,13 @@ import {
   noop,
 } from './utils'
 import { notifyManager } from './notifyManager'
-import type { QueryConfig, QueryResult, ResolvedQueryConfig } from './types'
+import type {
+  QueryConfig,
+  QueryResult,
+  ResolvedQueryConfig,
+  PlaceholderDataFunction,
+} from './types'
+import { QueryStatus } from './types'
 import type { Query, Action, FetchMoreOptions, RefetchOptions } from './query'
 import { DEFAULT_CONFIG, isResolvedQueryConfig } from './config'
 
@@ -243,6 +249,7 @@ export class QueryObserver<TResult, TError> {
     const { state } = this.currentQuery
     let { data, status, updatedAt } = state
     let isPreviousData = false
+    let isPlaceholderData = false
 
     // Keep previous data if needed
     if (
@@ -254,6 +261,19 @@ export class QueryObserver<TResult, TError> {
       updatedAt = this.previousQueryResult.updatedAt
       status = this.previousQueryResult.status
       isPreviousData = true
+    }
+
+    if (status === 'loading' && this.config.placeholderData) {
+      const placeholderData =
+        typeof this.config.placeholderData === 'function'
+          ? (this.config.placeholderData as PlaceholderDataFunction<TResult>)()
+          : this.config.placeholderData
+
+      if (typeof placeholderData !== 'undefined') {
+        status = QueryStatus.Success
+        data = placeholderData
+        isPlaceholderData = true
+      }
     }
 
     this.currentResult = {
@@ -270,6 +290,7 @@ export class QueryObserver<TResult, TError> {
       isFetchingMore: state.isFetchingMore,
       isInitialData: state.isInitialData,
       isPreviousData,
+      isPlaceholderData,
       isStale: this.isStale,
       refetch: this.refetch,
       remove: this.remove,
