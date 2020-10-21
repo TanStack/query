@@ -97,7 +97,11 @@ export interface UseMutationResult<
   data: TData | undefined
   error: TError | null
   failureCount: number
+  isError: boolean
+  isIdle: boolean
+  isLoading: boolean
   isPaused: boolean
+  isSuccess: boolean
   mutate: UseMutateFunction<TData, TError, TVariables, TContext>
   mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
   reset: () => void
