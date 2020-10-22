@@ -1,16 +1,13 @@
 import { sleep, queryKey } from '../../react/tests/utils'
-import { QueryCache, QueryClient, InfiniteQueryObserver } from '../..'
+import { QueryClient, InfiniteQueryObserver } from '../..'
 
 describe('InfiniteQueryObserver', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = new QueryClient()
   queryClient.mount()
 
   test('InfiniteQueryObserver should be able to fetch an infinite query with selector', async () => {
     const key = queryKey()
-    const testCache = new QueryCache()
-    const testClient = new QueryClient({ queryCache: testCache })
-    const observer = new InfiniteQueryObserver(testClient, {
+    const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 1,
       select: data => ({
@@ -24,7 +21,6 @@ describe('InfiniteQueryObserver', () => {
     })
     await sleep(1)
     unsubscribe()
-    testCache.clear()
     expect(observerResult).toMatchObject({
       data: { pages: ['1'], pageParams: [undefined] },
     })

@@ -21,8 +21,8 @@ import type {
   RefetchOptions,
 } from './types'
 import type { QueryState, SetDataOptions } from './query'
-import type { QueryCache } from './queryCache'
-import type { MutationCache } from './mutationCache'
+import { QueryCache } from './queryCache'
+import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
@@ -30,7 +30,7 @@ import { notifyManager } from './notifyManager'
 // TYPES
 
 interface QueryClientConfig {
-  queryCache: QueryCache
+  queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions
 }
@@ -49,16 +49,16 @@ interface MutationDefaults {
 
 export class QueryClient {
   private queryCache: QueryCache
-  private mutationCache?: MutationCache
+  private mutationCache: MutationCache
   private defaultOptions: DefaultOptions
   private queryDefaults: QueryDefaults[]
   private mutationDefaults: MutationDefaults[]
   private unsubscribeFocus?: () => void
   private unsubscribeOnline?: () => void
 
-  constructor(config: QueryClientConfig) {
-    this.queryCache = config.queryCache
-    this.mutationCache = config.mutationCache
+  constructor(config: QueryClientConfig = {}) {
+    this.queryCache = config.queryCache || new QueryCache()
+    this.mutationCache = config.mutationCache || new MutationCache()
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
@@ -67,13 +67,13 @@ export class QueryClient {
   mount(): void {
     this.unsubscribeFocus = focusManager.subscribe(() => {
       if (focusManager.isFocused() && onlineManager.isOnline()) {
-        this.mutationCache?.onFocus()
+        this.mutationCache.onFocus()
         this.queryCache.onFocus()
       }
     })
     this.unsubscribeOnline = onlineManager.subscribe(() => {
       if (focusManager.isFocused() && onlineManager.isOnline()) {
-        this.mutationCache?.onOnline()
+        this.mutationCache.onOnline()
         this.queryCache.onOnline()
       }
     })
@@ -218,19 +218,19 @@ export class QueryClient {
     return promise
   }
 
-  fetchQueryData<TData = unknown, TError = unknown, TQueryFnData = TData>(
+  fetchQuery<TData = unknown, TError = unknown, TQueryFnData = TData>(
     options: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData>
-  fetchQueryData<TData = unknown, TError = unknown, TQueryFnData = TData>(
+  fetchQuery<TData = unknown, TError = unknown, TQueryFnData = TData>(
     queryKey: QueryKey,
     options?: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData>
-  fetchQueryData<TData = unknown, TError = unknown, TQueryFnData = TData>(
+  fetchQuery<TData = unknown, TError = unknown, TQueryFnData = TData>(
     queryKey: QueryKey,
     queryFn: QueryFunction<TQueryFnData | TData>,
     options?: FetchQueryOptions<TData, TError, TQueryFnData>
   ): Promise<TData>
-  fetchQueryData<TData, TError, TQueryFnData = TData>(
+  fetchQuery<TData, TError, TQueryFnData = TData>(
     arg1: QueryKey | FetchQueryOptions<TData, TError, TQueryFnData>,
     arg2?:
       | QueryFunction<TQueryFnData | TData>
@@ -264,12 +264,12 @@ export class QueryClient {
     arg2?: QueryFunction | FetchQueryOptions,
     arg3?: FetchQueryOptions
   ): Promise<void> {
-    return this.fetchQueryData(arg1 as any, arg2 as any, arg3)
+    return this.fetchQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
       .catch(noop)
   }
 
-  mutate<
+  executeMutation<
     TData = unknown,
     TError = unknown,
     TVariables = void,
@@ -277,7 +277,7 @@ export class QueryClient {
   >(
     options: MutationOptions<TData, TError, TVariables, TContext>
   ): Promise<TData> {
-    return this.getMutationCache().build(this, options).execute()
+    return this.mutationCache.build(this, options).execute()
   }
 
   getQueryCache(): QueryCache {
@@ -285,9 +285,6 @@ export class QueryClient {
   }
 
   getMutationCache(): MutationCache {
-    if (!this.mutationCache) {
-      throw new Error('Missing MutationCache')
-    }
     return this.mutationCache
   }
 
@@ -360,6 +357,6 @@ export class QueryClient {
 
   clear(): void {
     this.queryCache.clear()
-    this.mutationCache?.clear()
+    this.mutationCache.clear()
   }
 }

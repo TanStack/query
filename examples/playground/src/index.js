@@ -4,8 +4,6 @@ import ReactDOM from "react-dom";
 import {
   QueryClient,
   QueryClientProvider,
-  QueryCache,
-  MutationCache,
   useQuery,
   useQueryClient,
   useMutation,
@@ -29,9 +27,7 @@ let errorRate = 0.05;
 let queryTimeMin = 1000;
 let queryTimeMax = 2000;
 
-const queryCache = new QueryCache();
-const mutationCache = new MutationCache();
-const queryClient = new QueryClient({ queryCache, mutationCache });
+const queryClient = new QueryClient();
 
 function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);

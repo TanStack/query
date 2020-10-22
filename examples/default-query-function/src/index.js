@@ -5,7 +5,6 @@ import axios from "axios";
 import {
   useQuery,
   useQueryClient,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from "react-query";
@@ -19,11 +18,8 @@ const defaultQueryFn = async (key) => {
   return data;
 };
 
-const queryCache = new QueryCache();
-
 // provide the default query function to your app via the query client
 const queryClient = new QueryClient({
-  queryCache,
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,

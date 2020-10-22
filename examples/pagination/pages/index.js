@@ -3,14 +3,12 @@ import axios from 'axios'
 import {
   useQuery,
   useQueryClient,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache })
+const queryClient = new QueryClient()
 
 export default function App() {
   return (

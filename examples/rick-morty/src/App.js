@@ -3,14 +3,13 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { ThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 
-import { QueryCache, QueryClient, QueryClientProvider } from "react-query";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
 import "./styles.css";
 import Layout from "./Layout";
 
-const queryCache = new QueryCache();
-const queryClient = new QueryClient({ queryCache });
+const queryClient = new QueryClient();
 
 export default function App() {
   return (

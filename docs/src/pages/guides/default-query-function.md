@@ -13,9 +13,7 @@ const defaultQueryFn = async key => {
 }
 
 // provide the default query function to your app with defaultOptions
-const queryCache = new QueryCache()
 const queryClient = new QueryClient({
-  queryCache,
   defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,

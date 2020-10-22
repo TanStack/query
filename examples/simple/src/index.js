@@ -1,16 +1,10 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-  useQuery,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from "react-query";
+import { useQuery, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
-const queryCache = new QueryCache();
-const queryClient = new QueryClient({ queryCache });
+const queryClient = new QueryClient();
 
 export default function App() {
   return (

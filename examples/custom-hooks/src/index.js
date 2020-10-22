@@ -1,19 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-  useQueryClient,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-} from "react-query";
+import { useQueryClient, QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query-devtools";
 
 import usePosts from "./hooks/usePosts";
 import usePost from "./hooks/usePost";
 
-const queryCache = new QueryCache();
-const queryClient = new QueryClient({ queryCache });
+const queryClient = new QueryClient();
 
 function App() {
   const [postId, setPostId] = React.useState(-1);

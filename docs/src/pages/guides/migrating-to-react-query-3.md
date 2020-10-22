@@ -23,16 +23,9 @@ This has some benefits:
 Use the `QueryClientProvider` component to connect a `QueryClient` to your application:
 
 ```js
-import { QueryClient, QueryClientProvider, QueryCache } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
-// Create query cache
-const queryCache = new QueryCache()
-
-// Create mutation cache (can be omitted to reduce file size when not using mutations)
-const mutationCache = new MutationCache()
-
-// Create client
-const queryClient = new QueryClient({ queryCache, mutationCache })
+const queryClient = new QueryClient()
 
 function App() {
   return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
@@ -64,7 +57,6 @@ The `ReactQueryConfigProvider` component has been removed. Default options for q
 
 ```js
 const queryClient = new QueryClient({
-  queryCache,
   defaultOptions: {
     queries: {
       staleTime: Infinity,
@@ -225,7 +217,7 @@ useQuery({
 
 The `queryClient.prefetchQuery()` method should now only be used for prefetching scenarios where the result is not relevant.
 
-Use the `queryClient.fetchQueryData()` method to get the query data or error:
+Use the `queryClient.fetchQuery()` method to get the query data or error:
 
 ```js
 // Prefetch a query:
@@ -233,7 +225,7 @@ await queryClient.prefetchQuery('posts', fetchPosts)
 
 // Fetch a query:
 try {
-  const data = await queryClient.fetchQueryData('posts', fetchPosts)
+  const data = await queryClient.fetchQuery('posts', fetchPosts)
 } catch (error) {
   // Error handling
 }

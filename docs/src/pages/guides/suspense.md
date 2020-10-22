@@ -11,11 +11,9 @@ Global configuration:
 
 ```js
 // Configure for all queries
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
-const queryCache = new QueryCache()
 const queryClient = new QueryClient({
-  queryCache,
   defaultOptions: {
     queries: {
       suspense: true,

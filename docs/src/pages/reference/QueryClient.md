@@ -10,9 +10,7 @@ The `QueryClient` can be used to interact with a cache:
 ```js
 import { QueryClient, QueryCache } from 'react-query'
 
-const queryCache = new QueryCache()
 const queryClient = new QueryClient({
-  queryCache,
   defaultOptions: {
     queries: {
       staleTime: Infinity,
@@ -25,7 +23,7 @@ await queryClient.prefetchQuery('posts', fetchPosts)
 
 Its available methods are:
 
-- [`fetchQueryData`](#queryclientfetchquerydata)
+- [`fetchQuery`](#queryclientfetchquerydata)
 - [`prefetchQuery`](#queryclientprefetchquery)
 - [`getQueryData`](#queryclientgetquerydata)
 - [`setQueryData`](#queryclientsetquerydata)
@@ -49,17 +47,17 @@ Its available methods are:
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
 
-## `queryClient.fetchQueryData`
+## `queryClient.fetchQuery`
 
-`fetchQueryData` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
+`fetchQuery` is an asynchronous method that can be used to fetch and cache a query. It will either resolve with the data or throw with the error. Use the `prefetchQuery` method if you just want to fetch a query without needing the result.
 
 If the query exists and the data is not invalidated or older than the given `staleTime`, then the data from the cache will be returned. Otherwise it will try to fetch the latest data.
 
-> The difference between using `fetchQueryData` and `setQueryData` is that `fetchQueryData` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
+> The difference between using `fetchQuery` and `setQueryData` is that `fetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
 ```js
 try {
-  const data = await queryClient.fetchQueryData(queryKey, queryFn)
+  const data = await queryClient.fetchQuery(queryKey, queryFn)
 } catch (error) {
   console.log(error)
 }
@@ -69,7 +67,7 @@ Specify a `staleTime` to only fetch when the data is older than a certain amount
 
 ```js
 try {
-  const data = await queryClient.fetchQueryData(queryKey, queryFn, {
+  const data = await queryClient.fetchQuery(queryKey, queryFn, {
     staleTime: 10000,
   })
 } catch (error) {
@@ -79,7 +77,7 @@ try {
 
 **Options**
 
-The options for `fetchQueryData` are exactly the same as those of [`useQuery`](#usequery).
+The options for `fetchQuery` are exactly the same as those of [`useQuery`](#usequery).
 
 **Returns**
 
@@ -87,7 +85,7 @@ The options for `fetchQueryData` are exactly the same as those of [`useQuery`](#
 
 ## `queryClient.prefetchQuery`
 
-`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQueryData` except that is will not throw or return any data.
+`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that is will not throw or return any data.
 
 ```js
 await queryClient.prefetchQuery(queryKey, queryFn)
@@ -130,7 +128,7 @@ const data = queryClient.getQueryData(queryKey)
 
 `setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
 
-> The difference between using `setQueryData` and `fetchQueryData` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQueryData` to handle the asynchronous fetch.
+> The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
 ```js
 queryClient.setQueryData(queryKey, updater)

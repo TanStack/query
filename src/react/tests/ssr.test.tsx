@@ -44,7 +44,7 @@ describe('Server Side Rendering', () => {
     const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
-    const data = await queryClient.fetchQueryData(key, fetchFn)
+    const data = await queryClient.fetchQuery(key, fetchFn)
     expect(data).toBe('data')
     expect(queryCache.find(key)?.state.data).toBe('data')
     queryCache.clear()

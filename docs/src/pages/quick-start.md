@@ -14,17 +14,13 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
 import { getTodos, postTodo } from '../my-api'
 
-// Create a cache
-const queryCache = new QueryCache()
-
 // Create a client
-const queryClient = new QueryClient({ queryCache })
+const queryClient = new QueryClient()
 
 function App() {
   return (

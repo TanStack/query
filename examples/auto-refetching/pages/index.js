@@ -7,16 +7,12 @@ import {
   useQuery,
   useQueryClient,
   useMutation,
-  MutationCache,
-  QueryCache,
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
-const queryCache = new QueryCache()
-const mutationCache = new MutationCache()
-const queryClient = new QueryClient({ queryCache, mutationCache })
+const queryClient = new QueryClient()
 
 export default function App() {
   return (

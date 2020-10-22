@@ -1,17 +1,14 @@
-import { QueryCache, QueryClient } from '../..'
+import { QueryClient } from '../..'
 import { mockConsoleError, queryKey, sleep } from '../../react/tests/utils'
 import { MutationState } from '../mutation'
-import { MutationCache } from '../mutationCache'
 import { MutationObserver } from '../mutationObserver'
 
 describe('mutations', () => {
-  const queryCache = new QueryCache()
-  const mutationCache = new MutationCache()
-  const queryClient = new QueryClient({ queryCache, mutationCache })
+  const queryClient = new QueryClient()
   queryClient.mount()
 
   test('mutate should trigger a mutation', async () => {
-    const result = await queryClient.mutate({
+    const result = await queryClient.executeMutation({
       mutationFn: async (text: string) => text,
       variables: 'todo',
     })
@@ -26,7 +23,7 @@ describe('mutations', () => {
       mutationFn: async (text: string) => text,
     })
 
-    const result = await queryClient.mutate({
+    const result = await queryClient.executeMutation({
       mutationKey: key,
       variables: 'todo',
     })
