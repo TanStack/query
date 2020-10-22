@@ -1,9 +1,7 @@
 import {
-  CancelOptions,
   Updater,
   ensureArray,
   functionalUpdate,
-  isCancelledError,
   isValidTimeout,
   noop,
   replaceEqualDeep,
@@ -20,7 +18,7 @@ import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
-import { Retryer } from './retryer'
+import { Retryer, CancelOptions, isCancelledError } from './retryer'
 
 // TYPES
 
@@ -162,32 +160,14 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     this.defaultOptions = options
   }
 
-  private dispatch(action: Action<TData, TError>): void {
-    this.state = this.reducer(this.state, action)
-
-    notifyManager.batch(() => {
-      this.observers.forEach(observer => {
-        observer.onQueryUpdate(action)
-      })
-
-      this.cache.notify(this)
-    })
-  }
-
   private scheduleGc(): void {
     this.clearGcTimeout()
 
     if (!this.observers.length && isValidTimeout(this.cacheTime)) {
       this.gcTimeout = setTimeout(() => {
-        this.remove()
+        this.cache.remove(this)
       }, this.cacheTime)
     }
-  }
-
-  cancel(options?: CancelOptions): Promise<void> {
-    const promise = this.promise
-    this.retryer?.cancel(options)
-    return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
 
   private clearGcTimeout() {
@@ -228,8 +208,10 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     this.dispatch({ type: 'setState', state })
   }
 
-  remove(): void {
-    this.cache.remove(this)
+  cancel(options?: CancelOptions): Promise<void> {
+    const promise = this.promise
+    this.retryer?.cancel(options)
+    return promise ? promise.then(noop).catch(noop) : Promise.resolve()
   }
 
   destroy(): void {
@@ -431,6 +413,18 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       })
 
     return this.promise
+  }
+
+  private dispatch(action: Action<TData, TError>): void {
+    this.state = this.reducer(this.state, action)
+
+    notifyManager.batch(() => {
+      this.observers.forEach(observer => {
+        observer.onQueryUpdate(action)
+      })
+
+      this.cache.notify(this)
+    })
   }
 
   protected getDefaultState(

@@ -1,5 +1,4 @@
 import {
-  CancelOptions,
   QueryFilters,
   Updater,
   noop,
@@ -26,6 +25,7 @@ import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
+import { CancelOptions } from './retryer'
 
 // TYPES
 

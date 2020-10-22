@@ -6,8 +6,13 @@ import {
   mockNavigatorOnLine,
   expectType,
 } from '../../react/tests/utils'
-import { QueryCache, QueryClient, QueryObserver } from '../..'
-import { isCancelledError, isError } from '../utils'
+import {
+  QueryCache,
+  QueryClient,
+  QueryObserver,
+  isCancelledError,
+  isError,
+} from '../..'
 import { QueryObserverResult } from '../types'
 import { QueriesObserver } from '../queriesObserver'
 

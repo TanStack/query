@@ -49,24 +49,6 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
-interface Cancelable {
-  cancel(): void
-}
-
-export interface CancelOptions {
-  revert?: boolean
-  silent?: boolean
-}
-
-export class CancelledError {
-  revert?: boolean
-  silent?: boolean
-  constructor(options?: CancelOptions) {
-    this.revert = options?.revert
-    this.silent = options?.silent
-  }
-}
-
 // UTILS
 
 export const isServer = typeof window === 'undefined'
@@ -353,16 +335,8 @@ export function isQueryKey(value: any): value is QueryKey {
   return typeof value === 'string' || Array.isArray(value)
 }
 
-export function isCancelable(value: any): value is Cancelable {
-  return typeof value?.cancel === 'function'
-}
-
 export function isError(value: any): value is Error {
   return value instanceof Error
-}
-
-export function isCancelledError(value: any): value is CancelledError {
-  return value instanceof CancelledError
 }
 
 export function sleep(timeout: number): Promise<void> {

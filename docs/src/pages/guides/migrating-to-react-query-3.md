@@ -356,7 +356,7 @@ function Overview() {
 }
 ```
 
-## Retry/offline mutations
+#### Retry/offline mutations
 
 By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
 
@@ -381,6 +381,24 @@ const unsubscribe = observer.subscribe(result => {
 })
 ```
 
+#### InfiniteQueryObserver
+
+A `InfiniteQueryObserver` can be used to create and/or watch an infinite query:
+
+```js
+const observer = new InfiniteQueryObserver(queryClient, {
+  queryKey: 'posts',
+  queryFn: fetchPosts,
+  getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
+  getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
+})
+
+const unsubscribe = observer.subscribe(result => {
+  console.log(result)
+  unsubscribe()
+})
+```
+
 #### QueriesObserver
 
 A `QueriesObserver` can be used to create and/or watch multiple queries:
@@ -397,7 +415,7 @@ const unsubscribe = observer.subscribe(result => {
 })
 ```
 
-## `queryClient.setQueryDefaults`
+#### Set default options for specific queries
 
 The `queryClient.setQueryDefaults()` method can be used to set default options for specific queries:
 
@@ -409,7 +427,7 @@ function Component() {
 }
 ```
 
-## `queryClient.setMutationDefaults`
+#### Set default options for specific mutations
 
 The `queryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
 

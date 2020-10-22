@@ -1,12 +1,6 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import {
-  CancelOptions,
-  CancelledError,
-  functionalUpdate,
-  isCancelable,
-  sleep,
-} from './utils'
+import { functionalUpdate, sleep } from './utils'
 
 // TYPES
 
@@ -32,6 +26,32 @@ type RetryDelayFunction = (failureCount: number) => number
 
 function defaultRetryDelay(failureCount: number) {
   return Math.min(1000 * 2 ** failureCount, 30000)
+}
+
+interface Cancelable {
+  cancel(): void
+}
+
+function isCancelable(value: any): value is Cancelable {
+  return typeof value?.cancel === 'function'
+}
+
+export interface CancelOptions {
+  revert?: boolean
+  silent?: boolean
+}
+
+export class CancelledError {
+  revert?: boolean
+  silent?: boolean
+  constructor(options?: CancelOptions) {
+    this.revert = options?.revert
+    this.silent = options?.silent
+  }
+}
+
+export function isCancelledError(value: any): value is CancelledError {
+  return value instanceof CancelledError
 }
 
 // CLASS

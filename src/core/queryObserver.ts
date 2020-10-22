@@ -165,17 +165,6 @@ export class QueryObserver<
     return this.currentResult
   }
 
-  getCurrentOrNextResult(
-    options?: ResultOptions
-  ): Promise<QueryObserverResult<TData, TError>> {
-    if (this.currentQuery.isFetching()) {
-      return this.getNextResult(options)
-    } else if (this.currentResult.isError && options?.throwOnError) {
-      return Promise.reject(this.currentResult.error)
-    }
-    return Promise.resolve(this.currentResult)
-  }
-
   getNextResult(
     options?: ResultOptions
   ): Promise<QueryObserverResult<TData, TError>> {
@@ -198,7 +187,7 @@ export class QueryObserver<
   }
 
   remove(): void {
-    this.currentQuery.remove()
+    this.client.getQueryCache().remove(this.currentQuery)
   }
 
   refetch(
@@ -418,7 +407,7 @@ export class QueryObserver<
 
     this.updateResult(willFetch)
 
-    if (!this.listeners.length) {
+    if (!this.hasListeners()) {
       return
     }
 
