@@ -45,7 +45,7 @@ function Todo() {
 
   const onClickButton = useCallback(() => {
     queryClient.invalidateQueries('posts')
-  }, [client])
+  }, [queryClient])
 
   return <button onClick={onClickButton}>Refetch</button>
 }
@@ -249,11 +249,11 @@ The `queryCache.resetErrorBoundaries()` method has been replaced by the `QueryEr
 
 ### queryCache.getQuery()
 
-The `queryCache.getQuery()` method has been replaced by `cache.find()`.
+The `queryCache.getQuery()` method has been replaced by `queryCache.find()`.
 
 ### queryCache.getQueries()
 
-The `queryCache.getQueries()` method has been replaced by `cache.findAll()`.
+The `queryCache.getQueries()` method has been replaced by `queryCache.findAll()`.
 
 ### queryCache.isFetching
 
@@ -355,6 +355,18 @@ function Overview() {
   )
 }
 ```
+
+## Retry/offline mutations
+
+By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
+
+```js
+const mutation = useMutation(addTodo, {
+  retry: 3,
+})
+```
+
+If mutations fail because the device is offline, they will be retried in the same order when the device reconnects.
 
 #### QueryObserver
 

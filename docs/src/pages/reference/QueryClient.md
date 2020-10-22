@@ -8,7 +8,7 @@ title: QueryClient
 The `QueryClient` can be used to interact with a cache:
 
 ```js
-import { QueryClient, QueryCache } from 'react-query'
+import { QueryClient } from 'react-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,22 +28,30 @@ Its available methods are:
 - [`getQueryData`](#queryclientgetquerydata)
 - [`setQueryData`](#queryclientsetquerydata)
 - [`getQueryState`](#queryclientgetquerystate)
-- [`setQueryDefaults`](#queryclientsetquerydefaults)
-- [`refetchQueries`](#queryclientrefetchqueries)
 - [`invalidateQueries`](#queryclientinvalidatequeries)
+- [`refetchQueries`](#queryclientrefetchqueries)
 - [`cancelQueries`](#queryclientcancelqueries)
 - [`removeQueries`](#queryclientremovequeries)
 - [`isFetching`](#queryclientisfetching)
 - [`getDefaultOptions`](#queryclientsetdefaultoptions)
 - [`setDefaultOptions`](#queryclientgetdefaultoptions)
+- [`getQueryDefaults`](#queryclientgetquerydefaults)
+- [`setQueryDefaults`](#queryclientsetquerydefaults)
+- [`getMutationDefaults`](#queryclientgetmutationdefaults)
+- [`setMutationDefaults`](#queryclientsetmutationdefaults)
+- [`getQueryCache`](#queryclientgetquerycache)
+- [`getMutationCache`](#queryclientgetmutationcache)
+- [`clear`](#queryclientclear)
 
 **Options**
 
-- `queryCache: QueryCache`
+- `queryCache?: QueryCache`
+  - Optional
   - The query cache this client is connected to.
-- `mutationCache: MutationCache`
+- `mutationCache?: MutationCache`
+  - Optional
   - The mutation cache this client is connected to.
-- `defaultOptions: DefaultOptions`
+- `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
 
@@ -168,40 +176,6 @@ console.log(state.updatedAt)
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
-
-## `queryClient.setQueryDefaults`
-
-`setQueryDefaults` is a synchronous method to set default options for specific queries:
-
-```js
-queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
-
-function Component() {
-  const { data } = useQuery('posts')
-}
-```
-
-**Options**
-
-- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
-- `options: QueryOptions`
-
-## `queryClient.setMutationDefaults`
-
-`setMutationDefaults` is a synchronous method to set default options for specific mutations:
-
-```js
-queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
-
-function Component() {
-  const { data } = useMutation('addPost')
-}
-```
-
-**Options**
-
-- `mutationKey: string | unknown[]`
-- `options: MutationOptions`
 
 ## `queryClient.invalidateQueries`
 
@@ -339,4 +313,78 @@ queryClient.setDefaultOptions({
     staleTime: Infinity,
   },
 })
+```
+
+## `queryClient.getQueryDefaults`
+
+The `getQueryDefaults` method returns the default options which have been set for specific queries:
+
+```js
+const defaultOptions = queryClient.getQueryDefaults('posts')
+```
+
+## `queryClient.setQueryDefaults`
+
+`setQueryDefaults` can be used to set default options for specific queries:
+
+```js
+queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
+
+function Component() {
+  const { data } = useQuery('posts')
+}
+```
+
+**Options**
+
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
+- `options: QueryOptions`
+
+## `queryClient.getMutationDefaults`
+
+The `getMutationDefaults` method returns the default options which have been set for specific mutations:
+
+```js
+const defaultOptions = queryClient.getMutationDefaults('addPost')
+```
+
+## `queryClient.setMutationDefaults`
+
+`setMutationDefaults` can be used to set default options for specific mutations:
+
+```js
+queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
+
+function Component() {
+  const { data } = useMutation('addPost')
+}
+```
+
+**Options**
+
+- `mutationKey: string | unknown[]`
+- `options: MutationOptions`
+
+## `queryClient.getQueryCache`
+
+The `getQueryCache` method returns the query cache this client is connected to.
+
+```js
+const queryCache = queryClient.getQueryCache()
+```
+
+## `queryClient.getMutationCache`
+
+The `getMutationCache` method returns the mutation cache this client is connected to.
+
+```js
+const mutationCache = queryClient.getMutationCache()
+```
+
+## `queryClient.clear`
+
+The `clear` method clears all connected caches.
+
+```js
+queryClient.clear()
 ```
