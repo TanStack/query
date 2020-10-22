@@ -43,7 +43,12 @@ export interface UseQueryResult<TData = unknown, TError = unknown>
 export interface UseInfiniteQueryResult<TData = unknown, TError = unknown>
   extends InfiniteQueryObserverResult<TData, TError> {}
 
-export interface UseMutationOptions<TData, TError, TVariables, TContext> {
+export interface UseMutationOptions<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> {
   mutationKey?: string | unknown[]
   onMutate?: (variables: TVariables) => Promise<TContext> | TContext
   onSuccess?: (
