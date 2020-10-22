@@ -89,14 +89,14 @@ export class QueryClient {
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetching = true
-    return this.getQueryCache().findAll(filters).length
+    return this.queryCache.findAll(filters).length
   }
 
   getQueryData<TData = unknown>(
     queryKey: QueryKey,
     filters?: QueryFilters
   ): TData | undefined {
-    return this.getQueryCache().find<TData>(queryKey, filters)?.state.data
+    return this.queryCache.find<TData>(queryKey, filters)?.state.data
   }
 
   setQueryData<TData>(
@@ -105,23 +105,21 @@ export class QueryClient {
     options?: SetDataOptions
   ): TData {
     const parsedOptions = parseQueryArgs(queryKey)
-    return this.getQueryCache()
-      .build(this, parsedOptions)
-      .setData(updater, options)
+    return this.queryCache.build(this, parsedOptions).setData(updater, options)
   }
 
   getQueryState<TData = unknown, TError = undefined>(
     queryKey: QueryKey,
     filters?: QueryFilters
   ): QueryState<TData, TError> | undefined {
-    return this.getQueryCache().find<TData, TError>(queryKey, filters)?.state
+    return this.queryCache.find<TData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void
   removeQueries(queryKey?: QueryKey, filters?: QueryFilters): void
   removeQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): void {
     const [filters] = parseFilterArgs(arg1, arg2)
-    const queryCache = this.getQueryCache()
+    const queryCache = this.queryCache
     notifyManager.batch(() => {
       queryCache.findAll(filters).forEach(query => {
         queryCache.remove(query)
@@ -147,9 +145,7 @@ export class QueryClient {
     }
 
     const promises = notifyManager.batch(() =>
-      this.getQueryCache()
-        .findAll(filters)
-        .map(query => query.cancel(cancelOptions))
+      this.queryCache.findAll(filters).map(query => query.cancel(cancelOptions))
     )
 
     return Promise.all(promises).then(noop).catch(noop)
@@ -178,11 +174,9 @@ export class QueryClient {
     }
 
     return notifyManager.batch(() => {
-      this.getQueryCache()
-        .findAll(filters)
-        .forEach(query => {
-          query.invalidate()
-        })
+      this.queryCache.findAll(filters).forEach(query => {
+        query.invalidate()
+      })
       return this.refetchQueries(refetchFilters, options)
     })
   }
@@ -204,9 +198,7 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.getQueryCache()
-        .findAll(filters)
-        .map(query => query.fetch())
+      this.queryCache.findAll(filters).map(query => query.fetch())
     )
 
     let promise = Promise.all(promises).then(noop)
@@ -245,7 +237,7 @@ export class QueryClient {
       defaultedOptions.retry = false
     }
 
-    const query = this.getQueryCache().build(this, defaultedOptions)
+    const query = this.queryCache.build(this, defaultedOptions)
 
     return query.isStaleByTime(defaultedOptions.staleTime)
       ? query.fetch(defaultedOptions)
