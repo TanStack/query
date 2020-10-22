@@ -3,9 +3,19 @@ id: initial-query-data
 title: Initial Query Data
 ---
 
-## Initial Data
+There are many ways to supply initial data for a query to the cache before you need it:
 
-There may be times when you already have the initial data for a query synchronously available in your app. If and when this is the case, you can use the `config.initialData` option to set the initial data for a query and skip the initial loading state!
+- Declaratively:
+  - Provide `initialData` to a query to prepopulate the its cache if empty
+- Imperatively:
+  - [Prefetch the data using `queryClient.prefetchQuery`](../prefetching)
+  - [Manually place the data into the cache using `queryClient.setQueryData`](../prefetching)
+
+## Using `initialData` to prepopulate a query
+
+There may be times when you already have the initial data for a query available in your app and can simply provide it directly to your query. If and when this is the case, you can use the `config.initialData` option to set the initial data for a query and skip the initial loading state!
+
+> IMPORTANT: `initialData` is persisted to the cache, so it is not recommended to provide placeholder, partial or incomplete data to this option and instead use `placeholderData`
 
 ```js
 function Todos() {
@@ -15,7 +25,7 @@ function Todos() {
 }
 ```
 
-## Using Initial Data with `staleTime`
+### Initial Data and `staleTime`
 
 `initialData` is treated exactly the same as normal data, which means that is follows the same rules and expectations of `staleTime`.
 
@@ -32,9 +42,9 @@ function Todos() {
 
 > If you would rather treat your data as **prefetched data**, we recommend that you use the `prefetchQuery` or `fetchQuery` APIs to populate the cache beforehand, thus letting you configure your `staleTime` independently from your initialData
 
-## Initial Data Function
+### Initial Data Function
 
-If the process for accessing a query's initial data is intensive or just not something you want to perform on every render, you can pass a function as the `initialData` value. This function will be executed only once when the query is initialized, saving you precious memory and CPU:
+If the process for accessing a query's initial data is intensive or just not something you want to perform on every render, you can pass a function as the `initialData` value. This function will be executed only once when the query is initialized, saving you precious memory and/or CPU:
 
 ```js
 function Todos() {
@@ -46,7 +56,7 @@ function Todos() {
 }
 ```
 
-## Initial Data from Cache
+### Initial Data from Cache
 
 In some circumstances, you may be able to provide the initial data for a query from the cached result of another. A good example of this would be searching the cached data from a todos list query for an individual todo item, then using that as the initial data for your individual todo query:
 

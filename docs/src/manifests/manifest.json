@@ -116,6 +116,11 @@
           "editUrl": "/guides/infinite-queries.md"
         },
         {
+          "title": "Placeholder Query Data",
+          "path": "/guides/placeholder-query-data",
+          "editUrl": "/guides/placeholder-query-data.md"
+        },
+        {
           "title": "Initial Query Data",
           "path": "/guides/initial-query-data",
           "editUrl": "/guides/initial-query-data.md"
