@@ -1352,4 +1352,33 @@ describe('queryCache', () => {
       consoleMock.mockRestore()
     })
   })
+
+  describe('QueryObserver', () => {
+    test('uses placeholderData as non-cache data when loading a query with no data', async () => {
+      const key = queryKey()
+      const testCache = new QueryCache()
+      const testClient = new QueryClient({ queryCache: testCache })
+      const observer = new QueryObserver(testClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+        placeholderData: 'placeholder',
+      })
+
+      expect(observer.getCurrentResult()).toMatchObject({
+        status: 'success',
+        data: 'placeholder',
+      })
+
+      const results: QueryObserverResult<unknown>[] = []
+
+      const unsubscribe = observer.subscribe(x => {
+        results.push(x)
+      })
+
+      await sleep(10)
+      expect(results[0].data).toBe('data')
+      unsubscribe()
+      testClient.clear()
+    })
+  })
 })

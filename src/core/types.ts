@@ -11,6 +11,8 @@ export type InitialDataFunction<T> = () => T | undefined
 
 export type InitialStaleFunction = () => boolean
 
+export type PlaceholderDataFunction<TResult> = () => TResult | undefined
+
 export type QueryKeyHashFunction = (queryKey: QueryKey) => string
 
 export type GetPreviousPageParamFunction<TQueryFnData = unknown> = (
@@ -160,6 +162,10 @@ export interface QueryObserverOptions<
    * Defaults to `false`.
    */
   keepPreviousData?: boolean
+  /**
+   * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
+   */
+  placeholderData?: TData | PlaceholderDataFunction<TData>
 }
 
 export interface InfiniteQueryObserverOptions<
@@ -211,6 +217,7 @@ export interface QueryObserverResult<TData = unknown, TError = unknown> {
   isIdle: boolean
   isLoading: boolean
   isPreviousData: boolean
+  isPlaceholderData: boolean
   isStale: boolean
   isSuccess: boolean
   refetch: (

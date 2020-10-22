@@ -13,6 +13,7 @@ const {
   isFetching,
   isIdle,
   isLoading,
+  isPlaceholderData,
   isPreviousData,
   isStale,
   isSuccess,
@@ -68,7 +69,7 @@ const result = useQuery({
   - Must return a promise that will either resolves data or throws an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
-  - Actually it can be anything that will pass a boolean condition. See [Dependent Queries](./guides/queries#dependent-queries) for more information.
+  - Can be used for [Dependent Queries](./guides/queries#dependent-queries).
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -128,11 +129,16 @@ const result = useQuery({
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
-- `initialData: unknown | () => unknown`
+- `initialData: TData | () => TData`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
   - Initial data is considered stale by default unless a `staleTime` has been set.
+  - `initialData` **is persisted** to the cache
+- `placeholderData: TData | () => TData`
+  - Optional
+  - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
+  - `placeholderData` is **not persisted** to the cache
 - `keepPreviousData: boolean`
   - Optional
   - Defaults to `false`
@@ -170,6 +176,8 @@ const result = useQuery({
   - The error object for the query, if an error was thrown.
 - `isStale: boolean`
   - Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
+- `isPlaceholderData: boolean`
+  - Will be `true` if the data shown is the placeholder data.
 - `isPreviousData: boolean`
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
 - `isFetchedAfterMount: boolean`

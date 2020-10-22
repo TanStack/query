@@ -9,6 +9,7 @@ import {
 } from './utils'
 import { notifyManager } from './notifyManager'
 import type {
+  PlaceholderDataFunction,
   QueryObserverOptions,
   QueryObserverResult,
   QueryOptions,
@@ -308,6 +309,7 @@ export class QueryObserver<
     const { state } = this.currentQuery
     let { status, isFetching, updatedAt } = state
     let isPreviousData = false
+    let isPlaceholderData = false
     let data: TData | undefined
 
     // Optimistically set status to loading if we will start fetching
@@ -328,7 +330,9 @@ export class QueryObserver<
       updatedAt = this.previousQueryResult.updatedAt
       status = this.previousQueryResult.status
       isPreviousData = true
-    } else if (this.options.select && typeof state.data !== 'undefined') {
+    }
+    // Select data if needed
+    else if (this.options.select && typeof state.data !== 'undefined') {
       // Use the previous select result if the query data did not change
       if (this.currentResult && state.data === this.currentResultState?.data) {
         data = this.currentResult.data
@@ -338,8 +342,27 @@ export class QueryObserver<
           data = replaceEqualDeep(this.currentResult?.data, data)
         }
       }
-    } else {
+    }
+    // Use query data
+    else {
       data = (state.data as unknown) as TData
+    }
+
+    // Show placeholder data if needed
+    if (
+      typeof this.options.placeholderData !== 'undefined' &&
+      typeof data === 'undefined' &&
+      status === 'loading'
+    ) {
+      const placeholderData =
+        typeof this.options.placeholderData === 'function'
+          ? (this.options.placeholderData as PlaceholderDataFunction<TData>)()
+          : this.options.placeholderData
+      if (typeof placeholderData !== 'undefined') {
+        status = 'success'
+        data = placeholderData
+        isPlaceholderData = true
+      }
     }
 
     return {
@@ -350,6 +373,7 @@ export class QueryObserver<
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
       isFetching,
+      isPlaceholderData,
       isPreviousData,
       isStale: this.isStale(),
       refetch: this.refetch,
