@@ -676,6 +676,29 @@ describe('queryCache', () => {
     consoleMock.mockRestore()
   })
 
+  test('QueryObserver should stop retry when unsubscribing', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const testClient = new QueryClient()
+    let count = 0
+    const observer = new QueryObserver(testClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.reject('reject')
+      },
+      retry: 10,
+      retryDelay: 50,
+    })
+    const unsubscribe = observer.subscribe()
+    await sleep(70)
+    unsubscribe()
+    await sleep(200)
+    expect(count).toBe(2)
+    testClient.clear()
+    consoleMock.mockRestore()
+  })
+
   test('cancelQueries should revert queries to their previous state', async () => {
     const consoleMock = mockConsoleError()
     const key1 = queryKey()

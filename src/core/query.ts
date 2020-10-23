@@ -299,8 +299,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       if (!this.observers.length) {
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
-        if (this.retryer && this.retryer.isTransportCancelable) {
-          this.retryer.cancel()
+        if (this.retryer) {
+          if (this.retryer.isTransportCancelable) {
+            this.retryer.cancel()
+          } else {
+            this.retryer.cancelRetry()
+          }
         }
 
         this.scheduleGc()

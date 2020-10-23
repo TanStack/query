@@ -58,6 +58,7 @@ export function isCancelledError(value: any): value is CancelledError {
 
 export class Retryer<TData = unknown, TError = unknown> {
   cancel: (options?: CancelOptions) => void
+  cancelRetry: () => void
   continue: () => void
   failureCount: number
   isPaused: boolean
@@ -66,12 +67,16 @@ export class Retryer<TData = unknown, TError = unknown> {
   promise: Promise<TData>
 
   constructor(config: RetryerConfig<TData, TError>) {
+    let cancelRetry = false
     let cancelFn: ((options?: CancelOptions) => void) | undefined
     let continueFn: (() => void) | undefined
     let promiseResolve: (data: TData) => void
     let promiseReject: (error: TError) => void
 
     this.cancel = cancelOptions => cancelFn?.(cancelOptions)
+    this.cancelRetry = () => {
+      cancelRetry = true
+    }
     this.continue = () => continueFn?.()
     this.failureCount = 0
     this.isPaused = false
@@ -154,7 +159,7 @@ export class Retryer<TData = unknown, TError = unknown> {
             (typeof retry === 'number' && this.failureCount < retry) ||
             (typeof retry === 'function' && retry(this.failureCount, error))
 
-          if (!shouldRetry) {
+          if (cancelRetry || !shouldRetry) {
             // We are done if the query does not need to be retried
             reject(error)
             return
@@ -173,8 +178,13 @@ export class Retryer<TData = unknown, TError = unknown> {
                 return pause()
               }
             })
-            // Try again
-            .then(run)
+            .then(() => {
+              if (cancelRetry) {
+                reject(error)
+              } else {
+                run()
+              }
+            })
         })
     }
 
