@@ -1356,6 +1356,35 @@ describe('queryCache', () => {
 
       consoleMock.mockRestore()
     })
+
+    test('the previous query status should be kept when refetching', async () => {
+      const consoleMock = mockConsoleError()
+      const key = queryKey()
+
+      await queryClient.prefetchQuery(key, () => 'data')
+      const query = queryCache.find(key)!
+      expect(query.state.status).toBe('success')
+
+      await queryClient.prefetchQuery(key, () => Promise.reject('reject'), {
+        retry: false,
+      })
+      expect(query.state.status).toBe('error')
+
+      queryClient.prefetchQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return Promise.reject('reject')
+        },
+        { retry: false }
+      )
+      expect(query.state.status).toBe('error')
+
+      await sleep(100)
+      expect(query.state.status).toBe('error')
+
+      consoleMock.mockRestore()
+    })
   })
 
   describe('QueryObserver', () => {

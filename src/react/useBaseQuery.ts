@@ -47,7 +47,11 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
 
   // Handle suspense
   if (observer.options.suspense || observer.options.useErrorBoundary) {
-    if (currentResult.isError && !errorResetBoundary.isReset()) {
+    if (
+      currentResult.isError &&
+      !errorResetBoundary.isReset() &&
+      !observer.getCurrentQuery().isFetching()
+    ) {
       throw currentResult.error
     }
 
