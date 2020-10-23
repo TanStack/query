@@ -14,7 +14,16 @@ import { useQuery, QueryClient, UseQueryResult, QueryCache } from '../..'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = new QueryClient({
+    queryCache,
+    defaultOptions: {
+      queries: {
+        notifyOnFetchChange: true,
+        notifyOnStaleChange: true,
+        notifyOnStatusChange: true,
+      },
+    },
+  })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -508,13 +517,15 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should not re-render when notifyOnStatusChange is false and the selected data did not change', async () => {
+  it('should not re-render when notify flags are false and the selected data did not change', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
     function Page() {
       const state = useQuery(key, () => ({ name: 'test' }), {
         select: data => data.name,
+        notifyOnFetchChange: false,
+        notifyOnStaleChange: false,
         notifyOnStatusChange: false,
       })
 
@@ -1353,7 +1364,7 @@ describe('useQuery', () => {
     expect(fn).toHaveBeenCalledTimes(5)
   })
 
-  it('should not re-render when a query status changes and notifyOnStatusChange is false', async () => {
+  it('should not re-render when a query status changes and notify flags are false', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -1366,6 +1377,8 @@ describe('useQuery', () => {
         },
         {
           notifyOnStatusChange: false,
+          notifyOnFetchChange: false,
+          notifyOnStaleChange: false,
         }
       )
 

@@ -199,9 +199,10 @@ export class QueryObserver<
   protected fetch(
     fetchOptions?: ObserverFetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
-    const promise = this.getNextResult(fetchOptions)
-    this.executeFetch(fetchOptions)
-    return promise
+    return this.executeFetch(fetchOptions).then(() => {
+      this.updateResult()
+      return this.currentResult
+    })
   }
 
   private optionalFetch(): void {
@@ -210,12 +211,14 @@ export class QueryObserver<
     }
   }
 
-  private executeFetch(fetchOptions?: ObserverFetchOptions): void {
+  private executeFetch(
+    fetchOptions?: ObserverFetchOptions
+  ): Promise<TQueryData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
     this.updateQuery()
 
     // Fetch
-    this.currentQuery
+    return this.currentQuery
       .fetch(
         this.options as QueryOptions<TQueryData, TError, TQueryFnData>,
         fetchOptions
@@ -443,11 +446,19 @@ export class QueryObserver<
     }
 
     if (
-      // Always notify if notifyOnStatusChange is set
-      this.options.notifyOnStatusChange !== false ||
-      // Otherwise only notify on data or error change
+      // Always notify on data or error changes
       currentResult.data !== prevResult.data ||
-      currentResult.error !== prevResult.error
+      currentResult.error !== prevResult.error ||
+      // Maybe notify on status change
+      (this.options.notifyOnStatusChange !== false &&
+        currentResult.status !== prevResult.status) ||
+      // Maybe notify on fetch change
+      (this.options.notifyOnFetchChange !== false &&
+        (currentResult.isFetching !== prevResult.isFetching ||
+          currentResult.failureCount !== prevResult.failureCount)) ||
+      // Maybe notify on stale change
+      (this.options.notifyOnStaleChange &&
+        currentResult.isStale !== prevResult.isStale)
     ) {
       notifyOptions.listeners = true
     }
