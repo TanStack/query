@@ -110,17 +110,13 @@ const result = useQuery({
   - If set to `true`, the query will refetch on reconnect if the data is stale.
   - If set to `false`, the query will not refetch on reconnect.
   - If set to `"always"`, the query will always refetch on reconnect.
-- `notifyOnFetchChange: boolean`
-  - Optional
-  - Set this to `false` to prevent re-renders when the `isFetching` or `failureCount` properties change.
-  - Defaults to `true`.
 - `notifyOnStaleChange: boolean`
   - Optional
   - Set this to `true` to re-render when the `isStale` property changes.
   - Defaults to `false`.
 - `notifyOnStatusChange: boolean`
   - Optional
-  - Set this to `false` to prevent re-renders when the `status` property changes.
+  - Set this to `false` to only re-render when there are changes to `data` or `error`.
   - Defaults to `true`.
 - `onSuccess: (data: TData) => void`
   - Optional

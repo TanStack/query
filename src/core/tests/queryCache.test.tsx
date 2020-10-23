@@ -584,7 +584,10 @@ describe('queryCache', () => {
     const key = queryKey()
     const queryFn = jest.fn()
     const testCache = new QueryCache()
-    const testClient = new QueryClient({ queryCache: testCache })
+    const testClient = new QueryClient({
+      queryCache: testCache,
+      defaultOptions: { queries: { notifyOnStaleChange: true } },
+    })
     const observer = new QueryObserver(testClient, {
       queryKey: key,
       enabled: false,

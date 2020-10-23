@@ -45,9 +45,7 @@ describe('useInfiniteQuery', () => {
     queryCache,
     defaultOptions: {
       queries: {
-        notifyOnFetchChange: true,
         notifyOnStaleChange: true,
-        notifyOnStatusChange: true,
       },
     },
   })
@@ -633,7 +631,7 @@ describe('useInfiniteQuery', () => {
 
     await sleep(300)
 
-    expect(states.length).toBe(4)
+    expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
       hasNextPage: undefined,
       data: undefined,
@@ -656,6 +654,13 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
     })
     expect(states[3]).toMatchObject({
+      hasNextPage: true,
+      data: { pages: [10] },
+      isFetching: true,
+      isFetchingNextPage: true,
+      isSuccess: true,
+    })
+    expect(states[4]).toMatchObject({
       hasNextPage: true,
       data: { pages: [10, 11] },
       isFetching: false,

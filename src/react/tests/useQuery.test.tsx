@@ -18,9 +18,7 @@ describe('useQuery', () => {
     queryCache,
     defaultOptions: {
       queries: {
-        notifyOnFetchChange: true,
         notifyOnStaleChange: true,
-        notifyOnStatusChange: true,
       },
     },
   })
@@ -524,7 +522,6 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(key, () => ({ name: 'test' }), {
         select: data => data.name,
-        notifyOnFetchChange: false,
         notifyOnStaleChange: false,
         notifyOnStatusChange: false,
       })
@@ -1377,7 +1374,6 @@ describe('useQuery', () => {
         },
         {
           notifyOnStatusChange: false,
-          notifyOnFetchChange: false,
           notifyOnStaleChange: false,
         }
       )

@@ -249,7 +249,10 @@ export class QueryObserver<
     this.staleTimeoutId = setTimeout(() => {
       if (!this.currentResult.isStale) {
         this.updateResult()
-        this.notify({ listeners: true, cache: true })
+        this.notify({
+          listeners: this.options.notifyOnStaleChange === true,
+          cache: true,
+        })
       }
     }, timeout)
   }
@@ -446,19 +449,11 @@ export class QueryObserver<
     }
 
     if (
-      // Always notify on data or error changes
+      // Always notify if notifyOnStatusChange is set
+      this.options.notifyOnStatusChange !== false ||
+      // Otherwise only notify on data or error change
       currentResult.data !== prevResult.data ||
-      currentResult.error !== prevResult.error ||
-      // Maybe notify on status change
-      (this.options.notifyOnStatusChange !== false &&
-        currentResult.status !== prevResult.status) ||
-      // Maybe notify on fetch change
-      (this.options.notifyOnFetchChange !== false &&
-        (currentResult.isFetching !== prevResult.isFetching ||
-          currentResult.failureCount !== prevResult.failureCount)) ||
-      // Maybe notify on stale change
-      (this.options.notifyOnStaleChange &&
-        currentResult.isStale !== prevResult.isStale)
+      currentResult.error !== prevResult.error
     ) {
       notifyOptions.listeners = true
     }

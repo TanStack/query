@@ -125,17 +125,13 @@ export interface QueryObserverOptions<
    */
   refetchOnMount?: boolean | 'always'
   /**
-   * Whether a component should re-render when the `isFetching` or `failureCount` properties change.
-   * Defaults to `true`.
-   */
-  notifyOnFetchChange?: boolean
-  /**
    * Whether a component should re-render when the `isStale` property changes.
    * Defaults to `false`.
    */
   notifyOnStaleChange?: boolean
   /**
-   * Whether a component should re-render when the `status` property changes.
+   * Whether a change to the query status should re-render a component.
+   * If set to `false`, the component will only re-render when the actual `data` or `error` changes.
    * Defaults to `true`.
    */
   notifyOnStatusChange?: boolean
