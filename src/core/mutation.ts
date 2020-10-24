@@ -4,6 +4,7 @@ import type { MutationObserver } from './mutationObserver'
 import { getLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import { Retryer } from './retryer'
+import { noop } from './utils'
 
 // TYPES
 
@@ -15,7 +16,12 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   state?: MutationState<TData, TError, TVariables, TContext>
 }
 
-export interface MutationState<TData, TError, TVariables, TContext> {
+export interface MutationState<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> {
   context: TContext | undefined
   data: TData | undefined
   error: TError | null
@@ -106,6 +112,14 @@ export class Mutation<
 
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
+  }
+
+  cancel(): Promise<void> {
+    if (this.retryer) {
+      this.retryer.cancel()
+      return this.retryer.promise.then(noop).catch(noop)
+    }
+    return Promise.resolve()
   }
 
   continue(): Promise<TData> {

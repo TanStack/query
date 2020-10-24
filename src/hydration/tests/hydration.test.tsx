@@ -1,4 +1,4 @@
-import { sleep } from '../../react/tests/utils'
+import { mockNavigatorOnLine, sleep } from '../../react/tests/utils'
 import { QueryCache, QueryClient } from '../..'
 import { dehydrate, hydrate } from '../hydration'
 
@@ -115,7 +115,9 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const hydrationCache = new QueryCache()
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
-    hydrate(hydrationClient, parsed, { defaultOptions: { retry: 10 } })
+    hydrate(hydrationClient, parsed, {
+      defaultOptions: { queries: { retry: 10 } },
+    })
     expect(hydrationCache.find('string')?.options.retry).toBe(10)
     queryClient.clear()
     hydrationClient.clear()
@@ -264,5 +266,84 @@ describe('dehydration and rehydration', () => {
 
     queryClient.clear()
     hydrationClient.clear()
+  })
+
+  test('should be able to dehydrate mutations and continue on hydration', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+    mockNavigatorOnLine(false)
+
+    const serverAddTodo = jest
+      .fn()
+      .mockImplementation(() => Promise.reject('offline'))
+    const serverOnMutate = jest.fn().mockImplementation(variables => {
+      const optimisticTodo = { id: 1, text: variables.text }
+      return { optimisticTodo }
+    })
+    const serverOnSuccess = jest.fn()
+
+    const serverClient = new QueryClient()
+
+    serverClient.setMutationDefaults('addTodo', {
+      mutationFn: serverAddTodo,
+      onMutate: serverOnMutate,
+      onSuccess: serverOnSuccess,
+      retry: 3,
+      retryDelay: 10,
+    })
+
+    serverClient
+      .executeMutation({
+        mutationKey: 'addTodo',
+        variables: { text: 'text' },
+      })
+      .catch(() => undefined)
+
+    await sleep(50)
+
+    const dehydrated = dehydrate(serverClient)
+    const stringified = JSON.stringify(dehydrated)
+
+    serverClient.clear()
+
+    // ---
+
+    mockNavigatorOnLine(true)
+
+    const parsed = JSON.parse(stringified)
+    const client = new QueryClient()
+
+    const clientAddTodo = jest.fn().mockImplementation(variables => {
+      return { id: 2, text: variables.text }
+    })
+    const clientOnMutate = jest.fn().mockImplementation(variables => {
+      const optimisticTodo = { id: 1, text: variables.text }
+      return { optimisticTodo }
+    })
+    const clientOnSuccess = jest.fn()
+
+    client.setMutationDefaults('addTodo', {
+      mutationFn: clientAddTodo,
+      onMutate: clientOnMutate,
+      onSuccess: clientOnSuccess,
+      retry: 3,
+      retryDelay: 10,
+    })
+
+    hydrate(client, parsed)
+
+    await client.resumePausedMutations()
+
+    expect(clientAddTodo).toHaveBeenCalledTimes(1)
+    expect(clientOnMutate).not.toHaveBeenCalled()
+    expect(clientOnSuccess).toHaveBeenCalledTimes(1)
+    expect(clientOnSuccess).toHaveBeenCalledWith(
+      { id: 2, text: 'text' },
+      { text: 'text' },
+      { optimisticTodo: { id: 1, text: 'text' } }
+    )
+
+    client.clear()
+    consoleMock.mockRestore()
   })
 })

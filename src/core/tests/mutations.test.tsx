@@ -259,7 +259,7 @@ describe('mutations', () => {
       variables: 'todo',
     })
 
-    await queryClient.getMutationCache().continueMutations()
+    await queryClient.resumePausedMutations()
 
     expect(mutation.state).toEqual({
       context: 'todo',

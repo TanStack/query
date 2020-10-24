@@ -1,15 +1,32 @@
 import type { QueryClient } from '../core/queryClient'
-import { Query, QueryState } from '../core/query'
-import type { QueryKey, QueryOptions } from '../core/types'
+import type { Query, QueryState } from '../core/query'
+import type {
+  MutationKey,
+  MutationOptions,
+  QueryKey,
+  QueryOptions,
+} from '../core/types'
+import type { Mutation, MutationState } from '../core/mutation'
 
 // TYPES
 
 export interface DehydrateOptions {
+  dehydrateMutations?: boolean
+  dehydrateQueries?: boolean
+  shouldDehydrateMutation?: ShouldDehydrateMutationFunction
   shouldDehydrateQuery?: ShouldDehydrateQueryFunction
 }
 
 export interface HydrateOptions {
-  defaultOptions?: QueryOptions
+  defaultOptions?: {
+    queries?: QueryOptions
+    mutations?: MutationOptions
+  }
+}
+
+interface DehydratedMutation {
+  mutationKey?: MutationKey
+  state: MutationState
 }
 
 interface DehydratedQuery {
@@ -20,10 +37,13 @@ interface DehydratedQuery {
 }
 
 export interface DehydratedState {
+  mutations: DehydratedMutation[]
   queries: DehydratedQuery[]
 }
 
 export type ShouldDehydrateQueryFunction = (query: Query) => boolean
+
+export type ShouldDehydrateMutationFunction = (mutation: Mutation) => boolean
 
 // FUNCTIONS
 
@@ -33,6 +53,13 @@ function serializePositiveNumber(value: number): number {
 
 function deserializePositiveNumber(value: number): number {
   return value === -1 ? Infinity : value
+}
+
+function dehydrateMutation(mutation: Mutation): DehydratedMutation {
+  return {
+    mutationKey: mutation.options.mutationKey,
+    state: mutation.state,
+  }
 }
 
 // Most config is not dehydrated but instead meant to configure again when
@@ -48,7 +75,11 @@ function dehydrateQuery(query: Query): DehydratedQuery {
   }
 }
 
-function defaultShouldDehydrate(query: Query) {
+function defaultShouldDehydrateMutation(mutation: Mutation) {
+  return mutation.state.isPaused
+}
+
+function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
@@ -58,21 +89,38 @@ export function dehydrate(
 ): DehydratedState {
   options = options || {}
 
-  const shouldDehydrateQuery =
-    options.shouldDehydrateQuery || defaultShouldDehydrate
-
+  const mutations: DehydratedMutation[] = []
   const queries: DehydratedQuery[] = []
 
-  client
-    .getQueryCache()
-    .getAll()
-    .forEach(query => {
-      if (shouldDehydrateQuery(query)) {
-        queries.push(dehydrateQuery(query))
-      }
-    })
+  if (options?.dehydrateMutations !== false) {
+    const shouldDehydrateMutation =
+      options.shouldDehydrateMutation || defaultShouldDehydrateMutation
 
-  return { queries }
+    client
+      .getMutationCache()
+      .getAll()
+      .forEach(mutation => {
+        if (shouldDehydrateMutation(mutation)) {
+          mutations.push(dehydrateMutation(mutation))
+        }
+      })
+  }
+
+  if (options?.dehydrateQueries !== false) {
+    const shouldDehydrateQuery =
+      options.shouldDehydrateQuery || defaultShouldDehydrateQuery
+
+    client
+      .getQueryCache()
+      .getAll()
+      .forEach(query => {
+        if (shouldDehydrateQuery(query)) {
+          queries.push(dehydrateQuery(query))
+        }
+      })
+  }
+
+  return { mutations, queries }
 }
 
 export function hydrate(
@@ -84,8 +132,22 @@ export function hydrate(
     return
   }
 
+  const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
+
+  const mutations = (dehydratedState as DehydratedState).mutations || []
   const queries = (dehydratedState as DehydratedState).queries || []
+
+  mutations.forEach(dehydratedMutation => {
+    mutationCache.build(
+      client,
+      {
+        ...options?.defaultOptions?.mutations,
+        mutationKey: dehydratedMutation.mutationKey,
+      },
+      dehydratedMutation.state
+    )
+  })
 
   queries.forEach(dehydratedQuery => {
     const query = queryCache.get(dehydratedQuery.queryHash)
@@ -102,7 +164,7 @@ export function hydrate(
     queryCache.build(
       client,
       {
-        ...options?.defaultOptions,
+        ...options?.defaultOptions?.queries,
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
         cacheTime: deserializePositiveNumber(dehydratedQuery.cacheTime),

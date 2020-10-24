@@ -261,6 +261,17 @@ export class QueryClient {
       .catch(noop)
   }
 
+  cancelMutations(): Promise<void> {
+    const promises = notifyManager.batch(() =>
+      this.mutationCache.getAll().map(mutation => mutation.cancel())
+    )
+    return Promise.all(promises).then(noop).catch(noop)
+  }
+
+  resumePausedMutations(): Promise<void> {
+    return this.getMutationCache().resumePausedMutations()
+  }
+
   executeMutation<
     TData = unknown,
     TError = unknown,

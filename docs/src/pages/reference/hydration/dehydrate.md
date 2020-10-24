@@ -20,10 +20,22 @@ const dehydratedState = dehydrate(queryClient, {
   - The `queryClient` that should be dehydrated
 - `options: DehydrateOptions`
   - Optional
+  - `dehydrateMutations: boolean`
+    - Optional
+    - Whether or not to dehydrate mutations.
+  - `dehydrateQueries: boolean`
+    - Optional
+    - Whether or not to dehydrate queries.
+  - `shouldDehydrateMutation: (mutation: Mutation) => boolean`
+    - Optional
+    - This function is called for each mutation in the cache
+    - Return `true` to include this mutation in dehydration, or `false` otherwise
+    - The default version only includes paused mutations
   - `shouldDehydrateQuery: (query: Query) => boolean`
+    - Optional
     - This function is called for each query in the cache
     - Return `true` to include this query in dehydration, or `false` otherwise
-    - Default version only includes successful queries, do `shouldDehydrateQuery: () => true` to include all queries
+    - The default version only includes successful queries, do `shouldDehydrateQuery: () => true` to include all queries
 
 **Returns**
 

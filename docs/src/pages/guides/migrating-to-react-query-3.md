@@ -368,6 +368,10 @@ const mutation = useMutation(addTodo, {
 
 If mutations fail because the device is offline, they will be retried in the same order when the device reconnects.
 
+#### Persist mutations
+
+Mutations can now be persisted to storage and resumed at a later point. More information can be found in the mutations documentation.
+
 #### QueryObserver
 
 A `QueryObserver` can be used to create and/or watch a query:

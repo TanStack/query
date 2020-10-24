@@ -48,6 +48,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   remove(mutation: Mutation<any, any, any, any>): void {
     this.mutations = this.mutations.filter(x => x !== mutation)
+    mutation.cancel()
     this.notify(mutation)
   }
 
@@ -72,14 +73,14 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   onFocus(): void {
-    this.continueMutations()
+    this.resumePausedMutations()
   }
 
   onOnline(): void {
-    this.continueMutations()
+    this.resumePausedMutations()
   }
 
-  continueMutations(): Promise<void> {
+  resumePausedMutations(): Promise<void> {
     const pausedMutations = this.mutations.filter(x => x.state.isPaused)
     return notifyManager.batch(() =>
       pausedMutations.reduce(

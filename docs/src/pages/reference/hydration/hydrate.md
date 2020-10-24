@@ -21,5 +21,7 @@ hydrate(queryClient, dehydratedState, options)
   - The state to hydrate into the client
 - `options: HydrateOptions`
   - Optional
-  - `defaultOptions: QueryOptions`
-    - The default query options to use for the hydrated queries.
+  - `defaultOptions: DefaultOptions`
+    - Optional
+    - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
+    - `queries: QueryOptions` The default query options to use for the hydrated queries.
