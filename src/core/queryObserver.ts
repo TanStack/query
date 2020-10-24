@@ -73,6 +73,8 @@ export class QueryObserver<
 
   protected onSubscribe(): void {
     if (this.listeners.length === 1) {
+      this.updateQuery()
+
       this.currentQuery.addObserver(this)
 
       if (this.willFetchOnMount()) {

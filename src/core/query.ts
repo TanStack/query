@@ -163,14 +163,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private scheduleGc(): void {
     this.clearGcTimeout()
 
-    if (!this.observers.length && isValidTimeout(this.cacheTime)) {
-      if (!this.cacheTime) {
-        this.cache.remove(this)
-      } else {
-        this.gcTimeout = setTimeout(() => {
+    if (isValidTimeout(this.cacheTime)) {
+      this.gcTimeout = setTimeout(() => {
+        if (!this.observers.length) {
           this.cache.remove(this)
-        }, this.cacheTime)
-      }
+        }
+      }, this.cacheTime)
     }
   }
 
@@ -311,7 +309,11 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
           }
         }
 
-        this.scheduleGc()
+        if (this.cacheTime) {
+          this.scheduleGc()
+        } else {
+          this.cache.remove(this)
+        }
       }
 
       this.cache.notify(this)
