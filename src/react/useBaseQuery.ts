@@ -14,25 +14,23 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
 
-  // Batch calls to callbacks if not in suspense mode
-  if (!defaultedOptions.suspense) {
-    if (defaultedOptions.onError) {
-      defaultedOptions.onError = notifyManager.batchCalls(
-        defaultedOptions.onError
-      )
-    }
+  // Include callbacks in batch renders
+  if (defaultedOptions.onError) {
+    defaultedOptions.onError = notifyManager.batchCalls(
+      defaultedOptions.onError
+    )
+  }
 
-    if (defaultedOptions.onSuccess) {
-      defaultedOptions.onSuccess = notifyManager.batchCalls(
-        defaultedOptions.onSuccess
-      )
-    }
+  if (defaultedOptions.onSuccess) {
+    defaultedOptions.onSuccess = notifyManager.batchCalls(
+      defaultedOptions.onSuccess
+    )
+  }
 
-    if (defaultedOptions.onSettled) {
-      defaultedOptions.onSettled = notifyManager.batchCalls(
-        defaultedOptions.onSettled
-      )
-    }
+  if (defaultedOptions.onSettled) {
+    defaultedOptions.onSettled = notifyManager.batchCalls(
+      defaultedOptions.onSettled
+    )
   }
 
   // Always set stale time when using suspense
