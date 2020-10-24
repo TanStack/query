@@ -164,9 +164,13 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     this.clearGcTimeout()
 
     if (!this.observers.length && isValidTimeout(this.cacheTime)) {
-      this.gcTimeout = setTimeout(() => {
+      if (!this.cacheTime) {
         this.cache.remove(this)
-      }, this.cacheTime)
+      } else {
+        this.gcTimeout = setTimeout(() => {
+          this.cache.remove(this)
+        }, this.cacheTime)
+      }
     }
   }
 

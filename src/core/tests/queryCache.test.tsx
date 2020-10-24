@@ -1009,9 +1009,8 @@ describe('queryCache', () => {
     })
     expect(queryCache.find(key)).toBeDefined()
     const unsubscribe = observer.subscribe()
-    unsubscribe()
     expect(queryCache.find(key)).toBeDefined()
-    await sleep(100)
+    unsubscribe()
     expect(queryCache.find(key)).toBeUndefined()
   })
 
@@ -1409,6 +1408,31 @@ describe('queryCache', () => {
       await sleep(100)
       expect(query.state.status).toBe('error')
 
+      consoleMock.mockRestore()
+    })
+
+    test('queries with cacheTime 0 should be removed immediately after unsubscribing', async () => {
+      const consoleMock = mockConsoleError()
+      const key = queryKey()
+      const testClient = new QueryClient()
+      let count = 0
+      const observer = new QueryObserver(testClient, {
+        queryKey: key,
+        queryFn: () => {
+          count++
+          return 'data'
+        },
+        cacheTime: 0,
+        staleTime: Infinity,
+      })
+      const unsubscribe1 = observer.subscribe()
+      unsubscribe1()
+      await sleep(10)
+      const unsubscribe2 = observer.subscribe()
+      unsubscribe2()
+      await sleep(10)
+      expect(count).toBe(2)
+      testClient.clear()
       consoleMock.mockRestore()
     })
   })
