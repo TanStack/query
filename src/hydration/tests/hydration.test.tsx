@@ -80,9 +80,9 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find('string')?.state.data).toBe('string')
-    await sleep(30)
+    await sleep(10)
     expect(hydrationCache.find('string')).toBeTruthy()
-    await sleep(30)
+    await sleep(100)
     expect(hydrationCache.find('string')).toBeFalsy()
 
     queryClient.clear()
