@@ -462,47 +462,26 @@ export class QueryObserver<
   }
 
   private notify(notifyOptions: NotifyOptions): void {
-    const { currentResult, currentQuery, listeners } = this
-    const { onSuccess, onSettled, onError } = this.options
-
     notifyManager.batch(() => {
       // First trigger the configuration callbacks
       if (notifyOptions.onSuccess) {
-        if (onSuccess) {
-          notifyManager.schedule(() => {
-            onSuccess(currentResult.data!)
-          })
-        }
-        if (onSettled) {
-          notifyManager.schedule(() => {
-            onSettled(currentResult.data!, null)
-          })
-        }
+        this.options.onSuccess?.(this.currentResult.data!)
+        this.options.onSettled?.(this.currentResult.data!, null)
       } else if (notifyOptions.onError) {
-        if (onError) {
-          notifyManager.schedule(() => {
-            onError(currentResult.error!)
-          })
-        }
-        if (onSettled) {
-          notifyManager.schedule(() => {
-            onSettled(undefined, currentResult.error!)
-          })
-        }
+        this.options.onError?.(this.currentResult.error!)
+        this.options.onSettled?.(undefined, this.currentResult.error!)
       }
 
       // Then trigger the listeners
       if (notifyOptions.listeners) {
-        listeners.forEach(listener => {
-          notifyManager.schedule(() => {
-            listener(currentResult)
-          })
+        this.listeners.forEach(listener => {
+          listener(this.currentResult)
         })
       }
 
       // Then the cache listeners
       if (notifyOptions.cache) {
-        this.client.getQueryCache().notify(currentQuery)
+        this.client.getQueryCache().notify(this.currentQuery)
       }
     })
   }

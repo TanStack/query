@@ -118,12 +118,9 @@ export class MutationObserver<
   }
 
   private notify() {
-    const { currentResult } = this
     notifyManager.batch(() => {
       this.listeners.forEach(listener => {
-        notifyManager.schedule(() => {
-          listener(currentResult)
-        })
+        listener(this.currentResult)
       })
     })
   }

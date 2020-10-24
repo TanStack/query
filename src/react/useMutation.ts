@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useIsMounted } from './utils'
+import { notifyManager } from '../core/notifyManager'
 import { noop, parseMutationArgs } from '../core/utils'
 import { MutationObserver } from '../core/mutationObserver'
 import { useQueryClient } from './QueryClientProvider'
@@ -65,8 +65,6 @@ export function useMutation<
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
   const options = parseMutationArgs(arg1, arg2, arg3)
-
-  const isMounted = useIsMounted()
   const queryClient = useQueryClient()
 
   // Create mutation observer
@@ -88,13 +86,8 @@ export function useMutation<
 
   // Subscribe to the observer
   React.useEffect(
-    () =>
-      observer.subscribe(result => {
-        if (isMounted()) {
-          setCurrentResult(result)
-        }
-      }),
-    [observer, isMounted]
+    () => observer.subscribe(notifyManager.batchCalls(setCurrentResult)),
+    [observer]
   )
 
   const mutate = React.useCallback<

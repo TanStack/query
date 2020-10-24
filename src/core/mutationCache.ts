@@ -66,9 +66,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   notify(mutation?: Mutation<any, any, any, any>) {
     notifyManager.batch(() => {
       this.listeners.forEach(listener => {
-        notifyManager.schedule(() => {
-          listener(mutation)
-        })
+        listener(mutation)
       })
     })
   }

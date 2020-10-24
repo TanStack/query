@@ -49,6 +49,17 @@ class NotifyManager {
     }
   }
 
+  /**
+   * All calls to the wrapped function will be batched.
+   */
+  batchCalls<T extends Function>(callback: T): T {
+    return ((...args: any[]) => {
+      this.schedule(() => {
+        callback(...args)
+      })
+    }) as any
+  }
+
   flush(): void {
     const queue = this.queue
     this.queue = []

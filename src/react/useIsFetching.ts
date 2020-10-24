@@ -1,9 +1,9 @@
 import React from 'react'
 
-import { QueryKey } from '../core'
+import { notifyManager } from '../core/notifyManager'
+import { QueryKey } from '../core/types'
 import { parseFilterArgs, QueryFilters } from '../core/utils'
 import { useQueryClient } from './QueryClientProvider'
-import { useIsMounted } from './utils'
 
 export function useIsFetching(filters?: QueryFilters): number
 export function useIsFetching(
@@ -15,7 +15,6 @@ export function useIsFetching(
   arg2?: QueryFilters
 ): number {
   const queryClient = useQueryClient()
-  const isMounted = useIsMounted()
   const [filters] = parseFilterArgs(arg1, arg2)
   const [isFetching, setIsFetching] = React.useState(
     queryClient.isFetching(filters)
@@ -28,15 +27,15 @@ export function useIsFetching(
 
   React.useEffect(
     () =>
-      queryClient.getQueryCache().subscribe(() => {
-        if (isMounted()) {
+      queryClient.getQueryCache().subscribe(
+        notifyManager.batchCalls(() => {
           const newIsFetching = queryClient.isFetching(filtersRef.current)
           if (isFetchingRef.current !== newIsFetching) {
             setIsFetching(newIsFetching)
           }
-        }
-      }),
-    [queryClient, isMounted]
+        })
+      ),
+    [queryClient]
   )
 
   return isFetching

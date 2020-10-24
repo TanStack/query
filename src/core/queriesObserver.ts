@@ -119,12 +119,9 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   }
 
   private notify(): void {
-    const { result } = this
     notifyManager.batch(() => {
       this.listeners.forEach(listener => {
-        notifyManager.schedule(() => {
-          listener(result)
-        })
+        listener(this.result)
       })
     })
   }

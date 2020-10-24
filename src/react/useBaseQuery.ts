@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useIsMounted } from './utils'
+import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
@@ -11,9 +11,29 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   Observer: typeof QueryObserver
 ) {
   const queryClient = useQueryClient()
-  const isMounted = useIsMounted()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
+
+  // Batch calls to callbacks if not in suspense mode
+  if (!defaultedOptions.suspense) {
+    if (defaultedOptions.onError) {
+      defaultedOptions.onError = notifyManager.batchCalls(
+        defaultedOptions.onError
+      )
+    }
+
+    if (defaultedOptions.onSuccess) {
+      defaultedOptions.onSuccess = notifyManager.batchCalls(
+        defaultedOptions.onSuccess
+      )
+    }
+
+    if (defaultedOptions.onSettled) {
+      defaultedOptions.onSettled = notifyManager.batchCalls(
+        defaultedOptions.onSettled
+      )
+    }
+  }
 
   // Always set stale time when using suspense
   if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
@@ -38,12 +58,8 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
   // Subscribe to the observer
   React.useEffect(() => {
     errorResetBoundary.clearReset()
-    return observer.subscribe(result => {
-      if (isMounted()) {
-        setCurrentResult(result)
-      }
-    })
-  }, [isMounted, observer, errorResetBoundary])
+    return observer.subscribe(notifyManager.batchCalls(setCurrentResult))
+  }, [observer, errorResetBoundary])
 
   // Handle suspense
   if (observer.options.suspense || observer.options.useErrorBoundary) {

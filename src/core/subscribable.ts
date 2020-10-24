@@ -1,6 +1,6 @@
 type Listener = () => void
 
-export class Subscribable<TListener = Listener> {
+export class Subscribable<TListener extends Function = Listener> {
   protected listeners: TListener[]
 
   constructor() {

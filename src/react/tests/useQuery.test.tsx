@@ -340,6 +340,41 @@ describe('useQuery', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
+  it('should not call onSuccess if a component has unmounted', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+
+      React.useEffect(() => {
+        setShow(false)
+      }, [setShow])
+
+      return show ? <Component /> : null
+    }
+
+    function Component() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'data'
+        },
+        { onSuccess }
+      )
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(50)
+    expect(states.length).toBe(1)
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+  })
+
   it('should call onError after a query has been fetched with an error', async () => {
     const key = queryKey()
     const states: UseQueryResult<unknown>[] = []
