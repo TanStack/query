@@ -198,7 +198,9 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.queryCache.findAll(filters).map(query => query.fetch())
+      this.queryCache
+        .findAll(filters)
+        .map(query => query.fetch(undefined, { origin: 'clientRefetch' }))
     )
 
     let promise = Promise.all(promises).then(noop)
@@ -240,7 +242,7 @@ export class QueryClient {
     const query = this.queryCache.build(this, defaultedOptions)
 
     return query.isStaleByTime(defaultedOptions.staleTime)
-      ? query.fetch(defaultedOptions)
+      ? query.fetch(defaultedOptions, { origin: 'clientFetch' })
       : Promise.resolve(query.state.data as TData)
   }
 

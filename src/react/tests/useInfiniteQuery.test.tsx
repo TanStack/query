@@ -73,8 +73,11 @@ describe('useInfiniteQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toEqual({
       data: undefined,
+      dataOrigin: undefined,
       error: null,
+      errorOrigin: undefined,
       failureCount: 0,
+      fetchOrigin: 'observerFetch',
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
       hasNextPage: undefined,
@@ -99,7 +102,9 @@ describe('useInfiniteQuery', () => {
 
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [undefined] },
+      dataOrigin: 'observerFetch',
       error: null,
+      errorOrigin: undefined,
       failureCount: 0,
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),

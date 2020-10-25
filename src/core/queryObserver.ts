@@ -211,7 +211,7 @@ export class QueryObserver<
   refetch(
     options?: RefetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
-    return this.fetch(options)
+    return this.fetch({ origin: 'observerRefetch', ...options })
   }
 
   protected fetch(
@@ -237,10 +237,10 @@ export class QueryObserver<
 
     // Fetch
     return this.currentQuery
-      .fetch(
-        this.options as QueryOptions<TQueryData, TError, TQueryFnData>,
-        fetchOptions
-      )
+      .fetch(this.options as QueryOptions<TQueryData, TError, TQueryFnData>, {
+        ...fetchOptions,
+        origin: fetchOptions?.origin || 'observerFetch',
+      })
       .catch(noop)
   }
 
@@ -291,7 +291,7 @@ export class QueryObserver<
         this.options.refetchIntervalInBackground ||
         focusManager.isFocused()
       ) {
-        this.executeFetch()
+        this.executeFetch({ origin: 'observerRefetchInterval' })
       }
     }, this.options.refetchInterval)
   }
@@ -320,7 +320,7 @@ export class QueryObserver<
     willFetch?: boolean
   ): QueryObserverResult<TData, TError> {
     const { state } = this.currentQuery
-    let { isFetching, status } = state
+    let { dataOrigin, fetchOrigin, isFetching, status } = state
     let isPreviousData = false
     let isPlaceholderData = false
     let data: TData | undefined
@@ -329,6 +329,7 @@ export class QueryObserver<
     // Optimistically set status to loading if we will start fetching
     if (willFetch) {
       isFetching = true
+      fetchOrigin = 'observerFetch'
       if (status === 'idle') {
         status = 'loading'
       }
@@ -342,6 +343,7 @@ export class QueryObserver<
     ) {
       data = this.previousQueryResult.data
       updatedAt = this.previousQueryResult.updatedAt
+      dataOrigin = this.previousQueryResult.dataOrigin
       status = this.previousQueryResult.status
       isPreviousData = true
     }
@@ -382,8 +384,11 @@ export class QueryObserver<
     return {
       ...getStatusProps(status),
       data,
+      dataOrigin,
       error: state.error,
+      errorOrigin: state.errorOrigin,
       failureCount: state.fetchFailureCount,
+      fetchOrigin,
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
       isFetching,

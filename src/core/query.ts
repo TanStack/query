@@ -33,18 +33,35 @@ interface QueryConfig<TData, TError, TQueryFnData> {
 
 export interface QueryState<TData = unknown, TError = unknown> {
   data: TData | undefined
+  dataOrigin?: QueryDataOrigin
   dataUpdateCount: number
   dataUpdatedAt: number
   error: TError | null
+  errorOrigin?: QueryErrorOrigin
   errorUpdateCount: number
   errorUpdatedAt: number
   fetchFailureCount: number
   fetchMeta: any
+  fetchOrigin?: QueryFetchOrigin
   isFetching: boolean
   isInvalidated: boolean
   isPaused: boolean
   status: QueryStatus
 }
+
+export type QueryFetchOrigin =
+  | 'clientFetch'
+  | 'clientRefetch'
+  | 'observerFetch'
+  | 'observerRefetch'
+  | 'observerRefetchInterval'
+  | 'observerRefetchOnMount'
+  | 'observerRefetchOnReconnect'
+  | 'observerRefetchOnWindowFocus'
+
+export type QueryDataOrigin = QueryFetchOrigin | 'initialData' | 'setData'
+
+export type QueryErrorOrigin = QueryFetchOrigin
 
 export interface FetchContext<TData, TError, TQueryFnData> {
   state: QueryState<TData, TError>
@@ -65,9 +82,11 @@ export interface QueryBehavior<
 export interface FetchOptions {
   cancelRefetch?: boolean
   meta?: any
+  origin?: QueryFetchOrigin
 }
 
 export interface SetDataOptions {
+  origin?: QueryDataOrigin
   updatedAt?: number
 }
 
@@ -76,19 +95,22 @@ interface FailedAction {
 }
 
 interface FetchAction {
-  type: 'fetch'
   meta?: any
+  origin?: QueryFetchOrigin
+  type: 'fetch'
 }
 
 interface SuccessAction<TData> {
   data: TData | undefined
+  origin?: QueryDataOrigin
   type: 'success'
   updatedAt?: number
 }
 
 interface ErrorAction<TError> {
-  type: 'error'
   error: TError
+  origin?: QueryErrorOrigin
+  type: 'error'
 }
 
 interface InvalidateAction {
@@ -200,6 +222,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     // Set data and mark it as cached
     this.dispatch({
       data,
+      origin: options?.origin || 'setData',
       type: 'success',
       updatedAt: options?.updatedAt,
     })
@@ -250,7 +273,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     const observer = this.observers.find(x => x.willFetchOnWindowFocus())
 
     if (observer) {
-      observer.refetch()
+      observer.refetch({ origin: 'observerRefetchOnWindowFocus' })
     }
 
     // Continue fetch if currently paused
@@ -261,7 +284,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     const observer = this.observers.find(x => x.willFetchOnReconnect())
 
     if (observer) {
-      observer.refetch()
+      observer.refetch({ origin: 'observerRefetchOnReconnect' })
     }
 
     // Continue fetch if currently paused
@@ -366,9 +389,14 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     // Set to fetching state if not already in it
     if (
       !this.state.isFetching ||
-      this.state.fetchMeta !== context.fetchOptions?.meta
+      this.state.fetchMeta !== context.fetchOptions?.meta ||
+      this.state.fetchOrigin !== context.fetchOptions?.origin
     ) {
-      this.dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
+      this.dispatch({
+        type: 'fetch',
+        meta: context.fetchOptions?.meta,
+        origin: context.fetchOptions?.origin,
+      })
     }
 
     // Try to fetch the data
@@ -388,12 +416,15 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     })
 
     this.promise = this.retryer.promise
-      .then(data => this.setData(data as TData))
+      .then(data =>
+        this.setData(data as TData, { origin: fetchOptions?.origin })
+      )
       .catch(error => {
         // Set error state if needed
         if (!(isCancelledError(error) && error.silent)) {
           this.dispatch({
             type: 'error',
+            origin: fetchOptions?.origin,
             error,
           })
         }
@@ -434,6 +465,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
     return {
       data,
+      dataOrigin: hasData ? 'initialData' : undefined,
       dataUpdateCount: 0,
       dataUpdatedAt: hasData ? Date.now() : 0,
       error: null,
@@ -473,6 +505,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
           ...state,
           fetchFailureCount: 0,
           fetchMeta: action.meta,
+          fetchOrigin: action.origin,
           isFetching: true,
           isPaused: false,
           status: state.status === 'idle' ? 'loading' : state.status,
@@ -481,10 +514,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         return {
           ...state,
           data: action.data,
+          dataOrigin: action.origin,
           dataUpdateCount: state.dataUpdateCount + 1,
           dataUpdatedAt: action.updatedAt ?? Date.now(),
           error: null,
           fetchFailureCount: 0,
+          fetchOrigin: undefined,
           isFetching: false,
           isInvalidated: false,
           isPaused: false,
@@ -497,6 +532,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
           return {
             ...state,
             fetchFailureCount: 0,
+            fetchOrigin: undefined,
             isFetching: false,
             isPaused: false,
             status: state.status === 'loading' ? 'idle' : state.status,
@@ -506,9 +542,11 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         return {
           ...state,
           error: error as TError,
+          errorOrigin: action.origin,
           errorUpdateCount: state.errorUpdateCount + 1,
           errorUpdatedAt: Date.now(),
           fetchFailureCount: state.fetchFailureCount + 1,
+          fetchOrigin: undefined,
           isFetching: false,
           isPaused: false,
           status: 'error',

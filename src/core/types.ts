@@ -1,5 +1,10 @@
 import type { MutationState } from './mutation'
-import type { QueryBehavior } from './query'
+import type {
+  QueryBehavior,
+  QueryDataOrigin,
+  QueryErrorOrigin,
+  QueryFetchOrigin,
+} from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
@@ -190,7 +195,9 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchOptions extends ResultOptions {}
+export interface RefetchOptions extends ResultOptions {
+  origin?: QueryFetchOrigin
+}
 
 export interface InvalidateQueryFilters extends QueryFilters {
   refetchActive?: boolean
@@ -213,8 +220,11 @@ export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
 
 export interface QueryObserverResult<TData = unknown, TError = unknown> {
   data: TData | undefined
+  dataOrigin?: QueryDataOrigin
   error: TError | null
+  errorOrigin?: QueryErrorOrigin
   failureCount: number
+  fetchOrigin?: QueryFetchOrigin
   isError: boolean
   isFetched: boolean
   isFetchedAfterMount: boolean

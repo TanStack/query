@@ -133,8 +133,11 @@ describe('useQuery', () => {
 
     expect(states[0]).toEqual({
       data: undefined,
+      dataOrigin: undefined,
       error: null,
+      errorOrigin: undefined,
       failureCount: 0,
+      fetchOrigin: 'observerFetch',
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -153,8 +156,11 @@ describe('useQuery', () => {
 
     expect(states[1]).toEqual({
       data: 'test',
+      dataOrigin: 'observerFetch',
       error: null,
+      errorOrigin: undefined,
       failureCount: 0,
+      fetchOrigin: undefined,
       isError: false,
       isFetched: true,
       isFetchedAfterMount: true,
@@ -203,8 +209,11 @@ describe('useQuery', () => {
 
     expect(states[0]).toEqual({
       data: undefined,
+      dataOrigin: undefined,
       error: null,
+      errorOrigin: undefined,
       failureCount: 0,
+      fetchOrigin: 'observerFetch',
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -223,8 +232,11 @@ describe('useQuery', () => {
 
     expect(states[1]).toEqual({
       data: undefined,
+      dataOrigin: undefined,
       error: null,
+      errorOrigin: undefined,
       failureCount: 1,
+      fetchOrigin: 'observerFetch',
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -243,8 +255,11 @@ describe('useQuery', () => {
 
     expect(states[2]).toEqual({
       data: undefined,
+      dataOrigin: undefined,
       error: 'rejected',
+      errorOrigin: 'observerFetch',
       failureCount: 2,
+      fetchOrigin: undefined,
       isError: true,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -701,15 +716,17 @@ describe('useQuery', () => {
 
     await sleep(20)
 
-    expect(states.length).toBe(4)
+    expect(states.length).toBe(5)
     // Initial
     expect(states[0]).toMatchObject({ data: undefined, updatedAt: 0 })
     // Fetched
     expect(states[1]).toMatchObject({ data: 1 })
     // Switch
     expect(states[2]).toMatchObject({ data: undefined, updatedAt: 0 })
+    // Switch
+    expect(states[3]).toMatchObject({ data: undefined, updatedAt: 0 })
     // Fetched
-    expect(states[3]).toMatchObject({ data: 2 })
+    expect(states[4]).toMatchObject({ data: 2 })
   })
 
   it('should share equal data structures between query results', async () => {
