@@ -47,6 +47,19 @@ describe('queryCache', () => {
     expect(data).toBe('data')
   })
 
+  test('setQueryDefaults should not match if the query key is a subset', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    queryClient.setQueryDefaults([key, 'a'], { queryFn: () => 'data' })
+    const observer = new QueryObserver(queryClient, {
+      queryKey: [key],
+      retry: false,
+    })
+    const { status } = await observer.refetch()
+    expect(status).toBe('error')
+    consoleMock.mockRestore()
+  })
+
   test('setQueryData does not crash if query could not be found', () => {
     const key = queryKey()
 
