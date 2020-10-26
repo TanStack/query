@@ -62,6 +62,12 @@ describe('core/utils', () => {
       const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
       expect(partialDeepEqual(a, b)).toEqual(false)
     })
+
+    it('should return `true` if array a includes array b', () => {
+      const a = [1, 2, 3]
+      const b = [1, 2]
+      expect(partialDeepEqual(a, b)).toEqual(true)
+    })
   })
 
   describe('replaceEqualDeep', () => {

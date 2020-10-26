@@ -236,12 +236,16 @@ export class QueryObserver<
     this.updateQuery()
 
     // Fetch
-    return this.currentQuery
-      .fetch(
-        this.options as QueryOptions<TQueryData, TError, TQueryFnData>,
-        fetchOptions
-      )
-      .catch(noop)
+    let promise: Promise<TQueryData | undefined> = this.currentQuery.fetch(
+      this.options as QueryOptions<TQueryData, TError, TQueryFnData>,
+      fetchOptions
+    )
+
+    if (!fetchOptions?.throwOnError) {
+      promise = promise.catch(noop)
+    }
+
+    return promise
   }
 
   private updateStaleTimeout(): void {

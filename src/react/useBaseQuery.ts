@@ -75,7 +75,8 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
       observer.willFetchOnMount()
     ) {
       errorResetBoundary.clearReset()
-      throw observer.getNextResult({ throwOnError: true })
+      const unsubscribe = observer.subscribe()
+      throw observer.refetch().finally(unsubscribe)
     }
   }
 

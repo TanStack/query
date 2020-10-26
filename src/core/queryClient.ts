@@ -1,6 +1,7 @@
 import {
   QueryFilters,
   Updater,
+  hashQueryKey,
   noop,
   parseFilterArgs,
   parseQueryArgs,
@@ -303,8 +304,8 @@ export class QueryClient {
     queryKey: QueryKey,
     options: QueryOptions<any, any, any>
   ): void {
-    const result = this.queryDefaults.find(x =>
-      partialMatchKey(x.queryKey, queryKey)
+    const result = this.queryDefaults.find(
+      x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
     )
     if (result) {
       result.defaultOptions = options
@@ -316,7 +317,7 @@ export class QueryClient {
   getQueryDefaults(
     queryKey: QueryKey
   ): QueryOptions<any, any, any> | undefined {
-    return this.queryDefaults.find(x => partialMatchKey(x.queryKey, queryKey))
+    return this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
       ?.defaultOptions
   }
 
@@ -324,8 +325,8 @@ export class QueryClient {
     mutationKey: MutationKey,
     options: MutationOptions<any, any, any, any>
   ): void {
-    const result = this.mutationDefaults.find(x =>
-      partialMatchKey(x.mutationKey, mutationKey)
+    const result = this.mutationDefaults.find(
+      x => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey)
     )
     if (result) {
       result.defaultOptions = options
@@ -338,7 +339,7 @@ export class QueryClient {
     mutationKey: MutationKey
   ): MutationOptions<any, any, any, any> | undefined {
     return this.mutationDefaults.find(x =>
-      partialMatchKey(x.mutationKey, mutationKey)
+      partialMatchKey(mutationKey, x.mutationKey)
     )?.defaultOptions
   }
 
