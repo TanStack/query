@@ -9,7 +9,7 @@ export function infiniteQueryBehavior<
   return {
     onFetch: context => {
       context.queryFn = () => {
-        const fetchMore = context.fetchOptions?.meta.fetchMore
+        const fetchMore = context.fetchOptions?.meta?.fetchMore
         const pageParam = fetchMore?.pageParam
         const isFetchingNextPage = fetchMore?.direction === 'forward'
         const isFetchingPreviousPage = fetchMore?.direction === 'backward'

@@ -94,9 +94,25 @@ export class QueryObserver<
   willFetchOnMount(): boolean {
     return (
       this.options.enabled !== false &&
-      (!this.currentQuery.state.updatedAt ||
+      (!this.currentQuery.state.dataUpdatedAt ||
         this.options.refetchOnMount === 'always' ||
         (this.options.refetchOnMount !== false && this.isStale()))
+    )
+  }
+
+  willFetchOnReconnect(): boolean {
+    return (
+      this.options.enabled !== false &&
+      (this.options.refetchOnReconnect === 'always' ||
+        (this.options.refetchOnReconnect !== false && this.isStale()))
+    )
+  }
+
+  willFetchOnWindowFocus(): boolean {
+    return (
+      this.options.enabled !== false &&
+      (this.options.refetchOnWindowFocus === 'always' ||
+        (this.options.refetchOnWindowFocus !== false && this.isStale()))
     )
   }
 
@@ -304,10 +320,11 @@ export class QueryObserver<
     willFetch?: boolean
   ): QueryObserverResult<TData, TError> {
     const { state } = this.currentQuery
-    let { status, isFetching, updatedAt } = state
+    let { isFetching, status } = state
     let isPreviousData = false
     let isPlaceholderData = false
     let data: TData | undefined
+    let updatedAt = state.dataUpdatedAt
 
     // Optimistically set status to loading if we will start fetching
     if (willFetch) {
@@ -366,7 +383,7 @@ export class QueryObserver<
       ...getStatusProps(status),
       data,
       error: state.error,
-      failureCount: state.failureCount,
+      failureCount: state.fetchFailureCount,
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
       isFetching,

@@ -154,7 +154,7 @@ export function hydrate(
 
     // Do not hydrate if an existing query exists with newer data
     if (query) {
-      if (query.state.updatedAt < dehydratedQuery.state.updatedAt) {
+      if (query.state.dataUpdatedAt < dehydratedQuery.state.dataUpdatedAt) {
         query.setState(dehydratedQuery.state)
       }
       return

@@ -34,15 +34,16 @@ interface QueryConfig<TData, TError, TQueryFnData> {
 export interface QueryState<TData = unknown, TError = unknown> {
   data: TData | undefined
   dataUpdateCount: number
+  dataUpdatedAt: number
   error: TError | null
   errorUpdateCount: number
-  failureCount: number
+  errorUpdatedAt: number
+  fetchFailureCount: number
   fetchMeta: any
   isFetching: boolean
   isInvalidated: boolean
   isPaused: boolean
   status: QueryStatus
-  updatedAt: number
 }
 
 export interface FetchContext<TData, TError, TQueryFnData> {
@@ -232,7 +233,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   isStale(): boolean {
     return (
       this.state.isInvalidated ||
-      !this.state.updatedAt ||
+      !this.state.dataUpdatedAt ||
       this.observers.some(observer => observer.getCurrentResult().isStale)
     )
   }
@@ -240,43 +241,27 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   isStaleByTime(staleTime = 0): boolean {
     return (
       this.state.isInvalidated ||
-      !this.state.updatedAt ||
-      !timeUntilStale(this.state.updatedAt, staleTime)
+      !this.state.dataUpdatedAt ||
+      !timeUntilStale(this.state.dataUpdatedAt, staleTime)
     )
   }
 
   onFocus(): void {
-    this.onExternalEvent('focus')
+    const observer = this.observers.find(x => x.willFetchOnWindowFocus())
+
+    if (observer) {
+      observer.refetch()
+    }
+
+    // Continue fetch if currently paused
+    this.retryer?.continue()
   }
 
   onOnline(): void {
-    this.onExternalEvent('online')
-  }
+    const observer = this.observers.find(x => x.willFetchOnReconnect())
 
-  private onExternalEvent(type: 'focus' | 'online'): void {
-    // Execute the first observer that wants to fetch on this event
-    const fetchObserver = this.observers.find(observer => {
-      const {
-        enabled,
-        refetchOnWindowFocus,
-        refetchOnReconnect,
-      } = observer.options
-
-      const { isStale } = observer.getCurrentResult()
-
-      return (
-        enabled !== false &&
-        ((type === 'focus' &&
-          (refetchOnWindowFocus === 'always' ||
-            (refetchOnWindowFocus !== false && isStale))) ||
-          (type === 'online' &&
-            (refetchOnReconnect === 'always' ||
-              (refetchOnReconnect !== false && isStale))))
-      )
-    })
-
-    if (fetchObserver) {
-      fetchObserver.refetch()
+    if (observer) {
+      observer.refetch()
     }
 
     // Continue fetch if currently paused
@@ -331,7 +316,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     fetchOptions?: FetchOptions
   ): Promise<TData> {
     if (this.state.isFetching)
-      if (this.state.updatedAt && fetchOptions?.cancelRefetch) {
+      if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetches
         this.cancel({ silent: true })
       } else if (this.promise) {
@@ -450,15 +435,16 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     return {
       data,
       dataUpdateCount: 0,
+      dataUpdatedAt: hasData ? Date.now() : 0,
       error: null,
       errorUpdateCount: 0,
-      failureCount: 0,
+      errorUpdatedAt: 0,
+      fetchFailureCount: 0,
       fetchMeta: undefined,
       isFetching: false,
       isInvalidated: false,
       isPaused: false,
       status: hasData ? 'success' : 'idle',
-      updatedAt: hasData ? Date.now() : 0,
     }
   }
 
@@ -470,7 +456,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       case 'failed':
         return {
           ...state,
-          failureCount: state.failureCount + 1,
+          fetchFailureCount: state.fetchFailureCount + 1,
         }
       case 'pause':
         return {
@@ -485,7 +471,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
       case 'fetch':
         return {
           ...state,
-          failureCount: 0,
+          fetchFailureCount: 0,
           fetchMeta: action.meta,
           isFetching: true,
           isPaused: false,
@@ -496,13 +482,13 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
           ...state,
           data: action.data,
           dataUpdateCount: state.dataUpdateCount + 1,
+          dataUpdatedAt: action.updatedAt ?? Date.now(),
           error: null,
-          failureCount: 0,
+          fetchFailureCount: 0,
           isFetching: false,
           isInvalidated: false,
           isPaused: false,
           status: 'success',
-          updatedAt: action.updatedAt ?? Date.now(),
         }
       case 'error':
         const error = action.error as unknown
@@ -510,7 +496,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         if (isCancelledError(error) && error.revert) {
           return {
             ...state,
-            failureCount: 0,
+            fetchFailureCount: 0,
             isFetching: false,
             isPaused: false,
             status: state.status === 'loading' ? 'idle' : state.status,
@@ -521,7 +507,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
           ...state,
           error: error as TError,
           errorUpdateCount: state.errorUpdateCount + 1,
-          failureCount: state.failureCount + 1,
+          errorUpdatedAt: Date.now(),
+          fetchFailureCount: state.fetchFailureCount + 1,
           isFetching: false,
           isPaused: false,
           status: 'error',
