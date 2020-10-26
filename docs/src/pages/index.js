@@ -10,12 +10,13 @@ import { Seo } from 'components/Seo'
 import Head from 'next/head'
 
 const supporters = [
-  ['Kent C. Dodds (kentcdodds.com)', 'https://kentcdodds.com/'],
+  ['Kent C. Dodds', 'https://kentcdodds.com/'],
   ['@bgazzera', 'https://github.com/bgazzera'],
   ['Gabe Ragland', 'https://github.com/gragland'],
   ['Matt Wood', 'https://github.com/mattwoodnyc'],
   ['Joshua Turner', 'https://github.com/joshua-turner'],
   ['Fillip Peyton', 'https://github.com/fillippeyton'],
+  ['Tim Myers', 'https://github.com/denvercoder'],
 ]
 
 const fans = [
@@ -31,11 +32,12 @@ const fans = [
   'Johnny Bell (@johnnyxbell)',
   'Garrett Fritz (@gfritzdev)',
   'Juliano Farias (@frontendwizard)',
-  'Kristóf Poduszló (@kripod)',
   'Peter Pistorius (@peterp)',
   'Agustín Villalobos (@agustin-v)',
   'Panigo (@rangigo)',
   'Jesse Jafa, (@awareness481)',
+  'Arijit Bhattacharya, (@hoodwink73)',
+  'Bryan Grill, (@brygrill)',
 ]
 
 const Home = () => {
