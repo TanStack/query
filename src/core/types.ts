@@ -69,30 +69,23 @@ export interface QueryOptions<
   getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
 }
 
-export interface FetchQueryOptions<
-  TData = unknown,
-  TError = unknown,
-  TQueryFnData = TData
-> extends QueryOptions<TData, TError, TQueryFnData> {
-  /**
-   * The time in milliseconds after data is considered stale.
-   * If set to `Infinity`, the data will never be considered stale.
-   */
-  staleTime?: number
-}
-
 export interface QueryObserverOptions<
   TData = unknown,
   TError = unknown,
   TQueryFnData = TData,
   TQueryData = TQueryFnData
-> extends FetchQueryOptions<TData, TError, TQueryFnData> {
+> extends QueryOptions<TData, TError, TQueryFnData> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    * Defaults to `true`.
    */
   enabled?: boolean
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If set to `Infinity`, the data will never be considered stale.
+   */
+  staleTime?: number
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
    * Defaults to `false`.
@@ -185,6 +178,18 @@ export interface InfiniteQueryObserverOptions<
     TQueryFnData,
     InfiniteData<TQueryData>
   > {}
+
+export interface FetchQueryOptions<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData
+> extends QueryOptions<TData, TError, TQueryFnData> {
+  /**
+   * The time in milliseconds after data is considered stale.
+   * If the data is fresh it will be returned from the cache.
+   */
+  staleTime?: number
+}
 
 export interface ResultOptions {
   throwOnError?: boolean

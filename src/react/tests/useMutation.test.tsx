@@ -247,6 +247,8 @@ describe('useMutation', () => {
     await sleep(100)
 
     expect(callbacks).toEqual([
+      'useMutation.onSuccess',
+      'useMutation.onSettled',
       'mutateAsync.onSuccess',
       'mutateAsync.onSettled',
       'mutateAsync.result:todo',
@@ -296,6 +298,8 @@ describe('useMutation', () => {
     await sleep(100)
 
     expect(callbacks).toEqual([
+      'useMutation.onError',
+      'useMutation.onSettled',
       'mutateAsync.onError',
       'mutateAsync.onSettled',
       'mutateAsync.error:oops',

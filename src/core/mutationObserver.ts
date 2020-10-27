@@ -1,4 +1,4 @@
-import { getDefaultState, Mutation } from './mutation'
+import { Action, getDefaultState, Mutation } from './mutation'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
@@ -14,6 +14,12 @@ import { getStatusProps } from './utils'
 type MutationObserverListener<TData, TError, TVariables, TContext> = (
   result: MutationObserverResult<TData, TError, TVariables, TContext>
 ) => void
+
+interface NotifyOptions {
+  listeners?: boolean
+  onError?: boolean
+  onSuccess?: boolean
+}
 
 // CLASS
 
@@ -35,6 +41,7 @@ export class MutationObserver<
     TContext
   >
   private currentMutation?: Mutation<TData, TError, TVariables, TContext>
+  private mutateOptions?: MutateOptions<TData, TError, TVariables, TContext>
 
   constructor(
     client: QueryClient,
@@ -65,9 +72,21 @@ export class MutationObserver<
     }
   }
 
-  onMutationUpdate(): void {
+  onMutationUpdate(action: Action<TData, TError, TVariables, TContext>): void {
     this.updateResult()
-    this.notify()
+
+    // Determine which callbacks to trigger
+    const notifyOptions: NotifyOptions = {
+      listeners: true,
+    }
+
+    if (action.type === 'success') {
+      notifyOptions.onSuccess = true
+    } else if (action.type === 'error') {
+      notifyOptions.onError = true
+    }
+
+    this.notify(notifyOptions)
   }
 
   getCurrentResult(): MutationObserverResult<
@@ -82,20 +101,21 @@ export class MutationObserver<
   reset(): void {
     this.currentMutation = undefined
     this.updateResult()
-    this.notify()
+    this.notify({ listeners: true })
   }
 
   mutate(
     variables?: TVariables,
     options?: MutateOptions<TData, TError, TVariables, TContext>
   ): Promise<TData> {
+    this.mutateOptions = options
+
     if (this.currentMutation) {
       this.currentMutation.removeObserver(this)
     }
 
     this.currentMutation = this.client.getMutationCache().build(this.client, {
       ...this.options,
-      ...options,
       variables: variables ?? this.options.variables,
     })
 
@@ -117,11 +137,43 @@ export class MutationObserver<
     }
   }
 
-  private notify() {
+  private notify(options: NotifyOptions) {
     notifyManager.batch(() => {
-      this.listeners.forEach(listener => {
-        listener(this.currentResult)
-      })
+      // First trigger the mutate callbacks
+      if (this.mutateOptions) {
+        if (options.onSuccess) {
+          this.mutateOptions.onSuccess?.(
+            this.currentResult.data!,
+            this.currentResult.variables!,
+            this.currentResult.context
+          )
+          this.mutateOptions.onSettled?.(
+            this.currentResult.data!,
+            null,
+            this.currentResult.variables!,
+            this.currentResult.context
+          )
+        } else if (options.onError) {
+          this.mutateOptions.onError?.(
+            this.currentResult.error!,
+            this.currentResult.variables!,
+            this.currentResult.context
+          )
+          this.mutateOptions.onSettled?.(
+            undefined,
+            this.currentResult.error,
+            this.currentResult.variables!,
+            this.currentResult.context
+          )
+        }
+      }
+
+      // Then trigger the listeners
+      if (options.listeners) {
+        this.listeners.forEach(listener => {
+          listener(this.currentResult)
+        })
+      }
     })
   }
 }

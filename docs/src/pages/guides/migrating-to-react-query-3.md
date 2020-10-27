@@ -190,9 +190,6 @@ try {
 }
 ```
 
-Callbacks passed to the `mutate` or `mutateAsync` functions will now override the callbacks defined on `useMutation`.
-The `mutateAsync` function can be used to compose side effects.
-
 ### Query object syntax
 
 The object syntax has been collapsed:

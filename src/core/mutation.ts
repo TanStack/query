@@ -64,7 +64,7 @@ interface SetStateAction<TData, TError, TVariables, TContext> {
   state: MutationState<TData, TError, TVariables, TContext>
 }
 
-type Action<TData, TError, TVariables, TContext> =
+export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction
@@ -230,7 +230,7 @@ export class Mutation<
 
     notifyManager.batch(() => {
       this.observers.forEach(observer => {
-        observer.onMutationUpdate()
+        observer.onMutationUpdate(action)
       })
       this.mutationCache.notify(this)
     })
