@@ -67,6 +67,7 @@ export interface QueryOptions<
    * The result will also be used to determine the value of `hasNextPage`.
    */
   getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
+  _defaulted?: boolean
 }
 
 export interface QueryObserverOptions<
@@ -288,6 +289,7 @@ export interface MutationOptions<
   ) => Promise<void> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue
+  _defaulted?: boolean
 }
 
 export interface MutationObserverOptions<

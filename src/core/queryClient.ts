@@ -13,6 +13,7 @@ import type {
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
+  MutationObserverOptions,
   MutationOptions,
   QueryFunction,
   QueryKey,
@@ -302,7 +303,7 @@ export class QueryClient {
 
   setQueryDefaults(
     queryKey: QueryKey,
-    options: QueryOptions<any, any, any>
+    options: QueryObserverOptions<any, any, any, any>
   ): void {
     const result = this.queryDefaults.find(
       x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
@@ -315,15 +316,17 @@ export class QueryClient {
   }
 
   getQueryDefaults(
-    queryKey: QueryKey
-  ): QueryOptions<any, any, any> | undefined {
-    return this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
-      ?.defaultOptions
+    queryKey?: QueryKey
+  ): QueryObserverOptions<any, any, any> | undefined {
+    return queryKey
+      ? this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
+          ?.defaultOptions
+      : undefined
   }
 
   setMutationDefaults(
     mutationKey: MutationKey,
-    options: MutationOptions<any, any, any, any>
+    options: MutationObserverOptions<any, any, any, any>
   ): void {
     const result = this.mutationDefaults.find(
       x => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey)
@@ -336,27 +339,45 @@ export class QueryClient {
   }
 
   getMutationDefaults(
-    mutationKey: MutationKey
-  ): MutationOptions<any, any, any, any> | undefined {
-    return this.mutationDefaults.find(x =>
-      partialMatchKey(mutationKey, x.mutationKey)
-    )?.defaultOptions
+    mutationKey?: MutationKey
+  ): MutationObserverOptions<any, any, any, any> | undefined {
+    return mutationKey
+      ? this.mutationDefaults.find(x =>
+          partialMatchKey(mutationKey, x.mutationKey)
+        )?.defaultOptions
+      : undefined
   }
 
   defaultQueryOptions<T extends QueryOptions<any, any>>(options?: T): T {
-    return { ...this.defaultOptions.queries, ...options } as T
+    if (options?._defaulted) {
+      return options
+    }
+    return {
+      ...this.defaultOptions.queries,
+      ...this.getQueryDefaults(options?.queryKey),
+      ...options,
+      _defaulted: true,
+    } as T
   }
 
   defaultQueryObserverOptions<T extends QueryObserverOptions<any, any>>(
     options?: T
   ): T {
-    return { ...this.defaultOptions.queries, ...options } as T
+    return this.defaultQueryOptions(options)
   }
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(
     options?: T
   ): T {
-    return { ...this.defaultOptions.mutations, ...options } as T
+    if (options?._defaulted) {
+      return options
+    }
+    return {
+      ...this.defaultOptions.mutations,
+      ...this.getMutationDefaults(options?.mutationKey),
+      ...options,
+      _defaulted: true,
+    } as T
   }
 
   clear(): void {

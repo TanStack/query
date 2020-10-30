@@ -60,6 +60,15 @@ describe('queryCache', () => {
     consoleMock.mockRestore()
   })
 
+  test('setQueryDefaults should also set defaults for observers', async () => {
+    const key = queryKey()
+    queryClient.setQueryDefaults(key, { queryFn: () => 'data', enabled: false })
+    const observer = new QueryObserver(queryClient, {
+      queryKey: [key],
+    })
+    expect(observer.getCurrentResult().status).toBe('idle')
+  })
+
   test('setQueryData does not crash if query could not be found', () => {
     const key = queryKey()
 
