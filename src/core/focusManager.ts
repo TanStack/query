@@ -2,19 +2,20 @@ import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
 class FocusManager extends Subscribable {
-  private removeHandler?: () => void
+  private focused?: boolean
+  private removeEventListener?: () => void
 
   protected onSubscribe(): void {
-    if (!this.removeHandler) {
-      this.setDefaultHandler()
+    if (!this.removeEventListener) {
+      this.setDefaultEventListener()
     }
   }
 
-  setHandler(init: (onFocus: () => void) => () => void): void {
-    if (this.removeHandler) {
-      this.removeHandler()
+  setEventListener(setup: (onFocus: () => void) => () => void): void {
+    if (this.removeEventListener) {
+      this.removeEventListener()
     }
-    this.removeHandler = init(() => {
+    this.removeEventListener = setup(() => {
       this.onFocus()
     })
   }
@@ -25,7 +26,19 @@ class FocusManager extends Subscribable {
     })
   }
 
+  setFocused(focused: boolean | undefined): void {
+    this.focused = focused
+
+    if (focused) {
+      this.onFocus()
+    }
+  }
+
   isFocused(): boolean {
+    if (typeof this.focused === 'boolean') {
+      return this.focused
+    }
+
     // document global can be unavailable in react native
     if (typeof document === 'undefined') {
       return true
@@ -36,9 +49,9 @@ class FocusManager extends Subscribable {
     )
   }
 
-  private setDefaultHandler() {
+  private setDefaultEventListener() {
     if (!isServer && window?.addEventListener) {
-      this.setHandler(onFocus => {
+      this.setEventListener(onFocus => {
         // Listen to visibillitychange and focus
         window.addEventListener('visibilitychange', onFocus, false)
         window.addEventListener('focus', onFocus, false)

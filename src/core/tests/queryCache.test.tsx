@@ -3,7 +3,6 @@ import {
   queryKey,
   mockVisibilityState,
   mockConsoleError,
-  mockNavigatorOnLine,
   expectType,
 } from '../../react/tests/utils'
 import {
@@ -12,6 +11,7 @@ import {
   QueryObserver,
   isCancelledError,
   isError,
+  onlineManager,
 } from '../..'
 import { QueryObserverResult } from '../types'
 import { QueriesObserver } from '../queriesObserver'
@@ -1172,7 +1172,7 @@ describe('queryCache', () => {
     it('should continue retry after reconnect and resolve all promises', async () => {
       const key = queryKey()
 
-      mockNavigatorOnLine(false)
+      onlineManager.setOnline(false)
 
       let count = 0
       let result
@@ -1206,8 +1206,7 @@ describe('queryCache', () => {
       expect(result).toBeUndefined()
 
       // Reset navigator to original value
-      mockNavigatorOnLine(true)
-      window.dispatchEvent(new Event('online'))
+      onlineManager.setOnline(true)
 
       // There should not be a result yet
       expect(result).toBeUndefined()
