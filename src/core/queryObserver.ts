@@ -362,7 +362,7 @@ export class QueryObserver<
       if (this.currentResult && state.data === this.currentResultState?.data) {
         data = this.currentResult.data
       } else {
-        data = this.options.select(state.data)
+        data = this.options.select(state.data, this.options.queryKey)
         if (this.options.structuralSharing !== false) {
           data = replaceEqualDeep(this.currentResult?.data, data)
         }

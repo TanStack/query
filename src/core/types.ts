@@ -149,7 +149,7 @@ export interface QueryObserverOptions<
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
-  select?: (data: TQueryData) => TData
+  select?: (data: TQueryData, queryKey?: QueryKey) => TData
   /**
    * If set to `true`, the query will suspend when `status === 'loading'`
    * and throw errors when `status === 'error'`.

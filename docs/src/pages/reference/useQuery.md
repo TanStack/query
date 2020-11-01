@@ -127,7 +127,7 @@ const result = useQuery({
 - `onSettled: (data?: TData, error?: TError) => void`
   - Optional
   - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error
-- `select: (data: TData) => unknown`
+- `select: (data: TData, queryKey: unknown[]) => unknown`
   - Optional
   - This option can be used to transform or select a part of the data returned by the query function.
 - `suspense: boolean`
