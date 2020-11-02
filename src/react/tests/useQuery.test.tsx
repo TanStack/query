@@ -116,20 +116,36 @@ describe('useQuery', () => {
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test')
+      const state = useQuery<string, Error>(key, () => 'test')
 
       states.push(state)
 
-      return (
-        <div>
-          <h1>Status: {state.status}</h1>
-        </div>
-      )
+      if (state.isIdle) {
+        expectType<undefined>(state.data)
+        expectType<null>(state.error)
+        return <span>idle</span>
+      }
+
+      if (state.isLoading) {
+        expectType<undefined>(state.data)
+        expectType<null>(state.error)
+        return <span>loading</span>
+      }
+
+      if (state.isLoadingError) {
+        expectType<undefined>(state.data)
+        expectType<Error>(state.error)
+        return <span>{state.error}</span>
+      }
+
+      expectType<string>(state.data)
+      expectType<Error | null>(state.error)
+      return <span>{state.data}</span>
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('Status: success'))
+    await sleep(10)
 
     expect(states[0]).toEqual({
       data: undefined,
@@ -141,8 +157,10 @@ describe('useQuery', () => {
       isFetching: true,
       isIdle: false,
       isLoading: true,
-      isPreviousData: false,
+      isLoadingError: false,
       isPlaceholderData: false,
+      isPreviousData: false,
+      isRefetchError: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -161,8 +179,10 @@ describe('useQuery', () => {
       isFetching: false,
       isIdle: false,
       isLoading: false,
-      isPreviousData: false,
+      isLoadingError: false,
       isPlaceholderData: false,
+      isPreviousData: false,
+      isRefetchError: false,
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
@@ -211,8 +231,10 @@ describe('useQuery', () => {
       isFetching: true,
       isIdle: false,
       isLoading: true,
-      isPreviousData: false,
+      isLoadingError: false,
       isPlaceholderData: false,
+      isPreviousData: false,
+      isRefetchError: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -231,8 +253,10 @@ describe('useQuery', () => {
       isFetching: true,
       isIdle: false,
       isLoading: true,
-      isPreviousData: false,
+      isLoadingError: false,
       isPlaceholderData: false,
+      isPreviousData: false,
+      isRefetchError: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -251,8 +275,10 @@ describe('useQuery', () => {
       isFetching: false,
       isIdle: false,
       isLoading: false,
-      isPreviousData: false,
+      isLoadingError: true,
       isPlaceholderData: false,
+      isPreviousData: false,
+      isRefetchError: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
