@@ -11,27 +11,29 @@ class FocusManager extends Subscribable {
     }
   }
 
-  setEventListener(setup: (onFocus: () => void) => () => void): void {
+  setEventListener(
+    setup: (onFocus: () => void) => (focused?: boolean) => void
+  ): void {
     if (this.removeEventListener) {
       this.removeEventListener()
     }
-    this.removeEventListener = setup(() => {
-      this.onFocus()
+    this.removeEventListener = setup((focused?: boolean) => {
+      this.setFocused(focused)
     })
+  }
+
+  setFocused(focused?: boolean): void {
+    this.focused = focused
+
+    if (focused) {
+      this.onFocus()
+    }
   }
 
   onFocus(): void {
     this.listeners.forEach(listener => {
       listener()
     })
-  }
-
-  setFocused(focused: boolean | undefined): void {
-    this.focused = focused
-
-    if (focused) {
-      this.onFocus()
-    }
   }
 
   isFocused(): boolean {

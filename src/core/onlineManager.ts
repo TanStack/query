@@ -11,27 +11,29 @@ class OnlineManager extends Subscribable {
     }
   }
 
-  setEventListener(setup: (onOnline: () => void) => () => void): void {
+  setEventListener(
+    setup: (setOnline: () => void) => (online?: boolean) => void
+  ): void {
     if (this.removeEventListener) {
       this.removeEventListener()
     }
-    this.removeEventListener = setup(() => {
-      this.onOnline()
+    this.removeEventListener = setup((online?: boolean) => {
+      this.setOnline(online)
     })
+  }
+
+  setOnline(online?: boolean): void {
+    this.online = online
+
+    if (online) {
+      this.onOnline()
+    }
   }
 
   onOnline(): void {
     this.listeners.forEach(listener => {
       listener()
     })
-  }
-
-  setOnline(online: boolean | undefined): void {
-    this.online = online
-
-    if (online) {
-      this.onOnline()
-    }
   }
 
   isOnline(): boolean {

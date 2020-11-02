@@ -18,20 +18,13 @@ Its available methods are:
 `setEventListener` can be used to set a custom event listener:
 
 ```js
+import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from 'react-query'
 
-onlineManager.setEventListener(handleOnline => {
-  // Listen to visibillitychange and online
-  if (typeof window !== 'undefined' && window.addEventListener) {
-    window.addEventListener('visibilitychange', handleOnline, false)
-    window.addEventListener('online', handleOnline, false)
-  }
-
-  return () => {
-    // Be sure to unsubscribe if a new handler is set
-    window.removeEventListener('visibilitychange', handleOnline)
-    window.removeEventListener('online', handleOnline)
-  }
+onlineManager.setEventListener(setOnline => {
+  return NetInfo.addEventListener(state => {
+    setOnline(state.isConnected)
+  })
 })
 ```
 
