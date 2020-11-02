@@ -34,14 +34,20 @@ export interface UseInfiniteQueryOptions<
     TQueryData
   > {}
 
-export interface UseBaseQueryResult<TData = unknown, TError = unknown>
-  extends QueryObserverResult<TData, TError> {}
+export type UseBaseQueryResult<
+  TData = unknown,
+  TError = unknown
+> = QueryObserverResult<TData, TError>
 
-export interface UseQueryResult<TData = unknown, TError = unknown>
-  extends UseBaseQueryResult<TData, TError> {}
+export type UseQueryResult<
+  TData = unknown,
+  TError = unknown
+> = UseBaseQueryResult<TData, TError>
 
-export interface UseInfiniteQueryResult<TData = unknown, TError = unknown>
-  extends InfiniteQueryObserverResult<TData, TError> {}
+export type UseInfiniteQueryResult<
+  TData = unknown,
+  TError = unknown
+> = InfiniteQueryObserverResult<TData, TError>
 
 export interface UseMutationOptions<
   TData = unknown,
