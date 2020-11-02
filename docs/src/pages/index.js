@@ -17,6 +17,7 @@ const supporters = [
   ['Joshua Turner', 'https://github.com/joshua-turner'],
   ['Fillip Peyton', 'https://github.com/fillippeyton'],
   ['Tim Myers', 'https://github.com/denvercoder'],
+  ['Andy Slezak', 'https://github.com/amslezak'],
 ]
 
 const fans = [
@@ -38,6 +39,7 @@ const fans = [
   'Jesse Jafa, (@awareness481)',
   'Arijit Bhattacharya, (@hoodwink73)',
   'Bryan Grill, (@brygrill)',
+  'Peter Hozák, (@Aprillion)',
 ]
 
 const Home = () => {
