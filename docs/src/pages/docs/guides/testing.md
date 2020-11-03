@@ -79,7 +79,7 @@ const expectation = nock('http://example.com')
 const { result, waitFor } = renderHook(() => useFetchData(), { wrapper });
 
 await waitFor(() => {
-  return expectation.isDone();
+  return result.current.isSuccess();
 });
 
 expect(result.current).toEqual({answer: 42});
