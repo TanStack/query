@@ -160,6 +160,11 @@
               "editUrl": "/docs/guides/suspense.md"
             },
             {
+              "title": "Testing",
+              "path": "/docs/guides/testing",
+              "editUrl": "/docs/guides/testing.md"
+            },
+            {
               "title": "Does this replace [Redux, MobX, etc]?",
               "path": "/docs/guides/does-this-replace-client-state",
               "editUrl": "/docs/guides/does-this-replace-client-state.md"
