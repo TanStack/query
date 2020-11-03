@@ -18,7 +18,11 @@ class OnlineManager extends Subscribable {
       this.removeEventListener()
     }
     this.removeEventListener = setup((online?: boolean) => {
-      this.setOnline(online)
+      if (typeof online === 'boolean') {
+        this.setOnline(online)
+      } else {
+        this.onOnline()
+      }
     })
   }
 
