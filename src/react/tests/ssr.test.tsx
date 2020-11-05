@@ -89,13 +89,9 @@ describe('Server Side Rendering', () => {
 
     function Page() {
       const [page, setPage] = React.useState(1)
-      const { data } = useQuery(
-        [key, page],
-        async (_: string, pageArg: number) => {
-          return pageArg
-        },
-        { initialData: 1 }
-      )
+      const { data } = useQuery([key, page], async () => page, {
+        initialData: 1,
+      })
 
       return (
         <div>

@@ -181,7 +181,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
     ["todos", { filter }],
-    fetchTodos
+    () => fetchTodos({ filter })
   );
 
   return (
@@ -235,7 +235,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   // Don't attempt to query until editingIndex is truthy
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
     ["todo", { id: editingIndex }],
-    fetchTodoById,
+    () => fetchTodoById({ id: editingIndex }),
     {
       enabled: editingIndex !== null,
     }
@@ -370,7 +370,7 @@ function AddTodo() {
   );
 }
 
-function fetchTodos(key, { filter } = {}) {
+function fetchTodos({ filter } = {}) {
   console.info("fetchTodos", { filter });
   const promise = new Promise((resolve, reject) => {
     setTimeout(() => {
@@ -388,7 +388,7 @@ function fetchTodos(key, { filter } = {}) {
   return promise;
 }
 
-function fetchTodoById(key, { id }) {
+function fetchTodoById({ id }) {
   console.info("fetchTodoById", { id });
   return new Promise((resolve, reject) => {
     setTimeout(() => {

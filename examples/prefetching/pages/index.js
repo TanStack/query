@@ -14,7 +14,7 @@ const getCharacters = async () => {
   return data
 }
 
-const getCharacter = async (key, selectedChar) => {
+const getCharacter = async (selectedChar) => {
   await new Promise(r => setTimeout(r, 500))
   const { data } = await axios.get(
     `https://rickandmortyapi.com/api/character/${selectedChar}`
@@ -41,7 +41,7 @@ function Example() {
 
   const { data: selectedData } = useQuery(
     ['character', selectedChar],
-    getCharacter
+    () => getCharacter(selectedChar)
   )
 
   const prefetchNext = async id => {
