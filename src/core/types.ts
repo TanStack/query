@@ -225,7 +225,9 @@ export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
 
 export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   data: TData | undefined
+  dataUpdatedAt: number
   error: TError | null
+  errorUpdatedAt: number
   failureCount: number
   isError: boolean
   isFetched: boolean
@@ -244,7 +246,6 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
-  updatedAt: number
 }
 
 export interface QueryObserverIdleResult<TData = unknown, TError = unknown>

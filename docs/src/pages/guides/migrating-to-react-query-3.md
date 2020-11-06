@@ -324,6 +324,10 @@ Parameters can still be filtered within the query function itself as the `QueryF
 
 The `QueryResult.clear()` method has been renamed to `QueryResult.remove()`.
 
+### QueryResult.updatedAt
+
+Because data and errors can be present at the same time, the `updatedAt` property has been split into `dataUpdatedAt` and `errorUpdatedAt`.
+
 ### setConsole
 
 The `setConsole` function has been replaced by `setLogger`:

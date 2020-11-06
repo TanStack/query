@@ -83,7 +83,7 @@ interface FetchAction {
 interface SuccessAction<TData> {
   data: TData | undefined
   type: 'success'
-  updatedAt?: number
+  dataUpdatedAt?: number
 }
 
 interface ErrorAction<TError> {
@@ -201,7 +201,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     this.dispatch({
       data,
       type: 'success',
-      updatedAt: options?.updatedAt,
+      dataUpdatedAt: options?.updatedAt,
     })
 
     return data
@@ -483,7 +483,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
           ...state,
           data: action.data,
           dataUpdateCount: state.dataUpdateCount + 1,
-          dataUpdatedAt: action.updatedAt ?? Date.now(),
+          dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
           error: null,
           fetchFailureCount: 0,
           isFetching: false,

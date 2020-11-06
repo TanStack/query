@@ -73,7 +73,9 @@ describe('useInfiniteQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toEqual({
       data: undefined,
+      dataUpdatedAt: 0,
       error: null,
+      errorUpdatedAt: 0,
       failureCount: 0,
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
@@ -96,12 +98,13 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
-      updatedAt: expect.any(Number),
     })
 
     expect(states[1]).toEqual({
       data: { pages: [0], pageParams: [undefined] },
+      dataUpdatedAt: expect.any(Number),
       error: null,
+      errorUpdatedAt: 0,
       failureCount: 0,
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
@@ -124,7 +127,6 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'success',
-      updatedAt: expect.any(Number),
     })
   })
 

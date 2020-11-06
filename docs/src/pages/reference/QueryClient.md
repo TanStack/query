@@ -169,7 +169,7 @@ setQueryData(queryKey, oldData => newData)
 
 ```js
 const state = queryClient.getQueryState(queryKey)
-console.log(state.updatedAt)
+console.log(state.dataUpdatedAt)
 ```
 
 **Options**

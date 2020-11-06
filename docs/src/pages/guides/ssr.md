@@ -41,7 +41,7 @@ The setup is minimal and this can be a quick solution for some cases, but there 
 
 - If you are calling `useQuery` in a component deeper down in the tree you need to pass the `initialData` down to that point
 - If you are calling `useQuery` with the same query in multiple locations, you need to pass `initialData` to all of them
-- There is no way to know at what time the query was fetched on the server, so `updatedAt` and determining if the query needs refetching is based on when the page loaded instead
+- There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
 
 ### Using Hydration
 
@@ -186,7 +186,7 @@ Sometimes this behavior is not desirable, maybe you want to render an error page
 
 ### Staleness is measured from when the query was fetched on the server
 
-A query is considered stale depending on when it was `updatedAt`. A caveat here is that the server needs to have the correct time for this to work properly, but UTC time is used, so timezones do not factor into this.
+A query is considered stale depending on when it was `dataUpdatedAt`. A caveat here is that the server needs to have the correct time for this to work properly, but UTC time is used, so timezones do not factor into this.
 
 Because `staleTime` defaults to `0`, queries will be refetched in the background on page load by default. You might want to use a higher `staleTime` to avoid this double fetching, especially if you don't cache your markup.
 

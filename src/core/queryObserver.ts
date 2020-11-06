@@ -268,7 +268,7 @@ export class QueryObserver<
     }
 
     const time = timeUntilStale(
-      this.currentResult.updatedAt,
+      this.currentResult.dataUpdatedAt,
       this.options.staleTime
     )
 
@@ -336,7 +336,7 @@ export class QueryObserver<
     let isPreviousData = false
     let isPlaceholderData = false
     let data: TData | undefined
-    let updatedAt = state.dataUpdatedAt
+    let dataUpdatedAt = state.dataUpdatedAt
 
     // Optimistically set status to loading if we will start fetching
     if (willFetch) {
@@ -353,7 +353,7 @@ export class QueryObserver<
       this.previousQueryResult?.isSuccess
     ) {
       data = this.previousQueryResult.data
-      updatedAt = this.previousQueryResult.updatedAt
+      dataUpdatedAt = this.previousQueryResult.dataUpdatedAt
       status = this.previousQueryResult.status
       isPreviousData = true
     }
@@ -394,7 +394,9 @@ export class QueryObserver<
     const result: QueryObserverBaseResult<TData, TError> = {
       ...getStatusProps(status),
       data,
+      dataUpdatedAt,
       error: state.error,
+      errorUpdatedAt: state.errorUpdateCount,
       failureCount: state.fetchFailureCount,
       isFetched: state.dataUpdateCount > 0,
       isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
@@ -406,7 +408,6 @@ export class QueryObserver<
       isStale: this.isStale(),
       refetch: this.refetch,
       remove: this.remove,
-      updatedAt,
     }
 
     return result as QueryObserverResult<TData, TError>

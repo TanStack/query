@@ -71,7 +71,7 @@ function Todo({ todoId }) {
 }
 ```
 
-Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryClient.getQueryState` method instead to get more information about the source query, including a `state.updatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
+Most of the time, this pattern works well, but if the source query you're using to look up the initial data from is old, you may not want to use the data at all and just fetch from the server. To make this decision easier, you can use the `queryClient.getQueryState` method instead to get more information about the source query, including a `state.dataUpdatedAt` timestamp you can use to decide if the query is "fresh" enough for your needs:
 
 ```js
 function Todo({ todoId }) {
@@ -81,7 +81,7 @@ function Todo({ todoId }) {
       const state = queryClient.getQueryState('todos')
 
       // If the query exists and has data that is no older than 10 seconds...
-      if (state && Date.now() - state.updatedAt <= 10 * 1000) {
+      if (state && Date.now() - state.dataUpdatedAt <= 10 * 1000) {
         // return the individual todo
         return state.data.find(d => d.id === todoId)
       }

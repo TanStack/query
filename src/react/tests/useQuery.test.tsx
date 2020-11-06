@@ -123,7 +123,9 @@ describe('useQuery', () => {
 
     expect(states[0]).toEqual({
       data: undefined,
+      dataUpdatedAt: 0,
       error: null,
+      errorUpdatedAt: 0,
       failureCount: 0,
       isError: false,
       isFetched: false,
@@ -140,12 +142,13 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
-      updatedAt: expect.any(Number),
     })
 
     expect(states[1]).toEqual({
       data: 'test',
+      dataUpdatedAt: expect.any(Number),
       error: null,
+      errorUpdatedAt: 0,
       failureCount: 0,
       isError: false,
       isFetched: true,
@@ -162,7 +165,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'success',
-      updatedAt: expect.any(Number),
     })
   })
 
@@ -197,7 +199,9 @@ describe('useQuery', () => {
 
     expect(states[0]).toEqual({
       data: undefined,
+      dataUpdatedAt: 0,
       error: null,
+      errorUpdatedAt: 0,
       failureCount: 0,
       isError: false,
       isFetched: false,
@@ -214,12 +218,13 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
-      updatedAt: expect.any(Number),
     })
 
     expect(states[1]).toEqual({
       data: undefined,
+      dataUpdatedAt: 0,
       error: null,
+      errorUpdatedAt: 0,
       failureCount: 1,
       isError: false,
       isFetched: false,
@@ -236,12 +241,13 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
-      updatedAt: expect.any(Number),
     })
 
     expect(states[2]).toEqual({
       data: undefined,
+      dataUpdatedAt: 0,
       error: 'rejected',
+      errorUpdatedAt: expect.any(Number),
       failureCount: 2,
       isError: true,
       isFetched: false,
@@ -258,7 +264,6 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'error',
-      updatedAt: expect.any(Number),
     })
 
     consoleMock.mockRestore()
@@ -703,11 +708,11 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(4)
     // Initial
-    expect(states[0]).toMatchObject({ data: undefined, updatedAt: 0 })
+    expect(states[0]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
     // Fetched
     expect(states[1]).toMatchObject({ data: 1 })
     // Switch
-    expect(states[2]).toMatchObject({ data: undefined, updatedAt: 0 })
+    expect(states[2]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
     // Fetched
     expect(states[3]).toMatchObject({ data: 2 })
   })
