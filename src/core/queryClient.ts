@@ -317,7 +317,7 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey?: QueryKey
-  ): QueryObserverOptions<any, any, any> | undefined {
+  ): QueryObserverOptions<any, any, any, any> | undefined {
     return queryKey
       ? this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
           ?.defaultOptions
@@ -348,7 +348,7 @@ export class QueryClient {
       : undefined
   }
 
-  defaultQueryOptions<T extends QueryOptions<any, any>>(options?: T): T {
+  defaultQueryOptions<T extends QueryOptions<any, any, any>>(options?: T): T {
     if (options?._defaulted) {
       return options
     }
@@ -360,9 +360,9 @@ export class QueryClient {
     } as T
   }
 
-  defaultQueryObserverOptions<T extends QueryObserverOptions<any, any>>(
-    options?: T
-  ): T {
+  defaultQueryObserverOptions<
+    T extends QueryObserverOptions<any, any, any, any>
+  >(options?: T): T {
     return this.defaultQueryOptions(options)
   }
 

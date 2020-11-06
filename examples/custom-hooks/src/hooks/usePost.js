@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import axios from "axios";
 
-const getPostById = async (_, postId) => {
+const getPostById = async (postId) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com/posts/${postId}`
   );
@@ -9,5 +9,5 @@ const getPostById = async (_, postId) => {
 };
 
 export default function usePost(postId) {
-  return useQuery(["post", postId], getPostById);
+  return useQuery(["post", postId], () => getPostById(postId));
 }

@@ -88,7 +88,7 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
 
-export function parseQueryArgs<TOptions extends QueryOptions<any, any>>(
+export function parseQueryArgs<TOptions extends QueryOptions<any, any, any>>(
   arg1: QueryKey | TOptions,
   arg2?: QueryFunction<any> | TOptions,
   arg3?: TOptions

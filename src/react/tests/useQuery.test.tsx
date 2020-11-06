@@ -49,32 +49,6 @@ describe('useQuery', () => {
       expectType<string | undefined>(withError.data)
       expectType<Error | null>(withError.error)
 
-      // it should be possible to specify the query function arguments
-      useQuery<void, string, [string]>(key, arg1 => {
-        expectType<string>(arg1)
-      })
-
-      // the query function arguments should default to unknown
-      useQuery(key, arg1 => {
-        expectType<unknown>(arg1)
-      })
-
-      // the query function arguments should default to any if other generics are provided
-      useQuery<void>(key, arg1 => {
-        expectType<any>(arg1)
-        arg1.someMethod()
-      })
-
-      // it should be possible to specify the query function argument types
-      useQuery(key, (arg1: string) => {
-        expectType<string>(arg1)
-      })
-
-      // it should be possible to specify the query function argument types when generics are provided
-      useQuery<void>(key, (arg1: string) => {
-        expectType<string>(arg1)
-      })
-
       // it should provide the result type in the configuration
       useQuery([key], async () => true, {
         onSuccess: data => expectType<boolean>(data),
@@ -1700,7 +1674,7 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    expect(queryFn).toHaveBeenCalledWith(key, variables)
+    expect(queryFn).toHaveBeenCalledWith({ queryKey: [key, variables] })
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
@@ -2658,7 +2632,7 @@ describe('useQuery', () => {
 
   it('should accept an empty string as query key', async () => {
     function Page() {
-      const result = useQuery('', (key: string) => key)
+      const result = useQuery('', ctx => ctx.queryKey)
       return <>{JSON.stringify(result.data)}</>
     }
 
@@ -2669,13 +2643,13 @@ describe('useQuery', () => {
 
   it('should accept an object as query key', async () => {
     function Page() {
-      const result = useQuery([{ a: 'a' }], (key: { a: string }) => key)
+      const result = useQuery([{ a: 'a' }], ctx => ctx.queryKey)
       return <>{JSON.stringify(result.data)}</>
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('{"a":"a"}'))
+    await waitFor(() => rendered.getByText('[{"a":"a"}]'))
   })
 
   it('should refetch if any query instance becomes enabled', async () => {

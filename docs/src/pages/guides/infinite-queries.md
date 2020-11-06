@@ -43,8 +43,8 @@ With this information, we can create a "Load More" UI by:
 import { useInfiniteQuery } from 'react-query'
 
 function Projects() {
-  const fetchProjects = (key, cursor = 0) =>
-    fetch('/api/projects?cursor=' + cursor)
+  const fetchProjects = ({ pageParam = 0 }) =>
+    fetch('/api/projects?cursor=' + pageParam)
 
   const {
     data,
@@ -98,8 +98,8 @@ By default, the variable returned from `getNextPageParam` will be supplied to th
 
 ```js
 function Projects() {
-  const fetchProjects = (key, cursor = 0) =>
-    fetch('/api/projects?cursor=' + cursor)
+  const fetchProjects = ({ pageParam = 0 }) =>
+    fetch('/api/projects?cursor=' + pageParam)
 
   const {
     status,

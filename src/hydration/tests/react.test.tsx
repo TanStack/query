@@ -14,7 +14,7 @@ describe('React hydration', () => {
   beforeAll(async () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
-    await queryClient.prefetchQuery('string', dataQuery)
+    await queryClient.prefetchQuery('string', () => dataQuery('string'))
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
@@ -28,7 +28,7 @@ describe('React hydration', () => {
 
       function Page() {
         useHydrate(dehydratedState)
-        const { data } = useQuery('string', dataQuery)
+        const { data } = useQuery('string', () => dataQuery('string'))
         return (
           <div>
             <h1>{data}</h1>
@@ -55,7 +55,7 @@ describe('React hydration', () => {
       const queryClient = new QueryClient({ queryCache })
 
       function Page({ queryKey }: { queryKey: string }) {
-        const { data } = useQuery(queryKey, dataQuery)
+        const { data } = useQuery(queryKey, () => dataQuery(queryKey))
         return (
           <div>
             <h1>{data}</h1>
@@ -81,7 +81,9 @@ describe('React hydration', () => {
       await intermediateClient.prefetchQuery('string', () =>
         dataQuery('should change')
       )
-      await intermediateClient.prefetchQuery('added string', dataQuery)
+      await intermediateClient.prefetchQuery('added string', () =>
+        dataQuery('added string')
+      )
       const dehydrated = dehydrate(intermediateClient)
       intermediateClient.clear()
 
@@ -110,7 +112,7 @@ describe('React hydration', () => {
       const queryClient = new QueryClient({ queryCache })
 
       function Page() {
-        const { data } = useQuery('string', dataQuery)
+        const { data } = useQuery('string', () => dataQuery('string'))
         return (
           <div>
             <h1>{data}</h1>

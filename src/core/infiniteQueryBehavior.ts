@@ -1,5 +1,5 @@
 import type { QueryBehavior } from './query'
-import type { InfiniteData, QueryOptions } from './types'
+import type { InfiniteData, QueryFunctionContext, QueryOptions } from './types'
 
 export function infiniteQueryBehavior<
   TData,
@@ -8,7 +8,7 @@ export function infiniteQueryBehavior<
 >(): QueryBehavior<InfiniteData<TData>, TError, TQueryFnData> {
   return {
     onFetch: context => {
-      context.queryFn = () => {
+      context.fetchFn = () => {
         const fetchMore = context.fetchOptions?.meta?.fetchMore
         const pageParam = fetchMore?.pageParam
         const isFetchingNextPage = fetchMore?.direction === 'forward'
@@ -32,8 +32,13 @@ export function infiniteQueryBehavior<
             return Promise.resolve(pages)
           }
 
+          const queryFnContext: QueryFunctionContext = {
+            queryKey: context.queryKey,
+            pageParam: param,
+          }
+
           return Promise.resolve()
-            .then(() => queryFn(...context.params, param))
+            .then(() => queryFn(queryFnContext))
             .then(page => {
               newPageParams = previous
                 ? [param, ...newPageParams]

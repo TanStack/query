@@ -27,7 +27,7 @@ Consider the following example where we would ideally want to increment a pageIn
 function Todos() {
   const [page, setPage] = React.useState(0)
 
-  const fetchProjects = (key, page = 0) => fetch('/api/projects?page=' + page)
+  const fetchProjects = (page = 0) => fetch('/api/projects?page=' + page)
 
   const {
     isLoading,
@@ -36,7 +36,7 @@ function Todos() {
     data,
     isFetching,
     isPreviousData,
-  } = useQuery(['projects', page], fetchProjects)
+  } = useQuery(['projects', page], () => fetchProjects(page))
 
   return (
     <div>

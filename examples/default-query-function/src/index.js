@@ -11,9 +11,9 @@ import {
 import { ReactQueryDevtools } from "react-query-devtools";
 
 // Define a default query function that will receive the query key
-const defaultQueryFn = async (key) => {
+const defaultQueryFn = async ({ queryKey }) => {
   const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com${key}`
+    `https://jsonplaceholder.typicode.com${queryKey[0]}`
   );
   return data;
 };

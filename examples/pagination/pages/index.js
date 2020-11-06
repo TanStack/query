@@ -22,14 +22,14 @@ function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
-  const fetchProjects = React.useCallback(async (key, page = 0) => {
+  const fetchProjects = React.useCallback(async (page = 0) => {
     const { data } = await axios.get('/api/projects?page=' + page)
     return data
   }, [])
 
   const { status, data, error, isFetching, isPreviousData } = useQuery(
     ['projects', page],
-    fetchProjects,
+    () => fetchProjects(page),
     { keepPreviousData: true }
   )
 

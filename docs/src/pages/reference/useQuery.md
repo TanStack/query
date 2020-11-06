@@ -32,7 +32,6 @@ const {
   onError,
   onSettled,
   onSuccess,
-  queryFnParamsFilter,
   queryKeyHashFn,
   refetchInterval,
   refetchIntervalInBackground,
@@ -63,11 +62,11 @@ const result = useQuery({
   - The query key to use for this query.
   - The query key will be hashed into a stable hash. See [Query Keys](./guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
-- `queryFn: (...params: unknown[]) => Promise<TData>`
+- `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined**
   - The function that the query will use to request data.
-  - Receives the following variables in the order that they are provided:
-    - Query Key parameters
+  - Receives a `QueryFunctionContext` object with the following variables:
+    - `queryKey: QueryKey`
   - Must return a promise that will either resolves data or throws an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
@@ -149,10 +148,6 @@ const result = useQuery({
   - Optional
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
-- `queryFnParamsFilter: (...params: unknown[]) => unknown[]`
-  - Optional
-  - This function will filter the params that get passed to `queryFn`.
-  - For example, you can filter out the first query key from the params by using `queryFnParamsFilter: params => params.slice(1)`.
 - `structuralSharing: boolean`
   - Optional
   - Defaults to `true`
@@ -174,6 +169,10 @@ const result = useQuery({
   - A derived boolean from the `status` variable above, provided for convenience.
 - `isError: boolean`
   - A derived boolean from the `status` variable above, provided for convenience.
+- `isLoadingError: boolean`
+  - Will be `true` if the query failed while fetching for the first time.
+- `isRefetchError: boolean`
+  - Will be `true` if the query failed while refetching.
 - `data: TData`
   - Defaults to `undefined`.
   - The last successfully resolved data for the query.

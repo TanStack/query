@@ -65,6 +65,32 @@ const queryClient = new QueryClient({
 })
 ```
 
+### Query function parameters
+
+Query functions now get a `QueryFunctionContext` instead of the query key parameters.
+
+The `QueryFunctionContext` contains a `queryKey` and a `pageParam` in case of ininite queries.
+
+useQuery:
+
+```js
+// Old
+useQuery(['post', id], (_key, id) => fetchPost(id))
+
+// New
+useQuery(['post', id], () => fetchPost(id))
+```
+
+useInfiniteQuery:
+
+```js
+// Old
+useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
+
+// New
+useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPost(pageParam))
+```
+
 ### usePaginatedQuery()
 
 The `usePaginatedQuery()` hook has been replaced by the `keepPreviousData` option on `useQuery`:
@@ -93,9 +119,13 @@ const {
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
-} = useInfiniteQuery('projects', fetchProjects, {
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-})
+} = useInfiniteQuery(
+  'projects',
+  ({ pageParam = 0 }) => fetchProjects(pageParam),
+  {
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  }
+)
 ```
 
 Both directions:
@@ -109,10 +139,14 @@ const {
   hasPreviousPage,
   isFetchingNextPage,
   isFetchingPreviousPage,
-} = useInfiniteQuery('projects', fetchProjects, {
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-  getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
-})
+} = useInfiniteQuery(
+  'projects',
+  ({ pageParam = 0 }) => fetchProjects(pageParam),
+  {
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+    getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
+  }
+)
 ```
 
 One direction reversed:
@@ -123,13 +157,17 @@ const {
   fetchNextPage,
   hasNextPage,
   isFetchingNextPage,
-} = useInfiniteQuery('projects', fetchProjects, {
-  select: data => ({
-    pages: [...data.pages].reverse(),
-    pageParams: [...data.pageParams].reverse(),
-  }),
-  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
-})
+} = useInfiniteQuery(
+  'projects',
+  ({ pageParam = 0 }) => fetchProjects(pageParam),
+  {
+    select: data => ({
+      pages: [...data.pages].reverse(),
+      pageParams: [...data.pageParams].reverse(),
+    }),
+    getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+  }
+)
 ```
 
 Manually removing the first page:
@@ -275,6 +313,12 @@ The `forceFetchOnMount` query option has been replaced by `refetchOnMount: 'alwa
 
 When `refetchOnMount` was set to `false` any additional components were prevented from refetching on mount.
 In version 3 only the component where the option has been set will not refetch on mount.
+
+### QueryOptions.queryFnParamsFilter
+
+The `queryFnParamsFilter` option has been removed because query functions now get a `QueryFunctionContext` object instead of the query key.
+
+Parameters can still be filtered within the query function itself as the `QueryFunctionContext` also contains the query key.
 
 ### QueryResult.clear()
 

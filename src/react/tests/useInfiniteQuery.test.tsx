@@ -57,7 +57,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        (_key: string, pageParam: number = 0) => pageParam,
+        ({ pageParam = 0 }) => Number(pageParam),
         {
           getNextPageParam: lastPage => lastPage + 1,
         }
@@ -137,11 +137,11 @@ describe('useInfiniteQuery', () => {
       const start = 1
       const state = useInfiniteQuery(
         key,
-        async (_key, pageParam: number = start) => {
+        async ({ pageParam = start }) => {
           if (pageParam === 2) {
             throw new Error('error')
           }
-          return pageParam
+          return Number(pageParam)
         },
         {
           retry: 1,
@@ -180,9 +180,9 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery(
         [key, order],
-        async (_key, orderParam, pageParam = 0) => {
+        async ({ pageParam = 0 }) => {
           await sleep(10)
-          return `${pageParam}-${orderParam}`
+          return `${pageParam}-${order}`
         },
         {
           getNextPageParam: () => 1,
@@ -300,7 +300,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        (_key, pageParam: number = 0) => pageParam,
+        ({ pageParam = 0 }) => Number(pageParam),
         {
           select: data => ({
             pages: [...data.pages].reverse(),
@@ -353,9 +353,9 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery(
         key,
-        async (_key, pageParam: number = start) => {
+        async ({ pageParam = start }) => {
           await sleep(10)
-          return pageParam
+          return Number(pageParam)
         },
         {
           getPreviousPageParam: firstPage => firstPage - 1,
@@ -423,9 +423,8 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(
-        key,
-        (_key, pageParam: number = 10) => pageParam
+      const state = useInfiniteQuery(key, ({ pageParam = 10 }) =>
+        Number(pageParam)
       )
 
       states.push(state)
@@ -513,7 +512,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        (_key, pageParam: number = 10) => pageParam,
+        ({ pageParam = 10 }) => Number(pageParam),
         {
           getPreviousPageParam: firstPage => firstPage - 1,
           getNextPageParam: lastPage => lastPage + 1,
@@ -606,9 +605,9 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery(
         key,
-        async (_key, pageParam: number = start) => {
+        async ({ pageParam = start }) => {
           await sleep(50)
-          return pageParam
+          return Number(pageParam)
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
@@ -681,9 +680,9 @@ describe('useInfiniteQuery', () => {
       const start = 10
       const state = useInfiniteQuery(
         key,
-        async (_key, pageParam: number = start) => {
+        async ({ pageParam = start }) => {
           await sleep(50)
-          return pageParam
+          return Number(pageParam)
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
@@ -731,9 +730,9 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        async (_key, pageParam: number = 0) => {
+        async ({ pageParam = 0 }) => {
           await sleep(10)
-          return pageParam
+          return Number(pageParam)
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
@@ -797,9 +796,9 @@ describe('useInfiniteQuery', () => {
 
       const state = useInfiniteQuery(
         key,
-        async (_key, pageParam: number = firstPage) => {
+        async ({ pageParam = firstPage }) => {
           await sleep(10)
-          return pageParam
+          return Number(pageParam)
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
@@ -883,9 +882,13 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, (_key, pageParam = 1) => pageParam, {
-        getNextPageParam: () => undefined,
-      })
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 1 }) => Number(pageParam),
+        {
+          getNextPageParam: () => undefined,
+        }
+      )
 
       states.push(state)
 
@@ -918,7 +921,7 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, (_key, pageParam = 10) => pageParam, {
+      const state = useInfiniteQuery(key, ({ pageParam = 10 }) => pageParam, {
         initialData: { pages: [10], pageParams: [undefined] },
         getNextPageParam: lastPage => (lastPage === 10 ? 11 : undefined),
       })
@@ -954,7 +957,7 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, (_key, pageParam = 10) => pageParam, {
+      const state = useInfiniteQuery(key, ({ pageParam = 10 }) => pageParam, {
         initialData: { pages: [10], pageParams: [undefined] },
         getNextPageParam: () => undefined,
       })
@@ -1014,8 +1017,8 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery<Result, Error>(
         key,
-        (_key, nextId = 0) =>
-          fetchItemsWithLimit(nextId, fetchCountRef.current++),
+        ({ pageParam = 0 }) =>
+          fetchItemsWithLimit(pageParam, fetchCountRef.current++),
         {
           getNextPageParam: lastPage => lastPage.nextId,
         }
@@ -1141,11 +1144,11 @@ describe('useInfiniteQuery', () => {
         refetch,
       } = useInfiniteQuery<Result, Error>(
         key,
-        (_key, nextId = 0) =>
+        ({ pageParam = 0 }) =>
           fetchItems(
-            nextId,
+            pageParam,
             fetchCountRef.current++,
-            nextId === MAX || (nextId === MAX - 1 && isRemovedLastPage)
+            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage)
           ),
         {
           getNextPageParam: lastPage => lastPage.nextId,

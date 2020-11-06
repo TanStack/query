@@ -90,7 +90,7 @@ function Posts({ setPostId }) {
   );
 }
 
-const getPostById = async (key, id) => {
+const getPostById = async (id) => {
   const { data } = await axios.get(
     `https://jsonplaceholder.typicode.com/posts/${id}`
   );
@@ -98,7 +98,7 @@ const getPostById = async (key, id) => {
 };
 
 function usePost(postId) {
-  return useQuery(["post", postId], getPostById, {
+  return useQuery(["post", postId], () => getPostById(postId), {
     enabled: !!postId,
   });
 }
