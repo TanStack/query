@@ -40,6 +40,7 @@ const fans = [
   'Arijit Bhattacharya, (@hoodwink73)',
   'Bryan Grill, (@brygrill)',
   'Peter Hozák, (@Aprillion)',
+  'Arijit Bhattacharya, (@hoodwink73)',
 ]
 
 const Home = () => {
