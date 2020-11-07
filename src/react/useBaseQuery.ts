@@ -33,9 +33,13 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
     )
   }
 
-  // Always set stale time when using suspense
-  if (defaultedOptions.suspense && !defaultedOptions.staleTime) {
-    defaultedOptions.staleTime = 2000
+  // Always set stale time when using suspense to prevent
+  // fetching again when directly re-mounting after suspense
+  if (
+    defaultedOptions.suspense &&
+    typeof defaultedOptions.staleTime !== 'number'
+  ) {
+    defaultedOptions.staleTime = 1000
   }
 
   // Create query observer
@@ -72,7 +76,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
     if (
       observer.options.suspense &&
       !observer.hasListeners() &&
-      observer.willFetchOnMount()
+      observer.willLoadOnMount()
     ) {
       errorResetBoundary.clearReset()
       const unsubscribe = observer.subscribe()

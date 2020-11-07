@@ -92,13 +92,23 @@ export class QueryObserver<
     }
   }
 
-  willFetchOnMount(): boolean {
+  willLoadOnMount(): boolean {
+    return (
+      this.options.enabled !== false && !this.currentQuery.state.dataUpdatedAt
+    )
+  }
+
+  willRefetchOnMount(): boolean {
     return (
       this.options.enabled !== false &&
-      (!this.currentQuery.state.dataUpdatedAt ||
-        this.options.refetchOnMount === 'always' ||
+      this.currentQuery.state.dataUpdatedAt > 0 &&
+      (this.options.refetchOnMount === 'always' ||
         (this.options.refetchOnMount !== false && this.isStale()))
     )
+  }
+
+  willFetchOnMount(): boolean {
+    return this.willLoadOnMount() || this.willRefetchOnMount()
   }
 
   willFetchOnReconnect(): boolean {

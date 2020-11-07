@@ -275,6 +275,64 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
+  it('should refetch when re-mounting', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Component() {
+      const result = useQuery(
+        key,
+        async () => {
+          await sleep(100)
+          count++
+          return count
+        },
+        {
+          retry: false,
+          suspense: true,
+          staleTime: 0,
+        }
+      )
+      return (
+        <div>
+          <span>data: {result.data}</span>
+          <span>fetching: {result.isFetching ? 'true' : 'false'}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setShow(!show)
+            }}
+          >
+            {show ? 'hide' : 'show'}
+          </button>
+          <React.Suspense fallback="Loading...">
+            {show && <Component />}
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('data: 1'))
+    await waitFor(() => rendered.getByText('fetching: false'))
+    await waitFor(() => rendered.getByText('hide'))
+    fireEvent.click(rendered.getByText('hide'))
+    await waitFor(() => rendered.getByText('show'))
+    fireEvent.click(rendered.getByText('show'))
+    await waitFor(() => rendered.getByText('fetching: true'))
+    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() => rendered.getByText('fetching: false'))
+  })
+
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
     const key = queryKey()
 
