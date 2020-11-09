@@ -333,6 +333,56 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('fetching: false'))
   })
 
+  it('should suspend when switching to a new query', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Component(props: { queryKey: string }) {
+      const result = useQuery(
+        props.queryKey,
+        async () => {
+          await sleep(100)
+          return props.queryKey
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      return <div>data: {result.data}</div>
+    }
+
+    function Page() {
+      const [key, setKey] = React.useState(key1)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setKey(key2)
+            }}
+          >
+            switch
+          </button>
+          <React.Suspense fallback="Loading...">
+            <Component queryKey={key} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText(`data: ${key1}`))
+    fireEvent.click(rendered.getByText('switch'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText(`data: ${key2}`))
+    expect(
+      // @ts-expect-error
+      queryClient.getQueryCache().find(key2)!.observers[0].listeners.length
+    ).toBe(1)
+  })
+
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
     const key = queryKey()
 

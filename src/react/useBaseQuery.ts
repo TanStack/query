@@ -73,11 +73,7 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
       throw currentResult.error
     }
 
-    if (
-      observer.options.suspense &&
-      !observer.hasListeners() &&
-      observer.willLoadOnMount()
-    ) {
+    if (observer.options.suspense && currentResult.isLoading) {
       errorResetBoundary.clearReset()
       const unsubscribe = observer.subscribe()
       throw observer.refetch().finally(unsubscribe)
