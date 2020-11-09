@@ -10,7 +10,13 @@ import {
   renderWithClient,
   setActTimeout,
 } from './utils'
-import { useQuery, QueryClient, UseQueryResult, QueryCache } from '../..'
+import {
+  useQuery,
+  QueryClient,
+  UseQueryResult,
+  QueryCache,
+  QueryFunctionContext,
+} from '../..'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -1666,10 +1672,15 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/147
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10))
-
     const variables = { number: 5, boolean: false, object: {}, array: [] }
+    const queryFn = jest
+      .fn()
+      .mockImplementation(
+        async (ctx: QueryFunctionContext<[string, typeof variables]>) => {
+          await sleep(10)
+          return ctx.queryKey
+        }
+      )
 
     function Page() {
       useQuery([key, variables], queryFn)

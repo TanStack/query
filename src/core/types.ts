@@ -9,8 +9,11 @@ export type QueryFunction<T = unknown> = (
   context: QueryFunctionContext
 ) => T | Promise<T>
 
-export interface QueryFunctionContext<TPageParam = any> {
-  queryKey: QueryKey
+export interface QueryFunctionContext<
+  TQueryKey extends QueryKey = QueryKey,
+  TPageParam = any
+> {
+  queryKey: TQueryKey
   pageParam?: TPageParam
 }
 

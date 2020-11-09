@@ -55,7 +55,7 @@ function Todos({ completed }) {
 
 // Access the key, status and page variables in your query function!
 function fetchTodoList({ queryKey }) {
-  const { status, page } = queryKey[1]
+  const [_key, { status, page }] = queryKey
   return new Promise()
 }
 ```
