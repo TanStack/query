@@ -7,4 +7,4 @@ Because React Query's fetching mechanisms are agnostically built on Promises, yo
 
 ## Examples
 
-- [basic-graphql-request](../docs/examples/basic-graphql-request) (The "basic" example, but implemented with [`graphq-request`](https://github.com/prisma-labs/graphql-request))
+- [basic-graphql-request](../docs/examples/basic-graphql-request) (The "basic" example, but implemented with [`graphql-request`](https://github.com/prisma-labs/graphql-request))
