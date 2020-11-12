@@ -522,6 +522,55 @@ describe('useQuery', () => {
     expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
   })
 
+  it.only('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const [, rerender] = React.useState({})
+
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(5)
+          return 'data'
+        },
+        {
+          cacheTime: 0,
+        }
+      )
+
+      states.push(state)
+
+      const { remove } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          remove()
+          rerender({})
+        }, 20)
+      }, [remove])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(5)
+    // First load
+    expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
+    // First success
+    expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
+    // Switch
+    expect(states[2]).toMatchObject({ isLoading: false, isSuccess: true })
+    // Second load
+    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
+    // Second success
+    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+  })
+
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []

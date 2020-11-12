@@ -65,10 +65,17 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   remove(query: Query<any, any>): void {
-    if (this.queriesMap[query.queryHash]) {
+    const queryInMap = this.queriesMap[query.queryHash]
+
+    if (queryInMap) {
       query.destroy()
-      delete this.queriesMap[query.queryHash]
+
       this.queries = this.queries.filter(x => x !== query)
+
+      if (queryInMap === query) {
+        delete this.queriesMap[query.queryHash]
+      }
+
       this.notify(query)
     }
   }
