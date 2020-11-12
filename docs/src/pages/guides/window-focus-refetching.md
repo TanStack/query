@@ -64,17 +64,19 @@ focusManager.setEventListener(onWindowFocus) // Boom!
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```js
-import { focusManager } from 'react-query'
 import { AppState } from 'react-native'
+import { focusManager } from 'react-query'
 
-focusManager.setEventListener(handleFocus => {
+focusManager.setEventListener(setFocus => {
   const handleAppStateChange = appState => {
-    if (appState === 'active') {
-      handleFocus()
-    }
+    setFocus(appState === 'active')
   }
+
   AppState.addEventListener('change', handleAppStateChange)
-  return () => AppState.removeEventListener('change', handleAppStateChange)
+
+  return () => {
+    AppState.removeEventListener('change', handleAppStateChange)
+  }
 })
 ```
 
