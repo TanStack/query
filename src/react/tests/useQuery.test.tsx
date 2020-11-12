@@ -522,7 +522,7 @@ describe('useQuery', () => {
     expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
   })
 
-  it.only('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
+  it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
