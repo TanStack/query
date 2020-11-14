@@ -50,6 +50,7 @@ function Projects() {
     isFetchingMore,
     fetchMore,
     canFetchMore,
+    error,
   } = useInfiniteQuery('projects', fetchProjects, {
     getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
   })
