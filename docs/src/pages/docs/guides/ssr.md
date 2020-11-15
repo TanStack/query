@@ -170,7 +170,8 @@ hydrate(queryCache, dehydratedState)
 ReactDOM.hydrate(
   <ReactQueryCacheProvider queryCache={queryCache}>
     <App />
-  </ReactQueryCacheProvider>
+  </ReactQueryCacheProvider>,
+  document.getElementById('root')
 )
 ```
 
