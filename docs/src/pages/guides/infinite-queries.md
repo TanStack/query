@@ -48,6 +48,7 @@ function Projects() {
 
   const {
     data,
+    error,
     fetchNextPage,
     hasNextPage,
     isFetching,

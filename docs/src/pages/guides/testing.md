@@ -35,7 +35,9 @@ const wrapper = ({ children }) => (
     {children}
   </ReactQueryCacheProvider>
 );
+
 const { result } = renderHook(() => useCustomHook(), { wrapper });
+
 expect(result.current).toEqual('Hello');
 ```
 
@@ -67,15 +69,19 @@ const wrapper = ({ children }) => (
     {children}
   </ReactQueryCacheProvider>
 );
+
 const expectation = nock('http://example.com')
   .get('/api/data')
   .reply(200, {
     answer: 42
   });
+
 const { result, waitFor } = renderHook(() => useFetchData(), { wrapper });
+
 await waitFor(() => {
-  return result.current.isSuccess();
+  return result.current.isSuccess;
 });
+
 expect(result.current).toEqual({answer: 42});
 ```
 
