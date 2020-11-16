@@ -382,7 +382,7 @@ Its available properties and methods are:
 
 **Options**
 
-- `defaultConfig: QueryQueryConfig`
+- `defaultConfig: QueryConfig`
   - Optional
   - Define defaults for all queries and mutations using this query cache.
 
