@@ -26,9 +26,8 @@ const {
   initialData,
   isDataEqual,
   keepPreviousData,
-  notifyOnFetchChange,
-  notifyOnStaleChange,
-  notifyOnStatusChange,
+  notifyOnChangeProps,
+  notifyOnChangePropsExclusions,
   onError,
   onSettled,
   onSuccess,
@@ -109,14 +108,14 @@ const result = useQuery({
   - If set to `true`, the query will refetch on reconnect if the data is stale.
   - If set to `false`, the query will not refetch on reconnect.
   - If set to `"always"`, the query will always refetch on reconnect.
-- `notifyOnStaleChange: boolean`
+- `notifyOnChangeProps: string[]`
   - Optional
-  - Set this to `true` to re-render when the `isStale` property changes.
-  - Defaults to `false`.
-- `notifyOnStatusChange: boolean`
+  - If set, the component will only re-render if any of the listed properties change.
+  - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.
+- `notifyOnChangePropsExclusions: string[]`
   - Optional
-  - Set this to `false` to only re-render when there are changes to `data` or `error`.
-  - Defaults to `true`.
+  - If set, the component will not re-render if any of the listed properties change.
+  - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
 - `onSuccess: (data: TData) => void`
   - Optional
   - This function will fire any time the query successfully fetches new data.

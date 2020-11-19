@@ -45,7 +45,7 @@ describe('useInfiniteQuery', () => {
     queryCache,
     defaultOptions: {
       queries: {
-        notifyOnStaleChange: true,
+        notifyOnChangePropsExclusions: [],
       },
     },
   })

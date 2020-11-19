@@ -128,16 +128,14 @@ export interface QueryObserverOptions<
    */
   refetchOnMount?: boolean | 'always'
   /**
-   * Whether a component should re-render when the `isStale` property changes.
-   * Defaults to `false`.
+   * If set, the component will only re-render if any of the listed properties change.
+   * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
    */
-  notifyOnStaleChange?: boolean
+  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult>
   /**
-   * Whether a change to the query status should re-render a component.
-   * If set to `false`, the component will only re-render when the actual `data` or `error` changes.
-   * Defaults to `true`.
+   * If set, the component will not re-render if any of the listed properties change.
    */
-  notifyOnStatusChange?: boolean
+  notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
    * This callback will fire any time the query successfully fetches new data.
    */

@@ -20,14 +20,7 @@ import {
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        notifyOnStaleChange: true,
-      },
-    },
-  })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -665,8 +658,7 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(key, () => ({ name: 'test' }), {
         select: data => data.name,
-        notifyOnStaleChange: false,
-        notifyOnStatusChange: false,
+        notifyOnChangeProps: ['data'],
       })
 
       states.push(state)
@@ -1266,7 +1258,9 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(7))
+    await sleep(100)
+
+    expect(states.length).toBe(6)
 
     // Disabled query
     expect(states[0]).toMatchObject({
@@ -1299,19 +1293,12 @@ describe('useQuery', () => {
     // Switched query key
     expect(states[4]).toMatchObject({
       data: 10,
-      isFetching: false,
-      isSuccess: true,
-      isPreviousData: true,
-    })
-    // Refetch
-    expect(states[5]).toMatchObject({
-      data: 10,
       isFetching: true,
       isSuccess: true,
       isPreviousData: true,
     })
     // Refetch done
-    expect(states[6]).toMatchObject({
+    expect(states[5]).toMatchObject({
       data: 12,
       isFetching: false,
       isSuccess: true,
@@ -1516,8 +1503,7 @@ describe('useQuery', () => {
           return 'test'
         },
         {
-          notifyOnStatusChange: false,
-          notifyOnStaleChange: false,
+          notifyOnChangeProps: ['data'],
         }
       )
 

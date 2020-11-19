@@ -614,7 +614,7 @@ describe('queryCache', () => {
     const testCache = new QueryCache()
     const testClient = new QueryClient({
       queryCache: testCache,
-      defaultOptions: { queries: { notifyOnStaleChange: true } },
+      defaultOptions: { queries: { notifyOnChangePropsExclusions: [] } },
     })
     const observer = new QueryObserver(testClient, {
       queryKey: key,
