@@ -121,6 +121,11 @@ export interface QueryObserverConfig<
    * Set this to `true` to always fetch when the component mounts (regardless of staleness).
    * Defaults to `false`.
    */
+  refetchNever?: boolean
+  /**
+   * Set this to `true` ro never fetch data if there is a cache for it, even if no components were previosuley mounted.
+   * Defaults to `false`
+   */
   forceFetchOnMount?: boolean
   /**
    * Whether a change to the query status should re-render a component.

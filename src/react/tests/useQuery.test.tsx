@@ -1453,6 +1453,75 @@ describe('useQuery', () => {
     })
   })
 
+  it('should not refetch when refetchNever is true, and there is a cache value', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    await queryCache.prefetchQuery(key, () => 'prefetched')
+
+    await sleep(10)
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        refetchNever: true,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page />)
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(1)
+    expect(states[0]).toMatchObject({
+      data: 'prefetched',
+      isStale: true,
+      isFetching: false,
+    })
+  })
+
+  it('should fetch if refetchNever is true but cache is empty/expired', async () => {
+    const key = queryKey()
+    const states: QueryResult<string>[] = []
+
+    await sleep(10)
+
+    function Page(props: {text: string}) {
+      const state = useQuery(key, () => `test ${props.text}`, {
+        refetchNever: true,
+        staleTime: Infinity,
+      })
+      states.push(state)
+      return null
+    }
+
+    render(<Page text="Eamonn"/>)
+
+    await waitForMs(10)
+
+    render(<Page text="You Should never see this. As 2nd render should not refetch. Should display text from first render."/>)
+
+    await waitForMs(10)
+
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'test Eamonn',
+      isStale: false,
+      isFetching: false,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'test Eamonn', // 2nd render text prop is different but already rendered with same key. so should NEVER refetch.
+      isStale: false,
+      isFetching: false,
+    })
+  })
+
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
     const consoleMock = mockConsoleError()

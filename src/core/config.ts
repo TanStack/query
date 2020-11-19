@@ -57,6 +57,7 @@ export const DEFAULT_CONFIG: ReactQueryConfig = {
     queryFn: () => Promise.reject(),
     queryKeySerializerFn: defaultQueryKeySerializerFn,
     refetchOnMount: true,
+    refetchNever: false,
     refetchOnReconnect: true,
     refetchOnWindowFocus: true,
     retry: 3,
