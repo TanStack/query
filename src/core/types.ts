@@ -117,14 +117,14 @@ export interface QueryObserverConfig<
    * Defaults to `true`.
    */
   refetchOnMount?: boolean | 'always'
-  /**
-   * Set this to `true` to always fetch when the component mounts (regardless of staleness).
-   * Defaults to `false`.
+   /**
+   * Set this to `true` to never fetch data if there is a cache for it, even if no components were previosuley mounted.
+   * Defaults to `false`
    */
   refetchNever?: boolean
   /**
-   * Set this to `true` ro never fetch data if there is a cache for it, even if no components were previosuley mounted.
-   * Defaults to `false`
+   * Set this to `true` to always fetch when the component mounts (regardless of staleness).
+   * Defaults to `false`.
    */
   forceFetchOnMount?: boolean
   /**
