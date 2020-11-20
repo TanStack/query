@@ -172,7 +172,8 @@ ReactDOM.hydrate(
     <Hydrate state={dehydratedState}>
       <App />
     </Hydrate>
-  </ReactQueryClientProvider>
+  </ReactQueryClientProvider>,
+  document.getElementById('root')
 )
 ```
 

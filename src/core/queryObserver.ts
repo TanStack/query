@@ -330,7 +330,7 @@ export class QueryObserver<
   }
 
   private clearStaleTimeout(): void {
-    clearInterval(this.staleTimeoutId)
+    clearTimeout(this.staleTimeoutId)
     this.staleTimeoutId = undefined
   }
 
