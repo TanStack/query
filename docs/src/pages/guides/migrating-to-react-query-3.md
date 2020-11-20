@@ -320,6 +320,38 @@ The `queryFnParamsFilter` option has been removed because query functions now ge
 
 Parameters can still be filtered within the query function itself as the `QueryFunctionContext` also contains the query key.
 
+### QueryOptions.notifyOnStatusChange
+
+The `notifyOnStatusChange` option has been replaced by the `notifyOnChangeProps` and `notifyOnChangePropsExclusions` props.
+
+With these options it is possible to configure when a component should re-render on a granular level.
+
+Only re-render when the `data` or `error` properties change:
+
+```js
+import { useQuery } from 'react-query'
+
+function User() {
+  const { data } = useQuery('user', fetchUser, {
+    notifyOnChangeProps: ['data', 'error'],
+  })
+  return <div>Username: {data.username}</div>
+}
+```
+
+Prevent re-render when the `isStale` property changes:
+
+```js
+import { useQuery } from 'react-query'
+
+function User() {
+  const { data } = useQuery('user', fetchUser, {
+    notifyOnChangePropsExclusions: ['isStale'],
+  })
+  return <div>Username: {data.username}</div>
+}
+```
+
 ### QueryResult.clear()
 
 The `QueryResult.clear()` method has been renamed to `QueryResult.remove()`.
@@ -379,7 +411,7 @@ function User() {
 }
 ```
 
-Set the `notifyOnStatusChange` option to `false` to only re-render when the selected data changes.
+Set the `notifyOnChangeProps` option to `['data', 'error']` to only re-render when the selected data changes.
 
 #### useQueries()
 

@@ -651,7 +651,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should not re-render when notify flags are false and the selected data did not change', async () => {
+  it('should not re-render when it should only re-render only data change and the selected data did not change', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -681,6 +681,45 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
+  it('should re-render when dataUpdatedAt changes but data remains the same', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        notifyOnChangePropsExclusions: [
+          'data',
+          'isFetching',
+          'isLoading',
+          'isSuccess',
+          'status',
+        ],
+      })
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 5)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 'test', isFetching: false })
+    expect(states[2]).toMatchObject({ data: 'test', isFetching: false })
+    expect(states[1].dataUpdatedAt).not.toBe(states[2].dataUpdatedAt)
   })
 
   it('should be able to remove a query', async () => {
@@ -1491,7 +1530,7 @@ describe('useQuery', () => {
     expect(fn).toHaveBeenCalledTimes(5)
   })
 
-  it('should not re-render when a query status changes and notify flags are false', async () => {
+  it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 

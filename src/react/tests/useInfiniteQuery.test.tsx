@@ -41,14 +41,7 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        notifyOnChangePropsExclusions: [],
-      },
-    },
-  })
+  const queryClient = new QueryClient({ queryCache })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()

@@ -448,7 +448,7 @@ export class QueryObserver<
 
       if (changed) {
         if (notifyOnChangePropsExclusions && isExcluded) {
-          break
+          continue
         }
 
         if (!notifyOnChangeProps || isIncluded) {
