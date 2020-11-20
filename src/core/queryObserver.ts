@@ -233,7 +233,7 @@ export class QueryObserver<TResult, TError> {
 
   private clearStaleTimeout(): void {
     if (this.staleTimeoutId) {
-      clearInterval(this.staleTimeoutId)
+      clearTimeout(this.staleTimeoutId)
       this.staleTimeoutId = undefined
     }
   }
