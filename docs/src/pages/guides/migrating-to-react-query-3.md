@@ -22,6 +22,8 @@ This has some benefits:
 
 Use the `QueryClientProvider` component to connect a `QueryClient` to your application:
 
+**NOTE** There is no longer a default query cache, you must connect your application to a query provider manually
+
 ```js
 import { QueryClient, QueryClientProvider } from 'react-query'
 
