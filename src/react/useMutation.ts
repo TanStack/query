@@ -152,10 +152,10 @@ export function useMutation<
           dispatch({ type: ActionType.Resolve, data })
         }
 
-        await latestConfig.onSuccess?.(data, variables!)
-        await mutateConfig.onSuccess?.(data, variables!)
-        await latestConfig.onSettled?.(data, null, variables!)
-        await mutateConfig.onSettled?.(data, null, variables!)
+        await latestConfig.onSuccess?.(data, variables!, snapshotValue)
+        await mutateConfig.onSuccess?.(data, variables!, snapshotValue)
+        await latestConfig.onSettled?.(data, null, variables!, snapshotValue)
+        await mutateConfig.onSettled?.(data, null, variables!, snapshotValue)
 
         return data
       } catch (error) {
@@ -172,7 +172,7 @@ export function useMutation<
           undefined,
           error,
           variables!,
-          snapshotValue
+          snapshotValue as TSnapshot
         )
 
         if (isLatest()) {

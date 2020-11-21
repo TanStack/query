@@ -233,7 +233,7 @@ export interface MutateConfig<
   TVariables = unknown,
   TSnapshot = unknown
 > {
-  onSuccess?: (data: TResult, variables: TVariables) => Promise<unknown> | void
+  onSuccess?: (data: TResult, variables: TVariables, snapshotValue: TSnapshot) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
@@ -243,7 +243,7 @@ export interface MutateConfig<
     data: undefined | TResult,
     error: TError | null,
     variables: TVariables,
-    snapshotValue?: TSnapshot
+    snapshotValue: TSnapshot
   ) => Promise<unknown> | void
   throwOnError?: boolean
 }
