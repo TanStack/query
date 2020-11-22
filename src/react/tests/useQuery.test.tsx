@@ -889,12 +889,20 @@ describe('useQuery', () => {
     expect(results[2]).toMatchObject({ data: 'fetched', isFetching: false })
   })
 
-  it('should update query stale state when invalidated with invalidateQueries', async () => {
+  it('should update query stale state and refetch when invalidated with invalidateQueries', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: UseQueryResult<number>[] = []
+    let count = 0
 
     function Page() {
-      const state = useQuery(key, () => 'data', { staleTime: Infinity })
+      const state = useQuery(
+        key,
+        () => {
+          count++
+          return count
+        },
+        { staleTime: Infinity }
+      )
 
       states.push(state)
 
@@ -919,19 +927,19 @@ describe('useQuery', () => {
       isStale: true,
     })
     expect(states[1]).toMatchObject({
-      data: 'data',
+      data: 1,
       isFetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[2]).toMatchObject({
-      data: 'data',
+      data: 1,
       isFetching: true,
       isSuccess: true,
       isStale: true,
     })
     expect(states[3]).toMatchObject({
-      data: 'data',
+      data: 2,
       isFetching: false,
       isSuccess: true,
       isStale: false,
