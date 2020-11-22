@@ -1,5 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react'
-import React from 'react'
+import React, { useState } from 'react'
 
 import { useMutation, QueryClient, QueryCache, MutationCache } from '../..'
 import { UseMutationResult } from '../types'
@@ -455,5 +455,42 @@ describe('useMutation', () => {
     })
 
     consoleMock.mockRestore()
+  })
+
+  it('should not change state if unmounted', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    let resolve: (result: string) => void = () => {}
+    const promise = new Promise<string>(r => (resolve = r))
+
+    function Mutates() {
+      const { mutate, data = '' } = useMutation(() => promise)
+
+      return (
+        <div>
+          <h1 data-testid="title">{data}</h1>
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+    function Page() {
+      const [shouldBeMounted, setShouldBeMounted] = useState(true)
+
+      return (
+        <div>
+          <button onClick={() => setShouldBeMounted(false)}>unmount</button>
+          {shouldBeMounted && <Mutates />}
+        </div>
+      )
+    }
+
+    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+
+    expect(getByTestId('title').textContent).toBe('')
+
+    fireEvent.click(getByText('mutate'))
+    fireEvent.click(getByText('unmount'))
+    await new Promise(r => setTimeout(r, 500))
+    resolve('mutation')
+    await new Promise(r => setTimeout(r))
   })
 })
