@@ -9,7 +9,11 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import { MutationFunction, MutationKey } from '../core/types'
+import {
+  MutationFunction,
+  MutationKey,
+  MutationObserverResult,
+} from '../core/types'
 
 // HOOK
 
@@ -86,7 +90,19 @@ export function useMutation<
 
   // Subscribe to the observer
   React.useEffect(
-    () => observer.subscribe(notifyManager.batchCalls(setCurrentResult)),
+    () =>
+      observer.subscribe(
+        notifyManager.batchCalls(
+          (
+            result: MutationObserverResult<TData, TError, TVariables, TContext>
+          ) => {
+            // Check if the component is still mounted
+            if (observer.hasListeners()) {
+              setCurrentResult(result)
+            }
+          }
+        )
+      ),
     [observer]
   )
 

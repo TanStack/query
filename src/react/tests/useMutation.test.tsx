@@ -456,4 +456,24 @@ describe('useMutation', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should not change state if unmounted', async () => {
+    function Mutates() {
+      const { mutate } = useMutation(() => sleep(10))
+      return <button onClick={() => mutate()}>mutate</button>
+    }
+    function Page() {
+      const [mounted, setMounted] = React.useState(true)
+      return (
+        <div>
+          <button onClick={() => setMounted(false)}>unmount</button>
+          {mounted && <Mutates />}
+        </div>
+      )
+    }
+
+    const { getByText } = renderWithClient(queryClient, <Page />)
+    fireEvent.click(getByText('mutate'))
+    fireEvent.click(getByText('unmount'))
+  })
 })
