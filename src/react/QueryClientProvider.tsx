@@ -6,7 +6,13 @@ const QueryClientContext = React.createContext<QueryClient | undefined>(
   undefined
 )
 
-export const useQueryClient = () => React.useContext(QueryClientContext)!
+export const useQueryClient = () => {
+  const queryClient = React.useContext(QueryClientContext)
+  if (!queryClient) {
+    throw new Error('No QueryClient set, use QueryClientProvider to set one')
+  }
+  return queryClient
+}
 
 export interface QueryClientProviderProps {
   client: QueryClient
