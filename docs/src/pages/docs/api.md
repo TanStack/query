@@ -11,6 +11,7 @@ const {
   error,
   failureCount,
   isError,
+  isFetched,
   isFetchedAfterMount,
   isFetching,
   isIdle,
@@ -185,6 +186,8 @@ const queryInfo = useQuery({
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
 - `isPlaceholderData: Boolean`
   - Will be `true` if and when the query's `data` is equal to the result of the `placeholderData` option.
+- `isFetched: Boolean`
+  - Will be `true` if the query has been fetched.
 - `isFetchedAfterMount: Boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
