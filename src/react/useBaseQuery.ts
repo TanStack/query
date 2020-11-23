@@ -67,8 +67,7 @@ export function useBaseQuery<TResult, TError>(
       !result.isSuccess
     ) {
       errorResetBoundary.clearReset()
-      const unsubscribe = observer.subscribe()
-      throw observer.fetch().finally(unsubscribe)
+      throw observer.fetch().finally(observer.unsubscribe)
     }
   }
 
