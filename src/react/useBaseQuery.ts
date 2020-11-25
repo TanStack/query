@@ -64,10 +64,12 @@ export function useBaseQuery<TResult, TError>(
     if (
       resolvedConfig.enabled &&
       resolvedConfig.suspense &&
-      !result.isSuccess
+      !result.isSuccess &&
+      !result.isFetching
     ) {
       errorResetBoundary.clearReset()
-      throw observer.fetch().finally(observer.unsubscribe)
+      const unsubscribe = observer.subscribe()
+      throw observer.fetch().finally(unsubscribe)
     }
   }
 
