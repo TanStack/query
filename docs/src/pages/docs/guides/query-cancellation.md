@@ -58,7 +58,7 @@ const query = useQuery('todos', () => {
 
 ## Manual Cancellation
 
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you can just set the key argument of `useQuery` to empty string. If `promise.cancel` is available, React Query will cancel the request.
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you need to set the key argument of `useQuery` to empty string and set the `enabled` option to false. If `promise.cancel` is available, React Query will cancel the request.
 
 ```js
 const [queryKey, setQueryKey] = useState('todos')
@@ -76,6 +76,8 @@ const query = useQuery(queryKey, () => {
   promise.cancel = () => controller.abort()
 
   return promise
+}, {
+  enabled: queryKey.length > 0
 })
 
 return (
