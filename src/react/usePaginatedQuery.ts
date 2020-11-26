@@ -24,6 +24,11 @@ export interface UsePaginatedQueryObjectConfig<TResult, TError> {
 
 // HOOK
 
+// Object syntax
+export function usePaginatedQuery<TResult = unknown, TError = unknown>(
+  config: UsePaginatedQueryObjectConfig<TResult, TError>
+): PaginatedQueryResult<TResult, TError>
+
 // Parameter syntax with optional config
 export function usePaginatedQuery<TResult = unknown, TError = unknown>(
   queryKey: QueryKey,
@@ -45,11 +50,6 @@ export function usePaginatedQuery<TResult = unknown, TError = unknown>(
   queryKey: QueryKey,
   queryFn: QueryFunction<TResult>,
   queryConfig?: PaginatedQueryConfig<TResult, TError>
-): PaginatedQueryResult<TResult, TError>
-
-// Object syntax
-export function usePaginatedQuery<TResult = unknown, TError = unknown>(
-  config: UsePaginatedQueryObjectConfig<TResult, TError>
 ): PaginatedQueryResult<TResult, TError>
 
 // Implementation
