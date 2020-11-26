@@ -76,8 +76,6 @@ const query = useQuery(queryKey, () => {
   promise.cancel = () => controller.abort()
 
   return promise
-}, {
-  enabled: queryKey.length > 0
 })
 
 const cache = useQueryCache();
