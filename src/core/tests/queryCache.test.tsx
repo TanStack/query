@@ -91,6 +91,17 @@ describe('queryCache', () => {
     }).not.toThrow()
   })
 
+  test('setQueryData should use default options', () => {
+    const key = queryKey()
+    const testClient = new QueryClient({
+      defaultOptions: { queries: { queryKeyHashFn: () => 'someKey' } },
+    })
+    const testCache = testClient.getQueryCache()
+    testClient.setQueryData(key, 'data')
+    expect(testClient.getQueryData(key)).toBe('data')
+    expect(testCache.find(key)).toBe(testCache.get('someKey'))
+  })
+
   // https://github.com/tannerlinsley/react-query/issues/652
   test('fetchQuery should not retry by default', async () => {
     const consoleMock = mockConsoleError()

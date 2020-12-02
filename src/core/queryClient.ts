@@ -107,7 +107,10 @@ export class QueryClient {
     options?: SetDataOptions
   ): TData {
     const parsedOptions = parseQueryArgs(queryKey)
-    return this.queryCache.build(this, parsedOptions).setData(updater, options)
+    const defaultedOptions = this.defaultQueryOptions(parsedOptions)
+    return this.queryCache
+      .build(this, defaultedOptions)
+      .setData(updater, options)
   }
 
   getQueryState<TData = unknown, TError = undefined>(
