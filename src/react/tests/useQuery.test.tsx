@@ -9,6 +9,7 @@ import {
   sleep,
   renderWithClient,
   setActTimeout,
+  Blink,
 } from './utils'
 import {
   useQuery,
@@ -2814,5 +2815,41 @@ describe('useQuery', () => {
         data: 'data',
       },
     ])
+  })
+
+  it('should cancel the query function when there are no more subscriptions', async () => {
+    const key = queryKey()
+    let cancelFn: jest.Mock = jest.fn()
+
+    const queryFn = () => {
+      const promise = new Promise<string>((resolve, reject) => {
+        cancelFn = jest.fn(() => reject('Cancelled'))
+        sleep(10).then(() => resolve('OK'))
+      })
+
+      ;(promise as any).cancel = cancelFn
+
+      return promise
+    }
+
+    function Page() {
+      const state = useQuery(key, queryFn)
+      return (
+        <div>
+          <h1>Status: {state.status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Blink duration={5}>
+        <Page />
+      </Blink>
+    )
+
+    await waitFor(() => rendered.getByText('off'))
+
+    expect(cancelFn).toHaveBeenCalled()
   })
 })

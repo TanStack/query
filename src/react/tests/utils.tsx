@@ -51,3 +51,20 @@ export function setActTimeout(fn: () => void, ms?: number) {
  * Assert the parameter is of a specific type.
  */
 export const expectType = <T,>(_: T): void => undefined
+
+export const Blink: React.FC<{ duration: number }> = ({
+  duration,
+  children,
+}) => {
+  const [shouldShow, setShouldShow] = React.useState<boolean>(true)
+
+  React.useEffect(() => {
+    setShouldShow(true)
+    const timeout = setTimeout(() => setShouldShow(false), duration)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [duration, children])
+
+  return shouldShow ? <>{children}</> : <>off</>
+}
