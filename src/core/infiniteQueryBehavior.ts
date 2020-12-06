@@ -37,14 +37,23 @@ export function infiniteQueryBehavior<
             pageParam: param,
           }
 
-          return Promise.resolve()
-            .then(() => queryFn(queryFnContext))
+          let cancelFn: undefined | (() => any)
+          const queryFnResult = queryFn(queryFnContext)
+          if ((queryFnResult as any).cancel) {
+            cancelFn = (queryFnResult as any).cancel
+          }
+
+          const promise = Promise.resolve(queryFnResult)
             .then(page => {
               newPageParams = previous
                 ? [param, ...newPageParams]
                 : [...newPageParams, param]
               return previous ? [page, ...pages] : [...pages, page]
             })
+          if (cancelFn) {
+            (promise as any).cancel = cancelFn
+          }
+          return promise
         }
 
         let promise
@@ -92,7 +101,11 @@ export function infiniteQueryBehavior<
           }
         }
 
-        return promise.then(pages => ({ pages, pageParams: newPageParams }))
+        const finalPromise = promise.then(pages => ({ pages, pageParams: newPageParams }))
+        if ((promise as any).cancel) {
+          (finalPromise as any).cancel = (promise as any).cancel;
+        }
+        return finalPromise;
       }
     },
   }
