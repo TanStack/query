@@ -19,6 +19,11 @@ export interface UseQueryObjectConfig<TResult, TError> {
 
 // HOOK
 
+// Object syntax
+export function useQuery<TResult = unknown, TError = unknown>(
+  config: UseQueryObjectConfig<TResult, TError>
+): QueryResult<TResult, TError>
+  
 // Parameter syntax with optional config
 export function useQuery<TResult = unknown, TError = unknown>(
   queryKey: QueryKey,
@@ -38,10 +43,6 @@ export function useQuery<TResult = unknown, TError = unknown>(
   queryConfig?: QueryConfig<TResult, TError>
 ): QueryResult<TResult, TError>
 
-// Object syntax
-export function useQuery<TResult = unknown, TError = unknown>(
-  config: UseQueryObjectConfig<TResult, TError>
-): QueryResult<TResult, TError>
 
 // Implementation
 export function useQuery<TResult, TError>(

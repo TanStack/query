@@ -19,6 +19,11 @@ export interface UseInfiniteQueryObjectConfig<TResult, TError> {
 
 // HOOK
 
+// Object syntax
+export function useInfiniteQuery<TResult = unknown, TError = unknown>(
+  config: UseInfiniteQueryObjectConfig<TResult, TError>
+): InfiniteQueryResult<TResult, TError>
+  
 // Parameter syntax with optional config
 export function useInfiniteQuery<TResult = unknown, TError = unknown>(
   queryKey: QueryKey,
@@ -40,11 +45,6 @@ export function useInfiniteQuery<TResult = unknown, TError = unknown>(
   queryKey: QueryKey,
   queryFn: QueryFunction<TResult>,
   queryConfig?: InfiniteQueryConfig<TResult, TError>
-): InfiniteQueryResult<TResult, TError>
-
-// Object syntax
-export function useInfiniteQuery<TResult = unknown, TError = unknown>(
-  config: UseInfiniteQueryObjectConfig<TResult, TError>
 ): InfiniteQueryResult<TResult, TError>
 
 // Implementation
