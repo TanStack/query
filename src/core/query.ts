@@ -197,14 +197,12 @@ export class Query<TResult, TError> {
     // Get the new data
     let data: TResult | undefined = functionalUpdate(updater, prevData)
 
-    // Structurally share data between prev and new data if needed
-    if (this.config.structuralSharing) {
-      data = replaceEqualDeep(prevData, data)
-    }
-
     // Use prev data if an isDataEqual function is defined and returns `true`
     if (this.config.isDataEqual?.(prevData, data)) {
       data = prevData
+    } else if (this.config.structuralSharing) {
+      // Structurally share data between prev and new data if needed
+      data = replaceEqualDeep(prevData, data)
     }
 
     // Try to determine if more data can be fetched
