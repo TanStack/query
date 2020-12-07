@@ -187,14 +187,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     // Get the new data
     let data = functionalUpdate(updater, prevData)
 
-    // Structurally share data between prev and new data if needed
-    if (this.options.structuralSharing !== false) {
-      data = replaceEqualDeep(prevData, data)
-    }
-
     // Use prev data if an isDataEqual function is defined and returns `true`
     if (this.options.isDataEqual?.(prevData, data)) {
       data = prevData as TData
+    } else if (this.options.structuralSharing !== false) {
+      // Structurally share data between prev and new data if needed
+      data = replaceEqualDeep(prevData, data)
     }
 
     // Set data and mark it as cached
