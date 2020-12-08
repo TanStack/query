@@ -124,6 +124,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   queryKey: QueryKey
   queryHash: string
   options!: QueryOptions<TData, TError, TQueryFnData>
+  initialState: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
 
@@ -141,7 +142,8 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     this.cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.state = config.state || this.getDefaultState(this.options)
+    this.initialState = config.state || this.getDefaultState(this.options)
+    this.state = this.initialState
     this.scheduleGc()
   }
 
@@ -218,6 +220,11 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   destroy(): void {
     this.clearGcTimeout()
     this.cancel()
+  }
+
+  reset(): void {
+    this.destroy()
+    this.setState(this.initialState)
   }
 
   isActive(): boolean {

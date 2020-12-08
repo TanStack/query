@@ -80,10 +80,27 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     }
   }
 
+  reset(query: Query<any, any>): void {
+    const queryInMap = this.queriesMap[query.queryHash]
+
+    if (queryInMap) {
+      query.reset()
+      this.notify(query)
+    }
+  }
+
   clear(): void {
     notifyManager.batch(() => {
       this.queries.forEach(query => {
         this.remove(query)
+      })
+    })
+  }
+
+  resetAll(): void {
+    notifyManager.batch(() => {
+      this.queries.forEach(query => {
+        this.reset(query)
       })
     })
   }
