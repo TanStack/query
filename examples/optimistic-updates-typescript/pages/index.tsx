@@ -1,5 +1,5 @@
 import * as React from 'react'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 
 import {
   useQuery,
@@ -7,6 +7,7 @@ import {
   useMutation,
   QueryClient,
   QueryClientProvider,
+  UseQueryOptions,
 } from 'react-query'
 import { ReactQueryDevtools } from 'react-query-devtools'
 
@@ -16,17 +17,17 @@ export default function App() {
   return (
     <QueryClientProvider client={client}>
       <Example />
+      <TodoCounter />
+      <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
   )
 }
 
-type Todo = {
-  id: string
-  text: string
-}
-
 type TodoData = {
-  items: readonly Todo[]
+  items: readonly {
+    id: string
+    text: string
+  }[]
   ts: number
 }
 
@@ -35,10 +36,29 @@ async function fetchTodos(): Promise<TodoData> {
   return res.data
 }
 
+function useTodos<TData = TodoData>(
+  options?: UseQueryOptions<TData, AxiosError, TodoData>
+) {
+  return useQuery<TData, AxiosError, TodoData>('todos', fetchTodos, options)
+}
+
+function TodoCounter() {
+  const counterQuery = useTodos({
+    select: data => data.items.length,
+    notifyOnChangeProps: ['data'],
+  })
+
+  React.useEffect(() => {
+    console.log('rendering counter')
+  })
+
+  return <div>TodoCounter: {counterQuery.data ?? 0}</div>
+}
+
 function Example() {
   const queryClient = useQueryClient()
   const [text, setText] = React.useState('')
-  const { isFetching, ...queryInfo } = useQuery('todos', fetchTodos)
+  const { isFetching, ...queryInfo } = useTodos()
 
   const addTodoMutation = useMutation(
     (newTodo: string) => axios.post('/api/data', { text: newTodo }),
@@ -68,7 +88,7 @@ function Example() {
       onError: (err, variables, previousValue) => {
         queryClient.setQueryData('todos', previousValue)
       },
-      // // After success or failure, refetch the todos query
+      // After success or failure, refetch the todos query
       onSettled: () => {
         queryClient.invalidateQueries('todos')
       },
@@ -102,6 +122,7 @@ function Example() {
       {queryInfo.isSuccess && (
         <>
           <div>
+            {/* The type of queryInfo.data will be narrowed because we check for isSuccess first */}
             Updated At: {new Date(queryInfo.data.ts).toLocaleTimeString()}
           </div>
           <ul>
@@ -113,8 +134,7 @@ function Example() {
         </>
       )}
       {queryInfo.isLoading && 'Loading'}
-      {queryInfo.error instanceof Error && queryInfo.error.message}
-      <ReactQueryDevtools initialIsOpen />
+      {queryInfo.error?.message}
     </div>
   )
 }
