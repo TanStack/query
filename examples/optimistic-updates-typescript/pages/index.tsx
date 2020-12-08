@@ -39,7 +39,7 @@ async function fetchTodos(): Promise<TodoData> {
 function useTodos<TData = TodoData>(
   options?: UseQueryOptions<TData, AxiosError, TodoData>
 ) {
-  return useQuery<TData, AxiosError, TodoData>('todos', fetchTodos, options)
+  return useQuery('todos', fetchTodos, options)
 }
 
 function TodoCounter() {
