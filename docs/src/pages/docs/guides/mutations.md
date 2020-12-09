@@ -83,7 +83,7 @@ Even with just variables, mutations aren't all that special, but when used with 
 Note that since version 1.1.0, the `mutate` function is no longer called synchronously so you cannot use it in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
 
 ```js
-// This will not work
+// ❌ This will not work
 const CreateTodo = () => {
   const [mutate] = useMutation(event => {
     event.preventDefault()
@@ -93,7 +93,7 @@ const CreateTodo = () => {
   return <form onSubmit={mutate}>...</form>
 }
 
-// This will work
+// ✅ This will work
 const CreateTodo = () => {
   const [mutate] = useMutation(formData => {
     return fetch('/api', formData)
