@@ -36,7 +36,7 @@ function Todos() {
     data,
     isFetching,
     isPreviousData,
-  } = useQuery(['projects', page], () => fetchProjects(page))
+  } = useQuery(['projects', page], () => fetchProjects(page), { keepPreviousData : true })
 
   return (
     <div>
