@@ -71,7 +71,7 @@ const queryClient = new QueryClient({
 
 Query functions now get a `QueryFunctionContext` instead of the query key parameters.
 
-The `QueryFunctionContext` contains a `queryKey` and a `pageParam` in case of ininite queries.
+The `QueryFunctionContext` contains a `queryKey` and a `pageParam` in case of infinite queries.
 
 useQuery:
 
