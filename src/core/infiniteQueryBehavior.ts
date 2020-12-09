@@ -50,7 +50,7 @@ export function infiniteQueryBehavior<
             return previous ? [page, ...pages] : [...pages, page]
           })
           if (cancelFn) {
-            ;(promise as any).cancel = cancelFn
+            (promise as any).cancel = cancelFn
           }
           return promise
         }
@@ -105,7 +105,7 @@ export function infiniteQueryBehavior<
           pageParams: newPageParams,
         }))
         if ((promise as any).cancel) {
-          ;(finalPromise as any).cancel = (promise as any).cancel
+          (finalPromise as any).cancel = (promise as any).cancel
         }
         return finalPromise
       }
