@@ -12,10 +12,10 @@
     "next": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-query": "^2.23.0"
+    "react-query": "^3"
   },
   "license": "MIT",
   "devDependencies": {
-    "react-query-devtools": "^2.4.7"
+    "react-query-devtools": "^3"
   }
 }
