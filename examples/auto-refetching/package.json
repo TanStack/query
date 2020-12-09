@@ -10,7 +10,7 @@
     "react": "16.13.0",
     "react-dom": "16.13.0",
     "react-query": "^2.21.2",
-    "react-query-devtools": "^2.4.7"
+    "react-query-devtools": "^3.0.0-beta.1"
   },
   "scripts": {
     "dev": "next",

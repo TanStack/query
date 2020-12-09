@@ -1,7 +1,7 @@
 {
   "private": true,
   "scripts": {
-    "start": "rescripts start",
+    "start": "SKIP_PREFLIGHT_CHECK=true rescripts start",
     "build": "rescripts build",
     "test": "rescripts test",
     "eject": "rescripts eject"

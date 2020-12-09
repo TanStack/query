@@ -81,7 +81,7 @@ function Posts({ setPostId }) {
                     onClick={() => setPostId(post.id)}
                     href="#"
                     style={
-                      // We can use the queryCache here to show bold links for
+                      // We can find the existing query data here to show bold links for
                       // ones that are cached
                       queryClient.getQueryData(["post", post.id])
                         ? {

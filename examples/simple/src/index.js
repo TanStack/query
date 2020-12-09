@@ -15,7 +15,7 @@ export default function App() {
 }
 
 function Example() {
-  const { isLoading, error, data } = useQuery("repoData", () =>
+  const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
     fetch(
       "https://api.github.com/repos/tannerlinsley/react-query"
     ).then((res) => res.json())
@@ -32,6 +32,7 @@ function Example() {
       <strong>👀 {data.subscribers_count}</strong>{" "}
       <strong>✨ {data.stargazers_count}</strong>{" "}
       <strong>🍴 {data.forks_count}</strong>
+      <div>{isFetching ? "Updating..." : ""}</div>
       <ReactQueryDevtools initialIsOpen />
     </div>
   );

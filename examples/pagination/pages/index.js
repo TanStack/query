@@ -18,27 +18,29 @@ export default function App() {
   )
 }
 
+async function fetchProjects(page = 0) {
+  const { data } = await axios.get('/api/projects?page=' + page)
+  return data
+}
+
 function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
-  const fetchProjects = React.useCallback(async (page = 0) => {
-    const { data } = await axios.get('/api/projects?page=' + page)
-    return data
-  }, [])
-
   const { status, data, error, isFetching, isPreviousData } = useQuery(
     ['projects', page],
     () => fetchProjects(page),
-    { keepPreviousData: true }
+    { keepPreviousData: true, staleTime: 5000 }
   )
 
   // Prefetch the next page!
   React.useEffect(() => {
     if (data?.hasMore) {
-      queryClient.prefetchQuery(['projects', page + 1], fetchProjects)
+      queryClient.prefetchQuery(['projects', page + 1], () =>
+        fetchProjects(page + 1)
+      )
     }
-  }, [data, fetchProjects, page])
+  }, [data, page, queryClient])
 
   return (
     <div>
@@ -63,7 +65,7 @@ function Example() {
           ))}
         </div>
       )}
-      <span>Current Page: {page + 1}</span>
+      <div>Current Page: {page + 1}</div>
       <button
         onClick={() => setPage(old => Math.max(old - 1, 0))}
         disabled={page === 0}

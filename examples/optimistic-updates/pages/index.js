@@ -23,6 +23,7 @@ export default function App() {
 function Example() {
   const queryClient = useQueryClient()
   const [text, setText] = React.useState('')
+
   const { status, data, error, isFetching } = useQuery('todos', async () => {
     const res = await axios.get('/api/data')
     return res.data
@@ -51,7 +52,7 @@ function Example() {
       onError: (err, variables, previousValue) =>
         queryClient.setQueryData('todos', previousValue),
       // After success or failure, refetch the todos query
-      onSettled: () => {
+      onSuccess: () => {
         queryClient.invalidateQueries('todos')
       },
     }
@@ -78,7 +79,7 @@ function Example() {
           onChange={event => setText(event.target.value)}
           value={text}
         />
-        <button>Create</button>
+        <button>{addTodoMutation.isLoading ? 'Creating...' : 'Create'}</button>
       </form>
       <br />
       {status === 'loading' ? (
