@@ -537,3 +537,7 @@ The core of React Query is now fully separated from React, which means it can al
 ```js
 import { QueryClient } from 'react-query/core'
 ```
+
+### Devtools are now part of the main repo and npm package
+
+The devtools are now included in the `react-query` package itself under the import `react-query/devtools`. Simply replace `react-query-devtools` imports with `react-query/devtools`

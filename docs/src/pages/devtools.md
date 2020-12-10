@@ -9,31 +9,71 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > Please note that for now, the devtools **do not support React Native**. If you would like to help use mae the devtools platform agnostic, please let us know!
 
-## Quick Installation
+## Import the Devtools
 
-To get going as fast as possible, do the following:
+The devtools are bundle split into the `react-query/devtools` package. No need to install anything extra, just:
 
-```bash
-$ npm i react-query-devtools
-# or
-$ yarn add react-query-devtools
+```js
+import { ReactQueryDevtools } from 'react-query/devtools'
 ```
+
+By default, React Query Devtools are not included in production bundles when `process.env.NODE_ENV === 'production'`, so you don't need to worry about excluding them during a production build.
+
+## Floating Mode
+
+Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
 
 Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
 
 ```js
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 function App() {
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       {/* The rest of your application */}
-      <ReactQueryDevtools initialIsOpen />
-    </>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   )
 }
 ```
 
-## Need more control?
+### Options
 
-Visit the [React Query Devtools Github Repo](https://github.com/tannerlinsley/react-query-devtools) for more documentation!
+- `initialIsOpen: Boolean`
+  - Set this `true` if you want the dev tools to default to being open
+- `panelProps: PropsObject`
+  - Use this to add props to the panel. For example, you can add `className`, `style` (merge and override default style), etc.
+- `closeButtonProps: PropsObject`
+  - Use this to add props to the close button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.
+- `toggleButtonProps: PropsObject`
+  - Use this to add props to the toggle button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.
+- `position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
+  - Defaults to `bottom-left`
+  - The position of the React Query logo to open and close the devtools panel
+
+## Embedded Mode
+
+Embedded Mode will embed the devtools as a regular component in your application. You can style it however you'd like after that!
+
+```js
+import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
+
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      {/* The rest of your application */}
+      <ReactQueryDevtoolsPanel style={styles} className={className} />
+    </QueryClientProvider>
+  )
+}
+```
+
+### Options
+
+Use these options to style the dev tools.
+
+- `style: StyleObject`
+  - The standard React style object used to style a component with inline styles
+- `className: string`
+  - The standard React className property used to style a component with classes

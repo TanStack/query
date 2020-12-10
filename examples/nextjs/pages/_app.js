@@ -1,7 +1,7 @@
 import React from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 const queryClient = new QueryClient()
 

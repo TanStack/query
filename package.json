@@ -52,13 +52,15 @@
     "dist",
     "es",
     "hydration",
+    "devtools",
     "lib",
     "react",
     "scripts",
     "types"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.5.5"
+    "@babel/runtime": "^7.5.5",
+    "match-sorter": "^6.0.2"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0"

@@ -2,7 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient();
 

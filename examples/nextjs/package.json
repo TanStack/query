@@ -15,7 +15,5 @@
     "react-query": "^3"
   },
   "license": "MIT",
-  "devDependencies": {
-    "react-query-devtools": "^3"
-  }
+  "devDependencies": {}
 }

@@ -6,7 +6,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 const getCharacters = async () => {
   await new Promise(r => setTimeout(r, 500))

@@ -7,7 +7,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { request, gql } from "graphql-request";
 
 const endpoint = "https://graphqlzero.almansi.me/api";

@@ -10,7 +10,6 @@
     "react-dom": "0.0.0-experimental-5faf377df",
     "react-error-boundary": "^2.2.3",
     "react-query": "^3",
-    "react-query-devtools": "^3",
     "react-scripts": "3.0.1"
   },
   "devDependencies": {

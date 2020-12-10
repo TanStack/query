@@ -4,7 +4,7 @@ import { ThemeProvider } from "@material-ui/core";
 import { createMuiTheme } from "@material-ui/core/styles";
 
 import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import "./styles.css";
 import Layout from "./Layout";

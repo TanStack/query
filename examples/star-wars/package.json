@@ -12,7 +12,6 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-query": "^3",
-    "react-query-devtools": "^3",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
