@@ -274,7 +274,7 @@ The `ReactQueryCacheProvider` component has been replaced by the `QueryClientPro
 
 ### makeQueryCache()
 
-The `makeQueryCache()` function has replaced by `new QueryCache()`.
+The `makeQueryCache()` function has been replaced by `new QueryCache()`.
 
 ### ReactQueryErrorResetBoundary
 
