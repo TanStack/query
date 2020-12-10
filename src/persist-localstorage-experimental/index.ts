@@ -31,17 +31,21 @@ export function persistWithLocalStorage(
     buster = '',
   }: Options = {}
 ) {
-  const saveCache = throttle(() => {
-    const storageCache: LocalStorageCache = {
-      buster,
-      timestamp: Date.now(),
-      cacheState: dehydrate(queryClient),
-    }
+  if (typeof window !== 'undefined') {
+    // Subscribe to changes
+    const saveCache = throttle(() => {
+      const storageCache: LocalStorageCache = {
+        buster,
+        timestamp: Date.now(),
+        cacheState: dehydrate(queryClient),
+      }
 
-    localStorage.setItem(localStorageKey, JSON.stringify(storageCache))
-  }, throttleTime)
+      localStorage.setItem(localStorageKey, JSON.stringify(storageCache))
+    }, throttleTime)
 
-  if (typeof localStorage !== 'undefined') {
+    queryClient.getQueryCache().subscribe(saveCache)
+
+    // Attempt restore
     const cacheStorage = localStorage.getItem(localStorageKey)
 
     if (!cacheStorage) {
@@ -58,9 +62,9 @@ export function persistWithLocalStorage(
       } else {
         hydrate(queryClient, cache.cacheState)
       }
+    } else {
+      localStorage.removeItem(localStorageKey)
     }
-
-    queryClient.getQueryCache().subscribe(saveCache)
   }
 }
 
