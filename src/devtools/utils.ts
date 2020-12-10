@@ -39,6 +39,7 @@ export function styled(type, newStyles, queries = {}) {
 
     const mediaStyles = Object.entries(queries).reduce(
       (current, [key, value]) => {
+        // eslint-disable-next-line react-hooks/rules-of-hooks
         return useMediaQuery(key)
           ? {
               ...current,

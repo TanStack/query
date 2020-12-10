@@ -172,6 +172,7 @@ export default function Explorer({
     )
   } else if (typeof value === 'object' && value !== null) {
     type = 'object'
+    // eslint-disable-next-line no-shadow
     subEntries = Object.entries(value).map(([label, value]) =>
       makeProperty({
         label,
