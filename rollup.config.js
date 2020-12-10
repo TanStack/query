@@ -19,6 +19,11 @@ const inputSrcs = [
   ['src/core/index.ts', 'ReactQueryCore', 'react-query-core'],
   ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
   ['src/hydration/index.ts', 'ReactQueryHydration', 'react-query-hydration'],
+  [
+    'src/persist-localstorage-experimental/index.ts',
+    'ReactQueryPersistLocalStorageExperimental',
+    'persist-localstorage-experimental',
+  ],
 ]
 
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']

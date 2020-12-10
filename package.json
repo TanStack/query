@@ -53,6 +53,7 @@
     "es",
     "hydration",
     "devtools",
+    "persist-localstorage-experimental",
     "lib",
     "react",
     "scripts",
