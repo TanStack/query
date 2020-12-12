@@ -39,6 +39,7 @@ const {
   refetchOnWindowFocus,
   retry,
   retryDelay,
+  select
   staleTime,
   structuralSharing,
   suspense,
