@@ -12,8 +12,7 @@
     "graphql-request": "^3.1.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-query": "2.23.1",
-    "react-query-devtools": "^2.4.7",
+    "react-query": "beta",
     "react-scripts": "3.0.1",
     "stop-runaway-react-effects": "^1.2.0",
     "styled-components": "^4.3.2"

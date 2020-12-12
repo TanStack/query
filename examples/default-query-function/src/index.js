@@ -8,7 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 // Define a default query function that will receive the query key
 const defaultQueryFn = async ({ queryKey }) => {

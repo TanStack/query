@@ -8,7 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient();
 
@@ -67,7 +67,7 @@ function Posts({ setPostId }) {
                     onClick={() => setPostId(post.id)}
                     href="#"
                     style={
-                      // We can use the queryCache here to show bold links for
+                      // We can access the query data here to show bold links for
                       // ones that are cached
                       queryClient.getQueryData(["post", post.id])
                         ? {

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import axios from 'axios'
 
 import { useInfiniteQuery, QueryClient, QueryClientProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 //
 
@@ -26,8 +26,11 @@ function Example() {
     error,
     isFetching,
     isFetchingNextPage,
+    isFetchingPreviousPage,
     fetchNextPage,
+    fetchPreviousPage,
     hasNextPage,
+    hasPreviousPage,
   } = useInfiniteQuery(
     'projects',
     async ({ pageParam = 0 }) => {
@@ -35,7 +38,8 @@ function Example() {
       return res.data
     },
     {
-      getFetchMore: lastGroup => lastGroup.nextId,
+      getPreviousPageParam: firstPage => firstPage.previousId ?? false,
+      getNextPageParam: lastPage => lastPage.nextId ?? false,
     }
   )
 
@@ -56,14 +60,27 @@ function Example() {
         <span>Error: {error.message}</span>
       ) : (
         <>
-          {data.pages.map((page, i) => (
-            <React.Fragment key={i}>
+          <div>
+            <button
+              onClick={() => fetchPreviousPage()}
+              disabled={!hasPreviousPage || isFetchingPreviousPage}
+            >
+              {isFetchingNextPage
+                ? 'Loading more...'
+                : hasNextPage
+                ? 'Load Older'
+                : 'Nothing more to load'}
+            </button>
+          </div>
+          {data.pages.map(page => (
+            <React.Fragment key={page.nextId}>
               {page.data.map(project => (
                 <p
                   style={{
                     border: '1px solid gray',
                     borderRadius: '5px',
                     padding: '10rem 1rem',
+                    background: `hsla(${project.id * 30}, 60%, 80%, 1)`,
                   }}
                   key={project.id}
                 >
@@ -81,7 +98,7 @@ function Example() {
               {isFetchingNextPage
                 ? 'Loading more...'
                 : hasNextPage
-                ? 'Load More'
+                ? 'Load Newer'
                 : 'Nothing more to load'}
             </button>
           </div>

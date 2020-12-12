@@ -6,7 +6,7 @@ import {
   QueryClientProvider,
   QueryErrorResetBoundary,
 } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { ErrorBoundary } from "react-error-boundary";
 
 import "./styles.css";

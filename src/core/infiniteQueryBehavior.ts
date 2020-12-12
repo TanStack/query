@@ -43,13 +43,12 @@ export function infiniteQueryBehavior<
             cancelFn = (queryFnResult as any).cancel
           }
 
-          const promise = Promise.resolve(queryFnResult)
-            .then(page => {
-              newPageParams = previous
-                ? [param, ...newPageParams]
-                : [...newPageParams, param]
-              return previous ? [page, ...pages] : [...pages, page]
-            })
+          const promise = Promise.resolve(queryFnResult).then(page => {
+            newPageParams = previous
+              ? [param, ...newPageParams]
+              : [...newPageParams, param]
+            return previous ? [page, ...pages] : [...pages, page]
+          })
           if (cancelFn) {
             (promise as any).cancel = cancelFn
           }
@@ -101,11 +100,14 @@ export function infiniteQueryBehavior<
           }
         }
 
-        const finalPromise = promise.then(pages => ({ pages, pageParams: newPageParams }))
+        const finalPromise = promise.then(pages => ({
+          pages,
+          pageParams: newPageParams,
+        }))
         if ((promise as any).cancel) {
-          (finalPromise as any).cancel = (promise as any).cancel;
+          (finalPromise as any).cancel = (promise as any).cancel
         }
-        return finalPromise;
+        return finalPromise
       }
     },
   }
@@ -133,9 +135,14 @@ export function hasNextPage(
   options: QueryOptions<any, any>,
   pages?: unknown
 ): boolean | undefined {
-  return options.getNextPageParam && Array.isArray(pages)
-    ? typeof getNextPageParam(options, pages) !== 'undefined'
-    : undefined
+  if (options.getNextPageParam && Array.isArray(pages)) {
+    const nextPageParam = getNextPageParam(options, pages)
+    return (
+      typeof nextPageParam !== 'undefined' &&
+      nextPageParam !== null &&
+      nextPageParam !== false
+    )
+  }
 }
 
 /**
@@ -146,7 +153,12 @@ export function hasPreviousPage(
   options: QueryOptions<any, any>,
   pages?: unknown
 ): boolean | undefined {
-  return options.getPreviousPageParam && Array.isArray(pages)
-    ? typeof getPreviousPageParam(options, pages) !== 'undefined'
-    : undefined
+  if (options.getPreviousPageParam && Array.isArray(pages)) {
+    const previousPageParam = getPreviousPageParam(options, pages)
+    return (
+      typeof previousPageParam !== 'undefined' &&
+      previousPageParam !== null &&
+      previousPageParam !== false
+    )
+  }
 }

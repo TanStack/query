@@ -3,26 +3,65 @@ id: migrating-to-react-query-3
 title: Migrating to React Query 3
 ---
 
-## V3 migration
+Previous versions of React Query were awesome and brought some amazing new features, more magic, and an overall better experience to the library. They also brought on massive adoption and likewise a lot of refining fire (issues/contributions) to the library and brought to light a few things that needed more polish to make the library even better. v3 contains that very polish.
 
-This article explains how to migrate your application to React Query 3.
+## Overview
 
-### QueryClient
+- More scalable and testable cache configuration
+- Better SSR support
+- Data-lag (previously usePaginatedQuery) anywhere!
+- Bi-directional Infinite Queries
+- Query data selectors!
+- Fully configure defaults for queries and/or mutations before use
+- More granularity for optional rendering optimization
+- New `useQueries` hook! (Variable-length parallel query execution)
+- Query filter support for the `useIsFetching()` hook!
+- Retry/offline/replay support for mutations
+- Observe queries/mutations outside of React
+- Use the React Query core logic anywhere you want!
+- Bundled/Colocated Devtools via `react-query/devtools`
+- Cache Persistence to localstorage (experimental via `react-query/persist-localstorage-experimental`)
 
-The `QueryCache` has been split into a `QueryClient`, `QueryCache` and `MutationCache`.
+## Breaking Changes
+
+### The `QueryCache` has been split into a `QueryClient` and lower-level `QueryCache` and `MutationCache` instances.
+
 The `QueryCache` contains all queries, the `MutationCache` contains all mutations, and the `QueryClient` can be used to set configuration and to interact with them.
 
 This has some benefits:
 
-- Allows for different type of caches.
+- Allows for different types of caches.
 - Multiple clients with different configurations can use the same cache.
 - Clients can be used to track queries, which can be used for shared caches on SSR.
 - The client API is more focused towards general usage.
 - Easier to test the individual components.
 
-Use the `QueryClientProvider` component to connect a `QueryClient` to your application:
+When creating a `new QueryClient()`, a `QueryCache` and `MutationCache` are automatically created for you if you don't supply them.
 
-**NOTE** There is no longer a default query cache, you must connect your application to a query provider manually
+```js
+import { QueryClient } from 'react-query'
+
+const queryClient = new QueryClient()
+```
+
+### `ReactQueryConfigProvider` and `ReactQueryCacheProvider` have both been replaced by `QueryClientProvider`
+
+Default options for queries and mutations can now be specified in `QueryClient`:
+
+```js
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // query options
+    },
+    mutations: {
+      // mutation options
+    },
+  },
+})
+```
+
+The `QueryClientProvider` component is now used to connect a `QueryClient` to your application:
 
 ```js
 import { QueryClient, QueryClientProvider } from 'react-query'
@@ -34,46 +73,56 @@ function App() {
 }
 ```
 
-### useQueryCache()
+### The default `QueryCache` is gone. **For real this time!**
 
-The `useQueryCache()` hook has been replaced by the `useQueryClient()` hook:
+As previously noted with a deprecation, there is no longer a default `QueryCache` that is created or exported from the main package. **You must create your own via `new QueryClient()` or `new QueryCache()` (which you can then pass to `new QueryClient({ queryCache })` )**
+
+### The deprecated `makeQueryCache` utility has been removed.
+
+It's been a long time coming, but it's finally gone :)
+
+### `QueryCache.prefetchQuery()` has been moved to `QueryClient.prefetchQuery()`
+
+The new `QueryClient.prefetchQuery()` function is async, but **does not return the data from the query**. If you require the data, use the new `QueryClient.fetchQuery()` function
 
 ```js
-import { useCallback } from 'react'
-import { useQueryClient } from 'react-query'
+// Prefetch a query:
+await queryClient.prefetchQuery('posts', fetchPosts)
 
-function Todo() {
-  const queryClient = useQueryClient()
-
-  const onClickButton = useCallback(() => {
-    queryClient.invalidateQueries('posts')
-  }, [queryClient])
-
-  return <button onClick={onClickButton}>Refetch</button>
+// Fetch a query:
+try {
+  const data = await queryClient.fetchQuery('posts', fetchPosts)
+} catch (error) {
+  // Error handling
 }
 ```
 
-### ReactQueryConfigProvider
+### `ReactQueryErrorResetBoundary`/`QueryCache.resetErrorBoundaries()` have been replaced by `QueryErrorResetBoundary`/`useQueryErrorResetBoundary()`.
 
-The `ReactQueryConfigProvider` component has been removed. Default options for queries and mutations can now be specified in `QueryClient`:
+Together, these provide the same experience as before, but with added control to choose which component trees you want to reset. For more information, see:
 
-```js
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: Infinity,
-    },
-  },
-})
-```
+- [QueryErrorResetBoundary](../reference/QueryErrorResetBoundary)
+- [useQueryErrorResetBoundary](../reference/useQueryErrorResetBoundary)
 
-### Query function parameters
+### `QueryCache.getQuery()` has been replaced by `QueryCache.find()`.
 
-Query functions now get a `QueryFunctionContext` instead of the query key parameters.
+`QueryCache.find()` should now be used to look up individual queries from a cache
 
-The `QueryFunctionContext` contains a `queryKey` and a `pageParam` in case of ininite queries.
+### `QueryCache.getQueries()` has been moved to `QueryCache.findAll()`.
 
-useQuery:
+`QueryCache.findAll()` should now be used to look up multiple queries from a cache
+
+### `QueryCache.isFetching` has been moved to `QueryClient.isFetching()`.
+
+**Notice that it's now a function instead of a property**
+
+### The `useQueryCache` hook has been replaced by the `useQueryClient` hook.
+
+It returns the provided `queryClient` for its component tree and shouldn't need much tweaking beyond a rename.
+
+### Query key parts/pieces are no longer automatically spread to the query function.
+
+Inline functions are now the suggested way of passing parameters to your query functions:
 
 ```js
 // Old
@@ -83,7 +132,15 @@ useQuery(['post', id], (_key, id) => fetchPost(id))
 useQuery(['post', id], () => fetchPost(id))
 ```
 
-useInfiniteQuery:
+If you still insist on not using inline functions, you can use the newly passed `QueryFunctionContext`:
+
+```js
+useQuery(['post', id], context => fetchPost(context.queryKey[1]))
+```
+
+### Infinite Query Page params are now passed via `QueryFunctionContext.pageParam`
+
+They were previously added as the last query key parameter in your query function, but this proved to be difficult for some patterns
 
 ```js
 // Old
@@ -93,9 +150,9 @@ useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
 useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPost(pageParam))
 ```
 
-### usePaginatedQuery()
+### usePaginatedQuery() has been deprecated in favor of the `keepPreviousData` option
 
-The `usePaginatedQuery()` hook has been replaced by the `keepPreviousData` option on `useQuery`:
+The new `keepPreviousData` options is available for both `useQuery` and `useInfiniteQuery` and will have the same "lagging" effect on your data:
 
 ```js
 import { useQuery } from 'react-query'
@@ -107,11 +164,19 @@ function Page({ page }) {
 }
 ```
 
-### useInfiniteQuery()
+### useInfiniteQuery() is now bi-directional
 
-The `useInfiniteQuery()` interface has changed to fully support bi-directional infinite lists and manual updates.
+The `useInfiniteQuery()` interface has changed to fully support bi-directional infinite lists.
 
-The `data` of an infinite query is now an object containing the `pages` and the `pageParams` used to fetch the pages.
+- `options.getFetchMore` has been renamed to `options.getNextPageParam`
+- `queryResult.canFetchMore` has been renamed to `queryResult.hasNextPage`
+- `queryResult.fetchMore` has been renamed to `queryResult.fetchNextPage`
+- `queryResult.isFetchingMore` has been renamed to `queryResult.isFetchingNextPage`
+- Added the `options.getPreviousPageParam` option
+- Added the `queryResult.hasPreviousPage` property
+- Added the `queryResult.fetchPreviousPage` property
+- Added the `queryResult.isFetchingPreviousPage`
+- The `data` of an infinite query is now an object containing the `pages` and the `pageParams` used to fetch the pages: `{ pages: [data, data, data], pageParams: [...]}`
 
 One direction:
 
@@ -172,7 +237,9 @@ const {
 )
 ```
 
-Manually removing the first page:
+### Infinite Query data now contains the array of pages and pageParams used to fetch those pages.
+
+This allows for easier manipulation of the data and the page params, like, for example, removing the first page of data along with it's params:
 
 ```js
 queryClient.setQueryData('projects', data => ({
@@ -181,9 +248,9 @@ queryClient.setQueryData('projects', data => ({
 }))
 ```
 
-### useMutation()
+### useMutation now returns an object instead of an array
 
-The `useMutation()` hook now returns an object instead of an array:
+Though the old way gave us warm fuzzy feelings of when we first discovered `useState` for the first time, they didn't last long. Now the mutation return is a single object.
 
 ```js
 // Old:
@@ -193,8 +260,13 @@ const [mutate, { status, reset }] = useMutation()
 const { mutate, status, reset } = useMutation()
 ```
 
-Previously the `mutate` function returned a promise which resolved to `undefined` if a mutation failed instead of throwing.
+### `mutation.mutate` no longer return a promise
+
+- The `[mutate]` variable has been changed to the `mutation.mutate` function
+- Added the `mutation.mutateAsync` function
+
 We got a lot of questions regarding this behavior as users expected the promise to behave like a regular promise.
+
 Because of this the `mutate` function is now split into a `mutate` and `mutateAsync` function.
 
 The `mutate` function can be used when using callbacks:
@@ -230,9 +302,7 @@ try {
 }
 ```
 
-### Query object syntax
-
-The object syntax has been collapsed:
+### The object syntax for useQuery now uses a collapsed config:
 
 ```js
 // Old:
@@ -250,83 +320,35 @@ useQuery({
 })
 ```
 
-### queryCache.prefetchQuery()
-
-The `queryClient.prefetchQuery()` method should now only be used for prefetching scenarios where the result is not relevant.
-
-Use the `queryClient.fetchQuery()` method to get the query data or error:
-
-```js
-// Prefetch a query:
-await queryClient.prefetchQuery('posts', fetchPosts)
-
-// Fetch a query:
-try {
-  const data = await queryClient.fetchQuery('posts', fetchPosts)
-} catch (error) {
-  // Error handling
-}
-```
-
-### ReactQueryCacheProvider
-
-The `ReactQueryCacheProvider` component has been replaced by the `QueryClientProvider` component.
-
-### makeQueryCache()
-
-The `makeQueryCache()` function has replaced by `new QueryCache()`.
-
-### ReactQueryErrorResetBoundary
-
-The `ReactQueryErrorResetBoundary` component has been renamed to `QueryErrorResetBoundary`.
-
-### queryCache.resetErrorBoundaries()
-
-The `queryCache.resetErrorBoundaries()` method has been replaced by the `QueryErrorResetBoundary` component.
-
-### queryCache.getQuery()
-
-The `queryCache.getQuery()` method has been replaced by `queryCache.find()`.
-
-### queryCache.getQueries()
-
-The `queryCache.getQueries()` method has been replaced by `queryCache.findAll()`.
-
-### queryCache.isFetching
-
-The `queryCache.isFetching` property has been replaced by `queryClient.isFetching()`.
-
-### QueryOptions.enabled
+### If set, the QueryOptions.enabled option must be a boolean (`true`/`false`)
 
 The `enabled` query option will now only disable a query when the value is `false`.
-If needed, values can be casted with `!!userId` or `Boolean(userId)`.
+If needed, values can be casted with `!!userId` or `Boolean(userId)` and a handy error will be thrown if a non-boolean value is passed.
 
-### QueryOptions.initialStale
+### The QueryOptions.initialStale option has been removed
 
 The `initialStale` query option has been removed and initial data is now treated as regular data.
 Which means that if `initialData` is provided, the query will refetch on mount by default.
 If you do not want to refetch immediately, you can define a `staleTime`.
 
-### QueryOptions.forceFetchOnMount
+### The `QueryOptions.forceFetchOnMount` option has been replaced by `refetchOnMount: 'always'`
 
-The `forceFetchOnMount` query option has been replaced by `refetchOnMount: 'always'`.
+Honestly, we were acruing way too many `refetchOn____` options, so this should clean things up.
 
-### QueryOptions.refetchOnMount
+### The `QueryOptions.refetchOnMount` options now only applies to its parent component instead of all query observers
 
 When `refetchOnMount` was set to `false` any additional components were prevented from refetching on mount.
 In version 3 only the component where the option has been set will not refetch on mount.
 
-### QueryOptions.queryFnParamsFilter
+### The `QueryOptions.queryFnParamsFilter` has been removed in favor of the new `QueryFunctionContext` object.
 
 The `queryFnParamsFilter` option has been removed because query functions now get a `QueryFunctionContext` object instead of the query key.
 
 Parameters can still be filtered within the query function itself as the `QueryFunctionContext` also contains the query key.
 
-### QueryOptions.notifyOnStatusChange
+### The `QueryOptions.notifyOnStatusChange` option has been superceded by the new `notifyonChangeProps` and `notifyOnChangePropsExclusions` options.
 
-The `notifyOnStatusChange` option has been replaced by the `notifyOnChangeProps` and `notifyOnChangePropsExclusions` props.
-
-With these options it is possible to configure when a component should re-render on a granular level.
+With these new options it is possible to configure when a component should re-render on a granular level.
 
 Only re-render when the `data` or `error` properties change:
 
@@ -354,17 +376,15 @@ function User() {
 }
 ```
 
-### QueryResult.clear()
+### The `QueryResult.clear()` function has been renamed to `QueryResult.remove()`
 
-The `QueryResult.clear()` method has been renamed to `QueryResult.remove()`.
+Although it was called `clear`, it really just removed the query from the cache. The name now matches the functionality.
 
-### QueryResult.updatedAt
+### The `QueryResult.updatedAt` property has been split into `QueryResult.dataUpdatedAt` and `QueryResult.errorUpdatedAt` properties
 
 Because data and errors can be present at the same time, the `updatedAt` property has been split into `dataUpdatedAt` and `errorUpdatedAt`.
 
-### setConsole
-
-The `setConsole` function has been replaced by `setLogger`:
+### `setConsole()` has been replaced by the new `setLogger()` function
 
 ```js
 import { setLogger } from 'react-query'
@@ -380,6 +400,8 @@ setLogger({
 setLogger(winston.createLogger())
 ```
 
+### React Native no longer requires overriding the logger
+
 To prevent showing error screens in React Native when a query fails it was necessary to manually change the Console:
 
 ```js
@@ -392,13 +414,11 @@ setConsole({
 })
 ```
 
-In version 3 this is done automatically when React Query is used in React Native.
+In version 3 **this is done automatically when React Query is used in React Native**.
 
-### New features
+## New features
 
-Some new features have also been added besides the API changes, performance improvements and file size reduction.
-
-#### Selectors
+#### Query Data Selectors
 
 The `useQuery` and `useInfiniteQuery` hooks now have a `select` option to select or transform parts of the query result.
 
@@ -415,9 +435,9 @@ function User() {
 
 Set the `notifyOnChangeProps` option to `['data', 'error']` to only re-render when the selected data changes.
 
-#### useQueries()
+#### The useQueries() hook, for variable-length parallel query execution
 
-The `useQueries()` hook can be used to fetch a variable number of queries:
+Wish you could run `useQuery` in a loop? The rules of hooks say no, but with the new `useQueries()` hook, you can!
 
 ```js
 import { useQueries } from 'react-query'
@@ -500,7 +520,7 @@ const unsubscribe = observer.subscribe(result => {
 
 #### Set default options for specific queries
 
-The `queryClient.setQueryDefaults()` method can be used to set default options for specific queries:
+The `QueryClient.setQueryDefaults()` method can be used to set default options for specific queries:
 
 ```js
 queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
@@ -512,7 +532,7 @@ function Component() {
 
 #### Set default options for specific mutations
 
-The `queryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
+The `QueryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
 
 ```js
 queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
@@ -537,3 +557,7 @@ The core of React Query is now fully separated from React, which means it can al
 ```js
 import { QueryClient } from 'react-query/core'
 ```
+
+### Devtools are now part of the main repo and npm package
+
+The devtools are now included in the `react-query` package itself under the import `react-query/devtools`. Simply replace `react-query-devtools` imports with `react-query/devtools`

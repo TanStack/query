@@ -18,6 +18,7 @@ const supporters = [
   ['Fillip Peyton', 'https://github.com/fillippeyton'],
   ['Tim Myers', 'https://github.com/denvercoder'],
   ['Andy Slezak', 'https://github.com/amslezak'],
+  ['Shane Cavaliere', 'https://githbu.com/shanecav']
 ]
 
 const fans = [
@@ -41,6 +42,9 @@ const fans = [
   'Bryan Grill, (@brygrill)',
   'Peter Hozák, (@Aprillion)',
   'Arijit Bhattacharya, (@hoodwink73)',
+  'Jonathan Chang, (@jdkschang)',
+  'Ash Connell, (@ashconnell)',
+  'Sara Bee, (@doeg)'
 ]
 
 const Home = () => {
