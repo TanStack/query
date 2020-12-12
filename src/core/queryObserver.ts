@@ -51,6 +51,7 @@ export class QueryObserver<
   private currentResultState?: QueryState<TQueryData, TError>
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private initialDataUpdateCount: number
+  private initialErrorUpdateCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
 
@@ -63,6 +64,7 @@ export class QueryObserver<
     this.client = client
     this.options = options
     this.initialDataUpdateCount = 0
+    this.initialErrorUpdateCount = 0
     this.bindMethods()
     this.setOptions(options)
   }
@@ -409,8 +411,10 @@ export class QueryObserver<
       error: state.error,
       errorUpdatedAt: state.errorUpdateCount,
       failureCount: state.fetchFailureCount,
-      isFetched: state.dataUpdateCount > 0,
-      isFetchedAfterMount: state.dataUpdateCount > this.initialDataUpdateCount,
+      isFetched: state.dataUpdateCount > 0 || state.errorUpdateCount > 0,
+      isFetchedAfterMount:
+        state.dataUpdateCount > this.initialDataUpdateCount ||
+        state.errorUpdateCount > this.initialErrorUpdateCount,
       isFetching,
       isLoadingError: status === 'error' && state.dataUpdatedAt === 0,
       isPlaceholderData,
@@ -489,6 +493,7 @@ export class QueryObserver<
     this.previousQueryResult = this.currentResult
     this.currentQuery = query
     this.initialDataUpdateCount = query.state.dataUpdateCount
+    this.initialErrorUpdateCount = query.state.errorUpdateCount
 
     const willFetch = prevQuery
       ? this.willFetchOptionally()
