@@ -132,6 +132,18 @@ export class QueryClient {
     })
   }
 
+  resetQueries(filters?: QueryFilters): void
+  resetQueries(queryKey?: QueryKey, filters?: QueryFilters): void
+  resetQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): void {
+    const [filters] = parseFilterArgs(arg1, arg2)
+    const queryCache = this.queryCache
+    notifyManager.batch(() => {
+      queryCache.findAll(filters).forEach(query => {
+        query.reset()
+      })
+    })
+  }
+
   cancelQueries(filters?: QueryFilters, options?: CancelOptions): Promise<void>
   cancelQueries(
     queryKey?: QueryKey,
