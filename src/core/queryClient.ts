@@ -139,7 +139,7 @@ export class QueryClient {
     const queryCache = this.queryCache
     notifyManager.batch(() => {
       queryCache.findAll(filters).forEach(query => {
-        queryCache.reset(query)
+        query.reset()
       })
     })
   }
