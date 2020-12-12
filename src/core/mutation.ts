@@ -161,7 +161,7 @@ export class Mutation<
         this.options.onSuccess?.(
           data,
           this.state.variables!,
-          this.state.context
+          this.state.context!
         )
       )
       .then(() =>

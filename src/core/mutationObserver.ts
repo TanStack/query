@@ -145,7 +145,7 @@ export class MutationObserver<
           this.mutateOptions.onSuccess?.(
             this.currentResult.data!,
             this.currentResult.variables!,
-            this.currentResult.context
+            this.currentResult.context!
           )
           this.mutateOptions.onSettled?.(
             this.currentResult.data!,

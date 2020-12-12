@@ -444,7 +444,7 @@ export interface MutationOptions<
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    context: TContext | undefined
+    context: TContext
   ) => Promise<void> | void
   onError?: (
     error: TError,
@@ -480,7 +480,7 @@ export interface MutateOptions<
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    context: TContext | undefined
+    context: TContext
   ) => Promise<void> | void
   onError?: (
     error: TError,
