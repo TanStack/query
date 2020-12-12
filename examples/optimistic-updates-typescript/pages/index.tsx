@@ -23,7 +23,7 @@ export default function App() {
   )
 }
 
-type TodoData = {
+type Todos = {
   items: readonly {
     id: string
     text: string
@@ -31,18 +31,20 @@ type TodoData = {
   ts: number
 }
 
-async function fetchTodos(): Promise<TodoData> {
+async function fetchTodos(): Promise<Todos> {
   const res = await axios.get('/api/data')
   return res.data
 }
 
-function useTodos<TData = TodoData>(
-  options?: UseQueryOptions<TData, AxiosError, TodoData>
+function useTodos<TData = Todos>(
+  options?: UseQueryOptions<TData, AxiosError, Todos>
 ) {
   return useQuery('todos', fetchTodos, options)
 }
 
 function TodoCounter() {
+  // subscribe only to changes in the 'data' prop, which will be the
+  // amount of todos because of the select function
   const counterQuery = useTodos({
     select: data => data.items.length,
     notifyOnChangeProps: ['data'],
@@ -61,34 +63,37 @@ function Example() {
   const { isFetching, ...queryInfo } = useTodos()
 
   const addTodoMutation = useMutation(
-    (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+    newTodo => axios.post('/api/data', { text: newTodo }),
     {
-      // Optimistically update the cache value on mutate, but store
-      // the old value and return it so that it's accessible in case of
-      // an error
-      onMutate: async newTodo => {
+      // When mutate is called:
+      onMutate: async (newTodo: string) => {
         setText('')
+        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries('todos')
 
-        const previousValue = queryClient.getQueryData<TodoData>('todos')
+        // Snapshot the previous value
+        const previousTodos = queryClient.getQueryData<Todos>('todos')
 
-        if (previousValue) {
-          queryClient.setQueryData<TodoData>('todos', {
-            ...previousValue,
+        // Optimistically update to the new value
+        if (previousTodos) {
+          queryClient.setQueryData<Todos>('todos', {
+            ...previousTodos,
             items: [
-              ...previousValue.items,
+              ...previousTodos.items,
               { id: Math.random().toString(), text: newTodo },
             ],
           })
         }
 
-        return previousValue
+        return { previousTodos }
       },
-      // On failure, roll back to the previous value
-      onError: (err, variables, previousValue) => {
-        queryClient.setQueryData('todos', previousValue)
+      // If the mutation fails, use the context returned from onMutate to roll back
+      onError: (err, variables, context) => {
+        if (context?.previousTodos) {
+          queryClient.setQueryData<Todos>('todos', context.previousTodos)
+        }
       },
-      // After success or failure, refetch the todos query
+      // Always refetch after error or success:
       onSettled: () => {
         queryClient.invalidateQueries('todos')
       },
