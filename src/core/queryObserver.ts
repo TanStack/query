@@ -172,7 +172,10 @@ export class QueryObserver<TResult, TError> {
     if (
       this.config.enabled && // Only fetch if enabled
       this.isStale && // Only fetch if stale
-      !(this.config.suspense && this.currentResult.isFetched) && // Don't refetch if in suspense mode and the data is already fetched
+      !(
+        this.config.suspense &&
+        (this.currentResult.isFetched || this.currentResult.isFetching)
+      ) && // Don't refetch if in suspense mode and the data is already fetched or fetching
       (this.config.refetchOnMount || this.currentQuery.observers.length === 1)
     ) {
       this.fetch()
