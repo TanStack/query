@@ -948,6 +948,56 @@ describe('queryCache', () => {
     expect(queryFn2).toHaveBeenCalledTimes(1)
   })
 
+  test('should notify listeners when a query is reset', async () => {
+    const key = queryKey()
+
+    const callback = jest.fn()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+
+    queryCache.subscribe(callback)
+
+    queryClient.resetQueries(key)
+
+    expect(callback).toHaveBeenCalled()
+  })
+
+  test('resetQueries should reset query', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+
+    let state = queryClient.getQueryState(key)
+    expect(state?.data).toEqual('data')
+    expect(state?.status).toEqual('success')
+
+    queryClient.resetQueries(key)
+
+    state = queryClient.getQueryState(key)
+
+    expect(state).toBeTruthy()
+    expect(state?.data).toBeUndefined()
+    expect(state?.status).toEqual('idle')
+  })
+
+  test('resetQueries should reset query data to initial data if set', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data', {
+      initialData: 'initial',
+    })
+
+    let state = queryClient.getQueryState(key)
+    expect(state?.data).toEqual('data')
+
+    queryClient.resetQueries(key)
+
+    state = queryClient.getQueryState(key)
+
+    expect(state).toBeTruthy()
+    expect(state?.data).toEqual('initial')
+  })
+
   test('find should filter correctly', async () => {
     const key = queryKey()
     const testCache = new QueryCache()
