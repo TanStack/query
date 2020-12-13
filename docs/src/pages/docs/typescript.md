@@ -8,7 +8,12 @@ React Query is now written in **TypeScript** to make sure the library and your p
 Install the latest version to get React Query with the new types:
 
 ```sh
+# If you are using NPM
 npm install react-query --save
+
+# If you are using Yarn
+yarn add react-query
+
 ```
 
 ## Changes
