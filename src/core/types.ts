@@ -214,6 +214,10 @@ export interface InvalidateOptions {
   throwOnError?: boolean
 }
 
+export interface ResetOptions {
+  throwOnError?: boolean
+}
+
 export interface FetchNextPageOptions extends ResultOptions {
   pageParam?: unknown
 }
