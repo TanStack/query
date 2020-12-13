@@ -294,6 +294,17 @@
       ]
     },
     {
+      "title": "Plugins",
+      "heading": true,
+      "routes": [
+        {
+          "title": "Persist - LocalStorage (Experimental)",
+          "path": "/plugins/persist-localstorage",
+          "editUrl": "/plugins/persist-localstorage.md"
+        }
+      ]
+    },
+    {
       "title": "API Reference",
       "heading": true,
       "routes": [
