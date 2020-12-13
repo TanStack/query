@@ -20,6 +20,7 @@ import type {
   QueryObserverOptions,
   QueryOptions,
   RefetchOptions,
+  ResetOptions,
 } from './types'
 import type { QueryState, SetDataOptions } from './query'
 import { QueryCache } from './queryCache'
@@ -132,15 +133,22 @@ export class QueryClient {
     })
   }
 
-  resetQueries(filters?: QueryFilters): void
-  resetQueries(queryKey?: QueryKey, filters?: QueryFilters): void
-  resetQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): void {
-    const [filters] = parseFilterArgs(arg1, arg2)
+  resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void>
+  resetQueries(queryKey?: QueryKey, filters?: QueryFilters, options?: ResetOptions): Promise<void>
+  resetQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters | ResetOptions, arg3?: ResetOptions): Promise<void> {
+    const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
     const queryCache = this.queryCache
-    notifyManager.batch(() => {
+
+    const refetchFilters: QueryFilters = {
+      ...filters,
+      active: true,
+    }
+
+    return notifyManager.batch(() => {
       queryCache.findAll(filters).forEach(query => {
         query.reset()
       })
+      return this.refetchQueries(refetchFilters, options)
     })
   }
 

@@ -284,7 +284,7 @@ property/state of the query.
 This will notify subscribers &mdash; unlike `clear`, which removes all
 subscribers &mdash; and reset the query to its pre-loaded state &mdash; unlike
 `invalidateQueries`. If a query has `initialData`, the query's data will be
-reset to that.
+reset to that. If a query is active, it will be refetched.
 
 ```js
 queryClient.resetQueries(queryKey, { exact: true })
@@ -294,10 +294,13 @@ queryClient.resetQueries(queryKey, { exact: true })
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `resetOptions?: ResetOptions`:
+  - `throwOnError?: boolean`
+    - When set to `true`, this method will throw if any of the query refetch tasks fail.
 
 **Returns**
 
-This method does not return anything
+This method returns a promise that resolves when all active queries have been refetched.
 
 ## `queryClient.isFetching`
 

@@ -998,6 +998,33 @@ describe('queryCache', () => {
     expect(state?.data).toEqual('initial')
   })
 
+  test('resetQueries should refetch all active queries', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const queryFn1 = jest.fn()
+    const queryFn2 = jest.fn()
+    const testCache = new QueryCache()
+    const testClient = new QueryClient({ queryCache: testCache })
+    const observer1 = new QueryObserver(testClient, {
+      queryKey: key1,
+      queryFn: queryFn1,
+      enabled: true,
+    })
+    const observer2 = new QueryObserver(testClient, {
+      queryKey: key2,
+      queryFn: queryFn2,
+      enabled: false,
+    })
+    observer1.subscribe()
+    observer2.subscribe()
+    await testClient.resetQueries()
+    observer2.destroy()
+    observer1.destroy()
+    testCache.clear()
+    expect(queryFn1).toHaveBeenCalledTimes(2)
+    expect(queryFn2).toHaveBeenCalledTimes(0)
+  })
+
   test('find should filter correctly', async () => {
     const key = queryKey()
     const testCache = new QueryCache()

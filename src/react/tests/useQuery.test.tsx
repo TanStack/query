@@ -2852,4 +2852,129 @@ describe('useQuery', () => {
 
     expect(cancelFn).toHaveBeenCalled()
   })
+
+  it('should update query state and refetch when reset with resetQueries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        () => {
+          count++
+          return count
+        },
+        { staleTime: Infinity }
+      )
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          queryClient.resetQueries(key)
+        }, 10)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(4)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 1,
+      isLoading: false,
+      isFetching: false,
+      isSuccess: true,
+      isStale: false,
+    })
+    expect(states[2]).toMatchObject({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[3]).toMatchObject({
+      data: 2,
+      isLoading: false,
+      isFetching: false,
+      isSuccess: true,
+      isStale: false,
+    })
+  })
+
+  it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        () => {
+          count++
+          return count
+        },
+        { staleTime: Infinity, enabled: false }
+      )
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          state.refetch()
+        }, 0)
+        setActTimeout(() => {
+          queryClient.resetQueries(key)
+        }, 50)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(4)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      isSuccess: false,
+      isStale: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: 1,
+      isLoading: false,
+      isFetching: false,
+      isSuccess: true,
+      isStale: false,
+    })
+    expect(states[3]).toMatchObject({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      isSuccess: false,
+      isStale: true,
+    })
+  })
 })
