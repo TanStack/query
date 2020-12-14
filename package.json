@@ -31,13 +31,6 @@
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
     "stats": "open ./stats.html"
   },
-  "release": {
-    "branches": [
-      "1.x",
-      "master",
-      "beta"
-    ]
-  },
   "files": [
     "dist",
     "lib",
