@@ -7,10 +7,10 @@ If you find yourself wishing for whatever reason that you could just share the s
 
 ```js
 // Define a default query function that will receive the query key
-const defaultQueryFn = async key => {
-  const { data } = await axios.get(`https://jsonplaceholder.typicode.com${key}`)
-  return data
-}
+const defaultQueryFn = async ({ queryKey }) => {
+  const { data } = await axios.get(`https://jsonplaceholder.typicode.com${queryKey[0]}`);
+  return data;
+};
 
 // provide the default query function to your app with defaultOptions
 const queryClient = new QueryClient({
