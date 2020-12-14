@@ -241,7 +241,7 @@ export function partialDeepEqual(a: any, b: any): boolean {
     return false
   }
 
-  if (typeof a === 'object' && typeof b === 'object') {
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
     return !Object.keys(b).some(key => !partialDeepEqual(a[key], b[key]))
   }
 
