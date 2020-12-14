@@ -24,12 +24,12 @@ export const Nav = () => (
         <div className="flex flex-grow items-center justify-between w-3/4 md:w-auto md:justify-end space-x-4 md:space-x-8 h-16">
           <div className="flex space-x-4 md:space-x-8 text-sm md:text-base">
             <div>
-              <Link href="/docs/overview">
+              <Link href="/overview">
                 <a className="leading-6 font-medium">Docs</a>
               </Link>
             </div>
             <div>
-              <Link href="/docs/examples/simple">
+              <Link href="/examples/simple">
                 <a className="leading-6 font-medium">Examples</a>
               </Link>
             </div>

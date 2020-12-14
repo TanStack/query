@@ -15,7 +15,7 @@ export async function fetchProjects(key) {
   return data;
 }
 
-export async function fetchProject(key, { id }) {
+export async function fetchProject(id) {
   console.info("fetch project id", id);
   let { data } = await axios.get(
     `https://api.github.com/repos/tannerlinsley/${id}`

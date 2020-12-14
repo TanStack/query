@@ -37,28 +37,21 @@ const remarkPlugins = [
 module.exports = optimizedImages({
   pageExtensions: ['jsx', 'js', 'mdx', 'md'],
   env: {
-    GA_TRACKING_ID: process.env.GA_TRACKING_ID || '',
+    NEXT_PUBLIC_GA_TRACKING_ID: process.env.GA_TRACKING_ID || '',
     SENTRY_RELEASE: process.env.VERCEL_GITHUB_COMMIT_SHA || '',
+  },
+  async redirects() {
+    return [
+      {
+        source: '/docs/:any*',
+        destination: '/:any*', // Matched parameters can be used in the destination
+        permanent: true,
+      },
+    ]
   },
   experimental: {
     plugins: true,
     modern: true,
-    rewrites() {
-      return [
-        {
-          source: '/feed.xml',
-          destination: '/_next/static/feed.xml',
-        },
-        {
-          source: '/docs{/}?',
-          destination: '/docs/overview',
-        },
-        {
-          source: '/docs/tag/:tag{/}?',
-          destination: '/docs/tag/:tag/overview',
-        },
-      ]
-    },
   },
   webpack: (config, { dev, isServer, ...options }) => {
     config.module.rules.push({

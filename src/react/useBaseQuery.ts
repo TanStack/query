@@ -1,76 +1,84 @@
 import React from 'react'
 
-import { useIsMounted } from './utils'
-import { getResolvedQueryConfig } from '../core/config'
+import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
-import { QueryResultBase, QueryKey, QueryConfig } from '../core/types'
-import { useErrorResetBoundary } from './ReactQueryErrorResetBoundary'
-import { useQueryCache } from './ReactQueryCacheProvider'
-import { useContextConfig } from './ReactQueryConfigProvider'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { useQueryClient } from './QueryClientProvider'
+import { UseBaseQueryOptions } from './types'
 
-export function useBaseQuery<TResult, TError>(
-  queryKey: QueryKey,
-  config?: QueryConfig<TResult, TError>
-): QueryResultBase<TResult, TError> {
-  const [, rerender] = React.useReducer(c => c + 1, 0)
-  const isMounted = useIsMounted()
-  const cache = useQueryCache()
-  const contextConfig = useContextConfig()
-  const errorResetBoundary = useErrorResetBoundary()
+export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
+  options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>,
+  Observer: typeof QueryObserver
+) {
+  const queryClient = useQueryClient()
+  const errorResetBoundary = useQueryErrorResetBoundary()
+  const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
 
-  // Get resolved config
-  const resolvedConfig = getResolvedQueryConfig(
-    cache,
-    queryKey,
-    contextConfig,
-    config
-  )
+  // Include callbacks in batch renders
+  if (defaultedOptions.onError) {
+    defaultedOptions.onError = notifyManager.batchCalls(
+      defaultedOptions.onError
+    )
+  }
+
+  if (defaultedOptions.onSuccess) {
+    defaultedOptions.onSuccess = notifyManager.batchCalls(
+      defaultedOptions.onSuccess
+    )
+  }
+
+  if (defaultedOptions.onSettled) {
+    defaultedOptions.onSettled = notifyManager.batchCalls(
+      defaultedOptions.onSettled
+    )
+  }
+
+  // Always set stale time when using suspense to prevent
+  // fetching again when directly re-mounting after suspense
+  if (
+    defaultedOptions.suspense &&
+    typeof defaultedOptions.staleTime !== 'number'
+  ) {
+    defaultedOptions.staleTime = 1000
+  }
 
   // Create query observer
-  const observerRef = React.useRef<QueryObserver<TResult, TError>>()
-  const firstRender = !observerRef.current
-  const observer = observerRef.current || new QueryObserver(resolvedConfig)
+  const observerRef = React.useRef<QueryObserver<any, any, any, any>>()
+  const observer =
+    observerRef.current || new Observer(queryClient, defaultedOptions)
   observerRef.current = observer
+
+  // Update options
+  if (observer.hasListeners()) {
+    observer.setOptions(defaultedOptions)
+  }
+
+  const [currentResult, setCurrentResult] = React.useState(() =>
+    observer.getCurrentResult()
+  )
 
   // Subscribe to the observer
   React.useEffect(() => {
     errorResetBoundary.clearReset()
-    return observer.subscribe(() => {
-      if (isMounted()) {
-        rerender()
-      }
-    })
-  }, [isMounted, observer, rerender, errorResetBoundary])
-
-  // Update config
-  if (!firstRender) {
-    observer.updateConfig(resolvedConfig)
-  }
-
-  const result = observer.getCurrentResult()
+    return observer.subscribe(notifyManager.batchCalls(setCurrentResult))
+  }, [observer, errorResetBoundary])
 
   // Handle suspense
-  if (resolvedConfig.suspense || resolvedConfig.useErrorBoundary) {
-    const query = observer.getCurrentQuery()
-
+  if (observer.options.suspense || observer.options.useErrorBoundary) {
     if (
-      result.isError &&
+      currentResult.isError &&
       !errorResetBoundary.isReset() &&
-      query.state.throwInErrorBoundary
+      !observer.getCurrentQuery().isFetching()
     ) {
-      throw result.error
+      throw currentResult.error
     }
 
-    if (
-      resolvedConfig.enabled &&
-      resolvedConfig.suspense &&
-      !result.isSuccess
-    ) {
+    if (observer.options.suspense && currentResult.isLoading) {
       errorResetBoundary.clearReset()
       const unsubscribe = observer.subscribe()
-      throw observer.fetch().finally(unsubscribe)
+      throw observer.refetch().finally(unsubscribe)
     }
   }
 
-  return result
+  return currentResult
 }

@@ -87,7 +87,7 @@ const Home = () => {
 
                   <div className="mt-5  mx-auto sm:flex sm:justify-center lg:justify-start lg:mx-0 md:mt-8">
                     <div className="rounded-md shadow">
-                      <Link href="/docs/overview">
+                      <Link href="/overview">
                         <a className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:border-coral focus:shadow-outline-coral transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10">
                           Get Started
                         </a>
@@ -523,7 +523,7 @@ const Home = () => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 md:mt-0">
               <div className="inline-flex rounded-md shadow">
-                <Link href="/docs/overview">
+                <Link href="/overview">
                   <a className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
                     Okay, let's get started!
                   </a>

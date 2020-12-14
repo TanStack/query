@@ -1,9 +1,10 @@
 {
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "import"],
   "extends": [
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript",
     "react-app",
     "prettier"
   ],
@@ -26,6 +27,10 @@
         "ignoreParameters": true
       }
     ],
-    "no-shadow": "error"
+    "no-shadow": "error",
+    "import/no-cycle": "error",
+    "import/no-unresolved": "error",
+    "import/no-unused-modules": ["off", { "unusedExports": true }],
+    "no-redeclare": "off"
   }
 }

@@ -79,7 +79,6 @@ export const LayoutDocs = props => {
         />
         <div className="block">
           <>
-
             <div className="container mx-auto pb-12 pt-6 content">
               <div className="flex relative">
                 {!isMobile && (
@@ -89,7 +88,7 @@ export const LayoutDocs = props => {
                 )}
 
                 <div className={s['markdown'] + ' w-full docs'}>
-                  <h1>{props.meta.title}</h1>
+                  <h1 id="_top">{props.meta.title}</h1>
                   <MDXProvider components={MDXComponents}>
                     {props.children}
                   </MDXProvider>
@@ -107,11 +106,11 @@ export const LayoutDocs = props => {
                       width: 200,
                     }}
                   >
-                    <div className="sticky top-24 ">
+                    <div className="sticky top-24 overflow-y-auto">
                       <h4 className="font-semibold uppercase text-sm mb-2 mt-2 text-gray-500">
                         On this page
                       </h4>
-                      <Toc />
+                      <Toc title={props.meta.title} />
                     </div>
                   </div>
                 )}

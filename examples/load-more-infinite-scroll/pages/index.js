@@ -2,24 +2,20 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 
-import {
-  useInfiniteQuery,
-  QueryCache,
-  ReactQueryCacheProvider,
-} from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { useInfiniteQuery, QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 //
 
 import useIntersectionObserver from '../hooks/useIntersectionObserver'
 
-const queryCache = new QueryCache()
+const queryClient = new QueryClient()
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
@@ -29,17 +25,21 @@ function Example() {
     data,
     error,
     isFetching,
-    isFetchingMore,
-    fetchMore,
-    canFetchMore,
+    isFetchingNextPage,
+    isFetchingPreviousPage,
+    fetchNextPage,
+    fetchPreviousPage,
+    hasNextPage,
+    hasPreviousPage,
   } = useInfiniteQuery(
     'projects',
-    async (key, nextId = 0) => {
-      const { data } = await axios.get('/api/projects?cursor=' + nextId)
-      return data
+    async ({ pageParam = 0 }) => {
+      const res = await axios.get('/api/projects?cursor=' + pageParam)
+      return res.data
     },
     {
-      getFetchMore: lastGroup => lastGroup.nextId,
+      getPreviousPageParam: firstPage => firstPage.previousId ?? false,
+      getNextPageParam: lastPage => lastPage.nextId ?? false,
     }
   )
 
@@ -47,8 +47,8 @@ function Example() {
 
   useIntersectionObserver({
     target: loadMoreButtonRef,
-    onIntersect: fetchMore,
-    enabled: canFetchMore,
+    onIntersect: fetchNextPage,
+    enabled: hasNextPage,
   })
 
   return (
@@ -60,14 +60,27 @@ function Example() {
         <span>Error: {error.message}</span>
       ) : (
         <>
-          {data.map((page, i) => (
-            <React.Fragment key={i}>
+          <div>
+            <button
+              onClick={() => fetchPreviousPage()}
+              disabled={!hasPreviousPage || isFetchingPreviousPage}
+            >
+              {isFetchingNextPage
+                ? 'Loading more...'
+                : hasNextPage
+                ? 'Load Older'
+                : 'Nothing more to load'}
+            </button>
+          </div>
+          {data.pages.map(page => (
+            <React.Fragment key={page.nextId}>
               {page.data.map(project => (
                 <p
                   style={{
                     border: '1px solid gray',
                     borderRadius: '5px',
                     padding: '10rem 1rem',
+                    background: `hsla(${project.id * 30}, 60%, 80%, 1)`,
                   }}
                   key={project.id}
                 >
@@ -79,18 +92,20 @@ function Example() {
           <div>
             <button
               ref={loadMoreButtonRef}
-              onClick={() => fetchMore()}
-              disabled={!canFetchMore || isFetchingMore}
+              onClick={() => fetchNextPage()}
+              disabled={!hasNextPage || isFetchingNextPage}
             >
-              {isFetchingMore
+              {isFetchingNextPage
                 ? 'Loading more...'
-                : canFetchMore
-                ? 'Load More'
+                : hasNextPage
+                ? 'Load Newer'
                 : 'Nothing more to load'}
             </button>
           </div>
           <div>
-            {isFetching && !isFetchingMore ? 'Background Updating...' : null}
+            {isFetching && !isFetchingNextPage
+              ? 'Background Updating...'
+              : null}
           </div>
         </>
       )}

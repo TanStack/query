@@ -1,23 +1,19 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import {
-  useQueryCache,
-  QueryCache,
-  ReactQueryCacheProvider,
-} from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { QueryClient, QueryClientProvider, useQueryClient } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 import usePosts from "./hooks/usePosts";
 import usePost from "./hooks/usePost";
 
-const queryCache = new QueryCache();
+const queryClient = new QueryClient();
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <p>
         This example is exactly the same as the basic example, but each query
         has been refactored to be it's own custom hook. This design is the
@@ -30,12 +26,12 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }
 
 function Posts({ setPostId }) {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -57,7 +53,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      cache.getQueryData(["post", post.id])
+                      queryClient.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",

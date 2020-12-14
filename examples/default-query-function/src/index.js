@@ -4,23 +4,23 @@ import ReactDOM from "react-dom";
 import axios from "axios";
 import {
   useQuery,
-  useQueryCache,
-  QueryCache,
-  ReactQueryCacheProvider,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
 } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 
 // Define a default query function that will receive the query key
-const defaultQueryFn = async (key) => {
+const defaultQueryFn = async ({ queryKey }) => {
   const { data } = await axios.get(
-    `https://jsonplaceholder.typicode.com${key}`
+    `https://jsonplaceholder.typicode.com${queryKey[0]}`
   );
   return data;
 };
 
-// provide the default query function to your app via the config provider
-const queryCache = new QueryCache({
-  defaultConfig: {
+// provide the default query function to your app via the query client
+const queryClient = new QueryClient({
+  defaultOptions: {
     queries: {
       queryFn: defaultQueryFn,
     },
@@ -31,7 +31,7 @@ function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -48,12 +48,12 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }
 
 function Posts({ setPostId }) {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
 
   // All you have to do now is pass a key!
   const { status, data, error, isFetching } = useQuery("/posts");
@@ -77,7 +77,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can use the queryCache here to show bold links for
                       // ones that are cached
-                      cache.getQueryData(["post", post.id])
+                      queryClient.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",
@@ -101,7 +101,7 @@ function Posts({ setPostId }) {
 function Post({ postId, setPostId }) {
   // You can even leave out the queryFn and just go straight into options
   const { status, data, error, isFetching } = useQuery(`/posts/${postId}`, {
-    enabled: postId,
+    enabled: !!postId,
   });
 
   return (

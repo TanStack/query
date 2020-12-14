@@ -3,22 +3,22 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {
   useQuery,
-  useQueryCache,
-  QueryCache,
-  ReactQueryCacheProvider,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
 } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { request, gql } from "graphql-request";
 
 const endpoint = "https://graphqlzero.almansi.me/api";
 
-const queryCache = new QueryCache();
+const queryClient = new QueryClient();
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
 
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <p>
         As you visit the posts below, you will notice them in a loading state
         the first time you load them. However, after you return to this list and
@@ -35,7 +35,7 @@ function App() {
         <Posts setPostId={setPostId} />
       )}
       <ReactQueryDevtools initialIsOpen />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -61,7 +61,7 @@ function usePosts() {
 }
 
 function Posts({ setPostId }) {
-  const cache = useQueryCache();
+  const queryClient = useQueryClient();
   const { status, data, error, isFetching } = usePosts();
 
   return (
@@ -81,9 +81,9 @@ function Posts({ setPostId }) {
                     onClick={() => setPostId(post.id)}
                     href="#"
                     style={
-                      // We can use the queryCache here to show bold links for
+                      // We can find the existing query data here to show bold links for
                       // ones that are cached
-                      cache.getQueryData(["post", post.id])
+                      queryClient.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
                             color: "green",
@@ -124,7 +124,7 @@ function usePost(postId) {
       return post;
     },
     {
-      enabled: postId,
+      enabled: !!postId,
     }
   );
 }

@@ -10,7 +10,10 @@ function areEqual(prevProps, props) {
 }
 
 export const DocsPageFooter = React.memo(({ route, prevRoute, nextRoute }) => {
-  const editUrl = `${siteConfig.editUrl}${route?.editUrl || route?.path}`
+  const editUrl =
+    route?.editUrl || route?.path
+      ? `${siteConfig.editUrl}${route?.editUrl || route?.path}`
+      : null
 
   return (
     <>
@@ -45,16 +48,18 @@ export const DocsPageFooter = React.memo(({ route, prevRoute, nextRoute }) => {
         </div>
       </div>
 
-      <div className="mb-8">
-        <a
-          href={editUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-gray-600 underline"
-        >
-          Edit this page on GitHub
-        </a>
-      </div>
+      {editUrl ? (
+        <div className="mb-8">
+          <a
+            href={editUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-600 underline"
+          >
+            Edit this page on GitHub
+          </a>
+        </div>
+      ) : null}
 
       <div className="py-8 md:flex md:items-center md:py-8 border-t border-b">
         <div className="font-semibold text-xl mr-4 text-center mb-4 md:mb-0  md:text-left">

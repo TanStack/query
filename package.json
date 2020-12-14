@@ -14,6 +14,12 @@
   "unpkg": "dist/react-query.development.js",
   "types": "types/index.d.ts",
   "module": "es/index.js",
+  "sideEffects": [
+    "es/react/setBatchUpdatesFn.js",
+    "es/react/setLogger.js",
+    "lib/react/setBatchUpdatesFn.js",
+    "lib/react/setLogger.js"
+  ],
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "npm run test:types && npm run test:eslint && jest --watch",
@@ -21,11 +27,11 @@
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
-    "build": "yarn build:commonjs && yarn build:es && yarn build:umd",
-    "build:commonjs": "rimraf ./lib && cross-env BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/*.test.tsx ./src --out-dir lib",
-    "build:es": "rimraf ./es && babel --extensions .ts,.tsx --ignore ./src/**/*.test.tsx ./src --out-dir es",
-    "build:umd": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json stats-hydration.json",
-    "build:types": "rimraf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r && replace 'export type' 'export' ./types -r",
+    "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
+    "build:commonjs": "rimraf ./lib && cross-env BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
+    "build:es": "rimraf ./es && babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir es",
+    "build:umd": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json",
+    "build:types": "rimraf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
     "now-build": "yarn && cd www && yarn && yarn build",
     "start": "rollup -c -w",
     "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
@@ -35,20 +41,27 @@
     "branches": [
       "1.x",
       "master",
-      "beta"
+      {
+        "name": "beta",
+        "prerelease": true
+      }
     ]
   },
   "files": [
+    "core",
     "dist",
-    "lib",
     "es",
-    "types",
+    "hydration",
+    "devtools",
+    "persist-localstorage-experimental",
+    "lib",
+    "react",
     "scripts",
-    "hydration.js",
-    "hydration.d.ts"
+    "types"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.5.5"
+    "@babel/runtime": "^7.5.5",
+    "match-sorter": "^6.0.2"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0"
@@ -74,8 +87,8 @@
     "@types/jest": "^26.0.4",
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
-    "@typescript-eslint/eslint-plugin": "^3.6.1",
-    "@typescript-eslint/parser": "^3.6.1",
+    "@typescript-eslint/eslint-plugin": "^4.8.1",
+    "@typescript-eslint/parser": "^4.8.1",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.1",
     "babel-plugin-const-enum": "^1.0.1",
@@ -87,7 +100,7 @@
     "eslint-config-standard": "^14.1.1",
     "eslint-config-standard-react": "^9.2.0",
     "eslint-plugin-flowtype": "5.x",
-    "eslint-plugin-import": "2.x",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "6.x",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.3",
@@ -113,6 +126,6 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-visualizer": "^4.0.4",
-    "typescript": "^3.9.5"
+    "typescript": "^4.1.2"
   }
 }

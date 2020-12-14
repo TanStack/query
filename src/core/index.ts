@@ -1,21 +1,19 @@
-export { getDefaultReactQueryConfig } from './config'
-export {
-  queryCache,
-  queryCaches,
-  makeQueryCache,
-  QueryCache,
-} from './queryCache'
-export { setFocusHandler } from './setFocusHandler'
-export { setOnlineHandler } from './setOnlineHandler'
-export {
-  CancelledError,
-  isCancelledError,
-  isError,
-  setConsole,
-  setBatchedUpdates,
-} from './utils'
+export { QueryCache } from './queryCache'
+export { QueryClient } from './queryClient'
+export { QueryObserver } from './queryObserver'
+export { QueriesObserver } from './queriesObserver'
+export { InfiniteQueryObserver } from './infiniteQueryObserver'
+export { MutationCache } from './mutationCache'
+export { MutationObserver } from './mutationObserver'
+export { setLogger } from './logger'
+export { notifyManager } from './notifyManager'
+export { focusManager } from './focusManager'
+export { onlineManager } from './onlineManager'
+export { hashQueryKey, isError } from './utils'
+export { isCancelledError } from './retryer'
 
 // Types
 export * from './types'
+export type { CancelledError } from './retryer'
 export type { Query } from './query'
-export type { ConsoleObject } from './utils'
+export type { Logger } from './logger'

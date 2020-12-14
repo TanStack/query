@@ -5,33 +5,33 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryCache,
+  useQueryClient,
   useMutation,
-  QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
 } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
-const queryCache = new QueryCache()
+const queryClient = new QueryClient()
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
 function Example() {
-  const cache = useQueryCache()
+  const queryClient = useQueryClient()
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
   const { status, data, error, isFetching } = useQuery(
     'todos',
     async () => {
-      const { data } = await axios.get('/api/data')
-      return data
+      const res = await axios.get('/api/data')
+      return res.data
     },
     {
       // Refetch the data every second
@@ -39,15 +39,12 @@ function Example() {
     }
   )
 
-  const [mutateAddTodo] = useMutation(
-    value => fetch(`/api/data?add=${value}`),
-    {
-      onSuccess: () => cache.invalidateQueries('todos'),
-    }
-  )
+  const addMutation = useMutation(value => fetch(`/api/data?add=${value}`), {
+    onSuccess: () => queryClient.invalidateQueries('todos'),
+  })
 
-  const [mutateClear] = useMutation(value => fetch(`/api/data?clear=1`), {
-    onSuccess: () => cache.invalidateQueries('todos'),
+  const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
+    onSuccess: () => queryClient.invalidateQueries('todos'),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>
@@ -84,12 +81,13 @@ function Example() {
       </label>
       <h2>Todo List</h2>
       <form
-        onSubmit={async ev => {
-          ev.preventDefault()
-          try {
-            await mutateAddTodo(value)
-            setValue('')
-          } catch {}
+        onSubmit={event => {
+          event.preventDefault()
+          addMutation.mutate(value, {
+            onSuccess: () => {
+              setValue('')
+            },
+          })
         }}
       >
         <input
@@ -104,7 +102,13 @@ function Example() {
         ))}
       </ul>
       <div>
-        <button onClick={mutateClear}>Clear All</button>
+        <button
+          onClick={() => {
+            clearMutation.mutate()
+          }}
+        >
+          Clear All
+        </button>
       </div>
       <ReactQueryDevtools initialIsOpen />
     </div>

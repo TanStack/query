@@ -125,7 +125,7 @@
   @apply p-3;
 }
 
-.markdown > :not(pre):not(h3) > code,
+.markdown > :not(pre) code,
 .markdown > ul > li > code,
 .markdown > blockquote > code,
 .markdown > blockquote > p > code,

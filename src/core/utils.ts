@@ -1,6 +1,47 @@
-import { QueryConfig, QueryStatus, QueryKey, QueryFunction } from './types'
+import type { Query } from './query'
+import type {
+  MutationFunction,
+  MutationKey,
+  MutationOptions,
+  QueryFunction,
+  QueryKey,
+  QueryKeyHashFunction,
+  QueryOptions,
+  QueryStatus,
+} from './types'
 
 // TYPES
+
+export interface QueryFilters {
+  /**
+   * Include or exclude active queries
+   */
+  active?: boolean
+  /**
+   * Match query key exactly
+   */
+  exact?: boolean
+  /**
+   * Include or exclude inactive queries
+   */
+  inactive?: boolean
+  /**
+   * Include queries matching this predicate function
+   */
+  predicate?: (query: Query) => boolean
+  /**
+   * Include queries matching this query key
+   */
+  queryKey?: QueryKey
+  /**
+   * Include or exclude stale queries
+   */
+  stale?: boolean
+  /**
+   * Include or exclude fetching queries
+   */
+  fetching?: boolean
+}
 
 export type DataUpdateFunction<TInput, TOutput> = (input: TInput) => TOutput
 
@@ -8,46 +49,12 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
-type ConsoleFunction = (...args: any[]) => void
-
-export interface ConsoleObject {
-  log: ConsoleFunction
-  warn: ConsoleFunction
-  error: ConsoleFunction
-}
-
-interface Cancelable {
-  cancel(): void
-}
-
-export class CancelledError {
-  silent?: boolean
-  constructor(silent?: boolean) {
-    this.silent = silent
-  }
-}
-
 // UTILS
-
-let _uid = 0
-export function uid(): number {
-  return _uid++
-}
 
 export const isServer = typeof window === 'undefined'
 
 export function noop(): undefined {
   return undefined
-}
-
-export let Console: ConsoleObject = console || {
-  error: noop,
-  warn: noop,
-  log: noop,
-}
-
-export function setConsole(c: ConsoleObject) {
-  Console = c
 }
 
 export function functionalUpdate<TInput, TOutput>(
@@ -59,28 +66,173 @@ export function functionalUpdate<TInput, TOutput>(
     : updater
 }
 
-function stableStringifyReplacer(_key: string, value: any): unknown {
-  if (typeof value === 'function') {
-    throw new Error()
-  }
-
-  if (isPlainObject(value)) {
-    return Object.keys(value)
-      .sort()
-      .reduce((result, key) => {
-        result[key] = value[key]
-        return result
-      }, {} as any)
-  }
-
-  return value
+export function isValidTimeout(value: any): value is number {
+  return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
-export function stableStringify(value: any): string {
-  return JSON.stringify(value, stableStringifyReplacer)
+export function ensureArray<T>(value: T | T[]): T[] {
+  return Array.isArray(value) ? value : [value]
 }
 
-export function deepIncludes(a: any, b: any): boolean {
+export function difference<T>(array1: T[], array2: T[]): T[] {
+  return array1.filter(x => array2.indexOf(x) === -1)
+}
+
+export function replaceAt<T>(array: T[], index: number, value: T): T[] {
+  const copy = array.slice(0)
+  copy[index] = value
+  return copy
+}
+
+export function timeUntilStale(updatedAt: number, staleTime?: number): number {
+  return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
+}
+
+export function parseQueryArgs<TOptions extends QueryOptions<any, any, any>>(
+  arg1: QueryKey | TOptions,
+  arg2?: QueryFunction<any> | TOptions,
+  arg3?: TOptions
+): TOptions {
+  if (!isQueryKey(arg1)) {
+    return arg1 as TOptions
+  }
+
+  if (typeof arg2 === 'function') {
+    return { ...arg3, queryKey: arg1, queryFn: arg2 } as TOptions
+  }
+
+  return { ...arg2, queryKey: arg1 } as TOptions
+}
+
+export function parseMutationArgs<
+  TOptions extends MutationOptions<any, any, any, any>
+>(
+  arg1: MutationKey | MutationFunction<any, any> | TOptions,
+  arg2?: MutationFunction<any, any> | TOptions,
+  arg3?: TOptions
+): TOptions {
+  if (isQueryKey(arg1)) {
+    if (typeof arg2 === 'function') {
+      return { ...arg3, mutationKey: arg1, mutationFn: arg2 } as TOptions
+    }
+    return { ...arg2, mutationKey: arg1 } as TOptions
+  }
+
+  if (typeof arg1 === 'function') {
+    return { ...arg2, mutationFn: arg1 } as TOptions
+  }
+
+  return { ...arg1 } as TOptions
+}
+
+export function parseFilterArgs<
+  TFilters extends QueryFilters,
+  TOptions = unknown
+>(
+  arg1?: QueryKey | TFilters,
+  arg2?: TFilters | TOptions,
+  arg3?: TOptions
+): [TFilters, TOptions | undefined] {
+  return (isQueryKey(arg1)
+    ? [{ ...arg2, queryKey: arg1 }, arg3]
+    : [arg1 || {}, arg2]) as [TFilters, TOptions]
+}
+
+export function matchQuery(
+  filters: QueryFilters,
+  query: Query<any, any>
+): boolean {
+  const {
+    active,
+    exact,
+    fetching,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+  } = filters
+
+  if (isQueryKey(queryKey)) {
+    if (exact) {
+      const hashFn = getQueryKeyHashFn(query.options)
+      if (query.queryHash !== hashFn(queryKey)) {
+        return false
+      }
+    } else if (!partialMatchKey(query.queryKey, queryKey)) {
+      return false
+    }
+  }
+
+  let isActive
+
+  if (inactive === false || (active && !inactive)) {
+    isActive = true
+  } else if (active === false || (inactive && !active)) {
+    isActive = false
+  }
+
+  if (typeof isActive === 'boolean' && query.isActive() !== isActive) {
+    return false
+  }
+
+  if (typeof stale === 'boolean' && query.isStale() !== stale) {
+    return false
+  }
+
+  if (typeof fetching === 'boolean' && query.isFetching() !== fetching) {
+    return false
+  }
+
+  if (predicate && !predicate(query)) {
+    return false
+  }
+
+  return true
+}
+
+export function getQueryKeyHashFn(
+  options?: QueryOptions<any, any>
+): QueryKeyHashFunction {
+  return options?.queryKeyHashFn || hashQueryKey
+}
+
+/**
+ * Default query keys hash function.
+ */
+export function hashQueryKey(queryKey: QueryKey): string {
+  return stableValueHash(queryKey)
+}
+
+/**
+ * Hashes the value into a stable hash.
+ */
+export function stableValueHash(value: any): string {
+  return JSON.stringify(value, (_, val) =>
+    isPlainObject(val)
+      ? Object.keys(val)
+          .sort()
+          .reduce((result, key) => {
+            result[key] = val[key]
+            return result
+          }, {} as any)
+      : val
+  )
+}
+
+/**
+ * Checks if key `b` partially matches with key `a`.
+ */
+export function partialMatchKey(
+  a: string | unknown[],
+  b: string | unknown[]
+): boolean {
+  return partialDeepEqual(ensureArray(a), ensureArray(b))
+}
+
+/**
+ * Checks if `b` partially matches with `a`.
+ */
+export function partialDeepEqual(a: any, b: any): boolean {
   if (a === b) {
     return true
   }
@@ -89,63 +241,11 @@ export function deepIncludes(a: any, b: any): boolean {
     return false
   }
 
-  if (typeof a === 'object') {
-    return !Object.keys(b).some(key => !deepIncludes(a[key], b[key]))
+  if (typeof a === 'object' && typeof b === 'object') {
+    return !Object.keys(b).some(key => !partialDeepEqual(a[key], b[key]))
   }
 
   return false
-}
-
-export function isValidTimeout(value: any): value is number {
-  return typeof value === 'number' && value >= 0 && value !== Infinity
-}
-
-export function isDocumentVisible(): boolean {
-  // document global can be unavailable in react native
-  if (typeof document === 'undefined') {
-    return true
-  }
-  return [undefined, 'visible', 'prerender'].includes(document.visibilityState)
-}
-
-export function isOnline(): boolean {
-  return navigator.onLine === undefined || navigator.onLine
-}
-
-export function getQueryArgs<TResult, TError, TOptions = undefined>(
-  arg1: any,
-  arg2?: any,
-  arg3?: any,
-  arg4?: any
-): [QueryKey, QueryConfig<TResult, TError>, TOptions] {
-  let queryKey: QueryKey
-  let queryFn: QueryFunction<TResult> | undefined
-  let config: QueryConfig<TResult, TError> | undefined
-  let options: TOptions
-
-  if (isPlainObject(arg1)) {
-    queryKey = arg1.queryKey
-    queryFn = arg1.queryFn
-    config = arg1.config
-    options = arg2
-  } else if (isPlainObject(arg2)) {
-    queryKey = arg1
-    config = arg2
-    options = arg3
-  } else {
-    queryKey = arg1
-    queryFn = arg2
-    config = arg3
-    options = arg4
-  }
-
-  config = config || {}
-
-  if (queryFn) {
-    config = { ...config, queryFn }
-  }
-
-  return [queryKey, config, options]
 }
 
 /**
@@ -183,6 +283,23 @@ export function replaceEqualDeep(a: any, b: any): any {
   return b
 }
 
+/**
+ * Shallow compare objects. Only works with objects that always have the same properties.
+ */
+export function shallowEqualObjects<T>(a: T, b: T): boolean {
+  if ((a && !b) || (b && !a)) {
+    return false
+  }
+
+  for (const key in a) {
+    if (a[key] !== b[key]) {
+      return false
+    }
+  }
+
+  return true
+}
+
 // Copied from: https://github.com/jonschlinkert/is-plain-object
 export function isPlainObject(o: any): o is Object {
   if (!hasObjectPrototype(o)) {
@@ -214,16 +331,12 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function isCancelable(value: any): value is Cancelable {
-  return typeof value?.cancel === 'function'
+export function isQueryKey(value: any): value is QueryKey {
+  return typeof value === 'string' || Array.isArray(value)
 }
 
 export function isError(value: any): value is Error {
   return value instanceof Error
-}
-
-export function isCancelledError(value: any): value is CancelledError {
-  return value instanceof CancelledError
 }
 
 export function sleep(timeout: number): Promise<void> {
@@ -235,22 +348,10 @@ export function sleep(timeout: number): Promise<void> {
 export function getStatusProps<T extends QueryStatus>(status: T) {
   return {
     status,
-    isLoading: status === QueryStatus.Loading,
-    isSuccess: status === QueryStatus.Success,
-    isError: status === QueryStatus.Error,
-    isIdle: status === QueryStatus.Idle,
-  }
-}
-
-export function createSetHandler(fn: () => void) {
-  let removePreviousHandler: (() => void) | void
-  return (callback: (handler: () => void) => void) => {
-    // Unsub the old handler
-    if (removePreviousHandler) {
-      removePreviousHandler()
-    }
-    // Sub the new handler
-    removePreviousHandler = callback(fn)
+    isLoading: status === 'loading',
+    isSuccess: status === 'success',
+    isError: status === 'error',
+    isIdle: status === 'idle',
   }
 }
 
@@ -266,21 +367,4 @@ export function scheduleMicrotask(callback: () => void): void {
         throw error
       })
     )
-}
-
-type BatchUpdateFunction = (callback: () => void) => void
-
-// Default to a dummy "batch" implementation that just runs the callback
-let batchedUpdates: BatchUpdateFunction = (callback: () => void) => {
-  callback()
-}
-
-// Allow injecting another batching function later
-export function setBatchedUpdates(fn: BatchUpdateFunction) {
-  batchedUpdates = fn
-}
-
-// Supply a getter just to skip dealing with ESM bindings
-export function getBatchedUpdates(): BatchUpdateFunction {
-  return batchedUpdates
 }

@@ -3,37 +3,37 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryCache,
+  useQueryClient,
   useMutation,
-  QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
 } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
-const queryCache = new QueryCache()
+const queryClient = new QueryClient()
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
 function Example() {
-  const cache = useQueryCache()
+  const queryClient = useQueryClient()
 
   const { status, data, error } = useQuery('user', async () => {
-    const { data } = await axios.get('/api/user')
-    return data
+    const res = await axios.get('/api/user')
+    return res.data
   })
 
-  const [logoutMutation] = useMutation(logout, {
-    onSuccess: () => cache.invalidateQueries('user'),
+  const logoutMutation = useMutation(logout, {
+    onSuccess: () => queryClient.invalidateQueries('user'),
   })
 
-  const [loginMutation] = useMutation(login, {
-    onSuccess: () => cache.invalidateQueries('user'),
+  const loginMutation = useMutation(login, {
+    onSuccess: () => queryClient.invalidateQueries('user'),
   })
 
   return (
@@ -55,7 +55,7 @@ function Example() {
           <div>
             <button
               onClick={() => {
-                logoutMutation()
+                logoutMutation.mutate()
               }}
             >
               Logout
@@ -68,7 +68,7 @@ function Example() {
           <div>
             <button
               onClick={() => {
-                loginMutation()
+                loginMutation.mutate()
               }}
             >
               Login

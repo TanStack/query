@@ -1,18 +1,32 @@
-import { getBatchedUpdates, scheduleMicrotask } from './utils'
+import { scheduleMicrotask } from './utils'
 
 // TYPES
 
 type NotifyCallback = () => void
 
+type NotifyFunction = (callback: () => void) => void
+
+type BatchNotifyFunction = (callback: () => void) => void
+
 // CLASS
 
-export class NotifyManager {
+class NotifyManager {
   private queue: NotifyCallback[]
   private transactions: number
+  private notifyFn: NotifyFunction
+  private batchNotifyFn: BatchNotifyFunction
 
   constructor() {
     this.queue = []
     this.transactions = 0
+
+    this.notifyFn = (callback: () => void) => {
+      callback()
+    }
+
+    this.batchNotifyFn = (callback: () => void) => {
+      callback()
+    }
   }
 
   batch<T>(callback: () => T): T {
@@ -25,14 +39,25 @@ export class NotifyManager {
     return result
   }
 
-  schedule(notify: NotifyCallback): void {
+  schedule(callback: NotifyCallback): void {
     if (this.transactions) {
-      this.queue.push(notify)
+      this.queue.push(callback)
     } else {
       scheduleMicrotask(() => {
-        notify()
+        this.notifyFn(callback)
       })
     }
+  }
+
+  /**
+   * All calls to the wrapped function will be batched.
+   */
+  batchCalls<T extends Function>(callback: T): T {
+    return ((...args: any[]) => {
+      this.schedule(() => {
+        callback(...args)
+      })
+    }) as any
   }
 
   flush(): void {
@@ -40,14 +65,29 @@ export class NotifyManager {
     this.queue = []
     if (queue.length) {
       scheduleMicrotask(() => {
-        const batchedUpdates = getBatchedUpdates()
-        batchedUpdates(() => {
-          queue.forEach(notify => {
-            notify()
+        this.batchNotifyFn(() => {
+          queue.forEach(callback => {
+            this.notifyFn(callback)
           })
         })
       })
     }
+  }
+
+  /**
+   * Use this method to set a custom notify function.
+   * This can be used to for example wrap notifications with `React.act` while running tests.
+   */
+  setNotifyFunction(fn: NotifyFunction) {
+    this.notifyFn = fn
+  }
+
+  /**
+   * Use this method to set a custom function to batch notifications together into a single tick.
+   * By default React Query will use the batch function provided by ReactDOM or React Native.
+   */
+  setBatchNotifyFunction(fn: BatchNotifyFunction) {
+    this.batchNotifyFn = fn
   }
 }
 

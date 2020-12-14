@@ -6,6 +6,11 @@
     "emitDeclarationOnly": true,
     "noEmit": false
   },
-  "files": ["./src/index.ts", "./src/hydration/index.ts"],
+  "files": [
+    "./src/index.ts",
+    "./src/hydration/index.ts",
+    "./src/devtools/index.ts",
+    "./src/persist-localstorage-experimental/index.ts"
+  ],
   "exclude": ["./src/**/*"]
 }

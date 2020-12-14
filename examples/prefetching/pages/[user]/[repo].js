@@ -10,7 +10,7 @@ export default () => {
 
   const { status, data, error, isFetching } = useQuery(
     ['team', id],
-    (key, id) => fetch('/api/data?id=' + id)
+    () => fetch('/api/data?id=' + id)
   )
 
   return (
