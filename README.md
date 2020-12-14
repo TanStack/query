@@ -39,7 +39,7 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [React Tabl
 - Load-More + Infinite Scroll Queries w/ Scroll Recovery
 - Request Cancellation
 - [React Suspense](https://reactjs.org/docs/concurrent-mode-suspense.html) + Fetch-As-You-Render Query Prefetching
-- [Dedicated Devtools
+- Dedicated Devtools
 - <a href="https://bundlephobia.com/result?p=react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/react-query@latest" />
   </a> (depending on features imported)
