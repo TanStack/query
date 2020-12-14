@@ -85,4 +85,4 @@ function Example() {
 ## You talked me into it, so what now?
 
 - Consider taking the [React Query Essentials Course](https://learn.tanstack.com) (or buying it for your whole team!)
-- Learn React Query at your own pace with our amazingly thorough [Walkthough Guide](../installation) and [API Reference](../reference/useQuery)
+- Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
