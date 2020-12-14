@@ -89,7 +89,7 @@ export function deepIncludes(a: any, b: any): boolean {
     return false
   }
 
-  if (typeof a === 'object') {
+  if (a && b && typeof a === 'object' && typeof b === 'object') {
     return !Object.keys(b).some(key => !deepIncludes(a[key], b[key]))
   }
 
