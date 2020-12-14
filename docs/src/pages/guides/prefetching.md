@@ -18,7 +18,7 @@ const prefetchTodos = async () => {
 
 ## Manually Priming a Query
 
-Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../api/#queryclientesetquerydata) to directly add or update a query's cached result by key.
+Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
 ```js
 queryClient.setQueryData('todos', todos)
