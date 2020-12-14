@@ -97,7 +97,7 @@ try {
 }
 ```
 
-### `ReactQueryErrorResetBoundary`/`QueryCache.resetErrorBoundaries()` have been replaced by `QueryErrorResetBoundary`/`useQueryErrorResetBoundary()`.
+### `ReactQueryErrorResetBoundary` and `QueryCache.resetErrorBoundaries()` have been replaced by `QueryErrorResetBoundary` and `useQueryErrorResetBoundary()`.
 
 Together, these provide the same experience as before, but with added control to choose which component trees you want to reset. For more information, see:
 
