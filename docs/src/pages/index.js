@@ -18,7 +18,7 @@ const supporters = [
   ['Fillip Peyton', 'https://github.com/fillippeyton'],
   ['Tim Myers', 'https://github.com/denvercoder'],
   ['Andy Slezak', 'https://github.com/amslezak'],
-  ['Shane Cavaliere', 'https://githbu.com/shanecav']
+  ['Shane Cavaliere', 'https://githbu.com/shanecav'],
 ]
 
 const fans = [
@@ -44,7 +44,7 @@ const fans = [
   'Arijit Bhattacharya, (@hoodwink73)',
   'Jonathan Chang, (@jdkschang)',
   'Ash Connell, (@ashconnell)',
-  'Sara Bee, (@doeg)'
+  'Sara Bee, (@doeg)',
 ]
 
 const Home = () => {
@@ -119,11 +119,11 @@ const Home = () => {
                       Declarative & Automatic
                     </h3>
                     <p className="mt-2 lg:mt-4 text-base xl:text-lg lg:leading-normal leading-6 text-gray-600">
-                      Writing your data fetching logic by hand is on its way
-                      out. Just tell React Query where to get your data and how
-                      fresh you want to keep it and the rest is automatic. React
-                      Query handles caching, background updates and stale data
-                      out of the box with zero-configuration.
+                      Writing your data fetching logic by hand is over. Tell
+                      React Query where to get your data and how fresh you need
+                      it to be and the rest is automatic. React Query handles
+                      caching, background updates and stale data out of the box
+                      with zero-configuration.
                     </p>
                   </div>
                 </div>
@@ -135,8 +135,8 @@ const Home = () => {
                     <p className="mt-2  lg:mt-4 text-base xl:text-lg lg:leading-normal leading-6 text-gray-600">
                       If you know how to work with promises or async/await, then
                       you already know how to use React Query. There's no global
-                      state to manage, reducers to write, or fancy state
-                      machines to understand. Just define your function that
+                      state to manage, reducers, normalization systems or heavy
+                      configurations to understand. Simply pass a function that
                       resolves your data (or throws an error) and the rest is
                       history.
                     </p>
@@ -148,10 +148,11 @@ const Home = () => {
                       Powerful & Configurable
                     </h3>
                     <p className="mt-2  lg:mt-4 text-base xl:text-lg lg:leading-normal leading-6 text-gray-600">
-                      React Query is configurable down to the query with knobs
-                      and options to fit every use-case. It even has dedicated
-                      hooks for pagination, infinite-loading, and even mutations
-                      that make updating your data a breeze. Don't worry though,
+                      React Query is configurable down to each observer instance
+                      of a query with knobs and options to fit every use-case.
+                      It comes wired up with dedicated devtools,
+                      infinite-loading APIs, and first class mutation tools that
+                      make updating your data a breeze. Don't worry though,
                       everything is pre-configured for success!
                     </p>
                   </div>
@@ -351,9 +352,9 @@ const Home = () => {
             <p className="my-4 text-xl leading-7  text-gray-600">
               Instead of writing reducers, caching logic, timers, retry logic,
               complex async/await scripting (I could keep going...), you
-              literally write a fraction of the code you normally would. You
-              will be surprised at how little code you're writing or how much
-              code you're deleting when you use React Query
+              literally write a tiny fraction of the code you normally would.
+              You will be surprised at how little code you're writing or how
+              much code you're deleting when you use React Query.
             </p>
           </div>
           <div
@@ -387,117 +388,47 @@ const Home = () => {
                 One Dep, All the Features.
               </h3>
               <p className="mt-4 text-xl max-w-3xl mx-auto leading-7 text-gray-300">
-                Sure, React is the only dependency, but React Query comes fully
-                featured with all the gizmos and gadgets you want or need. From
-                weekend hobby projects all the way up to enterprise e-commerce
-                systems (lookin' at you Walmart!), React Query is jam packed
-                with features.
+                With React as the only dependency, React Query is extremely
+                lean, but also strategically packed to the brim with features
+                you're bound to need in almost any project. From weekend hobbies
+                all the way up to enterprise e-commerce systems (lookin' at you
+                Walmart!), React Query is jam packed with battle-hardened tools
+                to help you succeed.
               </p>
             </div>
             <div>
               <div className="grid grid-flow-row grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-4 text-white max-w-screen-lg mx-auto text-lg">
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
+                {[
+                  'Backend agnostic',
+                  'Dedicated Devtools',
+                  'Auto Caching',
+                  'Auto Refetching',
+                  'Window Focus Refetching',
+                  'Polling/Realtime Queries',
+                  'Parallel Queries',
+                  'Dependent Queries',
+                  'Mutations API',
+                  'Automatic Garbage Collection',
+                  'Paginated/Cursor Queries',
+                  'Load-More/Infinite Scroll Queries',
+                  'Scroll Recovery',
+                  'Request Cancellation',
+                  'Suspense Ready!',
+                  'Render-as-you-fetch',
+                  'Prefetching',
+                  'Dedicated Devtools',
+                  'Variable-length Parallel Queries',
+                  'Offline Support',
+                  'SSR Support',
+                  'Data Selectors',
+                ].map(feature => (
+                  <span className="mb-2" key={feature}>
+                    <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                      <Check />
+                    </span>
+                    {feature}
                   </span>
-                  Backend agnostic
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Auto Caching
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Auto Refetching
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Window Focus Refetching
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Polling/Realtime Queries
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Parallel Queries
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Dependent Queries
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Mutations API
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Automatic Garbage Collection
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Paginated/Cursor Queries
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Load-More/Infinite Scroll Queries
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Scroll Recovery
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Request Cancellation
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Suspense Ready!
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Render-as-you-fetch
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Prefetching
-                </a>
-                <a className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Dedicated Devtools
-                </a>
+                ))}
               </div>
             </div>
           </div>
