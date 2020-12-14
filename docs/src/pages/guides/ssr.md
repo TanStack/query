@@ -113,7 +113,7 @@ As demonstrated, it's fine to prefetch some queries and let others fetch on the 
 
 This guide is at-best, a high level overview of how SSR with React Query should work. Your mileage may vary since there are many different possible setups for SSR.
 
-> If you can, please contribution your findings back tot his page for any framework specific guidance!
+> If you can, please contribution your findings back to this page for any framework specific guidance!
 
 ### On the Server
 
