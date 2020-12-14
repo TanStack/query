@@ -3,44 +3,45 @@ import axios from 'axios'
 
 import {
   useQuery,
-  useQueryCache,
+  useQueryClient,
   useMutation,
-  QueryCache,
-  ReactQueryCacheProvider,
+  QueryClient,
+  QueryClientProvider,
 } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
-const queryCache = new QueryCache()
+const queryClient = new QueryClient()
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   )
 }
 
 function Example() {
-  const cache = useQueryCache()
+  const queryClient = useQueryClient()
   const [text, setText] = React.useState('')
+
   const { status, data, error, isFetching } = useQuery('todos', async () => {
-    const { data } = await axios.get('/api/data')
-    return data
+    const res = await axios.get('/api/data')
+    return res.data
   })
 
-  const [mutatePostTodo] = useMutation(
+  const addTodoMutation = useMutation(
     text => axios.post('/api/data', { text }),
     {
       // Optimistically update the cache value on mutate, but store
       // the old value and return it so that it's accessible in case of
       // an error
-      onMutate: text => {
+      onMutate: async text => {
         setText('')
-        cache.cancelQueries('todos')
+        await queryClient.cancelQueries('todos')
 
-        const previousValue = cache.getQueryData('todos')
+        const previousValue = queryClient.getQueryData('todos')
 
-        cache.setQueryData('todos', old => ({
+        queryClient.setQueryData('todos', old => ({
           ...old,
           items: [...old.items, text],
         }))
@@ -49,10 +50,10 @@ function Example() {
       },
       // On failure, roll back to the previous value
       onError: (err, variables, previousValue) =>
-        cache.setQueryData('todos', previousValue),
+        queryClient.setQueryData('todos', previousValue),
       // After success or failure, refetch the todos query
-      onSettled: () => {
-        cache.invalidateQueries('todos')
+      onSuccess: () => {
+        queryClient.invalidateQueries('todos')
       },
     }
   )
@@ -70,7 +71,7 @@ function Example() {
       <form
         onSubmit={e => {
           e.preventDefault()
-          mutatePostTodo(text)
+          addTodoMutation.mutate(text)
         }}
       >
         <input
@@ -78,7 +79,7 @@ function Example() {
           onChange={event => setText(event.target.value)}
           value={text}
         />
-        <button>Create</button>
+        <button>{addTodoMutation.isLoading ? 'Creating...' : 'Create'}</button>
       </form>
       <br />
       {status === 'loading' ? (

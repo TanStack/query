@@ -13,21 +13,21 @@ export const Footer = props => {
                 </h4>
                 <ul className="mt-4">
                   <li>
-                    <Link href="/docs/overview">
+                    <Link href="/overview">
                       <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
                         Docs
                       </a>
                     </Link>
                   </li>
                   <li className="mt-4">
-                    <Link href="/docs/examples/simple">
+                    <Link href="/examples/simple">
                       <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
                         Examples
                       </a>
                     </Link>
                   </li>
                   <li className="mt-4">
-                    <Link href="/docs/api">
+                    <Link href="/api/useQuery">
                       <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
                         API Reference
                       </a>

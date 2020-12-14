@@ -1,16 +1,20 @@
-import { render, waitFor, fireEvent } from '@testing-library/react'
+import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import * as React from 'react'
+import React from 'react'
 
-import { sleep, queryKey, mockConsoleError } from './utils'
+import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
 import {
   useQuery,
-  queryCache,
-  ReactQueryErrorResetBoundary,
-  useErrorResetBoundary,
+  QueryClient,
+  QueryCache,
+  QueryErrorResetBoundary,
+  useQueryErrorResetBoundary,
 } from '../..'
 
 describe("useQuery's in Suspense mode", () => {
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({ queryCache })
+
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
@@ -23,7 +27,8 @@ describe("useQuery's in Suspense mode", () => {
       return <>rendered</>
     }
 
-    const rendered = render(
+    const rendered = renderWithClient(
+      queryClient,
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>
@@ -38,7 +43,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      useQuery([key], () => sleep(10), { suspense: true })
+      useQuery(key, () => sleep(10), { suspense: true })
 
       return <>rendered</>
     }
@@ -54,20 +59,22 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(<App />)
+    const rendered = renderWithClient(queryClient, <App />)
 
     expect(rendered.queryByText('rendered')).toBeNull()
-    expect(queryCache.getQuery(key)).toBeFalsy()
+    expect(queryCache.find(key)).toBeFalsy()
 
     fireEvent.click(rendered.getByLabelText('toggle'))
     await waitFor(() => rendered.getByText('rendered'))
 
-    expect(queryCache.getQuery(key)?.observers.length).toBe(1)
+    // @ts-expect-error
+    expect(queryCache.find(key)?.observers.length).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
 
     expect(rendered.queryByText('rendered')).toBeNull()
-    expect(queryCache.getQuery(key)?.observers.length).toBe(0)
+    // @ts-expect-error
+    expect(queryCache.find(key)?.observers.length).toBe(0)
   })
 
   it('should call onSuccess on the first successful call', async () => {
@@ -84,7 +91,8 @@ describe("useQuery's in Suspense mode", () => {
       return <>rendered</>
     }
 
-    const rendered = render(
+    const rendered = renderWithClient(
+      queryClient,
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>
@@ -119,7 +127,8 @@ describe("useQuery's in Suspense mode", () => {
       return <span>second</span>
     }
 
-    const rendered = render(
+    const rendered = renderWithClient(
+      queryClient,
       <React.Suspense fallback="loading">
         <FirstComponent />
         <SecondComponent />
@@ -160,27 +169,32 @@ describe("useQuery's in Suspense mode", () => {
       return <div>rendered</div>
     }
 
-    const rendered = render(
-      <ErrorBoundary
-        onReset={() => queryCache.resetErrorBoundaries()}
-        fallbackRender={({ resetErrorBoundary }) => (
-          <div>
-            <div>error boundary</div>
-            <button
-              onClick={() => {
-                succeed = true
-                resetErrorBoundary()
-              }}
-            >
-              retry
-            </button>
-          </div>
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    succeed = true
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <React.Suspense fallback={'Loading...'}>
+              <Page />
+            </React.Suspense>
+          </ErrorBoundary>
         )}
-      >
-        <React.Suspense fallback={'Loading...'}>
-          <Page />
-        </React.Suspense>
-      </ErrorBoundary>
+      </QueryErrorResetBoundary>
     )
 
     await waitFor(() => rendered.getByText('Loading...'))
@@ -221,8 +235,9 @@ describe("useQuery's in Suspense mode", () => {
       return <div>rendered</div>
     }
 
-    const rendered = render(
-      <ReactQueryErrorResetBoundary>
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
         {({ reset }) => (
           <ErrorBoundary
             onReset={reset}
@@ -244,7 +259,7 @@ describe("useQuery's in Suspense mode", () => {
             </React.Suspense>
           </ErrorBoundary>
         )}
-      </ReactQueryErrorResetBoundary>
+      </QueryErrorResetBoundary>
     )
 
     await waitFor(() => rendered.getByText('Loading...'))
@@ -258,6 +273,114 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('rendered'))
 
     consoleMock.mockRestore()
+  })
+
+  it('should refetch when re-mounting', async () => {
+    const key = queryKey()
+    let count = 0
+
+    function Component() {
+      const result = useQuery(
+        key,
+        async () => {
+          await sleep(100)
+          count++
+          return count
+        },
+        {
+          retry: false,
+          suspense: true,
+          staleTime: 0,
+        }
+      )
+      return (
+        <div>
+          <span>data: {result.data}</span>
+          <span>fetching: {result.isFetching ? 'true' : 'false'}</span>
+        </div>
+      )
+    }
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setShow(!show)
+            }}
+          >
+            {show ? 'hide' : 'show'}
+          </button>
+          <React.Suspense fallback="Loading...">
+            {show && <Component />}
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('data: 1'))
+    await waitFor(() => rendered.getByText('fetching: false'))
+    await waitFor(() => rendered.getByText('hide'))
+    fireEvent.click(rendered.getByText('hide'))
+    await waitFor(() => rendered.getByText('show'))
+    fireEvent.click(rendered.getByText('show'))
+    await waitFor(() => rendered.getByText('fetching: true'))
+    await waitFor(() => rendered.getByText('data: 2'))
+    await waitFor(() => rendered.getByText('fetching: false'))
+  })
+
+  it('should suspend when switching to a new query', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Component(props: { queryKey: string }) {
+      const result = useQuery(
+        props.queryKey,
+        async () => {
+          await sleep(100)
+          return props.queryKey
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      return <div>data: {result.data}</div>
+    }
+
+    function Page() {
+      const [key, setKey] = React.useState(key1)
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setKey(key2)
+            }}
+          >
+            switch
+          </button>
+          <React.Suspense fallback="Loading...">
+            <Component queryKey={key} />
+          </React.Suspense>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText(`data: ${key1}`))
+    fireEvent.click(rendered.getByText('switch'))
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText(`data: ${key2}`))
+    expect(
+      // @ts-expect-error
+      queryClient.getQueryCache().find(key2)!.observers[0].listeners.length
+    ).toBe(1)
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
@@ -286,7 +409,7 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     function App() {
-      const { reset } = useErrorResetBoundary()
+      const { reset } = useQueryErrorResetBoundary()
       return (
         <ErrorBoundary
           onReset={reset}
@@ -310,7 +433,7 @@ describe("useQuery's in Suspense mode", () => {
       )
     }
 
-    const rendered = render(<App />)
+    const rendered = renderWithClient(queryClient, <App />)
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
@@ -338,7 +461,8 @@ describe("useQuery's in Suspense mode", () => {
       return <button aria-label="fire" onClick={() => setEnabled(true)} />
     }
 
-    const rendered = render(
+    const rendered = renderWithClient(
+      queryClient,
       <React.Suspense fallback="loading">
         <Page />
       </React.Suspense>

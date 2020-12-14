@@ -1,20 +1,23 @@
-import { replaceEqualDeep, deepIncludes, isPlainObject } from '../utils'
-import { setConsole, queryCache } from '../..'
+import { replaceEqualDeep, partialDeepEqual, isPlainObject } from '../utils'
+import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
 
 describe('core/utils', () => {
-  it('setConsole should override Console object', async () => {
+  it('setLogger should override the default logger', async () => {
     const key = queryKey()
 
-    const mockConsole = {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    const logger: Logger = {
       error: jest.fn(),
       log: jest.fn(),
       warn: jest.fn(),
     }
 
-    setConsole(mockConsole)
+    setLogger(logger)
 
-    await queryCache.prefetchQuery(
+    await queryClient.prefetchQuery(
       key,
       async () => {
         throw new Error('Test')
@@ -24,9 +27,9 @@ describe('core/utils', () => {
       }
     )
 
-    expect(mockConsole.error).toHaveBeenCalled()
+    expect(logger.error).toHaveBeenCalled()
 
-    setConsole(console)
+    setLogger(console)
   })
 
   describe('isPlainObject', () => {
@@ -47,17 +50,23 @@ describe('core/utils', () => {
     })
   })
 
-  describe('deepIncludes', () => {
+  describe('partialDeepEqual', () => {
     it('should return `true` if a includes b', () => {
       const a = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
       const b = { a: { b: 'b' }, c: 'c', d: [] }
-      expect(deepIncludes(a, b)).toEqual(true)
+      expect(partialDeepEqual(a, b)).toEqual(true)
     })
 
     it('should return `false` if a does not include b', () => {
       const a = { a: { b: 'b' }, c: 'c', d: [] }
       const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
-      expect(deepIncludes(a, b)).toEqual(false)
+      expect(partialDeepEqual(a, b)).toEqual(false)
+    })
+
+    it('should return `true` if array a includes array b', () => {
+      const a = [1, 2, 3]
+      const b = [1, 2]
+      expect(partialDeepEqual(a, b)).toEqual(true)
     })
   })
 

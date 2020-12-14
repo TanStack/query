@@ -1,15 +1,17 @@
 import React from 'react'
-import { ReactQueryCacheProvider } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
-export default function App({ Component, pageProps }) {
+const queryClient = new QueryClient()
+
+export default function MyApp({ Component, pageProps }) {
   return (
-    <ReactQueryCacheProvider>
+    <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
-        <ReactQueryDevtools initialIsOpen={true} />
         <Component {...pageProps} />
       </Hydrate>
-    </ReactQueryCacheProvider>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   )
 }

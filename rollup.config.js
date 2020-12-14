@@ -8,167 +8,75 @@ import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 
 const external = ['react', 'react-dom']
-const hydrationExternal = [...external, 'react-query']
 
 const globals = {
   react: 'React',
   'react-dom': 'ReactDOM',
 }
-const hydrationGlobals = {
-  ...globals,
-  'react-query': 'ReactQuery',
-}
 
-const inputSrc = 'src/index.ts'
-const hydrationSrc = 'src/hydration/index.ts'
+const inputSrcs = [
+  ['src/index.ts', 'ReactQuery', 'react-query'],
+  ['src/core/index.ts', 'ReactQueryCore', 'react-query-core'],
+  ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
+  ['src/hydration/index.ts', 'ReactQueryHydration', 'react-query-hydration'],
+  [
+    'src/persist-localstorage-experimental/index.ts',
+    'ReactQueryPersistLocalStorageExperimental',
+    'persist-localstorage-experimental',
+  ],
+]
 
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
 const babelConfig = { extensions, runtimeHelpers: true }
 const resolveConfig = { extensions }
 
-export default [
-  {
-    input: inputSrc,
-    output: {
-      file: 'dist/react-query.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-    ],
-  },
-  {
-    input: inputSrc,
-    output: {
-      file: 'dist/react-query.min.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      terser(),
-    ],
-  },
-  {
-    input: inputSrc,
-    output: {
-      name: 'ReactQuery',
-      file: 'dist/react-query.development.js',
-      format: 'umd',
-      sourcemap: true,
-      globals,
-    },
-    external,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-    ],
-  },
-  {
-    input: inputSrc,
-    output: {
-      name: 'ReactQuery',
-      file: 'dist/react-query.production.min.js',
-      format: 'umd',
-      sourcemap: true,
-      globals,
-    },
-    external,
-    plugins: [
-      replace({ 'process.env.NODE_ENV': `"production"`, delimiters: ['', ''] }),
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      terser(),
-      size(),
-      visualizer({
-        filename: 'stats-react.json',
-        json: true,
-      }),
-    ],
-  },
-  {
-    input: hydrationSrc,
-    output: {
-      file: 'dist/hydration/react-query-hydration.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external: hydrationExternal,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-    ],
-  },
-  {
-    input: hydrationSrc,
-    output: {
-      file: 'dist/hydration/react-query-hydration.min.mjs',
-      format: 'es',
-      sourcemap: true,
-    },
-    external: hydrationExternal,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      terser(),
-    ],
-  },
-  {
-    input: hydrationSrc,
-    output: {
-      name: 'ReactQueryHydration',
-      file: 'dist/hydration/react-query-hydration.development.js',
-      format: 'umd',
-      sourcemap: true,
-      globals: hydrationGlobals,
-    },
-    external: hydrationExternal,
-    plugins: [
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-    ],
-  },
-  {
-    input: hydrationSrc,
-    output: {
-      name: 'ReactQueryHydration',
-      file: 'dist/hydration/react-query-hydration.production.min.js',
-      format: 'umd',
-      sourcemap: true,
-      globals: hydrationGlobals,
-    },
-    external: hydrationExternal,
-    plugins: [
-      replace({ 'process.env.NODE_ENV': `"production"`, delimiters: ['', ''] }),
-      resolve(resolveConfig),
-      babel(babelConfig),
-      commonJS(),
-      externalDeps(),
-      terser(),
-      size(),
-      visualizer({
-        filename: 'stats-hydration.json',
-        json: true,
-      }),
-    ],
-  },
-]
+export default inputSrcs
+  .map(([input, name, file]) => {
+    return [
+      {
+        input: input,
+        output: {
+          name,
+          file: `dist/${file}.development.js`,
+          format: 'umd',
+          sourcemap: true,
+          globals,
+        },
+        external,
+        plugins: [
+          resolve(resolveConfig),
+          babel(babelConfig),
+          commonJS(),
+          externalDeps(),
+        ],
+      },
+      {
+        input: input,
+        output: {
+          name,
+          file: `dist/${file}.production.min.js`,
+          format: 'umd',
+          sourcemap: true,
+          globals,
+        },
+        external,
+        plugins: [
+          replace({
+            'process.env.NODE_ENV': `"production"`,
+            delimiters: ['', ''],
+          }),
+          resolve(resolveConfig),
+          babel(babelConfig),
+          commonJS(),
+          externalDeps(),
+          terser(),
+          size(),
+          visualizer({
+            filename: 'stats-react.json',
+            json: true,
+          }),
+        ],
+      },
+    ]
+  })
+  .flat()

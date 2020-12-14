@@ -1,97 +1,175 @@
-import type { Query, QueryCache, QueryKey } from 'react-query'
+import type { QueryClient } from '../core/queryClient'
+import type { Query, QueryState } from '../core/query'
+import type {
+  MutationKey,
+  MutationOptions,
+  QueryKey,
+  QueryOptions,
+} from '../core/types'
+import type { Mutation, MutationState } from '../core/mutation'
 
-export interface DehydratedQueryConfig {
-  cacheTime?: number
+// TYPES
+
+export interface DehydrateOptions {
+  dehydrateMutations?: boolean
+  dehydrateQueries?: boolean
+  shouldDehydrateMutation?: ShouldDehydrateMutationFunction
+  shouldDehydrateQuery?: ShouldDehydrateQueryFunction
 }
 
-export interface DehydratedQuery {
+export interface HydrateOptions {
+  defaultOptions?: {
+    queries?: QueryOptions
+    mutations?: MutationOptions
+  }
+}
+
+interface DehydratedMutation {
+  mutationKey?: MutationKey
+  state: MutationState
+}
+
+interface DehydratedQuery {
+  cacheTime: number
+  queryHash: string
   queryKey: QueryKey
-  data?: unknown
-  updatedAt: number
-  config: DehydratedQueryConfig
+  state: QueryState
 }
 
 export interface DehydratedState {
-  queries: Array<DehydratedQuery>
+  mutations: DehydratedMutation[]
+  queries: DehydratedQuery[]
 }
 
-export type ShouldDehydrateFunction = <TResult, TError = unknown>(
-  query: Query<TResult, TError>
-) => boolean
+export type ShouldDehydrateQueryFunction = (query: Query) => boolean
 
-export interface DehydrateConfig {
-  shouldDehydrate?: ShouldDehydrateFunction
+export type ShouldDehydrateMutationFunction = (mutation: Mutation) => boolean
+
+// FUNCTIONS
+
+function serializePositiveNumber(value: number): number {
+  return value === Infinity ? -1 : value
+}
+
+function deserializePositiveNumber(value: number): number {
+  return value === -1 ? Infinity : value
+}
+
+function dehydrateMutation(mutation: Mutation): DehydratedMutation {
+  return {
+    mutationKey: mutation.options.mutationKey,
+    state: mutation.state,
+  }
 }
 
 // Most config is not dehydrated but instead meant to configure again when
 // consuming the de/rehydrated data, typically with useQuery on the client.
 // Sometimes it might make sense to prefetch data on the server and include
 // in the html-payload, but not consume it on the initial render.
-function dehydrateQuery<TResult, TError = unknown>(
-  query: Query<TResult, TError>
-): DehydratedQuery {
+function dehydrateQuery(query: Query): DehydratedQuery {
   return {
-    config: {
-      cacheTime: query.cacheTime,
-    },
-    data: query.state.data,
+    cacheTime: serializePositiveNumber(query.cacheTime),
+    state: query.state,
     queryKey: query.queryKey,
-    updatedAt: query.state.updatedAt,
+    queryHash: query.queryHash,
   }
 }
 
-function defaultShouldDehydrate<TResult, TError>(
-  query: Query<TResult, TError>
-) {
+function defaultShouldDehydrateMutation(mutation: Mutation) {
+  return mutation.state.isPaused
+}
+
+function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
 export function dehydrate(
-  queryCache: QueryCache,
-  dehydrateConfig?: DehydrateConfig
+  client: QueryClient,
+  options?: DehydrateOptions
 ): DehydratedState {
-  const config = dehydrateConfig || {}
-  const shouldDehydrate = config.shouldDehydrate || defaultShouldDehydrate
+  options = options || {}
+
+  const mutations: DehydratedMutation[] = []
   const queries: DehydratedQuery[] = []
 
-  queryCache.getQueries().forEach(query => {
-    if (shouldDehydrate(query)) {
-      queries.push(dehydrateQuery(query))
-    }
-  })
+  if (options?.dehydrateMutations !== false) {
+    const shouldDehydrateMutation =
+      options.shouldDehydrateMutation || defaultShouldDehydrateMutation
 
-  return { queries }
+    client
+      .getMutationCache()
+      .getAll()
+      .forEach(mutation => {
+        if (shouldDehydrateMutation(mutation)) {
+          mutations.push(dehydrateMutation(mutation))
+        }
+      })
+  }
+
+  if (options?.dehydrateQueries !== false) {
+    const shouldDehydrateQuery =
+      options.shouldDehydrateQuery || defaultShouldDehydrateQuery
+
+    client
+      .getQueryCache()
+      .getAll()
+      .forEach(query => {
+        if (shouldDehydrateQuery(query)) {
+          queries.push(dehydrateQuery(query))
+        }
+      })
+  }
+
+  return { mutations, queries }
 }
 
 export function hydrate(
-  queryCache: QueryCache,
-  dehydratedState: unknown
+  client: QueryClient,
+  dehydratedState: unknown,
+  options?: HydrateOptions
 ): void {
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
   }
 
+  const mutationCache = client.getMutationCache()
+  const queryCache = client.getQueryCache()
+
+  const mutations = (dehydratedState as DehydratedState).mutations || []
   const queries = (dehydratedState as DehydratedState).queries || []
 
-  queries.forEach(dehydratedQuery => {
-    const resolvedConfig = queryCache.getResolvedQueryConfig(
-      dehydratedQuery.queryKey,
-      dehydratedQuery.config
+  mutations.forEach(dehydratedMutation => {
+    mutationCache.build(
+      client,
+      {
+        ...options?.defaultOptions?.mutations,
+        mutationKey: dehydratedMutation.mutationKey,
+      },
+      dehydratedMutation.state
     )
+  })
 
-    let query = queryCache.getQueryByHash(resolvedConfig.queryHash)
+  queries.forEach(dehydratedQuery => {
+    const query = queryCache.get(dehydratedQuery.queryHash)
 
     // Do not hydrate if an existing query exists with newer data
-    if (query && query.state.updatedAt >= dehydratedQuery.updatedAt) {
+    if (query) {
+      if (query.state.dataUpdatedAt < dehydratedQuery.state.dataUpdatedAt) {
+        query.setState(dehydratedQuery.state)
+      }
       return
     }
 
-    if (!query) {
-      query = queryCache.createQuery(resolvedConfig)
-    }
-
-    query.setData(dehydratedQuery.data, {
-      updatedAt: dehydratedQuery.updatedAt,
-    })
+    // Restore query
+    queryCache.build(
+      client,
+      {
+        ...options?.defaultOptions?.queries,
+        queryKey: dehydratedQuery.queryKey,
+        queryHash: dehydratedQuery.queryHash,
+        cacheTime: deserializePositiveNumber(dehydratedQuery.cacheTime),
+      },
+      dehydratedQuery.state
+    )
   })
 }

@@ -3,10 +3,9 @@ export { useHydrate, Hydrate } from './react'
 
 // Types
 export type {
-  DehydratedQueryConfig,
-  DehydratedQuery,
+  DehydrateOptions,
   DehydratedState,
-  ShouldDehydrateFunction,
-  DehydrateConfig,
+  HydrateOptions,
+  ShouldDehydrateQueryFunction,
 } from './hydration'
 export type { HydrateProps } from './react'

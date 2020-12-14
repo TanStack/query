@@ -1,19 +1,11 @@
-import * as React from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDOMServer from 'react-dom/server'
-import { waitFor } from '@testing-library/react'
 
-import {
-  useQuery,
-  setConsole,
-  ReactQueryCacheProvider,
-  QueryCache,
-} from '../..'
-import { dehydrate, Hydrate } from '../'
+import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
+import { dehydrate, hydrate } from '../'
 import * as utils from '../../core/utils'
-import { sleep } from '../../react/tests/utils'
-
-jest.useFakeTimers()
+import { mockConsoleError, sleep } from '../../react/tests/utils'
 
 // This monkey-patches the isServer-value from utils,
 // so that we can pretend to be in a server environment
@@ -22,239 +14,208 @@ function setIsServer(isServer: boolean) {
   utils.isServer = isServer
 }
 
-const fetchData: <TResult>(
-  value: TResult,
-  ms?: number
-) => Promise<TResult> = async (value, ms) => {
+async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 1)
   return value
 }
 
-function PrintStateComponent({
-  componentName,
-  isFetching,
-  isError,
-  data,
-}: any): any {
-  if (isFetching) {
-    return `Loading ${componentName}`
-  }
-
-  if (isError) {
-    return `Error ${componentName}`
-  }
-
-  return `Success ${componentName} - ${data}`
+function PrintStateComponent({ componentName, result }: any): any {
+  return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
 }
 
 describe('Server side rendering with de/rehydration', () => {
   it('should not mismatch on success', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {
-      const { isFetching, isError, data } = useQuery('success', () =>
-        fetchDataSuccess('success!')
-      )
+      const result = useQuery('success', () => fetchDataSuccess('success!'))
       return (
-        <PrintStateComponent
-          componentName="SuccessComponent"
-          isFetching={isFetching}
-          isError={isError}
-          data={data}
-        />
+        <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
     }
 
     // -- Server part --
     setIsServer(true)
 
-    const serverPrefetchCache = new QueryCache()
-    const prefetchPromise = serverPrefetchCache.prefetchQuery('success', () =>
+    const prefetchCache = new QueryCache()
+    const prefetchClient = new QueryClient({ queryCache: prefetchCache })
+    await prefetchClient.prefetchQuery('success', () =>
       fetchDataSuccess('success')
     )
-    jest.runOnlyPendingTimers()
-    await prefetchPromise
-    const dehydratedStateServer = dehydrate(serverPrefetchCache)
+    const dehydratedStateServer = dehydrate(prefetchClient)
+    const renderCache = new QueryCache()
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateServer}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderClient.clear()
     setIsServer(false)
 
-    expect(markup).toBe('Success SuccessComponent - success')
+    const expectedMarkup =
+      'SuccessComponent - status:success fetching:true data:success'
+
+    expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedStateClient = JSON.parse(stringifiedState)
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, JSON.parse(stringifiedState))
+
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateClient}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>,
+      <QueryClientProvider client={queryClient}>
+        <SuccessComponent />
+      </QueryClientProvider>,
       el
     )
 
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
-    expect(el.innerHTML).toBe('Success SuccessComponent - success')
+    expect(el.innerHTML).toBe(expectedMarkup)
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
+    queryClient.clear()
   })
 
   it('should not mismatch on error', async () => {
-    setConsole({
-      log: console.log,
-      warn: console.warn,
-      error: () => undefined,
-    })
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
     const fetchDataError = jest.fn(() => {
-      throw new Error()
+      throw new Error('fetchDataError')
     })
 
     // -- Shared part --
     function ErrorComponent() {
-      const { isFetching, isError, data } = useQuery('error', () =>
-        fetchDataError()
-      )
+      const result = useQuery('error', () => fetchDataError(), { retry: false })
       return (
-        <PrintStateComponent
-          componentName="ErrorComponent"
-          isFetching={isFetching}
-          isError={isError}
-          data={data}
-        />
+        <PrintStateComponent componentName="ErrorComponent" result={result} />
       )
     }
 
     // -- Server part --
     setIsServer(true)
-    const serverQueryCache = new QueryCache()
-    const prefetchPromise = serverQueryCache.prefetchQuery('error', () =>
-      fetchDataError()
-    )
-    jest.runOnlyPendingTimers()
-    await prefetchPromise
-    const dehydratedStateServer = dehydrate(serverQueryCache)
+    const prefetchCache = new QueryCache()
+    const prefetchClient = new QueryClient({ queryCache: prefetchCache })
+    await prefetchClient.prefetchQuery('error', () => fetchDataError())
+    const dehydratedStateServer = dehydrate(prefetchClient)
+    const renderCache = new QueryCache()
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateServer}>
-          <ErrorComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>
+      <QueryClientProvider client={renderClient}>
+        <ErrorComponent />
+      </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderClient.clear()
     setIsServer(false)
 
-    expect(markup).toBe('Loading ErrorComponent')
+    const expectedMarkup =
+      'ErrorComponent - status:loading fetching:true data:undefined'
+
+    expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedStateClient = JSON.parse(stringifiedState)
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, JSON.parse(stringifiedState))
+
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateClient}>
-          <ErrorComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>,
+      <QueryClientProvider client={queryClient}>
+        <ErrorComponent />
+      </QueryClientProvider>,
       el
     )
 
     // We expect exactly one console.error here, which is from the
-    expect(consoleMock).toHaveBeenCalledTimes(0)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(fetchDataError).toHaveBeenCalledTimes(1)
-    expect(el.innerHTML).toBe('Loading ErrorComponent')
-
-    jest.runOnlyPendingTimers()
-
+    expect(el.innerHTML).toBe(expectedMarkup)
+    await sleep(10)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
-    await waitFor(() => expect(el.innerHTML).toBe('Error ErrorComponent'))
+    expect(el.innerHTML).toBe(
+      'ErrorComponent - status:error fetching:false data:undefined'
+    )
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
-    setConsole({
-      log: console.log,
-      warn: console.warn,
-      error: console.error,
-    })
+    queryClient.clear()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = jest.spyOn(console, 'error')
-    consoleMock.mockImplementation(() => undefined)
+    const consoleMock = mockConsoleError()
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {
-      const { isFetching, isError, data } = useQuery('success', () =>
-        fetchDataSuccess('success!')
-      )
+      const result = useQuery('success', () => fetchDataSuccess('success!'))
       return (
-        <PrintStateComponent
-          componentName="SuccessComponent"
-          isFetching={isFetching}
-          isError={isError}
-          data={data}
-        />
+        <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
     }
 
     // -- Server part --
     setIsServer(true)
 
-    const serverPrefetchCache = new QueryCache()
-    const dehydratedStateServer = dehydrate(serverPrefetchCache)
+    const prefetchCache = new QueryCache()
+    const prefetchClient = new QueryClient({ queryCache: prefetchCache })
+    const dehydratedStateServer = dehydrate(prefetchClient)
+    const renderCache = new QueryCache()
+    const renderClient = new QueryClient({ queryCache: renderCache })
+    hydrate(renderClient, dehydratedStateServer)
     const markup = ReactDOMServer.renderToString(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateServer}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>
+      <QueryClientProvider client={renderClient}>
+        <SuccessComponent />
+      </QueryClientProvider>
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
+    renderClient.clear()
     setIsServer(false)
 
-    expect(markup).toBe('Loading SuccessComponent')
+    const expectedMarkup =
+      'SuccessComponent - status:loading fetching:true data:undefined'
+
+    expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
     const el = document.createElement('div')
     el.innerHTML = markup
-    const dehydratedStateClient = JSON.parse(stringifiedState)
+
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    hydrate(queryClient, JSON.parse(stringifiedState))
+
     ReactDOM.hydrate(
-      <ReactQueryCacheProvider>
-        <Hydrate state={dehydratedStateClient}>
-          <SuccessComponent />
-        </Hydrate>
-      </ReactQueryCacheProvider>,
+      <QueryClientProvider client={queryClient}>
+        <SuccessComponent />
+      </QueryClientProvider>,
       el
     )
 
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(0)
-    expect(el.innerHTML).toBe('Loading SuccessComponent')
-
-    jest.runOnlyPendingTimers()
-
+    expect(el.innerHTML).toBe(expectedMarkup)
+    await sleep(10)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
-    await waitFor(() =>
-      expect(el.innerHTML).toBe('Success SuccessComponent - success!')
+    expect(el.innerHTML).toBe(
+      'SuccessComponent - status:success fetching:false data:success!'
     )
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
+    queryClient.clear()
   })
 })

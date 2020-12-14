@@ -1,12 +1,20 @@
-import { render, fireEvent, waitFor } from '@testing-library/react'
-import * as React from 'react'
+import { fireEvent, waitFor } from '@testing-library/react'
+import React from 'react'
 
-import { sleep, queryKey, mockConsoleError } from './utils'
-import { useQuery, useIsFetching } from '../..'
+import {
+  mockConsoleError,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
+import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
 
     function Page() {
@@ -33,7 +41,7 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = render(<Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('isFetching: 0'))
     fireEvent.click(rendered.getByText('setReady'))
@@ -43,6 +51,8 @@ describe('useIsFetching', () => {
 
   it('should not update state while rendering', async () => {
     const consoleMock = mockConsoleError()
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -75,7 +85,7 @@ describe('useIsFetching', () => {
       const [renderSecond, setRenderSecond] = React.useState(false)
 
       React.useEffect(() => {
-        setTimeout(() => {
+        setActTimeout(() => {
           setRenderSecond(true)
         }, 10)
       }, [])
@@ -89,11 +99,64 @@ describe('useIsFetching', () => {
       )
     }
 
-    render(<Page />)
-    await waitFor(() => expect(isFetchings).toEqual([1, 1, 2, 1, 0]))
+    renderWithClient(queryClient, <Page />)
+    await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
     expect(consoleMock).not.toHaveBeenCalled()
     expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
 
     consoleMock.mockRestore()
+  })
+
+  it('should be able to filter', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const isFetchings: number[] = []
+
+    function One() {
+      useQuery(key1, async () => {
+        await sleep(10)
+        return 'test'
+      })
+      return null
+    }
+
+    function Two() {
+      useQuery(key2, async () => {
+        await sleep(20)
+        return 'test'
+      })
+      return null
+    }
+
+    function Page() {
+      const [started, setStarted] = React.useState(false)
+      const isFetching = useIsFetching(key1)
+      isFetchings.push(isFetching)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setStarted(true)
+        }, 5)
+      }, [])
+
+      if (!started) {
+        return null
+      }
+
+      return (
+        <div>
+          <One />
+          <Two />
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+    expect(isFetchings).toEqual([0, 0, 1, 0])
   })
 })

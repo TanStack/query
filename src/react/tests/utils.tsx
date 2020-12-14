@@ -1,6 +1,11 @@
-import { waitFor } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
+import React from 'react'
 
-let queryKeyCount = 0
+import { QueryClient, QueryClientProvider } from '../..'
+
+export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
+  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+}
 
 export function mockVisibilityState(value: string) {
   Object.defineProperty(document, 'visibilityState', {
@@ -22,6 +27,7 @@ export function mockConsoleError() {
   return consoleMock
 }
 
+let queryKeyCount = 0
 export function queryKey(): string {
   queryKeyCount++
   return `query_${queryKeyCount}`
@@ -33,30 +39,32 @@ export function sleep(timeout: number): Promise<void> {
   })
 }
 
-export function waitForMs(ms: number) {
-  const end = Date.now() + ms
-  return waitFor(() => {
-    if (Date.now() < end) {
-      throw new Error('Time not elapsed yet')
-    }
-  })
+export function setActTimeout(fn: () => void, ms?: number) {
+  setTimeout(() => {
+    act(() => {
+      fn()
+    })
+  }, ms)
 }
-
-/**
- * Checks that `T` is of type `U`.
- */
-export type TypeOf<T, U> = Exclude<U, T> extends never ? true : false
-
-/**
- * Checks that `T` is equal to `U`.
- */
-export type TypeEqual<T, U> = Exclude<T, U> extends never
-  ? Exclude<U, T> extends never
-    ? true
-    : false
-  : false
 
 /**
  * Assert the parameter is of a specific type.
  */
 export const expectType = <T,>(_: T): void => undefined
+
+export const Blink: React.FC<{ duration: number }> = ({
+  duration,
+  children,
+}) => {
+  const [shouldShow, setShouldShow] = React.useState<boolean>(true)
+
+  React.useEffect(() => {
+    setShouldShow(true)
+    const timeout = setTimeout(() => setShouldShow(false), duration)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [duration, children])
+
+  return shouldShow ? <>{children}</> : <>off</>
+}

@@ -1,21 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import ReactDOM from "react-dom";
-import { useQuery, QueryCache, ReactQueryCacheProvider } from "react-query";
-import { ReactQueryDevtools } from "react-query-devtools";
+import { QueryClient, QueryClientProvider, useQuery } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 
-const queryCache = new QueryCache();
+const queryClient = new QueryClient();
 
 export default function App() {
   return (
-    <ReactQueryCacheProvider queryCache={queryCache}>
+    <QueryClientProvider client={queryClient}>
       <Example />
-    </ReactQueryCacheProvider>
+    </QueryClientProvider>
   );
 }
 
 function Example() {
-  const { isLoading, error, data } = useQuery("repoData", () =>
+  const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
     fetch(
       "https://api.github.com/repos/tannerlinsley/react-query"
     ).then((res) => res.json())
@@ -32,6 +32,7 @@ function Example() {
       <strong>👀 {data.subscribers_count}</strong>{" "}
       <strong>✨ {data.stargazers_count}</strong>{" "}
       <strong>🍴 {data.forks_count}</strong>
+      <div>{isFetching ? "Updating..." : ""}</div>
       <ReactQueryDevtools initialIsOpen />
     </div>
   );
