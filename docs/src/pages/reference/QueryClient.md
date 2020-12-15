@@ -23,8 +23,10 @@ await queryClient.prefetchQuery('posts', fetchPosts)
 
 Its available methods are:
 
-- [`fetchQuery`](#queryclientfetchquerydata)
+- [`fetchQuery`](#queryclientfetchquery)
+- [`fetchInfiniteQuery`](#queryclientfetchinfinitequery)
 - [`prefetchQuery`](#queryclientprefetchquery)
+- [`prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
 - [`getQueryData`](#queryclientgetquerydata)
 - [`setQueryData`](#queryclientsetquerydata)
 - [`getQueryState`](#queryclientgetquerystate)
@@ -92,6 +94,27 @@ The options for `fetchQuery` are exactly the same as those of [`useQuery`](#useq
 
 - `Promise<TData>`
 
+## `queryClient.fetchInfiniteQuery`
+
+`fetchInfiniteQuery` is similar to `fetchQuery` but can be used to fetch and cache an infinite query.
+
+```js
+try {
+  const data = await queryClient.fetchInfiniteQuery(queryKey, queryFn)
+  console.log(data.pages)
+} catch (error) {
+  console.log(error)
+}
+```
+
+**Options**
+
+The options for `fetchInfiniteQuery` are exactly the same as those of [`useInfiniteQuery`](#useinfinitequery).
+
+**Returns**
+
+- `Promise<InfiniteData<TData>>`
+
 ## `queryClient.prefetchQuery`
 
 `prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that is will not throw or return any data.
@@ -109,6 +132,23 @@ await queryClient.prefetchQuery(queryKey)
 **Options**
 
 The options for `prefetchQuery` are exactly the same as those of [`useQuery`](#usequery).
+
+**Returns**
+
+- `Promise<void>`
+  - A promise is returned that will either immediately resolve if no fetch is needed or after the query has been executed. It will not return any data or throw any errors.
+
+## `queryClient.prefetchInfiniteQuery`
+
+`prefetchInfiniteQuery` is similar to `prefetchQuery` but can be used to prefetch and cache an infinite query.
+
+```js
+await queryClient.prefetchInfiniteQuery(queryKey, queryFn)
+```
+
+**Options**
+
+The options for `prefetchInfiniteQuery` are exactly the same as those of [`useInfiniteQuery`](#useinfinitequery).
 
 **Returns**
 
