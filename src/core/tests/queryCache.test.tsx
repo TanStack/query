@@ -127,6 +127,42 @@ describe('queryCache', () => {
     expect(second).toBe(first)
   })
 
+  test('fetchQuery should be able to fetch when cache time is set to 0 and then be removed', async () => {
+    const testClient = new QueryClient({
+      defaultOptions: { queries: { cacheTime: 0 } },
+    })
+
+    const key1 = queryKey()
+
+    const result = await testClient.fetchQuery(key1, async () => {
+      await sleep(10)
+      return 1
+    })
+
+    const result2 = testClient.getQueryData(key1)
+
+    expect(result).toEqual(1)
+    expect(result2).toEqual(undefined)
+  })
+
+  test('fetchQuery should keep a query in cache if cache time is Infinity', async () => {
+    const testClient = new QueryClient({
+      defaultOptions: { queries: { cacheTime: Infinity } },
+    })
+
+    const key1 = queryKey()
+
+    const result = await testClient.fetchQuery(key1, async () => {
+      await sleep(10)
+      return 1
+    })
+
+    const result2 = testClient.getQueryData(key1)
+
+    expect(result).toEqual(1)
+    expect(result2).toEqual(1)
+  })
+
   test('fetchQuery should not force fetch', async () => {
     const key = queryKey()
 

@@ -168,9 +168,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
     if (isValidTimeout(this.cacheTime)) {
       this.gcTimeout = setTimeout(() => {
-        if (!this.observers.length) {
-          this.cache.remove(this)
-        }
+        this.optionalRemove()
       }, this.cacheTime)
     }
   }
@@ -178,6 +176,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private clearGcTimeout() {
     clearTimeout(this.gcTimeout)
     this.gcTimeout = undefined
+  }
+
+  private optionalRemove() {
+    if (!this.observers.length && !this.state.isFetching) {
+      this.cache.remove(this)
+    }
   }
 
   setData(
@@ -411,6 +415,12 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
 
         // Propagate error
         throw error
+      })
+      .finally(() => {
+        // Remove query after fetching if cache time is 0
+        if (this.cacheTime === 0) {
+          this.optionalRemove()
+        }
       })
 
     return this.promise
