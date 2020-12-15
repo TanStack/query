@@ -1,5 +1,6 @@
 import { QueryClient } from '../core'
 import { dehydrate, hydrate } from '../hydration'
+import deepEqual from "deep-equal";
 
 interface LocalStorageCache {
   timestamp: number
@@ -20,6 +21,12 @@ interface Options {
   /** A unique string that can be used to forcefully
    * invalidate existing caches if they do not share the same buster string */
   buster?: string
+  /** A list of QueryKeys to be blacklisted and prevented from persisted
+   * Example: you dont wanna persist an access token here especially we persisting without
+   * any sort of encryption */
+  blacklistQueries?: QueryKey[];
+  /** A list of MutationKeys to be blacklisted and prevented from persisted */
+  blacklistMutations?: MutationKey[];
 }
 
 export function persistWithLocalStorage(
@@ -29,15 +36,32 @@ export function persistWithLocalStorage(
     throttleTime = 1000,
     maxAge = 1000 * 60 * 60 * 24,
     buster = '',
+    blacklistQueries = [],
+    blacklistMutations = [],
   }: Options = {}
 ) {
   if (typeof window !== 'undefined') {
     // Subscribe to changes
     const saveCache = throttle(() => {
       const storageCache: LocalStorageCache = {
+        const cacheState = dehydrate(queryClient, {
+            shouldDehydrateQuery: (query) => {
+                const isExist =
+                    blacklistQueries.filter((bl) => deepEqual(bl, query.queryKey))
+                        .length > 0;
+                return !isExist;
+            },
+            shouldDehydrateMutation: (mutation) => {
+                const isExist =
+                    blacklistMutations.filter((bl) =>
+                        deepEqual(bl, mutation.options.mutationKey),
+                    ).length > 0;
+                return !isExist;
+            },
+        });
         buster,
         timestamp: Date.now(),
-        cacheState: dehydrate(queryClient),
+        cacheState,
       }
 
       localStorage.setItem(localStorageKey, JSON.stringify(storageCache))
