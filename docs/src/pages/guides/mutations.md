@@ -21,7 +21,7 @@ function App() {
             <div>An error occurred: {mutation.error.message}</div>
           ) : null}
 
-          {mutation.isError ? <div>Todo added!</div> : null}
+          {mutation.isSuccess ? <div>Todo added!</div> : null}
 
           <button
             onClick={() => {
