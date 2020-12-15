@@ -282,7 +282,7 @@ mutate('todo', {
     console.error(error)
   },
   onSettled: () => {
-    console.log('settled)
+    console.log('settled')
   },
 })
 ```
@@ -298,7 +298,7 @@ try {
 } catch (error) {
   console.error(error)
 } finally {
-  console.log('settled)
+  console.log('settled')
 }
 ```
 
