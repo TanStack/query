@@ -642,7 +642,7 @@ function getDefaultState<TResult, TError>(
     data,
     error: null,
     failureCount: 0,
-    isFetching: status === QueryStatus.Loading,
+    isFetching: false,
     isFetchingMore: false,
     isInitialData: true,
     isInvalidated: false,

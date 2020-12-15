@@ -59,8 +59,9 @@ export class QueryObserver<TResult, TError> {
     this.currentQuery.subscribeObserver(this)
 
     if (
+      !this.currentResult.isFetching &&
       this.config.enabled &&
-      (this.config.forceFetchOnMount || this.config.refetchOnMount === 'always')
+      this.config.refetchOnMount === 'always'
     ) {
       this.fetch()
     } else {
@@ -170,12 +171,10 @@ export class QueryObserver<TResult, TError> {
 
   private optionalFetch(): void {
     if (
+      !this.currentResult.isFetching &&
       this.config.enabled && // Only fetch if enabled
       this.isStale && // Only fetch if stale
-      !(
-        this.config.suspense &&
-        (this.currentResult.isFetched || this.currentResult.isFetching)
-      ) && // Don't refetch if in suspense mode and the data is already fetched or fetching
+      !(this.config.suspense && this.currentResult.isFetched) && // Don't refetch if in suspense mode and the data is already fetched
       (this.config.refetchOnMount || this.currentQuery.observers.length === 1)
     ) {
       this.fetch()
@@ -323,6 +322,9 @@ export class QueryObserver<TResult, TError> {
 
     // Update stale state on query switch
     if (query.state.isInitialData) {
+      if (query.config.queryKey[0] === 'key') {
+        console.log('isInitialData')
+      }
       if (config.keepPreviousData && prevQuery) {
         this.isStale = true
       } else if (typeof config.initialStale === 'function') {
@@ -333,6 +335,9 @@ export class QueryObserver<TResult, TError> {
         this.isStale = typeof query.state.data === 'undefined'
       }
     } else {
+      if (query.config.queryKey[0] === 'key') {
+        console.log('isStaleByTime')
+      }
       this.isStale = query.isStaleByTime(config.staleTime)
     }
 
