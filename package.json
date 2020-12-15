@@ -51,7 +51,8 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.5.5",
-    "match-sorter": "^6.0.2"
+    "match-sorter": "^6.0.2",
+    "deep-equal": "^2.0.5"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0"
@@ -116,6 +117,7 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-visualizer": "^4.0.4",
-    "typescript": "^4.1.2"
+    "typescript": "^4.1.2",
+    "@types/deep-equal": "^1.0.1"
   }
 }
