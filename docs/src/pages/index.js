@@ -18,7 +18,7 @@ const supporters = [
   ['Fillip Peyton', 'https://github.com/fillippeyton'],
   ['Tim Myers', 'https://github.com/denvercoder'],
   ['Andy Slezak', 'https://github.com/amslezak'],
-  ['Shane Cavaliere', 'https://githbu.com/shanecav'],
+  ['Shane Cavaliere', 'https://github.com/shanecav'],
 ]
 
 const fans = [
