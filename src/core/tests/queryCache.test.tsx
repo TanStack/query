@@ -202,6 +202,38 @@ describe('queryCache', () => {
     expect(fourth).toBe(2)
   })
 
+  test('fetchInfiniteQuery should return infinite query data', async () => {
+    const key = queryKey()
+    const result = await queryClient.fetchInfiniteQuery(
+      key,
+      ({ pageParam = 10 }) => Number(pageParam)
+    )
+    const result2 = queryClient.getQueryData(key)
+
+    const expected = {
+      pages: [10],
+      pageParams: [undefined],
+    }
+
+    expect(result).toEqual(expected)
+    expect(result2).toEqual(expected)
+  })
+
+  test('prefetchInfiniteQuery should return infinite query data', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchInfiniteQuery(key, ({ pageParam = 10 }) =>
+      Number(pageParam)
+    )
+
+    const result = queryClient.getQueryData(key)
+
+    expect(result).toEqual({
+      pages: [10],
+      pageParams: [undefined],
+    })
+  })
+
   test('prefetchQuery should return undefined when an error is thrown', async () => {
     const consoleMock = mockConsoleError()
 
