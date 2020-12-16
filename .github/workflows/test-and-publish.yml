@@ -29,7 +29,7 @@ jobs:
     name: 'Publish Module to NPM'
     needs: test
     # publish only when merged in master on original repo, not on PR
-    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/1.x' || github.ref === 'refs/heads/2.x')
+    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/1.x' || github.ref == 'refs/heads/2.x')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
