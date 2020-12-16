@@ -30,7 +30,6 @@ interface DehydratedMutation {
 }
 
 interface DehydratedQuery {
-  cacheTime: number
   queryHash: string
   queryKey: QueryKey
   state: QueryState
@@ -47,14 +46,6 @@ export type ShouldDehydrateMutationFunction = (mutation: Mutation) => boolean
 
 // FUNCTIONS
 
-function serializePositiveNumber(value: number): number {
-  return value === Infinity ? -1 : value
-}
-
-function deserializePositiveNumber(value: number): number {
-  return value === -1 ? Infinity : value
-}
-
 function dehydrateMutation(mutation: Mutation): DehydratedMutation {
   return {
     mutationKey: mutation.options.mutationKey,
@@ -68,7 +59,6 @@ function dehydrateMutation(mutation: Mutation): DehydratedMutation {
 // in the html-payload, but not consume it on the initial render.
 function dehydrateQuery(query: Query): DehydratedQuery {
   return {
-    cacheTime: serializePositiveNumber(query.cacheTime),
     state: query.state,
     queryKey: query.queryKey,
     queryHash: query.queryHash,
@@ -167,7 +157,6 @@ export function hydrate(
         ...options?.defaultOptions?.queries,
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
-        cacheTime: deserializePositiveNumber(dehydratedQuery.cacheTime),
       },
       dehydratedQuery.state
     )

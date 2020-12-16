@@ -62,7 +62,7 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
-  test('should schedule garbage collection, measured from hydration', async () => {
+  test('should use the cache time from the client', async () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
     await queryClient.prefetchQuery('string', () => fetchData('string'), {
@@ -80,28 +80,9 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = new QueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(hydrationCache.find('string')?.state.data).toBe('string')
-    await sleep(10)
-    expect(hydrationCache.find('string')).toBeTruthy()
     await sleep(100)
-    expect(hydrationCache.find('string')).toBeFalsy()
+    expect(hydrationCache.find('string')).toBeTruthy()
 
-    queryClient.clear()
-    hydrationClient.clear()
-  })
-
-  test('should serialize the cacheTime correctly', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-    await queryClient.prefetchQuery('string', () => fetchData('string'), {
-      cacheTime: Infinity,
-    })
-    const dehydrated = dehydrate(queryClient)
-    const stringified = JSON.stringify(dehydrated)
-    const parsed = JSON.parse(stringified)
-    const hydrationCache = new QueryCache()
-    const hydrationClient = new QueryClient({ queryCache: hydrationCache })
-    hydrate(hydrationClient, parsed)
-    expect(hydrationCache.find('string')?.cacheTime).toBe(Infinity)
     queryClient.clear()
     hydrationClient.clear()
   })
