@@ -134,11 +134,11 @@ await queryClient.prefetchQuery('key', fn)
 const dehydratedState = dehydrate(client)
 
 const html = ReactDOM.renderToString(
-  <ReactQueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
     <Hydrate state={dehydratedState}>
       <App />
     </Hydrate>
-  </ReactQueryClientProvider>
+  </QueryClientProvider>
 )
 
 res.send(`
@@ -163,16 +163,16 @@ res.send(`
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const dehydratedState = JSON.parse(window.__REACT_QUERY_STATE__)
+const dehydratedState = window.__REACT_QUERY_STATE__
 
 const queryClient = new QueryClient()
 
 ReactDOM.hydrate(
-  <ReactQueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
     <Hydrate state={dehydratedState}>
       <App />
     </Hydrate>
-  </ReactQueryClientProvider>,
+  </QueryClientProvider>,
   document.getElementById('root')
 )
 ```
