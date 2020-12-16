@@ -144,7 +144,7 @@ const html = ReactDOM.renderToString(
 res.send(`
   <html>
     <body>
-      <div id="app">${html}</div>
+      <div id="root">${html}</div>
       <script>
         window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};
       </script>

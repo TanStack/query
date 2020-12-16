@@ -127,6 +127,42 @@ describe('queryCache', () => {
     expect(second).toBe(first)
   })
 
+  test('fetchQuery should be able to fetch when cache time is set to 0 and then be removed', async () => {
+    const testClient = new QueryClient({
+      defaultOptions: { queries: { cacheTime: 0 } },
+    })
+
+    const key1 = queryKey()
+
+    const result = await testClient.fetchQuery(key1, async () => {
+      await sleep(10)
+      return 1
+    })
+
+    const result2 = testClient.getQueryData(key1)
+
+    expect(result).toEqual(1)
+    expect(result2).toEqual(undefined)
+  })
+
+  test('fetchQuery should keep a query in cache if cache time is Infinity', async () => {
+    const testClient = new QueryClient({
+      defaultOptions: { queries: { cacheTime: Infinity } },
+    })
+
+    const key1 = queryKey()
+
+    const result = await testClient.fetchQuery(key1, async () => {
+      await sleep(10)
+      return 1
+    })
+
+    const result2 = testClient.getQueryData(key1)
+
+    expect(result).toEqual(1)
+    expect(result2).toEqual(1)
+  })
+
   test('fetchQuery should not force fetch', async () => {
     const key = queryKey()
 
@@ -164,6 +200,38 @@ describe('queryCache', () => {
     expect(second).toBe(1)
     expect(third).toBe(1)
     expect(fourth).toBe(2)
+  })
+
+  test('fetchInfiniteQuery should return infinite query data', async () => {
+    const key = queryKey()
+    const result = await queryClient.fetchInfiniteQuery(
+      key,
+      ({ pageParam = 10 }) => Number(pageParam)
+    )
+    const result2 = queryClient.getQueryData(key)
+
+    const expected = {
+      pages: [10],
+      pageParams: [undefined],
+    }
+
+    expect(result).toEqual(expected)
+    expect(result2).toEqual(expected)
+  })
+
+  test('prefetchInfiniteQuery should return infinite query data', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchInfiniteQuery(key, ({ pageParam = 10 }) =>
+      Number(pageParam)
+    )
+
+    const result = queryClient.getQueryData(key)
+
+    expect(result).toEqual({
+      pages: [10],
+      pageParams: [undefined],
+    })
   })
 
   test('prefetchQuery should return undefined when an error is thrown', async () => {

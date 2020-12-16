@@ -199,6 +199,12 @@ export interface FetchQueryOptions<
   staleTime?: number
 }
 
+export interface FetchInfiniteQueryOptions<
+  TData = unknown,
+  TError = unknown,
+  TQueryFnData = TData
+> extends FetchQueryOptions<InfiniteData<TData>, TError, TQueryFnData> {}
+
 export interface ResultOptions {
   throwOnError?: boolean
 }

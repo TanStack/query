@@ -9,7 +9,9 @@ import {
 } from './utils'
 import type {
   DefaultOptions,
+  FetchInfiniteQueryOptions,
   FetchQueryOptions,
+  InfiniteData,
   InvalidateOptions,
   InvalidateQueryFilters,
   MutationKey,
@@ -29,6 +31,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { CancelOptions } from './retryer'
+import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 
 // TYPES
 
@@ -134,8 +137,16 @@ export class QueryClient {
   }
 
   resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void>
-  resetQueries(queryKey?: QueryKey, filters?: QueryFilters, options?: ResetOptions): Promise<void>
-  resetQueries(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters | ResetOptions, arg3?: ResetOptions): Promise<void> {
+  resetQueries(
+    queryKey?: QueryKey,
+    filters?: QueryFilters,
+    options?: ResetOptions
+  ): Promise<void>
+  resetQueries(
+    arg1?: QueryKey | QueryFilters,
+    arg2?: QueryFilters | ResetOptions,
+    arg3?: ResetOptions
+  ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
     const queryCache = this.queryCache
 
@@ -282,6 +293,54 @@ export class QueryClient {
     arg3?: FetchQueryOptions
   ): Promise<void> {
     return this.fetchQuery(arg1 as any, arg2 as any, arg3)
+      .then(noop)
+      .catch(noop)
+  }
+
+  fetchInfiniteQuery<TData = unknown, TError = unknown, TQueryFnData = TData>(
+    options: FetchInfiniteQueryOptions<TData, TError, TQueryFnData>
+  ): Promise<InfiniteData<TData>>
+  fetchInfiniteQuery<TData = unknown, TError = unknown, TQueryFnData = TData>(
+    queryKey: QueryKey,
+    options?: FetchInfiniteQueryOptions<TData, TError, TQueryFnData>
+  ): Promise<InfiniteData<TData>>
+  fetchInfiniteQuery<TData = unknown, TError = unknown, TQueryFnData = TData>(
+    queryKey: QueryKey,
+    queryFn: QueryFunction<TQueryFnData | TData>,
+    options?: FetchInfiniteQueryOptions<TData, TError, TQueryFnData>
+  ): Promise<InfiniteData<TData>>
+  fetchInfiniteQuery<TData, TError, TQueryFnData = TData>(
+    arg1: QueryKey | FetchInfiniteQueryOptions<TData, TError, TQueryFnData>,
+    arg2?:
+      | QueryFunction<TQueryFnData | TData>
+      | FetchInfiniteQueryOptions<TData, TError, TQueryFnData>,
+    arg3?: FetchInfiniteQueryOptions<TData, TError, TQueryFnData>
+  ): Promise<InfiniteData<TData>> {
+    const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
+    parsedOptions.behavior = infiniteQueryBehavior<
+      TData,
+      TError,
+      TQueryFnData
+    >()
+    return this.fetchQuery(parsedOptions)
+  }
+
+  prefetchInfiniteQuery(options: FetchInfiniteQueryOptions): Promise<void>
+  prefetchInfiniteQuery(
+    queryKey: QueryKey,
+    options?: FetchInfiniteQueryOptions
+  ): Promise<void>
+  prefetchInfiniteQuery(
+    queryKey: QueryKey,
+    queryFn: QueryFunction,
+    options?: FetchInfiniteQueryOptions
+  ): Promise<void>
+  prefetchInfiniteQuery(
+    arg1: QueryKey | FetchInfiniteQueryOptions,
+    arg2?: QueryFunction | FetchInfiniteQueryOptions,
+    arg3?: FetchInfiniteQueryOptions
+  ): Promise<void> {
+    return this.fetchInfiniteQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
       .catch(noop)
   }

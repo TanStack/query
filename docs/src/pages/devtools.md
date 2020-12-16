@@ -7,7 +7,7 @@ Wave your hands in the air and shout hooray because React Query comes with dedic
 
 When you begin your React Query journey, you'll want these devtools by your side. They help visualize all of the inner workings of React Query and will likely save you hours of debugging if you find yourself in a pinch!
 
-> Please note that for now, the devtools **do not support React Native**. If you would like to help use mae the devtools platform agnostic, please let us know!
+> Please note that for now, the devtools **do not support React Native**. If you would like to help us make the devtools platform agnostic, please let us know!
 
 ## Import the Devtools
 
