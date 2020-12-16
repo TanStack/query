@@ -558,7 +558,7 @@ describe('useQuery', () => {
     // First success
     expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
     // Switch
-    expect(states[2]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
     // Second load
     expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
     // Second success
@@ -758,7 +758,7 @@ describe('useQuery', () => {
     // Fetched
     expect(states[1]).toMatchObject({ data: 1 })
     // Rerender
-    expect(states[2]).toMatchObject({ data: 1 })
+    expect(states[2]).toMatchObject({ data: undefined })
     // Switch
     expect(states[3]).toMatchObject({ data: undefined })
     // Fetched
@@ -1087,9 +1087,9 @@ describe('useQuery', () => {
     // Set state
     expect(states[2]).toMatchObject({
       data: 0,
-      isFetching: false,
+      isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPreviousData: true,
     })
     // Previous data
     expect(states[3]).toMatchObject({
@@ -1155,9 +1155,9 @@ describe('useQuery', () => {
     // Set state
     expect(states[2]).toMatchObject({
       data: 0,
-      isFetching: false,
+      isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPreviousData: true,
     })
     // Previous data
     expect(states[3]).toMatchObject({
@@ -1240,7 +1240,7 @@ describe('useQuery', () => {
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPreviousData: true,
     })
     // Switched query key
     expect(states[4]).toMatchObject({
@@ -1322,7 +1322,7 @@ describe('useQuery', () => {
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPreviousData: true,
     })
     // Switched query key
     expect(states[2]).toMatchObject({
@@ -2112,7 +2112,7 @@ describe('useQuery', () => {
     // Initial
     expect(states[0]).toMatchObject({ data: { count: 0 } })
     // Set state
-    expect(states[1]).toMatchObject({ data: { count: 0 } })
+    expect(states[1]).toMatchObject({ data: { count: 1 } })
     // Update
     expect(states[2]).toMatchObject({ data: { count: 1 } })
   })

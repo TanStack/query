@@ -53,14 +53,13 @@ export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
     observer.setOptions(defaultedOptions)
   }
 
-  const [currentResult, setCurrentResult] = React.useState(() =>
-    observer.getCurrentResult()
-  )
+  const [, rerender] = React.useState({})
+  const currentResult = observer.getCurrentResult()
 
   // Subscribe to the observer
   React.useEffect(() => {
     errorResetBoundary.clearReset()
-    return observer.subscribe(notifyManager.batchCalls(setCurrentResult))
+    return observer.subscribe(notifyManager.batchCalls(rerender))
   }, [observer, errorResetBoundary])
 
   // Handle suspense
