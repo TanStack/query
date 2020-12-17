@@ -9,7 +9,7 @@ Here's an example of a mutation that adds a new todo the server:
 
 ```js
 function App() {
-  const mutation = useMutation(newTodo => axios.post('/todods', newTodo))
+  const mutation = useMutation(newTodo => axios.post('/todos', newTodo))
 
   return (
     <div>
