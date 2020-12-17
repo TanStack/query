@@ -6,8 +6,8 @@ import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
 
-export function useBaseQuery<TData, TError, TQueryFnData, TQueryData>(
-  options: UseBaseQueryOptions<TData, TError, TQueryFnData, TQueryData>,
+export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
+  options: UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData>,
   Observer: typeof QueryObserver
 ) {
   const queryClient = useQueryClient()

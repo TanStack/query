@@ -18,14 +18,14 @@ type InfiniteQueryObserverListener<TData, TError> = (
 ) => void
 
 export class InfiniteQueryObserver<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData,
+  TData = TQueryFnData,
   TQueryData = TQueryFnData
 > extends QueryObserver<
-  InfiniteData<TData>,
-  TError,
   TQueryFnData,
+  TError,
+  InfiniteData<TData>,
   InfiniteData<TQueryData>
 > {
   // Type override
@@ -45,9 +45,9 @@ export class InfiniteQueryObserver<
   constructor(
     client: QueryClient,
     options: InfiniteQueryObserverOptions<
-      TData,
-      TError,
       TQueryFnData,
+      TError,
+      TData,
       TQueryData
     >
   ) {
@@ -62,15 +62,15 @@ export class InfiniteQueryObserver<
 
   setOptions(
     options?: InfiniteQueryObserverOptions<
-      TData,
-      TError,
       TQueryFnData,
+      TError,
+      TData,
       TQueryData
     >
   ): void {
     super.setOptions({
       ...options,
-      behavior: infiniteQueryBehavior<TData, TError, TQueryFnData>(),
+      behavior: infiniteQueryBehavior<TQueryFnData, TError, TData>(),
     })
   }
 

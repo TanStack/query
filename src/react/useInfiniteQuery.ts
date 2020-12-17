@@ -8,35 +8,35 @@ import { useBaseQuery } from './useBaseQuery'
 // HOOK
 
 export function useInfiniteQuery<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 >(
-  options: UseInfiniteQueryOptions<TData, TError, TQueryFnData>
+  options: UseInfiniteQueryOptions<TQueryFnData, TError, TData>
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 >(
   queryKey: QueryKey,
-  options?: UseInfiniteQueryOptions<TData, TError, TQueryFnData>
+  options?: UseInfiniteQueryOptions<TQueryFnData, TError, TData>
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 >(
   queryKey: QueryKey,
-  queryFn: QueryFunction<TQueryFnData | TData>,
-  options?: UseInfiniteQueryOptions<TData, TError, TQueryFnData>
+  queryFn: QueryFunction<TQueryFnData>,
+  options?: UseInfiniteQueryOptions<TQueryFnData, TError, TData>
 ): UseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<TData, TError, TQueryFnData = TData>(
-  arg1: QueryKey | UseInfiniteQueryOptions<TData, TError, TQueryFnData>,
+export function useInfiniteQuery<TQueryFnData, TError, TData = TQueryFnData>(
+  arg1: QueryKey | UseInfiniteQueryOptions<TQueryFnData, TError, TData>,
   arg2?:
-    | QueryFunction<TQueryFnData | TData>
-    | UseInfiniteQueryOptions<TData, TError, TQueryFnData>,
-  arg3?: UseInfiniteQueryOptions<TData, TError, TQueryFnData>
+    | QueryFunction<TQueryFnData>
+    | UseInfiniteQueryOptions<TQueryFnData, TError, TData>,
+  arg3?: UseInfiniteQueryOptions<TQueryFnData, TError, TData>
 ): UseInfiniteQueryResult<TData, TError> {
   const options = parseQueryArgs(arg1, arg2, arg3)
   return useBaseQuery(

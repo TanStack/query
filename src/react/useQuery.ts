@@ -7,35 +7,35 @@ import { useBaseQuery } from './useBaseQuery'
 // HOOK
 
 export function useQuery<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 >(
-  options: UseQueryOptions<TData, TError, TQueryFnData>
+  options: UseQueryOptions<TQueryFnData, TError, TData>
 ): UseQueryResult<TData, TError>
 export function useQuery<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 >(
   queryKey: QueryKey,
-  options?: UseQueryOptions<TData, TError, TQueryFnData>
+  options?: UseQueryOptions<TQueryFnData, TError, TData>
 ): UseQueryResult<TData, TError>
 export function useQuery<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 >(
   queryKey: QueryKey,
-  queryFn: QueryFunction<TQueryFnData | TData>,
-  options?: UseQueryOptions<TData, TError, TQueryFnData>
+  queryFn: QueryFunction<TQueryFnData>,
+  options?: UseQueryOptions<TQueryFnData, TError, TData>
 ): UseQueryResult<TData, TError>
-export function useQuery<TData, TError, TQueryFnData = TData>(
-  arg1: QueryKey | UseQueryOptions<TData, TError, TQueryFnData>,
+export function useQuery<TQueryFnData, TError, TData = TQueryFnData>(
+  arg1: QueryKey | UseQueryOptions<TQueryFnData, TError, TData>,
   arg2?:
-    | QueryFunction<TData | TQueryFnData>
-    | UseQueryOptions<TData, TError, TQueryFnData>,
-  arg3?: UseQueryOptions<TData, TError, TQueryFnData>
+    | QueryFunction<TQueryFnData>
+    | UseQueryOptions<TQueryFnData, TError, TData>,
+  arg3?: UseQueryOptions<TQueryFnData, TError, TData>
 ): UseQueryResult<TData, TError> {
   const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
   return useBaseQuery(parsedOptions, QueryObserver)
