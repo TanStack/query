@@ -1772,24 +1772,26 @@ describe('useQuery', () => {
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
-    const queryFn = jest
-      .fn()
-      .mockImplementation(
-        async (ctx: QueryFunctionContext<[string, typeof variables]>) => {
-          await sleep(10)
-          return ctx.queryKey
-        }
-      )
+    const states: UseQueryResult<[string, typeof variables]>[] = []
+
+    const queryFn = async (
+      ctx: QueryFunctionContext<[string, typeof variables]>
+    ) => {
+      await sleep(10)
+      return ctx.queryKey
+    }
 
     function Page() {
-      useQuery([key, variables], queryFn)
-
+      const state = useQuery([key, variables], queryFn)
+      states.push(state)
       return null
     }
 
     renderWithClient(queryClient, <Page />)
 
-    expect(queryFn).toHaveBeenCalledWith({ queryKey: [key, variables] })
+    await sleep(20)
+
+    expect(states[1].data).toEqual([key, variables])
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
