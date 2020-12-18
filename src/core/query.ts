@@ -22,12 +22,12 @@ import { Retryer, CancelOptions, isCancelledError } from './retryer'
 
 // TYPES
 
-interface QueryConfig<TData, TError, TQueryFnData> {
+interface QueryConfig<TQueryFnData, TError, TData> {
   cache: QueryCache
   queryKey: QueryKey
   queryHash: string
-  options?: QueryOptions<TData, TError, TQueryFnData>
-  defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
+  options?: QueryOptions<TQueryFnData, TError, TData>
+  defaultOptions?: QueryOptions<TQueryFnData, TError, TData>
   state?: QueryState<TData, TError>
 }
 
@@ -46,20 +46,20 @@ export interface QueryState<TData = unknown, TError = unknown> {
   status: QueryStatus
 }
 
-export interface FetchContext<TData, TError, TQueryFnData> {
+export interface FetchContext<TQueryFnData, TError, TData> {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
-  options: QueryOptions<TData, TError, TQueryFnData>
+  options: QueryOptions<TQueryFnData, TError, TData>
   queryKey: QueryKey
   state: QueryState<TData, TError>
 }
 
 export interface QueryBehavior<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 > {
-  onFetch: (context: FetchContext<TData, TError, TQueryFnData>) => void
+  onFetch: (context: FetchContext<TQueryFnData, TError, TData>) => void
 }
 
 export interface FetchOptions {
@@ -120,10 +120,14 @@ export type Action<TData, TError> =
 
 // CLASS
 
-export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
+export class Query<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData
+> {
   queryKey: QueryKey
   queryHash: string
-  options!: QueryOptions<TData, TError, TQueryFnData>
+  options!: QueryOptions<TQueryFnData, TError, TData>
   initialState: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
@@ -133,9 +137,9 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   private gcTimeout?: number
   private retryer?: Retryer<unknown, TError>
   private observers: QueryObserver<any, any, any, any>[]
-  private defaultOptions?: QueryOptions<TData, TError, TQueryFnData>
+  private defaultOptions?: QueryOptions<TQueryFnData, TError, TData>
 
-  constructor(config: QueryConfig<TData, TError, TQueryFnData>) {
+  constructor(config: QueryConfig<TQueryFnData, TError, TData>) {
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -148,7 +152,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   private setOptions(
-    options?: QueryOptions<TData, TError, TQueryFnData>
+    options?: QueryOptions<TQueryFnData, TError, TData>
   ): void {
     this.options = { ...this.defaultOptions, ...options }
 
@@ -159,7 +163,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
     )
   }
 
-  setDefaultOptions(options: QueryOptions<TData, TError, TQueryFnData>): void {
+  setDefaultOptions(options: QueryOptions<TQueryFnData, TError, TData>): void {
     this.defaultOptions = options
   }
 
@@ -321,7 +325,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   fetch(
-    options?: QueryOptions<TData, TError, TQueryFnData>,
+    options?: QueryOptions<TQueryFnData, TError, TData>,
     fetchOptions?: FetchOptions
   ): Promise<TData> {
     if (this.state.isFetching)
@@ -361,7 +365,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
         : Promise.reject('Missing queryFn')
 
     // Trigger behavior hook
-    const context: FetchContext<TData, TError, TQueryFnData> = {
+    const context: FetchContext<TQueryFnData, TError, TData> = {
       fetchOptions,
       options: this.options,
       queryKey,
@@ -439,7 +443,7 @@ export class Query<TData = unknown, TError = unknown, TQueryFnData = TData> {
   }
 
   protected getDefaultState(
-    options: QueryOptions<TData, TError, TQueryFnData>
+    options: QueryOptions<TQueryFnData, TError, TData>
   ): QueryState<TData, TError> {
     const data =
       typeof options.initialData === 'function'

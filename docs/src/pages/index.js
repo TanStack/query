@@ -417,7 +417,6 @@ const Home = () => {
                   'Suspense Ready!',
                   'Render-as-you-fetch',
                   'Prefetching',
-                  'Dedicated Devtools',
                   'Variable-length Parallel Queries',
                   'Offline Support',
                   'SSR Support',

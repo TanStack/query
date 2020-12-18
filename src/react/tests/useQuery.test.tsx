@@ -58,6 +58,22 @@ describe('useQuery', () => {
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
       useQuery<number>(key, () => 'test')
+
+      // it should infer the result type from a generic query function
+      function queryFn<T = string>(): Promise<T> {
+        return Promise.resolve({} as T)
+      }
+
+      const fromGenericQueryFn = useQuery(key, () => queryFn())
+      expectType<string | undefined>(fromGenericQueryFn.data)
+      expectType<unknown>(fromGenericQueryFn.error)
+
+      const fromGenericOptionsQueryFn = useQuery({
+        queryKey: key,
+        queryFn: () => queryFn(),
+      })
+      expectType<string | undefined>(fromGenericOptionsQueryFn.data)
+      expectType<unknown>(fromGenericOptionsQueryFn.error)
     }
   })
 
@@ -175,7 +191,7 @@ describe('useQuery', () => {
     const states: UseQueryResult<undefined, string>[] = []
 
     function Page() {
-      const state = useQuery<undefined, string, [string]>(
+      const state = useQuery<string[], string, undefined>(
         key,
         () => Promise.reject('rejected'),
         {
@@ -1756,24 +1772,26 @@ describe('useQuery', () => {
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
-    const queryFn = jest
-      .fn()
-      .mockImplementation(
-        async (ctx: QueryFunctionContext<[string, typeof variables]>) => {
-          await sleep(10)
-          return ctx.queryKey
-        }
-      )
+    const states: UseQueryResult<[string, typeof variables]>[] = []
+
+    const queryFn = async (
+      ctx: QueryFunctionContext<[string, typeof variables]>
+    ) => {
+      await sleep(10)
+      return ctx.queryKey
+    }
 
     function Page() {
-      useQuery([key, variables], queryFn)
-
+      const state = useQuery([key, variables], queryFn)
+      states.push(state)
       return null
     }
 
     renderWithClient(queryClient, <Page />)
 
-    expect(queryFn).toHaveBeenCalledWith({ queryKey: [key, variables] })
+    await sleep(20)
+
+    expect(states[1].data).toEqual([key, variables])
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {

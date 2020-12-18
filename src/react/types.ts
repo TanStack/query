@@ -9,28 +9,28 @@ import {
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData,
+  TData = TQueryFnData,
   TQueryData = TQueryFnData
-> extends QueryObserverOptions<TData, TError, TQueryFnData, TQueryData> {}
+> extends QueryObserverOptions<TQueryFnData, TError, TData, TQueryData> {}
 
 export interface UseQueryOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
-> extends UseBaseQueryOptions<TData, TError, TQueryFnData> {}
+  TData = TQueryFnData
+> extends UseBaseQueryOptions<TQueryFnData, TError, TData> {}
 
 export interface UseInfiniteQueryOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData,
+  TData = TQueryFnData,
   TQueryData = TQueryFnData
 >
   extends InfiniteQueryObserverOptions<
-    TData,
-    TError,
     TQueryFnData,
+    TError,
+    TData,
     TQueryData
   > {}
 

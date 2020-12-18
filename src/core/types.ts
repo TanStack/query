@@ -6,7 +6,7 @@ import type { QueryFilters } from './utils'
 export type QueryKey = string | unknown[]
 
 export type QueryFunction<T = unknown> = (
-  context: QueryFunctionContext
+  context: QueryFunctionContext<any>
 ) => T | Promise<T>
 
 export interface QueryFunctionContext<
@@ -41,9 +41,9 @@ export interface InfiniteData<TData> {
 }
 
 export interface QueryOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
+  TData = TQueryFnData
 > {
   /**
    * If `false`, failed queries will not retry by default.
@@ -60,7 +60,7 @@ export interface QueryOptions<
   queryKey?: QueryKey
   queryKeyHashFn?: QueryKeyHashFunction
   initialData?: TData | InitialDataFunction<TData>
-  behavior?: QueryBehavior<TData, TError, TQueryFnData>
+  behavior?: QueryBehavior<TQueryFnData, TError, TData>
   /**
    * Set this to `false` to disable structural sharing between query results.
    * Defaults to `true`.
@@ -80,11 +80,11 @@ export interface QueryOptions<
 }
 
 export interface QueryObserverOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData,
+  TData = TQueryFnData,
   TQueryData = TQueryFnData
-> extends QueryOptions<TData, TError, TQueryFnData> {
+> extends QueryOptions<TQueryFnData, TError, TData> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
@@ -175,23 +175,23 @@ export interface QueryObserverOptions<
 }
 
 export interface InfiniteQueryObserverOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData,
+  TData = TQueryFnData,
   TQueryData = TQueryFnData
 >
   extends QueryObserverOptions<
-    InfiniteData<TData>,
-    TError,
     TQueryFnData,
+    TError,
+    InfiniteData<TData>,
     InfiniteData<TQueryData>
   > {}
 
 export interface FetchQueryOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
-> extends QueryOptions<TData, TError, TQueryFnData> {
+  TData = TQueryFnData
+> extends QueryOptions<TQueryFnData, TError, TData> {
   /**
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
@@ -200,10 +200,10 @@ export interface FetchQueryOptions<
 }
 
 export interface FetchInfiniteQueryOptions<
-  TData = unknown,
+  TQueryFnData = unknown,
   TError = unknown,
-  TQueryFnData = TData
-> extends FetchQueryOptions<InfiniteData<TData>, TError, TQueryFnData> {}
+  TData = TQueryFnData
+> extends FetchQueryOptions<TQueryFnData, TError, InfiniteData<TData>> {}
 
 export interface ResultOptions {
   throwOnError?: boolean

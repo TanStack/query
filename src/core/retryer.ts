@@ -32,7 +32,7 @@ interface Cancelable {
   cancel(): void
 }
 
-function isCancelable(value: any): value is Cancelable {
+export function isCancelable(value: any): value is Cancelable {
   return typeof value?.cancel === 'function'
 }
 
