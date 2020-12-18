@@ -6,7 +6,7 @@ import type { QueryFilters } from './utils'
 export type QueryKey = string | unknown[]
 
 export type QueryFunction<T = unknown> = (
-  context: QueryFunctionContext
+  context: QueryFunctionContext<any>
 ) => T | Promise<T>
 
 export interface QueryFunctionContext<
