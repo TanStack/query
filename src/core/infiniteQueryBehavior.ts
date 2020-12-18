@@ -1,11 +1,12 @@
 import type { QueryBehavior } from './query'
+import { isCancelable } from './retryer'
 import type { InfiniteData, QueryFunctionContext, QueryOptions } from './types'
 
 export function infiniteQueryBehavior<
-  TData,
+  TQueryFnData,
   TError,
-  TQueryFnData
->(): QueryBehavior<InfiniteData<TData>, TError, TQueryFnData> {
+  TData
+>(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
   return {
     onFetch: context => {
       context.fetchFn = () => {
@@ -49,9 +50,12 @@ export function infiniteQueryBehavior<
               : [...newPageParams, param]
             return previous ? [page, ...pages] : [...pages, page]
           })
+
           if (cancelFn) {
-            (promise as any).cancel = cancelFn
+            const promiseAsAny = promise as any
+            promiseAsAny.cancel = cancelFn
           }
+
           return promise
         }
 
@@ -104,9 +108,12 @@ export function infiniteQueryBehavior<
           pages,
           pageParams: newPageParams,
         }))
-        if ((promise as any).cancel) {
-          (finalPromise as any).cancel = (promise as any).cancel
+
+        if (isCancelable(promise)) {
+          const finalPromiseAsAny = finalPromise as any
+          finalPromiseAsAny.cancel = promise.cancel
         }
+
         return finalPromise
       }
     },
