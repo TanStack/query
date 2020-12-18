@@ -51,7 +51,7 @@ To support caching queries on the server and set up hydration:
 
 - Create a new `QueryClient` instance
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
-- Wrapp your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
+- Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
 
 ```js
 // _app.jsx
