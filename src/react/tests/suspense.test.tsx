@@ -9,11 +9,61 @@ import {
   QueryCache,
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
+  UseQueryResult,
 } from '../..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
   const queryClient = new QueryClient({ queryCache })
+
+  it('should render the correct amount of times in Suspense mode', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    let count = 0
+    let renders = 0
+
+    function Page() {
+      renders++
+
+      const [stateKey, setStateKey] = React.useState(key)
+
+      const state = useQuery(
+        stateKey,
+        async () => {
+          count++
+          await sleep(10)
+          return count
+        },
+        { suspense: true }
+      )
+
+      states.push(state)
+
+      return (
+        <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
+    )
+
+    await sleep(20)
+
+    await waitFor(() => rendered.getByLabelText('toggle'))
+    fireEvent.click(rendered.getByLabelText('toggle'))
+
+    await sleep(20)
+
+    expect(renders).toBe(4)
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 1, status: 'success' })
+    expect(states[1]).toMatchObject({ data: 2, status: 'success' })
+  })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
