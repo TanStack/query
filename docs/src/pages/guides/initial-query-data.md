@@ -25,11 +25,11 @@ function Todos() {
 }
 ```
 
-### `initialDataUpdatedAt` and `staleTime`
+### `staleTime` and `initialDataUpdatedAt`
 
 By default, `initialData` is treated as totally fresh, as if it were just fetched. This also means that it will affect how it is interpreted by the `staleTime` option.
 
-- If you configure your query observer with `initialData`, but no `staleTime`, the query will immediately refetch when it mounts, since the default `staleTime` is `0`:
+- If you configure your query observer with `initialData`, and no `staleTime` (the default `staleTime: 0`), the query will immediately refetch when it mounts:
 
   ```js
   function Todos() {
@@ -40,7 +40,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   }
   ```
 
-- Alternatively if you configure your query observer with a `staleTime` of `1000` ms, for example, the `initialData` you provide will be considered fresh for that same amount of time, as if it was just fetched from your query function.
+- If you configure your query observer with `initialData` and a `staleTime` of `1000` ms, the data will be considered fresh for that same amount of time, as if it was just fetched from your query function.
 
   ```js
   function Todos() {
@@ -52,9 +52,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   }
   ```
 
-  This above a simple way to avoid refetching immediately after the component mounts, however, this means that even after the initialData is used, you will still have a staleTime for future queries.
-
-- For the most effective setup, another option called `initialDataUpdatedAt` is available which allows you to pass a numeric unix timestamp of when the initialData itself was last updated.
+- So what if your `initialData` isn't totally fresh? That leaves us with the last configuration that is actually the most accurate and uses an option called `initialDataUpdatedAt`. This options allows you to pass a numeric unix timestamp of when the initialData itself was last updated.
   ```js
   function Todos() {
     // Show initialTodos immeidately, but won't refetch until another interaction event is encountered after 1000 ms
@@ -62,11 +60,11 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
       initialData: initialTodos,
       staleTime: 60 * 1000 // 1 minute
       // This could be 10 seconds ago or 10 minutes ago
-      initialDataUpdatedAt: 1608412420052
+      initialDataUpdatedAt: initialTodosUpdatedTimestamp // eg. 1608412420052
     })
   }
   ```
-  This option allows the staleTime to be used for it's original purpose, determining how fresh the data needs to be, instead of being used simply to combat an initialData that is considered fresh immediately. In the example above, the staleTime is deliberately set to 1 minute, and we can hint to the query when the initialData was last updated so the query can then decide for itself whether the data needs to be refetched again or not.
+  This option allows the staleTime to be used for it's original purpose, determining how fresh the data needs to be, while also allowing the data to be refetched on mount if the `initialData` is older than the `staleTime`. In the example above, our data needs to be fresh within 1 minute, and we can hint to the query when the initialData was last updated so the query can decide for itself whether the data needs to be refetched again or not.
 
 > If you would rather treat your data as **prefetched data**, we recommend that you use the `prefetchQuery` or `fetchQuery` APIs to populate the cache beforehand, thus letting you configure your `staleTime` independently from your initialData
 
