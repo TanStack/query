@@ -130,4 +130,71 @@ describe('QueryErrorResetBoundary', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should never render the component while the query is in error state', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+    let fetchCount = 0
+    let renders = 0
+
+    function Page() {
+      const { data } = useQuery(
+        key,
+        async () => {
+          fetchCount++
+          await sleep(10)
+          if (fetchCount > 2) {
+            return 'data'
+          } else {
+            throw new Error('Error')
+          }
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      renders++
+      return <div>{data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <React.Suspense fallback={<div>loading</div>}>
+              <Page />
+            </React.Suspense>
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('data'))
+    expect(fetchCount).toBe(3)
+    expect(renders).toBe(1)
+
+    consoleMock.mockRestore()
+  })
 })

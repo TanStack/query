@@ -34,13 +34,17 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     )
   }
 
-  // Always set stale time when using suspense to prevent
-  // fetching again when directly re-mounting after suspense
-  if (
-    defaultedOptions.suspense &&
-    typeof defaultedOptions.staleTime !== 'number'
-  ) {
-    defaultedOptions.staleTime = 1000
+  if (defaultedOptions.suspense) {
+    // Always set stale time when using suspense to prevent
+    // fetching again when directly re-mounting after suspense
+    if (typeof defaultedOptions.staleTime !== 'number') {
+      defaultedOptions.staleTime = 1000
+    }
+
+    // Prevent retrying failed query if the error boundary has not been reset yet
+    if (!errorResetBoundary.isReset()) {
+      defaultedOptions.retryOnMount = false
+    }
   }
 
   // Create query observer
@@ -54,12 +58,13 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     observer.setOptions(defaultedOptions)
   }
 
-  const [, rerender] = React.useState({})
   const currentResult = observer.getCurrentResult()
 
   // Remember latest result to prevent redundant renders
   const latestResultRef = React.useRef(currentResult)
   latestResultRef.current = currentResult
+
+  const [, rerender] = React.useState({})
 
   // Subscribe to the observer
   React.useEffect(() => {
@@ -75,18 +80,14 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
 
   // Handle suspense
   if (observer.options.suspense || observer.options.useErrorBoundary) {
-    if (
-      currentResult.isError &&
-      !errorResetBoundary.isReset() &&
-      !observer.getCurrentQuery().isFetching()
-    ) {
-      throw currentResult.error
-    }
-
     if (observer.options.suspense && currentResult.isLoading) {
       errorResetBoundary.clearReset()
       const unsubscribe = observer.subscribe()
       throw observer.refetch().finally(unsubscribe)
+    }
+
+    if (currentResult.isError) {
+      throw currentResult.error
     }
   }
 

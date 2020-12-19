@@ -96,7 +96,12 @@ export class QueryObserver<
 
   willLoadOnMount(): boolean {
     return (
-      this.options.enabled !== false && !this.currentQuery.state.dataUpdatedAt
+      this.options.enabled !== false &&
+      !this.currentQuery.state.dataUpdatedAt &&
+      !(
+        this.currentQuery.state.status === 'error' &&
+        this.options.retryOnMount === false
+      )
     )
   }
 
@@ -354,7 +359,7 @@ export class QueryObserver<
     // Optimistically set status to loading if we will start fetching
     if (willFetch) {
       isFetching = true
-      if (status === 'idle') {
+      if (!dataUpdatedAt) {
         status = 'loading'
       }
     }
