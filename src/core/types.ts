@@ -60,6 +60,7 @@ export interface QueryOptions<
   queryKey?: QueryKey
   queryKeyHashFn?: QueryKeyHashFunction
   initialData?: TData | InitialDataFunction<TData>
+  initialDataUpdatedAt?: number | (() => number | undefined)
   behavior?: QueryBehavior<TQueryFnData, TError, TData>
   /**
    * Set this to `false` to disable structural sharing between query results.
