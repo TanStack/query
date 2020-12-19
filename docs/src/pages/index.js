@@ -46,6 +46,7 @@ const fans = [
   'Ash Connell, (@ashconnell)',
   'Sara Bee, (@doeg)',
   'Mihir Kedia (@meitros)',
+  'Nick Quebbeman (@kidqueb)',
 ]
 
 const Home = () => {
