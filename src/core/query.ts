@@ -495,7 +495,7 @@ export class Query<
           fetchMeta: action.meta ?? null,
           isFetching: true,
           isPaused: false,
-          status: state.status === 'idle' ? 'loading' : state.status,
+          status: !state.dataUpdatedAt ? 'loading' : state.status,
         }
       case 'success':
         return {
@@ -514,12 +514,22 @@ export class Query<
         const error = action.error as unknown
 
         if (isCancelledError(error) && error.revert) {
+          let previousStatus: QueryStatus
+
+          if (!state.dataUpdatedAt && !state.errorUpdatedAt) {
+            previousStatus = 'idle'
+          } else if (state.dataUpdatedAt > state.errorUpdatedAt) {
+            previousStatus = 'success'
+          } else {
+            previousStatus = 'error'
+          }
+
           return {
             ...state,
             fetchFailureCount: 0,
             isFetching: false,
             isPaused: false,
-            status: state.status === 'loading' ? 'idle' : state.status,
+            status: previousStatus,
           }
         }
 
