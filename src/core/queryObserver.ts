@@ -409,7 +409,7 @@ export class QueryObserver<
       data,
       dataUpdatedAt,
       error: state.error,
-      errorUpdatedAt: state.errorUpdateCount,
+      errorUpdatedAt: state.errorUpdatedAt,
       failureCount: state.fetchFailureCount,
       isFetched: state.dataUpdateCount > 0 || state.errorUpdateCount > 0,
       isFetchedAfterMount:
