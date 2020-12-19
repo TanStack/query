@@ -402,7 +402,13 @@ export class Query<
     })
 
     this.promise = this.retryer.promise
-      .then(data => this.setData(data as TData))
+      .then(data => {
+          // Remove query after fetching if cache time is 0
+          if (this.cacheTime === 0) {
+            this.optionalRemove()
+          }
+          return this.setData(data as TData)
+      })
       .catch(error => {
         // Set error state if needed
         if (!(isCancelledError(error) && error.silent)) {
@@ -416,16 +422,15 @@ export class Query<
         if (!isCancelledError(error)) {
           getLogger().error(error)
         }
-
-        // Propagate error
-        throw error
-      })
-      .finally(() => {
         // Remove query after fetching if cache time is 0
         if (this.cacheTime === 0) {
           this.optionalRemove()
         }
+
+        // Propagate error
+        throw error
       })
+
 
     return this.promise
   }
