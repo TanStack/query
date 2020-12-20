@@ -4,8 +4,16 @@ import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
 describe('mutations', () => {
-  const queryClient = new QueryClient()
-  queryClient.mount()
+  let queryClient: QueryClient
+
+  beforeEach(() => {
+    queryClient = new QueryClient()
+    queryClient.mount()
+  })
+
+  afterEach(() => {
+    queryClient.clear()
+  })
 
   test('mutate should trigger a mutation', async () => {
     const result = await queryClient.executeMutation({
