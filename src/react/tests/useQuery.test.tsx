@@ -2069,6 +2069,44 @@ describe('useQuery', () => {
     })
   })
 
+  it('should fetch if initial data updated at is older than stale time', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    const oneSecondAgo = Date.now() - 1000
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        staleTime: 50,
+        initialData: 'initial',
+        initialDataUpdatedAt: oneSecondAgo,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({
+      data: 'initial',
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isStale: false,
+      isFetching: false,
+    })
+    expect(states[2]).toMatchObject({
+      data: 'data',
+      isStale: true,
+      isFetching: false,
+    })
+  })
+
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
     const states: UseQueryResult<{ count: number }>[] = []

@@ -456,12 +456,20 @@ export class Query<
         ? (options.initialData as InitialDataFunction<TData>)()
         : options.initialData
 
+    const hasInitialData = typeof options.initialData !== 'undefined'
+
+    const initialDataUpdatedAt =
+      hasInitialData &&
+      (typeof options.initialDataUpdatedAt === 'function'
+        ? (options.initialDataUpdatedAt as () => number | undefined)()
+        : options.initialDataUpdatedAt)
+
     const hasData = typeof data !== 'undefined'
 
     return {
       data,
       dataUpdateCount: 0,
-      dataUpdatedAt: hasData ? Date.now() : 0,
+      dataUpdatedAt: hasData ? initialDataUpdatedAt || Date.now() : 0,
       error: null,
       errorUpdateCount: 0,
       errorUpdatedAt: 0,
