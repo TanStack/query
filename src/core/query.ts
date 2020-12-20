@@ -416,16 +416,22 @@ export class Query<
         if (!isCancelledError(error)) {
           getLogger().error(error)
         }
-
-        // Propagate error
-        throw error
-      })
-      .finally(() => {
         // Remove query after fetching if cache time is 0
         if (this.cacheTime === 0) {
           this.optionalRemove()
         }
-      })
+
+        // Propagate error
+        throw error
+      }).then(
+          promise => {
+            if (this.cacheTime === 0) {
+              this.optionalRemove()
+            }
+            return promise
+          }
+      )
+
 
     return this.promise
   }
