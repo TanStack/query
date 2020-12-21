@@ -10,7 +10,7 @@ A query is a declarative dependency on an asynchronous source of data that is ti
 To subscribe to a query in your components or custom hooks, call the `useQuery` hook with at least:
 
 - A **unique key for the query**
-- An function that returns a promise that:
+- A function that returns a promise that:
   - Resolves the data, or
   - Throws an error
 
