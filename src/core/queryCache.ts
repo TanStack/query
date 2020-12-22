@@ -12,6 +12,10 @@ import { Subscribable } from './subscribable'
 
 // TYPES
 
+interface QueryCacheConfig {
+  onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
+}
+
 interface QueryHashMap {
   [hash: string]: Query<any, any>
 }
@@ -21,12 +25,14 @@ type QueryCacheListener = (query?: Query) => void
 // CLASS
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
+  config: QueryCacheConfig
+
   private queries: Query<any, any>[]
   private queriesMap: QueryHashMap
 
-  constructor() {
+  constructor(config?: QueryCacheConfig) {
     super()
-
+    this.config = config || {}
     this.queries = []
     this.queriesMap = {}
   }
