@@ -85,7 +85,7 @@ const theme = {
   success: '#00ab52',
   danger: '#ff0085',
   active: '#006bff',
-  warning: '#ffb200',
+  warning: '#ff6200',
 }
 
 export function ReactQueryDevtools({
