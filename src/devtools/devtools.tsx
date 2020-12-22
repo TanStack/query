@@ -322,7 +322,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
     }
 
     const [unsortedQueries, setUnsortedQueries] = useSafeState(
-      Object.values(queryCache.getAll())
+      Object.values(queryCache.findAll())
     )
 
     const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
@@ -655,13 +655,29 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   Refetch
                 </Button>{' '}
                 <Button
-                  onClick={() => queryCache.remove(activeQuery)}
+                  onClick={() => queryClient.invalidateQueries(activeQuery)}
+                  style={{
+                    background: theme.warning,
+                  }}
+                >
+                  Invalidate
+                </Button>{' '}
+                <Button
+                  onClick={() => queryClient.resetQueries(activeQuery)}
+                  style={{
+                    background: theme.gray,
+                  }}
+                >
+                  Reset
+                </Button>{' '}
+                <Button
+                  onClick={() => queryClient.removeQueries(activeQuery)}
                   style={{
                     background: theme.danger,
                   }}
                 >
                   Remove
-                </Button>{' '}
+                </Button>
               </div>
               <div
                 style={{
