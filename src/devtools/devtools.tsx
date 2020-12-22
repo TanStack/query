@@ -85,7 +85,7 @@ const theme = {
   success: '#00ab52',
   danger: '#ff0085',
   active: '#006bff',
-  warning: '#ff6200',
+  warning: '#ffb200',
 }
 
 export function ReactQueryDevtools({
@@ -658,6 +658,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   onClick={() => queryClient.invalidateQueries(activeQuery)}
                   style={{
                     background: theme.warning,
+                    color: theme.inputTextColor,
                   }}
                 >
                   Invalidate
