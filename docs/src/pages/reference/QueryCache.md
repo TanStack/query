@@ -10,7 +10,12 @@ The `QueryCache` is the storage mechanism for React Query. It stores all of the 
 ```js
 import { QueryCache } from 'react-query'
 
-const queryCache = new QueryCache()
+const queryCache = new QueryCache({
+  onError: error => {
+    console.log(error)
+  },
+})
+
 const query = queryCache.find('posts')
 ```
 
@@ -20,6 +25,12 @@ Its available methods are:
 - [`findAll`](#querycachefindall)
 - [`subscribe`](#querycachesubscribe)
 - [`clear`](#querycacheclear)
+
+**Options**
+
+- `onError?: (error: unknown, query: Query) => void`
+  - Optional
+  - This function will be called if some query encounters an error.
 
 ## `queryCache.find`
 

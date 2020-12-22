@@ -1,4 +1,4 @@
-import { sleep, queryKey } from '../../react/tests/utils'
+import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
 import { QueryCache, QueryClient } from '../..'
 
 describe('queryCache', () => {
@@ -128,6 +128,20 @@ describe('queryCache', () => {
         queryCache.findAll({ predicate: query => query === query3 })
       ).toEqual([query3])
       expect(queryCache.findAll('posts')).toEqual([query4])
+    })
+  })
+
+  describe('QueryCacheConfig.onError', () => {
+    test('should be called when a query errors', async () => {
+      const consoleMock = mockConsoleError()
+      const key = queryKey()
+      const onError = jest.fn()
+      const testCache = new QueryCache({ onError })
+      const testClient = new QueryClient({ queryCache: testCache })
+      await testClient.prefetchQuery(key, () => Promise.reject('error'))
+      consoleMock.mockRestore()
+      const query = testCache.find(key)
+      expect(onError).toHaveBeenCalledWith('error', query)
     })
   })
 })
