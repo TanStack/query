@@ -9,7 +9,7 @@
     "next": "9.3.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
-    "react-query": "^3"
+    "react-query": "^3.5.0"
   },
   "scripts": {
     "dev": "next",

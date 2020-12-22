@@ -12,7 +12,7 @@
     "next": "latest",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-query": "^3",
+    "react-query": "^3.5.0",
     "resolve-from": "^5.0.0"
   },
   "license": "MIT",

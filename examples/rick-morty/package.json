@@ -10,7 +10,7 @@
     "@material-ui/core": "^4.9.7",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-query": "^3",
+    "react-query": "^3.5.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",
