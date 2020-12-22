@@ -10,7 +10,11 @@ The `MutationCache` is the storage for mutations.
 ```js
 import { MutationCache } from 'react-query'
 
-const mutationCache = new MutationCache()
+const mutationCache = new MutationCache({
+  onError: error => {
+    console.log(error)
+  },
+})
 ```
 
 Its available methods are:
@@ -18,6 +22,12 @@ Its available methods are:
 - [`getAll`](#mutationcachegetall)
 - [`subscribe`](#mutationcachesubscribe)
 - [`clear`](#mutationcacheclear)
+
+**Options**
+
+- `onError?: (error: unknown, variables: unknown, context: unknown, mutation: Mutation) => void`
+  - Optional
+  - This function will be called if some mutation encounters an error.
 
 ## `mutationCache.getAll`
 

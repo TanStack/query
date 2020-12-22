@@ -177,7 +177,19 @@ export class Mutation<
         return data
       })
       .catch(error => {
+        // Notify cache callback
+        if (this.mutationCache.config.onError) {
+          this.mutationCache.config.onError(
+            error,
+            this.state.variables,
+            this.state.context,
+            this as Mutation<unknown, unknown, unknown, unknown>
+          )
+        }
+
+        // Log error
         getLogger().error(error)
+
         return Promise.resolve()
           .then(() =>
             this.options.onError?.(

@@ -412,10 +412,16 @@ export class Query<
           })
         }
 
-        // Log error
         if (!isCancelledError(error)) {
+          // Notify cache callback
+          if (this.cache.config.onError) {
+            this.cache.config.onError(error, this as Query)
+          }
+
+          // Log error
           getLogger().error(error)
         }
+
         // Remove query after fetching if cache time is 0
         if (this.cacheTime === 0) {
           this.optionalRemove()
@@ -423,15 +429,15 @@ export class Query<
 
         // Propagate error
         throw error
-      }).then(
-          promise => {
-            if (this.cacheTime === 0) {
-              this.optionalRemove()
-            }
-            return promise
-          }
-      )
+      })
+      .then(data => {
+        // Remove query after fetching if cache time is 0
+        if (this.cacheTime === 0) {
+          this.optionalRemove()
+        }
 
+        return data
+      })
 
     return this.promise
   }

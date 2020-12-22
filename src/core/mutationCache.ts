@@ -7,16 +7,28 @@ import { Subscribable } from './subscribable'
 
 // TYPES
 
+interface MutationCacheConfig {
+  onError?: (
+    error: unknown,
+    variables: unknown,
+    context: unknown,
+    mutation: Mutation<unknown, unknown, unknown, unknown>
+  ) => void
+}
+
 type MutationCacheListener = (mutation?: Mutation) => void
 
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
+  config: MutationCacheConfig
+
   private mutations: Mutation<any, any, any, any>[]
   private mutationId: number
 
-  constructor() {
+  constructor(config?: MutationCacheConfig) {
     super()
+    this.config = config || {}
     this.mutations = []
     this.mutationId = 0
   }
