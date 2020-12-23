@@ -153,11 +153,13 @@ export function ReactQueryDevtools({
 
       run()
 
-      window.addEventListener('resize', run)
+      if (typeof window !== 'undefined') {
+        window.addEventListener('resize', run)
 
-      return () => {
-        window.removeEventListener('resize', run)
-        rootRef.current.parentElement.style.paddingBottom = previousValue
+        return () => {
+          window.removeEventListener('resize', run)
+          rootRef.current.parentElement.style.paddingBottom = previousValue
+        }
       }
     }
   }, [isResolvedOpen])
