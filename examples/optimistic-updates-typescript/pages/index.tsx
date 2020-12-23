@@ -9,7 +9,7 @@ import {
   QueryClientProvider,
   UseQueryOptions,
 } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 const client = new QueryClient()
 
@@ -27,7 +27,7 @@ async function fetchTodos(): Promise<Todos> {
 }
 
 function useTodos<TData = Todos>(
-  options?: UseQueryOptions<TData, AxiosError, Todos>
+  options?: UseQueryOptions<Todos, AxiosError, TData>
 ) {
   return useQuery('todos', fetchTodos, options)
 }
