@@ -247,6 +247,11 @@
           "editUrl": "/examples/optimistic-updates.mdx"
         },
         {
+          "title": "Optimistic Updates in TypeScript",
+          "path": "/examples/optimistic-updates-typescript",
+          "editUrl": "/examples/optimistic-updates-typescript.mdx"
+        },
+        {
           "title": "Pagination",
           "path": "/examples/pagination",
           "editUrl": "/examples/pagination.mdx"
