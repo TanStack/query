@@ -13,16 +13,6 @@ import { ReactQueryDevtools } from 'react-query-devtools'
 
 const client = new QueryClient()
 
-export default function App() {
-  return (
-    <QueryClientProvider client={client}>
-      <Example />
-      <TodoCounter />
-      <ReactQueryDevtools initialIsOpen />
-    </QueryClientProvider>
-  )
-}
-
 type Todos = {
   items: readonly {
     id: string
@@ -141,5 +131,15 @@ function Example() {
       {queryInfo.isLoading && 'Loading'}
       {queryInfo.error?.message}
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={client}>
+      <Example />
+      <TodoCounter />
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   )
 }
