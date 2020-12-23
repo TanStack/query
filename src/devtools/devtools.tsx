@@ -658,6 +658,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   onClick={() => queryClient.invalidateQueries(activeQuery)}
                   style={{
                     background: theme.warning,
+                    color: theme.inputTextColor,
                   }}
                 >
                   Invalidate
