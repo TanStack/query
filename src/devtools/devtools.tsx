@@ -103,6 +103,39 @@ export function ReactQueryDevtools({
     initialIsOpen
   )
   const [isResolvedOpen, setIsResolvedOpen] = useSafeState(false)
+  const [isResizing, setIsResizing] = useSafeState(false)
+
+  const handleDragStart = (panelElement, startEvent) => {
+    if (startEvent.button !== 0) return // Only allow left click for drag
+
+    setIsResizing(true)
+
+    const dragInfo = {
+      originalHeight: panelElement.getBoundingClientRect().height,
+      pageY: startEvent.pageY,
+    }
+
+    const run = moveEvent => {
+      const delta = dragInfo.pageY - moveEvent.pageY
+      const newHeight = dragInfo.originalHeight + delta
+
+      if (newHeight < 70) {
+        setIsOpen(false)
+      } else {
+        setIsOpen(true)
+        panelElement.style.height = `${newHeight}px`
+      }
+    }
+
+    const unsub = () => {
+      setIsResizing(false)
+      document.removeEventListener('mousemove', run)
+      document.removeEventListener('mouseUp', unsub)
+    }
+
+    document.addEventListener('mousemove', run)
+    document.addEventListener('mouseup', unsub)
+  }
 
   React.useEffect(() => {
     setIsResolvedOpen(isOpen)
@@ -114,6 +147,7 @@ export function ReactQueryDevtools({
 
       const run = () => {
         const containerHeight = panelRef.current?.getBoundingClientRect().height
+        console.log(containerHeight)
         rootRef.current.parentElement.style.paddingBottom = `${containerHeight}px`
       }
 
@@ -144,25 +178,43 @@ export function ReactQueryDevtools({
 
   return (
     <Container ref={rootRef} className="ReactQueryDevtools">
-      {isResolvedOpen ? (
-        <ThemeProvider theme={theme}>
-          <ReactQueryDevtoolsPanel
-            ref={panelRef}
-            {...otherPanelProps}
-            style={{
-              position: 'fixed',
-              bottom: '0',
-              right: '0',
-              zIndex: '99999',
-              width: '100%',
-              height: '500px',
-              maxHeight: '90%',
-              boxShadow: '0 0 20px rgba(0,0,0,.3)',
-              borderTop: `1px solid ${theme.gray}`,
-              ...panelStyle,
-            }}
-            setIsOpen={setIsOpen}
-          />
+      <ThemeProvider theme={theme}>
+        <ReactQueryDevtoolsPanel
+          ref={panelRef}
+          {...otherPanelProps}
+          style={{
+            position: 'fixed',
+            bottom: '0',
+            right: '0',
+            zIndex: '99999',
+            width: '100%',
+            height: '500px',
+            maxHeight: '90%',
+            boxShadow: '0 0 20px rgba(0,0,0,.3)',
+            borderTop: `1px solid ${theme.gray}`,
+            transformOrigin: 'top',
+            ...panelStyle,
+            ...(isResizing
+              ? {
+                  transition: `none`,
+                }
+              : { transition: `all .2s ease` }),
+            ...(isResolvedOpen
+              ? {
+                  opacity: 1,
+                  pointerEvents: 'all',
+                  transform: `translateY(0) scale(1)`,
+                }
+              : {
+                  opacity: 0,
+                  pointerEvents: 'none',
+                  transform: `translateY(15px) scale(1.02)`,
+                }),
+          }}
+          setIsOpen={setIsOpen}
+          handleDragStart={e => handleDragStart(panelRef.current, e)}
+        />
+        {isResolvedOpen ? (
           <Button
             {...otherCloseButtonProps}
             onClick={() => {
@@ -194,8 +246,9 @@ export function ReactQueryDevtools({
           >
             Close
           </Button>
-        </ThemeProvider>
-      ) : (
+        ) : null}
+      </ThemeProvider>
+      {!isResolvedOpen ? (
         <button
           {...otherToggleButtonProps}
           aria-label="Open React Query Devtools"
@@ -240,7 +293,7 @@ export function ReactQueryDevtools({
         >
           <Logo aria-hidden />
         </button>
-      )}
+      ) : null}
     </Container>
   )
 }
@@ -264,7 +317,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
     props: DevtoolsPanelOptions,
     ref
   ): React.ReactElement {
-    const { setIsOpen, ...panelProps } = props
+    const { setIsOpen, handleDragStart, ...panelProps } = props
 
     const queryClient = useQueryClient()
     const queryCache = queryClient.getQueryCache()
@@ -281,8 +334,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
       false
     )
 
-    const [isDragging, setIsDragging] = useSafeState(false)
-
     const sortFn = React.useMemo(() => sortFns[sort], [sort])
 
     React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
@@ -290,36 +341,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
         setSort(Object.keys(sortFns)[0])
       }
     }, [setSort, sortFn])
-
-    React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
-      if (isDragging) {
-        const run = e => {
-          const containerHeight = window.innerHeight - e.pageY
-
-          if (containerHeight < 70) {
-            setIsOpen(false)
-          } else {
-            ref.current.style.height = `${containerHeight}px`
-          }
-        }
-        document.addEventListener('mousemove', run)
-        document.addEventListener('mouseup', handleDragEnd)
-
-        return () => {
-          document.removeEventListener('mousemove', run)
-          document.removeEventListener('mouseup', handleDragEnd)
-        }
-      }
-    }, [isDragging])
-
-    const handleDragStart = e => {
-      if (e.button !== 0) return // Only allow left click for drag
-      setIsDragging(true)
-    }
-
-    const handleDragEnd = e => {
-      setIsDragging(false)
-    }
 
     const [unsortedQueries, setUnsortedQueries] = useSafeState(
       Object.values(queryCache.findAll())
@@ -366,6 +387,30 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
     return (
       <ThemeProvider theme={theme}>
         <Panel ref={ref} className="ReactQueryDevtoolsPanel" {...panelProps}>
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+            .ReactQueryDevtoolsPanel * {
+              scrollbar-color: ${theme.backgroundAlt} ${theme.gray};
+            }
+              
+            .ReactQueryDevtoolsPanel *::-webkit-scrollbar, .ReactQueryDevtoolsPanel scrollbar {
+              width: 1rem;
+              height: 1rem;
+            }
+            
+            .ReactQueryDevtoolsPanel *::-webkit-scrollbar-track, .ReactQueryDevtoolsPanel scrollbar-track {
+              background: ${theme.backgroundAlt};
+            }
+             
+            .ReactQueryDevtoolsPanel *::-webkit-scrollbar-thumb, .ReactQueryDevtoolsPanel scrollbar-thumb {
+              background: ${theme.gray};
+              border-radius: .5rem;
+              border: 3px solid ${theme.backgroundAlt};
+            }
+          `,
+            }}
+          />
           <div
             style={{
               position: 'absolute',
@@ -378,7 +423,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
               zIndex: 100000,
             }}
             onMouseDown={handleDragStart}
-            onMouseUp={handleDragEnd}
           ></div>
           <div
             style={{
@@ -497,7 +541,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
             </div>
             <div
               style={{
-                overflow: 'auto scroll',
+                overflowY: 'auto',
+                flex: '1',
               }}
             >
               {queries.map((query, i) => (
