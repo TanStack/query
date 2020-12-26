@@ -42,6 +42,6 @@ describe('useQueries', () => {
       [1, 2, 3].map(num => ({ queryKey: queryKey(), queryFn: () => num }))
     )
 
-    expect(results.length).toBe(2)
+    expect(results.length).toBe(3)
   })
 })
