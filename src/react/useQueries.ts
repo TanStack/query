@@ -5,13 +5,22 @@ import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
-export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
+export function useQueries<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData
+>(
+  queries: UseQueryOptions<TQueryFnData, TError, TData>[]
+): UseQueryResult<TData, TError>[] {
   const queryClient = useQueryClient()
 
   // Create queries observer
-  const observerRef = React.useRef<QueriesObserver>()
+  const observerRef = React.useRef<
+    QueriesObserver<TQueryFnData, TError, TData>
+  >()
   const observer =
-    observerRef.current || new QueriesObserver(queryClient, queries)
+    observerRef.current ||
+    new QueriesObserver<TQueryFnData, TError, TData>(queryClient, queries)
   observerRef.current = observer
 
   // Update queries
