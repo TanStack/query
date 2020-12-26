@@ -38,10 +38,21 @@ describe('useQueries', () => {
   })
 
   it('should flow through data types correctly (a type test; validated by successful compilation; not runtime results)', async () => {
-    const results: QueryObserverResult<number, Error>[] = useQueries<number, Error>(
-      [1, 2, 3].map(num => ({ queryKey: queryKey(), queryFn: () => num }))
-    )
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results = [];
 
-    expect(results.length).toBe(3)
+    function Page() {
+      const result: QueryObserverResult<number, Error>[] = useQueries<number, Error>([
+        { queryKey: key1, queryFn: () => 1 },
+        { queryKey: key2, queryFn: () => 2 },
+      ])
+      results.push(...result);
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
   })
 })
