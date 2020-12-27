@@ -6,7 +6,6 @@ import {
   QueryClient,
   UseQueryResult,
   QueryCache,
-  QueryObserverResult,
 } from '../..'
 
 describe('useQueries', () => {
@@ -37,17 +36,46 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  it('should flow through data types correctly (a type test; validated by successful compilation; not runtime results)', async () => {
+  it('should return same data types correctly (a type test; validated by successful compilation; not runtime results)', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results = [];
+    const results: number[] = [];
 
     function Page() {
-      const result: QueryObserverResult<number, Error>[] = useQueries<number, Error>([
+      const result = useQueries([
         { queryKey: key1, queryFn: () => 1 },
         { queryKey: key2, queryFn: () => 2 },
       ])
-      results.push(...result);
+      if (result[0].data) {
+        results.push(result[0].data)
+      }
+      if (result[1].data) {
+        results.push(result[1].data)
+      }
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+  })
+
+  it('should return different data types correctly (a type test; validated by successful compilation; not runtime results)', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const results: (number | string)[] = [];
+
+    function Page() {
+      const result = useQueries<number | string>([
+        { queryKey: key1, queryFn: () => 1 },
+        { queryKey: key2, queryFn: () => 'two' },
+      ])
+      if (result[0].data) {
+        results.push(result[0].data)
+      }
+      if (result[1].data) {
+        results.push(result[1].data)
+      }
       return null
     }
 
