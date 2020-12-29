@@ -9,19 +9,9 @@ import {
   QueryClientProvider,
   UseQueryOptions,
 } from 'react-query'
-import { ReactQueryDevtools } from 'react-query-devtools'
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 const client = new QueryClient()
-
-export default function App() {
-  return (
-    <QueryClientProvider client={client}>
-      <Example />
-      <TodoCounter />
-      <ReactQueryDevtools initialIsOpen />
-    </QueryClientProvider>
-  )
-}
 
 type Todos = {
   items: readonly {
@@ -37,7 +27,7 @@ async function fetchTodos(): Promise<Todos> {
 }
 
 function useTodos<TData = Todos>(
-  options?: UseQueryOptions<TData, AxiosError, Todos>
+  options?: UseQueryOptions<Todos, AxiosError, TData>
 ) {
   return useQuery('todos', fetchTodos, options)
 }
@@ -141,5 +131,15 @@ function Example() {
       {queryInfo.isLoading && 'Loading'}
       {queryInfo.error?.message}
     </div>
+  )
+}
+
+export default function App() {
+  return (
+    <QueryClientProvider client={client}>
+      <Example />
+      <TodoCounter />
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   )
 }

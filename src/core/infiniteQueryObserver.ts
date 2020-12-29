@@ -107,8 +107,8 @@ export class InfiniteQueryObserver<
       ...result,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
-      hasNextPage: hasNextPage(this.options, result.data?.pages),
-      hasPreviousPage: hasPreviousPage(this.options, result.data?.pages),
+      hasNextPage: hasNextPage(this.options, state.data?.pages),
+      hasPreviousPage: hasPreviousPage(this.options, state.data?.pages),
       isFetchingNextPage:
         state.isFetching && state.fetchMeta?.fetchMore?.direction === 'forward',
       isFetchingPreviousPage:
