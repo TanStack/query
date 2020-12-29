@@ -969,6 +969,49 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should not use selected data when computing hasNextPage', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<string>[] = []
+
+    function Page() {
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 1 }) => Number(pageParam),
+        {
+          getNextPageParam: lastPage => (lastPage === 1 ? 2 : false),
+          select: data => ({
+            pages: data.pages.map(x => x.toString()),
+            pageParams: data.pageParams,
+          }),
+        }
+      )
+
+      states.push(state)
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      hasNextPage: undefined,
+      isFetching: true,
+      isFetchingNextPage: false,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: ['1'] },
+      hasNextPage: true,
+      isFetching: false,
+      isFetchingNextPage: false,
+      isSuccess: true,
+    })
+  })
+
   it('should build fresh cursors on refetch', async () => {
     const key = queryKey()
 
