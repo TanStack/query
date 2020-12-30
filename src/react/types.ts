@@ -8,7 +8,7 @@ import {
   QueryObserverResult,
 } from '../core/types'
 
-export interface UseBaseQueryOptions<
+export interface UseQueryObserverOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -19,7 +19,7 @@ export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData
-> extends UseBaseQueryOptions<TQueryFnData, TError, TData> {}
+> extends UseQueryObserverOptions<TQueryFnData, TError, TData> {}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -34,7 +34,7 @@ export interface UseInfiniteQueryOptions<
     TQueryData
   > {}
 
-export type UseBaseQueryResult<
+export type UseQueryObserverResult<
   TData = unknown,
   TError = unknown
 > = QueryObserverResult<TData, TError>
@@ -42,7 +42,7 @@ export type UseBaseQueryResult<
 export type UseQueryResult<
   TData = unknown,
   TError = unknown
-> = UseBaseQueryResult<TData, TError>
+> = UseQueryObserverResult<TData, TError>
 
 export type UseInfiniteQueryResult<
   TData = unknown,

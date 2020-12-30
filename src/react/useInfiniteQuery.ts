@@ -3,7 +3,7 @@ import { InfiniteQueryObserver } from '../core/infiniteQueryObserver'
 import { QueryFunction, QueryKey } from '../core/types'
 import { parseQueryArgs } from '../core/utils'
 import { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
-import { useBaseQuery } from './useBaseQuery'
+import { useQueryObserver } from './useQueryObserver'
 
 // HOOK
 
@@ -39,7 +39,7 @@ export function useInfiniteQuery<TQueryFnData, TError, TData = TQueryFnData>(
   arg3?: UseInfiniteQueryOptions<TQueryFnData, TError, TData>
 ): UseInfiniteQueryResult<TData, TError> {
   const options = parseQueryArgs(arg1, arg2, arg3)
-  return useBaseQuery(
+  return useQueryObserver(
     options,
     InfiniteQueryObserver as typeof QueryObserver
   ) as UseInfiniteQueryResult<TData, TError>

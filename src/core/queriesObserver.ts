@@ -5,17 +5,26 @@ import type { QueryClient } from './queryClient'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 
-type QueriesObserverListener = (result: QueryObserverResult[]) => void
+type QueriesObserverListener<TData, TError> = (
+  result: QueryObserverResult<TData, TError>[]
+) => void
 
-export class QueriesObserver extends Subscribable<QueriesObserverListener> {
+export class QueriesObserver<TData, TError> extends Subscribable<
+  QueriesObserverListener<TData, TError>
+> {
   private client: QueryClient
-  private result: QueryObserverResult[]
-  private queries: QueryObserverOptions[]
-  private observers: QueryObserver[]
+  private result: QueryObserverResult<TData, TError>[]
+  private queries: QueryObserverOptions<TData, TError>[]
+  private observers: QueryObserver<TData, TError>[]
+  private Observer: typeof QueryObserver
 
-  constructor(client: QueryClient, queries?: QueryObserverOptions[]) {
+  constructor(
+    client: QueryClient,
+    queries?: QueryObserverOptions<TData, TError>[],
+    Observer: typeof QueryObserver = QueryObserver
+  ) {
     super()
-
+    this.Observer = Observer
     this.client = client
     this.queries = queries || []
     this.result = []
@@ -48,12 +57,12 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     })
   }
 
-  setQueries(queries: QueryObserverOptions[]): void {
+  setQueries(queries: QueryObserverOptions<TData, TError>[]): void {
     this.queries = queries
     this.updateObservers()
   }
 
-  getCurrentResult(): QueryObserverResult[] {
+  getCurrentResult(): QueryObserverResult<TData, TError>[] {
     return this.result
   }
 
@@ -62,7 +71,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
     const prevObservers = this.observers
     const newObservers = this.queries.map((options, i) => {
-      let observer: QueryObserver | undefined = prevObservers[i]
+      let observer: QueryObserver<TData, TError> | undefined = prevObservers[i]
 
       const defaultedOptions = this.client.defaultQueryObserverOptions(options)
       const hashFn = getQueryKeyHashFn(defaultedOptions)
@@ -83,7 +92,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         return observer
       }
 
-      return new QueryObserver(this.client, defaultedOptions)
+      return new this.Observer(this.client, defaultedOptions)
     })
 
     if (prevObservers.length === newObservers.length && !hasIndexChange) {
@@ -110,7 +119,10 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     this.notify()
   }
 
-  private onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
+  private onUpdate(
+    observer: QueryObserver<TData, TError>,
+    result: QueryObserverResult<TData, TError>
+  ): void {
     const index = this.observers.indexOf(observer)
     if (index !== -1) {
       this.result = replaceAt(this.result, index, result)

@@ -2,15 +2,19 @@ import React from 'react'
 
 import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
-import { QueryObserverResult } from '../core/types'
+import { QueryObserverOptions, QueryObserverResult } from '../core/types'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
-import { UseBaseQueryOptions } from './types'
 
-export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
-  options: UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData>,
+export function useQueryObserver<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData
+>(
+  options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>,
   Observer: typeof QueryObserver
-) {
+): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryObserverOptions(options)

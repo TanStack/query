@@ -9,9 +9,11 @@ export {
 } from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
 export { useMutation } from './useMutation'
+export { useMutationObserver } from './useMutationObserver'
 export { useQuery } from './useQuery'
-export { useQueries } from './useQueries'
+export { useQueries, useQueriesObserver } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
+export { useQueryObserver } from './useQueryObserver'
 
 // Types
 export * from './types'
