@@ -147,7 +147,6 @@ export function ReactQueryDevtools({
 
       const run = () => {
         const containerHeight = panelRef.current?.getBoundingClientRect().height
-        console.log(containerHeight)
         rootRef.current.parentElement.style.paddingBottom = `${containerHeight}px`
       }
 
