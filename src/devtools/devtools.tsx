@@ -364,6 +364,10 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
         sorted.reverse()
       }
 
+      if (!filter) {
+        return sorted
+      }
+
       return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
         d => d.queryHash
       )
@@ -450,15 +454,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 alignItems: 'center',
               }}
             >
-              <QueryCountStyles>
-                <div
-                  style={{
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Queries ({queries.length})
-                </div>
-              </QueryCountStyles>
+              <Logo
+                aria-hidden
+                style={{
+                  marginRight: '.5rem',
+                }}
+              />
               <div
                 style={{
                   display: 'flex',
@@ -519,29 +520,33 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                       marginRight: '.5rem',
                     }}
                   />
-                  <Select
-                    value={sort}
-                    onChange={e => setSort(e.target.value)}
-                    style={{
-                      flex: '1',
-                      minWidth: 75,
-                      marginRight: '.5rem',
-                    }}
-                  >
-                    {Object.keys(sortFns).map(key => (
-                      <option key={key} value={key}>
-                        Sort by {key}
-                      </option>
-                    ))}
-                  </Select>
-                  <Button
-                    onClick={() => setSortDesc(old => !old)}
-                    style={{
-                      padding: '.2rem .4rem',
-                    }}
-                  >
-                    {sortDesc ? '⬇ Desc' : '⬆ Asc'}
-                  </Button>
+                  {!filter ? (
+                    <>
+                      <Select
+                        value={sort}
+                        onChange={e => setSort(e.target.value)}
+                        style={{
+                          flex: '1',
+                          minWidth: 75,
+                          marginRight: '.5rem',
+                        }}
+                      >
+                        {Object.keys(sortFns).map(key => (
+                          <option key={key} value={key}>
+                            Sort by {key}
+                          </option>
+                        ))}
+                      </Select>
+                      <Button
+                        onClick={() => setSortDesc(old => !old)}
+                        style={{
+                          padding: '.3rem .4rem',
+                        }}
+                      >
+                        {sortDesc ? '⬇ Desc' : '⬆ Asc'}
+                      </Button>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>
