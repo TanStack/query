@@ -102,6 +102,10 @@ export function ReactQueryDevtools({
     'reactQueryDevtoolsOpen',
     initialIsOpen
   )
+  const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage(
+    'reactQueryDevtoolsHeight',
+    null
+  )
   const [isResolvedOpen, setIsResolvedOpen] = useSafeState(false)
   const [isResizing, setIsResizing] = useSafeState(false)
 
@@ -119,11 +123,12 @@ export function ReactQueryDevtools({
       const delta = dragInfo.pageY - moveEvent.pageY
       const newHeight = dragInfo.originalHeight + delta
 
+      setDevtoolsHeight(newHeight)
+
       if (newHeight < 70) {
         setIsOpen(false)
       } else {
         setIsOpen(true)
-        panelElement.style.height = `${newHeight}px`
       }
     }
 
@@ -189,7 +194,7 @@ export function ReactQueryDevtools({
             right: '0',
             zIndex: '99999',
             width: '100%',
-            height: '500px',
+            height: devtoolsHeight ?? 500,
             maxHeight: '90%',
             boxShadow: '0 0 20px rgba(0,0,0,.3)',
             borderTop: `1px solid ${theme.gray}`,
