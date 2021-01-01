@@ -9,6 +9,7 @@ export const Entry = styled('div', {
   fontSize: '0.9rem',
   lineHeight: '1.7',
   outline: 'none',
+  wordBreak: 'break-word',
 })
 
 export const Label = styled('span', {

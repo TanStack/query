@@ -633,6 +633,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                       style={{
                         margin: 0,
                         padding: 0,
+                        overflow: 'auto',
                       }}
                     >
                       {JSON.stringify(activeQuery.queryKey, null, 2)}
