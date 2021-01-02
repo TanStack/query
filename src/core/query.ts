@@ -475,7 +475,11 @@ export class Query<
     return {
       data,
       dataUpdateCount: 0,
-      dataUpdatedAt: hasData ? initialDataUpdatedAt || Date.now() : 0,
+      dataUpdatedAt: !hasData
+        ? 0
+        : typeof initialDataUpdatedAt !== 'number'
+        ? Date.now()
+        : initialDataUpdatedAt,
       error: null,
       errorUpdateCount: 0,
       errorUpdatedAt: 0,
