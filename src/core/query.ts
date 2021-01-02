@@ -464,22 +464,18 @@ export class Query<
 
     const hasInitialData = typeof options.initialData !== 'undefined'
 
-    const initialDataUpdatedAt =
-      hasInitialData &&
-      (typeof options.initialDataUpdatedAt === 'function'
+    const initialDataUpdatedAt = hasInitialData
+      ? typeof options.initialDataUpdatedAt === 'function'
         ? (options.initialDataUpdatedAt as () => number | undefined)()
-        : options.initialDataUpdatedAt)
+        : options.initialDataUpdatedAt
+      : 0
 
     const hasData = typeof data !== 'undefined'
 
     return {
       data,
       dataUpdateCount: 0,
-      dataUpdatedAt: !hasData
-        ? 0
-        : typeof initialDataUpdatedAt !== 'number'
-        ? Date.now()
-        : initialDataUpdatedAt,
+      dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
       error: null,
       errorUpdateCount: 0,
       errorUpdatedAt: 0,
