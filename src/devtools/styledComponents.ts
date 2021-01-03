@@ -106,17 +106,3 @@ export const Select = styled(
     },
   }
 )
-
-export const QueryCountStyles = styled(
-  'div',
-  {
-    fontSize: '1.2rem',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  {
-    '(max-width: 500px)': {
-      display: 'none',
-    },
-  }
-)
