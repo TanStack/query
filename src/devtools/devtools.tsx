@@ -14,7 +14,6 @@ import {
   Code,
   Input,
   Select,
-  QueryCountStyles,
   ActiveQueryPanel,
 } from './styledComponents'
 import { ThemeProvider } from './theme'
