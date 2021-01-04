@@ -49,7 +49,7 @@ useQuery(['todos', todoId], async () => {
 Query keys are not just for uniquely identifying the data you are fetching, but are also conveniently passed into your query function and while not always necessary, this makes it possible to extract your query functions if needed:
 
 ```js
-function Todos({ completed }) {
+function Todos({ status, page }) {
   const result = useQuery(['todos', { status, page }], fetchTodoList)
 }
 
