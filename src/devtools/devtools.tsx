@@ -14,7 +14,6 @@ import {
   Code,
   Input,
   Select,
-  QueryCountStyles,
   ActiveQueryPanel,
 } from './styledComponents'
 import { ThemeProvider } from './theme'
@@ -102,6 +101,10 @@ export function ReactQueryDevtools({
     'reactQueryDevtoolsOpen',
     initialIsOpen
   )
+  const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage(
+    'reactQueryDevtoolsHeight',
+    null
+  )
   const [isResolvedOpen, setIsResolvedOpen] = useSafeState(false)
   const [isResizing, setIsResizing] = useSafeState(false)
 
@@ -119,11 +122,12 @@ export function ReactQueryDevtools({
       const delta = dragInfo.pageY - moveEvent.pageY
       const newHeight = dragInfo.originalHeight + delta
 
+      setDevtoolsHeight(newHeight)
+
       if (newHeight < 70) {
         setIsOpen(false)
       } else {
         setIsOpen(true)
-        panelElement.style.height = `${newHeight}px`
       }
     }
 
@@ -189,7 +193,7 @@ export function ReactQueryDevtools({
             right: '0',
             zIndex: '99999',
             width: '100%',
-            height: '500px',
+            height: devtoolsHeight ?? 500,
             maxHeight: '90%',
             boxShadow: '0 0 20px rgba(0,0,0,.3)',
             borderTop: `1px solid ${theme.gray}`,
@@ -359,6 +363,10 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
         sorted.reverse()
       }
 
+      if (!filter) {
+        return sorted
+      }
+
       return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
         d => d.queryHash
       )
@@ -445,15 +453,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 alignItems: 'center',
               }}
             >
-              <QueryCountStyles>
-                <div
-                  style={{
-                    fontWeight: 'bold',
-                  }}
-                >
-                  Queries ({queries.length})
-                </div>
-              </QueryCountStyles>
+              <Logo
+                aria-hidden
+                style={{
+                  marginRight: '.5rem',
+                }}
+              />
               <div
                 style={{
                   display: 'flex',
@@ -514,29 +519,33 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                       marginRight: '.5rem',
                     }}
                   />
-                  <Select
-                    value={sort}
-                    onChange={e => setSort(e.target.value)}
-                    style={{
-                      flex: '1',
-                      minWidth: 75,
-                      marginRight: '.5rem',
-                    }}
-                  >
-                    {Object.keys(sortFns).map(key => (
-                      <option key={key} value={key}>
-                        Sort by {key}
-                      </option>
-                    ))}
-                  </Select>
-                  <Button
-                    onClick={() => setSortDesc(old => !old)}
-                    style={{
-                      padding: '.2rem .4rem',
-                    }}
-                  >
-                    {sortDesc ? '⬇ Desc' : '⬆ Asc'}
-                  </Button>
+                  {!filter ? (
+                    <>
+                      <Select
+                        value={sort}
+                        onChange={e => setSort(e.target.value)}
+                        style={{
+                          flex: '1',
+                          minWidth: 75,
+                          marginRight: '.5rem',
+                        }}
+                      >
+                        {Object.keys(sortFns).map(key => (
+                          <option key={key} value={key}>
+                            Sort by {key}
+                          </option>
+                        ))}
+                      </Select>
+                      <Button
+                        onClick={() => setSortDesc(old => !old)}
+                        style={{
+                          padding: '.3rem .4rem',
+                        }}
+                      >
+                        {sortDesc ? '⬇ Desc' : '⬆ Asc'}
+                      </Button>
+                    </>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -632,6 +641,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                       style={{
                         margin: 0,
                         padding: 0,
+                        overflow: 'auto',
                       }}
                     >
                       {JSON.stringify(activeQuery.queryKey, null, 2)}
