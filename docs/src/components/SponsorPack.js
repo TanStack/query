@@ -16,7 +16,7 @@ export default function SponsorPack({ sponsors, height }) {
   const root = React.useMemo(
     () =>
       hierarchy(pack)
-        .sum(d => 40 + d.monthlyPriceInCents)
+        .sum(d => 100 + d.monthlyPriceInCents)
         .sort(
           (a, b) => b.data.monthlyPriceInCents - a.data.monthlyPriceInCents
         ),
