@@ -38,17 +38,17 @@ export default function SponsorPack({ sponsors, height }) {
               dangerouslySetInnerHTML={{
                 __html: `
 
-              .sponsor-link {
+              .spon-link {
                 transition: all .2s ease;
                 transform: translate(-50%, -50%);
               }
 
-              .sponsor-link:hover {
+              .spon-link:hover {
                 z-index: 10;
                 transform: translate(-50%, -50%) scale(1.1);
               }
 
-              .sponsor-link:hover .sponsor-tooltip {
+              .spon-link:hover .spon-tooltip {
                 opacity: 1;
               }
             `,
@@ -66,7 +66,7 @@ export default function SponsorPack({ sponsors, height }) {
                           circle.data.linkUrl ||
                           `https://github.com/${circle.data.login}`
                         }
-                        className="sponsor-link absolute shadow-lg bg-white rounded-full z-0"
+                        className="spon-link absolute shadow-lg bg-white rounded-full z-0"
                         style={{
                           left: circle.x,
                           top: circle.y,
@@ -92,7 +92,7 @@ export default function SponsorPack({ sponsors, height }) {
                         />
                         {circle.data.name ? (
                           <div
-                            className="sponsor-tooltip absolute -top-0 left-1/2
+                            className="spon-tooltip absolute -top-0 left-1/2
                           text-sm
                           bg-gray-900 text-white p-2 pointer-events-none
                           transform -translate-x-1/2 -translate-y-full opacity-0
