@@ -221,6 +221,7 @@ export function ReactQueryDevtools({
         />
         {isResolvedOpen ? (
           <Button
+            type="button"
             {...otherCloseButtonProps}
             onClick={() => {
               setIsOpen(false)
@@ -255,6 +256,7 @@ export function ReactQueryDevtools({
       </ThemeProvider>
       {!isResolvedOpen ? (
         <button
+          type="button"
           {...otherToggleButtonProps}
           aria-label="Open React Query Devtools"
           onClick={() => {
@@ -537,6 +539,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                         ))}
                       </Select>
                       <Button
+                        type="button"
                         onClick={() => setSortDesc(old => !old)}
                         style={{
                           padding: '.3rem .4rem',
@@ -702,6 +705,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 }}
               >
                 <Button
+                  type="button"
                   onClick={() => activeQuery.fetch()}
                   disabled={activeQuery.state.isFetching}
                   style={{
@@ -711,6 +715,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   Refetch
                 </Button>{' '}
                 <Button
+                  type="button"
                   onClick={() => queryClient.invalidateQueries(activeQuery)}
                   style={{
                     background: theme.warning,
@@ -720,6 +725,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   Invalidate
                 </Button>{' '}
                 <Button
+                  type="button"
                   onClick={() => queryClient.resetQueries(activeQuery)}
                   style={{
                     background: theme.gray,
@@ -728,6 +734,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   Reset
                 </Button>{' '}
                 <Button
+                  type="button"
                   onClick={() => queryClient.removeQueries(activeQuery)}
                   style={{
                     background: theme.danger,
