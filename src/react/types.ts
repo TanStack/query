@@ -21,6 +21,15 @@ export interface UseQueryOptions<
   TData = TQueryFnData
 > extends UseBaseQueryOptions<TQueryFnData, TError, TData> {}
 
+export type UseTrackedQueryOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData
+> = Omit<
+  UseQueryOptions<TQueryFnData, TError, TData>,
+  'notifyOnChangeProps' | 'notifyOnChangePropsExclusions'
+>
+
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,

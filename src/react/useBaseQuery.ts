@@ -91,5 +91,5 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     }
   }
 
-  return currentResult
+  return observer.createQueryResult(currentResult)
 }

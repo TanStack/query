@@ -148,6 +148,12 @@ export class QueryObserver<
     this.currentQuery.removeObserver(this)
   }
 
+  createQueryResult(
+    result: QueryObserverResult<TData, TError>
+  ): QueryObserverResult<TData, TError> {
+    return result
+  }
+
   setOptions(
     options?: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>
   ): void {
