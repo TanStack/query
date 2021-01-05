@@ -2107,6 +2107,37 @@ describe('useQuery', () => {
     })
   })
 
+  it('should fetch if "initial data updated at" is exactly 0', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'data', {
+        staleTime: 10 * 1000, // 10 seconds
+        initialData: 'initial',
+        initialDataUpdatedAt: 0,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: 'initial',
+      isStale: true,
+      isFetching: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isStale: false,
+      isFetching: false,
+    })
+  })
+
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
     const states: UseQueryResult<{ count: number }>[] = []
