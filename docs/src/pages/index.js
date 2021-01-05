@@ -1,15 +1,18 @@
 import * as React from 'react'
 import axios from 'axios'
-import { Banner } from 'components/Banner'
-import { Sticky } from 'components/Sticky'
-import { Nav } from 'components/Nav'
-import { siteConfig } from 'siteConfig'
-import Link from 'next/link'
-import { Footer } from 'components/Footer'
-import { ClientsMarquee } from 'components/clients/ClientsMarquee'
-import { Seo } from 'components/Seo'
 import Head from 'next/head'
-import SponsorPack from 'components/SponsorPack'
+import Link from 'next/link'
+
+//
+import { siteConfig } from '../siteConfig'
+
+import { Banner } from '../components/Banner'
+import { Sticky } from '../components/Sticky'
+import { Nav } from '../components/Nav'
+import { Footer } from '../components/Footer'
+import { ClientsMarquee } from '../components/clients/ClientsMarquee'
+import { Seo } from '../components/Seo'
+import SponsorPack from '../components/SponsorPack'
 
 export const getStaticProps = async () => {
   const {
@@ -164,30 +167,30 @@ const Home = ({ sponsors }) => {
                 ENROLL NOW
               </a>
               <div className="grid pt-8 text-white max-w-screen-lg mx-auto text-lg">
-                <a className="mb-2">
+                <span className="mb-2">
                   <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
                     <Check />
                   </span>
                   50+ Lessons
-                </a>
-                <a className="mb-2">
+                </span>
+                <span className="mb-2">
                   <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
                     <Check />
                   </span>
                   3+ Hours of Live-Code Training
-                </a>
-                <a className="mb-2">
+                </span>
+                <span className="mb-2">
                   <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
                     <Check />
                   </span>
                   Lesson Source Code
-                </a>
-                <a className="mb-2">
+                </span>
+                <span className="mb-2">
                   <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
                     <Check />
                   </span>
                   Full API coverage
-                </a>
+                </span>
               </div>
             </div>
           </div>
