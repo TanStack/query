@@ -1,4 +1,5 @@
 import * as React from 'react'
+import axios from 'axios'
 import { Banner } from 'components/Banner'
 import { Sticky } from 'components/Sticky'
 import { Nav } from 'components/Nav'
@@ -8,49 +9,23 @@ import { Footer } from 'components/Footer'
 import { ClientsMarquee } from 'components/clients/ClientsMarquee'
 import { Seo } from 'components/Seo'
 import Head from 'next/head'
+import SponsorPack from 'components/SponsorPack'
 
-const supporters = [
-  ['Kent C. Dodds', 'https://kentcdodds.com/'],
-  ['@bgazzera', 'https://github.com/bgazzera'],
-  ['Gabe Ragland', 'https://github.com/gragland'],
-  ['Matt Wood', 'https://github.com/mattwoodnyc'],
-  ['Joshua Turner', 'https://github.com/joshua-turner'],
-  ['Fillip Peyton', 'https://github.com/fillippeyton'],
-  ['Tim Myers', 'https://github.com/denvercoder'],
-  ['Andy Slezak', 'https://github.com/amslezak'],
-  ['Shane Cavaliere', 'https://github.com/shanecav'],
-]
+export const getStaticProps = async () => {
+  const {
+    data: { sponsors, tiers },
+  } = await axios.get('https://tanstack.com/api/github-sponsors')
 
-const fans = [
-  `Steven Miyakawa (@SamSamskies)`,
-  `Alex Trost (@a-trost)`,
-  `Andrey (@andreyvital)`,
-  'Anoop (@Anoupz)',
-  'Daniel Almaguer (@deini)',
-  'Chris Vaszauskas (@chrisvasz)',
-  'Christian Rudh (@crudh)',
-  'Vianney Carel (@vcarel)',
-  'Freddie (@fdjones)',
-  'Johnny Bell (@johnnyxbell)',
-  'Garrett Fritz (@gfritzdev)',
-  'Juliano Farias (@frontendwizard)',
-  'Peter Pistorius (@peterp)',
-  'Agustín Villalobos (@agustin-v)',
-  'Panigo (@rangigo)',
-  'Jesse Jafa, (@awareness481)',
-  'Arijit Bhattacharya, (@hoodwink73)',
-  'Bryan Grill, (@brygrill)',
-  'Peter Hozák, (@Aprillion)',
-  'Arijit Bhattacharya, (@hoodwink73)',
-  'Jonathan Chang, (@jdkschang)',
-  'Ash Connell, (@ashconnell)',
-  'Sara Bee, (@doeg)',
-  'Mihir Kedia (@meitros)',
-  'Nick Quebbeman (@kidqueb)',
-  'Greg Lin (@glin)',
-]
+  return {
+    props: {
+      sponsors,
+      tiers,
+    },
+    revalidate: 60, // In seconds
+  }
+}
 
-const Home = () => {
+const Home = ({ sponsors }) => {
   return (
     <>
       <Seo
@@ -217,7 +192,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="relative text-lg border-t border-gray-200 bg-white overflow-hidden">
+        <div className="relative text-lg border-t border-gray-200 bg-gray-100 overflow-hidden">
           <div className="lg:block lg:absolute lg:inset-0">
             <svg
               className="absolute top-1/2 left-1/2 transform -translate-y-1/2 -translate-x-1/2"
@@ -240,7 +215,7 @@ const Home = () => {
                     y="0"
                     width="4"
                     height="4"
-                    className="text-gray-100"
+                    className="text-gray-200"
                     fill="currentColor"
                   />
                 </pattern>
@@ -253,95 +228,19 @@ const Home = () => {
               />
             </svg>
           </div>
-          <div className="py-12 relative">
-            <div className="uppercase tracking-wider text-4xl font-semibold text-center text-gray-500 m-6">
-              Diamond Sponsors
+          <div className="relative">
+            <h3 className="text-center text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 lg:leading-none mt-8">
+              Sponsors
+            </h3>
+            <div className="py-4 flex flex-wrap">
+              <SponsorPack sponsors={sponsors} height={700} />
             </div>
-
-            <a
-              href="https://github.com/sponsors/tannerlinsley"
-              target="_blank"
-              className="opacity-50 font-bold w-56 h-56 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 border-4 border-transparent hover:border-green-500 hover:text-green-500 transition duration-200 ease-out hover:opacity-100"
-            >
-              Become a Sponsor
-            </a>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3">
-              <div className="mt-10">
-                <div className="uppercase tracking-wider text-3xl font-semibold text-center text-gray-500 mt-10 m-6">
-                  Gold Sponsors
-                </div>
-                <a
-                  href="https://github.com/sponsors/tannerlinsley"
-                  target="_blank"
-                  className="opacity-50 font-bold w-48 h-48 m-auto bg-gray-200 rounded-full flex items-center justify-center text-sm text-gray-500 border-4 border-transparent hover:border-green-500 hover:text-green-500 transition duration-200 ease-out hover:opacity-100"
-                >
-                  Become a Sponsor
-                </a>
-              </div>
-
-              <div className="mt-10">
-                <div className="uppercase tracking-wider text-3xl font-semibold text-center text-gray-500 mt-10 m-6">
-                  Silver Sponsors
-                </div>
-                <a
-                  href="https://www.reactbricks.com/"
-                  target="_blank"
-                  className="block w-56 m-auto"
-                >
-                  <img src="https://www.reactbricks.com/reactbricks_vertical.svg" />
-                </a>
-              </div>
-
-              <div className="mt-10">
-                <div className="uppercase tracking-wider text-3xl font-semibold text-center text-gray-500 mt-10 m-6">
-                  Bronze Sponsors
-                </div>
-                <a
-                  href="https://nozzle.io/"
-                  target="_blank"
-                  className="block w-48 m-auto"
-                >
-                  <img
-                    src="https://nozzle.io/img/logo-blue.png"
-                    alt="Nozzle - Google Keyword Rank Tracker"
-                  ></img>
-                </a>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <div className="mt-10">
-                <div className="uppercase tracking-wider text-2xl font-semibold text-center text-gray-500 mt-10 m-3">
-                  Supporters
-                </div>
-                <ul className="list-none text-center">
-                  {supporters.map((supporter, i) => (
-                    <li className="font-bold text-blue-800" key={i}>
-                      <a href={supporter[1]}>{supporter[0]}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="mt-10">
-                <div className="uppercase tracking-wider text-2xl font-semibold text-center text-gray-500 mt-10 m-3">
-                  Fans
-                </div>
-                <ul className="list-none text-center">
-                  {fans.map(fan => (
-                    <li key={fan}>{fan}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <div className="mt-10 text-center">
+            <div className="text-center mb-8">
               <a
                 href="https://github.com/sponsors/tannerlinsley"
-                target="_blank"
-                className="text-lg font-bold inline-flex items-center justify-center px-6 py-3 border border-transparent text-base leading-6 font-medium rounded-full text-white bg-green-500 hover:bg-green-500-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                className="inline-block bg-green-500 px-4 py-2 text-xl mx-auto leading-tight font-extrabold tracking-tight text-white rounded-full"
               >
-                Become a Sponsor
+                Become a Sponsor!
               </a>
             </div>
           </div>
