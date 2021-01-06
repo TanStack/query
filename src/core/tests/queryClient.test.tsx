@@ -440,6 +440,30 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
+	
+		test('should be able to destruct', async () => {
+
+			const { invalidateQueries, fetchQuery } = queryClient;
+
+			const key1 = queryKey()
+      const queryFn1 = jest.fn()
+
+      await fetchQuery(key1, queryFn1)
+
+			const observer = new QueryObserver(queryClient, {
+ 				queryKey: key1,
+				queryFn: queryFn1,
+			})
+
+      const unsubscribe = observer.subscribe()
+
+      invalidateQueries(key1)
+      unsubscribe()
+
+      expect(queryFn1).toHaveBeenCalledTimes(2)
+			
+ 		})
+
     test('should be able to refetch all stale and active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()

@@ -68,6 +68,36 @@ export class QueryClient {
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
+
+		this.invalidateQueries = this.invalidateQueries.bind(this)
+		this.fetchQuery = this.fetchQuery.bind(this)
+		this.isFetching = this.isFetching.bind(this)
+		this.getQueryData = this.getQueryData.bind(this)
+		this.setQueryData = this.setQueryData.bind(this)
+		this.getQueryState = this.getQueryState.bind(this)
+		this.removeQueries = this.removeQueries.bind(this)
+		this.resetQueries = this.resetQueries.bind(this)
+		this.cancelQueries = this.cancelQueries.bind(this)
+		this.refetchQueries = this.refetchQueries.bind(this)
+		this.fetchQuery = this.fetchQuery.bind(this)
+		this.prefetchQuery = this.prefetchQuery.bind(this)
+		this.fetchInfiniteQuery = this.fetchInfiniteQuery.bind(this)
+		this.prefetchInfiniteQuery = this.prefetchInfiniteQuery.bind(this)
+		this.cancelMutations = this.cancelMutations.bind(this)
+		this.resumePausedMutations = this.resumePausedMutations.bind(this)
+		this.executeMutation = this.executeMutation.bind(this)
+		this.getQueryCache = this.getQueryCache.bind(this)
+		this.getMutationCache = this.getMutationCache.bind(this)	
+		this.getDefaultOptions = this.getDefaultOptions.bind(this)
+		this.setDefaultOptions = this.setDefaultOptions.bind(this)
+		this.setQueryDefaults = this.setQueryDefaults.bind(this)
+		this.getQueryDefaults = this.getQueryDefaults.bind(this)
+		this.setMutationDefaults = this.setMutationDefaults.bind(this)
+		this.getMutationDefaults = this.getMutationDefaults.bind(this)
+		this.defaultQueryOptions = this.defaultQueryOptions.bind(this)
+		this.defaultQueryObserverOptions = this.defaultQueryObserverOptions.bind(this)
+		this.defaultMutationOptions = this.defaultMutationOptions.bind(this)
+		this.clear = this.clear.bind(this)
   }
 
   mount(): void {
@@ -215,7 +245,7 @@ export class QueryClient {
       })
       return this.refetchQueries(refetchFilters, options)
     })
-  }
+	}
 
   refetchQueries(
     filters?: QueryFilters,
