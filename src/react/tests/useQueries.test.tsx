@@ -1,12 +1,12 @@
 import React from 'react'
 
-import { queryKey, renderWithClient, sleep } from './utils'
 import {
-  useQueries,
-  QueryClient,
-  UseQueryResult,
-  QueryCache,
-} from '../..'
+  expectType,
+  queryKey,
+  renderWithClient,
+  sleep,
+} from './utils'
+import { useQueries, QueryClient, UseQueryResult, QueryCache } from '../..'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -39,7 +39,7 @@ describe('useQueries', () => {
   it('should return same data types correctly (a type test; validated by successful compilation; not runtime results)', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: number[] = [];
+    const results: number[] = []
 
     function Page() {
       const result = useQueries([
@@ -63,18 +63,17 @@ describe('useQueries', () => {
   it('should return different data types correctly (a type test; validated by successful compilation; not runtime results)', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: (number | string)[] = [];
 
     function Page() {
-      const result = useQueries<number | string>([
+      const result = useQueries([
         { queryKey: key1, queryFn: () => 1 },
         { queryKey: key2, queryFn: () => 'two' },
       ])
       if (result[0].data) {
-        results.push(result[0].data)
+        expectType<number>(result[0].data)
       }
       if (result[1].data) {
-        results.push(result[1].data)
+        expectType<string>(result[1].data)
       }
       return null
     }

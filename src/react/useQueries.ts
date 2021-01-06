@@ -5,27 +5,34 @@ import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
-export function useQueries<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData
->(
-  queries: UseQueryOptions<TQueryFnData, TError, TData>[]
-): UseQueryResult<TData, TError>[] {
+type Awaited<T> = T extends PromiseLike<infer U> ? Awaited<U> : T
+
+export function useQueries<TQueries extends readonly UseQueryOptions[]>(
+  queries: [...TQueries]
+): {
+  [ArrayElement in keyof TQueries]: UseQueryResult<
+    Awaited<
+      ReturnType<
+        NonNullable<Extract<TQueries[ArrayElement], UseQueryOptions>['queryFn']>
+      >
+    >
+  >
+} {
   const queryClient = useQueryClient()
 
   // Create queries observer
-  const observerRef = React.useRef<
-    QueriesObserver<TQueryFnData, TError, TData>
-  >()
+  const observerRef = React.useRef<QueriesObserver>()
   const observer =
     observerRef.current ||
-    new QueriesObserver<TQueryFnData, TError, TData>(queryClient, queries)
+    new QueriesObserver(
+      queryClient,
+      queries as UseQueryOptions<unknown, unknown, unknown>[]
+    )
   observerRef.current = observer
 
   // Update queries
   if (observer.hasListeners()) {
-    observer.setQueries(queries)
+    observer.setQueries(queries as UseQueryOptions<unknown, unknown, unknown>[])
   }
 
   const [currentResult, setCurrentResult] = React.useState(() =>
@@ -38,5 +45,5 @@ export function useQueries<
     [observer]
   )
 
-  return currentResult
+  return currentResult as any
 }
