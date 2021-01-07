@@ -216,7 +216,7 @@ const queryClient = new QueryClient()
 // Define the "addTodo" mutation
 queryClient.setMutationDefaults('addTodo', {
   mutationFn: addTodo,
-  onMutate: variables => {
+  onMutate: async (variables) => {
     // Cancel current queries for the todos list
     await queryClient.cancelQueries('todos')
 
