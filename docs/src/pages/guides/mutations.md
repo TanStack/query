@@ -17,11 +17,11 @@ function App() {
         'Adding todo...'
       ) : (
         <>
-          {mutation.isError ? (
+          {mutation.isError && (
             <div>An error occurred: {mutation.error.message}</div>
-          ) : null}
+          )}
 
-          {mutation.isSuccess ? <div>Todo added!</div> : null}
+          {mutation.isSuccess && <div>Todo added!</div>}
 
           <button
             onClick={() => {
