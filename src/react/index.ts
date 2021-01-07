@@ -10,7 +10,6 @@ export {
 export { useIsFetching } from './useIsFetching'
 export { useMutation } from './useMutation'
 export { useQuery } from './useQuery'
-export { useTrackedQuery } from './useTrackedQuery'
 export { useQueries } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
 

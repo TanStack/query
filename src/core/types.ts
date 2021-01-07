@@ -143,6 +143,10 @@ export interface QueryObserverOptions<
    */
   notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
+   * If set, access to properties will be tracked and only re-rendered if one of the tracked properties change.
+   */
+  notifyOnChangeTracked?: boolean
+  /**
    * This callback will fire any time the query successfully fetches new data.
    */
   onSuccess?: (data: TData) => void

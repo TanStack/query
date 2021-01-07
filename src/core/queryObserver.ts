@@ -149,9 +149,34 @@ export class QueryObserver<
   }
 
   createQueryResult(
-    result: QueryObserverResult<TData, TError>
+    queryObserverResult: QueryObserverResult<TData, TError>
   ): QueryObserverResult<TData, TError> {
-    return result
+    if (this.options.notifyOnChangeTracked) {
+      const trackedResult = {}
+      const addNotifyOnChangeProps = (prop: keyof QueryObserverResult) => {
+        if (!this.options.notifyOnChangeProps) {
+          this.options.notifyOnChangeProps = []
+        }
+
+        if (!this.options.notifyOnChangeProps.includes(prop)) {
+          this.options.notifyOnChangeProps.push(prop)
+        }
+      }
+
+      Object.keys(queryObserverResult).forEach(key => {
+        Object.defineProperty(trackedResult, key, {
+          configurable: false,
+          enumerable: true,
+          get() {
+            addNotifyOnChangeProps(key as keyof QueryObserverResult)
+            return queryObserverResult[key as keyof QueryObserverResult]
+          },
+        })
+      })
+
+      return trackedResult as QueryObserverResult<TData, TError>
+    }
+    return queryObserverResult
   }
 
   setOptions(
