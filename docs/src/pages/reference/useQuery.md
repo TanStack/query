@@ -28,6 +28,7 @@ const {
   keepPreviousData,
   notifyOnChangeProps,
   notifyOnChangePropsExclusions,
+  notifyOnChangeTracked,
   onError,
   onSettled,
   onSuccess,
@@ -39,7 +40,7 @@ const {
   refetchOnWindowFocus,
   retry,
   retryDelay,
-  select
+  select,
   staleTime,
   structuralSharing,
   suspense,
@@ -117,6 +118,9 @@ const result = useQuery({
   - Optional
   - If set, the component will not re-render if any of the listed properties change.
   - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
+- `notifyOnChangeTracked`
+    - Optional
+    - If set, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
 - `onSuccess: (data: TData) => void`
   - Optional
   - This function will fire any time the query successfully fetches new data.

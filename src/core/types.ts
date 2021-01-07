@@ -143,7 +143,7 @@ export interface QueryObserverOptions<
    */
   notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
-   * If set, access to properties will be tracked and only re-rendered if one of the tracked properties change.
+   * If set, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
    */
   notifyOnChangeTracked?: boolean
   /**
