@@ -737,6 +737,41 @@ describe('useQuery', () => {
     expect(states[1].dataUpdatedAt).not.toBe(states[2].dataUpdatedAt)
   })
 
+  it('should track properties and only re-render when a tracked property changes', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        notifyOnChangeTracked: true,
+      })
+
+      states.push(state)
+
+      const { refetch, data } = state
+
+      React.useEffect(() => {
+        if (data) {
+          refetch()
+        }
+      }, [refetch, data])
+
+      return (
+        <div>
+          <h1>{data ?? null}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('test'))
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
   it('should be able to remove a query', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
