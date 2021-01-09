@@ -55,6 +55,7 @@ export class QueryObserver<
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private trackedProps!: Array<keyof QueryObserverResult>
+  private trackedResult!: QueryObserverResult<TData, TError>
 
   constructor(
     client: QueryClient,
@@ -67,6 +68,7 @@ export class QueryObserver<
     this.initialDataUpdateCount = 0
     this.initialErrorUpdateCount = 0
     this.trackedProps = []
+    this.trackedResult = {} as QueryObserverResult<TData, TError>
     this.bindMethods()
     this.setOptions(options)
   }
@@ -155,7 +157,6 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     this.trackedProps = []
     if (this.options.notifyOnChangeTracked) {
-      const trackedResult = {}
       const addTrackedProps = (prop: keyof QueryObserverResult) => {
         if (!this.trackedProps.includes(prop)) {
           this.trackedProps.push(prop)
@@ -163,8 +164,8 @@ export class QueryObserver<
       }
 
       Object.keys(queryObserverResult).forEach(key => {
-        Object.defineProperty(trackedResult, key, {
-          configurable: false,
+        Object.defineProperty(this.trackedResult, key, {
+          configurable: true,
           enumerable: true,
           get() {
             addTrackedProps(key as keyof QueryObserverResult)
@@ -173,7 +174,7 @@ export class QueryObserver<
         })
       })
 
-      return trackedResult as QueryObserverResult<TData, TError>
+      return this.trackedResult
     }
     return queryObserverResult
   }
