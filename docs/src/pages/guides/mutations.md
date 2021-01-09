@@ -5,7 +5,7 @@ title: Mutations
 
 Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query exports a `useMutation` hook.
 
-Here's an example of a mutation that adds a new todo the server:
+Here's an example of a mutation that adds a new todo to the server:
 
 ```js
 function App() {
