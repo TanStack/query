@@ -59,7 +59,7 @@ describe("useQuery's in Suspense mode", () => {
 
     await sleep(20)
 
-    expect(renders).toBe(4)
+    expect(renders).toBe(5)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
