@@ -54,6 +54,7 @@ export class QueryObserver<
   private initialErrorUpdateCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
+  private trackedProps!: Array<keyof QueryObserverResult>
 
   constructor(
     client: QueryClient,
@@ -65,6 +66,7 @@ export class QueryObserver<
     this.options = options
     this.initialDataUpdateCount = 0
     this.initialErrorUpdateCount = 0
+    this.trackedProps = []
     this.bindMethods()
     this.setOptions(options)
   }
@@ -151,15 +153,12 @@ export class QueryObserver<
   createQueryResult(
     queryObserverResult: QueryObserverResult<TData, TError>
   ): QueryObserverResult<TData, TError> {
+    this.trackedProps = []
     if (this.options.notifyOnChangeTracked) {
       const trackedResult = {}
-      const addNotifyOnChangeProps = (prop: keyof QueryObserverResult) => {
-        if (!this.options.notifyOnChangeProps) {
-          this.options.notifyOnChangeProps = []
-        }
-
-        if (!this.options.notifyOnChangeProps.includes(prop)) {
-          this.options.notifyOnChangeProps.push(prop)
+      const addTrackedProps = (prop: keyof QueryObserverResult) => {
+        if (!this.trackedProps.includes(prop)) {
+          this.trackedProps.push(prop)
         }
       }
 
@@ -168,7 +167,7 @@ export class QueryObserver<
           configurable: false,
           enumerable: true,
           get() {
-            addNotifyOnChangeProps(key as keyof QueryObserverResult)
+            addTrackedProps(key as keyof QueryObserverResult)
             return queryObserverResult[key as keyof QueryObserverResult]
           },
         })
@@ -468,22 +467,33 @@ export class QueryObserver<
     prevResult: QueryObserverResult,
     result: QueryObserverResult
   ): boolean {
-    const { notifyOnChangeProps, notifyOnChangePropsExclusions } = this.options
+    const {
+      notifyOnChangeProps,
+      notifyOnChangePropsExclusions,
+      notifyOnChangeTracked,
+    } = this.options
 
     if (prevResult === result) {
       return false
     }
 
-    if (!notifyOnChangeProps && !notifyOnChangePropsExclusions) {
+    if (
+      !notifyOnChangeProps &&
+      !notifyOnChangePropsExclusions &&
+      !notifyOnChangeTracked
+    ) {
       return true
     }
 
     const keys = Object.keys(result)
+    const includedProps = notifyOnChangeProps
+      ? notifyOnChangeProps.concat(this.trackedProps)
+      : this.trackedProps
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i] as keyof QueryObserverResult
       const changed = prevResult[key] !== result[key]
-      const isIncluded = notifyOnChangeProps?.some(x => x === key)
+      const isIncluded = includedProps.some(x => x === key)
       const isExcluded = notifyOnChangePropsExclusions?.some(x => x === key)
 
       if (changed) {
@@ -491,7 +501,7 @@ export class QueryObserver<
           continue
         }
 
-        if (!notifyOnChangeProps || isIncluded) {
+        if ((!notifyOnChangeProps && !notifyOnChangeTracked) || isIncluded) {
           return true
         }
       }
