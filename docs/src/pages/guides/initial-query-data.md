@@ -44,7 +44,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 
   ```js
   function Todos() {
-    // Show initialTodos immeidately, but won't refetch until another interaction event is encountered after 1000 ms
+    // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
     const result = useQuery('todos', () => fetch('/todos'), {
       initialData: initialTodos,
       staleTime: 1000,
