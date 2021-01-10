@@ -739,14 +739,14 @@ describe('useQuery', () => {
 
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = queryKey()
-    const states: (string | undefined)[] = []
+    const states: UseQueryResult<string>[] = []
 
     function Page() {
       const state = useQuery(key, () => 'test', {
         notifyOnChangeTracked: true,
       })
 
-      states.push(state.data)
+      states.push(state)
 
       const { refetch, data } = state
 
@@ -768,8 +768,8 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('test'))
 
     expect(states.length).toBe(2)
-    expect(states[0]).toEqual(undefined)
-    expect(states[1]).toEqual('test')
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'test' })
   })
 
   it('should be able to remove a query', async () => {

@@ -68,7 +68,6 @@ export class QueryObserver<
     this.initialDataUpdateCount = 0
     this.initialErrorUpdateCount = 0
     this.trackedProps = []
-    this.trackedResult = {} as QueryObserverResult<TData, TError>
     this.bindMethods()
     this.setOptions(options)
   }
@@ -152,31 +151,8 @@ export class QueryObserver<
     this.currentQuery.removeObserver(this)
   }
 
-  createQueryResult(
-    queryObserverResult: QueryObserverResult<TData, TError>
-  ): QueryObserverResult<TData, TError> {
+  resetTrackedProps(): void {
     this.trackedProps = []
-    if (this.options.notifyOnChangeTracked) {
-      const addTrackedProps = (prop: keyof QueryObserverResult) => {
-        if (!this.trackedProps.includes(prop)) {
-          this.trackedProps.push(prop)
-        }
-      }
-
-      Object.keys(queryObserverResult).forEach(key => {
-        Object.defineProperty(this.trackedResult, key, {
-          configurable: true,
-          enumerable: true,
-          get() {
-            addTrackedProps(key as keyof QueryObserverResult)
-            return queryObserverResult[key as keyof QueryObserverResult]
-          },
-        })
-      })
-
-      return this.trackedResult
-    }
-    return queryObserverResult
   }
 
   setOptions(
@@ -237,6 +213,10 @@ export class QueryObserver<
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
     return this.currentResult
+  }
+
+  getTrackedResult(): QueryObserverResult<TData, TError> {
+    return this.trackedResult
   }
 
   getNextResult(
@@ -520,6 +500,23 @@ export class QueryObserver<
     // Only update if something has changed
     if (!shallowEqualObjects(result, this.currentResult)) {
       this.currentResult = result
+      const addTrackedProps = (prop: keyof QueryObserverResult) => {
+        if (!this.trackedProps.includes(prop)) {
+          this.trackedProps.push(prop)
+        }
+      }
+      this.trackedResult = {} as QueryObserverResult<TData, TError>
+
+      Object.keys(result).forEach(key => {
+        Object.defineProperty(this.trackedResult, key, {
+          configurable: false,
+          enumerable: true,
+          get() {
+            addTrackedProps(key as keyof QueryObserverResult)
+            return result[key as keyof QueryObserverResult]
+          },
+        })
+      })
     }
   }
 
