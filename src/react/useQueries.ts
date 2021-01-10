@@ -11,8 +11,10 @@ export function useQueries<TQueries extends readonly UseQueryOptions[]>(
   queries: [...TQueries]
 ): {
   [ArrayElement in keyof TQueries]: UseQueryResult<
-    TQueries[ArrayElement] extends { select: any }
-      ? unknown
+    TQueries[ArrayElement] extends { select: infer TSelect }
+      ? TSelect extends (data: any) => any
+        ? ReturnType<TSelect>
+        : never
       : Awaited<
           ReturnType<
             NonNullable<
