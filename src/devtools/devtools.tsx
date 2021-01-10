@@ -397,7 +397,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
 
     return (
       <ThemeProvider theme={theme}>
-        <Panel ref={ref} className="ReactQueryDevtoolsPanel" {...panelProps}>
+        <Panel
+          ref={ref}
+          className="ReactQueryDevtoolsPanel"
+          {...panelProps}
+          suppressHydrationWarning
+        >
           <style
             dangerouslySetInnerHTML={{
               __html: `
@@ -469,22 +474,26 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
               >
                 <QueryKeys style={{ marginBottom: '.5rem' }}>
                   <QueryKey
+                    suppressHydrationWarning
                     style={{
                       background: theme.success,
                       opacity: hasFresh ? 1 : 0.3,
                     }}
                   >
-                    fresh <Code>({hasFresh})</Code>
+                    fresh <Code suppressHydrationWarning>({hasFresh})</Code>
                   </QueryKey>{' '}
                   <QueryKey
+                    suppressHydrationWarning
                     style={{
                       background: theme.active,
                       opacity: hasFetching ? 1 : 0.3,
                     }}
                   >
-                    fetching <Code>({hasFetching})</Code>
+                    fetching{' '}
+                    <Code suppressHydrationWarning>({hasFetching})</Code>
                   </QueryKey>{' '}
                   <QueryKey
+                    suppressHydrationWarning
                     style={{
                       background: theme.warning,
                       color: 'black',
@@ -492,15 +501,17 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                       opacity: hasStale ? 1 : 0.3,
                     }}
                   >
-                    stale <Code>({hasStale})</Code>
+                    stale <Code suppressHydrationWarning>({hasStale})</Code>
                   </QueryKey>{' '}
                   <QueryKey
+                    suppressHydrationWarning
                     style={{
                       background: theme.gray,
                       opacity: hasInactive ? 1 : 0.3,
                     }}
                   >
-                    inactive <Code>({hasInactive})</Code>
+                    inactive{' '}
+                    <Code suppressHydrationWarning>({hasInactive})</Code>
                   </QueryKey>
                 </QueryKeys>
                 <div
@@ -553,6 +564,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
               </div>
             </div>
             <div
+              suppressHydrationWarning
               style={{
                 overflowY: 'auto',
                 flex: '1',
@@ -560,6 +572,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
             >
               {queries.map((query, i) => (
                 <div
+                  suppressHydrationWarning
                   key={query.queryHash || i}
                   onClick={() =>
                     setActiveQueryHash(
@@ -577,6 +590,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   }}
                 >
                   <div
+                    suppressHydrationWarning
                     style={{
                       flex: '0 0 auto',
                       width: '2rem',
@@ -599,6 +613,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                     {query.observers.length}
                   </div>
                   <Code
+                    suppressHydrationWarning
                     style={{
                       padding: '.5rem',
                     }}
