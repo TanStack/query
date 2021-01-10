@@ -11,11 +11,15 @@ export function useQueries<TQueries extends readonly UseQueryOptions[]>(
   queries: [...TQueries]
 ): {
   [ArrayElement in keyof TQueries]: UseQueryResult<
-    Awaited<
-      ReturnType<
-        NonNullable<Extract<TQueries[ArrayElement], UseQueryOptions>['queryFn']>
-      >
-    >
+    TQueries[ArrayElement] extends { select: any }
+      ? unknown
+      : Awaited<
+          ReturnType<
+            NonNullable<
+              Extract<TQueries[ArrayElement], UseQueryOptions>['queryFn']
+            >
+          >
+        >
   >
 } {
   const queryClient = useQueryClient()

@@ -1,11 +1,6 @@
 import React from 'react'
 
-import {
-  expectType,
-  queryKey,
-  renderWithClient,
-  sleep,
-} from './utils'
+import { expectType, queryKey, renderWithClient, sleep } from './utils'
 import { useQueries, QueryClient, UseQueryResult, QueryCache } from '../..'
 
 describe('useQueries', () => {
@@ -74,6 +69,36 @@ describe('useQueries', () => {
       }
       if (result[1].data) {
         expectType<string>(result[1].data)
+      }
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+  })
+
+  it('if select is provided then the return type should be unknown (a type test; validated by successful compilation; not runtime results)', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    function Page() {
+      const result = useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => ({ prop: 'value' }),
+          // here x is unknown; we use x.prop without testing - triggering `Object is of type 'unknown'.ts(2571)`
+          // @ts-expect-error
+          select: x => x.prop,
+        },
+        { queryKey: key2, queryFn: () => 1 },
+      ])
+
+      if (result[0].data) {
+        expectType<unknown>(result[0].data)
+      }
+      if (result[1].data) {
+        expectType<number>(result[1].data)
       }
       return null
     }
