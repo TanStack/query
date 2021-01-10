@@ -60,7 +60,7 @@ const result = useQuery({
 - `queryKey: string | unknown[]`
   - **Required**
   - The query key to use for this query.
-  - The query key will be hashed into a stable hash. See [Query Keys](./guides/query-keys) for more information.
+  - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined**
@@ -70,7 +70,7 @@ const result = useQuery({
   - Must return a promise that will either resolves data or throws an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
-  - Can be used for [Dependent Queries](./guides/queries#dependent-queries).
+  - Can be used for [Dependent Queries](../guides/dependent-queries).
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
