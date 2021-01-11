@@ -131,7 +131,7 @@ import { dehydrate, Hydrate } from 'react-query/hydration'
 
 const queryClient = new QueryClient()
 await queryClient.prefetchQuery('key', fn)
-const dehydratedState = dehydrate(client)
+const dehydratedState = dehydrate(queryClient)
 
 const html = ReactDOM.renderToString(
   <QueryClientProvider client={queryClient}>
