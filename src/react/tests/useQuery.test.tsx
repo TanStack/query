@@ -772,6 +772,48 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
+  it('should return the referentially same object if nothing changes between fetches', async () => {
+    const key = queryKey()
+    let renderCount = 0
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        notifyOnChangeTracked: true,
+      })
+
+      states.push(state)
+
+      const { data } = state
+
+      React.useEffect(() => {
+        renderCount++
+      }, [state])
+
+      return (
+        <div>
+          <h1>{data ?? null}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('test'))
+    expect(renderCount).toBe(2)
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'test' })
+
+    act(() => rendered.rerender(<Page />))
+    await waitFor(() => rendered.getByText('test'))
+    expect(renderCount).toBe(2)
+    expect(states.length).toBe(3)
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'test' })
+    expect(states[2]).toMatchObject({ data: 'test' })
+  })
+
   it('should be able to remove a query', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
