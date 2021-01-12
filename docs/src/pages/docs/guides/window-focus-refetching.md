@@ -25,7 +25,7 @@ function App() {
 
 ## Custom Window Focus Event
 
-In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
+You may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `setFocusHandler` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `setFocusHandler`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
 ```js
 setFocusHandler(handleFocus => {
@@ -56,7 +56,7 @@ setFocusHandler(onWindowFocus) // Boom!
 
 ## Managing Focus in React Native
 
-Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
+Implementing setFocusHandler is required in order to have window focus refetching in React Native. Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```js
 import { setFocusHandler } from 'react-query'
