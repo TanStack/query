@@ -53,10 +53,12 @@ class OnlineManager extends Subscribable {
       this.setEventListener(onOnline => {
         // Listen to online
         window.addEventListener('online', onOnline, false)
+        window.addEventListener('offline', onOnline, false)
 
         return () => {
           // Be sure to unsubscribe if a new handler is set
           window.removeEventListener('online', onOnline)
+          window.removeEventListener('offline', onOnline)
         }
       })
     }
