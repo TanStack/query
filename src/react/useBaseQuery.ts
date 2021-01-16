@@ -91,8 +91,6 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     }
   }
 
-  observer.resetTrackedProps()
-
   return observer.options.notifyOnChangeProps === 'tracked'
     ? observer.getTrackedCurrentResult()
     : currentResult

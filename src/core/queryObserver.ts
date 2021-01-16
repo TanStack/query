@@ -151,10 +151,6 @@ export class QueryObserver<
     this.currentQuery.removeObserver(this)
   }
 
-  resetTrackedProps(): void {
-    this.trackedProps = []
-  }
-
   setOptions(
     options?: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>
   ): void {
