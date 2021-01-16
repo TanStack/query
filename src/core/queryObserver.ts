@@ -493,23 +493,26 @@ export class QueryObserver<
     // Only update if something has changed
     if (!shallowEqualObjects(result, this.currentResult)) {
       this.currentResult = result
-      const addTrackedProps = (prop: keyof QueryObserverResult) => {
-        if (!this.trackedProps.includes(prop)) {
-          this.trackedProps.push(prop)
-        }
-      }
-      this.trackedCurrentResult = {} as QueryObserverResult<TData, TError>
 
-      Object.keys(result).forEach(key => {
-        Object.defineProperty(this.trackedCurrentResult, key, {
-          configurable: false,
-          enumerable: true,
-          get() {
-            addTrackedProps(key as keyof QueryObserverResult)
-            return result[key as keyof QueryObserverResult]
-          },
+      if (this.options.notifyOnChangeProps === 'tracked') {
+        const addTrackedProps = (prop: keyof QueryObserverResult) => {
+          if (!this.trackedProps.includes(prop)) {
+            this.trackedProps.push(prop)
+          }
+        }
+        this.trackedCurrentResult = {} as QueryObserverResult<TData, TError>
+
+        Object.keys(result).forEach(key => {
+          Object.defineProperty(this.trackedCurrentResult, key, {
+            configurable: false,
+            enumerable: true,
+            get() {
+              addTrackedProps(key as keyof QueryObserverResult)
+              return result[key as keyof QueryObserverResult]
+            },
+          })
         })
-      })
+      }
     }
   }
 
