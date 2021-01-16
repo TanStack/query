@@ -282,6 +282,36 @@ describe('query', () => {
     expect(isCancelledError(error)).toBe(true)
   })
 
+  test('should not error if reset while loading', async () => {
+    const key = queryKey()
+
+    const queryFn = jest.fn()
+
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+      throw new Error()
+    })
+
+    queryClient.fetchQuery(key, queryFn, {
+      retry: 3,
+      retryDelay: 10,
+    })
+
+    // Ensure the query is loading
+    const query = queryCache.find(key)!
+    expect(query.state.status).toBe('loading')
+
+    // Reset the query while it is loading
+    query.reset()
+
+    await sleep(100)
+
+    // The query should
+    expect(queryFn).toHaveBeenCalledTimes(1) // have been called,
+    expect(query.state.error).toBe(null) // not have an error, and
+    expect(query.state.status).toBe('idle') // not be loading any longer
+  })
+
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
