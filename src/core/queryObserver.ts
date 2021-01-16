@@ -448,33 +448,26 @@ export class QueryObserver<
     prevResult: QueryObserverResult,
     result: QueryObserverResult
   ): boolean {
-    const {
-      notifyOnChangeProps,
-      notifyOnChangePropsExclusions,
-      notifyOnChangeTracked,
-    } = this.options
+    const { notifyOnChangeProps, notifyOnChangePropsExclusions } = this.options
 
     if (prevResult === result) {
       return false
     }
 
-    if (
-      !notifyOnChangeProps &&
-      !notifyOnChangePropsExclusions &&
-      !notifyOnChangeTracked
-    ) {
+    if (!notifyOnChangeProps && !notifyOnChangePropsExclusions) {
       return true
     }
 
     const keys = Object.keys(result)
-    const includedProps = notifyOnChangeProps
-      ? notifyOnChangeProps.concat(this.trackedProps)
-      : this.trackedProps
+    const includedProps =
+      notifyOnChangeProps === 'tracked'
+        ? this.trackedProps
+        : notifyOnChangeProps
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i] as keyof QueryObserverResult
       const changed = prevResult[key] !== result[key]
-      const isIncluded = includedProps.some(x => x === key)
+      const isIncluded = includedProps?.some(x => x === key)
       const isExcluded = notifyOnChangePropsExclusions?.some(x => x === key)
 
       if (changed) {
@@ -482,7 +475,7 @@ export class QueryObserver<
           continue
         }
 
-        if ((!notifyOnChangeProps && !notifyOnChangeTracked) || isIncluded) {
+        if (!notifyOnChangeProps || isIncluded) {
           return true
         }
       }

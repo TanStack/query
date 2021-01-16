@@ -743,7 +743,7 @@ describe('useQuery', () => {
 
     function Page() {
       const state = useQuery(key, () => 'test', {
-        notifyOnChangeTracked: true,
+        notifyOnChangeProps: 'tracked',
       })
 
       states.push(state)
@@ -779,7 +779,7 @@ describe('useQuery', () => {
 
     function Page() {
       const state = useQuery(key, () => 'test', {
-        notifyOnChangeTracked: true,
+        notifyOnChangeProps: 'tracked',
       })
 
       states.push(state)
