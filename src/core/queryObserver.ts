@@ -55,7 +55,7 @@ export class QueryObserver<
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private trackedProps!: Array<keyof QueryObserverResult>
-  private trackedResult!: QueryObserverResult<TData, TError>
+  private trackedCurrentResult!: QueryObserverResult<TData, TError>
 
   constructor(
     client: QueryClient,
@@ -215,8 +215,8 @@ export class QueryObserver<
     return this.currentResult
   }
 
-  getTrackedResult(): QueryObserverResult<TData, TError> {
-    return this.trackedResult
+  getTrackedCurrentResult(): QueryObserverResult<TData, TError> {
+    return this.trackedCurrentResult
   }
 
   getNextResult(
@@ -505,10 +505,10 @@ export class QueryObserver<
           this.trackedProps.push(prop)
         }
       }
-      this.trackedResult = {} as QueryObserverResult<TData, TError>
+      this.trackedCurrentResult = {} as QueryObserverResult<TData, TError>
 
       Object.keys(result).forEach(key => {
-        Object.defineProperty(this.trackedResult, key, {
+        Object.defineProperty(this.trackedCurrentResult, key, {
           configurable: false,
           enumerable: true,
           get() {
