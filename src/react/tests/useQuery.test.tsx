@@ -814,6 +814,38 @@ describe('useQuery', () => {
     expect(states[2]).toMatchObject({ data: 'test' })
   })
 
+  it('should always re-render if we are tracking props but not using any', async () => {
+    const key = queryKey()
+    let renderCount = 0
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        notifyOnChangeProps: 'tracked',
+      })
+
+      states.push(state)
+
+      React.useEffect(() => {
+        renderCount++
+      }, [state])
+
+      return (
+        <div>
+          <h1>hello</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => renderCount > 1)
+    expect(renderCount).toBe(2)
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
   it('should be able to remove a query', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []

@@ -471,7 +471,11 @@ export class QueryObserver<
           continue
         }
 
-        if (!notifyOnChangeProps || isIncluded) {
+        if (
+          !notifyOnChangeProps ||
+          isIncluded ||
+          (notifyOnChangeProps === 'tracked' && this.trackedProps.length === 0)
+        ) {
           return true
         }
       }
