@@ -772,6 +772,37 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
+  it('should not re-render if a tracked prop changes, but it was excluded', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => 'test', {
+        notifyOnChangeProps: 'tracked',
+        notifyOnChangePropsExclusions: ['data'],
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <h1>{state.data ?? 'null'}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('null'))
+    expect(states.length).toBe(1)
+    expect(states[0]).toMatchObject({ data: undefined })
+
+    await queryClient.refetchQueries(key)
+    await waitFor(() => rendered.getByText('null'))
+    expect(states.length).toBe(1)
+    expect(states[0]).toMatchObject({ data: undefined })
+  })
+
   it('should return the referentially same object if nothing changes between fetches', async () => {
     const key = queryKey()
     let renderCount = 0
