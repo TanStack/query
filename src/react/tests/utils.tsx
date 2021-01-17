@@ -4,7 +4,16 @@ import React from 'react'
 import { QueryClient, QueryClientProvider } from '../..'
 
 export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
-  return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+  const { rerender, ...result } = render(
+    <QueryClientProvider client={client}>{ui}</QueryClientProvider>
+  )
+  return {
+    ...result,
+    rerender: (rerenderUi: React.ReactElement) =>
+      rerender(
+        <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>
+      ),
+  }
 }
 
 export function mockVisibilityState(value: string) {

@@ -368,7 +368,8 @@ export class QueryObserver<
     if (
       this.options.keepPreviousData &&
       !state.dataUpdateCount &&
-      this.previousQueryResult?.isSuccess
+      this.previousQueryResult?.isSuccess &&
+      status !== 'error'
     ) {
       data = this.previousQueryResult.data
       dataUpdatedAt = this.previousQueryResult.dataUpdatedAt
