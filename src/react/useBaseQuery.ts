@@ -2,7 +2,6 @@ import React from 'react'
 
 import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
-import { QueryObserverResult } from '../core/types'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
@@ -59,23 +58,12 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
   }
 
   const currentResult = observer.getCurrentResult()
-
-  // Remember latest result to prevent redundant renders
-  const latestResultRef = React.useRef(currentResult)
-  latestResultRef.current = currentResult
-
-  const [, rerender] = React.useState({})
+  const [, setCurrentResult] = React.useState(currentResult)
 
   // Subscribe to the observer
   React.useEffect(() => {
     errorResetBoundary.clearReset()
-    return observer.subscribe(
-      notifyManager.batchCalls((result: QueryObserverResult) => {
-        if (result !== latestResultRef.current) {
-          rerender({})
-        }
-      })
-    )
+    return observer.subscribe(notifyManager.batchCalls(setCurrentResult))
   }, [observer, errorResetBoundary])
 
   // Handle suspense

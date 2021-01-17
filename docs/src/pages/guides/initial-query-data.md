@@ -6,7 +6,7 @@ title: Initial Query Data
 There are many ways to supply initial data for a query to the cache before you need it:
 
 - Declaratively:
-  - Provide `initialData` to a query to prepopulate the its cache if empty
+  - Provide `initialData` to a query to prepopulate its cache if empty
 - Imperatively:
   - [Prefetch the data using `queryClient.prefetchQuery`](../prefetching)
   - [Manually place the data into the cache using `queryClient.setQueryData`](../prefetching)
@@ -44,7 +44,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 
   ```js
   function Todos() {
-    // Show initialTodos immeidately, but won't refetch until another interaction event is encountered after 1000 ms
+    // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
     const result = useQuery('todos', () => fetch('/todos'), {
       initialData: initialTodos,
       staleTime: 1000,

@@ -74,7 +74,7 @@ export const LayoutDocs = props => {
           </Sticky>
         )}
         <Seo
-          title={title || props.meta.title}
+          title={props.meta.title || title}
           description={props.meta.description}
         />
         <div className="block">

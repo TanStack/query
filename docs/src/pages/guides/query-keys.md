@@ -66,7 +66,7 @@ useQuery(['todos', undefined, page, status], ...)
 Since query keys uniquely describe the data they are fetching, they should include any variables you use in your query function that **change**. For example:
 
 ```js
-function Todos({ completed }) {
+function Todos({ todoId }) {
   const result = useQuery(['todos', todoId], () => fetchTodoById(todoId))
 }
 ```

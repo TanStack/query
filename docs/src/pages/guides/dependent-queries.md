@@ -3,7 +3,7 @@ id: dependent-queries
 title: Dependent Queries
 ---
 
-Dependent (or serial) queries depend on previous ones to finish before they can execute. To achive this, it's as easy as using the `enabled` option to tell a query when it is ready to run:
+Dependent (or serial) queries depend on previous ones to finish before they can execute. To achieve this, it's as easy as using the `enabled` option to tell a query when it is ready to run:
 
 ```js
 // Get the user
