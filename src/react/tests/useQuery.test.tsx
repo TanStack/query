@@ -1123,6 +1123,112 @@ describe('useQuery', () => {
     })
   })
 
+  it('should transition to error state when keepPreviousData is set', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+    const states: UseQueryResult<number>[] = []
+
+    function Page({ count }: { count: number }) {
+      const state = useQuery<number, Error>(
+        [key, count],
+        async () => {
+          if (count === 2) {
+            throw new Error('Error test')
+          }
+          return Promise.resolve(count)
+        },
+        {
+          retry: false,
+          keepPreviousData: true,
+        }
+      )
+
+      states.push(state)
+
+      return (
+        <div>
+          <h1>data: {state.data}</h1>
+          <h2>error: {state.error?.message}</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page count={0} />)
+    await waitFor(() => rendered.getByText('data: 0'))
+    act(() => rendered.rerender(<Page count={1} />))
+    await waitFor(() => rendered.getByText('data: 1'))
+    act(() => rendered.rerender(<Page count={2} />))
+    await waitFor(() => rendered.getByText('error: Error test'))
+
+    expect(states.length).toBe(8)
+    // Initial
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      status: 'loading',
+      error: null,
+      isPreviousData: false,
+    })
+    // Fetched
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      status: 'success',
+      error: null,
+      isPreviousData: false,
+    })
+    // rerender Page 1
+    expect(states[2]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      status: 'success',
+      error: null,
+      isPreviousData: true,
+    })
+    // Hook state update
+    expect(states[3]).toMatchObject({
+      data: 0,
+      isFetching: true,
+      status: 'success',
+      error: null,
+      isPreviousData: true,
+    })
+    // New data
+    expect(states[4]).toMatchObject({
+      data: 1,
+      isFetching: false,
+      status: 'success',
+      error: null,
+      isPreviousData: false,
+    })
+    // rerender Page 2
+    expect(states[5]).toMatchObject({
+      data: 1,
+      isFetching: true,
+      status: 'success',
+      error: null,
+      isPreviousData: true,
+    })
+    // Hook state update again
+    expect(states[6]).toMatchObject({
+      data: 1,
+      isFetching: true,
+      status: 'success',
+      error: null,
+      isPreviousData: true,
+    })
+    // Error
+    expect(states[7]).toMatchObject({
+      data: undefined,
+      isFetching: false,
+      status: 'error',
+      isPreviousData: false,
+    })
+    expect(states[7].error).toHaveProperty('message', 'Error test')
+
+    consoleMock.mockRestore()
+  })
+
   it('should not show initial data from next query if keepPreviousData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
