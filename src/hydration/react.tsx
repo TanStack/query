@@ -11,7 +11,8 @@ export function useHydrate(state: unknown, options?: HydrateOptions) {
 
   // Running hydrate again with the same queries is safe,
   // it wont overwrite or initialize existing queries,
-  // relying on useMemo here is only a performance optimization
+  // relying on useMemo here is only a performance optimization.
+  // hydrate can and should be run *during* render here for SSR to work properly
   React.useMemo(() => {
     if (state) {
       hydrate(queryClient, state, optionsRef.current)

@@ -17,7 +17,7 @@ queryClient.invalidateQueries('todos')
 When a query is invalidated with `invalidateQueries`, two things happen:
 
 - It is marked as stale. This stale state overrides any `staleTime` configurations being used in `useQuery` or related hooks
-- If the query is currently being rendered via `useQuery` or related hooks), it will also be refetched in the background
+- If the query is currently being rendered via `useQuery` or related hooks, it will also be refetched in the background
 
 ## Query Matching with `invalidateQueries`
 

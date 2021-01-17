@@ -29,11 +29,11 @@ export function useCustomHook() {
 We can write a test for this as follows:
 
 ```
-const queryCache = new QueryCache();
+const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
-  <ReactQueryCacheProvider queryCache={queryCache}>
+  <QueryClientProvider client={queryClient}>
     {children}
-  </ReactQueryCacheProvider>
+  </QueryClientProvider>
 );
 
 const { result } = renderHook(() => useCustomHook(), { wrapper });
@@ -41,9 +41,9 @@ const { result } = renderHook(() => useCustomHook(), { wrapper });
 expect(result.current).toEqual('Hello');
 ```
 
-Note that we provide a custom wrapper that builds the `QueryCache` and `ReactQueryCacheProvider`. This helps to ensure that our test is completely isolated from any other tests.
+Note that we provide a custom wrapper that builds the `QueryClient` and `QueryClientProvider`. This helps to ensure that our test is completely isolated from any other tests.
 
-It is possible to write this wrapper only once, but if so we need to ensure that the `QueryCache` gets cleared before every test, and that tests don't run in parallel otherwise one test will influence the results of others.
+It is possible to write this wrapper only once, but if so we need to ensure that the `QueryClient` gets cleared before every test, and that tests don't run in parallel otherwise one test will influence the results of others.
 
 ## Testing Network Calls
 
@@ -62,11 +62,11 @@ function useFetchData() {
 We can write a test for this as follows:
 
 ```
-const queryCache = new QueryCache();
+const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
-  <ReactQueryCacheProvider queryCache={queryCache}>
+  <QueryClientProvider client={queryClient}>
     {children}
-  </ReactQueryCacheProvider>
+  </QueryClientProvider>
 );
 
 const expectation = nock('http://example.com')

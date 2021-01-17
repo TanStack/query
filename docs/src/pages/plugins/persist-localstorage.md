@@ -11,15 +11,29 @@ This plugin comes packaged with `react-query` and is available under the `react-
 
 ## Usage
 
-Import the `persistWithLocalStorage` function, and pass it your `QueryClient` instance!
+Import the `persistWithLocalStorage` function, and pass it your `QueryClient` instance (with a `cacheTime` set)!
 
 ```js
 import { persistWithLocalStorage } from 'react-query/persist-localstorage-experimental'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 60 * 24 // 24 hours
+    }
+  }
+})
 
 persistWithLocalStorage(queryClient)
 ```
+
+**IMPORTANT** - for persist to work properly, you need to pass `QueryClient` a `cacheTime` value to override the default during hydration (as shown above).
+
+If it is not set when creating the `QueryClient` instance, it will default to `300000` (5 minutes) for hydration, and local storage will be discarded after 5 minutes of inactivity. This is the default garbage collection behavior.
+
+It should be set as the same value or higher than persistWithLocalStorage's `maxAge` option. E.g. if `maxAge` is 24 hours (the default) then `cacheTime` should be 24 hours or higher. If lower than `maxAge`, garbage collection will kick in and discard the local storage earlier than expected.
+
+You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
 ## How does it work?
 
