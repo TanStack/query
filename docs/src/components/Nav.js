@@ -24,9 +24,18 @@ export const Nav = () => (
         <div className="flex flex-grow items-center justify-between w-3/4 md:w-auto md:justify-end space-x-4 md:space-x-8 h-16">
           <div className="flex space-x-4 md:space-x-8 text-sm md:text-base">
             <div>
+              Docs (
               <Link href="/overview">
-                <a className="leading-6 font-medium">Docs</a>
-              </Link>
+                <a className="leading-6 font-medium">v3</a>
+              </Link>{' '}
+              /{' '}
+              <a
+                href="https://react-query-v2.tanstack.com/docs/overview"
+                className="leading-6 font-medium"
+              >
+                v2
+              </a>
+              )
             </div>
             <div>
               <Link href="/examples/simple">
