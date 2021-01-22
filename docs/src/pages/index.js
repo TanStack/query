@@ -85,6 +85,17 @@ const Home = ({ sponsors }) => {
                       </a>
                     </div>
                   </div>
+                  <div className="mt-5">
+                    <p>
+                      Still using v2? No problem!{' '}
+                      <a
+                        href="https://react-query-v2.tanstack.com/docs/overview"
+                        className="text-blue-600 font-semibold transition-colors duration-150 ease-out"
+                      >
+                        Find the v2 docs here.
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
