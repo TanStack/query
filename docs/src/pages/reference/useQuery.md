@@ -39,7 +39,7 @@ const {
   refetchOnWindowFocus,
   retry,
   retryDelay,
-  select
+  select,
   staleTime,
   structuralSharing,
   suspense,
@@ -109,10 +109,11 @@ const result = useQuery({
   - If set to `true`, the query will refetch on reconnect if the data is stale.
   - If set to `false`, the query will not refetch on reconnect.
   - If set to `"always"`, the query will always refetch on reconnect.
-- `notifyOnChangeProps: string[]`
+- `notifyOnChangeProps: string[] | "tracked"`
   - Optional
   - If set, the component will only re-render if any of the listed properties change.
   - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.
+  - If set to `"tracked"`, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
 - `notifyOnChangePropsExclusions: string[]`
   - Optional
   - If set, the component will not re-render if any of the listed properties change.

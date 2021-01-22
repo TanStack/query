@@ -54,6 +54,8 @@ export class QueryObserver<
   private initialErrorUpdateCount: number
   private staleTimeoutId?: number
   private refetchIntervalId?: number
+  private trackedProps!: Array<keyof QueryObserverResult>
+  private trackedCurrentResult!: QueryObserverResult<TData, TError>
 
   constructor(
     client: QueryClient,
@@ -65,6 +67,7 @@ export class QueryObserver<
     this.options = options
     this.initialDataUpdateCount = 0
     this.initialErrorUpdateCount = 0
+    this.trackedProps = []
     this.bindMethods()
     this.setOptions(options)
   }
@@ -206,6 +209,10 @@ export class QueryObserver<
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
     return this.currentResult
+  }
+
+  getTrackedCurrentResult(): QueryObserverResult<TData, TError> {
+    return this.trackedCurrentResult
   }
 
   getNextResult(
@@ -449,11 +456,15 @@ export class QueryObserver<
     }
 
     const keys = Object.keys(result)
+    const includedProps =
+      notifyOnChangeProps === 'tracked'
+        ? this.trackedProps
+        : notifyOnChangeProps
 
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i] as keyof QueryObserverResult
       const changed = prevResult[key] !== result[key]
-      const isIncluded = notifyOnChangeProps?.some(x => x === key)
+      const isIncluded = includedProps?.some(x => x === key)
       const isExcluded = notifyOnChangePropsExclusions?.some(x => x === key)
 
       if (changed) {
@@ -461,7 +472,11 @@ export class QueryObserver<
           continue
         }
 
-        if (!notifyOnChangeProps || isIncluded) {
+        if (
+          !notifyOnChangeProps ||
+          isIncluded ||
+          (notifyOnChangeProps === 'tracked' && this.trackedProps.length === 0)
+        ) {
           return true
         }
       }
@@ -479,6 +494,26 @@ export class QueryObserver<
     // Only update if something has changed
     if (!shallowEqualObjects(result, this.currentResult)) {
       this.currentResult = result
+
+      if (this.options.notifyOnChangeProps === 'tracked') {
+        const addTrackedProps = (prop: keyof QueryObserverResult) => {
+          if (!this.trackedProps.includes(prop)) {
+            this.trackedProps.push(prop)
+          }
+        }
+        this.trackedCurrentResult = {} as QueryObserverResult<TData, TError>
+
+        Object.keys(result).forEach(key => {
+          Object.defineProperty(this.trackedCurrentResult, key, {
+            configurable: false,
+            enumerable: true,
+            get() {
+              addTrackedProps(key as keyof QueryObserverResult)
+              return result[key as keyof QueryObserverResult]
+            },
+          })
+        })
+      }
     }
   }
 

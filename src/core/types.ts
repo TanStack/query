@@ -136,8 +136,9 @@ export interface QueryObserverOptions<
   /**
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
+   * When set to `tracked`, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
    */
-  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult>
+  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'tracked'
   /**
    * If set, the component will not re-render if any of the listed properties change.
    */
