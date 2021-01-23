@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.9.7",
-    "axios": "0.19.2",
+    "axios": "^0.21.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-query": "^3.5.0",

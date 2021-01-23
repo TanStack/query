@@ -7,7 +7,7 @@
     "eject": "rescripts eject"
   },
   "dependencies": {
-    "axios": "0.19.2",
+    "axios": "^0.21.1",
     "graphql": "^15.3.0",
     "graphql-request": "^3.1.0",
     "react": "^16.8.6",
