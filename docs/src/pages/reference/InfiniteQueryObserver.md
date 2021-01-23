@@ -23,4 +23,4 @@ const unsubscribe = observer.subscribe(result => {
 
 **Options**
 
-The options for the `InfiniteQueryObserver` are exactly the same as those of [`useInfiniteQuery`](#useinfinitequery).
+The options for the `InfiniteQueryObserver` are exactly the same as those of [`useInfiniteQuery`](/reference/useInfiniteQuery).
