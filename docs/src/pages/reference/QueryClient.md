@@ -228,8 +228,8 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 ```js
 await queryClient.invalidateQueries('posts', {
   exact,
-  refetchActive = true,
-  refetchInactive = false
+  refetchActive: true,
+  refetchInactive: false
 }, { throwOnError })
 ```
 
