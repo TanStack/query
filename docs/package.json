@@ -20,7 +20,6 @@
     "@next/mdx": "^9.5.3",
     "@next/plugin-google-analytics": "^9.5.3",
     "@reactions/component": "^2.0.2",
-    "@visx/hierarchy": "^1.0.0",
     "@visx/responsive": "^1.3.0",
     "@zeit/fetch": "^6.0.0",
     "@zeit/react-jsx-parser": "^2.0.0",

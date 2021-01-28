@@ -1,5 +1,5 @@
 import * as React from 'react'
-import axios from 'axios'
+import { ParentSize } from '@visx/responsive'
 import Head from 'next/head'
 import Link from 'next/link'
 
@@ -12,21 +12,6 @@ import { Nav } from '../components/Nav'
 import { Footer } from '../components/Footer'
 import { ClientsMarquee } from '../components/clients/ClientsMarquee'
 import { Seo } from '../components/Seo'
-import SponsorPack from '../components/SponsorPack'
-
-export const getStaticProps = async () => {
-  const {
-    data: { sponsors, tiers },
-  } = await axios.get('https://tanstack.com/api/github-sponsors')
-
-  return {
-    props: {
-      sponsors,
-      tiers,
-    },
-    revalidate: 60, // In seconds
-  }
-}
 
 const Home = ({ sponsors }) => {
   return (
@@ -246,8 +231,22 @@ const Home = ({ sponsors }) => {
             <h3 className="text-center text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 lg:leading-none mt-8">
               Sponsors
             </h3>
-            <div className="py-4 flex flex-wrap">
-              <SponsorPack sponsors={sponsors} height={700} />
+            <div className="py-4 flex flex-wrap max-w-screen-md mx-auto">
+              <ParentSize>
+                {({ width }) => {
+                  return (
+                    <iframe
+                      title="sponsors"
+                      src="https://tanstack.com/sponsors-embed"
+                      style={{
+                        width: width,
+                        height: width,
+                        overflow: 'hidden',
+                      }}
+                    />
+                  )
+                }}
+              </ParentSize>
             </div>
             <div className="text-center mb-8">
               <a
