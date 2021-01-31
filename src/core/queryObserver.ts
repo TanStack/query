@@ -406,10 +406,18 @@ export class QueryObserver<
       typeof data === 'undefined' &&
       status === 'loading'
     ) {
-      const placeholderData =
+      let placeholderData : TData | undefined;
+
+      // Use the previous result data if exists instead of readding placeholder data
+      if(this.currentResult && typeof this.currentResult.data !== 'undefined') {
+        placeholderData = this.currentResult.data
+      } else {
+        placeholderData =
         typeof this.options.placeholderData === 'function'
           ? (this.options.placeholderData as PlaceholderDataFunction<TData>)()
           : this.options.placeholderData
+      }
+
       if (typeof placeholderData !== 'undefined') {
         status = 'success'
         data = placeholderData

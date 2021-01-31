@@ -329,4 +329,29 @@ describe('queryObserver', () => {
     expect(results[0].data).toBe('data')
     unsubscribe()
   })
+
+  test('should only call placeholder data once for relevant data', async () => {
+    const key = queryKey()
+    const placeholderData = jest.fn(() => 'placeholder');
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData,
+    })
+
+    expect(observer.getCurrentResult()).toMatchObject({
+      status: 'success',
+      data: 'placeholder',
+    })
+
+    const results: QueryObserverResult<unknown>[] = []
+
+    const unsubscribe = observer.subscribe(x => {
+      results.push(x)
+    })
+
+    await sleep(10)
+    expect(placeholderData).toBeCalledTimes(1)
+    unsubscribe()
+  })
 })
