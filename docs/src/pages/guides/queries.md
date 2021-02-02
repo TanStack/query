@@ -37,7 +37,7 @@ The `result` object contains a few very important states you'll need to be aware
 - `isSuccess` or `status === 'success'` - The query was successful and data is available
 - `isIdle` or `status === 'idle'` - The query is currently disabled (you'll learn more about this in a bit)
 
-Beyond those primary state, more information is available depending on the state the query:
+Beyond those primary states, more information is available depending on the state of the query:
 
 - `error` - If the query is in an `isError` state, the error is available via the `error` property.
 - `data` - If the query is in a `success` state, the data is available via the `data` property.
