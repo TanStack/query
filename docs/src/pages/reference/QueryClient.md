@@ -185,7 +185,7 @@ queryClient.setQueryData(queryKey, updater)
 
 **Options**
 
-- `queryKey: QueryKey` [Query Keys](./guides/query-keys)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 - `updater: unknown | (oldData: TData | undefined) => TData`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
