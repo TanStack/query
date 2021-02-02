@@ -144,7 +144,7 @@ export function matchQuery(
 ): boolean {
   const {
     active,
-    exact,
+    exact = true,
     fetching,
     inactive,
     predicate,
