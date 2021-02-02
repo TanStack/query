@@ -14,7 +14,7 @@ const results = useQueries([
 
 **Options**
 
-The `useQueries` hook accepts an array with query option objects identical to the [`useQuery` hook](#usequery).
+The `useQueries` hook accepts an array with query option objects identical to the [`useQuery` hook](/reference/useQuery).
 
 **Returns**
 
