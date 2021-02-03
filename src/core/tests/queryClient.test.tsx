@@ -77,6 +77,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
         retry: false,
+        enabled: false,
       })
       const { status } = await observer.refetch()
       expect(status).toBe('error')

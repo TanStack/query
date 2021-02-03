@@ -333,6 +333,34 @@ describe('useQuery', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
 
+  it('should call onSuccess after a query has been refetched', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 10)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(50)
+    expect(states.length).toBe(4)
+    expect(onSuccess).toHaveBeenCalledTimes(2)
+  })
+
   it('should call onSuccess after a disabled query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -1794,11 +1822,13 @@ describe('useQuery', () => {
     unsubscribe()
 
     // 1. Subscribe observer
-    // 2. Query init
-    // 3. Query fetch
-    // 4. Query stale
-    // 5. Unsubscribe observer
-    expect(fn).toHaveBeenCalledTimes(5)
+    // 2. Query loading
+    // 3. Observer loading
+    // 4. Query success
+    // 5. Observer success
+    // 6. Query stale
+    // 7. Unsubscribe observer
+    expect(fn).toHaveBeenCalledTimes(7)
   })
 
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
@@ -1902,6 +1932,38 @@ describe('useQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     expect(queryCache.find(key)!.options.queryFn).toBe(queryFn1)
+  })
+
+  it('should render correct states even in case of useEffect triggering delays', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    const originalUseEffect = React.useEffect
+
+    // Try to simulate useEffect timing delay
+    React.useEffect = (...args: any[]) => {
+      originalUseEffect(() => {
+        setTimeout(() => {
+          args[0]()
+        }, 10)
+      }, args[1])
+    }
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { staleTime: Infinity })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+    queryClient.setQueryData(key, 'data')
+    await sleep(50)
+
+    React.useEffect = originalUseEffect
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ status: 'loading' })
+    expect(states[1]).toMatchObject({ status: 'success' })
   })
 
   it('should batch re-renders', async () => {
