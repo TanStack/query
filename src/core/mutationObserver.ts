@@ -116,7 +116,8 @@ export class MutationObserver<
 
     this.currentMutation = this.client.getMutationCache().build(this.client, {
       ...this.options,
-      variables: variables ?? this.options.variables,
+      variables:
+        typeof variables !== 'undefined' ? variables : this.options.variables,
     })
 
     this.currentMutation.addObserver(this)
