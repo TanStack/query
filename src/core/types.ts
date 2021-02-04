@@ -216,7 +216,9 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchOptions extends ResultOptions {}
+export interface RefetchOptions extends ResultOptions {
+  cancelRefetch?: boolean;
+}
 
 export interface InvalidateQueryFilters extends QueryFilters {
   refetchActive?: boolean

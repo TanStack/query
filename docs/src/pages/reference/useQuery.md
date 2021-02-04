@@ -208,8 +208,9 @@ const result = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: (options: { throwOnError: boolean }) => Promise<UseQueryResult>`
+- `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
+  - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
 - `remove: () => void`
   - A function to remove the query from the cache.
