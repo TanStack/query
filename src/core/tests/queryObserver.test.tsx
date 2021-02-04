@@ -49,6 +49,24 @@ describe('queryObserver', () => {
     expect(results[2]).toMatchObject({ data: 2, status: 'success' })
   })
 
+  test('should notify when the query has updated before subscribing', async () => {
+    const key = queryKey()
+    const results: QueryObserverResult[] = []
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 1,
+      staleTime: Infinity,
+    })
+    queryClient.setQueryData(key, 2)
+    const unsubscribe = observer.subscribe(result => {
+      results.push(result)
+    })
+    await sleep(1)
+    unsubscribe()
+    expect(results.length).toBe(1)
+    expect(results[0]).toMatchObject({ data: 2, status: 'success' })
+  })
+
   test('should be able to fetch with a selector', async () => {
     const key = queryKey()
     const observer = new QueryObserver(queryClient, {

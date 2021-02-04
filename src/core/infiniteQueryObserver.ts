@@ -98,11 +98,9 @@ export class InfiniteQueryObserver<
     })
   }
 
-  protected getNewResult(
-    willFetch?: boolean
-  ): InfiniteQueryObserverResult<TData, TError> {
+  protected getNewResult(): InfiniteQueryObserverResult<TData, TError> {
     const { state } = this.getCurrentQuery()
-    const result = super.getNewResult(willFetch)
+    const result = super.getNewResult()
     return {
       ...result,
       fetchNextPage: this.fetchNextPage,
