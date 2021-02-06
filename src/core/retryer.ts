@@ -6,6 +6,8 @@ import { functionalUpdate, sleep } from './utils'
 
 interface RetryerConfig<TData = unknown, TError = unknown> {
   fn: () => TData | Promise<TData>
+  onError?: (error: TError) => void
+  onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
   onContinue?: () => void
@@ -88,15 +90,21 @@ export class Retryer<TData = unknown, TError = unknown> {
     })
 
     const resolve = (value: any) => {
-      this.isResolved = true
-      continueFn?.()
-      promiseResolve(value)
+      if (!this.isResolved) {
+        this.isResolved = true
+        config.onSuccess?.(value)
+        continueFn?.()
+        promiseResolve(value)
+      }
     }
 
     const reject = (value: any) => {
-      this.isResolved = true
-      continueFn?.()
-      promiseReject(value)
+      if (!this.isResolved) {
+        this.isResolved = true
+        config.onError?.(value)
+        continueFn?.()
+        promiseReject(value)
+      }
     }
 
     const pause = () => {
@@ -129,13 +137,15 @@ export class Retryer<TData = unknown, TError = unknown> {
 
       // Create callback to cancel this fetch
       cancelFn = cancelOptions => {
-        reject(new CancelledError(cancelOptions))
+        if (!this.isResolved) {
+          reject(new CancelledError(cancelOptions))
 
-        // Cancel transport if supported
-        if (isCancelable(promiseOrValue)) {
-          try {
-            promiseOrValue.cancel()
-          } catch {}
+          // Cancel transport if supported
+          if (isCancelable(promiseOrValue)) {
+            try {
+              promiseOrValue.cancel()
+            } catch {}
+          }
         }
       }
 

@@ -135,7 +135,7 @@ export class Query<
   private cache: QueryCache
   private promise?: Promise<TData>
   private gcTimeout?: number
-  private retryer?: Retryer<unknown, TError>
+  private retryer?: Retryer<TData, TError>
   private observers: QueryObserver<any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData>
 
@@ -387,28 +387,21 @@ export class Query<
 
     // Try to fetch the data
     this.retryer = new Retryer({
-      fn: context.fetchFn,
-      onFail: () => {
-        this.dispatch({ type: 'failed' })
-      },
-      onPause: () => {
-        this.dispatch({ type: 'pause' })
-      },
-      onContinue: () => {
-        this.dispatch({ type: 'continue' })
-      },
-      retry: context.options.retry,
-      retryDelay: context.options.retryDelay,
-    })
+      fn: context.fetchFn as () => TData,
+      onSuccess: data => {
+        this.setData(data as TData)
 
-    this.promise = this.retryer.promise
-      .then(data => this.setData(data as TData))
-      .catch(error => {
-        // Set error state if needed
+        // Remove query after fetching if cache time is 0
+        if (this.cacheTime === 0) {
+          this.optionalRemove()
+        }
+      },
+      onError: error => {
+        // Optimistically update state if needed
         if (!(isCancelledError(error) && error.silent)) {
           this.dispatch({
             type: 'error',
-            error,
+            error: error as TError,
           })
         }
 
@@ -426,18 +419,21 @@ export class Query<
         if (this.cacheTime === 0) {
           this.optionalRemove()
         }
+      },
+      onFail: () => {
+        this.dispatch({ type: 'failed' })
+      },
+      onPause: () => {
+        this.dispatch({ type: 'pause' })
+      },
+      onContinue: () => {
+        this.dispatch({ type: 'continue' })
+      },
+      retry: context.options.retry,
+      retryDelay: context.options.retryDelay,
+    })
 
-        // Propagate error
-        throw error
-      })
-      .then(data => {
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
-        }
-
-        return data
-      })
+    this.promise = this.retryer.promise
 
     return this.promise
   }
