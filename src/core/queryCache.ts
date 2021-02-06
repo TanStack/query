@@ -109,6 +109,11 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     arg2?: QueryFilters
   ): Query<TQueryFnData, TError, TData> | undefined {
     const [filters] = parseFilterArgs(arg1, arg2)
+
+    if (typeof filters.exact === 'undefined') {
+      filters.exact = true
+    }
+
     return this.queries.find(query => matchQuery(filters, query))
   }
 
