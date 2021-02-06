@@ -49,6 +49,12 @@ export class QueryObserver<
   private currentQuery!: Query<TQueryFnData, TError, TQueryData>
   private currentResult!: QueryObserverResult<TData, TError>
   private currentResultState?: QueryState<TQueryData, TError>
+  private previousOptions?: QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData
+  >
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private initialDataUpdateCount: number
   private initialErrorUpdateCount: number
@@ -155,8 +161,7 @@ export class QueryObserver<
   setOptions(
     options?: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>
   ): void {
-    const prevOptions = this.options
-
+    this.previousOptions = this.options
     this.options = this.client.defaultQueryObserverOptions(options)
 
     if (
@@ -168,39 +173,49 @@ export class QueryObserver<
 
     // Keep previous query key if the user does not supply one
     if (!this.options.queryKey) {
-      this.options.queryKey = prevOptions.queryKey
+      this.options.queryKey = this.previousOptions.queryKey
     }
 
     const didUpdateQuery = this.updateQuery()
 
     let optionalFetch
+    let updateResult
     let updateStaleTimeout
     let updateRefetchInterval
 
-    // If we subscribed to a new query, optionally fetch and update intervals
+    // If we subscribed to a new query, optionally fetch and update result and timers
     if (didUpdateQuery) {
       optionalFetch = true
+      updateResult = true
       updateStaleTimeout = true
       updateRefetchInterval = true
     }
 
     // Optionally fetch if the query became enabled
-    if (this.options.enabled !== false && prevOptions.enabled === false) {
+    if (
+      this.options.enabled !== false &&
+      this.previousOptions.enabled === false
+    ) {
       optionalFetch = true
+    }
+
+    // Update result if the select function changed
+    if (this.options.select !== this.previousOptions.select) {
+      updateResult = true
     }
 
     // Update stale interval if needed
     if (
-      this.options.enabled !== prevOptions.enabled ||
-      this.options.staleTime !== prevOptions.staleTime
+      this.options.enabled !== this.previousOptions.enabled ||
+      this.options.staleTime !== this.previousOptions.staleTime
     ) {
       updateStaleTimeout = true
     }
 
     // Update refetch interval if needed
     if (
-      this.options.enabled !== prevOptions.enabled ||
-      this.options.refetchInterval !== prevOptions.refetchInterval
+      this.options.enabled !== this.previousOptions.enabled ||
+      this.options.refetchInterval !== this.previousOptions.refetchInterval
     ) {
       updateRefetchInterval = true
     }
@@ -212,8 +227,7 @@ export class QueryObserver<
       }
     }
 
-    // Update result when subscribing to a new query
-    if (didUpdateQuery) {
+    if (updateResult) {
       this.updateResult()
     }
 
@@ -399,8 +413,12 @@ export class QueryObserver<
     }
     // Select data if needed
     else if (this.options.select && typeof state.data !== 'undefined') {
-      // Use the previous select result if the query data did not change
-      if (this.currentResult && state.data === this.currentResultState?.data) {
+      // Use the previous select result if the query data and select function did not change
+      if (
+        this.currentResult &&
+        state.data === this.currentResultState?.data &&
+        this.options.select === this.previousOptions?.select
+      ) {
         data = this.currentResult.data
       } else {
         data = this.options.select(state.data)
