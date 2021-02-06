@@ -1,11 +1,14 @@
 import React from 'react'
 
+import { QueryObserverResult } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
+import { useIsMounted } from './useIsMounted'
 
 export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
+  const isMounted = useIsMounted()
   const queryClient = useQueryClient()
 
   // Create queries observer
@@ -25,8 +28,15 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
 
   // Subscribe to the observer
   React.useEffect(
-    () => observer.subscribe(notifyManager.batchCalls(setCurrentResult)),
-    [observer]
+    () =>
+      observer.subscribe(
+        notifyManager.batchCalls((result: QueryObserverResult[]) => {
+          if (isMounted()) {
+            setCurrentResult(result)
+          }
+        })
+      ),
+    [observer, isMounted]
   )
 
   return currentResult
