@@ -153,6 +153,25 @@ describe('queryClient', () => {
     })
   })
 
+  describe('getQueryData', () => {
+    test('should return the query data if the query is found', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(queryClient.getQueryData([key, 'id'])).toBe('bar')
+    })
+
+    test('should return undefined if the query is not found', () => {
+      const key = queryKey()
+      expect(queryClient.getQueryData(key)).toBeUndefined()
+    })
+
+    test('should match exact by default', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(queryClient.getQueryData([key])).toBeUndefined()
+    })
+  })
+
   describe('fetchQuery', () => {
     // https://github.com/tannerlinsley/react-query/issues/652
     test('should not retry by default', async () => {
