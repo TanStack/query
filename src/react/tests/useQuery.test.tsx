@@ -13,6 +13,7 @@ import {
 } from './utils'
 import {
   useQuery,
+  CancelledError,
   QueryClient,
   UseQueryResult,
   QueryCache,
@@ -900,7 +901,7 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => renderCount > 1)
+    await sleep(10)
     expect(renderCount).toBe(2)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -1051,7 +1052,14 @@ describe('useQuery', () => {
     queryClient.setQueryData(key, 'set')
 
     function Page() {
-      const result = useQuery(key, () => 'fetched', { enabled: false })
+      const result = useQuery(
+        key,
+        async () => {
+          await sleep(1)
+          return 'fetched'
+        },
+        { enabled: false }
+      )
 
       results.push(result)
 
@@ -1082,7 +1090,8 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(
         key,
-        () => {
+        async () => {
+          await sleep(1)
           count++
           return count
         },
@@ -2214,10 +2223,17 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useQuery(key, () => count++, {
-        staleTime: Infinity,
-        refetchOnWindowFocus: 'always',
-      })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(1)
+          return count++
+        },
+        {
+          staleTime: Infinity,
+          refetchOnWindowFocus: 'always',
+        }
+      )
       states.push(state)
       return null
     }
@@ -2725,7 +2741,10 @@ describe('useQuery', () => {
     queryClient.setQueryData(key, 'prefetched')
 
     function Page() {
-      const state = useQuery(key, () => 'data')
+      const state = useQuery(key, async () => {
+        await sleep(1)
+        return 'data'
+      })
       states.push(state)
       return null
     }
@@ -3269,6 +3288,70 @@ describe('useQuery', () => {
     expect(cancelFn).toHaveBeenCalled()
   })
 
+  it('should refetch when quickly switching to a failed query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    const queryFn = () => {
+      let cancelFn = jest.fn()
+
+      const promise = new Promise<string>((resolve, reject) => {
+        cancelFn = jest.fn(() => reject('Cancelled'))
+        sleep(50).then(() => resolve('OK'))
+      })
+
+      ;(promise as any).cancel = cancelFn
+
+      return promise
+    }
+
+    function Page() {
+      const [id, setId] = React.useState(1)
+      const [hasChanged, setHasChanged] = React.useState(false)
+
+      const state = useQuery([key, id], queryFn)
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setId(prevId => (prevId === 1 ? 2 : 1))
+        setHasChanged(true)
+      }, [hasChanged])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+    expect(states.length).toBe(5)
+    // Load query 1
+    expect(states[0]).toMatchObject({
+      status: 'loading',
+      error: null,
+    })
+    // Load query 2
+    expect(states[1]).toMatchObject({
+      status: 'loading',
+      error: null,
+    })
+    // Load query 1
+    expect(states[2]).toMatchObject({
+      status: 'loading',
+      error: expect.any(CancelledError),
+    })
+    // State update
+    expect(states[3]).toMatchObject({
+      status: 'loading',
+      error: expect.any(CancelledError),
+    })
+    // Loaded query 1
+    expect(states[4]).toMatchObject({
+      status: 'success',
+      error: null,
+    })
+  })
+
   it('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
@@ -3277,7 +3360,8 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(
         key,
-        () => {
+        async () => {
+          await sleep(1)
           count++
           return count
         },
