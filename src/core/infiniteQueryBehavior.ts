@@ -17,6 +17,7 @@ export function infiniteQueryBehavior<
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
         let newPageParams = oldPageParams
+        let cancelled = false
 
         // Get query function
         const queryFn =
@@ -29,6 +30,10 @@ export function infiniteQueryBehavior<
           param?: unknown,
           previous?: boolean
         ): Promise<unknown[]> => {
+          if (cancelled) {
+            return Promise.reject('Cancelled')
+          }
+
           if (typeof param === 'undefined' && !manual && pages.length) {
             return Promise.resolve(pages)
           }
@@ -38,11 +43,7 @@ export function infiniteQueryBehavior<
             pageParam: param,
           }
 
-          let cancelFn: undefined | (() => any)
           const queryFnResult = queryFn(queryFnContext)
-          if ((queryFnResult as any).cancel) {
-            cancelFn = (queryFnResult as any).cancel
-          }
 
           const promise = Promise.resolve(queryFnResult).then(page => {
             newPageParams = previous
@@ -51,15 +52,15 @@ export function infiniteQueryBehavior<
             return previous ? [page, ...pages] : [...pages, page]
           })
 
-          if (cancelFn) {
+          if (isCancelable(queryFnResult)) {
             const promiseAsAny = promise as any
-            promiseAsAny.cancel = cancelFn
+            promiseAsAny.cancel = queryFnResult.cancel
           }
 
           return promise
         }
 
-        let promise
+        let promise: Promise<unknown[]>
 
         // Fetch first page?
         if (!oldPages.length) {
@@ -109,9 +110,13 @@ export function infiniteQueryBehavior<
           pageParams: newPageParams,
         }))
 
-        if (isCancelable(promise)) {
-          const finalPromiseAsAny = finalPromise as any
-          finalPromiseAsAny.cancel = promise.cancel
+        const finalPromiseAsAny = finalPromise as any
+
+        finalPromiseAsAny.cancel = () => {
+          cancelled = true
+          if (isCancelable(promise)) {
+            promise.cancel()
+          }
         }
 
         return finalPromise

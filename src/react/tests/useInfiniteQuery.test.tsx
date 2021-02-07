@@ -15,6 +15,7 @@ import {
   QueryClient,
   QueryCache,
 } from '../..'
+import { CancelledError } from '../../core'
 
 interface Result {
   items: number[]
@@ -717,6 +718,54 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
+    })
+  })
+
+  it('should stop fetching additional pages when the component is unmounted', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+    let fetches = 0
+
+    function List() {
+      const state = useInfiniteQuery(
+        key,
+        async ({ pageParam }) => {
+          fetches++
+          await sleep(50)
+          return Number(pageParam)
+        },
+        {
+          initialData: { pages: [1, 2, 3, 4], pageParams: [1, 2, 3, 4] },
+          getNextPageParam: lastPage => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      return null
+    }
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setShow(false)
+        }, 75)
+      }, [])
+
+      return show ? <List /> : null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(300)
+
+    expect(states.length).toBe(1)
+    expect(fetches).toBe(2)
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      status: 'error',
+      error: expect.any(CancelledError),
     })
   })
 
