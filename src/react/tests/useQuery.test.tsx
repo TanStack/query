@@ -729,6 +729,35 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
+  it('should throw an error when a selector throws', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const error = new Error('Select Error')
+
+    function Page() {
+      const state = useQuery(key, () => ({ name: 'test' }), {
+        select: () => {
+          throw error
+        },
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(consoleMock).toHaveBeenCalledWith(error)
+    expect(states.length).toBe(2)
+
+    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
+    expect(states[1]).toMatchObject({ status: 'error', error })
+
+    consoleMock.mockRestore()
+  })
+
   it('should re-render when dataUpdatedAt changes but data remains the same', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []

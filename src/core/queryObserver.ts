@@ -21,6 +21,7 @@ import type { Query, QueryState, Action, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
+import { getLogger } from './logger'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>
@@ -240,6 +241,9 @@ export class QueryObserver<
         this.updateRefetchInterval()
       }
     }
+
+    // Reset previous options after all code related to option changes has run
+    this.previousOptions = this.options
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
@@ -390,6 +394,8 @@ export class QueryObserver<
     let isPlaceholderData = false
     let data: TData | undefined
     let dataUpdatedAt = state.dataUpdatedAt
+    let error = state.error
+    let errorUpdatedAt = state.errorUpdatedAt
 
     // Optimistically set status to loading if we will start fetching
     if (!this.hasListeners() && this.willFetchOnMount()) {
@@ -421,9 +427,16 @@ export class QueryObserver<
       ) {
         data = this.currentResult.data
       } else {
-        data = this.options.select(state.data)
-        if (this.options.structuralSharing !== false) {
-          data = replaceEqualDeep(this.currentResult?.data, data)
+        try {
+          data = this.options.select(state.data)
+          if (this.options.structuralSharing !== false) {
+            data = replaceEqualDeep(this.currentResult?.data, data)
+          }
+        } catch (selectError) {
+          getLogger().error(selectError)
+          error = selectError
+          errorUpdatedAt = Date.now()
+          status = 'error'
         }
       }
     }
@@ -453,8 +466,8 @@ export class QueryObserver<
       ...getStatusProps(status),
       data,
       dataUpdatedAt,
-      error: state.error,
-      errorUpdatedAt: state.errorUpdatedAt,
+      error,
+      errorUpdatedAt,
       failureCount: state.fetchFailureCount,
       isFetched: state.dataUpdateCount > 0 || state.errorUpdateCount > 0,
       isFetchedAfterMount:
