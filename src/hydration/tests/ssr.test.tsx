@@ -143,7 +143,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(fetchDataError).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
-    await sleep(10)
+    await sleep(50)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
       'ErrorComponent - status:error fetching:false data:undefined'
@@ -208,7 +208,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(0)
     expect(el.innerHTML).toBe(expectedMarkup)
-    await sleep(10)
+    await sleep(50)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(
       'SuccessComponent - status:success fetching:false data:success!'
