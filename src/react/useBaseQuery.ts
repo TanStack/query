@@ -1,21 +1,24 @@
 import React from 'react'
 
-import { QueryObserverResult } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
-import { useIsMounted } from './useIsMounted'
 
 export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
   options: UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData>,
   Observer: typeof QueryObserver
 ) {
-  const isMounted = useIsMounted()
+  const mountedRef = React.useRef(false)
+  const [, forceUpdate] = React.useState(0)
+
   const queryClient = useQueryClient()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
+
+  // Make sure results are optimistically set in fetching state before subscribing or updating options
+  defaultedOptions.optimisticResults = true
 
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {
@@ -42,53 +45,79 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     if (typeof defaultedOptions.staleTime !== 'number') {
       defaultedOptions.staleTime = 1000
     }
+  }
 
+  if (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) {
     // Prevent retrying failed query if the error boundary has not been reset yet
     if (!errorResetBoundary.isReset()) {
       defaultedOptions.retryOnMount = false
     }
   }
 
-  // Create query observer
-  const observerRef = React.useRef<QueryObserver<any, any, any, any>>()
-  const observer =
-    observerRef.current || new Observer(queryClient, defaultedOptions)
-  observerRef.current = observer
+  const obsRef = React.useRef<QueryObserver<any, any>>()
 
-  // Update options
-  if (observer.hasListeners()) {
-    observer.setOptions(defaultedOptions)
+  if (!obsRef.current) {
+    obsRef.current = new Observer(queryClient, defaultedOptions)
   }
 
-  const currentResult = observer.getCurrentResult()
-  const [, setCurrentResult] = React.useState(currentResult)
+  let result = obsRef.current.getOptimisticResult(defaultedOptions)
 
-  // Subscribe to the observer
   React.useEffect(() => {
-    errorResetBoundary.clearReset()
-    return observer.subscribe(
-      notifyManager.batchCalls((result: QueryObserverResult) => {
-        if (isMounted()) {
-          setCurrentResult(result)
+    mountedRef.current = true
+
+    const unsubscribe = obsRef.current!.subscribe(
+      notifyManager.batchCalls(() => {
+        errorResetBoundary.clearReset()
+        if (mountedRef.current) {
+          forceUpdate(x => x + 1)
         }
       })
     )
-  }, [observer, errorResetBoundary, isMounted])
+
+    // Update result to make sure we did not miss any query updates
+    // between creating the observer and subscribing to it.
+    obsRef.current!.updateResult()
+
+    return () => {
+      mountedRef.current = false
+      unsubscribe()
+    }
+  }, [errorResetBoundary])
+
+  React.useEffect(() => {
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    obsRef.current!.setOptions(defaultedOptions, { listeners: false })
+  }, [defaultedOptions])
 
   // Handle suspense
-  if (observer.options.suspense || observer.options.useErrorBoundary) {
-    if (observer.options.suspense && currentResult.isLoading) {
-      errorResetBoundary.clearReset()
-      const unsubscribe = observer.subscribe()
-      throw observer.refetch().finally(unsubscribe)
-    }
-
-    if (currentResult.isError) {
-      throw currentResult.error
-    }
+  if (obsRef.current.options.suspense && result.isLoading) {
+    throw queryClient
+      .fetchQuery(defaultedOptions)
+      .then(data => {
+        defaultedOptions.onSuccess?.(data)
+        defaultedOptions.onSettled?.(data, null)
+      })
+      .catch(error => {
+        errorResetBoundary.clearReset()
+        defaultedOptions.onError?.(error)
+        defaultedOptions.onSettled?.(undefined, error)
+      })
   }
 
-  return observer.options.notifyOnChangeProps === 'tracked'
-    ? observer.getTrackedCurrentResult()
-    : currentResult
+  // Handle error boundary
+  if (
+    (obsRef.current.options.suspense ||
+      obsRef.current.options.useErrorBoundary) &&
+    result.isError
+  ) {
+    throw result.error
+  }
+
+  // Handle result property usage tracking
+  if (obsRef.current.options.notifyOnChangeProps === 'tracked') {
+    result = obsRef.current.trackResult(result)
+  }
+
+  return result
 }

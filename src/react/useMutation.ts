@@ -9,12 +9,7 @@ import {
   UseMutationOptions,
   UseMutationResult,
 } from './types'
-import {
-  MutationFunction,
-  MutationKey,
-  MutationObserverResult,
-} from '../core/types'
-import { useIsMounted } from './useIsMounted'
+import { MutationFunction, MutationKey } from '../core/types'
 
 // HOOK
 
@@ -69,54 +64,45 @@ export function useMutation<
     | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const isMounted = useIsMounted()
+  const mountedRef = React.useRef(false)
+  const [, forceUpdate] = React.useState(0)
+
   const options = parseMutationArgs(arg1, arg2, arg3)
   const queryClient = useQueryClient()
 
-  // Create mutation observer
-  const observerRef = React.useRef<
-    MutationObserver<TData, TError, TVariables, TContext>
-  >()
-  const observer =
-    observerRef.current || new MutationObserver(queryClient, options)
-  observerRef.current = observer
+  const obsRef = React.useRef<MutationObserver<any, any, any, any>>()
 
-  // Update options
-  if (observer.hasListeners()) {
-    observer.setOptions(options)
+  if (!obsRef.current) {
+    obsRef.current = new MutationObserver(queryClient, options)
+  } else {
+    obsRef.current.setOptions(options)
   }
 
-  const [currentResult, setCurrentResult] = React.useState(() =>
-    observer.getCurrentResult()
-  )
+  const currentResult = obsRef.current.getCurrentResult()
 
-  // Subscribe to the observer
-  React.useEffect(
-    () =>
-      observer.subscribe(
-        notifyManager.batchCalls(
-          (
-            result: MutationObserverResult<TData, TError, TVariables, TContext>
-          ) => {
-            if (isMounted()) {
-              setCurrentResult(result)
-            }
-          }
-        )
-      ),
-    [observer, isMounted]
-  )
+  React.useEffect(() => {
+    mountedRef.current = true
+
+    const unsubscribe = obsRef.current!.subscribe(
+      notifyManager.batchCalls(() => {
+        if (mountedRef.current) {
+          forceUpdate(x => x + 1)
+        }
+      })
+    )
+    return () => {
+      mountedRef.current = false
+      unsubscribe()
+    }
+  }, [])
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TContext>
-  >(
-    (variables, mutateOptions) => {
-      observer.mutate(variables, mutateOptions).catch(noop)
-    },
-    [observer]
-  )
+  >((variables, mutateOptions) => {
+    obsRef.current!.mutate(variables, mutateOptions).catch(noop)
+  }, [])
 
-  if (currentResult.error && observer.options.useErrorBoundary) {
+  if (currentResult.error && obsRef.current.options.useErrorBoundary) {
     throw currentResult.error
   }
 

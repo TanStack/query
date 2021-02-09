@@ -28,15 +28,12 @@ function Todos() {
 
 ### Placeholder Data as a Function
 
-If the process for accessing a query's placeholder data is intensive or just not something you want to perform on every render, you can pass a function as the `placeholderData` value. This function will be executed only once when the query is placeholderized, saving you precious memory and/or CPU:
+If the process for accessing a query's placeholder data is intensive or just not something you want to perform on every render, you can memoize the value or pass a memoized function as the `placeholderData` value:
 
 ```js
 function Todos() {
-  const result = useQuery('todos', () => fetch('/todos'), {
-    placeholderData: () => {
-      return generateFakeTodos()
-    },
-  })
+  const placeholderData = useMemo(() => generateFakeTodos(), [])
+  const result = useQuery('todos', () => fetch('/todos'), { placeholderData })
 }
 ```
 

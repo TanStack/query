@@ -7,7 +7,6 @@ import type {
   MutationObserverResult,
   MutationObserverOptions,
 } from './types'
-import { getStatusProps } from './utils'
 
 // TYPES
 
@@ -132,7 +131,10 @@ export class MutationObserver<
 
     this.currentResult = {
       ...state,
-      ...getStatusProps(state.status),
+      isLoading: state.status === 'loading',
+      isSuccess: state.status === 'success',
+      isError: state.status === 'error',
+      isIdle: state.status === 'idle',
       mutate: this.mutate,
       reset: this.reset,
     }

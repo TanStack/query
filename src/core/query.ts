@@ -260,7 +260,7 @@ export class Query<
   }
 
   onFocus(): void {
-    const observer = this.observers.find(x => x.willFetchOnWindowFocus())
+    const observer = this.observers.find(x => x.shouldFetchOnWindowFocus())
 
     if (observer) {
       observer.refetch()
@@ -271,7 +271,7 @@ export class Query<
   }
 
   onOnline(): void {
-    const observer = this.observers.find(x => x.willFetchOnReconnect())
+    const observer = this.observers.find(x => x.shouldFetchOnReconnect())
 
     if (observer) {
       observer.refetch()
@@ -328,7 +328,7 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData>,
     fetchOptions?: FetchOptions
   ): Promise<TData> {
-    if (this.state.isFetching)
+    if (this.state.isFetching) {
       if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetches
         this.cancel({ silent: true })
@@ -336,6 +336,7 @@ export class Query<
         // Return current promise if we are already fetching
         return this.promise
       }
+    }
 
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
