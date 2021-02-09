@@ -158,11 +158,30 @@ describe('queryObserver', () => {
       select: select2,
     })
     await sleep(1)
+    await observer.refetch()
     unsubscribe()
     expect(count).toBe(2)
-    expect(results.length).toBe(2)
-    expect(results[0]).toMatchObject({ data: { myCount: 1 } })
-    expect(results[1]).toMatchObject({ data: { myCount: 99 } })
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: { myCount: 1 },
+    })
+    expect(results[1]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: { myCount: 99 },
+    })
+    expect(results[2]).toMatchObject({
+      status: 'success',
+      isFetching: true,
+      data: { myCount: 99 },
+    })
+    expect(results[3]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: { myCount: 99 },
+    })
   })
 
   test('should not run the selector again if the data and selector did not change', async () => {
@@ -189,10 +208,25 @@ describe('queryObserver', () => {
       select,
     })
     await sleep(1)
+    await observer.refetch()
     unsubscribe()
     expect(count).toBe(1)
-    expect(results.length).toBe(1)
-    expect(results[0]).toMatchObject({ data: { myCount: 1 } })
+    expect(results.length).toBe(3)
+    expect(results[0]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: { myCount: 1 },
+    })
+    expect(results[1]).toMatchObject({
+      status: 'success',
+      isFetching: true,
+      data: { myCount: 1 },
+    })
+    expect(results[2]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: { myCount: 1 },
+    })
   })
 
   test('should not run the selector again if the data did not change', async () => {
