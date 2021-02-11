@@ -13,7 +13,6 @@ import {
 } from './utils'
 import {
   useQuery,
-  CancelledError,
   QueryClient,
   UseQueryResult,
   QueryCache,
@@ -3353,7 +3352,7 @@ describe('useQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await sleep(100)
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
     // Load query 1
     expect(states[0]).toMatchObject({
       status: 'loading',
@@ -3367,15 +3366,10 @@ describe('useQuery', () => {
     // Load query 1
     expect(states[2]).toMatchObject({
       status: 'loading',
-      error: expect.any(CancelledError),
-    })
-    // State update
-    expect(states[3]).toMatchObject({
-      status: 'loading',
-      error: expect.any(CancelledError),
+      error: null,
     })
     // Loaded query 1
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       status: 'success',
       error: null,
     })
