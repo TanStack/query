@@ -43,7 +43,7 @@ const {
   refetchOnReconnect,
   refetchOnWindowFocus,
   retry,
-  retryOnMount
+  retryOnMount,
   retryDelay,
   select,
   staleTime,
