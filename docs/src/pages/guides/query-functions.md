@@ -36,11 +36,11 @@ While most utilities like `axios` or `graphql-request` automatically throw error
 
 ```js
 useQuery(['todos', todoId], async () => {
-  const { ok, json } = await fetch('/todos/' + todoId)
-  if (!ok) {
+  const response = await fetch('/todos/' + todoId)
+  if (!response.ok) {
     throw new Error('Network response was not ok')
   }
-  return json()
+  return response.json()
 })
 ```
 
