@@ -40,7 +40,7 @@ useQuery(['todos', todoId], async () => {
   if (!response.ok) {
     throw new Error('Network response was not ok')
   }
-  return response
+  return response.json()
 })
 ```
 
