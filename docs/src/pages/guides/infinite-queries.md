@@ -16,6 +16,8 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 - A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `undefined`.
 - The `isFetchingNextPage` and `isFetchingPreviousPage` booleans are now available to distinguish between a background refresh state and a loading more state
 
+> Note: When using options like `initialData` or `select` in your query, make sure when you restructure your data that it still includes `data.pages` and `data.pageParams` properties, otherwise your changes will be overwritten by the query in its return!
+
 ## Example
 
 Let's assume we have an API that returns pages of `projects` 3 at a time based on a `cursor` index along with a cursor that can be used to fetch the next group of projects:
@@ -152,3 +154,19 @@ queryClient.setQueryData('projects', data => ({
   pageParams: data.pageParams.slice(1),
 }))
 ```
+
+Manually removing a single of value from an individual page:
+
+```js
+const newPagesArray = []
+oldPagesArray?.pages.forEach(page => {
+  const newData = page.data.filter(val => val.id !== updatedId)
+  newPagesArray.push({ data: newData, pageParam: page.pageParam })
+})
+queryClient.setQueryData('projects', data => ({
+  pages: newPagesArray,
+  pageParams: data.pageParams,
+}))
+```
+
+Make sure to keep the same data structure of pages and pageParams!
