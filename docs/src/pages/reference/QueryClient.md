@@ -117,7 +117,7 @@ The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQue
 
 ## `queryClient.prefetchQuery`
 
-`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that is will not throw or return any data.
+`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that it will not throw or return any data.
 
 ```js
 await queryClient.prefetchQuery(queryKey, queryFn)
