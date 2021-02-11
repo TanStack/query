@@ -43,6 +43,7 @@ const {
   refetchOnReconnect,
   refetchOnWindowFocus,
   retry,
+  retryOnMount,
   retryDelay,
   select,
   staleTime,
@@ -80,6 +81,8 @@ const result = useQuery({
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to an `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
+- `retryOnMount: boolean`
+  - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
 - `retryDelay: (retryAttempt: number) => number`
   - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
