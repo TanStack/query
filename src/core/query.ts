@@ -129,6 +129,7 @@ export class Query<
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData>
   initialState: QueryState<TData, TError>
+  revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
 
@@ -301,7 +302,7 @@ export class Query<
         // we'll let the query continue so the result can be cached
         if (this.retryer) {
           if (this.retryer.isTransportCancelable) {
-            this.retryer.cancel()
+            this.retryer.cancel({ revert: true })
           } else {
             this.retryer.cancelRetry()
           }
@@ -377,6 +378,9 @@ export class Query<
     if (this.options.behavior?.onFetch) {
       this.options.behavior?.onFetch(context)
     }
+
+    // Store state in case the current fetch needs to be reverted
+    this.revertState = this.state
 
     // Set to fetching state if not already in it
     if (
@@ -530,24 +534,8 @@ export class Query<
       case 'error':
         const error = action.error as unknown
 
-        if (isCancelledError(error) && error.revert) {
-          let previousStatus: QueryStatus
-
-          if (!state.dataUpdatedAt && !state.errorUpdatedAt) {
-            previousStatus = 'idle'
-          } else if (state.dataUpdatedAt > state.errorUpdatedAt) {
-            previousStatus = 'success'
-          } else {
-            previousStatus = 'error'
-          }
-
-          return {
-            ...state,
-            fetchFailureCount: 0,
-            isFetching: false,
-            isPaused: false,
-            status: previousStatus,
-          }
+        if (isCancelledError(error) && error.revert && this.revertState) {
+          return { ...this.revertState }
         }
 
         return {

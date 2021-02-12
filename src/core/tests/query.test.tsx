@@ -247,8 +247,7 @@ describe('query', () => {
     expect(cancel).toHaveBeenCalled()
     expect(query.state).toMatchObject({
       data: undefined,
-      status: 'error',
-      errorUpdateCount: 1,
+      status: 'idle',
     })
   })
 

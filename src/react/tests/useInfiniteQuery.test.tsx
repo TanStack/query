@@ -15,7 +15,6 @@ import {
   QueryClient,
   QueryCache,
 } from '../..'
-import { CancelledError } from '../../core'
 
 interface Result {
   items: number[]
@@ -726,6 +725,8 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
     let fetches = 0
 
+    const initialData = { pages: [1, 2, 3, 4], pageParams: [1, 2, 3, 4] }
+
     function List() {
       const state = useInfiniteQuery(
         key,
@@ -735,7 +736,7 @@ describe('useInfiniteQuery', () => {
           return Number(pageParam)
         },
         {
-          initialData: { pages: [1, 2, 3, 4], pageParams: [1, 2, 3, 4] },
+          initialData,
           getNextPageParam: lastPage => lastPage + 1,
         }
       )
@@ -764,8 +765,9 @@ describe('useInfiniteQuery', () => {
     expect(states.length).toBe(1)
     expect(fetches).toBe(2)
     expect(queryClient.getQueryState(key)).toMatchObject({
-      status: 'error',
-      error: expect.any(CancelledError),
+      data: initialData,
+      status: 'success',
+      error: null,
     })
   })
 
