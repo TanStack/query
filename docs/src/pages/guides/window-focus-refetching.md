@@ -67,15 +67,11 @@ Instead of event listeners on `window`, React Native provides focus information 
 import { AppState } from 'react-native'
 import { focusManager } from 'react-query'
 
-focusManager.setEventListener(setFocus => {
-  const handleAppStateChange = appState => {
-    setFocus(appState === 'active')
-  }
-
-  AppState.addEventListener('change', handleAppStateChange)
+focusManager.setEventListener(handleFocus => {
+  AppState.addEventListener('change', handleFocus)
 
   return () => {
-    AppState.removeEventListener('change', handleAppStateChange)
+   AppState.removeEventListener('change', handleFocus)
   }
 })
 ```
