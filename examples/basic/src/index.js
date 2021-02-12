@@ -9,15 +9,8 @@ import {
   QueryClientProvider,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { persistQueryClient } from "react-query/persistQueryClient-experimental";
-import { createLocalStoragePersistor } from "react-query/createLocalStoragePersistor-experimental";
 
 const queryClient = new QueryClient();
-
-persistQueryClient({
-  queryClient,
-  persistor: createLocalStoragePersistor(),
-});
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
