@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/createLocalStoragePersistor-experimental/index.js",
+  "module": "../es/createLocalStoragePersistor-experimental/index.js",
+  "types": "../types/createLocalStoragePersistor-experimental/index.d.ts"
+}

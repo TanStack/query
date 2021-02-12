@@ -522,7 +522,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 >
                   <Input
                     placeholder="Filter"
-                    value={filter}
+                    value={filter ?? ''}
                     onChange={e => setFilter(e.target.value)}
                     onKeyDown={e => {
                       if (e.key === 'Escape') setFilter('')
