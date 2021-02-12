@@ -13,15 +13,17 @@ const getItem = key => {
 export default function useLocalStorage(key, defaultValue) {
   const [value, setValue] = React.useState()
 
-  useEffect(() => {
+  React.useEffect(() => {
     const initialValue = getItem(key)
 
     if (typeof initialValue === 'undefined' || initialValue === null) {
-      setValue(typeof defaultValue === 'function' ? defaultValue() : defaultValue)
+      setValue(
+        typeof defaultValue === 'function' ? defaultValue() : defaultValue
+      )
     } else {
       setValue(initialValue)
     }
-  }, []);
+  }, [])
 
   const setter = React.useCallback(
     updater => {
