@@ -303,9 +303,14 @@
       "heading": true,
       "routes": [
         {
-          "title": "Persist - LocalStorage (Experimental)",
-          "path": "/plugins/persist-localstorage",
-          "editUrl": "/plugins/persist-localstorage.md"
+          "title": "persistQueryClient (Experimental)",
+          "path": "/plugins/persistQueryClient",
+          "editUrl": "/plugins/persistQueryClient.md"
+        },
+        {
+          "title": "createLocalStoragePersistor (Experimental)",
+          "path": "/plugins/createLocalStoragePersistor",
+          "editUrl": "/plugins/createLocalStoragePersistor.md"
         }
       ]
     },

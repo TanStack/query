@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/persistQueryClient-experimental/index.js",
+  "module": "../es/persistQueryClient-experimental/index.js",
+  "types": "../types/persistQueryClient-experimental/index.d.ts"
+}
