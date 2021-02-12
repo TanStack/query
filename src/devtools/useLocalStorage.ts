@@ -11,13 +11,17 @@ const getItem = key => {
 }
 
 export default function useLocalStorage(key, defaultValue) {
-  const [value, setValue] = React.useState(() => {
-    const val = getItem(key)
-    if (typeof val === 'undefined' || val === null) {
-      return typeof defaultValue === 'function' ? defaultValue() : defaultValue
+  const [value, setValue] = React.useState()
+
+  useEffect(() => {
+    const initialValue = getItem(key)
+
+    if (typeof initialValue === 'undefined' || initialValue === null) {
+      setValue(typeof defaultValue === 'function' ? defaultValue() : defaultValue)
+    } else {
+      setValue(initialValue)
     }
-    return val
-  })
+  }, []);
 
   const setter = React.useCallback(
     updater => {
