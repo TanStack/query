@@ -7,7 +7,6 @@ import type {
   QueryKey,
   QueryKeyHashFunction,
   QueryOptions,
-  QueryStatus,
 } from './types'
 
 // TYPES
@@ -343,16 +342,6 @@ export function sleep(timeout: number): Promise<void> {
   return new Promise(resolve => {
     setTimeout(resolve, timeout)
   })
-}
-
-export function getStatusProps<T extends QueryStatus>(status: T) {
-  return {
-    status,
-    isLoading: status === 'loading',
-    isSuccess: status === 'success',
-    isError: status === 'error',
-    isIdle: status === 'idle',
-  }
 }
 
 /**

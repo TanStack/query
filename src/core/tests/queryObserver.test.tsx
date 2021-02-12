@@ -43,28 +43,11 @@ describe('queryObserver', () => {
     observer.setOptions({ queryKey: key2, queryFn: () => 2 })
     await sleep(1)
     unsubscribe()
-    expect(results.length).toBe(3)
-    expect(results[0]).toMatchObject({ data: 1, status: 'success' })
-    expect(results[1]).toMatchObject({ data: undefined, status: 'loading' })
-    expect(results[2]).toMatchObject({ data: 2, status: 'success' })
-  })
-
-  test('should notify when the query has updated before subscribing', async () => {
-    const key = queryKey()
-    const results: QueryObserverResult[] = []
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      queryFn: () => 1,
-      staleTime: Infinity,
-    })
-    queryClient.setQueryData(key, 2)
-    const unsubscribe = observer.subscribe(result => {
-      results.push(result)
-    })
-    await sleep(1)
-    unsubscribe()
-    expect(results.length).toBe(1)
-    expect(results[0]).toMatchObject({ data: 2, status: 'success' })
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject({ data: undefined, status: 'loading' })
+    expect(results[1]).toMatchObject({ data: 1, status: 'success' })
+    expect(results[2]).toMatchObject({ data: undefined, status: 'loading' })
+    expect(results[3]).toMatchObject({ data: 2, status: 'success' })
   })
 
   test('should be able to fetch with a selector', async () => {
@@ -161,23 +144,28 @@ describe('queryObserver', () => {
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(2)
-    expect(results.length).toBe(4)
+    expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
-      status: 'success',
-      isFetching: false,
-      data: { myCount: 1 },
+      status: 'loading',
+      isFetching: true,
+      data: undefined,
     })
     expect(results[1]).toMatchObject({
       status: 'success',
       isFetching: false,
-      data: { myCount: 99 },
+      data: { myCount: 1 },
     })
     expect(results[2]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: { myCount: 99 },
+    })
+    expect(results[3]).toMatchObject({
       status: 'success',
       isFetching: true,
       data: { myCount: 99 },
     })
-    expect(results[3]).toMatchObject({
+    expect(results[4]).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 99 },
@@ -211,18 +199,23 @@ describe('queryObserver', () => {
     await observer.refetch()
     unsubscribe()
     expect(count).toBe(1)
-    expect(results.length).toBe(3)
+    expect(results.length).toBe(4)
     expect(results[0]).toMatchObject({
+      status: 'loading',
+      isFetching: true,
+      data: undefined,
+    })
+    expect(results[1]).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 1 },
     })
-    expect(results[1]).toMatchObject({
+    expect(results[2]).toMatchObject({
       status: 'success',
       isFetching: true,
       data: { myCount: 1 },
     })
-    expect(results[2]).toMatchObject({
+    expect(results[3]).toMatchObject({
       status: 'success',
       isFetching: false,
       data: { myCount: 1 },
@@ -432,8 +425,8 @@ describe('queryObserver', () => {
     })
 
     expect(observer.getCurrentResult()).toMatchObject({
-      status: 'success',
-      data: 'placeholder',
+      status: 'idle',
+      data: undefined,
     })
 
     const results: QueryObserverResult<unknown>[] = []
@@ -443,7 +436,10 @@ describe('queryObserver', () => {
     })
 
     await sleep(10)
-    expect(results[0].data).toBe('data')
     unsubscribe()
+
+    expect(results.length).toBe(2)
+    expect(results[0]).toMatchObject({ status: 'success', data: 'placeholder' })
+    expect(results[1]).toMatchObject({ status: 'success', data: 'data' })
   })
 })

@@ -42,9 +42,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     options: QueryOptions<TQueryFnData, TError, TData>,
     state?: QueryState<TData, TError>
   ): Query<TQueryFnData, TError, TData> {
-    const hashFn = getQueryKeyHashFn(options)
     const queryKey = options.queryKey!
-    const queryHash = options.queryHash ?? hashFn(queryKey)
+    const queryHash = options.queryHash ?? getQueryKeyHashFn(options)(queryKey)
     let query = this.get<TQueryFnData, TError, TData>(queryHash)
 
     if (!query) {
