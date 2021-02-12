@@ -39,7 +39,6 @@ function App() {
 
 function usePosts() {
   return useQuery("posts", async () => {
-    await new Promise((r) => setTimeout(r, 2000));
     const { data } = await axios.get(
       "https://jsonplaceholder.typicode.com/posts"
     );
