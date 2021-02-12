@@ -23,7 +23,7 @@ export default function useLocalStorage(key, defaultValue) {
     } else {
       setValue(initialValue)
     }
-  }, [])
+  }, [defaultValue, key])
 
   const setter = React.useCallback(
     updater => {
