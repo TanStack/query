@@ -108,14 +108,14 @@ export class InfiniteQueryObserver<
       TQueryData
     >
   ): InfiniteQueryObserverResult<TData, TError> {
-    const { state } = this.getCurrentQuery()
+    const { state } = query
     const result = super.createResult(query, options)
     return {
       ...result,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
-      hasNextPage: hasNextPage(this.options, state.data?.pages),
-      hasPreviousPage: hasPreviousPage(this.options, state.data?.pages),
+      hasNextPage: hasNextPage(options, state.data?.pages),
+      hasPreviousPage: hasPreviousPage(options, state.data?.pages),
       isFetchingNextPage:
         state.isFetching && state.fetchMeta?.fetchMore?.direction === 'forward',
       isFetchingPreviousPage:
