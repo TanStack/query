@@ -4,7 +4,7 @@ import {
   matchQuery,
   parseFilterArgs,
 } from './utils'
-import { Query, QueryState } from './query'
+import { Action, Query, QueryState } from './query'
 import type { QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
@@ -20,7 +20,18 @@ interface QueryHashMap {
   [hash: string]: Query<any, any>
 }
 
-type QueryCacheListener = (query?: Query) => void
+interface QueryCacheNotifyMeta {
+  eventType:
+    | 'queryAdded'
+    | 'queryRemoved'
+    | 'observerAdded'
+    | 'observerRemoved'
+    | 'updateResults'
+    | 'dispatch'
+  dispatchAction?: Action<any, any>
+}
+
+type QueryCacheListener = (query?: Query, meta?: QueryCacheNotifyMeta) => void
 
 // CLASS
 
@@ -65,7 +76,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     if (!this.queriesMap[query.queryHash]) {
       this.queriesMap[query.queryHash] = query
       this.queries.push(query)
-      this.notify(query)
+      this.notify(query, {
+        eventType: 'queryAdded',
+      })
     }
   }
 
@@ -81,7 +94,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         delete this.queriesMap[query.queryHash]
       }
 
-      this.notify(query)
+      this.notify(query, { eventType: 'queryRemoved' })
     }
   }
 
@@ -126,10 +139,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       : this.queries
   }
 
-  notify(query?: Query<any, any>) {
+  notify(query: Query<any, any>, meta: QueryCacheNotifyMeta) {
     notifyManager.batch(() => {
       this.listeners.forEach(listener => {
-        listener(query)
+        listener(query, meta)
       })
     })
   }
