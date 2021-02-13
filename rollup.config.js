@@ -29,6 +29,11 @@ const inputSrcs = [
     'ReactQueryCreateLocalStoragePersistorExperimental',
     'createLocalStoragePersistor-experimental',
   ],
+  [
+    'src/broadcastQueryClient-experimental/index.ts',
+    'ReactQueryBroadcastQueryClientExperimental',
+    'broadcastQueryClient-experimental',
+  ],
 ]
 
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
