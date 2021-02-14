@@ -133,10 +133,18 @@ describe("useQuery's in Suspense mode", () => {
     const successFn = jest.fn()
 
     function Page() {
-      useQuery([key], () => sleep(10), {
-        suspense: true,
-        onSuccess: successFn,
-      })
+      useQuery(
+        [key],
+        async () => {
+          await sleep(10)
+          return key
+        },
+        {
+          suspense: true,
+          select: () => 'selected',
+          onSuccess: successFn,
+        }
+      )
 
       return <>rendered</>
     }
@@ -151,6 +159,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('rendered'))
 
     expect(successFn).toHaveBeenCalledTimes(1)
+    expect(successFn).toHaveBeenCalledWith('selected')
   })
 
   it('should call every onSuccess handler within a suspense boundary', async () => {

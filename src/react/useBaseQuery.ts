@@ -41,7 +41,7 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
 
   if (defaultedOptions.suspense) {
     // Always set stale time when using suspense to prevent
-    // fetching again when directly re-mounting after suspense
+    // fetching again when directly mounting after suspending
     if (typeof defaultedOptions.staleTime !== 'number') {
       defaultedOptions.staleTime = 1000
     }
@@ -65,9 +65,10 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
   React.useEffect(() => {
     mountedRef.current = true
 
+    errorResetBoundary.clearReset()
+
     const unsubscribe = obsRef.current!.subscribe(
       notifyManager.batchCalls(() => {
-        errorResetBoundary.clearReset()
         if (mountedRef.current) {
           forceUpdate(x => x + 1)
         }
@@ -91,10 +92,10 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
   }, [defaultedOptions])
 
   // Handle suspense
-  if (obsRef.current.options.suspense && result.isLoading) {
-    throw queryClient
-      .fetchQuery(defaultedOptions)
-      .then(data => {
+  if (defaultedOptions.suspense && result.isLoading) {
+    throw obsRef.current
+      .fetchOptimistic(defaultedOptions)
+      .then(({ data }) => {
         defaultedOptions.onSuccess?.(data)
         defaultedOptions.onSettled?.(data, null)
       })
@@ -107,15 +108,14 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
 
   // Handle error boundary
   if (
-    (obsRef.current.options.suspense ||
-      obsRef.current.options.useErrorBoundary) &&
+    (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) &&
     result.isError
   ) {
     throw result.error
   }
 
   // Handle result property usage tracking
-  if (obsRef.current.options.notifyOnChangeProps === 'tracked') {
+  if (defaultedOptions.notifyOnChangeProps === 'tracked') {
     result = obsRef.current.trackResult(result)
   }
 
