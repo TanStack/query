@@ -666,8 +666,8 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any>
 ): boolean {
   return (
-    (query !== prevQuery ||
-      (options.enabled !== false && prevOptions.enabled === false)) &&
+    options.enabled !== false &&
+    (query !== prevQuery || prevOptions.enabled === false) &&
     isStale(query, options)
   )
 }
