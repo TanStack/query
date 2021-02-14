@@ -1,6 +1,6 @@
 import {
   QueryFilters,
-  getQueryKeyHashFn,
+  hashQueryKeyByOptions,
   matchQuery,
   parseFilterArgs,
 } from './utils'
@@ -43,7 +43,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     state?: QueryState<TData, TError>
   ): Query<TQueryFnData, TError, TData> {
     const queryKey = options.queryKey!
-    const queryHash = options.queryHash ?? getQueryKeyHashFn(options)(queryKey)
+    const queryHash =
+      options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
     let query = this.get<TQueryFnData, TError, TData>(queryHash)
 
     if (!query) {

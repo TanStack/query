@@ -5,7 +5,6 @@ import type {
   MutationOptions,
   QueryFunction,
   QueryKey,
-  QueryKeyHashFunction,
   QueryOptions,
 } from './types'
 
@@ -153,8 +152,7 @@ export function matchQuery(
 
   if (isQueryKey(queryKey)) {
     if (exact) {
-      const hashFn = getQueryKeyHashFn(query.options)
-      if (query.queryHash !== hashFn(queryKey)) {
+      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
       }
     } else if (!partialMatchKey(query.queryKey, queryKey)) {
@@ -189,17 +187,20 @@ export function matchQuery(
   return true
 }
 
-export function getQueryKeyHashFn(
+export function hashQueryKeyByOptions(
+  queryKey: QueryKey,
   options?: QueryOptions<any, any>
-): QueryKeyHashFunction {
-  return options?.queryKeyHashFn || hashQueryKey
+): string {
+  const hashFn = options?.queryKeyHashFn || hashQueryKey
+  return hashFn(queryKey)
 }
 
 /**
  * Default query keys hash function.
  */
 export function hashQueryKey(queryKey: QueryKey): string {
-  return stableValueHash(queryKey)
+  const asArray = Array.isArray(queryKey) ? queryKey : [queryKey]
+  return stableValueHash(asArray)
 }
 
 /**

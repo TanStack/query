@@ -1,4 +1,4 @@
-import { difference, getQueryKeyHashFn, replaceAt } from './utils'
+import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
@@ -63,8 +63,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       let observer: QueryObserver | undefined = this.observers[i]
 
       const defaultedOptions = this.client.defaultQueryObserverOptions(options)
-      const hashFn = getQueryKeyHashFn(defaultedOptions)
-      defaultedOptions.queryHash = hashFn(defaultedOptions.queryKey!)
 
       if (
         !observer ||
@@ -94,8 +92,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         const defaultedOptions = this.client.defaultQueryObserverOptions(
           options
         )
-        const hashFn = getQueryKeyHashFn(defaultedOptions)
-        defaultedOptions.queryHash = hashFn(defaultedOptions.queryKey!)
 
         if (
           !observer ||

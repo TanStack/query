@@ -140,6 +140,19 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
+    test('should use the same query when using similar string or array query keys', () => {
+      const key = queryKey()
+      queryClient.setQueryData(key, '1')
+      expect(queryClient.getQueryData(key)).toBe('1')
+      expect(queryClient.getQueryData([key])).toBe('1')
+      queryClient.setQueryData([key], '2')
+      expect(queryClient.getQueryData(key)).toBe('2')
+      expect(queryClient.getQueryData([key])).toBe('2')
+      queryClient.setQueryData(key, '1')
+      expect(queryClient.getQueryData(key)).toBe('1')
+      expect(queryClient.getQueryData([key])).toBe('1')
+    })
+
     test('should accept an update function', () => {
       const key = queryKey()
 
