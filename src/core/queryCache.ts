@@ -20,18 +20,46 @@ interface QueryHashMap {
   [hash: string]: Query<any, any>
 }
 
-interface QueryCacheNotifyMeta {
-  eventType:
-    | 'queryAdded'
-    | 'queryRemoved'
-    | 'observerAdded'
-    | 'observerRemoved'
-    | 'updateResults'
-    | 'dispatch'
-  dispatchAction?: Action<any, any>
+interface NotifyEventQueryAdded {
+  type: 'queryAdded'
+  query: Query<any, any>
 }
 
-type QueryCacheListener = (query?: Query, meta?: QueryCacheNotifyMeta) => void
+interface NotifyEventQueryRemoved {
+  type: 'queryRemoved'
+  query: Query<any, any>
+}
+
+interface NotifyEventObserverAdded {
+  type: 'observerAdded'
+  query: Query<any, any>
+}
+
+interface NotifyEventObserverRemoved {
+  type: 'observerRemoved'
+  query: Query<any, any>
+}
+
+interface NotifyEventUpdateResults {
+  type: 'updateResults'
+  query: Query<any, any>
+}
+
+interface NotifyEventDispatch {
+  type: 'dispatch'
+  query: Query<any, any>
+  action: Action<any, any>
+}
+
+type QueryCacheNotifyEvent =
+  | NotifyEventQueryAdded
+  | NotifyEventQueryRemoved
+  | NotifyEventObserverAdded
+  | NotifyEventObserverRemoved
+  | NotifyEventUpdateResults
+  | NotifyEventDispatch
+
+type QueryCacheListener = (event?: QueryCacheNotifyEvent) => void
 
 // CLASS
 
@@ -76,8 +104,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     if (!this.queriesMap[query.queryHash]) {
       this.queriesMap[query.queryHash] = query
       this.queries.push(query)
-      this.notify(query, {
-        eventType: 'queryAdded',
+      this.notify({
+        type: 'queryAdded',
+        query,
       })
     }
   }
@@ -94,7 +123,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         delete this.queriesMap[query.queryHash]
       }
 
-      this.notify(query, { eventType: 'queryRemoved' })
+      this.notify({ type: 'queryRemoved', query })
     }
   }
 
@@ -139,10 +168,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       : this.queries
   }
 
-  notify(query: Query<any, any>, meta: QueryCacheNotifyMeta) {
+  notify(event: QueryCacheNotifyEvent) {
     notifyManager.batch(() => {
       this.listeners.forEach(listener => {
-        listener(query, meta)
+        listener(event)
       })
     })
   }

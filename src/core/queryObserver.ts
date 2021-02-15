@@ -601,7 +601,7 @@ export class QueryObserver<
       if (notifyOptions.cache) {
         this.client
           .getQueryCache()
-          .notify(this.currentQuery, { eventType: 'updateResults' })
+          .notify({ query: this.currentQuery, type: 'updateResults' })
       }
     })
   }

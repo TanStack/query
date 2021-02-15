@@ -297,7 +297,7 @@ export class Query<
       // Stop the query from being garbage collected
       this.clearGcTimeout()
 
-      this.cache.notify(this, { eventType: 'observerAdded' })
+      this.cache.notify({ query: this, type: 'observerAdded' })
     }
   }
 
@@ -323,7 +323,7 @@ export class Query<
         }
       }
 
-      this.cache.notify(this, { eventType: 'observerRemoved' })
+      this.cache.notify({ query: this, type: 'observerRemoved' })
     }
   }
 
@@ -459,7 +459,7 @@ export class Query<
         observer.onQueryUpdate(action)
       })
 
-      this.cache.notify(this, { eventType: 'dispatch', dispatchAction: action })
+      this.cache.notify({ query: this, type: 'dispatch', action })
     })
   }
 
