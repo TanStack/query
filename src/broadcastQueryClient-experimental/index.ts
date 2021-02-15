@@ -10,6 +10,13 @@ export function broadcastQueryClient({
   queryClient,
   broadcastChannel = 'react-query',
 }: BroadcastQueryClientOptions) {
+  let transaction = false
+  const tx = (cb: () => void) => {
+    transaction = true
+    cb()
+    transaction = false
+  }
+
   const channel = new BroadcastChannel(broadcastChannel, {
     webWorkerSupport: false,
   })
@@ -17,7 +24,7 @@ export function broadcastQueryClient({
   const queryCache = queryClient.getQueryCache()
 
   queryClient.getQueryCache().subscribe(queryEvent => {
-    if (!queryEvent?.query) {
+    if (transaction || !queryEvent?.query) {
       return
     }
 
@@ -27,9 +34,7 @@ export function broadcastQueryClient({
 
     if (
       queryEvent.type === 'dispatch' &&
-      (queryEvent.action?.type === 'success' ||
-        (queryEvent.action?.type === 'setState' &&
-          queryEvent.action?.setStateOptions?.meta?.source !== 'tabSync'))
+      queryEvent.action?.type === 'success'
     ) {
       channel.postMessage({
         type: 'queryUpdated',
@@ -53,34 +58,32 @@ export function broadcastQueryClient({
       return
     }
 
-    const { type, queryHash, queryKey, state } = action
+    tx(() => {
+      const { type, queryHash, queryKey, state } = action
 
-    if (type === 'queryUpdated') {
-      const query = queryCache.get(queryHash)
+      if (type === 'queryUpdated') {
+        const query = queryCache.get(queryHash)
 
-      if (query) {
-        query.setState(state, {
-          meta: {
-            source: 'tabSync',
+        if (query) {
+          query.setState(state)
+          return
+        }
+
+        queryCache.build(
+          queryClient,
+          {
+            queryKey,
+            queryHash,
           },
-        })
-        return
-      }
+          state
+        )
+      } else if (type === 'queryRemoved') {
+        const query = queryCache.get(queryHash)
 
-      queryCache.build(
-        queryClient,
-        {
-          queryKey,
-          queryHash,
-        },
-        state
-      )
-    } else if (type === 'queryRemoved') {
-      const query = queryCache.get(queryHash)
-
-      if (query) {
-        queryCache.remove(query)
+        if (query) {
+          queryCache.remove(query)
+        }
       }
-    }
+    })
   }
 }
