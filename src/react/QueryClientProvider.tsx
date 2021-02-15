@@ -15,7 +15,9 @@ const defaultContext = React.createContext<QueryClient | undefined>(undefined)
 // all use the same **instance** of context, regardless
 // of module scoping.
 function getQueryClientContext() {
+  // @ts-ignore (for global)
   if (typeof global !== 'undefined' || typeof window !== 'undefined') {
+    // @ts-ignore (for global)
     const thisContext = (global || window) as GlobalOrWindow
 
     if (!thisContext.ReactQueryClientContext) {
