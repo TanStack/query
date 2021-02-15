@@ -16,18 +16,20 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
-  queryClient.getQueryCache().subscribe((query, event) => {
-    if (!query) {
+  queryClient.getQueryCache().subscribe(queryEvent => {
+    if (!queryEvent?.query) {
       return
     }
 
-    const { queryHash, queryKey, state } = query
+    const {
+      query: { queryHash, queryKey, state },
+    } = queryEvent
 
     if (
-      event?.eventType === 'dispatch' &&
-      (event?.dispatchAction?.type === 'success' ||
-        (event?.dispatchAction?.type === 'setState' &&
-          event?.dispatchAction?.setStateOptions?.meta?.source !== 'tabSync'))
+      queryEvent.type === 'dispatch' &&
+      (queryEvent.action?.type === 'success' ||
+        (queryEvent.action?.type === 'setState' &&
+          queryEvent.action?.setStateOptions?.meta?.source !== 'tabSync'))
     ) {
       channel.postMessage({
         type: 'queryUpdated',
@@ -37,7 +39,7 @@ export function broadcastQueryClient({
       })
     }
 
-    if (event?.eventType === 'queryRemoved') {
+    if (queryEvent.type === 'queryRemoved') {
       channel.postMessage({
         type: 'queryRemoved',
         queryHash,
