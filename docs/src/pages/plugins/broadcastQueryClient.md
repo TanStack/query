@@ -42,7 +42,7 @@ An object of options:
 
 ```ts
 interface PersistQueryClientOptions {
-  /** The QueryClient to persist */
+  /** The QueryClient to sync */
   queryClient: QueryClient
   /** This is the unique channel name that will be used
    * to communicate between tabs and windows */
