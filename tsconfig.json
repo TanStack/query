@@ -13,7 +13,7 @@
     "noUnusedParameters": true,
     "skipLibCheck": true,
     "strict": true,
-    "types": ["jest"]
+    "types": ["jest", "node"]
   },
   "include": ["./src"]
 }
