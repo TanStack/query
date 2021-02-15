@@ -6,6 +6,10 @@ const QueryClientContext = (() => {
   const context = React.createContext<QueryClient | undefined>(undefined)
   if (typeof window !== 'undefined') {
     // @ts-ignore
+    if (typeof window.ReactQueryClientContext !== 'undefined') {
+      throw new Error('ReactQueryClientContext is already set, you should only set this once')
+    }
+    // @ts-ignore
     window.ReactQueryClientContext = context
   }
   return context
