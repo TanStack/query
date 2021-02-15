@@ -10,6 +10,8 @@ import {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
   UseQueryResult,
+  UseInfiniteQueryResult,
+  useInfiniteQuery,
 } from '../..'
 
 describe("useQuery's in Suspense mode", () => {
@@ -63,6 +65,39 @@ describe("useQuery's in Suspense mode", () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: 1, status: 'success' })
     expect(states[1]).toMatchObject({ data: 2, status: 'success' })
+  })
+
+  it('should return the correct states for a successful infinite query', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 0 }) => Number(pageParam),
+        {
+          suspense: true,
+          getNextPageParam: lastPage => lastPage + 1,
+        }
+      )
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
+    )
+
+    await sleep(10)
+
+    expect(states.length).toBe(1)
+    expect(states[0]).toMatchObject({
+      data: { pages: [0], pageParams: [undefined] },
+      status: 'success',
+    })
   })
 
   it('should not call the queryFn twice when used in Suspense mode', async () => {
