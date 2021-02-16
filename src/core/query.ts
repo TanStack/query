@@ -293,7 +293,7 @@ export class Query<
       // Stop the query from being garbage collected
       this.clearGcTimeout()
 
-      this.cache.notify({ query: this, type: 'observerAdded' })
+      this.cache.notify({ type: 'observerAdded', query: this, observer })
     }
   }
 
@@ -319,7 +319,7 @@ export class Query<
         }
       }
 
-      this.cache.notify({ query: this, type: 'observerRemoved' })
+      this.cache.notify({ type: 'observerRemoved', query: this, observer })
     }
   }
 

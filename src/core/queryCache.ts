@@ -9,6 +9,7 @@ import type { QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
+import { QueryObserver } from './queryObserver'
 
 // TYPES
 
@@ -33,11 +34,13 @@ interface NotifyEventQueryRemoved {
 interface NotifyEventObserverAdded {
   type: 'observerAdded'
   query: Query<any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventObserverRemoved {
   type: 'observerRemoved'
   query: Query<any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventUpdateResults {
@@ -45,7 +48,7 @@ interface NotifyEventUpdateResults {
   query: Query<any, any>
 }
 
-interface NotifyEventDispatch {
+interface NotifyEventQueryUpdated {
   type: 'dispatch'
   query: Query<any, any>
   action: Action<any, any>
@@ -57,7 +60,7 @@ type QueryCacheNotifyEvent =
   | NotifyEventObserverAdded
   | NotifyEventObserverRemoved
   | NotifyEventUpdateResults
-  | NotifyEventDispatch
+  | NotifyEventQueryUpdated
 
 type QueryCacheListener = (event?: QueryCacheNotifyEvent) => void
 
