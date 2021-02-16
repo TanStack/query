@@ -2,8 +2,10 @@ import React from 'react'
 
 import { QueryClient } from '../core'
 
-interface GlobalOrWindow {
-  ReactQueryClientContext?: React.Context<QueryClient | undefined>
+declare global {
+  interface Window {
+    ReactQueryClientContext?: React.Context<QueryClient | undefined>
+  }
 }
 
 const defaultContext = React.createContext<QueryClient | undefined>(undefined)
@@ -16,15 +18,12 @@ const defaultContext = React.createContext<QueryClient | undefined>(undefined)
 // of module scoping.
 function getQueryClientContext() {
   // @ts-ignore (for global)
-  if (typeof global !== 'undefined' || typeof window !== 'undefined') {
-    // @ts-ignore (for global)
-    const thisContext = (global || window) as GlobalOrWindow
-
-    if (!thisContext.ReactQueryClientContext) {
-      thisContext.ReactQueryClientContext = defaultContext
+  if (typeof window !== 'undefined') {
+    if (!window.ReactQueryClientContext) {
+      window.ReactQueryClientContext = defaultContext
     }
 
-    return thisContext.ReactQueryClientContext
+    return window.ReactQueryClientContext
   }
 
   return defaultContext
