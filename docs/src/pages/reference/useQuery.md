@@ -202,7 +202,7 @@ const result = useQuery({
   - Will be `true` if the data shown is the placeholder data.
 - `isPreviousData: boolean`
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
-- `isFetched: Boolean`
+- `isFetched: boolean`
   - Will be `true` if the query has been fetched.
 - `isFetchedAfterMount: boolean`
   - Will be `true` if the query has been fetched after the component mounted.
