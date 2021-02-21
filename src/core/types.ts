@@ -52,7 +52,7 @@ export interface QueryOptions<
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData>
@@ -483,7 +483,7 @@ export interface MutationOptions<
     context: TContext | undefined
   ) => Promise<void> | void
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
 }
 
