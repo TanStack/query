@@ -6,6 +6,7 @@ import {
   parseFilterArgs,
   parseQueryArgs,
   partialMatchKey,
+  hashQueryKeyByOptions,
 } from './utils'
 import type {
   DefaultOptions,
@@ -446,12 +447,22 @@ export class QueryClient {
     if (options?._defaulted) {
       return options
     }
-    return {
+
+    const defaultedOptions = {
       ...this.defaultOptions.queries,
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
     } as T
+
+    if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
+      defaultedOptions.queryHash = hashQueryKeyByOptions(
+        defaultedOptions.queryKey,
+        defaultedOptions
+      )
+    }
+
+    return defaultedOptions
   }
 
   defaultQueryObserverOptions<

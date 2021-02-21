@@ -21,8 +21,7 @@ Once installed, a simple test can be written. Given the following custom hook:
 
 ```
 export function useCustomHook() {
-  const { data } = useQuery('customHook', () => 'Hello');
-  return data;
+  return useQuery('customHook', () => 'Hello');
 }
 ```
 
@@ -36,9 +35,11 @@ const wrapper = ({ children }) => (
   </QueryClientProvider>
 );
 
-const { result } = renderHook(() => useCustomHook(), { wrapper });
+const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper });
 
-expect(result.current).toEqual('Hello');
+await waitFor(() => result.current.isSuccess);
+
+expect(result.current.data).toEqual("Hello");
 ```
 
 Note that we provide a custom wrapper that builds the `QueryClient` and `QueryClientProvider`. This helps to ensure that our test is completely isolated from any other tests.

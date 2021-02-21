@@ -49,7 +49,7 @@ React Query supports prefetching multiple queries on the server in Next.js and t
 
 To support caching queries on the server and set up hydration:
 
-- Create a new `QueryClient` instance
+- Create a new `QueryClient` instance **inside of your app, and on an instance ref. This ensures that data is not shared between different users and requests.**
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
 - Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
 
@@ -58,11 +58,14 @@ To support caching queries on the server and set up hydration:
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
-const queryClient = new QueryClient()
-
 export default function MyApp({ Component, pageProps }) {
+  const queryClientRef = React.useRef()
+  if (!queryClientRef.current) {
+    queryClientRef.current = new QueryClient()
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClientRef.current}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
@@ -73,7 +76,7 @@ export default function MyApp({ Component, pageProps }) {
 
 Now you are ready to prefetch some data in your pages with either [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) (for SSG) or [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) (for SSR). From React Query's perspective, these integrate in the same way, `getStaticProps` is shown below.
 
-- Create a new `QueryClient` instance for each page request
+- Create a new `QueryClient` instance **for each page request. This ensures that data is not shared between users and requests.**
 - Prefetch the data using the clients `prefetchQuery` method and wait for it to complete
 - Use `dehydrate` to dehydrate the query cache and pass it to the page via the `dehydratedState` prop. This is the same prop that the cache will be picked up from in your `_app.js`
 
@@ -117,7 +120,7 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 
 ### On the Server
 
-- Create a new `QueryClient` instance
+- Create a new `QueryClient` instance **inside of your request handler. This ensures that data is not shared between different users and requests.**
 - Using the client, prefetch any data you need
 - Dehydrate the client
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
@@ -129,28 +132,30 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { dehydrate, Hydrate } from 'react-query/hydration'
 
-const queryClient = new QueryClient()
-await queryClient.prefetchQuery('key', fn)
-const dehydratedState = dehydrate(queryClient)
+function handleRequest (req, res) {
+  const queryClient = new QueryClient()
+  await queryClient.prefetchQuery('key', fn)
+  const dehydratedState = dehydrate(queryClient)
 
-const html = ReactDOM.renderToString(
-  <QueryClientProvider client={queryClient}>
-    <Hydrate state={dehydratedState}>
-      <App />
-    </Hydrate>
-  </QueryClientProvider>
-)
+  const html = ReactDOM.renderToString(
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={dehydratedState}>
+        <App />
+      </Hydrate>
+    </QueryClientProvider>
+  )
 
-res.send(`
-  <html>
-    <body>
-      <div id="root">${html}</div>
-      <script>
-        window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};
-      </script>
-    </body>
-  </html>
+  res.send(`
+    <html>
+      <body>
+        <div id="root">${html}</div>
+        <script>
+          window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};
+        </script>
+      </body>
+    </html>
   `)
+}
 ```
 
 ### Client

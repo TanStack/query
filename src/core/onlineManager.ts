@@ -45,7 +45,14 @@ class OnlineManager extends Subscribable {
       return this.online
     }
 
-    return navigator.onLine === undefined || navigator.onLine
+    if (
+      typeof navigator === 'undefined' ||
+      typeof navigator.onLine === 'undefined'
+    ) {
+      return true
+    }
+
+    return navigator.onLine
   }
 
   private setDefaultEventListener() {

@@ -77,6 +77,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
         retry: false,
+        enabled: false,
       })
       const { status } = await observer.refetch()
       expect(status).toBe('error')
@@ -139,6 +140,19 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
+    test('should use the same query when using similar string or array query keys', () => {
+      const key = queryKey()
+      queryClient.setQueryData(key, '1')
+      expect(queryClient.getQueryData(key)).toBe('1')
+      expect(queryClient.getQueryData([key])).toBe('1')
+      queryClient.setQueryData([key], '2')
+      expect(queryClient.getQueryData(key)).toBe('2')
+      expect(queryClient.getQueryData([key])).toBe('2')
+      queryClient.setQueryData(key, '1')
+      expect(queryClient.getQueryData(key)).toBe('1')
+      expect(queryClient.getQueryData([key])).toBe('1')
+    })
+
     test('should accept an update function', () => {
       const key = queryKey()
 
@@ -149,6 +163,25 @@ describe('queryClient', () => {
 
       expect(updater).toHaveBeenCalled()
       expect(queryCache.find(key)!.state.data).toEqual('new data + test data')
+    })
+  })
+
+  describe('getQueryData', () => {
+    test('should return the query data if the query is found', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(queryClient.getQueryData([key, 'id'])).toBe('bar')
+    })
+
+    test('should return undefined if the query is not found', () => {
+      const key = queryKey()
+      expect(queryClient.getQueryData(key)).toBeUndefined()
+    })
+
+    test('should match exact by default', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(queryClient.getQueryData([key])).toBeUndefined()
     })
   })
 

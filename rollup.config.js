@@ -20,9 +20,14 @@ const inputSrcs = [
   ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
   ['src/hydration/index.ts', 'ReactQueryHydration', 'react-query-hydration'],
   [
-    'src/persist-localstorage-experimental/index.ts',
-    'ReactQueryPersistLocalStorageExperimental',
-    'persist-localstorage-experimental',
+    'src/persistQueryClient-experimental/index.ts',
+    'ReactQueryPersistQueryClientExperimental',
+    'persistQueryClient-experimental',
+  ],
+  [
+    'src/createLocalStoragePersistor-experimental/index.ts',
+    'ReactQueryCreateLocalStoragePersistorExperimental',
+    'createLocalStoragePersistor-experimental',
   ],
 ]
 

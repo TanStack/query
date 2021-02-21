@@ -24,6 +24,23 @@ describe('mutations', () => {
     expect(result).toBe(result)
   })
 
+  test('mutate should accept null values', async () => {
+    let variables
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async (vars: unknown) => {
+        variables = vars
+        return vars
+      },
+    })
+
+    mutation.mutate(null)
+
+    await sleep(10)
+
+    expect(variables).toBe(null)
+  })
+
   test('setMutationDefaults should be able to set defaults', async () => {
     const key = queryKey()
 

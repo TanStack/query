@@ -7,7 +7,6 @@ import type {
   MutationObserverResult,
   MutationObserverOptions,
 } from './types'
-import { getStatusProps } from './utils'
 
 // TYPES
 
@@ -116,7 +115,8 @@ export class MutationObserver<
 
     this.currentMutation = this.client.getMutationCache().build(this.client, {
       ...this.options,
-      variables: variables ?? this.options.variables,
+      variables:
+        typeof variables !== 'undefined' ? variables : this.options.variables,
     })
 
     this.currentMutation.addObserver(this)
@@ -131,7 +131,10 @@ export class MutationObserver<
 
     this.currentResult = {
       ...state,
-      ...getStatusProps(state.status),
+      isLoading: state.status === 'loading',
+      isSuccess: state.status === 'success',
+      isError: state.status === 'error',
+      isIdle: state.status === 'idle',
       mutate: this.mutate,
       reset: this.reset,
     }

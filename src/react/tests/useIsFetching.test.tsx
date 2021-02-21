@@ -87,7 +87,7 @@ describe('useIsFetching', () => {
       React.useEffect(() => {
         setActTimeout(() => {
           setRenderSecond(true)
-        }, 10)
+        }, 50)
       }, [])
 
       return (

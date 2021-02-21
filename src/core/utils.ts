@@ -5,9 +5,7 @@ import type {
   MutationOptions,
   QueryFunction,
   QueryKey,
-  QueryKeyHashFunction,
   QueryOptions,
-  QueryStatus,
 } from './types'
 
 // TYPES
@@ -154,8 +152,7 @@ export function matchQuery(
 
   if (isQueryKey(queryKey)) {
     if (exact) {
-      const hashFn = getQueryKeyHashFn(query.options)
-      if (query.queryHash !== hashFn(queryKey)) {
+      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
       }
     } else if (!partialMatchKey(query.queryKey, queryKey)) {
@@ -190,17 +187,20 @@ export function matchQuery(
   return true
 }
 
-export function getQueryKeyHashFn(
+export function hashQueryKeyByOptions(
+  queryKey: QueryKey,
   options?: QueryOptions<any, any>
-): QueryKeyHashFunction {
-  return options?.queryKeyHashFn || hashQueryKey
+): string {
+  const hashFn = options?.queryKeyHashFn || hashQueryKey
+  return hashFn(queryKey)
 }
 
 /**
  * Default query keys hash function.
  */
 export function hashQueryKey(queryKey: QueryKey): string {
-  return stableValueHash(queryKey)
+  const asArray = Array.isArray(queryKey) ? queryKey : [queryKey]
+  return stableValueHash(asArray)
 }
 
 /**
@@ -343,16 +343,6 @@ export function sleep(timeout: number): Promise<void> {
   return new Promise(resolve => {
     setTimeout(resolve, timeout)
   })
-}
-
-export function getStatusProps<T extends QueryStatus>(status: T) {
-  return {
-    status,
-    isLoading: status === 'loading',
-    isSuccess: status === 'success',
-    isError: status === 'error',
-    isIdle: status === 'idle',
-  }
 }
 
 /**

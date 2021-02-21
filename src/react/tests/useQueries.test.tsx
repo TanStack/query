@@ -14,8 +14,20 @@ describe('useQueries', () => {
 
     function Page() {
       const result = useQueries([
-        { queryKey: key1, queryFn: () => 1 },
-        { queryKey: key2, queryFn: () => 2 },
+        {
+          queryKey: key1,
+          queryFn: async () => {
+            await sleep(5)
+            return 1
+          },
+        },
+        {
+          queryKey: key2,
+          queryFn: async () => {
+            await sleep(10)
+            return 2
+          },
+        },
       ])
       results.push(result)
       return null
@@ -23,7 +35,7 @@ describe('useQueries', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await sleep(30)
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])

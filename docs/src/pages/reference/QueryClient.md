@@ -117,7 +117,7 @@ The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQue
 
 ## `queryClient.prefetchQuery`
 
-`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that is will not throw or return any data.
+`prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that it will not throw or return any data.
 
 ```js
 await queryClient.prefetchQuery(queryKey, queryFn)
@@ -185,7 +185,7 @@ queryClient.setQueryData(queryKey, updater)
 
 **Options**
 
-- `queryKey: QueryKey` [Query Keys](./guides/query-keys)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 - `updater: unknown | (oldData: TData | undefined) => TData`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
@@ -228,8 +228,8 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 ```js
 await queryClient.invalidateQueries('posts', {
   exact,
-  refetchActive = true,
-  refetchInactive = false
+  refetchActive: true,
+  refetchInactive: false
 }, { throwOnError })
 ```
 

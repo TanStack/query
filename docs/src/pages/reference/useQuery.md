@@ -6,15 +6,19 @@ title: useQuery
 ```js
 const {
   data,
+  dataUpdatedAt,
   error,
+  errorUpdatedAt,
   failureCount,
   isError,
   isFetchedAfterMount,
   isFetching,
   isIdle,
   isLoading,
+  isLoadingError,
   isPlaceholderData,
   isPreviousData,
+  isRefetchError,
   isStale,
   isSuccess,
   refetch,
@@ -24,6 +28,7 @@ const {
   cacheTime,
   enabled,
   initialData,
+  initialDataUpdatedAt
   isDataEqual,
   keepPreviousData,
   notifyOnChangeProps,
@@ -38,6 +43,7 @@ const {
   refetchOnReconnect,
   refetchOnWindowFocus,
   retry,
+  retryOnMount,
   retryDelay,
   select,
   staleTime,
@@ -63,7 +69,7 @@ const result = useQuery({
   - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined**
+  - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
   - Receives a `QueryFunctionContext` object with the following variables:
     - `queryKey: QueryKey`
@@ -75,6 +81,8 @@ const result = useQuery({
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
   - If set to an `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
+- `retryOnMount: boolean`
+  - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
 - `retryDelay: (retryAttempt: number) => number`
   - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
@@ -141,6 +149,9 @@ const result = useQuery({
   - If set to a function, the function will be called **once** during the shared/root query initialization, and be expected to synchronously return the initialData
   - Initial data is considered stale by default unless a `staleTime` has been set.
   - `initialData` **is persisted** to the cache
+- `initialDataUpdatedAt: number | (() => number | undefined)`
+  - Optional
+  - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
 - `placeholderData: TData | () => TData`
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
@@ -177,9 +188,13 @@ const result = useQuery({
 - `data: TData`
   - Defaults to `undefined`.
   - The last successfully resolved data for the query.
+- `dataUpdatedAt: number`
+  - The timestamp for when the query most recently returned the `status` as `"success"`.
 - `error: null | TError`
   - Defaults to `null`
   - The error object for the query, if an error was thrown.
+- `errorUpdatedAt: number`
+  - The timestamp for when the query most recently returned the `status` as `"error"`.
 - `isStale: boolean`
   - Will be `true` if the data in the cache is invalidated or if the data is older than the given `staleTime`.
 - `isPlaceholderData: boolean`
@@ -196,8 +211,9 @@ const result = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
-- `refetch: (options: { throwOnError: boolean }) => Promise<UseQueryResult>`
+- `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
+  - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
 - `remove: () => void`
   - A function to remove the query from the cache.
