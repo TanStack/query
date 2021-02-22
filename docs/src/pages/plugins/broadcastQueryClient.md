@@ -41,7 +41,7 @@ broadcastQueryClient({ queryClient, broadcastChannel })
 An object of options:
 
 ```ts
-interface PersistQueryClientOptions {
+interface broadcastQueryClient {
   /** The QueryClient to sync */
   queryClient: QueryClient
   /** This is the unique channel name that will be used
