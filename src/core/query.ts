@@ -118,10 +118,6 @@ export type Action<TData, TError> =
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
 
-export interface SetStateOptions {
-  meta?: any
-}
-
 // CLASS
 
 export class Query<
@@ -455,7 +451,7 @@ export class Query<
         observer.onQueryUpdate(action)
       })
 
-      this.cache.notify({ query: this, type: 'dispatch', action })
+      this.cache.notify({ query: this, type: 'queryUpdated', action })
     })
   }
 
