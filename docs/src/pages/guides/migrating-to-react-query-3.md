@@ -346,7 +346,7 @@ The `queryFnParamsFilter` option has been removed because query functions now ge
 
 Parameters can still be filtered within the query function itself as the `QueryFunctionContext` also contains the query key.
 
-### The `QueryOptions.notifyOnStatusChange` option has been superceded by the new `notifyonChangeProps` and `notifyOnChangePropsExclusions` options.
+### The `QueryOptions.notifyOnStatusChange` option has been superceded by the new `notifyOnChangeProps` and `notifyOnChangePropsExclusions` options.
 
 With these new options it is possible to configure when a component should re-render on a granular level.
 
