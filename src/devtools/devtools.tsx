@@ -268,8 +268,6 @@ export function ReactQueryDevtools({
             border: 0,
             padding: 0,
             position: 'fixed',
-            bottom: '0',
-            right: '0',
             zIndex: '99999',
             display: 'inline-flex',
             fontSize: '1.5rem',
