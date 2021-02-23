@@ -106,6 +106,7 @@ interface ContinueAction {
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: QueryState<TData, TError>
+  setStateOptions?: SetStateOptions
 }
 
 export type Action<TData, TError> =
@@ -117,6 +118,10 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
+
+export interface SetStateOptions {
+  meta?: any
+}
 
 // CLASS
 
@@ -216,8 +221,11 @@ export class Query<
     return data
   }
 
-  setState(state: QueryState<TData, TError>): void {
-    this.dispatch({ type: 'setState', state })
+  setState(
+    state: QueryState<TData, TError>,
+    setStateOptions?: SetStateOptions
+  ): void {
+    this.dispatch({ type: 'setState', state, setStateOptions })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
