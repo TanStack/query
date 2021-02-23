@@ -311,6 +311,11 @@
           "title": "createLocalStoragePersistor (Experimental)",
           "path": "/plugins/createLocalStoragePersistor",
           "editUrl": "/plugins/createLocalStoragePersistor.md"
+        },
+        {
+          "title": "broadcastQueryClient (Experimental)",
+          "path": "/plugins/broadcastQueryClient",
+          "editUrl": "/plugins/broadcastQueryClient.md"
         }
       ]
     },
