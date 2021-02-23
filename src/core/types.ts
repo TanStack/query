@@ -3,7 +3,7 @@ import type { QueryBehavior } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
-export type QueryKey = string | ReadonlyArray<unknown>
+export type QueryKey = string | readonly unknown[]
 
 export type QueryFunction<T = unknown> = (
   context: QueryFunctionContext<any>
@@ -448,7 +448,7 @@ export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>
   | InfiniteQueryObserverSuccessResult<TData, TError>
 
-export type MutationKey = string | ReadonlyArray<unknown>
+export type MutationKey = string | readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
