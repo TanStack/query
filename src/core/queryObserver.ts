@@ -245,6 +245,21 @@ export class QueryObserver<
     return this.fetch(options)
   }
 
+  fetchOptimistic(
+    options: QueryObserverOptions<TQueryFnData, TError, TData, TQueryData>
+  ): Promise<QueryObserverResult<TData, TError>> {
+    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+
+    const query = this.client
+      .getQueryCache()
+      .build(
+        this.client,
+        defaultedOptions as QueryOptions<TQueryFnData, TError, TQueryData>
+      )
+
+    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+  }
+
   protected fetch(
     fetchOptions?: ObserverFetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
@@ -601,7 +616,7 @@ export class QueryObserver<
       if (notifyOptions.cache) {
         this.client
           .getQueryCache()
-          .notify({ query: this.currentQuery, type: 'updateResults' })
+          .notify({ query: this.currentQuery, type: 'observerResultsUpdated' })
       }
     })
   }
@@ -668,8 +683,8 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any>
 ): boolean {
   return (
-    (query !== prevQuery ||
-      (options.enabled !== false && prevOptions.enabled === false)) &&
+    options.enabled !== false &&
+    (query !== prevQuery || prevOptions.enabled === false) &&
     isStale(query, options)
   )
 }

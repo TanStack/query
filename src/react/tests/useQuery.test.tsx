@@ -1218,6 +1218,59 @@ describe('useQuery', () => {
     })
   })
 
+  it('should not fetch when switching to a disabled query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery(
+        [key, count],
+        async () => {
+          await sleep(5)
+          return count
+        },
+        { enabled: count === 0 }
+      )
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setCount(1)
+        }, 10)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(50)
+
+    expect(states.length).toBe(3)
+
+    // Fetch query
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isSuccess: false,
+    })
+    // Fetched query
+    expect(states[1]).toMatchObject({
+      data: 0,
+      isFetching: false,
+      isSuccess: true,
+    })
+    // Switch to disabled query
+    expect(states[2]).toMatchObject({
+      data: undefined,
+      isFetching: false,
+      isSuccess: false,
+    })
+  })
+
   it('should keep the previous data when keepPreviousData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
@@ -1525,7 +1578,7 @@ describe('useQuery', () => {
     // Set state
     expect(states[3]).toMatchObject({
       data: 0,
-      isFetching: true,
+      isFetching: false,
       isSuccess: true,
       isPreviousData: true,
     })
@@ -1600,14 +1653,14 @@ describe('useQuery', () => {
     // Set state
     expect(states[1]).toMatchObject({
       data: 10,
-      isFetching: true,
+      isFetching: false,
       isSuccess: true,
       isPreviousData: true,
     })
-    // Set state
+    // State update
     expect(states[2]).toMatchObject({
       data: 10,
-      isFetching: true,
+      isFetching: false,
       isSuccess: true,
       isPreviousData: true,
     })

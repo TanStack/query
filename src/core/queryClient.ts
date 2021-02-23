@@ -6,7 +6,7 @@ import {
   parseFilterArgs,
   parseQueryArgs,
   partialMatchKey,
-  getQueryKeyHashFn,
+  hashQueryKeyByOptions,
 } from './utils'
 import type {
   DefaultOptions,
@@ -456,8 +456,9 @@ export class QueryClient {
     } as T
 
     if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
-      defaultedOptions.queryHash = getQueryKeyHashFn(defaultedOptions)(
-        defaultedOptions.queryKey
+      defaultedOptions.queryHash = hashQueryKeyByOptions(
+        defaultedOptions.queryKey,
+        defaultedOptions
       )
     }
 

@@ -2,22 +2,31 @@ import React from 'react'
 
 import { QueryClient } from '../core'
 
-const QueryClientContext = (() => {
-  const context = React.createContext<QueryClient | undefined>(undefined)
-  if (typeof window !== 'undefined') {
-    // @ts-ignore
-    window.ReactQueryClientContext = context
+declare global {
+  interface Window {
+    ReactQueryClientContext?: React.Context<QueryClient | undefined>
   }
-  return context
-})()
+}
 
+const defaultContext = React.createContext<QueryClient | undefined>(undefined)
+
+// We share the first and at least one
+// instance of the context across the window
+// to ensure that if React Query is used across
+// different bundles or microfrontends they will
+// all use the same **instance** of context, regardless
+// of module scoping.
 function getQueryClientContext() {
-  return typeof window !== 'undefined'
-    ? // @ts-ignore
-      (window.ReactQueryClientContext as React.Context<
-        QueryClient | undefined
-      >) ?? QueryClientContext
-    : QueryClientContext
+  // @ts-ignore (for global)
+  if (typeof window !== 'undefined') {
+    if (!window.ReactQueryClientContext) {
+      window.ReactQueryClientContext = defaultContext
+    }
+
+    return window.ReactQueryClientContext
+  }
+
+  return defaultContext
 }
 
 export const useQueryClient = () => {

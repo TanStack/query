@@ -7,7 +7,13 @@ import React from 'react'
 import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey } from './utils'
-import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+  useInfiniteQuery,
+} from '../..'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {
@@ -110,6 +116,39 @@ describe('Server Side Rendering', () => {
     const keys = queryCache.getAll().map(query => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
+    queryCache.clear()
+  })
+
+  it('useInfiniteQuery should return the correct state', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    const key = queryKey()
+    const queryFn = jest.fn(async () => {
+      await sleep(5)
+      return 'page 1'
+    })
+
+    function Page() {
+      const query = useInfiniteQuery(key, queryFn)
+      return (
+        <ul>
+          {query.data?.pages?.map(page => (
+            <li key={page}>{page}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    await queryClient.prefetchInfiniteQuery(key, queryFn)
+
+    const markup = renderToString(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    )
+
+    expect(markup).toContain('page 1')
+    expect(queryFn).toHaveBeenCalledTimes(1)
     queryCache.clear()
   })
 })

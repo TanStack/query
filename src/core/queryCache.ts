@@ -1,6 +1,6 @@
 import {
   QueryFilters,
-  getQueryKeyHashFn,
+  hashQueryKeyByOptions,
   matchQuery,
   parseFilterArgs,
 } from './utils'
@@ -9,6 +9,7 @@ import type { QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
+import { QueryObserver } from './queryObserver'
 
 // TYPES
 
@@ -30,34 +31,36 @@ interface NotifyEventQueryRemoved {
   query: Query<any, any>
 }
 
+interface NotifyEventQueryUpdated {
+  type: 'queryUpdated'
+  query: Query<any, any>
+  action: Action<any, any>
+}
+
 interface NotifyEventObserverAdded {
   type: 'observerAdded'
   query: Query<any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
 interface NotifyEventObserverRemoved {
   type: 'observerRemoved'
   query: Query<any, any>
+  observer: QueryObserver<any, any, any, any>
 }
 
-interface NotifyEventUpdateResults {
-  type: 'updateResults'
+interface NotifyEventObserverResultsUpdated {
+  type: 'observerResultsUpdated'
   query: Query<any, any>
-}
-
-interface NotifyEventDispatch {
-  type: 'dispatch'
-  query: Query<any, any>
-  action: Action<any, any>
 }
 
 type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
+  | NotifyEventQueryUpdated
   | NotifyEventObserverAdded
   | NotifyEventObserverRemoved
-  | NotifyEventUpdateResults
-  | NotifyEventDispatch
+  | NotifyEventObserverResultsUpdated
 
 type QueryCacheListener = (event?: QueryCacheNotifyEvent) => void
 
@@ -82,7 +85,8 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     state?: QueryState<TData, TError>
   ): Query<TQueryFnData, TError, TData> {
     const queryKey = options.queryKey!
-    const queryHash = options.queryHash ?? getQueryKeyHashFn(options)(queryKey)
+    const queryHash =
+      options.queryHash ?? hashQueryKeyByOptions(queryKey, options)
     let query = this.get<TQueryFnData, TError, TData>(queryHash)
 
     if (!query) {

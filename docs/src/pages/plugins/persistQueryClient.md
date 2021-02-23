@@ -9,7 +9,7 @@ title: persistQueryClient (Experimental)
 
 ## Officially Supported Persistors
 
-- [createLocalStoragePersistor (Experimental)](../createLocalStoragePersistor)
+- [createLocalStoragePersistor (Experimental)](/plugins/createLocalStoragePersistor)
 
 ## Installation
 
