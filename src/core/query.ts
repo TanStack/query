@@ -289,7 +289,7 @@ export class Query<
       // Stop the query from being garbage collected
       this.clearGcTimeout()
 
-      this.cache.notify(this)
+      this.cache.notify({ type: 'observerAdded', query: this, observer })
     }
   }
 
@@ -315,7 +315,7 @@ export class Query<
         }
       }
 
-      this.cache.notify(this)
+      this.cache.notify({ type: 'observerRemoved', query: this, observer })
     }
   }
 
@@ -401,7 +401,7 @@ export class Query<
           this.optionalRemove()
         }
       },
-      onError: error => {
+      onError: (error: TError | { silent?: boolean }) => {
         // Optimistically update state if needed
         if (!(isCancelledError(error) && error.silent)) {
           this.dispatch({
@@ -451,7 +451,7 @@ export class Query<
         observer.onQueryUpdate(action)
       })
 
-      this.cache.notify(this)
+      this.cache.notify({ query: this, type: 'queryUpdated', action })
     })
   }
 
