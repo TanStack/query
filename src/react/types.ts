@@ -74,7 +74,7 @@ export interface UseMutationOptions<
     context: TContext | undefined
   ) => Promise<void> | void
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
   useErrorBoundary?: boolean
 }
 
