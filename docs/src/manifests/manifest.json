@@ -15,14 +15,14 @@
           "editUrl": "/installation.md"
         },
         {
-          "title": "Devtools",
-          "path": "/devtools",
-          "editUrl": "/devtools.md"
-        },
-        {
           "title": "Quick Start",
           "path": "/quick-start",
           "editUrl": "/quick-start.md"
+        },
+        {
+          "title": "Devtools",
+          "path": "/devtools",
+          "editUrl": "/devtools.md"
         },
         {
           "title": "Videos & Talks",
