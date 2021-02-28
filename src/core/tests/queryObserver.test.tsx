@@ -240,6 +240,52 @@ describe('queryObserver', () => {
     expect(observerResult2.data).toMatchObject({ myCount: 1 })
   })
 
+  test('should always run the selector again if selector throws an error', async () => {
+    const key = queryKey()
+    const results: QueryObserverResult[] = []
+    const select = () => {
+      throw new Error('selector error')
+    }
+    const queryFn = () => ({ count: 1 })
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      select,
+    })
+    const unsubscribe = observer.subscribe(result => {
+      results.push(result)
+    })
+    await sleep(1)
+    await observer.refetch()
+    unsubscribe()
+    expect(results.length).toBe(5)
+    expect(results[0]).toMatchObject({
+      status: 'loading',
+      isFetching: true,
+      data: undefined,
+    })
+    expect(results[1]).toMatchObject({
+      status: 'error',
+      isFetching: false,
+      data: undefined,
+    })
+    expect(results[2]).toMatchObject({
+      status: 'error',
+      isFetching: true,
+      data: undefined,
+    })
+    expect(results[3]).toMatchObject({
+      status: 'error',
+      isFetching: false,
+      data: undefined,
+    })
+    expect(results[4]).toMatchObject({
+      status: 'error',
+      isFetching: false,
+      data: undefined,
+    })
+  })
+
   test('should structurally share the selector', async () => {
     const key = queryKey()
     let count = 0
