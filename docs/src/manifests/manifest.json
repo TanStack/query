@@ -15,14 +15,14 @@
           "editUrl": "/installation.md"
         },
         {
-          "title": "Devtools",
-          "path": "/devtools",
-          "editUrl": "/devtools.md"
-        },
-        {
           "title": "Quick Start",
           "path": "/quick-start",
           "editUrl": "/quick-start.md"
+        },
+        {
+          "title": "Devtools",
+          "path": "/devtools",
+          "editUrl": "/devtools.md"
         },
         {
           "title": "Videos & Talks",
@@ -311,6 +311,11 @@
           "title": "createLocalStoragePersistor (Experimental)",
           "path": "/plugins/createLocalStoragePersistor",
           "editUrl": "/plugins/createLocalStoragePersistor.md"
+        },
+        {
+          "title": "broadcastQueryClient (Experimental)",
+          "path": "/plugins/broadcastQueryClient",
+          "editUrl": "/plugins/broadcastQueryClient.md"
         }
       ]
     },

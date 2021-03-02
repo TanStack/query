@@ -2779,6 +2779,43 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should extract retryDelay from error', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    type DelayError = { delay: number }
+
+    const queryFn = jest.fn()
+    queryFn.mockImplementation(() => {
+      return Promise.reject({ delay: 50 })
+    })
+
+    function Page() {
+      const { status, failureCount } = useQuery(key, queryFn, {
+        retry: 1,
+        retryDelay: (_, error: DelayError) => error.delay,
+      })
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>Failed {failureCount} times</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    await waitFor(() => rendered.getByText('Failed 2 times'))
+
+    expect(queryFn).toHaveBeenCalledTimes(2)
+    consoleMock.mockRestore()
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/160
   it('should continue retry after focus regain', async () => {
     const key = queryKey()

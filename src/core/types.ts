@@ -3,7 +3,7 @@ import type { QueryBehavior } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
-export type QueryKey = string | unknown[]
+export type QueryKey = string | readonly unknown[]
 
 export type QueryFunction<T = unknown> = (
   context: QueryFunctionContext<any>
@@ -52,7 +52,7 @@ export interface QueryOptions<
    * If set to a function `(failureCount, error) => boolean` failed queries will retry until the function returns false.
    */
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData>
@@ -448,7 +448,7 @@ export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>
   | InfiniteQueryObserverSuccessResult<TData, TError>
 
-export type MutationKey = string | unknown[]
+export type MutationKey = string | readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
@@ -463,7 +463,7 @@ export interface MutationOptions<
   TContext = unknown
 > {
   mutationFn?: MutationFunction<TData, TVariables>
-  mutationKey?: string | unknown[]
+  mutationKey?: MutationKey
   variables?: TVariables
   onMutate?: (variables: TVariables) => Promise<TContext> | TContext
   onSuccess?: (
@@ -483,7 +483,7 @@ export interface MutationOptions<
     context: TContext | undefined
   ) => Promise<void> | void
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
 }
 

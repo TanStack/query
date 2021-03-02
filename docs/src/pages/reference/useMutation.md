@@ -62,8 +62,8 @@ mutate(variables, {
   - If `false`, failed mutations will not retry by default.
   - If `true`, failed mutations will retry infinitely.
   - If set to an `number`, e.g. `3`, failed mutations will retry until the failed mutations count meets that number.
-- `retryDelay: (retryAttempt: number) => number`
-  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds.
+- `retryDelay: number | (retryAttempt: number, error: TError) => number`
+  - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `useErrorBoundary`

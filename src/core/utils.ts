@@ -223,8 +223,8 @@ export function stableValueHash(value: any): string {
  * Checks if key `b` partially matches with key `a`.
  */
 export function partialMatchKey(
-  a: string | unknown[],
-  b: string | unknown[]
+  a: QueryKey,
+  b: QueryKey
 ): boolean {
   return partialDeepEqual(ensureArray(a), ensureArray(b))
 }

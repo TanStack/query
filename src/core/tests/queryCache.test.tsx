@@ -22,7 +22,7 @@ describe('queryCache', () => {
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find(key)
       await sleep(1)
-      expect(subscriber).toHaveBeenCalledWith(query)
+      expect(subscriber).toHaveBeenCalledWith({ query, type: 'queryAdded' })
       unsubscribe()
     })
 
@@ -42,7 +42,7 @@ describe('queryCache', () => {
       queryClient.prefetchQuery(key, () => 'data')
       const query = queryCache.find(key)
       await sleep(100)
-      expect(callback).toHaveBeenCalledWith(query)
+      expect(callback).toHaveBeenCalledWith({ query, type: 'queryAdded' })
     })
 
     test('should notify subscribers when new query with initialData is added', async () => {

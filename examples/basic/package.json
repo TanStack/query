@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "broadcast-channel": "^3.4.1",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-query": "^3.5.0",

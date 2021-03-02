@@ -11,6 +11,7 @@ const {
   errorUpdatedAt,
   failureCount,
   isError,
+  isFetched,
   isFetchedAfterMount,
   isFetching,
   isIdle,
@@ -83,8 +84,8 @@ const result = useQuery({
   - If set to an `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
 - `retryOnMount: boolean`
   - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
-- `retryDelay: (retryAttempt: number) => number`
-  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds.
+- `retryDelay: number | (retryAttempt: number, error: TError) => number`
+  - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: number | Infinity`
@@ -201,6 +202,8 @@ const result = useQuery({
   - Will be `true` if the data shown is the placeholder data.
 - `isPreviousData: boolean`
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
+- `isFetched: boolean`
+  - Will be `true` if the query has been fetched.
 - `isFetchedAfterMount: boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.

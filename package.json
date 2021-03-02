@@ -50,6 +50,7 @@
     "devtools",
     "persistQueryClient-experimental",
     "createLocalStoragePersistor-experimental",
+    "broadcastQueryClient-experimental",
     "lib",
     "react",
     "scripts",
@@ -57,6 +58,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.5.5",
+    "broadcast-channel": "^3.4.1",
     "match-sorter": "^6.0.2"
   },
   "peerDependencies": {
