@@ -22,6 +22,8 @@ function getQueryClientContext(contextSharing: boolean) {
     if (!window.ReactQueryClientContext) {
       window.ReactQueryClientContext = defaultContext
     }
+
+    return window.ReactQueryClientContext
   }
 
   return defaultContext
