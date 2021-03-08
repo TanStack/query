@@ -9,16 +9,16 @@ declare global {
 }
 
 const defaultContext = React.createContext<QueryClient | undefined>(undefined)
+const QueryClientSharingContext = React.createContext<boolean>(false)
 
-// We share the first and at least one
+// if contextSharing is on, we share the first and at least one
 // instance of the context across the window
 // to ensure that if React Query is used across
 // different bundles or microfrontends they will
 // all use the same **instance** of context, regardless
 // of module scoping.
-function getQueryClientContext() {
-  // @ts-ignore (for global)
-  if (typeof window !== 'undefined') {
+function getQueryClientContext(contextSharing: boolean) {
+  if (contextSharing && typeof window !== 'undefined') {
     if (!window.ReactQueryClientContext) {
       window.ReactQueryClientContext = defaultContext
     }
@@ -30,7 +30,9 @@ function getQueryClientContext() {
 }
 
 export const useQueryClient = () => {
-  const queryClient = React.useContext(getQueryClientContext())
+  const queryClient = React.useContext(
+    getQueryClientContext(React.useContext(QueryClientSharingContext))
+  )
 
   if (!queryClient) {
     throw new Error('No QueryClient set, use QueryClientProvider to set one')
@@ -41,10 +43,12 @@ export const useQueryClient = () => {
 
 export interface QueryClientProviderProps {
   client: QueryClient
+  contextSharing?: boolean
 }
 
 export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
   client,
+  contextSharing = false,
   children,
 }) => {
   React.useEffect(() => {
@@ -54,7 +58,11 @@ export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
     }
   }, [client])
 
-  const Context = getQueryClientContext()
+  const Context = getQueryClientContext(contextSharing)
 
-  return <Context.Provider value={client}>{children}</Context.Provider>
+  return (
+    <QueryClientSharingContext.Provider value={contextSharing}>
+      <Context.Provider value={client}>{children}</Context.Provider>
+    </QueryClientSharingContext.Provider>
+  )
 }
