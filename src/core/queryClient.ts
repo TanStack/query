@@ -18,6 +18,7 @@ import type {
   MutationKey,
   MutationObserverOptions,
   MutationOptions,
+  PrefetchQueryOptions,
   QueryFunction,
   QueryKey,
   QueryObserverOptions,
@@ -281,21 +282,34 @@ export class QueryClient {
       : Promise.resolve(query.state.data as TData)
   }
 
-  prefetchQuery(options: FetchQueryOptions): Promise<void>
-  prefetchQuery(queryKey: QueryKey, options?: FetchQueryOptions): Promise<void>
+  prefetchQuery(options: PrefetchQueryOptions): Promise<void>
+  prefetchQuery(
+    queryKey: QueryKey,
+    options?: PrefetchQueryOptions
+  ): Promise<void>
   prefetchQuery(
     queryKey: QueryKey,
     queryFn: QueryFunction,
-    options?: FetchQueryOptions
+    options?: PrefetchQueryOptions
   ): Promise<void>
   prefetchQuery(
-    arg1: QueryKey | FetchQueryOptions,
-    arg2?: QueryFunction | FetchQueryOptions,
-    arg3?: FetchQueryOptions
+    arg1: QueryKey | PrefetchQueryOptions,
+    arg2?: QueryFunction | PrefetchQueryOptions,
+    arg3?: PrefetchQueryOptions
   ): Promise<void> {
     return this.fetchQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
-      .catch(noop)
+      .catch(err => {
+        if (
+          (arg1 as PrefetchQueryOptions).throwOnError ||
+          (arg2 && (arg2 as PrefetchQueryOptions).throwOnError) ||
+          (arg3 && arg3.throwOnError)
+        ) {
+          return err
+        }
+
+        return noop()
+      })
   }
 
   fetchInfiniteQuery<

@@ -338,6 +338,25 @@ describe('queryClient', () => {
 
       consoleMock.mockRestore()
     })
+
+    test('should throw error when throwOnError is set to true', async () => {
+      const key = queryKey()
+
+      try {
+        await queryClient.prefetchQuery(
+          key,
+          async () => {
+            throw new Error('error')
+          },
+          {
+            retry: false,
+            throwOnError: true
+          }
+        )
+      } catch (err) {
+        expect(err).toBeDefined();
+      }
+    })
   })
 
   describe('removeQueries', () => {
@@ -373,7 +392,7 @@ describe('queryClient', () => {
         await queryClient.fetchQuery(key2, async () => {
           return Promise.reject('err')
         })
-      } catch {}
+      } catch { }
       queryClient.fetchQuery(key1, async () => {
         await sleep(1000)
         return 'data2'
@@ -383,7 +402,7 @@ describe('queryClient', () => {
           await sleep(1000)
           return Promise.reject('err2')
         })
-      } catch {}
+      } catch { }
       queryClient.fetchQuery(key3, async () => {
         await sleep(1000)
         return 'data3'

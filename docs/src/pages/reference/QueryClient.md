@@ -131,7 +131,9 @@ await queryClient.prefetchQuery(queryKey)
 
 **Options**
 
-The options for `prefetchQuery` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
+The options for `prefetchQuery` are similar as those of [`fetchQuery`](#queryclientfetchquery).
+
+Additionally `prefetchQuery` does not act on an error thrown in the `queryFn`. Set `throwOnError` to `true` in the options to throw an error when one happens in the `queryFn`.
 
 **Returns**
 
