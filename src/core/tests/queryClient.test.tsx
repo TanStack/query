@@ -550,6 +550,22 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
+
+    test('should not refetch active queries when "refetchActive" is false', async () => {
+      const key1 = queryKey()
+      const queryFn1 = jest.fn()
+      await queryClient.fetchQuery(key1, queryFn1)
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key1,
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe()
+      queryClient.invalidateQueries(key1, {
+        refetchActive: false,
+      })
+      unsubscribe()
+      expect(queryFn1).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('resetQueries', () => {
