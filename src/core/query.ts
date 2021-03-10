@@ -365,7 +365,7 @@ export class Query<
     const queryKey = ensureArray(this.queryKey)
     const queryFnContext: QueryFunctionContext = {
       queryKey,
-      pageParam: undefined,
+      pageParam: fetchOptions?.meta?.pageParam,
     }
 
     // Create fetch function
