@@ -16,18 +16,20 @@ export function useQuery<
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 >(
-  queryKey: QueryKey,
-  options?: UseQueryOptions<TQueryFnData, TError, TData>
+  queryKey: TQueryKey,
+  options?: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
 ): UseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 >(
-  queryKey: QueryKey,
-  queryFn: QueryFunction<TQueryFnData>,
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
   options?: UseQueryOptions<TQueryFnData, TError, TData>
 ): UseQueryResult<TData, TError>
 export function useQuery<TQueryFnData, TError, TData = TQueryFnData>(

@@ -5,9 +5,10 @@ import type { QueryFilters } from './utils'
 
 export type QueryKey = string | readonly unknown[]
 
-export type QueryFunction<T = unknown> = (
-  context: QueryFunctionContext<any>
-) => T | Promise<T>
+export type QueryFunction<
+  T = unknown,
+  TQueryKey extends QueryKey = QueryKey
+> = (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,

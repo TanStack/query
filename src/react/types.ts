@@ -4,6 +4,8 @@ import {
   InfiniteQueryObserverResult,
   MutateOptions,
   MutationStatus,
+  QueryFunction,
+  QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
 } from '../core/types'
@@ -18,8 +20,16 @@ export interface UseBaseQueryOptions<
 export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
-> extends UseBaseQueryOptions<TQueryFnData, TError, TData> {}
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+>
+  extends Omit<
+    UseBaseQueryOptions<TQueryFnData, TError, TData>,
+    'queryFn' | 'queryKey'
+  > {
+  queryKey?: TQueryKey
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
+}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
