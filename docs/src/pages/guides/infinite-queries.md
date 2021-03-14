@@ -155,7 +155,7 @@ queryClient.setQueryData('projects', data => ({
 }))
 ```
 
-Manually removing a single of value from an individual page:
+Manually removing a single value from an individual page:
 
 ```js
 const newPagesArray = []
