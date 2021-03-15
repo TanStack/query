@@ -7,6 +7,7 @@ import {
   parseQueryArgs,
   partialMatchKey,
   hashQueryKeyByOptions,
+  MutationFilters,
 } from './utils'
 import type {
   DefaultOptions,
@@ -97,6 +98,10 @@ export class QueryClient {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetching = true
     return this.queryCache.findAll(filters).length
+  }
+
+  isMutating(filters?: MutationFilters): number {
+    return this.mutationCache.findAll({ ...filters, fetching: true }).length
   }
 
   getQueryData<TData = unknown>(
