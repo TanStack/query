@@ -1,4 +1,4 @@
-import { Mutation } from './mutation'
+import type { Mutation } from './mutation'
 import type { Query } from './query'
 import type {
   MutationFunction,
