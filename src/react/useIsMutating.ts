@@ -21,7 +21,7 @@ export function useIsMutating(filters?: MutationFilters): number {
   React.useEffect(() => {
     mountedRef.current = true
 
-    const unsubscribe = queryClient.getQueryCache().subscribe(
+    const unsubscribe = queryClient.getMutationCache().subscribe(
       notifyManager.batchCalls(() => {
         if (mountedRef.current) {
           const newIsMutating = queryClient.isMutating(filtersRef.current)
