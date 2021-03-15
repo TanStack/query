@@ -207,7 +207,7 @@ export class QueryClient {
     const refetchFilters: QueryFilters = {
       ...filters,
       active: filters.refetchActive ?? true,
-      inactive: filters.refetchInactive ?? false,
+      inactive: filters.refetchInactive,
     }
 
     return notifyManager.batch(() => {
