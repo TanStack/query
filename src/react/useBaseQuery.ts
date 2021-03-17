@@ -39,6 +39,12 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     )
   }
 
+  if (defaultedOptions.onFetch) {
+    defaultedOptions.onFetch = notifyManager.batchCalls(
+      defaultedOptions.onFetch
+    )
+  }
+
   if (defaultedOptions.suspense) {
     // Always set stale time when using suspense to prevent
     // fetching again when directly mounting after suspending

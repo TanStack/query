@@ -34,6 +34,7 @@ const {
   keepPreviousData,
   notifyOnChangeProps,
   notifyOnChangePropsExclusions,
+  onFetch,
   onError,
   onSettled,
   onSuccess,
@@ -127,6 +128,12 @@ const result = useQuery({
   - Optional
   - If set, the component will not re-render if any of the listed properties change.
   - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
+- `onFetch: (context: QueryFunctionContext) => void`
+  - Optional
+  - This function will fire will any time right before the query tries to fetch new data.
+  - Receives a `QueryFunctionContext` object with the following variables:
+    - `queryKey: QueryKey`
+  - Please note: `onFetch` is called for every retry. With default `retry: 3`, this function is called 4 times before `useQuery()` reaches an error state.
 - `onSuccess: (data: TData) => void`
   - Optional
   - This function will fire any time the query successfully fetches new data.

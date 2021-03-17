@@ -144,6 +144,11 @@ export interface QueryObserverOptions<
    */
   notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
+   * This callback will fire right before the query will start fetching new data.
+   * Useful for side-effects that are specific to this query.
+   */
+  onFetch?: (context:QueryFunctionContext) => void
+  /**
    * This callback will fire any time the query successfully fetches new data.
    */
   onSuccess?: (data: TData) => void

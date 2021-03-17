@@ -314,6 +314,25 @@ describe('useQuery', () => {
     })
   })
 
+  it('should call onFetch before a query is fetched', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onFetch = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onFetch })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+    expect(states.length).toBe(2)
+    expect(onFetch).toHaveBeenCalledTimes(1)
+    expect(onFetch).toHaveBeenNthCalledWith(1, { pageParam: undefined, queryKey: [key] })
+  })
+
   it('should call onSuccess after a query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -359,6 +378,36 @@ describe('useQuery', () => {
     await sleep(50)
     expect(states.length).toBe(4)
     expect(onSuccess).toHaveBeenCalledTimes(2)
+  })
+
+  it('should call onFetch before a query will refetch', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onFetch = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onFetch })
+
+      states.push(state)
+
+      const { refetch } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 10)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(50)
+    expect(states.length).toBe(4)
+    expect(onFetch).toHaveBeenCalledTimes(2)
+    expect(onFetch).toHaveBeenNthCalledWith(1, { pageParam: undefined, queryKey: [key] })
+    expect(onFetch).toHaveBeenNthCalledWith(2, { pageParam: undefined, queryKey: [key] })
   })
 
   it('should call onSuccess after a disabled query has been fetched', async () => {
@@ -1858,13 +1907,14 @@ describe('useQuery', () => {
     unsubscribe()
 
     // 1. Subscribe observer
-    // 2. Query loading
-    // 3. Observer loading
-    // 4. Query success
-    // 5. Observer success
-    // 6. Query stale
-    // 7. Unsubscribe observer
-    expect(fn).toHaveBeenCalledTimes(7)
+    // 2. Query preFetch
+    // 3. Query loading
+    // 4. Observer loading
+    // 5. Query success
+    // 6. Observer success
+    // 7. Query stale
+    // 8. Unsubscribe observer
+    expect(fn).toHaveBeenCalledTimes(8)
   })
 
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
@@ -2730,6 +2780,44 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Failed 2 times'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
+    consoleMock.mockRestore()
+  })
+
+  it('should call onFetch for each retry', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    const onFetch = jest.fn()
+
+    const queryFn = jest.fn()
+    queryFn.mockImplementation(() => {
+      return Promise.reject('Error test Barrett')
+    })
+
+    function Page() {
+      const { status, failureCount } = useQuery(key, queryFn, {
+        onFetch,
+        retry: 3,
+        retryDelay: 1,
+      })
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>Failed {failureCount} times</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('loading'))
+    await waitFor(() => rendered.getByText('error'))
+
+    // query should fail `retry + 1` times, since first time isn't a "retry"
+    await waitFor(() => rendered.getByText('Failed 4 times'))
+
+    expect(onFetch).toHaveBeenCalledTimes(4)
     consoleMock.mockRestore()
   })
 

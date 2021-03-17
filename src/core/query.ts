@@ -47,6 +47,7 @@ export interface QueryState<TData = unknown, TError = unknown> {
 }
 
 export interface FetchContext<TQueryFnData, TError, TData> {
+  preFetchFn: (context:QueryFunctionContext) => void
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
   options: QueryOptions<TQueryFnData, TError, TData>
@@ -78,6 +79,11 @@ interface FailedAction {
 interface FetchAction {
   type: 'fetch'
   meta?: any
+}
+
+interface PreFetchAction {
+  type: 'preFetch'
+  context: QueryFunctionContext
 }
 
 interface SuccessAction<TData> {
@@ -114,6 +120,7 @@ export type Action<TData, TError> =
   | ErrorAction<TError>
   | FailedAction
   | FetchAction
+  | PreFetchAction
   | InvalidateAction
   | PauseAction
   | SetStateAction<TData, TError>
@@ -368,11 +375,18 @@ export class Query<
       pageParam: undefined,
     }
 
+    const preFetchFn = (context:QueryFunctionContext) => {
+      this.dispatch({ type: 'preFetch', context })
+    }
+
     // Create fetch function
-    const fetchFn = () =>
-      this.options.queryFn
-        ? this.options.queryFn(queryFnContext)
-        : Promise.reject('Missing queryFn')
+    const fetchFn = () => {
+      if (this.options.queryFn) {
+        preFetchFn(queryFnContext)
+        return this.options.queryFn(queryFnContext)
+      }
+      return Promise.reject('Missing queryFn')
+    }
 
     // Trigger behavior hook
     const context: FetchContext<TQueryFnData, TError, TData> = {
@@ -380,6 +394,7 @@ export class Query<
       options: this.options,
       queryKey,
       state: this.state,
+      preFetchFn,
       fetchFn,
     }
 

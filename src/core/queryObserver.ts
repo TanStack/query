@@ -586,6 +586,11 @@ export class QueryObserver<
   onQueryUpdate(action: Action<TData, TError>): void {
     const notifyOptions: NotifyOptions = {}
 
+    if (action.type === 'preFetch') {
+      this.options.onFetch?.(action.context)
+      return
+    }
+
     if (action.type === 'success') {
       notifyOptions.onSuccess = true
     } else if (action.type === 'error') {

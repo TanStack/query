@@ -43,6 +43,7 @@ export function infiniteQueryBehavior<
             pageParam: param,
           }
 
+          context.preFetchFn(queryFnContext)
           const queryFnResult = queryFn(queryFnContext)
 
           const promise = Promise.resolve(queryFnResult).then(page => {

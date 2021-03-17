@@ -1583,4 +1583,125 @@ describe('useInfiniteQuery', () => {
 
     expect(cancelFn).toHaveBeenCalled()
   })
+
+  it('should call onFetch on every reFetch', async () => {
+    const key = queryKey()
+    const onFetch = jest.fn()
+
+    const genItems = (size: number) =>
+      [...new Array(size)].fill(null).map((_, d) => d)
+    const items = genItems(15)
+    const limit = 3
+
+    const fetchItemsWithLimit = async (cursor = 0, ts: number) => {
+      await sleep(10)
+      return {
+        prevId: cursor - limit,
+        nextId: cursor + limit,
+        items: items.slice(cursor, cursor + limit),
+        ts,
+      }
+    }
+
+    function Page() {
+      const fetchCountRef = React.useRef(0)
+      const {
+        status,
+        data,
+        error,
+        isFetchingNextPage,
+        fetchNextPage,
+        hasNextPage,
+        refetch,
+      } = useInfiniteQuery<Result, Error>(
+        key,
+        ({ pageParam = 0 }) =>
+          fetchItemsWithLimit(pageParam, fetchCountRef.current++),
+        {
+          onFetch,
+          getNextPageParam: lastPage => lastPage.nextId,
+          getPreviousPageParam: lastPage => lastPage.prevId,
+        }
+      )
+
+      return (
+        <div>
+          <h1>Pagination</h1>
+          {status === 'loading' ? (
+            'Loading...'
+          ) : status === 'error' ? (
+            <span>Error: {error?.message}</span>
+          ) : (
+            <>
+              <div>Data:</div>
+              {data?.pages.map((page, i) => (
+                <div key={i}>
+                  <div>
+                    Page {i}: {page.ts}
+                  </div>
+                  <div key={i}>
+                    {page.items.map(item => (
+                      <p key={item}>Item: {item}</p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <div>
+                <button
+                  onClick={() => fetchNextPage()}
+                  disabled={!hasNextPage || Boolean(isFetchingNextPage)}
+                >
+                  {isFetchingNextPage
+                    ? 'Loading more...'
+                    : hasNextPage
+                      ? 'Load More'
+                      : 'Nothing more to load'}
+                </button>
+                <button onClick={() => refetch()}>Refetch</button>
+                <button
+                  onClick={() => {
+                    // Imagine that this mutation happens somewhere else
+                    // makes an actual network request
+                    // and calls invalidateQueries in an onSuccess
+                    items.splice(4, 1)
+                    queryClient.invalidateQueries(key)
+                  }}
+                >
+                  Remove item
+                </button>
+              </div>
+              <div>{!isFetchingNextPage ? 'Background Updating...' : null}</div>
+            </>
+          )}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    rendered.getByText('Loading...')
+
+    await waitFor(() => rendered.getByText('Item: 2'))
+    await waitFor(() => rendered.getByText('Page 0: 0'))
+
+    fireEvent.click(rendered.getByText('Load More'))
+
+    await waitFor(() => rendered.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Item: 5'))
+    await waitFor(() => rendered.getByText('Page 0: 0'))
+    await waitFor(() => rendered.getByText('Page 1: 1'))
+
+    fireEvent.click(rendered.getByText('Load More'))
+
+    await waitFor(() => rendered.getByText('Loading more...'))
+    await waitFor(() => rendered.getByText('Item: 8'))
+    await waitFor(() => rendered.getByText('Page 0: 0'))
+    await waitFor(() => rendered.getByText('Page 1: 1'))
+    await waitFor(() => rendered.getByText('Page 2: 2'))
+
+    expect(onFetch).toHaveBeenCalledTimes(3)
+    expect(onFetch).toHaveBeenNthCalledWith(1, { pageParam: undefined, queryKey: [key] })
+    expect(onFetch).toHaveBeenNthCalledWith(2, { pageParam: 3, queryKey: [key] })
+    expect(onFetch).toHaveBeenNthCalledWith(3, { pageParam: 6, queryKey: [key] })
+  })
 })

@@ -31,6 +31,13 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](/refer
     - `pageParam: unknown | undefined`
   - Must return a promise that will either resolves data or throws an error.
   - Make sure you return the data *and* the `pageParam` if needed for use in the props below.
+- `onFetch: (context: QueryFunctionContext) => void`
+  - Optional
+  - This function will fire will any time right before the query tries to fetch new data.
+  - Receives a `QueryFunctionContext` object with the following variables:
+    - `queryKey: QueryKey`
+    - `pageParam: unknown | undefined`
+  - Please note: `onFetch` is called for every retry. With default `retry: 3`, this function is called 4 times before `useInfiniteQuery()` reaches an error state.
 - `getNextPageParam: (lastPage, allPages) => unknown | undefined`
   - When new data is received for this query, this function receives both the last page of the infinite list of data and the full array of all pages.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
