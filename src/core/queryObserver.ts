@@ -57,6 +57,7 @@ export class QueryObserver<
     TQueryData
   >
   private previousQueryResult?: QueryObserverResult<TData, TError>
+  private previousSelectError: Error | null
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private trackedProps!: Array<keyof QueryObserverResult>
@@ -70,6 +71,7 @@ export class QueryObserver<
     this.client = client
     this.options = options
     this.trackedProps = []
+    this.previousSelectError = null
     this.bindMethods()
     this.setOptions(options)
   }
@@ -414,7 +416,8 @@ export class QueryObserver<
       if (
         prevResult &&
         state.data === prevResultState?.data &&
-        options.select === prevResultOptions?.select
+        options.select === prevResultOptions?.select &&
+        !this.previousSelectError
       ) {
         data = prevResult.data
       } else {
@@ -423,9 +426,11 @@ export class QueryObserver<
           if (options.structuralSharing !== false) {
             data = replaceEqualDeep(prevResult?.data, data)
           }
+          this.previousSelectError = null
         } catch (selectError) {
           getLogger().error(selectError)
           error = selectError
+          this.previousSelectError = selectError
           errorUpdatedAt = Date.now()
           status = 'error'
         }
