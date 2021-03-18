@@ -2,7 +2,7 @@ import type { MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import { Mutation, MutationState } from './mutation'
-import { noop } from './utils'
+import { matchMutation, MutationFilters, noop } from './utils'
 import { Subscribable } from './subscribable'
 
 // TYPES
@@ -74,6 +74,25 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   getAll(): Mutation[] {
     return this.mutations
+  }
+
+  find<
+    TData = unknown,
+    TError = unknown,
+    TVariables = any,
+    TContext = unknown
+  >(
+    filters: MutationFilters
+  ): Mutation<TData, TError, TVariables, TContext> | undefined {
+    if (typeof filters.exact === 'undefined') {
+      filters.exact = true
+    }
+
+    return this.mutations.find(mutation => matchMutation(filters, mutation))
+  }
+
+  findAll(filters: MutationFilters): Mutation[] {
+    return this.mutations.filter(mutation => matchMutation(filters, mutation))
   }
 
   notify(mutation?: Mutation<any, any, any, any>) {

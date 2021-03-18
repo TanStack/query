@@ -1,3 +1,4 @@
+import type { Mutation } from './mutation'
 import type { Query } from './query'
 import type {
   MutationFunction,
@@ -37,6 +38,25 @@ export interface QueryFilters {
   stale?: boolean
   /**
    * Include or exclude fetching queries
+   */
+  fetching?: boolean
+}
+
+export interface MutationFilters {
+  /**
+   * Match mutation key exactly
+   */
+  exact?: boolean
+  /**
+   * Include mutations matching this predicate function
+   */
+  predicate?: (mutation: Mutation<any, any, any>) => boolean
+  /**
+   * Include mutations matching this mutation key
+   */
+  mutationKey?: MutationKey
+  /**
+   * Include or exclude fetching mutations
    */
   fetching?: boolean
 }
@@ -187,6 +207,40 @@ export function matchQuery(
   return true
 }
 
+export function matchMutation(
+  filters: MutationFilters,
+  mutation: Mutation<any, any>
+): boolean {
+  const { exact, fetching, predicate, mutationKey } = filters
+  if (isQueryKey(mutationKey)) {
+    if (!mutation.options.mutationKey) {
+      return false
+    }
+    if (exact) {
+      if (
+        hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)
+      ) {
+        return false
+      }
+    } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+      return false
+    }
+  }
+
+  if (
+    typeof fetching === 'boolean' &&
+    (mutation.state.status === 'loading') !== fetching
+  ) {
+    return false
+  }
+
+  if (predicate && !predicate(mutation)) {
+    return false
+  }
+
+  return true
+}
+
 export function hashQueryKeyByOptions(
   queryKey: QueryKey,
   options?: QueryOptions<any, any>
@@ -222,10 +276,7 @@ export function stableValueHash(value: any): string {
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(
-  a: QueryKey,
-  b: QueryKey
-): boolean {
+export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
   return partialDeepEqual(ensureArray(a), ensureArray(b))
 }
 

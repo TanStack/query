@@ -36,6 +36,7 @@ Its available methods are:
 - [`removeQueries`](#queryclientremovequeries)
 - [`resetQueries`](#queryclientresetqueries)
 - [`isFetching`](#queryclientisfetching)
+- [`isMutating`](#queryclientismutating)
 - [`getDefaultOptions`](#queryclientsetdefaultoptions)
 - [`setDefaultOptions`](#queryclientgetdefaultoptions)
 - [`getQueryDefaults`](#queryclientgetquerydefaults)
@@ -166,7 +167,7 @@ const data = queryClient.getQueryData(queryKey)
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
 
@@ -216,7 +217,7 @@ console.log(state.dataUpdatedAt)
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 ## `queryClient.invalidateQueries`
 
@@ -236,7 +237,7 @@ await queryClient.invalidateQueries('posts', {
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
   - `refetchActive: Boolean`
     - Defaults to `true`
     - When set to `false`, queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will NOT be refetched in the background, and only marked as invalid.
@@ -270,7 +271,7 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 - `refetchOptions?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -292,7 +293,7 @@ await queryClient.cancelQueries('posts', { exact: true })
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
 
@@ -309,7 +310,7 @@ queryClient.removeQueries(queryKey, { exact: true })
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
 
@@ -333,7 +334,7 @@ queryClient.resetQueries(queryKey, { exact: true })
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 - `resetOptions?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
@@ -352,17 +353,36 @@ if (queryClient.isFetching()) {
 }
 ```
 
-React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+React Query also exports a handy [`useIsFetching`](./useIsFetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/query-filters)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
 
 This method returns the number of fetching queries.
 
+## `queryClient.isMutating`
+
+This `isMutating` method returns an `integer` representing how many mutations, if any, in the cache are currently fetching.
+
+```js
+if (queryClient.isMutating()) {
+  console.log('At least one mutation is fetching!')
+}
+```
+
+React Query also exports a handy [`useIsMutating`](./useIsMutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
+
+**Options**
+
+- `filters: MutationFilters`: [Query Filters](../guides/filters#mutation-filters)
+
+**Returns**
+
+This method returns the number of fetching mutations.
 ## `queryClient.getDefaultOptions`
 
 The `getDefaultOptions` method returns the default options which have been set when creating the client or with `setDefaultOptions`.
