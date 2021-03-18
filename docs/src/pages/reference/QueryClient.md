@@ -353,7 +353,7 @@ if (queryClient.isFetching()) {
 }
 ```
 
-React Query also exports a handy [`useIsFetching`](#useisfetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+React Query also exports a handy [`useIsFetching`](./useIsFetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
 **Options**
 
@@ -374,7 +374,7 @@ if (queryClient.isMutating()) {
 }
 ```
 
-React Query also exports a handy [`useIsMutating`](#useismutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
+React Query also exports a handy [`useIsMutating`](./useIsMutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
 
 **Options**
 
