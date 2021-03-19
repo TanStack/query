@@ -15,7 +15,7 @@ const isMutatingPosts = useIsMutating(['posts'])
 
 **Options**
 
-- `filters?: MutationFilters`: [Query Filters](../guides/filters#mutation-filters)
+- `filters?: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
 
 **Returns**
 
