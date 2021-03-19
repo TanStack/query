@@ -349,6 +349,11 @@
           "editUrl": "/reference/useIsFetching.md"
         },
         {
+          "title": "useIsMutating",
+          "path": "/reference/useIsMutating",
+          "editUrl": "/reference/useIsMutating.md"
+        },
+        {
           "title": "QueryClient",
           "path": "/reference/QueryClient",
           "editUrl": "/reference/QueryClient.md"

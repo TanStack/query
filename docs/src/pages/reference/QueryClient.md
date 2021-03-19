@@ -378,7 +378,7 @@ React Query also exports a handy [`useIsMutating`](./useIsMutating) hook that wi
 
 **Options**
 
-- `filters: MutationFilters`: [Query Filters](../guides/filters#mutation-filters)
+- `filters: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
 
 **Returns**
 
