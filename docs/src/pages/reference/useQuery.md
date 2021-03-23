@@ -81,7 +81,7 @@ const result = useQuery({
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
-  - If set to an `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
+  - If set to a `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
 - `retryOnMount: boolean`
   - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
 - `retryDelay: number | (retryAttempt: number, error: TError) => number`
