@@ -5,91 +5,89 @@ export const Footer = props => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
       <div className="container mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
-        <div className="xl:grid xl:grid-cols-2 xl:gap-8">
-          <div className="md:grid md:grid-cols-3 md:gap-8">
-            <div>
-              <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                Resources
-              </h4>
-              <ul className="mt-4">
-                <li>
-                  <Link href="/overview">
-                    <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                      Docs
-                    </a>
-                  </Link>
-                </li>
-                <li className="mt-4">
-                  <Link href="/examples/simple">
-                    <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                      Examples
-                    </a>
-                  </Link>
-                </li>
-                <li className="mt-4">
-                  <Link href="/reference/useQuery">
-                    <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
-                      API Reference
-                    </a>
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div className="mt-12 md:mt-0">
-              <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-                Community
-              </h4>
-              <ul className="mt-4">
-                <li className="mt-4">
-                  <a
-                    href="https://github.com/tannerlinsley/react-query/discussions"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                  >
-                    Forum & Support
+        <div className="grid-cols-2 md:grid xl:grid-cols-4 md:gap-8">
+          <div>
+            <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
+              Resources
+            </h4>
+            <ul className="mt-4">
+              <li>
+                <Link href="/overview">
+                  <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
+                    Docs
                   </a>
-                </li>
-                <li className="mt-4">
-                  <a
-                    href="https://discord.gg/WrRKjPJ"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                  >
-                    #TanStack Discord
+                </Link>
+              </li>
+              <li className="mt-4">
+                <Link href="/examples/simple">
+                  <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
+                    Examples
                   </a>
-                </li>
-                <li className="mt-4">
-                  <a
-                    href="http://stackoverflow.com/questions/tagged/react-query"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                  >
-                    Stack Overflow
+                </Link>
+              </li>
+              <li className="mt-4">
+                <Link href="/reference/useQuery">
+                  <a className="text-base leading-6 text-gray-500 hover:text-gray-900">
+                    API Reference
                   </a>
-                </li>
-                <li className="mt-4">
-                  <a
-                    href="https://github.com/tannerlinsley/react-query/releases"
-                    className="text-base leading-6 text-gray-500 hover:text-gray-900"
-                  >
-                    Releases
-                  </a>
-                </li>
-                <li className="mt-4">
-                  <a
-                    className="github-button"
-                    href="https://github.com/tannerlinsley/react-query"
-                    data-color-scheme="no-preference: light; light: light; dark: dark;"
-                    data-icon="octicon-star"
-                    data-size="large"
-                    data-show-count="true"
-                    aria-label="Star tannerlinsley/react-query on GitHub"
-                  >
-                    Star
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div className="mt-12 md:mt-0">
-              <CarbonAds />
-            </div>
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div className="mt-12 md:mt-0">
+            <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
+              Community
+            </h4>
+            <ul className="mt-4">
+              <li className="mt-4">
+                <a
+                  href="https://github.com/tannerlinsley/react-query/discussions"
+                  className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                >
+                  Forum & Support
+                </a>
+              </li>
+              <li className="mt-4">
+                <a
+                  href="https://discord.gg/WrRKjPJ"
+                  className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                >
+                  #TanStack Discord
+                </a>
+              </li>
+              <li className="mt-4">
+                <a
+                  href="http://stackoverflow.com/questions/tagged/react-query"
+                  className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                >
+                  Stack Overflow
+                </a>
+              </li>
+              <li className="mt-4">
+                <a
+                  href="https://github.com/tannerlinsley/react-query/releases"
+                  className="text-base leading-6 text-gray-500 hover:text-gray-900"
+                >
+                  Releases
+                </a>
+              </li>
+              <li className="mt-4">
+                <a
+                  className="github-button"
+                  href="https://github.com/tannerlinsley/react-query"
+                  data-color-scheme="no-preference: light; light: light; dark: dark;"
+                  data-icon="octicon-star"
+                  data-size="large"
+                  data-show-count="true"
+                  aria-label="Star tannerlinsley/react-query on GitHub"
+                >
+                  Star
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div className="mt-12 md:mt-0">
+            <CarbonAds />
           </div>
           <div className="mt-8 xl:mt-0">
             <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
