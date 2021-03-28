@@ -94,6 +94,9 @@ const result = useQuery({
 - `cacheTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
+- `queryKeyHashFn: (queryKey: QueryKey) => string`
+  - Optional
+  - If specified, this function is used to hash the `queryKey` to a string.
 - `refetchInterval: false | number`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
