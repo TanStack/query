@@ -24,7 +24,9 @@ export type InitialStaleFunction = () => boolean
 
 export type PlaceholderDataFunction<TResult> = () => TResult | undefined
 
-export type QueryKeyHashFunction = (queryKey: QueryKey) => string
+export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
+  queryKey: TQueryKey
+) => string
 
 export type GetPreviousPageParamFunction<TQueryFnData = unknown> = (
   firstPage: TQueryFnData,
@@ -60,7 +62,7 @@ export interface QueryOptions<
   queryFn?: QueryFunction<TQueryFnData>
   queryHash?: string
   queryKey?: TQueryKey
-  queryKeyHashFn?: QueryKeyHashFunction
+  queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>
   initialData?: TData | InitialDataFunction<TData>
   initialDataUpdatedAt?: number | (() => number | undefined)
   behavior?: QueryBehavior<TQueryFnData, TError, TData>

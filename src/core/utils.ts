@@ -161,7 +161,7 @@ export function parseFilterArgs<
 
 export function matchQuery(
   filters: QueryFilters,
-  query: Query<any, any>
+  query: Query<any, any, any, any>
 ): boolean {
   const {
     active,
@@ -244,9 +244,9 @@ export function matchMutation(
   return true
 }
 
-export function hashQueryKeyByOptions(
-  queryKey: QueryKey,
-  options?: QueryOptions<any, any>
+export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
+  queryKey: TQueryKey,
+  options?: QueryOptions<any, any, any, TQueryKey>
 ): string {
   const hashFn = options?.queryKeyHashFn || hashQueryKey
   return hashFn(queryKey)

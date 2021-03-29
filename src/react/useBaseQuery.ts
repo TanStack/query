@@ -1,13 +1,26 @@
 import React from 'react'
 
+import { QueryKey } from '../core'
 import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
 
-export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
-  options: UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData>,
+export function useBaseQuery<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey
+>(
+  options: UseBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
   Observer: typeof QueryObserver
 ) {
   const mountedRef = React.useRef(false)
@@ -54,10 +67,18 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     }
   }
 
-  const obsRef = React.useRef<QueryObserver<any, any>>()
+  const obsRef = React.useRef<
+    QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  >()
 
   if (!obsRef.current) {
-    obsRef.current = new Observer(queryClient, defaultedOptions)
+    obsRef.current = new Observer<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >(queryClient, defaultedOptions)
   }
 
   let result = obsRef.current.getOptimisticResult(defaultedOptions)
@@ -96,7 +117,7 @@ export function useBaseQuery<TQueryFnData, TError, TData, TQueryData>(
     throw obsRef.current
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {
-        defaultedOptions.onSuccess?.(data)
+        defaultedOptions.onSuccess?.(data as TData)
         defaultedOptions.onSettled?.(data, null)
       })
       .catch(error => {
