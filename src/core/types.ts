@@ -194,13 +194,15 @@ export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 >
   extends QueryObserverOptions<
     TQueryFnData,
     TError,
     InfiniteData<TData>,
-    InfiniteData<TQueryData>
+    InfiniteData<TQueryData>,
+    TQueryKey
   > {}
 
 export interface FetchQueryOptions<

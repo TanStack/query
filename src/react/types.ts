@@ -42,13 +42,15 @@ export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 >
   extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData
+    TQueryData,
+    TQueryKey
   > {}
 
 export type UseBaseQueryResult<

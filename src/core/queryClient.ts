@@ -471,7 +471,7 @@ export class QueryClient {
   }
 
   defaultQueryObserverOptions<
-    T extends QueryObserverOptions<any, any, any, any>
+    T extends QueryObserverOptions<any, any, any, any, any>
   >(options?: T): T {
     return this.defaultQueryOptions(options)
   }
