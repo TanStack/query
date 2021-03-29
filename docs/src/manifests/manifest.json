@@ -166,9 +166,9 @@
           "editUrl": "/guides/scroll-restoration.md"
         },
         {
-          "title": "Query Filters",
-          "path": "/guides/query-filters",
-          "editUrl": "/guides/query-filters.md"
+          "title": "Filters",
+          "path": "/guides/filters",
+          "editUrl": "/guides/filters.md"
         },
         {
           "title": "SSR & Next.js",
@@ -347,6 +347,11 @@
           "title": "useIsFetching",
           "path": "/reference/useIsFetching",
           "editUrl": "/reference/useIsFetching.md"
+        },
+        {
+          "title": "useIsMutating",
+          "path": "/reference/useIsMutating",
+          "editUrl": "/reference/useIsMutating.md"
         },
         {
           "title": "QueryClient",

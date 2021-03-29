@@ -34,7 +34,7 @@ const queryClient = new QueryClient({
 const localStoragePersistor = createLocalStoragePersistor()
 
 persistQueryClient({
-  queryClient
+  queryClient,
   persistor: localStoragePersistor,
 })
 ```

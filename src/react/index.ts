@@ -8,6 +8,7 @@ export {
   useQueryErrorResetBoundary,
 } from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
+export { useIsMutating } from './useIsMutating'
 export { useMutation } from './useMutation'
 export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'
