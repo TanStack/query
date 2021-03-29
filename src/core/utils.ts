@@ -106,9 +106,12 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
 
-export function parseQueryArgs<TOptions extends QueryOptions<any, any, any>>(
-  arg1: QueryKey | TOptions,
-  arg2?: QueryFunction<any> | TOptions,
+export function parseQueryArgs<
+  TOptions extends QueryOptions<any, any, any, TQueryKey>,
+  TQueryKey extends QueryKey = QueryKey
+>(
+  arg1: TQueryKey | TOptions,
+  arg2?: QueryFunction<any, TQueryKey> | TOptions,
   arg3?: TOptions
 ): TOptions {
   if (!isQueryKey(arg1)) {
