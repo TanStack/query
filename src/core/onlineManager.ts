@@ -12,7 +12,7 @@ class OnlineManager extends Subscribable {
   }
 
   setEventListener(
-    setup: (setOnline: () => void) => (online?: boolean) => void
+    setup: (setOnline: (online?: boolean) => void) => () => void
   ): void {
     if (this.removeEventListener) {
       this.removeEventListener()
@@ -59,13 +59,13 @@ class OnlineManager extends Subscribable {
     if (!isServer && window?.addEventListener) {
       this.setEventListener(onOnline => {
         // Listen to online
-        window.addEventListener('online', onOnline, false)
-        window.addEventListener('offline', onOnline, false)
+        window.addEventListener('online', () => onOnline(), false)
+        window.addEventListener('offline', () => onOnline(), false)
 
         return () => {
           // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('online', onOnline)
-          window.removeEventListener('offline', onOnline)
+          window.removeEventListener('online', () => onOnline())
+          window.removeEventListener('offline', () => onOnline())
         }
       })
     }
