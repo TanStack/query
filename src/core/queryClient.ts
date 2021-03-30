@@ -286,17 +286,22 @@ export class QueryClient {
       : Promise.resolve(query.state.data as TData)
   }
 
-  prefetchQuery(options: FetchQueryOptions): Promise<void>
-  prefetchQuery(queryKey: QueryKey, options?: FetchQueryOptions): Promise<void>
-  prefetchQuery(
+  prefetchQuery<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    options: FetchQueryOptions<TQueryFnData, TError, TData>
+  ): Promise<void>
+  prefetchQuery<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    queryKey: QueryKey,
+    options?: FetchQueryOptions<TQueryFnData, TError, TData>
+  ): Promise<void>
+  prefetchQuery<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
     queryKey: QueryKey,
     queryFn: QueryFunction,
-    options?: FetchQueryOptions
+    options?: FetchQueryOptions<TQueryFnData, TError, TData>
   ): Promise<void>
-  prefetchQuery(
-    arg1: QueryKey | FetchQueryOptions,
-    arg2?: QueryFunction | FetchQueryOptions,
-    arg3?: FetchQueryOptions
+  prefetchQuery<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+    arg1: QueryKey | FetchQueryOptions<TQueryFnData, TError, TData>,
+    arg2?: QueryFunction | FetchQueryOptions<TQueryFnData, TError, TData>,
+    arg3?: FetchQueryOptions<TQueryFnData, TError, TData>
   ): Promise<void> {
     return this.fetchQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)
