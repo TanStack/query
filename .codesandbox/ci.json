@@ -1,0 +1,5 @@
+{
+  "packages": ["./"],
+  "sandboxes": ["/examples/basic", "/examples/basic-typescript"],
+  "node": "14"
+}
