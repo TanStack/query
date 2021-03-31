@@ -1,0 +1,4 @@
+{
+  "packages": ["dist"],
+  "sandboxes": ["new", "examples/basic"]
+}
