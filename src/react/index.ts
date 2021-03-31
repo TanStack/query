@@ -14,7 +14,7 @@ export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
 
-// Types
+// Typess
 export * from './types'
 export type { QueryClientProviderProps } from './QueryClientProvider'
 export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
