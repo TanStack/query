@@ -1,4 +1,5 @@
 {
   "packages": ["dist"],
-  "sandboxes": ["new", "examples/basic"]
+  "sandboxes": ["new", "examples/basic"],
+  "node": "14"
 }
