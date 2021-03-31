@@ -6,32 +6,51 @@ import {
   MutationStatus,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryKey,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
-> extends QueryObserverOptions<TQueryFnData, TError, TData, TQueryData> {}
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+>
+  extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {}
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
-> extends UseBaseQueryOptions<TQueryFnData, TError, TData> {}
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+>
+  extends UseBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
+  > {}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 >
   extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData
+    TQueryData,
+    TQueryKey
   > {}
 
 export type UseBaseQueryResult<

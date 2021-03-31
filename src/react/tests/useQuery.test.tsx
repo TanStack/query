@@ -2261,11 +2261,10 @@ describe('useQuery', () => {
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
-    const states: UseQueryResult<[string, typeof variables]>[] = []
+    type QueryKey = [string, typeof variables]
+    const states: UseQueryResult<QueryKey>[] = []
 
-    const queryFn = async (
-      ctx: QueryFunctionContext<[string, typeof variables]>
-    ) => {
+    const queryFn = async (ctx: QueryFunctionContext<QueryKey>) => {
       await sleep(10)
       return ctx.queryKey
     }

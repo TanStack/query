@@ -422,7 +422,7 @@ export class QueryClient {
 
   getQueryDefaults(
     queryKey?: QueryKey
-  ): QueryObserverOptions<any, any, any, any> | undefined {
+  ): QueryObserverOptions<any, any, any, any, any> | undefined {
     return queryKey
       ? this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
           ?.defaultOptions
@@ -453,7 +453,21 @@ export class QueryClient {
       : undefined
   }
 
-  defaultQueryOptions<T extends QueryOptions<any, any, any>>(options?: T): T {
+  defaultQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey extends QueryKey
+  >(
+    options?: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
+  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
     if (options?._defaulted) {
       return options
     }
@@ -463,7 +477,13 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    } as T
+    } as QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
 
     if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
@@ -476,8 +496,20 @@ export class QueryClient {
   }
 
   defaultQueryObserverOptions<
-    T extends QueryObserverOptions<any, any, any, any>
-  >(options?: T): T {
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey extends QueryKey
+  >(
+    options?: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
+  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
     return this.defaultQueryOptions(options)
   }
 
