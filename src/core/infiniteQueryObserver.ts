@@ -71,7 +71,7 @@ export class InfiniteQueryObserver<
   ): void {
     super.setOptions({
       ...options,
-      behavior: infiniteQueryBehavior<TQueryFnData, TError, TData>(),
+      behavior: infiniteQueryBehavior(),
     })
   }
 
