@@ -3611,14 +3611,16 @@ describe('useQuery', () => {
 
       states.push(state)
 
+      const { refetch } = state
+
       React.useEffect(() => {
         setActTimeout(() => {
-          state.refetch()
+          refetch()
         }, 0)
         setActTimeout(() => {
           queryClient.resetQueries(key)
         }, 50)
-      }, [])
+      }, [refetch])
 
       return null
     }
