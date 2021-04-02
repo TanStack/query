@@ -116,46 +116,6 @@ Together, these provide the same experience as before, but with added control to
 
 **Notice that it's now a function instead of a property**
 
-### `QueryStatus` has been changed from an [enum](https://www.typescriptlang.org/docs/handbook/enums.html#string-enums) to a [union type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types)
-
-So, if you were checking the status property of a query or mutation against a QueryStatus enum property you will have to check it now against the string literal the enum previously held for each property.
-
-Therefore you have to change the enum properties to their equivalent string literal, like this:
-- `QueryStatus.Idle` -> `'idle'`
-- `QueryStatus.Loading` -> `'loading'`
-- `QueryStatus.Error` -> `'error'`
-- `QueryStatus.Success` -> `'success'`
-
-This is an example of how you would have done it in the previous version:
-
-```js
-import { QueryStatus } from 'react-query';
-
-const { data, status } = useQuery(['post', id], (_key, id) => fetchPost(id))
-
-if (status === QueryStatus.Loading) {
-  ...
-}
-
-if (status === QueryStatus.Error) {
-  ...
-}
-```
-
-And this is how it is now in version 3:
-
-```js
-const { data, status } = useQuery(['post', id], () => fetchPost(id))
-
-if (status === 'loading') {
-  ...
-}
-
-if (status === 'error') {
-  ...
-}
-```
-
 ### The `useQueryCache` hook has been replaced by the `useQueryClient` hook.
 
 It returns the provided `queryClient` for its component tree and shouldn't need much tweaking beyond a rename.
@@ -455,6 +415,38 @@ setConsole({
 ```
 
 In version 3 **this is done automatically when React Query is used in React Native**.
+
+
+### Typescript
+#### `QueryStatus` has been changed from an [enum](https://www.typescriptlang.org/docs/handbook/enums.html#string-enums) to a [union type](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types)
+
+So, if you were checking the status property of a query or mutation against a QueryStatus enum property you will have to check it now against the string literal the enum previously held for each property.
+
+Therefore you have to change the enum properties to their equivalent string literal, like this:
+- `QueryStatus.Idle` -> `'idle'`
+- `QueryStatus.Loading` -> `'loading'`
+- `QueryStatus.Error` -> `'error'`
+- `QueryStatus.Success` -> `'success'`
+
+Here is an example of the changes you would have to make:
+
+```diff
+- import { useQuery, QueryStatus } from 'react-query';
++ import { useQuery } from 'react-query';
+
+- const { data, status } = useQuery(['post', id], (_key, id) => fetchPost(id))
++ const { data, status } = useQuery(['post', id], () => fetchPost(id))
+
+- if (status === QueryStatus.Loading) {
++ if (status === 'loading') {
+  ...
+}
+
+- if (status === QueryStatus.Error) {
++ if (status === 'error') {
+  ...
+}
+```
 
 ## New features
 
