@@ -378,9 +378,8 @@ export class Query<
     }
 
     // Create query function context
-    const queryKey = (ensureArray(this.queryKey) as unknown) as TQueryKey
     const queryFnContext: QueryFunctionContext<TQueryKey> = {
-      queryKey,
+      queryKey: this.queryKey,
       pageParam: undefined,
     }
 
@@ -394,7 +393,7 @@ export class Query<
     const context: FetchContext<TQueryFnData, TError, TData, any> = {
       fetchOptions,
       options: this.options,
-      queryKey,
+      queryKey: ensureArray(this.queryKey),
       state: this.state,
       fetchFn,
     }
