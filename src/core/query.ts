@@ -379,7 +379,7 @@ export class Query<
 
     // Create query function context
     const queryKey = ensureArray(this.queryKey)
-    const queryFnContext: QueryFunctionContext<unknown[]> = {
+    const queryFnContext: QueryFunctionContext<TQueryKey> = {
       queryKey,
       pageParam: undefined,
     }
