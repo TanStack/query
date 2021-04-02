@@ -90,7 +90,7 @@ export interface QueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> extends QueryOptions<TQueryFnData, TError, TData, TQueryKey> {
+> extends QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
