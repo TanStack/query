@@ -16,6 +16,7 @@ import {
   QueryClient,
   UseQueryResult,
   QueryCache,
+  QueryFunction,
   QueryFunctionContext,
 } from '../..'
 
@@ -74,6 +75,20 @@ describe('useQuery', () => {
       })
       expectType<string | undefined>(fromGenericOptionsQueryFn.data)
       expectType<unknown>(fromGenericOptionsQueryFn.error)
+
+      type MyData = number
+      type MyQueryKey = readonly ['my-data', number]
+
+      const getMyData: QueryFunction<MyData, MyQueryKey> = async ({
+        queryKey: [, n],
+      }) => {
+        return n + 42
+      }
+
+      useQuery({
+        queryKey: ['my-data', 100],
+        queryFn: getMyData,
+      })
     }
   })
 
