@@ -1,6 +1,5 @@
 import {
   Updater,
-  ensureArray,
   functionalUpdate,
   isValidTimeout,
   noop,
@@ -393,7 +392,7 @@ export class Query<
     const context: FetchContext<TQueryFnData, TError, TData, any> = {
       fetchOptions,
       options: this.options,
-      queryKey: ensureArray(this.queryKey),
+      queryKey: this.queryKey,
       state: this.state,
       fetchFn,
     }
