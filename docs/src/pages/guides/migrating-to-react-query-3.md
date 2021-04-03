@@ -434,8 +434,7 @@ Here is an example of the changes you would have to make:
 - import { useQuery, QueryStatus } from 'react-query';
 + import { useQuery } from 'react-query';
 
-- const { data, status } = useQuery(['post', id], (_key, id) => fetchPost(id))
-+ const { data, status } = useQuery(['post', id], () => fetchPost(id))
+const { data, status } = useQuery(['post', id], () => fetchPost(id))
 
 - if (status === QueryStatus.Loading) {
 + if (status === 'loading') {
