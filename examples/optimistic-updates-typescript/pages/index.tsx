@@ -21,6 +21,9 @@ type Todos = {
   ts: number
 }
 
+// IMPORTANT!! make sure that your mutationFn (fetchTodos) is property typed as in example below, 
+// otherwise you may run into weird typescript errors
+
 async function fetchTodos(): Promise<Todos> {
   const res = await axios.get('/api/data')
   return res.data
