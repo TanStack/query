@@ -1,5 +1,5 @@
 import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
-import { QueryCache, QueryClient, QueryObserver } from '../..'
+import { QueryCache, QueryClient, QueryFunction, QueryObserver } from '../..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -186,6 +186,23 @@ describe('queryClient', () => {
   })
 
   describe('fetchQuery', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', string]
+      const key: StrictQueryKey = ['strict', queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+        Promise.resolve('data')
+      )
+
+      await expect(
+        queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>(
+          key,
+          fetchFn,
+        )
+      ).resolves.toEqual('data')
+    })
+
     // https://github.com/tannerlinsley/react-query/issues/652
     test('should not retry by default', async () => {
       const consoleMock = mockConsoleError()
@@ -282,6 +299,28 @@ describe('queryClient', () => {
   })
 
   describe('fetchInfiniteQuery', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = string
+      type StrictQueryKey = ['strict', string]
+      const key: StrictQueryKey = ['strict', queryKey()]
+
+      const data = {
+        pages: ['data'],
+        pageParams: [undefined],
+      }
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+        Promise.resolve(data.pages[0])
+      )
+
+      await expect(
+        queryClient.fetchInfiniteQuery<StrictData, any, StrictData, StrictQueryKey>(
+          key,
+          fetchFn,
+        )
+      ).resolves.toEqual(data)
+    })
+
     test('should return infinite query data', async () => {
       const key = queryKey()
       const result = await queryClient.fetchInfiniteQuery(
@@ -301,6 +340,25 @@ describe('queryClient', () => {
   })
 
   describe('prefetchInfiniteQuery', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', string]
+      const key: StrictQueryKey = ['strict', queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+        Promise.resolve('data')
+      )
+
+      await queryClient.prefetchInfiniteQuery<StrictData, any, StrictData, StrictQueryKey>(key, fetchFn)
+
+      const result = queryClient.getQueryData(key)
+
+      expect(result).toEqual({
+        pages: ['data'],
+        pageParams: [undefined],
+      })
+    })
+
     test('should return infinite query data', async () => {
       const key = queryKey()
 
@@ -318,6 +376,22 @@ describe('queryClient', () => {
   })
 
   describe('prefetchQuery', () => {
+    test('should not type-error with strict query key', async () => {
+      type StrictData = 'data'
+      type StrictQueryKey = ['strict', string]
+      const key: StrictQueryKey = ['strict', queryKey()]
+
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+        Promise.resolve('data')
+      )
+
+      await queryClient.prefetchQuery<StrictData, any, StrictData, StrictQueryKey>(key, fetchFn);
+
+      const result = queryClient.getQueryData(key);
+
+      expect(result).toEqual('data')
+    })
+
     test('should return undefined when an error is thrown', async () => {
       const consoleMock = mockConsoleError()
 

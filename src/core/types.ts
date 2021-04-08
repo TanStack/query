@@ -210,8 +210,9 @@ export interface InfiniteQueryObserverOptions<
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
-> extends QueryOptions<TQueryFnData, TError, TData> {
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> extends QueryOptions<TQueryFnData, TError, TData, TQueryKey> {
   /**
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
@@ -222,8 +223,9 @@ export interface FetchQueryOptions<
 export interface FetchInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
-> extends FetchQueryOptions<TQueryFnData, TError, InfiniteData<TData>> {}
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> extends FetchQueryOptions<TQueryFnData, TError, InfiniteData<TData>, TQueryKey> {}
 
 export interface ResultOptions {
   throwOnError?: boolean
