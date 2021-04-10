@@ -160,8 +160,8 @@ Manually removing a single value from an individual page:
 ```js
 const newPagesArray = []
 oldPagesArray?.pages.forEach(page => {
-  const newData = page.data.filter(val => val.id !== updatedId)
-  newPagesArray.push({ data: newData, pageParam: page.pageParam })
+  const newData = page.filter(val => val.id !== updatedId)
+  newPagesArray.push(newData)
 })
 queryClient.setQueryData('projects', data => ({
   pages: newPagesArray,
