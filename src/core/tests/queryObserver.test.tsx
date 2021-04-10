@@ -241,6 +241,7 @@ describe('queryObserver', () => {
   })
 
   test('should always run the selector again if selector throws an error', async () => {
+    const consoleMock = mockConsoleError()
     const key = queryKey()
     const results: QueryObserverResult[] = []
     const select = () => {
@@ -284,6 +285,7 @@ describe('queryObserver', () => {
       isFetching: false,
       data: undefined,
     })
+    consoleMock.mockRestore()
   })
 
   test('should structurally share the selector', async () => {
