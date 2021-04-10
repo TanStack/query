@@ -474,7 +474,7 @@ export interface MutationOptions<
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
   variables?: TVariables
-  onMutate?: (variables: TVariables) => Promise<TContext> | TContext
+  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
