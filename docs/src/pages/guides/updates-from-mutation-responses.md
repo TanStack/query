@@ -19,7 +19,7 @@ mutation.mutate({
 
 // The query below will be updated with the response from the
 // successful mutation
-const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoByID)
+const { status, data, error } = useQuery(['todo', { id: 5 }], fetchTodoById)
 ```
 
 You might want to tie the `onSuccess` logic into a reusable mutation, for that you can
