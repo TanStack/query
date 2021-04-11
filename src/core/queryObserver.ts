@@ -514,7 +514,7 @@ export class QueryObserver<
             placeholderData = options.select(placeholderData)
             if (options.structuralSharing !== false) {
               placeholderData = replaceEqualDeep(
-                prevResultOptions?.placeholderData,
+                prevResult?.data,
                 placeholderData
               )
             }
