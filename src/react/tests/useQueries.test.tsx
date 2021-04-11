@@ -22,8 +22,20 @@ describe('useQueries', () => {
 
     function Page() {
       const result = useQueries([
-        { queryKey: key1, queryFn: async () => { await sleep(5); return 1; } },
-        { queryKey: key2, queryFn: async () => { await sleep(7); return 2; } },
+        {
+          queryKey: key1,
+          queryFn: async () => {
+            await sleep(5)
+            return 1
+          },
+        },
+        {
+          queryKey: key2,
+          queryFn: async () => {
+            await sleep(7)
+            return 2
+          },
+        },
       ])
       results.push(result)
       return null
@@ -46,14 +58,32 @@ describe('useQueries', () => {
 
     function Page() {
       const result = useQueries([
-        { queryKey: key1, queryFn: async () => { await sleep(5); return 1; }, suspense: true },
-        { queryKey: key2, queryFn: async () => { await sleep(7); return 2; } },
+        {
+          queryKey: key1,
+          queryFn: async () => {
+            await sleep(5)
+            return 1
+          },
+          suspense: true,
+        },
+        {
+          queryKey: key2,
+          queryFn: async () => {
+            await sleep(7)
+            return 2
+          },
+        },
       ])
       results.push(result)
       return null
     }
 
-    renderWithClient(queryClient, <React.Suspense fallback={'test'}><Page /></React.Suspense>)
+    renderWithClient(
+      queryClient,
+      <React.Suspense fallback={'test'}>
+        <Page />
+      </React.Suspense>
+    )
 
     await sleep(10)
 
