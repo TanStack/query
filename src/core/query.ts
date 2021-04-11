@@ -48,6 +48,7 @@ export interface QueryState<TData = unknown, TError = unknown> {
   isFetching: boolean
   isInvalidated: boolean
   isPaused: boolean
+  isStale: boolean
   status: QueryStatus
 }
 
@@ -509,6 +510,7 @@ export class Query<
       isFetching: false,
       isInvalidated: false,
       isPaused: false,
+      isStale: false,
       status: hasData ? 'success' : 'idle',
     }
   }
