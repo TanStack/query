@@ -15,14 +15,14 @@
           "editUrl": "/installation.md"
         },
         {
-          "title": "Devtools",
-          "path": "/devtools",
-          "editUrl": "/devtools.md"
-        },
-        {
           "title": "Quick Start",
           "path": "/quick-start",
           "editUrl": "/quick-start.md"
+        },
+        {
+          "title": "Devtools",
+          "path": "/devtools",
+          "editUrl": "/devtools.md"
         },
         {
           "title": "Videos & Talks",
@@ -166,9 +166,9 @@
           "editUrl": "/guides/scroll-restoration.md"
         },
         {
-          "title": "Query Filters",
-          "path": "/guides/query-filters",
-          "editUrl": "/guides/query-filters.md"
+          "title": "Filters",
+          "path": "/guides/filters",
+          "editUrl": "/guides/filters.md"
         },
         {
           "title": "SSR & Next.js",
@@ -303,9 +303,19 @@
       "heading": true,
       "routes": [
         {
-          "title": "Persist - LocalStorage (Experimental)",
-          "path": "/plugins/persist-localstorage",
-          "editUrl": "/plugins/persist-localstorage.md"
+          "title": "persistQueryClient (Experimental)",
+          "path": "/plugins/persistQueryClient",
+          "editUrl": "/plugins/persistQueryClient.md"
+        },
+        {
+          "title": "createLocalStoragePersistor (Experimental)",
+          "path": "/plugins/createLocalStoragePersistor",
+          "editUrl": "/plugins/createLocalStoragePersistor.md"
+        },
+        {
+          "title": "broadcastQueryClient (Experimental)",
+          "path": "/plugins/broadcastQueryClient",
+          "editUrl": "/plugins/broadcastQueryClient.md"
         }
       ]
     },
@@ -337,6 +347,11 @@
           "title": "useIsFetching",
           "path": "/reference/useIsFetching",
           "editUrl": "/reference/useIsFetching.md"
+        },
+        {
+          "title": "useIsMutating",
+          "path": "/reference/useIsMutating",
+          "editUrl": "/reference/useIsMutating.md"
         },
         {
           "title": "QueryClient",

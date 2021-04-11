@@ -48,7 +48,9 @@
     "es",
     "hydration",
     "devtools",
-    "persist-localstorage-experimental",
+    "persistQueryClient-experimental",
+    "createLocalStoragePersistor-experimental",
+    "broadcastQueryClient-experimental",
     "lib",
     "react",
     "scripts",
@@ -56,6 +58,7 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.5.5",
+    "broadcast-channel": "^3.4.1",
     "match-sorter": "^6.0.2"
   },
   "peerDependencies": {
@@ -121,6 +124,7 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-visualizer": "^4.0.4",
+    "type-fest": "^0.21.0",
     "typescript": "^4.1.2"
   }
 }

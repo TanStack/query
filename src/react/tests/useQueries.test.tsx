@@ -22,8 +22,8 @@ describe('useQueries', () => {
 
     function Page() {
       const result = useQueries([
-        { queryKey: key1, queryFn: () => 1 },
-        { queryKey: key2, queryFn: () => 2 },
+        { queryKey: key1, queryFn: async () => { await sleep(5); return 1; } },
+        { queryKey: key2, queryFn: async () => { await sleep(7); return 2; } },
       ])
       results.push(result)
       return null
@@ -39,81 +39,26 @@ describe('useQueries', () => {
     expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
-  it('should render the correct amount of times in suspense mode', async () => {
+  it('should return the correct states with suspense', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const results: UseQueryResult[][] = []
 
-    let renders = 0
-    let count1 = 10
-    let count2 = 20
-
     function Page() {
-      renders++
-
-      const [stateKey1, setStateKey1] = React.useState(key1)
-
       const result = useQueries([
-        {
-          queryKey: stateKey1,
-          queryFn: async () => {
-            count1++
-            await sleep(10)
-            return count1
-          },
-        },
-        {
-          queryKey: key2,
-          queryFn: async () => {
-            count2++
-            await sleep(10)
-            return count2
-          },
-          suspense: true,
-        },
+        { queryKey: key1, queryFn: async () => { await sleep(5); return 1; }, suspense: true },
+        { queryKey: key2, queryFn: async () => { await sleep(7); return 2; } },
       ])
-
       results.push(result)
-
-      return (
-        <button aria-label="toggle" onClick={() => setStateKey1(queryKey())} />
-      )
+      return null
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <React.Suspense fallback="loading">
-        <Page />
-      </React.Suspense>
-    )
+    renderWithClient(queryClient, <React.Suspense fallback={'test'}><Page /></React.Suspense>)
 
-    await sleep(50)
+    await sleep(10)
 
-    await waitFor(() => rendered.getByLabelText('toggle'))
-    fireEvent.click(rendered.getByLabelText('toggle'))
-
-    await sleep(50)
-
-    expect(renders).toBe(5)
-    expect(results.length).toBe(3)
-
-    // First load
-    expect(results[0]).toMatchObject([
-      { data: 11, status: 'success' },
-      { data: 21, status: 'success' },
-    ])
-
-    // Set state
-    expect(results[1]).toMatchObject([
-      { data: 11, status: 'success' },
-      { data: 21, status: 'success' },
-    ])
-
-    // Second load
-    expect(results[2]).toMatchObject([
-      { data: 12, status: 'success' },
-      { data: 21, status: 'success' },
-    ])
+    expect(results.length).toBe(1)
+    expect(results[0]).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
@@ -124,7 +69,7 @@ describe('useQueries', () => {
     const consoleMock = mockConsoleError()
 
     function Page() {
-      const results = useQueries<string>([
+      const results = useQueries([
         {
           queryKey: key1,
           queryFn: async () => {

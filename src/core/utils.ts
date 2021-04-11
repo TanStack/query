@@ -1,3 +1,4 @@
+import type { Mutation } from './mutation'
 import type { Query } from './query'
 import type {
   MutationFunction,
@@ -5,9 +6,7 @@ import type {
   MutationOptions,
   QueryFunction,
   QueryKey,
-  QueryKeyHashFunction,
   QueryOptions,
-  QueryStatus,
 } from './types'
 
 // TYPES
@@ -39,6 +38,25 @@ export interface QueryFilters {
   stale?: boolean
   /**
    * Include or exclude fetching queries
+   */
+  fetching?: boolean
+}
+
+export interface MutationFilters {
+  /**
+   * Match mutation key exactly
+   */
+  exact?: boolean
+  /**
+   * Include mutations matching this predicate function
+   */
+  predicate?: (mutation: Mutation<any, any, any>) => boolean
+  /**
+   * Include mutations matching this mutation key
+   */
+  mutationKey?: MutationKey
+  /**
+   * Include or exclude fetching mutations
    */
   fetching?: boolean
 }
@@ -88,9 +106,12 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
 
-export function parseQueryArgs<TOptions extends QueryOptions<any, any, any>>(
-  arg1: QueryKey | TOptions,
-  arg2?: QueryFunction<any> | TOptions,
+export function parseQueryArgs<
+  TOptions extends QueryOptions<any, any, any, TQueryKey>,
+  TQueryKey extends QueryKey = QueryKey
+>(
+  arg1: TQueryKey | TOptions,
+  arg2?: QueryFunction<any, TQueryKey> | TOptions,
   arg3?: TOptions
 ): TOptions {
   if (!isQueryKey(arg1)) {
@@ -140,7 +161,7 @@ export function parseFilterArgs<
 
 export function matchQuery(
   filters: QueryFilters,
-  query: Query<any, any>
+  query: Query<any, any, any, any>
 ): boolean {
   const {
     active,
@@ -154,8 +175,7 @@ export function matchQuery(
 
   if (isQueryKey(queryKey)) {
     if (exact) {
-      const hashFn = getQueryKeyHashFn(query.options)
-      if (query.queryHash !== hashFn(queryKey)) {
+      if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
       }
     } else if (!partialMatchKey(query.queryKey, queryKey)) {
@@ -190,17 +210,54 @@ export function matchQuery(
   return true
 }
 
-export function getQueryKeyHashFn(
-  options?: QueryOptions<any, any>
-): QueryKeyHashFunction {
-  return options?.queryKeyHashFn || hashQueryKey
+export function matchMutation(
+  filters: MutationFilters,
+  mutation: Mutation<any, any>
+): boolean {
+  const { exact, fetching, predicate, mutationKey } = filters
+  if (isQueryKey(mutationKey)) {
+    if (!mutation.options.mutationKey) {
+      return false
+    }
+    if (exact) {
+      if (
+        hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)
+      ) {
+        return false
+      }
+    } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
+      return false
+    }
+  }
+
+  if (
+    typeof fetching === 'boolean' &&
+    (mutation.state.status === 'loading') !== fetching
+  ) {
+    return false
+  }
+
+  if (predicate && !predicate(mutation)) {
+    return false
+  }
+
+  return true
+}
+
+export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
+  queryKey: TQueryKey,
+  options?: QueryOptions<any, any, any, TQueryKey>
+): string {
+  const hashFn = options?.queryKeyHashFn || hashQueryKey
+  return hashFn(queryKey)
 }
 
 /**
  * Default query keys hash function.
  */
 export function hashQueryKey(queryKey: QueryKey): string {
-  return stableValueHash(queryKey)
+  const asArray = Array.isArray(queryKey) ? queryKey : [queryKey]
+  return stableValueHash(asArray)
 }
 
 /**
@@ -222,10 +279,7 @@ export function stableValueHash(value: any): string {
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(
-  a: string | unknown[],
-  b: string | unknown[]
-): boolean {
+export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
   return partialDeepEqual(ensureArray(a), ensureArray(b))
 }
 
@@ -343,16 +397,6 @@ export function sleep(timeout: number): Promise<void> {
   return new Promise(resolve => {
     setTimeout(resolve, timeout)
   })
-}
-
-export function getStatusProps<T extends QueryStatus>(status: T) {
-  return {
-    status,
-    isLoading: status === 'loading',
-    isSuccess: status === 'success',
-    isError: status === 'error',
-    isIdle: status === 'idle',
-  }
 }
 
 /**

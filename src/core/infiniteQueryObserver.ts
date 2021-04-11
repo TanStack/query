@@ -12,6 +12,7 @@ import {
   hasPreviousPage,
   infiniteQueryBehavior,
 } from './infiniteQueryBehavior'
+import { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (
   result: InfiniteQueryObserverResult<TData, TError>
@@ -70,7 +71,7 @@ export class InfiniteQueryObserver<
   ): void {
     super.setOptions({
       ...options,
-      behavior: infiniteQueryBehavior<TQueryFnData, TError, TData>(),
+      behavior: infiniteQueryBehavior(),
     })
   }
 
@@ -98,15 +99,23 @@ export class InfiniteQueryObserver<
     })
   }
 
-  protected getNewResult(): InfiniteQueryObserverResult<TData, TError> {
-    const { state } = this.getCurrentQuery()
-    const result = super.getNewResult()
+  protected createResult(
+    query: Query<TQueryFnData, TError, InfiniteData<TQueryData>>,
+    options: InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData
+    >
+  ): InfiniteQueryObserverResult<TData, TError> {
+    const { state } = query
+    const result = super.createResult(query, options)
     return {
       ...result,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
-      hasNextPage: hasNextPage(this.options, state.data?.pages),
-      hasPreviousPage: hasPreviousPage(this.options, state.data?.pages),
+      hasNextPage: hasNextPage(options, state.data?.pages),
+      hasPreviousPage: hasPreviousPage(options, state.data?.pages),
       isFetchingNextPage:
         state.isFetching && state.fetchMeta?.fetchMore?.direction === 'forward',
       isFetchingPreviousPage:

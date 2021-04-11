@@ -149,7 +149,7 @@ useMutation(addTodo, {
 })
 ```
 
-You might find that you want to **trigger additional callbacks** then the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`.
+You might find that you want to **trigger additional callbacks** than the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`.
 
 ```js
 useMutation(addTodo, {

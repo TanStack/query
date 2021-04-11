@@ -128,7 +128,7 @@ describe('dehydration and rehydration', () => {
     await hydrationClient.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
       fetchDataAfterHydration,
-      { staleTime: 10 }
+      { staleTime: 100 }
     )
     expect(fetchDataAfterHydration).toHaveBeenCalledTimes(0)
 

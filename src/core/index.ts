@@ -1,3 +1,4 @@
+export { CancelledError } from './retryer'
 export { QueryCache } from './queryCache'
 export { QueryClient } from './queryClient'
 export { QueryObserver } from './queryObserver'
@@ -14,6 +15,5 @@ export { isCancelledError } from './retryer'
 
 // Types
 export * from './types'
-export type { CancelledError } from './retryer'
 export type { Query } from './query'
 export type { Logger } from './logger'

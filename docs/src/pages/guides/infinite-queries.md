@@ -12,9 +12,11 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 - `data.pageParams` array containing the page params used to fetch the pages
 - The `fetchNextPage` and `fetchPreviousPage` functions are now available
 - The `getNextPageParam` and `getPreviousPageParam` options are available for both determining if there is more data to load and the information to fetch it. This information is supplied as an additional parameter in the query function (which can optionally be overridden when calling the `fetchNextPage` or `fetchPreviousPage` functions)
-- A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `undefined`.
-- A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `undefined`.
+- A `hasNextPage` boolean is now available and is `true` if `getNextPageParam` returns a value other than `undefined`
+- A `hasPreviousPage` boolean is now available and is `true` if `getPreviousPageParam` returns a value other than `undefined`
 - The `isFetchingNextPage` and `isFetchingPreviousPage` booleans are now available to distinguish between a background refresh state and a loading more state
+
+> Note: When using options like `initialData` or `select` in your query, make sure that when you restructure your data that it still includes `data.pages` and `data.pageParams` properties, otherwise your changes will be overwritten by the query in its return!
 
 ## Example
 
@@ -37,7 +39,7 @@ With this information, we can create a "Load More" UI by:
 - Returning the information for the next query in `getNextPageParam`
 - Calling `fetchNextPage` function
 
-> Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. eg. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
+> Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. e.g. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
 
 ```js
 import { useInfiniteQuery } from 'react-query'
@@ -91,7 +93,7 @@ function Projects() {
 
 ## What happens when an infinite query needs to be refetched?
 
-When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
+When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
 
 ## What if I need to pass custom information to my query function?
 
@@ -152,3 +154,19 @@ queryClient.setQueryData('projects', data => ({
   pageParams: data.pageParams.slice(1),
 }))
 ```
+
+Manually removing a single value from an individual page:
+
+```js
+const newPagesArray = []
+oldPagesArray?.pages.forEach(page => {
+  const newData = page.filter(val => val.id !== updatedId)
+  newPagesArray.push(newData)
+})
+queryClient.setQueryData('projects', data => ({
+  pages: newPagesArray,
+  pageParams: data.pageParams,
+}))
+```
+
+Make sure to keep the same data structure of pages and pageParams!

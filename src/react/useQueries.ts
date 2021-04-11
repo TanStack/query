@@ -5,105 +5,64 @@ import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { UseQueryOptions, UseQueryResult } from './types'
+import { initDefaultedOptions } from './useBaseQuery'
 
-export function useQueries<TData = unknown, TError = unknown>(
-  queries: UseQueryOptions[]
-): UseQueryResult<TData, TError>[] {
+export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
+  const mountedRef = React.useRef(false)
+  const [, forceUpdate] = React.useState(0)
+
   const queryClient = useQueryClient()
-  const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedQueries: UseQueryOptions[] = []
+  const errorResetBoundary = useQueryErrorResetBoundary();
 
-  let someSuspense = false
-  let someUseErrorBoundary = false
+  const defaultedQueries = queries.map((options) => initDefaultedOptions({ errorResetBoundary, options, queryClient }))
 
-  queries.forEach(options => {
-    const defaulted = queryClient.defaultQueryObserverOptions(options)
+  const obsRef = React.useRef<QueriesObserver>()
 
-    // Include callbacks in batch renders
-    if (defaulted.onError) {
-      defaulted.onError = notifyManager.batchCalls(defaulted.onError)
-    }
-
-    if (defaulted.onSuccess) {
-      defaulted.onSuccess = notifyManager.batchCalls(defaulted.onSuccess)
-    }
-
-    if (defaulted.onSettled) {
-      defaulted.onSettled = notifyManager.batchCalls(defaulted.onSettled)
-    }
-
-    if (defaulted.suspense) {
-      someSuspense = true
-    }
-
-    if (defaulted.useErrorBoundary) {
-      someUseErrorBoundary = true
-    }
-
-    defaultedQueries.push(defaulted)
-  })
-
-  if (someSuspense) {
-    defaultedQueries.forEach(options => {
-      // Always set stale time when using suspense to prevent
-      // fetching again when directly re-mounting after suspense
-      if (typeof options.staleTime !== 'number') {
-        options.staleTime = 1000
-      }
-
-      // Prevent retrying failed query if the error boundary has not been reset yet
-      if (!errorResetBoundary.isReset()) {
-        options.retryOnMount = false
-      }
-    })
+  if (!obsRef.current) {
+    obsRef.current = new QueriesObserver(queryClient, defaultedQueries)
   }
 
-  // Create queries observer
-  const observerRef = React.useRef<QueriesObserver>()
-  const observer =
-    observerRef.current || new QueriesObserver(queryClient, defaultedQueries)
-  observerRef.current = observer
+  const result = obsRef.current.getOptimisticResult(defaultedQueries)
 
-  // Update queries
-  if (observer.hasListeners()) {
-    observer.setQueries(defaultedQueries)
-  }
-
-  const [currentResult, setCurrentResult] = React.useState(() =>
-    observer.getCurrentResult()
-  )
-
-  let someError
-  let someIsLoading = false
-  let someIsError = false
-
-  currentResult.forEach(result => {
-    if (result.isLoading) {
-      someIsLoading = true
-    }
-
-    if (result.isError) {
-      someIsError = true
-    }
-
-    if (result.error) {
-      someError = result.error
-    }
-  })
-
-  // Subscribe to the observer
   React.useEffect(() => {
-    errorResetBoundary.clearReset()
-    return observer.subscribe(notifyManager.batchCalls(setCurrentResult))
-  }, [observer, errorResetBoundary])
+    mountedRef.current = true
+
+    const unsubscribe = obsRef.current!.subscribe(
+      notifyManager.batchCalls(() => {
+        if (mountedRef.current) {
+          forceUpdate(x => x + 1)
+        }
+      })
+    )
+
+    return () => {
+      mountedRef.current = false
+      unsubscribe()
+    }
+  }, [])
+
+  React.useEffect(() => {
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    obsRef.current!.setQueries(defaultedQueries, { listeners: false })
+  }, [defaultedQueries])
+
+
+  const someSuspense = defaultedQueries.some((q) => q.suspense);
+  const someUseErrorBoundary = defaultedQueries.some((q) => q.useErrorBoundary);
+  const firstResultWithError = result.find((r) => r.isError);
+  const someError = firstResultWithError?.error;
+  const someIsError = !!firstResultWithError;
+  const someIsLoading = result.some((r) => r.isLoading);
 
   // Handle suspense
   if (someSuspense || someUseErrorBoundary) {
     if (someSuspense && someIsLoading) {
+      console.log('suspense')
       errorResetBoundary.clearReset()
-      const unsubscribe = observer.subscribe()
-      throw observer
-        .refetch({ filter: x => x.getCurrentResult().isLoading })
+      const unsubscribe = obsRef.current.subscribe()
+      throw obsRef
+        .current.refetch({ filter: x => x.getCurrentResult().isLoading })
         .finally(unsubscribe)
     }
 
@@ -112,5 +71,5 @@ export function useQueries<TData = unknown, TError = unknown>(
     }
   }
 
-  return currentResult as UseQueryResult<TData, TError>[]
+  return result
 }

@@ -156,6 +156,12 @@
   @apply text-xl;
 }
 
+.markdown > h2 > a,
+.markdown > h3 > a,
+.markdown > h4 > a {
+  @apply underline;
+}
+
 .markdown > .markdown ul {
   @apply list-disc;
 }

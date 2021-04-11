@@ -11,6 +11,7 @@ const {
   errorUpdatedAt,
   failureCount,
   isError,
+  isFetched,
   isFetchedAfterMount,
   isFetching,
   isIdle,
@@ -43,6 +44,7 @@ const {
   refetchOnReconnect,
   refetchOnWindowFocus,
   retry,
+  retryOnMount,
   retryDelay,
   select,
   staleTime,
@@ -68,7 +70,7 @@ const result = useQuery({
   - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys) for more information.
   - The query will automatically update when this key changes (as long as `enabled` is not set to `false`).
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
-  - **Required, but only if no default query function has been defined**
+  - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
   - Receives a `QueryFunctionContext` object with the following variables:
     - `queryKey: QueryKey`
@@ -79,9 +81,11 @@ const result = useQuery({
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
-  - If set to an `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
-- `retryDelay: (retryAttempt: number) => number`
-  - This function receives a `retryAttempt` integer and returns the delay to apply before the next attempt in milliseconds.
+  - If set to a `number`, e.g. `3`, failed queries will retry until the failed query count meets that number.
+- `retryOnMount: boolean`
+  - If set to `false`, the query will not be retried on mount if it contains an error. Defaults to `true`.
+- `retryDelay: number | (retryAttempt: number, error: TError) => number`
+  - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: number | Infinity`
@@ -90,6 +94,9 @@ const result = useQuery({
 - `cacheTime: number | Infinity`
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
+- `queryKeyHashFn: (queryKey: QueryKey) => string`
+  - Optional
+  - If specified, this function is used to hash the `queryKey` to a string.
 - `refetchInterval: false | number`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
@@ -198,6 +205,8 @@ const result = useQuery({
   - Will be `true` if the data shown is the placeholder data.
 - `isPreviousData: boolean`
   - Will be `true` when `keepPreviousData` is set and data from the previous query is returned.
+- `isFetched: boolean`
+  - Will be `true` if the query has been fetched.
 - `isFetchedAfterMount: boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.

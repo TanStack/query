@@ -1,6 +1,0 @@
-{
-  "internal": true,
-  "main": "../lib/persist-localstorage-experimental/index.js",
-  "module": "../es/persist-localstorage-experimental/index.js",
-  "types": "../types/persist-localstorage-experimental/index.d.ts"
-}

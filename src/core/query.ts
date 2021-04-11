@@ -22,12 +22,17 @@ import { Retryer, CancelOptions, isCancelledError } from './retryer'
 
 // TYPES
 
-interface QueryConfig<TQueryFnData, TError, TData> {
+interface QueryConfig<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey = QueryKey
+> {
   cache: QueryCache
-  queryKey: QueryKey
+  queryKey: TQueryKey
   queryHash: string
-  options?: QueryOptions<TQueryFnData, TError, TData>
-  defaultOptions?: QueryOptions<TQueryFnData, TError, TData>
+  options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
 }
 
@@ -46,20 +51,28 @@ export interface QueryState<TData = unknown, TError = unknown> {
   status: QueryStatus
 }
 
-export interface FetchContext<TQueryFnData, TError, TData> {
+export interface FetchContext<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey = QueryKey
+> {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
-  options: QueryOptions<TQueryFnData, TError, TData>
-  queryKey: QueryKey
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  queryKey: TQueryKey
   state: QueryState<TData, TError>
 }
 
 export interface QueryBehavior<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 > {
-  onFetch: (context: FetchContext<TQueryFnData, TError, TData>) => void
+  onFetch: (
+    context: FetchContext<TQueryFnData, TError, TData, TQueryKey>
+  ) => void
 }
 
 export interface FetchOptions {
@@ -106,6 +119,7 @@ interface ContinueAction {
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: QueryState<TData, TError>
+  setStateOptions?: SetStateOptions
 }
 
 export type Action<TData, TError> =
@@ -118,28 +132,34 @@ export type Action<TData, TError> =
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
 
+export interface SetStateOptions {
+  meta?: any
+}
+
 // CLASS
 
 export class Query<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 > {
-  queryKey: QueryKey
+  queryKey: TQueryKey
   queryHash: string
-  options!: QueryOptions<TQueryFnData, TError, TData>
+  options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   initialState: QueryState<TData, TError>
+  revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
 
   private cache: QueryCache
   private promise?: Promise<TData>
   private gcTimeout?: number
-  private retryer?: Retryer<unknown, TError>
-  private observers: QueryObserver<any, any, any, any>[]
-  private defaultOptions?: QueryOptions<TQueryFnData, TError, TData>
+  private retryer?: Retryer<TData, TError>
+  private observers: QueryObserver<any, any, any, any, any>[]
+  private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
 
-  constructor(config: QueryConfig<TQueryFnData, TError, TData>) {
+  constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -152,7 +172,7 @@ export class Query<
   }
 
   private setOptions(
-    options?: QueryOptions<TQueryFnData, TError, TData>
+    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   ): void {
     this.options = { ...this.defaultOptions, ...options }
 
@@ -163,7 +183,9 @@ export class Query<
     )
   }
 
-  setDefaultOptions(options: QueryOptions<TQueryFnData, TError, TData>): void {
+  setDefaultOptions(
+    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  ): void {
     this.defaultOptions = options
   }
 
@@ -215,8 +237,11 @@ export class Query<
     return data
   }
 
-  setState(state: QueryState<TData, TError>): void {
-    this.dispatch({ type: 'setState', state })
+  setState(
+    state: QueryState<TData, TError>,
+    setStateOptions?: SetStateOptions
+  ): void {
+    this.dispatch({ type: 'setState', state, setStateOptions })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
@@ -260,7 +285,7 @@ export class Query<
   }
 
   onFocus(): void {
-    const observer = this.observers.find(x => x.willFetchOnWindowFocus())
+    const observer = this.observers.find(x => x.shouldFetchOnWindowFocus())
 
     if (observer) {
       observer.refetch()
@@ -271,7 +296,7 @@ export class Query<
   }
 
   onOnline(): void {
-    const observer = this.observers.find(x => x.willFetchOnReconnect())
+    const observer = this.observers.find(x => x.shouldFetchOnReconnect())
 
     if (observer) {
       observer.refetch()
@@ -281,18 +306,18 @@ export class Query<
     this.retryer?.continue()
   }
 
-  addObserver(observer: QueryObserver<any, any, any, any>): void {
+  addObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
 
-      this.cache.notify(this)
+      this.cache.notify({ type: 'observerAdded', query: this, observer })
     }
   }
 
-  removeObserver(observer: QueryObserver<any, any, any, any>): void {
+  removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) !== -1) {
       this.observers = this.observers.filter(x => x !== observer)
 
@@ -301,7 +326,7 @@ export class Query<
         // we'll let the query continue so the result can be cached
         if (this.retryer) {
           if (this.retryer.isTransportCancelable) {
-            this.retryer.cancel()
+            this.retryer.cancel({ revert: true })
           } else {
             this.retryer.cancelRetry()
           }
@@ -314,7 +339,7 @@ export class Query<
         }
       }
 
-      this.cache.notify(this)
+      this.cache.notify({ type: 'observerRemoved', query: this, observer })
     }
   }
 
@@ -325,10 +350,10 @@ export class Query<
   }
 
   fetch(
-    options?: QueryOptions<TQueryFnData, TError, TData>,
+    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions
   ): Promise<TData> {
-    if (this.state.isFetching)
+    if (this.state.isFetching) {
       if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetches
         this.cancel({ silent: true })
@@ -336,6 +361,7 @@ export class Query<
         // Return current promise if we are already fetching
         return this.promise
       }
+    }
 
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
@@ -353,7 +379,7 @@ export class Query<
 
     // Create query function context
     const queryKey = ensureArray(this.queryKey)
-    const queryFnContext: QueryFunctionContext = {
+    const queryFnContext: QueryFunctionContext<unknown[]> = {
       queryKey,
       pageParam: undefined,
     }
@@ -365,7 +391,7 @@ export class Query<
         : Promise.reject('Missing queryFn')
 
     // Trigger behavior hook
-    const context: FetchContext<TQueryFnData, TError, TData> = {
+    const context: FetchContext<TQueryFnData, TError, TData, any> = {
       fetchOptions,
       options: this.options,
       queryKey,
@@ -377,6 +403,9 @@ export class Query<
       this.options.behavior?.onFetch(context)
     }
 
+    // Store state in case the current fetch needs to be reverted
+    this.revertState = this.state
+
     // Set to fetching state if not already in it
     if (
       !this.state.isFetching ||
@@ -387,7 +416,39 @@ export class Query<
 
     // Try to fetch the data
     this.retryer = new Retryer({
-      fn: context.fetchFn,
+      fn: context.fetchFn as () => TData,
+      onSuccess: data => {
+        this.setData(data as TData)
+
+        // Remove query after fetching if cache time is 0
+        if (this.cacheTime === 0) {
+          this.optionalRemove()
+        }
+      },
+      onError: (error: TError | { silent?: boolean }) => {
+        // Optimistically update state if needed
+        if (!(isCancelledError(error) && error.silent)) {
+          this.dispatch({
+            type: 'error',
+            error: error as TError,
+          })
+        }
+
+        if (!isCancelledError(error)) {
+          // Notify cache callback
+          if (this.cache.config.onError) {
+            this.cache.config.onError(error, this as Query<any, any, any, any>)
+          }
+
+          // Log error
+          getLogger().error(error)
+        }
+
+        // Remove query after fetching if cache time is 0
+        if (this.cacheTime === 0) {
+          this.optionalRemove()
+        }
+      },
       onFail: () => {
         this.dispatch({ type: 'failed' })
       },
@@ -402,42 +463,6 @@ export class Query<
     })
 
     this.promise = this.retryer.promise
-      .then(data => this.setData(data as TData))
-      .catch(error => {
-        // Set error state if needed
-        if (!(isCancelledError(error) && error.silent)) {
-          this.dispatch({
-            type: 'error',
-            error,
-          })
-        }
-
-        if (!isCancelledError(error)) {
-          // Notify cache callback
-          if (this.cache.config.onError) {
-            this.cache.config.onError(error, this as Query)
-          }
-
-          // Log error
-          getLogger().error(error)
-        }
-
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
-        }
-
-        // Propagate error
-        throw error
-      })
-      .then(data => {
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
-        }
-
-        return data
-      })
 
     return this.promise
   }
@@ -450,12 +475,12 @@ export class Query<
         observer.onQueryUpdate(action)
       })
 
-      this.cache.notify(this)
+      this.cache.notify({ query: this, type: 'queryUpdated', action })
     })
   }
 
   protected getDefaultState(
-    options: QueryOptions<TQueryFnData, TError, TData>
+    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   ): QueryState<TData, TError> {
     const data =
       typeof options.initialData === 'function'
@@ -533,24 +558,8 @@ export class Query<
       case 'error':
         const error = action.error as unknown
 
-        if (isCancelledError(error) && error.revert) {
-          let previousStatus: QueryStatus
-
-          if (!state.dataUpdatedAt && !state.errorUpdatedAt) {
-            previousStatus = 'idle'
-          } else if (state.dataUpdatedAt > state.errorUpdatedAt) {
-            previousStatus = 'success'
-          } else {
-            previousStatus = 'error'
-          }
-
-          return {
-            ...state,
-            fetchFailureCount: 0,
-            isFetching: false,
-            isPaused: false,
-            status: previousStatus,
-          }
+        if (isCancelledError(error) && error.revert && this.revertState) {
+          return { ...this.revertState }
         }
 
         return {

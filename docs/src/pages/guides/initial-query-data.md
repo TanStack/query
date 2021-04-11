@@ -52,7 +52,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   }
   ```
 
-- So what if your `initialData` isn't totally fresh? That leaves us with the last configuration that is actually the most accurate and uses an option called `initialDataUpdatedAt`. This options allows you to pass a numeric JS timestamp in milliseconds of when the initialData itself was last updated, e.g. what `Date.now()` provides. Take note that if you have a unix timestamp, you'll need to convert it to a JS timestamp by multiplying it by `1000`.
+- So what if your `initialData` isn't totally fresh? That leaves us with the last configuration that is actually the most accurate and uses an option called `initialDataUpdatedAt`. This option allows you to pass a numeric JS timestamp in milliseconds of when the initialData itself was last updated, e.g. what `Date.now()` provides. Take note that if you have a unix timestamp, you'll need to convert it to a JS timestamp by multiplying it by `1000`.
   ```js
   function Todos() {
     // Show initialTodos immeidately, but won't refetch until another interaction event is encountered after 1000 ms
@@ -99,7 +99,7 @@ function Todo({ todoId }) {
 
 ### Initial Data from the cache with `initialDataUpdatedAt`
 
-Getting initial data from the cache means the source query you're using to look up the initial data from is likely old, but `initialData` Instead of using an artificial `staleTime` to keep your query from refetching immediately, it's suggested that you pass the source query's `dataUpdatedAt` to `initialDataUpdatedAt`. This provides the query instance with all the information it needs to determine if and when the query needs to be refetched, regardless of initial data being provided.
+Getting initial data from the cache means the source query you're using to look up the initial data from is likely old, but `initialData`. Instead of using an artificial `staleTime` to keep your query from refetching immediately, it's suggested that you pass the source query's `dataUpdatedAt` to `initialDataUpdatedAt`. This provides the query instance with all the information it needs to determine if and when the query needs to be refetched, regardless of initial data being provided.
 
 ```js
 function Todo({ todoId }) {

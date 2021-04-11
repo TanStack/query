@@ -1,16 +1,18 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
-import { functionalUpdate, sleep } from './utils'
+import { sleep } from './utils'
 
 // TYPES
 
 interface RetryerConfig<TData = unknown, TError = unknown> {
   fn: () => TData | Promise<TData>
+  onError?: (error: TError) => void
+  onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
   onPause?: () => void
   onContinue?: () => void
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -20,9 +22,12 @@ type ShouldRetryFunction<TError = unknown> = (
   error: TError
 ) => boolean
 
-export type RetryDelayValue = number | RetryDelayFunction
+export type RetryDelayValue<TError> = number | RetryDelayFunction<TError>
 
-type RetryDelayFunction = (failureCount: number) => number
+type RetryDelayFunction<TError = unknown> = (
+  failureCount: number,
+  error: TError
+) => number
 
 function defaultRetryDelay(failureCount: number) {
   return Math.min(1000 * 2 ** failureCount, 30000)
@@ -88,15 +93,21 @@ export class Retryer<TData = unknown, TError = unknown> {
     })
 
     const resolve = (value: any) => {
-      this.isResolved = true
-      continueFn?.()
-      promiseResolve(value)
+      if (!this.isResolved) {
+        this.isResolved = true
+        config.onSuccess?.(value)
+        continueFn?.()
+        promiseResolve(value)
+      }
     }
 
     const reject = (value: any) => {
-      this.isResolved = true
-      continueFn?.()
-      promiseReject(value)
+      if (!this.isResolved) {
+        this.isResolved = true
+        config.onError?.(value)
+        continueFn?.()
+        promiseReject(value)
+      }
     }
 
     const pause = () => {
@@ -129,13 +140,15 @@ export class Retryer<TData = unknown, TError = unknown> {
 
       // Create callback to cancel this fetch
       cancelFn = cancelOptions => {
-        reject(new CancelledError(cancelOptions))
+        if (!this.isResolved) {
+          reject(new CancelledError(cancelOptions))
 
-        // Cancel transport if supported
-        if (isCancelable(promiseOrValue)) {
-          try {
-            promiseOrValue.cancel()
-          } catch {}
+          // Cancel transport if supported
+          if (isCancelable(promiseOrValue)) {
+            try {
+              promiseOrValue.cancel()
+            } catch {}
+          }
         }
       }
 
@@ -153,7 +166,10 @@ export class Retryer<TData = unknown, TError = unknown> {
           // Do we need to retry the request?
           const retry = config.retry ?? 3
           const retryDelay = config.retryDelay ?? defaultRetryDelay
-          const delay = functionalUpdate(retryDelay, this.failureCount) || 0
+          const delay =
+            typeof retryDelay === 'function'
+              ? retryDelay(this.failureCount, error)
+              : retryDelay
           const shouldRetry =
             retry === true ||
             (typeof retry === 'number' && this.failureCount < retry) ||

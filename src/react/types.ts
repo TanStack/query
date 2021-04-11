@@ -6,32 +6,51 @@ import {
   MutationStatus,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryKey,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
-> extends QueryObserverOptions<TQueryFnData, TError, TData, TQueryData> {}
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+>
+  extends QueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {}
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData
-> extends UseBaseQueryOptions<TQueryFnData, TError, TData> {}
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+>
+  extends UseBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    TQueryKey
+  > {}
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 >
   extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
-    TQueryData
+    TQueryData,
+    TQueryKey
   > {}
 
 export type UseBaseQueryResult<
@@ -56,7 +75,7 @@ export interface UseMutationOptions<
   TContext = unknown
 > {
   mutationKey?: string | unknown[]
-  onMutate?: (variables: TVariables) => Promise<TContext> | TContext
+  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
@@ -74,7 +93,7 @@ export interface UseMutationOptions<
     context: TContext | undefined
   ) => Promise<void> | void
   retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue
+  retryDelay?: RetryDelayValue<TError>
   useErrorBoundary?: boolean
 }
 

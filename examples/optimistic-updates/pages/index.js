@@ -52,7 +52,7 @@ function Example() {
       onError: (err, variables, previousValue) =>
         queryClient.setQueryData('todos', previousValue),
       // After success or failure, refetch the todos query
-      onSuccess: () => {
+      onSettled: () => {
         queryClient.invalidateQueries('todos')
       },
     }

@@ -720,6 +720,57 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should stop fetching additional pages when the component is unmounted', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+    let fetches = 0
+
+    const initialData = { pages: [1, 2, 3, 4], pageParams: [1, 2, 3, 4] }
+
+    function List() {
+      const state = useInfiniteQuery(
+        key,
+        async ({ pageParam }) => {
+          fetches++
+          await sleep(50)
+          return Number(pageParam)
+        },
+        {
+          initialData,
+          getNextPageParam: lastPage => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      return null
+    }
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setShow(false)
+        }, 75)
+      }, [])
+
+      return show ? <List /> : null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(300)
+
+    expect(states.length).toBe(1)
+    expect(fetches).toBe(2)
+    expect(queryClient.getQueryState(key)).toMatchObject({
+      data: initialData,
+      status: 'success',
+      error: null,
+    })
+  })
+
   it('should be able to override the cursor in the fetchNextPage callback', async () => {
     const key = queryKey()
     const states: UseInfiniteQueryResult<number>[] = []
@@ -868,6 +919,71 @@ describe('useInfiniteQuery', () => {
     expect(states[5]).toMatchObject({
       hasNextPage: true,
       data: { pages: [7, 8] },
+      isFetching: false,
+      isFetchingNextPage: false,
+      isSuccess: true,
+    })
+  })
+
+  it('should only refetch the first page when initialData is provided', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const state = useInfiniteQuery(
+        key,
+        async ({ pageParam }) => {
+          await sleep(10)
+          return pageParam
+        },
+        {
+          initialData: { pages: [1], pageParams: [1] },
+          getNextPageParam: lastPage => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      const { fetchNextPage } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          fetchNextPage()
+        }, 20)
+      }, [fetchNextPage])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(4)
+    expect(states[0]).toMatchObject({
+      data: { pages: [1] },
+      hasNextPage: true,
+      isFetching: true,
+      isFetchingNextPage: false,
+      isSuccess: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [1] },
+      hasNextPage: true,
+      isFetching: false,
+      isFetchingNextPage: false,
+      isSuccess: true,
+    })
+    expect(states[2]).toMatchObject({
+      data: { pages: [1] },
+      hasNextPage: true,
+      isFetching: true,
+      isFetchingNextPage: true,
+      isSuccess: true,
+    })
+    expect(states[3]).toMatchObject({
+      data: { pages: [1, 2] },
+      hasNextPage: true,
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
@@ -1025,6 +1141,143 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isSuccess: true,
+    })
+  })
+
+  it('should render correct states even in case of concurrent renders with different properties', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+    let concurrent = false
+    const originalUseEffect = React.useEffect
+    const dummyUseEffect = (...args: any[]) => {
+      originalUseEffect(() => {
+        return
+      }, args[1])
+    }
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      if (concurrent) {
+        React.useEffect = dummyUseEffect
+      }
+
+      const state = useInfiniteQuery(
+        [key, count],
+        async () => {
+          await sleep(10)
+          return count
+        },
+        {
+          staleTime: Infinity,
+          keepPreviousData: true,
+          getNextPageParam: () => (count === 0 ? undefined : count + 1),
+        }
+      )
+
+      if (concurrent) {
+        React.useEffect = originalUseEffect
+      }
+
+      states.push(state)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setCount(1)
+        }, 20)
+
+        // Try to simulate concurrent render which does not trigger effects
+        setActTimeout(() => {
+          concurrent = true
+          setCount(0)
+        }, 40)
+
+        setActTimeout(() => {
+          concurrent = false
+          setCount(2)
+        }, 60)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(100)
+
+    expect(states.length).toBe(9)
+
+    // Load query 0
+    expect(states[0]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      isFetching: true,
+      isPreviousData: false,
+      hasNextPage: undefined,
+    })
+    // Fetch done
+    expect(states[1]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [0] },
+      isFetching: false,
+      isPreviousData: false,
+      hasNextPage: false,
+    })
+    // Set state to query 1
+    expect(states[2]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [0] },
+      isFetching: true,
+      isPreviousData: true,
+      hasNextPage: undefined,
+    })
+    // Fetch start
+    expect(states[3]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [0] },
+      isFetching: true,
+      isPreviousData: true,
+      hasNextPage: undefined,
+    })
+    // Fetch done
+    expect(states[4]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [1] },
+      isFetching: false,
+      isPreviousData: false,
+      hasNextPage: true,
+    })
+    // Concurrent render for query 0
+    expect(states[5]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [0] },
+      isFetching: false,
+      isPreviousData: false,
+      hasNextPage: false,
+    })
+    // Set state to query 2 (should have query 1 has previous data)
+    expect(states[6]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [1] },
+      isFetching: true,
+      isPreviousData: true,
+      hasNextPage: undefined,
+    })
+    // Fetch start
+    expect(states[7]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [1] },
+      isFetching: true,
+      isPreviousData: true,
+      hasNextPage: undefined,
+    })
+    // Fetch done
+    expect(states[8]).toMatchObject({
+      status: 'success',
+      data: { pageParams: [undefined], pages: [2] },
+      isFetching: false,
+      isPreviousData: false,
+      hasNextPage: true,
     })
   })
 

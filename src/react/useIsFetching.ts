@@ -14,7 +14,10 @@ export function useIsFetching(
   arg1?: QueryKey | QueryFilters,
   arg2?: QueryFilters
 ): number {
+  const mountedRef = React.useRef(false)
+
   const queryClient = useQueryClient()
+
   const [filters] = parseFilterArgs(arg1, arg2)
   const [isFetching, setIsFetching] = React.useState(
     queryClient.isFetching(filters)
@@ -25,18 +28,25 @@ export function useIsFetching(
   const isFetchingRef = React.useRef(isFetching)
   isFetchingRef.current = isFetching
 
-  React.useEffect(
-    () =>
-      queryClient.getQueryCache().subscribe(
-        notifyManager.batchCalls(() => {
+  React.useEffect(() => {
+    mountedRef.current = true
+
+    const unsubscribe = queryClient.getQueryCache().subscribe(
+      notifyManager.batchCalls(() => {
+        if (mountedRef.current) {
           const newIsFetching = queryClient.isFetching(filtersRef.current)
           if (isFetchingRef.current !== newIsFetching) {
             setIsFetching(newIsFetching)
           }
-        })
-      ),
-    [queryClient]
-  )
+        }
+      })
+    )
+
+    return () => {
+      mountedRef.current = false
+      unsubscribe()
+    }
+  }, [queryClient])
 
   return isFetching
 }

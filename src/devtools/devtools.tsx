@@ -216,6 +216,7 @@ export function ReactQueryDevtools({
                   transform: `translateY(15px) scale(1.02)`,
                 }),
           }}
+          isOpen={isResolvedOpen}
           setIsOpen={setIsOpen}
           handleDragStart={e => handleDragStart(panelRef.current, e)}
         />
@@ -268,8 +269,6 @@ export function ReactQueryDevtools({
             border: 0,
             padding: 0,
             position: 'fixed',
-            bottom: '0',
-            right: '0',
             zIndex: '99999',
             display: 'inline-flex',
             fontSize: '1.5rem',
@@ -324,7 +323,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
     props: DevtoolsPanelOptions,
     ref
   ): React.ReactElement {
-    const { setIsOpen, handleDragStart, ...panelProps } = props
+    const { isOpen, setIsOpen, handleDragStart, ...panelProps } = props
 
     const queryClient = useQueryClient()
     const queryCache = queryClient.getQueryCache()
@@ -390,10 +389,13 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
     ).length
 
     React.useEffect(() => {
-      return queryCache.subscribe(() => {
-        setUnsortedQueries(Object.values(queryCache.getAll()))
-      })
-    }, [sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
+      if (isOpen) {
+        return queryCache.subscribe(() => {
+          setUnsortedQueries(Object.values(queryCache.getAll()))
+        })
+      }
+      return undefined
+    }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
 
     return (
       <ThemeProvider theme={theme}>
@@ -409,16 +411,16 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
             .ReactQueryDevtoolsPanel * {
               scrollbar-color: ${theme.backgroundAlt} ${theme.gray};
             }
-              
+
             .ReactQueryDevtoolsPanel *::-webkit-scrollbar, .ReactQueryDevtoolsPanel scrollbar {
               width: 1rem;
               height: 1rem;
             }
-            
+
             .ReactQueryDevtoolsPanel *::-webkit-scrollbar-track, .ReactQueryDevtoolsPanel scrollbar-track {
               background: ${theme.backgroundAlt};
             }
-             
+
             .ReactQueryDevtoolsPanel *::-webkit-scrollbar-thumb, .ReactQueryDevtoolsPanel scrollbar-thumb {
               background: ${theme.gray};
               border-radius: .5rem;
@@ -522,7 +524,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 >
                   <Input
                     placeholder="Filter"
-                    value={filter}
+                    value={filter ?? ''}
                     onChange={e => setFilter(e.target.value)}
                     onKeyDown={e => {
                       if (e.key === 'Escape') setFilter('')

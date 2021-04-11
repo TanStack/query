@@ -13,7 +13,7 @@ However, if you run this simple example, you might notice something strange:
 
 **The UI jumps in and out of the `success` and `loading` states because each new page is treated like a brand new query.**
 
-This experience is not optimal and unfortunately is how many tools today insist on working. But not React Query! As you may have guessed, React Query comes with an awesome featured called `keepPreviousData` that allows us to get around this.
+This experience is not optimal and unfortunately is how many tools today insist on working. But not React Query! As you may have guessed, React Query comes with an awesome feature called `keepPreviousData` that allows us to get around this.
 
 ## Better Paginated Queries with `keepPreviousData`
 
