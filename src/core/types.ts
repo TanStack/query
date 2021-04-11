@@ -20,8 +20,6 @@ export interface QueryFunctionContext<
 
 export type InitialDataFunction<T> = () => T | undefined
 
-export type InitialStaleFunction = () => boolean
-
 export type PlaceholderDataFunction<TResult> = () => TResult | undefined
 
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
@@ -183,7 +181,7 @@ export interface QueryObserverOptions<
   /**
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    */
-  placeholderData?: TData | PlaceholderDataFunction<TData>
+  placeholderData?: TQueryData | PlaceholderDataFunction<TQueryData>
   /**
    * If set, the observer will optimistically set the result in fetching state before the query has actually started fetching.
    * This is to make sure the results are not lagging behind.
