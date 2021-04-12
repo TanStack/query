@@ -4,7 +4,7 @@ import React from 'react'
 import { matchSorter } from 'match-sorter'
 import { useQueryClient } from '../react'
 import useLocalStorage from './useLocalStorage'
-import { useSafeState, isStale } from './utils'
+import { useSafeState } from './utils'
 
 import {
   Panel,
@@ -305,7 +305,7 @@ export function ReactQueryDevtools({
 }
 
 const getStatusRank = q =>
-  q.state.isFetching ? 0 : !q.observers.length ? 3 : isStale(q) ? 2 : 1
+  q.state.isFetching ? 0 : !q.observers.length ? 3 : q.isStale() ? 2 : 1
 
 const sortFns = {
   'Status > Last Updated': (a, b) =>
