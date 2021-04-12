@@ -58,7 +58,6 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
   // Handle suspense
   if (someSuspense || someUseErrorBoundary) {
     if (someSuspense && someIsLoading) {
-      console.log('suspense')
       errorResetBoundary.clearReset()
       const unsubscribe = obsRef.current.subscribe()
       throw obsRef
