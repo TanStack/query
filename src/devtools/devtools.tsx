@@ -1,8 +1,10 @@
 // @ts-nocheck
 
 import React from 'react'
+
+// eslint-disable-next-line import/no-unresolved
+import { useQueryClient } from 'react-query'
 import { matchSorter } from 'match-sorter'
-import { useQueryClient } from '../react'
 import useLocalStorage from './useLocalStorage'
 import { useSafeState, isStale } from './utils'
 
