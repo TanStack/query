@@ -1,8 +1,9 @@
 // @ts-nocheck
 
 import React from 'react'
+
+import { useQueryClient } from 'react-query'
 import { matchSorter } from 'match-sorter'
-import { useQueryClient } from '../react'
 import useLocalStorage from './useLocalStorage'
 import { useSafeState } from './utils'
 

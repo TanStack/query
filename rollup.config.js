@@ -7,11 +7,12 @@ import commonJS from 'rollup-plugin-commonjs'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 
-const external = ['react', 'react-dom']
+const external = ['react', 'react-dom', 'react-query']
 
 const globals = {
   react: 'React',
   'react-dom': 'ReactDOM',
+  'react-query': 'ReactQuery',
 }
 
 const inputSrcs = [
