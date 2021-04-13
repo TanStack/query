@@ -80,8 +80,9 @@ export function useBaseQuery<
       TQueryKey
     >(queryClient, defaultedOptions)
   }
+  defaultedOptions.behavior = obsRef.current.options.behavior
 
-  let result = obsRef.current.getOptimisticResult(obsRef.current.options)
+  let result = obsRef.current.getOptimisticResult(defaultedOptions)
 
   React.useEffect(() => {
     mountedRef.current = true
