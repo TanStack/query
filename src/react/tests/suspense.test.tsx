@@ -72,19 +72,20 @@ describe("useQuery's in Suspense mode", () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
+      const [multiplier, setMultiplier] = React.useState(1)
       const state = useInfiniteQuery(
-        key,
-        ({ pageParam = 0 }) => Number(pageParam),
+        `${key}_${multiplier}`,
+        ({ pageParam = 1 }) => Number(pageParam * multiplier),
         {
           suspense: true,
           getNextPageParam: lastPage => lastPage + 1,
         }
       )
       states.push(state)
-      return null
+      return <button onClick={() => setMultiplier(2)}>next</button>
     }
 
-    renderWithClient(
+    const rendered = renderWithClient(
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
@@ -95,7 +96,16 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
-      data: { pages: [0], pageParams: [undefined] },
+      data: { pages: [1], pageParams: [undefined] },
+      status: 'success',
+    })
+
+    fireEvent.click(rendered.getByText('next'))
+    await sleep(10)
+
+    expect(states.length).toBe(3)
+    expect(states[2]).toMatchObject({
+      data: { pages: [2], pageParams: [undefined] },
       status: 'success',
     })
   })
