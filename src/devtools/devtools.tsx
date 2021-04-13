@@ -2,7 +2,6 @@
 
 import React from 'react'
 
-// eslint-disable-next-line import/no-unresolved
 import { useQueryClient } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
