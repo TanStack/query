@@ -147,7 +147,7 @@ They were previously added as the last query key parameter in your query functio
 useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
 
 // New
-useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPost(pageParam))
+useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPosts(pageParam))
 ```
 
 ### usePaginatedQuery() has been deprecated in favor of the `keepPreviousData` option
