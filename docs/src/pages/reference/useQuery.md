@@ -168,6 +168,9 @@ const result = useQuery({
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
+- `useErrorBoundary: boolean`
+  - Defaults to the global query config's `useErrorBoundary` value, which is false
+  - Set this to true if you want errors to be thrown in the render phase and propagated to the nearest error boundary
 
 **Returns**
 
