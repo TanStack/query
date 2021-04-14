@@ -80,7 +80,6 @@ export function useBaseQuery<
       TQueryKey
     >(queryClient, defaultedOptions)
   }
-  defaultedOptions.behavior = obsRef.current.options.behavior
 
   let result = obsRef.current.getOptimisticResult(defaultedOptions)
 
