@@ -447,4 +447,29 @@ describe('query', () => {
     await sleep(100)
     expect(queryCache.find(key)).toBeDefined()
   })
+
+  test('should return proper count of observers', async () => {
+    const key = queryKey()
+    const options = { queryKey: key, queryFn: async () => 'data' }
+    const observer = new QueryObserver(queryClient, options)
+    const observer2 = new QueryObserver(queryClient, options)
+    const observer3 = new QueryObserver(queryClient, options)
+    const query = queryCache.find(key)
+
+    expect(query?.getObserversCount()).toEqual(0)
+
+    const unsubscribe1 = observer.subscribe()
+    const unsubscribe2 = observer2.subscribe()
+    const unsubscribe3 = observer3.subscribe()
+    expect(query?.getObserversCount()).toEqual(3)
+
+    unsubscribe3()
+    expect(query?.getObserversCount()).toEqual(2)
+
+    unsubscribe2()
+    expect(query?.getObserversCount()).toEqual(1)
+
+    unsubscribe1()
+    expect(query?.getObserversCount()).toEqual(0)
+  })
 })
