@@ -130,7 +130,8 @@ export function useBaseQuery<
   // Handle error boundary
   if (
     (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) &&
-    result.isError
+    result.isError &&
+    !result.isFetching
   ) {
     throw result.error
   }
