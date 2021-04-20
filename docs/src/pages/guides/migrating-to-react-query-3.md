@@ -48,6 +48,8 @@ const queryClient = new QueryClient()
 
 Default options for queries and mutations can now be specified in `QueryClient`:
 
+**Notice that it's now defaultOptions instead of defaultConfig**
+
 ```js
 const queryClient = new QueryClient({
   defaultOptions: {
