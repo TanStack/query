@@ -4,6 +4,7 @@ import {
   InfiniteQueryObserverResult,
   MutateOptions,
   MutationStatus,
+  MutationKey,
   QueryObserverOptions,
   QueryObserverResult,
   QueryKey,
@@ -74,7 +75,7 @@ export interface UseMutationOptions<
   TVariables = void,
   TContext = unknown
 > {
-  mutationKey?: string | unknown[]
+  mutationKey?: MutationKey
   onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
