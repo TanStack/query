@@ -20,7 +20,7 @@ Once you grasp the nature of server state in your application, **even more chall
 
 - Caching... (possibly the hardest thing to do in programming)
 - Deduping multiple requests for the same data into a single request
-- Updating out of date data in the background
+- Updating "out of date" data in the background
 - Knowing when data is "out of date"
 - Reflecting updates to data as quickly as possible
 - Performance optimizations like pagination and lazy loading data
