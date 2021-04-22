@@ -72,7 +72,7 @@ export class QueryClient {
     this.mutationDefaults = []
   }
 
-  mount(): void {
+  mount(): QueryClient {
     this.unsubscribeFocus = focusManager.subscribe(() => {
       if (focusManager.isFocused() && onlineManager.isOnline()) {
         this.mutationCache.onFocus()
@@ -85,6 +85,8 @@ export class QueryClient {
         this.queryCache.onOnline()
       }
     })
+
+    return this;
   }
 
   unmount(): void {
