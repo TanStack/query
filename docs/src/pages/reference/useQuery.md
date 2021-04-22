@@ -89,6 +89,8 @@ const result = useQuery({
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: number | Infinity`
+  - Optional
+  - Defaults to `0`
   - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
 - `cacheTime: number | Infinity`
