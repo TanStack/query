@@ -2226,6 +2226,39 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('new'))
   })
 
+  it('should start with status idle if strict is strue and queryKey contains null or undefined', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    function Page() {
+      const first = useQuery([key1, null], () => 'data', {
+        strict: true,
+      })
+      const second = useQuery([key2, undefined], () => 'data', {
+        strict: true,
+        enabled: true
+      })
+      const third = useQuery([key3, undefined], () => 'data', {
+        strict: false
+      })
+
+      return (
+        <div>
+          <div>First Status: {first.status}</div>
+          <div>Second Status: {second.status}</div>
+          <div>Third Status: {third.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    rendered.getByText('First Status: idle')
+    await waitFor(() => rendered.getByText('Second Status: idle'))
+    await waitFor(() => rendered.getByText('Third Status: success'))
+  })
+
   // See https://github.com/tannerlinsley/react-query/issues/170
   it('should start with status idle if enabled is false', async () => {
     const key1 = queryKey()

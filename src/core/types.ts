@@ -98,6 +98,13 @@ export interface QueryObserverOptions<
    */
   enabled?: boolean
   /**
+   * Set this to `true` to have the queryKey checked for null and undefined values.
+   * If there are any null or undefined values in the queryKey, the `enabled` option
+   * will automatically be set to `false`.
+   * Defaults to `false`.
+   */
+  strict?: boolean
+  /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
    */

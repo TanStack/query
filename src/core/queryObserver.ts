@@ -141,6 +141,13 @@ export class QueryObserver<
     const prevOptions = this.options
     const prevQuery = this.currentQuery
 
+    if (options?.strict && Array.isArray(options?.queryKey)) {
+      const isInvalidKey = options.queryKey.some(key => key === undefined || key === null)
+      if (isInvalidKey) {
+        options.enabled = false
+      }
+    }
+
     this.options = this.client.defaultQueryObserverOptions(options)
 
     if (
