@@ -53,10 +53,10 @@ In the example above, you also saw that you can pass variables to your mutations
 
 Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
 
-> IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/events.html#event-pooling).
+> IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback in **React 16 and earlier**. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/legacy-event-pooling.html).
 
 ```js
-// This will not work
+// This will not work in React 16 and earlier
 const CreateTodo = () => {
   const mutation = useMutation(event => {
     event.preventDefault()

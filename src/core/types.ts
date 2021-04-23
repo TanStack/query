@@ -59,7 +59,7 @@ export interface QueryOptions<
   retryDelay?: RetryDelayValue<TError>
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
-  queryFn?: QueryFunction<TQueryFnData>
+  queryFn?: QueryFunction<TQueryFnData, TQueryKey>
   queryHash?: string
   queryKey?: TQueryKey
   queryKeyHashFn?: QueryKeyHashFunction<TQueryKey>

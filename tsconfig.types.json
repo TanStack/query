@@ -4,7 +4,10 @@
     "declaration": true,
     "declarationDir": "./types",
     "emitDeclarationOnly": true,
-    "noEmit": false
+    "noEmit": false,
+    "paths": {
+      "react-query": ["./src/index.ts"]
+    }
   },
   "files": [
     "./src/index.ts",
