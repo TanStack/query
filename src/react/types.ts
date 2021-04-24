@@ -76,23 +76,25 @@ export interface UseMutationOptions<
   TContext = unknown
 > {
   mutationKey?: MutationKey
-  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  onMutate?: (
+    variables: TVariables
+  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   useErrorBoundary?: boolean
