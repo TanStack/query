@@ -13,13 +13,13 @@ A query filter is an object with certain conditions to match a query with:
 // Cancel all queries
 await queryClient.cancelQueries()
 
-// Remove all inactive queries
+// Remove all inactive queries that begin with `posts` in the key
 queryClient.removeQueries('posts', { inactive: true })
 
 // Refetch all active queries
 await queryClient.refetchQueries({ active: true })
 
-// Refetch all active queries that begin with `post` in the key
+// Refetch all active queries that begin with `posts` in the key
 await queryClient.refetchQueries('posts', { active: true })
 ```
 
