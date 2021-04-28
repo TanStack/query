@@ -162,14 +162,12 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('toggle'))
     await waitFor(() => rendered.getByText('rendered'))
 
-    // @ts-expect-error
-    expect(queryCache.find(key)?.observers.length).toBe(1)
+    expect(queryCache.find(key)?.getObserversCount()).toBe(1)
 
     fireEvent.click(rendered.getByLabelText('toggle'))
 
     expect(rendered.queryByText('rendered')).toBeNull()
-    // @ts-expect-error
-    expect(queryCache.find(key)?.observers.length).toBe(0)
+    expect(queryCache.find(key)?.getObserversCount()).toBe(0)
   })
 
   it('should call onSuccess on the first successful call', async () => {
