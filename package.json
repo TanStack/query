@@ -25,7 +25,7 @@
     "test:dev": "npm run test:types && npm run test:format && npm run test:eslint && jest --watch",
     "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && jest",
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
-    "test:format": "npm run prettier -- --check",
+    "test:format": "yarn prettier --check",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
@@ -41,7 +41,7 @@
     "now-build": "yarn && cd www && yarn && yarn build",
     "prettier": "prettier \"{.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,ts,tsx,json}\"",
     "start": "yarn watch",
-    "format": "npm run prettier -- --write",
+    "format": "yarn prettier --write",
     "stats": "open ./stats.html"
   },
   "files": [
