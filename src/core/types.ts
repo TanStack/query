@@ -225,7 +225,13 @@ export interface FetchInfiniteQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> extends FetchQueryOptions<TQueryFnData, TError, InfiniteData<TData>, TQueryKey> {}
+>
+  extends FetchQueryOptions<
+    TQueryFnData,
+    TError,
+    InfiniteData<TData>,
+    TQueryKey
+  > {}
 
 export interface ResultOptions {
   throwOnError?: boolean
@@ -474,23 +480,25 @@ export interface MutationOptions<
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
   variables?: TVariables
-  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  onMutate?: (
+    variables: TVariables
+  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
     context: TContext
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
@@ -515,18 +523,18 @@ export interface MutateOptions<
     data: TData,
     variables: TVariables,
     context: TContext
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
 }
 
 export type MutateFunction<
