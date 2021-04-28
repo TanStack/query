@@ -1,6 +1,6 @@
 import { QueryClient } from '../core'
 import { getLogger } from '../core/logger'
-import { dehydrate, DehydratedState, hydrate } from '../hydration'
+import { dehydrate, DehydratedState, DehydrateOptions, HydrateOptions, hydrate } from '../hydration'
 import { Promisable } from 'type-fest'
 
 export interface Persistor {
@@ -28,6 +28,10 @@ export interface PersistQueryClientOptions {
   /** A unique string that can be used to forcefully
    * invalidate existing caches if they do not share the same buster string */
   buster?: string
+  /** The options passed to the hydrate function */
+  hydrateOptions?: HydrateOptions
+  /** The options passed to the dehydrate function */
+  dehydrateOptions?: DehydrateOptions
 }
 
 export async function persistQueryClient({
@@ -35,6 +39,8 @@ export async function persistQueryClient({
   persistor,
   maxAge = 1000 * 60 * 60 * 24,
   buster = '',
+  hydrateOptions,
+  dehydrateOptions,
 }: PersistQueryClientOptions) {
   if (typeof window !== 'undefined') {
     // Subscribe to changes
@@ -42,7 +48,7 @@ export async function persistQueryClient({
       const persistClient: PersistedClient = {
         buster,
         timestamp: Date.now(),
-        clientState: dehydrate(queryClient),
+        clientState: dehydrate(queryClient, dehydrateOptions),
       }
 
       persistor.persistClient(persistClient)
@@ -59,7 +65,7 @@ export async function persistQueryClient({
           if (expired || busted) {
             persistor.removeClient()
           } else {
-            hydrate(queryClient, persistedClient.clientState)
+            hydrate(queryClient, persistedClient.clientState, hydrateOptions)
           }
         } else {
           persistor.removeClient()

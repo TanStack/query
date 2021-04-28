@@ -12,12 +12,12 @@ class FocusManager extends Subscribable {
   }
 
   setEventListener(
-    setup: (onFocus: () => void) => (focused?: boolean) => void
+    setup: (setFocused: (focused?: boolean) => void) => () => void
   ): void {
     if (this.removeEventListener) {
       this.removeEventListener()
     }
-    this.removeEventListener = setup((focused?: boolean) => {
+    this.removeEventListener = setup((focused) => {
       if (typeof focused === 'boolean') {
         this.setFocused(focused)
       } else {
@@ -58,14 +58,15 @@ class FocusManager extends Subscribable {
   private setDefaultEventListener() {
     if (!isServer && window?.addEventListener) {
       this.setEventListener(onFocus => {
+        const listener = () => onFocus()
         // Listen to visibillitychange and focus
-        window.addEventListener('visibilitychange', onFocus, false)
-        window.addEventListener('focus', onFocus, false)
+        window.addEventListener('visibilitychange', listener, false)
+        window.addEventListener('focus', listener, false)
 
         return () => {
           // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('visibilitychange', onFocus)
-          window.removeEventListener('focus', onFocus)
+          window.removeEventListener('visibilitychange', listener)
+          window.removeEventListener('focus', listener)
         }
       })
     }
