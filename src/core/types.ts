@@ -225,7 +225,13 @@ export interface FetchInfiniteQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> extends FetchQueryOptions<TQueryFnData, TError, InfiniteData<TData>, TQueryKey> {}
+>
+  extends FetchQueryOptions<
+    TQueryFnData,
+    TError,
+    InfiniteData<TData>,
+    TQueryKey
+  > {}
 
 export interface ResultOptions {
   throwOnError?: boolean
@@ -474,7 +480,9 @@ export interface MutationOptions<
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
   variables?: TVariables
-  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  onMutate?: (
+    variables: TVariables
+  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
