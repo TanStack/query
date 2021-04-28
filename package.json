@@ -25,7 +25,7 @@
     "test:dev": "npm run test:types && npm run test:format && npm run test:eslint && jest --watch",
     "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && jest",
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
-    "test:format": "yarn prettier --check --loglevel=debug",
+    "test:format": "yarn prettier --check",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
