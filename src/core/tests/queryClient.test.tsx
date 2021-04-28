@@ -166,6 +166,44 @@ describe('queryClient', () => {
     })
   })
 
+  describe('setQueriesData', () => {
+    test('should update all existing, matching queries', () => {
+      queryClient.setQueryData(['key', 1], 1)
+      queryClient.setQueryData(['key', 2], 2)
+
+      const result = queryClient.setQueriesData<number>('key', old => old! + 5)
+
+      expect(result).toEqual([
+        [['key', 1], 6],
+        [['key', 2], 7],
+      ])
+      expect(queryClient.getQueryData(['key', 1])).toBe(6)
+      expect(queryClient.getQueryData(['key', 2])).toBe(7)
+    })
+
+    test('should accept queryFilters', () => {
+      queryClient.setQueryData(['key', 1], 1)
+      queryClient.setQueryData(['key', 2], 2)
+      const query1 = queryCache.find(['key', 1])!
+
+      const result = queryClient.setQueriesData<number>(
+        { predicate: query => query === query1 },
+        old => old! + 5
+      )
+
+      expect(result).toEqual([[['key', 1], 6]])
+      expect(queryClient.getQueryData(['key', 1])).toBe(6)
+      expect(queryClient.getQueryData(['key', 2])).toBe(2)
+    })
+
+    test('should not update non existing queries', () => {
+      const result = queryClient.setQueriesData<string>('key', 'data')
+
+      expect(result).toEqual([])
+      expect(queryClient.getQueryData('key')).toBe(undefined)
+    })
+  })
+
   describe('getQueryData', () => {
     test('should return the query data if the query is found', () => {
       const key = queryKey()
@@ -191,14 +229,13 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', string]
       const key: StrictQueryKey = ['strict', queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
-      )
 
       await expect(
         queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>(
           key,
-          fetchFn,
+          fetchFn
         )
       ).resolves.toEqual('data')
     })
@@ -309,15 +346,16 @@ describe('queryClient', () => {
         pageParams: [undefined],
       }
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve(data.pages[0])
-      )
 
       await expect(
-        queryClient.fetchInfiniteQuery<StrictData, any, StrictData, StrictQueryKey>(
-          key,
-          fetchFn,
-        )
+        queryClient.fetchInfiniteQuery<
+          StrictData,
+          any,
+          StrictData,
+          StrictQueryKey
+        >(key, fetchFn)
       ).resolves.toEqual(data)
     })
 
@@ -345,11 +383,15 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', string]
       const key: StrictQueryKey = ['strict', queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
-      )
 
-      await queryClient.prefetchInfiniteQuery<StrictData, any, StrictData, StrictQueryKey>(key, fetchFn)
+      await queryClient.prefetchInfiniteQuery<
+        StrictData,
+        any,
+        StrictData,
+        StrictQueryKey
+      >(key, fetchFn)
 
       const result = queryClient.getQueryData(key)
 
@@ -381,13 +423,17 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', string]
       const key: StrictQueryKey = ['strict', queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
-      )
 
-      await queryClient.prefetchQuery<StrictData, any, StrictData, StrictQueryKey>(key, fetchFn);
+      await queryClient.prefetchQuery<
+        StrictData,
+        any,
+        StrictData,
+        StrictQueryKey
+      >(key, fetchFn)
 
-      const result = queryClient.getQueryData(key);
+      const result = queryClient.getQueryData(key)
 
       expect(result).toEqual('data')
     })
