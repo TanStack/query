@@ -16,8 +16,7 @@ export interface UseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->
-  extends QueryObserverOptions<
+> extends QueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
@@ -30,8 +29,7 @@ export interface UseQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->
-  extends UseBaseQueryOptions<
+> extends UseBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -45,8 +43,7 @@ export interface UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->
-  extends InfiniteQueryObserverOptions<
+> extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,

@@ -110,7 +110,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
-    "prettier": "^2.0.5",
+    "prettier": "2.2.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^2.2.2",
