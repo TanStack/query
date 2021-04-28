@@ -342,6 +342,10 @@ export class Query<
     }
   }
 
+  getObserversCount(): number {
+    return this.observers.length
+  }
+
   invalidate(): void {
     if (!this.state.isInvalidated) {
       this.dispatch({ type: 'invalidate' })

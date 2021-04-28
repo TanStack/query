@@ -8,6 +8,7 @@ import {
   QueryObserverOptions,
   QueryObserverResult,
   QueryKey,
+  MutationFunction,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
@@ -75,8 +76,11 @@ export interface UseMutationOptions<
   TVariables = void,
   TContext = unknown
 > {
+  mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  onMutate?: (
+    variables: TVariables
+  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
