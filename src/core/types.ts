@@ -485,18 +485,18 @@ export interface MutationOptions<
     data: TData,
     variables: TVariables,
     context: TContext
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
@@ -521,18 +521,18 @@ export interface MutateOptions<
     data: TData,
     variables: TVariables,
     context: TContext
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
 }
 
 export type MutateFunction<
