@@ -12,7 +12,7 @@ export function getQueryStatusColor(query, theme) {
     ? theme.active
     : query.isStale()
     ? theme.warning
-    : !query.observers.length
+    : !query.getObserversCount()
     ? theme.gray
     : theme.success
 }
@@ -20,7 +20,7 @@ export function getQueryStatusColor(query, theme) {
 export function getQueryStatusLabel(query) {
   return query.state.isFetching
     ? 'fetching'
-    : !query.observers.length
+    : !query.getObserversCount()
     ? 'inactive'
     : query.isStale()
     ? 'stale'
