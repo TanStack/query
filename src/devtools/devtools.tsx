@@ -17,7 +17,7 @@ import {
   Select,
   ActiveQueryPanel,
 } from './styledComponents'
-import { ThemeProvider } from './theme'
+import { ThemeProvider, defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
@@ -73,20 +73,6 @@ interface DevtoolsPanelOptions {
 }
 
 const isServer = typeof window === 'undefined'
-
-const theme = {
-  background: '#0b1521',
-  backgroundAlt: '#132337',
-  foreground: 'white',
-  gray: '#3f4e60',
-  grayAlt: '#222e3e',
-  inputBackgroundColor: '#fff',
-  inputTextColor: '#000',
-  success: '#00ab52',
-  danger: '#ff0085',
-  active: '#006bff',
-  warning: '#ffb200',
-}
 
 export function ReactQueryDevtools({
   initialIsOpen,
