@@ -76,12 +76,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     return this.mutations
   }
 
-  find<
-    TData = unknown,
-    TError = unknown,
-    TVariables = any,
-    TContext = unknown
-  >(
+  find<TData = unknown, TError = unknown, TVariables = any, TContext = unknown>(
     filters: MutationFilters
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
     if (typeof filters.exact === 'undefined') {

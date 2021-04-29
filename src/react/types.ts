@@ -8,6 +8,7 @@ import {
   QueryObserverOptions,
   QueryObserverResult,
   QueryKey,
+  MutationFunction,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
@@ -16,8 +17,7 @@ export interface UseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->
-  extends QueryObserverOptions<
+> extends QueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
@@ -30,8 +30,7 @@ export interface UseQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->
-  extends UseBaseQueryOptions<
+> extends UseBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -45,8 +44,7 @@ export interface UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
->
-  extends InfiniteQueryObserverOptions<
+> extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
@@ -75,24 +73,27 @@ export interface UseMutationOptions<
   TVariables = void,
   TContext = unknown
 > {
+  mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  onMutate?: (variables: TVariables) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  onMutate?: (
+    variables: TVariables
+  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined
-  ) => Promise<void> | void
+  ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   useErrorBoundary?: boolean

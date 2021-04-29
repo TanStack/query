@@ -306,7 +306,7 @@ export function ReactQueryDevtools({
 }
 
 const getStatusRank = q =>
-  q.state.isFetching ? 0 : !q.observers.length ? 3 : q.isStale() ? 2 : 1
+  q.state.isFetching ? 0 : !q.getObserversCount() ? 3 : q.isStale() ? 2 : 1
 
 const sortFns = {
   'Status > Last Updated': (a, b) =>
@@ -613,7 +613,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                           : 'white',
                     }}
                   >
-                    {query.observers.length}
+                    {query.getObserversCount()}
                   </div>
                   <Code
                     suppressHydrationWarning
@@ -689,7 +689,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                     justifyContent: 'space-between',
                   }}
                 >
-                  Observers: <Code>{activeQuery.observers.length}</Code>
+                  Observers: <Code>{activeQuery.getObserversCount()}</Code>
                 </div>
                 <div
                   style={{
