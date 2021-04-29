@@ -79,7 +79,7 @@ describe('useQuery', () => {
       type MyData = number
       type MyQueryKey = readonly ['my-data', number]
 
-      const getMyData: QueryFunction<MyData, MyQueryKey> = async ({
+      const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = async ({
         queryKey: [, n],
       }) => {
         return n + 42
@@ -87,7 +87,17 @@ describe('useQuery', () => {
 
       useQuery({
         queryKey: ['my-data', 100],
-        queryFn: getMyData,
+        queryFn: getMyDataArrayKey,
+      })
+
+      const getMyDataStringKey: QueryFunction<MyData, '1'> = async context => {
+        expectType<['1']>(context.queryKey)
+        return Number(context.queryKey[0]) + 42
+      }
+
+      useQuery({
+        queryKey: '1',
+        queryFn: getMyDataStringKey,
       })
     }
   })
