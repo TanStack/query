@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { useQueryClient } from '../react'
+import { useQueryClient } from 'react-query'
 import { hydrate, HydrateOptions } from './hydration'
 
 export function useHydrate(state: unknown, options?: HydrateOptions) {

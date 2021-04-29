@@ -48,6 +48,8 @@ const queryClient = new QueryClient()
 
 Default options for queries and mutations can now be specified in `QueryClient`:
 
+**Notice that it's now defaultOptions instead of defaultConfig**
+
 ```js
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -147,7 +149,7 @@ They were previously added as the last query key parameter in your query functio
 useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
 
 // New
-useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPost(pageParam))
+useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPosts(pageParam))
 ```
 
 ### usePaginatedQuery() has been deprecated in favor of the `keepPreviousData` option

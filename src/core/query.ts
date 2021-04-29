@@ -1,6 +1,5 @@
 import {
   Updater,
-  ensureArray,
   functionalUpdate,
   isValidTimeout,
   noop,
@@ -343,6 +342,10 @@ export class Query<
     }
   }
 
+  getObserversCount(): number {
+    return this.observers.length
+  }
+
   invalidate(): void {
     if (!this.state.isInvalidated) {
       this.dispatch({ type: 'invalidate' })
@@ -378,9 +381,8 @@ export class Query<
     }
 
     // Create query function context
-    const queryKey = ensureArray(this.queryKey)
-    const queryFnContext: QueryFunctionContext<unknown[]> = {
-      queryKey,
+    const queryFnContext: QueryFunctionContext<TQueryKey> = {
+      queryKey: this.queryKey,
       pageParam: undefined,
     }
 
@@ -394,7 +396,7 @@ export class Query<
     const context: FetchContext<TQueryFnData, TError, TData, any> = {
       fetchOptions,
       options: this.options,
-      queryKey,
+      queryKey: this.queryKey,
       state: this.state,
       fetchFn,
     }

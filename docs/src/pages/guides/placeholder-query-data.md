@@ -43,7 +43,7 @@ In some circumstances, you may be able to provide the placeholder data for a que
 
 ```js
 function Todo({ blogPostId }) {
-  const result = useQuery(['blogPost', blogPostId], () => fetch('/blogPosts'), {
+  const result = useQuery(['blogPost', blogPostId], () => fetch(`/blogPosts/${blogPostId}`), {
     placeholderData: () => {
       // Use the smaller/preview version of the blogPost from the 'blogPosts' query as the placeholder data for this blogPost query
       return queryClient

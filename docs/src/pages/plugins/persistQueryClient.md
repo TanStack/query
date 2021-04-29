@@ -94,6 +94,10 @@ interface PersistQueryClientOptions {
   /** A unique string that can be used to forcefully
    * invalidate existing caches if they do not share the same buster string */
   buster?: string
+  /** The options passed to the hydrate function */
+  hydrateOptions?: HydrateOptions
+  /** The options passed to the dehydrate function */
+  dehydrateOptions?: DehydrateOptions
 }
 ```
 

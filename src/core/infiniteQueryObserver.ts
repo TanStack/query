@@ -75,6 +75,21 @@ export class InfiniteQueryObserver<
     })
   }
 
+  getOptimisticResult(
+    options: InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData
+    >
+  ): InfiniteQueryObserverResult<TData, TError> {
+    options.behavior = infiniteQueryBehavior()
+    return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
+      TData,
+      TError
+    >
+  }
+
   fetchNextPage(
     options?: FetchNextPageOptions
   ): Promise<InfiniteQueryObserverResult<TData, TError>> {

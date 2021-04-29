@@ -29,7 +29,7 @@
     ],
     "no-shadow": "error",
     "import/no-cycle": "error",
-    "import/no-unresolved": "error",
+    "import/no-unresolved": ["error", { "ignore": ["react-query"] }],
     "import/no-unused-modules": ["off", { "unusedExports": true }],
     "no-redeclare": "off"
   }
