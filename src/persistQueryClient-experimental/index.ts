@@ -1,6 +1,12 @@
 import { QueryClient } from '../core'
 import { getLogger } from '../core/logger'
-import { dehydrate, DehydratedState, DehydrateOptions, HydrateOptions, hydrate } from '../hydration'
+import {
+  dehydrate,
+  DehydratedState,
+  DehydrateOptions,
+  HydrateOptions,
+  hydrate,
+} from '../hydration'
 import { Promisable } from 'type-fest'
 
 export interface Persistor {
