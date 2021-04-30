@@ -22,9 +22,10 @@
   ],
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
-    "test:dev": "npm run test:types && npm run test:eslint && jest --watch",
-    "test:ci": "npm run test:types && npm run test:eslint && jest",
+    "test:dev": "npm run test:types && npm run test:format && npm run test:eslint && jest --watch",
+    "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && jest",
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
+    "test:format": "yarn prettier --check",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
@@ -38,8 +39,9 @@
     "watch:umd": "rimraf ./dist && cross-env NODE_ENV=production rollup -w -c && rollup-plugin-visualizer stats-react.json",
     "watch:types": "rimraf ./types && tsc --watch --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
     "now-build": "yarn && cd www && yarn && yarn build",
+    "prettier": "prettier \"{.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,ts,tsx,json}\"",
     "start": "yarn watch",
-    "format": "prettier {.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,tsx,json} --write",
+    "format": "yarn prettier --write",
     "stats": "open ./stats.html"
   },
   "files": [
@@ -108,7 +110,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
-    "prettier": "^2.0.5",
+    "prettier": "2.2.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.1",
     "react-error-boundary": "^2.2.2",

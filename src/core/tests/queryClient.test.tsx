@@ -191,14 +191,13 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', string]
       const key: StrictQueryKey = ['strict', queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
-      )
 
       await expect(
         queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>(
           key,
-          fetchFn,
+          fetchFn
         )
       ).resolves.toEqual('data')
     })
@@ -309,15 +308,16 @@ describe('queryClient', () => {
         pageParams: [undefined],
       }
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve(data.pages[0])
-      )
 
       await expect(
-        queryClient.fetchInfiniteQuery<StrictData, any, StrictData, StrictQueryKey>(
-          key,
-          fetchFn,
-        )
+        queryClient.fetchInfiniteQuery<
+          StrictData,
+          any,
+          StrictData,
+          StrictQueryKey
+        >(key, fetchFn)
       ).resolves.toEqual(data)
     })
 
@@ -345,11 +345,15 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', string]
       const key: StrictQueryKey = ['strict', queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
-      )
 
-      await queryClient.prefetchInfiniteQuery<StrictData, any, StrictData, StrictQueryKey>(key, fetchFn)
+      await queryClient.prefetchInfiniteQuery<
+        StrictData,
+        any,
+        StrictData,
+        StrictQueryKey
+      >(key, fetchFn)
 
       const result = queryClient.getQueryData(key)
 
@@ -381,13 +385,17 @@ describe('queryClient', () => {
       type StrictQueryKey = ['strict', string]
       const key: StrictQueryKey = ['strict', queryKey()]
 
-      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () => (
+      const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
-      )
 
-      await queryClient.prefetchQuery<StrictData, any, StrictData, StrictQueryKey>(key, fetchFn);
+      await queryClient.prefetchQuery<
+        StrictData,
+        any,
+        StrictData,
+        StrictQueryKey
+      >(key, fetchFn)
 
-      const result = queryClient.getQueryData(key);
+      const result = queryClient.getQueryData(key)
 
       expect(result).toEqual('data')
     })

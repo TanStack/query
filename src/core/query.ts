@@ -5,6 +5,7 @@ import {
   noop,
   replaceEqualDeep,
   timeUntilStale,
+  ensureQueryKeyArray,
 } from './utils'
 import type {
   InitialDataFunction,
@@ -12,6 +13,7 @@ import type {
   QueryOptions,
   QueryStatus,
   QueryFunctionContext,
+  EnsuredQueryKey,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -58,8 +60,8 @@ export interface FetchContext<
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
-  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  queryKey: TQueryKey
+  options: QueryOptions<TQueryFnData, TError, TData, any>
+  queryKey: EnsuredQueryKey<TQueryKey>
   state: QueryState<TData, TError>
 }
 
@@ -380,9 +382,11 @@ export class Query<
       }
     }
 
+    const queryKey = ensureQueryKeyArray(this.queryKey)
+
     // Create query function context
     const queryFnContext: QueryFunctionContext<TQueryKey> = {
-      queryKey: this.queryKey,
+      queryKey,
       pageParam: undefined,
     }
 
@@ -393,10 +397,10 @@ export class Query<
         : Promise.reject('Missing queryFn')
 
     // Trigger behavior hook
-    const context: FetchContext<TQueryFnData, TError, TData, any> = {
+    const context: FetchContext<TQueryFnData, TError, TData, TQueryKey> = {
       fetchOptions,
       options: this.options,
-      queryKey: this.queryKey,
+      queryKey: queryKey,
       state: this.state,
       fetchFn,
     }

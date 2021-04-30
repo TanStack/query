@@ -1,5 +1,6 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
+import { EnsuredQueryKey } from './types'
 import type {
   MutationFunction,
   MutationKey,
@@ -88,8 +89,12 @@ export function isValidTimeout(value: any): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
-export function ensureArray<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [value]
+export function ensureQueryKeyArray<T extends QueryKey>(
+  value: T
+): EnsuredQueryKey<T> {
+  return (Array.isArray(value)
+    ? value
+    : ([value] as unknown)) as EnsuredQueryKey<T>
 }
 
 export function difference<T>(array1: T[], array2: T[]): T[] {
@@ -256,7 +261,7 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
  * Default query keys hash function.
  */
 export function hashQueryKey(queryKey: QueryKey): string {
-  const asArray = Array.isArray(queryKey) ? queryKey : [queryKey]
+  const asArray = ensureQueryKeyArray(queryKey)
   return stableValueHash(asArray)
 }
 
@@ -280,7 +285,7 @@ export function stableValueHash(value: any): string {
  * Checks if key `b` partially matches with key `a`.
  */
 export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(ensureArray(a), ensureArray(b))
+  return partialDeepEqual(ensureQueryKeyArray(a), ensureQueryKeyArray(b))
 }
 
 /**
