@@ -103,7 +103,7 @@ Getting initial data from the cache means the source query you're using to look 
 
 ```js
 function Todo({ todoId }) {
-  const result = useQuery(['todo', todoId], () => fetch('/todos'), {
+  const result = useQuery(['todo', todoId], () => fetch(`/todos/${todoId}`), {
     initialData: () =>
       queryClient.getQueryData('todos')?.find(d => d.id === todoId),
     initialDataUpdatedAt: () =>
@@ -118,7 +118,7 @@ If the source query you're using to look up the initial data from is old, you ma
 
 ```js
 function Todo({ todoId }) {
-  const result = useQuery(['todo', todoId], () => fetch('/todos'), {
+  const result = useQuery(['todo', todoId], () => fetch(`/todos/${todoId}`), {
     initialData: () => {
       // Get the query state
       const state = queryClient.getQueryState('todos')
