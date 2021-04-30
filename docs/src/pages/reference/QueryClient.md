@@ -29,6 +29,7 @@ Its available methods are:
 - [`prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
 - [`getQueryData`](#queryclientgetquerydata)
 - [`setQueryData`](#queryclientsetquerydata)
+- [`setQueriesData`](#queryclientsetqueriesdata)
 - [`getQueryState`](#queryclientgetquerystate)
 - [`invalidateQueries`](#queryclientinvalidatequeries)
 - [`refetchQueries`](#queryclientrefetchqueries)
@@ -218,6 +219,22 @@ console.log(state.dataUpdatedAt)
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+
+## `queryClient.setQueriesData`
+
+`setQueriesData` is a synchronous function that can be used to immediately update cached data of multiple queries. Only queries that match the passed queryKey or queryFilter will be updated - no new cache entries will be created. Under the hood, [`setQueryData`](#queryclientsetquerydata) is called for each query.
+
+```js
+queryClient.setQueriesData(queryKey | filters, updater)
+```
+
+**Options**
+
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys) | `filters: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+  - if a queryKey is passed as first argument, queryKeys fuzzily matching this param will be updated
+  - if a filter is passed, queryKeys matching the filter will be updated
+- `updater: TData | (oldData: TData | undefined) => TData` [setQueryData updater](#queryclientsetquerydata)
+  - the updater will be called for each matching queryKey
 
 ## `queryClient.invalidateQueries`
 
