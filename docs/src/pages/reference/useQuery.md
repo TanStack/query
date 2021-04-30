@@ -73,8 +73,7 @@ const result = useQuery({
   - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
   - Receives a `QueryFunctionContext` object with the following variables:
-    - `queryKey: EnsuredQueryKey`
-      - the queryKey, guaranteed to be an Array
+    - `queryKey: EnsuredQueryKey`: the queryKey, guaranteed to be an Array
   - Must return a promise that will either resolve data or throw an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
