@@ -4,6 +4,9 @@ import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
 export type QueryKey = string | readonly unknown[]
+export type EnsuredQueryKey<T extends QueryKey> = T extends string
+  ? [T]
+  : Exclude<T, string>
 
 export type QueryFunction<
   T = unknown,
@@ -14,13 +17,11 @@ export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = any
 > {
-  queryKey: TQueryKey
+  queryKey: EnsuredQueryKey<TQueryKey>
   pageParam?: TPageParam
 }
 
 export type InitialDataFunction<T> = () => T | undefined
-
-export type InitialStaleFunction = () => boolean
 
 export type PlaceholderDataFunction<TResult> = () => TResult | undefined
 
