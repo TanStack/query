@@ -140,12 +140,14 @@ export class QueryClient {
     updater: Updater<TData | undefined, TData>,
     options?: SetDataOptions
   ): [QueryKey, TData][] {
-    return this.getQueryCache()
-      .findAll(queryKeyOrFilters)
-      .map(({ queryKey }) => [
-        queryKey,
-        this.setQueryData<TData>(queryKey, updater, options),
-      ])
+    return notifyManager.batch(() =>
+      this.getQueryCache()
+        .findAll(queryKeyOrFilters)
+        .map(({ queryKey }) => [
+          queryKey,
+          this.setQueryData<TData>(queryKey, updater, options),
+        ])
+    )
   }
 
   getQueryState<TData = unknown, TError = undefined>(
