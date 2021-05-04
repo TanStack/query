@@ -3,7 +3,7 @@ import type { QueryBehavior } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
-export type QueryKey = string | readonly unknown[]
+export type QueryKey = string | readonly [string, ...unknown[]]
 export type EnsuredQueryKey<T extends QueryKey> = T extends string
   ? [T]
   : Exclude<T, string>
