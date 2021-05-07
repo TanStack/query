@@ -166,6 +166,44 @@ describe('queryClient', () => {
     })
   })
 
+  describe('setQueriesData', () => {
+    test('should update all existing, matching queries', () => {
+      queryClient.setQueryData(['key', 1], 1)
+      queryClient.setQueryData(['key', 2], 2)
+
+      const result = queryClient.setQueriesData<number>('key', old => old! + 5)
+
+      expect(result).toEqual([
+        [['key', 1], 6],
+        [['key', 2], 7],
+      ])
+      expect(queryClient.getQueryData(['key', 1])).toBe(6)
+      expect(queryClient.getQueryData(['key', 2])).toBe(7)
+    })
+
+    test('should accept queryFilters', () => {
+      queryClient.setQueryData(['key', 1], 1)
+      queryClient.setQueryData(['key', 2], 2)
+      const query1 = queryCache.find(['key', 1])!
+
+      const result = queryClient.setQueriesData<number>(
+        { predicate: query => query === query1 },
+        old => old! + 5
+      )
+
+      expect(result).toEqual([[['key', 1], 6]])
+      expect(queryClient.getQueryData(['key', 1])).toBe(6)
+      expect(queryClient.getQueryData(['key', 2])).toBe(2)
+    })
+
+    test('should not update non existing queries', () => {
+      const result = queryClient.setQueriesData<string>('key', 'data')
+
+      expect(result).toEqual([])
+      expect(queryClient.getQueryData('key')).toBe(undefined)
+    })
+  })
+
   describe('getQueryData', () => {
     test('should return the query data if the query is found', () => {
       const key = queryKey()
