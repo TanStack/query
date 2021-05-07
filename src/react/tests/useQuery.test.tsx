@@ -3462,6 +3462,95 @@ describe('useQuery', () => {
     ])
   })
 
+  it('placeholder data should run through select', async () => {
+    const key1 = queryKey()
+
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key1, () => 1, {
+        placeholderData: 23,
+        select: data => String(data * 2),
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <div>Status: {state.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: 2'))
+
+    expect(states).toMatchObject([
+      {
+        isSuccess: true,
+        isPlaceholderData: true,
+        data: '46',
+      },
+      {
+        isSuccess: true,
+        isPlaceholderData: false,
+        data: '2',
+      },
+    ])
+  })
+
+  it('placeholder data function result should run through select', async () => {
+    const key1 = queryKey()
+
+    const states: UseQueryResult<string>[] = []
+    let placeholderFunctionRunCount = 0
+
+    function Page() {
+      const state = useQuery(key1, () => 1, {
+        placeholderData: () => {
+          placeholderFunctionRunCount++
+          return 23
+        },
+        select: data => String(data * 2),
+      })
+
+      states.push(state)
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <div>Status: {state.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: 2'))
+
+    rendered.rerender(<Page />)
+
+    expect(states).toMatchObject([
+      {
+        isSuccess: true,
+        isPlaceholderData: true,
+        data: '46',
+      },
+      {
+        isSuccess: true,
+        isPlaceholderData: false,
+        data: '2',
+      },
+      {
+        isSuccess: true,
+        isPlaceholderData: false,
+        data: '2',
+      },
+    ])
+
+    expect(placeholderFunctionRunCount).toEqual(1)
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
