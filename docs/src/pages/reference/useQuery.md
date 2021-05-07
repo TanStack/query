@@ -216,7 +216,7 @@ const result = useQuery({
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
 - `isFetching: boolean`
-  - Defaults to `true` so long as `enabled` is set to `false`
+  - Is `true` whenever a request is in-flight, which includes initial `loading` as well as background refetches.
   - Will be `true` if the query is currently fetching, including background fetching.
 - `failureCount: number`
   - The failure count for the query.
