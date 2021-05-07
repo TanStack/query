@@ -48,7 +48,7 @@ useQuery(['todos', { type: 'done' }], ...)
 This means that no matter the order of keys in objects, all of the following queries are considered equal:
 
 ```js
-useQuery(['todos', { status, page }], ...)
+useQuery(['todos', { page, status }], ...)
 useQuery(['todos', { page, status }], ...)
 useQuery(['todos', { page, status, other: undefined }], ...)
 ```
