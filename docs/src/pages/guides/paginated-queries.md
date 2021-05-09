@@ -27,7 +27,7 @@ Consider the following example where we would ideally want to increment a pageIn
 function Todos() {
   const [page, setPage] = React.useState(0)
 
-  const fetchProjects = (page = 0) => fetch('/api/projects?page=' + page)
+  const fetchProjects = (page = 0) => fetch('/api/projects?page=' + page).then((res) => res.json())
 
   const {
     isLoading,
