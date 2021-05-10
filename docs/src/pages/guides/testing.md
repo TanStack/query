@@ -126,7 +126,7 @@ await waitFor(() => result.current.isSuccess);
 
 expect(result.current.data).toStrictEqual(generateMockedResponse(1));
 
-result.current.fetchMore();
+result.current.fetchNextPage();
 
 await waitFor(() => result.current.isFetching);
 await waitFor(() => !result.current.isFetching);
