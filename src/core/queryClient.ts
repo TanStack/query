@@ -179,7 +179,7 @@ export class QueryClient {
     arg1?: QueryKey | QueryFilters,
     arg2?: QueryFilters | ResetOptions,
     arg3?: ResetOptions
-  ): Promise<void> {
+  ): Promise<void> | void {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
     const queryCache = this.queryCache
 
@@ -192,6 +192,11 @@ export class QueryClient {
       queryCache.findAll(filters).forEach(query => {
         query.reset()
       })
+
+      if (options?.disableRefetch === true) {
+        return
+      }
+
       return this.refetchQueries(refetchFilters, options)
     })
   }

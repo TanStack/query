@@ -251,6 +251,7 @@ export interface InvalidateOptions {
 
 export interface ResetOptions {
   throwOnError?: boolean
+  disableRefetch?: boolean
 }
 
 export interface FetchNextPageOptions extends ResultOptions {
