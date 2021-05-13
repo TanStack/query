@@ -68,6 +68,8 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
+export type QueryStatusFilter = 'all' | 'active' | 'inactive' | 'none'
+
 // UTILS
 
 export const isServer = typeof window === 'undefined'
@@ -164,6 +166,25 @@ export function parseFilterArgs<
     : [arg1 || {}, arg2]) as [TFilters, TOptions]
 }
 
+export function mapQueryStatusFilter(
+  active?: boolean,
+  inactive?: boolean
+): QueryStatusFilter {
+  if (
+    (active === true && inactive === true) ||
+    (active == null && inactive == null)
+  ) {
+    return 'all'
+  } else if (active === false && inactive === false) {
+    return 'none'
+  } else {
+    // At this point, active|inactive can only be true|false or false|true
+    // so, when only one value is provided, the missing one has to be the negated value
+    const isActive = active ?? !inactive
+    return isActive ? 'active' : 'inactive'
+  }
+}
+
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>
@@ -188,16 +209,18 @@ export function matchQuery(
     }
   }
 
-  let isActive
+  const queryStatusFilter = mapQueryStatusFilter(active, inactive)
 
-  if (inactive === false || (active && !inactive)) {
-    isActive = true
-  } else if (active === false || (inactive && !active)) {
-    isActive = false
-  }
-
-  if (typeof isActive === 'boolean' && query.isActive() !== isActive) {
+  if (queryStatusFilter === 'none') {
     return false
+  } else if (queryStatusFilter !== 'all') {
+    const isActive = query.isActive()
+    if (queryStatusFilter === 'active' && !isActive) {
+      return false
+    }
+    if (queryStatusFilter === 'inactive' && isActive) {
+      return false
+    }
   }
 
   if (typeof stale === 'boolean' && query.isStale() !== stale) {
