@@ -21,6 +21,7 @@ Previous versions of React Query were awesome and brought some amazing new featu
 - Use the React Query core logic anywhere you want!
 - Bundled/Colocated Devtools via `react-query/devtools`
 - Cache Persistence to localstorage (experimental via `react-query/persistQueryClient-experimental` and `react-query/createLocalStoragePersistor-experimental`)
+- Cache Persistence to sessionstorage (experimental via `react-query/persistQueryClient-experimental` and `react-query/createSessionStoragePersistor-experimental`)
 
 ## Breaking Changes
 

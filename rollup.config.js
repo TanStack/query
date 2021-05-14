@@ -31,6 +31,11 @@ const inputSrcs = [
     'createLocalStoragePersistor-experimental',
   ],
   [
+    'src/createSessionStoragePersistor-experimental/index.ts',
+    'ReactQueryCreateSessionStoragePersistorExperimental',
+    'createSessionStoragePersistor-experimental',
+  ],
+  [
     'src/broadcastQueryClient-experimental/index.ts',
     'ReactQueryBroadcastQueryClientExperimental',
     'broadcastQueryClient-experimental',

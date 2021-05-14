@@ -52,6 +52,7 @@
     "devtools",
     "persistQueryClient-experimental",
     "createLocalStoragePersistor-experimental",
+    "createSessionStoragePersistor-experimental",
     "broadcastQueryClient-experimental",
     "lib",
     "react",

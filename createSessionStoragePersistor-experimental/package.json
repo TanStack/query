@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/createSessionStoragePersistor-experimental/index.js",
+  "module": "../es/createSessionStoragePersistor-experimental/index.js",
+  "types": "../types/createSessionStoragePersistor-experimental/index.d.ts"
+}

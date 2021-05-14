@@ -10,6 +10,7 @@ title: persistQueryClient (Experimental)
 ## Officially Supported Persistors
 
 - [createLocalStoragePersistor (Experimental)](/plugins/createLocalStoragePersistor)
+- [createSessionStoragePersistor (Experimental)](/plugins/createSessionStoragePersistor)
 
 ## Installation
 
