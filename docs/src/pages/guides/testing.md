@@ -117,21 +117,21 @@ const expectation = nock('http://example.com')
 
 (Notice the `.persist()`, because we'll be calling from this endpoint multiple times)
 
-Now we can safely run our tests, the trick here is to await both `isFetching` and then `!isFetching` after calling `fetchMore()`:
+Now we can safely run our tests, the trick here is to await both `isFetching` and then `!isFetching` after calling `fetchNextPage()`:
 
 ```
 const { result, waitFor } = renderHook(() => useInfiniteQueryCustomHook(), { wrapper });
 
 await waitFor(() => result.current.isSuccess);
 
-expect(result.current.data).toStrictEqual(generateMockedResponse(1));
+expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1));
 
 result.current.fetchNextPage();
 
 await waitFor(() => result.current.isFetching);
 await waitFor(() => !result.current.isFetching);
 
-expect(result.current.data).toStrictEqual([
+expect(result.current.data.pages).toStrictEqual([
   ...generateMockedResponse(1),
   ...generateMockedResponse(2),
 ]);
