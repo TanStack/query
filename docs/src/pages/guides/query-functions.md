@@ -30,7 +30,7 @@ const { error } = useQuery(['todos', todoId], async () => {
 })
 ```
 
-## Usage with `fetch` and others clients that do not throw by default
+## Usage with `fetch` and other clients that do not throw by default
 
 While most utilities like `axios` or `graphql-request` automatically throw errors for unsuccessful HTTP calls, some utilities like `fetch` do not throw errors by default. If that's the case, you'll need to throw them on your own. Here is a simple way to do that with the popular `fetch` API:
 
