@@ -410,7 +410,7 @@ const defaultOptions = queryClient.getDefaultOptions()
 
 ## `queryClient.setDefaultOptions`
 
-The `setDefaultOptions` method can be used to dynamically set the default options for this queryClient.
+The `setDefaultOptions` method can be used to dynamically set the default options for this queryClient. Previously defined default options will be overwritten.
 
 ```js
 queryClient.setDefaultOptions({
