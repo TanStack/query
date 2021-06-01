@@ -16,8 +16,18 @@ Things to keep in mind:
 
 When defining a custom hook you need to specify the result and error types, for example:
 
+### Queries
+
 ```js
 function useGroups() {
   return useQuery<Group[], Error>('groups', fetchGroups)
+}
+```
+
+### Mutations
+
+```js
+function useAddGroup() {
+  return useMutation<Group, Error, Group>('groups', putGroup)
 }
 ```
