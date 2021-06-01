@@ -28,6 +28,6 @@ function useGroups() {
 
 ```js
 function useAddGroup() {
-  return useMutation<Group, Error, Group>('groups', putGroup)
+  return useMutation<Group, Error, Group>('group', putGroup)
 }
 ```
