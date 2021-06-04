@@ -818,7 +818,7 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 'test', isFetching: false })
     expect(states[2]).toMatchObject({ data: 'test', isFetching: false })
-    expect(states[1].dataUpdatedAt).not.toBe(states[2].dataUpdatedAt)
+    expect(states[1]?.dataUpdatedAt).not.toBe(states[2]?.dataUpdatedAt)
   })
 
   it('should track properties and only re-render when a tracked property changes', async () => {
@@ -1039,13 +1039,13 @@ describe('useQuery', () => {
 
     await waitFor(() => expect(states.length).toBe(4))
 
-    const todos = states[2].data!
-    const todo1 = todos[0]
-    const todo2 = todos[1]
+    const todos = states[2]?.data
+    const todo1 = todos?.[0]
+    const todo2 = todos?.[1]
 
-    const newTodos = states[3].data!
-    const newTodo1 = newTodos[0]
-    const newTodo2 = newTodos[1]
+    const newTodos = states[3]?.data
+    const newTodo1 = newTodos?.[0]
+    const newTodo2 = newTodos?.[1]
 
     expect(todos).toEqual(result1)
     expect(newTodos).toEqual(result2)
@@ -1465,7 +1465,7 @@ describe('useQuery', () => {
       status: 'error',
       isPreviousData: false,
     })
-    expect(states[7].error).toHaveProperty('message', 'Error test')
+    expect(states[7]?.error).toHaveProperty('message', 'Error test')
 
     consoleMock.mockRestore()
   })
@@ -2304,7 +2304,7 @@ describe('useQuery', () => {
 
     await sleep(20)
 
-    expect(states[1].data).toEqual([key, variables])
+    expect(states[1]?.data).toEqual([key, variables])
   })
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {

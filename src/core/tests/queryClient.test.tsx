@@ -347,7 +347,7 @@ describe('queryClient', () => {
       }
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
-        Promise.resolve(data.pages[0])
+        Promise.resolve(data.pages[0]!)
 
       await expect(
         queryClient.fetchInfiniteQuery<
