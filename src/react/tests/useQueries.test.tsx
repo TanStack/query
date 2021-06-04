@@ -47,7 +47,7 @@ describe('useQueries', () => {
   it('should keep previous data if amount of queries is the same', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: UseQueryResult[][] = []
+    const states: UseQueryResult[][] = []
 
     function Page() {
       const [count, setCount] = React.useState(1)
@@ -69,7 +69,7 @@ describe('useQueries', () => {
           },
         },
       ])
-      results.push(result)
+      states.push(result)
 
       React.useEffect(() => {
         setActTimeout(() => {
@@ -82,9 +82,9 @@ describe('useQueries', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(results.length).toBe(7))
+    await waitFor(() => expect(states.length).toBe(7))
 
-    expect(results[0]).toMatchObject([
+    expect(states[0]).toMatchObject([
       {
         status: 'loading',
         data: undefined,
@@ -98,7 +98,7 @@ describe('useQueries', () => {
         isFetching: true,
       },
     ])
-    expect(results[1]).toMatchObject([
+    expect(states[1]).toMatchObject([
       { status: 'success', data: 2, isPreviousData: false, isFetching: false },
       {
         status: 'loading',
@@ -107,23 +107,23 @@ describe('useQueries', () => {
         isFetching: true,
       },
     ])
-    expect(results[2]).toMatchObject([
+    expect(states[2]).toMatchObject([
       { status: 'success', data: 2, isPreviousData: false, isFetching: false },
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
     ])
-    expect(results[3]).toMatchObject([
+    expect(states[3]).toMatchObject([
       { status: 'success', data: 2, isPreviousData: true, isFetching: true },
       { status: 'success', data: 5, isPreviousData: true, isFetching: true },
     ])
-    expect(results[4]).toMatchObject([
+    expect(states[4]).toMatchObject([
       { status: 'success', data: 2, isPreviousData: true, isFetching: true },
       { status: 'success', data: 5, isPreviousData: true, isFetching: true },
     ])
-    expect(results[5]).toMatchObject([
+    expect(states[5]).toMatchObject([
       { status: 'success', data: 4, isPreviousData: false, isFetching: false },
       { status: 'success', data: 5, isPreviousData: true, isFetching: true },
     ])
-    expect(results[6]).toMatchObject([
+    expect(states[6]).toMatchObject([
       { status: 'success', data: 4, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
