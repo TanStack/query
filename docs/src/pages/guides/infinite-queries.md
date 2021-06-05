@@ -160,7 +160,7 @@ Manually removing a single value from an individual page:
 ```js
 const newPagesArray = oldPagesArray?.pages.map((page) =>
   page.filter((val) => val.id !== updatedId)
-)
+) ?? []
 
 queryClient.setQueryData('projects', data => ({
   pages: newPagesArray,
