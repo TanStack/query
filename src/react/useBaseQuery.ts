@@ -67,28 +67,22 @@ export function useBaseQuery<
     }
   }
 
-  const obsRef = React.useRef<
-    QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  >()
+  const [observer] = React.useState(
+    () =>
+      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
+        queryClient,
+        defaultedOptions
+      )
+  )
 
-  if (!obsRef.current) {
-    obsRef.current = new Observer<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >(queryClient, defaultedOptions)
-  }
-
-  let result = obsRef.current.getOptimisticResult(defaultedOptions)
+  let result = observer.getOptimisticResult(defaultedOptions)
 
   React.useEffect(() => {
     mountedRef.current = true
 
     errorResetBoundary.clearReset()
 
-    const unsubscribe = obsRef.current!.subscribe(
+    const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
         if (mountedRef.current) {
           forceUpdate(x => x + 1)
@@ -98,23 +92,23 @@ export function useBaseQuery<
 
     // Update result to make sure we did not miss any query updates
     // between creating the observer and subscribing to it.
-    obsRef.current!.updateResult()
+    observer.updateResult()
 
     return () => {
       mountedRef.current = false
       unsubscribe()
     }
-  }, [errorResetBoundary])
+  }, [errorResetBoundary, observer])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    obsRef.current!.setOptions(defaultedOptions, { listeners: false })
-  }, [defaultedOptions])
+    observer.setOptions(defaultedOptions, { listeners: false })
+  }, [defaultedOptions, observer])
 
   // Handle suspense
   if (defaultedOptions.suspense && result.isLoading) {
-    throw obsRef.current
+    throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {
         defaultedOptions.onSuccess?.(data as TData)
@@ -138,7 +132,7 @@ export function useBaseQuery<
 
   // Handle result property usage tracking
   if (defaultedOptions.notifyOnChangeProps === 'tracked') {
-    result = obsRef.current.trackResult(result)
+    result = observer.trackResult(result)
   }
 
   return result

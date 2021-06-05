@@ -49,7 +49,7 @@ React Query supports prefetching multiple queries on the server in Next.js and t
 
 To support caching queries on the server and set up hydration:
 
-- Create a new `QueryClient` instance **inside of your app, and on an instance ref. This ensures that data is not shared between different users and requests.**
+- Create a new `QueryClient` instance **inside of your app, and on an instance ref (or in React state). This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per component lifecycle.**
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
 - Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
 
@@ -59,13 +59,10 @@ import { QueryClient, QueryClientProvider } from 'react-query'
 import { Hydrate } from 'react-query/hydration'
 
 export default function MyApp({ Component, pageProps }) {
-  const queryClientRef = React.useRef()
-  if (!queryClientRef.current) {
-    queryClientRef.current = new QueryClient()
-  }
+  const [queryClient] = React.useState(() => new QueryClient())
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
+    <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
