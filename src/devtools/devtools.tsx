@@ -21,6 +21,7 @@ import { ThemeProvider, defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
+import { noop } from '../core/utils'
 
 interface DevtoolsOptions {
   /**
@@ -384,6 +385,11 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
       return undefined
     }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
 
+    const handleRefetch = () => {
+      const promise = activeQuery.fetch()
+      promise.catch(noop)
+    }
+
     return (
       <ThemeProvider theme={theme}>
         <Panel
@@ -710,7 +716,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
               >
                 <Button
                   type="button"
-                  onClick={() => activeQuery.fetch()}
+                  onClick={handleRefetch}
                   disabled={activeQuery.state.isFetching}
                   style={{
                     background: theme.active,
