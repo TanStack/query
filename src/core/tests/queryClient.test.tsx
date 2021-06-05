@@ -344,7 +344,7 @@ describe('queryClient', () => {
       const data = {
         pages: ['data'],
         pageParams: [undefined],
-      }
+      } as const
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve(data.pages[0])
