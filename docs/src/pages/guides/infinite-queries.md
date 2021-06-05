@@ -158,11 +158,10 @@ queryClient.setQueryData('projects', data => ({
 Manually removing a single value from an individual page:
 
 ```js
-const newPagesArray = []
-oldPagesArray?.pages.forEach(page => {
-  const newData = page.filter(val => val.id !== updatedId)
-  newPagesArray.push(newData)
-})
+const newPagesArray = oldPagesArray?.pages.map((page) =>
+  page.filter((val) => val.id !== updatedId)
+) ?? []
+
 queryClient.setQueryData('projects', data => ({
   pages: newPagesArray,
   pageParams: data.pageParams,
