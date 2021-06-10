@@ -1,25 +1,28 @@
 import { noop } from '../core/utils'
 import { PersistedClient, Persistor } from '../persistQueryClient-experimental'
 
-interface CreateLocalStoragePersistorOptions {
-  /** The key to use when storing the cache to localstorage */
-  localStorageKey?: string
-  /** To avoid localstorage spamming,
+interface CreateWebStoragePersistorOptions {
+  /** The storage client used for setting an retrieving items from cache */
+  storage: Storage
+  /** The key to use when storing the cache */
+  key?: string
+  /** To avoid spamming,
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
 }
 
-export function createLocalStoragePersistor({
-  localStorageKey = `REACT_QUERY_OFFLINE_CACHE`,
+export function createWebStoragePersistor({
+  storage,
+  key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
-}: CreateLocalStoragePersistorOptions = {}): Persistor {
-  if (typeof localStorage !== 'undefined') {
+}: CreateWebStoragePersistorOptions): Persistor {
+  if (typeof storage !== 'undefined') {
     return {
       persistClient: throttle(persistedClient => {
-        localStorage.setItem(localStorageKey, JSON.stringify(persistedClient))
+        storage.setItem(key, JSON.stringify(persistedClient))
       }, throttleTime),
       restoreClient: () => {
-        const cacheString = localStorage.getItem(localStorageKey)
+        const cacheString = storage.getItem(key)
 
         if (!cacheString) {
           return
@@ -28,7 +31,7 @@ export function createLocalStoragePersistor({
         return JSON.parse(cacheString) as PersistedClient
       },
       removeClient: () => {
-        localStorage.removeItem(localStorageKey)
+        storage.removeItem(key)
       },
     }
   }

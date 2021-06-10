@@ -51,7 +51,7 @@
     "hydration",
     "devtools",
     "persistQueryClient-experimental",
-    "createLocalStoragePersistor-experimental",
+    "createWebStoragePersistor-experimental",
     "broadcastQueryClient-experimental",
     "lib",
     "react",
