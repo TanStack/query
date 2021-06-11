@@ -14,7 +14,7 @@
     "./src/hydration/index.ts",
     "./src/devtools/index.ts",
     "./src/persistQueryClient-experimental/index.ts",
-    "./src/createLocalStoragePersistor-experimental/index.ts",
+    "./src/createWebStoragePersistor-experimental/index.ts",
     "./src/broadcastQueryClient-experimental/index.ts"
   ],
   "exclude": ["./src/**/*"]
