@@ -313,6 +313,11 @@
           "editUrl": "/plugins/createWebStoragePersistor.md"
         },
         {
+          "title": "createAsyncStoragePersistor (Experimental)",
+          "path": "/plugins/createAsyncStoragePersistor",
+          "editUrl": "/plugins/createAsyncStoragePersistor.md"
+        },
+        {
           "title": "broadcastQueryClient (Experimental)",
           "path": "/plugins/broadcastQueryClient",
           "editUrl": "/plugins/broadcastQueryClient.md"
