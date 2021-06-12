@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/createWebStoragePersistor-experimental/index.js",
+  "module": "../es/createWebStoragePersistor-experimental/index.js",
+  "types": "../types/createWebStoragePersistor-experimental/index.d.ts"
+}

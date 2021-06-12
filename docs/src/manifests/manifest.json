@@ -308,9 +308,9 @@
           "editUrl": "/plugins/persistQueryClient.md"
         },
         {
-          "title": "createLocalStoragePersistor (Experimental)",
-          "path": "/plugins/createLocalStoragePersistor",
-          "editUrl": "/plugins/createLocalStoragePersistor.md"
+          "title": "createWebStoragePersistor (Experimental)",
+          "path": "/plugins/createWebStoragePersistor",
+          "editUrl": "/plugins/createWebStoragePersistor.md"
         },
         {
           "title": "broadcastQueryClient (Experimental)",
