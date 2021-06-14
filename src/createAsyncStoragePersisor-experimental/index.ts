@@ -1,12 +1,23 @@
 import AsyncStorage from '@react-native-community/async-storage'
 
-export const asyncStoragePersistor = ({ asyncStorageKey, throttleTime }) => {
+interface CreateAsyncStoragePersistorOptions {
+  /** The key to use when storing the cache */
+  key?: string
+  /** To avoid spamming,
+   * pass a time in ms to throttle saving the cache to disk */
+  throttleTime?: number
+}
+
+export const asyncStoragePersistor = ({
+  key,
+  throttleTime,
+}: CreateAsyncStoragePersistorOptions) => {
   return {
     persistClient: throttle(function (persistedClient) {
-      AsyncStorage.setItem(asyncStorageKey, JSON.stringify(persistedClient))
+      AsyncStorage.setItem(key, JSON.stringify(persistedClient))
     }, throttleTime),
     restoreClient: async function restoreClient() {
-      const cacheString = await AsyncStorage.getItem(asyncStorageKey)
+      const cacheString = await AsyncStorage.getItem(key)
 
       if (!cacheString) {
         return
@@ -15,7 +26,7 @@ export const asyncStoragePersistor = ({ asyncStorageKey, throttleTime }) => {
       return JSON.parse(cacheString)
     },
     removeClient: function removeClient() {
-      AsyncStorage.removeItem(asyncStorageKey)
+      AsyncStorage.removeItem(key)
     },
   }
 }
