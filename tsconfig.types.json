@@ -15,6 +15,7 @@
     "./src/devtools/index.ts",
     "./src/persistQueryClient-experimental/index.ts",
     "./src/createWebStoragePersistor-experimental/index.ts",
+    "./src/createAsyncStoragePersistor-experimental/index.ts",
     "./src/broadcastQueryClient-experimental/index.ts"
   ],
   "exclude": ["./src/**/*"]

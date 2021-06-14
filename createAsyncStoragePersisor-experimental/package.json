@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/createAsyncStoragePersisor-experimental/index.js",
+  "module": "../es/createAsyncStoragePersisor-experimental/index.js",
+  "types": "../types/createAsyncStoragePersisor-experimental/index.d.ts"
+}
