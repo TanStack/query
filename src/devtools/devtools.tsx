@@ -407,9 +407,16 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
 
     React.useEffect(() => {
       if (isOpen) {
-        return queryCache.subscribe(() => {
+        const unsubscribe = queryCache.subscribe(() => {
           setUnsortedQueries(Object.values(queryCache.getAll()))
         })
+        // re-subscribing after the panel is closed and re-opened won't trigger the callback,
+        // So we'll manually populate our state
+        setUnsortedQueries(Object.values(queryCache.getAll()))
+
+        return () => {
+          unsubscribe()
+        }
       }
       return undefined
     }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
