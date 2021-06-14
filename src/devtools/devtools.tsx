@@ -214,7 +214,7 @@ export function ReactQueryDevtools({
             borderTop: `1px solid ${theme.gray}`,
             transformOrigin: 'top',
             // visibility will be toggled after transitions, but set initial state here
-            visibility: initialIsOpen ? 'visible' : 'hidden',
+            visibility: isOpen ? 'visible' : 'hidden',
             ...panelStyle,
             ...(isResizing
               ? {
