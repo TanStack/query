@@ -133,6 +133,33 @@ export function ReactQueryDevtools({
     setIsResolvedOpen(isOpen)
   }, [isOpen, isResolvedOpen, setIsResolvedOpen])
 
+  const handlePanelTransitionStart = React.useCallback(() => {
+    if (panelRef.current && isResolvedOpen) {
+      panelRef.current.style.visibility = 'visible'
+    }
+  }, [isResolvedOpen])
+
+  const handlePanelTransitionEnd = React.useCallback(() => {
+    if (panelRef.current && !isResolvedOpen) {
+      panelRef.current.style.visibility = 'hidden'
+    }
+  }, [isResolvedOpen])
+
+  // Toggle panel visibility before/after transition (depending on direction).
+  // Prevents focusing in a closed panel.
+  React.useEffect(() => {
+    if (panelRef.current) {
+      const ref = panelRef.current
+      ref.addEventListener('transitionstart', handlePanelTransitionStart)
+      ref.addEventListener('transitionend', handlePanelTransitionEnd)
+
+      return () => {
+        ref.removeEventListener('transitionstart', handlePanelTransitionStart)
+        ref.removeEventListener('transitionend', handlePanelTransitionEnd)
+      }
+    }
+  }, [handlePanelTransitionStart, handlePanelTransitionEnd])
+
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     if (isResolvedOpen) {
       const previousValue = rootRef.current?.parentElement.style.paddingBottom
@@ -186,6 +213,8 @@ export function ReactQueryDevtools({
             boxShadow: '0 0 20px rgba(0,0,0,.3)',
             borderTop: `1px solid ${theme.gray}`,
             transformOrigin: 'top',
+            // visibility will be toggled after transitions, but set initial state here
+            visibility: initialIsOpen ? 'visible' : 'hidden',
             ...panelStyle,
             ...(isResizing
               ? {
