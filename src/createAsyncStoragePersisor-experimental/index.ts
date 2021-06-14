@@ -1,6 +1,12 @@
-import AsyncStorage from '@react-native-community/async-storage'
+interface AsyncStorage {
+  getItem: (key: string) => Promise<string>
+  setItem: (key: string, value: string) => Promise<unknown>
+  removeItem: (key: string) => Promise<unknown>
+}
 
 interface CreateAsyncStoragePersistorOptions {
+  /** The storage client used for setting an retrieving items from cache */
+  storage: AsyncStorage
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -9,15 +15,17 @@ interface CreateAsyncStoragePersistorOptions {
 }
 
 export const asyncStoragePersistor = ({
-  key,
+  storage,
+  key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime,
 }: CreateAsyncStoragePersistorOptions) => {
   return {
-    persistClient: throttle(function (persistedClient) {
-      AsyncStorage.setItem(key, JSON.stringify(persistedClient))
-    }, throttleTime),
-    restoreClient: async function restoreClient() {
-      const cacheString = await AsyncStorage.getItem(key)
+    persistClient: throttle(
+      persistedClient => storage.setItem(key, JSON.stringify(persistedClient)),
+      throttleTime
+    ),
+    restoreClient: async () => {
+      const cacheString = await storage.getItem(key)
 
       if (!cacheString) {
         return
@@ -25,9 +33,7 @@ export const asyncStoragePersistor = ({
 
       return JSON.parse(cacheString)
     },
-    removeClient: function removeClient() {
-      AsyncStorage.removeItem(key)
-    },
+    removeClient: () => storage.removeItem(key),
   }
 }
 
