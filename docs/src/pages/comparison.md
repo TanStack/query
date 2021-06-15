@@ -71,7 +71,7 @@ Feature/Capability Key:
 
 > **<sup>5</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
 
-> **<sup>6</sup> Normalized Caching** - React Query and SWR do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
+> **<sup>6</sup> Normalized Caching** - React Query, SWR and RTK-Query do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
 
 <!-- -->
 
