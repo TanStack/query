@@ -133,23 +133,23 @@ export function ReactQueryDevtools({
     setIsResolvedOpen(isOpen)
   }, [isOpen, isResolvedOpen, setIsResolvedOpen])
 
-  const handlePanelTransitionStart = React.useCallback(() => {
-    if (panelRef.current && isResolvedOpen) {
-      panelRef.current.style.visibility = 'visible'
-    }
-  }, [isResolvedOpen])
-
-  const handlePanelTransitionEnd = React.useCallback(() => {
-    if (panelRef.current && !isResolvedOpen) {
-      panelRef.current.style.visibility = 'hidden'
-    }
-  }, [isResolvedOpen])
-
   // Toggle panel visibility before/after transition (depending on direction).
   // Prevents focusing in a closed panel.
   React.useEffect(() => {
-    if (panelRef.current) {
-      const ref = panelRef.current
+    const ref = panelRef.current
+    if (ref) {
+      function handlePanelTransitionStart() {
+        if (ref && isResolvedOpen) {
+          ref.style.visibility = 'visible'
+        }
+      }
+
+      function handlePanelTransitionEnd() {
+        if (ref && !isResolvedOpen) {
+          ref.style.visibility = 'hidden'
+        }
+      }
+
       ref.addEventListener('transitionstart', handlePanelTransitionStart)
       ref.addEventListener('transitionend', handlePanelTransitionEnd)
 
@@ -158,7 +158,7 @@ export function ReactQueryDevtools({
         ref.removeEventListener('transitionend', handlePanelTransitionEnd)
       }
     }
-  }, [handlePanelTransitionStart, handlePanelTransitionEnd])
+  }, [isResolvedOpen])
 
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     if (isResolvedOpen) {
@@ -414,9 +414,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
         // So we'll manually populate our state
         setUnsortedQueries(Object.values(queryCache.getAll()))
 
-        return () => {
-          unsubscribe()
-        }
+        return unsubscribe
       }
       return undefined
     }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
