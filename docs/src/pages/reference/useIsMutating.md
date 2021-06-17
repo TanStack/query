@@ -10,7 +10,7 @@ import { useIsMutating } from 'react-query'
 // How many mutations are fetching?
 const isMutating = useIsMutating()
 // How many mutations matching the posts prefix are fetching?
-const isMutatingPosts = useIsMutating(['posts'])
+const isMutatingPosts = useIsMutating({ mutationKey: 'posts' })
 ```
 
 **Options**
