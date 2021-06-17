@@ -17,7 +17,7 @@ interface CreateAsyncStoragePersistorOptions {
 export const asyncStoragePersistor = ({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
-  throttleTime,
+  throttleTime = 1000,
 }: CreateAsyncStoragePersistorOptions) => {
   return {
     persistClient: asyncThrottle(
@@ -39,7 +39,7 @@ export const asyncStoragePersistor = ({
 
 function asyncThrottle<T>(
   func: (...args: ReadonlyArray<unknown>) => Promise<T>,
-  { interval = 100, limit = 1 }: { interval?: number; limit?: number } = {}
+  { interval = 1000, limit = 1 }: { interval?: number; limit?: number } = {}
 ) {
   if (typeof func !== 'function') throw new Error('argument is not function.')
   const running = { current: false }
