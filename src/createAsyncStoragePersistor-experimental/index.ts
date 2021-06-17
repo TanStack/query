@@ -20,9 +20,9 @@ export const asyncStoragePersistor = ({
   throttleTime,
 }: CreateAsyncStoragePersistorOptions) => {
   return {
-    persistClient: throttle(
+    persistClient: asyncThrottle(
       persistedClient => storage.setItem(key, JSON.stringify(persistedClient)),
-      throttleTime
+      { interval: throttleTime }
     ),
     restoreClient: async () => {
       const cacheString = await storage.getItem(key)
@@ -37,18 +37,42 @@ export const asyncStoragePersistor = ({
   }
 }
 
-function throttle<TArgs extends any[]>(
-  func: (...args: TArgs) => any,
-  wait = 100
+function asyncThrottle<T>(
+  func: (...args: ReadonlyArray<unknown>) => Promise<T>,
+  { interval = 100, limit = 1 }: { interval?: number; limit?: number } = {}
 ) {
-  let timer: number | null = null
+  if (typeof func !== 'function') throw new Error('argument is not function.')
+  const running = { current: false }
+  let lastTime = 0
+  let timeout: number
+  const queue: Array<any[]> = []
+  return (...args: any) =>
+    (async () => {
+      if (running) {
+        lastTime = Date.now()
+        if (queue.length > limit) {
+          queue.shift()
+        }
 
-  return function (...args: TArgs) {
-    if (timer === null) {
-      timer = setTimeout(() => {
-        func(...args)
-        timer = null
-      }, wait)
-    }
-  }
+        queue.push(args)
+        clearTimeout(timeout)
+      }
+      if (Date.now() - lastTime > interval) {
+        running.current = true
+        await func(...args)
+        lastTime = Date.now()
+        running.current = false
+      } else {
+        if (queue.length > 0) {
+          const lastArgs = queue[queue.length - 1]!
+          timeout = setTimeout(async () => {
+            if (!running.current) {
+              running.current = true
+              await func(...lastArgs)
+              running.current = false
+            }
+          }, interval)
+        }
+      }
+    })()
 }
