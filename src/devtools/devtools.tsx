@@ -133,6 +133,33 @@ export function ReactQueryDevtools({
     setIsResolvedOpen(isOpen)
   }, [isOpen, isResolvedOpen, setIsResolvedOpen])
 
+  // Toggle panel visibility before/after transition (depending on direction).
+  // Prevents focusing in a closed panel.
+  React.useEffect(() => {
+    const ref = panelRef.current
+    if (ref) {
+      function handlePanelTransitionStart() {
+        if (ref && isResolvedOpen) {
+          ref.style.visibility = 'visible'
+        }
+      }
+
+      function handlePanelTransitionEnd() {
+        if (ref && !isResolvedOpen) {
+          ref.style.visibility = 'hidden'
+        }
+      }
+
+      ref.addEventListener('transitionstart', handlePanelTransitionStart)
+      ref.addEventListener('transitionend', handlePanelTransitionEnd)
+
+      return () => {
+        ref.removeEventListener('transitionstart', handlePanelTransitionStart)
+        ref.removeEventListener('transitionend', handlePanelTransitionEnd)
+      }
+    }
+  }, [isResolvedOpen])
+
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     if (isResolvedOpen) {
       const previousValue = rootRef.current?.parentElement.style.paddingBottom
@@ -186,6 +213,8 @@ export function ReactQueryDevtools({
             boxShadow: '0 0 20px rgba(0,0,0,.3)',
             borderTop: `1px solid ${theme.gray}`,
             transformOrigin: 'top',
+            // visibility will be toggled after transitions, but set initial state here
+            visibility: isOpen ? 'visible' : 'hidden',
             ...panelStyle,
             ...(isResizing
               ? {
@@ -378,9 +407,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
 
     React.useEffect(() => {
       if (isOpen) {
-        return queryCache.subscribe(() => {
+        const unsubscribe = queryCache.subscribe(() => {
           setUnsortedQueries(Object.values(queryCache.getAll()))
         })
+        // re-subscribing after the panel is closed and re-opened won't trigger the callback,
+        // So we'll manually populate our state
+        setUnsortedQueries(Object.values(queryCache.getAll()))
+
+        return unsubscribe
       }
       return undefined
     }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
