@@ -48,7 +48,7 @@ function asyncThrottle<T>(
   const queue: Array<any[]> = []
   return (...args: any) =>
     (async () => {
-      if (running) {
+      if (running.current) {
         lastTime = Date.now()
         if (queue.length > limit) {
           queue.shift()
