@@ -47,7 +47,7 @@ Feature/Capability Key:
 | Prefetching APIs                                   | ✅                                       | 🔶                         | ✅                                    | ✅                                   |
 | Query Cancellation                                 | ✅                                       | 🛑                         | 🛑                                    | 🛑                                   |
 | Partial Query Matching<sup>3</sup>                 | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Stale While Revalidate                             | ✅                                       | ✅                         | 🛑                                    | ✅                                   |
+| Stale While Revalidate                             | ✅                                       | ✅                         | ✅                                    | ✅                                   |
 | Stale Time Configuration                           | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
 | Pre-usage Query/Mutation Configuration<sup>4</sup> | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
 | Window Focus Refetching                            | ✅                                       | ✅                         | 🛑                                    | 🔶                                   |
