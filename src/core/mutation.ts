@@ -156,6 +156,13 @@ export class Mutation<
       .then(() => this.executeMutation())
       .then(result => {
         data = result
+        // Notify cache callback
+        this.mutationCache.config.onSuccess?.(
+          data,
+          this.state.variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>
+        )
       })
       .then(() =>
         this.options.onSuccess?.(
@@ -178,14 +185,12 @@ export class Mutation<
       })
       .catch(error => {
         // Notify cache callback
-        if (this.mutationCache.config.onError) {
-          this.mutationCache.config.onError(
-            error,
-            this.state.variables,
-            this.state.context,
-            this as Mutation<unknown, unknown, unknown, unknown>
-          )
-        }
+        this.mutationCache.config.onError?.(
+          error,
+          this.state.variables,
+          this.state.context,
+          this as Mutation<unknown, unknown, unknown, unknown>
+        )
 
         // Log error
         getLogger().error(error)
