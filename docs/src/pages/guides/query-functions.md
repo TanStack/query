@@ -8,12 +8,13 @@ A query function can be literally any function that **returns a promise**. The p
 All of the following are valid query function configurations:
 
 ```js
-useQuery(['todos', todoId], fetchTodoById)
+useQuery(['todos'], fetchAllTodos)
 useQuery(['todos', todoId], () => fetchTodoById(todoId))
 useQuery(['todos', todoId], async () => {
   const data = await fetchTodoById(todoId)
   return data
 })
+useQuery(['todos', todoId], ({ queryKey }) => fetchTodoById(queryKey[1]))
 ```
 
 ## Handling and Throwing Errors
