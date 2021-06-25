@@ -37,8 +37,8 @@ Its available methods are:
 
 ## Global callbacks
 
-The `onError` and `onSuccess` callbacks on the MutationCache can be used to handle these events on a global level. They are different to _defaultOptions_ provided to the QueryClient because:
-- _defaultOptions_ can be overridden by each Mutation - the global callbacks will _always_ be called.
+The `onError` and `onSuccess` callbacks on the MutationCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
+- `defaultOptions` can be overridden by each Mutation - the global callbacks will **always** be called.
 
 ## `mutationCache.getAll`
 

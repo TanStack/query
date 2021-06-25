@@ -40,9 +40,9 @@ Its available methods are:
 
 ## Global callbacks
 
-The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle these events on a global level. They are different to _defaultOptions_ provided to the QueryClient because:
-- _defaultOptions_ can be overridden by each Query - the global callbacks will _always_ be called.
-- _defaultOptions_ callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
+The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
+- `defaultOptions` can be overridden by each Query - the global callbacks will **always** be called.
+- `defaultOptions` callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
 
 ## `queryCache.find`
 
