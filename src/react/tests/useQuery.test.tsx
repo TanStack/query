@@ -473,6 +473,33 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not call onError when receiving a CancelledError', async () => {
+    const key = queryKey()
+    const onError = jest.fn()
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery<unknown>(
+        key,
+        async () => {
+          await sleep(10)
+          return 23
+        },
+        {
+          onError,
+        }
+      )
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(5)
+    await queryClient.cancelQueries(key)
+    expect(onError).not.toHaveBeenCalled()
+    consoleMock.mockRestore()
+  })
+
   it('should call onSettled after a query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
