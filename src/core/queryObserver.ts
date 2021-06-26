@@ -22,6 +22,7 @@ import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { getLogger } from './logger'
+import { isCancelledError } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>
@@ -660,7 +661,7 @@ export class QueryObserver<
 
     if (action.type === 'success') {
       notifyOptions.onSuccess = true
-    } else if (action.type === 'error') {
+    } else if (action.type === 'error' && !isCancelledError(action.error)) {
       notifyOptions.onError = true
     }
 
