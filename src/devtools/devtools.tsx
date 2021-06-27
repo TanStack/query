@@ -240,6 +240,7 @@ export function ReactQueryDevtools({
         {isResolvedOpen ? (
           <Button
             type="button"
+            aria-label="Close React Query Devtools"
             {...otherCloseButtonProps}
             onClick={() => {
               setIsOpen(false)
