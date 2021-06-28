@@ -27,8 +27,8 @@ const queryClient = new QueryClient({
   },
 })
 
-const localStoragePersistor = createWebStoragePersistor({storage: window.localStorage})
-// const sessionStoragePersistor = createWebStoragePersistor({storage: window.sessionStorage})
+const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage })
+// const sessionStoragePersistor = createWebStoragePersistor({ storage: window.sessionStorage })
 
 persistQueryClient({
   queryClient,
@@ -40,17 +40,15 @@ persistQueryClient({
 
 ### `createWebStoragePersistor`
 
-Call this function (with an optional options object) to create a webStoragePersistor that you can use later with `persistQueryClient`.
+Call this function to create a webStoragePersistor that you can use later with `persistQueryClient`.
 
 ```js
-createWebStoragePersistor(options?: CreateWebStoragePersistorOptions)
+createWebStoragePersistor(options: CreateWebStoragePersistorOptions)
 ```
 
 ### `Options`
 
-An optional object of options:
-
-```js
+```ts
 interface CreateWebStoragePersistorOptions {
   /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
   storage: Storage
