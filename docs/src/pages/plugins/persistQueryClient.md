@@ -10,6 +10,7 @@ title: persistQueryClient (Experimental)
 ## Officially Supported Persistors
 
 - [createWebStoragePersistor (Experimental)](/plugins/createWebStoragePersistor)
+- [createAsyncStoragePersistor (Experimental)](/plugins/createAsyncStoragePersistor)
 
 ## Installation
 

@@ -31,6 +31,11 @@ const inputSrcs = [
     'createWebStoragePersistor-experimental',
   ],
   [
+    'src/createAsyncStoragePersistor-experimental/index.ts',
+    'ReactQueryCreateAsyncStoragePersistorExperimental',
+    'createAsyncStoragePersistor-experimental',
+  ],
+  [
     'src/broadcastQueryClient-experimental/index.ts',
     'ReactQueryBroadcastQueryClientExperimental',
     'broadcastQueryClient-experimental',
