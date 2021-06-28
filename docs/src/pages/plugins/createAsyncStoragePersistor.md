@@ -1,6 +1,6 @@
 ---
 id: createAsyncStoragePersistor
-title: createAsyncStoragePersistor for React Native (Experimental)
+title: createAsyncStoragePersistor (Experimental)
 ---
 
 > VERY IMPORTANT: This utility is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Use at your own risk. If you choose to rely on this in production in an experimental stage, please lock your version to a patch-level version to avoid unexpected breakages.
@@ -13,7 +13,7 @@ This utility comes packaged with `react-query` and is available under the `react
 
 - Import the `createAsyncStoragePersistor` function
 - Create a new asyncStoragePersistor
-  - you can pass any `storage` to it that adheres to the `AsyncStorage` interface
+  - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native
 - Pass it to the [`persistQueryClient`](../persistQueryClient) function
 
 ```ts
