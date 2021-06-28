@@ -53,7 +53,7 @@ createAsyncStoragePersistor(options: CreateAsyncStoragePersistorOptions)
 
 ```ts
 interface CreateAsyncStoragePersistorOptions {
-  /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
+  /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage
   /** The key to use when storing the cache to localstorage */
   asyncStorageKey?: string
