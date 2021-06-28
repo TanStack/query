@@ -240,8 +240,7 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters
-  extends Omit<QueryFilters, 'active' | 'inactive'> {
+export interface InvalidateQueryFilters extends QueryFilters {
   refetchActive?: boolean
   refetchInactive?: boolean
 }
