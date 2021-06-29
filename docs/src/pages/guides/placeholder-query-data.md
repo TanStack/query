@@ -12,7 +12,7 @@ Placeholder data allows a query to behave as if it already has data, similar to 
 There are a few ways to supply placeholder data for a query to the cache before you need it:
 
 - Declaratively:
-  - Provide `placeholderData` to a query to prepopulate the its cache if empty
+  - Provide `placeholderData` to a query to prepopulate its cache if empty
 - Imperatively:
   - [Prefetch or fetch the data using `queryClient` and the `placeholderData` option](./prefetching)
 
@@ -43,7 +43,7 @@ In some circumstances, you may be able to provide the placeholder data for a que
 
 ```js
 function Todo({ blogPostId }) {
-  const result = useQuery(['blogPost', blogPostId], () => fetch('/blogPosts'), {
+  const result = useQuery(['blogPost', blogPostId], () => fetch(`/blogPosts/${blogPostId}`), {
     placeholderData: () => {
       // Use the smaller/preview version of the blogPost from the 'blogPosts' query as the placeholder data for this blogPost query
       return queryClient

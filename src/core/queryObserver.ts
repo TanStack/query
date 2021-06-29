@@ -22,6 +22,7 @@ import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { getLogger } from './logger'
+import { isCancelledError } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>
@@ -507,13 +508,31 @@ export class QueryObserver<
       } else {
         placeholderData =
           typeof options.placeholderData === 'function'
-            ? (options.placeholderData as PlaceholderDataFunction<TData>)()
+            ? (options.placeholderData as PlaceholderDataFunction<TQueryData>)()
             : options.placeholderData
+        if (options.select && typeof placeholderData !== 'undefined') {
+          try {
+            placeholderData = options.select(placeholderData)
+            if (options.structuralSharing !== false) {
+              placeholderData = replaceEqualDeep(
+                prevResult?.data,
+                placeholderData
+              )
+            }
+            this.previousSelectError = null
+          } catch (selectError) {
+            getLogger().error(selectError)
+            error = selectError
+            this.previousSelectError = selectError
+            errorUpdatedAt = Date.now()
+            status = 'error'
+          }
+        }
       }
 
       if (typeof placeholderData !== 'undefined') {
         status = 'success'
-        data = placeholderData
+        data = placeholderData as TData
         isPlaceholderData = true
       }
     }
@@ -642,7 +661,7 @@ export class QueryObserver<
 
     if (action.type === 'success') {
       notifyOptions.onSuccess = true
-    } else if (action.type === 'error') {
+    } else if (action.type === 'error' && !isCancelledError(action.error)) {
       notifyOptions.onError = true
     }
 

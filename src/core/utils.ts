@@ -1,5 +1,6 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
+import { EnsuredQueryKey } from './types'
 import type {
   MutationFunction,
   MutationKey,
@@ -67,6 +68,8 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
+export type QueryStatusFilter = 'all' | 'active' | 'inactive' | 'none'
+
 // UTILS
 
 export const isServer = typeof window === 'undefined'
@@ -88,8 +91,12 @@ export function isValidTimeout(value: any): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
-export function ensureArray<T>(value: T | T[]): T[] {
-  return Array.isArray(value) ? value : [value]
+export function ensureQueryKeyArray<T extends QueryKey>(
+  value: T
+): EnsuredQueryKey<T> {
+  return (Array.isArray(value)
+    ? value
+    : ([value] as unknown)) as EnsuredQueryKey<T>
 }
 
 export function difference<T>(array1: T[], array2: T[]): T[] {
@@ -159,6 +166,25 @@ export function parseFilterArgs<
     : [arg1 || {}, arg2]) as [TFilters, TOptions]
 }
 
+export function mapQueryStatusFilter(
+  active?: boolean,
+  inactive?: boolean
+): QueryStatusFilter {
+  if (
+    (active === true && inactive === true) ||
+    (active == null && inactive == null)
+  ) {
+    return 'all'
+  } else if (active === false && inactive === false) {
+    return 'none'
+  } else {
+    // At this point, active|inactive can only be true|false or false|true
+    // so, when only one value is provided, the missing one has to be the negated value
+    const isActive = active ?? !inactive
+    return isActive ? 'active' : 'inactive'
+  }
+}
+
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>
@@ -183,16 +209,18 @@ export function matchQuery(
     }
   }
 
-  let isActive
+  const queryStatusFilter = mapQueryStatusFilter(active, inactive)
 
-  if (inactive === false || (active && !inactive)) {
-    isActive = true
-  } else if (active === false || (inactive && !active)) {
-    isActive = false
-  }
-
-  if (typeof isActive === 'boolean' && query.isActive() !== isActive) {
+  if (queryStatusFilter === 'none') {
     return false
+  } else if (queryStatusFilter !== 'all') {
+    const isActive = query.isActive()
+    if (queryStatusFilter === 'active' && !isActive) {
+      return false
+    }
+    if (queryStatusFilter === 'inactive' && isActive) {
+      return false
+    }
   }
 
   if (typeof stale === 'boolean' && query.isStale() !== stale) {
@@ -256,7 +284,7 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
  * Default query keys hash function.
  */
 export function hashQueryKey(queryKey: QueryKey): string {
-  const asArray = Array.isArray(queryKey) ? queryKey : [queryKey]
+  const asArray = ensureQueryKeyArray(queryKey)
   return stableValueHash(asArray)
 }
 
@@ -280,7 +308,7 @@ export function stableValueHash(value: any): string {
  * Checks if key `b` partially matches with key `a`.
  */
 export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(ensureArray(a), ensureArray(b))
+  return partialDeepEqual(ensureQueryKeyArray(a), ensureQueryKeyArray(b))
 }
 
 /**

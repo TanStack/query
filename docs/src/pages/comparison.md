@@ -47,11 +47,11 @@ Feature/Capability Key:
 | Prefetching APIs                                   | ✅                                       | 🔶                         | ✅                                    | ✅                                   |
 | Query Cancellation                                 | ✅                                       | 🛑                         | 🛑                                    | 🛑                                   |
 | Partial Query Matching<sup>3</sup>                 | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Stale While Revalidate                             | ✅                                       | ✅                         | 🛑                                    | ✅                                   |
-| Stale Time Configuration                           | ✅                                       | 🛑                         | 🛑                                    | 🛑                                   |
+| Stale While Revalidate                             | ✅                                       | ✅                         | ✅                                    | ✅                                   |
+| Stale Time Configuration                           | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
 | Pre-usage Query/Mutation Configuration<sup>4</sup> | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Window Focus Refetching                            | ✅                                       | ✅                         | 🛑                                    | 🛑                                   |
-| Network Status Refetching                          | ✅                                       | ✅                         | ✅                                    | 🛑                                   |
+| Window Focus Refetching                            | ✅                                       | ✅                         | 🛑                                    | 🔶                                   |
+| Network Status Refetching                          | ✅                                       | ✅                         | ✅                                    | 🔶                                   |
 | General Cache Dehydration/Rehydration              | ✅                                       | 🛑                         | ✅                                    | ✅                                   |
 | Offline Caching                                    | ✅ (Experimental)                        | 🛑                         | ✅                                    | 🔶                                   |
 | React Suspense (Experimental)                      | ✅                                       | ✅                         | 🛑                                    | 🛑                                   |
@@ -71,7 +71,7 @@ Feature/Capability Key:
 
 > **<sup>5</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
 
-> **<sup>6</sup> Normalized Caching** - React Query and SWR do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
+> **<sup>6</sup> Normalized Caching** - React Query, SWR and RTK-Query do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
 
 <!-- -->
 
@@ -98,8 +98,8 @@ Feature/Capability Key:
 
 <!-- -->
 
-[rtk-query]: https://rtk-query-docs.netlify.app/
-[rtk-query-comparison]: https://rtk-query-docs.netlify.app/introduction/comparison
+[rtk-query]: https://redux-toolkit.js.org/rtk-query/overview
+[rtk-query-comparison]: https://redux-toolkit.js.org/rtk-query/comparison
 [bp-rtk]: https://badgen.net/bundlephobia/minzip/@reduxjs/toolkit?label=💾
 [bp-rtk-query]: https://badgen.net/bundlephobia/minzip/@rtk-incubator/rtk-query?label=💾
 [gh-rtk-query]: https://github.com/rtk-incubator/rtk-query

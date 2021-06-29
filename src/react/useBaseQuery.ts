@@ -1,88 +1,11 @@
 import React from 'react'
 
-import { QueryClient, QueryKey } from '../core'
+import { QueryKey } from '../core'
 import { notifyManager } from '../core/notifyManager'
 import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
-
-function configureNotifyManager<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey
->({ options }: {
-  options: UseBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >
-}) {
-  // Include callbacks in batch renders
-  if (options.onError) {
-    options.onError = notifyManager.batchCalls(
-      options.onError
-    )
-  }
-
-  if (options.onSuccess) {
-    options.onSuccess = notifyManager.batchCalls(
-      options.onSuccess
-    )
-  }
-
-  if (options.onSettled) {
-    options.onSettled = notifyManager.batchCalls(
-      options.onSettled
-    )
-  }
-}
-
-export function initDefaultedOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey
->({ errorResetBoundary, options, queryClient }: {
-  errorResetBoundary: ReturnType<typeof useQueryErrorResetBoundary>
-  options: UseBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
-  queryClient: QueryClient
-}) {
-  const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
-
-  // Make sure results are optimistically set in fetching state before subscribing or updating options
-  defaultedOptions.optimisticResults = true
-
-  configureNotifyManager({ options: defaultedOptions })
-
-  if (defaultedOptions.suspense) {
-    // Always set stale time when using suspense to prevent
-    // fetching again when directly mounting after suspending
-    if (typeof defaultedOptions.staleTime !== 'number') {
-      defaultedOptions.staleTime = 1000
-    }
-  }
-
-  if (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) {
-    // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
-      defaultedOptions.retryOnMount = false
-    }
-  }
-
-  return defaultedOptions;
-}
 
 export function useBaseQuery<
   TQueryFnData,
@@ -105,30 +28,61 @@ export function useBaseQuery<
 
   const queryClient = useQueryClient()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedOptions = initDefaultedOptions({ errorResetBoundary, options, queryClient });
+  const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
 
-  const obsRef = React.useRef<
-    QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-  >()
+  // Make sure results are optimistically set in fetching state before subscribing or updating options
+  defaultedOptions.optimisticResults = true
 
-  if (!obsRef.current) {
-    obsRef.current = new Observer<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >(queryClient, defaultedOptions)
+  // Include callbacks in batch renders
+  if (defaultedOptions.onError) {
+    defaultedOptions.onError = notifyManager.batchCalls(
+      defaultedOptions.onError
+    )
   }
 
-  let result = obsRef.current.getOptimisticResult(defaultedOptions)
+  if (defaultedOptions.onSuccess) {
+    defaultedOptions.onSuccess = notifyManager.batchCalls(
+      defaultedOptions.onSuccess
+    )
+  }
+
+  if (defaultedOptions.onSettled) {
+    defaultedOptions.onSettled = notifyManager.batchCalls(
+      defaultedOptions.onSettled
+    )
+  }
+
+  if (defaultedOptions.suspense) {
+    // Always set stale time when using suspense to prevent
+    // fetching again when directly mounting after suspending
+    if (typeof defaultedOptions.staleTime !== 'number') {
+      defaultedOptions.staleTime = 1000
+    }
+  }
+
+  if (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) {
+    // Prevent retrying failed query if the error boundary has not been reset yet
+    if (!errorResetBoundary.isReset()) {
+      defaultedOptions.retryOnMount = false
+    }
+  }
+
+  const [observer] = React.useState(
+    () =>
+      new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
+        queryClient,
+        defaultedOptions
+      )
+  )
+
+  let result = observer.getOptimisticResult(defaultedOptions)
 
   React.useEffect(() => {
     mountedRef.current = true
 
     errorResetBoundary.clearReset()
 
-    const unsubscribe = obsRef.current!.subscribe(
+    const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
         if (mountedRef.current) {
           forceUpdate(x => x + 1)
@@ -138,23 +92,23 @@ export function useBaseQuery<
 
     // Update result to make sure we did not miss any query updates
     // between creating the observer and subscribing to it.
-    obsRef.current!.updateResult()
+    observer.updateResult()
 
     return () => {
       mountedRef.current = false
       unsubscribe()
     }
-  }, [errorResetBoundary])
+  }, [errorResetBoundary, observer])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    obsRef.current!.setOptions(defaultedOptions, { listeners: false })
-  }, [defaultedOptions])
+    observer.setOptions(defaultedOptions, { listeners: false })
+  }, [defaultedOptions, observer])
 
   // Handle suspense
   if (defaultedOptions.suspense && result.isLoading) {
-    throw obsRef.current
+    throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {
         defaultedOptions.onSuccess?.(data as TData)
@@ -170,14 +124,15 @@ export function useBaseQuery<
   // Handle error boundary
   if (
     (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) &&
-    result.isError
+    result.isError &&
+    !result.isFetching
   ) {
     throw result.error
   }
 
   // Handle result property usage tracking
   if (defaultedOptions.notifyOnChangeProps === 'tracked') {
-    result = obsRef.current.trackResult(result)
+    result = observer.trackResult(result)
   }
 
   return result

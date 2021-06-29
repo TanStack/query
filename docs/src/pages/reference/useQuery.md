@@ -73,8 +73,8 @@ const result = useQuery({
   - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
   - Receives a `QueryFunctionContext` object with the following variables:
-    - `queryKey: QueryKey`
-  - Must return a promise that will either resolves data or throws an error.
+    - `queryKey: EnsuredQueryKey`: the queryKey, guaranteed to be an Array
+  - Must return a promise that will either resolve data or throw an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../guides/dependent-queries).
@@ -89,6 +89,8 @@ const result = useQuery({
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
 - `staleTime: number | Infinity`
+  - Optional
+  - Defaults to `0`
   - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
 - `cacheTime: number | Infinity`
@@ -168,6 +170,9 @@ const result = useQuery({
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
+- `useErrorBoundary: boolean`
+  - Defaults to the global query config's `useErrorBoundary` value, which is false
+  - Set this to true if you want errors to be thrown in the render phase and propagated to the nearest error boundary
 
 **Returns**
 
@@ -211,7 +216,7 @@ const result = useQuery({
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
 - `isFetching: boolean`
-  - Defaults to `true` so long as `enabled` is set to `false`
+  - Is `true` whenever a request is in-flight, which includes initial `loading` as well as background refetches.
   - Will be `true` if the query is currently fetching, including background fetching.
 - `failureCount: number`
   - The failure count for the query.

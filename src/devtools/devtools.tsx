@@ -1,10 +1,11 @@
 // @ts-nocheck
 
 import React from 'react'
+
+import { useQueryClient } from 'react-query'
 import { matchSorter } from 'match-sorter'
-import { useQueryClient } from '../react'
 import useLocalStorage from './useLocalStorage'
-import { useSafeState, isStale } from './utils'
+import { useSafeState } from './utils'
 
 import {
   Panel,
@@ -16,10 +17,11 @@ import {
   Select,
   ActiveQueryPanel,
 } from './styledComponents'
-import { ThemeProvider } from './theme'
+import { ThemeProvider, defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
+import { noop } from '../core/utils'
 
 interface DevtoolsOptions {
   /**
@@ -72,20 +74,6 @@ interface DevtoolsPanelOptions {
 }
 
 const isServer = typeof window === 'undefined'
-
-const theme = {
-  background: '#0b1521',
-  backgroundAlt: '#132337',
-  foreground: 'white',
-  gray: '#3f4e60',
-  grayAlt: '#222e3e',
-  inputBackgroundColor: '#fff',
-  inputTextColor: '#000',
-  success: '#00ab52',
-  danger: '#ff0085',
-  active: '#006bff',
-  warning: '#ffb200',
-}
 
 export function ReactQueryDevtools({
   initialIsOpen,
@@ -145,6 +133,33 @@ export function ReactQueryDevtools({
     setIsResolvedOpen(isOpen)
   }, [isOpen, isResolvedOpen, setIsResolvedOpen])
 
+  // Toggle panel visibility before/after transition (depending on direction).
+  // Prevents focusing in a closed panel.
+  React.useEffect(() => {
+    const ref = panelRef.current
+    if (ref) {
+      function handlePanelTransitionStart() {
+        if (ref && isResolvedOpen) {
+          ref.style.visibility = 'visible'
+        }
+      }
+
+      function handlePanelTransitionEnd() {
+        if (ref && !isResolvedOpen) {
+          ref.style.visibility = 'hidden'
+        }
+      }
+
+      ref.addEventListener('transitionstart', handlePanelTransitionStart)
+      ref.addEventListener('transitionend', handlePanelTransitionEnd)
+
+      return () => {
+        ref.removeEventListener('transitionstart', handlePanelTransitionStart)
+        ref.removeEventListener('transitionend', handlePanelTransitionEnd)
+      }
+    }
+  }, [isResolvedOpen])
+
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     if (isResolvedOpen) {
       const previousValue = rootRef.current?.parentElement.style.paddingBottom
@@ -198,6 +213,8 @@ export function ReactQueryDevtools({
             boxShadow: '0 0 20px rgba(0,0,0,.3)',
             borderTop: `1px solid ${theme.gray}`,
             transformOrigin: 'top',
+            // visibility will be toggled after transitions, but set initial state here
+            visibility: isOpen ? 'visible' : 'hidden',
             ...panelStyle,
             ...(isResizing
               ? {
@@ -305,7 +322,7 @@ export function ReactQueryDevtools({
 }
 
 const getStatusRank = q =>
-  q.state.isFetching ? 0 : !q.observers.length ? 3 : isStale(q) ? 2 : 1
+  q.state.isFetching ? 0 : !q.getObserversCount() ? 3 : q.isStale() ? 2 : 1
 
 const sortFns = {
   'Status > Last Updated': (a, b) =>
@@ -390,12 +407,22 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
 
     React.useEffect(() => {
       if (isOpen) {
-        return queryCache.subscribe(() => {
+        const unsubscribe = queryCache.subscribe(() => {
           setUnsortedQueries(Object.values(queryCache.getAll()))
         })
+        // re-subscribing after the panel is closed and re-opened won't trigger the callback,
+        // So we'll manually populate our state
+        setUnsortedQueries(Object.values(queryCache.getAll()))
+
+        return unsubscribe
       }
       return undefined
     }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
+
+    const handleRefetch = () => {
+      const promise = activeQuery.fetch()
+      promise.catch(noop)
+    }
 
     return (
       <ThemeProvider theme={theme}>
@@ -612,7 +639,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                           : 'white',
                     }}
                   >
-                    {query.observers.length}
+                    {query.getObserversCount()}
                   </div>
                   <Code
                     suppressHydrationWarning
@@ -688,7 +715,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                     justifyContent: 'space-between',
                   }}
                 >
-                  Observers: <Code>{activeQuery.observers.length}</Code>
+                  Observers: <Code>{activeQuery.getObserversCount()}</Code>
                 </div>
                 <div
                   style={{
@@ -723,7 +750,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
               >
                 <Button
                   type="button"
-                  onClick={() => activeQuery.fetch()}
+                  onClick={handleRefetch}
                   disabled={activeQuery.state.isFetching}
                   style={{
                     background: theme.active,

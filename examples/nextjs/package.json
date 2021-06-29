@@ -13,7 +13,8 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-query": "^3.5.0",
-    "resolve-from": "^5.0.0"
+    "resolve-from": "^5.0.0",
+    "web-streams-polyfill": "^3.0.3"
   },
   "license": "MIT",
   "devDependencies": {}

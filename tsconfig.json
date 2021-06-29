@@ -11,9 +11,13 @@
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "strict": true,
-    "types": ["jest"]
+    "types": ["jest"],
+    "paths": {
+      "react-query": ["./src/index.ts"]
+    }
   },
   "include": ["./src"]
 }

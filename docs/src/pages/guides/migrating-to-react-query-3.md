@@ -20,7 +20,7 @@ Previous versions of React Query were awesome and brought some amazing new featu
 - Observe queries/mutations outside of React
 - Use the React Query core logic anywhere you want!
 - Bundled/Colocated Devtools via `react-query/devtools`
-- Cache Persistence to localstorage (experimental via `react-query/persistQueryClient-experimental` and `react-query/createLocalStoragePersistor-experimental`)
+- Cache Persistence to web storage (experimental via `react-query/persistQueryClient-experimental` and `react-query/createWebStoragePersistor-experimental`)
 
 ## Breaking Changes
 
@@ -47,6 +47,8 @@ const queryClient = new QueryClient()
 ### `ReactQueryConfigProvider` and `ReactQueryCacheProvider` have both been replaced by `QueryClientProvider`
 
 Default options for queries and mutations can now be specified in `QueryClient`:
+
+**Notice that it's now defaultOptions instead of defaultConfig**
 
 ```js
 const queryClient = new QueryClient({
@@ -147,7 +149,7 @@ They were previously added as the last query key parameter in your query functio
 useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
 
 // New
-useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPost(pageParam))
+useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPosts(pageParam))
 ```
 
 ### usePaginatedQuery() has been deprecated in favor of the `keepPreviousData` option

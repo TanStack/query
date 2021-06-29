@@ -1,11 +1,11 @@
 import {
   Updater,
-  ensureArray,
   functionalUpdate,
   isValidTimeout,
   noop,
   replaceEqualDeep,
   timeUntilStale,
+  ensureQueryKeyArray,
 } from './utils'
 import type {
   InitialDataFunction,
@@ -13,6 +13,7 @@ import type {
   QueryOptions,
   QueryStatus,
   QueryFunctionContext,
+  EnsuredQueryKey,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -59,8 +60,8 @@ export interface FetchContext<
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
-  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  queryKey: TQueryKey
+  options: QueryOptions<TQueryFnData, TError, TData, any>
+  queryKey: EnsuredQueryKey<TQueryKey>
   state: QueryState<TData, TError>
 }
 
@@ -343,6 +344,10 @@ export class Query<
     }
   }
 
+  getObserversCount(): number {
+    return this.observers.length
+  }
+
   invalidate(): void {
     if (!this.state.isInvalidated) {
       this.dispatch({ type: 'invalidate' })
@@ -377,9 +382,10 @@ export class Query<
       }
     }
 
+    const queryKey = ensureQueryKeyArray(this.queryKey)
+
     // Create query function context
-    const queryKey = ensureArray(this.queryKey)
-    const queryFnContext: QueryFunctionContext<unknown[]> = {
+    const queryFnContext: QueryFunctionContext<TQueryKey> = {
       queryKey,
       pageParam: undefined,
     }
@@ -391,10 +397,10 @@ export class Query<
         : Promise.reject('Missing queryFn')
 
     // Trigger behavior hook
-    const context: FetchContext<TQueryFnData, TError, TData, any> = {
+    const context: FetchContext<TQueryFnData, TError, TData, TQueryKey> = {
       fetchOptions,
       options: this.options,
-      queryKey,
+      queryKey: queryKey,
       state: this.state,
       fetchFn,
     }
