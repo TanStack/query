@@ -32,7 +32,7 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observerRef.current.setQueries(defaultedQueries, { listeners: false })
-  }, [defaultedQueries, observerRef.current])
+  }, [defaultedQueries])
 
   const someSuspense = defaultedQueries.some(q => q.suspense)
   const someUseErrorBoundary = defaultedQueries.some(q => q.useErrorBoundary)
@@ -45,7 +45,7 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
 
     const unsubscribe = observerRef.current.subscribe(
       notifyManager.batchCalls(() => {
-        if (mountedRef.current &&  someIsLoading) {
+        if (mountedRef.current && someIsLoading) {
           forceUpdate(x => x + 1)
         }
       })
@@ -55,7 +55,7 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
       mountedRef.current = false
       unsubscribe()
     }
-  }, [observerRef.current])
+  }, [someIsLoading])
 
   const handleReset = React.useCallback(() => {
     errorResetBoundary.clearReset()
@@ -63,19 +63,19 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
     throw observerRef.current
       .refetch({ filter: x => x.getCurrentResult().isLoading })
       .finally(unsubscribe)
-  }, [errorResetBoundary, observerRef.current])
+  }, [errorResetBoundary])
 
   // Handle suspense and error boundaries
   if (someSuspense || someUseErrorBoundary) {
     if (someError) {
       if (errorResetBoundary.isReset()) {
-       handleReset();
+        handleReset()
       }
       throw someError
     }
 
     if (someSuspense && someIsLoading) {
-      handleReset();
+      handleReset()
     }
   }
 

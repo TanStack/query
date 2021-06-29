@@ -11,6 +11,7 @@ import {
   useQueryErrorResetBoundary,
   useQueryClient,
 } from '../..'
+import { QueryState } from '../../core/query'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -55,11 +56,11 @@ describe('useQueries', () => {
   it('should return the correct states with suspense', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: any[] = []
+    const results: (QueryState<unknown, undefined>[] | UseQueryResult[])[] = []
 
     function Fallback() {
       const qc = useQueryClient()
-      const queryStates = [qc.getQueryState(key1), qc.getQueryState(key2)]
+      const queryStates = [qc.getQueryState(key1)!, qc.getQueryState(key2)!]
 
       results.push(queryStates)
 
@@ -96,9 +97,12 @@ describe('useQueries', () => {
     )
 
     await waitFor(() => {
-      expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
+      expect(results[0]).toMatchObject([
+        { data: undefined },
+        { data: undefined },
+      ])
       expect(results[1]).toMatchObject([{ data: 1 }, { data: 2 }])
-      expect(results.length).toBe(2);
+      expect(results.length).toBe(2)
     })
   })
 
