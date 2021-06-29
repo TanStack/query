@@ -9,6 +9,7 @@ import {
   UseQueryResult,
   QueryCache,
   useQueryErrorResetBoundary,
+  useQueryClient,
 } from '../..'
 
 describe('useQueries', () => {
@@ -54,7 +55,16 @@ describe('useQueries', () => {
   it('should return the correct states with suspense', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const results: UseQueryResult[][] = []
+    const results: any[] = []
+
+    function Fallback() {
+      const qc = useQueryClient()
+      const queryStates = [qc.getQueryState(key1), qc.getQueryState(key2)]
+
+      results.push(queryStates)
+
+      return null
+    }
 
     function Page() {
       const result = useQueries([
@@ -80,15 +90,16 @@ describe('useQueries', () => {
 
     renderWithClient(
       queryClient,
-      <React.Suspense fallback={'test'}>
+      <React.Suspense fallback={<Fallback />}>
         <Page />
       </React.Suspense>
     )
 
-    await sleep(10)
-
-    expect(results.length).toBe(1)
-    expect(results[0]).toMatchObject([{ data: 1 }, { data: 2 }])
+    await waitFor(() => {
+      expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
+      expect(results[1]).toMatchObject([{ data: 1 }, { data: 2 }])
+      expect(results.length).toBe(2);
+    })
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
@@ -103,7 +114,7 @@ describe('useQueries', () => {
         {
           queryKey: key1,
           queryFn: async () => {
-            await sleep(10)
+            await sleep(5)
             if (!succeed) {
               throw new Error('Suspense Error Bingo')
             } else {
@@ -122,8 +133,8 @@ describe('useQueries', () => {
 
       return (
         <div>
-          <div>data1: {results[0].data}</div>
-          <div>data2: {results[1].data}</div>
+          <div>data1: {results[0]?.data}</div>
+          <div>data2: {results[1]?.data}</div>
         </div>
       )
     }

@@ -1,7 +1,9 @@
 import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type {
-  QueryObserverOptions, QueryObserverResult, RefetchOptions
+  QueryObserverOptions,
+  QueryObserverResult,
+  RefetchOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
 import { NotifyOptions, QueryObserver } from './queryObserver'
