@@ -282,10 +282,10 @@ describe('ReactQueryDevtools', () => {
     // to just the number, with the order being -> query-1, query-2, query-3
     fireEvent.change(sortSelect, { target: { value: 'Query Hash' } })
     /** To check the order of the queries we can use regex to find
-     * all the row items in an array and then compare the items 
+     * all the row items in an array and then compare the items
      * one by one in the order we expect it
      * @reference https://github.com/testing-library/react-testing-library/issues/313#issuecomment-625294327
-    */
+     */
     queries = await screen.findAllByText(/\["query-[1-3]"\]/)
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
@@ -300,7 +300,7 @@ describe('ReactQueryDevtools', () => {
     expect(queries[1]?.textContent).toEqual(query3Hash)
     expect(queries[2]?.textContent).toEqual(query1Hash)
 
-    // When sorted by the status and then last updated date the queries 
+    // When sorted by the status and then last updated date the queries
     // query-3 takes precedence because its stale time being infinity, it
     // always remains fresh, the rest of the queries are sorted by their last
     // updated time, so the resulting order is -> query-3, query-2, query-1
@@ -309,5 +309,13 @@ describe('ReactQueryDevtools', () => {
     expect(queries[0]?.textContent).toEqual(query3Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
     expect(queries[2]?.textContent).toEqual(query1Hash)
+
+    // Switch the order form ascending to descending and expect the
+    // query order to be reversed from previous state
+    fireEvent.click(screen.getByRole('button', { name: /⬆ asc/i}))
+    queries = await screen.findAllByText(/\["query-[1-3]"\]/)
+    expect(queries[0]?.textContent).toEqual(query1Hash)
+    expect(queries[1]?.textContent).toEqual(query2Hash)
+    expect(queries[2]?.textContent).toEqual(query3Hash)
   })
 })
