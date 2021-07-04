@@ -211,14 +211,14 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    const fooQuery = queryCache.find('foo')
-    const barQuery = queryCache.find('bar')
-    const bazQuery = queryCache.find('baz')
+    const fooQueryHash = queryCache.find('foo')?.queryHash ?? 'invalid hash'
+    const barQueryHash = queryCache.find('bar')?.queryHash ?? 'invalid hash'
+    const bazQueryHash = queryCache.find('baz')?.queryHash ?? 'invalid hash'
 
     // First check that all the querie hash are visible in list
-    await screen.findByText(fooQuery?.queryHash ?? 'invalid hash')
-    screen.getByText(barQuery?.queryHash ?? 'invalid hash')
-    screen.getByText(bazQuery?.queryHash ?? 'invalid hash')
+    await screen.findByText(fooQueryHash)
+    screen.getByText(barQueryHash)
+    screen.getByText(bazQueryHash)
 
     // Search for 'fo' via the filter input
     const filterInput = screen.getByLabelText(/filter by queryhash/i)
@@ -226,10 +226,88 @@ describe('ReactQueryDevtools', () => {
 
     // Expect only the foo query to be visible, and bar and baz
     // to not be visible
-    await screen.findByText(fooQuery?.queryHash ?? 'invalid hash')
-    const barItem = screen.queryByText(barQuery?.queryHash ?? 'invalid hash')
-    const bazItem = screen.queryByText(bazQuery?.queryHash ?? 'invalid hash')
+    await screen.findByText(fooQueryHash)
+    const barItem = screen.queryByText(barQueryHash)
+    const bazItem = screen.queryByText(bazQueryHash)
     expect(barItem).toBeNull()
     expect(bazItem).toBeNull()
+    // Clear the filter input
+    fireEvent.change(filterInput, { target: { value: '' } })
+  })
+
+  it('should sort the queries according to the sorting filter', async () => {
+    function Page() {
+      const query1Result = useQuery('query-1', async () => {
+        await sleep(20)
+        return 'query-1-result'
+      })
+
+      const query2Result = useQuery('query-2', async () => {
+        await sleep(60)
+        return 'query-2-result'
+      })
+
+      const query3Result = useQuery(
+        'query-3',
+        async () => {
+          await sleep(40)
+          return 'query-3-result'
+        },
+        { staleTime: Infinity }
+      )
+
+      return (
+        <div>
+          <h1>
+            {query1Result.data} {query2Result.data} {query3Result.data}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open react query devtools/i })
+    )
+
+    const query1Hash = queryCache.find('query-1')?.queryHash ?? 'invalid hash'
+    const query2Hash = queryCache.find('query-2')?.queryHash ?? 'invalid hash'
+    const query3Hash = queryCache.find('query-3')?.queryHash ?? 'invalid hash'
+
+    const sortSelect = screen.getByLabelText(/sort queries/i)
+    let queries = []
+
+    // When sorted by query hash the queries get sorted according
+    // to just the number, with the order being -> query-1, query-2, query-3
+    fireEvent.change(sortSelect, { target: { value: 'Query Hash' } })
+    /** To check the order of the queries we can use regex to find
+     * all the row items in an array and then compare the items 
+     * one by one in the order we expect it
+     * @reference https://github.com/testing-library/react-testing-library/issues/313#issuecomment-625294327
+    */
+    queries = await screen.findAllByText(/\["query-[1-3]"\]/)
+    expect(queries[0]?.textContent).toEqual(query1Hash)
+    expect(queries[1]?.textContent).toEqual(query2Hash)
+    expect(queries[2]?.textContent).toEqual(query3Hash)
+
+    // When sorted by the last updated date the queries are sorted by the time
+    // they were updated and since the query-2 takes longest time to complete
+    // and query-1 the shortest, so the order is -> query-2, query-3, query-1
+    fireEvent.change(sortSelect, { target: { value: 'Last Updated' } })
+    queries = await screen.findAllByText(/\["query-[1-3]"\]/)
+    expect(queries[0]?.textContent).toEqual(query2Hash)
+    expect(queries[1]?.textContent).toEqual(query3Hash)
+    expect(queries[2]?.textContent).toEqual(query1Hash)
+
+    // When sorted by the status and then last updated date the queries 
+    // query-3 takes precedence because its stale time being infinity, it
+    // always remains fresh, the rest of the queries are sorted by their last
+    // updated time, so the resulting order is -> query-3, query-2, query-1
+    fireEvent.change(sortSelect, { target: { value: 'Status > Last Updated' } })
+    queries = await screen.findAllByText(/\["query-[1-3]"\]/)
+    expect(queries[0]?.textContent).toEqual(query3Hash)
+    expect(queries[1]?.textContent).toEqual(query2Hash)
+    expect(queries[2]?.textContent).toEqual(query1Hash)
   })
 })

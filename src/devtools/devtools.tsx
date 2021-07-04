@@ -333,7 +333,7 @@ const sortFns = {
       ? 1
       : -1,
   'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
-  'Last Updated': (a, b) => (a.state.updatedAt < b.state.updatedAt ? 1 : -1),
+  'Last Updated': (a, b) => (a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1),
 }
 
 export const ReactQueryDevtoolsPanel = React.forwardRef(
@@ -566,6 +566,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   {!filter ? (
                     <>
                       <Select
+                        aria-label="Sort queries"
                         value={sort}
                         onChange={e => setSort(e.target.value)}
                         style={{
