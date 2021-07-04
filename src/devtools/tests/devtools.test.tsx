@@ -312,7 +312,7 @@ describe('ReactQueryDevtools', () => {
 
     // Switch the order form ascending to descending and expect the
     // query order to be reversed from previous state
-    fireEvent.click(screen.getByRole('button', { name: /⬆ asc/i}))
+    fireEvent.click(screen.getByRole('button', { name: /⬆ asc/i }))
     queries = await screen.findAllByText(/\["query-[1-3]"\]/)
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)

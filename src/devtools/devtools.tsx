@@ -333,7 +333,8 @@ const sortFns = {
       ? 1
       : -1,
   'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
-  'Last Updated': (a, b) => (a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1),
+  'Last Updated': (a, b) =>
+    a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
 
 export const ReactQueryDevtoolsPanel = React.forwardRef(

@@ -41,7 +41,10 @@ export function sleep(timeout: number): Promise<void> {
  * @param textToMatch The string that needs to be matched
  * @reference https://stackoverflow.com/a/56859650/8252081
  */
-export const getByTextContent = (textToMatch: string) => (content: string, node: HTMLElement): boolean => {
+export const getByTextContent = (textToMatch: string) => (
+  _content: string,
+  node: HTMLElement
+): boolean => {
   const hasText = (currentNode: HTMLElement) =>
     currentNode.textContent === textToMatch
   const nodeHasText = hasText(node)
