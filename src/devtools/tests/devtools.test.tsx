@@ -142,4 +142,94 @@ describe('ReactQueryDevtools', () => {
       getByTextContent('fresh (0) fetching (0) stale (0) inactive (1)')
     )
   })
+
+  it('should display the query hash and open the query details', async () => {
+    function Page() {
+      const { data = 'default' } = useQuery('check', async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open react query devtools/i })
+    )
+
+    // Find the current query from the cache
+    const currentQuery = queryCache.find('check')
+
+    // Expect the query hash to be visible with one observer
+    await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
+
+    // Open the query details
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: `Open query details for ${currentQuery?.queryHash}`,
+      })
+    )
+
+    await screen.findByText(/query details/i)
+  })
+
+  it('should filter the queries via the query hash', async () => {
+    function Page() {
+      const fooResult = useQuery('foo', async () => {
+        await sleep(10)
+        return 'foo-result'
+      })
+
+      const barResult = useQuery('bar', async () => {
+        await sleep(10)
+        return 'bar-result'
+      })
+
+      const bazResult = useQuery('baz', async () => {
+        await sleep(10)
+        return 'baz-result'
+      })
+
+      return (
+        <div>
+          <h1>
+            {barResult.data} {fooResult.data} {bazResult.data}
+          </h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /open react query devtools/i })
+    )
+
+    const fooQuery = queryCache.find('foo')
+    const barQuery = queryCache.find('bar')
+    const bazQuery = queryCache.find('baz')
+
+    // First check that all the querie hash are visible in list
+    await screen.findByText(fooQuery?.queryHash ?? 'invalid hash')
+    screen.getByText(barQuery?.queryHash ?? 'invalid hash')
+    screen.getByText(bazQuery?.queryHash ?? 'invalid hash')
+
+    // Search for 'fo' via the filter input
+    const filterInput = screen.getByLabelText(/filter by queryhash/i)
+    fireEvent.change(filterInput, { target: { value: 'fo' } })
+
+    // Expect only the foo query to be visible, and bar and baz
+    // to not be visible
+    await screen.findByText(fooQuery?.queryHash ?? 'invalid hash')
+    const barItem = screen.queryByText(barQuery?.queryHash ?? 'invalid hash')
+    const bazItem = screen.queryByText(bazQuery?.queryHash ?? 'invalid hash')
+    expect(barItem).toBeNull()
+    expect(bazItem).toBeNull()
+  })
 })

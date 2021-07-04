@@ -552,6 +552,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 >
                   <Input
                     placeholder="Filter"
+                    aria-label="Filter by queryhash"
                     value={filter ?? ''}
                     onChange={e => setFilter(e.target.value)}
                     onKeyDown={e => {
@@ -604,6 +605,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 <div
                   suppressHydrationWarning
                   key={query.queryHash || i}
+                  role="button"
+                  aria-label={`Open query details for ${query.queryHash}`}
                   onClick={() =>
                     setActiveQueryHash(
                       activeQueryHash === query.queryHash ? '' : query.queryHash
