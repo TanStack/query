@@ -5,25 +5,18 @@ import {
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react'
-import { QueryClient, QueryCache, useQuery } from '../..'
-import { getByTextContent, renderWithClient, sleep } from './utils'
+import { useQuery } from '../..'
+import {
+  getByTextContent,
+  renderWithClient,
+  sleep,
+  createQueryClient,
+} from './utils'
 
 describe('ReactQueryDevtools', () => {
-  const queryCache = new QueryCache()
-  const queryClient = new QueryClient({
-    queryCache,
-    defaultOptions: {
-      queries: {
-        staleTime: 0,
-      },
-    },
-  })
-
-  beforeEach(() => {
-    queryCache.clear()
-  })
-
   it('should be able to open and close devtools', async () => {
+    const { queryClient } = createQueryClient()
+
     function Page() {
       const { data = 'default' } = useQuery('check', async () => {
         await sleep(10)
@@ -39,8 +32,6 @@ describe('ReactQueryDevtools', () => {
 
     renderWithClient(queryClient, <Page />, { initialIsOpen: false })
 
-    // Since the initial is open state is false, expect the close button to not be present
-    // in the DOM. Then find the open button and click on it.
     const closeButton = screen.queryByRole('button', {
       name: /close react query devtools/i,
     })
@@ -49,8 +40,6 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    // Wait for the animation to finish and the open button to be removed from DOM once the devtools
-    // is opened. Then find the close button and click on it.
     await waitForElementToBeRemoved(() =>
       screen.queryByRole('button', { name: /open react query devtools/i })
     )
@@ -58,12 +47,12 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /close react query devtools/i })
     )
 
-    // Finally once the close animation is completed expect the open button to
-    // be present in the DOM again.
     await screen.findByRole('button', { name: /open react query devtools/i })
   })
 
   it('should display the correct query states', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
     function Page() {
       const { data = 'default' } = useQuery(
         'check',
@@ -82,14 +71,17 @@ describe('ReactQueryDevtools', () => {
     }
 
     function PageParent() {
-      const [isPageVisible, setIsPageVisible] = React.useState(true)
+      const [isPageVisible, togglePageVisible] = React.useReducer(
+        visible => !visible,
+        true
+      )
 
       return (
         <div>
           <button
             type="button"
             aria-label="Toggle page visibility"
-            onClick={() => setIsPageVisible(visible => !visible)}
+            onClick={togglePageVisible}
           >
             Toggle Page
           </button>
@@ -104,7 +96,6 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    // Find the current query from the cache
     const currentQuery = queryCache.find('check')
 
     // When the query is fetching then expect number of
@@ -144,6 +135,8 @@ describe('ReactQueryDevtools', () => {
   })
 
   it('should display the query hash and open the query details', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
     function Page() {
       const { data = 'default' } = useQuery('check', async () => {
         await sleep(10)
@@ -163,13 +156,10 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    // Find the current query from the cache
     const currentQuery = queryCache.find('check')
 
-    // Expect the query hash to be visible with one observer
     await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
 
-    // Open the query details
     fireEvent.click(
       screen.getByRole('button', {
         name: `Open query details for ${currentQuery?.queryHash}`,
@@ -180,6 +170,8 @@ describe('ReactQueryDevtools', () => {
   })
 
   it('should filter the queries via the query hash', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
     function Page() {
       const fooResult = useQuery('foo', async () => {
         await sleep(10)
@@ -215,27 +207,25 @@ describe('ReactQueryDevtools', () => {
     const barQueryHash = queryCache.find('bar')?.queryHash ?? 'invalid hash'
     const bazQueryHash = queryCache.find('baz')?.queryHash ?? 'invalid hash'
 
-    // First check that all the querie hash are visible in list
     await screen.findByText(fooQueryHash)
     screen.getByText(barQueryHash)
     screen.getByText(bazQueryHash)
 
-    // Search for 'fo' via the filter input
     const filterInput = screen.getByLabelText(/filter by queryhash/i)
     fireEvent.change(filterInput, { target: { value: 'fo' } })
 
-    // Expect only the foo query to be visible, and bar and baz
-    // to not be visible
     await screen.findByText(fooQueryHash)
     const barItem = screen.queryByText(barQueryHash)
     const bazItem = screen.queryByText(bazQueryHash)
     expect(barItem).toBeNull()
     expect(bazItem).toBeNull()
-    // Clear the filter input
+    
     fireEvent.change(filterInput, { target: { value: '' } })
   })
 
   it('should sort the queries according to the sorting filter', async () => {
+    const { queryClient, queryCache } = createQueryClient()
+
     function Page() {
       const query1Result = useQuery('query-1', async () => {
         await sleep(20)

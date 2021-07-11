@@ -2,7 +2,7 @@ import { render } from '@testing-library/react'
 import React from 'react'
 import { ReactQueryDevtools } from '../'
 
-import { QueryClient, QueryClientProvider } from '../..'
+import { QueryClient, QueryClientProvider, QueryCache } from '../..'
 
 export function renderWithClient(
   client: QueryClient,
@@ -35,7 +35,7 @@ export function sleep(timeout: number): Promise<void> {
 
 /**
  * This method is useful for matching by text content when the text is splitted
- * across multiple different HTML elements which cannot be searched by normal
+ * across different HTML elements which cannot be searched by normal
  * *ByText methods. It returns a function that can be passed to the testing
  * library's *ByText methods.
  * @param textToMatch The string that needs to be matched
@@ -53,4 +53,22 @@ export const getByTextContent = (textToMatch: string) => (
   )
 
   return nodeHasText && childrenDontHaveText
+}
+
+interface CreateQueryClientResponse {
+  queryClient: QueryClient
+  queryCache: QueryCache
+}
+
+export const createQueryClient = (): CreateQueryClientResponse => {
+  const queryCache = new QueryCache()
+  const queryClient = new QueryClient({
+    queryCache,
+    defaultOptions: {
+      queries: {
+        staleTime: 0,
+      },
+    },
+  })
+  return { queryClient, queryCache }
 }
