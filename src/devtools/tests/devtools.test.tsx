@@ -219,7 +219,7 @@ describe('ReactQueryDevtools', () => {
     const bazItem = screen.queryByText(bazQueryHash)
     expect(barItem).toBeNull()
     expect(bazItem).toBeNull()
-    
+
     fireEvent.change(filterInput, { target: { value: '' } })
   })
 
