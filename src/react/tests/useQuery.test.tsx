@@ -848,6 +848,44 @@ describe('useQuery', () => {
     expect(states[1]?.dataUpdatedAt).not.toBe(states[2]?.dataUpdatedAt)
   })
 
+  it('should always clear the `trackedProps` after re-render', async () => {
+    const key = queryKey()
+    let renderCount = 0
+    let data = 'hello'
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery(key, () => data, {
+        notifyOnChangeProps: 'tracked',
+      })
+
+      states.push(state)
+
+      React.useEffect(() => {
+        renderCount++
+
+        if (renderCount === 1) {
+          setActTimeout(() => {
+            data = 'hi'
+            state.refetch()
+          }, 5)
+        }
+      }, [state])
+
+      return (
+        <div>
+          <h1>{renderCount === 0 ? state.data : 'test'}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(30)
+    expect(renderCount).toBe(2)
+    expect(states.length).toBe(2)
+  })
+
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []

@@ -623,6 +623,8 @@ export class QueryObserver<
       this.shouldNotifyListeners(this.currentResult, prevResult)
     ) {
       defaultNotifyOptions.listeners = true
+      // clear `trackedProps` of the pre render
+      this.trackedProps = []
     }
 
     this.notify({ ...defaultNotifyOptions, ...notifyOptions })
