@@ -128,4 +128,111 @@ describe('useQueries', () => {
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
   })
+
+  it('should keep previous data for variable amounts of useQueries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[][] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(2)
+      const result = useQueries(
+        Array.from({ length: count }, (_, i) => ({
+          queryKey: [key, count, i + 1],
+          keepPreviousData: true,
+          queryFn: async () => {
+            await sleep(5)
+            return (i + 1) * count * 2
+          },
+        }))
+      )
+
+      states.push(result)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setCount(prev => prev + 1)
+        }, 20)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(8))
+
+    expect(states[0]).toMatchObject([
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[1]).toMatchObject([
+      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[2]).toMatchObject([
+      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 8, isPreviousData: false, isFetching: false },
+    ])
+
+    expect(states[3]).toMatchObject([
+      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
+      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
+      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[5]).toMatchObject([
+      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[6]).toMatchObject([
+      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 12, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[7]).toMatchObject([
+      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 12, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 18, isPreviousData: false, isFetching: false },
+    ])
+  })
 })
