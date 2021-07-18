@@ -1,20 +1,25 @@
-// @ts-nocheck
-
 import React from 'react'
 
-const getItem = key => {
+const getItem = (key: string): unknown => {
   try {
-    return JSON.parse(localStorage.getItem(key))
+    const itemValue = localStorage.getItem(key)
+    if (typeof itemValue === 'string') {
+      return JSON.parse(itemValue)
+    }
+    return undefined
   } catch {
     return undefined
   }
 }
 
-export default function useLocalStorage(key, defaultValue) {
-  const [value, setValue] = React.useState()
+export default function useLocalStorage<T>(
+  key: string,
+  defaultValue: T | undefined
+): [T | undefined, (newVal: T) => void] {
+  const [value, setValue] = React.useState<T>()
 
   React.useEffect(() => {
-    const initialValue = getItem(key)
+    const initialValue = getItem(key) as T | undefined
 
     if (typeof initialValue === 'undefined' || initialValue === null) {
       setValue(
@@ -23,6 +28,7 @@ export default function useLocalStorage(key, defaultValue) {
     } else {
       setValue(initialValue)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValue, key])
 
   const setter = React.useCallback(
