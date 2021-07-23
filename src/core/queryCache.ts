@@ -15,6 +15,7 @@ import { QueryObserver } from './queryObserver'
 
 interface QueryCacheConfig {
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
+  onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
 }
 
 interface QueryHashMap {

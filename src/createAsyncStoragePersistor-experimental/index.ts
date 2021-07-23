@@ -1,7 +1,9 @@
+import { PersistedClient, Persistor } from '../persistQueryClient-experimental'
+
 interface AsyncStorage {
-  getItem: (key: string) => Promise<string>
-  setItem: (key: string, value: string) => Promise<unknown>
-  removeItem: (key: string) => Promise<unknown>
+  getItem: (key: string) => Promise<string | null>
+  setItem: (key: string, value: string) => Promise<void>
+  removeItem: (key: string) => Promise<void>
 }
 
 interface CreateAsyncStoragePersistorOptions {
@@ -14,11 +16,11 @@ interface CreateAsyncStoragePersistorOptions {
   throttleTime?: number
 }
 
-export const asyncStoragePersistor = ({
+export const createAsyncStoragePersistor = ({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
-}: CreateAsyncStoragePersistorOptions) => {
+}: CreateAsyncStoragePersistorOptions): Persistor => {
   return {
     persistClient: asyncThrottle(
       persistedClient => storage.setItem(key, JSON.stringify(persistedClient)),
@@ -31,7 +33,7 @@ export const asyncStoragePersistor = ({
         return
       }
 
-      return JSON.parse(cacheString)
+      return JSON.parse(cacheString) as PersistedClient
     },
     removeClient: () => storage.removeItem(key),
   }

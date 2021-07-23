@@ -17,7 +17,7 @@ This utility comes packaged with `react-query` and is available under the `react
 - Pass it to the [`persistQueryClient`](../persistQueryClient) function
 
 ```ts
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
 import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
 
@@ -56,7 +56,7 @@ interface CreateAsyncStoragePersistorOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage
   /** The key to use when storing the cache to localstorage */
-  asyncStorageKey?: string
+  key?: string
   /** To avoid localstorage spamming,
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
@@ -73,7 +73,7 @@ The default options are:
 
 ```js
 {
-  asyncStorageKey = `REACT_QUERY_OFFLINE_CACHE`,
+  key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
 }
 ```

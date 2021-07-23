@@ -426,6 +426,9 @@ export class Query<
       onSuccess: data => {
         this.setData(data as TData)
 
+        // Notify cache callback
+        this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+
         // Remove query after fetching if cache time is 0
         if (this.cacheTime === 0) {
           this.optionalRemove()
@@ -442,9 +445,7 @@ export class Query<
 
         if (!isCancelledError(error)) {
           // Notify cache callback
-          if (this.cache.config.onError) {
-            this.cache.config.onError(error, this as Query<any, any, any, any>)
-          }
+          this.cache.config.onError?.(error, this as Query<any, any, any, any>)
 
           // Log error
           getLogger().error(error)

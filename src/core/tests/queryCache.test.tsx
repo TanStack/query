@@ -144,4 +144,18 @@ describe('queryCache', () => {
       expect(onError).toHaveBeenCalledWith('error', query)
     })
   })
+
+  describe('QueryCacheConfig.onSuccess', () => {
+    test('should be called when a query is successful', async () => {
+      const consoleMock = mockConsoleError()
+      const key = queryKey()
+      const onSuccess = jest.fn()
+      const testCache = new QueryCache({ onSuccess })
+      const testClient = new QueryClient({ queryCache: testCache })
+      await testClient.prefetchQuery(key, () => Promise.resolve({ data: 5 }))
+      consoleMock.mockRestore()
+      const query = testCache.find(key)
+      expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
+    })
+  })
 })
