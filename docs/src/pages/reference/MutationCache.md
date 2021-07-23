@@ -14,6 +14,9 @@ const mutationCache = new MutationCache({
   onError: error => {
     console.log(error)
   },
+  onSuccess: data => {
+    console.log(data)
+  }
 })
 ```
 
@@ -28,6 +31,14 @@ Its available methods are:
 - `onError?: (error: unknown, variables: unknown, context: unknown, mutation: Mutation) => void`
   - Optional
   - This function will be called if some mutation encounters an error.
+- `onSuccess?: (data: unknown, variables: unknown, context: unknown, mutation: Mutation) => void`
+  - Optional
+  - This function will be called if some mutation is successful.
+
+## Global callbacks
+
+The `onError` and `onSuccess` callbacks on the MutationCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
+- `defaultOptions` can be overridden by each Mutation - the global callbacks will **always** be called.
 
 ## `mutationCache.getAll`
 

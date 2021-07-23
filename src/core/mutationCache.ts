@@ -14,6 +14,12 @@ interface MutationCacheConfig {
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown, unknown>
   ) => void
+  onSuccess?: (
+    data: unknown,
+    variables: unknown,
+    context: unknown,
+    mutation: Mutation<unknown, unknown, unknown, unknown>
+  ) => void
 }
 
 type MutationCacheListener = (mutation?: Mutation) => void

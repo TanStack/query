@@ -20,18 +20,16 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
     return defaultedOptions
   })
 
-  const obsRef = React.useRef<QueriesObserver>()
+  const [observer] = React.useState(
+    () => new QueriesObserver(queryClient, defaultedQueries)
+  )
 
-  if (!obsRef.current) {
-    obsRef.current = new QueriesObserver(queryClient, defaultedQueries)
-  }
-
-  const result = obsRef.current.getOptimisticResult(defaultedQueries)
+  const result = observer.getOptimisticResult(defaultedQueries)
 
   React.useEffect(() => {
     mountedRef.current = true
 
-    const unsubscribe = obsRef.current!.subscribe(
+    const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
         if (mountedRef.current) {
           forceUpdate(x => x + 1)
@@ -43,13 +41,13 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
       mountedRef.current = false
       unsubscribe()
     }
-  }, [])
+  }, [observer])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
-    obsRef.current!.setQueries(defaultedQueries, { listeners: false })
-  }, [defaultedQueries])
+    observer.setQueries(defaultedQueries, { listeners: false })
+  }, [defaultedQueries, observer])
 
   return result
 }

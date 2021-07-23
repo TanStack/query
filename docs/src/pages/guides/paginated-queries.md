@@ -65,7 +65,7 @@ function Todos() {
           }
         }}
         // Disable the Next Page button until we know a next page is available
-        disabled={isPreviousData || !data.hasMore}
+        disabled={isPreviousData || !data?.hasMore}
       >
         Next Page
       </button>

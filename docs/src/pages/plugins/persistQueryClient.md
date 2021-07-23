@@ -9,7 +9,8 @@ title: persistQueryClient (Experimental)
 
 ## Officially Supported Persistors
 
-- [createLocalStoragePersistor (Experimental)](/plugins/createLocalStoragePersistor)
+- [createWebStoragePersistor (Experimental)](/plugins/createWebStoragePersistor)
+- [createAsyncStoragePersistor (Experimental)](/plugins/createAsyncStoragePersistor)
 
 ## Installation
 
@@ -21,7 +22,7 @@ Import the `persistQueryClient` function, and pass it your `QueryClient` instanc
 
 ```ts
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
-import { createLocalStoragePersistor } from 'react-query/createLocalStoragePersistor-experimental'
+import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -31,7 +32,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const localStoragePersistor = createLocalStoragePersistor()
+const localStoragePersistor = createWebStoragePersistor({storage: window.localStorage})
 
 persistQueryClient({
   queryClient,

@@ -133,6 +133,33 @@ export function ReactQueryDevtools({
     setIsResolvedOpen(isOpen)
   }, [isOpen, isResolvedOpen, setIsResolvedOpen])
 
+  // Toggle panel visibility before/after transition (depending on direction).
+  // Prevents focusing in a closed panel.
+  React.useEffect(() => {
+    const ref = panelRef.current
+    if (ref) {
+      function handlePanelTransitionStart() {
+        if (ref && isResolvedOpen) {
+          ref.style.visibility = 'visible'
+        }
+      }
+
+      function handlePanelTransitionEnd() {
+        if (ref && !isResolvedOpen) {
+          ref.style.visibility = 'hidden'
+        }
+      }
+
+      ref.addEventListener('transitionstart', handlePanelTransitionStart)
+      ref.addEventListener('transitionend', handlePanelTransitionEnd)
+
+      return () => {
+        ref.removeEventListener('transitionstart', handlePanelTransitionStart)
+        ref.removeEventListener('transitionend', handlePanelTransitionEnd)
+      }
+    }
+  }, [isResolvedOpen])
+
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     if (isResolvedOpen) {
       const previousValue = rootRef.current?.parentElement.style.paddingBottom
@@ -186,6 +213,8 @@ export function ReactQueryDevtools({
             boxShadow: '0 0 20px rgba(0,0,0,.3)',
             borderTop: `1px solid ${theme.gray}`,
             transformOrigin: 'top',
+            // visibility will be toggled after transitions, but set initial state here
+            visibility: isOpen ? 'visible' : 'hidden',
             ...panelStyle,
             ...(isResizing
               ? {
@@ -211,6 +240,7 @@ export function ReactQueryDevtools({
         {isResolvedOpen ? (
           <Button
             type="button"
+            aria-label="Close React Query Devtools"
             {...otherCloseButtonProps}
             onClick={() => {
               setIsOpen(false)
@@ -303,7 +333,8 @@ const sortFns = {
       ? 1
       : -1,
   'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
-  'Last Updated': (a, b) => (a.state.updatedAt < b.state.updatedAt ? 1 : -1),
+  'Last Updated': (a, b) =>
+    a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
 
 export const ReactQueryDevtoolsPanel = React.forwardRef(
@@ -378,9 +409,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
 
     React.useEffect(() => {
       if (isOpen) {
-        return queryCache.subscribe(() => {
+        const unsubscribe = queryCache.subscribe(() => {
           setUnsortedQueries(Object.values(queryCache.getAll()))
         })
+        // re-subscribing after the panel is closed and re-opened won't trigger the callback,
+        // So we'll manually populate our state
+        setUnsortedQueries(Object.values(queryCache.getAll()))
+
+        return unsubscribe
       }
       return undefined
     }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
@@ -517,6 +553,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 >
                   <Input
                     placeholder="Filter"
+                    aria-label="Filter by queryhash"
                     value={filter ?? ''}
                     onChange={e => setFilter(e.target.value)}
                     onKeyDown={e => {
@@ -530,6 +567,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   {!filter ? (
                     <>
                       <Select
+                        aria-label="Sort queries"
                         value={sort}
                         onChange={e => setSort(e.target.value)}
                         style={{
@@ -569,6 +607,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 <div
                   suppressHydrationWarning
                   key={query.queryHash || i}
+                  role="button"
+                  aria-label={`Open query details for ${query.queryHash}`}
                   onClick={() =>
                     setActiveQueryHash(
                       activeQueryHash === query.queryHash ? '' : query.queryHash

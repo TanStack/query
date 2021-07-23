@@ -238,8 +238,10 @@ export class QueryClient {
 
     const refetchFilters: QueryFilters = {
       ...filters,
-      active: filters.refetchActive ?? true,
-      inactive: filters.refetchInactive,
+      // if filters.refetchActive is not provided and filters.active is explicitly false,
+      // e.g. invalidateQueries({ active: false }), we don't want to refetch active queries
+      active: filters.refetchActive ?? filters.active ?? true,
+      inactive: filters.refetchInactive ?? false,
     }
 
     return notifyManager.batch(() => {

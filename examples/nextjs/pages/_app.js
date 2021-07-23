@@ -4,13 +4,10 @@ import { Hydrate } from 'react-query/hydration'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 export default function MyApp({ Component, pageProps }) {
-  const queryClientRef = React.useRef()
-  if (!queryClientRef.current) {
-    queryClientRef.current = new QueryClient()
-  }
+  const [queryClient] = React.useState(() => new QueryClient())
 
   return (
-    <QueryClientProvider client={queryClientRef.current}>
+    <QueryClientProvider client={queryClient}>
       <Hydrate state={pageProps.dehydratedState}>
         <Component {...pageProps} />
       </Hydrate>
