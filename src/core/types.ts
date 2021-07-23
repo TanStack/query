@@ -481,7 +481,7 @@ export interface MutationOptions<
   variables?: TVariables
   onMutate?: (
     variables: TVariables
-  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  ) => Promise<TContext | undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,

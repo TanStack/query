@@ -77,7 +77,7 @@ export interface UseMutationOptions<
   mutationKey?: MutationKey
   onMutate?: (
     variables: TVariables
-  ) => Promise<TContext> | Promise<undefined> | TContext | undefined
+  ) => Promise<TContext | undefined> | TContext | undefined
   onSuccess?: (
     data: TData,
     variables: TVariables,
