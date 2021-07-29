@@ -116,14 +116,12 @@ export class QueryClient {
   getQueriesData<TData = unknown>(
     queryKeyOrFilters: QueryKey | QueryFilters
   ): [QueryKey, TData][] {
-    return notifyManager.batch(() =>
-      this.getQueryCache()
-        .findAll(queryKeyOrFilters)
-        .map(({ queryKey, state }) => {
-          const data = state.data as TData
-          return [queryKey, data]
-        })
-    )
+    return this.getQueryCache()
+      .findAll(queryKeyOrFilters)
+      .map(({ queryKey, state }) => {
+        const data = state.data as TData
+        return [queryKey, data]
+      })
   }
 
   setQueryData<TData>(
