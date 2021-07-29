@@ -223,6 +223,37 @@ describe('queryClient', () => {
     })
   })
 
+  describe('getQueriesData', () => {
+    test('should return the query data for all matched queries', () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      queryClient.setQueryData([key1, 1], 1)
+      queryClient.setQueryData([key1, 2], 2)
+      queryClient.setQueryData([key2, 2], 2)
+      expect(queryClient.getQueriesData([key1])).toEqual([
+        [[key1, 1], 1],
+        [[key1, 2], 2],
+      ])
+    })
+
+    test('should return empty array if queries are not found', () => {
+      const key = queryKey()
+      expect(queryClient.getQueriesData(key)).toEqual([])
+    })
+
+    test('should accept query filters', () => {
+      queryClient.setQueryData(['key', 1], 1)
+      queryClient.setQueryData(['key', 2], 2)
+      const query1 = queryCache.find(['key', 1])!
+
+      const result = queryClient.getQueriesData({
+        predicate: query => query === query1,
+      })
+
+      expect(result).toEqual([[['key', 1], 1]])
+    })
+  })
+
   describe('fetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
