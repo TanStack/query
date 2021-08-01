@@ -381,6 +381,27 @@ React Query also exports a handy [`useIsFetching`](./useIsFetching) hook that wi
 
 This method returns the number of fetching queries.
 
+## `queryClient.isError`
+
+This `isError` method returns an `integer` representing the number of queries that encountered an error.
+
+```js
+if (queryClient.isError()) {
+  console.log('At least one query errored!')
+}
+```
+
+React Query also exports a handy [`useIsError`](./useIsError) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+
+**Options**
+
+- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+
+**Returns**
+
+This method returns the number of queries that hit an error.
+
 ## `queryClient.isMutating`
 
 This `isMutating` method returns an `integer` representing how many mutations, if any, in the cache are currently fetching.
