@@ -41,6 +41,10 @@ export interface QueryFilters {
    * Include or exclude fetching queries
    */
   fetching?: boolean
+  /**
+   * Include or exclude errored queries
+   */
+  error?: boolean
 }
 
 export interface MutationFilters {
@@ -197,6 +201,7 @@ export function matchQuery(
     predicate,
     queryKey,
     stale,
+    error,
   } = filters
 
   if (isQueryKey(queryKey)) {
@@ -210,6 +215,7 @@ export function matchQuery(
   }
 
   const queryStatusFilter = mapQueryStatusFilter(active, inactive)
+  // console.log('queryStatusFilter', queryStatusFilter)
 
   if (queryStatusFilter === 'none') {
     return false
@@ -228,6 +234,10 @@ export function matchQuery(
   }
 
   if (typeof fetching === 'boolean' && query.isFetching() !== fetching) {
+    return false
+  }
+
+  if (error === true && query.state.status !== 'error') {
     return false
   }
 
