@@ -97,8 +97,7 @@ export class QueryClient {
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.fetching = true
-    const res = this.queryCache.findAll(filters).length
-    return res
+    return this.queryCache.findAll(filters).length
   }
 
   isError(filters?: QueryFilters): number
@@ -106,8 +105,7 @@ export class QueryClient {
   isError(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
     filters.error = true
-    const res = this.queryCache.findAll(filters).length
-    return res
+    return this.queryCache.findAll(filters).length
   }
 
   isMutating(filters?: MutationFilters): number {
