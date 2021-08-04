@@ -23,7 +23,6 @@ await queryClient.prefetchQuery('posts', fetchPosts)
 
 Its available methods are:
 
-- [`QueryClient`](#queryclient)
 - [`queryClient.fetchQuery`](#queryclientfetchquery)
 - [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
 - [`queryClient.prefetchQuery`](#queryclientprefetchquery)
