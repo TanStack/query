@@ -3489,6 +3489,64 @@ describe('useQuery', () => {
     ])
   })
 
+  it('should use placeholder data even for disabled queries', async () => {
+    const key1 = queryKey()
+
+    const states: { state: UseQueryResult<string>; count: number }[] = []
+
+    function Page() {
+      const [count, setCount] = React.useState(0)
+
+      const state = useQuery(key1, () => 'data', {
+        placeholderData: 'placeholder',
+        enabled: count === 0,
+      })
+
+      states.push({ state, count })
+
+      React.useEffect(() => {
+        setCount(1)
+      }, [])
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <div>Status: {state.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: data'))
+
+    expect(states).toMatchObject([
+      {
+        state: {
+          isSuccess: true,
+          isPlaceholderData: true,
+          data: 'placeholder',
+        },
+        count: 0,
+      },
+      {
+        state: {
+          isSuccess: true,
+          isPlaceholderData: true,
+          data: 'placeholder',
+        },
+        count: 1,
+      },
+      {
+        state: {
+          isSuccess: true,
+          isPlaceholderData: false,
+          data: 'data',
+        },
+        count: 1,
+      },
+    ])
+  })
+
   it('placeholder data should run through select', async () => {
     const key1 = queryKey()
 
