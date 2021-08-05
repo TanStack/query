@@ -111,6 +111,19 @@ export class QueryClient {
     return this.queryCache.find<TData>(queryKey, filters)?.state.data
   }
 
+  getQueriesData<TData = unknown>(queryKey: QueryKey): [QueryKey, TData][]
+  getQueriesData<TData = unknown>(filters: QueryFilters): [QueryKey, TData][]
+  getQueriesData<TData = unknown>(
+    queryKeyOrFilters: QueryKey | QueryFilters
+  ): [QueryKey, TData][] {
+    return this.getQueryCache()
+      .findAll(queryKeyOrFilters)
+      .map(({ queryKey, state }) => {
+        const data = state.data as TData
+        return [queryKey, data]
+      })
+  }
+
   setQueryData<TData>(
     queryKey: QueryKey,
     updater: Updater<TData | undefined, TData>,
