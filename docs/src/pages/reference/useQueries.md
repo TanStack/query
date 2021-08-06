@@ -16,7 +16,10 @@ const results = useQueries({
 
 **Options**
 
-The `useQueries` hook accepts an options object with a **queries** key whose value is an array with query option objects identical to the [`useQuery` hook](/reference/useQuery).
+The `useQueries` hook accepts an options object with a **queries** key whose value is an array with query option objects identical to the [`useQuery` hook](/reference/useQuery) (excluding the `context` option).
+
+- `context?: React.Context<QueryClient | undefined>`
+  - Use this to use a custom React Query context. Otherwise, the default will be used.
 
 **Returns**
 

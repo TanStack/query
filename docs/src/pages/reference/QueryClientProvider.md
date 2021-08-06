@@ -14,6 +14,7 @@ function App() {
   return <QueryClientProvider client={queryClient}>...</QueryClientProvider>
 }
 ```
+
 **Options**
 
 - `client: QueryClient`
@@ -21,4 +22,6 @@ function App() {
   - the QueryClient instance to provide
 - `contextSharing: boolean`
   - defaults to `false`
-  - Set this to `true` to enable context sharing, which will share the first and at least one instance of the context across the window  to ensure that if React Query is used across  different bundles or microfrontends they will  all use the same **instance** of context, regardless of module scoping.
+  - Set this to `true` to enable context sharing, which will share the first and at least one instance of the context across the window to ensure that if React Query is used across different bundles or microfrontends they will all use the same **instance** of context, regardless of module scoping.
+- `context?: React.Context<QueryClient | undefined>`
+  - Use this to use a custom React Query context. Otherwise, the default will be used.

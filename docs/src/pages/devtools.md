@@ -18,6 +18,7 @@ import { ReactQueryDevtools } from 'react-query/devtools'
 ```
 
 By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
+
 ## Floating Mode
 
 Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
@@ -50,6 +51,8 @@ function App() {
 - `position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
   - The position of the React Query logo to open and close the devtools panel
+- `context?: React.Context<QueryClient | undefined>`
+  - Use this to use a custom React Query context. Otherwise, the default will be used.
 
 ## Embedded Mode
 

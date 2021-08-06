@@ -2,23 +2,29 @@ import React from 'react'
 
 import { notifyManager } from '../core/notifyManager'
 import { QueryKey } from '../core/types'
+import { ContextOptions } from '../reactjs/types'
 import { parseFilterArgs, QueryFilters } from '../core/utils'
 import { useQueryClient } from './QueryClientProvider'
 
-export function useIsFetching(filters?: QueryFilters): number
+interface Options extends ContextOptions {}
+
+export function useIsFetching(filters?: QueryFilters, options?: Options): number
 export function useIsFetching(
   queryKey?: QueryKey,
-  filters?: QueryFilters
+  filters?: QueryFilters,
+  options?: Options
 ): number
 export function useIsFetching(
   arg1?: QueryKey | QueryFilters,
-  arg2?: QueryFilters
+  arg2?: QueryFilters | Options,
+  arg3?: Options
 ): number {
   const mountedRef = React.useRef(false)
 
-  const queryClient = useQueryClient()
+  const [filters, options = {}] = parseFilterArgs(arg1, arg2, arg3)
 
-  const [filters] = parseFilterArgs(arg1, arg2)
+  const queryClient = useQueryClient({ context: options.context })
+
   const [isFetching, setIsFetching] = React.useState(
     queryClient.isFetching(filters)
   )

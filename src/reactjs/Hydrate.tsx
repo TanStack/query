@@ -3,8 +3,8 @@ import React from 'react'
 import { hydrate, HydrateOptions } from '../core'
 import { useQueryClient } from './QueryClientProvider'
 
-export function useHydrate(state: unknown, options?: HydrateOptions) {
-  const queryClient = useQueryClient()
+export function useHydrate(state: unknown, options: HydrateOptions = {}) {
+  const queryClient = useQueryClient({ context: options.context })
 
   const optionsRef = React.useRef(options)
   optionsRef.current = options

@@ -8,6 +8,14 @@ import {
   MutationObserverOptions,
   MutateFunction,
 } from '../core/types'
+import type { QueryClient } from '../core/queryClient'
+
+export interface ContextOptions {
+  /**
+   * Use this to pass your React Query context. Otherwise, the default will be used.
+   */
+  context?: React.Context<QueryClient | undefined>
+}
 
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
@@ -15,13 +23,8 @@ export interface UseBaseQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> extends QueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  > {}
+> extends ContextOptions,
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
@@ -42,13 +45,14 @@ export interface UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> extends InfiniteQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  > {}
+> extends ContextOptions,
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    > {}
 
 export type UseBaseQueryResult<
   TData = unknown,
@@ -70,10 +74,11 @@ export interface UseMutationOptions<
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> extends Omit<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
-  > {}
+> extends ContextOptions,
+    Omit<
+      MutationObserverOptions<TData, TError, TVariables, TContext>,
+      '_defaulted' | 'variables'
+    > {}
 
 export type UseMutateFunction<
   TData = unknown,

@@ -154,11 +154,17 @@ export function parseFilterArgs<
     : [arg1 || {}, arg2]) as [TFilters, TOptions]
 }
 
-export function parseMutationFilterArgs(
-  arg1?: QueryKey | MutationFilters,
-  arg2?: MutationFilters
-): MutationFilters | undefined {
-  return isQueryKey(arg1) ? { ...arg2, mutationKey: arg1 } : arg1
+export function parseMutationFilterArgs<
+  TFilters extends MutationFilters,
+  TOptions = unknown
+>(
+  arg1?: QueryKey | TFilters,
+  arg2?: TFilters | TOptions,
+  arg3?: TOptions
+): [TFilters, TOptions | undefined] {
+  return (isQueryKey(arg1)
+    ? [{ ...arg2, mutationKey: arg1 }, arg3]
+    : [arg1 || {}, arg2]) as [TFilters, TOptions]
 }
 
 export function matchQuery(

@@ -17,6 +17,8 @@ const isMutatingPosts = useIsMutating(['posts'])
 
 - `mutationKey?: string | unknown[]`
 - `filters?: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
+- `context?: React.Context<QueryClient | undefined>`
+  - Use this to use a custom React Query context. Otherwise, the default will be used.
 
 **Returns**
 
