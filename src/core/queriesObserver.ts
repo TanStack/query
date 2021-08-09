@@ -85,7 +85,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       let hasIndexChange = false
 
       const prevObservers = this.observers
-      const prevOberversMap = this.observersMap
+      const prevObserversMap = this.observersMap
 
       const newResult: QueryObserverResult[] = []
       const newObservers: QueryObserver[] = []
@@ -98,7 +98,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
         const queryHash = defaultedOptions.queryHash!
         const observer = this.getObserver(defaultedOptions)
 
-        if (prevOberversMap[queryHash]) {
+        if (prevObserversMap[queryHash]) {
           observer.setOptions(defaultedOptions, notifyOptions)
         }
 
