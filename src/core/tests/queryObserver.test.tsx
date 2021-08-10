@@ -473,8 +473,8 @@ describe('queryObserver', () => {
     })
 
     expect(observer.getCurrentResult()).toMatchObject({
-      status: 'idle',
-      data: undefined,
+      status: 'success',
+      data: 'placeholder',
     })
 
     const results: QueryObserverResult<unknown>[] = []

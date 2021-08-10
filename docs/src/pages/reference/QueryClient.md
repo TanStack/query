@@ -23,30 +23,31 @@ await queryClient.prefetchQuery('posts', fetchPosts)
 
 Its available methods are:
 
-- [`fetchQuery`](#queryclientfetchquery)
-- [`fetchInfiniteQuery`](#queryclientfetchinfinitequery)
-- [`prefetchQuery`](#queryclientprefetchquery)
-- [`prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
-- [`getQueryData`](#queryclientgetquerydata)
-- [`setQueryData`](#queryclientsetquerydata)
-- [`setQueriesData`](#queryclientsetqueriesdata)
-- [`getQueryState`](#queryclientgetquerystate)
-- [`invalidateQueries`](#queryclientinvalidatequeries)
-- [`refetchQueries`](#queryclientrefetchqueries)
-- [`cancelQueries`](#queryclientcancelqueries)
-- [`removeQueries`](#queryclientremovequeries)
-- [`resetQueries`](#queryclientresetqueries)
-- [`isFetching`](#queryclientisfetching)
-- [`isMutating`](#queryclientismutating)
-- [`getDefaultOptions`](#queryclientsetdefaultoptions)
-- [`setDefaultOptions`](#queryclientgetdefaultoptions)
-- [`getQueryDefaults`](#queryclientgetquerydefaults)
-- [`setQueryDefaults`](#queryclientsetquerydefaults)
-- [`getMutationDefaults`](#queryclientgetmutationdefaults)
-- [`setMutationDefaults`](#queryclientsetmutationdefaults)
-- [`getQueryCache`](#queryclientgetquerycache)
-- [`getMutationCache`](#queryclientgetmutationcache)
-- [`clear`](#queryclientclear)
+- [`queryClient.fetchQuery`](#queryclientfetchquery)
+- [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
+- [`queryClient.prefetchQuery`](#queryclientprefetchquery)
+- [`queryClient.prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
+- [`queryClient.getQueryData`](#queryclientgetquerydata)
+- [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
+- [`queryClient.setQueryData`](#queryclientsetquerydata)
+- [`queryClient.getQueryState`](#queryclientgetquerystate)
+- [`queryClient.setQueriesData`](#queryclientsetqueriesdata)
+- [`queryClient.invalidateQueries`](#queryclientinvalidatequeries)
+- [`queryClient.refetchQueries`](#queryclientrefetchqueries)
+- [`queryClient.cancelQueries`](#queryclientcancelqueries)
+- [`queryClient.removeQueries`](#queryclientremovequeries)
+- [`queryClient.resetQueries`](#queryclientresetqueries)
+- [`queryClient.isFetching`](#queryclientisfetching)
+- [`queryClient.isMutating`](#queryclientismutating)
+- [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
+- [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
+- [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
+- [`queryClient.setQueryDefaults`](#queryclientsetquerydefaults)
+- [`queryClient.getMutationDefaults`](#queryclientgetmutationdefaults)
+- [`queryClient.setMutationDefaults`](#queryclientsetmutationdefaults)
+- [`queryClient.getQueryCache`](#queryclientgetquerycache)
+- [`queryClient.getMutationCache`](#queryclientgetmutationcache)
+- [`queryClient.clear`](#queryclientclear)
 
 **Options**
 
@@ -174,6 +175,31 @@ const data = queryClient.getQueryData(queryKey)
 
 - `data: TData | undefined`
   - The data for the cached query, or `undefined` if the query does not exist.
+
+## `queryClient.getQueriesData`
+
+`getQueriesData` is a synchronous function that can be used to get the cached data of multiple queries. Only queries that match the passed queryKey or queryFilter will be returned. If there are no matching queries, an empty array will be returned.
+
+```js
+const data = queryClient.getQueriesData(queryKey | filters)
+```
+
+**Options**
+
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys) | `filters: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+  - if a queryKey is passed as the argument, the data with queryKeys fuzzily matching this param will be returned
+  - if a filter is passed, the data with queryKeys matching the filter will be returned
+
+**Returns**
+
+- `[queryKey:QueryKey, data:TData | unknown][]`
+  - An array of tuples for the matched query keys, or `[]` if there are no matches. The tuples are the query key and its associated data.
+  
+**Caveats**
+
+Because the returned data in each tuple can be of varying structures (i.e. using a filter to return "active" queries can return different data types), the `TData` generic defaults to `unknown`. If you provide a more specific type to `TData` it is assumed that you are certain each tuple's data entry is all the same type.
+
+This distinction is more a "convenience" for ts devs that know which structure will be returned.
 
 ## `queryClient.setQueryData`
 
