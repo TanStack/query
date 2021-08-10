@@ -236,7 +236,11 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchOptions extends ResultOptions {
+export interface RefetchPageOptions<TQueryFnData = unknown> {
+  refetchPage: (lastPage: TQueryFnData, allPages: TQueryFnData[]) => boolean
+}
+
+export interface RefetchOptions extends ResultOptions, RefetchPageOptions {
   cancelRefetch?: boolean
 }
 
@@ -245,11 +249,11 @@ export interface InvalidateQueryFilters extends QueryFilters {
   refetchInactive?: boolean
 }
 
-export interface InvalidateOptions {
+export interface InvalidateOptions extends RefetchPageOptions {
   throwOnError?: boolean
 }
 
-export interface ResetOptions {
+export interface ResetOptions extends RefetchPageOptions {
   throwOnError?: boolean
 }
 
