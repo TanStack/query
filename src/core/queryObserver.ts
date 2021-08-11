@@ -763,6 +763,7 @@ function shouldFetchOptionally(
   return (
     options.enabled !== false &&
     (query !== prevQuery || prevOptions.enabled === false) &&
+    (prevQuery.state.status !== 'error' || prevOptions.enabled === false) &&
     isStale(query, options)
   )
 }
