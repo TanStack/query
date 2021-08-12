@@ -68,6 +68,23 @@ const wrapper = ({ children }) => (
 
 This will set the defaults for all queries in the component tree to "no retries". It is important to know that this will only work if your actual useQuery has no explicit retries set. If you have a query that wants 5 retries, this will still take precedence, because defaults are only taken as a fallback.
 
+## Turn off network error logging
+
+When testing we want to supress network errors being logged to the console.
+To do this, we can use `react-query`'s `setLogger()` function.
+
+```ts
+// as part of your test setup
+import { setLogger } from 'react-query'
+
+setLogger({
+  log: console.log,
+  warn: console.warn,
+  // ✅ no more errors on the console
+  error: () => {},
+})
+```
+
 ## Testing Network Calls
 
 The primary use for React Query is to cache network requests, so it's important that we can test our code is making the correct network requests in the first place.
