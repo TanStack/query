@@ -647,4 +647,68 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('error boundary'))
     consoleMock.mockRestore()
   })
+
+  it('should error catched in error boundary without infinite loop when query keys changed', async () => {
+    const consoleMock = mockConsoleError()
+
+    let succeed = true
+
+    function Page() {
+      const [key, rerender] = React.useReducer(x => x + 1, 0)
+      const queryKeys = [key, succeed]
+
+      const result = useQuery(
+        queryKeys,
+        async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      return (
+        <div>
+          <span>rendered</span> <span>{result.data}</span>
+          <button aria-label="fail" onClick={rerender}>
+            fail
+          </button>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render suspense fallback (Loading...)
+    await waitFor(() => rendered.getByText('Loading...'))
+    // resolve promise -> render Page (rendered)
+    await waitFor(() => rendered.getByText('rendered'))
+
+    // change promise result to error
+    succeed = false
+    // change query key
+    fireEvent.click(rendered.getByLabelText('fail'))
+    // render error boundary fallback (error boundary)
+    await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
+  })
 })
