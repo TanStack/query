@@ -5,7 +5,7 @@ import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
-export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
+export function useQueries<TData = unknown, TError = unknown>(queries: UseQueryOptions[]): UseQueryResult<TData,TError>[] {
   const mountedRef = React.useRef(false)
   const [, forceUpdate] = React.useState(0)
 
