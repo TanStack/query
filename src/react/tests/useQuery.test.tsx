@@ -3883,4 +3883,126 @@ describe('useQuery', () => {
     expect(renders).toBe(2)
     expect(hashes).toBe(2)
   })
+
+  it('should refetch when changed enabled to true in error state', async () => {
+    const consoleMock = mockConsoleError()
+
+    const queryFn = jest.fn()
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+      return Promise.reject(new Error('Suspense Error Bingo'))
+    })
+
+    function Page({ enabled }: { enabled: boolean }) {
+      const { error, isLoading } = useQuery(['key'], queryFn, {
+        enabled,
+        retry: false,
+        retryOnMount: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      })
+
+      if (isLoading) {
+        return <div>status: loading</div>
+      }
+      if (error instanceof Error) {
+        return <div>error</div>
+      }
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const [enabled, toggle] = React.useReducer(x => !x, true)
+
+      return (
+        <div>
+          <Page enabled={enabled} />
+          <button aria-label="retry" onClick={toggle}>
+            retry {enabled}
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // initial state check
+    rendered.getByText('status: loading')
+
+    // // render error state component
+    await waitFor(() => rendered.getByText('error'))
+    expect(queryFn).toBeCalledTimes(1)
+
+    // change to enabled to false
+    fireEvent.click(rendered.getByLabelText('retry'))
+    await waitFor(() => rendered.getByText('error'))
+    expect(queryFn).toBeCalledTimes(1)
+
+    // // change to enabled to true
+    fireEvent.click(rendered.getByLabelText('retry'))
+    expect(queryFn).toBeCalledTimes(2)
+
+    consoleMock.mockRestore()
+  })
+
+  it('should refetch when query key changed when previous status is error', async () => {
+    const consoleMock = mockConsoleError()
+    const queryFn = jest.fn()
+
+    function Page({ id }: { id: number }) {
+      queryFn.mockImplementation(async () => {
+        await sleep(10)
+        if (id % 2 === 1) {
+          return Promise.reject(new Error('Suspense Error Bingo'))
+        } else {
+          return 'data'
+        }
+      })
+      const { error, isLoading } = useQuery([id], queryFn, {
+        retry: false,
+        retryOnMount: false,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
+      })
+
+      if (isLoading) {
+        return <div>status: loading</div>
+      }
+      if (error instanceof Error) {
+        return <div>error</div>
+      }
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const [id, changeId] = React.useReducer(x => x + 1, 1)
+
+      return (
+        <div>
+          <Page id={id} />
+          <button aria-label="change" onClick={changeId}>
+            change {id}
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // initial state check
+    rendered.getByText('status: loading')
+
+    // render error state component
+    await waitFor(() => rendered.getByText('error'))
+
+    // change to enabled to false
+    fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('rendered'))
+
+    // // change to enabled to true
+    fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('error'))
+
+    consoleMock.mockRestore()
+  })
 })
