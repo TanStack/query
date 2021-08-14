@@ -275,7 +275,7 @@ export class QueryObserver<
   }
 
   refetch(
-    options?: RefetchOptions
+    options?: RefetchOptions<TData>
   ): Promise<QueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
