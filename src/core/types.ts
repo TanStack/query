@@ -240,7 +240,9 @@ export interface RefetchPageOptions<TQueryFnData = unknown> {
   refetchPage: (lastPage: TQueryFnData, allPages: TQueryFnData[]) => boolean
 }
 
-export interface RefetchOptions extends ResultOptions, RefetchPageOptions {
+export interface RefetchOptions<TQueryFnData = unknown>
+  extends ResultOptions,
+    RefetchPageOptions<TQueryFnData> {
   cancelRefetch?: boolean
 }
 
@@ -286,7 +288,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isStale: boolean
   isSuccess: boolean
   refetch: (
-    options?: RefetchOptions
+    options?: RefetchOptions<TData>
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
