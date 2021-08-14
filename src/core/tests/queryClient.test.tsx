@@ -946,7 +946,7 @@ describe('queryClient', () => {
 
       await queryClient.refetchQueries(
         { queryKey: key },
-        { refetchPage: (page, allPages) => page === allPages[0] }
+        { refetchPage: (_, index) => index === 0 }
       )
 
       expect(queryClient.getQueryData(key)).toMatchObject({
@@ -974,7 +974,7 @@ describe('queryClient', () => {
       await queryClient.invalidateQueries(
         { queryKey: key, refetchInactive: true },
         {
-          refetchPage: (page, allPages) => {
+          refetchPage: (page, _, allPages) => {
             return page === allPages[0]
           },
         }
@@ -1007,7 +1007,7 @@ describe('queryClient', () => {
       await queryClient.resetQueries(
         { queryKey: key, inactive: true },
         {
-          refetchPage: (page, allPages) => {
+          refetchPage: (page, _, allPages) => {
             return page === allPages[0]
           },
         }

@@ -237,7 +237,11 @@ export interface ResultOptions {
 }
 
 export interface RefetchPageOptions<TQueryFnData = unknown> {
-  refetchPage: (lastPage: TQueryFnData, allPages: TQueryFnData[]) => boolean
+  refetchPage: (
+    lastPage: TQueryFnData,
+    index: number,
+    allPages: TQueryFnData[]
+  ) => boolean
 }
 
 export interface RefetchOptions<TQueryFnData = unknown>

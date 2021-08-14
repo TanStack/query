@@ -109,7 +109,7 @@ export function infiniteQueryBehavior<
 
           const shouldFetchFirstPage =
             refetchPage && oldPages[0]
-              ? refetchPage(oldPages[0], oldPages)
+              ? refetchPage(oldPages[0], 0, oldPages)
               : true
 
           // Fetch first page
@@ -122,7 +122,7 @@ export function infiniteQueryBehavior<
             promise = promise.then(pages => {
               const shouldFetchNextPage =
                 refetchPage && oldPages[i]
-                  ? refetchPage(oldPages[i], oldPages)
+                  ? refetchPage(oldPages[i], i, oldPages)
                   : true
 
               if (shouldFetchNextPage) {

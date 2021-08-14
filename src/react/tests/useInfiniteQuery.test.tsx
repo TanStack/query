@@ -619,7 +619,7 @@ describe('useInfiniteQuery', () => {
         setActTimeout(() => {
           multiplier.current = 2
           refetch({
-            refetchPage: (page, allPages) => page === allPages[0],
+            refetchPage: (_, index) => index === 0,
           })
         }, 20)
       }, [fetchNextPage, refetch])
