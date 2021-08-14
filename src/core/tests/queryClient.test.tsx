@@ -984,5 +984,38 @@ describe('queryClient', () => {
         pages: [20, 11],
       })
     })
+
+    test('resetQueries', async () => {
+      const key = queryKey()
+      let multiplier = 1
+      new InfiniteQueryObserver<number>(queryClient, {
+        queryKey: key,
+        queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
+        getNextPageParam: lastPage => lastPage + 1,
+        initialData: () => ({
+          pages: [10, 11],
+          pageParams: [10, 11],
+        }),
+      })
+
+      expect(queryClient.getQueryData(key)).toMatchObject({
+        pages: [10, 11],
+      })
+
+      multiplier = 2
+
+      await queryClient.resetQueries(
+        { queryKey: key, inactive: true },
+        {
+          refetchPage: (page, allPages) => {
+            return page === allPages[0]
+          },
+        }
+      )
+
+      expect(queryClient.getQueryData(key)).toMatchObject({
+        pages: [20, 11],
+      })
+    })
   })
 })
