@@ -1,4 +1,4 @@
-export { dehydrate, hydrate } from '../core/hydration'
+export { dehydrate, hydrate } from 'react-query'
 export { useHydrate, Hydrate } from './react'
 
 // Types
