@@ -1,5 +1,11 @@
 import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
-import { QueryCache, QueryClient, QueryFunction, QueryObserver } from '../..'
+import {
+  InfiniteQueryObserver,
+  QueryCache,
+  QueryClient,
+  QueryFunction,
+  QueryObserver,
+} from '../..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -916,6 +922,67 @@ describe('queryClient', () => {
       observer1.destroy()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(0)
+    })
+  })
+
+  describe('refetch only certain pages of an infinite query', () => {
+    test('refetchQueries', async () => {
+      const key = queryKey()
+      let multiplier = 1
+      const observer = new InfiniteQueryObserver<number>(queryClient, {
+        queryKey: key,
+        queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
+        getNextPageParam: lastPage => lastPage + 1,
+      })
+
+      await observer.fetchNextPage()
+      await observer.fetchNextPage()
+
+      expect(queryClient.getQueryData(key)).toMatchObject({
+        pages: [10, 11],
+      })
+
+      multiplier = 2
+
+      await queryClient.refetchQueries(
+        { queryKey: key },
+        { refetchPage: (page, allPages) => page === allPages[0] }
+      )
+
+      expect(queryClient.getQueryData(key)).toMatchObject({
+        pages: [20, 11],
+      })
+    })
+    test('invalidateQueries', async () => {
+      const key = queryKey()
+      let multiplier = 1
+      const observer = new InfiniteQueryObserver<number>(queryClient, {
+        queryKey: key,
+        queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
+        getNextPageParam: lastPage => lastPage + 1,
+      })
+
+      await observer.fetchNextPage()
+      await observer.fetchNextPage()
+
+      expect(queryClient.getQueryData(key)).toMatchObject({
+        pages: [10, 11],
+      })
+
+      multiplier = 2
+
+      await queryClient.invalidateQueries(
+        { queryKey: key, refetchInactive: true },
+        {
+          refetchPage: (page, allPages) => {
+            return page === allPages[0]
+          },
+        }
+      )
+
+      expect(queryClient.getQueryData(key)).toMatchObject({
+        pages: [20, 11],
+      })
     })
   })
 })
