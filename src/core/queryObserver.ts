@@ -277,7 +277,10 @@ export class QueryObserver<
   refetch(
     options?: RefetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
-    return this.fetch(options)
+    return this.fetch({
+      ...options,
+      meta: { refetchPage: options?.refetchPage },
+    })
   }
 
   fetchOptimistic(
