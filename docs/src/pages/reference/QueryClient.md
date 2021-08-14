@@ -194,7 +194,7 @@ const data = queryClient.getQueriesData(queryKey | filters)
 
 - `[queryKey:QueryKey, data:TData | unknown][]`
   - An array of tuples for the matched query keys, or `[]` if there are no matches. The tuples are the query key and its associated data.
-  
+
 **Caveats**
 
 Because the returned data in each tuple can be of varying structures (i.e. using a filter to return "active" queries can return different data types), the `TData` generic defaults to `unknown`. If you provide a more specific type to `TData` it is assumed that you are certain each tuple's data entry is all the same type.
@@ -290,6 +290,9 @@ await queryClient.invalidateQueries('posts', {
 - `refetchOptions?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
+    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
+    - Use this function to specify which pages should be refetched
 
 ## `queryClient.refetchQueries`
 
@@ -318,6 +321,9 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
 - `refetchOptions?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
+    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
+    - Use this function to specify which pages should be refetched
 
 **Returns**
 
@@ -381,6 +387,9 @@ queryClient.resetQueries(queryKey, { exact: true })
 - `resetOptions?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
+    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
+    - Use this function to specify which pages should be refetched
 
 **Returns**
 
