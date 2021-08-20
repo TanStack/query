@@ -3,8 +3,10 @@ import {
   fireEvent,
   screen,
   waitFor,
+  act,
   waitForElementToBeRemoved,
 } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import { useQuery } from '../..'
 import {
   getByTextContent,
@@ -221,6 +223,41 @@ describe('ReactQueryDevtools', () => {
     expect(bazItem).toBeNull()
 
     fireEvent.change(filterInput, { target: { value: '' } })
+  })
+
+  it('should show a disabled label if all observers are disabled', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const [enabled, setEnabled] = React.useState(false)
+      const { data } = useQuery(
+        'key',
+        async () => {
+          await sleep(10)
+          return 'test'
+        },
+        {
+          enabled,
+        }
+      )
+
+      return (
+        <div>
+          <h1>{data}</h1>
+          <button onClick={() => setEnabled(true)}>Enable Query</button>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, { initialIsOpen: true })
+
+    await screen.findByText(/disabled/i)
+
+    await act(async () => {
+      fireEvent.click(await screen.findByText(/enable query/i))
+    })
+
+    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
   })
 
   it('should sort the queries according to the sorting filter', async () => {
