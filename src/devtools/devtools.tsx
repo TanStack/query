@@ -646,7 +646,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                     }}
                   >
                     {query.getObserversCount()}
-                    {query.isActive() ? null : ' (disabled)'}
+                    {query.isActive() ? null : ' (query disabled)'}
                   </div>
                   <Code
                     suppressHydrationWarning
