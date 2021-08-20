@@ -656,8 +656,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                         background: theme.gray,
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
                         fontWeight: 'bold',
+                        padding: '0 0.5rem',
                       }}
                     >
                       disabled
