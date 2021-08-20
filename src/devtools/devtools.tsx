@@ -646,7 +646,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                     }}
                   >
                     {query.getObserversCount()}
-                    {query.isActive() ? null : ' (query disabled)'}
                   </div>
                   <Code
                     suppressHydrationWarning
@@ -654,6 +653,16 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                       padding: '.5rem',
                     }}
                   >
+                    {query.isActive() ? null : (
+                      <QueryKey
+                        suppressHydrationWarning
+                        style={{
+                          background: theme.gray,
+                        }}
+                      >
+                        disabled
+                      </QueryKey>
+                    )}
                     {`${query.queryHash}`}
                   </Code>
                 </div>
