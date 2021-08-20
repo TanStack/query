@@ -4,7 +4,7 @@ import type {
   InfiniteData,
   QueryFunctionContext,
   QueryOptions,
-  RefetchPageOptions,
+  RefetchQueryFilters,
 } from './types'
 
 export function infiniteQueryBehavior<
@@ -15,7 +15,7 @@ export function infiniteQueryBehavior<
   return {
     onFetch: context => {
       context.fetchFn = () => {
-        const refetchPage: RefetchPageOptions['refetchPage'] | undefined =
+        const refetchPage: RefetchQueryFilters['refetchPage'] | undefined =
           context.fetchOptions?.meta?.refetchPage
         const fetchMore = context.fetchOptions?.meta?.fetchMore
         const pageParam = fetchMore?.pageParam

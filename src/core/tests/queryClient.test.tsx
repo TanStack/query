@@ -944,10 +944,10 @@ describe('queryClient', () => {
 
       multiplier = 2
 
-      await queryClient.refetchQueries(
-        { queryKey: key },
-        { refetchPage: (_, index) => index === 0 }
-      )
+      await queryClient.refetchQueries({
+        queryKey: key,
+        refetchPage: (_, index) => index === 0,
+      })
 
       expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
@@ -971,14 +971,13 @@ describe('queryClient', () => {
 
       multiplier = 2
 
-      await queryClient.invalidateQueries(
-        { queryKey: key, refetchInactive: true },
-        {
-          refetchPage: (page, _, allPages) => {
-            return page === allPages[0]
-          },
-        }
-      )
+      await queryClient.invalidateQueries({
+        queryKey: key,
+        refetchInactive: true,
+        refetchPage: (page, _, allPages) => {
+          return page === allPages[0]
+        },
+      })
 
       expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
@@ -1004,14 +1003,13 @@ describe('queryClient', () => {
 
       multiplier = 2
 
-      await queryClient.resetQueries(
-        { queryKey: key, inactive: true },
-        {
-          refetchPage: (page, _, allPages) => {
-            return page === allPages[0]
-          },
-        }
-      )
+      await queryClient.resetQueries({
+        queryKey: key,
+        inactive: true,
+        refetchPage: (page, _, allPages) => {
+          return page === allPages[0]
+        },
+      })
 
       expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],

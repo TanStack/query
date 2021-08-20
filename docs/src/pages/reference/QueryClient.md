@@ -287,12 +287,12 @@ await queryClient.invalidateQueries('posts', {
   - `refetchInactive: Boolean`
     - Defaults to `false`
     - When set to `true`, queries that match the refetch predicate and are not being rendered via `useQuery` and friends will be both marked as invalid and also refetched in the background
-- `refetchOptions?: RefetchOptions`:
-  - `throwOnError?: boolean`
-    - When set to `true`, this method will throw if any of the query refetch tasks fail.
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
+- `refetchOptions?: RefetchOptions`:
+  - `throwOnError?: boolean`
+    - When set to `true`, this method will throw if any of the query refetch tasks fail.
 
 ## `queryClient.refetchQueries`
 
@@ -318,12 +318,12 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-- `refetchOptions?: RefetchOptions`:
-  - `throwOnError?: boolean`
-    - When set to `true`, this method will throw if any of the query refetch tasks fail.
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
+- `refetchOptions?: RefetchOptions`:
+  - `throwOnError?: boolean`
+    - When set to `true`, this method will throw if any of the query refetch tasks fail.
 
 **Returns**
 
@@ -384,12 +384,12 @@ queryClient.resetQueries(queryKey, { exact: true })
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-- `resetOptions?: ResetOptions`:
-  - `throwOnError?: boolean`
-    - When set to `true`, this method will throw if any of the query refetch tasks fail.
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
+- `resetOptions?: ResetOptions`:
+  - `throwOnError?: boolean`
+    - When set to `true`, this method will throw if any of the query refetch tasks fail.
 
 **Returns**
 
