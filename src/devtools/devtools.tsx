@@ -647,22 +647,28 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   >
                     {query.getObserversCount()}
                   </div>
+                  {query.isActive() ? null : (
+                    <div
+                      suppressHydrationWarning
+                      style={{
+                        flex: '0 0 auto',
+                        height: '2rem',
+                        background: theme.gray,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      disabled
+                    </div>
+                  )}
                   <Code
                     suppressHydrationWarning
                     style={{
                       padding: '.5rem',
                     }}
                   >
-                    {query.isActive() ? null : (
-                      <QueryKey
-                        suppressHydrationWarning
-                        style={{
-                          background: theme.gray,
-                        }}
-                      >
-                        disabled
-                      </QueryKey>
-                    )}
                     {`${query.queryHash}`}
                   </Code>
                 </div>
