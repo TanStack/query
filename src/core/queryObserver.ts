@@ -1,3 +1,4 @@
+import { RefetchQueryFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -275,9 +276,12 @@ export class QueryObserver<
   }
 
   refetch(
-    options?: RefetchOptions
+    options?: RefetchOptions & RefetchQueryFilters<TData>
   ): Promise<QueryObserverResult<TData, TError>> {
-    return this.fetch(options)
+    return this.fetch({
+      ...options,
+      meta: { refetchPage: options?.refetchPage },
+    })
   }
 
   fetchOptimistic(

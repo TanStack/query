@@ -1,6 +1,11 @@
 import type { QueryBehavior } from './query'
 import { isCancelable } from './retryer'
-import type { InfiniteData, QueryFunctionContext, QueryOptions } from './types'
+import type {
+  InfiniteData,
+  QueryFunctionContext,
+  QueryOptions,
+  RefetchQueryFilters,
+} from './types'
 
 export function infiniteQueryBehavior<
   TQueryFnData,
@@ -10,6 +15,8 @@ export function infiniteQueryBehavior<
   return {
     onFetch: context => {
       context.fetchFn = () => {
+        const refetchPage: RefetchQueryFilters['refetchPage'] | undefined =
+          context.fetchOptions?.meta?.refetchPage
         const fetchMore = context.fetchOptions?.meta?.fetchMore
         const pageParam = fetchMore?.pageParam
         const isFetchingNextPage = fetchMore?.direction === 'forward'
@@ -22,6 +29,18 @@ export function infiniteQueryBehavior<
         // Get query function
         const queryFn =
           context.options.queryFn || (() => Promise.reject('Missing queryFn'))
+
+        const buildNewPages = (
+          pages: unknown[],
+          param: unknown,
+          page: unknown,
+          previous?: boolean
+        ) => {
+          newPageParams = previous
+            ? [param, ...newPageParams]
+            : [...newPageParams, param]
+          return previous ? [page, ...pages] : [...pages, page]
+        }
 
         // Create function to fetch a page
         const fetchPage = (
@@ -45,12 +64,9 @@ export function infiniteQueryBehavior<
 
           const queryFnResult = queryFn(queryFnContext)
 
-          const promise = Promise.resolve(queryFnResult).then(page => {
-            newPageParams = previous
-              ? [param, ...newPageParams]
-              : [...newPageParams, param]
-            return previous ? [page, ...pages] : [...pages, page]
-          })
+          const promise = Promise.resolve(queryFnResult).then(page =>
+            buildNewPages(pages, param, page, previous)
+          )
 
           if (isCancelable(queryFnResult)) {
             const promiseAsAny = promise as any
@@ -91,16 +107,33 @@ export function infiniteQueryBehavior<
 
           const manual = typeof context.options.getNextPageParam === 'undefined'
 
+          const shouldFetchFirstPage =
+            refetchPage && oldPages[0]
+              ? refetchPage(oldPages[0], 0, oldPages)
+              : true
+
           // Fetch first page
-          promise = fetchPage([], manual, oldPageParams[0])
+          promise = shouldFetchFirstPage
+            ? fetchPage([], manual, oldPageParams[0])
+            : Promise.resolve(buildNewPages([], oldPageParams[0], oldPages[0]))
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
             promise = promise.then(pages => {
-              const param = manual
-                ? oldPageParams[i]
-                : getNextPageParam(context.options, pages)
-              return fetchPage(pages, manual, param)
+              const shouldFetchNextPage =
+                refetchPage && oldPages[i]
+                  ? refetchPage(oldPages[i], i, oldPages)
+                  : true
+
+              if (shouldFetchNextPage) {
+                const param = manual
+                  ? oldPageParams[i]
+                  : getNextPageParam(context.options, pages)
+                return fetchPage(pages, manual, param)
+              }
+              return Promise.resolve(
+                buildNewPages(pages, oldPageParams[i], oldPages[i])
+              )
             })
           }
         }
