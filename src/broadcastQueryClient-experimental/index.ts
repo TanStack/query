@@ -24,7 +24,14 @@ export function broadcastQueryClient({
   const queryCache = queryClient.getQueryCache()
 
   queryClient.getQueryCache().subscribe(queryEvent => {
-    if (transaction || !queryEvent?.query) {
+    //@ts-ignore
+    if (transaction || !(queryEvent?.query || queryEvent?.type === 'invalidate') ) {
+      return
+    }
+
+    //@ts-ignore
+    if (queryEvent.type === 'invalidate') {
+      channel.postMessage(queryEvent)
       return
     }
 
@@ -59,6 +66,10 @@ export function broadcastQueryClient({
     }
 
     tx(() => {
+      if (action.type === 'invalidate') {
+        queryClient.invalidateQueries(action.filters, action.options)
+      }
+
       const { type, queryHash, queryKey, state } = action
 
       if (type === 'queryUpdated') {

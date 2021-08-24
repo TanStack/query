@@ -263,6 +263,8 @@ export class QueryClient {
     }
 
     return notifyManager.batch(() => {
+      //@ts-ignore
+      this.queryCache.notify({ type: 'invalidate', filters, options })
       this.queryCache.findAll(filters).forEach(query => {
         query.invalidate()
       })

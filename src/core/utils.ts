@@ -153,6 +153,28 @@ export function parseMutationArgs<
   return { ...arg1 } as TOptions
 }
 
+function getQueryFilters<TFilters extends QueryFilters>(arg: TFilters | undefined): QueryFilters | undefined {
+  if (!arg) return
+  const {
+    active,
+    exact,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+    fetching,
+  } = arg;
+  return {
+    active,
+    exact,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+    fetching,
+  }
+}
+
 export function parseFilterArgs<
   TFilters extends QueryFilters,
   TOptions = unknown
@@ -162,8 +184,8 @@ export function parseFilterArgs<
   arg3?: TOptions
 ): [TFilters, TOptions | undefined] {
   return (isQueryKey(arg1)
-    ? [{ ...arg2, queryKey: arg1 }, arg3]
-    : [arg1 || {}, arg2]) as [TFilters, TOptions]
+    ? [{ ...getQueryFilters(arg2), queryKey: arg1 }, arg3]
+    : [getQueryFilters(arg1) || {}, arg2]) as [TFilters, TOptions]
 }
 
 export function parseMutationFilterArgs(
@@ -302,11 +324,11 @@ export function stableValueHash(value: any): string {
   return JSON.stringify(value, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
-          .sort()
-          .reduce((result, key) => {
-            result[key] = val[key]
-            return result
-          }, {} as any)
+        .sort()
+        .reduce((result, key) => {
+          result[key] = val[key]
+          return result
+        }, {} as any)
       : val
   )
 }
