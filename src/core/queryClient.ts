@@ -40,7 +40,7 @@ import { CancelOptions } from './types'
 
 // TYPES
 
-interface QueryClientConfig {
+export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
   defaultOptions?: DefaultOptions

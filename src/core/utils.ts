@@ -1,6 +1,12 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
-import { EnsuredQueryKey } from './types'
+import {
+  EnsuredQueryKey,
+  InvalidateQueryFilters,
+  RefetchPageFilters,
+  RefetchQueryFilters,
+  ResetQueryFilters,
+} from './types'
 import type {
   MutationFunction,
   MutationKey,
@@ -153,6 +159,42 @@ export function parseMutationArgs<
   return { ...arg1 } as TOptions
 }
 
+function getQueryFilters<TFilters extends QueryFilters>(
+  arg: TFilters | undefined
+):
+  | QueryFilters
+  | InvalidateQueryFilters
+  | ResetQueryFilters
+  | RefetchQueryFilters
+  | RefetchPageFilters
+  | undefined {
+  if (!arg) return
+  const {
+    active,
+    exact,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+    fetching,
+    refetchActive,
+    refetchInactive,
+    refetchPage,
+  } = (arg as unknown) as any
+  return {
+    active,
+    exact,
+    inactive,
+    predicate,
+    queryKey,
+    stale,
+    fetching,
+    refetchActive,
+    refetchInactive,
+    refetchPage,
+  }
+}
+
 export function parseFilterArgs<
   TFilters extends QueryFilters,
   TOptions = unknown
@@ -162,8 +204,8 @@ export function parseFilterArgs<
   arg3?: TOptions
 ): [TFilters, TOptions | undefined] {
   return (isQueryKey(arg1)
-    ? [{ ...arg2, queryKey: arg1 }, arg3]
-    : [arg1 || {}, arg2]) as [TFilters, TOptions]
+    ? [{ ...getQueryFilters(arg2), queryKey: arg1 }, arg3]
+    : [getQueryFilters(arg1) || {}, arg2]) as [TFilters, TOptions]
 }
 
 export function parseMutationFilterArgs(
