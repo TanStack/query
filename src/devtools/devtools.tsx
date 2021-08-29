@@ -240,6 +240,7 @@ export function ReactQueryDevtools({
         {isResolvedOpen ? (
           <Button
             type="button"
+            aria-label="Close React Query Devtools"
             {...otherCloseButtonProps}
             onClick={() => {
               setIsOpen(false)
@@ -332,7 +333,8 @@ const sortFns = {
       ? 1
       : -1,
   'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
-  'Last Updated': (a, b) => (a.state.updatedAt < b.state.updatedAt ? 1 : -1),
+  'Last Updated': (a, b) =>
+    a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
 
 export const ReactQueryDevtoolsPanel = React.forwardRef(
@@ -551,6 +553,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 >
                   <Input
                     placeholder="Filter"
+                    aria-label="Filter by queryhash"
                     value={filter ?? ''}
                     onChange={e => setFilter(e.target.value)}
                     onKeyDown={e => {
@@ -564,6 +567,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   {!filter ? (
                     <>
                       <Select
+                        aria-label="Sort queries"
                         value={sort}
                         onChange={e => setSort(e.target.value)}
                         style={{
@@ -603,6 +607,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 <div
                   suppressHydrationWarning
                   key={query.queryHash || i}
+                  role="button"
+                  aria-label={`Open query details for ${query.queryHash}`}
                   onClick={() =>
                     setActiveQueryHash(
                       activeQueryHash === query.queryHash ? '' : query.queryHash
@@ -641,6 +647,22 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                   >
                     {query.getObserversCount()}
                   </div>
+                  {query.isActive() ? null : (
+                    <div
+                      suppressHydrationWarning
+                      style={{
+                        flex: '0 0 auto',
+                        height: '2rem',
+                        background: theme.gray,
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontWeight: 'bold',
+                        padding: '0 0.5rem',
+                      }}
+                    >
+                      disabled
+                    </div>
+                  )}
                   <Code
                     suppressHydrationWarning
                     style={{

@@ -1,3 +1,4 @@
+import { RefetchQueryFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -275,9 +276,12 @@ export class QueryObserver<
   }
 
   refetch(
-    options?: RefetchOptions
+    options?: RefetchOptions & RefetchQueryFilters<TData>
   ): Promise<QueryObserverResult<TData, TError>> {
-    return this.fetch(options)
+    return this.fetch({
+      ...options,
+      meta: { refetchPage: options?.refetchPage },
+    })
   }
 
   fetchOptimistic(
@@ -495,7 +499,7 @@ export class QueryObserver<
     if (
       typeof options.placeholderData !== 'undefined' &&
       typeof data === 'undefined' &&
-      status === 'loading'
+      (status === 'loading' || status === 'idle')
     ) {
       let placeholderData
 
@@ -763,6 +767,7 @@ function shouldFetchOptionally(
   return (
     options.enabled !== false &&
     (query !== prevQuery || prevOptions.enabled === false) &&
+    (query.state.status !== 'error' || prevOptions.enabled === false) &&
     isStale(query, options)
   )
 }

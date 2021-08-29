@@ -594,6 +594,82 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should be able to refetch only specific pages when refetchPages is provided', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const multiplier = React.useRef(1)
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 10 }) => Number(pageParam) * multiplier.current,
+        {
+          getNextPageParam: lastPage => lastPage + 1,
+        }
+      )
+
+      states.push(state)
+
+      const { fetchNextPage, refetch } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          fetchNextPage()
+        }, 10)
+        setActTimeout(() => {
+          multiplier.current = 2
+          refetch({
+            refetchPage: (_, index) => index === 0,
+          })
+        }, 20)
+      }, [fetchNextPage, refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(50)
+
+    expect(states.length).toBe(6)
+    // Initial fetch
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isFetching: true,
+      isFetchingNextPage: false,
+    })
+    // Initial fetch done
+    expect(states[1]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: false,
+      isFetchingNextPage: false,
+    })
+    // Fetch next page
+    expect(states[2]).toMatchObject({
+      data: { pages: [10] },
+      isFetching: true,
+      isFetchingNextPage: true,
+    })
+    // Fetch next page done
+    expect(states[3]).toMatchObject({
+      data: { pages: [10, 11] },
+      isFetching: false,
+      isFetchingNextPage: false,
+    })
+    // Refetch
+    expect(states[4]).toMatchObject({
+      data: { pages: [10, 11] },
+      isFetching: true,
+      isFetchingNextPage: false,
+    })
+    // Refetch done, only page one has been refetched and multiplied
+    expect(states[5]).toMatchObject({
+      data: { pages: [20, 11] },
+      isFetching: false,
+      isFetchingNextPage: false,
+    })
+  })
+
   it('should silently cancel any ongoing fetch when fetching more', async () => {
     const key = queryKey()
     const states: UseInfiniteQueryResult<number>[] = []

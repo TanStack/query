@@ -14,10 +14,11 @@ But don't worry! If your queries are high-bandwidth or potentially very expensiv
 ## Using `axios`
 
 ```js
-import { CancelToken } from 'axios'
+import axios from 'axios'
 
 const query = useQuery('todos', () => {
   // Create a new CancelToken source for this request
+  const CancelToken = axios.CancelToken
   const source = CancelToken.source()
 
   const promise = axios.get('/todos', {

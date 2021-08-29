@@ -95,6 +95,27 @@ function Projects() {
 
 When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
 
+### refetchPage
+
+If you only want to actively refetch a subset of all pages, you can pass the `refetchPage` function to `refetch` returned from `useInfiniteQuery`.
+
+```js
+const { refetch } = useInfiniteQuery('projects', fetchProjects, {
+  getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
+})
+
+// only refetch the first page
+refetch({ refetchPage: (page, index) => index === 0 })
+```
+
+You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](/reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](/reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](/reference/QueryClient#queryclientresetqueries).
+
+**Signature**
+
+- `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
+
+The function is executed for each page, and only pages where this function returns `true` will be refetched.
+
 ## What if I need to pass custom information to my query function?
 
 By default, the variable returned from `getNextPageParam` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchNextPage` function which will override the default variable like so:

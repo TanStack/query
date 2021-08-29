@@ -3,7 +3,7 @@ id: QueryCache
 title: QueryCache
 ---
 
-The `QueryCache` is the storage mechanism for React Query. It stores all of the data, meta information and state of queries it contains.
+The `QueryCache` is the storage mechanism for React Query. It stores all the data, meta information and state of queries it contains.
 
 **Normally, you will not interact with the QueryCache directly and instead use the `QueryClient` for a specific cache.**
 
@@ -14,6 +14,9 @@ const queryCache = new QueryCache({
   onError: error => {
     console.log(error)
   },
+  onSuccess: data => {
+    console.log(data)
+  }
 })
 
 const query = queryCache.find('posts')
@@ -31,6 +34,15 @@ Its available methods are:
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
   - This function will be called if some query encounters an error.
+- `onSuccess?: (data: unknown, query: Query) => void`
+  - Optional
+  - This function will be called if some query is successful.
+
+## Global callbacks
+
+The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle these events on a global level. They are different to `defaultOptions` provided to the QueryClient because:
+- `defaultOptions` can be overridden by each Query - the global callbacks will **always** be called.
+- `defaultOptions` callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
 
 ## `queryCache.find`
 

@@ -25,6 +25,34 @@ describe('mutationCache', () => {
       expect(onError).toHaveBeenCalledWith('error', 'vars', 'context', mutation)
     })
   })
+  describe('MutationCacheConfig.onSuccess', () => {
+    test('should be called when a mutation is successful', async () => {
+      const consoleMock = mockConsoleError()
+      const key = queryKey()
+      const onSuccess = jest.fn()
+      const testCache = new MutationCache({ onSuccess })
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      try {
+        await testClient.executeMutation({
+          mutationKey: key,
+          variables: 'vars',
+          mutationFn: () => Promise.resolve({ data: 5 }),
+          onMutate: () => 'context',
+        })
+      } catch {
+        consoleMock.mockRestore()
+      }
+
+      const mutation = testCache.getAll()[0]
+      expect(onSuccess).toHaveBeenCalledWith(
+        { data: 5 },
+        'vars',
+        'context',
+        mutation
+      )
+    })
+  })
 
   describe('find', () => {
     test('should filter correctly', async () => {

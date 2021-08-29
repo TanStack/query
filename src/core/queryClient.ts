@@ -24,7 +24,9 @@ import type {
   QueryObserverOptions,
   QueryOptions,
   RefetchOptions,
+  RefetchQueryFilters,
   ResetOptions,
+  ResetQueryFilters,
 } from './types'
 import type { QueryState, SetDataOptions } from './query'
 import { QueryCache } from './queryCache'
@@ -111,6 +113,19 @@ export class QueryClient {
     return this.queryCache.find<TData>(queryKey, filters)?.state.data
   }
 
+  getQueriesData<TData = unknown>(queryKey: QueryKey): [QueryKey, TData][]
+  getQueriesData<TData = unknown>(filters: QueryFilters): [QueryKey, TData][]
+  getQueriesData<TData = unknown>(
+    queryKeyOrFilters: QueryKey | QueryFilters
+  ): [QueryKey, TData][] {
+    return this.getQueryCache()
+      .findAll(queryKeyOrFilters)
+      .map(({ queryKey, state }) => {
+        const data = state.data as TData
+        return [queryKey, data]
+      })
+  }
+
   setQueryData<TData>(
     queryKey: QueryKey,
     updater: Updater<TData | undefined, TData>,
@@ -169,21 +184,24 @@ export class QueryClient {
     })
   }
 
-  resetQueries(filters?: QueryFilters, options?: ResetOptions): Promise<void>
   resetQueries(
-    queryKey?: QueryKey,
-    filters?: QueryFilters,
+    filters?: ResetQueryFilters,
     options?: ResetOptions
   ): Promise<void>
   resetQueries(
-    arg1?: QueryKey | QueryFilters,
-    arg2?: QueryFilters | ResetOptions,
+    queryKey?: QueryKey,
+    filters?: ResetQueryFilters,
+    options?: ResetOptions
+  ): Promise<void>
+  resetQueries(
+    arg1?: QueryKey | ResetQueryFilters,
+    arg2?: ResetQueryFilters | ResetOptions,
     arg3?: ResetOptions
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
     const queryCache = this.queryCache
 
-    const refetchFilters: QueryFilters = {
+    const refetchFilters: RefetchQueryFilters = {
       ...filters,
       active: true,
     }
@@ -236,7 +254,7 @@ export class QueryClient {
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
-    const refetchFilters: QueryFilters = {
+    const refetchFilters: RefetchQueryFilters = {
       ...filters,
       // if filters.refetchActive is not provided and filters.active is explicitly false,
       // e.g. invalidateQueries({ active: false }), we don't want to refetch active queries
@@ -253,23 +271,27 @@ export class QueryClient {
   }
 
   refetchQueries(
-    filters?: QueryFilters,
+    filters?: RefetchQueryFilters,
     options?: RefetchOptions
   ): Promise<void>
   refetchQueries(
     queryKey?: QueryKey,
-    filters?: QueryFilters,
+    filters?: RefetchQueryFilters,
     options?: RefetchOptions
   ): Promise<void>
   refetchQueries(
-    arg1?: QueryKey | QueryFilters,
-    arg2?: QueryFilters | RefetchOptions,
+    arg1?: QueryKey | RefetchQueryFilters,
+    arg2?: RefetchQueryFilters | RefetchOptions,
     arg3?: RefetchOptions
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.queryCache.findAll(filters).map(query => query.fetch())
+      this.queryCache.findAll(filters).map(query =>
+        query.fetch(undefined, {
+          meta: { refetchPage: filters?.refetchPage },
+        })
+      )
     )
 
     let promise = Promise.all(promises).then(noop)
