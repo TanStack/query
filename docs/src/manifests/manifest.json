@@ -208,6 +208,17 @@
       ]
     },
     {
+      "title": "Community Resources",
+      "heading": true,
+      "routes": [
+        {
+          "title": "TkDodo's Blog",
+          "path": "/community/tkdodos-blog",
+          "editUrl": "/community/tkdodos-blog.md"
+        }
+      ]
+    },
+    {
       "title": "Examples",
       "heading": true,
       "routes": [
