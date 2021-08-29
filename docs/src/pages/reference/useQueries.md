@@ -12,6 +12,8 @@ const results = useQueries([
 ])
 ```
 
+Note that if _any_ query in the array of query option objects is configured with `suspense: true` or `useQueryBoundary: true`, that configuration will apply to _all_ queries handled by that `useQueries` hook.
+
 **Options**
 
 The `useQueries` hook accepts an array with query option objects identical to the [`useQuery` hook](/reference/useQuery).
