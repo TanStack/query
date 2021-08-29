@@ -58,7 +58,7 @@ export function styled(type, newStyles, queries = {}) {
   })
 }
 
-function useIsMounted() {
+export function useIsMounted() {
   const mountedRef = React.useRef(false)
   const isMounted = React.useCallback(() => mountedRef.current, [])
 
