@@ -3,7 +3,7 @@ id: tkdodos-blog
 title: TkDodo's Blog
 ---
 
-React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog posts about using and working with the library. Some articles show general best practices, but most have an _opinionated_ point of view.
+React Query maintainer [TkDodo](https://tkdodo.eu) has a series of blog posts about using and working with the library. Some articles show general best practices, but most have an _opinionated_ point of view.
 
 
 ## [#1: Practical React Query](https://tkdodo.eu/blog/practical-react-query)
