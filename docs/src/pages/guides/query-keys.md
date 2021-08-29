@@ -5,7 +5,7 @@ title: Query Keys
 
 At its core, React Query manages query caching for you based on query keys. Query keys can be as simple as a string, or as complex as an array of many strings and nested objects. As long as the query key is serializable, and **unique to the query's data**, you can use it!
 
-### String-Only Query Keys
+## String-Only Query Keys
 
 The simplest form of a key is actually not an array, but an individual string. When a string query key is passed, it is converted to an array internally with the string as the only item in the query key. This format is useful for:
 
@@ -20,7 +20,7 @@ useQuery('todos', ...) // queryKey === ['todos']
 useQuery('somethingSpecial', ...) // queryKey === ['somethingSpecial']
 ```
 
-### Array Keys
+## Array Keys
 
 When a query needs more information to uniquely describe its data, you can use an array with a string and any number of serializable objects to describe it. This is useful for:
 
@@ -43,7 +43,7 @@ useQuery(['todos', { type: 'done' }], ...)
 // queryKey === ['todos', { type: 'done' }]
 ```
 
-### Query Keys are hashed deterministically!
+## Query Keys are hashed deterministically!
 
 This means that no matter the order of keys in objects, all of the following queries are considered equal:
 
@@ -70,3 +70,8 @@ function Todos({ todoId }) {
   const result = useQuery(['todos', todoId], () => fetchTodoById(todoId))
 }
 ```
+
+## Further reading
+
+For tips on organizing Query Keys in larger applications, have a look at [Effective React Query Keys](../community/tkdodos-blog#8-effective-react-query-keys) from
+the Community Resources.

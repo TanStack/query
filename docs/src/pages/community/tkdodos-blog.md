@@ -3,7 +3,7 @@ id: tkdodos-blog
 title: TkDodo's Blog
 ---
 
-React Query maintainer [TkDodo](https://tkdodo.eu) has a series of blog posts about using and working with the library. Some articles show general best practices, but most have an _opinionated_ point of view.
+React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog posts about using and working with the library. Some articles show general best practices, but most have an _opinionated_ point of view.
 
 
 ## [#1: Practical React Query](https://tkdodo.eu/blog/practical-react-query)
@@ -24,7 +24,7 @@ React Query maintainer [TkDodo](https://tkdodo.eu) has a series of blog posts ab
 
 ## [#5: Testing React Query](https://tkdodo.eu/blog/testing-react-query)
 
-> The docs already cover pretty well what you need to do to get started when testing React Query. This article shows some additional tips (like turning off `retries` or silencing the `console`) you might want to follow when testing custom hooks or components using them. It also links to an [example repository](https://github.com/TkDodo/testing-react-query) with tests for success and error states. [Read more...](https://tkdodo.eu/blog/testing-react-query)
+> The docs already cover pretty well what you need to do to get started when testing React Query. This article shows some additional tips (like turning off `retries` or silencing the `console`) you might want to follow when testing custom hooks or components using them. It also links to an [example repository](https://github.com/TkDodo/testing-react-query) with tests for success and error states, powered by `mock-service-worker`. [Read more...](https://tkdodo.eu/blog/testing-react-query)
 
 ## [#6: React Query and TypeScript](https://tkdodo.eu/blog/react-query-and-type-script)
 
