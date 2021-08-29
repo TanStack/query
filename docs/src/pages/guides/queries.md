@@ -92,3 +92,6 @@ function Todos() {
   )
 }
 ```
+## Further Reading
+
+For an alternative way of performing status checks, have a look at the [Community Resources](../community/tkdodos-blog#4-status-checks-in-react-query).

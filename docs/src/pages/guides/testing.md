@@ -177,3 +177,7 @@ expect(result.current.data.pages).toStrictEqual([
 
 expectation.done();
 ```
+## Further reading
+
+For additional tips and an alternative setup using `mock-service-worker`, have a look at [Testing React Query](../community/tkdodos-blog#5-testing-react-query) from
+the Community Resources.

@@ -16,8 +16,13 @@ Things to keep in mind:
 
 When defining a custom hook you need to specify the result and error types, for example:
 
-```js
+```ts
 function useGroups() {
   return useQuery<Group[], Error>('groups', fetchGroups)
 }
 ```
+
+## Further Reading
+
+For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog#6-react-query-and-typescript) from
+the Community Resources.

@@ -53,3 +53,7 @@ function Todo({ blogPostId }) {
   })
 }
 ```
+
+## Further reading
+
+For a comparison between `Placholder Data` and `Initial Data`, have a look at the [Community Resources](../community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
