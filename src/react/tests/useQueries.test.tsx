@@ -2,7 +2,13 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { mockConsoleError, queryKey, renderWithClient, setActTimeout, sleep } from './utils'
+import {
+  mockConsoleError,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
 import {
   useQueries,
   QueryClient,
