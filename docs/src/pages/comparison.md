@@ -8,7 +8,7 @@ title: Comparison | React Query vs SWR vs Apollo vs RTK Query
 Feature/Capability Key:
 
 - ✅ 1st-class, built-in, and ready to use with no added configuration or code
-- 🟡 Supported, but as an unoffical 3rd party or community library/contribution
+- 🟡 Supported, but as an unofficial 3rd party or community library/contribution
 - 🔶 Supported and documented, but requires extra user-code to implement
 - 🛑 Not officially supported or documented.
 
