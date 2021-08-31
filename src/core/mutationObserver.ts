@@ -4,6 +4,7 @@ import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
 import type {
   MutateOptions,
+  MutationObserverBaseResult,
   MutationObserverResult,
   MutationObserverOptions,
 } from './types'
@@ -129,7 +130,12 @@ export class MutationObserver<
       ? this.currentMutation.state
       : getDefaultState<TData, TError, TVariables, TContext>()
 
-    this.currentResult = {
+    const result: MutationObserverBaseResult<
+      TData,
+      TError,
+      TVariables,
+      TContext
+    > = {
       ...state,
       isLoading: state.status === 'loading',
       isSuccess: state.status === 'success',
@@ -138,6 +144,13 @@ export class MutationObserver<
       mutate: this.mutate,
       reset: this.reset,
     }
+
+    this.currentResult = result as MutationObserverResult<
+      TData,
+      TError,
+      TVariables,
+      TContext
+    >
   }
 
   private notify(options: NotifyOptions) {
