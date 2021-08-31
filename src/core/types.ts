@@ -100,14 +100,18 @@ export interface QueryObserverOptions<
   enabled?: boolean
   /**
    * The time in milliseconds after data is considered stale.
-   * If set to `Infinity`, the data will never be considered stale.
+   * If set to `Infinity`, the daxta will never be considered stale.
    */
   staleTime?: number
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
+   * If set to a function, the function will be executed with the latest data and error to compute a frequency
    * Defaults to `false`.
    */
-  refetchInterval?: number | false
+  refetchInterval?:
+    | number
+    | false
+    | ((data: TData | undefined, error: TError | null) => number | false)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.

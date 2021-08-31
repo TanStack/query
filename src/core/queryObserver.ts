@@ -71,6 +71,7 @@ export class QueryObserver<
   private previousSelectError: Error | null
   private staleTimeoutId?: number
   private refetchIntervalId?: number
+  private currentRefetchInterval?: number | false
   private trackedProps!: Array<keyof QueryObserverResult>
 
   constructor(
@@ -187,14 +188,16 @@ export class QueryObserver<
       this.updateStaleTimeout()
     }
 
+    const nextRefetchInterval = this.computeRefetchInterval()
+
     // Update refetch interval if needed
     if (
       mounted &&
       (this.currentQuery !== prevQuery ||
         this.options.enabled !== prevOptions.enabled ||
-        this.options.refetchInterval !== prevOptions.refetchInterval)
+        nextRefetchInterval !== this.currentRefetchInterval)
     ) {
-      this.updateRefetchInterval()
+      this.updateRefetchInterval(nextRefetchInterval)
     }
   }
 
@@ -365,13 +368,24 @@ export class QueryObserver<
     }, timeout)
   }
 
-  private updateRefetchInterval(): void {
+  private computeRefetchInterval() {
+    return typeof this.options.refetchInterval === 'function'
+      ? this.options.refetchInterval(
+          this.currentResult.data,
+          this.currentResult.error
+        )
+      : this.options.refetchInterval
+  }
+
+  private updateRefetchInterval(nextInterval?: number | false): void {
     this.clearRefetchInterval()
+
+    this.currentRefetchInterval = nextInterval ?? this.computeRefetchInterval()
 
     if (
       isServer ||
       this.options.enabled === false ||
-      !isValidTimeout(this.options.refetchInterval)
+      !isValidTimeout(this.currentRefetchInterval)
     ) {
       return
     }
@@ -383,7 +397,7 @@ export class QueryObserver<
       ) {
         this.executeFetch()
       }
-    }, this.options.refetchInterval)
+    }, this.currentRefetchInterval)
   }
 
   private updateTimers(): void {
