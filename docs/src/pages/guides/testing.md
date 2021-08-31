@@ -70,7 +70,7 @@ This will set the defaults for all queries in the component tree to "no retries"
 
 ## Turn off network error logging
 
-When testing we want to supress network errors being logged to the console.
+When testing we want to suppress network errors being logged to the console.
 To do this, we can use `react-query`'s `setLogger()` function.
 
 ```ts

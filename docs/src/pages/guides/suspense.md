@@ -45,7 +45,7 @@ In addition to queries behaving differently in suspense mode, mutations also beh
 
 ## Resetting Error Boundaries
 
-Whether you are using **suspense** or **useErrorBoundaries** in your queries, you will need a way to let queries know that you want to try again when re-rendering after some error occured.
+Whether you are using **suspense** or **useErrorBoundaries** in your queries, you will need a way to let queries know that you want to try again when re-rendering after some error occurred.
 
 Query errors can be reset with the `QueryErrorResetBoundary` component or with the `useQueryErrorResetBoundary` hook.
 
