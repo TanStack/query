@@ -167,6 +167,10 @@ export interface QueryObserverOptions<
    */
   useErrorBoundary?: boolean
   /**
+   * If an error is to be thrown by `useErrorBoundary`/`suspense` returning false from this callback will place that error in `error` instead.
+   */
+  shouldThrowError?: (err: TError) => boolean
+  /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
   select?: (data: TQueryData) => TData
@@ -528,6 +532,7 @@ export interface MutationObserverOptions<
   TContext = unknown
 > extends MutationOptions<TData, TError, TVariables, TContext> {
   useErrorBoundary?: boolean
+  shouldThrowError?: (err: TError) => boolean
 }
 
 export interface MutateOptions<

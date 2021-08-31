@@ -23,6 +23,7 @@ const {
   onSettled,
   onSuccess,
   useErrorBoundary,
+  shouldThrowError,
 })
 
 mutate(variables, {
@@ -69,6 +70,9 @@ mutate(variables, {
 - `useErrorBoundary`
   - Defaults to the global query config's `useErrorBoundary` value, which is `false`
   - Set this to true if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
+- `shouldThrowError: () => boolean`
+  - Default to throwing all errors
+  - Use this if you want to use `useErrorBoundary` or `suspense`, but want to handle some errors locally without them being thrown.
 
 **Returns**
 

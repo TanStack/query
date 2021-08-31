@@ -102,7 +102,13 @@ export function useMutation<
     obsRef.current!.mutate(variables, mutateOptions).catch(noop)
   }, [])
 
-  if (currentResult.error && obsRef.current.options.useErrorBoundary) {
+  if (
+    currentResult.error &&
+    obsRef.current.options.useErrorBoundary &&
+    (obsRef.current.options.shouldThrowError
+      ? obsRef.current.options.shouldThrowError(currentResult.error)
+      : true)
+  ) {
     throw currentResult.error
   }
 

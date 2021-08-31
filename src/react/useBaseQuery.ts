@@ -125,7 +125,10 @@ export function useBaseQuery<
   if (
     (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) &&
     result.isError &&
-    !result.isFetching
+    !result.isFetching &&
+    (defaultedOptions.shouldThrowError
+      ? defaultedOptions.shouldThrowError(result.error)
+      : true)
   ) {
     throw result.error
   }
