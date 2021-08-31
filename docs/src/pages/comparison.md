@@ -12,52 +12,53 @@ Feature/Capability Key:
 - 🔶 Supported and documented, but requires extra user-code to implement
 - 🛑 Not officially supported or documented.
 
-|                                                    | React Query                              | SWR [_(Website)_][swr]     | Apollo Client [_(Website)_][apollo]   | RTK-Query [_(Website)_][rtk-query]   |
-| -------------------------------------------------- | ---------------------------------------- | -------------------------- | ------------------------------------- | ------------------------------------ |
-| Github Repo / Stars                                | [![][stars-react-query]][gh-react-query] | [![][stars-swr]][gh-swr]   | [![][stars-apollo]][gh-apollo]        | [![][stars-rtk-query]][gh-rtk-query] |
-| Platform Requirements                              | React                                    | React                      | React, GraphQL                        | Redux                                |
-| Their Comparison                                   |                                          | (none)                     | (none)                                | [Comparison][rtk-query-comparison]   |
-| Supported Query Syntax                             | Promise, REST, GraphQL                   | Promise, REST, GraphQL     | GraphQL                               | Promise, REST, GraphQL               |
-| Supported Frameworks                               | React                                    | React                      | React + Others                        | Any                                  |
-| Supported Query Keys                               | JSON                                     | JSON                       | GraphQL Query                         | JSON                                 |
-| Query Key Change Detection                         | Deep Compare (Stable Serialization)      | Referential Equality (===) | Deep Compare (Unstable Serialization) | Referential Equality (===)           |
-| Query Data Memoization Level                       | Query + Structural Sharing               | Query                      | Query + Entity + Structural Sharing   | Query                                |
-| Bundle Size                                        | [![][bp-react-query]][bpl-react-query]   | [![][bp-swr]][bpl-swr]     | [![][bp-apollo]][bpl-apollo]          | [![][bp-rtk-query]][bpl-rtk-query]   |
-| API Definition                                     | On-Use, Declarative                      | On-Use                     | GraphQL Schema                        | Declarative                          |
-| Queries                                            | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Caching                                            | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Devtools                                           | ✅                                       | 🟡                         | ✅                                    | ✅                                   |
-| Polling/Intervals                                  | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Parallel Queries                                   | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Dependent Queries                                  | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Paginated Queries                                  | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Infinite Queries                                   | ✅                                       | ✅                         | ✅                                    | 🛑                                   |
-| Bi-directional Infinite Queries                    | ✅                                       | 🔶                         | 🔶                                    | 🛑                                   |
-| Infinite Query Refetching                          | ✅                                       | ✅                         | 🛑                                    | 🛑                                   |
-| Lagged Query Data<sup>1</sup>                      | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Selectors                                          | ✅                                       | 🛑                         | ✅                                    | ✅                                   |
-| Initial Data                                       | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Scroll Recovery                                    | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Cache Manipulation                                 | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Outdated Query Dismissal                           | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Render Optimization<sup>2</sup>                    | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Auto Garbage Collection                            | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Mutation Hooks                                     | ✅                                       | 🟡                         | ✅                                    | ✅                                   |
-| Offline Mutation Support                           | ✅                                       | 🛑                         | 🟡                                    | 🛑                                   |
-| Prefetching APIs                                   | ✅                                       | 🔶                         | ✅                                    | ✅                                   |
-| Query Cancellation                                 | ✅                                       | 🛑                         | 🛑                                    | 🛑                                   |
-| Partial Query Matching<sup>3</sup>                 | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Stale While Revalidate                             | ✅                                       | ✅                         | ✅                                    | ✅                                   |
-| Stale Time Configuration                           | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Pre-usage Query/Mutation Configuration<sup>4</sup> | ✅                                       | 🛑                         | 🛑                                    | ✅                                   |
-| Window Focus Refetching                            | ✅                                       | ✅                         | 🛑                                    | 🔶                                   |
-| Network Status Refetching                          | ✅                                       | ✅                         | ✅                                    | 🔶                                   |
-| General Cache Dehydration/Rehydration              | ✅                                       | 🛑                         | ✅                                    | ✅                                   |
-| Offline Caching                                    | ✅ (Experimental)                        | 🛑                         | ✅                                    | 🔶                                   |
-| React Suspense (Experimental)                      | ✅                                       | ✅                         | 🛑                                    | 🛑                                   |
-| Abstracted/Agnostic Core                           | ✅                                       | 🛑                         | ✅                                    | ✅                                   |
-| Automatic Refetch after Mutation<sup>5</sup>       | 🔶                                       | 🔶                         | ✅                                    | ✅                                   |
-| Normalized Caching<sup>6</sup>                     | 🛑                                       | 🛑                         | ✅                                    | 🛑                                   |
+|                                                    | React Query                              | SWR [_(Website)_][swr]      | Apollo Client [_(Website)_][apollo]   | RTK-Query [_(Website)_][rtk-query]   |
+| -------------------------------------------------- | ---------------------------------------- | --------------------------- | ------------------------------------- | ------------------------------------ |
+| Github Repo / Stars                                | [![][stars-react-query]][gh-react-query] | [![][stars-swr]][gh-swr]    | [![][stars-apollo]][gh-apollo]        | [![][stars-rtk-query]][gh-rtk-query] |
+| Platform Requirements                              | React                                    | React                       | React, GraphQL                        | Redux                                |
+| Their Comparison                                   |                                          | (none)                      | (none)                                | [Comparison][rtk-query-comparison]   |
+| Supported Query Syntax                             | Promise, REST, GraphQL                   | Promise, REST, GraphQL      | GraphQL                               | Promise, REST, GraphQL               |
+| Supported Frameworks                               | React                                    | React                       | React + Others                        | Any                                  |
+| Supported Query Keys                               | JSON                                     | JSON                        | GraphQL Query                         | JSON                                 |
+| Query Key Change Detection                         | Deep Compare (Stable Serialization)      | Shallow Compare             | Deep Compare (Unstable Serialization) | Referential Equality (===)           |
+| Query Data Change Detection                        | Deep Comparison + Structural Sharing     | Deep Compare (via `dequal`) | Deep Compare (Unstable Serialization) | Referential Equality (===)           |
+| Query Data Memoization Level                       | Query + Structural Sharing               | Query                       | Query + Entity + Structural Sharing   | Query                                |
+| Bundle Size                                        | [![][bp-react-query]][bpl-react-query]   | [![][bp-swr]][bpl-swr]      | [![][bp-apollo]][bpl-apollo]          | [![][bp-rtk-query]][bpl-rtk-query]   |
+| API Definition                                     | On-Use, Declarative                      | On-Use                      | GraphQL Schema                        | Declarative                          |
+| Queries                                            | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Caching                                            | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Devtools                                           | ✅                                       | 🟡                          | ✅                                    | ✅                                   |
+| Polling/Intervals                                  | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Parallel Queries                                   | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Dependent Queries                                  | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Paginated Queries                                  | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Infinite Queries                                   | ✅                                       | ✅                          | ✅                                    | 🛑                                   |
+| Bi-directional Infinite Queries                    | ✅                                       | 🔶                          | 🔶                                    | 🛑                                   |
+| Infinite Query Refetching                          | ✅                                       | ✅                          | 🛑                                    | 🛑                                   |
+| Lagged Query Data<sup>1</sup>                      | ✅                                       | 🔶                          | 🛑                                    | ✅                                   |
+| Selectors                                          | ✅                                       | 🛑                          | ✅                                    | ✅                                   |
+| Initial Data                                       | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Scroll Recovery                                    | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Cache Manipulation                                 | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Outdated Query Dismissal                           | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Render Batching & Optimization<sup>2</sup>         | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
+| Auto Garbage Collection                            | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
+| Mutation Hooks                                     | ✅                                       | 🟡                          | ✅                                    | ✅                                   |
+| Offline Mutation Support                           | ✅                                       | 🛑                          | 🟡                                    | 🛑                                   |
+| Prefetching APIs                                   | ✅                                       | 🔶                          | ✅                                    | ✅                                   |
+| Query Cancellation                                 | ✅                                       | 🛑                          | 🛑                                    | 🛑                                   |
+| Partial Query Matching<sup>3</sup>                 | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
+| Stale While Revalidate                             | ✅                                       | ✅                          | ✅                                    | ✅                                   |
+| Stale Time Configuration<sup>7</sup>               | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
+| Pre-usage Query/Mutation Configuration<sup>4</sup> | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
+| Window Focus Refetching                            | ✅                                       | ✅                          | 🛑                                    | 🔶                                   |
+| Network Status Refetching                          | ✅                                       | ✅                          | ✅                                    | 🔶                                   |
+| General Cache Dehydration/Rehydration              | ✅                                       | 🛑                          | ✅                                    | ✅                                   |
+| Offline Caching                                    | ✅ (Experimental)                        | 🛑                          | ✅                                    | 🔶                                   |
+| React Suspense (Experimental)                      | ✅                                       | ✅                          | 🛑                                    | 🛑                                   |
+| Abstracted/Agnostic Core                           | ✅                                       | 🛑                          | ✅                                    | ✅                                   |
+| Automatic Refetch after Mutation<sup>5</sup>       | 🔶                                       | 🔶                          | ✅                                    | ✅                                   |
+| Normalized Caching<sup>6</sup>                     | 🛑                                       | 🛑                          | ✅                                    | 🛑                                   |
 
 ### Notes
 
@@ -72,6 +73,8 @@ Feature/Capability Key:
 > **<sup>5</sup> Automatic Refetch after Mutation** - For truly automatic refetching to happen after a mutation occurs, a schema is necessary (like the one graphQL provides) along with heuristics that help the library know how to identify individual entities and entities types in that schema.
 
 > **<sup>6</sup> Normalized Caching** - React Query, SWR and RTK-Query do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
+
+> **<sup>6</sup> SWR's Immutable Mode** - SWR ships with an "immutable" mode that does allow you to only fetch a query once for the life of the cache, but it still does not have the concept of stale-time or conditional auto-revalidation
 
 <!-- -->
 
