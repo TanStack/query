@@ -173,7 +173,7 @@ const result = useQuery({
 - `useErrorBoundary: boolean | (err: TError) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `false`
   - Set this to true if you want errors to be thrown in the render phase and propagate to the nearest error boundary
-  - If set to a function, it will be passed the error and should return a boolean indicating whether to throw the error (`true`) or return the error as state (`false`)
+  - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
 
 **Returns**
 
