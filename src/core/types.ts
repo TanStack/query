@@ -165,7 +165,7 @@ export interface QueryObserverOptions<
    * Whether errors should be thrown instead of setting the `error` property.
    * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
    * If set to `false` and `suspense` is `false`, errors are returned as state.
-   * If set to a function, it will be passed the error and should return a boolean indicating whether to throw the error (`true`) or return the error as state (`false`).
+   * If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
   useErrorBoundary?: boolean | ((err: TError) => boolean)
