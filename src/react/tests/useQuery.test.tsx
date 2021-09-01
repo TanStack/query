@@ -2594,8 +2594,7 @@ describe('useQuery', () => {
         () => Promise.reject('Local Error'),
         {
           retry: false,
-          useErrorBoundary: true,
-          shouldThrowError: err => err !== 'Local Error',
+          useErrorBoundary: err => err !== 'Local Error',
         }
       )
 
@@ -2630,8 +2629,7 @@ describe('useQuery', () => {
         () => Promise.reject('Remote Error'),
         {
           retry: false,
-          useErrorBoundary: true,
-          shouldThrowError: err => err !== 'Local Error',
+          useErrorBoundary: err => err !== 'Local Error',
         }
       )
 
