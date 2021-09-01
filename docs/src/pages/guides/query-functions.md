@@ -28,7 +28,7 @@ const { error } = useQuery(['todos', todoId], async () => {
   }
 
   return data
-})
+}, { onError: (error) => handleError(error)})
 ```
 
 ## Usage with `fetch` and other clients that do not throw by default
