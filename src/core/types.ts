@@ -100,7 +100,7 @@ export interface QueryObserverOptions<
   enabled?: boolean
   /**
    * The time in milliseconds after data is considered stale.
-   * If set to `Infinity`, the daxta will never be considered stale.
+   * If set to `Infinity`, the data will never be considered stale.
    */
   staleTime?: number
   /**
