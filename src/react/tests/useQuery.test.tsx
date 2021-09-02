@@ -3456,6 +3456,42 @@ describe('useQuery', () => {
     ])
   })
 
+  it('should not interval fetch with a refetchInterval of 0', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const queryInfo = useQuery(key, () => 1, {
+        refetchInterval: 0,
+      })
+
+      states.push(queryInfo)
+
+      return <div>count: {queryInfo.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('count: 1'))
+
+    await sleep(10) //extra sleep to make sure we're not re-fetching
+
+    expect(states.length).toEqual(2)
+
+    expect(states).toMatchObject([
+      {
+        status: 'loading',
+        isFetching: true,
+        data: undefined,
+      },
+      {
+        status: 'success',
+        isFetching: false,
+        data: 1,
+      },
+    ])
+  })
+
   it('should accept an empty string as query key', async () => {
     function Page() {
       const result = useQuery('', ctx => ctx.queryKey)
