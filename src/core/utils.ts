@@ -72,7 +72,7 @@ export type QueryStatusFilter = 'all' | 'active' | 'inactive' | 'none'
 
 // UTILS
 
-export const isServer = typeof window === 'undefined'
+export const isServer = typeof window === 'undefined' || 'Deno' in window
 
 export function noop(): undefined {
   return undefined
