@@ -2,10 +2,29 @@ import React from 'react'
 
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
+import { InitialDataFunction, PlaceholderDataFunction } from '../core/types'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
-export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
+type InferredQueryOptions<TQueryFnData> = Omit<
+  UseQueryOptions<TQueryFnData, unknown, TQueryFnData>,
+  'select' | 'initialData' | 'placeholderData'
+> & {
+  select?: (data: TQueryFnData) => unknown
+  initialData?: TQueryFnData extends infer TInitialData
+    ? TInitialData | InitialDataFunction<TInitialData>
+    : never
+  placeholderData?: TQueryFnData extends infer TPlaceholderData
+  ? TPlaceholderData | PlaceholderDataFunction<TPlaceholderData>
+  : never
+}
+
+type QueriesOptions<T> = { [E in keyof T]: InferredQueryOptions<T[E]> }
+type QueriesResults<T> = { [E in keyof T]: UseQueryResult<T[E]> }
+
+export function useQueries<TQueriesFnData extends unknown[]>(
+  queries: [...QueriesOptions<TQueriesFnData>]
+): QueriesResults<TQueriesFnData> {
   const mountedRef = React.useRef(false)
   const [, forceUpdate] = React.useState(0)
 
@@ -49,5 +68,5 @@ export function useQueries(queries: UseQueryOptions[]): UseQueryResult[] {
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
 
-  return result
+  return result as QueriesResults<TQueriesFnData>
 }

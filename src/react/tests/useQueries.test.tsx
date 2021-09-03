@@ -1,7 +1,13 @@
 import { waitFor } from '@testing-library/react'
 import React from 'react'
 
-import { queryKey, renderWithClient, setActTimeout, sleep } from './utils'
+import {
+  expectType,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
 import { useQueries, QueryClient, UseQueryResult, QueryCache } from '../..'
 
 describe('useQueries', () => {
@@ -234,5 +240,148 @@ describe('useQueries', () => {
       { status: 'success', data: 12, isPreviousData: false, isFetching: false },
       { status: 'success', data: 18, isPreviousData: false, isFetching: false },
     ])
+  })
+
+  it('should return the correct types', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    // @ts-ignore
+    // eslint-disable-next-line
+    function Page() {
+      // unspecified query functions should default to unknown
+      const noQueryFn = useQueries([
+        {
+          queryKey: key1,
+        },
+        {
+          queryKey: key2,
+        },
+      ])
+      expectType<unknown>(noQueryFn[0].data)
+      expectType<unknown>(noQueryFn[0].error)
+      expectType<unknown>(noQueryFn[1].error)
+      expectType<unknown>(noQueryFn[1].error)
+
+      // it should infer the result type from the query function
+      const fromQueryFn = useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 1,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+        },
+        {
+          queryKey: key3,
+          queryFn: () => ['string[]'],
+        },
+      ])
+      expectType<number | undefined>(fromQueryFn[0].data)
+      expectType<string | undefined>(fromQueryFn[1].data)
+      expectType<string[] | undefined>(fromQueryFn[2].data)
+
+      // it should enforce the initialData's type
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 1,
+          initialData: 2,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+          initialData: 'another string',
+        },
+        {
+          queryKey: key3,
+          queryFn: () => 'string',
+          // @ts-expect-error
+          initialData: 2,
+        },
+      ])
+
+      // it should enforce the placeholderData's type
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 1,
+          placeholderData: 2,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+          placeholderData: 'another string',
+        },
+        {
+          queryKey: key3,
+          queryFn: () => 'string',
+          // @ts-expect-error
+          placeholderData: 2,
+        },
+      ])
+
+      // it should enforce the select function's parameter type
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 1,
+          select: (_number: number) => null,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+          select: (_string: string) => null,
+        },
+        {
+          queryKey: key3,
+          queryFn: () => 1,
+          // @ts-expect-error
+          select: (_number: string) => null,
+        },
+      ])
+
+      // it should enforce the onSettled function's parameter type
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 1,
+          onSuccess: (_number: number) => null,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+          onSuccess: (_string: string) => null,
+        },
+        {
+          queryKey: key3,
+          queryFn: () => 1,
+          // @ts-expect-error
+          onSuccess: (_number: string) => null,
+        },
+      ])
+
+      // it should enforce the onSettled function's parameter type
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 1,
+          onSettled: (_number: number | undefined) => null,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+          onSettled: (_string: string | undefined) => null,
+        },
+        {
+          queryKey: key3,
+          queryFn: () => 1,
+          // @ts-expect-error
+          onSettled: (_number: string | undefined) => null,
+        },
+      ])
+    }
   })
 })
