@@ -168,7 +168,7 @@ export interface QueryObserverOptions<
    * If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?: boolean | ((err: TError) => boolean)
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
@@ -530,7 +530,7 @@ export interface MutationObserverOptions<
   TVariables = void,
   TContext = unknown
 > extends MutationOptions<TData, TError, TVariables, TContext> {
-  useErrorBoundary?: boolean | ((err: TError) => boolean)
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
 }
 
 export interface MutateOptions<

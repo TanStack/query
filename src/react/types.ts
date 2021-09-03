@@ -96,7 +96,7 @@ export interface UseMutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  useErrorBoundary?: boolean | ((err: TError) => boolean)
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
 }
 
 export type UseMutateFunction<
