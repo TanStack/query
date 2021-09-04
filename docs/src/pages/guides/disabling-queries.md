@@ -29,27 +29,33 @@ function Todos() {
   } = useQuery('todos', fetchTodoList, {
     enabled: false,
   })
+  
+  let todos;
+  
+  if (isIdle) {
+    todos = 'Not ready...'
+  } else if (isLoading) {
+    todos = 'Loading...'
+  } else if (isError) {
+    todos = <span>Error: {error.message}</span>
+  } else {
+    todos = (
+      <>
+        <ul>
+          {data.map(todo => (
+            <li key={todo.id}>{todo.title}</li>
+          ))}
+        </ul>
+        <div>{isFetching ? 'Fetching...' : null}</div>
+      </>
+    )
+  }
 
   return (
     <>
       <button onClick={() => refetch()}>Fetch Todos</button>
 
-      {isIdle ? (
-        'Not ready...'
-      ) : isLoading ? (
-        <span>Loading...</span>
-      ) : isError ? (
-        <span>Error: {error.message}</span>
-      ) : (
-        <>
-          <ul>
-            {data.map(todo => (
-              <li key={todo.id}>{todo.title}</li>
-            ))}
-          </ul>
-          <div>{isFetching ? 'Fetching...' : null}</div>
-        </>
-      )}
+      {todos}
     </>
   )
 }
