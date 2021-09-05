@@ -275,8 +275,8 @@ export class QueryObserver<
     this.client.getQueryCache().remove(this.currentQuery)
   }
 
-  refetch(
-    options?: RefetchOptions & RefetchQueryFilters<TData>
+  refetch<TPageData>(
+    options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ): Promise<QueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,

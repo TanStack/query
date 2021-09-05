@@ -236,11 +236,11 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchPageFilters<TQueryFnData = unknown> {
+export interface RefetchPageFilters<TPageData = unknown> {
   refetchPage?: (
-    lastPage: TQueryFnData,
+    lastPage: TPageData,
     index: number,
-    allPages: TQueryFnData[]
+    allPages: TPageData[]
   ) => boolean
 }
 
@@ -248,20 +248,20 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TQueryFnData = unknown>
+export interface InvalidateQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {
+    RefetchPageFilters<TPageData> {
   refetchActive?: boolean
   refetchInactive?: boolean
 }
 
-export interface RefetchQueryFilters<TQueryFnData = unknown>
+export interface RefetchQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {}
+    RefetchPageFilters<TPageData> {}
 
-export interface ResetQueryFilters<TQueryFnData = unknown>
+export interface ResetQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {}
+    RefetchPageFilters<TPageData> {}
 
 export interface InvalidateOptions {
   throwOnError?: boolean
@@ -299,8 +299,8 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isRefetchError: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: (
-    options?: RefetchOptions & RefetchQueryFilters<TData>
+  refetch: <TPageData>(
+    options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
