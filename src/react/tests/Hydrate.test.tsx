@@ -1,9 +1,16 @@
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import { QueryClient, QueryClientProvider, QueryCache, useQuery } from '../..'
-import { dehydrate, useHydrate, Hydrate } from '../'
-import { sleep } from '../../react/tests/utils'
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+  useQuery,
+  dehydrate,
+  useHydrate,
+  Hydrate,
+} from '../..'
+import { sleep } from './utils'
 
 describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = value =>
