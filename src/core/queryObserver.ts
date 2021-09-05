@@ -96,6 +96,7 @@ export class QueryObserver<
   protected bindMethods(): void {
     this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
+    this.reset = this.reset.bind(this)
   }
 
   protected onSubscribe(): void {
@@ -282,6 +283,13 @@ export class QueryObserver<
       ...options,
       meta: { refetchPage: options?.refetchPage },
     })
+  }
+
+  reset(
+    options?: RefetchOptions & RefetchQueryFilters<TData>
+  ): Promise<QueryObserverResult<TData, TError>> {
+    this.currentQuery.reset()
+    return this.refetch(options)
   }
 
   fetchOptimistic(
@@ -564,6 +572,7 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       remove: this.remove,
+      reset: this.reset,
     }
 
     return result as QueryObserverResult<TData, TError>
