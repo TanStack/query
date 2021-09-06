@@ -72,7 +72,10 @@ export type QueryStatusFilter = 'all' | 'active' | 'inactive' | 'none'
 
 // UTILS
 
-export const isServer = typeof window === 'undefined' || 'Deno' in window
+export const isServer =
+  typeof window === 'undefined' ||
+  // @ts-expect-error
+  !!(window.Deno && Deno.version && Deno.version.deno)
 
 export function noop(): undefined {
   return undefined
