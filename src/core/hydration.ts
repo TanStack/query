@@ -1,12 +1,12 @@
-import type { QueryClient } from '../core/queryClient'
-import type { Query, QueryState } from '../core/query'
+import type { QueryClient } from './queryClient'
+import type { Query, QueryState } from './query'
 import type {
   MutationKey,
   MutationOptions,
   QueryKey,
   QueryOptions,
-} from '../core/types'
-import type { Mutation, MutationState } from '../core/mutation'
+} from './types'
+import type { Mutation, MutationState } from './mutation'
 
 // TYPES
 
