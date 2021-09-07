@@ -1,6 +1,5 @@
 import React from 'react'
-import { QueryClient } from 'react-query'
-import { dehydrate } from 'react-query/hydration'
+import { dehydrate, QueryClient } from 'react-query'
 import { Layout, Header, InfoBox, PostList } from '../components'
 import { fetchPosts } from '../hooks'
 

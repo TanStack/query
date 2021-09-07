@@ -6,7 +6,7 @@ title: hydration/Hydrate
 `hydration/Hydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
 
 ```js
-import { Hydrate } from 'react-query/hydration'
+import { Hydrate } from 'react-query'
 
 function App() {
   return <Hydrate state={dehydratedState}>...</Hydrate>

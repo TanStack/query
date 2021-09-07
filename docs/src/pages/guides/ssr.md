@@ -55,8 +55,7 @@ To support caching queries on the server and set up hydration:
 
 ```js
 // _app.jsx
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { Hydrate } from 'react-query/hydration'
+import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
 
 export default function MyApp({ Component, pageProps }) {
   const [queryClient] = React.useState(() => new QueryClient())
@@ -79,8 +78,7 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 
 ```js
 // pages/posts.jsx
-import { QueryClient, useQuery } from 'react-query'
-import { dehydrate } from 'react-query/hydration'
+import { dehydrate, QueryClient, useQuery } from 'react-query';
 
 export async function getStaticProps() {
   const queryClient = new QueryClient()
@@ -126,8 +124,7 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```js
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { dehydrate, Hydrate } from 'react-query/hydration'
+import { dehydrate, Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
 function handleRequest (req, res) {
   const queryClient = new QueryClient()
@@ -162,8 +159,7 @@ function handleRequest (req, res) {
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```js
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { Hydrate } from 'react-query/hydration'
+import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
 
 const dehydratedState = window.__REACT_QUERY_STATE__
 
