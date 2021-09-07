@@ -1032,6 +1032,82 @@ describe('useQuery', () => {
     expect(states[3]).toMatchObject({ data: 2 })
   })
 
+  it('should be able to reset a query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => ++count)
+
+      states.push(state)
+
+      const { reset } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          reset()
+        }, 5)
+      }, [reset])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+
+    expect(states.length).toBe(5)
+    // Initial
+    expect(states[0]).toMatchObject({ data: undefined })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Reset
+    expect(states[2]).toMatchObject({ data: undefined })
+    // Initial (refetch)
+    expect(states[3]).toMatchObject({ data: undefined })
+    // Fetched
+    expect(states[4]).toMatchObject({ data: 2 })
+  })
+
+  it('should reset the query to its initial state', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => ++count, { initialData: 99 })
+
+      states.push(state)
+
+      const { reset } = state
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          reset()
+        }, 5)
+      }, [reset])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+
+    expect(states.length).toBe(5)
+    // Initial
+    expect(states[0]).toMatchObject({ data: 99 })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Reset
+    expect(states[2]).toMatchObject({ data: 99 })
+    // Initial (refetch)
+    expect(states[3]).toMatchObject({ data: 99 })
+    // Fetched
+    expect(states[4]).toMatchObject({ data: 2 })
+  })
+
   it('should share equal data structures between query results', async () => {
     const key = queryKey()
 
