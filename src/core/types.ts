@@ -163,9 +163,12 @@ export interface QueryObserverOptions<
   onSettled?: (data: TData | undefined, error: TError | null) => void
   /**
    * Whether errors should be thrown instead of setting the `error` property.
+   * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
+   * If set to `false` and `suspense` is `false`, errors are returned as state.
+   * If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?: boolean
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
@@ -527,7 +530,7 @@ export interface MutationObserverOptions<
   TVariables = void,
   TContext = unknown
 > extends MutationOptions<TData, TError, TVariables, TContext> {
-  useErrorBoundary?: boolean
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
 }
 
 export interface MutateOptions<
