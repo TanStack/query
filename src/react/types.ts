@@ -2,13 +2,13 @@ import { RetryValue, RetryDelayValue } from '../core/retryer'
 import {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
-  MutateOptions,
-  MutationStatus,
+  MutationObserverResult,
   MutationKey,
   QueryObserverOptions,
   QueryObserverResult,
   QueryKey,
   MutationFunction,
+  MutateOptions,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
@@ -119,24 +119,21 @@ export type UseMutateAsyncFunction<
   options?: MutateOptions<TData, TError, TVariables, TContext>
 ) => Promise<TData>
 
-export interface UseMutationResult<
+export type UseBaseMutationResult<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
   TContext = unknown
-> {
-  context: TContext | undefined
-  data: TData | undefined
-  error: TError | null
-  failureCount: number
-  isError: boolean
-  isIdle: boolean
-  isLoading: boolean
-  isPaused: boolean
-  isSuccess: boolean
-  mutate: UseMutateFunction<TData, TError, TVariables, TContext>
-  mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext>
-  reset: () => void
-  status: MutationStatus
-  variables: TVariables | undefined
-}
+> = Override<
+  MutationObserverResult<TData, TError, TVariables, TContext>,
+  { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
+> & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
+
+export type UseMutationResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = unknown,
+  TContext = unknown
+> = UseBaseMutationResult<TData, TError, TVariables, TContext>
+
+type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

@@ -567,7 +567,7 @@ export type MutateFunction<
   options?: MutateOptions<TData, TError, TVariables, TContext>
 ) => Promise<TData>
 
-export interface MutationObserverResult<
+export interface MutationObserverBaseResult<
   TData = unknown,
   TError = unknown,
   TVariables = void,
@@ -580,6 +580,77 @@ export interface MutationObserverResult<
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
 }
+
+export interface MutationObserverIdleResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: undefined
+  error: null
+  isError: false
+  isIdle: true
+  isLoading: false
+  isSuccess: false
+  status: 'idle'
+}
+
+export interface MutationObserverLoadingResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: undefined
+  error: null
+  isError: false
+  isIdle: false
+  isLoading: true
+  isSuccess: false
+  status: 'loading'
+}
+
+export interface MutationObserverErrorResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: undefined
+  error: TError
+  isError: true
+  isIdle: false
+  isLoading: false
+  isSuccess: false
+  status: 'error'
+}
+
+export interface MutationObserverSuccessResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: TData
+  error: null
+  isError: false
+  isIdle: false
+  isLoading: false
+  isSuccess: true
+  status: 'success'
+}
+
+export type MutationObserverResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> =
+  | MutationObserverIdleResult<TData, TError, TVariables, TContext>
+  | MutationObserverLoadingResult<TData, TError, TVariables, TContext>
+  | MutationObserverErrorResult<TData, TError, TVariables, TContext>
+  | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
 
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>
