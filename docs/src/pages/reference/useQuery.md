@@ -24,6 +24,7 @@ const {
   isSuccess,
   refetch,
   remove,
+  reset,
   status,
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
@@ -228,3 +229,6 @@ const result = useQuery({
   - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
 - `remove: () => void`
   - A function to remove the query from the cache.
+- `reset: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
+  - A function to manually reset the query to its initial state.
+  - `options` are used to call `refetch` on the query after it is resetted.
