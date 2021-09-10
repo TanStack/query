@@ -170,11 +170,11 @@ const result = useQuery({
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
-- `useErrorBoundary: undefined | boolean | (error: TError) => boolean`
+- `useErrorBoundary: undefined | boolean | (error: TError, query: Query) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behaviour of throwing errors to the error boundary.
-  - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+  - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
 
 **Returns**
 
