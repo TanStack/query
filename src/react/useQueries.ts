@@ -59,20 +59,35 @@ type GetResults<T> =
     : // Fallback
       UseQueryResult
 
-type QueriesOptions<T extends any[], Result extends any[] = []> = T extends []
+// in case of very large array literal, revert to UseQueryOptions[]/UseQueryResult[] to avoid TS depth-limit error
+type MAXIMUM_DEPTH = 20
+
+type QueriesOptions<
+  T extends any[],
+  Result extends any[] = [],
+  Depth extends ReadonlyArray<number> = []
+> = Depth['length'] extends MAXIMUM_DEPTH
+  ? UseQueryOptions[]
+  : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
-  ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>]>
+  ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
   : T
 
-type QueriesResults<T extends any[], Result extends any[] = []> = T extends []
+type QueriesResults<
+  T extends any[],
+  Result extends any[] = [],
+  Depth extends ReadonlyArray<number> = []
+> = Depth['length'] extends MAXIMUM_DEPTH
+  ? UseQueryResult[]
+  : T extends []
   ? []
   : T extends [infer Head]
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
-  ? QueriesResults<[...Tail], [...Result, GetResults<Head>]>
+  ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
   : UseQueryResult[] // fallback in case of Array.map (does not get typed as a tuple)
 
 export function useQueries<T extends any[]>(
