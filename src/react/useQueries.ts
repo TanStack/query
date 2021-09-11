@@ -1,4 +1,5 @@
 import React from 'react'
+import { QueryFunction } from '../core/types'
 
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
@@ -24,24 +25,37 @@ type GetOptions<T extends any> =
     ? UseQueryOptions<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
     ? UseQueryOptions<TQueryFnData>
+    : // Otherwise try to infer raw argument types
+    T extends {
+        queryFn?: QueryFunction<infer X>
+        select: (data: any) => infer Y
+      }
+    ? UseQueryOptions<X, unknown, Y>
+    : T extends { queryFn?: QueryFunction<infer X> }
+    ? UseQueryOptions<X>
     : // Fallback
       UseQueryOptions
 
 type GetResults<T> =
   // Map explicit type-object to results
-  T extends { queryFnData: any; error?: any; data: infer TData }
-    ? UseQueryResult<TData>
-    : T extends { queryFnData: infer TQueryFnData; error?: any }
-    ? UseQueryResult<TQueryFnData>
-    : T extends { data: infer TData; error?: any }
-    ? UseQueryResult<TData>
+  T extends { queryFnData: any; error?: infer TError; data: infer TData }
+    ? UseQueryResult<TData, TError>
+    : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
+    ? UseQueryResult<TQueryFnData, TError>
+    : T extends { data: infer TData; error?: infer TError }
+    ? UseQueryResult<TData, TError>
     : // Map explicit type-tuple to results
-    T extends [any, any, infer TData]
-    ? UseQueryResult<TData>
-    : T extends [infer TQueryFnData, any]
-    ? UseQueryResult<TQueryFnData>
+    T extends [any, infer TError, infer TData]
+    ? UseQueryResult<TData, TError>
+    : T extends [infer TQueryFnData, infer TError]
+    ? UseQueryResult<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
     ? UseQueryResult<TQueryFnData>
+    : // OPTION 3: map inferred type to results
+    T extends { queryFn?: QueryFunction<any>; select: (data: any) => infer Y }
+    ? UseQueryResult<Y>
+    : T extends { queryFn?: QueryFunction<infer X> }
+    ? UseQueryResult<X>
     : // Fallback
       UseQueryResult
 

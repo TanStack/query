@@ -257,7 +257,7 @@ describe('useQueries', () => {
     // @ts-ignore
     // eslint-disable-next-line
     function Page() {
-      const result1 = useQueries<[[number], [string], [string[]]]>([
+      const result1 = useQueries<[[number], [string], [string[], boolean]]>([
         {
           queryKey: key1,
           queryFn: () => 1,
@@ -273,17 +273,18 @@ describe('useQueries', () => {
       ])
       expectType<QueryObserverResult<number, unknown>>(result1[0])
       expectType<QueryObserverResult<string, unknown>>(result1[1])
-      expectType<QueryObserverResult<string[], unknown>>(result1[2])
+      expectType<QueryObserverResult<string[], boolean>>(result1[2])
       expectType<number | undefined>(result1[0].data)
       expectType<string | undefined>(result1[1].data)
       expectType<string[] | undefined>(result1[2].data)
+      expectType<boolean | null>(result1[2].error)
 
       // TData (3rd element) takes precedence over TQueryFnData (1st element)
       const result2 = useQueries<
         [[string, unknown, string], [string, unknown, number]]
       >([
         {
-          queryKey: key2,
+          queryKey: key1,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -292,7 +293,7 @@ describe('useQueries', () => {
           },
         },
         {
-          queryKey: key3,
+          queryKey: key2,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -307,9 +308,9 @@ describe('useQueries', () => {
       expectType<number | undefined>(result2[1].data)
 
       // types should be enforced
-      useQueries<[[string, unknown, string], [string, unknown, number]]>([
+      useQueries<[[string, unknown, string], [string, boolean, number]]>([
         {
-          queryKey: key2,
+          queryKey: key1,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -325,7 +326,7 @@ describe('useQueries', () => {
           initialData: 123,
         },
         {
-          queryKey: key3,
+          queryKey: key2,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -335,6 +336,10 @@ describe('useQueries', () => {
           onSuccess: a => {
             expectType<number>(a)
             expectTypeNotAny(a)
+          },
+          onError: e => {
+            expectType<boolean>(e)
+            expectTypeNotAny(e)
           },
           placeholderData: 'string',
           // @ts-expect-error (initialData: string)
@@ -356,7 +361,7 @@ describe('useQueries', () => {
         [
           { queryFnData: number },
           { queryFnData: string },
-          { queryFnData: string[] }
+          { queryFnData: string[]; error: boolean }
         ]
       >([
         {
@@ -374,10 +379,11 @@ describe('useQueries', () => {
       ])
       expectType<QueryObserverResult<number, unknown>>(result1[0])
       expectType<QueryObserverResult<string, unknown>>(result1[1])
-      expectType<QueryObserverResult<string[], unknown>>(result1[2])
+      expectType<QueryObserverResult<string[], boolean>>(result1[2])
       expectType<number | undefined>(result1[0].data)
       expectType<string | undefined>(result1[1].data)
       expectType<string[] | undefined>(result1[2].data)
+      expectType<boolean | null>(result1[2].error)
 
       // TData (data prop) takes precedence over TQueryFnData (queryFnData prop)
       const result2 = useQueries<
@@ -387,7 +393,7 @@ describe('useQueries', () => {
         ]
       >([
         {
-          queryKey: key2,
+          queryKey: key1,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -396,7 +402,7 @@ describe('useQueries', () => {
           },
         },
         {
-          queryKey: key3,
+          queryKey: key2,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -413,7 +419,7 @@ describe('useQueries', () => {
       // can pass only TData (data prop) although TQueryFnData will be left unknown
       const result3 = useQueries<[{ data: string }, { data: number }]>([
         {
-          queryKey: key2,
+          queryKey: key1,
           queryFn: () => 'string',
           select: a => {
             expectType<unknown>(a)
@@ -422,7 +428,7 @@ describe('useQueries', () => {
           },
         },
         {
-          queryKey: key3,
+          queryKey: key2,
           queryFn: () => 'string',
           select: a => {
             expectType<unknown>(a)
@@ -440,11 +446,11 @@ describe('useQueries', () => {
       useQueries<
         [
           { queryFnData: string; data: string },
-          { queryFnData: string; data: number }
+          { queryFnData: string; data: number; error: boolean }
         ]
       >([
         {
-          queryKey: key2,
+          queryKey: key1,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -460,7 +466,7 @@ describe('useQueries', () => {
           initialData: 123,
         },
         {
-          queryKey: key3,
+          queryKey: key2,
           queryFn: () => 'string',
           select: a => {
             expectType<string>(a)
@@ -471,6 +477,10 @@ describe('useQueries', () => {
             expectType<number>(a)
             expectTypeNotAny(a)
           },
+          onError: e => {
+            expectType<boolean>(e)
+            expectTypeNotAny(e)
+          },
           placeholderData: 'string',
           // @ts-expect-error (initialData: string)
           initialData: 123,
@@ -479,15 +489,16 @@ describe('useQueries', () => {
     }
   })
 
-  it('passing no type parameter should return QueryObserverResult<unknown> types', async () => {
+  it('passing no type parameter should infer results from queryFn / select', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
+    const key4 = queryKey()
 
     // @ts-ignore
     // eslint-disable-next-line
     function Page() {
-      const result1 = useQueries([
+      const result = useQueries([
         {
           queryKey: key1,
           queryFn: () => 1,
@@ -499,44 +510,78 @@ describe('useQueries', () => {
         {
           queryKey: key3,
           queryFn: () => ['string[]'],
+          select: () => 123,
         },
       ])
-      expectType<QueryObserverResult<unknown, unknown>>(result1[0])
-      expectType<QueryObserverResult<unknown, unknown>>(result1[1])
-      expectType<QueryObserverResult<unknown, unknown>>(result1[2])
-      expectType<unknown>(result1[0].data)
-      expectType<unknown>(result1[1].data)
-      expectType<unknown>(result1[2].data)
+      expectType<QueryObserverResult<number, unknown>>(result[0])
+      expectType<QueryObserverResult<string, unknown>>(result[1])
+      expectType<QueryObserverResult<number, unknown>>(result[2])
+      expectType<number | undefined>(result[0].data)
+      expectType<string | undefined>(result[1].data)
+      // select takes precedence over queryFn
+      expectType<number | undefined>(result[2].data)
 
-      // parameter sub-types are not enforced
-      const result2 = useQueries([
+      // initialData/placeholderData are enforced
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 'string',
+          placeholderData: 'string',
+          // @ts-expect-error (initialData: string)
+          initialData: 123,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 123,
+          // @ts-expect-error (placeholderData: number)
+          placeholderData: 'string',
+          initialData: 123,
+        },
+      ])
+
+      // select / onSuccess / onSettled params are "indirectly" enforced
+      useQueries([
+        // unfortunately TS will not suggest the type for you
+        {
+          queryKey: key1,
+          queryFn: () => 'string',
+          // @ts-expect-error (noImplicitAny)
+          onSuccess: a => null,
+          // @ts-expect-error (noImplicitAny)
+          onSettled: a => null,
+        },
+        // however you can add a type to the callback
         {
           queryKey: key2,
           queryFn: () => 'string',
-          select: (a: unknown) => {
-            expectType<unknown>(a)
+          onSuccess: (a: string) => {
+            expectType<string>(a)
+            expectTypeNotAny(a)
           },
-          onSuccess: (a: unknown) => {
-            expectType<unknown>(a)
+          onSettled: (a: string | undefined) => {
+            expectType<string | undefined>(a)
+            expectTypeNotAny(a)
           },
-          placeholderData: 'string',
-          initialData: 123,
         },
+        // the type you do pass is enforced
         {
           queryKey: key3,
           queryFn: () => 'string',
-          select: (a: unknown) => {
-            expectType<unknown>(a)
+          // @ts-expect-error (only accepts string)
+          onSuccess: (a: number) => null,
+        },
+        {
+          queryKey: key4,
+          queryFn: () => 'string',
+          select: (a: string) => parseInt(a),
+          // @ts-expect-error (select is defined => only accepts number)
+          onSuccess: (a: string) => null,
+          onSettled: (a: number | undefined) => {
+            expectType<number | undefined>(a)
+            expectTypeNotAny(a)
           },
-          onSuccess: (a: unknown) => {
-            expectType<unknown>(a)
-          },
-          placeholderData: 'string',
-          initialData: 123,
         },
       ])
-      expectType<unknown>(result2[0].data)
-      expectType<unknown>(result2[1].data)
     }
   })
 })
