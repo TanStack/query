@@ -51,7 +51,7 @@ type GetResults<T> =
     ? UseQueryResult<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
     ? UseQueryResult<TQueryFnData>
-    : // OPTION 3: map inferred type to results
+    : // Otherwise map inferred type to results
     T extends { queryFn?: QueryFunction<any>; select: (data: any) => infer Y }
     ? UseQueryResult<Y>
     : T extends { queryFn?: QueryFunction<infer X> }
@@ -73,10 +73,10 @@ type QueriesResults<T extends any[], Result extends any[] = []> = T extends []
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>]>
-  : UseQueryResult[] // fallback in case of Arrap.map (does not get typed as a tuple)
+  : UseQueryResult[] // fallback in case of Array.map (does not get typed as a tuple)
 
 export function useQueries<T extends any[]>(
-  queries: [...QueriesOptions<T>]
+  queries: readonly [...QueriesOptions<T>]
 ): QueriesResults<T> {
   const mountedRef = React.useRef(false)
   const [, forceUpdate] = React.useState(0)

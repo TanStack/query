@@ -249,7 +249,7 @@ describe('useQueries', () => {
     ])
   })
 
-  it('passing a type parameter should return the correct types - tuple of tuples', async () => {
+  it('handles type parameter - tuple of tuples', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -349,7 +349,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('passing a type parameter should return the correct types - tuple of objects', async () => {
+  it('handles type parameter - tuple of objects', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -489,7 +489,7 @@ describe('useQueries', () => {
     }
   })
 
-  it('passing no type parameter should infer results from queryFn / select', async () => {
+  it('handles array literal without type parameter to infer result type', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -498,7 +498,16 @@ describe('useQueries', () => {
     // @ts-ignore
     // eslint-disable-next-line
     function Page() {
-      const result = useQueries([
+      // Array.map does not throw error
+      const result1 = useQueries(
+        Array(10).map(i => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => i + 10,
+        }))
+      )
+      expectType<QueryObserverResult<unknown, unknown>[]>(result1)
+
+      const result2 = useQueries([
         {
           queryKey: key1,
           queryFn: () => 1,
@@ -513,13 +522,13 @@ describe('useQueries', () => {
           select: () => 123,
         },
       ])
-      expectType<QueryObserverResult<number, unknown>>(result[0])
-      expectType<QueryObserverResult<string, unknown>>(result[1])
-      expectType<QueryObserverResult<number, unknown>>(result[2])
-      expectType<number | undefined>(result[0].data)
-      expectType<string | undefined>(result[1].data)
+      expectType<QueryObserverResult<number, unknown>>(result2[0])
+      expectType<QueryObserverResult<string, unknown>>(result2[1])
+      expectType<QueryObserverResult<number, unknown>>(result2[2])
+      expectType<number | undefined>(result2[0].data)
+      expectType<string | undefined>(result2[1].data)
       // select takes precedence over queryFn
-      expectType<number | undefined>(result[2].data)
+      expectType<number | undefined>(result2[2].data)
 
       // initialData/placeholderData are enforced
       useQueries([
@@ -582,6 +591,20 @@ describe('useQueries', () => {
           },
         },
       ])
+
+      // Array as const does not throw error
+      const result3 = useQueries([
+        {
+          queryKey: 'key1',
+          queryFn: () => 'string',
+        },
+        {
+          queryKey: 'key1',
+          queryFn: () => 123,
+        },
+      ] as const)
+      expectType<QueryObserverResult<string, unknown>>(result3[0])
+      expectType<QueryObserverResult<number, unknown>>(result3[1])
     }
   })
 })
