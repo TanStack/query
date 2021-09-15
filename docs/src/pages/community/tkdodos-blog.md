@@ -45,3 +45,7 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 ## [#10: React Query as a State Manager](https://tkdodo.eu/blog/react-query-as-a-state-manager)
 
 > React Query doesn't fetch any data for you - it's a data synchronization tool that excels when used for server state. This article has everything you need to know to make React Query your single source of truth state manager for your async state. You'll learn how to let React Query do it's magic and why customizing `staleTime` might be all you need. [Read more...](https://tkdodo.eu/blog/react-query-as-a-state-manager)
+
+## [#11: React Query Error Handling](https://tkdodo.eu/blog/react-query-error-handling)
+
+> Handling errors is an integral part of working with asynchronous data, especially data fetching. We have to face it: Not all requests will be successful, and not all Promises will be fulfilled. This blog post describes various ways of coping with errors in React Query, such as the error property, using Error Boundaries or onError callbacks, so that you can prepare your application for the cases when "Something went wrong". [Read more...](https://tkdodo.eu/blog/react-query-error-handling)

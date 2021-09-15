@@ -10,6 +10,7 @@ import {
   UseMutationResult,
 } from './types'
 import { MutationFunction, MutationKey } from '../core/types'
+import { shouldThrowError } from './utils'
 
 // HOOK
 
@@ -102,7 +103,14 @@ export function useMutation<
     obsRef.current!.mutate(variables, mutateOptions).catch(noop)
   }, [])
 
-  if (currentResult.error && obsRef.current.options.useErrorBoundary) {
+  if (
+    currentResult.error &&
+    shouldThrowError(
+      undefined,
+      obsRef.current.options.useErrorBoundary,
+      currentResult.error
+    )
+  ) {
     throw currentResult.error
   }
 
