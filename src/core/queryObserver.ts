@@ -446,7 +446,7 @@ export class QueryObserver<
 
       if (fetchOnMount || fetchOptionally) {
         isFetching = true
-        if (!dataUpdatedAt) {
+        if (!dataUpdatedAt && !errorUpdatedAt) {
           status = 'loading'
         }
       }

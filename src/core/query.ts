@@ -547,7 +547,10 @@ export class Query<
           fetchMeta: action.meta ?? null,
           isFetching: true,
           isPaused: false,
-          status: !state.dataUpdatedAt ? 'loading' : state.status,
+          status:
+            !state.dataUpdatedAt && !state.errorUpdatedAt
+              ? 'loading'
+              : state.status,
         }
       case 'success':
         return {
