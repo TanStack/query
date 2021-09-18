@@ -260,6 +260,43 @@ describe('ReactQueryDevtools', () => {
     expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
   })
 
+  it('should not show a disabled label for inactive queries', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data } = useQuery('key', () => Promise.resolve('test'), {
+        enabled: false,
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    function App() {
+      const [visible, setVisible] = React.useState(true)
+
+      return (
+        <div>
+          {visible ? <Page /> : null}
+          <button onClick={() => setVisible(false)}>Hide Query</button>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, { initialIsOpen: true })
+
+    await screen.findByText(/disabled/i)
+
+    await act(async () => {
+      fireEvent.click(await screen.findByText(/hide query/i))
+    })
+
+    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+  })
+
   it('should sort the queries according to the sorting filter', async () => {
     const { queryClient, queryCache } = createQueryClient()
 

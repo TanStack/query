@@ -435,24 +435,9 @@
           "editUrl": "/reference/setLogger.md"
         },
         {
-          "title": "hydration/Hydrate",
-          "path": "/reference/hydration/HydrateComp",
-          "editUrl": "/reference/hydration/HydrateComp.md"
-        },
-        {
-          "title": "hydration/useHydrate",
-          "path": "/reference/hydration/useHydrate",
-          "editUrl": "/reference/hydration/useHydrate.md"
-        },
-        {
-          "title": "hydration/hydrate",
-          "path": "/reference/hydration/hydrate",
-          "editUrl": "/reference/hydration/hydrate.md"
-        },
-        {
-          "title": "hydration/dehydrate",
-          "path": "/reference/hydration/dehydrate",
-          "editUrl": "/reference/hydration/dehydrate.md"
+          "title": "hydration",
+          "path": "/reference/hydration",
+          "editUrl": "/reference/hydration.md"
         }
       ]
     }
