@@ -265,7 +265,7 @@ export function ReactQueryDevtools({
           <Button
             type="button"
             aria-label="Close React Query Devtools"
-            {...(otherCloseButtonProps as any)}
+            {...(otherCloseButtonProps as unknown)}
             onClick={e => {
               setIsOpen(false)
               onCloseClick && onCloseClick(e)
