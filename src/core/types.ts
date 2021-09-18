@@ -167,9 +167,12 @@ export interface QueryObserverOptions<
   onSettled?: (data: TData | undefined, error: TError | null) => void
   /**
    * Whether errors should be thrown instead of setting the `error` property.
+   * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
+   * If set to `false` and `suspense` is `false`, errors are returned as state.
+   * If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?: boolean
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
@@ -240,11 +243,11 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchPageFilters<TQueryFnData = unknown> {
+export interface RefetchPageFilters<TPageData = unknown> {
   refetchPage?: (
-    lastPage: TQueryFnData,
+    lastPage: TPageData,
     index: number,
-    allPages: TQueryFnData[]
+    allPages: TPageData[]
   ) => boolean
 }
 
@@ -252,20 +255,20 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TQueryFnData = unknown>
+export interface InvalidateQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {
+    RefetchPageFilters<TPageData> {
   refetchActive?: boolean
   refetchInactive?: boolean
 }
 
-export interface RefetchQueryFilters<TQueryFnData = unknown>
+export interface RefetchQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {}
+    RefetchPageFilters<TPageData> {}
 
-export interface ResetQueryFilters<TQueryFnData = unknown>
+export interface ResetQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {}
+    RefetchPageFilters<TPageData> {}
 
 export interface InvalidateOptions {
   throwOnError?: boolean
@@ -301,10 +304,11 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isPlaceholderData: boolean
   isPreviousData: boolean
   isRefetchError: boolean
+  isRefetching: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: (
-    options?: RefetchOptions & RefetchQueryFilters<TData>
+  refetch: <TPageData>(
+    options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
@@ -531,7 +535,7 @@ export interface MutationObserverOptions<
   TVariables = void,
   TContext = unknown
 > extends MutationOptions<TData, TError, TVariables, TContext> {
-  useErrorBoundary?: boolean
+  useErrorBoundary?: boolean | ((error: TError) => boolean)
 }
 
 export interface MutateOptions<
@@ -568,7 +572,7 @@ export type MutateFunction<
   options?: MutateOptions<TData, TError, TVariables, TContext>
 ) => Promise<TData>
 
-export interface MutationObserverResult<
+export interface MutationObserverBaseResult<
   TData = unknown,
   TError = unknown,
   TVariables = void,
@@ -581,6 +585,77 @@ export interface MutationObserverResult<
   mutate: MutateFunction<TData, TError, TVariables, TContext>
   reset: () => void
 }
+
+export interface MutationObserverIdleResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: undefined
+  error: null
+  isError: false
+  isIdle: true
+  isLoading: false
+  isSuccess: false
+  status: 'idle'
+}
+
+export interface MutationObserverLoadingResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: undefined
+  error: null
+  isError: false
+  isIdle: false
+  isLoading: true
+  isSuccess: false
+  status: 'loading'
+}
+
+export interface MutationObserverErrorResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: undefined
+  error: TError
+  isError: true
+  isIdle: false
+  isLoading: false
+  isSuccess: false
+  status: 'error'
+}
+
+export interface MutationObserverSuccessResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
+  data: TData
+  error: null
+  isError: false
+  isIdle: false
+  isLoading: false
+  isSuccess: true
+  status: 'success'
+}
+
+export type MutationObserverResult<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown
+> =
+  | MutationObserverIdleResult<TData, TError, TVariables, TContext>
+  | MutationObserverLoadingResult<TData, TError, TVariables, TContext>
+  | MutationObserverErrorResult<TData, TError, TVariables, TContext>
+  | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
 
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>

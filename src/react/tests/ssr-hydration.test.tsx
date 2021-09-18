@@ -2,10 +2,16 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDOMServer from 'react-dom/server'
 
-import { useQuery, QueryClient, QueryClientProvider, QueryCache } from '../..'
-import { dehydrate, hydrate } from '../'
+import {
+  useQuery,
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+  dehydrate,
+  hydrate,
+} from '../..'
 import * as utils from '../../core/utils'
-import { mockConsoleError, sleep } from '../../react/tests/utils'
+import { mockConsoleError, sleep } from './utils'
 
 // This monkey-patches the isServer-value from utils,
 // so that we can pretend to be in a server environment

@@ -278,8 +278,8 @@ export class QueryObserver<
     this.client.getQueryCache().remove(this.currentQuery)
   }
 
-  refetch(
-    options?: RefetchOptions & RefetchQueryFilters<TData>
+  refetch<TPageData>(
+    options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ): Promise<QueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
@@ -572,6 +572,7 @@ export class QueryObserver<
         state.dataUpdateCount > queryInitialState.dataUpdateCount ||
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
       isFetching,
+      isRefetching: isFetching && status !== 'loading',
       isLoadingError: status === 'error' && state.dataUpdatedAt === 0,
       isPlaceholderData,
       isPreviousData,

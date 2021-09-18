@@ -595,72 +595,78 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
                 flex: '1',
               }}
             >
-              {queries.map((query, i) => (
-                <div
-                  key={query.queryHash || i}
-                  role="button"
-                  aria-label={`Open query details for ${query.queryHash}`}
-                  onClick={() =>
-                    setActiveQueryHash(
-                      activeQueryHash === query.queryHash ? '' : query.queryHash
-                    )
-                  }
-                  style={{
-                    display: 'flex',
-                    borderBottom: `solid 1px ${theme.grayAlt}`,
-                    cursor: 'pointer',
-                    background:
-                      query === activeQuery
-                        ? 'rgba(255,255,255,.1)'
-                        : undefined,
-                  }}
-                >
+              {queries.map((query, i) => {
+                const isDisabled =
+                  query.getObserversCount() > 0 && !query.isActive()
+                return (
                   <div
+                    key={query.queryHash || i}
+                    role="button"
+                    aria-label={`Open query details for ${query.queryHash}`}
+                    onClick={() =>
+                      setActiveQueryHash(
+                        activeQueryHash === query.queryHash
+                          ? ''
+                          : query.queryHash
+                      )
+                    }
                     style={{
-                      flex: '0 0 auto',
-                      width: '2rem',
-                      height: '2rem',
-                      background: getQueryStatusColor(query, theme),
                       display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 'bold',
-                      textShadow:
-                        getQueryStatusLabel(query) === 'stale'
-                          ? '0'
-                          : '0 0 10px black',
-                      color:
-                        getQueryStatusLabel(query) === 'stale'
-                          ? 'black'
-                          : 'white',
+                      borderBottom: `solid 1px ${theme.grayAlt}`,
+                      cursor: 'pointer',
+                      background:
+                        query === activeQuery
+                          ? 'rgba(255,255,255,.1)'
+                          : undefined,
                     }}
                   >
-                    {query.getObserversCount()}
-                  </div>
-                  {query.isActive() ? null : (
                     <div
                       style={{
                         flex: '0 0 auto',
+                        width: '2rem',
                         height: '2rem',
-                        background: theme.gray,
+                        background: getQueryStatusColor(query, theme),
                         display: 'flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
                         fontWeight: 'bold',
-                        padding: '0 0.5rem',
+                        textShadow:
+                          getQueryStatusLabel(query) === 'stale'
+                            ? '0'
+                            : '0 0 10px black',
+                        color:
+                          getQueryStatusLabel(query) === 'stale'
+                            ? 'black'
+                            : 'white',
                       }}
                     >
-                      disabled
+                      {query.getObserversCount()}
                     </div>
-                  )}
-                  <Code
-                    style={{
-                      padding: '.5rem',
-                    }}
-                  >
-                    {`${query.queryHash}`}
-                  </Code>
-                </div>
-              ))}
+                    {isDisabled ? (
+                      <div
+                        style={{
+                          flex: '0 0 auto',
+                          height: '2rem',
+                          background: theme.gray,
+                          display: 'flex',
+                          alignItems: 'center',
+                          fontWeight: 'bold',
+                          padding: '0 0.5rem',
+                        }}
+                      >
+                        disabled
+                      </div>
+                    ) : null}
+                    <Code
+                      style={{
+                        padding: '.5rem',
+                      }}
+                    >
+                      {`${query.queryHash}`}
+                    </Code>
+                  </div>
+                )
+              })}
             </div>
           </div>
           {activeQuery ? (
