@@ -1,10 +1,8 @@
-// @ts-nocheck
-
 import { styled } from './utils'
 
 export const Panel = styled(
   'div',
-  (props, theme) => ({
+  (_props, theme) => ({
     fontSize: 'clamp(12px, 1.5vw, 14px)',
     fontFamily: `sans-serif`,
     display: 'flex',
@@ -24,7 +22,7 @@ export const Panel = styled(
 
 export const ActiveQueryPanel = styled(
   'div',
-  (props, theme) => ({
+  () => ({
     flex: '1 1 500px',
     display: 'flex',
     flexDirection: 'column',
@@ -32,7 +30,7 @@ export const ActiveQueryPanel = styled(
     height: '100%',
   }),
   {
-    '(max-width: 700px)': (props, theme) => ({
+    '(max-width: 700px)': (_props, theme) => ({
       borderTop: `2px solid ${theme.gray}`,
     }),
   }
@@ -69,7 +67,7 @@ export const Code = styled('code', {
   fontSize: '.9em',
 })
 
-export const Input = styled('input', (props, theme) => ({
+export const Input = styled('input', (_props, theme) => ({
   backgroundColor: theme.inputBackgroundColor,
   border: 0,
   borderRadius: '.2em',
@@ -81,7 +79,7 @@ export const Input = styled('input', (props, theme) => ({
 
 export const Select = styled(
   'select',
-  (props, theme) => ({
+  (_props, theme) => ({
     display: `inline-block`,
     fontSize: `.9em`,
     fontFamily: `sans-serif`,
