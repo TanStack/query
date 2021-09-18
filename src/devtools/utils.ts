@@ -10,10 +10,10 @@ export const isServer = typeof window === 'undefined'
 export function getQueryStatusColor(query, theme) {
   return query.state.isFetching
     ? theme.active
-    : query.isStale()
-    ? theme.warning
     : !query.getObserversCount()
     ? theme.gray
+    : query.isStale()
+    ? theme.warning
     : theme.success
 }
 
