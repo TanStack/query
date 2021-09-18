@@ -28,7 +28,6 @@ export default function useLocalStorage<T>(
     } else {
       setValue(initialValue)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [defaultValue, key])
 
   const setter = React.useCallback(
