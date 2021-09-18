@@ -428,6 +428,9 @@ export class QueryObserver<
     const prevQueryResult = queryChange
       ? this.currentResult
       : this.previousQueryResult
+    const queryKey = prevQueryResult
+      ? prevQueryResult.queryKey
+      : query.queryKey
 
     const { state } = query
     let { dataUpdatedAt, error, errorUpdatedAt, isFetching, status } = state
@@ -563,6 +566,7 @@ export class QueryObserver<
       isPreviousData,
       isRefetchError: status === 'error' && state.dataUpdatedAt !== 0,
       isStale: isStale(query, options),
+      queryKey,
       refetch: this.refetch,
       remove: this.remove,
     }

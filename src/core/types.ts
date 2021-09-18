@@ -284,7 +284,11 @@ export interface FetchPreviousPageOptions extends ResultOptions {
 
 export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
 
-export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
+export interface QueryObserverBaseResult<
+  TData = unknown,
+  TError = unknown,
+  TQueryKey extends QueryKey = QueryKey
+> {
   data: TData | undefined
   dataUpdatedAt: number
   error: TError | null
@@ -303,6 +307,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isRefetching: boolean
   isStale: boolean
   isSuccess: boolean
+  queryKey: TQueryKey
   refetch: <TPageData>(
     options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ) => Promise<QueryObserverResult<TData, TError>>
