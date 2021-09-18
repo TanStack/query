@@ -184,13 +184,13 @@ export class QueryClient {
     })
   }
 
-  resetQueries(
-    filters?: ResetQueryFilters,
+  resetQueries<TPageData = unknown>(
+    filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions
   ): Promise<void>
-  resetQueries(
+  resetQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: ResetQueryFilters,
+    filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions
   ): Promise<void>
   resetQueries(
@@ -238,13 +238,13 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
-  invalidateQueries(
-    filters?: InvalidateQueryFilters,
+  invalidateQueries<TPageData = unknown>(
+    filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions
   ): Promise<void>
-  invalidateQueries(
+  invalidateQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: InvalidateQueryFilters,
+    filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions
   ): Promise<void>
   invalidateQueries(
@@ -270,13 +270,13 @@ export class QueryClient {
     })
   }
 
-  refetchQueries(
-    filters?: RefetchQueryFilters,
+  refetchQueries<TPageData = unknown>(
+    filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions
   ): Promise<void>
-  refetchQueries(
+  refetchQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: RefetchQueryFilters,
+    filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions
   ): Promise<void>
   refetchQueries(

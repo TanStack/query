@@ -6,6 +6,7 @@ import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
+import { shouldThrowError } from './utils'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -123,9 +124,13 @@ export function useBaseQuery<
 
   // Handle error boundary
   if (
-    (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) &&
     result.isError &&
-    !result.isFetching
+    !result.isFetching &&
+    shouldThrowError(
+      defaultedOptions.suspense,
+      defaultedOptions.useErrorBoundary,
+      result.error
+    )
   ) {
     throw result.error
   }

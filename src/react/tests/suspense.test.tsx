@@ -550,6 +550,185 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
+  it('should throw errors to the error boundary by default', async () => {
+    const key = queryKey()
+
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          throw new Error('Suspense Error a1x')
+        },
+        {
+          retry: false,
+          suspense: true,
+        }
+      )
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw errors to the error boundary when useErrorBoundary: false', async () => {
+    const key = queryKey()
+
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          throw new Error('Suspense Error a2x')
+        },
+        {
+          retry: false,
+          suspense: true,
+          useErrorBoundary: false,
+        }
+      )
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('rendered'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw errors to the error boundary when a useErrorBoundary function returns true', async () => {
+    const key = queryKey()
+
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return Promise.reject('Remote Error')
+        },
+        {
+          retry: false,
+          suspense: true,
+          useErrorBoundary: err => err !== 'Local Error',
+        }
+      )
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should not throw errors to the error boundary when a useErrorBoundary function returns false', async () => {
+    const key = queryKey()
+
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return Promise.reject('Local Error')
+        },
+        {
+          retry: false,
+          suspense: true,
+          useErrorBoundary: err => err !== 'Local Error',
+        }
+      )
+      return <div>rendered</div>
+    }
+
+    function App() {
+      return (
+        <ErrorBoundary
+          fallbackRender={() => (
+            <div>
+              <div>error boundary</div>
+            </div>
+          )}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('Loading...'))
+    await waitFor(() => rendered.getByText('rendered'))
+
+    consoleMock.mockRestore()
+  })
+
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 

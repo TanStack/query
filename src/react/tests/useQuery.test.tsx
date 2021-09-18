@@ -19,6 +19,7 @@ import {
   QueryFunction,
   QueryFunctionContext,
 } from '../..'
+import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -178,6 +179,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -202,6 +204,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
@@ -256,6 +259,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -280,6 +284,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -304,6 +309,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -824,6 +830,7 @@ describe('useQuery', () => {
           'data',
           'isFetching',
           'isLoading',
+          'isRefetching',
           'isSuccess',
           'status',
         ],
@@ -1236,24 +1243,28 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
+      isRefetching: false,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
       data: 1,
       isFetching: false,
+      isRefetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[2]).toMatchObject({
       data: 1,
       isFetching: true,
+      isRefetching: true,
       isSuccess: true,
       isStale: true,
     })
     expect(states[3]).toMatchObject({
       data: 2,
       isFetching: false,
+      isRefetching: false,
       isSuccess: true,
       isStale: false,
     })
@@ -2629,6 +2640,114 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error'))
     await waitFor(() => rendered.getByText('Error test jaylen'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error if queryFn throws and useErrorBoundary is in use', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { status, error } = useQuery<undefined, string>(
+        key,
+        () => Promise.reject('Error test jaylen'),
+        { retry: false, useErrorBoundary: true }
+      )
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>{error}</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should set status to error instead of throwing when error should not be thrown', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { status, error } = useQuery<undefined, string>(
+        key,
+        () => Promise.reject('Local Error'),
+        {
+          retry: false,
+          useErrorBoundary: err => err !== 'Local Error',
+        }
+      )
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>{error}</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <Page />
+      </ErrorBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('error'))
+    await waitFor(() => rendered.getByText('Local Error'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should throw error instead of setting status when error should be thrown', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { status, error } = useQuery<undefined, string>(
+        key,
+        () => Promise.reject('Remote Error'),
+        {
+          retry: false,
+          useErrorBoundary: err => err !== 'Local Error',
+        }
+      )
+
+      return (
+        <div>
+          <h1>{status}</h1>
+          <h2>{error}</h2>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('Remote Error'))
 
     consoleMock.mockRestore()
   })

@@ -1,5 +1,6 @@
 import { mockNavigatorOnLine, sleep } from '../../react/tests/utils'
-import { QueryCache, QueryClient } from '../..'
+import { QueryCache } from '../queryCache'
+import { QueryClient } from '../queryClient'
 import { dehydrate, hydrate } from '../hydration'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
