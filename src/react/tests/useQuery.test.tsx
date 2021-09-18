@@ -179,6 +179,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -202,6 +203,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
@@ -255,6 +257,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -278,6 +281,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -301,6 +305,7 @@ describe('useQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -820,6 +825,7 @@ describe('useQuery', () => {
           'data',
           'isFetching',
           'isLoading',
+          'isRefetching',
           'isSuccess',
           'status',
         ],
@@ -1156,24 +1162,28 @@ describe('useQuery', () => {
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
+      isRefetching: false,
       isSuccess: false,
       isStale: true,
     })
     expect(states[1]).toMatchObject({
       data: 1,
       isFetching: false,
+      isRefetching: false,
       isSuccess: true,
       isStale: false,
     })
     expect(states[2]).toMatchObject({
       data: 1,
       isFetching: true,
+      isRefetching: true,
       isSuccess: true,
       isStale: true,
     })
     expect(states[3]).toMatchObject({
       data: 2,
       isFetching: false,
+      isRefetching: false,
       isSuccess: true,
       isStale: false,
     })
