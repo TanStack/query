@@ -28,12 +28,15 @@ export function useInfiniteQuery<
   TQueryKey extends QueryKey = QueryKey
 >(
   queryKey: TQueryKey,
-  options?: UseInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
+  options?: Omit<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    >,
+    'queryKey'
   >
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
@@ -44,12 +47,15 @@ export function useInfiniteQuery<
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: UseInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
+  options?: Omit<
+    UseInfiniteQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    >,
+    'queryKey' | 'queryFn'
   >
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
