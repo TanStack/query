@@ -15,7 +15,7 @@ const getItem = (key: string): unknown => {
 export default function useLocalStorage<T>(
   key: string,
   defaultValue: T | undefined
-): [T | undefined, (newVal: T) => void] {
+): [T | undefined, (newVal: T | ((prevVal: T) => T)) => void] {
   const [value, setValue] = React.useState<T>()
 
   React.useEffect(() => {

@@ -17,6 +17,7 @@ export const defaultTheme = {
 export type Theme = typeof defaultTheme
 interface ProviderProps {
   theme: Theme
+  children?: React.ReactNode
 }
 
 const ThemeContext = React.createContext(defaultTheme)

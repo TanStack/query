@@ -6,12 +6,24 @@ import useMediaQuery from './useMediaQuery'
 
 export const isServer = typeof window === 'undefined'
 
-type StyledComponent<T> = 
-    T extends "button" ? React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> :
-    T extends "input" ? React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> :
-    T extends "select" ? React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> :
-    T extends keyof HTMLElementTagNameMap ? React.HTMLAttributes<HTMLElementTagNameMap[T]> :
-    never;
+type StyledComponent<T> = T extends 'button'
+  ? React.DetailedHTMLProps<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      HTMLButtonElement
+    >
+  : T extends 'input'
+  ? React.DetailedHTMLProps<
+      React.InputHTMLAttributes<HTMLInputElement>,
+      HTMLInputElement
+    >
+  : T extends 'select'
+  ? React.DetailedHTMLProps<
+      React.SelectHTMLAttributes<HTMLSelectElement>,
+      HTMLSelectElement
+    >
+  : T extends keyof HTMLElementTagNameMap
+  ? React.HTMLAttributes<HTMLElementTagNameMap[T]>
+  : never
 
 export function getQueryStatusColor(query: Query, theme: Theme) {
   return query.state.isFetching
@@ -42,7 +54,7 @@ export function styled<T extends keyof HTMLElementTagNameMap>(
   newStyles: Styles,
   queries: Record<string, Styles> = {}
 ) {
-  return React.forwardRef<unknown, StyledComponent<T>>(
+  return React.forwardRef<HTMLElementTagNameMap[T], StyledComponent<T>>(
     ({ style, ...rest }, ref) => {
       const theme = useTheme()
 
@@ -93,12 +105,12 @@ export function useIsMounted() {
  * to prevent updating a component state while React is rendering different components
  * or when the component is not mounted anymore.
  */
-export function useSafeState<T>(initialState: T) {
+export function useSafeState<T>(initialState: T): [T, (value: T) => void] {
   const isMounted = useIsMounted()
   const [state, setState] = React.useState(initialState)
 
   const safeSetState = React.useCallback(
-    value => {
+    (value: T) => {
       scheduleMicrotask(() => {
         if (isMounted()) {
           setState(value)
