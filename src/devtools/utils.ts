@@ -6,6 +6,13 @@ import useMediaQuery from './useMediaQuery'
 
 export const isServer = typeof window === 'undefined'
 
+type StyledComponent<T> = 
+    T extends "button" ? React.DetailedHTMLProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> :
+    T extends "input" ? React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> :
+    T extends "select" ? React.DetailedHTMLProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> :
+    T extends keyof HTMLElementTagNameMap ? React.HTMLAttributes<HTMLElementTagNameMap[T]> :
+    never;
+
 export function getQueryStatusColor(query: Query, theme: Theme) {
   return query.state.isFetching
     ? theme.active
@@ -30,12 +37,12 @@ type Styles =
   | React.CSSProperties
   | ((props: Record<string, any>, theme: Theme) => React.CSSProperties)
 
-export function styled(
-  type: string,
+export function styled<T extends keyof HTMLElementTagNameMap>(
+  type: T,
   newStyles: Styles,
   queries: Record<string, Styles> = {}
 ) {
-  return React.forwardRef<unknown, { style?: React.CSSProperties }>(
+  return React.forwardRef<unknown, StyledComponent<T>>(
     ({ style, ...rest }, ref) => {
       const theme = useTheme()
 
