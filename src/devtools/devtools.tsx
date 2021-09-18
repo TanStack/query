@@ -336,7 +336,7 @@ export function ReactQueryDevtools({
                   bottom: '0',
                   left: '0',
                 }),
-            ...(toggleButtonStyle as any),
+            ...(toggleButtonStyle as unknown),
           }}
         >
           <Logo aria-hidden />
