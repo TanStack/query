@@ -4066,23 +4066,25 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when previous status is error', async () => {
     const consoleMock = mockConsoleError()
-    const queryFn = jest.fn()
 
     function Page({ id }: { id: number }) {
-      queryFn.mockImplementation(async () => {
-        await sleep(10)
-        if (id % 2 === 1) {
-          return Promise.reject(new Error('Suspense Error Bingo'))
-        } else {
-          return 'data'
+      const { error, isLoading } = useQuery(
+        [id],
+        async () => {
+          await sleep(10)
+          if (id % 2 === 1) {
+            return Promise.reject(new Error('Error'))
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          retryOnMount: false,
+          refetchOnMount: false,
+          refetchOnWindowFocus: false,
         }
-      })
-      const { error, isLoading } = useQuery([id], queryFn, {
-        retry: false,
-        retryOnMount: false,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-      })
+      )
 
       if (isLoading) {
         return <div>status: loading</div>
@@ -4114,12 +4116,73 @@ describe('useQuery', () => {
     // render error state component
     await waitFor(() => rendered.getByText('error'))
 
-    // change to enabled to false
+    // change to unmount query
     fireEvent.click(rendered.getByLabelText('change'))
     await waitFor(() => rendered.getByText('rendered'))
 
-    // // change to enabled to true
+    // change to mount new query
     fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('error'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should refetch when query key changed when switching between erroneous queries', async () => {
+    const consoleMock = mockConsoleError()
+
+    function Page({ id }: { id: boolean }) {
+      const { error, isFetching } = useQuery(
+        [id],
+        async () => {
+          await sleep(10)
+          return Promise.reject(new Error('Error'))
+        },
+        {
+          retry: false,
+          retryOnMount: false,
+          refetchOnMount: false,
+          refetchOnWindowFocus: false,
+        }
+      )
+
+      if (isFetching) {
+        return <div>status: fetching</div>
+      }
+      if (error instanceof Error) {
+        return <div>error</div>
+      }
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const [value, toggle] = React.useReducer(x => !x, true)
+
+      return (
+        <div>
+          <Page id={value} />
+          <button aria-label="change" onClick={toggle}>
+            change {value}
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // initial state check
+    rendered.getByText('status: fetching')
+
+    // render error state component
+    await waitFor(() => rendered.getByText('error'))
+
+    // change to mount second query
+    fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('status: fetching'))
+    await waitFor(() => rendered.getByText('error'))
+
+    // change to mount first query again
+    fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('status: fetching'))
     await waitFor(() => rendered.getByText('error'))
 
     consoleMock.mockRestore()
