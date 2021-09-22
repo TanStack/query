@@ -15,8 +15,12 @@
   "types": "types/index.d.ts",
   "module": "es/index.js",
   "sideEffects": [
+    "es/index.js",
+    "es/react/index.js",
     "es/react/setBatchUpdatesFn.js",
     "es/react/setLogger.js",
+    "lib/index.js",
+    "lib/react/index.js",
     "lib/react/setBatchUpdatesFn.js",
     "lib/react/setLogger.js"
   ],
