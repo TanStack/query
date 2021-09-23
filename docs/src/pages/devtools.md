@@ -17,8 +17,7 @@ The devtools are bundle split into the `react-query/devtools` package. No need t
 import { ReactQueryDevtools } from 'react-query/devtools'
 ```
 
-By default, React Query Devtools are not included in production bundles when `process.env.NODE_ENV === 'production'`, so you don't need to worry about excluding them during a production build.
-
+By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
 ## Floating Mode
 
 Floating Mode will mount the devtools as a fixed, floating element in your app and provide a toggle in the corner of the screen to show and hide the devtools. This toggle state will be stored and remembered in localStorage across reloads.
