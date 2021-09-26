@@ -370,10 +370,7 @@ export class QueryObserver<
 
   private computeRefetchInterval() {
     return typeof this.options.refetchInterval === 'function'
-      ? this.options.refetchInterval(
-          this.currentResult.data,
-          this.currentResult.error
-        )
+      ? this.options.refetchInterval(this.currentResult.data, this.currentQuery)
       : this.options.refetchInterval
   }
 
