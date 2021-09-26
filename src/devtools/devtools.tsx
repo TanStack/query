@@ -1,8 +1,6 @@
-// @ts-nocheck
-
 import React from 'react'
 
-import { useQueryClient } from 'react-query'
+import { Query, useQueryClient } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
 import { useIsMounted, useSafeState } from './utils'
@@ -71,6 +69,18 @@ interface DevtoolsPanelOptions {
    * The standard React className property used to style a component with classes
    */
   className?: string
+  /**
+   * A boolean variable indicating whether the panel is open or closed
+   */
+  isOpen: boolean
+  /**
+   * A function that toggles the open and close state of the panel
+   */
+  setIsOpen: (isOpen: boolean) => void
+  /**
+   * Handles the opening and closing the devtools panel
+   */
+  handleDragStart: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
 const isServer = typeof window === 'undefined'
@@ -82,14 +92,14 @@ export function ReactQueryDevtools({
   toggleButtonProps = {},
   position = 'bottom-left',
   containerElement: Container = 'footer',
-}: DevtoolsOptions): React.ReactElement {
-  const rootRef = React.useRef()
-  const panelRef = React.useRef()
+}: DevtoolsOptions): React.ReactElement | null {
+  const rootRef = React.useRef<HTMLDivElement>(null)
+  const panelRef = React.useRef<HTMLDivElement>(null)
   const [isOpen, setIsOpen] = useLocalStorage(
     'reactQueryDevtoolsOpen',
     initialIsOpen
   )
-  const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage(
+  const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage<number | null>(
     'reactQueryDevtoolsHeight',
     null
   )
@@ -97,19 +107,22 @@ export function ReactQueryDevtools({
   const [isResizing, setIsResizing] = useSafeState(false)
   const isMounted = useIsMounted()
 
-  const handleDragStart = (panelElement, startEvent) => {
+  const handleDragStart = (
+    panelElement: HTMLDivElement | null,
+    startEvent: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     if (startEvent.button !== 0) return // Only allow left click for drag
 
     setIsResizing(true)
 
     const dragInfo = {
-      originalHeight: panelElement.getBoundingClientRect().height,
+      originalHeight: panelElement?.getBoundingClientRect().height ?? 0,
       pageY: startEvent.pageY,
     }
 
-    const run = moveEvent => {
+    const run = (moveEvent: MouseEvent) => {
       const delta = dragInfo.pageY - moveEvent.pageY
-      const newHeight = dragInfo.originalHeight + delta
+      const newHeight = dragInfo?.originalHeight + delta
 
       setDevtoolsHeight(newHeight)
 
@@ -131,7 +144,7 @@ export function ReactQueryDevtools({
   }
 
   React.useEffect(() => {
-    setIsResolvedOpen(isOpen)
+    setIsResolvedOpen(isOpen ?? false)
   }, [isOpen, isResolvedOpen, setIsResolvedOpen])
 
   // Toggle panel visibility before/after transition (depending on direction).
@@ -139,13 +152,13 @@ export function ReactQueryDevtools({
   React.useEffect(() => {
     const ref = panelRef.current
     if (ref) {
-      function handlePanelTransitionStart() {
+      const handlePanelTransitionStart = () => {
         if (ref && isResolvedOpen) {
           ref.style.visibility = 'visible'
         }
       }
 
-      function handlePanelTransitionEnd() {
+      const handlePanelTransitionEnd = () => {
         if (ref && !isResolvedOpen) {
           ref.style.visibility = 'hidden'
         }
@@ -163,11 +176,13 @@ export function ReactQueryDevtools({
 
   React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
     if (isResolvedOpen) {
-      const previousValue = rootRef.current?.parentElement.style.paddingBottom
+      const previousValue = rootRef.current?.parentElement?.style.paddingBottom
 
       const run = () => {
         const containerHeight = panelRef.current?.getBoundingClientRect().height
-        rootRef.current.parentElement.style.paddingBottom = `${containerHeight}px`
+        if (rootRef.current?.parentElement) {
+          rootRef.current.parentElement.style.paddingBottom = `${containerHeight}px`
+        }
       }
 
       run()
@@ -177,7 +192,12 @@ export function ReactQueryDevtools({
 
         return () => {
           window.removeEventListener('resize', run)
-          rootRef.current.parentElement.style.paddingBottom = previousValue
+          if (
+            rootRef.current?.parentElement &&
+            typeof previousValue === 'string'
+          ) {
+            rootRef.current.parentElement.style.paddingBottom = previousValue
+          }
         }
       }
     }
@@ -204,13 +224,13 @@ export function ReactQueryDevtools({
     <Container ref={rootRef} className="ReactQueryDevtools">
       <ThemeProvider theme={theme}>
         <ReactQueryDevtoolsPanel
-          ref={panelRef}
+          ref={panelRef as any}
           {...otherPanelProps}
           style={{
             position: 'fixed',
             bottom: '0',
             right: '0',
-            zIndex: '99999',
+            zIndex: 99999,
             width: '100%',
             height: devtoolsHeight ?? 500,
             maxHeight: '90%',
@@ -245,14 +265,14 @@ export function ReactQueryDevtools({
           <Button
             type="button"
             aria-label="Close React Query Devtools"
-            {...otherCloseButtonProps}
-            onClick={() => {
+            {...(otherCloseButtonProps as unknown)}
+            onClick={e => {
               setIsOpen(false)
-              onCloseClick && onCloseClick()
+              onCloseClick && onCloseClick(e)
             }}
             style={{
               position: 'fixed',
-              zIndex: '99999',
+              zIndex: 99999,
               margin: '.5rem',
               bottom: 0,
               ...(position === 'top-right'
@@ -282,16 +302,16 @@ export function ReactQueryDevtools({
           type="button"
           {...otherToggleButtonProps}
           aria-label="Open React Query Devtools"
-          onClick={() => {
+          onClick={e => {
             setIsOpen(true)
-            onToggleClick && onToggleClick()
+            onToggleClick && onToggleClick(e)
           }}
           style={{
             background: 'none',
             border: 0,
             padding: 0,
             position: 'fixed',
-            zIndex: '99999',
+            zIndex: 99999,
             display: 'inline-flex',
             fontSize: '1.5rem',
             margin: '.5rem',
@@ -326,13 +346,13 @@ export function ReactQueryDevtools({
   )
 }
 
-const getStatusRank = q =>
+const getStatusRank = (q: Query) =>
   q.state.isFetching ? 0 : !q.getObserversCount() ? 3 : q.isStale() ? 2 : 1
 
-const sortFns = {
+const sortFns: Record<string, (a: Query, b: Query) => number> = {
   'Status > Last Updated': (a, b) =>
     getStatusRank(a) === getStatusRank(b)
-      ? sortFns['Last Updated'](a, b)
+      ? (sortFns['Last Updated']?.(a, b) as number)
       : getStatusRank(a) > getStatusRank(b)
       ? 1
       : -1,
@@ -341,101 +361,98 @@ const sortFns = {
     a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
 
-export const ReactQueryDevtoolsPanel = React.forwardRef(
-  function ReactQueryDevtoolsPanel(
-    props: DevtoolsPanelOptions,
-    ref
-  ): React.ReactElement {
-    const { isOpen, setIsOpen, handleDragStart, ...panelProps } = props
+export const ReactQueryDevtoolsPanel = React.forwardRef<
+  HTMLDivElement,
+  DevtoolsPanelOptions
+>(function ReactQueryDevtoolsPanel(props, ref): React.ReactElement {
+  const { isOpen, setIsOpen, handleDragStart, ...panelProps } = props
 
-    const queryClient = useQueryClient()
-    const queryCache = queryClient.getQueryCache()
+  const queryClient = useQueryClient()
+  const queryCache = queryClient.getQueryCache()
 
-    const [sort, setSort] = useLocalStorage(
-      'reactQueryDevtoolsSortFn',
-      Object.keys(sortFns)[0]
-    )
+  const [sort, setSort] = useLocalStorage(
+    'reactQueryDevtoolsSortFn',
+    Object.keys(sortFns)[0]
+  )
 
-    const [filter, setFilter] = useLocalStorage('reactQueryDevtoolsFilter', '')
+  const [filter, setFilter] = useLocalStorage('reactQueryDevtoolsFilter', '')
 
-    const [sortDesc, setSortDesc] = useLocalStorage(
-      'reactQueryDevtoolsSortDesc',
-      false
-    )
+  const [sortDesc, setSortDesc] = useLocalStorage(
+    'reactQueryDevtoolsSortDesc',
+    false
+  )
 
-    const sortFn = React.useMemo(() => sortFns[sort], [sort])
+  const sortFn = React.useMemo(() => sortFns[sort as string], [sort])
 
-    React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
-      if (!sortFn) {
-        setSort(Object.keys(sortFns)[0])
-      }
-    }, [setSort, sortFn])
+  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
+    if (!sortFn) {
+      setSort(Object.keys(sortFns)[0] as string)
+    }
+  }, [setSort, sortFn])
 
-    const [unsortedQueries, setUnsortedQueries] = useSafeState(
-      Object.values(queryCache.findAll())
-    )
+  const [unsortedQueries, setUnsortedQueries] = useSafeState(
+    Object.values(queryCache.findAll())
+  )
 
-    const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
-      'reactQueryDevtoolsActiveQueryHash',
-      ''
-    )
+  const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
+    'reactQueryDevtoolsActiveQueryHash',
+    ''
+  )
 
-    const queries = React.useMemo(() => {
-      const sorted = [...unsortedQueries].sort(sortFn)
+  const queries = React.useMemo(() => {
+    const sorted = [...unsortedQueries].sort(sortFn)
 
-      if (sortDesc) {
-        sorted.reverse()
-      }
-
-      if (!filter) {
-        return sorted
-      }
-
-      return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
-        d => d.queryHash
-      )
-    }, [sortDesc, sortFn, unsortedQueries, filter])
-
-    const activeQuery = React.useMemo(() => {
-      return queries.find(query => query.queryHash === activeQueryHash)
-    }, [activeQueryHash, queries])
-
-    const hasFresh = queries.filter(q => getQueryStatusLabel(q) === 'fresh')
-      .length
-    const hasFetching = queries.filter(
-      q => getQueryStatusLabel(q) === 'fetching'
-    ).length
-    const hasStale = queries.filter(q => getQueryStatusLabel(q) === 'stale')
-      .length
-    const hasInactive = queries.filter(
-      q => getQueryStatusLabel(q) === 'inactive'
-    ).length
-
-    React.useEffect(() => {
-      if (isOpen) {
-        const unsubscribe = queryCache.subscribe(() => {
-          setUnsortedQueries(Object.values(queryCache.getAll()))
-        })
-        // re-subscribing after the panel is closed and re-opened won't trigger the callback,
-        // So we'll manually populate our state
-        setUnsortedQueries(Object.values(queryCache.getAll()))
-
-        return unsubscribe
-      }
-      return undefined
-    }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
-
-    const handleRefetch = () => {
-      const promise = activeQuery.fetch()
-      promise.catch(noop)
+    if (sortDesc) {
+      sorted.reverse()
     }
 
-    return (
-      <ThemeProvider theme={theme}>
-        <Panel ref={ref} className="ReactQueryDevtoolsPanel" {...panelProps}>
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
+    if (!filter) {
+      return sorted
+    }
+
+    return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
+      d => d.queryHash
+    )
+  }, [sortDesc, sortFn, unsortedQueries, filter])
+
+  const activeQuery = React.useMemo(() => {
+    return queries.find(query => query.queryHash === activeQueryHash)
+  }, [activeQueryHash, queries])
+
+  const hasFresh = queries.filter(q => getQueryStatusLabel(q) === 'fresh')
+    .length
+  const hasFetching = queries.filter(q => getQueryStatusLabel(q) === 'fetching')
+    .length
+  const hasStale = queries.filter(q => getQueryStatusLabel(q) === 'stale')
+    .length
+  const hasInactive = queries.filter(q => getQueryStatusLabel(q) === 'inactive')
+    .length
+
+  React.useEffect(() => {
+    if (isOpen) {
+      const unsubscribe = queryCache.subscribe(() => {
+        setUnsortedQueries(Object.values(queryCache.getAll()))
+      })
+      // re-subscribing after the panel is closed and re-opened won't trigger the callback,
+      // So we'll manually populate our state
+      setUnsortedQueries(Object.values(queryCache.getAll()))
+
+      return unsubscribe
+    }
+    return undefined
+  }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
+
+  const handleRefetch = () => {
+    const promise = activeQuery?.fetch()
+    promise?.catch(noop)
+  }
+
+  return (
+    <ThemeProvider theme={theme}>
+      <Panel ref={ref} className="ReactQueryDevtoolsPanel" {...panelProps}>
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
             .ReactQueryDevtoolsPanel * {
               scrollbar-color: ${theme.backgroundAlt} ${theme.gray};
             }
@@ -455,404 +472,402 @@ export const ReactQueryDevtoolsPanel = React.forwardRef(
               border: 3px solid ${theme.backgroundAlt};
             }
           `,
-            }}
-          />
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: '100%',
+            height: '4px',
+            marginBottom: '-4px',
+            cursor: 'row-resize',
+            zIndex: 100000,
+          }}
+          onMouseDown={handleDragStart}
+        ></div>
+        <div
+          style={{
+            flex: '1 1 500px',
+            minHeight: '40%',
+            maxHeight: '100%',
+            overflow: 'auto',
+            borderRight: `1px solid ${theme.grayAlt}`,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           <div
             style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: '100%',
-              height: '4px',
-              marginBottom: '-4px',
-              cursor: 'row-resize',
-              zIndex: 100000,
-            }}
-            onMouseDown={handleDragStart}
-          ></div>
-          <div
-            style={{
-              flex: '1 1 500px',
-              minHeight: '40%',
-              maxHeight: '100%',
-              overflow: 'auto',
-              borderRight: `1px solid ${theme.grayAlt}`,
+              padding: '.5rem',
+              background: theme.backgroundAlt,
               display: 'flex',
-              flexDirection: 'column',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
+            <Logo
+              aria-hidden
+              style={{
+                marginRight: '.5rem',
+              }}
+            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+              }}
+            >
+              <QueryKeys style={{ marginBottom: '.5rem' }}>
+                <QueryKey
+                  style={{
+                    background: theme.success,
+                    opacity: hasFresh ? 1 : 0.3,
+                  }}
+                >
+                  fresh <Code>({hasFresh})</Code>
+                </QueryKey>{' '}
+                <QueryKey
+                  style={{
+                    background: theme.active,
+                    opacity: hasFetching ? 1 : 0.3,
+                  }}
+                >
+                  fetching <Code>({hasFetching})</Code>
+                </QueryKey>{' '}
+                <QueryKey
+                  style={{
+                    background: theme.warning,
+                    color: 'black',
+                    textShadow: '0',
+                    opacity: hasStale ? 1 : 0.3,
+                  }}
+                >
+                  stale <Code>({hasStale})</Code>
+                </QueryKey>{' '}
+                <QueryKey
+                  style={{
+                    background: theme.gray,
+                    opacity: hasInactive ? 1 : 0.3,
+                  }}
+                >
+                  inactive <Code>({hasInactive})</Code>
+                </QueryKey>
+              </QueryKeys>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <Input
+                  placeholder="Filter"
+                  aria-label="Filter by queryhash"
+                  value={filter ?? ''}
+                  onChange={e => setFilter(e.target.value)}
+                  onKeyDown={e => {
+                    if (e.key === 'Escape') setFilter('')
+                  }}
+                  style={{
+                    flex: '1',
+                    marginRight: '.5rem',
+                  }}
+                />
+                {!filter ? (
+                  <>
+                    <Select
+                      aria-label="Sort queries"
+                      value={sort}
+                      onChange={e => setSort(e.target.value)}
+                      style={{
+                        flex: '1',
+                        minWidth: 75,
+                        marginRight: '.5rem',
+                      }}
+                    >
+                      {Object.keys(sortFns).map(key => (
+                        <option key={key} value={key}>
+                          Sort by {key}
+                        </option>
+                      ))}
+                    </Select>
+                    <Button
+                      type="button"
+                      onClick={() => setSortDesc(old => !old)}
+                      style={{
+                        padding: '.3rem .4rem',
+                      }}
+                    >
+                      {sortDesc ? '⬇ Desc' : '⬆ Asc'}
+                    </Button>
+                  </>
+                ) : null}
+              </div>
+            </div>
+          </div>
+          <div
+            style={{
+              overflowY: 'auto',
+              flex: '1',
+            }}
+          >
+            {queries.map((query, i) => {
+              const isDisabled =
+                query.getObserversCount() > 0 && !query.isActive()
+              return (
+                <div
+                  key={query.queryHash || i}
+                  role="button"
+                  aria-label={`Open query details for ${query.queryHash}`}
+                  onClick={() =>
+                    setActiveQueryHash(
+                      activeQueryHash === query.queryHash ? '' : query.queryHash
+                    )
+                  }
+                  style={{
+                    display: 'flex',
+                    borderBottom: `solid 1px ${theme.grayAlt}`,
+                    cursor: 'pointer',
+                    background:
+                      query === activeQuery
+                        ? 'rgba(255,255,255,.1)'
+                        : undefined,
+                  }}
+                >
+                  <div
+                    style={{
+                      flex: '0 0 auto',
+                      width: '2rem',
+                      height: '2rem',
+                      background: getQueryStatusColor(query, theme),
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      textShadow:
+                        getQueryStatusLabel(query) === 'stale'
+                          ? '0'
+                          : '0 0 10px black',
+                      color:
+                        getQueryStatusLabel(query) === 'stale'
+                          ? 'black'
+                          : 'white',
+                    }}
+                  >
+                    {query.getObserversCount()}
+                  </div>
+                  {isDisabled ? (
+                    <div
+                      style={{
+                        flex: '0 0 auto',
+                        height: '2rem',
+                        background: theme.gray,
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontWeight: 'bold',
+                        padding: '0 0.5rem',
+                      }}
+                    >
+                      disabled
+                    </div>
+                  ) : null}
+                  <Code
+                    style={{
+                      padding: '.5rem',
+                    }}
+                  >
+                    {`${query.queryHash}`}
+                  </Code>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {activeQuery ? (
+          <ActiveQueryPanel>
             <div
               style={{
                 padding: '.5rem',
                 background: theme.backgroundAlt,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
               }}
             >
-              <Logo
-                aria-hidden
+              Query Details
+            </div>
+            <div
+              style={{
+                padding: '.5rem',
+              }}
+            >
+              <div
                 style={{
-                  marginRight: '.5rem',
+                  marginBottom: '.5rem',
+                  display: 'flex',
+                  alignItems: 'stretch',
+                  justifyContent: 'space-between',
                 }}
-              />
+              >
+                <Code
+                  style={{
+                    lineHeight: '1.8rem',
+                  }}
+                >
+                  <pre
+                    style={{
+                      margin: 0,
+                      padding: 0,
+                      overflow: 'auto',
+                    }}
+                  >
+                    {JSON.stringify(activeQuery.queryKey, null, 2)}
+                  </pre>
+                </Code>
+                <span
+                  style={{
+                    padding: '0.3rem .6rem',
+                    borderRadius: '0.4rem',
+                    fontWeight: 'bold',
+                    textShadow: '0 2px 10px black',
+                    background: getQueryStatusColor(activeQuery, theme),
+                    flexShrink: 0,
+                  }}
+                >
+                  {getQueryStatusLabel(activeQuery)}
+                </span>
+              </div>
+              <div
+                style={{
+                  marginBottom: '.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                }}
+              >
+                Observers: <Code>{activeQuery.getObserversCount()}</Code>
+              </div>
               <div
                 style={{
                   display: 'flex',
-                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
                 }}
               >
-                <QueryKeys style={{ marginBottom: '.5rem' }}>
-                  <QueryKey
-                    style={{
-                      background: theme.success,
-                      opacity: hasFresh ? 1 : 0.3,
-                    }}
-                  >
-                    fresh <Code>({hasFresh})</Code>
-                  </QueryKey>{' '}
-                  <QueryKey
-                    style={{
-                      background: theme.active,
-                      opacity: hasFetching ? 1 : 0.3,
-                    }}
-                  >
-                    fetching <Code>({hasFetching})</Code>
-                  </QueryKey>{' '}
-                  <QueryKey
-                    style={{
-                      background: theme.warning,
-                      color: 'black',
-                      textShadow: '0',
-                      opacity: hasStale ? 1 : 0.3,
-                    }}
-                  >
-                    stale <Code>({hasStale})</Code>
-                  </QueryKey>{' '}
-                  <QueryKey
-                    style={{
-                      background: theme.gray,
-                      opacity: hasInactive ? 1 : 0.3,
-                    }}
-                  >
-                    inactive <Code>({hasInactive})</Code>
-                  </QueryKey>
-                </QueryKeys>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Input
-                    placeholder="Filter"
-                    aria-label="Filter by queryhash"
-                    value={filter ?? ''}
-                    onChange={e => setFilter(e.target.value)}
-                    onKeyDown={e => {
-                      if (e.key === 'Escape') setFilter('')
-                    }}
-                    style={{
-                      flex: '1',
-                      marginRight: '.5rem',
-                    }}
-                  />
-                  {!filter ? (
-                    <>
-                      <Select
-                        aria-label="Sort queries"
-                        value={sort}
-                        onChange={e => setSort(e.target.value)}
-                        style={{
-                          flex: '1',
-                          minWidth: 75,
-                          marginRight: '.5rem',
-                        }}
-                      >
-                        {Object.keys(sortFns).map(key => (
-                          <option key={key} value={key}>
-                            Sort by {key}
-                          </option>
-                        ))}
-                      </Select>
-                      <Button
-                        type="button"
-                        onClick={() => setSortDesc(old => !old)}
-                        style={{
-                          padding: '.3rem .4rem',
-                        }}
-                      >
-                        {sortDesc ? '⬇ Desc' : '⬆ Asc'}
-                      </Button>
-                    </>
-                  ) : null}
-                </div>
+                Last Updated:{' '}
+                <Code>
+                  {new Date(
+                    activeQuery.state.dataUpdatedAt
+                  ).toLocaleTimeString()}
+                </Code>
               </div>
             </div>
             <div
               style={{
-                overflowY: 'auto',
-                flex: '1',
+                background: theme.backgroundAlt,
+                padding: '.5rem',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
               }}
             >
-              {queries.map((query, i) => {
-                const isDisabled =
-                  query.getObserversCount() > 0 && !query.isActive()
-                return (
-                  <div
-                    key={query.queryHash || i}
-                    role="button"
-                    aria-label={`Open query details for ${query.queryHash}`}
-                    onClick={() =>
-                      setActiveQueryHash(
-                        activeQueryHash === query.queryHash
-                          ? ''
-                          : query.queryHash
-                      )
-                    }
-                    style={{
-                      display: 'flex',
-                      borderBottom: `solid 1px ${theme.grayAlt}`,
-                      cursor: 'pointer',
-                      background:
-                        query === activeQuery
-                          ? 'rgba(255,255,255,.1)'
-                          : undefined,
-                    }}
-                  >
-                    <div
-                      style={{
-                        flex: '0 0 auto',
-                        width: '2rem',
-                        height: '2rem',
-                        background: getQueryStatusColor(query, theme),
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontWeight: 'bold',
-                        textShadow:
-                          getQueryStatusLabel(query) === 'stale'
-                            ? '0'
-                            : '0 0 10px black',
-                        color:
-                          getQueryStatusLabel(query) === 'stale'
-                            ? 'black'
-                            : 'white',
-                      }}
-                    >
-                      {query.getObserversCount()}
-                    </div>
-                    {isDisabled ? (
-                      <div
-                        style={{
-                          flex: '0 0 auto',
-                          height: '2rem',
-                          background: theme.gray,
-                          display: 'flex',
-                          alignItems: 'center',
-                          fontWeight: 'bold',
-                          padding: '0 0.5rem',
-                        }}
-                      >
-                        disabled
-                      </div>
-                    ) : null}
-                    <Code
-                      style={{
-                        padding: '.5rem',
-                      }}
-                    >
-                      {`${query.queryHash}`}
-                    </Code>
-                  </div>
-                )
-              })}
+              Actions
             </div>
-          </div>
-          {activeQuery ? (
-            <ActiveQueryPanel>
-              <div
+            <div
+              style={{
+                padding: '0.5rem',
+              }}
+            >
+              <Button
+                type="button"
+                onClick={handleRefetch}
+                disabled={activeQuery.state.isFetching}
                 style={{
-                  padding: '.5rem',
-                  background: theme.backgroundAlt,
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
+                  background: theme.active,
                 }}
               >
-                Query Details
-              </div>
-              <div
+                Refetch
+              </Button>{' '}
+              <Button
+                type="button"
+                onClick={() => queryClient.invalidateQueries(activeQuery)}
                 style={{
-                  padding: '.5rem',
+                  background: theme.warning,
+                  color: theme.inputTextColor,
                 }}
               >
-                <div
-                  style={{
-                    marginBottom: '.5rem',
-                    display: 'flex',
-                    alignItems: 'stretch',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <Code
-                    style={{
-                      lineHeight: '1.8rem',
-                    }}
-                  >
-                    <pre
-                      style={{
-                        margin: 0,
-                        padding: 0,
-                        overflow: 'auto',
-                      }}
-                    >
-                      {JSON.stringify(activeQuery.queryKey, null, 2)}
-                    </pre>
-                  </Code>
-                  <span
-                    style={{
-                      padding: '0.3rem .6rem',
-                      borderRadius: '0.4rem',
-                      fontWeight: 'bold',
-                      textShadow: '0 2px 10px black',
-                      background: getQueryStatusColor(activeQuery, theme),
-                      flexShrink: 0,
-                    }}
-                  >
-                    {getQueryStatusLabel(activeQuery)}
-                  </span>
-                </div>
-                <div
-                  style={{
-                    marginBottom: '.5rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  Observers: <Code>{activeQuery.getObserversCount()}</Code>
-                </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  Last Updated:{' '}
-                  <Code>
-                    {new Date(
-                      activeQuery.state.dataUpdatedAt
-                    ).toLocaleTimeString()}
-                  </Code>
-                </div>
-              </div>
-              <div
+                Invalidate
+              </Button>{' '}
+              <Button
+                type="button"
+                onClick={() => queryClient.resetQueries(activeQuery)}
                 style={{
-                  background: theme.backgroundAlt,
-                  padding: '.5rem',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
+                  background: theme.gray,
                 }}
               >
-                Actions
-              </div>
-              <div
+                Reset
+              </Button>{' '}
+              <Button
+                type="button"
+                onClick={() => queryClient.removeQueries(activeQuery)}
                 style={{
-                  padding: '0.5rem',
+                  background: theme.danger,
                 }}
               >
-                <Button
-                  type="button"
-                  onClick={handleRefetch}
-                  disabled={activeQuery.state.isFetching}
-                  style={{
-                    background: theme.active,
-                  }}
-                >
-                  Refetch
-                </Button>{' '}
-                <Button
-                  type="button"
-                  onClick={() => queryClient.invalidateQueries(activeQuery)}
-                  style={{
-                    background: theme.warning,
-                    color: theme.inputTextColor,
-                  }}
-                >
-                  Invalidate
-                </Button>{' '}
-                <Button
-                  type="button"
-                  onClick={() => queryClient.resetQueries(activeQuery)}
-                  style={{
-                    background: theme.gray,
-                  }}
-                >
-                  Reset
-                </Button>{' '}
-                <Button
-                  type="button"
-                  onClick={() => queryClient.removeQueries(activeQuery)}
-                  style={{
-                    background: theme.danger,
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-              <div
-                style={{
-                  background: theme.backgroundAlt,
-                  padding: '.5rem',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
+                Remove
+              </Button>
+            </div>
+            <div
+              style={{
+                background: theme.backgroundAlt,
+                padding: '.5rem',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              Data Explorer
+            </div>
+            <div
+              style={{
+                padding: '.5rem',
+              }}
+            >
+              <Explorer
+                label="Data"
+                value={activeQuery?.state?.data}
+                defaultExpanded={{}}
+              />
+            </div>
+            <div
+              style={{
+                background: theme.backgroundAlt,
+                padding: '.5rem',
+                position: 'sticky',
+                top: 0,
+                zIndex: 1,
+              }}
+            >
+              Query Explorer
+            </div>
+            <div
+              style={{
+                padding: '.5rem',
+              }}
+            >
+              <Explorer
+                label="Query"
+                value={activeQuery}
+                defaultExpanded={{
+                  queryKey: true,
                 }}
-              >
-                Data Explorer
-              </div>
-              <div
-                style={{
-                  padding: '.5rem',
-                }}
-              >
-                <Explorer
-                  label="Data"
-                  value={activeQuery?.state?.data}
-                  defaultExpanded={{}}
-                />
-              </div>
-              <div
-                style={{
-                  background: theme.backgroundAlt,
-                  padding: '.5rem',
-                  position: 'sticky',
-                  top: 0,
-                  zIndex: 1,
-                }}
-              >
-                Query Explorer
-              </div>
-              <div
-                style={{
-                  padding: '.5rem',
-                }}
-              >
-                <Explorer
-                  label="Query"
-                  value={activeQuery}
-                  defaultExpanded={{
-                    queryKey: true,
-                  }}
-                />
-              </div>
-            </ActiveQueryPanel>
-          ) : null}
-        </Panel>
-      </ThemeProvider>
-    )
-  }
-)
+              />
+            </div>
+          </ActiveQueryPanel>
+        ) : null}
+      </Panel>
+    </ThemeProvider>
+  )
+})

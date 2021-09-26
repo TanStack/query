@@ -108,7 +108,7 @@
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "7.20.0",
-    "eslint-plugin-react-hooks": "4.0.4",
+    "eslint-plugin-react-hooks": "4.2.0",
     "eslint-plugin-standard": "^4.0.1",
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
@@ -130,5 +130,9 @@
     "rollup-plugin-visualizer": "^4.0.4",
     "type-fest": "^0.21.0",
     "typescript": "^4.1.2"
+  },
+  "resolutions": {
+    "@types/react": "^16.9.41",
+    "@types/react-dom": "^16.9.8"
   }
 }

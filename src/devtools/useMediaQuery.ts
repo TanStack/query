@@ -1,8 +1,6 @@
-// @ts-nocheck
-
 import React from 'react'
 
-export default function useMediaQuery(query) {
+export default function useMediaQuery(query: string): boolean | undefined {
   // Keep track of the preference in state, start with the current match
   const [isMatch, setIsMatch] = React.useState(() => {
     if (typeof window !== 'undefined') {
@@ -21,7 +19,8 @@ export default function useMediaQuery(query) {
       const matcher = window.matchMedia(query)
 
       // Create our handler
-      const onChange = ({ matches }) => setIsMatch(matches)
+      const onChange = ({ matches }: { matches: boolean }) =>
+        setIsMatch(matches)
 
       // Listen for changes
       matcher.addListener(onChange)
