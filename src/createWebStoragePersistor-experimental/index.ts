@@ -7,20 +7,20 @@ interface CreateWebStoragePersistorOptions {
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
-   * pass a time in ms to throttle saving the cache to disk */
-  throttleTime?: number
+   * pass a time in ms to debounce saving the cache to disk */
+   debounceTime?: number
 }
 
 export function createWebStoragePersistor({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
-  throttleTime = 1000,
+  debounceTime = 1000,
 }: CreateWebStoragePersistorOptions): Persistor {
   if (typeof storage !== 'undefined') {
     return {
-      persistClient: throttle(persistedClient => {
+      persistClient: debounce(persistedClient => {
         storage.setItem(key, JSON.stringify(persistedClient))
-      }, throttleTime),
+      }, debounceTime),
       restoreClient: () => {
         const cacheString = storage.getItem(key)
 
@@ -43,18 +43,19 @@ export function createWebStoragePersistor({
   }
 }
 
-function throttle<TArgs extends any[]>(
+function debounce<TArgs extends any[]>(
   func: (...args: TArgs) => any,
   wait = 100
 ) {
   let timer: number | null = null
 
   return function (...args: TArgs) {
-    if (timer === null) {
-      timer = setTimeout(() => {
-        func(...args)
-        timer = null
-      }, wait)
+    if (timer !== null) {
+      clearTimeout(timer)
     }
+    timer = setTimeout(() => {
+      func(...args)
+      timer = null
+    }, wait)
   }
 }

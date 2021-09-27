@@ -12,19 +12,19 @@ interface CreateAsyncStoragePersistorOptions {
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
-   * pass a time in ms to throttle saving the cache to disk */
-  throttleTime?: number
+   * pass a time in ms to debounce saving the cache to disk */
+   debounceTime?: number
 }
 
 export const createAsyncStoragePersistor = ({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
-  throttleTime = 1000,
+  debounceTime = 1000,
 }: CreateAsyncStoragePersistorOptions): Persistor => {
   return {
-    persistClient: asyncThrottle(
+    persistClient: asyncDebounce(
       persistedClient => storage.setItem(key, JSON.stringify(persistedClient)),
-      { interval: throttleTime }
+      { interval: debounceTime }
     ),
     restoreClient: async () => {
       const cacheString = await storage.getItem(key)
@@ -39,7 +39,7 @@ export const createAsyncStoragePersistor = ({
   }
 }
 
-function asyncThrottle<T>(
+function asyncDebounce<T>(
   func: (...args: ReadonlyArray<unknown>) => Promise<T>,
   { interval = 1000, limit = 1 }: { interval?: number; limit?: number } = {}
 ) {
