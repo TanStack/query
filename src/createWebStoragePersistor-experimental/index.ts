@@ -8,7 +8,7 @@ interface CreateWebStoragePersistorOptions {
   key?: string
   /** To avoid spamming,
    * pass a time in ms to debounce saving the cache to disk */
-   debounceTime?: number
+  debounceTime?: number
 }
 
 export function createWebStoragePersistor({
