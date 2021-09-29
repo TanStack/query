@@ -48,11 +48,13 @@ function throttle<TArgs extends any[]>(
   wait = 100
 ) {
   let timer: number | null = null
-
+  let params: TArgs
   return function (...args: TArgs) {
-    if (timer === null) {
+    if (timer !== null) {
+      params = args
+    } else {
       timer = setTimeout(() => {
-        func(...args)
+        func(...params)
         timer = null
       }, wait)
     }
