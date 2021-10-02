@@ -371,13 +371,13 @@ export class QueryObserver<
   private computeRefetchInterval() {
     return typeof this.options.refetchInterval === 'function'
       ? this.options.refetchInterval(this.currentResult.data, this.currentQuery)
-      : this.options.refetchInterval
+      : this.options.refetchInterval ?? 0
   }
 
-  private updateRefetchInterval(nextInterval?: number | false): void {
+  private updateRefetchInterval(nextInterval: number | false): void {
     this.clearRefetchInterval()
 
-    this.currentRefetchInterval = nextInterval ?? this.computeRefetchInterval()
+    this.currentRefetchInterval = nextInterval
 
     if (
       isServer ||
@@ -400,7 +400,7 @@ export class QueryObserver<
 
   private updateTimers(): void {
     this.updateStaleTimeout()
-    this.updateRefetchInterval()
+    this.updateRefetchInterval(this.computeRefetchInterval())
   }
 
   private clearTimers(): void {
