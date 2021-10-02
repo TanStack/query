@@ -72,7 +72,7 @@ interface DevtoolsPanelOptions {
   /**
    * A boolean variable indicating whether the panel is open or closed
    */
-  isOpen: boolean
+  isOpen?: boolean
   /**
    * A function that toggles the open and close state of the panel
    */
@@ -365,7 +365,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   HTMLDivElement,
   DevtoolsPanelOptions
 >(function ReactQueryDevtoolsPanel(props, ref): React.ReactElement {
-  const { isOpen, setIsOpen, handleDragStart, ...panelProps } = props
+  const { isOpen = true, setIsOpen, handleDragStart, ...panelProps } = props
 
   const queryClient = useQueryClient()
   const queryCache = queryClient.getQueryCache()
