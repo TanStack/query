@@ -29,7 +29,7 @@ function App() {
 ```
 
 Here we are creating a client by creating a new instance of the `QueryClient` class.
-A query client can be used to deal with things like cache.
+A QueryClient can be used to interact directly with the underlying caches.
 
 
 Next, we pass the instance to the `QueryClientProvider` which must be a parent to all components that use `react-query`.
