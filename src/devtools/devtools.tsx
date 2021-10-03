@@ -273,7 +273,7 @@ export function ReactQueryDevtools({
             style={{
               position: 'fixed',
               zIndex: 99999,
-              margin: '.5rem',
+              margin: '.5em',
               bottom: 0,
               ...(position === 'top-right'
                 ? {
@@ -313,8 +313,8 @@ export function ReactQueryDevtools({
             position: 'fixed',
             zIndex: 99999,
             display: 'inline-flex',
-            fontSize: '1.5rem',
-            margin: '.5rem',
+            fontSize: '1.5em',
+            margin: '.5em',
             cursor: 'pointer',
             width: 'fit-content',
             ...(position === 'top-right'
@@ -458,8 +458,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             }
 
             .ReactQueryDevtoolsPanel *::-webkit-scrollbar, .ReactQueryDevtoolsPanel scrollbar {
-              width: 1rem;
-              height: 1rem;
+              width: 1em;
+              height: 1em;
             }
 
             .ReactQueryDevtoolsPanel *::-webkit-scrollbar-track, .ReactQueryDevtoolsPanel scrollbar-track {
@@ -468,7 +468,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
             .ReactQueryDevtoolsPanel *::-webkit-scrollbar-thumb, .ReactQueryDevtoolsPanel scrollbar-thumb {
               background: ${theme.gray};
-              border-radius: .5rem;
+              border-radius: .5em;
               border: 3px solid ${theme.backgroundAlt};
             }
           `,
@@ -500,7 +500,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
         >
           <div
             style={{
-              padding: '.5rem',
+              padding: '.5em',
               background: theme.backgroundAlt,
               display: 'flex',
               justifyContent: 'space-between',
@@ -510,7 +510,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             <Logo
               aria-hidden
               style={{
-                marginRight: '.5rem',
+                marginRight: '.5em',
               }}
             />
             <div
@@ -519,7 +519,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                 flexDirection: 'column',
               }}
             >
-              <QueryKeys style={{ marginBottom: '.5rem' }}>
+              <QueryKeys style={{ marginBottom: '.5em' }}>
                 <QueryKey
                   style={{
                     background: theme.success,
@@ -571,7 +571,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   }}
                   style={{
                     flex: '1',
-                    marginRight: '.5rem',
+                    marginRight: '.5em',
                   }}
                 />
                 {!filter ? (
@@ -583,7 +583,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       style={{
                         flex: '1',
                         minWidth: 75,
-                        marginRight: '.5rem',
+                        marginRight: '.5em',
                       }}
                     >
                       {Object.keys(sortFns).map(key => (
@@ -596,7 +596,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       type="button"
                       onClick={() => setSortDesc(old => !old)}
                       style={{
-                        padding: '.3rem .4rem',
+                        padding: '.3em .4em',
                       }}
                     >
                       {sortDesc ? '⬇ Desc' : '⬆ Asc'}
@@ -638,8 +638,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   <div
                     style={{
                       flex: '0 0 auto',
-                      width: '2rem',
-                      height: '2rem',
+                      width: '2em',
+                      height: '2em',
                       background: getQueryStatusColor(query, theme),
                       display: 'flex',
                       alignItems: 'center',
@@ -661,12 +661,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     <div
                       style={{
                         flex: '0 0 auto',
-                        height: '2rem',
+                        height: '2em',
                         background: theme.gray,
                         display: 'flex',
                         alignItems: 'center',
                         fontWeight: 'bold',
-                        padding: '0 0.5rem',
+                        padding: '0 0.5em',
                       }}
                     >
                       disabled
@@ -674,7 +674,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   ) : null}
                   <Code
                     style={{
-                      padding: '.5rem',
+                      padding: '.5em',
                     }}
                   >
                     {`${query.queryHash}`}
@@ -689,7 +689,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
           <ActiveQueryPanel>
             <div
               style={{
-                padding: '.5rem',
+                padding: '.5em',
                 background: theme.backgroundAlt,
                 position: 'sticky',
                 top: 0,
@@ -700,12 +700,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             </div>
             <div
               style={{
-                padding: '.5rem',
+                padding: '.5em',
               }}
             >
               <div
                 style={{
-                  marginBottom: '.5rem',
+                  marginBottom: '.5em',
                   display: 'flex',
                   alignItems: 'stretch',
                   justifyContent: 'space-between',
@@ -713,7 +713,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               >
                 <Code
                   style={{
-                    lineHeight: '1.8rem',
+                    lineHeight: '1.8em',
                   }}
                 >
                   <pre
@@ -728,8 +728,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                 </Code>
                 <span
                   style={{
-                    padding: '0.3rem .6rem',
-                    borderRadius: '0.4rem',
+                    padding: '0.3em .6em',
+                    borderRadius: '0.4em',
                     fontWeight: 'bold',
                     textShadow: '0 2px 10px black',
                     background: getQueryStatusColor(activeQuery, theme),
@@ -741,7 +741,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               </div>
               <div
                 style={{
-                  marginBottom: '.5rem',
+                  marginBottom: '.5em',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -767,7 +767,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             <div
               style={{
                 background: theme.backgroundAlt,
-                padding: '.5rem',
+                padding: '.5em',
                 position: 'sticky',
                 top: 0,
                 zIndex: 1,
@@ -777,7 +777,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             </div>
             <div
               style={{
-                padding: '0.5rem',
+                padding: '0.5em',
               }}
             >
               <Button
@@ -822,7 +822,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             <div
               style={{
                 background: theme.backgroundAlt,
-                padding: '.5rem',
+                padding: '.5em',
                 position: 'sticky',
                 top: 0,
                 zIndex: 1,
@@ -832,7 +832,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             </div>
             <div
               style={{
-                padding: '.5rem',
+                padding: '.5em',
               }}
             >
               <Explorer
@@ -844,7 +844,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             <div
               style={{
                 background: theme.backgroundAlt,
-                padding: '.5rem',
+                padding: '.5em',
                 position: 'sticky',
                 top: 0,
                 zIndex: 1,
@@ -854,7 +854,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             </div>
             <div
               style={{
-                padding: '.5rem',
+                padding: '.5em',
               }}
             >
               <Explorer
