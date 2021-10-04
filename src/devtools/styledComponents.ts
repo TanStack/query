@@ -14,7 +14,7 @@ export const Panel = styled(
       flexDirection: 'column',
     },
     '(max-width: 600px)': {
-      fontSize: '.9rem',
+      fontSize: '.9em',
       // flexDirection: 'column',
     },
   }
