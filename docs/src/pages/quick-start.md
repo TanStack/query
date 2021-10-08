@@ -28,7 +28,7 @@ function App() {
 }
 ```
 
-Here we are creating a client by creating a new instance of the `QueryClient` class.
+We are creating a new instance of the `QueryClient` class.
 A QueryClient can be used to interact directly with the underlying caches.
 
 
