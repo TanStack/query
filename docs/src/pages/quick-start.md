@@ -24,7 +24,7 @@ function App() {
   return (
     // Provide the client to your App
     <QueryClientProvider client={queryClient}>
-      // we will define this later
+      {/* we will look at this later */}
       <Todos />
     </QueryClientProvider>
   )
