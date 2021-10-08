@@ -70,7 +70,7 @@ render(<App />, document.getElementById('root'))
 ```
 
 In the `Todo` component, we start by accessing the queryClient we defined earlier using the `useQueryClient` hook.
-A `query` listens to a source of data, in our case, the `getTodos` method.
+A `query` listens to a source of data. A unique key is used to reference this source, in our case, `todos`.
 The unique key you provide is used internally for re-fetching, caching, and sharing your queries throughout your application.
 
 Finally, let's add a button that adds a todo:
