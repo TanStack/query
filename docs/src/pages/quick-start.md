@@ -50,7 +50,7 @@ import { getTodos, postTodo } from '../my-api'
 
 function Todos() {
   // Access the client
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // Queries
   const query = useQuery('todos', getTodos)
@@ -90,7 +90,7 @@ import { getTodos, postTodo } from '../my-api'
 
 function Todos() {
   // Access the client
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   // Queries
   const query = useQuery('todos', getTodos)
