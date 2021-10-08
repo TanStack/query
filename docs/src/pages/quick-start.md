@@ -73,8 +73,6 @@ In the `Todo` component, we start by accessing the queryClient we defined earlie
 A `query` listens to a source of data, in our case, the `getTodos` method.
 The unique key you provide is used internally for re-fetching, caching, and sharing your queries throughout your application.
 
-Queries are generally use with the `GET` HTTP method, mutations are used for HTTP methods like `POST`, `PUT` etc which modify data on the server.
-
 Finally, let's add a button that adds a todo:
 ```js
 import {
