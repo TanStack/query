@@ -756,13 +756,9 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const { fetchNextPage } = useInfiniteQuery(
-        key,
-        fetchPage,
-        {
-          getNextPageParam: lastPage => lastPage + 1,
-        }
-      )
+      const { fetchNextPage } = useInfiniteQuery(key, fetchPage, {
+        getNextPageParam: lastPage => lastPage + 1,
+      })
 
       React.useEffect(() => {
         setActTimeout(() => {
@@ -781,9 +777,18 @@ describe('useInfiniteQuery', () => {
     await sleep(300)
 
     expect(fetchPage).toBeCalledTimes(3)
-    expect(fetchPage).toHaveBeenNthCalledWith(1, {pageParam: undefined, queryKey: [key]})
-    expect(fetchPage).toHaveBeenNthCalledWith(2, {pageParam: 11, queryKey: [key]})
-    expect(fetchPage).toHaveBeenNthCalledWith(3, {pageParam: 11, queryKey: [key]})
+    expect(fetchPage).toHaveBeenNthCalledWith(1, {
+      pageParam: undefined,
+      queryKey: [key],
+    })
+    expect(fetchPage).toHaveBeenNthCalledWith(2, {
+      pageParam: 11,
+      queryKey: [key],
+    })
+    expect(fetchPage).toHaveBeenNthCalledWith(3, {
+      pageParam: 11,
+      queryKey: [key],
+    })
   })
 
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
@@ -795,20 +800,16 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const { fetchNextPage } = useInfiniteQuery(
-        key,
-        fetchPage,
-        {
-          getNextPageParam: lastPage => lastPage + 1,
-        }
-      )
+      const { fetchNextPage } = useInfiniteQuery(key, fetchPage, {
+        getNextPageParam: lastPage => lastPage + 1,
+      })
 
       React.useEffect(() => {
         setActTimeout(() => {
           fetchNextPage()
         }, 100)
         setActTimeout(() => {
-          fetchNextPage({cancelRefetch: false})
+          fetchNextPage({ cancelRefetch: false })
         }, 110)
       }, [fetchNextPage])
 
@@ -820,8 +821,14 @@ describe('useInfiniteQuery', () => {
     await sleep(300)
 
     expect(fetchPage).toBeCalledTimes(2)
-    expect(fetchPage).toHaveBeenNthCalledWith(1, {pageParam: undefined, queryKey: [key]})
-    expect(fetchPage).toHaveBeenNthCalledWith(2, {pageParam: 11, queryKey: [key]})
+    expect(fetchPage).toHaveBeenNthCalledWith(1, {
+      pageParam: undefined,
+      queryKey: [key],
+    })
+    expect(fetchPage).toHaveBeenNthCalledWith(2, {
+      pageParam: 11,
+      queryKey: [key],
+    })
   })
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
