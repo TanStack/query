@@ -15,6 +15,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
+import Todos from './Todos';
 
 // Create a client
 const queryClient = new QueryClient()
@@ -23,6 +24,8 @@ function App() {
   return (
     // Provide the client to your App
     <QueryClientProvider client={queryClient}>
+      // we will define this later
+      <Todos />
     </QueryClientProvider>
   )
 }
