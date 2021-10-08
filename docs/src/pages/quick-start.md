@@ -90,11 +90,7 @@ import { getTodos, postTodo } from '../my-api'
 // ...app component
 
 function Todos() {
-  // Access the client
-  const queryClient = useQueryClient()
-
-  // Queries
-  const query = useQuery('todos', getTodos)
+  // ...access the client and creating queries(see previous example)
 
   // Mutations
   const mutation = useMutation(postTodo, {
@@ -126,7 +122,7 @@ function Todos() {
   )
 }
 
-render(<App />, document.getElementById('root'))
+// ...render app
 ```
 
 We begin by defining a `mutation` using the `useMutation` hook which takes in a function, and a config object.
