@@ -6,7 +6,7 @@ import { styled } from './utils'
 
 export const Entry = styled('div', {
   fontFamily: 'Menlo, monospace',
-  fontSize: '0.9rem',
+  fontSize: '0.9em',
   lineHeight: '1.7',
   outline: 'none',
   wordBreak: 'break-word',
@@ -22,14 +22,14 @@ export const Value = styled('span', (props, theme) => ({
 }))
 
 export const SubEntries = styled('div', {
-  marginLeft: '.1rem',
-  paddingLeft: '1rem',
+  marginLeft: '.1em',
+  paddingLeft: '1em',
   borderLeft: '2px solid rgba(0,0,0,.15)',
 })
 
 export const Info = styled('span', {
   color: 'grey',
-  fontSize: '.7rem',
+  fontSize: '.7em',
 })
 
 export const Expander = ({ expanded, style = {}, ...rest }) => (

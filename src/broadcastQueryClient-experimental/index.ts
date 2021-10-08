@@ -3,7 +3,7 @@ import { QueryClient } from '../core'
 
 interface BroadcastQueryClientOptions {
   queryClient: QueryClient
-  broadcastChannel: string
+  broadcastChannel?: string
 }
 
 export function broadcastQueryClient({

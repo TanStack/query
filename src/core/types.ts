@@ -1,5 +1,5 @@
 import type { MutationState } from './mutation'
-import type { QueryBehavior } from './query'
+import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
@@ -105,9 +105,16 @@ export interface QueryObserverOptions<
   staleTime?: number
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
+   * If set to a function, the function will be executed with the latest data and query to compute a frequency
    * Defaults to `false`.
    */
-  refetchInterval?: number | false
+  refetchInterval?:
+    | number
+    | false
+    | ((
+        data: TData | undefined,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => number | false)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.
