@@ -59,9 +59,15 @@ type GetResults<T> =
     : // Fallback
       UseQueryResult
 
-// in case of very large array literal, revert to UseQueryOptions[]/UseQueryResult[] to avoid TS depth-limit error
+/**
+ * In case of very large array literal, revert to UseQueryOptions[]/UseQueryResult[] to avoid TS depth-limit error
+ * note: limit does not apply in case of Array.map() argument
+ */
 type MAXIMUM_DEPTH = 20
 
+/**
+ * Step 1: infer mapped function param-types
+ */
 type QueriesOptions<
   T extends any[],
   Result extends any[] = [],
@@ -74,8 +80,11 @@ type QueriesOptions<
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : T
+  : T // fallback if inference fails: T is inferred as the literal param array
 
+/**
+ * Step 2: map inferred type T to mapped results
+ */
 type QueriesResults<
   T extends any[],
   Result extends any[] = [],
@@ -88,7 +97,11 @@ type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : UseQueryResult[] // fallback in case of Array.map (does not get typed as a tuple)
+  // handle Array.map() => in step 1, T was inferred as literal param array (fallback)
+  // so if TData is the same for all array elements, we can type the result as such
+  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[] ?
+  UseQueryResult<unknown extends TData? TQueryFnData : TData, TError>[]
+  : UseQueryResult[] // fallback if inference fails
 
 export function useQueries<T extends any[]>(
   queries: readonly [...QueriesOptions<T>]

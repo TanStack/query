@@ -498,16 +498,26 @@ describe('useQueries', () => {
     // @ts-ignore
     // eslint-disable-next-line
     function Page() {
-      // Array.map does not throw error
+      // Array.map preserves TQueryFnData
       const result1 = useQueries(
-        Array(10).map(i => ({
+        Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
         }))
       )
-      expectType<QueryObserverResult<unknown, unknown>[]>(result1)
+      expectType<QueryObserverResult<number, unknown>[]>(result1)
 
-      const result2 = useQueries([
+      // Array.map preserves TData
+      const result2 = useQueries(
+        Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => i + 10,
+          select: () => 'string'
+        }))
+      )
+      expectType<QueryObserverResult<string, unknown>[]>(result2)
+
+      const result3 = useQueries([
         {
           queryKey: key1,
           queryFn: () => 1,
@@ -522,13 +532,13 @@ describe('useQueries', () => {
           select: () => 123,
         },
       ])
-      expectType<QueryObserverResult<number, unknown>>(result2[0])
-      expectType<QueryObserverResult<string, unknown>>(result2[1])
-      expectType<QueryObserverResult<number, unknown>>(result2[2])
-      expectType<number | undefined>(result2[0].data)
-      expectType<string | undefined>(result2[1].data)
+      expectType<QueryObserverResult<number, unknown>>(result3[0])
+      expectType<QueryObserverResult<string, unknown>>(result3[1])
+      expectType<QueryObserverResult<number, unknown>>(result3[2])
+      expectType<number | undefined>(result3[0].data)
+      expectType<string | undefined>(result3[1].data)
       // select takes precedence over queryFn
-      expectType<number | undefined>(result2[2].data)
+      expectType<number | undefined>(result3[2].data)
 
       // initialData/placeholderData are enforced
       useQueries([
@@ -593,7 +603,7 @@ describe('useQueries', () => {
       ])
 
       // Array as const does not throw error
-      const result3 = useQueries([
+      const result4 = useQueries([
         {
           queryKey: 'key1',
           queryFn: () => 'string',
@@ -603,8 +613,8 @@ describe('useQueries', () => {
           queryFn: () => 123,
         },
       ] as const)
-      expectType<QueryObserverResult<string, unknown>>(result3[0])
-      expectType<QueryObserverResult<number, unknown>>(result3[1])
+      expectType<QueryObserverResult<string, unknown>>(result4[0])
+      expectType<QueryObserverResult<number, unknown>>(result4[1])
     }
   })
 })
