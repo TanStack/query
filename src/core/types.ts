@@ -282,10 +282,12 @@ export interface ResetOptions {
 }
 
 export interface FetchNextPageOptions extends ResultOptions {
+  cancelRefetch?: boolean
   pageParam?: unknown
 }
 
 export interface FetchPreviousPageOptions extends ResultOptions {
+  cancelRefetch?: boolean
   pageParam?: unknown
 }
 
