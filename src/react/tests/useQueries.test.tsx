@@ -353,8 +353,8 @@ describe('useQueries', () => {
           queryKey: key1,
           queryFn: () => 'string',
           // @ts-expect-error (invalidField)
-          someInvalidField: []
-        }
+          someInvalidField: [],
+        },
       ])
     }
   })
@@ -498,17 +498,13 @@ describe('useQueries', () => {
       ])
 
       // field names should be enforced
-      useQueries<
-        [
-          { queryFnData: string; },
-        ]
-      >([
+      useQueries<[{ queryFnData: string }]>([
         {
           queryKey: key1,
           queryFn: () => 'string',
           // @ts-expect-error (invalidField)
-          someInvalidField: []
-        }
+          someInvalidField: [],
+        },
       ])
     }
   })
@@ -538,7 +534,7 @@ describe('useQueries', () => {
         Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
-          select: (data: number) => data.toString()
+          select: (data: number) => data.toString(),
         }))
       )
       expectType<QueryObserverResult<string, unknown>[]>(result2)
@@ -635,7 +631,7 @@ describe('useQueries', () => {
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
           select: (data: number) => data.toString(),
-          onSuccess: (_data: number) => null
+          onSuccess: (_data: number) => null,
         }))
       )
       useQueries(
@@ -643,7 +639,7 @@ describe('useQueries', () => {
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
           select: (data: number) => data.toString(),
-          onSuccess: (_data: string) => null
+          onSuccess: (_data: string) => null,
         }))
       )
 
@@ -704,15 +700,17 @@ describe('useQueries', () => {
           queryKey: key1,
           queryFn: () => 'string',
           // @ts-expect-error (invalidField)
-          someInvalidField: []
-        }
+          someInvalidField: [],
+        },
       ])
 
       // field names should be enforced - Array.map() result
-      // @ts-expect-error
-      useQueries(Array(10).map(() => ({
-        someInvalidField: ''
-      })))
+      useQueries(
+        // @ts-expect-error (invalidField)
+        Array(10).map(() => ({
+          someInvalidField: '',
+        }))
+      )
     }
   })
 })

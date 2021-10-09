@@ -6,8 +6,11 @@ import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 
+// Avoid TS depth-limit error in case of large array literal
+type MAXIMUM_DEPTH = 20
+
 type GetOptions<T extends any> =
-  // Map params from object {queryFnData: TQueryFnData, error: TError, data: TData}
+  // Part 1: responsible for applying explicit type parameter to function arguments, if object { queryFnData: TQueryFnData, error: TError, data: TData }
   T extends {
     queryFnData: infer TQueryFnData
     error?: infer TError
@@ -18,14 +21,14 @@ type GetOptions<T extends any> =
     ? UseQueryOptions<TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
     ? UseQueryOptions<unknown, TError, TData>
-    : // Map params from tuple [TQueryFnData, TError, TData]
+    : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
     T extends [infer TQueryFnData, infer TError, infer TData]
     ? UseQueryOptions<TQueryFnData, TError, TData>
     : T extends [infer TQueryFnData, infer TError]
     ? UseQueryOptions<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
     ? UseQueryOptions<TQueryFnData>
-    : // Otherwise try to infer raw argument types
+    : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData>
         select: (data: any) => infer TData
@@ -37,22 +40,25 @@ type GetOptions<T extends any> =
       UseQueryOptions
 
 type GetResults<T> =
-  // Map explicit type-object to results
+  // Part 1: responsible for mapping explicit type parameter to function result, if object
   T extends { queryFnData: any; error?: infer TError; data: infer TData }
     ? UseQueryResult<TData, TError>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
     ? UseQueryResult<TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
     ? UseQueryResult<TData, TError>
-    : // Map explicit type-tuple to results
+    : // Part 2: responsible for mapping explicit type parameter to function result, if tuple
     T extends [any, infer TError, infer TData]
     ? UseQueryResult<TData, TError>
     : T extends [infer TQueryFnData, infer TError]
     ? UseQueryResult<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
     ? UseQueryResult<TQueryFnData>
-    : // Otherwise map inferred type to results
-    T extends { queryFn?: QueryFunction<any>; select: (data: any) => infer TData }
+    : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
+    T extends {
+        queryFn?: QueryFunction<any>
+        select: (data: any) => infer TData
+      }
     ? UseQueryResult<TData>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
     ? UseQueryResult<TQueryFnData>
@@ -60,13 +66,7 @@ type GetResults<T> =
       UseQueryResult
 
 /**
- * In case of very large array literal, revert to UseQueryOptions[]/UseQueryResult[] to avoid TS depth-limit error
- * note: limit does not apply in case of Array.map() argument
- */
-type MAXIMUM_DEPTH = 20
-
-/**
- * Step 1: reducer infers T from mapped param type
+ * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
 type QueriesOptions<
   T extends any[],
@@ -80,19 +80,17 @@ type QueriesOptions<
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  // Differentiate between fixed and dynamic array param type:
-  // with dynamic array, TS can't stop the recursion, so keeps going until T = [] which fails this check
-  : UseQueryOptions[] extends T
-  // Mapped tuple (keep the entire structure and try to unwrap in Step 2)
+  : unknown[] extends T
   ? T
-  // Dynamic (but homogenous) array
-  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
+  : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
+  // use this to infer the param types in the case of Array.map() argument
+  T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
   ? UseQueryOptions<TQueryFnData, TError, TData>[]
-  // Fallback
-  : UseQueryOptions[]
+  : // Fallback
+    UseQueryOptions[]
 
 /**
- * Step 2: reducer unwraps inferred type T to results
+ * QueriesResults reducer recursively maps type param to results
  */
 type QueriesResults<
   T extends any[],
@@ -106,11 +104,11 @@ type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  // Handle Array.map()
-  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[] ?
-  UseQueryResult<unknown extends TData? TQueryFnData : TData, TError>[]
-  // Fallback
-  : UseQueryResult[]
+  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
+  ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
+    UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+  : // Fallback
+    UseQueryResult[]
 
 export function useQueries<T extends any[]>(
   queries: readonly [...QueriesOptions<T>]
