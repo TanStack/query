@@ -602,8 +602,45 @@ describe('useQueries', () => {
         },
       ])
 
-      // Array as const does not throw error
+      // results inference works when all the handlers are defined
       const result4 = useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 'string',
+          // @ts-expect-error (noImplicitAny)
+          onSuccess: a => null,
+          // @ts-expect-error (noImplicitAny)
+          onSettled: a => null,
+        },
+        {
+          queryKey: key2,
+          queryFn: () => 'string',
+          onSuccess: (a: string) => {
+            expectType<string>(a)
+            expectTypeNotAny(a)
+          },
+          onSettled: (a: string | undefined) => {
+            expectType<string | undefined>(a)
+            expectTypeNotAny(a)
+          },
+        },
+        {
+          queryKey: key4,
+          queryFn: () => 'string',
+          select: (a: string) => parseInt(a),
+          onSuccess: (_a: number) => null,
+          onSettled: (a: number | undefined) => {
+            expectType<number | undefined>(a)
+            expectTypeNotAny(a)
+          },
+        },
+      ])
+      expectType<QueryObserverResult<string, unknown>>(result4[0])
+      expectType<QueryObserverResult<string, unknown>>(result4[1])
+      expectType<QueryObserverResult<number, unknown>>(result4[2])
+
+      // Array as const does not throw error
+      const result5 = useQueries([
         {
           queryKey: 'key1',
           queryFn: () => 'string',
@@ -613,8 +650,8 @@ describe('useQueries', () => {
           queryFn: () => 123,
         },
       ] as const)
-      expectType<QueryObserverResult<string, unknown>>(result4[0])
-      expectType<QueryObserverResult<number, unknown>>(result4[1])
+      expectType<QueryObserverResult<string, unknown>>(result5[0])
+      expectType<QueryObserverResult<number, unknown>>(result5[1])
     }
   })
 })
