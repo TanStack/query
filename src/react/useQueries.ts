@@ -80,7 +80,8 @@ type QueriesOptions<
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  // UseQueryOptions[] can be assigned to a mapped tuple, but not to Array.map() dynamic array!
+  // Differentiate between fixed and dynamic array param type:
+  // with dynamic array, TS can't stop the recursion, so keeps going until T = [] which fails this check
   : UseQueryOptions[] extends T
   // Mapped tuple (keep the entire structure and try to unwrap in Step 2)
   ? T
