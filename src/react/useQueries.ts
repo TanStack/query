@@ -27,12 +27,12 @@ type GetOptions<T extends any> =
     ? UseQueryOptions<TQueryFnData>
     : // Otherwise try to infer raw argument types
     T extends {
-        queryFn?: QueryFunction<infer X>
-        select: (data: any) => infer Y
+        queryFn?: QueryFunction<infer TQueryFnData>
+        select: (data: any) => infer TData
       }
-    ? UseQueryOptions<X, unknown, Y>
-    : T extends { queryFn?: QueryFunction<infer X> }
-    ? UseQueryOptions<X>
+    ? UseQueryOptions<TQueryFnData, unknown, TData>
+    : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
+    ? UseQueryOptions<TQueryFnData>
     : // Fallback
       UseQueryOptions
 
@@ -52,10 +52,10 @@ type GetResults<T> =
     : T extends [infer TQueryFnData]
     ? UseQueryResult<TQueryFnData>
     : // Otherwise map inferred type to results
-    T extends { queryFn?: QueryFunction<any>; select: (data: any) => infer Y }
-    ? UseQueryResult<Y>
-    : T extends { queryFn?: QueryFunction<infer X> }
-    ? UseQueryResult<X>
+    T extends { queryFn?: QueryFunction<any>; select: (data: any) => infer TData }
+    ? UseQueryResult<TData>
+    : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
+    ? UseQueryResult<TQueryFnData>
     : // Fallback
       UseQueryResult
 
@@ -66,7 +66,7 @@ type GetResults<T> =
 type MAXIMUM_DEPTH = 20
 
 /**
- * Step 1: infer mapped function param-types
+ * Step 1: reducer infers T from mapped param type
  */
 type QueriesOptions<
   T extends any[],
@@ -80,10 +80,18 @@ type QueriesOptions<
   ? [...Result, GetOptions<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesOptions<[...Tail], [...Result, GetOptions<Head>], [...Depth, 1]>
-  : T // fallback if inference fails: T is inferred as the literal param array
+  // UseQueryOptions[] can be assigned to a mapped tuple, but not to Array.map() dynamic array!
+  : UseQueryOptions[] extends T
+  // Mapped tuple (keep the entire structure and try to unwrap in Step 2)
+  ? T
+  // Dynamic (but homogenous) array
+  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
+  ? UseQueryOptions<TQueryFnData, TError, TData>[]
+  // Fallback
+  : UseQueryOptions[]
 
 /**
- * Step 2: map inferred type T to mapped results
+ * Step 2: reducer unwraps inferred type T to results
  */
 type QueriesResults<
   T extends any[],
@@ -97,11 +105,11 @@ type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  // handle Array.map() => in step 1, T was inferred as literal param array (fallback)
-  // so if TData is the same for all array elements, we can type the result as such
+  // Handle Array.map()
   : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[] ?
   UseQueryResult<unknown extends TData? TQueryFnData : TData, TError>[]
-  : UseQueryResult[] // fallback if inference fails
+  // Fallback
+  : UseQueryResult[]
 
 export function useQueries<T extends any[]>(
   queries: readonly [...QueriesOptions<T>]

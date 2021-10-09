@@ -346,6 +346,16 @@ describe('useQueries', () => {
           initialData: 123,
         },
       ])
+
+      // field names should be enforced
+      useQueries<[[string]]>([
+        {
+          queryKey: key1,
+          queryFn: () => 'string',
+          // @ts-expect-error (invalidField)
+          someInvalidField: []
+        }
+      ])
     }
   })
 
@@ -354,7 +364,7 @@ describe('useQueries', () => {
     const key2 = queryKey()
     const key3 = queryKey()
 
-    // @ts-ignore
+    // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
     function Page() {
       const result1 = useQueries<
@@ -486,6 +496,20 @@ describe('useQueries', () => {
           initialData: 123,
         },
       ])
+
+      // field names should be enforced
+      useQueries<
+        [
+          { queryFnData: string; },
+        ]
+      >([
+        {
+          queryKey: key1,
+          queryFn: () => 'string',
+          // @ts-expect-error (invalidField)
+          someInvalidField: []
+        }
+      ])
     }
   })
 
@@ -495,24 +519,26 @@ describe('useQueries', () => {
     const key3 = queryKey()
     const key4 = queryKey()
 
-    // @ts-ignore
+    // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
     function Page() {
       // Array.map preserves TQueryFnData
-      const result1 = useQueries(
+      let result1 = useQueries(
         Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
         }))
       )
       expectType<QueryObserverResult<number, unknown>[]>(result1)
+      // re-assign an empty array to confirm result1 is not of type never
+      result1 = []
 
       // Array.map preserves TData
       const result2 = useQueries(
         Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
-          select: () => 'string'
+          select: (data: number) => data.toString()
         }))
       )
       expectType<QueryObserverResult<string, unknown>[]>(result2)
@@ -602,6 +628,25 @@ describe('useQueries', () => {
         },
       ])
 
+      // callbacks are also indirectly enforced with Array.map
+      useQueries(
+        // @ts-expect-error (onSuccess only accepts string)
+        Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => i + 10,
+          select: (data: number) => data.toString(),
+          onSuccess: (_data: number) => null
+        }))
+      )
+      useQueries(
+        Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => i + 10,
+          select: (data: number) => data.toString(),
+          onSuccess: (_data: string) => null
+        }))
+      )
+
       // results inference works when all the handlers are defined
       const result4 = useQueries([
         {
@@ -652,6 +697,22 @@ describe('useQueries', () => {
       ] as const)
       expectType<QueryObserverResult<string, unknown>>(result5[0])
       expectType<QueryObserverResult<number, unknown>>(result5[1])
+
+      // field names should be enforced - array literal
+      useQueries([
+        {
+          queryKey: key1,
+          queryFn: () => 'string',
+          // @ts-expect-error (invalidField)
+          someInvalidField: []
+        }
+      ])
+
+      // field names should be enforced - Array.map() result
+      // @ts-expect-error
+      useQueries(Array(10).map(() => ({
+        someInvalidField: ''
+      })))
     }
   })
 })
