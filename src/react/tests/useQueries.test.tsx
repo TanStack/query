@@ -519,15 +519,14 @@ describe('useQueries', () => {
     // eslint-disable-next-line
     function Page() {
       // Array.map preserves TQueryFnData
-      let result1 = useQueries(
+      const result1 = useQueries(
         Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
           queryFn: () => i + 10,
         }))
       )
       expectType<QueryObserverResult<number, unknown>[]>(result1)
-      // re-assign an empty array to confirm result1 is not of type never
-      result1 = []
+      expectType<number | undefined>(result1[0]?.data)
 
       // Array.map preserves TData
       const result2 = useQueries(
