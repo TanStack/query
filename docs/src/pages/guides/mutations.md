@@ -256,3 +256,8 @@ hydrate(queryClient, state)
 // Resume the paused mutations:
 queryClient.resumePausedMutations()
 ```
+
+## Further reading
+
+For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog#12-mastering-mutations-in-react-query) from
+the Community Resources.
