@@ -6,6 +6,7 @@ import type {
   QueryOptions,
   RefetchQueryFilters,
 } from './types'
+import { AbortController } from './utils'
 
 export function infiniteQueryBehavior<
   TQueryFnData,
@@ -23,8 +24,9 @@ export function infiniteQueryBehavior<
         const isFetchingPreviousPage = fetchMore?.direction === 'backward'
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
+        const abortController = new AbortController()
+        const abortSignal = abortController.signal
         let newPageParams = oldPageParams
-        let cancelled = false
 
         // Get query function
         const queryFn =
@@ -49,7 +51,7 @@ export function infiniteQueryBehavior<
           param?: unknown,
           previous?: boolean
         ): Promise<unknown[]> => {
-          if (cancelled) {
+          if (abortSignal.aborted) {
             return Promise.reject('Cancelled')
           }
 
@@ -59,6 +61,7 @@ export function infiniteQueryBehavior<
 
           const queryFnContext: QueryFunctionContext = {
             queryKey: context.queryKey,
+            signal: abortSignal,
             pageParam: param,
           }
 
@@ -146,7 +149,7 @@ export function infiniteQueryBehavior<
         const finalPromiseAsAny = finalPromise as any
 
         finalPromiseAsAny.cancel = () => {
-          cancelled = true
+          abortController.abort()
           if (isCancelable(promise)) {
             promise.cancel()
           }

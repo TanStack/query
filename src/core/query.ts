@@ -1,4 +1,5 @@
 import {
+  AbortController,
   Updater,
   functionalUpdate,
   isValidTimeout,
@@ -383,18 +384,33 @@ export class Query<
     }
 
     const queryKey = ensureQueryKeyArray(this.queryKey)
+    const abortController = new AbortController()
+    const cancelFn = abortController.abort.bind(abortController)
 
     // Create query function context
     const queryFnContext: QueryFunctionContext<TQueryKey> = {
       queryKey,
+      signal: abortController.signal,
       pageParam: undefined,
     }
 
     // Create fetch function
-    const fetchFn = () =>
-      this.options.queryFn
-        ? this.options.queryFn(queryFnContext)
-        : Promise.reject('Missing queryFn')
+    const fetchFn = () => {
+      if (!this.options.queryFn) {
+        return Promise.reject('Missing queryFn')
+      }
+      const result = this.options.queryFn(queryFnContext)
+      const res: any = result
+      if (
+        res &&
+        typeof res.then === 'function' &&
+        typeof res.cancel === 'undefined'
+      ) {
+        // Only add `cancel()` function to thenables which don't already have a `cancel` property
+        res.cancel = cancelFn
+      }
+      return result
+    }
 
     // Trigger behavior hook
     const context: FetchContext<TQueryFnData, TError, TData, TQueryKey> = {

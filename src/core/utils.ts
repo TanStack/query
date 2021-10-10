@@ -447,3 +447,62 @@ export function scheduleMicrotask(callback: () => void): void {
       })
     )
 }
+
+interface MinimalAbortInterfaces {
+  AbortSignal: typeof globalThis.AbortSignal
+  AbortController: typeof globalThis.AbortController
+}
+
+export function getMinimalAbortInterfaces(): MinimalAbortInterfaces {
+  const aborted = new WeakSet<AbortSignalBackup>()
+  class AbortSignalBackup {
+    constructor() {
+      Object.defineProperty(this, 'aborted', {
+        get() {
+          return aborted.has(this)
+        },
+        set(v) {
+          return v
+        },
+      })
+    }
+    addEventListener() {
+      return
+    }
+    removeEventListener() {
+      return
+    }
+  }
+
+  class AbortControllerBackup {
+    constructor() {
+      const signal = new AbortSignalBackup()
+      Object.defineProperty(this, 'signal', {
+        get() {
+          return signal
+        },
+        set(v) {
+          return v
+        },
+      })
+    }
+
+    abort() {
+      // @ts-ignore: signal exist as a getter
+      const { signal } = this
+      if (!aborted.has(signal)) {
+        aborted.add(signal)
+      }
+    }
+  }
+
+  return ({
+    AbortSignal: AbortSignalBackup,
+    AbortController: AbortControllerBackup,
+  } as unknown) as MinimalAbortInterfaces
+}
+
+export const { AbortSignal, AbortController }: MinimalAbortInterfaces =
+  typeof globalThis.AbortController !== 'undefined'
+    ? globalThis
+    : getMinimalAbortInterfaces()

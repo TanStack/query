@@ -14,7 +14,9 @@ import {
   UseInfiniteQueryResult,
   QueryClient,
   QueryCache,
+  QueryFunctionContext,
 } from '../..'
+import { AbortSignal } from '../../core/utils'
 
 interface Result {
   items: number[]
@@ -750,7 +752,10 @@ describe('useInfiniteQuery', () => {
   it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
     const key = queryKey()
     const start = 10
-    const fetchPage = jest.fn(async ({ pageParam = start }) => {
+    const fetchPage = jest.fn<
+      Promise<number>,
+      [QueryFunctionContext<string, number>]
+    >(async ({ pageParam = start }) => {
       await sleep(50)
       return Number(pageParam)
     })
@@ -777,24 +782,31 @@ describe('useInfiniteQuery', () => {
     await sleep(300)
 
     expect(fetchPage).toBeCalledTimes(3)
-    expect(fetchPage).toHaveBeenNthCalledWith(1, {
-      pageParam: undefined,
-      queryKey: [key],
-    })
-    expect(fetchPage).toHaveBeenNthCalledWith(2, {
-      pageParam: 11,
-      queryKey: [key],
-    })
-    expect(fetchPage).toHaveBeenNthCalledWith(3, {
-      pageParam: 11,
-      queryKey: [key],
-    })
+
+    const firstCtx = fetchPage.mock.calls[0]![0]
+    expect(firstCtx.pageParam).toBeUndefined()
+    expect(firstCtx.queryKey).toEqual([key])
+    expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
+    expect(firstCtx.signal.aborted).toBe(false)
+
+    const secondCtx = fetchPage.mock.calls[1]![0]
+    expect(secondCtx.pageParam).toBe(11)
+    expect(secondCtx.queryKey).toEqual([key])
+    expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
+
+    const thirdCtx = fetchPage.mock.calls[2]![0]
+    expect(thirdCtx.pageParam).toBe(11)
+    expect(thirdCtx.queryKey).toEqual([key])
+    expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
   })
 
   it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
     const key = queryKey()
     const start = 10
-    const fetchPage = jest.fn(async ({ pageParam = start }) => {
+    const fetchPage = jest.fn<
+      Promise<number>,
+      [QueryFunctionContext<string, number>]
+    >(async ({ pageParam = start }) => {
       await sleep(50)
       return Number(pageParam)
     })
@@ -821,14 +833,17 @@ describe('useInfiniteQuery', () => {
     await sleep(300)
 
     expect(fetchPage).toBeCalledTimes(2)
-    expect(fetchPage).toHaveBeenNthCalledWith(1, {
-      pageParam: undefined,
-      queryKey: [key],
-    })
-    expect(fetchPage).toHaveBeenNthCalledWith(2, {
-      pageParam: 11,
-      queryKey: [key],
-    })
+
+    const firstCtx = fetchPage.mock.calls[0]![0]
+    expect(firstCtx.pageParam).toBeUndefined()
+    expect(firstCtx.queryKey).toEqual([key])
+    expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
+    expect(firstCtx.signal.aborted).toBe(false)
+
+    const secondCtx = fetchPage.mock.calls[1]![0]
+    expect(secondCtx.pageParam).toBe(11)
+    expect(secondCtx.queryKey).toEqual([key])
+    expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
   })
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {
