@@ -276,7 +276,7 @@ await queryClient.invalidateQueries('posts', {
   exact,
   refetchActive: true,
   refetchInactive: false
-}, { throwOnError })
+}, { throwOnError, cancelRefetch })
 ```
 
 **Options**
@@ -292,9 +292,11 @@ await queryClient.invalidateQueries('posts', {
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `refetchOptions?: RefetchOptions`:
+- `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 ## `queryClient.refetchQueries`
 
@@ -323,9 +325,11 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `refetchOptions?: RefetchOptions`:
+- `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 **Returns**
 
@@ -389,9 +393,11 @@ queryClient.resetQueries(queryKey, { exact: true })
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `resetOptions?: ResetOptions`:
+- `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 **Returns**
 

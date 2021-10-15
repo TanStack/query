@@ -847,6 +847,30 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
+
+    test('should cancel ongoing fetches if cancelRefetch option is passed', async () => {
+      const key = queryKey()
+      const cancelFn = jest.fn()
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        enabled: false,
+        initialData: 1,
+      })
+      observer.subscribe()
+
+      queryClient.fetchQuery(key, () => {
+        const promise = new Promise(resolve => {
+          setTimeout(() => resolve(5), 10)
+        })
+        // @ts-expect-error
+        promise.cancel = cancelFn
+        return promise
+      })
+
+      await queryClient.refetchQueries(undefined, { cancelRefetch: true })
+      observer.destroy()
+      expect(cancelFn).toHaveBeenCalledTimes(1)
+    })
   })
 
   describe('resetQueries', () => {
