@@ -273,9 +273,7 @@ export interface ResetQueryFilters<TPageData = unknown>
   extends QueryFilters,
     RefetchPageFilters<TPageData> {}
 
-export interface InvalidateOptions {
-  throwOnError?: boolean
-}
+export interface InvalidateOptions extends RefetchOptions {}
 
 export interface ResetOptions {
   throwOnError?: boolean
