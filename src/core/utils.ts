@@ -502,7 +502,7 @@ export function getMinimalAbortInterfaces(): MinimalAbortInterfaces {
   } as unknown) as MinimalAbortInterfaces
 }
 
-export const { AbortSignal, AbortController }: MinimalAbortInterfaces =
-  typeof globalThis.AbortController !== 'undefined'
-    ? globalThis
-    : getMinimalAbortInterfaces()
+export const { AbortSignal, AbortController } = ((): MinimalAbortInterfaces =>
+  typeof AbortController !== 'undefined'
+    ? { AbortSignal, AbortController }
+    : getMinimalAbortInterfaces())()
