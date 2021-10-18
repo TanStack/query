@@ -136,7 +136,7 @@ const result = useQuery({
   - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
 - `onSuccess: (data: TData) => void`
   - Optional
-  - This function will fire any time the query successfully fetches new data.
+  - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
 - `onError: (error: TError) => void`
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
