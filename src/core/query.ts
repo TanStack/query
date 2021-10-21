@@ -14,6 +14,7 @@ import type {
   QueryStatus,
   QueryFunctionContext,
   EnsuredQueryKey,
+  QueryMeta,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -35,6 +36,7 @@ interface QueryConfig<
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
+  meta?: QueryMeta
 }
 
 export interface QueryState<TData = unknown, TError = unknown> {
@@ -152,6 +154,7 @@ export class Query<
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
+  meta: QueryMeta
 
   private cache: QueryCache
   private promise?: Promise<TData>
@@ -169,6 +172,7 @@ export class Query<
     this.queryHash = config.queryHash
     this.initialState = config.state || this.getDefaultState(this.options)
     this.state = this.initialState
+    this.meta = config.meta ?? {}
     this.scheduleGc()
   }
 
