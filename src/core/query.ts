@@ -377,6 +377,10 @@ export class Query<
       this.setOptions(options)
     }
 
+    if (options?.meta) {
+      this.meta = options.meta
+    }
+
     // Use the options from the first observer with a query function if no function is found.
     // This can happen when the query is hydrated or created with setQueryData.
     if (!this.options.queryFn) {
