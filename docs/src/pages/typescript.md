@@ -8,6 +8,7 @@ React Query is now written in **TypeScript** to make sure the library and your p
 Things to keep in mind:
 
 - Types currently require using TypeScript v3.8 or greater
+  - for [useQueries](./reference/useQueries.md), TypeScript v4.1 or greater is required to get the correct return type for each individual query (below v4.1 will mean the type of each returned `data` property is left as `unknown`)
 - Changes to types in this repository are considered **non-breaking** and are usually released as **patch** semver changes (otherwise every type enhancement would be a major version!).
 - It is **highly recommended that you lock your react-query package version to a specific patch release and upgrade with the expectation that types may be fixed or upgraded between any release**
 - The non-type-related public API of React Query still follows semver very strictly.
