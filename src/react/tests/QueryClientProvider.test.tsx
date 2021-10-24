@@ -2,7 +2,13 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
 import { sleep, queryKey } from './utils'
-import { QueryClient, QueryClientProvider, QueryCache, useQuery } from '../..'
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+  useQuery,
+  useQueryClient,
+} from '../..'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
@@ -126,5 +132,22 @@ describe('QueryClientProvider', () => {
 
     expect(queryCache.find(key)).toBeDefined()
     expect(queryCache.find(key)?.options.cacheTime).toBe(Infinity)
+  })
+
+  test.only('useQueryClient should throw an error if no query client has been set', () => {
+    const consoleMock = jest
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined)
+
+    function Page() {
+      useQueryClient()
+      return null
+    }
+
+    expect(() => render(<Page />)).toThrow(
+      'No QueryClient set, use QueryClientProvider to set one'
+    )
+
+    consoleMock.mockRestore()
   })
 })
