@@ -728,7 +728,7 @@ describe('useQueries', () => {
       }
     }
 
-    jest
+    const QueriesObserverSpy = jest
       .spyOn(QueriesObserverModule, 'QueriesObserver')
       .mockImplementation(fn => {
         return new QueriesObserverMock(fn)
@@ -768,6 +768,8 @@ describe('useQueries', () => {
 
     // Should not display the console error
     // "Warning: Can't perform a React state update on an unmounted component"
+
     await sleep(20)
+    QueriesObserverSpy.mockRestore()
   })
 })
