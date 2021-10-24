@@ -719,7 +719,7 @@ describe('useQueries', () => {
   it('should not change state if unmounted', async () => {
     const key1 = queryKey()
 
-    // We have to mock the QueriesObserver to do not unsubscribe
+    // We have to mock the QueriesObserver to not unsubscribe
     // the listener when the component is unmounted
     class QueriesObserverMock extends QueriesObserver {
       subscribe(listener: any) {
