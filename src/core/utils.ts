@@ -453,31 +453,61 @@ interface MinimalAbortInterfaces {
   AbortController: typeof globalThis.AbortController
 }
 
+type Listener = () => void
+
+interface AbortSignalPrivate {
+  listeners: Set<Listener>
+  onabort?: Listener
+  aborted: boolean
+}
+
 export function getMinimalAbortInterfaces(): MinimalAbortInterfaces {
-  const aborted = new WeakSet<AbortSignalBackup>()
+  const hidden = new WeakMap<AbortSignalBackup, AbortSignalPrivate>()
   class AbortSignalBackup {
     constructor() {
-      Object.defineProperty(this, 'aborted', {
-        get() {
-          return aborted.has(this)
-        },
-        set(v) {
-          return v
-        },
+      hidden.set(this, {
+        listeners: new Set(),
+        aborted: false,
       })
     }
-    addEventListener() {
-      return
+    addEventListener(type: string, fn: Listener) {
+      if (type !== 'abort' || typeof fn !== 'function') return
+      hidden.get(this)?.listeners.add(fn)
     }
-    removeEventListener() {
-      return
+    removeEventListener(type: string, fn: Listener) {
+      if (type !== 'abort' || typeof fn !== 'function') return
+      hidden.get(this)?.listeners.delete(fn)
     }
   }
+
+  Object.defineProperties(AbortSignalBackup.prototype, {
+    aborted: {
+      enumerable: true,
+      get() {
+        return !!hidden.get(this)?.aborted
+      },
+      set(v) {
+        return v
+      },
+    },
+    onabort: {
+      enumerable: true,
+      get() {
+        return hidden.get(this)?.onabort
+      },
+      set(fn) {
+        const $ = hidden.get(this)
+        if ($) $.onabort = fn
+        return fn
+      },
+    },
+  })
 
   class AbortControllerBackup {
     constructor() {
       const signal = new AbortSignalBackup()
       Object.defineProperty(this, 'signal', {
+        enumerable: true,
         get() {
           return signal
         },
@@ -488,11 +518,12 @@ export function getMinimalAbortInterfaces(): MinimalAbortInterfaces {
     }
 
     abort() {
-      // @ts-ignore: signal exist as a getter
-      const { signal } = this
-      if (!aborted.has(signal)) {
-        aborted.add(signal)
-      }
+      // @ts-expect-error: signal exist as a getter
+      const $ = hidden.get(this.signal)
+      if (!$ || $.aborted) return
+      $.aborted = true
+      if (typeof $.onabort === 'function') $.onabort()
+      $.listeners.forEach(fn => fn())
     }
   }
 
