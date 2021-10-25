@@ -154,7 +154,7 @@ export class Query<
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
-  meta: QueryMeta
+  meta?: QueryMeta
 
   private cache: QueryCache
   private promise?: Promise<TData>
@@ -172,7 +172,7 @@ export class Query<
     this.queryHash = config.queryHash
     this.initialState = config.state || this.getDefaultState(this.options)
     this.state = this.initialState
-    this.meta = config.meta ?? {}
+    this.meta = config.meta
     this.scheduleGc()
   }
 
