@@ -181,6 +181,8 @@ export class Query<
   ): void {
     this.options = { ...this.defaultOptions, ...options }
 
+    this.meta = options?.meta
+
     // Default to 5 minutes if not cache time is set
     this.cacheTime = Math.max(
       this.cacheTime || 0,
@@ -375,10 +377,6 @@ export class Query<
     // Update config if passed, otherwise the config from the last execution is used
     if (options) {
       this.setOptions(options)
-    }
-
-    if (options?.meta) {
-      this.meta = options.meta
     }
 
     // Use the options from the first observer with a query function if no function is found.
