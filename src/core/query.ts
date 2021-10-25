@@ -394,6 +394,7 @@ export class Query<
     const queryFnContext: QueryFunctionContext<TQueryKey> = {
       queryKey,
       pageParam: undefined,
+      meta: this.meta,
     }
 
     // Create fetch function

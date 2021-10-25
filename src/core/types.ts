@@ -19,6 +19,7 @@ export interface QueryFunctionContext<
 > {
   queryKey: EnsuredQueryKey<TQueryKey>
   pageParam?: TPageParam
+  meta?: QueryMeta
 }
 
 export type InitialDataFunction<T> = () => T | undefined
