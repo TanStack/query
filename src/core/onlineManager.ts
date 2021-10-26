@@ -56,7 +56,7 @@ class OnlineManager extends Subscribable {
   }
 
   private setDefaultEventListener() {
-    if (!isServer && window?.addEventListener) {
+    if (!isServer) {
       this.setEventListener(onOnline => {
         const listener = () => onOnline()
         // Listen to online
