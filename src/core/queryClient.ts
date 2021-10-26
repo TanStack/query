@@ -289,6 +289,7 @@ export class QueryClient {
     const promises = notifyManager.batch(() =>
       this.queryCache.findAll(filters).map(query =>
         query.fetch(undefined, {
+          ...options,
           meta: { refetchPage: filters?.refetchPage },
         })
       )

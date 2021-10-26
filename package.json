@@ -79,6 +79,9 @@
       "optional": true
     }
   },
+  "typesVersions": {
+    "<4.1": { "types/*": ["types/ts3.8/*"] }
+  },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",

@@ -383,4 +383,23 @@ describe('QueryErrorResetBoundary', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should render children', async () => {
+    function Page() {
+      return (
+        <div>
+          <span>page</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        <Page />
+      </QueryErrorResetBoundary>
+    )
+
+    expect(rendered.queryByText('page')).not.toBeNull()
+  })
 })

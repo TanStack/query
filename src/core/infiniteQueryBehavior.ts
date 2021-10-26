@@ -64,6 +64,7 @@ export function infiniteQueryBehavior<
             queryKey: context.queryKey,
             signal: abortSignal,
             pageParam: param,
+            meta: context.meta,
           }
 
           const queryFnResult = queryFn(queryFnContext)

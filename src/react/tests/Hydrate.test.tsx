@@ -11,6 +11,7 @@ import {
   Hydrate,
 } from '../..'
 import { sleep } from './utils'
+import * as coreModule from '../../core/index'
 
 describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = value =>
@@ -157,5 +158,51 @@ describe('React hydration', () => {
       queryClient.clear()
       newClientQueryClient.clear()
     })
+  })
+
+  test('should not hydrate queries if state is null', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
+
+    function Page() {
+      useHydrate(null)
+      return null
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    )
+
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
+
+    hydrateSpy.mockRestore()
+    queryClient.clear()
+  })
+
+  test('should not hydrate queries if state is undefined', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
+
+    function Page() {
+      useHydrate(undefined)
+      return null
+    }
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    )
+
+    expect(hydrateSpy).toHaveBeenCalledTimes(0)
+
+    hydrateSpy.mockRestore()
+    queryClient.clear()
   })
 })

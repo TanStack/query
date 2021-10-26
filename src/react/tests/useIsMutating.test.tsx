@@ -1,9 +1,10 @@
-import { waitFor } from '@testing-library/react'
+import { waitFor, fireEvent } from '@testing-library/react'
 import React from 'react'
 import { QueryClient } from '../../core'
 import { useIsMutating } from '../useIsMutating'
 import { useMutation } from '../useMutation'
 import { renderWithClient, setActTimeout, sleep } from './utils'
+import * as MutationCacheModule from '../../core/mutationCache'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -104,5 +105,57 @@ describe('useIsMutating', () => {
 
     renderWithClient(queryClient, <Page />)
     await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 1, 0, 0]))
+  })
+
+  it('should not change state if unmounted', async () => {
+    // We have to mock the MutationCache to not unsubscribe
+    // the listener when the component is unmounted
+    class MutationCacheMock extends MutationCacheModule.MutationCache {
+      subscribe(listener: any) {
+        super.subscribe(listener)
+        return () => void 0
+      }
+    }
+
+    const MutationCacheSpy = jest
+      .spyOn(MutationCacheModule, 'MutationCache')
+      .mockImplementation(fn => {
+        return new MutationCacheMock(fn)
+      })
+
+    const queryClient = new QueryClient()
+
+    function IsMutating() {
+      useIsMutating()
+      return null
+    }
+
+    function Page() {
+      const [mounted, setMounted] = React.useState(true)
+      const { mutate: mutate1 } = useMutation('mutation1', async () => {
+        await sleep(10)
+        return 'data'
+      })
+
+      React.useEffect(() => {
+        mutate1()
+      }, [mutate1])
+
+      return (
+        <div>
+          <button onClick={() => setMounted(false)}>unmount</button>
+          {mounted && <IsMutating />}
+        </div>
+      )
+    }
+
+    const { getByText } = renderWithClient(queryClient, <Page />)
+    fireEvent.click(getByText('unmount'))
+
+    // Should not display the console error
+    // "Warning: Can't perform a React state update on an unmounted component"
+
+    await sleep(20)
+    MutationCacheSpy.mockRestore()
   })
 })

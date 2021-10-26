@@ -20,6 +20,7 @@ export interface QueryFunctionContext<
   queryKey: EnsuredQueryKey<TQueryKey>
   signal?: AbortSignal
   pageParam?: TPageParam
+  meta: QueryMeta | undefined
 }
 
 export type InitialDataFunction<T> = () => T | undefined
@@ -44,6 +45,8 @@ export interface InfiniteData<TData> {
   pages: TData[]
   pageParams: unknown[]
 }
+
+export type QueryMeta = Record<string, unknown>
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -84,6 +87,11 @@ export interface QueryOptions<
    */
   getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
   _defaulted?: boolean
+  /**
+   * Additional payload to be stored on each query.
+   * Use this property to pass information that can be used in other places.
+   */
+  meta?: QueryMeta
 }
 
 export interface QueryObserverOptions<
@@ -274,13 +282,8 @@ export interface ResetQueryFilters<TPageData = unknown>
   extends QueryFilters,
     RefetchPageFilters<TPageData> {}
 
-export interface InvalidateOptions {
-  throwOnError?: boolean
-}
-
-export interface ResetOptions {
-  throwOnError?: boolean
-}
+export interface InvalidateOptions extends RefetchOptions {}
+export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {
   cancelRefetch?: boolean

@@ -85,6 +85,10 @@ setLogger({
 })
 ```
 
+## Set cacheTime to Infinity with Jest
+
+`cacheTime` is set to 5 minutes by default. It means that the cache garbage collector timer will be triggered every 5 minutes. If you use Jest, you can set the `cacheTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message.
+
 ## Testing Network Calls
 
 The primary use for React Query is to cache network requests, so it's important that we can test our code is making the correct network requests in the first place.
