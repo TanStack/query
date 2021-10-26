@@ -60,6 +60,7 @@ export function infiniteQueryBehavior<
           const queryFnContext: QueryFunctionContext = {
             queryKey: context.queryKey,
             pageParam: param,
+            meta: context.meta,
           }
 
           const queryFnResult = queryFn(queryFnContext)
