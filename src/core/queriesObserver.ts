@@ -86,7 +86,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   private updateObservers(notifyOptions?: NotifyOptions): void {
     notifyManager.batch(() => {
-      let hasIndexChange = false
+      let hasIndexChange = false as boolean
 
       const prevObservers = this.observers
       const prevObserversMap = this.observersMap
