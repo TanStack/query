@@ -414,9 +414,7 @@ export class Query<
       meta: this.meta,
     }
 
-    if (this.options.behavior?.onFetch) {
-      this.options.behavior?.onFetch(context)
-    }
+    this.options.behavior?.onFetch(context)
 
     // Store state in case the current fetch needs to be reverted
     this.revertState = this.state
