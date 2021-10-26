@@ -14,6 +14,7 @@ import type {
   QueryStatus,
   QueryFunctionContext,
   EnsuredQueryKey,
+  QueryMeta,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -35,6 +36,7 @@ interface QueryConfig<
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
+  meta: QueryMeta | undefined
 }
 
 export interface QueryState<TData = unknown, TError = unknown> {
@@ -63,6 +65,7 @@ export interface FetchContext<
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: EnsuredQueryKey<TQueryKey>
   state: QueryState<TData, TError>
+  meta: QueryMeta | undefined
 }
 
 export interface QueryBehavior<
@@ -152,6 +155,7 @@ export class Query<
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
+  meta: QueryMeta | undefined
 
   private cache: QueryCache
   private promise?: Promise<TData>
@@ -169,6 +173,7 @@ export class Query<
     this.queryHash = config.queryHash
     this.initialState = config.state || this.getDefaultState(this.options)
     this.state = this.initialState
+    this.meta = config.meta
     this.scheduleGc()
   }
 
@@ -176,6 +181,8 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   ): void {
     this.options = { ...this.defaultOptions, ...options }
+
+    this.meta = options?.meta
 
     // Default to 5 minutes if not cache time is set
     this.cacheTime = Math.max(
@@ -388,6 +395,7 @@ export class Query<
     const queryFnContext: QueryFunctionContext<TQueryKey> = {
       queryKey,
       pageParam: undefined,
+      meta: this.meta,
     }
 
     // Create fetch function
@@ -403,6 +411,7 @@ export class Query<
       queryKey: queryKey,
       state: this.state,
       fetchFn,
+      meta: this.meta,
     }
 
     if (this.options.behavior?.onFetch) {

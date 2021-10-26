@@ -33,6 +33,7 @@ const {
   initialDataUpdatedAt
   isDataEqual,
   keepPreviousData,
+  meta,
   notifyOnChangeProps,
   notifyOnChangePropsExclusions,
   onError,
@@ -177,6 +178,9 @@ const result = useQuery({
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behaviour of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+- `meta: Record<string, unknown>`
+  - Optional
+  - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
 
 **Returns**
 

@@ -472,4 +472,63 @@ describe('query', () => {
     unsubscribe1()
     expect(query?.getObserversCount()).toEqual(0)
   })
+
+  test('stores meta object in query', async () => {
+    const meta = {
+      it: 'works',
+    }
+
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data', {
+      meta,
+    })
+
+    const query = queryCache.find(key)!
+
+    expect(query.meta).toBe(meta)
+    expect(query.options.meta).toBe(meta)
+  })
+
+  test('updates meta object on change', async () => {
+    const meta = {
+      it: 'works',
+    }
+
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    await queryClient.prefetchQuery(key, queryFn, {
+      meta,
+    })
+
+    await queryClient.prefetchQuery(key, queryFn, {
+      meta: undefined,
+    })
+
+    const query = queryCache.find(key)!
+
+    expect(query.meta).toBeUndefined()
+    expect(query.options.meta).toBeUndefined()
+  })
+
+  test('provides meta object inside query function', async () => {
+    const meta = {
+      it: 'works',
+    }
+
+    const queryFn = jest.fn(() => 'data')
+
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, queryFn, {
+      meta,
+    })
+
+    expect(queryFn).toBeCalledWith(
+      expect.objectContaining({
+        meta,
+      })
+    )
+  })
 })

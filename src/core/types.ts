@@ -19,6 +19,7 @@ export interface QueryFunctionContext<
 > {
   queryKey: EnsuredQueryKey<TQueryKey>
   pageParam?: TPageParam
+  meta: QueryMeta | undefined
 }
 
 export type InitialDataFunction<T> = () => T | undefined
@@ -43,6 +44,8 @@ export interface InfiniteData<TData> {
   pages: TData[]
   pageParams: unknown[]
 }
+
+export type QueryMeta = Record<string, unknown>
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -83,6 +86,11 @@ export interface QueryOptions<
    */
   getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
   _defaulted?: boolean
+  /**
+   * Additional payload to be stored on each query.
+   * Use this property to pass information that can be used in other places.
+   */
+  meta?: QueryMeta
 }
 
 export interface QueryObserverOptions<
