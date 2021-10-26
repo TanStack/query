@@ -290,7 +290,7 @@ export class QueryClient {
       this.queryCache.findAll(filters).map(query =>
         query.fetch(undefined, {
           ...options,
-          meta: { refetchPage: filters?.refetchPage },
+          meta: { refetchPage: filters.refetchPage },
         })
       )
     )

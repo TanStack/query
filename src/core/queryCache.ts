@@ -174,9 +174,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   findAll(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): Query[]
   findAll(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): Query[] {
     const [filters] = parseFilterArgs(arg1, arg2)
-    return filters
-      ? this.queries.filter(query => matchQuery(filters, query))
-      : this.queries
+    return this.queries.filter(query => matchQuery(filters, query))
   }
 
   notify(event: QueryCacheNotifyEvent) {
