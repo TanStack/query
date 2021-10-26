@@ -36,7 +36,7 @@ interface QueryConfig<
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
-  meta?: QueryMeta
+  meta: QueryMeta | undefined
 }
 
 export interface QueryState<TData = unknown, TError = unknown> {
@@ -154,7 +154,7 @@ export class Query<
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   cacheTime!: number
-  meta?: QueryMeta
+  meta: QueryMeta | undefined
 
   private cache: QueryCache
   private promise?: Promise<TData>
