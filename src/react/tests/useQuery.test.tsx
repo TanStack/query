@@ -3924,10 +3924,18 @@ describe('useQuery', () => {
       dataUpdateCount: 1,
     })
 
-    expect(queryCache.find([key, 1])?.state).toMatchObject({
-      data: undefined,
-      status: 'idle',
-    })
+    if (typeof AbortSignal === 'function') {
+      expect(queryCache.find([key, 1])?.state).toMatchObject({
+        data: undefined,
+        status: 'idle',
+      })
+    } else {
+      expect(queryCache.find([key, 1])?.state).toMatchObject({
+        data: 'data 1',
+        status: 'success',
+        dataUpdateCount: 1,
+      })
+    }
 
     expect(queryCache.find([key, 2])?.state).toMatchObject({
       data: 'data 2',
@@ -3935,10 +3943,18 @@ describe('useQuery', () => {
       dataUpdateCount: 1,
     })
 
-    expect(queryCache.find([key, 3])?.state).toMatchObject({
-      data: undefined,
-      status: 'idle',
-    })
+    if (typeof AbortSignal === 'function') {
+      expect(queryCache.find([key, 3])?.state).toMatchObject({
+        data: undefined,
+        status: 'idle',
+      })
+    } else {
+      expect(queryCache.find([key, 3])?.state).toMatchObject({
+        data: 'data 3',
+        status: 'success',
+        dataUpdateCount: 1,
+      })
+    }
   })
 
   it('should refetch when quickly switching to a failed query', async () => {
