@@ -12,6 +12,7 @@ type LogFunction = (...args: any[]) => void
 
 // FUNCTIONS
 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
 let logger: Logger = console || {
   error: noop,
   warn: noop,
