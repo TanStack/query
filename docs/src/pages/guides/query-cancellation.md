@@ -5,7 +5,7 @@ title: Query Cancellation
 
 [_Previous method requiring a `cancel` function_](#old-cancel-function)
 
-React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal) **if it available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable and you can respond to the cancellation inside your query function if desired. The best part about this is that it allow you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
+React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal) **if it's available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable and you can respond to the cancellation inside your query function if desired. The best part about this is that it allow you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
 
 The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are several available.
 
