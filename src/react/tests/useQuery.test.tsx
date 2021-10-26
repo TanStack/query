@@ -688,7 +688,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should fetch when refetchOnMount is false and data has been fetched already', async () => {
+  it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
