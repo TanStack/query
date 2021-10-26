@@ -243,7 +243,7 @@ describe('query', () => {
 
     queryClient.prefetchQuery(key, async ({ signal }) => {
       await sleep(100)
-      return signal?.aborted
+      return signal?.aborted ? 'aborted' : 'data'
     })
 
     await sleep(10)
@@ -267,7 +267,7 @@ describe('query', () => {
       })
     } else {
       expect(query.state).toMatchObject({
-        data: undefined,
+        data: 'data',
         status: 'success',
         dataUpdateCount: 1,
       })

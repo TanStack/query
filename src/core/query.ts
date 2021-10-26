@@ -411,16 +411,16 @@ export class Query<
         }
         return undefined
       },
-      set(v) {
-        return v
-      },
     })
 
     // Create fetch function
-    const fetchFn = () =>
-      this.options.queryFn
-        ? this.options.queryFn(queryFnContext)
-        : Promise.reject('Missing queryFn')
+    const fetchFn = () => {
+      if (!this.options.queryFn) {
+        return Promise.reject('Missing queryFn')
+      }
+      this.abortSignalConsumed = false
+      return this.options.queryFn(queryFnContext)
+    }
 
     // Trigger behavior hook
     const context: FetchContext<TQueryFnData, TError, TData, TQueryKey> = {

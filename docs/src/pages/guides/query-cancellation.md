@@ -7,18 +7,28 @@ title: Query Cancellation
 
 React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal) **if it's available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable and you can respond to the cancellation inside your query function if desired. The best part about this is that it allow you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
 
-The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are several available.
+The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are [several available](https://www.npmjs.com/search?q=abortcontroller%20polyfill).
 
 ## Using `fetch`
 
 ```js
-const query = useQuery('todos', async ({ signal }) =>
-  fetch('/todos', {
-    method: 'get',
-    // Pass the signal to `fetch`
+const query = useQuery('todos', async ({ signal }) => {
+  const todosResponse = await fetch('/todos', {
+    // Pass the signal to one fetch
     signal,
   })
-);
+  const todos = await todosResponse.json()
+
+  const todoDetails = todos.map(async ({ details } => {
+    const response = await fetch(details, {
+      // Or pass it to several
+      signal,
+    })
+    return response.json()
+  })
+
+  return Promise.all(todoDetails)
+})
 ```
 
 ## Using `axios`
@@ -65,18 +75,18 @@ const query = useQuery('todos', ({ signal }) => {
 ```js
 const query = useQuery('todos', ({ signal }) => {
   return new Promise((resolve, reject) => {
-    var oReq = new XMLHttpRequest();
+    var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', () => {
-      resolve(JSON.parse(oReq.responseText));
-    });
+      resolve(JSON.parse(oReq.responseText))
+    })
     signal?.addEventListener('abort', () => {
-      oReq.abort();
-      reject();
-    });
-    oReq.open('GET', '/todos');
-    oReq.send();
-  });
-});
+      oReq.abort()
+      reject()
+    })
+    oReq.open('GET', '/todos')
+    oReq.send()
+  })
+})
 ```
 
 ## Manual Cancellation
@@ -86,19 +96,17 @@ You might want to cancel a query manually. For example, if the request takes a l
 ```js
 const [queryKey] = useState('todos')
 
-const query = useQuery(queryKey, ({ signal }) =>
-  fetch('/todos', {
-    method: 'get',
-    signal,
-  })
-)
+const query = useQuery(queryKey, await ({ signal }) => {
+  const resp = fetch('/todos', { signal })
+  return resp.json()
+})
 
-const queryClient = useQueryClient();
+const queryClient = useQueryClient()
 
 return (
   <button onClick={(e) => {
-    e.preventDefault();
-    queryClient.cancelQueries(queryKey);
+    e.preventDefault()
+    queryClient.cancelQueries(queryKey)
    }}>Cancel</button>
 )
 ```
