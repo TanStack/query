@@ -65,6 +65,7 @@ export interface FetchContext<
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: EnsuredQueryKey<TQueryKey>
   state: QueryState<TData, TError>
+  meta: QueryMeta | undefined
 }
 
 export interface QueryBehavior<
@@ -410,6 +411,7 @@ export class Query<
       queryKey: queryKey,
       state: this.state,
       fetchFn,
+      meta: this.meta,
     }
 
     if (this.options.behavior?.onFetch) {
