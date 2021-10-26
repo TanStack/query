@@ -122,7 +122,7 @@ export function ReactQueryDevtools({
 
     const run = (moveEvent: MouseEvent) => {
       const delta = dragInfo.pageY - moveEvent.pageY
-      const newHeight = dragInfo?.originalHeight + delta
+      const newHeight = dragInfo.originalHeight + delta
 
       setDevtoolsHeight(newHeight)
 
@@ -153,13 +153,13 @@ export function ReactQueryDevtools({
     const ref = panelRef.current
     if (ref) {
       const handlePanelTransitionStart = () => {
-        if (ref && isResolvedOpen) {
+        if (isResolvedOpen) {
           ref.style.visibility = 'visible'
         }
       }
 
       const handlePanelTransitionEnd = () => {
-        if (ref && !isResolvedOpen) {
+        if (!isResolvedOpen) {
           ref.style.visibility = 'hidden'
         }
       }
@@ -837,7 +837,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             >
               <Explorer
                 label="Data"
-                value={activeQuery?.state?.data}
+                value={activeQuery.state.data}
                 defaultExpanded={{}}
               />
             </div>
