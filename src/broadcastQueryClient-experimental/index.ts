@@ -34,7 +34,7 @@ export function broadcastQueryClient({
 
     if (
       queryEvent.type === 'queryUpdated' &&
-      queryEvent.action?.type === 'success'
+      queryEvent.action.type === 'success'
     ) {
       channel.postMessage({
         type: 'queryUpdated',
