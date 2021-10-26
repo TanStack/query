@@ -5,7 +5,9 @@ title: Query Cancellation
 
 [_Previous method requiring a `cancel` function_](#old-cancel-function)
 
-React Query provide each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal). When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable and you can respond to the cancellation inside your query function if desired. The best part about this is that it allow you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation.
+React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal) **if it available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable and you can respond to the cancellation inside your query function if desired. The best part about this is that it allow you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
+
+The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are several available.
 
 ## Using `fetch`
 
@@ -50,9 +52,9 @@ const query = useQuery('todos', ({ signal }) => {
   })
 
   // Cancel the request if React Query signals to abort
-  signal.onabort = () => {
+  signal?.addEventListener('abort', () => {
     source.cancel('Query was cancelled by React Query')
-  }
+  })
 
   return promise
 })
@@ -67,7 +69,7 @@ const query = useQuery('todos', ({ signal }) => {
     oReq.addEventListener('load', () => {
       resolve(JSON.parse(oReq.responseText));
     });
-    signal.addEventListener('abort', () => {
+    signal?.addEventListener('abort', () => {
       oReq.abort();
       reject();
     });
@@ -79,7 +81,7 @@ const query = useQuery('todos', ({ signal }) => {
 
 ## Manual Cancellation
 
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)` and React Query will cancel the request.
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)`. If `promise.cancel` is available or you have consumed the `singal` passed to the query function then React Query will cancel the request.
 
 ```js
 const [queryKey] = useState('todos')
@@ -105,7 +107,7 @@ return (
 
 Don't worry! The previous cancellation functionality will continue to work. But we do recommend that you move away from [the withdrawn cancelable promise proposal](https://github.com/tc39/proposal-cancelable-promises) to the [new `AbortSignal` interface](#_top) which has been [stardardized](https://dom.spec.whatwg.org/#interface-abortcontroller) as a general purpose construct for aborting ongoing activities in [most browsers](https://caniuse.com/abortcontroller) and in [Node](https://nodejs.org/api/globals.html#globals_class_abortsignal).
 
-To integrate with this feature, attach a `cancel` function to the promise returned by your query that implements your request cancellation. When a query becomes out-of-date or inactive, this `promise.cancel` function will be called (if available). Also note that if you attach a `cancel` function to the promise that the `AbortSignal` provided to the query function will **not** become aborted. Using this method opts you out from the newer `AbortSignal` method.
+To integrate with this feature, attach a `cancel` function to the promise returned by your query that implements your request cancellation. When a query becomes out-of-date or inactive, this `promise.cancel` function will be called (if available).
 
 ## Using `axios` with `cancel` function
 

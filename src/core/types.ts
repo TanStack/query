@@ -18,7 +18,7 @@ export interface QueryFunctionContext<
   TPageParam = any
 > {
   queryKey: EnsuredQueryKey<TQueryKey>
-  signal: AbortSignal
+  signal?: AbortSignal
   pageParam?: TPageParam
 }
 

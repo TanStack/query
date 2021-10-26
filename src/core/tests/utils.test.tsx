@@ -3,7 +3,6 @@ import {
   partialDeepEqual,
   isPlainObject,
   mapQueryStatusFilter,
-  getMinimalAbortInterfaces,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
@@ -327,43 +326,5 @@ describe('core/utils', () => {
         expect(mapQueryStatusFilter(active, inactive)).toBe(statusFilter)
       }
     )
-  })
-
-  describe('getMinimalAbortInterfaces', () => {
-    it('should return the minimum implementation of the AbortController/AbortSignal classes to work with react-query', () => {
-      const { AbortController, AbortSignal } = getMinimalAbortInterfaces()
-      expect(() => new AbortController()).not.toThrow()
-      const controller = new AbortController()
-      expect(controller).toBeDefined()
-      expect(typeof controller.abort).toBe('function')
-      expect(controller.signal).toBeInstanceOf(AbortSignal)
-
-      const { signal } = controller
-      expect(signal).toHaveProperty('aborted', false)
-
-      // @ts-ignore: test readonly at runtime
-      controller.signal = null
-      expect(controller.signal).toBe(signal)
-
-      // @ts-ignore: test readonly at runtime
-      signal.aborted = true
-      expect(signal).toHaveProperty('aborted', false)
-
-      const handler = jest.fn()
-      expect(() => signal.addEventListener('abort', handler)).not.toThrow()
-      expect(() => signal.removeEventListener('abort', handler)).not.toThrow()
-      expect(() => {
-        signal.onabort = handler
-      }).not.toThrow()
-
-      controller.abort()
-
-      expect(controller.signal).toBe(signal)
-      expect(signal).toHaveProperty('aborted', true)
-
-      controller.abort()
-
-      expect(handler.mock.calls.length).toBeLessThanOrEqual(1)
-    })
   })
 })

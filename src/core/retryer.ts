@@ -6,6 +6,7 @@ import { sleep } from './utils'
 
 interface RetryerConfig<TData = unknown, TError = unknown> {
   fn: () => TData | Promise<TData>
+  abort?: () => void
   onError?: (error: TError) => void
   onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
@@ -71,6 +72,8 @@ export class Retryer<TData = unknown, TError = unknown> {
   isTransportCancelable: boolean
   promise: Promise<TData>
 
+  private abort?: () => void
+
   constructor(config: RetryerConfig<TData, TError>) {
     let cancelRetry = false
     let cancelFn: ((options?: CancelOptions) => void) | undefined
@@ -78,6 +81,7 @@ export class Retryer<TData = unknown, TError = unknown> {
     let promiseResolve: (data: TData) => void
     let promiseReject: (error: TError) => void
 
+    this.abort = config.abort
     this.cancel = cancelOptions => cancelFn?.(cancelOptions)
     this.cancelRetry = () => {
       cancelRetry = true
@@ -142,6 +146,8 @@ export class Retryer<TData = unknown, TError = unknown> {
       cancelFn = cancelOptions => {
         if (!this.isResolved) {
           reject(new CancelledError(cancelOptions))
+
+          this.abort?.()
 
           // Cancel transport if supported
           if (isCancelable(promiseOrValue)) {
