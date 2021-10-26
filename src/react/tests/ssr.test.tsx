@@ -132,7 +132,7 @@ describe('Server Side Rendering', () => {
       const query = useInfiniteQuery(key, queryFn)
       return (
         <ul>
-          {query.data?.pages?.map(page => (
+          {query.data?.pages.map(page => (
             <li key={page}>{page}</li>
           ))}
         </ul>
