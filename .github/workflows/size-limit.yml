@@ -3,13 +3,15 @@ on:
   pull_request:
     branches:
       - master
+permissions:
+    pull-requests: write
 jobs:
   size:
     runs-on: ubuntu-latest
     env:
       CI_JOB_NUMBER: 1
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2.3.5
       - uses: andresz1/size-limit-action@v1.5.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
