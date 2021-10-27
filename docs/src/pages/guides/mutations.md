@@ -9,7 +9,9 @@ Here's an example of a mutation that adds a new todo to the server:
 
 ```js
 function App() {
-  const mutation = useMutation(newTodo => axios.post('/todos', newTodo))
+  const mutation = useMutation(newTodo => {
+    return axios.post('/todos', newTodo)
+  })
 
   return (
     <div>
@@ -254,3 +256,8 @@ hydrate(queryClient, state)
 // Resume the paused mutations:
 queryClient.resumePausedMutations()
 ```
+
+## Further reading
+
+For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog#12-mastering-mutations-in-react-query) from
+the Community Resources.

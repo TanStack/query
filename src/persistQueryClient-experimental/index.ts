@@ -6,7 +6,7 @@ import {
   DehydrateOptions,
   HydrateOptions,
   hydrate,
-} from '../hydration'
+} from 'react-query'
 import { Promisable } from 'type-fest'
 
 export interface Persistor {

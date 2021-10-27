@@ -48,6 +48,20 @@ const dehydratedState = dehydrate(queryClient, {
   - You **should not** rely on the exact format of this response, it is not part of the public API and can change at any time
   - This result is not in serialized form, you need to do that yourself if desired
 
+### limitations
+
+The hydration API requires values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
+
+```js
+// server
+const state = dehydrate(client, { shouldDehydrateQuery: () => true }) // to also include Errors
+const serializedState = mySerialize(state) // transform Error instances to objects
+
+// client
+const state = myDeserialize(serializedState)  // transform objects back to Error instances
+hydrate(client, state)
+```
+
 ## `hydrate`
 
 `hydrate` adds a previously dehydrated state into a `cache`. If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them.

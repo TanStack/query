@@ -34,6 +34,7 @@ const {
   initialDataUpdatedAt
   isDataEqual,
   keepPreviousData,
+  meta,
   notifyOnChangeProps,
   notifyOnChangePropsExclusions,
   onError,
@@ -101,9 +102,10 @@ const result = useQuery({
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
   - If specified, this function is used to hash the `queryKey` to a string.
-- `refetchInterval: false | number`
+- `refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
+  - If set to a function, the function will be executed with the latest data and query to compute a frequency
 - `refetchIntervalInBackground: boolean`
   - Optional
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
@@ -136,7 +138,7 @@ const result = useQuery({
   - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
 - `onSuccess: (data: TData) => void`
   - Optional
-  - This function will fire any time the query successfully fetches new data.
+  - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
 - `onError: (error: TError) => void`
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
@@ -177,6 +179,9 @@ const result = useQuery({
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable `suspense`'s default behaviour of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+- `meta: Record<string, unknown>`
+  - Optional
+  - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
 
 **Returns**
 

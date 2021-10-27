@@ -205,6 +205,8 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 `setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
 
+After successful changing query's cached data via `setQueryData`, it will also trigger `onSuccess` callback from that query.
+
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
 ```js
@@ -274,7 +276,7 @@ await queryClient.invalidateQueries('posts', {
   exact,
   refetchActive: true,
   refetchInactive: false
-}, { throwOnError })
+}, { throwOnError, cancelRefetch })
 ```
 
 **Options**
@@ -290,9 +292,11 @@ await queryClient.invalidateQueries('posts', {
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `refetchOptions?: RefetchOptions`:
+- `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 ## `queryClient.refetchQueries`
 
@@ -321,9 +325,11 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `refetchOptions?: RefetchOptions`:
+- `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 **Returns**
 
@@ -387,9 +393,11 @@ queryClient.resetQueries(queryKey, { exact: true })
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `resetOptions?: ResetOptions`:
+- `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 **Returns**
 

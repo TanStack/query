@@ -693,7 +693,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should fetch when refetchOnMount is false and data has been fetched already', async () => {
+  it('should not fetch when refetchOnMount is false and data has been fetched already', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -3601,6 +3601,97 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('count: 2'))
   })
 
+  it('should refetch in an interval depending on function result', async () => {
+    const key = queryKey()
+    let count = 0
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const queryInfo = useQuery(key, () => count++, {
+        refetchInterval: (data = 0) => (data < 2 ? 10 : false),
+      })
+
+      states.push(queryInfo)
+
+      return <div>count: {queryInfo.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('count: 2'))
+
+    expect(states.length).toEqual(6)
+
+    expect(states).toMatchObject([
+      {
+        status: 'loading',
+        isFetching: true,
+        data: undefined,
+      },
+      {
+        status: 'success',
+        isFetching: false,
+        data: 0,
+      },
+      {
+        status: 'success',
+        isFetching: true,
+        data: 0,
+      },
+      {
+        status: 'success',
+        isFetching: false,
+        data: 1,
+      },
+      {
+        status: 'success',
+        isFetching: true,
+        data: 1,
+      },
+      {
+        status: 'success',
+        isFetching: false,
+        data: 2,
+      },
+    ])
+  })
+
+  it('should not interval fetch with a refetchInterval of 0', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    function Page() {
+      const queryInfo = useQuery(key, () => 1, {
+        refetchInterval: 0,
+      })
+
+      states.push(queryInfo)
+
+      return <div>count: {queryInfo.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('count: 1'))
+
+    await sleep(10) //extra sleep to make sure we're not re-fetching
+
+    expect(states.length).toEqual(2)
+
+    expect(states).toMatchObject([
+      {
+        status: 'loading',
+        isFetching: true,
+        data: undefined,
+      },
+      {
+        status: 'success',
+        isFetching: false,
+        data: 1,
+      },
+    ])
+  })
+
   it('should accept an empty string as query key', async () => {
     function Page() {
       const result = useQuery('', ctx => ctx.queryKey)
@@ -4147,23 +4238,25 @@ describe('useQuery', () => {
 
   it('should refetch when query key changed when previous status is error', async () => {
     const consoleMock = mockConsoleError()
-    const queryFn = jest.fn()
 
     function Page({ id }: { id: number }) {
-      queryFn.mockImplementation(async () => {
-        await sleep(10)
-        if (id % 2 === 1) {
-          return Promise.reject(new Error('Suspense Error Bingo'))
-        } else {
-          return 'data'
+      const { error, isLoading } = useQuery(
+        [id],
+        async () => {
+          await sleep(10)
+          if (id % 2 === 1) {
+            return Promise.reject(new Error('Error'))
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          retryOnMount: false,
+          refetchOnMount: false,
+          refetchOnWindowFocus: false,
         }
-      })
-      const { error, isLoading } = useQuery([id], queryFn, {
-        retry: false,
-        retryOnMount: false,
-        refetchOnMount: false,
-        refetchOnWindowFocus: false,
-      })
+      )
 
       if (isLoading) {
         return <div>status: loading</div>
@@ -4195,12 +4288,73 @@ describe('useQuery', () => {
     // render error state component
     await waitFor(() => rendered.getByText('error'))
 
-    // change to enabled to false
+    // change to unmount query
     fireEvent.click(rendered.getByLabelText('change'))
     await waitFor(() => rendered.getByText('rendered'))
 
-    // // change to enabled to true
+    // change to mount new query
     fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('error'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should refetch when query key changed when switching between erroneous queries', async () => {
+    const consoleMock = mockConsoleError()
+
+    function Page({ id }: { id: boolean }) {
+      const { error, isFetching } = useQuery(
+        [id],
+        async () => {
+          await sleep(10)
+          return Promise.reject(new Error('Error'))
+        },
+        {
+          retry: false,
+          retryOnMount: false,
+          refetchOnMount: false,
+          refetchOnWindowFocus: false,
+        }
+      )
+
+      if (isFetching) {
+        return <div>status: fetching</div>
+      }
+      if (error instanceof Error) {
+        return <div>error</div>
+      }
+      return <div>rendered</div>
+    }
+
+    function App() {
+      const [value, toggle] = React.useReducer(x => !x, true)
+
+      return (
+        <div>
+          <Page id={value} />
+          <button aria-label="change" onClick={toggle}>
+            change {value}
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // initial state check
+    rendered.getByText('status: fetching')
+
+    // render error state component
+    await waitFor(() => rendered.getByText('error'))
+
+    // change to mount second query
+    fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('status: fetching'))
+    await waitFor(() => rendered.getByText('error'))
+
+    // change to mount first query again
+    fireEvent.click(rendered.getByLabelText('change'))
+    await waitFor(() => rendered.getByText('status: fetching'))
     await waitFor(() => rendered.getByText('error'))
 
     consoleMock.mockRestore()

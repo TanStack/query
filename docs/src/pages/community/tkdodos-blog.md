@@ -36,11 +36,11 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 
 ## [#8: Effective React Query Keys](https://tkdodo.eu/blog/effective-react-query-keys)
 
-> Most examples just use a simple String or Array Query Key, but how do you organize your keys effectively once your app grows past a todo list? This articles shows you how co-location and Query Key Factories can make your life easier. [Read more...](https://tkdodo.eu/blog/effective-react-query-keys)
+> Most examples just use a simple String or Array Query Key, but how do you organize your keys effectively once your app grows past a todo list? This article shows how co-location and Query Key Factories can make life easier. [Read more...](https://tkdodo.eu/blog/effective-react-query-keys)
 
 ## [#9: Placeholder and Initial Data in React Query](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query)
 
-> Placeholder and Initial Data are two similar yet different concepts for synchronously showing data instead of a loading spinner to improve the ux of our application. This blog post compares the two and outlines scenarios where each one shines. [Read more...](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query)
+> Placeholder and Initial Data are two similar yet different concepts for synchronously showing data instead of a loading spinner to improve an application's UX. This blog post compares the two and outlines the scenarios where each one shines. [Read more...](https://tkdodo.eu/blog/placeholder-and-initial-data-in-react-query)
 
 ## [#10: React Query as a State Manager](https://tkdodo.eu/blog/react-query-as-a-state-manager)
 
@@ -49,3 +49,7 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 ## [#11: React Query Error Handling](https://tkdodo.eu/blog/react-query-error-handling)
 
 > Handling errors is an integral part of working with asynchronous data, especially data fetching. We have to face it: Not all requests will be successful, and not all Promises will be fulfilled. This blog post describes various ways of coping with errors in React Query, such as the error property, using Error Boundaries or onError callbacks, so that you can prepare your application for the cases when "Something went wrong". [Read more...](https://tkdodo.eu/blog/react-query-error-handling)
+
+## [#12: Mastering Mutations in React Query](https://tkdodo.eu/blog/mastering-mutations-in-react-query)
+
+> Mutation are the important, second part necessary to work with server data - for situations where you need to update it. This blog post covers what mutations are and how they are different from queries. You'll learn the difference between `mutate` and `mutateAsync` as well as how you can tie queries and mutations together. [Read more...](https://tkdodo.eu/blog/mastering-mutations-in-react-query)

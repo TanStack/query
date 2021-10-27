@@ -890,4 +890,49 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('error boundary'))
     consoleMock.mockRestore()
   })
+
+  it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
+    const key = queryKey()
+    let state: UseQueryResult<number> | null = null
+
+    let count = 0
+    let renders = 0
+
+    function Page() {
+      renders++
+
+      state = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return count
+        },
+        { suspense: true, cacheTime: 0 }
+      )
+
+      return (
+        <div>
+          <span>rendered</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
+    )
+
+    await waitFor(() =>
+      expect(state).toMatchObject({
+        data: 1,
+        status: 'success',
+      })
+    )
+
+    expect(renders).toBe(2)
+    expect(rendered.queryByText('rendered')).not.toBeNull()
+  })
 })

@@ -1,5 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { useMutation, QueryClient, QueryCache, MutationCache } from '../..'
 import { UseMutationResult } from '../types'
@@ -475,5 +476,47 @@ describe('useMutation', () => {
     const { getByText } = renderWithClient(queryClient, <Page />)
     fireEvent.click(getByText('mutate'))
     fireEvent.click(getByText('unmount'))
+  })
+
+  it('should be able to throw an error when useErrorBoundary is set to true', async () => {
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { mutate } = useMutation<string, Error>(
+        () => {
+          const err = new Error('Expected mock error. All is well!')
+          err.stack = ''
+          return Promise.reject(err)
+        },
+        { useErrorBoundary: true }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={() => (
+          <div>
+            <span>error</span>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )
+
+    fireEvent.click(getByText('mutate'))
+
+    await waitFor(() => {
+      expect(queryByText('error')).not.toBeNull()
+    })
+
+    consoleMock.mockRestore()
   })
 })

@@ -1,5 +1,5 @@
 import type { MutationState } from './mutation'
-import type { QueryBehavior } from './query'
+import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
 
@@ -19,6 +19,7 @@ export interface QueryFunctionContext<
 > {
   queryKey: EnsuredQueryKey<TQueryKey>
   pageParam?: TPageParam
+  meta: QueryMeta | undefined
 }
 
 export type InitialDataFunction<T> = () => T | undefined
@@ -43,6 +44,8 @@ export interface InfiniteData<TData> {
   pages: TData[]
   pageParams: unknown[]
 }
+
+export type QueryMeta = Record<string, unknown>
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -83,6 +86,11 @@ export interface QueryOptions<
    */
   getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
   _defaulted?: boolean
+  /**
+   * Additional payload to be stored on each query.
+   * Use this property to pass information that can be used in other places.
+   */
+  meta?: QueryMeta
 }
 
 export interface QueryObserverOptions<
@@ -105,9 +113,16 @@ export interface QueryObserverOptions<
   staleTime?: number
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
+   * If set to a function, the function will be executed with the latest data and query to compute a frequency
    * Defaults to `false`.
    */
-  refetchInterval?: number | false
+  refetchInterval?:
+    | number
+    | false
+    | ((
+        data: TData | undefined,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => number | false)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.
@@ -150,7 +165,7 @@ export interface QueryObserverOptions<
    */
   notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
-   * This callback will fire any time the query successfully fetches new data.
+   * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
    */
   onSuccess?: (data: TData) => void
   /**
@@ -266,19 +281,16 @@ export interface ResetQueryFilters<TPageData = unknown>
   extends QueryFilters,
     RefetchPageFilters<TPageData> {}
 
-export interface InvalidateOptions {
-  throwOnError?: boolean
-}
-
-export interface ResetOptions {
-  throwOnError?: boolean
-}
+export interface InvalidateOptions extends RefetchOptions {}
+export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {
+  cancelRefetch?: boolean
   pageParam?: unknown
 }
 
 export interface FetchPreviousPageOptions extends ResultOptions {
+  cancelRefetch?: boolean
   pageParam?: unknown
 }
 

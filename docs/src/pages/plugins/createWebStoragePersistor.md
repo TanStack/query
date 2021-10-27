@@ -13,7 +13,7 @@ This utility comes packaged with `react-query` and is available under the `react
 
 - Import the `createWebStoragePersistor` function
 - Create a new webStoragePersistor
-- Pass it to the [`persistQueryClient`](../persistQueryClient) function
+- Pass it to the [`persistQueryClient`](./persistQueryClient) function
 
 ```ts
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental'

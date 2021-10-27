@@ -21,7 +21,10 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey
 >(
   queryKey: TQueryKey,
-  options?: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey'
+  >
 ): UseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData = unknown,
@@ -31,7 +34,10 @@ export function useQuery<
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn'
+  >
 ): UseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData,
