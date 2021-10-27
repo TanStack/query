@@ -3,8 +3,13 @@ on:
   pull_request:
     branches:
       - master
+  pull_requests_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
 permissions:
-    pull-requests: write
+  pull-requests: write
 jobs:
   size:
     runs-on: ubuntu-latest
