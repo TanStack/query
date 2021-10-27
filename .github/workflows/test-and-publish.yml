@@ -25,6 +25,8 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - run: yarn test:ci
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{secrets.BUNDLEWATCH_GITHUB_TOKEN}}
 
   publish-module:
     name: 'Publish Module to NPM'
