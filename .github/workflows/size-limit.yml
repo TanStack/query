@@ -1,9 +1,8 @@
 name: "size"
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - master
-  pull_requests_target:
     types:
       - opened
       - synchronize
