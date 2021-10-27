@@ -27,7 +27,7 @@
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "npm run test:types && npm run test:format && npm run test:eslint && jest --watch",
-    "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && jest && npm run test:size",
+    "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && jest",
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:format": "yarn prettier --check",
     "test:types": "tsc",
