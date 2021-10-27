@@ -1,5 +1,5 @@
 {
-  "name": "pagination",
+  "name": "load-more-infinite-scroll",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
