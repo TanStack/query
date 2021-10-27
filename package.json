@@ -47,7 +47,7 @@
     "start": "yarn watch",
     "format": "yarn prettier --write",
     "stats": "open ./stats.html",
-    "size": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types && size-limit"
+    "size": "npm run build && size-limit"
   },
   "files": [
     "core",
