@@ -46,7 +46,8 @@
     "prettier": "prettier \"{.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,ts,tsx,json}\"",
     "start": "yarn watch",
     "format": "yarn prettier --write",
-    "stats": "open ./stats.html"
+    "stats": "open ./stats.html",
+    "build-size": "yarn build:umd"
   },
   "files": [
     "core",
@@ -90,6 +91,7 @@
     "@babel/preset-react": "^7.10.4",
     "@babel/preset-typescript": "^7.10.4",
     "@rollup/plugin-replace": "^2.3.3",
+    "@size-limit/file": "^6.0.3",
     "@svgr/rollup": "^5.4.0",
     "@testing-library/react": "^10.4.7",
     "@testing-library/jest-dom": "^5.14.1",
@@ -135,11 +137,17 @@
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-visualizer": "^4.0.4",
+    "size-limit": "^6.0.3",
     "type-fest": "^0.21.0",
     "typescript": "^4.1.2"
   },
   "resolutions": {
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8"
-  }
+  },
+  "size-limit": [
+    {
+      "path": "dist/*.production.min.js"
+    }
+  ]
 }
