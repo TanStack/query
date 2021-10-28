@@ -15,12 +15,13 @@ import type {
   QueryFunctionContext,
   EnsuredQueryKey,
   QueryMeta,
+  CancelOptions,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
-import { Retryer, CancelOptions, isCancelledError } from './retryer'
+import { Retryer, isCancelledError } from './retryer'
 
 // TYPES
 

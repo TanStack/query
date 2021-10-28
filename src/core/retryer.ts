@@ -1,6 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { sleep } from './utils'
+import { CancelOptions } from './types'
 
 // TYPES
 
@@ -39,11 +40,6 @@ interface Cancelable {
 
 export function isCancelable(value: any): value is Cancelable {
   return typeof value?.cancel === 'function'
-}
-
-export interface CancelOptions {
-  revert?: boolean
-  silent?: boolean
 }
 
 export class CancelledError {
