@@ -27,8 +27,9 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   ResetQueryFilters,
+  SetDataOptions,
 } from './types'
-import type { QueryState, SetDataOptions } from './query'
+import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'

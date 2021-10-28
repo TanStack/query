@@ -16,6 +16,7 @@ import type {
   EnsuredQueryKey,
   QueryMeta,
   CancelOptions,
+  SetDataOptions,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
@@ -83,10 +84,6 @@ export interface QueryBehavior<
 export interface FetchOptions {
   cancelRefetch?: boolean
   meta?: any
-}
-
-export interface SetDataOptions {
-  updatedAt?: number
 }
 
 interface FailedAction {

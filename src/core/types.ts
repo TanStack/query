@@ -674,3 +674,7 @@ export interface CancelOptions {
   revert?: boolean
   silent?: boolean
 }
+
+export interface SetDataOptions {
+  updatedAt?: number
+}
