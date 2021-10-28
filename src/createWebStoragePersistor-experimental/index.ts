@@ -16,10 +16,45 @@ export function createWebStoragePersistor({
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
 }: CreateWebStoragePersistorOptions): Persistor {
+  //try to save data to storage
+  function trySave(persistedClient: PersistedClient) {
+    try {
+      storage.setItem(key, JSON.stringify(persistedClient))
+    } catch {
+      return false
+    }
+    return true
+  }
+
   if (typeof storage !== 'undefined') {
     return {
       persistClient: throttle(persistedClient => {
-        storage.setItem(key, JSON.stringify(persistedClient))
+        if (trySave(persistedClient) !== true) {
+          const { mutations, queries } = persistedClient.clientState
+
+          // try to remove mutations and save
+          while (mutations.length > 0) {
+            mutations.unshift()
+            persistedClient.clientState.mutations = mutations
+            if (trySave(persistedClient)) {
+              return
+            }
+          }
+
+          // clean old queries and try save
+          const sortedQueries = queries.sort(
+            (a, b) => a.state.dataUpdatedAt - b.state.dataUpdatedAt
+          )
+          while (sortedQueries.length > 0) {
+            const oldestData = sortedQueries.shift()
+            persistedClient.clientState.queries = queries.filter(
+              q => q !== oldestData
+            )
+            if (trySave(persistedClient)) {
+              return
+            }
+          }
+        }
       }, throttleTime),
       restoreClient: () => {
         const cacheString = storage.getItem(key)
