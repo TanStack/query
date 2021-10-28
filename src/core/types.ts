@@ -2,6 +2,10 @@ import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
+// eslint-disable-next-line import/no-cycle
+export type { CancelOptions } from './retryer'
+// eslint-disable-next-line import/no-cycle
+export type { SetDataOptions } from './query'
 
 export type QueryKey = string | readonly unknown[]
 export type EnsuredQueryKey<T extends QueryKey> = T extends string
