@@ -30,28 +30,30 @@ export function createWebStoragePersistor({
     return {
       persistClient: throttle(persistedClient => {
         if (trySave(persistedClient) !== true) {
-          const { mutations, queries } = persistedClient.clientState
+          const mutations = [...persistedClient.clientState.mutations]
+          const queries = [...persistedClient.clientState.queries]
+          const client: PersistedClient = {
+            ...persistedClient,
+            clientState: { mutations, queries },
+          }
 
-          // try to remove mutations and save
-          while (mutations.length > 0) {
-            mutations.unshift()
-            persistedClient.clientState.mutations = mutations
-            if (trySave(persistedClient)) {
-              return
+          // clean mutations and try to save
+          while (mutations.shift()) {
+            if (trySave(client)) {
+              return // save success
             }
           }
 
-          // clean old queries and try save
-          const sortedQueries = queries.sort(
+          // sort queries by dataUpdatedAt (oldest first)
+          const sortedQueries = [...queries].sort(
             (a, b) => a.state.dataUpdatedAt - b.state.dataUpdatedAt
           )
+          // clean old queries and try to save
           while (sortedQueries.length > 0) {
             const oldestData = sortedQueries.shift()
-            persistedClient.clientState.queries = queries.filter(
-              q => q !== oldestData
-            )
-            if (trySave(persistedClient)) {
-              return
+            client.clientState.queries = queries.filter(q => q !== oldestData)
+            if (trySave(client)) {
+              return // save success
             }
           }
         }
