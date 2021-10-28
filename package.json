@@ -66,11 +66,13 @@
   ],
   "dependencies": {
     "@babel/runtime": "^7.5.5",
+    "@types/use-sync-external-store": "^0.0.0",
     "broadcast-channel": "^3.4.1",
-    "match-sorter": "^6.0.2"
+    "match-sorter": "^6.0.2",
+    "use-sync-external-store": "^0.0.0-experimental-45898dacb2-20210828"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18"
   },
   "peerDependenciesMeta": {
     "react-dom": {
@@ -95,8 +97,8 @@
     "@testing-library/react": "^10.4.7",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/jest": "^26.0.4",
-    "@types/react": "^16.9.41",
-    "@types/react-dom": "^16.9.8",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
     "@typescript-eslint/eslint-plugin": "^4.8.1",
     "@typescript-eslint/parser": "^4.8.1",
     "babel-eslint": "^10.1.0",
@@ -122,8 +124,8 @@
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
     "prettier": "2.2.1",
-    "react": "^16.13.0",
-    "react-dom": "^16.13.1",
+    "react": "^18.0.0-alpha-9c8161ba8-20211028",
+    "react-dom": "^18.0.0-alpha-9c8161ba8-20211028",
     "react-error-boundary": "^2.2.2",
     "replace": "^1.2.0",
     "rimraf": "^3.0.2",
