@@ -8059,10 +8059,10 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-use-sync-external-store@^0.0.0-experimental-45898dacb2-20210828:
-  version "0.0.0-experimental-45898dacb2-20210828"
-  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-0.0.0-experimental-45898dacb2-20210828.tgz#c911c562ab43ffb186ce33e39df66e83ff6c3053"
-  integrity sha512-ozQMmLoTKtr37o9R02WBUCFqYH+WjnQPuOtwjn24YDLL5xDeq1k4Biy9uMIE/bK+VgOgHKm2N9Ux7nuMhtD6Gg==
+use-sync-external-store@0.0.0-experimental-7d38e4fd8-20210930:
+  version "0.0.0-experimental-7d38e4fd8-20210930"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-0.0.0-experimental-7d38e4fd8-20210930.tgz#e19347e9db200a1407772c4322a508c01cc9a7f3"
+  integrity sha512-WKomTf2T6KUNzwuJRPaRMGHs+cUFkctnV8fBc1kc4GQFOpaxSqkhbfx0MyGgrzVFzuvH08gqg2wU7kRffRLGcw==
 
 use@^3.1.0:
   version "3.1.1"
