@@ -3,7 +3,6 @@ import {
   fireEvent,
   screen,
   waitFor,
-  act,
   waitForElementToBeRemoved,
 } from '@testing-library/react'
 import '@testing-library/jest-dom'
@@ -253,11 +252,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    await act(async () => {
-      fireEvent.click(await screen.findByText(/enable query/i))
-    })
+    screen.getByRole('button', { name: /enable query/i }).click()
 
-    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    })
   })
 
   it('should not show a disabled label for inactive queries', async () => {
@@ -290,11 +289,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    await act(async () => {
-      fireEvent.click(await screen.findByText(/hide query/i))
-    })
+    screen.getByRole('button', { name: /hide query/i }).click()
 
-    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    })
   })
 
   it('should sort the queries according to the sorting filter', async () => {
