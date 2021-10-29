@@ -2,7 +2,6 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
 import {
-  mockConsoleError,
   queryKey,
   renderWithClient,
   setActTimeout,
@@ -50,7 +49,6 @@ describe('useIsFetching', () => {
   })
 
   it('should not update state while rendering', async () => {
-    const consoleMock = mockConsoleError()
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
 
@@ -92,19 +90,15 @@ describe('useIsFetching', () => {
 
       return (
         <>
+          <IsFetching />
           <FirstQuery />
           {renderSecond && <SecondQuery />}
-          <IsFetching />
         </>
       )
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
-    expect(consoleMock).not.toHaveBeenCalled()
-    expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
-
-    consoleMock.mockRestore()
+    await waitFor(() => expect(isFetchings).toEqual([0, 1, 1, 2, 1, 0]))
   })
 
   it('should be able to filter', async () => {
