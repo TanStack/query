@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store'
 
 import { QueryKey } from '../core'
 import { notifyManager } from '../core/notifyManager'
@@ -24,9 +25,6 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver
 ) {
-  const mountedRef = React.useRef(false)
-  const [, forceUpdate] = React.useState(0)
-
   const queryClient = useQueryClient()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
@@ -82,35 +80,22 @@ export function useBaseQuery<
       )
   )
 
-  let result = observer.getOptimisticResult(defaultedOptions)
+  let result = useSyncExternalStore(observer.subscribe, () =>
+    observer.getCurrentResult()
+  )
 
   React.useEffect(() => {
-    mountedRef.current = true
-
     errorResetBoundary.clearReset()
+  }, [errorResetBoundary])
 
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          forceUpdate(x => x + 1)
-        }
-      })
-    )
-
+  React.useEffect(() => {
     // Update result to make sure we did not miss any query updates
     // between creating the observer and subscribing to it.
     observer.updateResult()
-
-    return () => {
-      mountedRef.current = false
-      unsubscribe()
-    }
-  }, [errorResetBoundary, observer])
+  }, [observer])
 
   React.useEffect(() => {
-    // Do not notify on updates because of changes in the options because
-    // these changes should already be reflected in the optimistic result.
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions(defaultedOptions)
   }, [defaultedOptions, observer])
 
   // Handle suspense
