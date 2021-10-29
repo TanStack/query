@@ -80,7 +80,7 @@ export function useBaseQuery<
       )
   )
 
-  let result = useSyncExternalStore(observer.subscribe, () =>
+  const result = useSyncExternalStore(observer.subscribe, () =>
     observer.getCurrentResult()
   )
 
@@ -127,9 +127,7 @@ export function useBaseQuery<
   }
 
   // Handle result property usage tracking
-  if (defaultedOptions.notifyOnChangeProps === 'tracked') {
-    result = observer.trackResult(result)
-  }
-
-  return result
+  return defaultedOptions.notifyOnChangeProps === 'tracked'
+    ? observer.trackResult(result)
+    : result
 }
