@@ -74,12 +74,14 @@ export function useBaseQuery<
     }
   }
 
-  const [observer] = React.useState(
+  const observer = React.useMemo(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
         queryClient,
         defaultedOptions
-      )
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   )
 
   let result = observer.getOptimisticResult(defaultedOptions)
