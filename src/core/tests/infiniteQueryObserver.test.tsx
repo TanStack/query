@@ -94,4 +94,75 @@ describe('InfiniteQueryObserver', () => {
     unsubscribe()
     consoleMock.mockRestore()
   })
+
+  test('InfiniteQueryObserver should not refetch the first page if refetch another page', async () => {
+    const key = queryKey()
+
+    const queryFnSpy = jest
+      .fn()
+      .mockImplementation(({ pageParam = 1 }) => pageParam)
+
+    const observer = new InfiniteQueryObserver<number>(queryClient, {
+      queryKey: key,
+      queryFn: queryFnSpy,
+      getNextPageParam: lastPage => lastPage + 1,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe(result => {
+      observerResult = result
+    })
+
+    // Wait for the first page to be fetched
+    await waitFor(() =>
+      expect(observerResult).toMatchObject({
+        isFetching: false,
+        data: { pages: [1] },
+      })
+    )
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+      queryKey: [key],
+      pageParam: undefined,
+      meta: undefined,
+    })
+
+    queryFnSpy.mockClear()
+
+    // Fetch the second page
+    await observer.fetchNextPage()
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+      queryKey: [key],
+      pageParam: 2,
+      meta: undefined,
+    })
+
+    expect(observerResult).toMatchObject({
+      isFetching: false,
+      data: { pages: [1, 2] },
+    })
+
+    queryFnSpy.mockClear()
+
+    // Refetch the second page
+    await queryClient.refetchQueries({
+      refetchPage: (_page, index) => index === 1,
+    })
+
+    expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
+      queryKey: [key],
+      pageParam: 2,
+      meta: undefined,
+    })
+
+    expect(observerResult).toMatchObject({
+      data: { pages: [1, 2] },
+    })
+
+    unsubscribe()
+  })
 })
