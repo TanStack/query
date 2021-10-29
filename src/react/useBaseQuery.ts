@@ -80,9 +80,9 @@ export function useBaseQuery<
       )
   )
 
-  const result = useSyncExternalStore(observer.subscribe, () =>
-    observer.getCurrentResult()
-  )
+  const result = observer.getOptimisticResult(defaultedOptions)
+
+  useSyncExternalStore(observer.subscribe, () => observer.getCurrentResult())
 
   React.useEffect(() => {
     errorResetBoundary.clearReset()
@@ -95,7 +95,9 @@ export function useBaseQuery<
   }, [observer])
 
   React.useEffect(() => {
-    observer.setOptions(defaultedOptions)
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
+    observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
   // Handle suspense
