@@ -94,7 +94,7 @@
     "@babel/preset-typescript": "^7.10.4",
     "@rollup/plugin-replace": "^2.3.3",
     "@svgr/rollup": "^5.4.0",
-    "@testing-library/react": "^10.4.7",
+    "@testing-library/react": "^13.0.0-alpha.3",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/jest": "^26.0.4",
     "@types/react": "^17.0.33",
