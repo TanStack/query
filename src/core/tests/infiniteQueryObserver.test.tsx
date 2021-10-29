@@ -1,5 +1,10 @@
-import { sleep, queryKey } from '../../react/tests/utils'
-import { QueryClient, InfiniteQueryObserver } from '../..'
+import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
+import {
+  QueryClient,
+  InfiniteQueryObserver,
+  InfiniteQueryObserverResult,
+} from '../..'
+import { waitFor } from '@testing-library/react'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
@@ -60,5 +65,33 @@ describe('InfiniteQueryObserver', () => {
       data: { pages: ['1'], pageParams: [undefined] },
     })
     expect(queryFn).toBeCalledWith(expect.objectContaining({ meta }))
+  })
+
+  test('InfiniteQueryObserver result should contain an error if the queryFn is not defined', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+
+    const observer = new InfiniteQueryObserver(queryClient, {
+      queryKey: key,
+      retry: false,
+    })
+
+    let observerResult:
+      | InfiniteQueryObserverResult<unknown, unknown>
+      | undefined
+
+    const unsubscribe = observer.subscribe(result => {
+      observerResult = result
+    })
+
+    await waitFor(() => {
+      return expect(observerResult).toMatchObject({
+        isError: true,
+        error: 'Missing queryFn',
+      })
+    })
+
+    unsubscribe()
+    consoleMock.mockRestore()
   })
 })
