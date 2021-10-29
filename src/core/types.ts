@@ -669,3 +669,12 @@ export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
 }
+
+export interface CancelOptions {
+  revert?: boolean
+  silent?: boolean
+}
+
+export interface SetDataOptions {
+  updatedAt?: number
+}

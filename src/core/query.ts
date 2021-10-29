@@ -15,12 +15,14 @@ import type {
   QueryFunctionContext,
   EnsuredQueryKey,
   QueryMeta,
+  CancelOptions,
+  SetDataOptions,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
-import { Retryer, CancelOptions, isCancelledError } from './retryer'
+import { Retryer, isCancelledError } from './retryer'
 
 // TYPES
 
@@ -82,10 +84,6 @@ export interface QueryBehavior<
 export interface FetchOptions {
   cancelRefetch?: boolean
   meta?: any
-}
-
-export interface SetDataOptions {
-  updatedAt?: number
 }
 
 interface FailedAction {
