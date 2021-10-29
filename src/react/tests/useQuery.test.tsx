@@ -163,6 +163,8 @@ describe('useQuery', () => {
 
     await sleep(10)
 
+    expect(states.length).toEqual(2)
+
     expect(states[0]).toEqual({
       data: undefined,
       dataUpdatedAt: 0,
