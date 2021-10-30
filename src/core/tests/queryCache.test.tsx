@@ -65,6 +65,13 @@ describe('queryCache', () => {
       const query = queryCache.find(key)!
       expect(query).toBeDefined()
     })
+
+    test('find should filter correctly with exact set to false', async () => {
+      const key = queryKey()
+      await queryClient.prefetchQuery(key, () => 'data1')
+      const query = queryCache.find(key, { exact: false })!
+      expect(query).toBeDefined()
+    })
   })
 
   describe('findAll', () => {
@@ -161,7 +168,7 @@ describe('queryCache', () => {
   })
 
   describe('QueryCache.add', () => {
-    test.only('should not try to add a query already added to the cache', async () => {
+    test('should not try to add a query already added to the cache', async () => {
       const key = queryKey()
       const hash = `["${key}"]`
 
