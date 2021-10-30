@@ -166,7 +166,7 @@ export interface QueryObserverOptions<
    */
   notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
-   * This callback will fire any time the query successfully fetches new data.
+   * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
    */
   onSuccess?: (data: TData) => void
   /**
@@ -669,4 +669,13 @@ export type MutationObserverResult<
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
+}
+
+export interface CancelOptions {
+  revert?: boolean
+  silent?: boolean
+}
+
+export interface SetDataOptions {
+  updatedAt?: number
 }

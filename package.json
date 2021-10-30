@@ -32,6 +32,7 @@
     "test:format": "yarn prettier --check",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:size": "yarn build:umd && bundlewatch",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
     "build:commonjs": "rimraf ./lib && cross-env BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
     "build:es": "rimraf ./es && babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir es",
@@ -102,6 +103,7 @@
     "babel-jest": "^26.0.1",
     "babel-plugin-const-enum": "^1.0.1",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
+    "bundlewatch": "^0.3.2",
     "cross-env": "^7.0.2",
     "eslint": "7.x",
     "eslint-config-prettier": "^6.11.0",
@@ -141,5 +143,12 @@
   "resolutions": {
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8"
+  },
+  "bundlewatch": {
+    "files": [
+      {
+        "path": "dist/*.production.min.js"
+      }
+    ]
   }
 }
