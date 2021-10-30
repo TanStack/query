@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react'
 import { sleep, queryKey } from '../../react/tests/utils'
 import { QueryClient, QueriesObserver, QueryObserverResult } from '../..'
 
@@ -229,5 +230,36 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
+  })
+
+  test('should not destroy the observer if there is still a subscription', async () => {
+    const key1 = queryKey()
+    const observer = new QueriesObserver(queryClient, [
+      {
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(20)
+          return 1
+        },
+      },
+    ])
+
+    const subscription1Handler = jest.fn()
+    const subscription2Handler = jest.fn()
+
+    const unsubscribe1 = observer.subscribe(subscription1Handler)
+    const unsubscribe2 = observer.subscribe(subscription2Handler)
+
+    unsubscribe1()
+
+    await waitFor(() => {
+      // 1 call: loading
+      expect(subscription1Handler).toBeCalledTimes(1)
+      // 1 call: success
+      expect(subscription2Handler).toBeCalledTimes(1)
+    })
+
+    // Clean-up
+    unsubscribe2()
   })
 })
