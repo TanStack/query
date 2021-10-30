@@ -3,15 +3,121 @@ id: query-cancellation
 title: Query Cancellation
 ---
 
-By default, queries that unmount or become unused before their promises are resolved are simply ignored instead of canceled. Why is this?
+[_Previous method requiring a `cancel` function_](#old-cancel-function)
 
-- For most applications, ignoring out-of-date queries is sufficient.
-- Cancellation APIs may not be available for every query function.
-- If cancellation APIs are available, they typically vary in implementation between utilities/libraries (eg. Fetch vs Axios vs XMLHttpRequest).
+React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal) **if it's available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable and you can respond to the cancellation inside your query function if desired. The best part about this is that it allow you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
 
-But don't worry! If your queries are high-bandwidth or potentially very expensive to download, React Query exposes a generic way to **cancel** query requests using a cancellation token or other related API. To integrate with this feature, attach a `cancel` function to the promise returned by your query that implements your request cancellation. When a query becomes out-of-date or inactive, this `promise.cancel` function will be called (if available):
+The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are [several available](https://www.npmjs.com/search?q=abortcontroller%20polyfill).
+
+## Using `fetch`
+
+```js
+const query = useQuery('todos', async ({ signal }) => {
+  const todosResponse = await fetch('/todos', {
+    // Pass the signal to one fetch
+    signal,
+  })
+  const todos = await todosResponse.json()
+
+  const todoDetails = todos.map(async ({ details } => {
+    const response = await fetch(details, {
+      // Or pass it to several
+      signal,
+    })
+    return response.json()
+  })
+
+  return Promise.all(todoDetails)
+})
+```
 
 ## Using `axios`
+
+### Using `axios` [v0.22.0+](https://github.com/axios/axios/releases/tag/v0.22.0)
+
+```js
+import axios from 'axios'
+
+const query = useQuery('todos', ({ signal }) =>
+  axios.get('/todos', {
+    // Pass the signal to `axios`
+    signal,
+  })
+)
+```
+
+### Using an `axios` version less than v0.22.0
+
+```js
+import axios from 'axios'
+
+const query = useQuery('todos', ({ signal }) => {
+  // Create a new CancelToken source for this request
+  const CancelToken = axios.CancelToken
+  const source = CancelToken.source()
+
+  const promise = axios.get('/todos', {
+    // Pass the source token to your request
+    cancelToken: source.token,
+  })
+
+  // Cancel the request if React Query signals to abort
+  signal?.addEventListener('abort', () => {
+    source.cancel('Query was cancelled by React Query')
+  })
+
+  return promise
+})
+```
+
+## Using `XMLHttpRequest`
+
+```js
+const query = useQuery('todos', ({ signal }) => {
+  return new Promise((resolve, reject) => {
+    var oReq = new XMLHttpRequest()
+    oReq.addEventListener('load', () => {
+      resolve(JSON.parse(oReq.responseText))
+    })
+    signal?.addEventListener('abort', () => {
+      oReq.abort()
+      reject()
+    })
+    oReq.open('GET', '/todos')
+    oReq.send()
+  })
+})
+```
+
+## Manual Cancellation
+
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)`. If `promise.cancel` is available or you have consumed the `singal` passed to the query function then React Query will cancel the request.
+
+```js
+const [queryKey] = useState('todos')
+
+const query = useQuery(queryKey, await ({ signal }) => {
+  const resp = fetch('/todos', { signal })
+  return resp.json()
+})
+
+const queryClient = useQueryClient()
+
+return (
+  <button onClick={(e) => {
+    e.preventDefault()
+    queryClient.cancelQueries(queryKey)
+   }}>Cancel</button>
+)
+```
+
+## Old `cancel` function
+
+Don't worry! The previous cancellation functionality will continue to work. But we do recommend that you move away from [the withdrawn cancelable promise proposal](https://github.com/tc39/proposal-cancelable-promises) to the [new `AbortSignal` interface](#_top) which has been [stardardized](https://dom.spec.whatwg.org/#interface-abortcontroller) as a general purpose construct for aborting ongoing activities in [most browsers](https://caniuse.com/abortcontroller) and in [Node](https://nodejs.org/api/globals.html#globals_class_abortsignal). The old cancel function might be removed in a future major version.
+
+To integrate with this feature, attach a `cancel` function to the promise returned by your query that implements your request cancellation. When a query becomes out-of-date or inactive, this `promise.cancel` function will be called (if available).
+
+## Using `axios` with `cancel` function
 
 ```js
 import axios from 'axios'
@@ -35,7 +141,7 @@ const query = useQuery('todos', () => {
 })
 ```
 
-## Using `fetch`
+## Using `fetch` with `cancel` function
 
 ```js
 const query = useQuery('todos', () => {
@@ -55,36 +161,4 @@ const query = useQuery('todos', () => {
 
   return promise
 })
-```
-
-## Manual Cancellation
-
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)`. If `promise.cancel` is available, React Query will cancel the request.
-
-```js
-const [queryKey] = useState('todos')
-
-const query = useQuery(queryKey, () => {
-  const controller = new AbortController()
-  const signal = controller.signal
-
-  const promise = fetch('/todos', {
-    method: 'get',
-    signal,
-  })
-
-  // Cancel the request if React Query calls the `promise.cancel` method
-  promise.cancel = () => controller.abort()
-
-  return promise
-})
-
-const queryClient = useQueryClient();
-
-return (
-  <button onClick={(e) => {
-    e.preventDefault();
-    queryClient.cancelQueries(queryKey);
-   }}>Cancel</button>
-)
 ```
