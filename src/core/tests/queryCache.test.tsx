@@ -137,6 +137,14 @@ describe('queryCache', () => {
       ).toEqual([query3])
       expect(queryCache.findAll('posts')).toEqual([query4])
     })
+
+    test('should return all the queries when no filters are defined', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      await queryClient.prefetchQuery(key1, () => 'data1')
+      await queryClient.prefetchQuery(key2, () => 'data2')
+      expect(queryCache.findAll().length).toBe(2)
+    })
   })
 
   describe('QueryCacheConfig.onError', () => {
