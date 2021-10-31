@@ -31,7 +31,6 @@ function PrintStateComponent({ componentName, result }: any): any {
 
 describe('Server side rendering with de/rehydration', () => {
   it('should not mismatch on success', async () => {
-    const consoleMock = mockConsoleError()
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
@@ -69,6 +68,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
+    const consoleMock = mockConsoleError()
     const el = document.createElement('div')
     el.innerHTML = markup
 
@@ -146,7 +146,8 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // We expect exactly one console.error here, which is from the
-    expect(consoleMock).toHaveBeenCalledTimes(1)
+    // and another one for useLayoutEffect error, coming from useSyncExternalStorage
+    expect(consoleMock).toHaveBeenCalledTimes(2)
     expect(fetchDataError).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
@@ -161,7 +162,6 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
-    const consoleMock = mockConsoleError()
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
@@ -196,6 +196,7 @@ describe('Server side rendering with de/rehydration', () => {
     expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
+    const consoleMock = mockConsoleError()
     const el = document.createElement('div')
     el.innerHTML = markup
 
