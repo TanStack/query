@@ -99,7 +99,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutate } = useMutation(
-        async (vars: { count: number }) => Promise.resolve(vars.count),
+        (vars: { count: number }) => Promise.resolve(vars.count),
         {
           onSuccess: data => {
             onSuccessMock(data)
@@ -126,18 +126,22 @@ describe('useMutation', () => {
     getByRole('button', { name: /mutate/i }).click()
     getByRole('button', { name: /mutate/i }).click()
 
-    await waitFor(() => getByRole('heading'))
-
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe('3')
     })
 
-    expect(onSuccessMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onSuccessMock).toHaveBeenCalledTimes(3)
+    })
+
     expect(onSuccessMock).toHaveBeenCalledWith(1)
     expect(onSuccessMock).toHaveBeenCalledWith(2)
     expect(onSuccessMock).toHaveBeenCalledWith(3)
 
-    expect(onSettledMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onSettledMock).toHaveBeenCalledTimes(3)
+    })
+
     expect(onSettledMock).toHaveBeenCalledWith(1)
     expect(onSettledMock).toHaveBeenCalledWith(2)
     expect(onSettledMock).toHaveBeenCalledWith(3)
@@ -171,23 +175,27 @@ describe('useMutation', () => {
 
       return (
         <div>
-          <h1 data-testid="title">{count}</h1>
+          <h1>{count}</h1>
           <button onClick={() => mutate({ count: ++count })}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(getByTestId('title').textContent).toBe('0')
+    expect(getByRole('heading').textContent).toBe('0')
 
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
+    getByRole('button', { name: /mutate/i }).click()
+    getByRole('button', { name: /mutate/i }).click()
+    getByRole('button', { name: /mutate/i }).click()
 
-    await waitFor(() => getByTestId('title'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('3')
+    })
 
-    expect(onErrorMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onErrorMock).toHaveBeenCalledTimes(3)
+    })
     expect(onErrorMock).toHaveBeenCalledWith(
       'Expected mock error. All is well! 1'
     )
@@ -198,7 +206,9 @@ describe('useMutation', () => {
       'Expected mock error. All is well! 3'
     )
 
-    expect(onSettledMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onSettledMock).toHaveBeenCalledTimes(3)
+    })
     expect(onSettledMock).toHaveBeenCalledWith(
       'Expected mock error. All is well! 1'
     )
@@ -208,8 +218,6 @@ describe('useMutation', () => {
     expect(onSettledMock).toHaveBeenCalledWith(
       'Expected mock error. All is well! 3'
     )
-
-    expect(getByTestId('title').textContent).toBe('3')
 
     consoleMock.mockRestore()
   })
