@@ -62,31 +62,32 @@ describe('useMutation', () => {
 
       return (
         <div>
-          {error && <h1 data-testid="error">{error.message}</h1>}
+          {error && <h1>{error.message}</h1>}
           <button onClick={() => reset()}>reset</button>
           <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText, queryByTestId } = renderWithClient(
-      queryClient,
-      <Page />
-    )
+    const { getByRole, queryByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(queryByTestId('error')).toBeNull()
+    await waitFor(() => {
+      expect(queryByRole('heading')).toBeNull()
+    })
 
-    fireEvent.click(getByText('mutate'))
+    getByRole('button', { name: /mutate/i }).click()
 
-    await waitFor(() => getByTestId('error'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe(
+        'Expected mock error. All is well!'
+      )
+    })
 
-    expect(getByTestId('error').textContent).toBe(
-      'Expected mock error. All is well!'
-    )
+    getByRole('button', { name: /reset/i }).click()
 
-    fireEvent.click(getByText('reset'))
-
-    await waitFor(() => expect(queryByTestId('error')).toBeNull())
+    await waitFor(() => {
+      expect(queryByRole('heading')).toBeNull()
+    })
 
     consoleMock.mockRestore()
   })
@@ -111,21 +112,21 @@ describe('useMutation', () => {
 
       return (
         <div>
-          <h1 data-testid="title">{count}</h1>
+          <h1>{count}</h1>
           <button onClick={() => mutate({ count: ++count })}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByRole } = renderWithClient(queryClient, <Page />)
+    const { getByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(getByTestId('title').textContent).toBe('0')
+    expect(getByRole('heading').textContent).toBe('0')
 
     getByRole('button', { name: /mutate/i }).click()
     getByRole('button', { name: /mutate/i }).click()
     getByRole('button', { name: /mutate/i }).click()
 
-    await waitFor(() => getByTestId('title'))
+    await waitFor(() => getByRole('heading'))
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe('3')
