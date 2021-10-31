@@ -38,7 +38,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
   })
 
   it('should filter correctly by mutationKey', async () => {
@@ -70,7 +70,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 1, 0, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -104,7 +104,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 1, 0, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0, 0]))
   })
 
   it('should not change state if unmounted', async () => {
