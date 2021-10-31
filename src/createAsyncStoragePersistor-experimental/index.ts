@@ -51,16 +51,16 @@ export const createAsyncStoragePersistor = ({
   }
 }
 
-function asyncThrottle<T>(
-  func: (...args: ReadonlyArray<unknown>) => Promise<T>,
+function asyncThrottle<Args extends readonly unknown[], Result>(
+  func: (...args: Args) => Promise<Result>,
   { interval = 1000, limit = 1 }: { interval?: number; limit?: number } = {}
 ) {
   if (typeof func !== 'function') throw new Error('argument is not function.')
   const running = { current: false }
   let lastTime = 0
   let timeout: number
-  const queue: Array<any[]> = []
-  return (...args: any) =>
+  const queue: Array<Args> = []
+  return (...args: Args) =>
     (async () => {
       if (running.current) {
         lastTime = Date.now()
