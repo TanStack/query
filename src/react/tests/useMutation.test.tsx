@@ -117,15 +117,19 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByTestId, getByRole } = renderWithClient(queryClient, <Page />)
 
     expect(getByTestId('title').textContent).toBe('0')
 
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
+    getByRole('button', { name: /mutate/i }).click()
+    getByRole('button', { name: /mutate/i }).click()
+    getByRole('button', { name: /mutate/i }).click()
 
     await waitFor(() => getByTestId('title'))
+
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('3')
+    })
 
     expect(onSuccessMock).toHaveBeenCalledTimes(3)
     expect(onSuccessMock).toHaveBeenCalledWith(1)
@@ -136,8 +140,6 @@ describe('useMutation', () => {
     expect(onSettledMock).toHaveBeenCalledWith(1)
     expect(onSettledMock).toHaveBeenCalledWith(2)
     expect(onSettledMock).toHaveBeenCalledWith(3)
-
-    expect(getByTestId('title').textContent).toBe('3')
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
