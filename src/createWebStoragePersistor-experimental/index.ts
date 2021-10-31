@@ -9,17 +9,29 @@ interface CreateWebStoragePersistorOptions {
   /** To avoid spamming,
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
+  /**
+   * How to serialize the data to storage.
+   * @default `JSON.stringify`
+   */
+  serialize?: (client: PersistedClient) => string
+  /**
+   * How to deserialize the data from storage.
+   * @default `JSON.parse`
+   */
+  deserialize?: (cachedString: string) => PersistedClient
 }
 
 export function createWebStoragePersistor({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
+  serialize = JSON.stringify,
+  deserialize = JSON.parse,
 }: CreateWebStoragePersistorOptions): Persistor {
   if (typeof storage !== 'undefined') {
     return {
       persistClient: throttle(persistedClient => {
-        storage.setItem(key, JSON.stringify(persistedClient))
+        storage.setItem(key, serialize(persistedClient))
       }, throttleTime),
       restoreClient: () => {
         const cacheString = storage.getItem(key)
@@ -28,7 +40,7 @@ export function createWebStoragePersistor({
           return
         }
 
-        return JSON.parse(cacheString) as PersistedClient
+        return deserialize(cacheString) as PersistedClient
       },
       removeClient: () => {
         storage.removeItem(key)
