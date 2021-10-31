@@ -20,34 +20,34 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const { mutate, data = '', reset } = useMutation(() =>
+      const { mutate, data = 'empty', reset } = useMutation(() =>
         Promise.resolve('mutation')
       )
 
       return (
         <div>
-          <h1 data-testid="title">{data}</h1>
+          <h1>{data}</h1>
           <button onClick={() => reset()}>reset</button>
           <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(getByTestId('title').textContent).toBe('')
+    expect(getByRole('heading').textContent).toBe('empty')
 
-    fireEvent.click(getByText('mutate'))
+    getByRole('button', { name: /mutate/i }).click()
 
-    await waitFor(() => getByTestId('title'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('mutation')
+    })
 
-    expect(getByTestId('title').textContent).toBe('mutation')
+    getByRole('button', { name: /reset/i }).click()
 
-    fireEvent.click(getByText('reset'))
-
-    await waitFor(() => getByTestId('title'))
-
-    expect(getByTestId('title').textContent).toBe('')
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('empty')
+    })
   })
 
   it('should be able to reset `error`', async () => {
