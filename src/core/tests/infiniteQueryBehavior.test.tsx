@@ -48,10 +48,14 @@ describe('InfiniteQueryBehavior', () => {
 
   test('InfiniteQueryBehavior should not refetch the first page if another page refetched', async () => {
     const key = queryKey()
+    let abortSignal: AbortSignal | null = null
 
     const queryFnSpy = jest
       .fn()
-      .mockImplementation(({ pageParam = 1 }) => pageParam)
+      .mockImplementation(({ pageParam = 1, signal }) => {
+        abortSignal = signal
+        return pageParam
+      })
 
     const observer = new InfiniteQueryObserver<number>(queryClient, {
       queryKey: key,
@@ -79,6 +83,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: [key],
       pageParam: undefined,
       meta: undefined,
+      signal: abortSignal,
     })
 
     queryFnSpy.mockClear()
@@ -90,6 +95,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: [key],
       pageParam: 2,
       meta: undefined,
+      signal: abortSignal,
     })
 
     expect(observerResult).toMatchObject({
@@ -108,6 +114,7 @@ describe('InfiniteQueryBehavior', () => {
       queryKey: [key],
       pageParam: 2,
       meta: undefined,
+      signal: abortSignal,
     })
 
     expect(observerResult).toMatchObject({
