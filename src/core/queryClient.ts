@@ -27,15 +27,16 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   ResetQueryFilters,
+  SetDataOptions,
 } from './types'
-import type { QueryState, SetDataOptions } from './query'
+import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
-import { CancelOptions } from './retryer'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { CancelOptions } from './types'
 
 // TYPES
 
