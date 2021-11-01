@@ -716,4 +716,25 @@ describe('query', () => {
 
     notifySpy.mockRestore()
   })
+
+  test('should not dispatch "invalidate" on invalidate() if already invalidated', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+
+    query.invalidate()
+    expect(query.state.isInvalidated).toBeTruthy()
+
+    const dispatchOriginal = query['dispatch']
+    const dispatchSpy = jest.fn()
+    query['dispatch'] = dispatchSpy
+
+    query.invalidate()
+
+    expect(query.state.isInvalidated).toBeTruthy()
+    expect(dispatchSpy).not.toHaveBeenCalled()
+
+    query['dispatch'] = dispatchOriginal
+  })
 })
