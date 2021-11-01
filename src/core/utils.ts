@@ -453,3 +453,10 @@ export function getAbortController(): AbortController | undefined {
     return new AbortController()
   }
 }
+
+/**
+ * Type predicate to filter an array of null or undefined elements
+ */
+export function notNullOrUndefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
+}
