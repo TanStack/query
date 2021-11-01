@@ -699,4 +699,21 @@ describe('query', () => {
     query.addObserver(observer)
     expect(query.getObserversCount()).toEqual(1)
   })
+
+  test('should not try to remove an observer that does not exist', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+    expect(query.getObserversCount()).toEqual(0)
+
+    const notifySpy = jest.spyOn(queryCache, 'notify')
+    expect(() => query.removeObserver(observer)).not.toThrow()
+    expect(notifySpy).not.toHaveBeenCalled()
+
+    notifySpy.mockRestore()
+  })
 })
