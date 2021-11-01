@@ -661,4 +661,23 @@ describe('query', () => {
 
     expect(query.options).toMatchObject({ cacheTime: 100, retryDelay: 20 })
   })
+
+  test('should refetch the observer when online method is called', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const refetchSpy = jest.spyOn(observer, 'refetch')
+    const unsubscribe = observer.subscribe()
+    queryCache.onOnline()
+
+    // Should refetch the observer
+    expect(refetchSpy).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+    refetchSpy.mockRestore()
+  })
 })
