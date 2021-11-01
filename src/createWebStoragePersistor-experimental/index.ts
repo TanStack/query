@@ -37,13 +37,6 @@ export function createWebStoragePersistor({
             clientState: { mutations, queries },
           }
 
-          // clean mutations and try to save
-          while (mutations.shift()) {
-            if (trySave(client)) {
-              return // save success
-            }
-          }
-
           // sort queries by dataUpdatedAt (oldest first)
           const sortedQueries = [...queries].sort(
             (a, b) => a.state.dataUpdatedAt - b.state.dataUpdatedAt
@@ -52,6 +45,13 @@ export function createWebStoragePersistor({
           while (sortedQueries.length > 0) {
             const oldestData = sortedQueries.shift()
             client.clientState.queries = queries.filter(q => q !== oldestData)
+            if (trySave(client)) {
+              return // save success
+            }
+          }
+
+          // clean mutations and try to save
+          while (mutations.shift()) {
             if (trySave(client)) {
               return // save success
             }

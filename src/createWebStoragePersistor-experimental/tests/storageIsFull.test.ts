@@ -121,4 +121,55 @@ describe('createWebStoragePersistor ', () => {
       restoredClient2?.clientState.queries.find(q => q.queryKey === 'B')
     ).toBeUndefined()
   })
+
+  test('should clean queries before mutations when storage full', async () => {
+    const queryCache = new QueryCache()
+    const mutationCache = new MutationCache()
+    const queryClient = new QueryClient({ queryCache, mutationCache })
+
+    const N = 2000
+    const storage = getMockStorage(N * 5) // can save 4 items;
+    const webStoragePersistor = createWebStoragePersistor({
+      throttleTime: 0,
+      storage,
+    })
+
+    mutationCache.build(
+      queryClient,
+      {
+        mutationKey: 'MUTATIONS',
+        mutationFn: () => Promise.resolve('M'.repeat(N)),
+      },
+      {
+        error: null,
+        context: '',
+        failureCount: 1,
+        isPaused: true,
+        status: 'success',
+        variables: '',
+        data: 'M'.repeat(N),
+      }
+    )
+    await sleep(1)
+    await queryClient.prefetchQuery('A', () => Promise.resolve('A'.repeat(N)))
+    await sleep(1)
+    await queryClient.prefetchQuery('B', () => Promise.resolve('B'.repeat(N)))
+    await queryClient.prefetchQuery('C', () => Promise.resolve('C'.repeat(N)))
+    await sleep(1)
+    await queryClient.prefetchQuery('D', () => Promise.resolve('D'.repeat(N)))
+
+    const persistClient = {
+      buster: 'test-limit-mutations',
+      timestamp: Date.now(),
+      clientState: dehydrate(queryClient),
+    }
+    webStoragePersistor.persistClient(persistClient)
+    await sleep(10)
+    const restoredClient = await webStoragePersistor.restoreClient()
+    expect(restoredClient?.clientState.mutations.length).toEqual(1)
+    expect(restoredClient?.clientState.queries.length).toEqual(3)
+    expect(
+      restoredClient?.clientState.queries.find(q => q.queryKey === 'A')
+    ).toBeUndefined()
+  })
 })
