@@ -749,4 +749,58 @@ describe('query', () => {
     const reducedState = query['reducer'](query.state, { type: 'unknown' })
     expect(reducedState).toEqual(query.state)
   })
+
+  test('fetch should not dispatch "fetch" if state meta and fetchOptions meta are the same object', async () => {
+    const key = queryKey()
+
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    const query = queryCache.find(key)!
+
+    const meta = { meta1: '1' }
+
+    // This first fetch will set the state.meta value
+    query.fetch(
+      {
+        queryKey: key,
+        queryFn,
+      },
+      {
+        meta,
+      }
+    )
+
+    // Spy on private dispatch method
+    const dispatchOriginal = query['dispatch']
+    const dispatchSpy = jest.fn()
+    query['dispatch'] = dispatchSpy
+
+    // Second fetch in parallel with the same meta
+    query.fetch(
+      {
+        queryKey: key,
+        queryFn,
+      },
+      {
+        meta,
+        // cancelRefetch must be set to true to enter in the case to test
+        // where isFetching is true
+        cancelRefetch: true,
+      }
+    )
+
+    // Should not call dispatch with type set to fetch
+    expect(dispatchSpy).not.toHaveBeenCalledWith({
+      meta,
+      type: 'fetch',
+    })
+
+    // Clean-up
+    await sleep(20)
+    query['dispatch'] = dispatchOriginal
+  })
 })
