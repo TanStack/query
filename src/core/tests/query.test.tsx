@@ -646,4 +646,19 @@ describe('query', () => {
       })
     )
   })
+
+  test('should set default options', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+
+    query.setDefaultOptions({ retryDelay: 20 })
+
+    await queryClient.prefetchQuery(key, () => 'data', {
+      cacheTime: 100,
+    })
+
+    expect(query.options).toMatchObject({ cacheTime: 100, retryDelay: 20 })
+  })
 })
