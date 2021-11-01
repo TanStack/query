@@ -208,6 +208,18 @@ describe('queryClient', () => {
       expect(result).toEqual([])
       expect(queryClient.getQueryData('key')).toBe(undefined)
     })
+
+    test('should use prev data if an isDataEqual function is defined and returns "true"', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: { isDataEqual: (_prev, data) => data === 'data' },
+      })
+      queryClient.setQueryData(key, 'prev data')
+      queryClient.setQueryData(key, 'data')
+
+      expect(queryCache.find(key)!.state.data).toEqual('prev data')
+    })
   })
 
   describe('getQueryData', () => {
