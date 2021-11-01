@@ -1,12 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
-import {
-  queryKey,
-  renderWithClient,
-  setActTimeout,
-  sleep,
-} from './utils'
+import { queryKey, renderWithClient, setActTimeout, sleep } from './utils'
 import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
 
 describe('useIsFetching', () => {

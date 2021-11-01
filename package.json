@@ -69,7 +69,7 @@
     "@types/use-sync-external-store": "^0.0.0",
     "broadcast-channel": "^3.4.1",
     "match-sorter": "^6.0.2",
-    "use-sync-external-store": "^0.0.0-experimental-9c8161ba8-20211028"
+    "use-sync-external-store": "^0.0.0-experimental-6bce0355c-20211031"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18"
