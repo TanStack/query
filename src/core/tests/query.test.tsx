@@ -680,4 +680,23 @@ describe('query', () => {
     unsubscribe()
     refetchSpy.mockRestore()
   })
+
+  test('should not add an existing observer', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+    expect(query.getObserversCount()).toEqual(0)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+    expect(query.getObserversCount()).toEqual(0)
+
+    query.addObserver(observer)
+    expect(query.getObserversCount()).toEqual(1)
+
+    query.addObserver(observer)
+    expect(query.getObserversCount()).toEqual(1)
+  })
 })
