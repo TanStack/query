@@ -170,6 +170,35 @@ describe('queryClient', () => {
       expect(updater).toHaveBeenCalled()
       expect(queryCache.find(key)!.state.data).toEqual('new data + test data')
     })
+
+    test('should use prev data if an isDataEqual function is defined and returns "true"', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: { isDataEqual: (_prev, data) => data === 'data' },
+      })
+      queryClient.setQueryData(key, 'prev data')
+      queryClient.setQueryData(key, 'data')
+
+      expect(queryCache.find(key)!.state.data).toEqual('prev data')
+    })
+
+    test('should set the new data without comparison if structuralSharing is set to false', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: {
+          structuralSharing: false,
+        },
+      })
+
+      const oldData = { value: true }
+      const newData = { value: true }
+      queryClient.setQueryData(key, oldData)
+      queryClient.setQueryData(key, newData)
+
+      expect(queryCache.find(key)!.state.data).toBe(newData)
+    })
   })
 
   describe('setQueriesData', () => {
@@ -207,18 +236,6 @@ describe('queryClient', () => {
 
       expect(result).toEqual([])
       expect(queryClient.getQueryData('key')).toBe(undefined)
-    })
-
-    test('should use prev data if an isDataEqual function is defined and returns "true"', () => {
-      const key = queryKey()
-
-      queryClient.setDefaultOptions({
-        queries: { isDataEqual: (_prev, data) => data === 'data' },
-      })
-      queryClient.setQueryData(key, 'prev data')
-      queryClient.setQueryData(key, 'data')
-
-      expect(queryCache.find(key)!.state.data).toEqual('prev data')
     })
   })
 
