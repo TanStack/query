@@ -823,4 +823,22 @@ describe('query', () => {
     //@ts-ignore
     globalThis['AbortController'] = AbortControllerOriginal
   })
+
+  test('fetch should throw an error if the queryFn is not defined', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: undefined,
+      retry: false,
+    })
+
+    const unsubscribe = observer.subscribe()
+    await sleep(10)
+    expect(consoleMock).toHaveBeenCalledWith('Missing queryFn')
+
+    unsubscribe()
+    consoleMock.mockRestore()
+  })
 })
