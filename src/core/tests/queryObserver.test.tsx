@@ -537,4 +537,15 @@ describe('queryObserver', () => {
         })
     ).toThrowError('Expected enabled to be a boolean')
   })
+
+  test('getCurrentQuery should return the current query', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    expect(observer.getCurrentQuery().queryKey).toEqual(key)
+  })
 })
