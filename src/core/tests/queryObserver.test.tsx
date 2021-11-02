@@ -548,4 +548,26 @@ describe('queryObserver', () => {
 
     expect(observer.getCurrentQuery().queryKey).toEqual(key)
   })
+
+  test('should throw an error if throwOnError option is true', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.reject('error'),
+      retry: false,
+    })
+
+    let error: string | null = null
+    try {
+      await observer.refetch({ throwOnError: true })
+    } catch (err) {
+      error = err as string
+    }
+
+    expect(error).toEqual('error')
+
+    consoleMock.mockRestore()
+  })
 })
