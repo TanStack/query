@@ -627,4 +627,95 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('select function error using placeholderdata should log an error', () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: 'placeholderdata',
+      select: () => {
+        throw new Error('error')
+      },
+    })
+
+    expect(consoleMock).toHaveBeenNthCalledWith(1, new Error('error'))
+
+    consoleMock.mockRestore()
+  })
+
+  test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const selectedData1 = { value: 'data' }
+    const selectedData2 = { value: 'data' }
+    const placeholderData1 = { value: 'data' }
+    const placeholderData2 = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+      select: () => data,
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      select: () => {
+        if (true) return selectedData1
+      },
+      placeholderData: placeholderData1,
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      select: () => {
+        return selectedData2
+      },
+      placeholderData: placeholderData2,
+      structuralSharing: false,
+    })
+
+    expect(observer.getCurrentResult().data).toBe(selectedData2)
+  })
+
+  test('should not use an undefined value returned by select as placeholderdata', () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const selectedData = { value: 'data' }
+    const placeholderData1 = { value: 'data' }
+    const placeholderData2 = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+      select: () => data,
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      select: () => {
+        if (true) return selectedData
+      },
+      placeholderData: placeholderData1,
+    })
+
+    expect(observer.getCurrentResult().isPlaceholderData).toBe(true)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      //@ts-ignore
+      select: () => undefined,
+      placeholderData: placeholderData2,
+    })
+
+    expect(observer.getCurrentResult().isPlaceholderData).toBe(false)
+  })
 })
