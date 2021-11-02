@@ -4,7 +4,12 @@ import {
   mockConsoleError,
   expectType,
 } from '../../react/tests/utils'
-import { QueryClient, QueryObserver, QueryObserverResult } from '../..'
+import {
+  QueryClient,
+  QueryObserver,
+  QueryObserverResult,
+  focusManager,
+} from '../..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -569,5 +574,27 @@ describe('queryObserver', () => {
     expect(error).toEqual('error')
 
     consoleMock.mockRestore()
+  })
+
+  test('should not refetch in background if refetchIntervalInBackground is false', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+
+    focusManager.setFocused(false)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      refetchIntervalInBackground: false,
+      refetchInterval: 10,
+    })
+
+    const unsubscribe = observer.subscribe()
+    await sleep(30)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    // Clean-up
+    unsubscribe()
+    focusManager.setFocused(true)
   })
 })
