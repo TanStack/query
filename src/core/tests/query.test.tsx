@@ -841,4 +841,45 @@ describe('query', () => {
     unsubscribe()
     consoleMock.mockRestore()
   })
+
+  test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {
+    const key = queryKey()
+
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    const query = queryCache.find(key)!
+
+    query.fetch({
+      queryKey: key,
+      queryFn,
+    })
+
+    // Force promise to undefined
+    // because no use case have been identified
+    query['promise'] = undefined
+
+    // Spy on private dispatch method
+    const dispatchOriginal = query['dispatch']
+    const dispatchSpy = jest.fn()
+    query['dispatch'] = dispatchSpy
+
+    query.fetch({
+      queryKey: key,
+      queryFn,
+    })
+
+    // Should call dispatch with type set to fetch
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      meta: undefined,
+      type: 'fetch',
+    })
+
+    // Clean-up
+    await sleep(20)
+    query['dispatch'] = dispatchOriginal
+  })
 })
