@@ -803,4 +803,24 @@ describe('query', () => {
     await sleep(20)
     query['dispatch'] = dispatchOriginal
   })
+
+  test('fetch should not set the signal in the queryFnContext if AbortController is undefined', async () => {
+    const key = queryKey()
+
+    // Mock the AbortController to be undefined
+    const AbortControllerOriginal = globalThis['AbortController']
+    //@ts-ignore
+    globalThis['AbortController'] = undefined
+
+    let signalTest: any
+    await queryClient.prefetchQuery(key, ({ signal }) => {
+      signalTest = signal
+    })
+
+    expect(signalTest).toBeUndefined()
+
+    // Clean-up
+    //@ts-ignore
+    globalThis['AbortController'] = AbortControllerOriginal
+  })
 })
