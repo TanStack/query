@@ -597,4 +597,34 @@ describe('queryObserver', () => {
     unsubscribe()
     focusManager.setFocused(true)
   })
+
+  test('should not use replaceEqualDeep for select value when structuralSharing option is true', async () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const selectedData = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+      select: () => data,
+    })
+
+    const unsubscribe = observer.subscribe()
+
+    await sleep(10)
+    expect(observer.getCurrentResult().data).toBe(data)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      structuralSharing: false,
+      select: () => selectedData,
+    })
+
+    await observer.refetch({ queryKey: key })
+    expect(observer.getCurrentResult().data).toBe(selectedData)
+
+    unsubscribe()
+  })
 })
