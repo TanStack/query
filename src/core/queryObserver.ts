@@ -590,10 +590,6 @@ export class QueryObserver<
       return true
     }
 
-    if (result === prevResult) {
-      return false
-    }
-
     const { notifyOnChangeProps, notifyOnChangePropsExclusions } = this.options
 
     if (!notifyOnChangeProps && !notifyOnChangePropsExclusions) {
