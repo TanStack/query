@@ -882,4 +882,19 @@ describe('query', () => {
     await sleep(20)
     query['dispatch'] = dispatchOriginal
   })
+
+  test('constructor should call initialDataUpdatedAt if defined as a function', async () => {
+    const key = queryKey()
+
+    const initialDataUpdatedAtSpy = jest.fn()
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
+      initialData: 'initial',
+      initialDataUpdatedAt: initialDataUpdatedAtSpy,
+    })
+
+    expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
+  })
 })
