@@ -523,4 +523,18 @@ describe('queryObserver', () => {
 
     consoleMock.mockRestore()
   })
+
+  test('should throw an error if enabled option type is not valid', async () => {
+    const key = queryKey()
+
+    expect(
+      () =>
+        new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => 'data',
+          //@ts-ignore
+          enabled: null,
+        })
+    ).toThrowError('Expected enabled to be a boolean')
+  })
 })
