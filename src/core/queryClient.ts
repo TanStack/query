@@ -8,6 +8,7 @@ import {
   partialMatchKey,
   hashQueryKeyByOptions,
   MutationFilters,
+  functionalUpdate,
 } from './utils'
 import type {
   DefaultOptions,
@@ -129,14 +130,25 @@ export class QueryClient {
 
   setQueryData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): TData {
+  ): TData | undefined {
+    let query = this.queryCache.find<TData>(queryKey)
+
+    if (query) {
+      return query.setData(updater, options)
+    } 
+
+    const data = functionalUpdate(updater, undefined)
+
+    if (typeof data === 'undefined') {
+      return
+    }
+
     const parsedOptions = parseQueryArgs(queryKey)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
-    return this.queryCache
-      .build(this, defaultedOptions)
-      .setData(updater, options)
+    query = this.queryCache.build(this, defaultedOptions)
+    query.setData(data, options)
   }
 
   setQueriesData<TData>(
@@ -153,9 +165,9 @@ export class QueryClient {
 
   setQueriesData<TData>(
     queryKeyOrFilters: QueryKey | QueryFilters,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): [QueryKey, TData][] {
+  ): [QueryKey, TData | undefined][] {
     return notifyManager.batch(() =>
       this.getQueryCache()
         .findAll(queryKeyOrFilters)

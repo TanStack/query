@@ -220,20 +220,28 @@ export class Query<
   }
 
   setData(
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): TData {
+  ): TData | undefined {
     const prevData = this.state.data
 
     // Get the new data
     let data = functionalUpdate(updater, prevData)
 
+    if (typeof data === 'undefined') {
+      return
+    }
+
     // Use prev data if an isDataEqual function is defined and returns `true`
     if (this.options.isDataEqual?.(prevData, data)) {
-      data = prevData as TData
+      return data
     } else if (this.options.structuralSharing !== false) {
       // Structurally share data between prev and new data if needed
       data = replaceEqualDeep(prevData, data)
+
+      if (data === prevData) {
+        return data
+      }
     }
 
     // Set data and mark it as cached
