@@ -116,13 +116,17 @@ describe('queryObserver', () => {
   test('should run the selector again if the selector changed', async () => {
     const key = queryKey()
     let count = 0
+    let dataCount = 1
     const results: QueryObserverResult[] = []
-    const queryFn = () => ({ count: 1 })
+    const queryFn = () => ({ count: dataCount++ })
     const select1 = (data: ReturnType<typeof queryFn>) => {
+      console.log('select1');
+      
       count++
       return { myCount: data.count }
     }
     const select2 = (_data: ReturnType<typeof queryFn>) => {
+      console.log('select2');
       count++
       return { myCount: 99 }
     }
@@ -176,7 +180,8 @@ describe('queryObserver', () => {
     const key = queryKey()
     let count = 0
     const results: QueryObserverResult[] = []
-    const queryFn = () => ({ count: 1 })
+    let dataCount = 1
+    const queryFn = () => ({ count: dataCount++ })
     const select = (data: ReturnType<typeof queryFn>) => {
       count++
       return { myCount: data.count }
@@ -247,7 +252,8 @@ describe('queryObserver', () => {
     const select = () => {
       throw new Error('selector error')
     }
-    const queryFn = () => ({ count: 1 })
+    let dataCount = 1
+    const queryFn = () => ({ count: dataCount++ })
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -326,7 +332,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const callback = jest.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -341,7 +347,7 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
