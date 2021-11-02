@@ -718,4 +718,25 @@ describe('queryObserver', () => {
 
     expect(observer.getCurrentResult().isPlaceholderData).toBe(false)
   })
+
+  test('updateResult should not notify cache listeners if cache option is false', async () => {
+    const key = queryKey()
+
+    const data1 = { value: 'data 1' }
+    const data2 = { value: 'data 2' }
+
+    await queryClient.prefetchQuery(key, () => data1)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+    await queryClient.prefetchQuery(key, () => data2)
+
+    const spy = jest.fn()
+    const unsubscribe = queryClient.getQueryCache().subscribe(spy)
+    observer.updateResult({ cache: false })
+
+    expect(spy).toHaveBeenCalledTimes(0)
+
+    unsubscribe()
+  })
 })
