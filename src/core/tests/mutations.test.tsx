@@ -344,4 +344,23 @@ describe('mutations', () => {
 
     expect(currentMutation['observers'].length).toEqual(1)
   })
+
+  test('executeMutation should throw an error if no mutationFn found', async () => {
+    const consoleMock = mockConsoleError()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: undefined,
+      retry: false,
+    })
+
+    let error: any
+    try {
+      await mutation.mutate()
+    } catch (err) {
+      error = err
+    }
+    expect(error).toEqual('No mutationFn found')
+
+    consoleMock.mockRestore()
+  })
 })
