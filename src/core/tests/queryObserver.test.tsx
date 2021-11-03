@@ -739,4 +739,31 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('should not notify observer when the stale timeout expires and the current result is stale', async () => {
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    await queryClient.prefetchQuery(key, queryFn)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: 20,
+    })
+
+    const spy = jest.fn()
+    const unsubscribe = observer.subscribe(spy)
+    await queryClient.refetchQueries(key)
+    await sleep(10)
+
+    // Force isStale to false
+    // because no use case has been found to reproduce this condition
+    // @ts-ignore
+    observer['currentResult'].isStale = true
+    spy.mockReset()
+    await sleep(30)
+    expect(spy).not.toHaveBeenCalled()
+
+    unsubscribe()
+  })
 })
