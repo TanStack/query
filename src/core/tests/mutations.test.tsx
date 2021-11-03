@@ -300,4 +300,30 @@ describe('mutations', () => {
     expect(onSuccess).toHaveBeenCalled()
     expect(onSettled).toHaveBeenCalled()
   })
+
+  test('setState should update the mutation state', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+      onMutate: text => text,
+    })
+    await mutation.mutate()
+    expect(mutation.getCurrentResult().data).toEqual('update')
+
+    // Force setState usage
+    // because no use case have been found using mutation.setState
+    const currentMutation = mutation['currentMutation']
+    currentMutation?.setState({
+      context: undefined,
+      variables: undefined,
+      data: 'new',
+      error: undefined,
+      failureCount: 0,
+      isPaused: false,
+      status: 'success',
+    })
+
+    expect(mutation.getCurrentResult().data).toEqual('new')
+  })
 })
