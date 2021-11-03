@@ -312,7 +312,7 @@ describe('mutations', () => {
     expect(mutation.getCurrentResult().data).toEqual('update')
 
     // Force setState usage
-    // because no use case has been found using mutation.setState
+    // because no use case have been found using mutation.setState
     const currentMutation = mutation['currentMutation']
     currentMutation?.setState({
       context: undefined,
@@ -325,23 +325,5 @@ describe('mutations', () => {
     })
 
     expect(mutation.getCurrentResult().data).toEqual('new')
-  })
-
-  test.only('addObserver should not add an existing observer', async () => {
-    const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
-      },
-      onMutate: text => text,
-    })
-    await mutation.mutate()
-
-    // Force addObserver usage to add an existing observer
-    // because no use case has been found
-    const currentMutation = mutation['currentMutation']!
-    expect(currentMutation['observers'].length).toEqual(1)
-    currentMutation?.addObserver(mutation)
-
-    expect(currentMutation['observers'].length).toEqual(1)
   })
 })
