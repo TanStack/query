@@ -595,6 +595,25 @@ describe('queryClient', () => {
       })
       consoleMock.mockRestore()
     })
+
+    test('should not revert if revert option is set to false', async () => {
+      const consoleMock = mockConsoleError()
+      const key1 = queryKey()
+      await queryClient.fetchQuery(key1, async () => {
+        return 'data'
+      })
+      queryClient.fetchQuery(key1, async () => {
+        await sleep(1000)
+        return 'data2'
+      })
+      await sleep(10)
+      await queryClient.cancelQueries(key1, {}, { revert: false })
+      const state1 = queryClient.getQueryState(key1)
+      expect(state1).toMatchObject({
+        status: 'error',
+      })
+      consoleMock.mockRestore()
+    })
   })
 
   describe('refetchQueries', () => {
