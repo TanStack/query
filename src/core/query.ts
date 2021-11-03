@@ -102,6 +102,10 @@ interface SuccessAction<TData> {
   dataUpdatedAt?: number
 }
 
+interface IgnoreAction {
+  type: 'ignore'
+}
+
 interface ErrorAction<TError> {
   type: 'error'
   error: TError
@@ -134,6 +138,7 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
+  | IgnoreAction
 
 export interface SetStateOptions {
   meta?: any
@@ -223,33 +228,42 @@ export class Query<
     updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): TData | undefined {
+    let shouldIgnore = false
     const prevData = this.state.data
 
     // Get the new data
     let data = functionalUpdate(updater, prevData)
 
     if (typeof data === 'undefined') {
-      return
-    }
+      shouldIgnore = true
+    } else {
+      // Use prev data if an isDataEqual function is defined and returns `true`
+      if (this.options.isDataEqual?.(prevData, data)) {
+        data = prevData
+        shouldIgnore = true
+      } else if (this.options.structuralSharing !== false) {
+        // Structurally share data between prev and new data if needed
+        data = replaceEqualDeep(prevData, data)
 
-    // Use prev data if an isDataEqual function is defined and returns `true`
-    if (this.options.isDataEqual?.(prevData, data)) {
-      return data
-    } else if (this.options.structuralSharing !== false) {
-      // Structurally share data between prev and new data if needed
-      data = replaceEqualDeep(prevData, data)
-
-      if (data === prevData) {
-        return data
+        if (data === prevData) {
+          shouldIgnore = true
+        }
       }
     }
 
-    // Set data and mark it as cached
-    this.dispatch({
-      data,
-      type: 'success',
-      dataUpdatedAt: options?.updatedAt,
-    })
+    if (shouldIgnore) {
+      // Bail out
+      this.dispatch({
+        type: 'ignore',
+      })
+    } else {
+      // Set data and mark it as cached
+      this.dispatch({
+        data,
+        type: 'success',
+        dataUpdatedAt: options?.updatedAt,
+      })
+    }
 
     return data
   }
@@ -589,6 +603,16 @@ export class Query<
           data: action.data,
           dataUpdateCount: state.dataUpdateCount + 1,
           dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
+          error: null,
+          fetchFailureCount: 0,
+          isFetching: false,
+          isInvalidated: false,
+          isPaused: false,
+          status: 'success',
+        }
+      case 'ignore':
+        return {
+          ...state,
           error: null,
           fetchFailureCount: 0,
           isFetching: false,

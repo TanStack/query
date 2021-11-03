@@ -367,10 +367,11 @@ describe('useQuery', () => {
   it('should call onSuccess after a query has been refetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
+    let queryReturnValue = 0
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(key, () => queryReturnValue++, { onSuccess })
 
       states.push(state)
 
@@ -817,10 +818,11 @@ describe('useQuery', () => {
 
   it('should re-render when dataUpdatedAt changes but data remains the same', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: UseQueryResult<number>[] = []
+    let queryReturnValue = 0
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
+      const state = useQuery(key, () => queryReturnValue++, {
         notifyOnChangePropsExclusions: [
           'data',
           'isFetching',
@@ -850,8 +852,8 @@ describe('useQuery', () => {
 
     expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 'test', isFetching: false })
-    expect(states[2]).toMatchObject({ data: 'test', isFetching: false })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+    expect(states[2]).toMatchObject({ data: 1, isFetching: false })
     expect(states[1]?.dataUpdatedAt).not.toBe(states[2]?.dataUpdatedAt)
   })
 

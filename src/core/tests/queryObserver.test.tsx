@@ -116,19 +116,16 @@ describe('queryObserver', () => {
   test('should run the selector again if the selector changed', async () => {
     const key = queryKey()
     let count = 0
-    let dataCount = 1
     const results: QueryObserverResult[] = []
-    const queryFn = () => ({ count: dataCount++ })
-    const select1 = (data: ReturnType<typeof queryFn>) => {
-      console.log('select1');
-      
+    let queryFnValue = 0
+    const queryFn = () => queryFnValue++
+    const select1 = () => {
       count++
-      return { myCount: data.count }
+      return 'select1'
     }
     const select2 = (_data: ReturnType<typeof queryFn>) => {
-      console.log('select2');
       count++
-      return { myCount: 99 }
+      return 'select2'
     }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -147,7 +144,7 @@ describe('queryObserver', () => {
     await sleep(1)
     await observer.refetch()
     unsubscribe()
-    expect(count).toBe(2)
+    expect(count).toBe(3)
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
       status: 'loading',
@@ -157,22 +154,22 @@ describe('queryObserver', () => {
     expect(results[1]).toMatchObject({
       status: 'success',
       isFetching: false,
-      data: { myCount: 1 },
+      data: 'select1',
     })
     expect(results[2]).toMatchObject({
       status: 'success',
       isFetching: false,
-      data: { myCount: 99 },
+      data: 'select2',
     })
     expect(results[3]).toMatchObject({
       status: 'success',
       isFetching: true,
-      data: { myCount: 99 },
+      data: 'select2',
     })
     expect(results[4]).toMatchObject({
       status: 'success',
       isFetching: false,
-      data: { myCount: 99 },
+      data: 'select2',
     })
   })
 
@@ -180,11 +177,10 @@ describe('queryObserver', () => {
     const key = queryKey()
     let count = 0
     const results: QueryObserverResult[] = []
-    let dataCount = 1
-    const queryFn = () => ({ count: dataCount++ })
-    const select = (data: ReturnType<typeof queryFn>) => {
+    const queryFn = () => 'data'
+    const select = () => {
       count++
-      return { myCount: data.count }
+      return 'select'
     }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -213,17 +209,17 @@ describe('queryObserver', () => {
     expect(results[1]).toMatchObject({
       status: 'success',
       isFetching: false,
-      data: { myCount: 1 },
+      data: 'select',
     })
     expect(results[2]).toMatchObject({
       status: 'success',
       isFetching: true,
-      data: { myCount: 1 },
+      data: 'select',
     })
     expect(results[3]).toMatchObject({
       status: 'success',
       isFetching: false,
-      data: { myCount: 1 },
+      data: 'select',
     })
   })
 
@@ -252,8 +248,7 @@ describe('queryObserver', () => {
     const select = () => {
       throw new Error('selector error')
     }
-    let dataCount = 1
-    const queryFn = () => ({ count: dataCount++ })
+    const queryFn = () => ({ count: 1 })
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -332,7 +327,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn()
     const callback = jest.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
