@@ -49,6 +49,15 @@ describe('queryClient', () => {
       const newQuery = testClient.getQueryCache().find(key)
       expect(newQuery?.options.cacheTime).toBe(Infinity)
     })
+
+    test('should get defaultOptions', async () => {
+      const queryFn = () => 'data'
+      const defaultOptions = { queries: { queryFn } }
+      const testClient = new QueryClient({
+        defaultOptions,
+      })
+      expect(testClient.getDefaultOptions()).toMatchObject(defaultOptions)
+    })
   })
 
   describe('setQueryDefaults', () => {
