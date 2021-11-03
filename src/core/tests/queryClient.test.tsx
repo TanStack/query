@@ -792,6 +792,30 @@ describe('queryClient', () => {
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
+
+    test('should throw an error if throwOnError option is set to true', async () => {
+      const consoleMock = mockConsoleError()
+      const key1 = queryKey()
+      const queryFnError = () => Promise.reject('error')
+      try {
+        await queryClient.fetchQuery({
+          queryKey: key1,
+          queryFn: queryFnError,
+          retry: false,
+        })
+      } catch {}
+      let error: any
+      try {
+        await queryClient.refetchQueries(
+          { queryKey: key1 },
+          { throwOnError: true }
+        )
+      } catch (err) {
+        error = err
+      }
+      expect(error).toEqual('error')
+      consoleMock.mockRestore()
+    })
   })
 
   describe('invalidateQueries', () => {
