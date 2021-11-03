@@ -94,3 +94,6 @@ class NotifyManager {
 // SINGLETON
 
 export const notifyManager = new NotifyManager()
+
+// For testing purposes (not change made by jest.setup.js)
+export const notifyManagerTest = new NotifyManager()
