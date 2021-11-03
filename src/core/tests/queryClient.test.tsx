@@ -6,6 +6,7 @@ import {
   QueryFunction,
   QueryObserver,
 } from '../..'
+import { focusManager, onlineManager } from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -1067,6 +1068,57 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
       })
+    })
+  })
+
+  describe('focusManager and onlineManager', () => {
+    test('should not notify queryCache and mutationCache if not focused or online', async () => {
+      const testClient = new QueryClient()
+      testClient.mount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus'
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline'
+      )
+      const mutationCacheOnFocusSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onFocus'
+      )
+      const mutationCacheOnOnlineSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onOnline'
+      )
+
+      focusManager.setFocused(false)
+      expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      onlineManager.setOnline(false)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      onlineManager.setOnline(false)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(false)
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      testClient.unmount()
+      onlineManager.setOnline(true)
+      focusManager.setFocused(true)
+      queryCacheOnFocusSpy.mockRestore()
+      mutationCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheOnOnlineSpy.mockRestore()
     })
   })
 })
