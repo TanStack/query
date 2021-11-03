@@ -1,4 +1,5 @@
 import { onlineManager } from '../onlineManager'
+import { sleep } from '../utils'
 
 describe('onlineManager', () => {
   test('isOnline should return true if navigator is undefined', () => {
@@ -19,5 +20,23 @@ describe('onlineManager', () => {
     expect(onlineManager.isOnline()).toBeTruthy()
 
     navigatorSpy.mockRestore()
+  })
+
+  test('setEventListener should use online boolean arg', async () => {
+    let count = 0
+
+    const setup = (setOnline: (online?: boolean) => void) => {
+      setTimeout(() => {
+        count++
+        setOnline(false)
+      }, 20)
+      return () => void 0
+    }
+
+    onlineManager.setEventListener(setup)
+
+    await sleep(30)
+    expect(count).toEqual(1)
+    expect(onlineManager.isOnline()).toBeFalsy()
   })
 })
