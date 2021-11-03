@@ -390,4 +390,28 @@ describe('mutations', () => {
     await sleep(30)
     expect(mutationFn).toHaveBeenCalledTimes(0)
   })
+
+  test('reducer should return the state for an unknown action type', async () => {
+    const observer = new MutationObserver(queryClient, {
+      mutationKey: 'key',
+      mutationFn: async () => 'data',
+    })
+
+    const spy = jest.fn()
+    const unsubscribe = observer.subscribe(spy)
+    observer.mutate()
+    const mutation = queryClient
+      .getMutationCache()
+      .find({ mutationKey: 'key' })!
+    const prevState = observer.getCurrentResult()
+    spy.mockReset()
+
+    // Force dispatch unknown action type
+    // because no use case has been found
+    //@ts-ignore
+    mutation.dispatch({ type: 'unknown' })
+    expect(spy).toHaveBeenCalledWith(prevState)
+
+    unsubscribe()
+  })
 })
