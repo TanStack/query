@@ -4,9 +4,11 @@ import {
   isPlainObject,
   mapQueryStatusFilter,
   parseMutationArgs,
+  matchMutation,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
+import { Mutation } from '../mutation'
 
 describe('core/utils', () => {
   it('setLogger should override the default logger', async () => {
@@ -333,6 +335,19 @@ describe('core/utils', () => {
     it('should return mutation options', () => {
       const options = { mutationKey: 'key' }
       expect(parseMutationArgs(options)).toMatchObject(options)
+    })
+  })
+
+  describe('matchMutation', () => {
+    it('should return false if mutationKey options is undefined', () => {
+      const filters = { mutationKey: 'key1' }
+      const queryClient = new QueryClient()
+      const mutation = new Mutation({
+        mutationId: 1,
+        mutationCache: queryClient.getMutationCache(),
+        options: {},
+      })
+      expect(matchMutation(filters, mutation)).toBeFalsy()
     })
   })
 })
