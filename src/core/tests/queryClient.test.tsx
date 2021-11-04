@@ -112,6 +112,15 @@ describe('queryClient', () => {
       })
       expect(observer.getCurrentResult().status).toBe('idle')
     })
+
+    test('should update existing query defaults', async () => {
+      const key = queryKey()
+      const queryOptions1 = { queryFn: () => 'data' }
+      const queryOptions2 = { retry: false }
+      queryClient.setQueryDefaults(key, queryOptions1)
+      queryClient.setQueryDefaults(key, queryOptions2)
+      expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
+    })
   })
 
   describe('setQueryData', () => {
