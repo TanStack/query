@@ -56,6 +56,20 @@ describe('core/utils', () => {
     it('should return `false` for undefined', () => {
       expect(isPlainObject(undefined)).toEqual(false)
     })
+
+    it('should return `true` for object with an undefined constructor', () => {
+      expect(isPlainObject(Object.create(null))).toBeTruthy()
+    })
+
+    it('should return `false` if constructor does not have an Object-specific method', () => {
+      class Foo {
+        abc: any
+        constructor() {
+          this.abc = {}
+        }
+      }
+      expect(isPlainObject(new Foo())).toBeFalsy()
+    })
   })
 
   describe('partialDeepEqual', () => {
