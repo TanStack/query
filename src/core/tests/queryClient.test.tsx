@@ -1205,4 +1205,16 @@ describe('queryClient', () => {
       mutationSpy.mockRestore()
     })
   })
+  describe('setMutationDefaults', () => {
+    test('should update existing mutation defaults', () => {
+      const key = queryKey()
+      const mutationOptions1 = { mutationFn: async () => 'data' }
+      const mutationOptions2 = { retry: false }
+      queryClient.setMutationDefaults(key, mutationOptions1)
+      queryClient.setMutationDefaults(key, mutationOptions2)
+      expect(queryClient.getMutationDefaults(key)).toMatchObject(
+        mutationOptions2
+      )
+    })
+  })
 })
