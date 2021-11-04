@@ -3,6 +3,7 @@ import {
   partialDeepEqual,
   isPlainObject,
   mapQueryStatusFilter,
+  parseMutationArgs,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
@@ -326,5 +327,12 @@ describe('core/utils', () => {
         expect(mapQueryStatusFilter(active, inactive)).toBe(statusFilter)
       }
     )
+  })
+
+  describe('parseMutationArgs', () => {
+    it('should return mutation options', () => {
+      const options = { mutationKey: 'key' }
+      expect(parseMutationArgs(options)).toMatchObject(options)
+    })
   })
 })
