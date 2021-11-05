@@ -5,7 +5,7 @@ import {
   mapQueryStatusFilter,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
-import { queryKey } from '../../react/tests/utils'
+import { queryKey } from '../../reactjs/tests/utils'
 
 describe('core/utils', () => {
   it('setLogger should override the default logger', async () => {

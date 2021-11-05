@@ -3,7 +3,7 @@ import {
   queryKey,
   mockVisibilityState,
   mockConsoleError,
-} from '../../react/tests/utils'
+} from '../../reactjs/tests/utils'
 import {
   QueryCache,
   QueryClient,

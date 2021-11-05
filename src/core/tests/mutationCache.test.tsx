@@ -1,4 +1,4 @@
-import { queryKey, mockConsoleError } from '../../react/tests/utils'
+import { queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import { MutationCache, QueryClient } from '../..'
 
 describe('mutationCache', () => {

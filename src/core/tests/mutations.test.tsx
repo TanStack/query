@@ -1,5 +1,5 @@
 import { QueryClient } from '../..'
-import { mockConsoleError, queryKey, sleep } from '../../react/tests/utils'
+import { mockConsoleError, queryKey, sleep } from '../../reactjs/tests/utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
