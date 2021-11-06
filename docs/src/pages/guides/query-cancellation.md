@@ -9,6 +9,8 @@ React Query provides each query function with an [`AbortSignal` instance](https:
 
 The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are [several available](https://www.npmjs.com/search?q=abortcontroller%20polyfill).
 
+**NOTE:** This feature was introduced at version `3.30.0`. If you are using an older version, you will need to either upgrade (recommended) or use the [old `cancel` function](#old-cancel-function).
+
 ## Using `fetch`
 
 ```js
