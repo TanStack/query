@@ -646,4 +646,22 @@ describe('query', () => {
       })
     )
   })
+
+  test('does not update data if data is undefined', async () => {
+    const key = queryKey()
+    const value = {value: 'data'}
+    queryClient.setQueryData(key, value)
+    const query = queryCache.find(key)!
+    query.setData(undefined)
+    expect(query.state.data).toBe(value)
+  })
+
+  test('does not update data if data is the same as previous data', async () => {
+    const key = queryKey()
+    const value = {value: 'data'}
+    queryClient.setQueryData(key, value)
+    const query = queryCache.find(key)!
+    query.setData({value: 'data'})
+    expect(query.state.data).toBe(value)
+  })
 })
