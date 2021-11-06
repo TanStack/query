@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'use-sync-external-store'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
 import { QueryKey } from '../core/types'
 import { parseFilterArgs, QueryFilters } from '../core/utils'

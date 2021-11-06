@@ -2549,10 +2549,10 @@
     lodash "^4.17.15"
     redent "^3.0.0"
 
-"@testing-library/react@^13.0.0-alpha.3":
-  version "13.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-13.0.0-alpha.3.tgz#46bb30793489e5bf22e90fc128407e305bb66c82"
-  integrity sha512-QSZ5K7D4Q4Xa0n2Xtf/mXfeVsjANkOPspereGIzh26Ro4bsUGPFtHdYjzbQhD+w3K7zEoAnh6gIIPhyB04BPog==
+"@testing-library/react@^13.0.0-alpha.4":
+  version "13.0.0-alpha.4"
+  resolved "https://registry.yarnpkg.com/@testing-library/react/-/react-13.0.0-alpha.4.tgz#00cf104f3a9b90d07691497abc50ade74e534d98"
+  integrity sha512-SY+sz4juZDcMlAaEI8kYpdi4qv+fGjvqLHETVAcL13Q+N9PFtsdmNJnVu3Ez4V1dJuR59y4vZlSJa/U69YyYBg==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@testing-library/dom" "^8.5.0"
@@ -2751,10 +2751,10 @@
   dependencies:
     "@types/jest" "*"
 
-"@types/use-sync-external-store@^0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@types/use-sync-external-store/-/use-sync-external-store-0.0.0.tgz#ec2ebe41a1288e3d5d80aacc4a4c2873db4aafa8"
-  integrity sha512-dtA1bGSTAyPAcged3AjG9r3BOUzznqgpZkK8HnVrlOOkZunfKnqJikykxUg3xOrBvgGbROLNptpJLflqp8KvkQ==
+"@types/use-sync-external-store@^0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@types/use-sync-external-store/-/use-sync-external-store-0.0.3.tgz#b6725d5f4af24ace33b36fafd295136e75509f43"
+  integrity sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==
 
 "@types/yargs-parser@*":
   version "15.0.0"
@@ -6810,7 +6810,7 @@ randombytes@^2.1.0:
   dependencies:
     safe-buffer "^5.1.0"
 
-react-dom@^18.0.0-alpha-6bce0355c-20211031:
+react-dom@^18.0.0-alpha-ee069065d-20211105:
   version "18.0.0-alpha-fd5e01c2e-20210913"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.0.0-alpha-fd5e01c2e-20210913.tgz#4f09435d727a12fb2bc319daa43db313ac57e5a8"
   integrity sha512-TC5tvZF9sspBjxETtTD7bKkc72drM9BIQvDI0GnSxIj4VKzq1i1aAJPZSdSKPOZ1kgqRrXWRFF5YTcgzOIC/Vw==
@@ -6841,7 +6841,7 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
-react@^18.0.0-alpha-6bce0355c-20211031:
+react@^18.0.0-alpha-ee069065d-20211105:
   version "18.0.0-alpha-fd5e01c2e-20210913"
   resolved "https://registry.yarnpkg.com/react/-/react-18.0.0-alpha-fd5e01c2e-20210913.tgz#3e67ccd4a41a187958788d416b6a19595b8669ab"
   integrity sha512-SWeUmHARw0qSM8LcpGzpw3UbyCTVNcJTuCHmPIvgHMvZrs8R8wwk2nil5BQ+LZ8q0iNwwU0ilkLTWIqCQ5d44w==
@@ -8112,10 +8112,10 @@ urix@^0.1.0:
   resolved "https://registry.yarnpkg.com/urix/-/urix-0.1.0.tgz#da937f7a62e21fec1fd18d49b35c2935067a6c72"
   integrity sha1-2pN/emLiH+wf0Y1Js1wpNQZ6bHI=
 
-use-sync-external-store@^0.0.0-experimental-6bce0355c-20211031:
-  version "0.0.0-experimental-fd5e01c2e-20210913"
-  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-0.0.0-experimental-fd5e01c2e-20210913.tgz#fa6d821e6f710fe9a75926a87a2214882fb56bbd"
-  integrity sha512-yVlkhz9/tba6Poz3mhx2c48OFv/pINgnDajaLy7Y7fcX6nkA1g2Bq3pxYKMX1DwnvZicXvDFwJT65jO8tbb5sQ==
+use-sync-external-store@^1.0.0-alpha-ee069065d-20211105:
+  version "1.0.0-alpha-ee069065d-20211105"
+  resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.0.0-alpha-ee069065d-20211105.tgz#5364a536c7181fc00f76ce4d379647f677aab8c4"
+  integrity sha512-2zRhZLfVyQisr3dp/NHdnO4OsTNzZrkyG+IJLaosiP/7ofBUbzfhagaRa2NqH5WTK6iAsImCwoo44qc9X7CtoQ==
 
 use@^3.1.0:
   version "3.1.1"

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
 import { noop, parseMutationArgs } from '../core/utils'
 import { MutationObserver } from '../core/mutationObserver'
