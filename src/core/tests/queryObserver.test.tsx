@@ -756,7 +756,7 @@ describe('queryObserver', () => {
     await queryClient.refetchQueries(key)
     await sleep(10)
 
-    // Force isStale to false
+    // Force isStale to true
     // because no use case has been found to reproduce this condition
     // @ts-ignore
     observer['currentResult'].isStale = true
