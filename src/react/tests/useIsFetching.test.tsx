@@ -35,12 +35,12 @@ describe('useIsFetching', () => {
       )
     }
 
-    const { getByText, getByRole } = renderWithClient(queryClient, <Page />)
+    const { findByText, getByRole } = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => getByText('isFetching: 0'))
+    await findByText('isFetching: 0')
     getByRole('button', { name: /setReady/i }).click()
-    await waitFor(() => getByText('isFetching: 1'))
-    await waitFor(() => getByText('isFetching: 0'))
+    await findByText('isFetching: 1')
+    await findByText('isFetching: 0')
   })
 
   it('should not update state while rendering', async () => {
