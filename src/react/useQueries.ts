@@ -1,7 +1,7 @@
 import React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 import { QueryFunction } from '../core/types'
 
-import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
@@ -113,9 +113,6 @@ type QueriesResults<
 export function useQueries<T extends any[]>(
   queries: readonly [...QueriesOptions<T>]
 ): QueriesResults<T> {
-  const mountedRef = React.useRef(false)
-  const [, forceUpdate] = React.useState(0)
-
   const queryClient = useQueryClient()
 
   const defaultedQueries = queries.map(options => {
@@ -133,22 +130,7 @@ export function useQueries<T extends any[]>(
 
   const result = observer.getOptimisticResult(defaultedQueries)
 
-  React.useEffect(() => {
-    mountedRef.current = true
-
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          forceUpdate(x => x + 1)
-        }
-      })
-    )
-
-    return () => {
-      mountedRef.current = false
-      unsubscribe()
-    }
-  }, [observer])
+  useSyncExternalStore(observer.subscribe, () => observer.getCurrentResult())
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
