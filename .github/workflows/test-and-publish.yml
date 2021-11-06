@@ -30,7 +30,7 @@ jobs:
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
       - name: Upload coverage to Codecov
-      - uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v2
 
   publish-module:
     name: 'Publish Module to NPM'
