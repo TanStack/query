@@ -6,3 +6,25 @@ import { notifyManager } from './src'
 notifyManager.setNotifyFunction(fn => {
   act(fn)
 })
+
+jest.mock('react', () => {
+  const packages = {
+    18: 'react',
+    17: 'react-17',
+  }
+  const version = process.env.REACTJS_VERSION || '18'
+
+  console.log(process.env.REACTJS_VERSION, version)
+
+  return jest.requireActual(packages[version])
+})
+
+jest.mock('react-dom', () => {
+  const packages = {
+    18: 'react-dom',
+    17: 'react-dom-17',
+  }
+  const version = process.env.REACTJS_VERSION || '18'
+
+  return jest.requireActual(packages[version])
+})

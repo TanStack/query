@@ -1105,8 +1105,6 @@ describe('useInfiniteQuery', () => {
 
     await sleep(100)
 
-    console.log('states', states)
-
     expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
       hasNextPage: undefined,
