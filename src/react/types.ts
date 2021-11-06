@@ -70,7 +70,7 @@ export type UseInfiniteQueryResult<
 export interface UseMutationOptions<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > {
   mutationFn?: MutationFunction<TData, TVariables>
@@ -102,7 +102,7 @@ export interface UseMutationOptions<
 export type UseMutateFunction<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > = (
   variables: TVariables,
@@ -112,7 +112,7 @@ export type UseMutateFunction<
 export type UseMutateAsyncFunction<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > = (
   variables: TVariables,

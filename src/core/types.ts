@@ -508,7 +508,7 @@ export type MutationFunction<TData = unknown, TVariables = unknown> = (
 export interface MutationOptions<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > {
   mutationFn?: MutationFunction<TData, TVariables>
@@ -541,7 +541,7 @@ export interface MutationOptions<
 export interface MutationObserverOptions<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends MutationOptions<TData, TError, TVariables, TContext> {
   useErrorBoundary?: boolean | ((error: TError) => boolean)
@@ -550,7 +550,7 @@ export interface MutationObserverOptions<
 export interface MutateOptions<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > {
   onSuccess?: (
@@ -574,7 +574,7 @@ export interface MutateOptions<
 export type MutateFunction<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > = (
   variables: TVariables,
@@ -584,7 +584,7 @@ export type MutateFunction<
 export interface MutationObserverBaseResult<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends MutationState<TData, TError, TVariables, TContext> {
   isError: boolean
@@ -598,7 +598,7 @@ export interface MutationObserverBaseResult<
 export interface MutationObserverIdleResult<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
@@ -613,7 +613,7 @@ export interface MutationObserverIdleResult<
 export interface MutationObserverLoadingResult<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
@@ -628,7 +628,7 @@ export interface MutationObserverLoadingResult<
 export interface MutationObserverErrorResult<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
@@ -643,7 +643,7 @@ export interface MutationObserverErrorResult<
 export interface MutationObserverSuccessResult<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: TData
@@ -658,7 +658,7 @@ export interface MutationObserverSuccessResult<
 export type MutationObserverResult<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > =
   | MutationObserverIdleResult<TData, TError, TVariables, TContext>

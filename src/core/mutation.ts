@@ -19,7 +19,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
 export interface MutationState<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > {
   context: TContext | undefined
@@ -78,7 +78,7 @@ export type Action<TData, TError, TVariables, TContext> =
 export class Mutation<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > {
   state: MutationState<TData, TError, TVariables, TContext>

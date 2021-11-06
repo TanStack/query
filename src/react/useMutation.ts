@@ -17,7 +17,7 @@ import { shouldThrowError } from './utils'
 export function useMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 >(
   options: UseMutationOptions<TData, TError, TVariables, TContext>
@@ -25,7 +25,7 @@ export function useMutation<
 export function useMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 >(
   mutationFn: MutationFunction<TData, TVariables>,
@@ -37,7 +37,7 @@ export function useMutation<
 export function useMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 >(
   mutationKey: MutationKey,
@@ -49,7 +49,7 @@ export function useMutation<
 export function useMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 >(
   mutationKey: MutationKey,
@@ -62,7 +62,7 @@ export function useMutation<
 export function useMutation<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 >(
   arg1:

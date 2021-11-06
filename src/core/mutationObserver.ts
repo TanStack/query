@@ -26,7 +26,7 @@ interface NotifyOptions {
 export class MutationObserver<
   TData = unknown,
   TError = unknown,
-  TVariables = void,
+  TVariables = unknown,
   TContext = unknown
 > extends Subscribable<
   MutationObserverListener<TData, TError, TVariables, TContext>
