@@ -1,5 +1,5 @@
 import { act, waitFor, fireEvent } from '@testing-library/react'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import {
   expectType,
@@ -4083,7 +4083,10 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      renders++
+      useEffect(() => {
+        renders++
+      })
+
       useQuery(key, () => 'test', { queryKeyHashFn })
       return null
     }
