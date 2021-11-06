@@ -53,7 +53,7 @@ describe('focusManager', () => {
   it('should return true for isFocused if document is undefined', async () => {
     const { document } = globalThis
 
-    // @ts-ignore
+    // @ts-expect-error
     delete globalThis.document
 
     focusManager.setFocused()
@@ -64,7 +64,7 @@ describe('focusManager', () => {
   it('should not set window listener if window.addEventListener is not defined', async () => {
     const { addEventListener } = globalThis.window
 
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
     const setEventListenerSpy = jest.spyOn(focusManager, 'setEventListener')

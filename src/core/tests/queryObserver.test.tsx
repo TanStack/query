@@ -537,7 +537,7 @@ describe('queryObserver', () => {
         new QueryObserver(queryClient, {
           queryKey: key,
           queryFn: () => 'data',
-          //@ts-ignore
+          //@ts-expect-error
           enabled: null,
         })
     ).toThrowError('Expected enabled to be a boolean')
@@ -711,7 +711,7 @@ describe('queryObserver', () => {
     observer.setOptions({
       queryKey: key,
       queryFn: () => data,
-      //@ts-ignore
+      //@ts-expect-error
       select: () => undefined,
       placeholderData: placeholderData2,
     })

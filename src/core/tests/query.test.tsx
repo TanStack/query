@@ -745,7 +745,7 @@ describe('query', () => {
     const query = queryCache.find(key)!
 
     // Force unknown action type
-    //@ts-ignore
+    //@ts-expect-error
     const reducedState = query['reducer'](query.state, { type: 'unknown' })
     expect(reducedState).toEqual(query.state)
   })
@@ -809,7 +809,7 @@ describe('query', () => {
 
     // Mock the AbortController to be undefined
     const AbortControllerOriginal = globalThis['AbortController']
-    //@ts-ignore
+    //@ts-expect-error
     globalThis['AbortController'] = undefined
 
     let signalTest: any

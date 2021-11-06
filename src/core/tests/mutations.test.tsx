@@ -408,7 +408,7 @@ describe('mutations', () => {
 
     // Force dispatch unknown action type
     // because no use case has been found
-    //@ts-ignore
+    //@ts-expect-error
     mutation.dispatch({ type: 'unknown' })
     expect(spy).toHaveBeenCalledWith(prevState)
 

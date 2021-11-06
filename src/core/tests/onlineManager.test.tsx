@@ -11,7 +11,7 @@ describe('onlineManager', () => {
     const navigatorSpy = jest.spyOn(globalThis, 'navigator', 'get')
 
     // Force navigator to be undefined
-    //@ts-ignore
+    //@ts-expect-error
     navigatorSpy.mockImplementation(() => undefined)
     expect(onlineManager.isOnline()).toBeTruthy()
 
@@ -59,7 +59,7 @@ describe('onlineManager', () => {
   test('setEventListener should not set window listener if window.addEventListener is not defined', async () => {
     const { addEventListener } = globalThis.window
 
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
     const setEventListenerSpy = jest.spyOn(onlineManager, 'setEventListener')
