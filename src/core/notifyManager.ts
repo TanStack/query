@@ -10,7 +10,7 @@ type BatchNotifyFunction = (callback: () => void) => void
 
 // CLASS
 
-class NotifyManager {
+export class NotifyManager {
   private queue: NotifyCallback[]
   private transactions: number
   private notifyFn: NotifyFunction
@@ -94,6 +94,3 @@ class NotifyManager {
 // SINGLETON
 
 export const notifyManager = new NotifyManager()
-
-// For testing purposes (not change made by jest.setup.js)
-export const notifyManagerTest = new NotifyManager()

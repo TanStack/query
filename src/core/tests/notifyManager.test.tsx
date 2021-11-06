@@ -1,8 +1,9 @@
-import { notifyManagerTest } from '../notifyManager'
+import { NotifyManager } from '../notifyManager'
 import { sleep } from '../../devtools/tests/utils'
 
 describe('notifyManager', () => {
   it('should use default notifyFn', async () => {
+    const notifyManagerTest = new NotifyManager()
     const callbackSpy = jest.fn()
     notifyManagerTest.schedule(callbackSpy)
     await sleep(1)
@@ -10,6 +11,7 @@ describe('notifyManager', () => {
   })
 
   it('should use default batchNotifyFn', async () => {
+    const notifyManagerTest = new NotifyManager()
     const callbackScheduleSpy = jest
       .fn()
       .mockImplementation(async () => await sleep(20))
