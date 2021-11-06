@@ -3882,6 +3882,81 @@ describe('useQuery', () => {
     expect(cancelFn).toHaveBeenCalled()
   })
 
+  it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string, unknown>[] = []
+
+    const queryFn: QueryFunction<string, [string, number]> = async ctx => {
+      const [, limit] = ctx.queryKey
+      const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
+      await sleep(10)
+      return value
+    }
+
+    function Page(props: { limit: number }) {
+      const state = useQuery([key, props.limit], queryFn)
+      states[props.limit] = state
+      return (
+        <div>
+          <h1>Status: {state.status}</h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <Blink duration={5}>
+        <Page limit={0} />
+        <Page limit={1} />
+        <Page limit={2} />
+        <Page limit={3} />
+      </Blink>
+    )
+
+    await waitFor(() => rendered.getByText('off'))
+    await sleep(10)
+
+    expect(states).toHaveLength(4)
+
+    expect(queryCache.find([key, 0])?.state).toMatchObject({
+      data: 'data 0',
+      status: 'success',
+      dataUpdateCount: 1,
+    })
+
+    if (typeof AbortSignal === 'function') {
+      expect(queryCache.find([key, 1])?.state).toMatchObject({
+        data: undefined,
+        status: 'idle',
+      })
+    } else {
+      expect(queryCache.find([key, 1])?.state).toMatchObject({
+        data: 'data 1',
+        status: 'success',
+        dataUpdateCount: 1,
+      })
+    }
+
+    expect(queryCache.find([key, 2])?.state).toMatchObject({
+      data: 'data 2',
+      status: 'success',
+      dataUpdateCount: 1,
+    })
+
+    if (typeof AbortSignal === 'function') {
+      expect(queryCache.find([key, 3])?.state).toMatchObject({
+        data: undefined,
+        status: 'idle',
+      })
+    } else {
+      expect(queryCache.find([key, 3])?.state).toMatchObject({
+        data: 'data 3',
+        status: 'success',
+        dataUpdateCount: 1,
+      })
+    }
+  })
+
   it('should refetch when quickly switching to a failed query', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []

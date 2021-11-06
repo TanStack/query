@@ -14,16 +14,28 @@ interface CreateAsyncStoragePersistorOptions {
   /** To avoid spamming,
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
+  /**
+   * How to serialize the data to storage.
+   * @default `JSON.stringify`
+   */
+  serialize?: (client: PersistedClient) => string
+  /**
+   * How to deserialize the data from storage.
+   * @default `JSON.parse`
+   */
+  deserialize?: (cachedString: string) => PersistedClient
 }
 
 export const createAsyncStoragePersistor = ({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
+  serialize = JSON.stringify,
+  deserialize = JSON.parse,
 }: CreateAsyncStoragePersistorOptions): Persistor => {
   return {
     persistClient: asyncThrottle(
-      persistedClient => storage.setItem(key, JSON.stringify(persistedClient)),
+      persistedClient => storage.setItem(key, serialize(persistedClient)),
       { interval: throttleTime }
     ),
     restoreClient: async () => {
@@ -33,22 +45,22 @@ export const createAsyncStoragePersistor = ({
         return
       }
 
-      return JSON.parse(cacheString) as PersistedClient
+      return deserialize(cacheString) as PersistedClient
     },
     removeClient: () => storage.removeItem(key),
   }
 }
 
-function asyncThrottle<T>(
-  func: (...args: ReadonlyArray<unknown>) => Promise<T>,
+function asyncThrottle<Args extends readonly unknown[], Result>(
+  func: (...args: Args) => Promise<Result>,
   { interval = 1000, limit = 1 }: { interval?: number; limit?: number } = {}
 ) {
   if (typeof func !== 'function') throw new Error('argument is not function.')
   const running = { current: false }
   let lastTime = 0
   let timeout: number
-  const queue: Array<any[]> = []
-  return (...args: any) =>
+  const queue: Array<Args> = []
+  return (...args: Args) =>
     (async () => {
       if (running.current) {
         lastTime = Date.now()

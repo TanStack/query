@@ -55,7 +55,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
 - So what if your `initialData` isn't totally fresh? That leaves us with the last configuration that is actually the most accurate and uses an option called `initialDataUpdatedAt`. This option allows you to pass a numeric JS timestamp in milliseconds of when the initialData itself was last updated, e.g. what `Date.now()` provides. Take note that if you have a unix timestamp, you'll need to convert it to a JS timestamp by multiplying it by `1000`.
   ```js
   function Todos() {
-    // Show initialTodos immeidately, but won't refetch until another interaction event is encountered after 1000 ms
+    // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
     const result = useQuery('todos', () => fetch('/todos'), {
       initialData: initialTodos,
       staleTime: 60 * 1000 // 1 minute
@@ -137,4 +137,4 @@ function Todo({ todoId }) {
 
 ## Further reading
 
-For a comparison between `Initial Data` and `Placholder Data`, have a look at the [Community Resources](../community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
+For a comparison between `Initial Data` and `Placeholder Data`, have a look at the [Community Resources](../community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).

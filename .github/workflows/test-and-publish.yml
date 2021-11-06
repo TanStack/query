@@ -25,6 +25,8 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - run: yarn test:ci
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
 
   publish-module:
     name: 'Publish Module to NPM'
