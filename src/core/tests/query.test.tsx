@@ -11,6 +11,7 @@ import {
   isCancelledError,
   isError,
   onlineManager,
+  QueryFunctionContext,
 } from '../..'
 
 describe('query', () => {
@@ -185,7 +186,30 @@ describe('query', () => {
     window.dispatchEvent(new FocusEvent('focus'))
   })
 
-  test('should continue if cancellation is not supported', async () => {
+  test('should provide context to queryFn', async () => {
+    const key = queryKey()
+
+    const queryFn = jest
+      .fn<Promise<'data'>, [QueryFunctionContext<string>]>()
+      .mockResolvedValue('data')
+
+    queryClient.prefetchQuery(key, queryFn)
+
+    await sleep(10)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+    const args = queryFn.mock.calls[0]![0]
+    expect(args).toBeDefined()
+    expect(args.pageParam).toBeUndefined()
+    expect(args.queryKey).toEqual([key])
+    if (typeof AbortSignal === 'function') {
+      expect(args.signal).toBeInstanceOf(AbortSignal)
+    } else {
+      expect(args.signal).toBeUndefined()
+    }
+  })
+
+  test('should continue if cancellation is not supported and signal is not consumed', async () => {
     const key = queryKey()
 
     queryClient.prefetchQuery(key, async () => {
@@ -214,7 +238,98 @@ describe('query', () => {
     })
   })
 
-  test('should not continue if cancellation is supported', async () => {
+  test('should not continue when last observer unsubscribed if the signal was consumed', async () => {
+    const key = queryKey()
+
+    queryClient.prefetchQuery(key, async ({ signal }) => {
+      await sleep(100)
+      return signal?.aborted ? 'aborted' : 'data'
+    })
+
+    await sleep(10)
+
+    // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      enabled: false,
+    })
+    const unsubscribe = observer.subscribe()
+    unsubscribe()
+
+    await sleep(100)
+
+    const query = queryCache.find(key)!
+
+    if (typeof AbortSignal === 'function') {
+      expect(query.state).toMatchObject({
+        data: undefined,
+        status: 'idle',
+      })
+    } else {
+      expect(query.state).toMatchObject({
+        data: 'data',
+        status: 'success',
+        dataUpdateCount: 1,
+      })
+    }
+  })
+
+  test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
+    const key = queryKey()
+
+    const queryFn = jest.fn<Promise<void>, [QueryFunctionContext<string>]>()
+    const onAbort = jest.fn()
+    const abortListener = jest.fn()
+    let error
+
+    queryFn.mockImplementation(async ({ signal }) => {
+      if (signal) {
+        signal.onabort = onAbort
+        signal.addEventListener('abort', abortListener)
+      }
+      await sleep(10)
+      if (signal) {
+        signal.onabort = null
+        signal.removeEventListener('abort', abortListener)
+      }
+      throw new Error()
+    })
+
+    const promise = queryClient.fetchQuery(key, queryFn, {
+      retry: 3,
+      retryDelay: 10,
+    })
+
+    promise.catch(e => {
+      error = e
+    })
+
+    const query = queryCache.find(key)!
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    let signal = queryFn.mock.calls[0]![0].signal
+
+    if (typeof AbortSignal === 'function') {
+      signal = queryFn.mock.calls[0]![0].signal
+      expect(signal?.aborted).toBe(false)
+    }
+    expect(onAbort).not.toHaveBeenCalled()
+    expect(abortListener).not.toHaveBeenCalled()
+
+    query.cancel()
+
+    await sleep(100)
+
+    if (typeof AbortSignal === 'function') {
+      expect(signal?.aborted).toBe(true)
+      expect(onAbort).toHaveBeenCalledTimes(1)
+      expect(abortListener).toHaveBeenCalledTimes(1)
+    }
+    expect(isCancelledError(error)).toBe(true)
+  })
+
+  test('should call cancel() fn if it was provided and not continue when last observer unsubscribed', async () => {
     const key = queryKey()
 
     const cancel = jest.fn()
