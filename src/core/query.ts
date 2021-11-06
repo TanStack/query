@@ -228,30 +228,22 @@ export class Query<
     updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): TData | undefined {
-    let shouldIgnore = false
     const prevData = this.state.data
 
     // Get the new data
     let data = functionalUpdate(updater, prevData)
 
-    if (typeof data === 'undefined') {
-      shouldIgnore = true
-    } else {
+    if (typeof data !== 'undefined') {
       // Use prev data if an isDataEqual function is defined and returns `true`
       if (this.options.isDataEqual?.(prevData, data)) {
         data = prevData
-        shouldIgnore = true
       } else if (this.options.structuralSharing !== false) {
         // Structurally share data between prev and new data if needed
         data = replaceEqualDeep(prevData, data)
-
-        if (data === prevData) {
-          shouldIgnore = true
-        }
       }
     }
 
-    if (shouldIgnore) {
+    if (typeof data === 'undefined' || Object.is(data, prevData)) {
       // Bail out
       this.dispatch({
         type: 'ignore',
