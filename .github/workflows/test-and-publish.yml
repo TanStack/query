@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    name: 'Node ${{ matrix.node }}'
+    name: 'Node ${{ matrix.node }}, React ${{ matrix.react }}'
     runs-on: ubuntu-latest
     strategy:
       matrix:
