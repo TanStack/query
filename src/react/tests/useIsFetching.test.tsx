@@ -1,4 +1,4 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/react'
 import React from 'react'
 
 import { queryKey, renderWithClient, setActTimeout, sleep } from './utils'
@@ -35,12 +35,12 @@ describe('useIsFetching', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    const { getByText, getByRole } = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('isFetching: 0'))
-    fireEvent.click(rendered.getByText('setReady'))
-    await waitFor(() => rendered.getByText('isFetching: 1'))
-    await waitFor(() => rendered.getByText('isFetching: 0'))
+    await waitFor(() => getByText('isFetching: 0'))
+    getByRole('button', { name: /setReady/i }).click()
+    await waitFor(() => getByText('isFetching: 1'))
+    await waitFor(() => getByText('isFetching: 0'))
   })
 
   it('should not update state while rendering', async () => {
