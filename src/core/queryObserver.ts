@@ -68,7 +68,7 @@ export class QueryObserver<
     TQueryKey
   >
   private previousQueryResult?: QueryObserverResult<TData, TError>
-  private previousSelectError: Error | null
+  private previousSelectError: TError | null
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private currentRefetchInterval?: number | false
@@ -495,8 +495,8 @@ export class QueryObserver<
           this.previousSelectError = null
         } catch (selectError) {
           getLogger().error(selectError)
-          error = selectError
-          this.previousSelectError = selectError
+          error = selectError as TError
+          this.previousSelectError = selectError as TError
           errorUpdatedAt = Date.now()
           status = 'error'
         }
@@ -538,8 +538,8 @@ export class QueryObserver<
             this.previousSelectError = null
           } catch (selectError) {
             getLogger().error(selectError)
-            error = selectError
-            this.previousSelectError = selectError
+            error = selectError as TError
+            this.previousSelectError = selectError as TError
             errorUpdatedAt = Date.now()
             status = 'error'
           }
