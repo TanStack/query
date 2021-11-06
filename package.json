@@ -27,7 +27,7 @@
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "npm run test:types && npm run test:format && npm run test:eslint && jest --watch",
-    "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && jest",
+    "test:ci": "npm run test:types && npm run test:format && npm run test:eslint && REACTJS_VERSION=17 jest",
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:format": "yarn prettier --check",
     "test:types": "tsc",
@@ -69,7 +69,7 @@
     "@types/use-sync-external-store": "^0.0.3",
     "broadcast-channel": "^3.4.1",
     "match-sorter": "^6.0.2",
-    "use-sync-external-store": "^1.0.0-alpha-ee069065d-20211105"
+    "use-sync-external-store": "1.0.0-alpha-ee069065d-20211105"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0-alpha || ^18.0.0-beta"
@@ -124,9 +124,9 @@
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
     "prettier": "2.2.1",
-    "react": "^18.0.0-alpha-ee069065d-20211105",
+    "react": "18.0.0-alpha-ee069065d-20211105",
     "react-17": "npm:react@^17.0.2",
-    "react-dom": "^18.0.0-alpha-ee069065d-20211105",
+    "react-dom": "18.0.0-alpha-ee069065d-20211105",
     "react-dom-17": "npm:react-dom@^17.0.2",
     "react-error-boundary": "^2.2.2",
     "replace": "^1.2.0",
