@@ -513,7 +513,7 @@ export class QueryClient {
   executeMutation<
     TData = unknown,
     TError = unknown,
-    TVariables = unknown,
+    TVariables = void,
     TContext = unknown
   >(
     options: MutationOptions<TData, TError, TVariables, TContext>
