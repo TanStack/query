@@ -14,8 +14,6 @@ jest.mock('react', () => {
   }
   const version = process.env.REACTJS_VERSION || '18'
 
-  console.log(process.env.REACTJS_VERSION, version)
-
   return jest.requireActual(packages[version])
 })
 
