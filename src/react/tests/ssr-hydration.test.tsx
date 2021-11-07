@@ -146,8 +146,7 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // We expect exactly one console.error here, which is from the
-    // and another one for useLayoutEffect error, coming from useSyncExternalStorage
-    expect(consoleMock).toHaveBeenCalledTimes(2)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(fetchDataError).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
