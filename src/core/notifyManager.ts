@@ -10,7 +10,7 @@ type BatchNotifyFunction = (callback: () => void) => void
 
 // CLASS
 
-class NotifyManager {
+export class NotifyManager {
   private queue: NotifyCallback[]
   private transactions: number
   private notifyFn: NotifyFunction

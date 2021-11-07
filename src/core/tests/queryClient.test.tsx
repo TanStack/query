@@ -5,7 +5,9 @@ import {
   QueryClient,
   QueryFunction,
   QueryObserver,
+  MutationObserver,
 } from '../..'
+import { focusManager, onlineManager } from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -46,6 +48,15 @@ describe('queryClient', () => {
       await testClient.prefetchQuery(key, fetchData)
       const newQuery = testClient.getQueryCache().find(key)
       expect(newQuery?.options.cacheTime).toBe(Infinity)
+    })
+
+    test('should get defaultOptions', async () => {
+      const queryFn = () => 'data'
+      const defaultOptions = { queries: { queryFn } }
+      const testClient = new QueryClient({
+        defaultOptions,
+      })
+      expect(testClient.getDefaultOptions()).toMatchObject(defaultOptions)
     })
   })
 
@@ -100,6 +111,15 @@ describe('queryClient', () => {
         queryKey: [key],
       })
       expect(observer.getCurrentResult().status).toBe('idle')
+    })
+
+    test('should update existing query defaults', async () => {
+      const key = queryKey()
+      const queryOptions1 = { queryFn: () => 'data' }
+      const queryOptions2 = { retry: false }
+      queryClient.setQueryDefaults(key, queryOptions1)
+      queryClient.setQueryDefaults(key, queryOptions2)
+      expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
     })
   })
 
@@ -169,6 +189,35 @@ describe('queryClient', () => {
 
       expect(updater).toHaveBeenCalled()
       expect(queryCache.find(key)!.state.data).toEqual('new data + test data')
+    })
+
+    test('should use prev data if an isDataEqual function is defined and returns "true"', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: { isDataEqual: (_prev, data) => data === 'data' },
+      })
+      queryClient.setQueryData(key, 'prev data')
+      queryClient.setQueryData(key, 'data')
+
+      expect(queryCache.find(key)!.state.data).toEqual('prev data')
+    })
+
+    test('should set the new data without comparison if structuralSharing is set to false', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: {
+          structuralSharing: false,
+        },
+      })
+
+      const oldData = { value: true }
+      const newData = { value: true }
+      queryClient.setQueryData(key, oldData)
+      queryClient.setQueryData(key, newData)
+
+      expect(queryCache.find(key)!.state.data).toBe(newData)
     })
   })
 
@@ -565,6 +614,25 @@ describe('queryClient', () => {
       })
       consoleMock.mockRestore()
     })
+
+    test('should not revert if revert option is set to false', async () => {
+      const consoleMock = mockConsoleError()
+      const key1 = queryKey()
+      await queryClient.fetchQuery(key1, async () => {
+        return 'data'
+      })
+      queryClient.fetchQuery(key1, async () => {
+        await sleep(1000)
+        return 'data2'
+      })
+      await sleep(10)
+      await queryClient.cancelQueries(key1, {}, { revert: false })
+      const state1 = queryClient.getQueryState(key1)
+      expect(state1).toMatchObject({
+        status: 'error',
+      })
+      consoleMock.mockRestore()
+    })
   })
 
   describe('refetchQueries', () => {
@@ -742,6 +810,30 @@ describe('queryClient', () => {
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(1)
+    })
+
+    test('should throw an error if throwOnError option is set to true', async () => {
+      const consoleMock = mockConsoleError()
+      const key1 = queryKey()
+      const queryFnError = () => Promise.reject('error')
+      try {
+        await queryClient.fetchQuery({
+          queryKey: key1,
+          queryFn: queryFnError,
+          retry: false,
+        })
+      } catch {}
+      let error: any
+      try {
+        await queryClient.refetchQueries(
+          { queryKey: key1 },
+          { throwOnError: true }
+        )
+      } catch (err) {
+        error = err
+      }
+      expect(error).toEqual('error')
+      consoleMock.mockRestore()
     })
   })
 
@@ -1038,6 +1130,91 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
       })
+    })
+  })
+
+  describe('focusManager and onlineManager', () => {
+    test('should not notify queryCache and mutationCache if not focused or online', async () => {
+      const testClient = new QueryClient()
+      testClient.mount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus'
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline'
+      )
+      const mutationCacheOnFocusSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onFocus'
+      )
+      const mutationCacheOnOnlineSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onOnline'
+      )
+
+      focusManager.setFocused(false)
+      expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      onlineManager.setOnline(false)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      onlineManager.setOnline(false)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(false)
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      testClient.unmount()
+      onlineManager.setOnline(true)
+      focusManager.setFocused(true)
+      queryCacheOnFocusSpy.mockRestore()
+      mutationCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheOnOnlineSpy.mockRestore()
+    })
+  })
+
+  describe('cancelMutations', () => {
+    test('should cancel mutations', async () => {
+      const key = queryKey()
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationKey: key,
+        mutationFn: async () => {
+          await sleep(20)
+          return 'data'
+        },
+        onMutate: text => text,
+      })
+      await mutationObserver.mutate()
+      const mutation = queryClient
+        .getMutationCache()
+        .find({ mutationKey: key })!
+      const mutationSpy = jest.spyOn(mutation, 'cancel')
+      queryClient.cancelMutations()
+      expect(mutationSpy).toHaveBeenCalled()
+      mutationSpy.mockRestore()
+    })
+  })
+  describe('setMutationDefaults', () => {
+    test('should update existing mutation defaults', () => {
+      const key = queryKey()
+      const mutationOptions1 = { mutationFn: async () => 'data' }
+      const mutationOptions2 = { retry: false }
+      queryClient.setMutationDefaults(key, mutationOptions1)
+      queryClient.setMutationDefaults(key, mutationOptions2)
+      expect(queryClient.getMutationDefaults(key)).toMatchObject(
+        mutationOptions2
+      )
     })
   })
 })
