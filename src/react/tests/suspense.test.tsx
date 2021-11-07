@@ -733,13 +733,21 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10))
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+      return '23'
+    })
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      useQuery([key], queryFn, { suspense: true, enabled })
+      const result = useQuery([key], queryFn, { suspense: true, enabled })
 
-      return <button aria-label="fire" onClick={() => setEnabled(true)} />
+      return (
+        <div>
+          <button onClick={() => setEnabled(true)}>fire</button>
+          <h1>{result.data}</h1>
+        </div>
+      )
     }
 
     const rendered = renderWithClient(
@@ -751,10 +759,13 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(queryFn).toHaveBeenCalledTimes(0)
 
-    fireEvent.click(rendered.getByLabelText('fire'))
+    rendered.getByRole('button', { name: /fire/i }).click()
+
+    await waitFor(() => {
+      expect(rendered.getByRole('heading').textContent).toBe('23')
+    })
 
     expect(queryFn).toHaveBeenCalledTimes(1)
-    await waitFor(() => rendered.getByLabelText('fire'))
   })
 
   it('should error catched in error boundary without infinite loop', async () => {
