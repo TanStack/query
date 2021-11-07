@@ -77,17 +77,17 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     const newObservers: QueryObserver[] = []
     const newObserversMap: Record<string, QueryObserver> = {}
 
-    const defaultedQueryOptions = queries.map(o =>
-      this.client.defaultQueryObserverOptions(o)
+    const defaultedQueryOptions = queries.map(options =>
+      this.client.defaultQueryObserverOptions(options)
     )
     const matchingObservers = defaultedQueryOptions
-      .map(o => {
-        if (o.queryHash == null) {
+      .map(options => {
+        if (options.queryHash == null) {
           return null
         }
-        const match = prevObserversMap[o.queryHash]
+        const match = prevObserversMap[options.queryHash]
         if (match != null) {
-          match.setOptions(o, notifyOptions)
+          match.setOptions(options, notifyOptions)
           return match
         }
         return null
@@ -95,27 +95,28 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       .filter(notNullOrUndefined)
 
     const matchedQueryHashes = matchingObservers
-      .map(o => o?.options.queryHash)
+      .map(observer => observer?.options.queryHash)
       .filter(notNullOrUndefined)
     const unmatchedQueries = defaultedQueryOptions.filter(
-      o =>
-        o.queryHash !== undefined && !matchedQueryHashes.includes(o.queryHash)
+      options =>
+        options.queryHash !== undefined &&
+        !matchedQueryHashes.includes(options.queryHash)
     )
 
     const unmatchedObservers = prevObservers.filter(
-      p => !matchingObservers.includes(p)
+      prevObserver => !matchingObservers.includes(prevObserver)
     )
 
-    const newlyMatchedOrCreatedObservers = unmatchedQueries.map(q => {
-      if (q.keepPreviousData && unmatchedObservers.length > 0) {
-        // use the first existing but no longer matched query to keep query data for any new queries
+    const newlyMatchedOrCreatedObservers = unmatchedQueries.map(options => {
+      if (options.keepPreviousData && unmatchedObservers.length > 0) {
+        // use the first observer but no longer matched query to keep query data for any new queries
         const firstObserver = unmatchedObservers.splice(0, 1)[0]
         if (firstObserver !== undefined) {
-          firstObserver.setOptions(q, notifyOptions)
+          firstObserver.setOptions(options, notifyOptions)
           return firstObserver
         }
       }
-      return this.getObserver(q)
+      return this.getObserver(options)
     })
 
     matchingObservers
@@ -148,7 +149,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       )
 
       const hasIndexChange = updatedObservers.newObservers.some(
-        (o, i) => o !== prevObservers[i]
+        (observer, index) => observer !== prevObservers[index]
       )
       if (
         prevObservers.length === updatedObservers.newObservers.length &&
