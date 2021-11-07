@@ -89,8 +89,10 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = useSyncExternalStore(observer.subscribe, () =>
-    observer.getCurrentResult()
+  const result = useSyncExternalStore(
+    observer.subscribe,
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
   )
 
   const mutate = React.useCallback<

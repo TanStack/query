@@ -17,7 +17,9 @@ export function useIsMutating(
 
   const queryClient = useQueryClient()
 
-  return useSyncExternalStore(queryClient.getQueryCache().subscribe, () =>
-    queryClient.isMutating(filters)
+  return useSyncExternalStore(
+    queryClient.getQueryCache().subscribe,
+    () => queryClient.isMutating(filters),
+    () => queryClient.isMutating(filters)
   )
 }

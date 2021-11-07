@@ -130,7 +130,11 @@ export function useQueries<T extends any[]>(
 
   const result = observer.getOptimisticResult(defaultedQueries)
 
-  useSyncExternalStore(observer.subscribe, () => observer.getCurrentResult())
+  useSyncExternalStore(
+    observer.subscribe,
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  )
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because

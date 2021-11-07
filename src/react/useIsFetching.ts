@@ -17,7 +17,9 @@ export function useIsFetching(
 
   const [filters] = parseFilterArgs(arg1, arg2)
 
-  return useSyncExternalStore(queryClient.getQueryCache().subscribe, () =>
-    queryClient.isFetching(filters)
+  return useSyncExternalStore(
+    queryClient.getQueryCache().subscribe,
+    () => queryClient.isFetching(filters),
+    () => queryClient.isFetching(filters)
   )
 }

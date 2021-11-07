@@ -82,7 +82,11 @@ export function useBaseQuery<
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
-  useSyncExternalStore(observer.subscribe, () => observer.getCurrentResult())
+  useSyncExternalStore(
+    observer.subscribe,
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  )
 
   React.useEffect(() => {
     errorResetBoundary.clearReset()
