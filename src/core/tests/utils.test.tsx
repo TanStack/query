@@ -3,9 +3,12 @@ import {
   partialDeepEqual,
   isPlainObject,
   mapQueryStatusFilter,
+  parseMutationArgs,
+  matchMutation,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
+import { Mutation } from '../mutation'
 
 describe('core/utils', () => {
   it('setLogger should override the default logger', async () => {
@@ -52,6 +55,20 @@ describe('core/utils', () => {
 
     it('should return `false` for undefined', () => {
       expect(isPlainObject(undefined)).toEqual(false)
+    })
+
+    it('should return `true` for object with an undefined constructor', () => {
+      expect(isPlainObject(Object.create(null))).toBeTruthy()
+    })
+
+    it('should return `false` if constructor does not have an Object-specific method', () => {
+      class Foo {
+        abc: any
+        constructor() {
+          this.abc = {}
+        }
+      }
+      expect(isPlainObject(new Foo())).toBeFalsy()
     })
   })
 
@@ -326,5 +343,25 @@ describe('core/utils', () => {
         expect(mapQueryStatusFilter(active, inactive)).toBe(statusFilter)
       }
     )
+  })
+
+  describe('parseMutationArgs', () => {
+    it('should return mutation options', () => {
+      const options = { mutationKey: 'key' }
+      expect(parseMutationArgs(options)).toMatchObject(options)
+    })
+  })
+
+  describe('matchMutation', () => {
+    it('should return false if mutationKey options is undefined', () => {
+      const filters = { mutationKey: 'key1' }
+      const queryClient = new QueryClient()
+      const mutation = new Mutation({
+        mutationId: 1,
+        mutationCache: queryClient.getMutationCache(),
+        options: {},
+      })
+      expect(matchMutation(filters, mutation)).toBeFalsy()
+    })
   })
 })
