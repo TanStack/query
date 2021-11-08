@@ -33,10 +33,10 @@ Its available methods are:
 
 - `onError?: (error: unknown, query: Query) => void`
   - Optional
-  - This function will be called if some query encounters an error.
+  - This function will fire if some query encounters an error and will be passed the error.
 - `onSuccess?: (data: unknown, query: Query) => void`
   - Optional
-  - This function will be called if some query is successful.
+  - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
 
 ## Global callbacks
 
