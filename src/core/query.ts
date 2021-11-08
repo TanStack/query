@@ -470,7 +470,7 @@ export class Query<
 
         if (typeof updatedData !== 'undefined' && !Object.is(prevData, updatedData)) {
           // Notify cache callback
-          this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+          this.cache.config.onSuccess?.(updatedData, this as Query<any, any, any, any>)
         }
 
         // Remove query after fetching if cache time is 0

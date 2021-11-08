@@ -30,7 +30,7 @@ import type {
   ResetQueryFilters,
   SetDataOptions,
 } from './types'
-import type { QueryState } from './query'
+import type { Query, QueryState } from './query'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
@@ -136,7 +136,15 @@ export class QueryClient {
     let query = this.queryCache.find<TData>(queryKey)
 
     if (query) {
-      return query.setData(updater, options)
+      const prevData = query.state.data
+      const updatedData = query.setData(updater, options)
+
+      if (typeof updatedData !== 'undefined' && !Object.is(prevData, updatedData)) {
+        // Notify cache callback
+        this.queryCache.config.onSuccess?.(updatedData, query as Query<any, any, any, any>)
+      }
+
+      return updatedData
     } 
 
     const data = functionalUpdate(updater, undefined)
@@ -148,7 +156,9 @@ export class QueryClient {
     const parsedOptions = parseQueryArgs(queryKey)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     query = this.queryCache.build(this, defaultedOptions)
-    query.setData(data, options)
+    const updatedData = query.setData(data, options)
+    this.queryCache.config.onSuccess?.(updatedData, query as Query<any, any, any, any>)
+    return updatedData
   }
 
   setQueriesData<TData>(
