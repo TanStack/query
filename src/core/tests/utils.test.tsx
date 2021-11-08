@@ -70,6 +70,19 @@ describe('core/utils', () => {
       }
       expect(isPlainObject(new Foo())).toBeFalsy()
     })
+
+    it('should return `false` if the object has a modified prototype', () => {
+      function Graph(this: any) {
+        this.vertices = []
+        this.edges = []
+      }
+
+      Graph.prototype.addVertex = function (v: any) {
+        this.vertices.push(v)
+      }
+
+      expect(isPlainObject(Object.create(Graph))).toBeFalsy()
+    })
   })
 
   describe('partialDeepEqual', () => {
