@@ -137,13 +137,13 @@ describe('queryClient', () => {
     test('should create a new query if query was not found', () => {
       const key = queryKey()
       queryClient.setQueryData(key, 'bar')
-      expect(queryClient.getQueryData(key)).toBe('bar')
+      expect(queryCache.find(key)).not.toBe(undefined)
     })
 
-    test('should create a new query if query was not found', () => {
+    test('should not create a new query if query data is undefined', () => {
       const key = queryKey()
-      queryClient.setQueryData(key, 'qux')
-      expect(queryClient.getQueryData(key)).toBe('qux')
+      queryClient.setQueryData(key, undefined)
+      expect(queryCache.find(key)).toBe(undefined)
     })
 
     test('should use the same query when using similar string or array query keys', () => {

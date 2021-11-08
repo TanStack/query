@@ -380,6 +380,8 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions
   ): Promise<TData> {
+    const prevData = this.state.data
+
     if (this.state.isFetching) {
       if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetches
@@ -464,10 +466,12 @@ export class Query<
       fn: context.fetchFn as () => TData,
       abort: abortController?.abort?.bind(abortController),
       onSuccess: data => {
-        this.setData(data as TData)
+        const updatedData = this.setData(data as TData)
 
-        // Notify cache callback
-        this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        if (typeof updatedData !== 'undefined' && !Object.is(prevData, updatedData)) {
+          // Notify cache callback
+          this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
+        }
 
         // Remove query after fetching if cache time is 0
         if (this.cacheTime === 0) {

@@ -456,6 +456,78 @@ describe('useQuery', () => {
     expect(onSuccess).toHaveBeenCalledTimes(0)
   })
 
+  it('should call onSuccess when data changed', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+      states.push(state)
+      React.useEffect(() => {
+        setActTimeout(() => {
+          queryClient.setQueryData(key, 'data2')
+        }, 10)
+      }, [])
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+    expect(states.length).toBe(3)
+    expect(onSuccess).toHaveBeenCalledTimes(2)
+    expect(onSuccess).toHaveBeenNthCalledWith(2, 'data2')
+  })
+
+  it('should not call onSuccess if data is undefined', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+      states.push(state)
+      React.useEffect(() => {
+        setActTimeout(() => {
+          queryClient.setQueryData(key, undefined)
+        }, 10)
+      }, [])
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+    expect(states.length).toBe(2)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  })
+
+  it('should not call onSuccess if data is unchanged', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+      states.push(state)
+      React.useEffect(() => {
+        setActTimeout(() => {
+          queryClient.setQueryData(key, 'data')
+        }, 10)
+      }, [])
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+    expect(states.length).toBe(2)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  })
+
   it('should call onError after a query has been fetched with an error', async () => {
     const key = queryKey()
     const states: UseQueryResult<unknown>[] = []
