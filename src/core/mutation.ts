@@ -85,7 +85,7 @@ export class Mutation<
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
-  meta?: MutationMeta
+  meta: MutationMeta | undefined
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
   private mutationCache: MutationCache
