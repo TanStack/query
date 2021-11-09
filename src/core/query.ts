@@ -614,7 +614,7 @@ export class Query<
           isFetching: false,
           isInvalidated: false,
           isPaused: false,
-          status: 'success',
+          status: typeof state.data === 'undefined' ? 'idle' : 'success',
         }
       case 'error':
         const error = action.error as unknown
