@@ -52,6 +52,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       defaultOptions: options.mutationKey
         ? client.getMutationDefaults(options.mutationKey)
         : undefined,
+      meta: options.meta,
     })
 
     this.add(mutation)
