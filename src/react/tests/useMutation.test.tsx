@@ -521,54 +521,54 @@ describe('useMutation', () => {
   })
 
   it('should pass meta to mutation', async () => {
-    const successMock = jest.fn()
-    const errorMock = jest.fn()
+    let successMessage: string | null = null
+    let errorMessage: string | null = null
 
     const queryClientAy = new QueryClient({
       mutationCache: new MutationCache({
         onSuccess: (_, __, ___, mutation) => {
-          successMock(mutation.meta?.mySuccessMessage)
+          successMessage = mutation.meta?.metaSuccessMessage as string
         },
         onError: (_, __, ___, mutation) => {
-          errorMock(mutation.meta?.myErrorMessage)
+          errorMessage = mutation.meta?.metaErrorMessage as string
         },
       }),
     })
 
-    const mySuccessMessage = 'mutation succeeded'
-    const myErrorMessage = 'mutation succeeded'
+    const metaSuccessMessage = 'mutation succeeded'
+    const metaErrorMessage = 'mutation failed'
 
     function Page() {
       const { mutate: succeed } = useMutation(async () => '', {
-        meta: { mySuccessMessage },
+        meta: { metaSuccessMessage },
       })
       const { mutate: error } = useMutation(
         async () => {
           throw new Error('')
         },
         {
-          meta: { myErrorMessage },
+          meta: { metaErrorMessage },
         }
       )
 
       return (
         <div>
           <button onClick={() => succeed()}>succeed</button>
-          <button onClick={() => error()}>error now</button>
+          <button onClick={() => error()}>error</button>
+          <div>{successMessage}</div>
+          <div>{errorMessage}</div>
         </div>
       )
     }
 
-    const { getByText } = renderWithClient(queryClientAy, <Page />)
+    const { getByText, queryByText } = renderWithClient(queryClientAy, <Page />)
 
     fireEvent.click(getByText('succeed'))
-    fireEvent.click(getByText('error now'))
+    fireEvent.click(getByText('error'))
 
-    await sleep(500)
-
-    expect(successMock).toHaveBeenCalledTimes(1)
-    expect(successMock).toHaveBeenCalledWith(mySuccessMessage)
-    expect(errorMock).toHaveBeenCalledTimes(1)
-    expect(errorMock).toHaveBeenCalledWith(myErrorMessage)
+    await waitFor(() => {
+      expect(queryByText(metaErrorMessage)).not.toBeNull()
+      expect(queryByText(metaSuccessMessage)).not.toBeNull()
+    })
   })
 })
