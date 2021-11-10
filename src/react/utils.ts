@@ -8,7 +8,7 @@ export function shouldThrowError<TError>(
     return _useErrorBoundary(error)
   }
 
-  // Allow useErrorBoundary to override suspense's throwing behaviour
+  // Allow useErrorBoundary to override suspense's throwing behavior
   if (typeof _useErrorBoundary === 'boolean') return _useErrorBoundary
 
   // If suspense is enabled default to throwing errors
