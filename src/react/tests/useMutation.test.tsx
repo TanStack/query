@@ -526,7 +526,7 @@ describe('useMutation', () => {
     const errorMock = jest.fn()
     const successMock = jest.fn()
 
-    const queryClientAy = new QueryClient({
+    const queryClientMutationMeta = new QueryClient({
       mutationCache: new MutationCache({
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)
@@ -563,7 +563,10 @@ describe('useMutation', () => {
       )
     }
 
-    const { getByText, queryByText } = renderWithClient(queryClientAy, <Page />)
+    const { getByText, queryByText } = renderWithClient(
+      queryClientMutationMeta,
+      <Page />
+    )
 
     fireEvent.click(getByText('succeed'))
     fireEvent.click(getByText('error'))
