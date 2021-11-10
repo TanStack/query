@@ -82,10 +82,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     )
     const matchingObservers = defaultedQueryOptions
       .map(options => {
-        if (options.queryHash == null) {
-          return null
-        }
-        const match = prevObserversMap[options.queryHash]
+        const match = prevObserversMap[options.queryHash ?? '']
         if (match != null) {
           match.setOptions(options, notifyOptions)
           return match
@@ -94,13 +91,11 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       })
       .filter(notNullOrUndefined)
 
-    const matchedQueryHashes = matchingObservers
-      .map(observer => observer?.options.queryHash)
-      .filter(notNullOrUndefined)
+    const matchedQueryHashes = matchingObservers.map(
+      observer => observer?.options.queryHash
+    )
     const unmatchedQueries = defaultedQueryOptions.filter(
-      options =>
-        options.queryHash !== undefined &&
-        !matchedQueryHashes.includes(options.queryHash)
+      options => !matchedQueryHashes.includes(options.queryHash)
     )
 
     const unmatchedObservers = prevObservers.filter(
@@ -124,7 +119,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       .forEach(observer => {
         newObservers.push(observer)
         newResult.push(observer.getCurrentResult())
-        newObserversMap[observer.options.queryHash!] = observer
+        newObserversMap[observer.options.queryHash ?? ''] = observer
       })
 
     return {
