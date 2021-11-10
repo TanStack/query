@@ -21,7 +21,7 @@ Its available methods are:
 import { focusManager } from 'react-query'
 
 focusManager.setEventListener(handleFocus => {
-  // Listen to visibillitychange and focus
+  // Listen to visibilitychange and focus
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
     window.addEventListener('focus', handleFocus, false)
