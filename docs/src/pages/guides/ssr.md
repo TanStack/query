@@ -112,7 +112,7 @@ As demonstrated, it's fine to prefetch some queries and let others fetch on the 
 Please read the [general tips for this topic](#staleness-is-measured-from-when-the-query-was-fetched-on-the-server) first.
 
 You will need to synchronize your `getStaticProps` revalidation time (via `revalidate`) and the `staleTime` of your query.
-We have to do this, because otherwise it would prevent us from using the static page of Next.js' revalidation result otherwise.
+We have to do this, because otherwise it would prevent us from using the static page of Next.js' revalidation result.
 
 Via `getStaticProps`, we hydrate the query state with fresh data every revalidation cycle.
 Let's say revalidation is configured to be every 5 minutes. After 5 minutes, `getStaticProps` is executed again when a new user request comes in.
