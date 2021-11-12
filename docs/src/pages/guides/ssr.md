@@ -127,7 +127,7 @@ The query is considered stale after 3 minutes, our request comes in after 4 minu
 The pitfall: This refetching will not happen in `getStaticProps` automatically, because the query is not "used" on the server.
 Rather, Next.js sends the existing client to the browser with it's data like it always does. The client therefore has the existing data
 of the last revalidation cycle and can use it for hydration.
-But: The client will immediately refetch this query, because the `staleTime` was reached.
+But: This query will immediately refetch in the browser, because the `staleTime` was reached, even though the data is there.
 
 ## Using Other Frameworks or Custom SSR Frameworks
 
