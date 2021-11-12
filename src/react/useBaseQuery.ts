@@ -131,6 +131,7 @@ export function useBaseQuery<
   // Handle error boundary
   if (
     result.isError &&
+    defaultedOptions.enabled !== false &&
     !result.isFetching &&
     shouldThrowError(
       defaultedOptions.suspense,
