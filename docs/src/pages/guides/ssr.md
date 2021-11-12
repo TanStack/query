@@ -124,9 +124,9 @@ gets created once per revalidation cycle. This means that the internal timer of 
 Let's imagine in our example (5 minutes revalidation cycle and 3 minutes stale time), a request is sent at minute 4 of the revalidation cycle.
 Next.js does not need to revalidate again (because it's less than 5 minutes), so it sends the already existent client with the running `staleTime` timer.
 The query is considered stale after 3 minutes, our request comes in after 4 minutes, so React Query wants to refetch.
+
 The pitfall: This refetching will not happen in `getStaticProps` automatically, because the query is not "used" on the server.
-Rather, Next.js sends the existing client to the browser with it's data like it always does. The client therefore has the existing data
-of the last revalidation cycle and can use it for hydration.
+Rather, Next.js sends the existing client to the browser with its data like it always does. The client therefore has the existing data of the last revalidation cycle and can use it for hydration.
 But: This query will immediately refetch in the browser, because the `staleTime` was reached, even though the data is there.
 
 ## Using Other Frameworks or Custom SSR Frameworks
