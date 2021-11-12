@@ -13,7 +13,7 @@ The `AbortController` API is available in [most runtime environments](https://de
 
 ## Default behavior
 
-By default, queries that unmount or become unused before their promises are resolved are _not_ cancelled. This means that after the promise has resolved, the resulting data will be available in the cache. This is helpful if you've started receiving a query, but then left the page. If you come back and the query has not been garbage collected yet, data will be available.
+By default, queries that unmount or become unused before their promises are resolved are _not_ cancelled. This means that after the promise has resolved, the resulting data will be available in the cache. This is helpful if you've started receiving a query, but then unmount the component before it finishes. If you mount the component again and the query has not been garbage collected yet, data will be available.
 
 However, if you consume the `AbortSignal` or attach a `cancel` function to your Promise, the Promise will be cancelled (e.g. aborting the fetch) and therefore, also the Query must be cancelled. Cancelling the query will result in its state being _reverted_ to its previous state.
 
