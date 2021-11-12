@@ -114,7 +114,7 @@ Please read the [general tips for this topic](#staleness-is-measured-from-when-t
 You will need to synchronize your `getStaticProps` revalidation time (via `revalidate`) and the `staleTime` of your query.
 We have to do this, because otherwise it would prevent us from using the static page of Next.js' revalidation result otherwise.
 
-Via `getStaticProps`, we hydrate the query state with fresh data every revlidation cycle.
+Via `getStaticProps`, we hydrate the query state with fresh data every revalidation cycle.
 Let's say revalidation is configured to be every 5 minutes. After 5 minutes, `getStaticProps` is executed again when a new user request comes in.
 But everything inbetween these 5 minutes, the "old" props result will be sent to the client.
 
