@@ -204,6 +204,65 @@ describe('QueryErrorResetBoundary', () => {
     consoleMock.mockRestore()
   })
 
+  it('should throw error if query is disabled and manually refetched', async () => {
+    const key = queryKey()
+
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { data, refetch, status } = useQuery(
+        key,
+        async () => {
+          throw new Error('Error')
+        },
+        {
+          retry: false,
+          enabled: false,
+          useErrorBoundary: true,
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <div>status: {status}</div>
+          <div>{data}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <Page />
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('status: idle'))
+    rendered.getByRole('button', { name: /refetch/i }).click()
+    await waitFor(() => rendered.getByText('error boundary'))
+
+    consoleMock.mockRestore()
+  })
+
   it('should not retry fetch if the reset error boundary has not been reset', async () => {
     const key = queryKey()
 
