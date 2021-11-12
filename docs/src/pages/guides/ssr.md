@@ -107,6 +107,28 @@ function Posts() {
 
 As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
 
+#### Pitfall with Incremental Static Regeneration (`getStaticProps` with `revalidate`) and `staleTime`
+
+Please read the [general tips for this topic](#staleness-is-measured-from-when-the-query-was-fetched-on-the-server) first.
+
+You will need to synchronize your `getStaticProps` revalidation time (via `revalidate`) and the `staleTime` of your query.
+We have to do this, because otherwise it would prevent us from using the static page of Next.js' revalidation result otherwise.
+
+Via `getStaticProps`, we hydrate the query state with fresh data every revlidation cycle.
+Let's say revalidation is configured to be every 5 minutes. After 5 minutes, `getStaticProps` is executed again when a new user request comes in.
+But everything inbetween these 5 minutes, the "old" props result will be sent to the client.
+
+Now, let's say a query has a `staleTime` of 3 minutes. This means, that React Query wants to refetch a query after 3 minutes (under most circumstances).
+This stale time is bound to the query and the query is bound to the query client. We create the client in `getStaticProps`, which only
+gets created once per revalidation cycle. This means that the internal timer of `staleTime` will continue to run.
+Let's imagine in our example (5 minutes revalidation cycle and 3 minutes stale time), a request is sent at minute 4 of the revalidation cycle.
+Next.js does not need to revalidate again (because it's less than 5 minutes), so it sends the already existent client with the running `staleTime` timer.
+The query is considered stale after 3 minutes, our request comes in after 4 minutes, so React Query wants to refetch.
+The pitfall: This refetching will not happen in `getStaticProps` automatically, because the query is not "used" on the server.
+Rather, Next.js sends the existing client to the browser with it's data like it always does. The client therefore has the existing data
+of the last revalidation cycle and can use it for hydration.
+But: The client will immediately refetch this query, because the `staleTime` was reached.
+
 ## Using Other Frameworks or Custom SSR Frameworks
 
 This guide is at-best, a high level overview of how SSR with React Query should work. Your mileage may vary since there are many different possible setups for SSR.
