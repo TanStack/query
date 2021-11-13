@@ -15,8 +15,6 @@ const dehydratedState = dehydrate(queryClient, {
 })
 ```
 
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `dehydrate` from `react-query/hydration`
-
 **Options**
 
 - `client: QueryClient`
@@ -72,8 +70,6 @@ import { hydrate } from 'react-query'
 hydrate(queryClient, dehydratedState, options)
 ```
 
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `hydrate` from `react-query/hydration`
-
 **Options**
 
 - `client: QueryClient`
@@ -99,8 +95,6 @@ import { useHydrate } from 'react-query'
 useHydrate(dehydratedState, options)
 ```
 
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `useHydrate` from `react-query/hydration`
-
 **Options**
 
 - `dehydratedState: DehydratedState`
@@ -122,8 +116,6 @@ function App() {
   return <Hydrate state={dehydratedState}>...</Hydrate>
 }
 ```
-
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `Hydrate` from `react-query/hydration`
 
 **Options**
 
