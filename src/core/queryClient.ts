@@ -260,12 +260,12 @@ export class QueryClient {
         query.invalidate()
       })
 
-      if (filters?.refetch === 'none') {
+      if (filters?.refetchType === 'none') {
         return Promise.resolve()
       }
       const refetchFilters: RefetchQueryFilters = {
         ...filters,
-        type: filters?.refetch ?? filters?.type ?? 'active',
+        type: filters?.refetchType ?? filters?.type ?? 'active',
       }
       return this.refetchQueries(refetchFilters, options)
     })

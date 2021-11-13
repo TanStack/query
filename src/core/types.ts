@@ -270,7 +270,7 @@ export interface RefetchOptions extends ResultOptions {
 export interface InvalidateQueryFilters<TPageData = unknown>
   extends QueryFilters,
     RefetchPageFilters<TPageData> {
-  refetch?: QueryActivenessFilter | 'none'
+  refetchType?: QueryActivenessFilter | 'none'
 }
 
 export interface RefetchQueryFilters<TPageData = unknown>

@@ -871,7 +871,7 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe()
       queryClient.invalidateQueries(key1, {
-        refetch: 'none',
+        refetchType: 'none',
       })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
@@ -893,7 +893,7 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe()
       queryClient.invalidateQueries(key1, {
-        refetch: 'inactive',
+        refetchType: 'inactive',
       })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -914,7 +914,7 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe()
       queryClient.invalidateQueries({
-        refetch: 'all',
+        refetchType: 'all',
       })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -1070,7 +1070,7 @@ describe('queryClient', () => {
 
       await queryClient.invalidateQueries({
         queryKey: key,
-        refetch: 'all',
+        refetchType: 'all',
         refetchPage: (page, _, allPages) => {
           return page === allPages[0]
         },
