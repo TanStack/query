@@ -694,7 +694,8 @@ describe('queryClient', () => {
       queryClient.invalidateQueries(key1)
       await queryClient.refetchQueries({ stale: true })
       unsubscribe()
-      expect(queryFn1).toHaveBeenCalledTimes(2)
+      // fetchQuery, observer mount, invalidation (cancels observer mount) and refetch
+      expect(queryFn1).toHaveBeenCalledTimes(4)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
@@ -711,7 +712,10 @@ describe('queryClient', () => {
         queryFn: queryFn1,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: true, stale: true })
+      await queryClient.refetchQueries(
+        { active: true, stale: true },
+        { cancelRefetch: false }
+      )
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
