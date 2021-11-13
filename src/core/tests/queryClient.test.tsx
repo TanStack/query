@@ -878,7 +878,7 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    test('should refetch inactive queries and active queries when "refetch" is "all"', async () => {
+    test('should refetch inactive queries when "refetch" is "inactive"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const queryFn1 = jest.fn()
@@ -893,11 +893,32 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe()
       queryClient.invalidateQueries(key1, {
-        refetch: 'all',
+        refetch: 'inactive',
       })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
+    })
+
+    test('should refetch active and inactive queries when "refetch" is "all"', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const queryFn1 = jest.fn()
+      const queryFn2 = jest.fn()
+      await queryClient.fetchQuery(key1, queryFn1)
+      await queryClient.fetchQuery(key2, queryFn2)
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key1,
+        queryFn: queryFn1,
+        staleTime: Infinity,
+      })
+      const unsubscribe = observer.subscribe()
+      queryClient.invalidateQueries({
+        refetch: 'all',
+      })
+      unsubscribe()
+      expect(queryFn1).toHaveBeenCalledTimes(2)
+      expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
     test('should cancel ongoing fetches if cancelRefetch option is passed', async () => {
