@@ -19,7 +19,6 @@ const inputSrcs = [
   ['src/index.ts', 'ReactQuery', 'react-query'],
   ['src/core/index.ts', 'ReactQueryCore', 'react-query-core'],
   ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
-  ['src/hydration/index.ts', 'ReactQueryHydration', 'react-query-hydration'],
   [
     'src/persistQueryClient-experimental/index.ts',
     'ReactQueryPersistQueryClientExperimental',
