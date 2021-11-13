@@ -622,7 +622,7 @@ describe('queryObserver', () => {
       select: () => selectedData,
     })
 
-    await observer.refetch({ queryKey: key })
+    await observer.refetch()
     expect(observer.getCurrentResult().data).toBe(selectedData)
 
     unsubscribe()

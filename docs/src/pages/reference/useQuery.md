@@ -236,6 +236,9 @@ const result = useQuery({
 - `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
-  - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 - `remove: () => void`
   - A function to remove the query from the cache.

@@ -1,4 +1,4 @@
-import { RefetchQueryFilters } from './types'
+import { RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -278,12 +278,15 @@ export class QueryObserver<
     this.client.getQueryCache().remove(this.currentQuery)
   }
 
-  refetch<TPageData>(
-    options?: RefetchOptions & RefetchQueryFilters<TPageData>
-  ): Promise<QueryObserverResult<TData, TError>> {
+  refetch<TPageData>({
+    refetchPage,
+    ...options
+  }: RefetchOptions & RefetchPageFilters<TPageData> = {}): Promise<
+    QueryObserverResult<TData, TError>
+  > {
     return this.fetch({
       ...options,
-      meta: { refetchPage: options?.refetchPage },
+      meta: { refetchPage },
     })
   }
 
@@ -314,9 +317,12 @@ export class QueryObserver<
   }
 
   protected fetch(
-    fetchOptions?: ObserverFetchOptions
+    fetchOptions: ObserverFetchOptions
   ): Promise<QueryObserverResult<TData, TError>> {
-    return this.executeFetch(fetchOptions).then(() => {
+    return this.executeFetch({
+      ...fetchOptions,
+      cancelRefetch: fetchOptions.cancelRefetch ?? true,
+    }).then(() => {
       this.updateResult()
       return this.currentResult
     })

@@ -694,7 +694,8 @@ describe('queryClient', () => {
       queryClient.invalidateQueries(key1)
       await queryClient.refetchQueries({ stale: true })
       unsubscribe()
-      expect(queryFn1).toHaveBeenCalledTimes(2)
+      // fetchQuery, observer mount, invalidation (cancels observer mount) and refetch
+      expect(queryFn1).toHaveBeenCalledTimes(4)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
@@ -711,7 +712,10 @@ describe('queryClient', () => {
         queryFn: queryFn1,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: true, stale: true })
+      await queryClient.refetchQueries(
+        { active: true, stale: true },
+        { cancelRefetch: false }
+      )
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -940,9 +944,10 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    test('should cancel ongoing fetches if cancelRefetch option is passed', async () => {
+    test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
       const cancelFn = jest.fn()
+      let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         enabled: false,
@@ -952,6 +957,7 @@ describe('queryClient', () => {
 
       queryClient.fetchQuery(key, () => {
         const promise = new Promise(resolve => {
+          fetchCount++
           setTimeout(() => resolve(5), 10)
         })
         // @ts-expect-error
@@ -959,9 +965,37 @@ describe('queryClient', () => {
         return promise
       })
 
-      await queryClient.refetchQueries(undefined, { cancelRefetch: true })
+      await queryClient.refetchQueries()
       observer.destroy()
       expect(cancelFn).toHaveBeenCalledTimes(1)
+      expect(fetchCount).toBe(2)
+    })
+
+    test('should not cancel ongoing fetches if cancelRefetch option is set to false', async () => {
+      const key = queryKey()
+      const cancelFn = jest.fn()
+      let fetchCount = 0
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        enabled: false,
+        initialData: 1,
+      })
+      observer.subscribe()
+
+      queryClient.fetchQuery(key, () => {
+        const promise = new Promise(resolve => {
+          fetchCount++
+          setTimeout(() => resolve(5), 10)
+        })
+        // @ts-expect-error
+        promise.cancel = cancelFn
+        return promise
+      })
+
+      await queryClient.refetchQueries(undefined, { cancelRefetch: false })
+      observer.destroy()
+      expect(cancelFn).toHaveBeenCalledTimes(0)
+      expect(fetchCount).toBe(1)
     })
   })
 
