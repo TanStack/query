@@ -14,17 +14,13 @@ import type {
 
 export interface QueryFilters {
   /**
-   * Include or exclude active queries
+   * Filter to active queries, inactive queries or all queries
    */
-  active?: boolean
+  type?: QueryActivenessFilter
   /**
    * Match query key exactly
    */
   exact?: boolean
-  /**
-   * Include or exclude inactive queries
-   */
-  inactive?: boolean
   /**
    * Include queries matching this predicate function
    */
@@ -68,7 +64,7 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
-export type QueryStatusFilter = 'all' | 'active' | 'inactive' | 'none'
+export type QueryActivenessFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
@@ -173,38 +169,11 @@ export function parseMutationFilterArgs(
   return isQueryKey(arg1) ? { ...arg2, mutationKey: arg1 } : arg1
 }
 
-export function mapQueryStatusFilter(
-  active?: boolean,
-  inactive?: boolean
-): QueryStatusFilter {
-  if (
-    (active === true && inactive === true) ||
-    (active == null && inactive == null)
-  ) {
-    return 'all'
-  } else if (active === false && inactive === false) {
-    return 'none'
-  } else {
-    // At this point, active|inactive can only be true|false or false|true
-    // so, when only one value is provided, the missing one has to be the negated value
-    const isActive = active ?? !inactive
-    return isActive ? 'active' : 'inactive'
-  }
-}
-
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>
 ): boolean {
-  const {
-    active,
-    exact,
-    fetching,
-    inactive,
-    predicate,
-    queryKey,
-    stale,
-  } = filters
+  const { type = 'all', exact, fetching, predicate, queryKey, stale } = filters
 
   if (isQueryKey(queryKey)) {
     if (exact) {
@@ -216,16 +185,12 @@ export function matchQuery(
     }
   }
 
-  const queryStatusFilter = mapQueryStatusFilter(active, inactive)
-
-  if (queryStatusFilter === 'none') {
-    return false
-  } else if (queryStatusFilter !== 'all') {
+  if (type !== 'all') {
     const isActive = query.isActive()
-    if (queryStatusFilter === 'active' && !isActive) {
+    if (type === 'active' && !isActive) {
       return false
     }
-    if (queryStatusFilter === 'inactive' && isActive) {
+    if (type === 'inactive' && isActive) {
       return false
     }
   }
