@@ -297,7 +297,7 @@ export class Query<
     const observer = this.observers.find(x => x.shouldFetchOnWindowFocus())
 
     if (observer) {
-      observer.refetch()
+      observer.refetch({ cancelRefetch: false })
     }
 
     // Continue fetch if currently paused
@@ -308,7 +308,7 @@ export class Query<
     const observer = this.observers.find(x => x.shouldFetchOnReconnect())
 
     if (observer) {
-      observer.refetch()
+      observer.refetch({ cancelRefetch: false })
     }
 
     // Continue fetch if currently paused
