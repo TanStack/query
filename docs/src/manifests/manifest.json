@@ -204,6 +204,11 @@
           "title": "Migrating to React Query 3",
           "path": "/guides/migrating-to-react-query-3",
           "editUrl": "/guides/migrating-to-react-query-3.md"
+        },
+        {
+          "title": "Migrating to React Query 4",
+          "path": "/guides/migrating-to-react-query-4",
+          "editUrl": "/guides/migrating-to-react-query-4.md"
         }
       ]
     },
