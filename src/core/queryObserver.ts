@@ -283,6 +283,7 @@ export class QueryObserver<
   ): Promise<QueryObserverResult<TData, TError>> {
     return this.fetch({
       ...options,
+      cancelRefetch: options?.cancelRefetch ?? true,
       meta: { refetchPage: options?.refetchPage },
     })
   }
