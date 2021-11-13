@@ -1,4 +1,4 @@
-import { RefetchQueryFilters } from './types'
+import { RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -281,7 +281,7 @@ export class QueryObserver<
   refetch<TPageData>({
     refetchPage,
     ...options
-  }: RefetchOptions & RefetchQueryFilters<TPageData> = {}): Promise<
+  }: RefetchOptions & RefetchPageFilters<TPageData> = {}): Promise<
     QueryObserverResult<TData, TError>
   > {
     return this.fetch({
