@@ -295,8 +295,10 @@ await queryClient.invalidateQueries('posts', {
 - `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
-  - cancelRefetch?: boolean
-    - When set to `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 
 ## `queryClient.refetchQueries`
 
@@ -328,8 +330,10 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
 - `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
-  - cancelRefetch?: boolean
-    - When set to `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 
 **Returns**
 
@@ -396,8 +400,10 @@ queryClient.resetQueries(queryKey, { exact: true })
 - `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
-  - cancelRefetch?: boolean
-    - When set to `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 
 **Returns**
 
