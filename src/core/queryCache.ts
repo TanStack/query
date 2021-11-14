@@ -8,7 +8,7 @@ import { Action, Query, QueryState } from './query'
 import type { QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
-import { Subscribable } from './subscribable'
+import { Notifiable } from './notifiable'
 import { QueryObserver } from './queryObserver'
 
 // TYPES
@@ -38,20 +38,20 @@ interface NotifyEventQueryUpdated {
   action: Action<any, any>
 }
 
-interface NotifyEventObserverAdded {
-  type: 'observerAdded'
+interface NotifyEventQueryObserverAdded {
+  type: 'queryObserverAdded'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventObserverRemoved {
-  type: 'observerRemoved'
+interface NotifyEventQueryObserverRemoved {
+  type: 'queryObserverRemoved'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventObserverResultsUpdated {
-  type: 'observerResultsUpdated'
+interface NotifyEventQueryObserverResultsUpdated {
+  type: 'queryObserverResultsUpdated'
   query: Query<any, any, any, any>
 }
 
@@ -59,15 +59,13 @@ type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
   | NotifyEventQueryUpdated
-  | NotifyEventObserverAdded
-  | NotifyEventObserverRemoved
-  | NotifyEventObserverResultsUpdated
-
-type QueryCacheListener = (event?: QueryCacheNotifyEvent) => void
+  | NotifyEventQueryObserverAdded
+  | NotifyEventQueryObserverRemoved
+  | NotifyEventQueryObserverResultsUpdated
 
 // CLASS
 
-export class QueryCache extends Subscribable<QueryCacheListener> {
+export class QueryCache extends Notifiable<QueryCacheNotifyEvent> {
   config: QueryCacheConfig
 
   private queries: Query<any, any, any, any>[]
@@ -177,14 +175,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return Object.keys(filters).length > 0
       ? this.queries.filter(query => matchQuery(filters, query))
       : this.queries
-  }
-
-  notify(event: QueryCacheNotifyEvent) {
-    notifyManager.batch(() => {
-      this.listeners.forEach(listener => {
-        listener(event)
-      })
-    })
   }
 
   onFocus(): void {

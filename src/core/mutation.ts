@@ -107,11 +107,23 @@ export class Mutation<
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
+
+      this.mutationCache.notify({
+        type: 'mutationObserverAdded',
+        mutation: this,
+        observer,
+      })
     }
   }
 
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
+
+    this.mutationCache.notify({
+      type: 'mutationObserverRemoved',
+      mutation: this,
+      observer,
+    })
   }
 
   cancel(): Promise<void> {
@@ -249,7 +261,11 @@ export class Mutation<
       this.observers.forEach(observer => {
         observer.onMutationUpdate(action)
       })
-      this.mutationCache.notify(this)
+      this.mutationCache.notify({
+        mutation: this,
+        type: 'mutationUpdated',
+        action,
+      })
     })
   }
 }

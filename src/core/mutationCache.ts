@@ -1,9 +1,10 @@
+import { MutationObserver } from './mutationObserver'
 import type { MutationOptions } from './types'
 import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
-import { Mutation, MutationState } from './mutation'
+import { Action, Mutation, MutationState } from './mutation'
 import { matchMutation, MutationFilters, noop } from './utils'
-import { Subscribable } from './subscribable'
+import { Notifiable } from './notifiable'
 
 // TYPES
 
@@ -12,21 +13,53 @@ interface MutationCacheConfig {
     error: unknown,
     variables: unknown,
     context: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>
+    mutation: Mutation<unknown, unknown, unknown>
   ) => void
   onSuccess?: (
     data: unknown,
     variables: unknown,
     context: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>
+    mutation: Mutation<unknown, unknown, unknown>
   ) => void
 }
 
-type MutationCacheListener = (mutation?: Mutation) => void
+interface NotifyEventMutationAdded {
+  type: 'mutationAdded'
+  mutation: Mutation<any, any, any, any>
+}
+interface NotifyEventMutationRemoved {
+  type: 'mutationRemoved'
+  mutation: Mutation<any, any, any, any>
+}
+
+interface NotifyEventMutationObserverAdded {
+  type: 'mutationObserverAdded'
+  mutation: Mutation<any, any, any, any>
+  observer: MutationObserver<any, any, any>
+}
+
+interface NotifyEventMutationObserverRemoved {
+  type: 'mutationObserverRemoved'
+  mutation: Mutation<any, any, any, any>
+  observer: MutationObserver<any, any, any>
+}
+
+interface NotifyEventMutationUpdated {
+  type: 'mutationUpdated'
+  mutation: Mutation<any, any, any, any>
+  action: Action<any, any, any, any>
+}
+
+type MutationCacheNotifyEvent =
+  | NotifyEventMutationAdded
+  | NotifyEventMutationRemoved
+  | NotifyEventMutationObserverAdded
+  | NotifyEventMutationObserverRemoved
+  | NotifyEventMutationUpdated
 
 // CLASS
 
-export class MutationCache extends Subscribable<MutationCacheListener> {
+export class MutationCache extends Notifiable<MutationCacheNotifyEvent> {
   config: MutationCacheConfig
 
   private mutations: Mutation<any, any, any, any>[]
@@ -61,13 +94,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   add(mutation: Mutation<any, any, any, any>): void {
     this.mutations.push(mutation)
-    this.notify(mutation)
+    this.notify({ type: 'mutationAdded', mutation })
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
     this.mutations = this.mutations.filter(x => x !== mutation)
     mutation.cancel()
-    this.notify(mutation)
+    this.notify({ type: 'mutationRemoved', mutation })
   }
 
   clear(): void {
@@ -94,14 +127,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   findAll(filters: MutationFilters): Mutation[] {
     return this.mutations.filter(mutation => matchMutation(filters, mutation))
-  }
-
-  notify(mutation?: Mutation<any, any, any, any>) {
-    notifyManager.batch(() => {
-      this.listeners.forEach(listener => {
-        listener(mutation)
-      })
-    })
   }
 
   onFocus(): void {
