@@ -1,6 +1,6 @@
 import { isValidTimeout } from './utils'
 
-export class Removable {
+export abstract class Removable {
   cacheTime!: number
   private gcTimeout?: number
 
@@ -31,7 +31,5 @@ export class Removable {
     this.gcTimeout = undefined
   }
 
-  protected optionalRemove() {
-    // Do nothing
-  }
+  protected abstract optionalRemove(): void
 }

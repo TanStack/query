@@ -1,5 +1,5 @@
-import { queryKey, mockConsoleError } from '../../react/tests/utils'
-import { MutationCache, QueryClient } from '../..'
+import { queryKey, mockConsoleError, sleep } from '../../react/tests/utils'
+import { MutationCache, MutationObserver, QueryClient } from '../..'
 
 describe('mutationCache', () => {
   describe('MutationCacheConfig.onError', () => {
@@ -104,6 +104,43 @@ describe('mutationCache', () => {
       expect(
         testCache.findAll({ predicate: m => m.options.variables === 2 })
       ).toEqual([mutation2])
+    })
+  })
+
+  describe('garbage collection', () => {
+    test('should remove unused mutations after cacheTime has elapsed', async () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+      await testClient.executeMutation({
+        mutationKey: ['a', 1],
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: () => Promise.resolve(),
+      })
+
+      expect(testCache.getAll()).toHaveLength(1)
+      await sleep(10)
+      expect(testCache.getAll()).toHaveLength(0)
+    })
+
+    test('should not remove mutations if there are active observers', async () => {
+      const queryClient = new QueryClient()
+      const observer = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: () => Promise.resolve(),
+      })
+      const unsubscribe = observer.subscribe()
+
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      observer.mutate(1)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      unsubscribe()
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
     })
   })
 })

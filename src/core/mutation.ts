@@ -113,7 +113,7 @@ export class Mutation<
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
 
-      // Stop the query from being garbage collected
+      // Stop the mutation from being garbage collected
       this.clearGcTimeout()
 
       this.mutationCache.notify({
@@ -138,6 +138,12 @@ export class Mutation<
       mutation: this,
       observer,
     })
+  }
+
+  protected optionalRemove() {
+    if (!this.observers.length && this.state.status !== 'loading') {
+      this.mutationCache.remove(this)
+    }
   }
 
   cancel(): Promise<void> {
