@@ -3,6 +3,7 @@ import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import { getLogger } from './logger'
 import { notifyManager } from './notifyManager'
+import { Removable } from './removable'
 import { Retryer } from './retryer'
 import { noop } from './utils'
 
@@ -80,7 +81,7 @@ export class Mutation<
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> {
+> extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
@@ -90,6 +91,8 @@ export class Mutation<
   private retryer?: Retryer<TData, TError>
 
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
+    super()
+
     this.options = {
       ...config.defaultOptions,
       ...config.options,
@@ -98,6 +101,8 @@ export class Mutation<
     this.mutationCache = config.mutationCache
     this.observers = []
     this.state = config.state || getDefaultState()
+    this.updateCacheTime(this.options.cacheTime)
+    this.scheduleGc()
   }
 
   setState(state: MutationState<TData, TError, TVariables, TContext>): void {
@@ -107,6 +112,9 @@ export class Mutation<
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
+
+      // Stop the query from being garbage collected
+      this.clearGcTimeout()
 
       this.mutationCache.notify({
         type: 'mutationObserverAdded',
@@ -118,6 +126,12 @@ export class Mutation<
 
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
+
+    if (this.cacheTime) {
+      this.scheduleGc()
+    } else {
+      this.mutationCache.remove(this)
+    }
 
     this.mutationCache.notify({
       type: 'mutationObserverRemoved',
