@@ -45,3 +45,51 @@ queryClient.refetchQueries({ queryKey: ['todos'] }, { cancelRefetch: false })
 ```
 
 > Note: There is no change in behaviour for automatically triggered fetches, e.g. because a query mounts or because of a window focus refetch.
+
+### Query Filters
+
+A [query filter](../guides/filters) is an object with certain conditions to match a query. Historically, the filter options have mostly been a combination of boolean flags. However, combining those flags can lead to impossible states. Specifically:
+
+```
+active?: boolean
+  - When set to true it will match active queries.
+  - When set to false it will match inactive queries.
+inactive?: boolean
+  - When set to true it will match inactive queries.
+  - When set to false it will match active queries.
+```
+
+Those flags don't work well when used together, because they are mutually exclusive. Setting `false` for both flags could match all queries, judging from the description, or no queries, which doesn't make much sense.
+
+With v4, those filters have been combined into a single filter to better show the intent:
+
+```diff
+- active?: boolean
+- inactive?: boolean
++ type?: 'active' | 'inactive' | 'all'
+```
+
+The filter defaults to `all`, and you can choose to only match `active` or `inactive` queries.
+
+#### refetchActive / refetchInactive
+
+[queryClient.invalidateQueries](../reference/QueryClient#queryclientinvalidatequeries) had two additional, similar flags:
+
+```
+refetchActive: Boolean
+  - Defaults to true
+  - When set to false, queries that match the refetch predicate and are actively being rendered via useQuery and friends will NOT be refetched in the background, and only marked as invalid.
+refetchInactive: Boolean
+  - Defaults to false
+  - When set to true, queries that match the refetch predicate and are not being rendered via useQuery and friends will be both marked as invalid and also refetched in the background
+```
+
+For the same reason, those have also been combined:
+
+```diff
+- active?: boolean
+- inactive?: boolean
++ refetchType?: 'active' | 'inactive' | 'all' | 'none'
+```
+
+This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.

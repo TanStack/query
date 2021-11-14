@@ -101,11 +101,11 @@ describe('queriesObserver', () => {
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
     await sleep(1)
     const queryCache = queryClient.getQueryCache()
-    expect(queryCache.find(key1, { active: true })).toBeUndefined()
-    expect(queryCache.find(key2, { active: true })).toBeDefined()
+    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find(key2, { type: 'active' })).toBeDefined()
     unsubscribe()
-    expect(queryCache.find(key1, { active: true })).toBeUndefined()
-    expect(queryCache.find(key2, { active: true })).toBeUndefined()
+    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find(key2, { type: 'active' })).toBeUndefined()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
       { status: 'idle', data: undefined },

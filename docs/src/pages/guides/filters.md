@@ -14,25 +14,23 @@ A query filter is an object with certain conditions to match a query with:
 await queryClient.cancelQueries()
 
 // Remove all inactive queries that begin with `posts` in the key
-queryClient.removeQueries('posts', { inactive: true })
+queryClient.removeQueries('posts', { type: 'inactive' })
 
 // Refetch all active queries
-await queryClient.refetchQueries({ active: true })
+await queryClient.refetchQueries({ type: 'active' })
 
 // Refetch all active queries that begin with `posts` in the key
-await queryClient.refetchQueries('posts', { active: true })
+await queryClient.refetchQueries('posts', { type: 'active' })
 ```
 
 A query filter object supports the following properties:
 
 - `exact?: boolean`
   - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
-- `active?: boolean`
-  - When set to `true` it will match active queries.
-  - When set to `false` it will match inactive queries.
-- `inactive?: boolean`
-  - When set to `true` it will match inactive queries.
-  - When set to `false` it will match active queries.
+- `type?: 'active' | 'inactive' | 'all'`
+  - Defaults to `all`
+  - When set to `active` it will match active queries.
+  - When set to `inactive` it will match inactive queries.
 - `stale?: boolean`
   - When set to `true` it will match stale queries.
   - When set to `false` it will match fresh queries.

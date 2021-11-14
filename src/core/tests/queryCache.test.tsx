@@ -92,20 +92,20 @@ describe('queryCache', () => {
       expect(queryCache.findAll([key1])).toEqual([query1])
       expect(queryCache.findAll()).toEqual([query1, query2, query3, query4])
       expect(queryCache.findAll({})).toEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll(key1, { active: false })).toEqual([query1])
-      expect(queryCache.findAll(key1, { active: true })).toEqual([])
+      expect(queryCache.findAll(key1, { type: 'inactive' })).toEqual([query1])
+      expect(queryCache.findAll(key1, { type: 'active' })).toEqual([])
       expect(queryCache.findAll(key1, { stale: true })).toEqual([])
       expect(queryCache.findAll(key1, { stale: false })).toEqual([query1])
-      expect(queryCache.findAll(key1, { stale: false, active: true })).toEqual(
-        []
-      )
       expect(
-        queryCache.findAll(key1, { stale: false, active: false })
+        queryCache.findAll(key1, { stale: false, type: 'active' })
+      ).toEqual([])
+      expect(
+        queryCache.findAll(key1, { stale: false, type: 'inactive' })
       ).toEqual([query1])
       expect(
         queryCache.findAll(key1, {
           stale: false,
-          active: false,
+          type: 'inactive',
           exact: true,
         })
       ).toEqual([query1])
@@ -128,8 +128,8 @@ describe('queryCache', () => {
         query3,
       ])
       expect(queryCache.findAll([{ a: 'a' }], { stale: true })).toEqual([])
-      expect(queryCache.findAll([{ a: 'a' }], { active: true })).toEqual([])
-      expect(queryCache.findAll([{ a: 'a' }], { inactive: true })).toEqual([
+      expect(queryCache.findAll([{ a: 'a' }], { type: 'active' })).toEqual([])
+      expect(queryCache.findAll([{ a: 'a' }], { type: 'inactive' })).toEqual([
         query3,
       ])
       expect(
