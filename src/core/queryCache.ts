@@ -23,35 +23,35 @@ interface QueryHashMap {
 }
 
 interface NotifyEventQueryAdded {
-  type: 'queryAdded'
+  type: 'added'
   query: Query<any, any, any, any>
 }
 
 interface NotifyEventQueryRemoved {
-  type: 'queryRemoved'
+  type: 'removed'
   query: Query<any, any, any, any>
 }
 
 interface NotifyEventQueryUpdated {
-  type: 'queryUpdated'
+  type: 'updated'
   query: Query<any, any, any, any>
   action: Action<any, any>
 }
 
 interface NotifyEventQueryObserverAdded {
-  type: 'queryObserverAdded'
+  type: 'observerAdded'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
 interface NotifyEventQueryObserverRemoved {
-  type: 'queryObserverRemoved'
+  type: 'observerRemoved'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
 interface NotifyEventQueryObserverResultsUpdated {
-  type: 'queryObserverResultsUpdated'
+  type: 'observerResultsUpdated'
   query: Query<any, any, any, any>
 }
 
@@ -109,7 +109,7 @@ export class QueryCache extends Notifiable<QueryCacheNotifyEvent> {
       this.queriesMap[query.queryHash] = query
       this.queries.push(query)
       this.notify({
-        type: 'queryAdded',
+        type: 'added',
         query,
       })
     }
@@ -127,7 +127,7 @@ export class QueryCache extends Notifiable<QueryCacheNotifyEvent> {
         delete this.queriesMap[query.queryHash]
       }
 
-      this.notify({ type: 'queryRemoved', query })
+      this.notify({ type: 'removed', query })
     }
   }
 

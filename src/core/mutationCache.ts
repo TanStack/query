@@ -24,28 +24,28 @@ interface MutationCacheConfig {
 }
 
 interface NotifyEventMutationAdded {
-  type: 'mutationAdded'
+  type: 'added'
   mutation: Mutation<any, any, any, any>
 }
 interface NotifyEventMutationRemoved {
-  type: 'mutationRemoved'
+  type: 'removed'
   mutation: Mutation<any, any, any, any>
 }
 
 interface NotifyEventMutationObserverAdded {
-  type: 'mutationObserverAdded'
+  type: 'observerAdded'
   mutation: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any>
 }
 
 interface NotifyEventMutationObserverRemoved {
-  type: 'mutationObserverRemoved'
+  type: 'observerRemoved'
   mutation: Mutation<any, any, any, any>
   observer: MutationObserver<any, any, any>
 }
 
 interface NotifyEventMutationUpdated {
-  type: 'mutationUpdated'
+  type: 'updated'
   mutation: Mutation<any, any, any, any>
   action: Action<any, any, any, any>
 }
@@ -94,13 +94,13 @@ export class MutationCache extends Notifiable<MutationCacheNotifyEvent> {
 
   add(mutation: Mutation<any, any, any, any>): void {
     this.mutations.push(mutation)
-    this.notify({ type: 'mutationAdded', mutation })
+    this.notify({ type: 'added', mutation })
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
     this.mutations = this.mutations.filter(x => x !== mutation)
     mutation.cancel()
-    this.notify({ type: 'mutationRemoved', mutation })
+    this.notify({ type: 'removed', mutation })
   }
 
   clear(): void {

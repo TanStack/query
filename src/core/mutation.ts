@@ -117,7 +117,7 @@ export class Mutation<
       this.clearGcTimeout()
 
       this.mutationCache.notify({
-        type: 'mutationObserverAdded',
+        type: 'observerAdded',
         mutation: this,
         observer,
       })
@@ -134,7 +134,7 @@ export class Mutation<
     }
 
     this.mutationCache.notify({
-      type: 'mutationObserverRemoved',
+      type: 'observerRemoved',
       mutation: this,
       observer,
     })
@@ -277,7 +277,7 @@ export class Mutation<
       })
       this.mutationCache.notify({
         mutation: this,
-        type: 'mutationUpdated',
+        type: 'updated',
         action,
       })
     })

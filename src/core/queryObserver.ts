@@ -713,7 +713,7 @@ export class QueryObserver<
       if (notifyOptions.cache) {
         this.client.getQueryCache().notify({
           query: this.currentQuery,
-          type: 'queryObserverResultsUpdated',
+          type: 'observerResultsUpdated',
         })
       }
     })
