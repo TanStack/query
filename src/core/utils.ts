@@ -16,7 +16,7 @@ export interface QueryFilters {
   /**
    * Filter to active queries, inactive queries or all queries
    */
-  type?: QueryActivenessFilter
+  type?: QueryTypeFilter
   /**
    * Match query key exactly
    */
@@ -64,7 +64,7 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
-export type QueryActivenessFilter = 'all' | 'active' | 'inactive'
+export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
