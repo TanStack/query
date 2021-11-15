@@ -510,7 +510,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             maxHeight: '100%',
             overflow: 'auto',
             borderRight: `1px solid ${theme.grayAlt}`,
-            display: 'flex',
+            display: isOpen ? 'flex' : 'none',
             flexDirection: 'column',
           }}
         >
