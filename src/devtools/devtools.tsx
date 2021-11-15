@@ -55,7 +55,7 @@ interface DevtoolsOptions {
   /**
    * Use this to render the devtools inside a different type of container element for a11y purposes.
    * Any string which corresponds to a valid intrinsic JSX element is allowed.
-   * Defaults to 'footer'.
+   * Defaults to 'aside'.
    */
   containerElement?: string | any
 }
@@ -91,7 +91,7 @@ export function ReactQueryDevtools({
   closeButtonProps = {},
   toggleButtonProps = {},
   position = 'bottom-left',
-  containerElement: Container = 'footer',
+  containerElement: Container = 'aside',
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -221,7 +221,11 @@ export function ReactQueryDevtools({
   if (!isMounted()) return null
 
   return (
-    <Container ref={rootRef} className="ReactQueryDevtools">
+    <Container
+      ref={rootRef}
+      className="ReactQueryDevtools"
+      aria-label="React Query Devtools"
+    >
       <ThemeProvider theme={theme}>
         <ReactQueryDevtoolsPanel
           ref={panelRef as any}
