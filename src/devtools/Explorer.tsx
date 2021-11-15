@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React from 'react'
 
 import { styled } from './utils'
@@ -17,7 +15,7 @@ export const Label = styled('span', {
   color: 'white',
 })
 
-export const Value = styled('span', (props, theme) => ({
+export const Value = styled('span', (_props, theme) => ({
   color: theme.danger,
 }))
 
@@ -32,7 +30,12 @@ export const Info = styled('span', {
   fontSize: '.7em',
 })
 
-export const Expander = ({ expanded, style = {}, ...rest }) => (
+type ExpanderProps = {
+  expanded: boolean
+  style?: React.CSSProperties
+}
+
+export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
   <span
     style={{
       display: 'inline-block',
@@ -44,21 +47,38 @@ export const Expander = ({ expanded, style = {}, ...rest }) => (
     ▶
   </span>
 )
+type Entry = {
+  label: string
+}
 
-const DefaultRenderer = ({
-  handleEntry,
+type RendererProps = {
+  handleEntry?: (entry: Entry) => JSX.Element
+  label?: string
+  value?: any
+  subEntries?: Entry[]
+  subEntryPages?: Entry[][]
+  type?: string
+  expanded?: boolean
+  toggle: (set?: boolean) => void
+  pageSize: number
+}
+
+type Renderer = (props: RendererProps) => JSX.Element
+
+const DefaultRenderer: Renderer = ({
+  handleEntry = () => null,
   label,
   value,
   // path,
-  subEntries,
-  subEntryPages,
+  subEntries = [],
+  subEntryPages = [],
   type,
   // depth,
-  expanded,
+  expanded = false,
   toggle,
   pageSize,
 }) => {
-  const [expandedPages, setExpandedPages] = React.useState([])
+  const [expandedPages, setExpandedPages] = React.useState<number[]>([])
 
   return (
     <Entry key={label}>
@@ -117,6 +137,12 @@ const DefaultRenderer = ({
   )
 }
 
+type ExplorerProps = Partial<RendererProps> & {
+  renderer?: Renderer
+  depth?: number
+  defaultExpanded?: true | Record<string, boolean>
+}
+
 export default function Explorer({
   value,
   defaultExpanded,
@@ -124,20 +150,29 @@ export default function Explorer({
   pageSize = 100,
   depth = 0,
   ...rest
-}) {
-  const [expanded, setExpanded] = React.useState(defaultExpanded)
+}: ExplorerProps) {
+  const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
 
-  const toggle = set => {
-    setExpanded(old => (typeof set !== 'undefined' ? set : !old))
+  const toggle = (set?: boolean): void => {
+    setExpanded(old => (typeof set !== 'undefined' ? set : !Boolean(old)))
   }
 
-  const path = []
-
-  let type = typeof value
+  const path: string[] = []
+  let type:
+    | 'string'
+    | 'number'
+    | 'bigint'
+    | 'boolean'
+    | 'symbol'
+    | 'undefined'
+    | 'object'
+    | 'function'
+    | 'array'
+    | 'Iterable' = typeof value
   let subEntries
   const subEntryPages = []
 
-  const makeProperty = sub => {
+  const makeProperty = (sub: { label: string; value: unknown }) => {
     const newPath = path.concat(sub.label)
     const subDefaultExpanded =
       defaultExpanded === true
@@ -155,7 +190,7 @@ export default function Explorer({
     type = 'array'
     subEntries = value.map((d, i) =>
       makeProperty({
-        label: i,
+        label: i.toString(),
         value: d,
       })
     )
@@ -167,7 +202,7 @@ export default function Explorer({
     type = 'Iterable'
     subEntries = Array.from(value, (val, i) =>
       makeProperty({
-        label: i,
+        label: i.toString(),
         value: val,
       })
     )
@@ -193,14 +228,12 @@ export default function Explorer({
 
   return renderer({
     handleEntry: entry => (
-      <Explorer key={entry.label} renderer={renderer} {...rest} {...entry} />
+      <Explorer value={value} renderer={renderer} {...rest} {...entry} />
     ),
     type,
     subEntries,
     subEntryPages,
-    depth,
     value,
-    path,
     expanded,
     toggle,
     pageSize,
