@@ -214,8 +214,12 @@ export class Query<
   }
 
   private optionalRemove() {
-    if (!this.observers.length && !this.state.isFetching) {
-      this.cache.remove(this)
+    if (!this.observers.length) {
+      if (this.state.isFetching) {
+        this.scheduleGc()
+      } else {
+        this.cache.remove(this)
+      }
     }
   }
 
