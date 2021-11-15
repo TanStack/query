@@ -269,6 +269,9 @@ export function ReactQueryDevtools({
           <Button
             type="button"
             aria-label="Close React Query Devtools"
+            aria-controls="ReactQueryDevtoolsPanel"
+            aria-haspopup="true"
+            aria-expanded="true"
             {...(otherCloseButtonProps as unknown)}
             onClick={e => {
               setIsOpen(false)
@@ -306,6 +309,9 @@ export function ReactQueryDevtools({
           type="button"
           {...otherToggleButtonProps}
           aria-label="Open React Query Devtools"
+          aria-controls="ReactQueryDevtoolsPanel"
+          aria-haspopup="true"
+          aria-expanded="false"
           onClick={e => {
             setIsOpen(true)
             onToggleClick && onToggleClick(e)
@@ -453,7 +459,13 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   return (
     <ThemeProvider theme={theme}>
-      <Panel ref={ref} className="ReactQueryDevtoolsPanel" {...panelProps}>
+      <Panel
+        ref={ref}
+        className="ReactQueryDevtoolsPanel"
+        aria-label="React Query Devtools Panel"
+        id="ReactQueryDevtoolsPanel"
+        {...panelProps}
+      >
         <style
           dangerouslySetInnerHTML={{
             __html: `
