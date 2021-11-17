@@ -536,6 +536,7 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
 }

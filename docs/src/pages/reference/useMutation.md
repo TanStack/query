@@ -17,13 +17,14 @@ const {
   reset,
   status,
 } = useMutation(mutationFn, {
+  cacheTime,
   mutationKey,
   onError,
   onMutate,
   onSettled,
   onSuccess,
   useErrorBoundary,
-  meta,
+  meta
 })
 
 mutate(variables, {
@@ -39,6 +40,9 @@ mutate(variables, {
   - **Required**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
+- `cacheTime: number | Infinity`
+  - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
+  - If set to `Infinity`, will disable garbage collection
 - `mutationKey: string`
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults` or to identify the mutation in the devtools.

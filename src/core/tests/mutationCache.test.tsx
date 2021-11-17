@@ -1,5 +1,6 @@
-import { queryKey, mockConsoleError } from '../../reactjs/tests/utils'
-import { MutationCache, QueryClient } from '../..'
+import { waitFor } from '@testing-library/react'
+import { queryKey, mockConsoleError, sleep } from '../../reactjs/tests/utils'
+import { MutationCache, MutationObserver, QueryClient } from '../..'
 
 describe('mutationCache', () => {
   describe('MutationCacheConfig.onError', () => {
@@ -104,6 +105,137 @@ describe('mutationCache', () => {
       expect(
         testCache.findAll({ predicate: m => m.options.variables === 2 })
       ).toEqual([mutation2])
+    })
+  })
+
+  describe('garbage collection', () => {
+    test('should remove unused mutations after cacheTime has elapsed', async () => {
+      const testCache = new MutationCache()
+      const testClient = new QueryClient({ mutationCache: testCache })
+      const onSuccess = jest.fn()
+      await testClient.executeMutation({
+        mutationKey: ['a', 1],
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: () => Promise.resolve(),
+        onSuccess,
+      })
+
+      expect(testCache.getAll()).toHaveLength(1)
+      await sleep(10)
+      await waitFor(() => {
+        expect(testCache.getAll()).toHaveLength(0)
+      })
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+    })
+
+    test('should not remove mutations if there are active observers', async () => {
+      const queryClient = new QueryClient()
+      const observer = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: () => Promise.resolve(),
+      })
+      const unsubscribe = observer.subscribe()
+
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      observer.mutate(1)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      unsubscribe()
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
+    })
+
+    test('should only remove when the last observer unsubscribes', async () => {
+      const queryClient = new QueryClient()
+      const observer1 = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: async () => {
+          await sleep(10)
+          return 'update1'
+        },
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        cacheTime: 10,
+        mutationFn: async () => {
+          await sleep(10)
+          return 'update2'
+        },
+      })
+
+      await observer1.mutate()
+
+      // we currently have no way to add multiple observers to the same mutation
+      const currentMutation = observer1['currentMutation']!
+      currentMutation?.addObserver(observer1)
+      currentMutation?.addObserver(observer2)
+
+      expect(currentMutation['observers'].length).toEqual(2)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+
+      currentMutation?.removeObserver(observer1)
+      currentMutation?.removeObserver(observer2)
+      expect(currentMutation['observers'].length).toEqual(0)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      // wait for cacheTime to gc
+      await sleep(10)
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
+    })
+
+    test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
+      const queryClient = new QueryClient()
+      const onSuccess = jest.fn()
+      const observer = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: async () => {
+          await sleep(20)
+          return 'data'
+        },
+        onSuccess,
+      })
+      const unsubscribe = observer.subscribe()
+      observer.mutate(1)
+      unsubscribe()
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      // unsubscribe should not remove even though cacheTime has elapsed b/c mutation is still loading
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      // should be removed after an additional cacheTime wait
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+    })
+
+    test('should call callbacks even with cacheTime 0 and mutation still loading', async () => {
+      const queryClient = new QueryClient()
+      const onSuccess = jest.fn()
+      const observer = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 0,
+        mutationFn: async () => {
+          return 'data'
+        },
+        onSuccess,
+      })
+      const unsubscribe = observer.subscribe()
+      observer.mutate(1)
+      unsubscribe()
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
+      expect(onSuccess).toHaveBeenCalledTimes(1)
     })
   })
 })
