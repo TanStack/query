@@ -9,6 +9,7 @@ import {
   QueryKey,
   MutationFunction,
   MutateOptions,
+  MutationMeta,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
@@ -97,6 +98,7 @@ export interface UseMutationOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   useErrorBoundary?: boolean | ((error: TError) => boolean)
+  meta?: MutationMeta
 }
 
 export type UseMutateFunction<
