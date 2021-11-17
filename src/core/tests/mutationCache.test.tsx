@@ -147,6 +147,44 @@ describe('mutationCache', () => {
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
     })
 
+    test('should only remove when the last observer unsubscribes', async () => {
+      const queryClient = new QueryClient()
+      const observer1 = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: async () => {
+          await sleep(10)
+          return 'update1'
+        },
+      })
+
+      const observer2 = new MutationObserver(queryClient, {
+        cacheTime: 10,
+        mutationFn: async () => {
+          await sleep(10)
+          return 'update2'
+        },
+      })
+
+      await observer1.mutate()
+
+      // we currently have no way to add multiple observers to the same mutation
+      const currentMutation = observer1['currentMutation']!
+      currentMutation?.addObserver(observer1)
+      currentMutation?.addObserver(observer2)
+
+      expect(currentMutation['observers'].length).toEqual(2)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+
+      currentMutation?.removeObserver(observer1)
+      currentMutation?.removeObserver(observer2)
+      expect(currentMutation['observers'].length).toEqual(0)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      // wait for cacheTime to gc
+      await sleep(10)
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+    })
+
     test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
       const queryClient = new QueryClient()
       const onSuccess = jest.fn()
