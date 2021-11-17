@@ -21,7 +21,7 @@ const inputSrcs = [
   ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
   [
     'src/persistQueryClient/index.ts',
-    'ReactQueryPersistQueryClientExperimental',
+    'ReactQueryPersistQueryClient',
     'persistQueryClient',
   ],
   [
