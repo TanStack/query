@@ -93,3 +93,30 @@ For the same reason, those have also been combined:
 ```
 
 This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.
+
+### Streamlined NotifyEvents
+
+Subscribing manually to the `QueryCache` has always given you a `QueryCacheNotifyEvent`, but this was not true for the `MutationCache`. We have streamlined the behavior and also adapted event names accordingly.
+
+#### QueryCacheNotifyEvent
+
+```diff
+- type: 'queryAdded'
++ type: 'added'
+- type: 'queryRemoved'
++ type: 'removed'
+- type: 'queryUpdated'
++ type: 'updated'
+```
+
+#### MutationCacheNotifyEvent
+
+The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent`.
+
+> Note: This is only relevant if you manually subscribe to the caches via `queryCache.subscribe` or `mutationCache.subscribe`
+
+## New Features 🚀
+
+### Mutation Cache Garbage Collection
+
+Mutations can now also be garbage collected automatically, just like queries. The default `cacheTime` for mutations is also set to 5 minutes.
