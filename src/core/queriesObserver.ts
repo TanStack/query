@@ -1,4 +1,4 @@
-import { difference, notNullOrUndefined, replaceAt } from './utils'
+import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type { QueryObserverOptions, QueryObserverResult } from './types'
 import type { QueryClient } from './queryClient'
@@ -77,17 +77,17 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       this.client.defaultQueryObserverOptions(options)
     )
 
-    const matchingObservers: QueryObserverMatch[] = defaultedQueryOptions
-      .map(defaultedOptions => {
+    const matchingObservers: QueryObserverMatch[] = defaultedQueryOptions.flatMap(
+      defaultedOptions => {
         const match = prevObservers.find(
-          observer => observer.options.queryHash === defaultedOptions.queryHash!
+          observer => observer.options.queryHash === defaultedOptions.queryHash
         )
         if (match != null) {
-          return { defaultedQueryOptions: defaultedOptions, observer: match }
+          return [{ defaultedQueryOptions: defaultedOptions, observer: match }]
         }
-        return null
-      })
-      .filter(notNullOrUndefined)
+        return []
+      }
+    )
 
     const matchedQueryHashes = matchingObservers.map(
       match => match.defaultedQueryOptions.queryHash
@@ -104,7 +104,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
     const newOrReusedObservers: QueryObserverMatch[] = unmatchedQueries.map(
       (options, index) => {
-        if (options.keepPreviousData && unmatchedObservers.length > 0) {
+        if (options.keepPreviousData) {
           // return previous data from one of the observers that no longer match
           const previouslyUsedObserver = unmatchedObservers[index]
           if (previouslyUsedObserver !== undefined) {
