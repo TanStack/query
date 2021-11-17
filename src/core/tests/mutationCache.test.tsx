@@ -1,3 +1,4 @@
+import { waitFor } from '@testing-library/react'
 import { queryKey, mockConsoleError, sleep } from '../../react/tests/utils'
 import { MutationCache, MutationObserver, QueryClient } from '../..'
 
@@ -111,16 +112,19 @@ describe('mutationCache', () => {
     test('should remove unused mutations after cacheTime has elapsed', async () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
+      const onSuccess = jest.fn()
       await testClient.executeMutation({
         mutationKey: ['a', 1],
         variables: 1,
         cacheTime: 10,
         mutationFn: () => Promise.resolve(),
+        onSuccess,
       })
 
       expect(testCache.getAll()).toHaveLength(1)
       await sleep(10)
       expect(testCache.getAll()).toHaveLength(0)
+      expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
     test('should not remove mutations if there are active observers', async () => {
@@ -141,6 +145,51 @@ describe('mutationCache', () => {
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+    })
+
+    test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
+      const queryClient = new QueryClient()
+      const onSuccess = jest.fn()
+      const observer = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 10,
+        mutationFn: async () => {
+          await sleep(20)
+          return 'data'
+        },
+        onSuccess,
+      })
+      const unsubscribe = observer.subscribe()
+      observer.mutate(1)
+      unsubscribe()
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      // unsubscribe should not remove even though cacheTime has elapsed b/c mutation is still loading
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
+      await sleep(10)
+      // should be removed after an additional cacheTime wait
+      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+    })
+
+    test('should call callbacks even with cacheTime 0 and mutation still loading', async () => {
+      const queryClient = new QueryClient()
+      const onSuccess = jest.fn()
+      const observer = new MutationObserver(queryClient, {
+        variables: 1,
+        cacheTime: 0,
+        mutationFn: async () => {
+          return 'data'
+        },
+        onSuccess,
+      })
+      const unsubscribe = observer.subscribe()
+      observer.mutate(1)
+      unsubscribe()
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
+      expect(onSuccess).toHaveBeenCalledTimes(1)
     })
   })
 })

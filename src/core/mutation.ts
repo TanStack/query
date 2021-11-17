@@ -145,8 +145,12 @@ export class Mutation<
   }
 
   protected optionalRemove() {
-    if (!this.observers.length && this.state.status !== 'loading') {
-      this.mutationCache.remove(this)
+    if (!this.observers.length) {
+      if (this.state.status === 'loading') {
+        this.scheduleGc()
+      } else {
+        this.mutationCache.remove(this)
+      }
     }
   }
 
