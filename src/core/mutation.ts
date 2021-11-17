@@ -1,4 +1,4 @@
-import type { MutationOptions, MutationStatus } from './types'
+import type { MutationOptions, MutationStatus, MutationMeta } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import { getLogger } from './logger'
@@ -14,6 +14,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   options: MutationOptions<TData, TError, TVariables, TContext>
   defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
+  meta?: MutationMeta
 }
 
 export interface MutationState<
@@ -84,6 +85,7 @@ export class Mutation<
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
+  meta: MutationMeta | undefined
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
   private mutationCache: MutationCache
@@ -98,6 +100,7 @@ export class Mutation<
     this.mutationCache = config.mutationCache
     this.observers = []
     this.state = config.state || getDefaultState()
+    this.meta = config.meta
   }
 
   setState(state: MutationState<TData, TError, TVariables, TContext>): void {

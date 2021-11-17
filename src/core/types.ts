@@ -500,6 +500,8 @@ export type MutationKey = string | readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
+export type MutationMeta = Record<string, unknown>
+
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables
 ) => Promise<TData>
@@ -535,6 +537,7 @@ export interface MutationOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
+  meta?: MutationMeta
 }
 
 export interface MutationObserverOptions<
