@@ -1,4 +1,4 @@
-import { PersistedClient, Persistor } from '../persistQueryClient-experimental'
+import { PersistedClient, Persistor } from '../persistQueryClient'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>

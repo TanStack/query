@@ -20,9 +20,9 @@ const inputSrcs = [
   ['src/core/index.ts', 'ReactQueryCore', 'react-query-core'],
   ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
   [
-    'src/persistQueryClient-experimental/index.ts',
+    'src/persistQueryClient/index.ts',
     'ReactQueryPersistQueryClientExperimental',
-    'persistQueryClient-experimental',
+    'persistQueryClient',
   ],
   [
     'src/createWebStoragePersistor-experimental/index.ts',

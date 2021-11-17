@@ -55,7 +55,7 @@
     "es",
     "hydration",
     "devtools",
-    "persistQueryClient-experimental",
+    "persistQueryClient",
     "createWebStoragePersistor-experimental",
     "createAsyncStoragePersistor-experimental",
     "broadcastQueryClient-experimental",

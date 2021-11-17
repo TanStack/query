@@ -1,5 +1,5 @@
 import { noop } from '../core/utils'
-import { PersistedClient, Persistor } from '../persistQueryClient-experimental'
+import { PersistedClient, Persistor } from '../persistQueryClient'
 
 interface CreateWebStoragePersistorOptions {
   /** The storage client used for setting an retrieving items from cache */
