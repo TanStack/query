@@ -3,7 +3,7 @@ import {
   queryKey,
   mockConsoleError,
   expectType,
-} from '../../react/tests/utils'
+} from '../../reactjs/tests/utils'
 import {
   QueryClient,
   QueryObserver,

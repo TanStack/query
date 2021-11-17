@@ -115,6 +115,23 @@ The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent
 
 > Note: This is only relevant if you manually subscribe to the caches via `queryCache.subscribe` or `mutationCache.subscribe`
 
+### The `src/react` directory was renamed to `src/reactjs`
+
+Previously, react-query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
+
+```
+TypeError: Cannot read property 'createContext' of undefined
+```
+
+With the renamed directory this no longer is an issue.
+
+If you were importing anything from `'react-query/react'` directly in your project (as opposed to just `'react-query'`), then you need to update your imports:
+
+```diff
+- import { QueryClientProvider } from 'react-query/react';
++ import { QueryClientProvider } from 'react-query/reactjs';
+```
+
 ## New Features 🚀
 
 ### Mutation Cache Garbage Collection

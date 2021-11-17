@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { queryKey, mockConsoleError, sleep } from '../../react/tests/utils'
+import { queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import { MutationCache, MutationObserver, QueryClient } from '../..'
 
 describe('mutationCache', () => {
