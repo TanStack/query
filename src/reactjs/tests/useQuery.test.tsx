@@ -372,7 +372,14 @@ describe('useQuery', () => {
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'data'
+        },
+        { onSuccess }
+      )
 
       states.push(state)
 
@@ -381,7 +388,7 @@ describe('useQuery', () => {
       React.useEffect(() => {
         setActTimeout(() => {
           refetch()
-        }, 10)
+        }, 20)
       }, [refetch])
 
       return null
@@ -924,16 +931,23 @@ describe('useQuery', () => {
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangePropsExclusions: [
-          'data',
-          'isFetching',
-          'isLoading',
-          'isRefetching',
-          'isSuccess',
-          'status',
-        ],
-      })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'test'
+        },
+        {
+          notifyOnChangePropsExclusions: [
+            'data',
+            'isFetching',
+            'isLoading',
+            'isRefetching',
+            'isSuccess',
+            'status',
+          ],
+        }
+      )
 
       states.push(state)
 
@@ -942,7 +956,7 @@ describe('useQuery', () => {
       React.useEffect(() => {
         setActTimeout(() => {
           refetch()
-        }, 5)
+        }, 20)
       }, [refetch])
 
       return null
@@ -950,7 +964,7 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await sleep(50)
 
     expect(states.length).toBe(3)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
@@ -964,18 +978,27 @@ describe('useQuery', () => {
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-      })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'test'
+        },
+        {
+          notifyOnChangeProps: 'tracked',
+        }
+      )
 
       states.push(state)
 
       const { refetch, data } = state
 
       React.useEffect(() => {
-        if (data) {
-          refetch()
-        }
+        setActTimeout(() => {
+          if (data) {
+            refetch()
+          }
+        }, 20)
       }, [refetch, data])
 
       return (
@@ -1070,33 +1093,33 @@ describe('useQuery', () => {
 
       const { remove } = state
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          remove()
-        }, 5)
-        setActTimeout(() => {
-          rerender({})
-        }, 10)
-      }, [remove, rerender])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => remove()}>remove</button>
+          <button onClick={() => rerender({})}>rerender</button>
+          data: {state.data ?? 'null'}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+    rendered.getByRole('button', { name: /remove/i }).click()
 
     await sleep(20)
+    rendered.getByRole('button', { name: /rerender/i }).click()
+    await waitFor(() => rendered.getByText('data: 2'))
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
     // Initial
-    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
     // Fetched
-    expect(states[1]).toMatchObject({ data: 1 })
-    // Remove
-    expect(states[2]).toMatchObject({ data: undefined })
-    // Hook state update
-    expect(states[3]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ status: 'success', data: 1 })
+    // Remove + Hook state update, batched
+    expect(states[2]).toMatchObject({ status: 'loading', data: undefined })
     // Fetched
-    expect(states[4]).toMatchObject({ data: 2 })
+    expect(states[3]).toMatchObject({ status: 'success', data: 2 })
   })
 
   it('should be create a new query when refetching a removed query', async () => {
