@@ -1122,7 +1122,7 @@ describe('useQuery', () => {
     expect(states[3]).toMatchObject({ status: 'success', data: 2 })
   })
 
-  it('should be create a new query when refetching a removed query', async () => {
+  it('should create a new query when refetching a removed query', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
     let count = 0
@@ -1134,21 +1134,23 @@ describe('useQuery', () => {
 
       const { remove, refetch } = state
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          remove()
-        }, 5)
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      }, [remove, refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => remove()}>remove</button>
+          <button onClick={() => refetch()}>refetch</button>
+          data: {state.data ?? 'null'}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+    rendered.getByRole('button', { name: /remove/i }).click()
 
     await sleep(20)
+    rendered.getByRole('button', { name: /refetch/i }).click()
+    await waitFor(() => rendered.getByText('data: 2'))
 
     expect(states.length).toBe(4)
     // Initial
@@ -1179,7 +1181,8 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useQuery(key, () => {
+      const state = useQuery(key, async () => {
+        await sleep(10)
         count++
         return count === 1 ? result1 : result2
       })
@@ -1188,15 +1191,20 @@ describe('useQuery', () => {
 
       const { refetch } = state
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      }, [refetch])
-      return null
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          data: {String(state.data?.[1]?.done)}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: false'))
+    await sleep(20)
+    rendered.getByRole('button', { name: /refetch/i }).click()
+    await waitFor(() => rendered.getByText('data: true'))
 
     await waitFor(() => expect(states.length).toBe(4))
 
