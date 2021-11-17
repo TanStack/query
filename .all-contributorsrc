@@ -147,6 +147,15 @@
         "question",
         "review"
       ]
+    },
+    {
+      "login": "KATT",
+      "name": "Alex Johansson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/459267?v=4",
+      "profile": "https://katt.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
