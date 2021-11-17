@@ -324,7 +324,10 @@ describe('useMutation', () => {
     const key = queryKey()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: async (text: string) => {
+        await sleep(10)
+        return text
+      },
     })
 
     const states: UseMutationResult<any, any, any, any>[] = []
@@ -399,7 +402,8 @@ describe('useMutation', () => {
 
     function Page() {
       const state = useMutation(
-        (_text: string) => {
+        async (_text: string) => {
+          await sleep(1)
           count++
           return count > 1 ? Promise.resolve('data') : Promise.reject('oops')
         },
