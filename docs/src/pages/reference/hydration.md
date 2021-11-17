@@ -5,7 +5,7 @@ title: hydration
 
 ## `dehydrate`
 
-`dehydrate` creates a frozen representation of a `cache` that can later be hydrated with `Hydrate`, `useHydrate`, or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localstorage or other persistent locations. It only includes currently successful queries by default.
+`dehydrate` creates a frozen representation of a `cache` that can later be hydrated with `Hydrate`, `useHydrate`, or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localStorage or other persistent locations. It only includes currently successful queries by default.
 
 ```js
 import { dehydrate } from 'react-query'
@@ -14,8 +14,6 @@ const dehydratedState = dehydrate(queryClient, {
   shouldDehydrateQuery,
 })
 ```
-
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `dehydrate` from `react-query/hydration`
 
 **Options**
 
@@ -72,8 +70,6 @@ import { hydrate } from 'react-query'
 hydrate(queryClient, dehydratedState, options)
 ```
 
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `hydrate` from `react-query/hydration`
-
 **Options**
 
 - `client: QueryClient`
@@ -99,8 +95,6 @@ import { useHydrate } from 'react-query'
 useHydrate(dehydratedState, options)
 ```
 
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `useHydrate` from `react-query/hydration`
-
 **Options**
 
 - `dehydratedState: DehydratedState`
@@ -122,8 +116,6 @@ function App() {
   return <Hydrate state={dehydratedState}>...</Hydrate>
 }
 ```
-
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `Hydrate` from `react-query/hydration`
 
 **Options**
 

@@ -1,5 +1,3 @@
-import { noop } from './utils'
-
 // TYPES
 
 export interface Logger {
@@ -12,11 +10,7 @@ type LogFunction = (...args: any[]) => void
 
 // FUNCTIONS
 
-let logger: Logger = console || {
-  error: noop,
-  warn: noop,
-  log: noop,
-}
+let logger: Logger = console
 
 export function getLogger(): Logger {
   return logger

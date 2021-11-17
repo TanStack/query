@@ -646,4 +646,255 @@ describe('query', () => {
       })
     )
   })
+
+  test('should set default options', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+
+    query.setDefaultOptions({ retryDelay: 20 })
+
+    await queryClient.prefetchQuery(key, () => 'data', {
+      cacheTime: 100,
+    })
+
+    expect(query.options).toMatchObject({ cacheTime: 100, retryDelay: 20 })
+  })
+
+  test('should refetch the observer when online method is called', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    const refetchSpy = jest.spyOn(observer, 'refetch')
+    const unsubscribe = observer.subscribe()
+    queryCache.onOnline()
+
+    // Should refetch the observer
+    expect(refetchSpy).toHaveBeenCalledTimes(1)
+
+    unsubscribe()
+    refetchSpy.mockRestore()
+  })
+
+  test('should not add an existing observer', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+    expect(query.getObserversCount()).toEqual(0)
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+    expect(query.getObserversCount()).toEqual(0)
+
+    query.addObserver(observer)
+    expect(query.getObserversCount()).toEqual(1)
+
+    query.addObserver(observer)
+    expect(query.getObserversCount()).toEqual(1)
+  })
+
+  test('should not try to remove an observer that does not exist', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+    expect(query.getObserversCount()).toEqual(0)
+
+    const notifySpy = jest.spyOn(queryCache, 'notify')
+    expect(() => query.removeObserver(observer)).not.toThrow()
+    expect(notifySpy).not.toHaveBeenCalled()
+
+    notifySpy.mockRestore()
+  })
+
+  test('should not dispatch "invalidate" on invalidate() if already invalidated', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+
+    query.invalidate()
+    expect(query.state.isInvalidated).toBeTruthy()
+
+    const dispatchOriginal = query['dispatch']
+    const dispatchSpy = jest.fn()
+    query['dispatch'] = dispatchSpy
+
+    query.invalidate()
+
+    expect(query.state.isInvalidated).toBeTruthy()
+    expect(dispatchSpy).not.toHaveBeenCalled()
+
+    query['dispatch'] = dispatchOriginal
+  })
+
+  test('reducer should return the state for an unknown action type', async () => {
+    const key = queryKey()
+
+    await queryClient.prefetchQuery(key, () => 'data')
+    const query = queryCache.find(key)!
+
+    // Force unknown action type
+    //@ts-expect-error
+    const reducedState = query['reducer'](query.state, { type: 'unknown' })
+    expect(reducedState).toEqual(query.state)
+  })
+
+  test('fetch should not dispatch "fetch" if state meta and fetchOptions meta are the same object', async () => {
+    const key = queryKey()
+
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    const query = queryCache.find(key)!
+
+    const meta = { meta1: '1' }
+
+    // This first fetch will set the state.meta value
+    query.fetch(
+      {
+        queryKey: key,
+        queryFn,
+      },
+      {
+        meta,
+      }
+    )
+
+    // Spy on private dispatch method
+    const dispatchOriginal = query['dispatch']
+    const dispatchSpy = jest.fn()
+    query['dispatch'] = dispatchSpy
+
+    // Second fetch in parallel with the same meta
+    query.fetch(
+      {
+        queryKey: key,
+        queryFn,
+      },
+      {
+        meta,
+        // cancelRefetch must be set to true to enter in the case to test
+        // where isFetching is true
+        cancelRefetch: true,
+      }
+    )
+
+    // Should not call dispatch with type set to fetch
+    expect(dispatchSpy).not.toHaveBeenCalledWith({
+      meta,
+      type: 'fetch',
+    })
+
+    // Clean-up
+    await sleep(20)
+    query['dispatch'] = dispatchOriginal
+  })
+
+  test('fetch should not set the signal in the queryFnContext if AbortController is undefined', async () => {
+    const key = queryKey()
+
+    // Mock the AbortController to be undefined
+    const AbortControllerOriginal = globalThis['AbortController']
+    //@ts-expect-error
+    globalThis['AbortController'] = undefined
+
+    let signalTest: any
+    await queryClient.prefetchQuery(key, ({ signal }) => {
+      signalTest = signal
+    })
+
+    expect(signalTest).toBeUndefined()
+
+    // Clean-up
+    //@ts-ignore
+    globalThis['AbortController'] = AbortControllerOriginal
+  })
+
+  test('fetch should throw an error if the queryFn is not defined', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: undefined,
+      retry: false,
+    })
+
+    const unsubscribe = observer.subscribe()
+    await sleep(10)
+    expect(consoleMock).toHaveBeenCalledWith('Missing queryFn')
+
+    unsubscribe()
+    consoleMock.mockRestore()
+  })
+
+  test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {
+    const key = queryKey()
+
+    const queryFn = async () => {
+      await sleep(10)
+      return 'data'
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    const query = queryCache.find(key)!
+
+    query.fetch({
+      queryKey: key,
+      queryFn,
+    })
+
+    // Force promise to undefined
+    // because no use case have been identified
+    query['promise'] = undefined
+
+    // Spy on private dispatch method
+    const dispatchOriginal = query['dispatch']
+    const dispatchSpy = jest.fn()
+    query['dispatch'] = dispatchSpy
+
+    query.fetch({
+      queryKey: key,
+      queryFn,
+    })
+
+    // Should call dispatch with type set to fetch
+    expect(dispatchSpy).toHaveBeenCalledWith({
+      meta: undefined,
+      type: 'fetch',
+    })
+
+    // Clean-up
+    await sleep(20)
+    query['dispatch'] = dispatchOriginal
+  })
+
+  test('constructor should call initialDataUpdatedAt if defined as a function', async () => {
+    const key = queryKey()
+
+    const initialDataUpdatedAtSpy = jest.fn()
+
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
+      initialData: 'initial',
+      initialDataUpdatedAt: initialDataUpdatedAtSpy,
+    })
+
+    expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
+  })
 })

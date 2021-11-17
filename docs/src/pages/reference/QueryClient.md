@@ -91,7 +91,7 @@ try {
 
 **Options**
 
-The options for `fetchQuery` are exactly the same as those of [`useQuery`](./useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, notifyOnChangePropsExclusions, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are stictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
+The options for `fetchQuery` are exactly the same as those of [`useQuery`](./useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, notifyOnChangePropsExclusions, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
 
 **Returns**
 
@@ -268,14 +268,13 @@ queryClient.setQueriesData(queryKey | filters, updater)
 
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as invalid and active queries are refetched in the background.
 
-- If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchActive: false` option.
-- If you **want inactive queries to refetch** as well, use the `refetchInactive: true` option
+- If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchType: 'none'` option.
+- If you **want inactive queries to refetch** as well, use the `refetchTye: 'all'` option
 
 ```js
 await queryClient.invalidateQueries('posts', {
   exact,
-  refetchActive: true,
-  refetchInactive: false
+  refetchType: 'active',
 }, { throwOnError, cancelRefetch })
 ```
 
@@ -283,20 +282,22 @@ await queryClient.invalidateQueries('posts', {
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-  - `refetchActive: Boolean`
-    - Defaults to `true`
-    - When set to `false`, queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will NOT be refetched in the background, and only marked as invalid.
-  - `refetchInactive: Boolean`
-    - Defaults to `false`
-    - When set to `true`, queries that match the refetch predicate and are not being rendered via `useQuery` and friends will be both marked as invalid and also refetched in the background
+  - `refetchType?: 'active' | 'inactive' | 'all' | 'none'`
+    - Defaults to `'active'`
+    - When set to `active`, only queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will be refetched in the background.
+    - When set to `inactive`, only queries that match the refetch predicate and are NOT actively being rendered via `useQuery` and friends will be refetched in the background.
+    - When set to `all`, all queries that match the refetch predicate will be refetched in the background.
+    - When set to `none`, no queries will be refetched, and those that match the refetch predicate will be marked as invalid only.
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
 - `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
-  - cancelRefetch?: boolean
-    - When set to `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 
 ## `queryClient.refetchQueries`
 
@@ -312,10 +313,10 @@ await queryClient.refetchQueries()
 await queryClient.refetchQueries({ stale: true })
 
 // refetch all active queries partially matching a query key:
-await queryClient.refetchQueries(['posts'], { active: true })
+await queryClient.refetchQueries(['posts'], { type: 'active' })
 
 // refetch all active queries exactly matching a query key:
-await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
+await queryClient.refetchQueries(['posts', 1], { type: 'active', exact: true })
 ```
 
 **Options**
@@ -328,8 +329,10 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
 - `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
-  - cancelRefetch?: boolean
-    - When set to `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 
 **Returns**
 
@@ -396,8 +399,10 @@ queryClient.resetQueries(queryKey, { exact: true })
 - `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
-  - cancelRefetch?: boolean
-    - When set to `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 
 **Returns**
 

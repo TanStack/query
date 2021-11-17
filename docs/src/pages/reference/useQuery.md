@@ -176,7 +176,7 @@ const result = useQuery({
 - `useErrorBoundary: undefined | boolean | (error: TError) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
-  - Set this to `false` to disable `suspense`'s default behaviour of throwing errors to the error boundary.
+  - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
 - `meta: Record<string, unknown>`
   - Optional
@@ -236,6 +236,9 @@ const result = useQuery({
 - `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
-  - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 - `remove: () => void`
   - A function to remove the query from the cache.

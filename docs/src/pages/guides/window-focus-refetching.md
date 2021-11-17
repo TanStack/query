@@ -34,7 +34,7 @@ In rare circumstances, you may want to manage your own window focus events that 
 
 ```js
 focusManager.setEventListener(handleFocus => {
-  // Listen to visibillitychange and focus
+  // Listen to visibilitychange and focus
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
     window.addEventListener('focus', handleFocus, false)

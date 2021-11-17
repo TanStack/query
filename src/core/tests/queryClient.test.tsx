@@ -5,7 +5,9 @@ import {
   QueryClient,
   QueryFunction,
   QueryObserver,
+  MutationObserver,
 } from '../..'
+import { focusManager, onlineManager } from '..'
 
 describe('queryClient', () => {
   let queryClient: QueryClient
@@ -46,6 +48,15 @@ describe('queryClient', () => {
       await testClient.prefetchQuery(key, fetchData)
       const newQuery = testClient.getQueryCache().find(key)
       expect(newQuery?.options.cacheTime).toBe(Infinity)
+    })
+
+    test('should get defaultOptions', async () => {
+      const queryFn = () => 'data'
+      const defaultOptions = { queries: { queryFn } }
+      const testClient = new QueryClient({
+        defaultOptions,
+      })
+      expect(testClient.getDefaultOptions()).toMatchObject(defaultOptions)
     })
   })
 
@@ -100,6 +111,15 @@ describe('queryClient', () => {
         queryKey: [key],
       })
       expect(observer.getCurrentResult().status).toBe('idle')
+    })
+
+    test('should update existing query defaults', async () => {
+      const key = queryKey()
+      const queryOptions1 = { queryFn: () => 'data' }
+      const queryOptions2 = { retry: false }
+      queryClient.setQueryDefaults(key, queryOptions1)
+      queryClient.setQueryDefaults(key, queryOptions2)
+      expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
     })
   })
 
@@ -169,6 +189,35 @@ describe('queryClient', () => {
 
       expect(updater).toHaveBeenCalled()
       expect(queryCache.find(key)!.state.data).toEqual('new data + test data')
+    })
+
+    test('should use prev data if an isDataEqual function is defined and returns "true"', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: { isDataEqual: (_prev, data) => data === 'data' },
+      })
+      queryClient.setQueryData(key, 'prev data')
+      queryClient.setQueryData(key, 'data')
+
+      expect(queryCache.find(key)!.state.data).toEqual('prev data')
+    })
+
+    test('should set the new data without comparison if structuralSharing is set to false', () => {
+      const key = queryKey()
+
+      queryClient.setDefaultOptions({
+        queries: {
+          structuralSharing: false,
+        },
+      })
+
+      const oldData = { value: true }
+      const newData = { value: true }
+      queryClient.setQueryData(key, oldData)
+      queryClient.setQueryData(key, newData)
+
+      expect(queryCache.find(key)!.state.data).toBe(newData)
     })
   })
 
@@ -565,6 +614,25 @@ describe('queryClient', () => {
       })
       consoleMock.mockRestore()
     })
+
+    test('should not revert if revert option is set to false', async () => {
+      const consoleMock = mockConsoleError()
+      const key1 = queryKey()
+      await queryClient.fetchQuery(key1, async () => {
+        return 'data'
+      })
+      queryClient.fetchQuery(key1, async () => {
+        await sleep(1000)
+        return 'data2'
+      })
+      await sleep(10)
+      await queryClient.cancelQueries(key1, {}, { revert: false })
+      const state1 = queryClient.getQueryState(key1)
+      expect(state1).toMatchObject({
+        status: 'error',
+      })
+      consoleMock.mockRestore()
+    })
   })
 
   describe('refetchQueries', () => {
@@ -605,7 +673,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: true, stale: false })
+      await queryClient.refetchQueries({ type: 'active', stale: false })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -626,7 +694,8 @@ describe('queryClient', () => {
       queryClient.invalidateQueries(key1)
       await queryClient.refetchQueries({ stale: true })
       unsubscribe()
-      expect(queryFn1).toHaveBeenCalledTimes(2)
+      // fetchQuery, observer mount, invalidation (cancels observer mount) and refetch
+      expect(queryFn1).toHaveBeenCalledTimes(4)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
@@ -643,7 +712,10 @@ describe('queryClient', () => {
         queryFn: queryFn1,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: true, stale: true })
+      await queryClient.refetchQueries(
+        { type: 'active', stale: true },
+        { cancelRefetch: false }
+      )
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -681,7 +753,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: true, inactive: true })
+      await queryClient.refetchQueries({ type: 'all' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(2)
@@ -700,7 +772,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: true })
+      await queryClient.refetchQueries({ type: 'active' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
@@ -719,29 +791,34 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ inactive: true })
+      await queryClient.refetchQueries({ type: 'inactive' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
-    test('should skip refetch for all active and inactive queries', async () => {
+    test('should throw an error if throwOnError option is set to true', async () => {
+      const consoleMock = mockConsoleError()
       const key1 = queryKey()
-      const key2 = queryKey()
-      const queryFn1 = jest.fn()
-      const queryFn2 = jest.fn()
-      await queryClient.fetchQuery(key1, queryFn1)
-      await queryClient.fetchQuery(key2, queryFn2)
-      const observer = new QueryObserver(queryClient, {
-        queryKey: key1,
-        queryFn: queryFn1,
-        staleTime: Infinity,
-      })
-      const unsubscribe = observer.subscribe()
-      await queryClient.refetchQueries({ active: false, inactive: false })
-      unsubscribe()
-      expect(queryFn1).toHaveBeenCalledTimes(1)
-      expect(queryFn2).toHaveBeenCalledTimes(1)
+      const queryFnError = () => Promise.reject('error')
+      try {
+        await queryClient.fetchQuery({
+          queryKey: key1,
+          queryFn: queryFnError,
+          retry: false,
+        })
+      } catch {}
+      let error: any
+      try {
+        await queryClient.refetchQueries(
+          { queryKey: key1 },
+          { throwOnError: true }
+        )
+      } catch (err) {
+        error = err
+      }
+      expect(error).toEqual('error')
+      consoleMock.mockRestore()
     })
   })
 
@@ -784,7 +861,7 @@ describe('queryClient', () => {
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    test('should not refetch active queries when "refetchActive" is false', async () => {
+    test('should not refetch active queries when "refetch" is "none"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const queryFn1 = jest.fn()
@@ -798,14 +875,14 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe()
       queryClient.invalidateQueries(key1, {
-        refetchActive: false,
+        refetchType: 'none',
       })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    test('should refetch inactive queries when "refetchInactive" is true', async () => {
+    test('should refetch inactive queries when "refetch" is "inactive"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const queryFn1 = jest.fn()
@@ -820,14 +897,14 @@ describe('queryClient', () => {
       })
       const unsubscribe = observer.subscribe()
       queryClient.invalidateQueries(key1, {
-        refetchInactive: true,
+        refetchType: 'inactive',
       })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
 
-    test('should not refetch active queries when "refetchActive" is not provided and "active" is false', async () => {
+    test('should refetch active and inactive queries when "refetch" is "all"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
       const queryFn1 = jest.fn()
@@ -840,17 +917,18 @@ describe('queryClient', () => {
         staleTime: Infinity,
       })
       const unsubscribe = observer.subscribe()
-      queryClient.invalidateQueries(key1, {
-        active: false,
+      queryClient.invalidateQueries({
+        refetchType: 'all',
       })
       unsubscribe()
-      expect(queryFn1).toHaveBeenCalledTimes(1)
-      expect(queryFn2).toHaveBeenCalledTimes(1)
+      expect(queryFn1).toHaveBeenCalledTimes(2)
+      expect(queryFn2).toHaveBeenCalledTimes(2)
     })
 
-    test('should cancel ongoing fetches if cancelRefetch option is passed', async () => {
+    test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
       const cancelFn = jest.fn()
+      let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         enabled: false,
@@ -860,6 +938,7 @@ describe('queryClient', () => {
 
       queryClient.fetchQuery(key, () => {
         const promise = new Promise(resolve => {
+          fetchCount++
           setTimeout(() => resolve(5), 10)
         })
         // @ts-expect-error
@@ -867,9 +946,37 @@ describe('queryClient', () => {
         return promise
       })
 
-      await queryClient.refetchQueries(undefined, { cancelRefetch: true })
+      await queryClient.refetchQueries()
       observer.destroy()
       expect(cancelFn).toHaveBeenCalledTimes(1)
+      expect(fetchCount).toBe(2)
+    })
+
+    test('should not cancel ongoing fetches if cancelRefetch option is set to false', async () => {
+      const key = queryKey()
+      const cancelFn = jest.fn()
+      let fetchCount = 0
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        enabled: false,
+        initialData: 1,
+      })
+      observer.subscribe()
+
+      queryClient.fetchQuery(key, () => {
+        const promise = new Promise(resolve => {
+          fetchCount++
+          setTimeout(() => resolve(5), 10)
+        })
+        // @ts-expect-error
+        promise.cancel = cancelFn
+        return promise
+      })
+
+      await queryClient.refetchQueries(undefined, { cancelRefetch: false })
+      observer.destroy()
+      expect(cancelFn).toHaveBeenCalledTimes(0)
+      expect(fetchCount).toBe(1)
     })
   })
 
@@ -997,7 +1104,7 @@ describe('queryClient', () => {
 
       await queryClient.invalidateQueries({
         queryKey: key,
-        refetchInactive: true,
+        refetchType: 'all',
         refetchPage: (page, _, allPages) => {
           return page === allPages[0]
         },
@@ -1029,7 +1136,7 @@ describe('queryClient', () => {
 
       await queryClient.resetQueries({
         queryKey: key,
-        inactive: true,
+        type: 'inactive',
         refetchPage: (page, _, allPages) => {
           return page === allPages[0]
         },
@@ -1038,6 +1145,91 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
       })
+    })
+  })
+
+  describe('focusManager and onlineManager', () => {
+    test('should not notify queryCache and mutationCache if not focused or online', async () => {
+      const testClient = new QueryClient()
+      testClient.mount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus'
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline'
+      )
+      const mutationCacheOnFocusSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onFocus'
+      )
+      const mutationCacheOnOnlineSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onOnline'
+      )
+
+      focusManager.setFocused(false)
+      expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      onlineManager.setOnline(false)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      onlineManager.setOnline(false)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(false)
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      testClient.unmount()
+      onlineManager.setOnline(true)
+      focusManager.setFocused(true)
+      queryCacheOnFocusSpy.mockRestore()
+      mutationCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheOnOnlineSpy.mockRestore()
+    })
+  })
+
+  describe('cancelMutations', () => {
+    test('should cancel mutations', async () => {
+      const key = queryKey()
+      const mutationObserver = new MutationObserver(queryClient, {
+        mutationKey: key,
+        mutationFn: async () => {
+          await sleep(20)
+          return 'data'
+        },
+        onMutate: text => text,
+      })
+      await mutationObserver.mutate()
+      const mutation = queryClient
+        .getMutationCache()
+        .find({ mutationKey: key })!
+      const mutationSpy = jest.spyOn(mutation, 'cancel')
+      queryClient.cancelMutations()
+      expect(mutationSpy).toHaveBeenCalled()
+      mutationSpy.mockRestore()
+    })
+  })
+  describe('setMutationDefaults', () => {
+    test('should update existing mutation defaults', () => {
+      const key = queryKey()
+      const mutationOptions1 = { mutationFn: async () => 'data' }
+      const mutationOptions2 = { retry: false }
+      queryClient.setMutationDefaults(key, mutationOptions1)
+      queryClient.setMutationDefaults(key, mutationOptions2)
+      expect(queryClient.getMutationDefaults(key)).toMatchObject(
+        mutationOptions2
+      )
     })
   })
 })

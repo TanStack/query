@@ -203,8 +203,8 @@ export class QueryClient {
     const queryCache = this.queryCache
 
     const refetchFilters: RefetchQueryFilters = {
+      type: 'active',
       ...filters,
-      active: true,
     }
 
     return notifyManager.batch(() => {
@@ -255,18 +255,18 @@ export class QueryClient {
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
-    const refetchFilters: RefetchQueryFilters = {
-      ...filters,
-      // if filters.refetchActive is not provided and filters.active is explicitly false,
-      // e.g. invalidateQueries({ active: false }), we don't want to refetch active queries
-      active: filters.refetchActive ?? filters.active ?? true,
-      inactive: filters.refetchInactive ?? false,
-    }
-
     return notifyManager.batch(() => {
       this.queryCache.findAll(filters).forEach(query => {
         query.invalidate()
       })
+
+      if (filters?.refetchType === 'none') {
+        return Promise.resolve()
+      }
+      const refetchFilters: RefetchQueryFilters = {
+        ...filters,
+        type: filters?.refetchType ?? filters?.type ?? 'active',
+      }
       return this.refetchQueries(refetchFilters, options)
     })
   }
@@ -291,6 +291,7 @@ export class QueryClient {
       this.queryCache.findAll(filters).map(query =>
         query.fetch(undefined, {
           ...options,
+          cancelRefetch: options?.cancelRefetch ?? true,
           meta: { refetchPage: filters?.refetchPage },
         })
       )

@@ -23,6 +23,7 @@ const {
   onSettled,
   onSuccess,
   useErrorBoundary,
+  meta,
 })
 
 mutate(variables, {
@@ -69,8 +70,11 @@ mutate(variables, {
 - `useErrorBoundary: undefined | boolean | (error: TError) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
   - Set this to `true` if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
-  - Set this to `false` to disable the behaviour of throwing errors to the error boundary.
+  - Set this to `false` to disable the behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+- `meta: Record<string, unknown>`
+  - Optional
+  - If set, stores additional information on the mutation cache entry that can be used as needed. It will be accessible wherever the `mutation` is available (eg. `onError`, `onSuccess` functions of the `MutationCache`).
 
 **Returns**
 

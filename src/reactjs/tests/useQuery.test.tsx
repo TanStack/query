@@ -549,6 +549,108 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+
+    function Page() {
+      const { refetch } = useQuery(
+        key,
+        async () => {
+          fetchCount++
+          await sleep(10)
+          return 'data'
+        },
+        { enabled: false, initialData: 'initialData' }
+      )
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 5)
+        setActTimeout(() => {
+          refetch({ cancelRefetch: false })
+        }, 5)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+    // first refetch only, second refetch is ignored
+    expect(fetchCount).toBe(1)
+  })
+
+  it('should cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we have data already', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+
+    function Page() {
+      const { refetch } = useQuery(
+        key,
+        async () => {
+          fetchCount++
+          await sleep(10)
+          return 'data'
+        },
+        { enabled: false, initialData: 'initialData' }
+      )
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 5)
+        setActTimeout(() => {
+          refetch()
+        }, 5)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+    // first refetch (gets cancelled) and second refetch
+    expect(fetchCount).toBe(2)
+  })
+
+  it('should not cancel an ongoing fetch when refetch is called (cancelRefetch=true) if we do not have data yet', async () => {
+    const key = queryKey()
+    let fetchCount = 0
+
+    function Page() {
+      const { refetch } = useQuery(
+        key,
+        async () => {
+          fetchCount++
+          await sleep(10)
+          return 'data'
+        },
+        { enabled: false }
+      )
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          refetch()
+        }, 5)
+        setActTimeout(() => {
+          refetch()
+        }, 5)
+      }, [refetch])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+    // first refetch will not get cancelled, second one gets skipped
+    expect(fetchCount).toBe(1)
+  })
+
   it('should be able to watch a query without providing a query function', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []

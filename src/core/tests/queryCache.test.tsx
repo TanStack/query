@@ -1,5 +1,6 @@
 import { sleep, queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import { QueryCache, QueryClient } from '../..'
+import { Query } from '.././query'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -64,6 +65,13 @@ describe('queryCache', () => {
       const query = queryCache.find(key)!
       expect(query).toBeDefined()
     })
+
+    test('find should filter correctly with exact set to false', async () => {
+      const key = queryKey()
+      await queryClient.prefetchQuery(key, () => 'data1')
+      const query = queryCache.find(key, { exact: false })!
+      expect(query).toBeDefined()
+    })
   })
 
   describe('findAll', () => {
@@ -84,20 +92,20 @@ describe('queryCache', () => {
       expect(queryCache.findAll([key1])).toEqual([query1])
       expect(queryCache.findAll()).toEqual([query1, query2, query3, query4])
       expect(queryCache.findAll({})).toEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll(key1, { active: false })).toEqual([query1])
-      expect(queryCache.findAll(key1, { active: true })).toEqual([])
+      expect(queryCache.findAll(key1, { type: 'inactive' })).toEqual([query1])
+      expect(queryCache.findAll(key1, { type: 'active' })).toEqual([])
       expect(queryCache.findAll(key1, { stale: true })).toEqual([])
       expect(queryCache.findAll(key1, { stale: false })).toEqual([query1])
-      expect(queryCache.findAll(key1, { stale: false, active: true })).toEqual(
-        []
-      )
       expect(
-        queryCache.findAll(key1, { stale: false, active: false })
+        queryCache.findAll(key1, { stale: false, type: 'active' })
+      ).toEqual([])
+      expect(
+        queryCache.findAll(key1, { stale: false, type: 'inactive' })
       ).toEqual([query1])
       expect(
         queryCache.findAll(key1, {
           stale: false,
-          active: false,
+          type: 'inactive',
           exact: true,
         })
       ).toEqual([query1])
@@ -120,14 +128,22 @@ describe('queryCache', () => {
         query3,
       ])
       expect(queryCache.findAll([{ a: 'a' }], { stale: true })).toEqual([])
-      expect(queryCache.findAll([{ a: 'a' }], { active: true })).toEqual([])
-      expect(queryCache.findAll([{ a: 'a' }], { inactive: true })).toEqual([
+      expect(queryCache.findAll([{ a: 'a' }], { type: 'active' })).toEqual([])
+      expect(queryCache.findAll([{ a: 'a' }], { type: 'inactive' })).toEqual([
         query3,
       ])
       expect(
         queryCache.findAll({ predicate: query => query === query3 })
       ).toEqual([query3])
       expect(queryCache.findAll('posts')).toEqual([query4])
+    })
+
+    test('should return all the queries when no filters are defined', async () => {
+      const key1 = queryKey()
+      const key2 = queryKey()
+      await queryClient.prefetchQuery(key1, () => 'data1')
+      await queryClient.prefetchQuery(key2, () => 'data2')
+      expect(queryCache.findAll().length).toBe(2)
     })
   })
 
@@ -156,6 +172,45 @@ describe('queryCache', () => {
       consoleMock.mockRestore()
       const query = testCache.find(key)
       expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
+    })
+  })
+
+  describe('QueryCache.add', () => {
+    test('should not try to add a query already added to the cache', async () => {
+      const key = queryKey()
+      const hash = `["${key}"]`
+
+      await queryClient.prefetchQuery(key, () => 'data1')
+
+      // Directly add the query from the cache
+      // to simulate a race condition
+      const query = queryCache['queriesMap'][hash] as Query
+      const queryClone = Object.assign({}, query)
+
+      // No error should be thrown when trying to add the query
+      queryCache.add(queryClone)
+      expect(queryCache['queries'].length).toEqual(1)
+
+      // Clean-up to avoid an error when queryClient.clear()
+      delete queryCache['queriesMap'][hash]
+    })
+
+    describe('QueryCache.remove', () => {
+      test('should not try to remove a query already removed from the cache', async () => {
+        const key = queryKey()
+        const hash = `["${key}"]`
+
+        await queryClient.prefetchQuery(key, () => 'data1')
+
+        // Directly remove the query from the cache
+        // to simulate a race condition
+        const query = queryCache['queriesMap'][hash] as Query
+        const queryClone = Object.assign({}, query)
+        delete queryCache['queriesMap'][hash]
+
+        // No error should be thrown when trying to remove the query
+        expect(() => queryCache.remove(queryClone)).not.toThrow()
+      })
     })
   })
 })
