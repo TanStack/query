@@ -93,3 +93,20 @@ For the same reason, those have also been combined:
 ```
 
 This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.
+
+### The `src/react` directory was renamed to `src/reactjs`
+
+Previously, react-query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
+
+```
+TypeError: Cannot read property 'createContext' of undefined
+```
+
+With the renamed directory this no longer is an issue.
+
+If you were importing anything from `'react-query/react'` directly in your project (as opposed to just `'react-query'`), then you need to update your imports:
+
+```diff
+- import { QueryClientProvider } from 'react-query/react';
++ import { QueryClientProvider } from 'react-query/reactjs';
+```
