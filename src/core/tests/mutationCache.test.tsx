@@ -123,7 +123,9 @@ describe('mutationCache', () => {
 
       expect(testCache.getAll()).toHaveLength(1)
       await sleep(10)
-      expect(testCache.getAll()).toHaveLength(0)
+      await waitFor(() => {
+        expect(testCache.getAll()).toHaveLength(0)
+      })
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
@@ -144,7 +146,9 @@ describe('mutationCache', () => {
       unsubscribe()
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
     })
 
     test('should only remove when the last observer unsubscribes', async () => {
@@ -182,7 +186,9 @@ describe('mutationCache', () => {
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       // wait for cacheTime to gc
       await sleep(10)
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
     })
 
     test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
@@ -206,7 +212,9 @@ describe('mutationCache', () => {
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       await sleep(10)
       // should be removed after an additional cacheTime wait
-      expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      await waitFor(() => {
+        expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
+      })
       expect(onSuccess).toHaveBeenCalledTimes(1)
     })
 
