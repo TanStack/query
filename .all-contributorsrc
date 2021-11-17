@@ -147,7 +147,7 @@
         "question",
         "review"
       ]
-    },
+    }
   ],
   "contributorsPerLine": 7,
   "skipCi": true
