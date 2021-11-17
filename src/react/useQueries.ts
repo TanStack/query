@@ -1,5 +1,7 @@
 import React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
+
+import { notifyManager } from '../core'
 import { QueryFunction } from '../core/types'
 
 import { QueriesObserver } from '../core/queriesObserver'
@@ -131,7 +133,11 @@ export function useQueries<T extends any[]>(
   const result = observer.getOptimisticResult(defaultedQueries)
 
   useSyncExternalStore(
-    observer.subscribe,
+    React.useCallback(
+      onStoreChange =>
+        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer]
+    ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult()
   )

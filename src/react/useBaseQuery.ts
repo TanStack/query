@@ -1,9 +1,7 @@
 import React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
-import { QueryKey } from '../core'
-import { notifyManager } from '../core/notifyManager'
-import { QueryObserver } from '../core/queryObserver'
+import { QueryKey, notifyManager, QueryObserver } from '../core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
@@ -83,7 +81,11 @@ export function useBaseQuery<
   const result = observer.getOptimisticResult(defaultedOptions)
 
   useSyncExternalStore(
-    observer.subscribe,
+    React.useCallback(
+      onStoreChange =>
+        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer]
+    ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult()
   )

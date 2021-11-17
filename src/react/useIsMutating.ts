@@ -1,5 +1,7 @@
+import React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
+import { notifyManager } from '../core'
 import { QueryKey } from '../core/types'
 import { MutationFilters, parseMutationFilterArgs } from '../core/utils'
 import { useQueryClient } from './QueryClientProvider'
@@ -16,9 +18,14 @@ export function useIsMutating(
   const filters = parseMutationFilterArgs(arg1, arg2)
 
   const queryClient = useQueryClient()
+  const queryCache = queryClient.getQueryCache()
 
   return useSyncExternalStore(
-    queryClient.getQueryCache().subscribe,
+    React.useCallback(
+      onStoreChange =>
+        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [queryCache]
+    ),
     () => queryClient.isMutating(filters),
     () => queryClient.isMutating(filters)
   )

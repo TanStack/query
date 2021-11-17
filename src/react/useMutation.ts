@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
+import { notifyManager } from '../core'
 import { noop, parseMutationArgs } from '../core/utils'
 import { MutationObserver } from '../core/mutationObserver'
 import { useQueryClient } from './QueryClientProvider'
@@ -90,7 +91,11 @@ export function useMutation<
   }, [observer, options])
 
   const result = useSyncExternalStore(
-    observer.subscribe,
+    React.useCallback(
+      onStoreChange =>
+        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer]
+    ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult()
   )
