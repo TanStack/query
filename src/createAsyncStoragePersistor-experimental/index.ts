@@ -1,4 +1,4 @@
-import { PersistedClient, Persistor } from '../persistQueryClient'
+import { PersistedClient, Persister } from '../persistQueryClient'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
@@ -32,7 +32,7 @@ export const createAsyncStoragePersistor = ({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-}: CreateAsyncStoragePersistorOptions): Persistor => {
+}: CreateAsyncStoragePersistorOptions): Persister => {
   return {
     persistClient: asyncThrottle(
       persistedClient => storage.setItem(key, serialize(persistedClient)),

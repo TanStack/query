@@ -1,5 +1,5 @@
 import { noop } from '../core/utils'
-import { PersistedClient, Persistor } from '../persistQueryClient'
+import { PersistedClient, Persister } from '../persistQueryClient'
 
 interface CreateWebStoragePersistorOptions {
   /** The storage client used for setting an retrieving items from cache */
@@ -27,7 +27,7 @@ export function createWebStoragePersistor({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-}: CreateWebStoragePersistorOptions): Persistor {
+}: CreateWebStoragePersistorOptions): Persister {
   //try to save data to storage
   function trySave(persistedClient: PersistedClient) {
     try {
