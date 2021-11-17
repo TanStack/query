@@ -86,7 +86,7 @@ describe('Server side rendering with de/rehydration', () => {
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
-    expect(el.innerHTML).toBe(expectedMarkup)
+    expect(el.innerText).toBe(expectedMarkup)
 
     ReactDOM.unmountComponentAtNode(el)
     consoleMock.mockRestore()
@@ -126,7 +126,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'ErrorComponent - status:loading fetching:true data:undefined'
+      '<!-- -->ErrorComponent - status:loading fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
@@ -190,7 +190,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      'SuccessComponent - status:loading fetching:true data:undefined'
+      '<!-- -->SuccessComponent - status:loading fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
