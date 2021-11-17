@@ -1,7 +1,7 @@
 import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
-import type { QueryFilters } from './utils'
+import type { QueryFilters, QueryTypeFilter } from './utils'
 
 export type QueryKey = string | readonly unknown[]
 export type EnsuredQueryKey<T extends QueryKey> = T extends string
@@ -270,8 +270,7 @@ export interface RefetchOptions extends ResultOptions {
 export interface InvalidateQueryFilters<TPageData = unknown>
   extends QueryFilters,
     RefetchPageFilters<TPageData> {
-  refetchActive?: boolean
-  refetchInactive?: boolean
+  refetchType?: QueryTypeFilter | 'none'
 }
 
 export interface RefetchQueryFilters<TPageData = unknown>
@@ -537,6 +536,7 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
 }

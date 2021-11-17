@@ -2,7 +2,6 @@ import {
   getAbortController,
   Updater,
   functionalUpdate,
-  isValidTimeout,
   noop,
   replaceEqualDeep,
   timeUntilStale,
@@ -24,6 +23,7 @@ import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
 import { Retryer, isCancelledError } from './retryer'
+import { Removable } from './removable'
 
 // TYPES
 
@@ -146,25 +146,25 @@ export class Query<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> {
+> extends Removable {
   queryKey: TQueryKey
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   initialState: QueryState<TData, TError>
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
-  cacheTime!: number
   meta: QueryMeta | undefined
 
   private cache: QueryCache
   private promise?: Promise<TData>
-  private gcTimeout?: number
   private retryer?: Retryer<TData, TError>
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
+    super()
+
     this.abortSignalConsumed = false
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
@@ -185,11 +185,7 @@ export class Query<
 
     this.meta = options?.meta
 
-    // Default to 5 minutes if not cache time is set
-    this.cacheTime = Math.max(
-      this.cacheTime || 0,
-      this.options.cacheTime ?? 5 * 60 * 1000
-    )
+    this.updateCacheTime(this.options.cacheTime)
   }
 
   setDefaultOptions(
@@ -198,22 +194,7 @@ export class Query<
     this.defaultOptions = options
   }
 
-  private scheduleGc(): void {
-    this.clearGcTimeout()
-
-    if (isValidTimeout(this.cacheTime)) {
-      this.gcTimeout = setTimeout(() => {
-        this.optionalRemove()
-      }, this.cacheTime)
-    }
-  }
-
-  private clearGcTimeout() {
-    clearTimeout(this.gcTimeout)
-    this.gcTimeout = undefined
-  }
-
-  private optionalRemove() {
+  protected optionalRemove() {
     if (!this.observers.length && !this.state.isFetching) {
       this.cache.remove(this)
     }
@@ -260,7 +241,8 @@ export class Query<
   }
 
   destroy(): void {
-    this.clearGcTimeout()
+    super.destroy()
+
     this.cancel({ silent: true })
   }
 
@@ -297,7 +279,7 @@ export class Query<
     const observer = this.observers.find(x => x.shouldFetchOnWindowFocus())
 
     if (observer) {
-      observer.refetch()
+      observer.refetch({ cancelRefetch: false })
     }
 
     // Continue fetch if currently paused
@@ -308,7 +290,7 @@ export class Query<
     const observer = this.observers.find(x => x.shouldFetchOnReconnect())
 
     if (observer) {
-      observer.refetch()
+      observer.refetch({ cancelRefetch: false })
     }
 
     // Continue fetch if currently paused
@@ -508,7 +490,7 @@ export class Query<
         observer.onQueryUpdate(action)
       })
 
-      this.cache.notify({ query: this, type: 'queryUpdated', action })
+      this.cache.notify({ query: this, type: 'updated', action })
     })
   }
 

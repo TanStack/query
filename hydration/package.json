@@ -1,6 +1,0 @@
-{
-  "internal": true,
-  "main": "../lib/hydration/index.js",
-  "module": "../es/hydration/index.js",
-  "types": "../types/hydration/index.d.ts"
-}

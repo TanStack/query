@@ -11,7 +11,6 @@
   },
   "files": [
     "./src/index.ts",
-    "./src/hydration/index.ts",
     "./src/devtools/index.ts",
     "./src/persistQueryClient-experimental/index.ts",
     "./src/createWebStoragePersistor-experimental/index.ts",
