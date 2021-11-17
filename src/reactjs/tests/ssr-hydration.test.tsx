@@ -1,7 +1,9 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import ReactDOM, { Root } from 'react-dom'
 import ReactDOMTestUtils from 'react-dom/test-utils'
 import ReactDOMServer from 'react-dom/server'
+// eslint-disable-next-line import/no-unresolved -- types only for module augmentation
+import type {} from 'react-dom/next'
 
 import {
   useQuery,
@@ -24,9 +26,8 @@ function setIsServer(isServer: boolean) {
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   // @ts-expect-error
   if (String(process.env.REACTJS_VERSION || '18') === '18') {
-    let root: any
+    let root: Root
     ReactDOMTestUtils.act(() => {
-      // @ts-expect-error
       root = ReactDOM.hydrateRoot(container, element)
     })
     return () => {
@@ -49,7 +50,7 @@ function PrintStateComponent({ componentName, result }: any): any {
   return `${componentName} - status:${result.status} fetching:${result.isFetching} data:${result.data}`
 }
 
-describe.skip('Server side rendering with de/rehydration', () => {
+describe('Server side rendering with de/rehydration', () => {
   let previousIsReactActEnvironment: unknown
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
@@ -96,6 +97,7 @@ describe.skip('Server side rendering with de/rehydration', () => {
       'SuccessComponent - status:success fetching:true data:success'
 
     expect(markup).toBe(expectedMarkup)
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
 
     // -- Client part --
     const consoleMock = mockConsoleError()
@@ -115,8 +117,8 @@ describe.skip('Server side rendering with de/rehydration', () => {
 
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
-    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
-    expect(el.innerText).toBe(expectedMarkup)
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
+    expect(el.innerHTML).toBe(expectedMarkup)
 
     unmount()
     consoleMock.mockRestore()
@@ -177,12 +179,12 @@ describe.skip('Server side rendering with de/rehydration', () => {
 
     // We expect exactly one console.error here, which is from the
     expect(consoleMock).toHaveBeenCalledTimes(1)
-    expect(fetchDataError).toHaveBeenCalledTimes(1)
+    expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
-      'ErrorComponent - status:error fetching:false data:undefined'
+      '<!-- -->ErrorComponent - status:error fetching:false data:undefined'
     )
 
     unmount()
@@ -240,12 +242,12 @@ describe.skip('Server side rendering with de/rehydration', () => {
 
     // Check that we have no React hydration mismatches
     expect(consoleMock).not.toHaveBeenCalled()
-    expect(fetchDataSuccess).toHaveBeenCalledTimes(0)
+    expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(
-      'SuccessComponent - status:success fetching:false data:success!'
+      '<!-- -->SuccessComponent - status:success fetching:false data:success!'
     )
 
     unmount()
