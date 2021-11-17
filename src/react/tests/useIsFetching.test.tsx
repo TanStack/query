@@ -19,7 +19,7 @@ describe('useIsFetching', () => {
       useQuery(
         key,
         async () => {
-          await sleep(1000)
+          await sleep(50)
           return 'test'
         },
         {
