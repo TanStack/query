@@ -1,5 +1,5 @@
 import { dehydrate, MutationCache, QueryCache, QueryClient } from '../../core'
-import { sleep } from '../../react/tests/utils'
+import { sleep } from '../../reactjs/tests/utils'
 import { createWebStoragePersistor } from '../index'
 
 function getMockStorage(limitSize?: number) {
