@@ -454,6 +454,30 @@ describe('useQuery', () => {
     expect(states.length).toBe(1)
     expect(onSuccess).toHaveBeenCalledTimes(0)
   })
+  
+  it('should call onSuccess when data changed', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+      states.push(state)
+      React.useEffect(() => {
+        setActTimeout(() => {
+          queryClient.setQueryData(key, 'data')
+        }, 10)
+      }, [])
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+    expect(states.length).toBe(3)
+    expect(onSuccess).toHaveBeenCalledTimes(2)
+    expect(onSuccess).toHaveBeenNthCalledWith(2, 'data')
+  })
 
   it('should call onError after a query has been fetched with an error', async () => {
     const key = queryKey()
