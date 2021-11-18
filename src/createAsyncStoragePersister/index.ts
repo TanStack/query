@@ -1,4 +1,4 @@
-import { PersistedClient, Persistor } from '../persistQueryClient-experimental'
+import { PersistedClient, Persister } from '../persistQueryClient'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
@@ -6,7 +6,7 @@ interface AsyncStorage {
   removeItem: (key: string) => Promise<void>
 }
 
-interface CreateAsyncStoragePersistorOptions {
+interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage
   /** The key to use when storing the cache */
@@ -26,13 +26,13 @@ interface CreateAsyncStoragePersistorOptions {
   deserialize?: (cachedString: string) => PersistedClient
 }
 
-export const createAsyncStoragePersistor = ({
+export const createAsyncStoragePersister = ({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-}: CreateAsyncStoragePersistorOptions): Persistor => {
+}: CreateAsyncStoragePersisterOptions): Persister => {
   return {
     persistClient: asyncThrottle(
       persistedClient => storage.setItem(key, serialize(persistedClient)),

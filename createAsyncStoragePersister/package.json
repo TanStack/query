@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/createAsyncStoragePersister/index.js",
+  "module": "../es/createAsyncStoragePersister/index.js",
+  "types": "../types/createAsyncStoragePersister/index.d.ts"
+}
