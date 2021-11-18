@@ -136,7 +136,7 @@ export class QueryClient {
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     return this.queryCache
       .build(this, defaultedOptions)
-      .setData(updater, options)
+      .setData(updater, { ...options, notifySuccess: false })
   }
 
   setQueriesData<TData>(
