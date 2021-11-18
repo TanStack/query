@@ -596,9 +596,9 @@ export class QueryObserver<
       return true
     }
 
-    const { notifyOnChangeProps, notifyOnChangePropsExclusions } = this.options
+    const { notifyOnChangeProps } = this.options
 
-    if (!notifyOnChangeProps && !notifyOnChangePropsExclusions) {
+    if (!notifyOnChangeProps) {
       return true
     }
 
@@ -615,8 +615,7 @@ export class QueryObserver<
       const typedKey = key as keyof QueryObserverResult
       const changed = result[typedKey] !== prevResult[typedKey]
       const isIncluded = includedProps?.some(x => x === key)
-      const isExcluded = notifyOnChangePropsExclusions?.some(x => x === key)
-      return changed && !isExcluded && (!includedProps || isIncluded)
+      return changed && (!includedProps || isIncluded)
     })
   }
 

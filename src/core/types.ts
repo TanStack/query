@@ -162,10 +162,6 @@ export interface QueryObserverOptions<
    */
   notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'tracked'
   /**
-   * If set, the component will not re-render if any of the listed properties change.
-   */
-  notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
-  /**
    * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
    */
   onSuccess?: (data: TData) => void

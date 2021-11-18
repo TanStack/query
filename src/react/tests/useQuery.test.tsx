@@ -917,46 +917,6 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should re-render when dataUpdatedAt changes but data remains the same', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-
-    function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangePropsExclusions: [
-          'data',
-          'isFetching',
-          'isLoading',
-          'isRefetching',
-          'isSuccess',
-          'status',
-        ],
-      })
-
-      states.push(state)
-
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 5)
-      }, [refetch])
-
-      return null
-    }
-
-    renderWithClient(queryClient, <Page />)
-
-    await sleep(10)
-
-    expect(states.length).toBe(3)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 'test', isFetching: false })
-    expect(states[2]).toMatchObject({ data: 'test', isFetching: false })
-    expect(states[1]?.dataUpdatedAt).not.toBe(states[2]?.dataUpdatedAt)
-  })
-
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -990,37 +950,6 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
-  })
-
-  it('should not re-render if a tracked prop changes, but it was excluded', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-
-    function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-        notifyOnChangePropsExclusions: ['data'],
-      })
-
-      states.push(state)
-
-      return (
-        <div>
-          <h1>{state.data ?? 'null'}</h1>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('null'))
-    expect(states.length).toBe(1)
-    expect(states[0]).toMatchObject({ data: undefined })
-
-    await queryClient.refetchQueries(key)
-    await waitFor(() => rendered.getByText('null'))
-    expect(states.length).toBe(1)
-    expect(states[0]).toMatchObject({ data: undefined })
   })
 
   it('should always re-render if we are tracking props but not using any', async () => {
