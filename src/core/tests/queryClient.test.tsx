@@ -1,5 +1,14 @@
-import { sleep, queryKey, mockConsoleError } from '../../reactjs/tests/utils'
+import { waitFor } from '@testing-library/react'
+import React from 'react'
+
 import {
+  sleep,
+  queryKey,
+  mockConsoleError,
+  renderWithClient,
+} from '../../reactjs/tests/utils'
+import {
+  useQuery,
   InfiniteQueryObserver,
   QueryCache,
   QueryClient,
@@ -218,6 +227,32 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, newData)
 
       expect(queryCache.find(key)!.state.data).toBe(newData)
+    })
+
+    test('should not call onSuccess callback of active observers', async () => {
+      const key = queryKey()
+      const onSuccess = jest.fn()
+
+      function Page() {
+        const state = useQuery(key, () => 'data', { onSuccess })
+        return (
+          <div>
+            <div>data: {state.data}</div>
+            <button onClick={() => queryClient.setQueryData(key, 'newData')}>
+              setQueryData
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: data'))
+      rendered.getByRole('button', { name: /setQueryData/i }).click()
+      await waitFor(() => rendered.getByText('data: newData'))
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess).toHaveBeenCalledWith('data')
     })
   })
 
