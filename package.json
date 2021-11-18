@@ -16,13 +16,13 @@
   "module": "es/index.js",
   "sideEffects": [
     "es/index.js",
-    "es/react/index.js",
-    "es/react/setBatchUpdatesFn.js",
-    "es/react/setLogger.js",
+    "es/reactjs/index.js",
+    "es/reactjs/setBatchUpdatesFn.js",
+    "es/reactjs/setLogger.js",
     "lib/index.js",
-    "lib/react/index.js",
-    "lib/react/setBatchUpdatesFn.js",
-    "lib/react/setLogger.js"
+    "lib/reactjs/index.js",
+    "lib/reactjs/setBatchUpdatesFn.js",
+    "lib/reactjs/setLogger.js"
   ],
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
@@ -60,7 +60,7 @@
     "createAsyncStoragePersister",
     "broadcastQueryClient-experimental",
     "lib",
-    "react",
+    "reactjs",
     "scripts",
     "types"
   ],
@@ -81,7 +81,11 @@
     }
   },
   "typesVersions": {
-    "<4.1": { "types/*": ["types/ts3.8/*"] }
+    "<4.1": {
+      "types/*": [
+        "types/ts3.8/*"
+      ]
+    }
   },
   "devDependencies": {
     "@babel/cli": "^7.11.6",

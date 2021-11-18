@@ -60,8 +60,8 @@ const mutations = mutationCache.getAll()
 The `subscribe` method can be used to subscribe to the mutation cache as a whole and be informed of safe/known updates to the cache like mutation states changing or mutations being updated, added or removed.
 
 ```js
-const callback = mutation => {
-  console.log(mutation)
+const callback = event => {
+  console.log(event.type, event.mutation)
 }
 
 const unsubscribe = mutationCache.subscribe(callback)
@@ -69,7 +69,7 @@ const unsubscribe = mutationCache.subscribe(callback)
 
 **Options**
 
-- `callback: (mutation?: Mutation) => void`
+- `callback: (mutation?: MutationCacheNotifyEvent) => void`
   - This function will be called with the mutation cache any time it is updated.
 
 **Returns**

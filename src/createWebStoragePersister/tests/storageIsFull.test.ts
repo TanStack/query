@@ -1,6 +1,6 @@
 import { dehydrate, MutationCache, QueryCache, QueryClient } from '../../core'
-import { sleep } from '../../react/tests/utils'
 import { createWebStoragePersister } from '../index'
+import { sleep } from '../../reactjs/tests/utils'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()

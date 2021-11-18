@@ -519,4 +519,68 @@ describe('useMutation', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should pass meta to mutation', async () => {
+    const consoleMock = mockConsoleError()
+
+    const errorMock = jest.fn()
+    const successMock = jest.fn()
+
+    const queryClientMutationMeta = new QueryClient({
+      mutationCache: new MutationCache({
+        onSuccess: (_, __, ___, mutation) => {
+          successMock(mutation.meta?.metaSuccessMessage)
+        },
+        onError: (_, __, ___, mutation) => {
+          errorMock(mutation.meta?.metaErrorMessage)
+        },
+      }),
+    })
+
+    const metaSuccessMessage = 'mutation succeeded'
+    const metaErrorMessage = 'mutation failed'
+
+    function Page() {
+      const { mutate: succeed, isSuccess } = useMutation(async () => '', {
+        meta: { metaSuccessMessage },
+      })
+      const { mutate: error, isError } = useMutation(
+        async () => {
+          throw new Error('')
+        },
+        {
+          meta: { metaErrorMessage },
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => succeed()}>succeed</button>
+          <button onClick={() => error()}>error</button>
+          {isSuccess && <div>successTest</div>}
+          {isError && <div>errorTest</div>}
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClientMutationMeta,
+      <Page />
+    )
+
+    fireEvent.click(getByText('succeed'))
+    fireEvent.click(getByText('error'))
+
+    await waitFor(() => {
+      expect(queryByText('successTest')).not.toBeNull()
+      expect(queryByText('errorTest')).not.toBeNull()
+    })
+
+    expect(successMock).toHaveBeenCalledTimes(1)
+    expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
+    expect(errorMock).toHaveBeenCalledTimes(1)
+    expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
+
+    consoleMock.mockRestore()
+  })
 })

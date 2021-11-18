@@ -1,4 +1,4 @@
-import { sleep, queryKey } from '../../react/tests/utils'
+import { sleep, queryKey } from '../../reactjs/tests/utils'
 import { QueryClient, InfiniteQueryObserver } from '../..'
 
 describe('InfiniteQueryObserver', () => {

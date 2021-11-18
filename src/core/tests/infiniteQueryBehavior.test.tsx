@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { queryKey, mockConsoleError } from '../../react/tests/utils'
+import { queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import {
   QueryClient,
   InfiniteQueryObserver,

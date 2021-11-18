@@ -1,4 +1,4 @@
-import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
+import { sleep, queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import { QueryCache, QueryClient } from '../..'
 import { Query } from '.././query'
 
@@ -23,7 +23,7 @@ describe('queryCache', () => {
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find(key)
       await sleep(1)
-      expect(subscriber).toHaveBeenCalledWith({ query, type: 'queryAdded' })
+      expect(subscriber).toHaveBeenCalledWith({ query, type: 'added' })
       unsubscribe()
     })
 
@@ -43,7 +43,7 @@ describe('queryCache', () => {
       queryClient.prefetchQuery(key, () => 'data')
       const query = queryCache.find(key)
       await sleep(100)
-      expect(callback).toHaveBeenCalledWith({ query, type: 'queryAdded' })
+      expect(callback).toHaveBeenCalledWith({ query, type: 'added' })
     })
 
     test('should notify subscribers when new query with initialData is added', async () => {
