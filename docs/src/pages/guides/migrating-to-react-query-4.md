@@ -93,3 +93,22 @@ For the same reason, those have also been combined:
 ```
 
 This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.
+
+
+### `persistQueryClient` and its sister plugins are no longer expermental and have been renamed
+
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createWebStoragePersister`](/plugins/createWebStoragePersister) and [`createAsyncStoragePersister`](/plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+
+Since these plugins are no longer experimental, there import paths have also been updated:
+
+```diff
+- import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
+- import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
+- import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
+
++ import { persistQueryClient } from 'react-query/persistQueryClient'
++ import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
++ import { createAsyncStoragePersister } from 'react-query/createAsyncStoragePersister'
+```
+
+
