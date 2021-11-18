@@ -1,6 +1,6 @@
 import { dehydrate, MutationCache, QueryCache, QueryClient } from '../../core'
 import { sleep } from '../../react/tests/utils'
-import { createWebStoragePersistor } from '../index'
+import { createWebStoragePersister } from '../index'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()
@@ -33,14 +33,14 @@ function getMockStorage(limitSize?: number) {
   } as any) as Storage
 }
 
-describe('createWebStoragePersistor ', () => {
+describe('createWebStoragePersister ', () => {
   test('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })
 
     const storage = getMockStorage()
-    const webStoragePersistor = createWebStoragePersistor({
+    const webStoragePersister = createWebStoragePersister({
       throttleTime: 0,
       storage,
     })
@@ -58,9 +58,9 @@ describe('createWebStoragePersistor ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersistor.persistClient(persistClient)
+    webStoragePersister.persistClient(persistClient)
     await sleep(1)
-    const restoredClient = await webStoragePersistor.restoreClient()
+    const restoredClient = await webStoragePersister.restoreClient()
     expect(restoredClient).toEqual(persistClient)
   })
 
@@ -71,7 +71,7 @@ describe('createWebStoragePersistor ', () => {
 
     const N = 2000
     const storage = getMockStorage(N * 5) // can save 4 items;
-    const webStoragePersistor = createWebStoragePersistor({
+    const webStoragePersister = createWebStoragePersister({
       throttleTime: 0,
       storage,
     })
@@ -92,9 +92,9 @@ describe('createWebStoragePersistor ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersistor.persistClient(persistClient)
+    webStoragePersister.persistClient(persistClient)
     await sleep(10)
-    const restoredClient = await webStoragePersistor.restoreClient()
+    const restoredClient = await webStoragePersister.restoreClient()
     expect(restoredClient?.clientState.queries.length).toEqual(4)
     expect(
       restoredClient?.clientState.queries.find(q => q.queryKey === 'A')
@@ -110,9 +110,9 @@ describe('createWebStoragePersistor ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersistor.persistClient(updatedPersistClient)
+    webStoragePersister.persistClient(updatedPersistClient)
     await sleep(10)
-    const restoredClient2 = await webStoragePersistor.restoreClient()
+    const restoredClient2 = await webStoragePersister.restoreClient()
     expect(restoredClient2?.clientState.queries.length).toEqual(4)
     expect(
       restoredClient2?.clientState.queries.find(q => q.queryKey === 'A')
@@ -129,7 +129,7 @@ describe('createWebStoragePersistor ', () => {
 
     const N = 2000
     const storage = getMockStorage(N * 5) // can save 4 items;
-    const webStoragePersistor = createWebStoragePersistor({
+    const webStoragePersister = createWebStoragePersister({
       throttleTime: 0,
       storage,
     })
@@ -163,9 +163,9 @@ describe('createWebStoragePersistor ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersistor.persistClient(persistClient)
+    webStoragePersister.persistClient(persistClient)
     await sleep(10)
-    const restoredClient = await webStoragePersistor.restoreClient()
+    const restoredClient = await webStoragePersister.restoreClient()
     expect(restoredClient?.clientState.mutations.length).toEqual(1)
     expect(restoredClient?.clientState.queries.length).toEqual(3)
     expect(

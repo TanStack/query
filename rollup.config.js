@@ -25,14 +25,14 @@ const inputSrcs = [
     'persistQueryClient',
   ],
   [
-    'src/createWebStoragePersistor-experimental/index.ts',
-    'ReactQueryCreateWebStoragePersistorExperimental',
-    'createWebStoragePersistor-experimental',
+    'src/createWebStoragePersister/index.ts',
+    'ReactQueryCreateWebStoragePersister',
+    'createWebStoragePersister',
   ],
   [
-    'src/createAsyncStoragePersistor-experimental/index.ts',
-    'ReactQueryCreateAsyncStoragePersistorExperimental',
-    'createAsyncStoragePersistor-experimental',
+    'src/createAsyncStoragePersister/index.ts',
+    'ReactQueryCreateAsyncStoragePersister',
+    'createAsyncStoragePersister',
   ],
   [
     'src/broadcastQueryClient-experimental/index.ts',

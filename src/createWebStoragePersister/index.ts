@@ -1,7 +1,7 @@
 import { noop } from '../core/utils'
 import { PersistedClient, Persister } from '../persistQueryClient'
 
-interface CreateWebStoragePersistorOptions {
+interface CreateWebStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: Storage
   /** The key to use when storing the cache */
@@ -21,13 +21,13 @@ interface CreateWebStoragePersistorOptions {
   deserialize?: (cachedString: string) => PersistedClient
 }
 
-export function createWebStoragePersistor({
+export function createWebStoragePersister({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-}: CreateWebStoragePersistorOptions): Persister {
+}: CreateWebStoragePersisterOptions): Persister {
   //try to save data to storage
   function trySave(persistedClient: PersistedClient) {
     try {
