@@ -78,6 +78,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://katt.dev"><img src="https://avatars.githubusercontent.com/u/459267?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Alex Johansson</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=KATT" title="Code">💻</a></td>
     <td align="center"><a href="http://www.eddyvinck.nl"><img src="https://avatars.githubusercontent.com/u/23434753?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Eddy</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=EddyVinck" title="Code">💻</a></td>
+    <td align="center"><a href="http://prateeksurana.me"><img src="https://avatars.githubusercontent.com/u/21277179?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Prateek Surana</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=prateek3255" title="Code">💻</a></td>
   </tr>
 </table>
 

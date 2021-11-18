@@ -319,19 +319,19 @@
       "heading": true,
       "routes": [
         {
-          "title": "persistQueryClient (Experimental)",
+          "title": "persistQueryClient",
           "path": "/plugins/persistQueryClient",
           "editUrl": "/plugins/persistQueryClient.md"
         },
         {
-          "title": "createWebStoragePersistor (Experimental)",
-          "path": "/plugins/createWebStoragePersistor",
-          "editUrl": "/plugins/createWebStoragePersistor.md"
+          "title": "createWebStoragePersister",
+          "path": "/plugins/createWebStoragePersister",
+          "editUrl": "/plugins/createWebStoragePersister.md"
         },
         {
-          "title": "createAsyncStoragePersistor (Experimental)",
-          "path": "/plugins/createAsyncStoragePersistor",
-          "editUrl": "/plugins/createAsyncStoragePersistor.md"
+          "title": "createAsyncStoragePersister",
+          "path": "/plugins/createAsyncStoragePersister",
+          "editUrl": "/plugins/createAsyncStoragePersister.md"
         },
         {
           "title": "broadcastQueryClient (Experimental)",

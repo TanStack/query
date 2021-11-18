@@ -132,6 +132,22 @@ If you were importing anything from `'react-query/react'` directly in your proje
 + import { QueryClientProvider } from 'react-query/reactjs';
 ```
 
+### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed
+
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createWebStoragePersister`](/plugins/createWebStoragePersister) and [`createAsyncStoragePersister`](/plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+
+Since these plugins are no longer experimental, their import paths have also been updated:
+
+```diff
+- import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
+- import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
+- import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
+
++ import { persistQueryClient } from 'react-query/persistQueryClient'
++ import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
++ import { createAsyncStoragePersister } from 'react-query/createAsyncStoragePersister'
+```
+
 ## New Features 🚀
 
 ### Mutation Cache Garbage Collection
