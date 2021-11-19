@@ -135,7 +135,7 @@ describe('queryCache', () => {
       expect(
         queryCache.findAll({ predicate: query => query === query3 })
       ).toEqual([query3])
-      expect(queryCache.findAll('posts')).toEqual([query4])
+      expect(queryCache.findAll(['posts'])).toEqual([query4])
     })
 
     test('should return all the queries when no filters are defined', async () => {

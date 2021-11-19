@@ -190,7 +190,10 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = jest
-      .fn<Promise<'data'>, [QueryFunctionContext<string>]>()
+      .fn<
+        Promise<'data'>,
+        [QueryFunctionContext<ReturnType<typeof queryKey>>]
+      >()
       .mockResolvedValue('data')
 
     queryClient.prefetchQuery(key, queryFn)
@@ -277,7 +280,10 @@ describe('query', () => {
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<Promise<void>, [QueryFunctionContext<string>]>()
+    const queryFn = jest.fn<
+      Promise<void>,
+      [QueryFunctionContext<ReturnType<typeof queryKey>>]
+    >()
     const onAbort = jest.fn()
     const abortListener = jest.fn()
     let error

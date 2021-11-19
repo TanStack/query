@@ -74,7 +74,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [multiplier, setMultiplier] = React.useState(1)
       const state = useInfiniteQuery(
-        `${key}_${multiplier}`,
+        [`${key}_${multiplier}`],
         ({ pageParam = 1 }) => Number(pageParam * multiplier),
         {
           suspense: true,
@@ -439,7 +439,7 @@ describe("useQuery's in Suspense mode", () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
-    function Component(props: { queryKey: string }) {
+    function Component(props: { queryKey: Array<string> }) {
       const result = useQuery(
         props.queryKey,
         async () => {
@@ -766,7 +766,7 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const [nonce] = React.useState(0)
-      const queryKeys = `${key}-${succeed}`
+      const queryKeys = [`${key}-${succeed}`]
       const result = useQuery(
         queryKeys,
         async () => {

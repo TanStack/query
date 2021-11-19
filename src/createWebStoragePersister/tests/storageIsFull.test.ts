@@ -45,11 +45,11 @@ describe('createWebStoragePersister ', () => {
       storage,
     })
 
-    await queryClient.prefetchQuery('string', () => Promise.resolve('string'))
-    await queryClient.prefetchQuery('number', () => Promise.resolve(1))
-    await queryClient.prefetchQuery('boolean', () => Promise.resolve(true))
-    await queryClient.prefetchQuery('null', () => Promise.resolve(null))
-    await queryClient.prefetchQuery('array', () =>
+    await queryClient.prefetchQuery(['string'], () => Promise.resolve('string'))
+    await queryClient.prefetchQuery(['number'], () => Promise.resolve(1))
+    await queryClient.prefetchQuery(['boolean'], () => Promise.resolve(true))
+    await queryClient.prefetchQuery(['null'], () => Promise.resolve(null))
+    await queryClient.prefetchQuery(['array'], () =>
       Promise.resolve(['string', 0])
     )
 
@@ -76,16 +76,16 @@ describe('createWebStoragePersister ', () => {
       storage,
     })
 
-    await queryClient.prefetchQuery('A', () => Promise.resolve('A'.repeat(N)))
+    await queryClient.prefetchQuery(['A'], () => Promise.resolve('A'.repeat(N)))
     await sleep(1)
-    await queryClient.prefetchQuery('B', () => Promise.resolve('B'.repeat(N)))
+    await queryClient.prefetchQuery(['B'], () => Promise.resolve('B'.repeat(N)))
     await sleep(1)
-    await queryClient.prefetchQuery('C', () => Promise.resolve('C'.repeat(N)))
+    await queryClient.prefetchQuery(['C'], () => Promise.resolve('C'.repeat(N)))
     await sleep(1)
-    await queryClient.prefetchQuery('D', () => Promise.resolve('D'.repeat(N)))
+    await queryClient.prefetchQuery(['D'], () => Promise.resolve('D'.repeat(N)))
 
     await sleep(1)
-    await queryClient.prefetchQuery('E', () => Promise.resolve('E'.repeat(N)))
+    await queryClient.prefetchQuery(['E'], () => Promise.resolve('E'.repeat(N)))
 
     const persistClient = {
       buster: 'test-limit',
@@ -97,14 +97,14 @@ describe('createWebStoragePersister ', () => {
     const restoredClient = await webStoragePersister.restoreClient()
     expect(restoredClient?.clientState.queries.length).toEqual(4)
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey === 'A')
+      restoredClient?.clientState.queries.find(q => q.queryKey === ['A'])
     ).toBeUndefined()
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey === 'B')
+      restoredClient?.clientState.queries.find(q => q.queryKey === ['B'])
     ).not.toBeUndefined()
 
     // update query Data
-    await queryClient.prefetchQuery('A', () => Promise.resolve('a'.repeat(N)))
+    await queryClient.prefetchQuery(['A'], () => Promise.resolve('a'.repeat(N)))
     const updatedPersistClient = {
       buster: 'test-limit',
       timestamp: Date.now(),
@@ -115,10 +115,10 @@ describe('createWebStoragePersister ', () => {
     const restoredClient2 = await webStoragePersister.restoreClient()
     expect(restoredClient2?.clientState.queries.length).toEqual(4)
     expect(
-      restoredClient2?.clientState.queries.find(q => q.queryKey === 'A')
+      restoredClient2?.clientState.queries.find(q => q.queryKey === ['A'])
     ).toHaveProperty('state.data', 'a'.repeat(N))
     expect(
-      restoredClient2?.clientState.queries.find(q => q.queryKey === 'B')
+      restoredClient2?.clientState.queries.find(q => q.queryKey === ['B'])
     ).toBeUndefined()
   })
 
@@ -137,7 +137,7 @@ describe('createWebStoragePersister ', () => {
     mutationCache.build(
       queryClient,
       {
-        mutationKey: 'MUTATIONS',
+        mutationKey: ['MUTATIONS'],
         mutationFn: () => Promise.resolve('M'.repeat(N)),
       },
       {
@@ -151,12 +151,12 @@ describe('createWebStoragePersister ', () => {
       }
     )
     await sleep(1)
-    await queryClient.prefetchQuery('A', () => Promise.resolve('A'.repeat(N)))
+    await queryClient.prefetchQuery(['A'], () => Promise.resolve('A'.repeat(N)))
     await sleep(1)
-    await queryClient.prefetchQuery('B', () => Promise.resolve('B'.repeat(N)))
-    await queryClient.prefetchQuery('C', () => Promise.resolve('C'.repeat(N)))
+    await queryClient.prefetchQuery(['B'], () => Promise.resolve('B'.repeat(N)))
+    await queryClient.prefetchQuery(['C'], () => Promise.resolve('C'.repeat(N)))
     await sleep(1)
-    await queryClient.prefetchQuery('D', () => Promise.resolve('D'.repeat(N)))
+    await queryClient.prefetchQuery(['D'], () => Promise.resolve('D'.repeat(N)))
 
     const persistClient = {
       buster: 'test-limit-mutations',
@@ -169,7 +169,7 @@ describe('createWebStoragePersister ', () => {
     expect(restoredClient?.clientState.mutations.length).toEqual(1)
     expect(restoredClient?.clientState.queries.length).toEqual(3)
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey === 'A')
+      restoredClient?.clientState.queries.find(q => q.queryKey === ['A'])
     ).toBeUndefined()
   })
 })

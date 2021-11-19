@@ -755,7 +755,7 @@ describe('useInfiniteQuery', () => {
     const abortListeners: jest.Mock<any, any>[] = []
     const fetchPage = jest.fn<
       Promise<number>,
-      [QueryFunctionContext<string, number>]
+      [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
       if (signal) {
         const onAbort = jest.fn()
@@ -836,7 +836,7 @@ describe('useInfiniteQuery', () => {
     const abortListeners: jest.Mock<any, any>[] = []
     const fetchPage = jest.fn<
       Promise<number>,
-      [QueryFunctionContext<string, number>]
+      [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
       if (signal) {
         const onAbort = jest.fn()

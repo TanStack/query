@@ -226,7 +226,10 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 1], 1)
       queryClient.setQueryData(['key', 2], 2)
 
-      const result = queryClient.setQueriesData<number>('key', old => old! + 5)
+      const result = queryClient.setQueriesData<number>(
+        ['key'],
+        old => old! + 5
+      )
 
       expect(result).toEqual([
         [['key', 1], 6],
@@ -252,10 +255,10 @@ describe('queryClient', () => {
     })
 
     test('should not update non existing queries', () => {
-      const result = queryClient.setQueriesData<string>('key', 'data')
+      const result = queryClient.setQueriesData<string>(['key'], 'data')
 
       expect(result).toEqual([])
-      expect(queryClient.getQueryData('key')).toBe(undefined)
+      expect(queryClient.getQueryData(['key'])).toBe(undefined)
     })
   })
 
@@ -312,8 +315,8 @@ describe('queryClient', () => {
   describe('fetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
@@ -424,8 +427,8 @@ describe('queryClient', () => {
   describe('fetchInfiniteQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = string
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const data = {
         pages: ['data'],
@@ -466,8 +469,8 @@ describe('queryClient', () => {
   describe('prefetchInfiniteQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
@@ -506,8 +509,8 @@ describe('queryClient', () => {
   describe('prefetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')

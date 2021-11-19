@@ -67,10 +67,10 @@ describe('mutationCache', () => {
       })
       const [mutation] = testCache.getAll()
       expect(testCache.find({ mutationKey: key })).toEqual(mutation)
-      expect(testCache.find({ mutationKey: 'mutation', exact: false })).toEqual(
-        mutation
-      )
-      expect(testCache.find({ mutationKey: 'unknown' })).toEqual(undefined)
+      expect(
+        testCache.find({ mutationKey: ['mutation'], exact: false })
+      ).toEqual(mutation)
+      expect(testCache.find({ mutationKey: ['unknown'] })).toEqual(undefined)
       expect(
         testCache.find({ predicate: m => m.options.variables === 'vars' })
       ).toEqual(mutation)
@@ -92,16 +92,16 @@ describe('mutationCache', () => {
         mutationFn: () => Promise.resolve(),
       })
       await testClient.executeMutation({
-        mutationKey: 'b',
+        mutationKey: ['b'],
         mutationFn: () => Promise.resolve(),
       })
 
       const [mutation1, mutation2] = testCache.getAll()
       expect(
-        testCache.findAll({ mutationKey: 'a', exact: false })
+        testCache.findAll({ mutationKey: ['a'], exact: false })
       ).toHaveLength(2)
       expect(testCache.find({ mutationKey: ['a', 1] })).toEqual(mutation1)
-      expect(testCache.findAll({ mutationKey: 'unknown' })).toEqual([])
+      expect(testCache.findAll({ mutationKey: ['unknown'] })).toEqual([])
       expect(
         testCache.findAll({ predicate: m => m.options.variables === 2 })
       ).toEqual([mutation2])

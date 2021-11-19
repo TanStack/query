@@ -91,13 +91,16 @@ describe('useQuery', () => {
         queryFn: getMyDataArrayKey,
       })
 
-      const getMyDataStringKey: QueryFunction<MyData, '1'> = async context => {
+      const getMyDataStringKey: QueryFunction<
+        MyData,
+        ['1']
+      > = async context => {
         expectType<['1']>(context.queryKey)
         return Number(context.queryKey[0]) + 42
       }
 
       useQuery({
-        queryKey: '1',
+        queryKey: ['1'],
         queryFn: getMyDataStringKey,
       })
     }
@@ -2426,10 +2429,10 @@ describe('useQuery', () => {
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
-    type QueryKey = [string, typeof variables]
-    const states: UseQueryResult<QueryKey>[] = []
+    type CustomQueryKey = [typeof key, typeof variables]
+    const states: UseQueryResult<CustomQueryKey>[] = []
 
-    const queryFn = async (ctx: QueryFunctionContext<QueryKey>) => {
+    const queryFn = async (ctx: QueryFunctionContext<CustomQueryKey>) => {
       await sleep(10)
       return ctx.queryKey
     }
@@ -3715,7 +3718,7 @@ describe('useQuery', () => {
 
   it('should accept an empty string as query key', async () => {
     function Page() {
-      const result = useQuery('', ctx => ctx.queryKey)
+      const result = useQuery([''], ctx => ctx.queryKey)
       return <>{JSON.stringify(result.data)}</>
     }
 
@@ -3988,7 +3991,7 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string, unknown>[] = []
 
-    const queryFn: QueryFunction<string, [string, number]> = async ctx => {
+    const queryFn: QueryFunction<string, [typeof key, number]> = async ctx => {
       const [, limit] = ctx.queryKey
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(10)
