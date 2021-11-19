@@ -14,6 +14,10 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 + import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query'
 ```
 
+### `notifyOnChangePropsExclusion` has been removed
+
+In v4, `notifyOnChangeProps` defaults to the `"tracked"` behavior of v3 instead of `undefined`. Now that `"tracked"` is the default behavior for v4, it no longer makes sense to include this config option.
+
 ### Consistent behavior for `cancelRefetch`
 
 The `cancelRefetch` can be passed to all functions that imperatively fetch a query, namely:

@@ -35,7 +35,6 @@ const {
   keepPreviousData,
   meta,
   notifyOnChangeProps,
-  notifyOnChangePropsExclusions,
   onError,
   onSettled,
   onSuccess,
@@ -131,10 +130,6 @@ const result = useQuery({
   - If set, the component will only re-render if any of the listed properties change.
   - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.
   - If set to `"tracked"`, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
-- `notifyOnChangePropsExclusions: string[]`
-  - Optional
-  - If set, the component will not re-render if any of the listed properties change.
-  - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
 - `onSuccess: (data: TData) => void`
   - Optional
   - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
