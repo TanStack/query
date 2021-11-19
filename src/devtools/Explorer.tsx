@@ -72,7 +72,6 @@ const DefaultRenderer: Renderer = ({
   subEntries = [],
   subEntryPages = [],
   type,
-  // depth,
   expanded = false,
   toggleExpanded,
   pageSize,
@@ -138,7 +137,6 @@ const DefaultRenderer: Renderer = ({
 
 type ExplorerProps = Partial<RendererProps> & {
   renderer?: Renderer
-  depth?: number
   defaultExpanded?: true | Record<string, boolean>
 }
 
@@ -147,7 +145,6 @@ export default function Explorer({
   defaultExpanded,
   renderer = DefaultRenderer,
   pageSize = 100,
-  depth = 0,
   ...rest
 }: ExplorerProps) {
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
@@ -163,7 +160,6 @@ export default function Explorer({
         : defaultExpanded?.[sub.label]
     return {
       ...sub,
-      depth: depth + 1,
       defaultExpanded: subDefaultExpanded,
     }
   }
