@@ -606,9 +606,7 @@ export class QueryObserver<
       return true
     }
 
-    const includedProps = !notifyOnChangeProps
-      ? this.trackedProps
-      : notifyOnChangeProps
+    const includedProps = notifyOnChangeProps ?? this.trackedProps
 
     return Object.keys(result).some(key => {
       const typedKey = key as keyof QueryObserverResult
