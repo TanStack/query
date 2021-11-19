@@ -69,7 +69,6 @@ const DefaultRenderer: Renderer = ({
   handleEntry = () => null,
   label,
   value,
-  // path,
   subEntries = [],
   subEntryPages = [],
   type,
@@ -154,7 +153,6 @@ export default function Explorer({
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
   const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
 
-  const path: string[] = []
   let type:
     | 'string'
     | 'number'
@@ -170,14 +168,12 @@ export default function Explorer({
   const subEntryPages = []
 
   const makeProperty = (sub: { label: string; value: unknown }) => {
-    const newPath = path.concat(sub.label)
     const subDefaultExpanded =
       defaultExpanded === true
         ? { [sub.label]: true }
         : defaultExpanded?.[sub.label]
     return {
       ...sub,
-      path: newPath,
       depth: depth + 1,
       defaultExpanded: subDefaultExpanded,
     }
