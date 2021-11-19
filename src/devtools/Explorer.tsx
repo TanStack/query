@@ -59,7 +59,7 @@ type RendererProps = {
   subEntryPages?: Entry[][]
   type?: string
   expanded?: boolean
-  toggle: () => void
+  toggleExpanded: () => void
   pageSize: number
 }
 
@@ -75,7 +75,7 @@ const DefaultRenderer: Renderer = ({
   type,
   // depth,
   expanded = false,
-  toggle,
+  toggleExpanded,
   pageSize,
 }) => {
   const [expandedPages, setExpandedPages] = React.useState<number[]>([])
@@ -84,7 +84,7 @@ const DefaultRenderer: Renderer = ({
     <Entry key={label}>
       {subEntryPages?.length ? (
         <>
-          <Label onClick={() => toggle()}>
+          <Label onClick={() => toggleExpanded()}>
             <Expander expanded={expanded} /> {label}{' '}
             <Info>
               {String(type).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
@@ -152,8 +152,7 @@ export default function Explorer({
   ...rest
 }: ExplorerProps) {
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
-
-  const toggle = React.useCallback(() => setExpanded(old => !old), [])
+  const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
 
   const path: string[] = []
   let type:
@@ -233,7 +232,7 @@ export default function Explorer({
     subEntryPages,
     value,
     expanded,
-    toggle,
+    toggleExpanded,
     pageSize,
     ...rest,
   })
