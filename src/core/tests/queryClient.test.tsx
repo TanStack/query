@@ -1,4 +1,5 @@
 import { waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import React from 'react'
 
 import {
@@ -253,6 +254,36 @@ describe('queryClient', () => {
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
       expect(onSuccess).toHaveBeenCalledWith('data')
+    })
+
+    test('should respect updatedAt', async () => {
+      const key = queryKey()
+
+      function Page() {
+        const state = useQuery(key, () => 'data')
+        return (
+          <div>
+            <div>data: {state.data}</div>
+            <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
+            <button
+              onClick={() =>
+                queryClient.setQueryData(key, 'newData', { updatedAt: 100 })
+              }
+            >
+              setQueryData
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: data'))
+      rendered.getByRole('button', { name: /setQueryData/i }).click()
+      await waitFor(() => rendered.getByText('data: newData'))
+      await waitFor(() => {
+        expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
+      })
     })
   })
 

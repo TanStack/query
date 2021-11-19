@@ -222,7 +222,8 @@ export class Query<
     this.dispatch({
       data,
       type: 'success',
-      ...options,
+      dataUpdatedAt: options?.updatedAt,
+      notifySuccess: options?.notifySuccess,
     })
 
     return data
