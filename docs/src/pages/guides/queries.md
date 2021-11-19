@@ -18,7 +18,7 @@ To subscribe to a query in your components or custom hooks, call the `useQuery` 
 import { useQuery } from 'react-query'
 
 function App() {
-  const info = useQuery('todos', fetchTodoList)
+  const info = useQuery(['todos'], fetchTodoList)
 }
 ```
 
@@ -27,7 +27,7 @@ The **unique key** you provide is used internally for refetching, caching, and s
 The query results returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
 ```js
-const result = useQuery('todos', fetchTodoList)
+const result = useQuery(['todos'], fetchTodoList)
 ```
 
 The `result` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
@@ -47,7 +47,7 @@ For **most** queries, it's usually sufficient to check for the `isLoading` state
 
 ```js
 function Todos() {
-  const { isLoading, isError, data, error } = useQuery('todos', fetchTodoList)
+  const { isLoading, isError, data, error } = useQuery(['todos'], fetchTodoList)
 
   if (isLoading) {
     return <span>Loading...</span>
@@ -72,7 +72,7 @@ If booleans aren't your thing, you can always use the `status` state as well:
 
 ```js
 function Todos() {
-  const { status, data, error } = useQuery('todos', fetchTodoList)
+  const { status, data, error } = useQuery(['todos'], fetchTodoList)
 
   if (status === 'loading') {
     return <span>Loading...</span>

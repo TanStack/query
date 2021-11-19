@@ -9,7 +9,7 @@ Waiting for queries to become stale before they are fetched again doesn't always
 // Invalidate every query in the cache
 queryClient.invalidateQueries()
 // Invalidate every query with a key that starts with `todos`
-queryClient.invalidateQueries('todos')
+queryClient.invalidateQueries(['todos'])
 ```
 
 > Note: Where other libraries that use normalized caches would attempt to update local queries with the new data either imperatively or via schema inference, React Query gives you the tools to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **targeted invalidation, background-refetching and ultimately atomic updates**.
@@ -31,10 +31,10 @@ import { useQuery, useQueryClient } from 'react-query'
 // Get QueryClient from the context
 const queryClient = useQueryClient()
 
-queryClient.invalidateQueries('todos')
+queryClient.invalidateQueries(['todos'])
 
 // Both queries below will be invalidated
-const todoListQuery = useQuery('todos', fetchTodoList)
+const todoListQuery = useQuery(['todos'], fetchTodoList)
 const todoListQuery = useQuery(['todos', { page: 1 }], fetchTodoList)
 ```
 
@@ -47,13 +47,13 @@ queryClient.invalidateQueries(['todos', { type: 'done' }])
 const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
 
 // However, the following query below will NOT be invalidated
-const todoListQuery = useQuery('todos', fetchTodoList)
+const todoListQuery = useQuery(['todos'], fetchTodoList)
 ```
 
 The `invalidateQueries` API is very flexible, so even if you want to **only** invalidate `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `invalidateQueries` method:
 
 ```js
-queryClient.invalidateQueries('todos', { exact: true })
+queryClient.invalidateQueries(['todos'], { exact: true })
 
 // The query below will be invalidated
 const todoListQuery = useQuery(['todos'], fetchTodoList)

@@ -3,11 +3,7 @@ import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 
-export type QueryKey = string | readonly unknown[]
-export type EnsuredQueryKey<T extends QueryKey> = T extends string
-  ? [T]
-  : Exclude<T, string>
-
+export type QueryKey = readonly unknown[]
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey
@@ -17,7 +13,7 @@ export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = any
 > {
-  queryKey: EnsuredQueryKey<TQueryKey>
+  queryKey: TQueryKey
   signal?: AbortSignal
   pageParam?: TPageParam
   meta: QueryMeta | undefined
@@ -496,7 +492,7 @@ export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>
   | InfiniteQueryObserverSuccessResult<TData, TError>
 
-export type MutationKey = string | readonly unknown[]
+export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 

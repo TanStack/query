@@ -5,7 +5,6 @@ import {
   noop,
   replaceEqualDeep,
   timeUntilStale,
-  ensureQueryKeyArray,
 } from './utils'
 import type {
   InitialDataFunction,
@@ -13,7 +12,6 @@ import type {
   QueryOptions,
   QueryStatus,
   QueryFunctionContext,
-  EnsuredQueryKey,
   QueryMeta,
   CancelOptions,
   SetDataOptions,
@@ -66,7 +64,7 @@ export interface FetchContext<
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
   options: QueryOptions<TQueryFnData, TError, TData, any>
-  queryKey: EnsuredQueryKey<TQueryKey>
+  queryKey: TQueryKey
   state: QueryState<TData, TError>
   meta: QueryMeta | undefined
 }
@@ -374,12 +372,11 @@ export class Query<
       }
     }
 
-    const queryKey = ensureQueryKeyArray(this.queryKey)
     const abortController = getAbortController()
 
     // Create query function context
     const queryFnContext: QueryFunctionContext<TQueryKey> = {
-      queryKey,
+      queryKey: this.queryKey,
       pageParam: undefined,
       meta: this.meta,
     }
@@ -408,7 +405,7 @@ export class Query<
     const context: FetchContext<TQueryFnData, TError, TData, TQueryKey> = {
       fetchOptions,
       options: this.options,
-      queryKey: queryKey,
+      queryKey: this.queryKey,
       state: this.state,
       fetchFn,
       meta: this.meta,

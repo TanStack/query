@@ -685,11 +685,11 @@ describe('useQueries', () => {
       // Array as const does not throw error
       const result5 = useQueries([
         {
-          queryKey: 'key1',
+          queryKey: ['key1'],
           queryFn: () => 'string',
         },
         {
-          queryKey: 'key1',
+          queryKey: ['key1'],
           queryFn: () => 123,
         },
       ] as const)
