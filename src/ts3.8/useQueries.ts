@@ -1,4 +1,4 @@
-import { UseQueryOptions, UseQueryResult } from '../react/types'
+import { UseQueryOptions, UseQueryResult } from '../reactjs/types'
 
 /**
  * Backwards-compatible definition for TS < 4.1

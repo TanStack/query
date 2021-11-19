@@ -97,3 +97,63 @@ For the same reason, those have also been combined:
 ```
 
 This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.
+
+### Streamlined NotifyEvents
+
+Subscribing manually to the `QueryCache` has always given you a `QueryCacheNotifyEvent`, but this was not true for the `MutationCache`. We have streamlined the behavior and also adapted event names accordingly.
+
+#### QueryCacheNotifyEvent
+
+```diff
+- type: 'queryAdded'
++ type: 'added'
+- type: 'queryRemoved'
++ type: 'removed'
+- type: 'queryUpdated'
++ type: 'updated'
+```
+
+#### MutationCacheNotifyEvent
+
+The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent`.
+
+> Note: This is only relevant if you manually subscribe to the caches via `queryCache.subscribe` or `mutationCache.subscribe`
+
+### The `src/react` directory was renamed to `src/reactjs`
+
+Previously, react-query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
+
+```
+TypeError: Cannot read property 'createContext' of undefined
+```
+
+With the renamed directory this no longer is an issue.
+
+If you were importing anything from `'react-query/react'` directly in your project (as opposed to just `'react-query'`), then you need to update your imports:
+
+```diff
+- import { QueryClientProvider } from 'react-query/react';
++ import { QueryClientProvider } from 'react-query/reactjs';
+```
+
+### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed
+
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createWebStoragePersister`](/plugins/createWebStoragePersister) and [`createAsyncStoragePersister`](/plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+
+Since these plugins are no longer experimental, their import paths have also been updated:
+
+```diff
+- import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
+- import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
+- import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
+
++ import { persistQueryClient } from 'react-query/persistQueryClient'
++ import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
++ import { createAsyncStoragePersister } from 'react-query/createAsyncStoragePersister'
+```
+
+## New Features 🚀
+
+### Mutation Cache Garbage Collection
+
+Mutations can now also be garbage collected automatically, just like queries. The default `cacheTime` for mutations is also set to 5 minutes.

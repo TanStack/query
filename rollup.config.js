@@ -20,19 +20,19 @@ const inputSrcs = [
   ['src/core/index.ts', 'ReactQueryCore', 'react-query-core'],
   ['src/devtools/index.ts', 'ReactQueryDevtools', 'react-query-devtools'],
   [
-    'src/persistQueryClient-experimental/index.ts',
-    'ReactQueryPersistQueryClientExperimental',
-    'persistQueryClient-experimental',
+    'src/persistQueryClient/index.ts',
+    'ReactQueryPersistQueryClient',
+    'persistQueryClient',
   ],
   [
-    'src/createWebStoragePersistor-experimental/index.ts',
-    'ReactQueryCreateWebStoragePersistorExperimental',
-    'createWebStoragePersistor-experimental',
+    'src/createWebStoragePersister/index.ts',
+    'ReactQueryCreateWebStoragePersister',
+    'createWebStoragePersister',
   ],
   [
-    'src/createAsyncStoragePersistor-experimental/index.ts',
-    'ReactQueryCreateAsyncStoragePersistorExperimental',
-    'createAsyncStoragePersistor-experimental',
+    'src/createAsyncStoragePersister/index.ts',
+    'ReactQueryCreateAsyncStoragePersister',
+    'createAsyncStoragePersister',
   ],
   [
     'src/broadcastQueryClient-experimental/index.ts',

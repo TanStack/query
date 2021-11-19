@@ -1,4 +1,4 @@
-import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
+import { sleep, queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import {
   InfiniteQueryObserver,
   QueryCache,

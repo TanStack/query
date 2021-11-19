@@ -7,7 +7,7 @@ import {
   scheduleMicrotask,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
-import { queryKey } from '../../react/tests/utils'
+import { queryKey } from '../../reactjs/tests/utils'
 import { Mutation } from '../mutation'
 import { waitFor } from '@testing-library/dom'
 

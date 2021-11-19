@@ -33,20 +33,20 @@ export function broadcastQueryClient({
     } = queryEvent
 
     if (
-      queryEvent.type === 'queryUpdated' &&
+      queryEvent.type === 'updated' &&
       queryEvent.action?.type === 'success'
     ) {
       channel.postMessage({
-        type: 'queryUpdated',
+        type: 'updated',
         queryHash,
         queryKey,
         state,
       })
     }
 
-    if (queryEvent.type === 'queryRemoved') {
+    if (queryEvent.type === 'removed') {
       channel.postMessage({
-        type: 'queryRemoved',
+        type: 'removed',
         queryHash,
         queryKey,
       })
@@ -61,7 +61,7 @@ export function broadcastQueryClient({
     tx(() => {
       const { type, queryHash, queryKey, state } = action
 
-      if (type === 'queryUpdated') {
+      if (type === 'updated') {
         const query = queryCache.get(queryHash)
 
         if (query) {
@@ -77,7 +77,7 @@ export function broadcastQueryClient({
           },
           state
         )
-      } else if (type === 'queryRemoved') {
+      } else if (type === 'removed') {
         const query = queryCache.get(queryHash)
 
         if (query) {

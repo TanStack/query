@@ -106,7 +106,7 @@ export const LayoutDocs = props => {
                       width: 200,
                     }}
                   >
-                    <div className="sticky top-24 overflow-y-auto">
+                    <div className="sticky top-24">
                       <h4 className="font-semibold uppercase text-sm mb-2 mt-2 text-gray-500">
                         On this page
                       </h4>

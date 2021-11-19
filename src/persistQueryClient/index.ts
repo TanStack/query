@@ -9,7 +9,7 @@ import {
 } from 'react-query'
 import { Promisable } from 'type-fest'
 
-export interface Persistor {
+export interface Persister {
   persistClient(persistClient: PersistedClient): Promisable<void>
   restoreClient(): Promisable<PersistedClient | undefined>
   removeClient(): Promisable<void>
@@ -24,9 +24,9 @@ export interface PersistedClient {
 export interface PersistQueryClientOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
-  /** The Persistor interface for storing and restoring the cache
+  /** The Persister interface for storing and restoring the cache
    * to/from a persisted location */
-  persistor: Persistor
+  persister: Persister
   /** The max-allowed age of the cache.
    * If a persisted cache is found that is older than this
    * time, it will be discarded */
@@ -42,7 +42,7 @@ export interface PersistQueryClientOptions {
 
 export async function persistQueryClient({
   queryClient,
-  persistor,
+  persister,
   maxAge = 1000 * 60 * 60 * 24,
   buster = '',
   hydrateOptions,
@@ -57,24 +57,24 @@ export async function persistQueryClient({
         clientState: dehydrate(queryClient, dehydrateOptions),
       }
 
-      persistor.persistClient(persistClient)
+      persister.persistClient(persistClient)
     }
 
     // Attempt restore
     try {
-      const persistedClient = await persistor.restoreClient()
+      const persistedClient = await persister.restoreClient()
 
       if (persistedClient) {
         if (persistedClient.timestamp) {
           const expired = Date.now() - persistedClient.timestamp > maxAge
           const busted = persistedClient.buster !== buster
           if (expired || busted) {
-            persistor.removeClient()
+            persister.removeClient()
           } else {
             hydrate(queryClient, persistedClient.clientState, hydrateOptions)
           }
         } else {
-          persistor.removeClient()
+          persister.removeClient()
         }
       }
     } catch (err) {
@@ -82,7 +82,7 @@ export async function persistQueryClient({
       getLogger().warn(
         'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
       )
-      persistor.removeClient()
+      persister.removeClient()
     }
 
     // Subscribe to changes in the query cache to trigger the save

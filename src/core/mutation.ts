@@ -1,8 +1,9 @@
-import type { MutationOptions, MutationStatus } from './types'
+import type { MutationOptions, MutationStatus, MutationMeta } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
 import { getLogger } from './logger'
 import { notifyManager } from './notifyManager'
+import { Removable } from './removable'
 import { Retryer } from './retryer'
 import { noop } from './utils'
 
@@ -14,6 +15,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   options: MutationOptions<TData, TError, TVariables, TContext>
   defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
+  meta?: MutationMeta
 }
 
 export interface MutationState<
@@ -80,16 +82,19 @@ export class Mutation<
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> {
+> extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
+  meta: MutationMeta | undefined
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
   private mutationCache: MutationCache
   private retryer?: Retryer<TData, TError>
 
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
+    super()
+
     this.options = {
       ...config.defaultOptions,
       ...config.options,
@@ -98,6 +103,10 @@ export class Mutation<
     this.mutationCache = config.mutationCache
     this.observers = []
     this.state = config.state || getDefaultState()
+    this.meta = config.meta
+
+    this.updateCacheTime(this.options.cacheTime)
+    this.scheduleGc()
   }
 
   setState(state: MutationState<TData, TError, TVariables, TContext>): void {
@@ -107,11 +116,42 @@ export class Mutation<
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
+
+      // Stop the mutation from being garbage collected
+      this.clearGcTimeout()
+
+      this.mutationCache.notify({
+        type: 'observerAdded',
+        mutation: this,
+        observer,
+      })
     }
   }
 
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
+
+    if (this.cacheTime) {
+      this.scheduleGc()
+    } else {
+      this.mutationCache.remove(this)
+    }
+
+    this.mutationCache.notify({
+      type: 'observerRemoved',
+      mutation: this,
+      observer,
+    })
+  }
+
+  protected optionalRemove() {
+    if (!this.observers.length) {
+      if (this.state.status === 'loading') {
+        this.scheduleGc()
+      } else {
+        this.mutationCache.remove(this)
+      }
+    }
   }
 
   cancel(): Promise<void> {
@@ -249,7 +289,11 @@ export class Mutation<
       this.observers.forEach(observer => {
         observer.onMutationUpdate(action)
       })
-      this.mutationCache.notify(this)
+      this.mutationCache.notify({
+        mutation: this,
+        type: 'updated',
+        action,
+      })
     })
   }
 }

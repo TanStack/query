@@ -148,6 +148,33 @@
         "review"
       ]
     },
+    {
+      "login": "KATT",
+      "name": "Alex Johansson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/459267?v=4",
+      "profile": "https://katt.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "EddyVinck",
+      "name": "Eddy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23434753?v=4",
+      "profile": "http://www.eddyvinck.nl",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "prateek3255",
+      "name": "Prateek Surana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21277179?v=4",
+      "profile": "http://prateeksurana.me",
+      "contributions": [
+        "code"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "skipCi": true
