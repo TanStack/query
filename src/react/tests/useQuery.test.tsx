@@ -922,9 +922,7 @@ describe('useQuery', () => {
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-      })
+      const state = useQuery(key, () => 'test')
 
       states.push(state)
 
@@ -958,9 +956,7 @@ describe('useQuery', () => {
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-      })
+      const state = useQuery(key, () => 'test')
 
       states.push(state)
 

@@ -598,18 +598,17 @@ export class QueryObserver<
 
     const { notifyOnChangeProps } = this.options
 
-    if (!notifyOnChangeProps) {
+    if (notifyOnChangeProps === 'all') {
       return true
     }
 
-    if (notifyOnChangeProps === 'tracked' && !this.trackedProps.length) {
+    if (!notifyOnChangeProps && !this.trackedProps.length) {
       return true
     }
 
-    const includedProps =
-      notifyOnChangeProps === 'tracked'
-        ? this.trackedProps
-        : notifyOnChangeProps
+    const includedProps = !notifyOnChangeProps
+      ? this.trackedProps
+      : notifyOnChangeProps
 
     return Object.keys(result).some(key => {
       const typedKey = key as keyof QueryObserverResult
