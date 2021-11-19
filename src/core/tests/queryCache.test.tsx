@@ -89,7 +89,8 @@ describe('queryCache', () => {
       const query4 = queryCache.find(['posts', 1])!
 
       expect(queryCache.findAll(key1)).toEqual([query1])
-      expect(queryCache.findAll([key1])).toEqual([query1])
+      // wrapping in an extra array doesn't yield the same results anymore since v4 because keys need to be an array
+      expect(queryCache.findAll([key1])).toEqual([])
       expect(queryCache.findAll()).toEqual([query1, query2, query3, query4])
       expect(queryCache.findAll({})).toEqual([query1, query2, query3, query4])
       expect(queryCache.findAll(key1, { type: 'inactive' })).toEqual([query1])
