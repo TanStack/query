@@ -153,7 +153,7 @@ export default function Explorer({
 }: ExplorerProps) {
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
 
-  const toggle = () => setExpanded(old => !old)
+  const toggle = React.useCallback(() => setExpanded(old => !old), [])
 
   const path: string[] = []
   let type:
