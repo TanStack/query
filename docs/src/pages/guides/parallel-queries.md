@@ -12,9 +12,9 @@ When the number of parallel queries does not change, there is **no extra effort*
 ```js
 function App () {
   // The following queries will execute in parallel
-  const usersQuery = useQuery('users', fetchUsers)
-  const teamsQuery = useQuery('teams', fetchTeams)
-  const projectsQuery = useQuery('projects', fetchProjects)
+  const usersQuery = useQuery(['users'], fetchUsers)
+  const teamsQuery = useQuery(['teams'], fetchTeams)
+  const projectsQuery = useQuery(['projects'], fetchProjects)
   ...
 }
 ```

@@ -18,11 +18,11 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation('mutation1', async () => {
+      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
         await sleep(150)
         return 'data'
       })
-      const { mutate: mutate2 } = useMutation('mutation2', async () => {
+      const { mutate: mutate2 } = useMutation(['mutation2'], async () => {
         await sleep(50)
         return 'data'
       })
@@ -46,17 +46,17 @@ describe('useIsMutating', () => {
     const queryClient = new QueryClient()
 
     function IsMutating() {
-      const isMutating = useIsMutating('mutation1')
+      const isMutating = useIsMutating(['mutation1'])
       isMutatings.push(isMutating)
       return null
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation('mutation1', async () => {
+      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
         await sleep(100)
         return 'data'
       })
-      const { mutate: mutate2 } = useMutation('mutation2', async () => {
+      const { mutate: mutate2 } = useMutation(['mutation2'], async () => {
         await sleep(100)
         return 'data'
       })
@@ -79,18 +79,19 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating({
-        predicate: mutation => mutation.options.mutationKey === 'mutation1',
+        predicate: mutation =>
+          mutation.options.mutationKey?.[0] === 'mutation1',
       })
       isMutatings.push(isMutating)
       return null
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation('mutation1', async () => {
+      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
         await sleep(100)
         return 'data'
       })
-      const { mutate: mutate2 } = useMutation('mutation2', async () => {
+      const { mutate: mutate2 } = useMutation(['mutation2'], async () => {
         await sleep(100)
         return 'data'
       })
@@ -132,7 +133,7 @@ describe('useIsMutating', () => {
 
     function Page() {
       const [mounted, setMounted] = React.useState(true)
-      const { mutate: mutate1 } = useMutation('mutation1', async () => {
+      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
         await sleep(10)
         return 'data'
       })

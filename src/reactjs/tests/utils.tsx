@@ -37,9 +37,9 @@ export function mockConsoleError() {
 }
 
 let queryKeyCount = 0
-export function queryKey(): string {
+export function queryKey(): Array<string> {
   queryKeyCount++
-  return `query_${queryKeyCount}`
+  return [`query_${queryKeyCount}`]
 }
 
 export function sleep(timeout: number): Promise<void> {

@@ -20,7 +20,7 @@ However, if you consume the `AbortSignal` or attach a `cancel` function to your 
 ## Using `fetch`
 
 ```js
-const query = useQuery('todos', async ({ signal }) => {
+const query = useQuery(['todos'], async ({ signal }) => {
   const todosResponse = await fetch('/todos', {
     // Pass the signal to one fetch
     signal,
@@ -46,7 +46,7 @@ const query = useQuery('todos', async ({ signal }) => {
 ```js
 import axios from 'axios'
 
-const query = useQuery('todos', ({ signal }) =>
+const query = useQuery(['todos'], ({ signal }) =>
   axios.get('/todos', {
     // Pass the signal to `axios`
     signal,
@@ -59,7 +59,7 @@ const query = useQuery('todos', ({ signal }) =>
 ```js
 import axios from 'axios'
 
-const query = useQuery('todos', ({ signal }) => {
+const query = useQuery(['todos'], ({ signal }) => {
   // Create a new CancelToken source for this request
   const CancelToken = axios.CancelToken
   const source = CancelToken.source()
@@ -81,7 +81,7 @@ const query = useQuery('todos', ({ signal }) => {
 ## Using `XMLHttpRequest`
 
 ```js
-const query = useQuery('todos', ({ signal }) => {
+const query = useQuery(['todos'], ({ signal }) => {
   return new Promise((resolve, reject) => {
     var oReq = new XMLHttpRequest()
     oReq.addEventListener('load', () => {
@@ -102,7 +102,7 @@ const query = useQuery('todos', ({ signal }) => {
 An `AbortSignal` can be set in the `GraphQLClient` constructor.
 
 ```js
-const query = useQuery('todos', ({ signal }) => {
+const query = useQuery(['todos'], ({ signal }) => {
   const client = new GraphQLClient(endpoint, {
     signal,
   });
@@ -115,9 +115,7 @@ const query = useQuery('todos', ({ signal }) => {
 You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)`, which will cancel the query and revert it back to its previous state. If `promise.cancel` is available, or you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
 
 ```js
-const [queryKey] = useState('todos')
-
-const query = useQuery(queryKey, await ({ signal }) => {
+const query = useQuery(['todos'], await ({ signal }) => {
   const resp = fetch('/todos', { signal })
   return resp.json()
 })
@@ -127,7 +125,7 @@ const queryClient = useQueryClient()
 return (
   <button onClick={(e) => {
     e.preventDefault()
-    queryClient.cancelQueries(queryKey)
+    queryClient.cancelQueries(['todos'])
    }}>Cancel</button>
 )
 ```
@@ -143,7 +141,7 @@ To integrate with this feature, attach a `cancel` function to the promise return
 ```js
 import axios from 'axios'
 
-const query = useQuery('todos', () => {
+const query = useQuery(['todos'], () => {
   // Create a new CancelToken source for this request
   const CancelToken = axios.CancelToken
   const source = CancelToken.source()
@@ -165,7 +163,7 @@ const query = useQuery('todos', () => {
 ## Using `fetch` with `cancel` function
 
 ```js
-const query = useQuery('todos', () => {
+const query = useQuery(['todos'], () => {
   // Create a new AbortController instance for this request
   const controller = new AbortController()
   // Get the abortController's signal

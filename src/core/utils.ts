@@ -1,6 +1,5 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
-import { EnsuredQueryKey } from './types'
 import type {
   MutationFunction,
   MutationKey,
@@ -85,14 +84,6 @@ export function functionalUpdate<TInput, TOutput>(
 
 export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
-}
-
-export function ensureQueryKeyArray<T extends QueryKey>(
-  value: T
-): EnsuredQueryKey<T> {
-  return (Array.isArray(value)
-    ? value
-    : ([value] as unknown)) as EnsuredQueryKey<T>
 }
 
 export function difference<T>(array1: T[], array2: T[]): T[] {
@@ -254,17 +245,10 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
 
 /**
  * Default query keys hash function.
- */
-export function hashQueryKey(queryKey: QueryKey): string {
-  const asArray = ensureQueryKeyArray(queryKey)
-  return stableValueHash(asArray)
-}
-
-/**
  * Hashes the value into a stable hash.
  */
-export function stableValueHash(value: any): string {
-  return JSON.stringify(value, (_, val) =>
+export function hashQueryKey(queryKey: QueryKey): string {
+  return JSON.stringify(queryKey, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
           .sort()
@@ -280,7 +264,7 @@ export function stableValueHash(value: any): string {
  * Checks if key `b` partially matches with key `a`.
  */
 export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(ensureQueryKeyArray(a), ensureQueryKeyArray(b))
+  return partialDeepEqual(a, b)
 }
 
 /**
@@ -385,8 +369,8 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function isQueryKey(value: any): value is QueryKey {
-  return typeof value === 'string' || Array.isArray(value)
+export function isQueryKey(value: unknown): value is QueryKey {
+  return Array.isArray(value)
 }
 
 export function isError(value: any): value is Error {

@@ -66,7 +66,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery('success', () => fetchDataSuccess('success!'))
+      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )
@@ -77,7 +77,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     const prefetchCache = new QueryCache()
     const prefetchClient = new QueryClient({ queryCache: prefetchCache })
-    await prefetchClient.prefetchQuery('success', () =>
+    await prefetchClient.prefetchQuery(['success'], () =>
       fetchDataSuccess('success')
     )
     const dehydratedStateServer = dehydrate(prefetchClient)
@@ -133,7 +133,9 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function ErrorComponent() {
-      const result = useQuery('error', () => fetchDataError(), { retry: false })
+      const result = useQuery(['error'], () => fetchDataError(), {
+        retry: false,
+      })
       return (
         <PrintStateComponent componentName="ErrorComponent" result={result} />
       )
@@ -143,7 +145,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(true)
     const prefetchCache = new QueryCache()
     const prefetchClient = new QueryClient({ queryCache: prefetchCache })
-    await prefetchClient.prefetchQuery('error', () => fetchDataError())
+    await prefetchClient.prefetchQuery(['error'], () => fetchDataError())
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
     const renderClient = new QueryClient({ queryCache: renderCache })
@@ -197,7 +199,7 @@ describe('Server side rendering with de/rehydration', () => {
 
     // -- Shared part --
     function SuccessComponent() {
-      const result = useQuery('success', () => fetchDataSuccess('success!'))
+      const result = useQuery(['success'], () => fetchDataSuccess('success!'))
       return (
         <PrintStateComponent componentName="SuccessComponent" result={result} />
       )

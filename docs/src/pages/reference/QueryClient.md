@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
   },
 })
 
-await queryClient.prefetchQuery('posts', fetchPosts)
+await queryClient.prefetchQuery(['posts'], fetchPosts)
 ```
 
 Its available methods are:
@@ -205,8 +205,6 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 `setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
 
-After successful changing query's cached data via `setQueryData`, it will also trigger `onSuccess` callback from that query.
-
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
 ```js
@@ -272,7 +270,7 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 - If you **want inactive queries to refetch** as well, use the `refetchTye: 'all'` option
 
 ```js
-await queryClient.invalidateQueries('posts', {
+await queryClient.invalidateQueries(['posts'], {
   exact,
   refetchType: 'active',
 }, { throwOnError, cancelRefetch })
@@ -345,7 +343,7 @@ The `cancelQueries` method can be used to cancel outgoing queries based on their
 This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
 
 ```js
-await queryClient.cancelQueries('posts', { exact: true })
+await queryClient.cancelQueries(['posts'], { exact: true })
 ```
 
 **Options**
@@ -473,7 +471,7 @@ queryClient.setDefaultOptions({
 The `getQueryDefaults` method returns the default options which have been set for specific queries:
 
 ```js
-const defaultOptions = queryClient.getQueryDefaults('posts')
+const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ```
 
 ## `queryClient.setQueryDefaults`
@@ -481,10 +479,10 @@ const defaultOptions = queryClient.getQueryDefaults('posts')
 `setQueryDefaults` can be used to set default options for specific queries:
 
 ```js
-queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
+queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
 
 function Component() {
-  const { data } = useQuery('posts')
+  const { data } = useQuery(['posts'])
 }
 ```
 
@@ -498,7 +496,7 @@ function Component() {
 The `getMutationDefaults` method returns the default options which have been set for specific mutations:
 
 ```js
-const defaultOptions = queryClient.getMutationDefaults('addPost')
+const defaultOptions = queryClient.getMutationDefaults(['addPost'])
 ```
 
 ## `queryClient.setMutationDefaults`
@@ -506,10 +504,10 @@ const defaultOptions = queryClient.getMutationDefaults('addPost')
 `setMutationDefaults` can be used to set default options for specific mutations:
 
 ```js
-queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
+queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
-  const { data } = useMutation('addPost')
+  const { data } = useMutation(['addPost'])
 }
 ```
 
