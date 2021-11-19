@@ -97,10 +97,10 @@ describe('createWebStoragePersister ', () => {
     const restoredClient = await webStoragePersister.restoreClient()
     expect(restoredClient?.clientState.queries.length).toEqual(4)
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey === ['A'])
+      restoredClient?.clientState.queries.find(q => q.queryKey[0] === 'A')
     ).toBeUndefined()
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey === ['B'])
+      restoredClient?.clientState.queries.find(q => q.queryKey[0] === 'B')
     ).not.toBeUndefined()
 
     // update query Data
@@ -115,10 +115,10 @@ describe('createWebStoragePersister ', () => {
     const restoredClient2 = await webStoragePersister.restoreClient()
     expect(restoredClient2?.clientState.queries.length).toEqual(4)
     expect(
-      restoredClient2?.clientState.queries.find(q => q.queryKey === ['A'])
+      restoredClient2?.clientState.queries.find(q => q.queryKey[0] === 'A')
     ).toHaveProperty('state.data', 'a'.repeat(N))
     expect(
-      restoredClient2?.clientState.queries.find(q => q.queryKey === ['B'])
+      restoredClient2?.clientState.queries.find(q => q.queryKey[0] === 'B')
     ).toBeUndefined()
   })
 

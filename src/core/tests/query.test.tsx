@@ -204,7 +204,7 @@ describe('query', () => {
     const args = queryFn.mock.calls[0]![0]
     expect(args).toBeDefined()
     expect(args.pageParam).toBeUndefined()
-    expect(args.queryKey).toEqual([key])
+    expect(args.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(args.signal).toBeInstanceOf(AbortSignal)
     } else {
