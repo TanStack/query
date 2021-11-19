@@ -153,17 +153,7 @@ export default function Explorer({
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
   const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
 
-  let type:
-    | 'string'
-    | 'number'
-    | 'bigint'
-    | 'boolean'
-    | 'symbol'
-    | 'undefined'
-    | 'object'
-    | 'function'
-    | 'array'
-    | 'Iterable' = typeof value
+  let type: string = typeof value
   let subEntries
 
   const makeProperty = (sub: { label: string; value: unknown }) => {
