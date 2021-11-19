@@ -186,6 +186,7 @@ describe('useInfiniteQuery', () => {
         {
           getNextPageParam: () => 1,
           keepPreviousData: true,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -306,6 +307,7 @@ describe('useInfiniteQuery', () => {
             pages: [...data.pages].reverse(),
             pageParams: [...data.pageParams].reverse(),
           }),
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -359,6 +361,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getPreviousPageParam: firstPage => firstPage - 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -423,8 +426,10 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, ({ pageParam = 10 }) =>
-        Number(pageParam)
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 10 }) => Number(pageParam),
+        { notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -516,6 +521,7 @@ describe('useInfiniteQuery', () => {
         {
           getPreviousPageParam: firstPage => firstPage - 1,
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -608,6 +614,7 @@ describe('useInfiniteQuery', () => {
         ({ pageParam = 10 }) => Number(pageParam) * multiplier.current,
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -687,6 +694,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -913,6 +921,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1014,6 +1023,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1080,6 +1090,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1169,6 +1180,7 @@ describe('useInfiniteQuery', () => {
         {
           initialData: { pages: [1], pageParams: [1] },
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
