@@ -233,6 +233,7 @@ describe('useQuery', () => {
       return (
         <div>
           <h1>Status: {state.status}</h1>
+          <div>Failure Count: {state.failureCount}</div>
         </div>
       )
     }
@@ -370,7 +371,10 @@ describe('useQuery', () => {
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(key, () => 'data', {
+        onSuccess,
+        notifyOnChangeProps: 'all',
+      })
 
       states.push(state)
 
@@ -735,6 +739,7 @@ describe('useQuery', () => {
         },
         {
           cacheTime: 0,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -987,7 +992,7 @@ describe('useQuery', () => {
 
     function Page() {
       const [, rerender] = React.useState({})
-      const state = useQuery(key, () => ++count)
+      const state = useQuery(key, () => ++count, { notifyOnChangeProps: 'all' })
 
       states.push(state)
 
@@ -1028,7 +1033,7 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useQuery(key, () => ++count)
+      const state = useQuery(key, () => ++count, { notifyOnChangeProps: 'all' })
 
       states.push(state)
 
@@ -1079,10 +1084,14 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useQuery(key, () => {
-        count++
-        return count === 1 ? result1 : result2
-      })
+      const state = useQuery(
+        key,
+        () => {
+          count++
+          return count === 1 ? result1 : result2
+        },
+        { notifyOnChangeProps: 'all' }
+      )
 
       states.push(state)
 
@@ -1455,6 +1464,7 @@ describe('useQuery', () => {
         <div>
           <h1>data: {state.data}</h1>
           <h2>error: {state.error?.message}</h2>
+          <p>previous data: {state.isPreviousData}</p>
         </div>
       )
     }
@@ -1616,7 +1626,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        { enabled: false, keepPreviousData: true }
+        { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -1705,7 +1715,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        { enabled: false, keepPreviousData: true }
+        { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -1775,7 +1785,7 @@ describe('useQuery', () => {
     const states: UseQueryResult<number>[] = []
 
     function FirstComponent() {
-      const state = useQuery(key, () => 1)
+      const state = useQuery(key, () => 1, { notifyOnChangeProps: 'all' })
       const refetch = state.refetch
 
       states.push(state)
@@ -1790,7 +1800,7 @@ describe('useQuery', () => {
     }
 
     function SecondComponent() {
-      useQuery(key, () => 2)
+      useQuery(key, () => 2, { notifyOnChangeProps: 'all' })
       return null
     }
 
@@ -3559,7 +3569,12 @@ describe('useQuery', () => {
 
       states.push(queryInfo)
 
-      return <div>count: {queryInfo.data}</div>
+      return (
+        <div>
+          <h1>count: {queryInfo.data}</h1>
+          <h2>refetch: {queryInfo.isRefetching}</h2>
+        </div>
+      )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
@@ -4117,7 +4132,7 @@ describe('useQuery', () => {
           count++
           return count
         },
-        { staleTime: Infinity, enabled: false }
+        { staleTime: Infinity, enabled: false, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
