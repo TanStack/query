@@ -165,7 +165,6 @@ export default function Explorer({
     | 'array'
     | 'Iterable' = typeof value
   let subEntries
-  const subEntryPages = []
 
   const makeProperty = (sub: { label: string; value: unknown }) => {
     const subDefaultExpanded =
@@ -210,6 +209,7 @@ export default function Explorer({
     )
   }
 
+  const subEntryPages = []
   if (subEntries) {
     let i = 0
 
