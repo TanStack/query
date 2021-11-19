@@ -118,7 +118,7 @@ export function useQueries<T extends any[]>(
 
   const queryClient = useQueryClient()
 
-  const defaultedQueries = useMemo(queries.map(options => {
+  const defaultedQueries = useMemo(() => queries.map(options => {
     const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
 
     // Make sure the results are already in fetching state before subscribing or updating options
