@@ -100,6 +100,7 @@ interface SuccessAction<TData> {
   data: TData | undefined
   type: 'success'
   dataUpdatedAt?: number
+  notifySuccess?: boolean
 }
 
 interface ErrorAction<TError> {
@@ -202,7 +203,7 @@ export class Query<
 
   setData(
     updater: Updater<TData | undefined, TData>,
-    options?: SetDataOptions
+    options?: SetDataOptions & { notifySuccess: boolean }
   ): TData {
     const prevData = this.state.data
 
@@ -222,6 +223,7 @@ export class Query<
       data,
       type: 'success',
       dataUpdatedAt: options?.updatedAt,
+      notifySuccess: options?.notifySuccess,
     })
 
     return data
