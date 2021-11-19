@@ -21,8 +21,8 @@ const queryClient = useQueryClient()
 // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
 const mutation = useMutation(addTodo, {
   onSuccess: () => {
-    queryClient.invalidateQueries('todos')
-    queryClient.invalidateQueries('reminders')
+    queryClient.invalidateQueries(['todos'])
+    queryClient.invalidateQueries(['reminders'])
   },
 })
 ```

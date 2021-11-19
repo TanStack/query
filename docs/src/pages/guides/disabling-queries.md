@@ -26,7 +26,7 @@ function Todos() {
     error,
     refetch,
     isFetching,
-  } = useQuery('todos', fetchTodoList, {
+  } = useQuery(['todos'], fetchTodoList, {
     enabled: false,
   })
 

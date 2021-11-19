@@ -7,7 +7,6 @@ If you find yourself wishing for whatever reason that you could just share the s
 
 ```js
 // Define a default query function that will receive the query key
-// the queryKey is guaranteed to be an Array here
 const defaultQueryFn = async ({ queryKey }) => {
   const { data } = await axios.get(`https://jsonplaceholder.typicode.com${queryKey[0]}`);
   return data;
@@ -32,14 +31,14 @@ function App() {
 
 // All you have to do now is pass a key!
 function Posts() {
-  const { status, data, error, isFetching } = useQuery('/posts')
+  const { status, data, error, isFetching } = useQuery(['/posts'])
 
   // ...
 }
 
 // You can even leave out the queryFn and just go straight into options
 function Post({ postId }) {
-  const { status, data, error, isFetching } = useQuery(`/posts/${postId}`, {
+  const { status, data, error, isFetching } = useQuery([`/posts/${postId}`], {
     enabled: !!postId,
   })
 

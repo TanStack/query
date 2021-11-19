@@ -60,7 +60,7 @@ export default function App() {
 }
 
 function Example() {
-  const { isLoading, error, data } = useQuery('repoData', () =>
+  const { isLoading, error, data } = useQuery(['repoData'], () =>
     fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
       res.json()
     )
