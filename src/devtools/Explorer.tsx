@@ -59,7 +59,7 @@ type RendererProps = {
   subEntryPages?: Entry[][]
   type?: string
   expanded?: boolean
-  toggle: (set?: boolean) => void
+  toggle: () => void
   pageSize: number
 }
 
@@ -153,9 +153,7 @@ export default function Explorer({
 }: ExplorerProps) {
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
 
-  const toggle = (set?: boolean): void => {
-    setExpanded(old => (typeof set !== 'undefined' ? set : !Boolean(old)))
-  }
+  const toggle = () => setExpanded(old => !old)
 
   const path: string[] = []
   let type:
