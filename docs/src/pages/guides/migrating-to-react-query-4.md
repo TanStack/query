@@ -27,6 +27,12 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 + import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query'
 ```
 
+### `notifyOnChangeProps` property no longer accepts `"tracked"` as a value
+
+The `notifyOnChangeProps` option no longer accepts a `"tracked"` value. Instead, `useQuery` defaults to tracking properties. All queries using `notifyOnChangeProps: "tracked"` should be updated by removing this option. 
+
+If you would like to bypass this in any queries to emulate the v3 default behavior of re-rendering whenever a query changes, `notifyOnChangeProps` now accepts an `"all"` value to opt-out of the default smart tracking optimization.
+
 ### `notifyOnChangePropsExclusion` has been removed
 
 In v4, `notifyOnChangeProps` defaults to the `"tracked"` behavior of v3 instead of `undefined`. Now that `"tracked"` is the default behavior for v4, it no longer makes sense to include this config option.
