@@ -97,8 +97,8 @@ export interface UseMutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode: 'online' | 'always'
-  pauseRetryWhenOffline: boolean
+  networkMode?: 'online' | 'always'
+  pauseRetryWhenOffline?: boolean
   useErrorBoundary?: boolean | ((error: TError) => boolean)
   meta?: MutationMeta
 }
