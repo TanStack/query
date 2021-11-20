@@ -1,4 +1,8 @@
-import { chunkArray } from '../Explorer'
+import React from 'react'
+import { fireEvent, screen } from '@testing-library/react'
+
+import { chunkArray, DefaultRenderer } from '../Explorer'
+import { renderWithClient, createQueryClient } from './utils'
 
 describe('Explorer', () => {
   describe('chunkArray', () => {
@@ -21,6 +25,26 @@ describe('Explorer', () => {
       const chunks = chunkArray([1, 2, 3, 4, 5], 2)
       const lastChunk = chunks[chunks.length - 1]
       expect(lastChunk).toStrictEqual([5])
+    })
+  })
+
+  describe('DefaultRenderer', () => {
+    it('when the entry label is clicked, toggle expanded', () => {
+      const toggleExpanded = jest.fn()
+      const { queryClient } = createQueryClient()
+      renderWithClient(
+        queryClient,
+        <DefaultRenderer
+          label="example label"
+          toggleExpanded={toggleExpanded}
+          pageSize={10}
+          handleEntry={() => <></>}
+        />,
+        {}
+      )
+      const label = screen.getByRole('button', { name: /example label/i })
+      fireEvent.click(label)
+      expect(toggleExpanded).toHaveBeenCalledTimes(1)
     })
   })
 })
