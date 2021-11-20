@@ -4561,5 +4561,51 @@ describe('useQuery', () => {
       )
       expect(count).toBe(1)
     })
+
+    it('online queries should pause retries if you are offline', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            throw new Error('failed' + count)
+          },
+          retry: 2,
+          retryDelay: 10,
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus},
+              failureCount: {state.failureCount}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText(
+          'status: loading, fetchStatus: fetching, failureCount: 1'
+        )
+      )
+
+      mockNavigatorOnLine(false)
+
+      await waitFor(() =>
+        rendered.getByText(
+          'status: loading, fetchStatus: paused, failureCount: 1'
+        )
+      )
+
+      expect(count).toBe(1)
+    })
   })
 })
