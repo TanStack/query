@@ -592,4 +592,64 @@ describe('QueryErrorResetBoundary', () => {
 
     expect(rendered.queryByText('page')).not.toBeNull()
   })
+
+  it('should show error boundary when using tracked queries even though we do not track the error field', async () => {
+    const key = queryKey()
+
+    let succeed = false
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { data } = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Error')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          useErrorBoundary: true,
+          notifyOnChangeProps: 'tracked',
+        }
+      )
+      return <div>{data}</div>
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <QueryErrorResetBoundary>
+        {({ reset }) => (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ resetErrorBoundary }) => (
+              <div>
+                <div>error boundary</div>
+                <button
+                  onClick={() => {
+                    resetErrorBoundary()
+                  }}
+                >
+                  retry
+                </button>
+              </div>
+            )}
+          >
+            <Page />
+          </ErrorBoundary>
+        )}
+      </QueryErrorResetBoundary>
+    )
+
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('retry'))
+    succeed = true
+    fireEvent.click(rendered.getByText('retry'))
+    await waitFor(() => rendered.getByText('data'))
+
+    consoleMock.mockRestore()
+  })
 })
