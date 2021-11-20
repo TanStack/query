@@ -1,4 +1,5 @@
 import { act, waitFor, fireEvent } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import React from 'react'
 
 import {
@@ -10,6 +11,7 @@ import {
   renderWithClient,
   setActTimeout,
   Blink,
+  mockNavigatorOnLine,
 } from './utils'
 import {
   useQuery,
@@ -4402,5 +4404,49 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('error'))
 
     consoleMock.mockRestore()
+  })
+
+  describe('networkMode', () => {
+    it('online queries (default) should not start fetching if you are offline', async () => {
+      const consoleMock = mockConsoleError()
+      mockNavigatorOnLine(false)
+
+      const key = queryKey()
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            await sleep(10)
+            return 'data'
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, isPaused: {String(state.isPaused)}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('status: loading, isPaused: true'))
+
+      mockNavigatorOnLine(true)
+      window.dispatchEvent(new Event('online'))
+
+      await waitFor(() =>
+        rendered.getByText('status: success, isPaused: false')
+      )
+      await waitFor(() => {
+        expect(rendered.getByText('data: data')).toBeInTheDocument()
+      })
+
+      consoleMock.mockRestore()
+    })
   })
 })
