@@ -34,7 +34,6 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-          notifyOnChangeProps: 'all',
         }
       )
       return <div>{data}</div>
@@ -161,7 +160,6 @@ describe('QueryErrorResetBoundary', () => {
           retry: false,
           enabled,
           useErrorBoundary: true,
-          notifyOnChangeProps: 'all',
         }
       )
 
@@ -285,7 +283,6 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-          notifyOnChangeProps: 'all',
         }
       )
       return <div>{data}</div>
@@ -345,7 +342,6 @@ describe('QueryErrorResetBoundary', () => {
           retry: false,
           useErrorBoundary: true,
           initialData: 'initial',
-          notifyOnChangeProps: 'all',
         }
       )
       return <div>{data}</div>
@@ -406,7 +402,6 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-          notifyOnChangeProps: 'all',
         }
       )
       return <div>{data}</div>
@@ -470,7 +465,6 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-          notifyOnChangeProps: 'all',
         }
       )
       return <div>{data}</div>
