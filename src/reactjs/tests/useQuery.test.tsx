@@ -4608,4 +4608,86 @@ describe('useQuery', () => {
       expect(count).toBe(1)
     })
   })
+
+  describe('networkMode always', () => {
+    it('always queries should start fetching even if you are offline', async () => {
+      mockNavigatorOnLine(false)
+
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data ' + count
+          },
+          networkMode: 'always',
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, isPaused: {String(state.isPaused)}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: success, isPaused: false')
+      )
+
+      await waitFor(() => {
+        expect(rendered.getByText('data: data 1')).toBeInTheDocument()
+      })
+    })
+
+    it('always queries should not pause retries', async () => {
+      mockNavigatorOnLine(false)
+      const consoleMock = mockConsoleError()
+
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            throw new Error('error ' + count)
+          },
+          networkMode: 'always',
+          retry: 1,
+          retryDelay: 5,
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, isPaused: {String(state.isPaused)}
+            </div>
+            <div>
+              error: {state.error instanceof Error && state.error.message}
+            </div>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('status: error, isPaused: false'))
+
+      await waitFor(() => {
+        expect(rendered.getByText('error: error 2')).toBeInTheDocument()
+      })
+      consoleMock.mockRestore()
+    })
+  })
 })
