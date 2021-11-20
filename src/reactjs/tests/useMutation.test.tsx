@@ -395,8 +395,7 @@ describe('useMutation', () => {
         {
           retry: 1,
           retryDelay: 5,
-          networkMode: 'always',
-          pauseRetryWhenOffline: true,
+          networkMode: 'offlineFirst',
         }
       )
 

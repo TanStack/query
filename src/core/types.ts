@@ -44,6 +44,8 @@ export interface InfiniteData<TData> {
 
 export type QueryMeta = Record<string, unknown>
 
+export type NetworkMode = 'online' | 'always' | 'offlineFirst'
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -58,8 +60,7 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode?: 'online' | 'always'
-  pauseRetryWhenOffline?: boolean
+  networkMode?: NetworkMode
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
@@ -546,8 +547,7 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode?: 'online' | 'always'
-  pauseRetryWhenOffline?: boolean
+  networkMode?: NetworkMode
   cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta

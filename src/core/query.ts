@@ -475,9 +475,6 @@ export class Query<
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
       networkMode: context.options.networkMode ?? 'online',
-      pauseRetryWhenOffline:
-        context.options.pauseRetryWhenOffline ??
-        this.options.networkMode !== 'always',
     })
 
     this.promise = this.retryer.promise

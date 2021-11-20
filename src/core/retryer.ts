@@ -1,7 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { sleep } from './utils'
-import { CancelOptions } from './types'
+import { CancelOptions, NetworkMode } from './types'
 
 // TYPES
 
@@ -15,8 +15,7 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode: 'online' | 'always'
-  pauseRetryWhenOffline: boolean
+  networkMode: NetworkMode
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -87,13 +86,13 @@ export class Retryer<TData = unknown, TError = unknown> {
 
     const shouldPause = () =>
       !focusManager.isFocused() ||
-      (config.pauseRetryWhenOffline && !onlineManager.isOnline())
+      (config.networkMode !== 'always' && !onlineManager.isOnline())
 
     const canFetch = () => {
       if (this.isPaused) {
         return !shouldPause()
       }
-      return config.networkMode === 'always' || onlineManager.isOnline()
+      return config.networkMode === 'online' ? onlineManager.isOnline() : true
     }
 
     this.continue = () => {
