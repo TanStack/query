@@ -223,7 +223,7 @@ export type DefaultedQueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey
 > = WithRequired<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  'useErrorBoundary' | 'networkRetry' | 'refetchOnReconnect'
+  'useErrorBoundary' | 'refetchOnReconnect'
 >
 
 export interface InfiniteQueryObserverOptions<
@@ -550,6 +550,8 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: 'online' | 'offline'
+  networkRetry?: boolean | ShouldRetryFunction<TError>
   cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta

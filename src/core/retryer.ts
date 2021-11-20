@@ -15,8 +15,8 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode?: 'online' | 'offline'
-  networkRetry?: boolean | ShouldRetryFunction<TError>
+  networkMode: 'online' | 'offline'
+  networkRetry: boolean | ShouldRetryFunction<TError>
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -199,9 +199,13 @@ export class Retryer<TData = unknown, TError = unknown> {
           sleep(delay)
             // Pause if the document is not visible or when the device is offline
             .then(() => {
+              const networkRetry = () =>
+                typeof config.networkRetry === 'function'
+                  ? config.networkRetry(this.failureCount, error)
+                  : config.networkRetry
               if (
                 !focusManager.isFocused() ||
-                (config.networkRetry !== false && !onlineManager.isOnline())
+                (networkRetry() && !onlineManager.isOnline())
               ) {
                 return pause()
               }

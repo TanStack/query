@@ -633,11 +633,9 @@ export class QueryClient {
     }
 
     // dependent default values
-    if (typeof defaultedOptions.networkRetry === 'undefined') {
-      defaultedOptions.networkRetry = defaultedOptions.networkMode !== 'offline'
-    }
     if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
-      defaultedOptions.networkRetry = defaultedOptions.networkMode !== 'offline'
+      defaultedOptions.refetchOnReconnect =
+        defaultedOptions.networkMode !== 'offline'
     }
     if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
       defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
