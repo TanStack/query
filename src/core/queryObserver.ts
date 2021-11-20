@@ -612,11 +612,10 @@ export class QueryObserver<
 
     const { notifyOnChangeProps } = this.options
 
-    if (notifyOnChangeProps === 'all') {
-      return true
-    }
-
-    if (!notifyOnChangeProps && !this.trackedProps.length) {
+    if (
+      notifyOnChangeProps === 'all' ||
+      (!notifyOnChangeProps && !this.trackedProps.length)
+    ) {
       return true
     }
 
