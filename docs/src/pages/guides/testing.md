@@ -21,7 +21,7 @@ Once installed, a simple test can be written. Given the following custom hook:
 
 ```
 export function useCustomHook() {
-  return useQuery('customHook', () => 'Hello');
+  return useQuery(['customHook'], () => 'Hello');
 }
 ```
 
@@ -99,7 +99,7 @@ Given the following custom hook:
 
 ```
 function useFetchData() {
-  return useQuery('fetchData', () => request('/api/data'));
+  return useQuery(['fetchData'], () => request('/api/data'));
 }
 ```
 

@@ -1,5 +1,15 @@
-import { sleep, queryKey, mockConsoleError } from '../../reactjs/tests/utils'
+import { waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
+import React from 'react'
+
 import {
+  sleep,
+  queryKey,
+  mockConsoleError,
+  renderWithClient,
+} from '../../reactjs/tests/utils'
+import {
+  useQuery,
   InfiniteQueryObserver,
   QueryCache,
   QueryClient,
@@ -166,19 +176,6 @@ describe('queryClient', () => {
       expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
-    test('should use the same query when using similar string or array query keys', () => {
-      const key = queryKey()
-      queryClient.setQueryData(key, '1')
-      expect(queryClient.getQueryData(key)).toBe('1')
-      expect(queryClient.getQueryData([key])).toBe('1')
-      queryClient.setQueryData([key], '2')
-      expect(queryClient.getQueryData(key)).toBe('2')
-      expect(queryClient.getQueryData([key])).toBe('2')
-      queryClient.setQueryData(key, '1')
-      expect(queryClient.getQueryData(key)).toBe('1')
-      expect(queryClient.getQueryData([key])).toBe('1')
-    })
-
     test('should accept an update function', () => {
       const key = queryKey()
 
@@ -219,6 +216,62 @@ describe('queryClient', () => {
 
       expect(queryCache.find(key)!.state.data).toBe(newData)
     })
+
+    test('should not call onSuccess callback of active observers', async () => {
+      const key = queryKey()
+      const onSuccess = jest.fn()
+
+      function Page() {
+        const state = useQuery(key, () => 'data', { onSuccess })
+        return (
+          <div>
+            <div>data: {state.data}</div>
+            <button onClick={() => queryClient.setQueryData(key, 'newData')}>
+              setQueryData
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: data'))
+      rendered.getByRole('button', { name: /setQueryData/i }).click()
+      await waitFor(() => rendered.getByText('data: newData'))
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess).toHaveBeenCalledWith('data')
+    })
+
+    test('should respect updatedAt', async () => {
+      const key = queryKey()
+
+      function Page() {
+        const state = useQuery(key, () => 'data')
+        return (
+          <div>
+            <div>data: {state.data}</div>
+            <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
+            <button
+              onClick={() =>
+                queryClient.setQueryData(key, 'newData', { updatedAt: 100 })
+              }
+            >
+              setQueryData
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: data'))
+      rendered.getByRole('button', { name: /setQueryData/i }).click()
+      await waitFor(() => rendered.getByText('data: newData'))
+      await waitFor(() => {
+        expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
+      })
+    })
   })
 
   describe('setQueriesData', () => {
@@ -226,7 +279,10 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 1], 1)
       queryClient.setQueryData(['key', 2], 2)
 
-      const result = queryClient.setQueriesData<number>('key', old => old! + 5)
+      const result = queryClient.setQueriesData<number>(
+        ['key'],
+        old => old! + 5
+      )
 
       expect(result).toEqual([
         [['key', 1], 6],
@@ -252,10 +308,10 @@ describe('queryClient', () => {
     })
 
     test('should not update non existing queries', () => {
-      const result = queryClient.setQueriesData<string>('key', 'data')
+      const result = queryClient.setQueriesData<string>(['key'], 'data')
 
       expect(result).toEqual([])
-      expect(queryClient.getQueryData('key')).toBe(undefined)
+      expect(queryClient.getQueryData(['key'])).toBe(undefined)
     })
   })
 
@@ -312,8 +368,8 @@ describe('queryClient', () => {
   describe('fetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
@@ -424,8 +480,8 @@ describe('queryClient', () => {
   describe('fetchInfiniteQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = string
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const data = {
         pages: ['data'],
@@ -466,8 +522,8 @@ describe('queryClient', () => {
   describe('prefetchInfiniteQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')
@@ -506,8 +562,8 @@ describe('queryClient', () => {
   describe('prefetchQuery', () => {
     test('should not type-error with strict query key', async () => {
       type StrictData = 'data'
-      type StrictQueryKey = ['strict', string]
-      const key: StrictQueryKey = ['strict', queryKey()]
+      type StrictQueryKey = ['strict', ...ReturnType<typeof queryKey>]
+      const key: StrictQueryKey = ['strict', ...queryKey()]
 
       const fetchFn: QueryFunction<StrictData, StrictQueryKey> = () =>
         Promise.resolve('data')

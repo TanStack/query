@@ -5,6 +5,19 @@ title: Migrating to React Query 4
 
 ## Breaking Changes
 
+### Query Keys (and Mutation Keys) need to be an Array
+
+In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./default-query-function) easier.
+
+However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](./filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
+
+To streamline all apis, we've decided to make all keys Arrays only:
+
+```diff
+- useQuery('todos', fetchTodos)
++ useQuery(['todos'], fetchTodos)
+```
+
 ### Separate hydration exports have been removed
 
 With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the react-query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
@@ -134,6 +147,19 @@ If you were importing anything from `'react-query/react'` directly in your proje
 ```diff
 - import { QueryClientProvider } from 'react-query/react';
 + import { QueryClientProvider } from 'react-query/reactjs';
+```
+
+### `onSuccess` is no longer called from `setQueryData`
+
+This was confusing to many and also created infinite loops if `setQueryData` was called from within `onSuccess`. It was also a frequent source of error when combined with `staleTime`, because if data was read from the cache only, `onSuccess` was _not_ called.
+
+Similar to `onError` and `onSettled`, the `onSuccess` callback is now tied to a request being made. No request -> no callback.
+
+If you want to listen to changes of the `data` field, you can best do this with a `useEffect`, where `data` is part of the dependency Array. Since react-query ensures stable data through structural sharing, the effect will not execute with every background refetch, but only if something within data has changed:
+
+```
+const { data } = useQuery({ queryKey, queryFn })
+React.useEffect(() => mySideEffectHere(data), [data])
 ```
 
 ### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed

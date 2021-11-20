@@ -763,7 +763,7 @@ describe('useInfiniteQuery', () => {
     const abortListeners: jest.Mock<any, any>[] = []
     const fetchPage = jest.fn<
       Promise<number>,
-      [QueryFunctionContext<string, number>]
+      [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
       if (signal) {
         const onAbort = jest.fn()
@@ -806,7 +806,7 @@ describe('useInfiniteQuery', () => {
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
     expect(firstCtx.pageParam).toBeUndefined()
-    expect(firstCtx.queryKey).toEqual([key])
+    expect(firstCtx.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
       expect(firstCtx.signal?.aborted).toBe(false)
@@ -817,7 +817,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual([key])
+    expect(secondCtx.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
       expect(secondCtx.signal?.aborted).toBe(true)
@@ -828,7 +828,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 2
     const thirdCtx = fetchPage.mock.calls[callIndex]![0]
     expect(thirdCtx.pageParam).toBe(11)
-    expect(thirdCtx.queryKey).toEqual([key])
+    expect(thirdCtx.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
       expect(thirdCtx.signal?.aborted).toBe(false)
@@ -844,7 +844,7 @@ describe('useInfiniteQuery', () => {
     const abortListeners: jest.Mock<any, any>[] = []
     const fetchPage = jest.fn<
       Promise<number>,
-      [QueryFunctionContext<string, number>]
+      [QueryFunctionContext<typeof key, number>]
     >(async ({ pageParam = start, signal }) => {
       if (signal) {
         const onAbort = jest.fn()
@@ -887,7 +887,7 @@ describe('useInfiniteQuery', () => {
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
     expect(firstCtx.pageParam).toBeUndefined()
-    expect(firstCtx.queryKey).toEqual([key])
+    expect(firstCtx.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
       expect(firstCtx.signal?.aborted).toBe(false)
@@ -898,7 +898,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual([key])
+    expect(secondCtx.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
       expect(secondCtx.signal?.aborted).toBe(false)

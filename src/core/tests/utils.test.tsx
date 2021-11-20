@@ -341,14 +341,14 @@ describe('core/utils', () => {
 
   describe('parseMutationArgs', () => {
     it('should return mutation options', () => {
-      const options = { mutationKey: 'key' }
+      const options = { mutationKey: ['key'] }
       expect(parseMutationArgs(options)).toMatchObject(options)
     })
   })
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: 'key1' }
+      const filters = { mutationKey: ['key1'] }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         mutationId: 1,

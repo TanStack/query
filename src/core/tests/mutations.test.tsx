@@ -371,14 +371,14 @@ describe('mutations', () => {
     })
 
     const observer = new MutationObserver(queryClient, {
-      mutationKey: 'key',
+      mutationKey: ['key'],
       mutationFn,
     })
 
     observer.mutate()
     const mutation = queryClient
       .getMutationCache()
-      .find({ mutationKey: 'key' })!
+      .find({ mutationKey: ['key'] })!
     await sleep(10)
 
     // Force current mutation retryer to be undefined
@@ -393,7 +393,7 @@ describe('mutations', () => {
 
   test('reducer should return the state for an unknown action type', async () => {
     const observer = new MutationObserver(queryClient, {
-      mutationKey: 'key',
+      mutationKey: ['key'],
       mutationFn: async () => 'data',
     })
 
@@ -402,7 +402,7 @@ describe('mutations', () => {
     observer.mutate()
     const mutation = queryClient
       .getMutationCache()
-      .find({ mutationKey: 'key' })!
+      .find({ mutationKey: ['key'] })!
     const prevState = observer.getCurrentResult()
     spy.mockReset()
 

@@ -65,7 +65,7 @@ const result = useQuery({
 
 **Options**
 
-- `queryKey: string | unknown[]`
+- `queryKey:  unknown[]`
   - **Required**
   - The query key to use for this query.
   - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys) for more information.
@@ -73,8 +73,7 @@ const result = useQuery({
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
-  - Receives a `QueryFunctionContext` object with the following variables:
-    - `queryKey: EnsuredQueryKey`: the queryKey, guaranteed to be an Array
+  - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
@@ -132,7 +131,7 @@ const result = useQuery({
   - If set to `"tracked"`, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
 - `onSuccess: (data: TData) => void`
   - Optional
-  - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
+  - This function will fire any time the query successfully fetches new data.
 - `onError: (error: TError) => void`
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.

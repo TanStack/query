@@ -20,7 +20,7 @@ There are a few ways to supply placeholder data for a query to the cache before 
 
 ```js
 function Todos() {
-  const result = useQuery('todos', () => fetch('/todos'), {
+  const result = useQuery(['todos'], () => fetch('/todos'), {
     placeholderData: placeholderTodos,
   })
 }
@@ -33,7 +33,7 @@ If the process for accessing a query's placeholder data is intensive or just not
 ```js
 function Todos() {
   const placeholderData = useMemo(() => generateFakeTodos(), [])
-  const result = useQuery('todos', () => fetch('/todos'), { placeholderData })
+  const result = useQuery(['todos'], () => fetch('/todos'), { placeholderData })
 }
 ```
 
@@ -47,7 +47,7 @@ function Todo({ blogPostId }) {
     placeholderData: () => {
       // Use the smaller/preview version of the blogPost from the 'blogPosts' query as the placeholder data for this blogPost query
       return queryClient
-        .getQueryData('blogPosts')
+        .getQueryData(['blogPosts'])
         ?.find(d => d.id === blogPostId)
     },
   })

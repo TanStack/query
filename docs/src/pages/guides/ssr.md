@@ -31,7 +31,7 @@ export async function getStaticProps() {
 }
 
 function Posts(props) {
-  const { data } = useQuery('posts', getPosts, { initialData: props.posts })
+  const { data } = useQuery(['posts'], getPosts, { initialData: props.posts })
 
   // ...
 }
@@ -95,11 +95,11 @@ export async function getStaticProps() {
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the "Posts"-page, data will be available immediately either way
-  const { data } = useQuery('posts', getPosts)
+  const { data } = useQuery(['posts'], getPosts)
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: otherData } = useQuery('posts-2', getPosts)
+  const { data: otherData } = useQuery(['posts-2'], getPosts)
 
   // ...
 }
@@ -126,9 +126,9 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 ```js
 import { dehydrate, Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
-function handleRequest (req, res) {
+async function handleRequest (req, res) {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery('key', fn)
+  await queryClient.prefetchQuery(['key'], fn)
   const dehydratedState = dehydrate(queryClient)
 
   const html = ReactDOM.renderToString(

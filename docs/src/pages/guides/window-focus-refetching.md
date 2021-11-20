@@ -25,7 +25,7 @@ function App() {
 #### Disabling Per-Query
 
 ```js
-useQuery('todos', fetchTodos, { refetchOnWindowFocus: false })
+useQuery(['todos'], fetchTodos, { refetchOnWindowFocus: false })
 ```
 
 ## Custom Window Focus Event
