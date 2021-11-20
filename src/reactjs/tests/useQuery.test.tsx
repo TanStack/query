@@ -4411,9 +4411,8 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  describe('networkMode', () => {
-    it('online queries (default) should not start fetching if you are offline', async () => {
-      const consoleMock = mockConsoleError()
+  describe('networkMode online', () => {
+    it('online queries should not start fetching if you are offline', async () => {
       mockNavigatorOnLine(false)
 
       const key = queryKey()
@@ -4450,8 +4449,117 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data')).toBeInTheDocument()
       })
+    })
 
-      consoleMock.mockRestore()
+    it('online queries should not refetch if you are offline', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus},
+              failureCount: {state.failureCount}
+            </div>
+            <div>data: {state.data}</div>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            >
+              invalidate
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: data1'))
+
+      mockNavigatorOnLine(false)
+      rendered.getByRole('button', { name: /invalidate/i }).click()
+
+      await waitFor(() =>
+        rendered.getByText(
+          'status: success, fetchStatus: paused, failureCount: 0'
+        )
+      )
+
+      mockNavigatorOnLine(true)
+      window.dispatchEvent(new Event('online'))
+
+      await waitFor(() =>
+        rendered.getByText(
+          'status: success, fetchStatus: fetching, failureCount: 0'
+        )
+      )
+      await waitFor(() =>
+        rendered.getByText(
+          'status: success, fetchStatus: idle, failureCount: 0'
+        )
+      )
+
+      await waitFor(() => {
+        expect(rendered.getByText('data: data2')).toBeInTheDocument()
+      })
+    })
+
+    it('online queries should not refetch if you are offline and refocus', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            >
+              invalidate
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: data1'))
+
+      mockNavigatorOnLine(false)
+      rendered.getByRole('button', { name: /invalidate/i }).click()
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: paused')
+      )
+
+      window.dispatchEvent(new FocusEvent('focus'))
+      await sleep(15)
+
+      await waitFor(() =>
+        expect(rendered.queryByText('data: data2')).not.toBeInTheDocument()
+      )
+      expect(count).toBe(1)
     })
   })
 })
