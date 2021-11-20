@@ -357,7 +357,13 @@ export function ReactQueryDevtools({
 }
 
 const getStatusRank = (q: Query) =>
-  q.state.isFetching ? 0 : !q.getObserversCount() ? 3 : q.isStale() ? 2 : 1
+  q.state.fetchStatus !== 'idle'
+    ? 0
+    : !q.getObserversCount()
+    ? 3
+    : q.isStale()
+    ? 2
+    : 1
 
 const sortFns: Record<string, (a: Query, b: Query) => number> = {
   'Status > Last Updated': (a, b) =>
@@ -799,7 +805,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               <Button
                 type="button"
                 onClick={handleRefetch}
-                disabled={activeQuery.state.isFetching}
+                disabled={activeQuery.state.fetchStatus === 'fetching'}
                 style={{
                   background: theme.active,
                 }}

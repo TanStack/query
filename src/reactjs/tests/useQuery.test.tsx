@@ -191,6 +191,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
+      fetchStatus: 'fetching',
     })
 
     expect(states[1]).toEqual({
@@ -216,6 +217,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'success',
+      fetchStatus: 'idle',
     })
   })
 
@@ -272,6 +274,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
+      fetchStatus: 'fetching',
     })
 
     expect(states[1]).toEqual({
@@ -297,6 +300,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
+      fetchStatus: 'fetching',
     })
 
     expect(states[2]).toEqual({
@@ -322,6 +326,7 @@ describe('useQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'error',
+      fetchStatus: 'idle',
     })
 
     consoleMock.mockRestore()

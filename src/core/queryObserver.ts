@@ -454,7 +454,7 @@ export class QueryObserver<
       : this.previousQueryResult
 
     const { state } = query
-    let { dataUpdatedAt, error, errorUpdatedAt, isFetching, status } = state
+    let { dataUpdatedAt, error, errorUpdatedAt, fetchStatus, status } = state
     let isPreviousData = false
     let isPlaceholderData = false
     let data: TData | undefined
@@ -469,7 +469,7 @@ export class QueryObserver<
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
 
       if (fetchOnMount || fetchOptionally) {
-        isFetching = true
+        fetchStatus = 'fetching'
         if (!dataUpdatedAt) {
           status = 'loading'
         }
@@ -565,8 +565,11 @@ export class QueryObserver<
       }
     }
 
+    const isFetching = fetchStatus === 'fetching'
+
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
+      fetchStatus,
       isLoading: status === 'loading',
       isSuccess: status === 'success',
       isError: status === 'error',
@@ -580,10 +583,10 @@ export class QueryObserver<
       isFetchedAfterMount:
         state.dataUpdateCount > queryInitialState.dataUpdateCount ||
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
-      isFetching: isFetching && !state.isPaused,
+      isFetching: isFetching,
       isRefetching: isFetching && status !== 'loading',
       isLoadingError: status === 'error' && state.dataUpdatedAt === 0,
-      isPaused: state.isPaused,
+      isPaused: fetchStatus === 'paused',
       isPlaceholderData,
       isPreviousData,
       isRefetchError: status === 'error' && state.dataUpdatedAt !== 0,

@@ -302,6 +302,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
 }
 
 export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
+export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   data: TData | undefined
@@ -328,6 +329,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
+  fetchStatus: FetchStatus
 }
 
 export interface QueryObserverIdleResult<TData = unknown, TError = unknown>

@@ -95,6 +95,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
+      fetchStatus: 'fetching',
     })
 
     expect(states[1]).toEqual({
@@ -126,6 +127,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'success',
+      fetchStatus: 'idle',
     })
   })
 
