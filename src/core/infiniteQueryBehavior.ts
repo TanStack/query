@@ -1,5 +1,5 @@
 import type { QueryBehavior } from './query'
-import { isCancelable } from './retryer'
+
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -72,11 +72,6 @@ export function infiniteQueryBehavior<
           const promise = Promise.resolve(queryFnResult).then(page =>
             buildNewPages(pages, param, page, previous)
           )
-
-          if (isCancelable(queryFnResult)) {
-            const promiseAsAny = promise as any
-            promiseAsAny.cancel = queryFnResult.cancel
-          }
 
           return promise
         }
@@ -153,9 +148,6 @@ export function infiniteQueryBehavior<
         finalPromiseAsAny.cancel = () => {
           cancelled = true
           abortController?.abort()
-          if (isCancelable(promise)) {
-            promise.cancel()
-          }
         }
 
         return finalPromise

@@ -144,13 +144,6 @@ export class Retryer<TData = unknown, TError = unknown> {
           reject(new CancelledError(cancelOptions))
 
           this.abort?.()
-
-          // Cancel transport if supported
-          if (isCancelable(promiseOrValue)) {
-            try {
-              promiseOrValue.cancel()
-            } catch {}
-          }
         }
       }
 
