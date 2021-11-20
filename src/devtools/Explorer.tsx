@@ -47,6 +47,7 @@ export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
     ▶
   </span>
 )
+
 type Entry = {
   label: string
 }
@@ -61,6 +62,25 @@ type RendererProps = {
   expanded?: boolean
   toggleExpanded: () => void
   pageSize: number
+}
+
+/**
+ * Chunk elements in the array by size
+ *
+ * when the array cannot be chunked evenly by size, the last chunk will be
+ * filled with the remaining elements
+ *
+ * @example
+ * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
+ */
+export function chunkArray<T>(array: T[], size: number): T[][] {
+  let i = 0
+  const result: T[][] = []
+  while (i < array.length) {
+    result.push(array.slice(i, i + size))
+    i = i + size
+  }
+  return result
 }
 
 type Renderer = (props: RendererProps) => JSX.Element
@@ -195,15 +215,7 @@ export default function Explorer({
     )
   }
 
-  const subEntryPages = []
-  if (subEntries) {
-    let i = 0
-
-    while (i < subEntries.length) {
-      subEntryPages.push(subEntries.slice(i, i + pageSize))
-      i = i + pageSize
-    }
-  }
+  const subEntryPages = chunkArray(subEntries ?? [], pageSize)
 
   return renderer({
     handleEntry: entry => (
