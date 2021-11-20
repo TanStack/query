@@ -77,13 +77,13 @@ export class QueryClient {
 
   mount(): void {
     this.unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
+      if (focusManager.isFocused()) {
         this.mutationCache.onFocus()
         this.queryCache.onFocus()
       }
     })
     this.unsubscribeOnline = onlineManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
+      if (onlineManager.isOnline()) {
         this.mutationCache.onOnline()
         this.queryCache.onOnline()
       }

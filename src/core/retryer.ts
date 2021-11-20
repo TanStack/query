@@ -112,9 +112,14 @@ export class Retryer<TData = unknown, TError = unknown> {
       }
     }
 
+    const canFetch = () =>
+      config.networkMode === 'offline' || onlineManager.isOnline()
+
     const pause = () => {
       return new Promise(continueResolve => {
-        continueFn = continueResolve
+        continueFn = value => {
+          return canFetch() ? continueResolve(value) : pause()
+        }
         this.isPaused = true
         config.onPause?.()
       }).then(() => {
@@ -133,12 +138,9 @@ export class Retryer<TData = unknown, TError = unknown> {
 
       let promiseOrValue: any
 
-      const canFetch =
-        config.networkMode === 'offline' || onlineManager.isOnline()
-
       // Execute query
       try {
-        promiseOrValue = canFetch
+        promiseOrValue = canFetch()
           ? config.fn()
           : pause().then(() => config.fn())
       } catch (error) {
@@ -205,7 +207,7 @@ export class Retryer<TData = unknown, TError = unknown> {
                   : config.networkRetry
               if (
                 !focusManager.isFocused() ||
-                (networkRetry() && !onlineManager.isOnline())
+                (!onlineManager.isOnline() && networkRetry())
               ) {
                 return pause()
               }
