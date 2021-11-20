@@ -119,7 +119,7 @@ export function useQueries<T extends any[]>(
   const queryClient = useQueryClient()
 
   const defaultedQueries = queries.map(options => {
-    const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
+    const defaultedOptions = queryClient.defaultQueryOptions(options)
 
     // Make sure the results are already in fetching state before subscribing or updating options
     defaultedOptions.optimisticResults = true

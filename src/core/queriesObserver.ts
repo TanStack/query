@@ -65,7 +65,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
     return queries.map((options, index) => {
-      const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+      const defaultedOptions = this.client.defaultQueryOptions(options)
       return this.getObserver(defaultedOptions, index).getOptimisticResult(
         defaultedOptions
       )
@@ -76,7 +76,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     options: QueryObserverOptions,
     index: number
   ): QueryObserver {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
     let currentObserver = this.observersMap[defaultedOptions.queryHash!]
     if (!currentObserver && defaultedOptions.keepPreviousData) {
       currentObserver = this.observers[index]
@@ -96,7 +96,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       const newObserversMap: Record<string, QueryObserver> = {}
 
       this.queries.forEach((options, i) => {
-        const defaultedOptions = this.client.defaultQueryObserverOptions(
+        const defaultedOptions = this.client.defaultQueryOptions(
           options
         )
         const queryHash = defaultedOptions.queryHash!

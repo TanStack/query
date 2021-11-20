@@ -627,24 +627,6 @@ export class QueryClient {
     return defaultedOptions
   }
 
-  defaultQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey
-  >(
-    options?: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
-    return this.defaultQueryOptions(options)
-  }
-
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(
     options?: T
   ): T {

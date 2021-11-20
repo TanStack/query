@@ -144,7 +144,7 @@ export class QueryObserver<
     const prevOptions = this.options
     const prevQuery = this.currentQuery
 
-    this.options = this.client.defaultQueryObserverOptions(options)
+    this.options = this.client.defaultQueryOptions(options)
 
     if (
       typeof this.options.enabled !== 'undefined' &&
@@ -210,7 +210,7 @@ export class QueryObserver<
       TQueryKey
     >
   ): QueryObserverResult<TData, TError> {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
 
     const query = this.client
       .getQueryCache()
@@ -299,7 +299,7 @@ export class QueryObserver<
       TQueryKey
     >
   ): Promise<QueryObserverResult<TData, TError>> {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
 
     const query = this.client
       .getQueryCache()
