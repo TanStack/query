@@ -1,4 +1,4 @@
-import { RefetchPageFilters } from './types'
+import { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -214,15 +214,7 @@ export class QueryObserver<
 
     const query = this.client
       .getQueryCache()
-      .build(
-        this.client,
-        defaultedOptions as QueryOptions<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >
-      )
+      .build(this.client, defaultedOptions)
 
     return this.createResult(query, defaultedOptions)
   }
@@ -233,7 +225,7 @@ export class QueryObserver<
 
   trackResult(
     result: QueryObserverResult<TData, TError>,
-    defaultedOptions: QueryObserverOptions<
+    defaultedOptions: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -260,7 +252,7 @@ export class QueryObserver<
       })
     })
 
-    if (defaultedOptions.useErrorBoundary || defaultedOptions.suspense) {
+    if (defaultedOptions.useErrorBoundary) {
       trackProp('error')
     }
 

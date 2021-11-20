@@ -96,9 +96,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       const newObserversMap: Record<string, QueryObserver> = {}
 
       this.queries.forEach((options, i) => {
-        const defaultedOptions = this.client.defaultQueryOptions(
-          options
-        )
+        const defaultedOptions = this.client.defaultQueryOptions(options)
         const queryHash = defaultedOptions.queryHash!
         const observer = this.getObserver(defaultedOptions, i)
 

@@ -133,11 +133,7 @@ export function useBaseQuery<
     result.isError &&
     !errorResetBoundary.isReset() &&
     !result.isFetching &&
-    shouldThrowError(
-      defaultedOptions.suspense,
-      defaultedOptions.useErrorBoundary,
-      result.error
-    )
+    shouldThrowError(defaultedOptions.useErrorBoundary, result.error)
   ) {
     throw result.error
   }

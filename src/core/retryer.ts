@@ -19,7 +19,7 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
-type ShouldRetryFunction<TError = unknown> = (
+export type ShouldRetryFunction<TError> = (
   failureCount: number,
   error: TError
 ) => boolean

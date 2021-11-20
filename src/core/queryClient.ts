@@ -36,7 +36,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import { CancelOptions } from './types'
+import { CancelOptions, DefaultedQueryObserverOptions } from './types'
 
 // TYPES
 
@@ -592,16 +592,30 @@ export class QueryClient {
     TQueryData,
     TQueryKey extends QueryKey
   >(
-    options?: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
+    options?:
+      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | DefaultedQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >
+  ): DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {
     if (options?._defaulted) {
-      return options
+      return options as DefaultedQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
     }
 
     const defaultedOptions = {
@@ -609,13 +623,7 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    } as QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    }
 
     if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
@@ -624,7 +632,24 @@ export class QueryClient {
       )
     }
 
-    return defaultedOptions
+    // dependent default values
+    if (typeof defaultedOptions.networkRetry === 'undefined') {
+      defaultedOptions.networkRetry = defaultedOptions.networkMode !== 'offline'
+    }
+    if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
+      defaultedOptions.networkRetry = defaultedOptions.networkMode !== 'offline'
+    }
+    if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
+      defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
+    }
+
+    return defaultedOptions as DefaultedQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
   }
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(

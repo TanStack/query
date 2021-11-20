@@ -1,6 +1,10 @@
 import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
-import type { RetryValue, RetryDelayValue } from './retryer'
+import type {
+  RetryValue,
+  RetryDelayValue,
+  ShouldRetryFunction,
+} from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 
 export type QueryKey = readonly unknown[]
@@ -136,7 +140,7 @@ export interface QueryObserverOptions<
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
-   * Defaults to `true`.
+   * Defaults to the value of `networkOnline` (`true`)
    */
   refetchOnReconnect?: boolean | 'always'
   /**
@@ -151,6 +155,8 @@ export interface QueryObserverOptions<
    * Defaults to `true`.
    */
   retryOnMount?: boolean
+  networkMode?: 'online' | 'offline'
+  networkRetry?: boolean | ShouldRetryFunction<TError>
   /**
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
@@ -207,6 +213,18 @@ export interface QueryObserverOptions<
    */
   optimisticResults?: boolean
 }
+
+type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+export type DefaultedQueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> = WithRequired<
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  'useErrorBoundary' | 'networkRetry' | 'refetchOnReconnect'
+>
 
 export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
