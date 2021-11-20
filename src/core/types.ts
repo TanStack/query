@@ -323,6 +323,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isIdle: boolean
   isLoading: boolean
   isLoadingError: boolean
+  isPaused: boolean
   isPlaceholderData: boolean
   isPreviousData: boolean
   isRefetchError: boolean
