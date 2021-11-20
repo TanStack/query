@@ -3952,13 +3952,12 @@ describe('useQuery', () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
 
-    const queryFn = () => {
+    const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
         cancelFn = jest.fn(() => reject('Cancelled'))
+        signal?.addEventListener('abort', cancelFn)
         sleep(10).then(() => resolve('OK'))
       })
-
-      ;(promise as any).cancel = cancelFn
 
       return promise
     }
@@ -3981,7 +3980,9 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('off'))
 
-    expect(cancelFn).toHaveBeenCalled()
+    if (typeof AbortSignal === 'function') {
+      expect(cancelFn).toHaveBeenCalled()
+    }
   })
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
