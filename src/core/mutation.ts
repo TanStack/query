@@ -277,6 +277,8 @@ export class Mutation<
       },
       retry: this.options.retry ?? 0,
       retryDelay: this.options.retryDelay,
+      networkMode: 'offline',
+      networkRetry: true,
     })
 
     return this.retryer.promise

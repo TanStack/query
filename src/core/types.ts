@@ -62,6 +62,8 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: 'online' | 'offline'
+  networkRetry?: boolean | ShouldRetryFunction<TError>
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
@@ -155,8 +157,6 @@ export interface QueryObserverOptions<
    * Defaults to `true`.
    */
   retryOnMount?: boolean
-  networkMode?: 'online' | 'offline'
-  networkRetry?: boolean | ShouldRetryFunction<TError>
   /**
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
