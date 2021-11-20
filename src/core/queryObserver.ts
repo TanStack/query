@@ -232,23 +232,37 @@ export class QueryObserver<
   }
 
   trackResult(
-    result: QueryObserverResult<TData, TError>
+    result: QueryObserverResult<TData, TError>,
+    defaultedOptions: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
+
+    const trackProp = (key: keyof QueryObserverResult) => {
+      if (!this.trackedProps.includes(key)) {
+        this.trackedProps.push(key)
+      }
+    }
 
     Object.keys(result).forEach(key => {
       Object.defineProperty(trackedResult, key, {
         configurable: false,
         enumerable: true,
         get: () => {
-          const typedKey = key as keyof QueryObserverResult
-          if (!this.trackedProps.includes(typedKey)) {
-            this.trackedProps.push(typedKey)
-          }
-          return result[typedKey]
+          trackProp(key as keyof QueryObserverResult)
+          return result[key as keyof QueryObserverResult]
         },
       })
     })
+
+    if (defaultedOptions.useErrorBoundary || defaultedOptions.suspense) {
+      trackProp('error')
+    }
 
     return trackedResult
   }
