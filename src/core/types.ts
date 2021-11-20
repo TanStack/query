@@ -1,10 +1,6 @@
 import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
-import type {
-  RetryValue,
-  RetryDelayValue,
-  ShouldRetryFunction,
-} from './retryer'
+import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 
 export type QueryKey = readonly unknown[]
@@ -62,8 +58,8 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode?: 'online' | 'offline'
-  networkRetry?: boolean | ShouldRetryFunction<TError>
+  networkMode?: 'online' | 'always'
+  pauseRetryWhenOffline?: boolean
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
@@ -551,8 +547,8 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode?: 'online' | 'offline'
-  networkRetry?: boolean | ShouldRetryFunction<TError>
+  networkMode?: 'online' | 'always'
+  pauseRetryWhenOffline?: boolean
   cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta

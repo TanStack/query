@@ -15,13 +15,13 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode: 'online' | 'offline'
-  networkRetry: boolean | ShouldRetryFunction<TError>
+  networkMode: 'online' | 'always'
+  pauseRetryWhenOffline: boolean
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
-export type ShouldRetryFunction<TError> = (
+type ShouldRetryFunction<TError> = (
   failureCount: number,
   error: TError
 ) => boolean
@@ -84,7 +84,23 @@ export class Retryer<TData = unknown, TError = unknown> {
     this.cancelRetry = () => {
       cancelRetry = true
     }
-    this.continue = () => continueFn?.()
+
+    const shouldPause = () =>
+      !focusManager.isFocused() ||
+      (config.pauseRetryWhenOffline && !onlineManager.isOnline())
+
+    const canFetch = () => {
+      if (this.isPaused) {
+        return !shouldPause()
+      }
+      return config.networkMode === 'always' || onlineManager.isOnline()
+    }
+
+    this.continue = () => {
+      if (canFetch()) {
+        continueFn?.()
+      }
+    }
     this.failureCount = 0
     this.isPaused = false
     this.isResolved = false
@@ -112,14 +128,9 @@ export class Retryer<TData = unknown, TError = unknown> {
       }
     }
 
-    const canFetch = () =>
-      config.networkMode === 'offline' || onlineManager.isOnline()
-
     const pause = () => {
       return new Promise(continueResolve => {
-        continueFn = value => {
-          return canFetch() ? continueResolve(value) : pause()
-        }
+        continueFn = continueResolve
         this.isPaused = true
         config.onPause?.()
       }).then(() => {
@@ -201,14 +212,7 @@ export class Retryer<TData = unknown, TError = unknown> {
           sleep(delay)
             // Pause if the document is not visible or when the device is offline
             .then(() => {
-              const networkRetry = () =>
-                typeof config.networkRetry === 'function'
-                  ? config.networkRetry(this.failureCount, error)
-                  : config.networkRetry
-              if (
-                !focusManager.isFocused() ||
-                (!onlineManager.isOnline() && networkRetry())
-              ) {
+              if (shouldPause()) {
                 return pause()
               }
             })

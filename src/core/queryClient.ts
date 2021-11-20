@@ -635,7 +635,7 @@ export class QueryClient {
     // dependent default values
     if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
       defaultedOptions.refetchOnReconnect =
-        defaultedOptions.networkMode !== 'offline'
+        defaultedOptions.networkMode !== 'always'
     }
     if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
       defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
