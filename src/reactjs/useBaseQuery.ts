@@ -139,7 +139,7 @@ export function useBaseQuery<
   }
 
   // Handle result property usage tracking
-  if (defaultedOptions.notifyOnChangeProps === 'tracked') {
+  if (!defaultedOptions.notifyOnChangeProps) {
     result = observer.trackResult(result, defaultedOptions)
   }
 

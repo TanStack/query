@@ -603,27 +603,22 @@ export class QueryObserver<
       return true
     }
 
-    const { notifyOnChangeProps, notifyOnChangePropsExclusions } = this.options
+    const { notifyOnChangeProps } = this.options
 
-    if (!notifyOnChangeProps && !notifyOnChangePropsExclusions) {
+    if (
+      notifyOnChangeProps === 'all' ||
+      (!notifyOnChangeProps && !this.trackedProps.length)
+    ) {
       return true
     }
 
-    if (notifyOnChangeProps === 'tracked' && !this.trackedProps.length) {
-      return true
-    }
-
-    const includedProps =
-      notifyOnChangeProps === 'tracked'
-        ? this.trackedProps
-        : notifyOnChangeProps
+    const includedProps = notifyOnChangeProps ?? this.trackedProps
 
     return Object.keys(result).some(key => {
       const typedKey = key as keyof QueryObserverResult
       const changed = result[typedKey] !== prevResult[typedKey]
       const isIncluded = includedProps?.some(x => x === key)
-      const isExcluded = notifyOnChangePropsExclusions?.some(x => x === key)
-      return changed && !isExcluded && (!includedProps || isIncluded)
+      return changed && (!includedProps || isIncluded)
     })
   }
 

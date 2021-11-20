@@ -613,7 +613,6 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-          notifyOnChangeProps: 'tracked',
         }
       )
       return <div>{data}</div>

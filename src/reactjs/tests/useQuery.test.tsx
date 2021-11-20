@@ -238,6 +238,7 @@ describe('useQuery', () => {
       return (
         <div>
           <h1>Status: {state.status}</h1>
+          <div>Failure Count: {state.failureCount}</div>
         </div>
       )
     }
@@ -378,7 +379,10 @@ describe('useQuery', () => {
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(key, () => 'data', {
+        onSuccess,
+        notifyOnChangeProps: 'all',
+      })
 
       states.push(state)
 
@@ -743,6 +747,7 @@ describe('useQuery', () => {
         },
         {
           cacheTime: 0,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -925,54 +930,12 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('should re-render when dataUpdatedAt changes but data remains the same', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-
-    function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangePropsExclusions: [
-          'data',
-          'isFetching',
-          'isLoading',
-          'isRefetching',
-          'isSuccess',
-          'status',
-        ],
-      })
-
-      states.push(state)
-
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 5)
-      }, [refetch])
-
-      return null
-    }
-
-    renderWithClient(queryClient, <Page />)
-
-    await sleep(10)
-
-    expect(states.length).toBe(3)
-    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
-    expect(states[1]).toMatchObject({ data: 'test', isFetching: false })
-    expect(states[2]).toMatchObject({ data: 'test', isFetching: false })
-    expect(states[1]?.dataUpdatedAt).not.toBe(states[2]?.dataUpdatedAt)
-  })
-
   it('should track properties and only re-render when a tracked property changes', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-      })
+      const state = useQuery(key, () => 'test')
 
       states.push(state)
 
@@ -1000,46 +963,13 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should not re-render if a tracked prop changes, but it was excluded', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-
-    function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-        notifyOnChangePropsExclusions: ['data'],
-      })
-
-      states.push(state)
-
-      return (
-        <div>
-          <h1>{state.data ?? 'null'}</h1>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await waitFor(() => rendered.getByText('null'))
-    expect(states.length).toBe(1)
-    expect(states[0]).toMatchObject({ data: undefined })
-
-    await queryClient.refetchQueries(key)
-    await waitFor(() => rendered.getByText('null'))
-    expect(states.length).toBe(1)
-    expect(states[0]).toMatchObject({ data: undefined })
-  })
-
   it('should always re-render if we are tracking props but not using any', async () => {
     const key = queryKey()
     let renderCount = 0
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery(key, () => 'test', {
-        notifyOnChangeProps: 'tracked',
-      })
+      const state = useQuery(key, () => 'test')
 
       states.push(state)
 
@@ -1070,7 +1000,7 @@ describe('useQuery', () => {
 
     function Page() {
       const [, rerender] = React.useState({})
-      const state = useQuery(key, () => ++count)
+      const state = useQuery(key, () => ++count, { notifyOnChangeProps: 'all' })
 
       states.push(state)
 
@@ -1111,7 +1041,7 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useQuery(key, () => ++count)
+      const state = useQuery(key, () => ++count, { notifyOnChangeProps: 'all' })
 
       states.push(state)
 
@@ -1162,10 +1092,14 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const state = useQuery(key, () => {
-        count++
-        return count === 1 ? result1 : result2
-      })
+      const state = useQuery(
+        key,
+        () => {
+          count++
+          return count === 1 ? result1 : result2
+        },
+        { notifyOnChangeProps: 'all' }
+      )
 
       states.push(state)
 
@@ -1538,6 +1472,7 @@ describe('useQuery', () => {
         <div>
           <h1>data: {state.data}</h1>
           <h2>error: {state.error?.message}</h2>
+          <p>previous data: {state.isPreviousData}</p>
         </div>
       )
     }
@@ -1699,7 +1634,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        { enabled: false, keepPreviousData: true }
+        { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -1788,7 +1723,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        { enabled: false, keepPreviousData: true }
+        { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -1858,7 +1793,7 @@ describe('useQuery', () => {
     const states: UseQueryResult<number>[] = []
 
     function FirstComponent() {
-      const state = useQuery(key, () => 1)
+      const state = useQuery(key, () => 1, { notifyOnChangeProps: 'all' })
       const refetch = state.refetch
 
       states.push(state)
@@ -1873,7 +1808,7 @@ describe('useQuery', () => {
     }
 
     function SecondComponent() {
-      useQuery(key, () => 2)
+      useQuery(key, () => 2, { notifyOnChangeProps: 'all' })
       return null
     }
 
@@ -3642,7 +3577,12 @@ describe('useQuery', () => {
 
       states.push(queryInfo)
 
-      return <div>count: {queryInfo.data}</div>
+      return (
+        <div>
+          <h1>count: {queryInfo.data}</h1>
+          <h2>refetch: {queryInfo.isRefetching}</h2>
+        </div>
+      )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
@@ -4200,7 +4140,7 @@ describe('useQuery', () => {
           count++
           return count
         },
-        { staleTime: Infinity, enabled: false }
+        { staleTime: Infinity, enabled: false, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
