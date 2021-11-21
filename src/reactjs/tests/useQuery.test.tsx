@@ -4413,6 +4413,7 @@ describe('useQuery', () => {
       const onlineMock = mockNavigatorOnLine(false)
 
       const key = queryKey()
+      const states: Array<any> = []
 
       function Page() {
         const state = useQuery({
@@ -4421,6 +4422,10 @@ describe('useQuery', () => {
             await sleep(10)
             return 'data'
           },
+        })
+
+        React.useEffect(() => {
+          states.push(state.fetchStatus)
         })
 
         return (
@@ -4446,6 +4451,8 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data')).toBeInTheDocument()
       })
+
+      expect(states).toEqual(['paused', 'fetching', 'idle'])
 
       onlineMock.mockRestore()
     })
@@ -4787,6 +4794,66 @@ describe('useQuery', () => {
 
       onlineMock.mockRestore()
       consoleMock.mockRestore()
+    })
+
+    it('online queries should fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Component() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      function Page() {
+        const [show, setShow] = React.useState(true)
+
+        return (
+          <div>
+            {show && <Component />}
+            <button onClick={() => setShow(false)}>hide</button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockNavigatorOnLine(false)
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: paused')
+      )
+
+      rendered.getByRole('button', { name: /hide/i }).click()
+
+      onlineMock.mockReturnValue(true)
+      window.dispatchEvent(new Event('online'))
+
+      await sleep(15)
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        fetchStatus: 'idle',
+        status: 'success',
+      })
+
+      expect(count).toBe(1)
+
+      onlineMock.mockRestore()
     })
   })
 

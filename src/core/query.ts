@@ -21,7 +21,7 @@ import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
-import { Retryer, isCancelledError } from './retryer'
+import { Retryer, isCancelledError, canFetch } from './retryer'
 import { Removable } from './removable'
 
 // TYPES
@@ -552,7 +552,9 @@ export class Query<
           ...state,
           fetchFailureCount: 0,
           fetchMeta: action.meta ?? null,
-          fetchStatus: 'fetching',
+          fetchStatus: canFetch(this.options.networkMode)
+            ? 'fetching'
+            : 'paused',
           status: !state.dataUpdatedAt ? 'loading' : state.status,
         }
       case 'success':
