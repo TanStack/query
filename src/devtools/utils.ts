@@ -26,8 +26,10 @@ type StyledComponent<T> = T extends 'button'
   : never
 
 export function getQueryStatusColor(query: Query, theme: Theme) {
-  return query.state.fetchStatus !== 'idle'
+  return query.state.fetchStatus === 'fetching'
     ? theme.active
+    : query.state.fetchStatus === 'paused'
+    ? theme.paused
     : !query.getObserversCount()
     ? theme.gray
     : query.isStale()

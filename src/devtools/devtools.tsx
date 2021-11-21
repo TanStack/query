@@ -439,6 +439,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     .length
   const hasFetching = queries.filter(q => getQueryStatusLabel(q) === 'fetching')
     .length
+  const hasPaused = queries.filter(q => getQueryStatusLabel(q) === 'paused')
+    .length
   const hasStale = queries.filter(q => getQueryStatusLabel(q) === 'stale')
     .length
   const hasInactive = queries.filter(q => getQueryStatusLabel(q) === 'inactive')
@@ -557,6 +559,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   }}
                 >
                   fetching <Code>({hasFetching})</Code>
+                </QueryKey>{' '}
+                <QueryKey
+                  style={{
+                    background: theme.paused,
+                    opacity: hasPaused ? 1 : 0.3,
+                  }}
+                >
+                  paused <Code>({hasPaused})</Code>
                 </QueryKey>{' '}
                 <QueryKey
                   style={{
