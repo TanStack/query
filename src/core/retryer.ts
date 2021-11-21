@@ -96,7 +96,7 @@ export class Retryer<TData = unknown, TError = unknown> {
       if (this.isPaused) {
         return !shouldPause()
       }
-      return canFetch()
+      return canFetch(config.networkMode)
     }
 
     this.continue = () => {
@@ -230,7 +230,7 @@ export class Retryer<TData = unknown, TError = unknown> {
     }
 
     // Start loop
-    if (canFetch()) {
+    if (canFetch(config.networkMode)) {
       run()
     } else {
       pause().then(run)
