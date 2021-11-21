@@ -44,6 +44,10 @@ export function isCancelable(value: any): value is Cancelable {
   return typeof value?.cancel === 'function'
 }
 
+export function canFetch(networkMode: NetworkMode = 'online'): boolean {
+  return networkMode === 'online' ? onlineManager.isOnline() : true
+}
+
 export class CancelledError {
   revert?: boolean
   silent?: boolean
@@ -88,11 +92,11 @@ export class Retryer<TData = unknown, TError = unknown> {
       !focusManager.isFocused() ||
       (config.networkMode !== 'always' && !onlineManager.isOnline())
 
-    const canFetch = () => {
+    const canContinue = () => {
       if (this.isPaused) {
         return !shouldPause()
       }
-      return config.networkMode === 'online' ? onlineManager.isOnline() : true
+      return canFetch()
     }
 
     this.continue = () => {
@@ -128,7 +132,7 @@ export class Retryer<TData = unknown, TError = unknown> {
     const pause = () => {
       return new Promise(continueResolve => {
         continueFn = value => {
-          if (canFetch()) {
+          if (canContinue()) {
             return continueResolve(value)
           }
         }

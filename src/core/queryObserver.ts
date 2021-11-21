@@ -23,7 +23,7 @@ import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { getLogger } from './logger'
-import { isCancelledError } from './retryer'
+import { canFetch, isCancelledError } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>
@@ -469,7 +469,9 @@ export class QueryObserver<
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
 
       if (fetchOnMount || fetchOptionally) {
-        fetchStatus = 'fetching'
+        fetchStatus = canFetch(query.options.networkMode)
+          ? 'fetching'
+          : 'paused'
         if (!dataUpdatedAt) {
           status = 'loading'
         }
