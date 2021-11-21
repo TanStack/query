@@ -104,7 +104,9 @@ describe('ReactQueryDevtools', () => {
     // fetching queries to be 1
     expect(currentQuery?.isFetching()).toEqual(true)
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (1) stale (0) inactive (0)')
+      getByTextContent(
+        'fresh (0) fetching (1) paused (0) stale (0) inactive (0)'
+      )
     )
 
     // When we are done fetching the query doesn't go stale
@@ -114,7 +116,9 @@ describe('ReactQueryDevtools', () => {
       expect(currentQuery?.isFetching()).toEqual(false)
     })
     await screen.findByText(
-      getByTextContent('fresh (1) fetching (0) stale (0) inactive (0)')
+      getByTextContent(
+        'fresh (1) fetching (0) paused (0) stale (0) inactive (0)'
+      )
     )
 
     // Then wait for the query to go stale and then
@@ -123,7 +127,9 @@ describe('ReactQueryDevtools', () => {
       expect(currentQuery?.isStale()).toEqual(false)
     })
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (0) stale (1) inactive (0)')
+      getByTextContent(
+        'fresh (0) fetching (0) paused (0) stale (1) inactive (0)'
+      )
     )
 
     // Unmount the page component thus making the query inactive
@@ -132,7 +138,9 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /toggle page visibility/i })
     )
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (0) stale (0) inactive (1)')
+      getByTextContent(
+        'fresh (0) fetching (0) paused (0) stale (0) inactive (1)'
+      )
     )
   })
 
