@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Query, useQueryClient } from 'react-query'
+import { Query, useQueryClient, onlineManager } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
 import { useIsMounted, useSafeState } from './utils'
@@ -465,6 +465,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     promise?.catch(noop)
   }
 
+  const [isMockOffline, setMockOffline] = React.useState(false)
+
   return (
     <ThemeProvider theme={theme}>
       <Panel
@@ -632,6 +634,56 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       }}
                     >
                       {sortDesc ? '⬇ Desc' : '⬆ Asc'}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (isMockOffline) {
+                          onlineManager.setOnline(undefined)
+                          setMockOffline(false)
+                          window.dispatchEvent(new Event('online'))
+                        } else {
+                          onlineManager.setOnline(false)
+                          setMockOffline(true)
+                        }
+                      }}
+                      aria-label={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
+                      style={{
+                        padding: '0',
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="44"
+                        height="44"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        fill="none"
+                      >
+                        {isMockOffline ? (
+                          <>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="12" y1="12" x2="12" y2="12.01" />
+                            <path d="M14.828 9.172a4 4 0 0 1 0 5.656" />
+                            <path d="M17.657 6.343a8 8 0 0 1 0 11.314" />
+                            <path d="M9.168 14.828a4 4 0 0 1 0 -5.656" />
+                            <path d="M6.337 17.657a8 8 0 0 1 0 -11.314" />
+                          </>
+                        ) : (
+                          <>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="3" y1="3" x2="21" y2="21" />
+                            <path d="M14.828 9.172a4 4 0 0 1 1.172 2.828" />
+                            <path d="M17.657 6.343a8 8 0 0 1 1.635 8.952" />
+                            <path d="M9.168 14.828a4 4 0 0 1 0 -5.656" />
+                            <path d="M6.337 17.657a8 8 0 0 1 0 -11.314" />
+                          </>
+                        )}
+                      </svg>
                     </Button>
                   </>
                 ) : null}

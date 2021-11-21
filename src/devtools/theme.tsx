@@ -11,7 +11,7 @@ export const defaultTheme = {
   success: '#00ab52',
   danger: '#ff0085',
   active: '#006bff',
-  paused: '#fa8c16',
+  paused: '#8c49eb',
   warning: '#ffb200',
 } as const
 
