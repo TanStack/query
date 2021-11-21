@@ -352,6 +352,97 @@ describe('useQueries', () => {
     ])
   })
 
+  it('should not go to infinite render loop with previous data when toggling queries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[][] = []
+
+    function Page() {
+      const [enableId1, setEnableId1] = React.useState(true)
+      const ids = enableId1 ? [1, 2] : [2]
+
+      const result = useQueries(
+        ids.map(id => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => {
+              await sleep(5)
+              return id * 5
+            },
+            keepPreviousData: true,
+          }
+        })
+      )
+
+      states.push(result)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setEnableId1(false)
+        }, 20)
+
+        setActTimeout(() => {
+          setEnableId1(true)
+        }, 30)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(9))
+
+    expect(states[0]).toMatchObject([
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[1]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[2]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[3]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[5]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+    ])
+    expect(states[6]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[7]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[8]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+  })
+
   it('handles type parameter - tuple of tuples', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
