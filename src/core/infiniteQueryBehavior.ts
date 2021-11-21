@@ -144,10 +144,9 @@ export function infiniteQueryBehavior<
         }))
 
         context.signal?.addEventListener('abort', () => {
-          cancelled = true;
+          cancelled = true
           abortController?.abort()
         })
-        
 
         return finalPromise
       }

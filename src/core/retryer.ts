@@ -136,7 +136,6 @@ export class Retryer<TData = unknown, TError = unknown> {
         }
       }
 
-
       Promise.resolve(promiseOrValue)
         .then(resolve)
         .catch(error => {
