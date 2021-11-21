@@ -538,15 +538,19 @@ export class Query<
           fetchFailureCount: state.fetchFailureCount + 1,
         }
       case 'pause':
-        return {
-          ...state,
-          fetchStatus: 'paused',
-        }
+        return state.fetchStatus === 'fetching'
+          ? {
+              ...state,
+              fetchStatus: 'paused',
+            }
+          : state
       case 'continue':
-        return {
-          ...state,
-          fetchStatus: 'fetching',
-        }
+        return state.fetchStatus === 'paused'
+          ? {
+              ...state,
+              fetchStatus: 'fetching',
+            }
+          : state
       case 'fetch':
         return {
           ...state,
