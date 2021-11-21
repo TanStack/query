@@ -4668,6 +4668,77 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
+    it('online queries should not get stuck in fetching state when pausing multiple times', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+          initialData: 'initial',
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            >
+              invalidate
+            </button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockNavigatorOnLine(false)
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: paused')
+      )
+      await waitFor(() => {
+        expect(rendered.getByText('data: initial')).toBeInTheDocument()
+      })
+
+      // triggers one pause
+      rendered.getByRole('button', { name: /invalidate/i }).click()
+
+      await sleep(15)
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: paused')
+      )
+
+      // triggers a second pause
+      act(() => {
+        window.dispatchEvent(new FocusEvent('focus'))
+      })
+
+      onlineMock.mockReturnValue(true)
+      act(() => {
+        window.dispatchEvent(new Event('online'))
+      })
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: idle')
+      )
+      await waitFor(() => {
+        expect(rendered.getByText('data: data1')).toBeInTheDocument()
+      })
+
+      expect(count).toBe(1)
+      onlineMock.mockRestore()
+    })
+
     it('online queries should pause retries if you are offline', async () => {
       const key = queryKey()
       let count = 0

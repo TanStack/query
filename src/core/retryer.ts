@@ -128,7 +128,9 @@ export class Retryer<TData = unknown, TError = unknown> {
     const pause = () => {
       return new Promise(continueResolve => {
         continueFn = value => {
-          return canFetch() ? continueResolve(value) : pause()
+          if (canFetch()) {
+            return continueResolve(value)
+          }
         }
         this.isPaused = true
         config.onPause?.()
