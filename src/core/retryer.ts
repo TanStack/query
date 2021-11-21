@@ -152,9 +152,7 @@ export class Retryer<TData = unknown, TError = unknown> {
 
       // Execute query
       try {
-        promiseOrValue = canFetch()
-          ? config.fn()
-          : pause().then(() => config.fn())
+        promiseOrValue = config.fn()
       } catch (error) {
         promiseOrValue = Promise.reject(error)
       }
@@ -228,6 +226,10 @@ export class Retryer<TData = unknown, TError = unknown> {
     }
 
     // Start loop
-    run()
+    if (canFetch()) {
+      run()
+    } else {
+      pause().then(run)
+    }
   }
 }
