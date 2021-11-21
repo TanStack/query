@@ -381,7 +381,7 @@ describe('useMutation', () => {
 
   it('should be able to retry a mutation when online', async () => {
     const consoleMock = mockConsoleError()
-    mockNavigatorOnLine(false)
+    const onlineMock = mockNavigatorOnLine(false)
 
     let count = 0
     const states: UseMutationResult<any, any, any, any>[] = []
@@ -438,7 +438,7 @@ describe('useMutation', () => {
       failureCount: 1,
     })
 
-    mockNavigatorOnLine(true)
+    onlineMock.mockReturnValue(true)
     window.dispatchEvent(new Event('online'))
 
     await sleep(50)
@@ -457,6 +457,7 @@ describe('useMutation', () => {
     })
 
     consoleMock.mockRestore()
+    onlineMock.mockRestore()
   })
 
   it('should not change state if unmounted', async () => {

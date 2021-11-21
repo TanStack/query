@@ -46,10 +46,8 @@ describe('query', () => {
   it('should continue retry after focus regain and resolve all promises', async () => {
     const key = queryKey()
 
-    const originalVisibilityState = document.visibilityState
-
     // make page unfocused
-    mockVisibilityState('hidden')
+    const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
     let result
@@ -83,7 +81,7 @@ describe('query', () => {
     expect(result).toBeUndefined()
 
     // Reset visibilityState to original value
-    mockVisibilityState(originalVisibilityState)
+    visibilityMock.mockRestore()
     window.dispatchEvent(new FocusEvent('focus'))
 
     // There should not be a result yet
@@ -144,10 +142,8 @@ describe('query', () => {
   it('should throw a CancelledError when a paused query is cancelled', async () => {
     const key = queryKey()
 
-    const originalVisibilityState = document.visibilityState
-
     // make page unfocused
-    mockVisibilityState('hidden')
+    const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
     let result
@@ -182,7 +178,7 @@ describe('query', () => {
     expect(isCancelledError(result)).toBe(true)
 
     // Reset visibilityState to original value
-    mockVisibilityState(originalVisibilityState)
+    visibilityMock.mockRestore()
     window.dispatchEvent(new FocusEvent('focus'))
   })
 

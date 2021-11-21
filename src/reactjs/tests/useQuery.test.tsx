@@ -3044,10 +3044,8 @@ describe('useQuery', () => {
 
     const consoleMock = mockConsoleError()
 
-    const originalVisibilityState = document.visibilityState
-
     // make page unfocused
-    mockVisibilityState('hidden')
+    const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
 
@@ -3086,7 +3084,7 @@ describe('useQuery', () => {
 
     act(() => {
       // reset visibilityState to original value
-      mockVisibilityState(originalVisibilityState)
+      visibilityMock.mockRestore()
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
@@ -3142,8 +3140,7 @@ describe('useQuery', () => {
     const consoleMock = mockConsoleError()
 
     // make page unfocused
-    const originalVisibilityState = document.visibilityState
-    mockVisibilityState('hidden')
+    const visibilityMock = mockVisibilityState('hidden')
 
     // set data in cache to check if the hook query fn is actually called
     queryClient.setQueryData(key, 'prefetched')
@@ -3163,7 +3160,7 @@ describe('useQuery', () => {
 
     act(() => {
       // reset visibilityState to original value
-      mockVisibilityState(originalVisibilityState)
+      visibilityMock.mockRestore()
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
@@ -4413,7 +4410,7 @@ describe('useQuery', () => {
 
   describe('networkMode online', () => {
     it('online queries should not start fetching if you are offline', async () => {
-      mockNavigatorOnLine(false)
+      const onlineMock = mockNavigatorOnLine(false)
 
       const key = queryKey()
 
@@ -4440,7 +4437,7 @@ describe('useQuery', () => {
 
       await waitFor(() => rendered.getByText('status: loading, isPaused: true'))
 
-      mockNavigatorOnLine(true)
+      onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
@@ -4449,6 +4446,8 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data')).toBeInTheDocument()
       })
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should not refetch if you are offline', async () => {
@@ -4485,7 +4484,7 @@ describe('useQuery', () => {
 
       await waitFor(() => rendered.getByText('data: data1'))
 
-      mockNavigatorOnLine(false)
+      const onlineMock = mockNavigatorOnLine(false)
       rendered.getByRole('button', { name: /invalidate/i }).click()
 
       await waitFor(() =>
@@ -4494,7 +4493,7 @@ describe('useQuery', () => {
         )
       )
 
-      mockNavigatorOnLine(true)
+      onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
@@ -4511,6 +4510,8 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data2')).toBeInTheDocument()
       })
+
+      onlineMock.mockRestore()
     })
 
     it('online queries should not refetch if you are offline and refocus', async () => {
@@ -4546,7 +4547,7 @@ describe('useQuery', () => {
 
       await waitFor(() => rendered.getByText('data: data1'))
 
-      mockNavigatorOnLine(false)
+      const onlineMock = mockNavigatorOnLine(false)
       rendered.getByRole('button', { name: /invalidate/i }).click()
 
       await waitFor(() =>
@@ -4560,6 +4561,7 @@ describe('useQuery', () => {
         expect(rendered.queryByText('data: data2')).not.toBeInTheDocument()
       )
       expect(count).toBe(1)
+      onlineMock.mockRestore()
     })
 
     it('online queries should pause retries if you are offline', async () => {
@@ -4597,7 +4599,7 @@ describe('useQuery', () => {
         )
       )
 
-      mockNavigatorOnLine(false)
+      const onlineMock = mockNavigatorOnLine(false)
 
       await waitFor(() =>
         rendered.getByText(
@@ -4606,12 +4608,14 @@ describe('useQuery', () => {
       )
 
       expect(count).toBe(1)
+
+      onlineMock.mockRestore()
     })
   })
 
   describe('networkMode always', () => {
     it('always queries should start fetching even if you are offline', async () => {
-      mockNavigatorOnLine(false)
+      const onlineMock = mockNavigatorOnLine(false)
 
       const key = queryKey()
       let count = 0
@@ -4646,10 +4650,12 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('data: data 1')).toBeInTheDocument()
       })
+
+      onlineMock.mockRestore()
     })
 
     it('always queries should not pause retries', async () => {
-      mockNavigatorOnLine(false)
+      const onlineMock = mockNavigatorOnLine(false)
       const consoleMock = mockConsoleError()
 
       const key = queryKey()
@@ -4688,6 +4694,7 @@ describe('useQuery', () => {
         expect(rendered.getByText('error: error 2')).toBeInTheDocument()
       })
       consoleMock.mockRestore()
+      onlineMock.mockRestore()
     })
   })
 })
