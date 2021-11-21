@@ -4564,6 +4564,110 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
+    it('online queries should not refetch while already paused', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            >
+              invalidate
+            </button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockNavigatorOnLine(false)
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: paused')
+      )
+
+      rendered.getByRole('button', { name: /invalidate/i }).click()
+
+      await sleep(15)
+
+      // invalidation should not trigger a refetch
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: paused')
+      )
+
+      expect(count).toBe(0)
+      onlineMock.mockRestore()
+    })
+
+    it('online queries should not refetch while already paused if data is in the cache', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+          initialData: 'initial',
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            >
+              invalidate
+            </button>
+          </div>
+        )
+      }
+
+      const onlineMock = mockNavigatorOnLine(false)
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: paused')
+      )
+      await waitFor(() => {
+        expect(rendered.getByText('data: initial')).toBeInTheDocument()
+      })
+
+      rendered.getByRole('button', { name: /invalidate/i }).click()
+
+      await sleep(15)
+
+      // invalidation should not trigger a refetch
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: paused')
+      )
+
+      expect(count).toBe(0)
+      onlineMock.mockRestore()
+    })
+
     it('online queries should pause retries if you are offline', async () => {
       const key = queryKey()
       let count = 0
