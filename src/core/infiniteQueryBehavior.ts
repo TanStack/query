@@ -143,12 +143,11 @@ export function infiniteQueryBehavior<
           pageParams: newPageParams,
         }))
 
-        const finalPromiseAsAny = finalPromise as any
-
-        finalPromiseAsAny.cancel = () => {
-          cancelled = true
+        context.signal?.addEventListener('abort', () => {
+          cancelled = true;
           abortController?.abort()
-        }
+        })
+        
 
         return finalPromise
       }

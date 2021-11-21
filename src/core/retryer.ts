@@ -34,15 +34,6 @@ type RetryDelayFunction<TError = unknown> = (
 function defaultRetryDelay(failureCount: number) {
   return Math.min(1000 * 2 ** failureCount, 30000)
 }
-
-interface Cancelable {
-  cancel(): void
-}
-
-export function isCancelable(value: any): value is Cancelable {
-  return typeof value?.cancel === 'function'
-}
-
 export class CancelledError {
   revert?: boolean
   silent?: boolean
@@ -65,7 +56,6 @@ export class Retryer<TData = unknown, TError = unknown> {
   failureCount: number
   isPaused: boolean
   isResolved: boolean
-  isTransportCancelable: boolean
   promise: Promise<TData>
 
   private abort?: () => void
@@ -86,7 +76,6 @@ export class Retryer<TData = unknown, TError = unknown> {
     this.failureCount = 0
     this.isPaused = false
     this.isResolved = false
-    this.isTransportCancelable = false
     this.promise = new Promise<TData>((outerResolve, outerReject) => {
       promiseResolve = outerResolve
       promiseReject = outerReject
@@ -144,18 +133,9 @@ export class Retryer<TData = unknown, TError = unknown> {
           reject(new CancelledError(cancelOptions))
 
           this.abort?.()
-
-          // Cancel transport if supported
-          if (isCancelable(promiseOrValue)) {
-            try {
-              promiseOrValue.cancel()
-            } catch {}
-          }
         }
       }
 
-      // Check if the transport layer support cancellation
-      this.isTransportCancelable = isCancelable(promiseOrValue)
 
       Promise.resolve(promiseOrValue)
         .then(resolve)

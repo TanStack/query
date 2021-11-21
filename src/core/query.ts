@@ -65,6 +65,7 @@ export interface FetchContext<
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
+  signal?: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: EnsuredQueryKey<TQueryKey>
   state: QueryState<TData, TError>
@@ -316,7 +317,7 @@ export class Query<
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.retryer) {
-          if (this.retryer.isTransportCancelable || this.abortSignalConsumed) {
+          if (this.abortSignalConsumed) {
             this.retryer.cancel({ revert: true })
           } else {
             this.retryer.cancelRetry()
@@ -411,6 +412,17 @@ export class Query<
       fetchFn,
       meta: this.meta,
     }
+
+    Object.defineProperty(context, 'signal', {
+      enumerable: true,
+      get: () => {
+        if (abortController) {
+          this.abortSignalConsumed = true
+          return abortController.signal
+        }
+        return undefined
+      },
+    })
 
     if (this.options.behavior?.onFetch) {
       this.options.behavior?.onFetch(context)
