@@ -631,6 +631,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       onClick={() => setSortDesc(old => !old)}
                       style={{
                         padding: '.3em .4em',
+                        marginRight: '.5em',
                       }}
                     >
                       {sortDesc ? '⬇ Desc' : '⬆ Asc'}
@@ -652,35 +653,39 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                           ? 'Restore offline mock'
                           : 'Mock offline behavior'
                       }
+                      title={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
                       style={{
                         padding: '0',
                       }}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        width="44"
-                        height="44"
+                        width="23"
+                        height="23"
                         viewBox="0 0 24 24"
-                        stroke="currentColor"
+                        stroke={isMockOffline ? theme.danger : 'currentColor'}
                         fill="none"
                       >
                         {isMockOffline ? (
                           <>
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                            <line x1="12" y1="12" x2="12" y2="12.01" />
-                            <path d="M14.828 9.172a4 4 0 0 1 0 5.656" />
-                            <path d="M17.657 6.343a8 8 0 0 1 0 11.314" />
-                            <path d="M9.168 14.828a4 4 0 0 1 0 -5.656" />
-                            <path d="M6.337 17.657a8 8 0 0 1 0 -11.314" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                            <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
+                            <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
                           </>
                         ) : (
                           <>
                             <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                            <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
+                            <path d="M3.515 9.515a12 12 0 0 1 3.544 -2.455m3.101 -.92a12 12 0 0 1 10.325 3.374" />
                             <line x1="3" y1="3" x2="21" y2="21" />
-                            <path d="M14.828 9.172a4 4 0 0 1 1.172 2.828" />
-                            <path d="M17.657 6.343a8 8 0 0 1 1.635 8.952" />
-                            <path d="M9.168 14.828a4 4 0 0 1 0 -5.656" />
-                            <path d="M6.337 17.657a8 8 0 0 1 0 -11.314" />
                           </>
                         )}
                       </svg>
