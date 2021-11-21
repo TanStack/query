@@ -40,10 +40,10 @@ export function getQueryStatusColor(query: Query, theme: Theme) {
 export function getQueryStatusLabel(query: Query) {
   return query.state.fetchStatus === 'fetching'
     ? 'fetching'
-    : query.state.fetchStatus === 'paused'
-    ? 'paused'
     : !query.getObserversCount()
     ? 'inactive'
+    : query.state.fetchStatus === 'paused'
+    ? 'paused'
     : query.isStale()
     ? 'stale'
     : 'fresh'

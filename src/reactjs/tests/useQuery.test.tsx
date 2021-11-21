@@ -4741,6 +4741,7 @@ describe('useQuery', () => {
 
     it('online queries should pause retries if you are offline', async () => {
       const key = queryKey()
+      const consoleMock = mockConsoleError()
       let count = 0
 
       function Page() {
@@ -4785,6 +4786,7 @@ describe('useQuery', () => {
       expect(count).toBe(1)
 
       onlineMock.mockRestore()
+      consoleMock.mockRestore()
     })
   })
 
