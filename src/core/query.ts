@@ -175,7 +175,6 @@ export class Query<
     this.initialState = config.state || this.getDefaultState(this.options)
     this.state = this.initialState
     this.meta = config.meta
-    this.scheduleGc()
   }
 
   private setOptions(
@@ -214,8 +213,12 @@ export class Query<
   }
 
   private optionalRemove() {
-    if (!this.observers.length && !this.state.isFetching) {
-      this.cache.remove(this)
+    if (!this.observers.length) {
+      if (this.state.isFetching) {
+        this.scheduleGc()
+      } else {
+        this.cache.remove(this)
+      }
     }
   }
 
