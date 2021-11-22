@@ -383,16 +383,23 @@ export class Query<
       meta: this.meta,
     }
 
-    Object.defineProperty(queryFnContext, 'signal', {
-      enumerable: true,
-      get: () => {
-        if (abortController) {
-          this.abortSignalConsumed = true
-          return abortController.signal
-        }
-        return undefined
-      },
-    })
+    // Adds an enumerable signal property to the object that
+    // which sets abortSignalConsumed to true when the signal
+    // is read.
+    const addSignalProperty = (object: unknown) => {
+      Object.defineProperty(object, 'signal', {
+        enumerable: true,
+        get: () => {
+          if (abortController) {
+            this.abortSignalConsumed = true
+            return abortController.signal
+          }
+          return undefined
+        },
+      })
+    }
+
+    addSignalProperty(queryFnContext)
 
     // Create fetch function
     const fetchFn = () => {
@@ -413,16 +420,7 @@ export class Query<
       meta: this.meta,
     }
 
-    Object.defineProperty(context, 'signal', {
-      enumerable: true,
-      get: () => {
-        if (abortController) {
-          this.abortSignalConsumed = true
-          return abortController.signal
-        }
-        return undefined
-      },
-    })
+    addSignalProperty(context)
 
     if (this.options.behavior?.onFetch) {
       this.options.behavior?.onFetch(context)
