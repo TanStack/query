@@ -87,13 +87,6 @@ export class Retryer<TData = unknown, TError = unknown> {
       !focusManager.isFocused() ||
       (config.networkMode !== 'always' && !onlineManager.isOnline())
 
-    const canContinue = () => {
-      if (this.isPaused) {
-        return !shouldPause()
-      }
-      return canFetch(config.networkMode)
-    }
-
     this.continue = () => {
       continueFn?.()
     }
@@ -126,7 +119,7 @@ export class Retryer<TData = unknown, TError = unknown> {
     const pause = () => {
       return new Promise(continueResolve => {
         continueFn = value => {
-          if (canContinue()) {
+          if (!shouldPause()) {
             return continueResolve(value)
           }
         }
