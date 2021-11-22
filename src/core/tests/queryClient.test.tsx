@@ -544,6 +544,21 @@ describe('queryClient', () => {
 
       consoleMock.mockRestore()
     })
+
+    test('should be garbage collected after cacheTime if unused', async () => {
+      const key = queryKey()
+
+      await queryClient.prefetchQuery(
+        key,
+        async () => {
+          return 'data'
+        },
+        { cacheTime: 10 }
+      )
+      expect(queryCache.find(key)).toBeDefined()
+      await sleep(15)
+      expect(queryCache.find(key)).not.toBeDefined()
+    })
   })
 
   describe('removeQueries', () => {
