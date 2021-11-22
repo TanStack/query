@@ -119,7 +119,7 @@ export class Retryer<TData = unknown, TError = unknown> {
     const pause = () => {
       return new Promise(continueResolve => {
         continueFn = value => {
-          if (!shouldPause()) {
+          if (this.isResolved || !shouldPause()) {
             return continueResolve(value)
           }
         }
