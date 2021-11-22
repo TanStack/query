@@ -983,7 +983,7 @@ describe('queryClient', () => {
 
     test('should cancel ongoing fetches if cancelRefetch option is set (default value)', async () => {
       const key = queryKey()
-      const cancelFn = jest.fn()
+      const abortFn = jest.fn()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
@@ -992,25 +992,29 @@ describe('queryClient', () => {
       })
       observer.subscribe()
 
-      queryClient.fetchQuery(key, () => {
+      queryClient.fetchQuery(key, ({ signal }) => {
         const promise = new Promise(resolve => {
           fetchCount++
           setTimeout(() => resolve(5), 10)
+          if (signal) {
+            signal.addEventListener('abort', abortFn)
+          }
         })
-        // @ts-expect-error
-        promise.cancel = cancelFn
+
         return promise
       })
 
       await queryClient.refetchQueries()
       observer.destroy()
-      expect(cancelFn).toHaveBeenCalledTimes(1)
+      if (typeof AbortSignal === 'function') {
+        expect(abortFn).toHaveBeenCalledTimes(1)
+      }
       expect(fetchCount).toBe(2)
     })
 
     test('should not cancel ongoing fetches if cancelRefetch option is set to false', async () => {
       const key = queryKey()
-      const cancelFn = jest.fn()
+      const abortFn = jest.fn()
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
@@ -1019,19 +1023,23 @@ describe('queryClient', () => {
       })
       observer.subscribe()
 
-      queryClient.fetchQuery(key, () => {
+      queryClient.fetchQuery(key, ({ signal }) => {
         const promise = new Promise(resolve => {
           fetchCount++
           setTimeout(() => resolve(5), 10)
+          if (signal) {
+            signal.addEventListener('abort', abortFn)
+          }
         })
-        // @ts-expect-error
-        promise.cancel = cancelFn
+
         return promise
       })
 
       await queryClient.refetchQueries(undefined, { cancelRefetch: false })
       observer.destroy()
-      expect(cancelFn).toHaveBeenCalledTimes(0)
+      if (typeof AbortSignal === 'function') {
+        expect(abortFn).toHaveBeenCalledTimes(0)
+      }
       expect(fetchCount).toBe(1)
     })
   })
