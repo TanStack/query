@@ -15,7 +15,7 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
-  networkMode: NetworkMode
+  networkMode: NetworkMode | undefined
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -44,8 +44,10 @@ export function isCancelable(value: any): value is Cancelable {
   return typeof value?.cancel === 'function'
 }
 
-export function canFetch(networkMode: NetworkMode = 'online'): boolean {
-  return networkMode === 'online' ? onlineManager.isOnline() : true
+export function canFetch(networkMode: NetworkMode | undefined): boolean {
+  return (networkMode ?? 'online') === 'online'
+    ? onlineManager.isOnline()
+    : true
 }
 
 export class CancelledError {
