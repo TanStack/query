@@ -163,11 +163,9 @@ export class Query<
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
-  private hadObservers: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     this.abortSignalConsumed = false
-    this.hadObservers = false
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -177,7 +175,6 @@ export class Query<
     this.initialState = config.state || this.getDefaultState(this.options)
     this.state = this.initialState
     this.meta = config.meta
-    this.scheduleGc()
   }
 
   private setOptions(
@@ -218,9 +215,7 @@ export class Query<
   private optionalRemove() {
     if (!this.observers.length) {
       if (this.state.isFetching) {
-        if (this.hadObservers) {
-          this.scheduleGc()
-        }
+        this.scheduleGc()
       } else {
         this.cache.remove(this)
       }
@@ -325,7 +320,6 @@ export class Query<
 
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
-      this.hadObservers = true
       this.observers.push(observer)
 
       // Stop the query from being garbage collected
