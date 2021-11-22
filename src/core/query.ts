@@ -195,10 +195,10 @@ export class Query<
 
   protected optionalRemove() {
     if (!this.observers.length) {
-      if this.state.fetchStatus !== 'idle') {
-        this.scheduleGc()
-      } else {
+      if (this.state.fetchStatus === 'idle') {
         this.cache.remove(this)
+      } else {
+        this.scheduleGc()
       }
     }
   }
