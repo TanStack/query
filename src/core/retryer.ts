@@ -128,7 +128,9 @@ export class Retryer<TData = unknown, TError = unknown> {
       }).then(() => {
         continueFn = undefined
         this.isPaused = false
-        config.onContinue?.()
+        if (!this.isResolved) {
+          config.onContinue?.()
+        }
       })
     }
 
