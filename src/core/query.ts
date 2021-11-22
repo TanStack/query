@@ -63,6 +63,7 @@ export interface FetchContext<
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
+  signal?: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: TQueryKey
   state: QueryState<TData, TError>
@@ -316,7 +317,7 @@ export class Query<
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.retryer) {
-          if (this.retryer.isTransportCancelable || this.abortSignalConsumed) {
+          if (this.abortSignalConsumed) {
             this.retryer.cancel({ revert: true })
           } else {
             this.retryer.cancelRetry()
@@ -381,16 +382,23 @@ export class Query<
       meta: this.meta,
     }
 
-    Object.defineProperty(queryFnContext, 'signal', {
-      enumerable: true,
-      get: () => {
-        if (abortController) {
-          this.abortSignalConsumed = true
-          return abortController.signal
-        }
-        return undefined
-      },
-    })
+    // Adds an enumerable signal property to the object that
+    // which sets abortSignalConsumed to true when the signal
+    // is read.
+    const addSignalProperty = (object: unknown) => {
+      Object.defineProperty(object, 'signal', {
+        enumerable: true,
+        get: () => {
+          if (abortController) {
+            this.abortSignalConsumed = true
+            return abortController.signal
+          }
+          return undefined
+        },
+      })
+    }
+
+    addSignalProperty(queryFnContext)
 
     // Create fetch function
     const fetchFn = () => {
@@ -410,6 +418,8 @@ export class Query<
       fetchFn,
       meta: this.meta,
     }
+
+    addSignalProperty(context)
 
     if (this.options.behavior?.onFetch) {
       this.options.behavior?.onFetch(context)
