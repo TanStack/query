@@ -66,17 +66,19 @@ export class Retryer<TData = unknown, TError = unknown> {
   isResolved: boolean
   promise: Promise<TData>
 
-  private abort?: () => void
-
   constructor(config: RetryerConfig<TData, TError>) {
     let cancelRetry = false
-    let cancelFn: ((options?: CancelOptions) => void) | undefined
     let continueFn: ((value?: unknown) => void) | undefined
     let promiseResolve: (data: TData) => void
     let promiseReject: (error: TError) => void
 
-    this.abort = config.abort
-    this.cancel = cancelOptions => cancelFn?.(cancelOptions)
+    this.cancel = (cancelOptions?: CancelOptions): void => {
+      if (!this.isResolved) {
+        reject(new CancelledError(cancelOptions))
+
+        config.abort?.()
+      }
+    }
     this.cancelRetry = () => {
       cancelRetry = true
     }
@@ -151,15 +153,6 @@ export class Retryer<TData = unknown, TError = unknown> {
         promiseOrValue = config.fn()
       } catch (error) {
         promiseOrValue = Promise.reject(error)
-      }
-
-      // Create callback to cancel this fetch
-      cancelFn = cancelOptions => {
-        if (!this.isResolved) {
-          reject(new CancelledError(cancelOptions))
-
-          this.abort?.()
-        }
       }
 
       Promise.resolve(promiseOrValue)
