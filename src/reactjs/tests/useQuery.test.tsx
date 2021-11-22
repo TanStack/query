@@ -4761,7 +4761,7 @@ describe('useQuery', () => {
             throw new Error('failed' + count)
           },
           retry: 2,
-          retryDelay: 10,
+          retryDelay: 1,
         })
 
         return (
@@ -4770,7 +4770,6 @@ describe('useQuery', () => {
               status: {state.status}, fetchStatus: {state.fetchStatus},
               failureCount: {state.failureCount}
             </div>
-            <div>data: {state.data}</div>
           </div>
         )
       }
@@ -4785,6 +4784,8 @@ describe('useQuery', () => {
 
       const onlineMock = mockNavigatorOnLine(false)
 
+      await sleep(20)
+
       await waitFor(() =>
         rendered.getByText(
           'status: loading, fetchStatus: paused, failureCount: 1'
@@ -4792,6 +4793,15 @@ describe('useQuery', () => {
       )
 
       expect(count).toBe(1)
+
+      onlineMock.mockReturnValue(true)
+      window.dispatchEvent(new Event('online'))
+
+      await waitFor(() =>
+        rendered.getByText('status: error, fetchStatus: idle, failureCount: 3')
+      )
+
+      expect(count).toBe(3)
 
       onlineMock.mockRestore()
       consoleMock.mockRestore()
