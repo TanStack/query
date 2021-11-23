@@ -27,6 +27,16 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 + import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query'
 ```
 
+### `notifyOnChangeProps` property no longer accepts `"tracked"` as a value
+
+The `notifyOnChangeProps` option no longer accepts a `"tracked"` value. Instead, `useQuery` defaults to tracking properties. All queries using `notifyOnChangeProps: "tracked"` should be updated by removing this option. 
+
+If you would like to bypass this in any queries to emulate the v3 default behavior of re-rendering whenever a query changes, `notifyOnChangeProps` now accepts an `"all"` value to opt-out of the default smart tracking optimization.
+
+### `notifyOnChangePropsExclusion` has been removed
+
+In v4, `notifyOnChangeProps` defaults to the `"tracked"` behavior of v3 instead of `undefined`. Now that `"tracked"` is the default behavior for v4, it no longer makes sense to include this config option.
+
 ### Consistent behavior for `cancelRefetch`
 
 The `cancelRefetch` can be passed to all functions that imperatively fetch a query, namely:
@@ -173,6 +183,10 @@ Since these plugins are no longer experimental, their import paths have also bee
 + import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
 + import { createAsyncStoragePersister } from 'react-query/createAsyncStoragePersister'
 ```
+
+### The `cancel` method on promises is no longer supported
+
+The [old `cancel` method](../guides/query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../guides/query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
 
 ## New Features 🚀
 

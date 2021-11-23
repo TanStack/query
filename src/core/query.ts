@@ -63,6 +63,7 @@ export interface FetchContext<
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
+  signal?: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: TQueryKey
   state: QueryState<TData, TError>
@@ -160,11 +161,13 @@ export class Query<
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
+  private hadObservers: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
     this.abortSignalConsumed = false
+    this.hadObservers = false
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -194,8 +197,14 @@ export class Query<
   }
 
   protected optionalRemove() {
-    if (!this.observers.length && !this.state.isFetching) {
-      this.cache.remove(this)
+    if (!this.observers.length) {
+      if (this.state.isFetching) {
+        if (this.hadObservers) {
+          this.scheduleGc()
+        }
+      } else {
+        this.cache.remove(this)
+      }
     }
   }
 
@@ -300,6 +309,7 @@ export class Query<
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
+      this.hadObservers = true
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
@@ -316,7 +326,7 @@ export class Query<
         // If the transport layer does not support cancellation
         // we'll let the query continue so the result can be cached
         if (this.retryer) {
-          if (this.retryer.isTransportCancelable || this.abortSignalConsumed) {
+          if (this.abortSignalConsumed) {
             this.retryer.cancel({ revert: true })
           } else {
             this.retryer.cancelRetry()
@@ -381,16 +391,23 @@ export class Query<
       meta: this.meta,
     }
 
-    Object.defineProperty(queryFnContext, 'signal', {
-      enumerable: true,
-      get: () => {
-        if (abortController) {
-          this.abortSignalConsumed = true
-          return abortController.signal
-        }
-        return undefined
-      },
-    })
+    // Adds an enumerable signal property to the object that
+    // which sets abortSignalConsumed to true when the signal
+    // is read.
+    const addSignalProperty = (object: unknown) => {
+      Object.defineProperty(object, 'signal', {
+        enumerable: true,
+        get: () => {
+          if (abortController) {
+            this.abortSignalConsumed = true
+            return abortController.signal
+          }
+          return undefined
+        },
+      })
+    }
+
+    addSignalProperty(queryFnContext)
 
     // Create fetch function
     const fetchFn = () => {
@@ -410,6 +427,8 @@ export class Query<
       fetchFn,
       meta: this.meta,
     }
+
+    addSignalProperty(context)
 
     if (this.options.behavior?.onFetch) {
       this.options.behavior?.onFetch(context)

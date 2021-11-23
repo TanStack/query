@@ -186,6 +186,7 @@ describe('useInfiniteQuery', () => {
         {
           getNextPageParam: () => 1,
           keepPreviousData: true,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -306,6 +307,7 @@ describe('useInfiniteQuery', () => {
             pages: [...data.pages].reverse(),
             pageParams: [...data.pageParams].reverse(),
           }),
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -359,6 +361,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getPreviousPageParam: firstPage => firstPage - 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -423,8 +426,10 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, ({ pageParam = 10 }) =>
-        Number(pageParam)
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 10 }) => Number(pageParam),
+        { notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -516,6 +521,7 @@ describe('useInfiniteQuery', () => {
         {
           getPreviousPageParam: firstPage => firstPage - 1,
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -608,6 +614,7 @@ describe('useInfiniteQuery', () => {
         ({ pageParam = 10 }) => Number(pageParam) * multiplier.current,
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -687,6 +694,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -913,6 +921,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1014,6 +1023,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1080,6 +1090,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1161,6 +1172,7 @@ describe('useInfiniteQuery', () => {
         {
           initialData: { pages: [1], pageParams: [1] },
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -1774,13 +1786,12 @@ describe('useInfiniteQuery', () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
 
-    const queryFn = () => {
+    const queryFn = ({ signal }: { signal?: AbortSignal }) => {
       const promise = new Promise<string>((resolve, reject) => {
         cancelFn = jest.fn(() => reject('Cancelled'))
+        signal?.addEventListener('abort', cancelFn)
         sleep(10).then(() => resolve('OK'))
       })
-
-      ;(promise as any).cancel = cancelFn
 
       return promise
     }
@@ -1803,6 +1814,8 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => rendered.getByText('off'))
 
-    expect(cancelFn).toHaveBeenCalled()
+    if (typeof AbortSignal === 'function') {
+      expect(cancelFn).toHaveBeenCalled()
+    }
   })
 })

@@ -335,43 +335,6 @@ describe('query', () => {
     expect(isCancelledError(error)).toBe(true)
   })
 
-  test('should call cancel() fn if it was provided and not continue when last observer unsubscribed', async () => {
-    const key = queryKey()
-
-    const cancel = jest.fn()
-
-    queryClient.prefetchQuery(key, async () => {
-      const promise = new Promise((resolve, reject) => {
-        sleep(100).then(() => resolve('data'))
-        cancel.mockImplementation(() => {
-          reject(new Error('Cancelled'))
-        })
-      }) as any
-      promise.cancel = cancel
-      return promise
-    })
-
-    await sleep(10)
-
-    // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    const unsubscribe = observer.subscribe()
-    unsubscribe()
-
-    await sleep(100)
-
-    const query = queryCache.find(key)!
-
-    expect(cancel).toHaveBeenCalled()
-    expect(query.state).toMatchObject({
-      data: undefined,
-      status: 'idle',
-    })
-  })
-
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
@@ -547,6 +510,29 @@ describe('query', () => {
     const unsubscribe = observer.subscribe()
     expect(queryCache.find(key)).toBeDefined()
     unsubscribe()
+    expect(queryCache.find(key)).toBeUndefined()
+  })
+
+  test('should be garbage collected later when unsubscribed and query is fetching', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(20)
+        return 'data'
+      },
+      cacheTime: 10,
+    })
+    const unsubscribe = observer.subscribe()
+    await sleep(20)
+    expect(queryCache.find(key)).toBeDefined()
+    observer.refetch()
+    unsubscribe()
+    await sleep(10)
+    // unsubscribe should not remove even though cacheTime has elapsed b/c query is still fetching
+    expect(queryCache.find(key)).toBeDefined()
+    await sleep(10)
+    // should be removed after an additional staleTime wait
     expect(queryCache.find(key)).toBeUndefined()
   })
 

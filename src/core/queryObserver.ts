@@ -232,23 +232,37 @@ export class QueryObserver<
   }
 
   trackResult(
-    result: QueryObserverResult<TData, TError>
+    result: QueryObserverResult<TData, TError>,
+    defaultedOptions: QueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      TQueryKey
+    >
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
+
+    const trackProp = (key: keyof QueryObserverResult) => {
+      if (!this.trackedProps.includes(key)) {
+        this.trackedProps.push(key)
+      }
+    }
 
     Object.keys(result).forEach(key => {
       Object.defineProperty(trackedResult, key, {
         configurable: false,
         enumerable: true,
         get: () => {
-          const typedKey = key as keyof QueryObserverResult
-          if (!this.trackedProps.includes(typedKey)) {
-            this.trackedProps.push(typedKey)
-          }
-          return result[typedKey]
+          trackProp(key as keyof QueryObserverResult)
+          return result[key as keyof QueryObserverResult]
         },
       })
     })
+
+    if (defaultedOptions.useErrorBoundary || defaultedOptions.suspense) {
+      trackProp('error')
+    }
 
     return trackedResult
   }
@@ -596,27 +610,22 @@ export class QueryObserver<
       return true
     }
 
-    const { notifyOnChangeProps, notifyOnChangePropsExclusions } = this.options
+    const { notifyOnChangeProps } = this.options
 
-    if (!notifyOnChangeProps && !notifyOnChangePropsExclusions) {
+    if (
+      notifyOnChangeProps === 'all' ||
+      (!notifyOnChangeProps && !this.trackedProps.length)
+    ) {
       return true
     }
 
-    if (notifyOnChangeProps === 'tracked' && !this.trackedProps.length) {
-      return true
-    }
-
-    const includedProps =
-      notifyOnChangeProps === 'tracked'
-        ? this.trackedProps
-        : notifyOnChangeProps
+    const includedProps = notifyOnChangeProps ?? this.trackedProps
 
     return Object.keys(result).some(key => {
       const typedKey = key as keyof QueryObserverResult
       const changed = result[typedKey] !== prevResult[typedKey]
       const isIncluded = includedProps?.some(x => x === key)
-      const isExcluded = notifyOnChangePropsExclusions?.some(x => x === key)
-      return changed && !isExcluded && (!includedProps || isIncluded)
+      return changed && (!includedProps || isIncluded)
     })
   }
 
