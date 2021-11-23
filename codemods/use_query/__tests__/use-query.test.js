@@ -4,9 +4,9 @@ const defineTest = require('jscodeshift/dist/testUtils').defineTest
 jest.autoMockOff()
 
 defineTest(__dirname, 'use-query', null, 'default-import', {
-    parser: 'tsx',
+  parser: 'tsx',
 })
 
 defineTest(__dirname, 'use-query', null, 'named-import', {
-    parser: 'tsx',
+  parser: 'tsx',
 })
