@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useQuery as useRenamedQuery } from 'react-query'
 
-const Example = () => {
+export const Example = () => {
   const { data } = useRenamedQuery('repoData', () =>
     fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
       res.json()

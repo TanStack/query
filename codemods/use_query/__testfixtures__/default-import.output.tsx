@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useQuery } from 'react-query'
 
-const Example = () => {
+export const Example = () => {
   const { data } = useQuery({
     queryKey: 'repoData',
 
