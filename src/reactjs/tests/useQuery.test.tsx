@@ -4866,6 +4866,78 @@ describe('useQuery', () => {
 
       onlineMock.mockRestore()
     })
+
+    it('online queries should not fetch if paused and we go online if already unmounted when signal consumed', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Component() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async ({ signal }) => {
+            count++
+            await sleep(10)
+            return `${signal ? 'signal' : 'data'}${count}`
+          },
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      function Page() {
+        const [show, setShow] = React.useState(true)
+
+        return (
+          <div>
+            {show && <Component />}
+            <button onClick={() => setShow(false)}>hide</button>
+            <button
+              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+            >
+              invalidate
+            </button>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: idle')
+      )
+
+      // await waitFor(() => rendered.getByText(typeof AbortSignal === 'function' ? 'data: signal1' : 'data: data1'))
+
+      const onlineMock = mockNavigatorOnLine(false)
+
+      rendered.getByRole('button', { name: /invalidate/i }).click()
+
+      await waitFor(() =>
+        rendered.getByText('status: success, fetchStatus: paused')
+      )
+
+      rendered.getByRole('button', { name: /hide/i }).click()
+
+      onlineMock.mockReturnValue(true)
+      window.dispatchEvent(new Event('online'))
+
+      await sleep(15)
+
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        fetchStatus: 'idle',
+        status: 'success',
+      })
+      expect(count).toBe(typeof AbortSignal === 'function' ? 1 : 2)
+
+      onlineMock.mockRestore()
+    })
   })
 
   describe('networkMode always', () => {
