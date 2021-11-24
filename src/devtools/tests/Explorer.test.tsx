@@ -33,19 +33,20 @@ describe('Explorer', () => {
 
       render(
         <DefaultRenderer
-          label="a lovely label"
+          label="the top level label"
           toggleExpanded={toggleExpanded}
           pageSize={10}
           handleEntry={() => <></>}
-          expanded={true}
+          expanded={false}
+          subEntryPages={[[{ label: 'A lovely lable' }]]}
         />
       )
 
-      fireEvent.click(
-        screen.getByRole('button', {
-          name: /a lovely label/i,
-        })
-      )
+      const expandButton = screen.getByRole('button', {
+        name: /▶ the top level label 0 item/i,
+      })
+
+      fireEvent.click(expandButton)
 
       expect(toggleExpanded).toHaveBeenCalledTimes(1)
     })
