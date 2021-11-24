@@ -4867,6 +4867,62 @@ describe('useQuery', () => {
       onlineMock.mockRestore()
     })
 
+    it('online queries should not fetch if paused and we go online when cancelled and no refetchOnReconnect', async () => {
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            return 'data' + count
+          },
+          refetchOnReconnect: false,
+        })
+
+        return (
+          <div>
+            <button
+              onClick={() => queryClient.cancelQueries({ queryKey: key })}
+            >
+              cancel
+            </button>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus}
+            </div>
+            <div>data: {state.data}</div>
+          </div>
+        )
+      }
+
+      const onlineMock = mockNavigatorOnLine(false)
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: paused')
+      )
+
+      rendered.getByRole('button', { name: /cancel/i }).click()
+
+      await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
+
+      expect(count).toBe(0)
+
+      onlineMock.mockReturnValue(true)
+      window.dispatchEvent(new Event('online'))
+
+      await sleep(15)
+
+      await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
+
+      expect(count).toBe(0)
+
+      onlineMock.mockRestore()
+    })
+
     it('online queries should not fetch if paused and we go online if already unmounted when signal consumed', async () => {
       const key = queryKey()
       let count = 0
@@ -4912,8 +4968,6 @@ describe('useQuery', () => {
       await waitFor(() =>
         rendered.getByText('status: success, fetchStatus: idle')
       )
-
-      // await waitFor(() => rendered.getByText(typeof AbortSignal === 'function' ? 'data: signal1' : 'data: data1'))
 
       const onlineMock = mockNavigatorOnLine(false)
 
