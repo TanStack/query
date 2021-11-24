@@ -5132,8 +5132,66 @@ describe('useQuery', () => {
       await waitFor(() => {
         expect(rendered.getByText('error: error 2')).toBeInTheDocument()
       })
+
+      expect(count).toBe(2)
+
       consoleMock.mockRestore()
       onlineMock.mockRestore()
+    })
+  })
+
+  describe('networkMode offlineFirst', () => {
+    it('offlineFirst queries should start fetching if you are offline, but pause retries', async () => {
+      const consoleMock = mockConsoleError()
+      const onlineMock = mockNavigatorOnLine(false)
+
+      const key = queryKey()
+      let count = 0
+
+      function Page() {
+        const state = useQuery({
+          queryKey: key,
+          queryFn: async () => {
+            count++
+            await sleep(10)
+            throw new Error('failed' + count)
+          },
+          retry: 2,
+          retryDelay: 1,
+          networkMode: 'offlineFirst',
+        })
+
+        return (
+          <div>
+            <div>
+              status: {state.status}, fetchStatus: {state.fetchStatus},
+              failureCount: {state.failureCount}
+            </div>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() =>
+        rendered.getByText(
+          'status: loading, fetchStatus: paused, failureCount: 1'
+        )
+      )
+
+      expect(count).toBe(1)
+
+      onlineMock.mockReturnValue(true)
+      window.dispatchEvent(new Event('online'))
+
+      await waitFor(() =>
+        rendered.getByText('status: error, fetchStatus: idle, failureCount: 3')
+      )
+
+      expect(count).toBe(3)
+
+      onlineMock.mockRestore()
+      consoleMock.mockRestore()
     })
   })
 })
