@@ -4761,7 +4761,7 @@ describe('useQuery', () => {
             throw new Error('failed' + count)
           },
           retry: 2,
-          retryDelay: 1,
+          retryDelay: 10,
         })
 
         return (
