@@ -11,6 +11,10 @@ export const Entry = styled('div', {
 })
 
 export const Label = styled('span', {
+  color: 'white',
+})
+
+export const LabelButton = styled('button', {
   cursor: 'pointer',
   color: 'white',
 })
@@ -74,6 +78,7 @@ type RendererProps = {
  * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
  */
 export function chunkArray<T>(array: T[], size: number): T[][] {
+  if (size < 1) return []
   let i = 0
   const result: T[][] = []
   while (i < array.length) {
@@ -102,13 +107,13 @@ export const DefaultRenderer: Renderer = ({
     <Entry key={label}>
       {subEntryPages?.length ? (
         <>
-          <Label onClick={() => toggleExpanded()}>
+          <button onClick={() => toggleExpanded()}>
             <Expander expanded={expanded} /> {label}{' '}
             <Info>
               {String(type).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries.length} {subEntries.length > 1 ? `items` : `item`}
             </Info>
-          </Label>
+          </button>
           {expanded ? (
             subEntryPages.length === 1 ? (
               <SubEntries>
@@ -119,7 +124,7 @@ export const DefaultRenderer: Renderer = ({
                 {subEntryPages.map((entries, index) => (
                   <div key={index}>
                     <Entry>
-                      <Label
+                      <LabelButton
                         onClick={() =>
                           setExpandedPages(old =>
                             old.includes(index)
@@ -130,7 +135,7 @@ export const DefaultRenderer: Renderer = ({
                       >
                         <Expander expanded={expanded} /> [{index * pageSize} ...{' '}
                         {index * pageSize + pageSize - 1}]
-                      </Label>
+                      </LabelButton>
                       {expandedPages.includes(index) ? (
                         <SubEntries>
                           {entries.map(entry => handleEntry(entry))}

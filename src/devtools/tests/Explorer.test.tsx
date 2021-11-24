@@ -1,8 +1,7 @@
 import React from 'react'
-import { fireEvent, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 
 import { chunkArray, DefaultRenderer } from '../Explorer'
-import { renderWithClient, createQueryClient } from './utils'
 
 describe('Explorer', () => {
   describe('chunkArray', () => {
@@ -14,7 +13,7 @@ describe('Explorer', () => {
       expect(chunkArray([], 2)).toStrictEqual([])
     })
 
-    it('when the array is evenly chunked return chu ', () => {
+    it('when the array is evenly chunked return full chunks ', () => {
       expect(chunkArray([1, 2, 3, 4], 2)).toStrictEqual([
         [1, 2],
         [3, 4],
@@ -29,21 +28,25 @@ describe('Explorer', () => {
   })
 
   describe('DefaultRenderer', () => {
-    it('when the entry label is clicked, toggle expanded', () => {
+    it('when the entry label is clicked, toggle expanded', async () => {
       const toggleExpanded = jest.fn()
-      const { queryClient } = createQueryClient()
-      renderWithClient(
-        queryClient,
+
+      render(
         <DefaultRenderer
-          label="example label"
+          label="a lovely label"
           toggleExpanded={toggleExpanded}
           pageSize={10}
           handleEntry={() => <></>}
-        />,
-        {}
+          expanded={true}
+        />
       )
-      const label = screen.getByRole('button', { name: /example label/i })
-      fireEvent.click(label)
+
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: /a lovely label/i,
+        })
+      )
+
       expect(toggleExpanded).toHaveBeenCalledTimes(1)
     })
   })
