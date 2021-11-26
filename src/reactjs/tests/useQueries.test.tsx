@@ -128,8 +128,8 @@ describe('useQueries', () => {
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
     ])
     expect(states[3]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
+      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
     ])
     expect(states[4]).toMatchObject([
       { status: 'success', data: 2, isPreviousData: true, isFetching: true },
@@ -206,8 +206,8 @@ describe('useQueries', () => {
     ])
 
     expect(states[3]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
+      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 8, isPreviousData: false, isFetching: false },
       {
         status: 'loading',
         data: undefined,
@@ -249,6 +249,197 @@ describe('useQueries', () => {
       { status: 'success', data: 6, isPreviousData: false, isFetching: false },
       { status: 'success', data: 12, isPreviousData: false, isFetching: false },
       { status: 'success', data: 18, isPreviousData: false, isFetching: false },
+    ])
+  })
+
+  it('should keep previous data when switching between queries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[][] = []
+
+    function Page() {
+      const [series1, setSeries1] = React.useState(1)
+      const [series2, setSeries2] = React.useState(2)
+      const ids = [series1, series2]
+
+      const result = useQueries(
+        ids.map(id => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => {
+              await sleep(5)
+              return id * 5
+            },
+            keepPreviousData: true,
+          }
+        })
+      )
+
+      states.push(result)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setSeries2(3)
+        }, 20)
+      }, [])
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setSeries1(2)
+        }, 50)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(10))
+
+    expect(states[0]).toMatchObject([
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[1]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[2]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[3]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
+    ])
+    expect(states[5]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[6]).toMatchObject([
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[7]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[8]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[9]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+  })
+
+  it('should not go to infinite render loop with previous data when toggling queries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[][] = []
+
+    function Page() {
+      const [enableId1, setEnableId1] = React.useState(true)
+      const ids = enableId1 ? [1, 2] : [2]
+
+      const result = useQueries(
+        ids.map(id => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => {
+              await sleep(5)
+              return id * 5
+            },
+            keepPreviousData: true,
+          }
+        })
+      )
+
+      states.push(result)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setEnableId1(false)
+        }, 20)
+
+        setActTimeout(() => {
+          setEnableId1(true)
+        }, 30)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(9))
+
+    expect(states[0]).toMatchObject([
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[1]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[2]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[3]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[5]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+    ])
+    expect(states[6]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[7]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[8]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
   })
 

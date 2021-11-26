@@ -33,7 +33,7 @@ When a query needs more information to uniquely describe its data, you can use a
 // An individual todo
 useQuery(['todo', 5], ...)
 
-// And individual todo in a "preview" format
+// An individual todo in a "preview" format
 useQuery(['todo', 5, { preview: true }], ...)
 
 // A list of todos that are "done"
