@@ -20,7 +20,7 @@ To streamline all apis, we've decided to make all keys Arrays only:
 
 ### Separate hydration exports have been removed
 
-With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the react-query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
+With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
 
 ```diff
 - import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration'
@@ -29,7 +29,7 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 
 ### `notifyOnChangeProps` property no longer accepts `"tracked"` as a value
 
-The `notifyOnChangeProps` option no longer accepts a `"tracked"` value. Instead, `useQuery` defaults to tracking properties. All queries using `notifyOnChangeProps: "tracked"` should be updated by removing this option. 
+The `notifyOnChangeProps` option no longer accepts a `"tracked"` value. Instead, `useQuery` defaults to tracking properties. All queries using `notifyOnChangeProps: "tracked"` should be updated by removing this option.
 
 If you would like to bypass this in any queries to emulate the v3 default behavior of re-rendering whenever a query changes, `notifyOnChangeProps` now accepts an `"all"` value to opt-out of the default smart tracking optimization.
 
@@ -140,7 +140,7 @@ The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent
 
 ### The `src/react` directory was renamed to `src/reactjs`
 
-Previously, react-query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
+Previously, React Query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
 
 ```
 TypeError: Cannot read property 'createContext' of undefined
@@ -161,7 +161,7 @@ This was confusing to many and also created infinite loops if `setQueryData` was
 
 Similar to `onError` and `onSettled`, the `onSuccess` callback is now tied to a request being made. No request -> no callback.
 
-If you want to listen to changes of the `data` field, you can best do this with a `useEffect`, where `data` is part of the dependency Array. Since react-query ensures stable data through structural sharing, the effect will not execute with every background refetch, but only if something within data has changed:
+If you want to listen to changes of the `data` field, you can best do this with a `useEffect`, where `data` is part of the dependency Array. Since React Query ensures stable data through structural sharing, the effect will not execute with every background refetch, but only if something within data has changed:
 
 ```
 const { data } = useQuery({ queryKey, queryFn })
@@ -188,8 +188,43 @@ Since these plugins are no longer experimental, their import paths have also bee
 
 The [old `cancel` method](../guides/query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../guides/query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
 
+### Queries and mutations, per default, need internet connection to run
+
+Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../guides/network-mode)
+
+Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no internet connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
+
+```js
+new QueryClient({
+  defaultOptions: {
+    queries: {
+      networkMode: 'offlineFirst'
+    },
+    mutations: {
+      networkmode: 'offlineFirst'
+    }
+  }
+})
+
+```
+
 ## New Features 🚀
+
+### Proper offline support
+
+In v3, React Query has always fired off queries and mutations, but then taken the assumption that if you want to retry it, you need to be connected to the internet. This has led to several confusing situations:
+
+- You are offline and mount a query - it goes to loading state, the request fails, and it stays in loading state until you go online again, even though it is not really fetching.
+- Similarly, if you are offline and have retries turned off, your query will just fire and fail, and the query goes to error state.
+- You are offline and want to fire off a query that doesn't necessarily need internet connection (because you _can_ use React Query for something other than data fetching), but it fails for some other reason. That query will now be paused until you go online again.
+- Window focus refetching didn't do anything at all if you were offline.
+
+With v4, React Query introduces a new `networkMode` to tackle all these issues. Please read the dedicated page about the new [Network mode](../guides/network-mode) for more information.
 
 ### Mutation Cache Garbage Collection
 
 Mutations can now also be garbage collected automatically, just like queries. The default `cacheTime` for mutations is also set to 5 minutes.
+
+### Tracked Queries per default
+
+React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.6.0) and has now become the default behavior with v4.
