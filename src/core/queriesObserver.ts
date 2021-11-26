@@ -125,7 +125,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   }
 
   private getObserver(options: QueryObserverOptions): QueryObserver {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
     const currentObserver = this.observersMap[defaultedOptions.queryHash!]
     return currentObserver ?? new QueryObserver(this.client, defaultedOptions)
   }
