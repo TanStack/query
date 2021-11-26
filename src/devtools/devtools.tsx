@@ -275,7 +275,7 @@ export function ReactQueryDevtools({
             {...(otherCloseButtonProps as unknown)}
             onClick={e => {
               setIsOpen(false)
-              onCloseClick && onCloseClick(e)
+              onCloseClick?.(e)
             }}
             style={{
               position: 'fixed',
@@ -314,7 +314,7 @@ export function ReactQueryDevtools({
           aria-expanded="false"
           onClick={e => {
             setIsOpen(true)
-            onToggleClick && onToggleClick(e)
+            onToggleClick?.(e)
           }}
           style={{
             background: 'none',

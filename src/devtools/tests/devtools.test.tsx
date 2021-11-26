@@ -32,6 +32,8 @@ Object.defineProperty(window, 'matchMedia', {
 describe('ReactQueryDevtools', () => {
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
+    const onCloseClick = jest.fn()
+    const onToggleClick = jest.fn()
 
     function Page() {
       const { data = 'default' } = useQuery(['check'], async () => {
@@ -46,7 +48,11 @@ describe('ReactQueryDevtools', () => {
       )
     }
 
-    renderWithClient(queryClient, <Page />, { initialIsOpen: false })
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: false,
+      closeButtonProps: { onClick: onCloseClick },
+      toggleButtonProps: { onClick: onToggleClick },
+    })
 
     const closeButton = screen.queryByRole('button', {
       name: /close react query devtools/i,
@@ -59,11 +65,16 @@ describe('ReactQueryDevtools', () => {
     await waitForElementToBeRemoved(() =>
       screen.queryByRole('button', { name: /open react query devtools/i })
     )
+
+    expect(onToggleClick).toHaveBeenCalledTimes(1)
+
     fireEvent.click(
       screen.getByRole('button', { name: /close react query devtools/i })
     )
 
     await screen.findByRole('button', { name: /open react query devtools/i })
+
+    expect(onCloseClick).toHaveBeenCalledTimes(1)
   })
 
   it('should display the correct query states', async () => {
