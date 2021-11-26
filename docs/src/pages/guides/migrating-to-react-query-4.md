@@ -188,11 +188,11 @@ Since these plugins are no longer experimental, their import paths have also bee
 
 The [old `cancel` method](../guides/query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../guides/query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
 
-### Queries and mutations, per default, need internet connection to run
+### Queries and mutations, per default, need network connection to run
 
 Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../guides/network-mode)
 
-Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no internet connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
+Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no network connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
 
 ```js
 new QueryClient({
@@ -216,7 +216,7 @@ In v3, React Query has always fired off queries and mutations, but then taken th
 
 - You are offline and mount a query - it goes to loading state, the request fails, and it stays in loading state until you go online again, even though it is not really fetching.
 - Similarly, if you are offline and have retries turned off, your query will just fire and fail, and the query goes to error state.
-- You are offline and want to fire off a query that doesn't necessarily need internet connection (because you _can_ use React Query for something other than data fetching), but it fails for some other reason. That query will now be paused until you go online again.
+- You are offline and want to fire off a query that doesn't necessarily need network connection (because you _can_ use React Query for something other than data fetching), but it fails for some other reason. That query will now be paused until you go online again.
 - Window focus refetching didn't do anything at all if you were offline.
 
 With v4, React Query introduces a new `networkMode` to tackle all these issues. Please read the dedicated page about the new [Network mode](../guides/network-mode) for more information.

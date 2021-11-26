@@ -226,7 +226,7 @@ const result = useQuery({
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
 - `fetchStatus: FetchStatus`
-  - `fetching`: Is `true` whenever a request is in-flight, which includes initial `loading` as well as background refetches.
+  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `loading` as well as background refetches.
   - `paused`: The query wanted to fetch, but has been `paused`
   - `idle`: The query is not fetching
   - see [Network Mode](../guides/network-mode) for more information.
