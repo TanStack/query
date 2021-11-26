@@ -1,4 +1,5 @@
 import { fireEvent, waitFor } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -377,6 +378,71 @@ describe('useMutation', () => {
     expect(count).toBe(2)
 
     consoleMock.mockRestore()
+  })
+
+  it('should not retry mutations while offline', async () => {
+    const consoleMock = mockConsoleError()
+    const onlineMock = mockNavigatorOnLine(false)
+
+    let count = 0
+
+    function Page() {
+      const mutation = useMutation(
+        (_text: string) => {
+          count++
+          return Promise.reject(new Error('oops'))
+        },
+        {
+          retry: 1,
+          retryDelay: 5,
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            error:{' '}
+            {mutation.error instanceof Error ? mutation.error.message : 'null'},
+            status: {mutation.status}, isPaused: {String(mutation.isPaused)}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => {
+      expect(
+        rendered.getByText('error: null, status: idle, isPaused: false')
+      ).toBeInTheDocument()
+    })
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await waitFor(() => {
+      expect(
+        rendered.getByText('error: null, status: loading, isPaused: true')
+      ).toBeInTheDocument()
+    })
+
+    expect(count).toBe(0)
+
+    onlineMock.mockReturnValue(true)
+    window.dispatchEvent(new Event('online'))
+
+    await sleep(100)
+
+    await waitFor(() => {
+      expect(
+        rendered.getByText('error: oops, status: error, isPaused: false')
+      ).toBeInTheDocument()
+    })
+
+    expect(count).toBe(2)
+
+    consoleMock.mockRestore()
+    onlineMock.mockRestore()
   })
 
   it('should be able to retry a mutation when online', async () => {
