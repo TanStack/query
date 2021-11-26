@@ -38,6 +38,23 @@ describe('queriesObserver', () => {
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  test('should still return value for undefined query key', async () => {
+    const key1 = queryKey()
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: undefined, queryFn: queryFn2 },
+    ])
+    let observerResult
+    const unsubscribe = observer.subscribe(result => {
+      observerResult = result
+    })
+    await sleep(1)
+    unsubscribe()
+    expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
   test('should update when a query updates', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
