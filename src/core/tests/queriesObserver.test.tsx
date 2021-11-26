@@ -38,6 +38,51 @@ describe('queriesObserver', () => {
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
   })
 
+  test('should still return value for undefined query key', async () => {
+    const key1 = queryKey()
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: undefined, queryFn: queryFn2 },
+    ])
+    let observerResult
+    const unsubscribe = observer.subscribe(result => {
+      observerResult = result
+    })
+    await sleep(1)
+    unsubscribe()
+    expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  test('should return same value for multiple falsy query keys', async () => {
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: undefined, queryFn: queryFn1 },
+    ])
+    const results: QueryObserverResult[][] = []
+    results.push(observer.getCurrentResult())
+    const unsubscribe = observer.subscribe(result => {
+      results.push(result)
+    })
+    await sleep(1)
+    observer.setQueries([
+      { queryKey: undefined, queryFn: queryFn1 },
+      { queryKey: '', queryFn: queryFn2 },
+    ])
+    await sleep(1)
+    unsubscribe()
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject([{ status: 'idle', data: undefined }])
+    expect(results[1]).toMatchObject([{ status: 'loading', data: undefined }])
+    expect(results[2]).toMatchObject([{ status: 'success', data: 1 }])
+    expect(results[3]).toMatchObject([
+      { status: 'success', data: 1 },
+      { status: 'success', data: 1 },
+    ])
+  })
+
   test('should update when a query updates', async () => {
     const key1 = queryKey()
     const key2 = queryKey()

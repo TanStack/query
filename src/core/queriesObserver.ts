@@ -64,57 +64,94 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   }
 
   getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
-    return queries.map((options, index) => {
-      const defaultedOptions = this.client.defaultQueryObserverOptions(options)
-      return this.getObserver(defaultedOptions, index).getOptimisticResult(
-        defaultedOptions
-      )
-    })
+    return this.findMatchingObservers(queries).map(match =>
+      match.observer.getCurrentResult()
+    )
   }
 
-  private getObserver(
-    options: QueryObserverOptions,
-    index: number
-  ): QueryObserver {
+  private findMatchingObservers(
+    queries: QueryObserverOptions[]
+  ): QueryObserverMatch[] {
+    const prevObservers = this.observers
+    const defaultedQueryOptions = queries.map(options =>
+      this.client.defaultQueryObserverOptions(options)
+    )
+
+    const matchingObservers: QueryObserverMatch[] = defaultedQueryOptions.flatMap(
+      defaultedOptions => {
+        const match = prevObservers.find(
+          observer => observer.options.queryHash === defaultedOptions.queryHash
+        )
+        if (match != null) {
+          return [{ defaultedQueryOptions: defaultedOptions, observer: match }]
+        }
+        return []
+      }
+    )
+
+    const matchedQueryHashes = matchingObservers.map(
+      match => match.defaultedQueryOptions.queryHash
+    )
+    const unmatchedQueries = defaultedQueryOptions.filter(
+      defaultedOptions =>
+        !matchedQueryHashes.includes(defaultedOptions.queryHash)
+    )
+
+    const unmatchedObservers = prevObservers.filter(
+      prevObserver =>
+        !matchingObservers.some(match => match.observer === prevObserver)
+    )
+
+    const newOrReusedObservers: QueryObserverMatch[] = unmatchedQueries.map(
+      (options, index) => {
+        if (options.keepPreviousData) {
+          // return previous data from one of the observers that no longer match
+          const previouslyUsedObserver = unmatchedObservers[index]
+          if (previouslyUsedObserver !== undefined) {
+            return {
+              defaultedQueryOptions: options,
+              observer: previouslyUsedObserver,
+            }
+          }
+        }
+        return {
+          defaultedQueryOptions: options,
+          observer: this.getObserver(options),
+        }
+      }
+    )
+
+    return matchingObservers.concat(newOrReusedObservers)
+  }
+
+  private getObserver(options: QueryObserverOptions): QueryObserver {
     const defaultedOptions = this.client.defaultQueryObserverOptions(options)
-    let currentObserver = this.observersMap[defaultedOptions.queryHash!]
-    if (!currentObserver && defaultedOptions.keepPreviousData) {
-      currentObserver = this.observers[index]
-    }
+    const currentObserver = this.observersMap[defaultedOptions.queryHash!]
     return currentObserver ?? new QueryObserver(this.client, defaultedOptions)
   }
 
   private updateObservers(notifyOptions?: NotifyOptions): void {
     notifyManager.batch(() => {
-      let hasIndexChange = false
-
       const prevObservers = this.observers
-      const prevObserversMap = this.observersMap
 
-      const newResult: QueryObserverResult[] = []
-      const newObservers: QueryObserver[] = []
-      const newObserversMap: Record<string, QueryObserver> = {}
+      const newObserverMatches = this.findMatchingObservers(this.queries)
 
-      this.queries.forEach((options, i) => {
-        const defaultedOptions = this.client.defaultQueryObserverOptions(
-          options
-        )
-        const queryHash = defaultedOptions.queryHash!
-        const observer = this.getObserver(defaultedOptions, i)
+      // set options for the new observers to notify of changes
+      newObserverMatches.forEach(match =>
+        match.observer.setOptions(match.defaultedQueryOptions, notifyOptions)
+      )
 
-        if (prevObserversMap[queryHash] || defaultedOptions.keepPreviousData) {
-          observer.setOptions(defaultedOptions, notifyOptions)
-        }
+      const newObservers = newObserverMatches.map(match => match.observer)
+      const newObserversMap = Object.fromEntries(
+        newObservers.map(observer => [observer.options.queryHash, observer])
+      )
+      const newResult = newObservers.map(observer =>
+        observer.getCurrentResult()
+      )
 
-        if (observer !== prevObservers[i]) {
-          hasIndexChange = true
-        }
-
-        newObservers.push(observer)
-        newResult.push(observer.getCurrentResult())
-        newObserversMap[queryHash] = observer
-      })
-
+      const hasIndexChange = newObservers.some(
+        (observer, index) => observer !== prevObservers[index]
+      )
       if (prevObservers.length === newObservers.length && !hasIndexChange) {
         return
       }
@@ -156,4 +193,9 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       })
     })
   }
+}
+
+type QueryObserverMatch = {
+  defaultedQueryOptions: QueryObserverOptions
+  observer: QueryObserver
 }
