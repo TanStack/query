@@ -333,11 +333,7 @@ export class Query<
           }
         }
 
-        if (this.cacheTime) {
-          this.scheduleGc()
-        } else {
-          this.cache.remove(this)
-        }
+        this.scheduleGc()
       }
 
       this.cache.notify({ type: 'observerRemoved', query: this, observer })
