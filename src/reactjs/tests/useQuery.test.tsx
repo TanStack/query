@@ -2353,6 +2353,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('count: 2'))
 
     // Should be 2 / 3 instead of 5, uSES batches differently
+    // @ts-expect-error process is not defined?
     expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
 
     // Both callbacks should have been executed

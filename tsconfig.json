@@ -14,7 +14,7 @@
     "noUncheckedIndexedAccess": true,
     "skipLibCheck": true,
     "strict": true,
-    "types": ["jest", "node"],
+    "types": ["jest"],
     "paths": {
       "react-query": ["./src/index.ts"]
     }
