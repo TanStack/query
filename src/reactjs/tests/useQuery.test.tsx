@@ -1175,6 +1175,7 @@ describe('useQuery', () => {
 
       return (
         <div>
+          <div>isFetching: {result.isFetching}</div>
           <button onClick={() => queryClient.refetchQueries(key)}>
             refetch
           </button>
