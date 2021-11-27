@@ -382,22 +382,34 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setEnableId1(false)
-        }, 20)
+      const isFetching = result.some(r => r.isFetching)
 
-        setActTimeout(() => {
-          setEnableId1(true)
-        }, 30)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <div>
+            data1: {result[0]?.data ?? 'null'}, data2:{' '}
+            {result[1]?.data ?? 'null'}
+          </div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setEnableId1(false)}>set1Disabled</button>
+          <button onClick={() => setEnableId1(true)}>set2Enabled</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(9))
+    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
+    rendered.getByRole('button', { name: /set1Disabled/i }).click()
+
+    await waitFor(() => rendered.getByText('data1: 10, data2: null'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    rendered.getByRole('button', { name: /set2Enabled/i }).click()
+
+    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+
+    await waitFor(() => expect(states.length).toBe(7))
 
     expect(states[0]).toMatchObject([
       {
@@ -415,36 +427,24 @@ describe('useQueries', () => {
     ])
     expect(states[1]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[2]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[3]).toMatchObject([
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
     ])
     expect(states[4]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[5]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
       { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[6]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[7]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[8]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
