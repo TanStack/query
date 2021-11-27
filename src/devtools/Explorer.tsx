@@ -57,7 +57,7 @@ type Entry = {
 }
 
 type RendererProps = {
-  handleEntry: (entry: Entry) => JSX.Element
+  HandleEntry: HandleEntryComponent
   label?: string
   value?: any
   subEntries?: Entry[]
@@ -91,7 +91,7 @@ export function chunkArray<T>(array: T[], size: number): T[][] {
 type Renderer = (props: RendererProps) => JSX.Element
 
 export const DefaultRenderer: Renderer = ({
-  handleEntry,
+  HandleEntry,
   label,
   value,
   subEntries = [],
@@ -117,7 +117,9 @@ export const DefaultRenderer: Renderer = ({
           {expanded ? (
             subEntryPages.length === 1 ? (
               <SubEntries>
-                {subEntries.map(entry => handleEntry(entry))}
+                {subEntries.map(entry => (
+                  <HandleEntry entry={entry} />
+                ))}
               </SubEntries>
             ) : (
               <SubEntries>
@@ -138,7 +140,9 @@ export const DefaultRenderer: Renderer = ({
                       </LabelButton>
                       {expandedPages.includes(index) ? (
                         <SubEntries>
-                          {entries.map(entry => handleEntry(entry))}
+                          {entries.map(entry => (
+                            <HandleEntry entry={entry} />
+                          ))}
                         </SubEntries>
                       ) : null}
                     </Entry>
@@ -159,6 +163,8 @@ export const DefaultRenderer: Renderer = ({
     </Entry>
   )
 }
+
+type HandleEntryComponent = (props: { entry: Entry }) => JSX.Element
 
 type ExplorerProps = Partial<RendererProps> & {
   renderer?: Renderer
@@ -228,7 +234,7 @@ export default function Explorer({
   const subEntryPages = chunkArray(subEntries, pageSize)
 
   return renderer({
-    handleEntry: entry => (
+    HandleEntry: ({ entry }) => (
       <Explorer value={value} renderer={renderer} {...rest} {...entry} />
     ),
     type,
