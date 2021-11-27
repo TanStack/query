@@ -165,6 +165,12 @@ type ExplorerProps = Partial<RendererProps> & {
   defaultExpanded?: true | Record<string, boolean>
 }
 
+type Property = {
+  defaultExpanded?: boolean | Record<string, boolean>
+  label: string
+  value: unknown
+}
+
 export default function Explorer({
   value,
   defaultExpanded,
@@ -176,9 +182,9 @@ export default function Explorer({
   const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
 
   let type: string = typeof value
-  let subEntries = []
+  let subEntries: Property[] = []
 
-  const makeProperty = (sub: { label: string; value: unknown }) => {
+  const makeProperty = (sub: { label: string; value: unknown }): Property => {
     const subDefaultExpanded =
       defaultExpanded === true
         ? { [sub.label]: true }
