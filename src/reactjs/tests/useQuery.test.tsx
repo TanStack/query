@@ -1210,7 +1210,7 @@ describe('useQuery', () => {
           count++
           return count
         },
-        { staleTime: Infinity }
+        { staleTime: Infinity, notifyOnChangeProps: 'all' }
       )
 
       states.push(state)
@@ -3200,11 +3200,15 @@ describe('useQuery', () => {
 
     function Page() {
       const state = useQuery(key, async () => {
-        await sleep(1)
+        await sleep(10)
         return 'data'
       })
       states.push(state)
-      return null
+      return (
+        <div>
+          {state.data}, {state.isStale}, {state.isFetching}
+        </div>
+      )
     }
 
     renderWithClient(queryClient, <Page />)
@@ -3628,15 +3632,24 @@ describe('useQuery', () => {
     const states: UseQueryResult<number>[] = []
 
     function Page() {
-      const queryInfo = useQuery(key, () => count++, {
-        refetchInterval: (data = 0) => (data < 2 ? 10 : false),
-      })
+      const queryInfo = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return count++
+        },
+        {
+          refetchInterval: (data = 0) => (data < 2 ? 10 : false),
+        }
+      )
 
       states.push(queryInfo)
 
       return (
         <div>
           <h1>count: {queryInfo.data}</h1>
+          <h2>status: {queryInfo.status}</h2>
+          <h2>data: {queryInfo.data}</h2>
           <h2>refetch: {queryInfo.isRefetching}</h2>
         </div>
       )
