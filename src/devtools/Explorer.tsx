@@ -176,7 +176,7 @@ export default function Explorer({
   const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
 
   let type: string = typeof value
-  let subEntries
+  let subEntries = []
 
   const makeProperty = (sub: { label: string; value: unknown }) => {
     const subDefaultExpanded =
@@ -219,7 +219,7 @@ export default function Explorer({
     )
   }
 
-  const subEntryPages = chunkArray(subEntries ?? [], pageSize)
+  const subEntryPages = chunkArray(subEntries, pageSize)
 
   return renderer({
     handleEntry: entry => (
