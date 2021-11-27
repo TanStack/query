@@ -95,12 +95,6 @@ export function useBaseQuery<
   }, [errorResetBoundary])
 
   React.useEffect(() => {
-    // Update result to make sure we did not miss any query updates
-    // between creating the observer and subscribing to it.
-    observer.updateResult()
-  }, [observer])
-
-  React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
