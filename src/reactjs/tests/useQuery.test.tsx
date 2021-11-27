@@ -2320,7 +2320,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     let renders = 0
-    let renderedCount = 0
+    let callbackCount = 0
 
     const queryFn = async () => {
       await sleep(10)
@@ -2339,20 +2339,24 @@ describe('useQuery', () => {
           setCount(x => x + 1)
         },
       })
-      renders++
-      renderedCount = count
-      return null
+
+      React.useEffect(() => {
+        renders++
+        callbackCount = count
+      })
+
+      return <div>count: {count}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => rendered.getByText('count: 2'))
 
-    // Should be 2 instead of 5
-    expect(renders).toBe(2)
+    // Should be 2 / 3 instead of 5, uSES batches differently
+    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
 
     // Both callbacks should have been executed
-    expect(renderedCount).toBe(2)
+    expect(callbackCount).toBe(2)
   })
 
   it('should render latest data even if react has discarded certain renders', async () => {
