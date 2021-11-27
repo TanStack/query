@@ -162,9 +162,7 @@ describe('ReactQueryDevtools', () => {
     await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
 
     fireEvent.click(
-      screen.getByRole('button', {
-        name: `Open query details for ${currentQuery?.queryHash}`,
-      })
+      screen.getByLabelText(`Open query details for ${currentQuery?.queryHash}`)
     )
 
     await screen.findByText(/query details/i)
