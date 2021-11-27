@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
-import { QueryFunction } from '../core/types'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
+import { QueryFunction } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
