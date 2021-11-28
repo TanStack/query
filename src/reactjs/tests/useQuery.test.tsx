@@ -2820,6 +2820,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('failureCount: 1'))
     rendered.getByRole('button', { name: /hide/i }).click()
+    await waitFor(() => rendered.getByRole('button', { name: /show/i }))
     rendered.getByRole('button', { name: /show/i }).click()
     await waitFor(() => rendered.getByText('error: some error'))
 
@@ -2874,6 +2875,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('failureCount: 1'))
     rendered.getByRole('button', { name: /hide/i }).click()
     rendered.getByRole('button', { name: /cancel/i }).click()
+    await waitFor(() => rendered.getByRole('button', { name: /show/i }))
     rendered.getByRole('button', { name: /show/i }).click()
     await waitFor(() => rendered.getByText('error: some error'))
 
