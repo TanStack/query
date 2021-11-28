@@ -336,7 +336,7 @@ export class Query<
         if (this.cacheTime) {
           this.scheduleGc()
         } else {
-          this.optionalRemove()
+          this.cache.remove(this)
         }
       }
 
