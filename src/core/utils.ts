@@ -387,14 +387,8 @@ export function sleep(timeout: number): Promise<void> {
  * Schedules a microtask.
  * This can be useful to schedule state updates after rendering.
  */
-export function scheduleMicrotask(callback: () => void): void {
-  sleep(0)
-    .then(callback)
-    .catch(error =>
-      setTimeout(() => {
-        throw error
-      })
-    )
+export function scheduleMicrotask(callback: () => void) {
+  sleep(0).then(callback)
 }
 
 export function getAbortController(): AbortController | undefined {
