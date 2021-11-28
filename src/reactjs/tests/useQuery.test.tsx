@@ -692,20 +692,19 @@ describe('useQuery', () => {
     function Page() {
       const [toggle, setToggle] = React.useState(false)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setToggle(true)
-        }, 20)
-      }, [setToggle])
-
-      return toggle ? <Component key="1" /> : <Component key="2" />
+      return (
+        <div>
+          <button onClick={() => setToggle(true)}>toggle</button>
+          {toggle ? <Component key="1" /> : <Component key="2" />}
+        </div>
+      )
     }
 
     function Component() {
       const state = useQuery(
         key,
         async () => {
-          await sleep(5)
+          await sleep(10)
           return 'data'
         },
         {
@@ -713,14 +712,18 @@ describe('useQuery', () => {
         }
       )
       states.push(state)
-      return null
+      return <div>status: {state.status}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => rendered.getByText('status: success'))
+    rendered.getByRole('button', { name: /toggle/i }).click()
+    await waitFor(() => rendered.getByText('status: loading'))
+    await waitFor(() => rendered.getByText('status: success'))
 
-    expect(states.length).toBe(5)
+    await waitFor(() => expect(states.length).toBe(5))
+
     // First load
     expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
     // First success
