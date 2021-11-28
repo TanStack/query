@@ -164,7 +164,7 @@ describe('useQueries', () => {
           queryKey: [key, count, i + 1],
           keepPreviousData: true,
           queryFn: async () => {
-            await sleep(5 * (i + 1))
+            await sleep(10 * (i + 1))
             return (i + 1) * count * 2
           },
         }))
@@ -172,17 +172,24 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(prev => prev + 1)
-        }, 20)
-      }, [])
+      const isFetching = result.some(r => r.isFetching)
 
-      return null
+      return (
+        <div>
+          <div>data: {result.map(it => it.data).join(',')}</div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setCount(prev => prev + 1)}>inc</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
+    await waitFor(() => rendered.getByText('data: 4,8'))
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('data: 6,12,18'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(8))
 
     expect(states[0]).toMatchObject([
