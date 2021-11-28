@@ -2671,6 +2671,56 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+    let count = 0
+
+    function Page() {
+      const result = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return Promise.reject('some error')
+        },
+        {
+          retry: 2,
+          retryDelay: 100,
+        }
+      )
+
+      return (
+        <div>
+          <div>error: {result.error ?? 'null'}</div>
+          <div>failureCount: {result.failureCount}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [show, toggle] = React.useReducer(x => !x, true)
+
+      return (
+        <div>
+          <button onClick={toggle}>{show ? 'hide' : 'show'}</button>
+          {show && <Page />}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('failureCount: 1'))
+    rendered.getByRole('button', { name: /hide/i }).click()
+    rendered.getByRole('button', { name: /show/i }).click()
+    await waitFor(() => rendered.getByText('error: some error'))
+
+    expect(count).toBe(3)
+
+    consoleMock.mockRestore()
+  })
+
   it('should always fetch if refetchOnMount is set to always', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []

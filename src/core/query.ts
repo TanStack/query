@@ -380,6 +380,8 @@ export class Query<
         // Silently cancel current fetch if the user wants to cancel refetches
         this.cancel({ silent: true })
       } else if (this.promise) {
+        // make sure that retries that were potentially cancelled due to unmounts can continue
+        this.retryer?.continueRetry()
         // Return current promise if we are already fetching
         return this.promise
       }

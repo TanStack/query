@@ -61,6 +61,7 @@ export function isCancelledError(value: any): value is CancelledError {
 export class Retryer<TData = unknown, TError = unknown> {
   cancel: (options?: CancelOptions) => void
   cancelRetry: () => void
+  continueRetry: () => void
   continue: () => void
   failureCount: number
   isPaused: boolean
@@ -81,6 +82,9 @@ export class Retryer<TData = unknown, TError = unknown> {
     this.cancel = cancelOptions => cancelFn?.(cancelOptions)
     this.cancelRetry = () => {
       cancelRetry = true
+    }
+    this.continueRetry = () => {
+      cancelRetry = false
     }
     this.continue = () => continueFn?.()
     this.failureCount = 0
