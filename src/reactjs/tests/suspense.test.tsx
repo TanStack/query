@@ -201,8 +201,8 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('rendered'))
 
-    expect(successFn).toHaveBeenCalledTimes(1)
-    expect(successFn).toHaveBeenCalledWith('selected')
+    await waitFor(() => expect(successFn).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(successFn).toHaveBeenCalledWith('selected'))
   })
 
   it('should call every onSuccess handler within a suspense boundary', async () => {
@@ -239,8 +239,8 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('second'))
 
-    expect(successFn1).toHaveBeenCalledTimes(1)
-    expect(successFn2).toHaveBeenCalledTimes(1)
+    await waitFor(() => expect(successFn1).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(successFn2).toHaveBeenCalledTimes(1))
   })
 
   // https://github.com/tannerlinsley/react-query/issues/468
