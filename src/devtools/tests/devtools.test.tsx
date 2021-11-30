@@ -305,18 +305,24 @@ describe('ReactQueryDevtools', () => {
         return 'query-1-result'
       })
 
-      const query2Result = useQuery(['query-2'], async () => {
-        await sleep(90)
-        return 'query-2-result'
-      })
-
       const query3Result = useQuery(
         ['query-3'],
         async () => {
-          await sleep(50)
+          await sleep(10)
           return 'query-3-result'
         },
-        { staleTime: Infinity }
+        { staleTime: Infinity, enabled: typeof query1Result.data === 'string' }
+      )
+
+      const query2Result = useQuery(
+        ['query-2'],
+        async () => {
+          await sleep(10)
+          return 'query-2-result'
+        },
+        {
+          enabled: typeof query3Result.data === 'string',
+        }
       )
 
       return (
@@ -356,9 +362,7 @@ describe('ReactQueryDevtools', () => {
     expect(queries[2]?.textContent).toEqual(query3Hash)
 
     // Wait for the queries to be resolved
-    await waitFor(() => {
-      expect(queryClient.isFetching()).toBe(0)
-    })
+    await screen.findByText(/query-1-result query-2-result query-3-result/i)
 
     // When sorted by the last updated date the queries are sorted by the time
     // they were updated and since the query-2 takes longest time to complete
