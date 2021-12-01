@@ -10,6 +10,7 @@ import {
   MutationFunction,
   MutateOptions,
   MutationMeta,
+  NetworkMode,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
@@ -97,6 +98,7 @@ export interface UseMutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: NetworkMode
   useErrorBoundary?: boolean | ((error: TError) => boolean)
   meta?: MutationMeta
 }

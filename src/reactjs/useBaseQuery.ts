@@ -29,7 +29,7 @@ export function useBaseQuery<
 
   const queryClient = useQueryClient()
   const errorResetBoundary = useQueryErrorResetBoundary()
-  const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
+  const defaultedOptions = queryClient.defaultQueryOptions(options)
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
   defaultedOptions.optimisticResults = true
@@ -133,11 +133,7 @@ export function useBaseQuery<
     result.isError &&
     !errorResetBoundary.isReset() &&
     !result.isFetching &&
-    shouldThrowError(
-      defaultedOptions.suspense,
-      defaultedOptions.useErrorBoundary,
-      result.error
-    )
+    shouldThrowError(defaultedOptions.useErrorBoundary, result.error)
   ) {
     throw result.error
   }

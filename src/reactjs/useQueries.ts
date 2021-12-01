@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { QueryFunction } from '../core/types'
 
 import { notifyManager } from '../core/notifyManager'
@@ -118,12 +118,10 @@ export function useQueries<T extends any[]>(
 
   const queryClient = useQueryClient()
 
-  const defaultedQueries = useMemo(
+  const defaultedQueries = React.useMemo(
     () =>
       queries.map(options => {
-        const defaultedOptions = queryClient.defaultQueryObserverOptions(
-          options
-        )
+        const defaultedOptions = queryClient.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
         defaultedOptions.optimisticResults = true

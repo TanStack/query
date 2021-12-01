@@ -1228,7 +1228,7 @@ describe('queryClient', () => {
   })
 
   describe('focusManager and onlineManager', () => {
-    test('should not notify queryCache and mutationCache if not focused or online', async () => {
+    test('should notify queryCache and mutationCache if focused', async () => {
       const testClient = new QueryClient()
       testClient.mount()
 
@@ -1254,23 +1254,50 @@ describe('queryClient', () => {
       expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
 
       focusManager.setFocused(true)
+      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+
+      queryCacheOnFocusSpy.mockRestore()
+      mutationCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheOnOnlineSpy.mockRestore()
+    })
+
+    test('should notify queryCache and mutationCache if online', async () => {
+      const testClient = new QueryClient()
+      testClient.mount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus'
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline'
+      )
+      const mutationCacheOnFocusSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onFocus'
+      )
+      const mutationCacheOnOnlineSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'onOnline'
+      )
+
       onlineManager.setOnline(false)
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
-      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
-
-      focusManager.setFocused(true)
-      onlineManager.setOnline(false)
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
-      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
 
-      focusManager.setFocused(false)
       onlineManager.setOnline(true)
-      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
-      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
 
-      testClient.unmount()
-      onlineManager.setOnline(true)
-      focusManager.setFocused(true)
+      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+
       queryCacheOnFocusSpy.mockRestore()
       mutationCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()

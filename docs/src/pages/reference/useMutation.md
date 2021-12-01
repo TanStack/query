@@ -19,6 +19,7 @@ const {
 } = useMutation(mutationFn, {
   cacheTime,
   mutationKey,
+  networkMode,
   onError,
   onMutate,
   onSettled,
@@ -46,6 +47,10 @@ mutate(variables, {
 - `mutationKey: string`
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults` or to identify the mutation in the devtools.
+- `networkMode: 'online' | 'always' | 'offlineFirst`
+  - optional
+  - defaults to `'online'`
+  - see [Network Mode](../guides/network-mode) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
@@ -98,6 +103,9 @@ mutate(variables, {
     - `error` if the last mutation attempt resulted in an error.
     - `success` if the last mutation attempt was successful.
 - `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
+- `isPaused: boolean`
+  - will be `true` if the mutation has been `paused`
+  - see [Network Mode](../guides/network-mode) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the query.

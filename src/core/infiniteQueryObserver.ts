@@ -133,9 +133,10 @@ export class InfiniteQueryObserver<
       hasNextPage: hasNextPage(options, state.data?.pages),
       hasPreviousPage: hasPreviousPage(options, state.data?.pages),
       isFetchingNextPage:
-        state.isFetching && state.fetchMeta?.fetchMore?.direction === 'forward',
+        state.fetchStatus === 'fetching' &&
+        state.fetchMeta?.fetchMore?.direction === 'forward',
       isFetchingPreviousPage:
-        state.isFetching &&
+        state.fetchStatus === 'fetching' &&
         state.fetchMeta?.fetchMore?.direction === 'backward',
     }
   }

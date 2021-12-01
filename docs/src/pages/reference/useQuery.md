@@ -14,6 +14,7 @@ const {
   isFetched,
   isFetchedAfterMount,
   isFetching,
+  isPaused,
   isIdle,
   isLoading,
   isLoadingError,
@@ -26,11 +27,13 @@ const {
   refetch,
   remove,
   status,
+  fetchStatus,
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
   enabled,
+  networkMode,
   initialData,
-  initialDataUpdatedAt
+  initialDataUpdatedAt,
   isDataEqual,
   keepPreviousData,
   meta,
@@ -78,6 +81,10 @@ const result = useQuery({
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../guides/dependent-queries).
+- `networkMode: 'online' | 'always' | 'offlineFirst`
+  - optional
+  - defaults to `'online'`
+  - see [Network Mode](../guides/network-mode) for more information.
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -218,9 +225,15 @@ const result = useQuery({
 - `isFetchedAfterMount: boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
+- `fetchStatus: FetchStatus`
+  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `loading` as well as background refetches.
+  - `paused`: The query wanted to fetch, but has been `paused`
+  - `idle`: The query is not fetching
+  - see [Network Mode](../guides/network-mode) for more information.
 - `isFetching: boolean`
-  - Is `true` whenever a request is in-flight, which includes initial `loading` as well as background refetches.
-  - Will be `true` if the query is currently fetching, including background fetching.
+  - A derived boolean from the `fetchStatus` variable above, provided for convenience.
+- `isPaused: boolean`
+  - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - `isRefetching: boolean`
   - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading`
   - Is the same as `isFetching && !isLoading`

@@ -16,18 +16,12 @@ export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
   }
 }
 
-export function mockVisibilityState(value: string) {
-  Object.defineProperty(document, 'visibilityState', {
-    value,
-    configurable: true,
-  })
+export function mockVisibilityState(value: VisibilityState) {
+  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockNavigatorOnLine(value: boolean) {
-  Object.defineProperty(navigator, 'onLine', {
-    value,
-    configurable: true,
-  })
+  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
 export function mockConsoleError() {

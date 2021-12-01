@@ -36,7 +36,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import { CancelOptions } from './types'
+import { CancelOptions, DefaultedQueryObserverOptions } from './types'
 
 // TYPES
 
@@ -77,13 +77,13 @@ export class QueryClient {
 
   mount(): void {
     this.unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
+      if (focusManager.isFocused()) {
         this.mutationCache.onFocus()
         this.queryCache.onFocus()
       }
     })
     this.unsubscribeOnline = onlineManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
+      if (onlineManager.isOnline()) {
         this.mutationCache.onOnline()
         this.queryCache.onOnline()
       }
@@ -592,16 +592,30 @@ export class QueryClient {
     TQueryData,
     TQueryKey extends QueryKey
   >(
-    options?: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
+    options?:
+      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | DefaultedQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >
+  ): DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {
     if (options?._defaulted) {
-      return options
+      return options as DefaultedQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
     }
 
     const defaultedOptions = {
@@ -609,13 +623,7 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    } as QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    }
 
     if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
@@ -624,25 +632,22 @@ export class QueryClient {
       )
     }
 
-    return defaultedOptions
-  }
+    // dependent default values
+    if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
+      defaultedOptions.refetchOnReconnect =
+        defaultedOptions.networkMode !== 'always'
+    }
+    if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
+      defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
+    }
 
-  defaultQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey
-  >(
-    options?: QueryObserverOptions<
+    return defaultedOptions as DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
     >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
-    return this.defaultQueryOptions(options)
   }
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(

@@ -15,12 +15,13 @@ import type {
   QueryMeta,
   CancelOptions,
   SetDataOptions,
+  FetchStatus,
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
-import { Retryer, isCancelledError } from './retryer'
+import { Retryer, isCancelledError, canFetch } from './retryer'
 import { Removable } from './removable'
 
 // TYPES
@@ -49,10 +50,9 @@ export interface QueryState<TData = unknown, TError = unknown> {
   errorUpdatedAt: number
   fetchFailureCount: number
   fetchMeta: any
-  isFetching: boolean
   isInvalidated: boolean
-  isPaused: boolean
   status: QueryStatus
+  fetchStatus: FetchStatus
 }
 
 export interface FetchContext<
@@ -198,12 +198,10 @@ export class Query<
 
   protected optionalRemove() {
     if (!this.observers.length) {
-      if (this.state.isFetching) {
-        if (this.hadObservers) {
-          this.scheduleGc()
-        }
-      } else {
+      if (this.state.fetchStatus === 'idle') {
         this.cache.remove(this)
+      } else if (this.hadObservers) {
+        this.scheduleGc()
       }
     }
   }
@@ -265,7 +263,7 @@ export class Query<
   }
 
   isFetching(): boolean {
-    return this.state.isFetching
+    return this.state.fetchStatus === 'fetching'
   }
 
   isStale(): boolean {
@@ -358,7 +356,7 @@ export class Query<
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     fetchOptions?: FetchOptions
   ): Promise<TData> {
-    if (this.state.isFetching) {
+    if (this.state.fetchStatus !== 'idle') {
       if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
         // Silently cancel current fetch if the user wants to cancel refetches
         this.cancel({ silent: true })
@@ -441,7 +439,7 @@ export class Query<
 
     // Set to fetching state if not already in it
     if (
-      !this.state.isFetching ||
+      this.state.fetchStatus === 'idle' ||
       this.state.fetchMeta !== context.fetchOptions?.meta
     ) {
       this.dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
@@ -495,6 +493,7 @@ export class Query<
       },
       retry: context.options.retry,
       retryDelay: context.options.retryDelay,
+      networkMode: context.options.networkMode,
     })
 
     this.promise = this.retryer.promise
@@ -541,10 +540,9 @@ export class Query<
       errorUpdatedAt: 0,
       fetchFailureCount: 0,
       fetchMeta: null,
-      isFetching: false,
       isInvalidated: false,
-      isPaused: false,
       status: hasData ? 'success' : 'idle',
+      fetchStatus: 'idle',
     }
   }
 
@@ -561,20 +559,21 @@ export class Query<
       case 'pause':
         return {
           ...state,
-          isPaused: true,
+          fetchStatus: 'paused',
         }
       case 'continue':
         return {
           ...state,
-          isPaused: false,
+          fetchStatus: 'fetching',
         }
       case 'fetch':
         return {
           ...state,
           fetchFailureCount: 0,
           fetchMeta: action.meta ?? null,
-          isFetching: true,
-          isPaused: false,
+          fetchStatus: canFetch(this.options.networkMode)
+            ? 'fetching'
+            : 'paused',
           status: !state.dataUpdatedAt ? 'loading' : state.status,
         }
       case 'success':
@@ -585,9 +584,8 @@ export class Query<
           dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
           error: null,
           fetchFailureCount: 0,
-          isFetching: false,
           isInvalidated: false,
-          isPaused: false,
+          fetchStatus: 'idle',
           status: 'success',
         }
       case 'error':
@@ -603,8 +601,7 @@ export class Query<
           errorUpdateCount: state.errorUpdateCount + 1,
           errorUpdatedAt: Date.now(),
           fetchFailureCount: state.fetchFailureCount + 1,
-          isFetching: false,
-          isPaused: false,
+          fetchStatus: 'idle',
           status: 'error',
         }
       case 'invalidate':
