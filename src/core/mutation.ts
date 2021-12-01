@@ -143,6 +143,13 @@ export class Mutation<
     if (!restored) {
       this.dispatch({ type: 'loading', variables: this.options.variables! })
       promise = promise
+        .then(() => {
+          // Notify cache callback
+          this.mutationCache.config.onMutate?.(
+            this.state.variables,
+            this as Mutation<unknown, unknown, unknown, unknown>
+          )
+        })
         .then(() => this.options.onMutate?.(this.state.variables!))
         .then(context => {
           if (context !== this.state.context) {

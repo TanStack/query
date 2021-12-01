@@ -53,6 +53,29 @@ describe('mutationCache', () => {
       )
     })
   })
+  describe('MutationCacheConfig.onMutate', () => {
+    test('should be called before a mutation executes', async () => {
+      const consoleMock = mockConsoleError()
+      const key = queryKey()
+      const onMutate = jest.fn()
+      const testCache = new MutationCache({ onMutate })
+      const testClient = new QueryClient({ mutationCache: testCache })
+
+      try {
+        await testClient.executeMutation({
+          mutationKey: key,
+          variables: 'vars',
+          mutationFn: () => Promise.resolve({ data: 5 }),
+          onMutate: () => 'context',
+        })
+      } catch {
+        consoleMock.mockRestore()
+      }
+
+      const mutation = testCache.getAll()[0]
+      expect(onMutate).toHaveBeenCalledWith('vars', mutation)
+    })
+  })
 
   describe('find', () => {
     test('should filter correctly', async () => {
