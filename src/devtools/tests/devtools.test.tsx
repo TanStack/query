@@ -348,28 +348,36 @@ describe('ReactQueryDevtools', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />, {
+    renderWithClient(queryClient, <App />, {
       initialIsOpen: true,
     })
 
-    await rendered.findByRole('heading', { name: /test/i })
+    await screen.findByRole('heading', { name: /test/i })
 
-    rendered.getByRole('button', { name: /mock offline behavior/i }).click()
+    fireEvent.click(
+      screen.getByRole('button', { name: /mock offline behavior/i })
+    )
 
-    rendered
-      .getByRole('button', { name: 'Open query details for ["key"]' })
-      .click()
+    const queryButton = await screen.findByRole('button', {
+      name: 'Open query details for ["key"]',
+    })
+    fireEvent.click(queryButton)
 
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    const refetchButton = await screen.findByRole('button', {
+      name: /refetch/i,
+    })
+    fireEvent.click(refetchButton)
 
     await waitFor(() => {
-      expect(rendered.getByText('test, paused')).toBeInTheDocument()
+      expect(screen.getByText('test, paused')).toBeInTheDocument()
     })
 
-    rendered.getByRole('button', { name: /restore offline mock/i }).click()
+    fireEvent.click(
+      screen.getByRole('button', { name: /restore offline mock/i })
+    )
 
     await waitFor(() => {
-      expect(rendered.getByText('test, idle')).toBeInTheDocument()
+      expect(screen.getByText('test, idle')).toBeInTheDocument()
     })
 
     expect(count).toBe(2)
