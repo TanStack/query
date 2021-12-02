@@ -21,6 +21,10 @@ interface MutationCacheConfig {
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>
   ) => void
+  onMutate?: (
+    variables: unknown,
+    mutation: Mutation<unknown, unknown, unknown, unknown>
+  ) => void
 }
 
 interface NotifyEventMutationAdded {
