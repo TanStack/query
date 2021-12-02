@@ -15,24 +15,14 @@ React Query already supports auto refetch on reconnect in web browser.
 To add this behavior in React Native you have to use React Query `onlineManager` as in the example below:
 
 ```ts
-import React from 'react'
 import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from 'react-query'
-import { Platform } from 'react-native'
 
-export function useOnlineManager() {
-  React.useEffect(() => {
-    if (Platform.OS !== 'web') {
-      return NetInfo.addEventListener(state => {
-        onlineManager.setOnline(
-          state.isConnected != null &&
-            state.isConnected &&
-            Boolean(state.isInternetReachable)
-        )
-      })
-    }
-  }, [])
-}
+onlineManager.setEventListener(setOnline => {
+  return NetInfo.addEventListener(state => {
+    setOnline(state.isConnected)
+  })
+})
 ```
 
 ## Refetch on App focus
