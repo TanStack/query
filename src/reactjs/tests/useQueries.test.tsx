@@ -8,7 +8,6 @@ import {
   expectTypeNotAny,
   queryKey,
   renderWithClient,
-  setActTimeout,
   sleep,
 } from './utils'
 import {
@@ -80,7 +79,7 @@ describe('useQueries', () => {
           queryKey: [key1, count],
           keepPreviousData: true,
           queryFn: async () => {
-            await sleep(5)
+            await sleep(10)
             return count * 2
           },
         },
@@ -88,24 +87,34 @@ describe('useQueries', () => {
           queryKey: [key2, count],
           keepPreviousData: true,
           queryFn: async () => {
-            await sleep(10)
+            await sleep(35)
             return count * 5
           },
         },
       ])
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(prev => prev + 1)
-        }, 20)
-      }, [])
+      const isFetching = result.some(r => r.isFetching)
 
-      return null
+      return (
+        <div>
+          <div>
+            data1: {result[0]?.data ?? 'null'}, data2:{' '}
+            {result[1]?.data ?? 'null'}
+          </div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setCount(prev => prev + 1)}>inc</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
+    await waitFor(() => rendered.getByText('data1: 2, data2: 5'))
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('data1: 4, data2: 10'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(7))
 
     expect(states[0]).toMatchObject([
