@@ -14,9 +14,25 @@ import {
   createQueryClient,
 } from './utils'
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
 describe('ReactQueryDevtools', () => {
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
+    const onCloseClick = jest.fn()
+    const onToggleClick = jest.fn()
 
     function Page() {
       const { data = 'default' } = useQuery(['check'], async () => {
@@ -31,7 +47,11 @@ describe('ReactQueryDevtools', () => {
       )
     }
 
-    renderWithClient(queryClient, <Page />, { initialIsOpen: false })
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: false,
+      closeButtonProps: { onClick: onCloseClick },
+      toggleButtonProps: { onClick: onToggleClick },
+    })
 
     const closeButton = screen.queryByRole('button', {
       name: /close react query devtools/i,
@@ -44,11 +64,16 @@ describe('ReactQueryDevtools', () => {
     await waitForElementToBeRemoved(() =>
       screen.queryByRole('button', { name: /open react query devtools/i })
     )
+
+    expect(onToggleClick).toHaveBeenCalledTimes(1)
+
     fireEvent.click(
       screen.getByRole('button', { name: /close react query devtools/i })
     )
 
     await screen.findByRole('button', { name: /open react query devtools/i })
+
+    expect(onCloseClick).toHaveBeenCalledTimes(1)
   })
 
   it('should display the correct query states', async () => {
@@ -103,7 +128,9 @@ describe('ReactQueryDevtools', () => {
     // fetching queries to be 1
     expect(currentQuery?.isFetching()).toEqual(true)
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (1) stale (0) inactive (0)')
+      getByTextContent(
+        'fresh (0) fetching (1) paused (0) stale (0) inactive (0)'
+      )
     )
 
     // When we are done fetching the query doesn't go stale
@@ -113,7 +140,9 @@ describe('ReactQueryDevtools', () => {
       expect(currentQuery?.isFetching()).toEqual(false)
     })
     await screen.findByText(
-      getByTextContent('fresh (1) fetching (0) stale (0) inactive (0)')
+      getByTextContent(
+        'fresh (1) fetching (0) paused (0) stale (0) inactive (0)'
+      )
     )
 
     // Then wait for the query to go stale and then
@@ -122,7 +151,9 @@ describe('ReactQueryDevtools', () => {
       expect(currentQuery?.isStale()).toEqual(false)
     })
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (0) stale (1) inactive (0)')
+      getByTextContent(
+        'fresh (0) fetching (0) paused (0) stale (1) inactive (0)'
+      )
     )
 
     // Unmount the page component thus making the query inactive
@@ -131,7 +162,9 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /toggle page visibility/i })
     )
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (0) stale (0) inactive (1)')
+      getByTextContent(
+        'fresh (0) fetching (0) paused (0) stale (0) inactive (1)'
+      )
     )
   })
 
@@ -294,6 +327,52 @@ describe('ReactQueryDevtools', () => {
     await waitFor(() => {
       expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
     })
+  })
+
+  it('should simulate offline mode', async () => {
+    const { queryClient } = createQueryClient()
+    let count = 0
+
+    function App() {
+      const { data, fetchStatus } = useQuery(['key'], () => {
+        count++
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div>
+          <h1>
+            {data}, {fetchStatus}
+          </h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    await rendered.findByRole('heading', { name: /test/i })
+
+    rendered.getByRole('button', { name: /mock offline behavior/i }).click()
+
+    rendered
+      .getByRole('button', { name: 'Open query details for ["key"]' })
+      .click()
+
+    rendered.getByRole('button', { name: /refetch/i }).click()
+
+    await waitFor(() => {
+      expect(rendered.getByText('test, paused')).toBeInTheDocument()
+    })
+
+    rendered.getByRole('button', { name: /restore offline mock/i }).click()
+
+    await waitFor(() => {
+      expect(rendered.getByText('test, idle')).toBeInTheDocument()
+    })
+
+    expect(count).toBe(2)
   })
 
   it('should sort the queries according to the sorting filter', async () => {

@@ -44,6 +44,8 @@ export interface InfiniteData<TData> {
 
 export type QueryMeta = Record<string, unknown>
 
+export type NetworkMode = 'online' | 'always' | 'offlineFirst'
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -58,6 +60,7 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: NetworkMode
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
@@ -136,7 +139,7 @@ export interface QueryObserverOptions<
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
-   * Defaults to `true`.
+   * Defaults to the value of `networkOnline` (`true`)
    */
   refetchOnReconnect?: boolean | 'always'
   /**
@@ -204,6 +207,18 @@ export interface QueryObserverOptions<
    */
   optimisticResults?: boolean
 }
+
+type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+export type DefaultedQueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> = WithRequired<
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  'useErrorBoundary' | 'refetchOnReconnect'
+>
 
 export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
@@ -288,6 +303,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
 }
 
 export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
+export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   data: TData | undefined
@@ -302,6 +318,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isIdle: boolean
   isLoading: boolean
   isLoadingError: boolean
+  isPaused: boolean
   isPlaceholderData: boolean
   isPreviousData: boolean
   isRefetchError: boolean
@@ -313,6 +330,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
+  fetchStatus: FetchStatus
 }
 
 export interface QueryObserverIdleResult<TData = unknown, TError = unknown>
@@ -529,6 +547,7 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: NetworkMode
   cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta

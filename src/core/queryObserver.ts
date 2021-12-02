@@ -1,4 +1,4 @@
-import { RefetchPageFilters } from './types'
+import { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -23,7 +23,7 @@ import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { getLogger } from './logger'
-import { isCancelledError } from './retryer'
+import { canFetch, isCancelledError } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
   result: QueryObserverResult<TData, TError>
@@ -144,7 +144,7 @@ export class QueryObserver<
     const prevOptions = this.options
     const prevQuery = this.currentQuery
 
-    this.options = this.client.defaultQueryObserverOptions(options)
+    this.options = this.client.defaultQueryOptions(options)
 
     if (
       typeof this.options.enabled !== 'undefined' &&
@@ -210,19 +210,11 @@ export class QueryObserver<
       TQueryKey
     >
   ): QueryObserverResult<TData, TError> {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
 
     const query = this.client
       .getQueryCache()
-      .build(
-        this.client,
-        defaultedOptions as QueryOptions<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >
-      )
+      .build(this.client, defaultedOptions)
 
     return this.createResult(query, defaultedOptions)
   }
@@ -233,7 +225,7 @@ export class QueryObserver<
 
   trackResult(
     result: QueryObserverResult<TData, TError>,
-    defaultedOptions: QueryObserverOptions<
+    defaultedOptions: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -260,7 +252,7 @@ export class QueryObserver<
       })
     })
 
-    if (defaultedOptions.useErrorBoundary || defaultedOptions.suspense) {
+    if (defaultedOptions.useErrorBoundary) {
       trackProp('error')
     }
 
@@ -313,7 +305,7 @@ export class QueryObserver<
       TQueryKey
     >
   ): Promise<QueryObserverResult<TData, TError>> {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
 
     const query = this.client
       .getQueryCache()
@@ -462,7 +454,7 @@ export class QueryObserver<
       : this.previousQueryResult
 
     const { state } = query
-    let { dataUpdatedAt, error, errorUpdatedAt, isFetching, status } = state
+    let { dataUpdatedAt, error, errorUpdatedAt, fetchStatus, status } = state
     let isPreviousData = false
     let isPlaceholderData = false
     let data: TData | undefined
@@ -477,7 +469,9 @@ export class QueryObserver<
         mounted && shouldFetchOptionally(query, prevQuery, options, prevOptions)
 
       if (fetchOnMount || fetchOptionally) {
-        isFetching = true
+        fetchStatus = canFetch(query.options.networkMode)
+          ? 'fetching'
+          : 'paused'
         if (!dataUpdatedAt) {
           status = 'loading'
         }
@@ -573,8 +567,11 @@ export class QueryObserver<
       }
     }
 
+    const isFetching = fetchStatus === 'fetching'
+
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
+      fetchStatus,
       isLoading: status === 'loading',
       isSuccess: status === 'success',
       isError: status === 'error',
@@ -588,9 +585,10 @@ export class QueryObserver<
       isFetchedAfterMount:
         state.dataUpdateCount > queryInitialState.dataUpdateCount ||
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
-      isFetching,
+      isFetching: isFetching,
       isRefetching: isFetching && status !== 'loading',
       isLoadingError: status === 'error' && state.dataUpdatedAt === 0,
+      isPaused: fetchStatus === 'paused',
       isPlaceholderData,
       isPreviousData,
       isRefetchError: status === 'error' && state.dataUpdatedAt !== 0,

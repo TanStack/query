@@ -265,7 +265,7 @@ describe('dehydration and rehydration', () => {
   test('should be able to dehydrate mutations and continue on hydration', async () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
-    mockNavigatorOnLine(false)
+    const onlineMock = mockNavigatorOnLine(false)
 
     const serverAddTodo = jest
       .fn()
@@ -302,7 +302,7 @@ describe('dehydration and rehydration', () => {
 
     // ---
 
-    mockNavigatorOnLine(true)
+    onlineMock.mockReturnValue(true)
 
     const parsed = JSON.parse(stringified)
     const client = new QueryClient()
@@ -339,6 +339,7 @@ describe('dehydration and rehydration', () => {
 
     client.clear()
     consoleMock.mockRestore()
+    onlineMock.mockRestore()
   })
 
   test('should not dehydrate mutations if dehydrateMutations is set to false', async () => {

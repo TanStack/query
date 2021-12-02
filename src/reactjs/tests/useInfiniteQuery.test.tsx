@@ -80,6 +80,7 @@ describe('useInfiniteQuery', () => {
       isFetched: false,
       isFetchedAfterMount: false,
       isFetching: true,
+      isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isIdle: false,
@@ -94,6 +95,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'loading',
+      fetchStatus: 'fetching',
     })
 
     expect(states[1]).toEqual({
@@ -110,6 +112,7 @@ describe('useInfiniteQuery', () => {
       isFetched: true,
       isFetchedAfterMount: true,
       isFetching: false,
+      isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
       isIdle: false,
@@ -124,6 +127,7 @@ describe('useInfiniteQuery', () => {
       refetch: expect.any(Function),
       remove: expect.any(Function),
       status: 'success',
+      fetchStatus: 'idle',
     })
   })
 

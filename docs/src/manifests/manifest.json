@@ -76,6 +76,11 @@
           "editUrl": "/guides/query-functions.md"
         },
         {
+          "title": "Network Mode",
+          "path": "/guides/network-mode",
+          "editUrl": "/guides/network-mode.md"
+        },
+        {
           "title": "Parallel Queries",
           "path": "/guides/parallel-queries",
           "editUrl": "/guides/parallel-queries.md"

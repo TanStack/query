@@ -1,7 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { sleep } from './utils'
-import { CancelOptions } from './types'
+import { CancelOptions, NetworkMode } from './types'
 
 // TYPES
 
@@ -15,11 +15,12 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode: NetworkMode | undefined
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
-type ShouldRetryFunction<TError = unknown> = (
+type ShouldRetryFunction<TError> = (
   failureCount: number,
   error: TError
 ) => boolean
@@ -34,6 +35,13 @@ type RetryDelayFunction<TError = unknown> = (
 function defaultRetryDelay(failureCount: number) {
   return Math.min(1000 * 2 ** failureCount, 30000)
 }
+
+export function canFetch(networkMode: NetworkMode | undefined): boolean {
+  return (networkMode ?? 'online') === 'online'
+    ? onlineManager.isOnline()
+    : true
+}
+
 export class CancelledError {
   revert?: boolean
   silent?: boolean
@@ -59,24 +67,34 @@ export class Retryer<TData = unknown, TError = unknown> {
   isResolved: boolean
   promise: Promise<TData>
 
-  private abort?: () => void
-
   constructor(config: RetryerConfig<TData, TError>) {
     let cancelRetry = false
-    let cancelFn: ((options?: CancelOptions) => void) | undefined
     let continueFn: ((value?: unknown) => void) | undefined
     let promiseResolve: (data: TData) => void
     let promiseReject: (error: TError) => void
 
-    this.abort = config.abort
-    this.cancel = cancelOptions => cancelFn?.(cancelOptions)
+    this.cancel = (cancelOptions?: CancelOptions): void => {
+      if (!this.isResolved) {
+        reject(new CancelledError(cancelOptions))
+
+        config.abort?.()
+      }
+    }
     this.cancelRetry = () => {
       cancelRetry = true
     }
+
     this.continueRetry = () => {
       cancelRetry = false
     }
-    this.continue = () => continueFn?.()
+
+    const shouldPause = () =>
+      !focusManager.isFocused() ||
+      (config.networkMode !== 'always' && !onlineManager.isOnline())
+
+    this.continue = () => {
+      continueFn?.()
+    }
     this.failureCount = 0
     this.isPaused = false
     this.isResolved = false
@@ -105,13 +123,19 @@ export class Retryer<TData = unknown, TError = unknown> {
 
     const pause = () => {
       return new Promise(continueResolve => {
-        continueFn = continueResolve
+        continueFn = value => {
+          if (this.isResolved || !shouldPause()) {
+            return continueResolve(value)
+          }
+        }
         this.isPaused = true
         config.onPause?.()
       }).then(() => {
         continueFn = undefined
         this.isPaused = false
-        config.onContinue?.()
+        if (!this.isResolved) {
+          config.onContinue?.()
+        }
       })
     }
 
@@ -129,15 +153,6 @@ export class Retryer<TData = unknown, TError = unknown> {
         promiseOrValue = config.fn()
       } catch (error) {
         promiseOrValue = Promise.reject(error)
-      }
-
-      // Create callback to cancel this fetch
-      cancelFn = cancelOptions => {
-        if (!this.isResolved) {
-          reject(new CancelledError(cancelOptions))
-
-          this.abort?.()
-        }
       }
 
       Promise.resolve(promiseOrValue)
@@ -175,7 +190,7 @@ export class Retryer<TData = unknown, TError = unknown> {
           sleep(delay)
             // Pause if the document is not visible or when the device is offline
             .then(() => {
-              if (!focusManager.isFocused() || !onlineManager.isOnline()) {
+              if (shouldPause()) {
                 return pause()
               }
             })
@@ -190,6 +205,10 @@ export class Retryer<TData = unknown, TError = unknown> {
     }
 
     // Start loop
-    run()
+    if (canFetch(config.networkMode)) {
+      run()
+    } else {
+      pause().then(run)
+    }
   }
 }
