@@ -5191,6 +5191,8 @@ describe('useQuery', () => {
 
       rendered.getByRole('button', { name: /hide/i }).click()
 
+      await sleep(15)
+
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
 
@@ -5200,6 +5202,7 @@ describe('useQuery', () => {
         fetchStatus: 'idle',
         status: 'success',
       })
+
       expect(count).toBe(typeof AbortSignal === 'function' ? 1 : 2)
 
       onlineMock.mockRestore()
