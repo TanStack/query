@@ -1,5 +1,10 @@
 import { waitFor } from '@testing-library/react'
-import { queryKey, mockConsoleError, sleep } from '../../reactjs/tests/utils'
+import {
+  queryKey,
+  mockConsoleError,
+  sleep,
+  executeMutation,
+} from '../../reactjs/tests/utils'
 import { MutationCache, MutationObserver, QueryClient } from '../..'
 
 describe('mutationCache', () => {
@@ -12,7 +17,7 @@ describe('mutationCache', () => {
       const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
-        await testClient.executeMutation({
+        await executeMutation(testClient, {
           mutationKey: key,
           variables: 'vars',
           mutationFn: () => Promise.reject('error'),
@@ -35,7 +40,7 @@ describe('mutationCache', () => {
       const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
-        await testClient.executeMutation({
+        await executeMutation(testClient, {
           mutationKey: key,
           variables: 'vars',
           mutationFn: () => Promise.resolve({ data: 5 }),
@@ -63,7 +68,7 @@ describe('mutationCache', () => {
       const testClient = new QueryClient({ mutationCache: testCache })
 
       try {
-        await testClient.executeMutation({
+        await executeMutation(testClient, {
           mutationKey: key,
           variables: 'vars',
           mutationFn: () => Promise.resolve({ data: 5 }),
@@ -83,7 +88,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
       const key = ['mutation', 'vars']
-      await testClient.executeMutation({
+      await executeMutation(testClient, {
         mutationKey: key,
         variables: 'vars',
         mutationFn: () => Promise.resolve(),
@@ -104,17 +109,17 @@ describe('mutationCache', () => {
     test('should filter correctly', async () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
-      await testClient.executeMutation({
+      await executeMutation(testClient, {
         mutationKey: ['a', 1],
         variables: 1,
         mutationFn: () => Promise.resolve(),
       })
-      await testClient.executeMutation({
+      await executeMutation(testClient, {
         mutationKey: ['a', 2],
         variables: 2,
         mutationFn: () => Promise.resolve(),
       })
-      await testClient.executeMutation({
+      await executeMutation(testClient, {
         mutationKey: ['b'],
         mutationFn: () => Promise.resolve(),
       })
@@ -136,7 +141,7 @@ describe('mutationCache', () => {
       const testCache = new MutationCache()
       const testClient = new QueryClient({ mutationCache: testCache })
       const onSuccess = jest.fn()
-      await testClient.executeMutation({
+      await executeMutation(testClient, {
         mutationKey: ['a', 1],
         variables: 1,
         cacheTime: 10,

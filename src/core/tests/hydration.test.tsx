@@ -1,4 +1,8 @@
-import { mockNavigatorOnLine, sleep } from '../../reactjs/tests/utils'
+import {
+  executeMutation,
+  mockNavigatorOnLine,
+  sleep,
+} from '../../reactjs/tests/utils'
 import { QueryCache } from '../queryCache'
 import { QueryClient } from '../queryClient'
 import { dehydrate, hydrate } from '../hydration'
@@ -286,12 +290,10 @@ describe('dehydration and rehydration', () => {
       retryDelay: 10,
     })
 
-    serverClient
-      .executeMutation({
-        mutationKey: ['addTodo'],
-        variables: { text: 'text' },
-      })
-      .catch(() => undefined)
+    executeMutation(serverClient, {
+      mutationKey: ['addTodo'],
+      variables: { text: 'text' },
+    }).catch(() => undefined)
 
     await sleep(50)
 
@@ -357,12 +359,10 @@ describe('dehydration and rehydration', () => {
       retry: false,
     })
 
-    queryClient
-      .executeMutation({
-        mutationKey: ['addTodo'],
-        variables: { text: 'text' },
-      })
-      .catch(() => undefined)
+    executeMutation(queryClient, {
+      mutationKey: ['addTodo'],
+      variables: { text: 'text' },
+    }).catch(() => undefined)
 
     await sleep(1)
     const dehydrated = dehydrate(queryClient, { dehydrateMutations: false })
@@ -389,12 +389,10 @@ describe('dehydration and rehydration', () => {
       retryDelay: 20,
     })
 
-    queryClient
-      .executeMutation({
-        mutationKey: ['addTodo'],
-        variables: { text: 'text' },
-      })
-      .catch(() => undefined)
+    executeMutation(queryClient, {
+      mutationKey: ['addTodo'],
+      variables: { text: 'text' },
+    }).catch(() => undefined)
 
     // Dehydrate mutation between retries
     await sleep(1)
