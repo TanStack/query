@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  fireEvent,
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
+import { fireEvent, screen, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import { useQuery } from '../..'
 import {
@@ -29,6 +24,9 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 describe('ReactQueryDevtools', () => {
+  beforeEach(() => {
+    localStorage.removeItem('reactQueryDevtoolsOpen')
+  })
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
     const onCloseClick = jest.fn()
@@ -59,10 +57,6 @@ describe('ReactQueryDevtools', () => {
     expect(closeButton).toBeNull()
     fireEvent.click(
       screen.getByRole('button', { name: /open react query devtools/i })
-    )
-
-    await waitForElementToBeRemoved(() =>
-      screen.queryByRole('button', { name: /open react query devtools/i })
     )
 
     expect(onToggleClick).toHaveBeenCalledTimes(1)

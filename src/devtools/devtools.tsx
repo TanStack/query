@@ -1,9 +1,10 @@
 import React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
 import { Query, useQueryClient, onlineManager } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
-import { useIsMounted, useSafeState } from './utils'
+import { useIsMounted } from './utils'
 
 import {
   Panel,
@@ -103,8 +104,8 @@ export function ReactQueryDevtools({
     'reactQueryDevtoolsHeight',
     null
   )
-  const [isResolvedOpen, setIsResolvedOpen] = useSafeState(false)
-  const [isResizing, setIsResizing] = useSafeState(false)
+  const [isResolvedOpen, setIsResolvedOpen] = React.useState(false)
+  const [isResizing, setIsResizing] = React.useState(false)
   const isMounted = useIsMounted()
 
   const handleDragStart = (
@@ -406,8 +407,28 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     }
   }, [setSort, sortFn])
 
-  const [unsortedQueries, setUnsortedQueries] = useSafeState(
-    Object.values(queryCache.findAll())
+  const updateReceived = React.useRef(false)
+
+  const allQueries = useSyncExternalStore(
+    React.useCallback(
+      onStoreChange => {
+        return isOpen
+          ? queryCache.subscribe(() => {
+              updateReceived.current = true
+              onStoreChange()
+            })
+          : () => undefined
+      },
+      [queryCache, isOpen]
+    ),
+    () => {
+      if (updateReceived.current) {
+        updateReceived.current = false
+        return queryCache.getAll().slice()
+      }
+      return queryCache.getAll()
+    },
+    () => queryCache.getAll()
   )
 
   const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
@@ -416,7 +437,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   )
 
   const queries = React.useMemo(() => {
-    const sorted = [...unsortedQueries].sort(sortFn)
+    const sorted = Object.values(allQueries).sort(sortFn)
 
     if (sortDesc) {
       sorted.reverse()
@@ -429,7 +450,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
       d => d.queryHash
     )
-  }, [sortDesc, sortFn, unsortedQueries, filter])
+  }, [sortDesc, sortFn, allQueries, filter])
 
   const activeQuery = React.useMemo(() => {
     return queries.find(query => query.queryHash === activeQueryHash)
@@ -445,20 +466,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     .length
   const hasInactive = queries.filter(q => getQueryStatusLabel(q) === 'inactive')
     .length
-
-  React.useEffect(() => {
-    if (isOpen) {
-      const unsubscribe = queryCache.subscribe(() => {
-        setUnsortedQueries(Object.values(queryCache.getAll()))
-      })
-      // re-subscribing after the panel is closed and re-opened won't trigger the callback,
-      // So we'll manually populate our state
-      setUnsortedQueries(Object.values(queryCache.getAll()))
-
-      return unsubscribe
-    }
-    return undefined
-  }, [isOpen, sort, sortFn, sortDesc, setUnsortedQueries, queryCache])
 
   const handleRefetch = () => {
     const promise = activeQuery?.fetch()
