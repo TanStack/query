@@ -1,5 +1,10 @@
 import { QueryClient } from '../..'
-import { mockConsoleError, queryKey, sleep } from '../../reactjs/tests/utils'
+import {
+  executeMutation,
+  mockConsoleError,
+  queryKey,
+  sleep,
+} from '../../reactjs/tests/utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
@@ -16,7 +21,7 @@ describe('mutations', () => {
   })
 
   test('mutate should trigger a mutation', async () => {
-    const result = await queryClient.executeMutation({
+    const result = await executeMutation(queryClient, {
       mutationFn: async (text: string) => text,
       variables: 'todo',
     })
@@ -48,7 +53,7 @@ describe('mutations', () => {
       mutationFn: async (text: string) => text,
     })
 
-    const result = await queryClient.executeMutation({
+    const result = await executeMutation(queryClient, {
       mutationKey: key,
       variables: 'todo',
     })
@@ -345,7 +350,7 @@ describe('mutations', () => {
     expect(currentMutation['observers'].length).toEqual(1)
   })
 
-  test('executeMutation should throw an error if no mutationFn found', async () => {
+  test('mutate should throw an error if no mutationFn found', async () => {
     const consoleMock = mockConsoleError()
 
     const mutation = new MutationObserver(queryClient, {

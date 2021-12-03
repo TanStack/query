@@ -205,7 +205,32 @@ new QueryClient({
     }
   }
 })
+```
 
+### Removed undocumented methods from the `queryClient`
+
+The methods `cancelMutatations` and `executeMutation` were undocumented and unused internally, so we removed them. Since they were just wrappers around methods available on the `mutationCache`, you can still use the functionality.
+
+```diff
+- cancelMutations(): Promise<void> {
+-   const promises = notifyManager.batch(() =>
+-     this.mutationCache.getAll().map(mutation => mutation.cancel())
+-   )
+-   return Promise.all(promises).then(noop).catch(noop)
+- }
+```
+
+```diff
+- executeMutation<
+-   TData = unknown,
+-   TError = unknown,
+-   TVariables = void,
+-   TContext = unknown
+- >(
+-   options: MutationOptions<TData, TError, TVariables, TContext>
+- ): Promise<TData> {
+-   return this.mutationCache.build(this, options).execute()
+- }
 ```
 
 ## New Features 🚀

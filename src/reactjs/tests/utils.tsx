@@ -1,7 +1,7 @@
 import { act, render } from '@testing-library/react'
 import React from 'react'
 
-import { QueryClient, QueryClientProvider } from '../..'
+import { MutationOptions, QueryClient, QueryClientProvider } from '../..'
 
 export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
   const { rerender, ...result } = render(
@@ -76,4 +76,11 @@ export const Blink: React.FC<{ duration: number }> = ({
   }, [duration, children])
 
   return shouldShow ? <>{children}</> : <>off</>
+}
+
+export const executeMutation = (
+  queryClient: QueryClient,
+  options: MutationOptions<any, any, any, any>
+): Promise<unknown> => {
+  return queryClient.getMutationCache().build(queryClient, options).execute()
 }

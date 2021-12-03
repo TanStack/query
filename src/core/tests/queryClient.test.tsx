@@ -15,7 +15,6 @@ import {
   QueryClient,
   QueryFunction,
   QueryObserver,
-  MutationObserver,
 } from '../..'
 import { focusManager, onlineManager } from '..'
 
@@ -1305,27 +1304,6 @@ describe('queryClient', () => {
     })
   })
 
-  describe('cancelMutations', () => {
-    test('should cancel mutations', async () => {
-      const key = queryKey()
-      const mutationObserver = new MutationObserver(queryClient, {
-        mutationKey: key,
-        mutationFn: async () => {
-          await sleep(20)
-          return 'data'
-        },
-        onMutate: text => text,
-      })
-      await mutationObserver.mutate()
-      const mutation = queryClient
-        .getMutationCache()
-        .find({ mutationKey: key })!
-      const mutationSpy = jest.spyOn(mutation, 'cancel')
-      queryClient.cancelMutations()
-      expect(mutationSpy).toHaveBeenCalled()
-      mutationSpy.mockRestore()
-    })
-  })
   describe('setMutationDefaults', () => {
     test('should update existing mutation defaults', () => {
       const key = queryKey()
