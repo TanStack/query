@@ -3484,21 +3484,30 @@ describe('useQuery', () => {
   // See https://github.com/tannerlinsley/react-query/issues/199
   it('should use prefetched data for dependent query', async () => {
     const key = queryKey()
+    let count = 0
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
       const [isPrefetched, setPrefetched] = React.useState(false)
 
-      const query = useQuery(key, () => undefined, {
-        enabled,
-      })
+      const query = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return count
+        },
+        {
+          enabled,
+        }
+      )
 
       React.useEffect(() => {
         async function prefetch() {
           await queryClient.prefetchQuery(key, () =>
             Promise.resolve('prefetched data')
           )
-          setPrefetched(true)
+          act(() => setPrefetched(true))
         }
         prefetch()
       }, [])
@@ -3507,7 +3516,7 @@ describe('useQuery', () => {
         <div>
           {isPrefetched && <div>isPrefetched</div>}
           <button onClick={() => setEnabled(true)}>setKey</button>
-          <div>{query.data}</div>
+          <div>data: {query.data}</div>
         </div>
       )
     }
@@ -3516,7 +3525,9 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('isPrefetched'))
 
     fireEvent.click(rendered.getByText('setKey'))
-    await waitFor(() => rendered.getByText('prefetched data'))
+    await waitFor(() => rendered.getByText('data: prefetched data'))
+    await waitFor(() => rendered.getByText('data: 1'))
+    expect(count).toBe(1)
   })
 
   it('should support dependent queries via the enable config option', async () => {
