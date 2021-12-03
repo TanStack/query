@@ -5251,12 +5251,14 @@ describe('useQuery', () => {
 
       rendered.getByRole('button', { name: /hide/i }).click()
 
+      await waitFor(() =>
+        expect(queryClient.getQueryState(key)).not.toBeDefined()
+      )
+
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
 
       await sleep(15)
-
-      expect(queryClient.getQueryState(key)).not.toBeDefined()
 
       expect(count).toBe(0)
 
