@@ -173,7 +173,7 @@ describe('useQueries', () => {
           queryKey: [key, count, i + 1],
           keepPreviousData: true,
           queryFn: async () => {
-            await sleep(10 * (i + 1))
+            await sleep(20 * (i + 1))
             return (i + 1) * count * 2
           },
         }))
