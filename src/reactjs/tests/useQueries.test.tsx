@@ -1,7 +1,5 @@
-import { waitFor, fireEvent } from '@testing-library/react'
+import { waitFor } from '@testing-library/react'
 import React from 'react'
-
-import * as QueriesObserverModule from '../../core/queriesObserver'
 
 import {
   expectType,
@@ -16,7 +14,6 @@ import {
   UseQueryResult,
   QueryCache,
   QueryObserverResult,
-  QueriesObserver,
 } from '../..'
 
 describe('useQueries', () => {
@@ -928,62 +925,5 @@ describe('useQueries', () => {
         }))
       )
     }
-  })
-
-  it('should not change state if unmounted', async () => {
-    const key1 = queryKey()
-
-    // We have to mock the QueriesObserver to not unsubscribe
-    // the listener when the component is unmounted
-    class QueriesObserverMock extends QueriesObserver {
-      subscribe(listener: any) {
-        super.subscribe(listener)
-        return () => void 0
-      }
-    }
-
-    const QueriesObserverSpy = jest
-      .spyOn(QueriesObserverModule, 'QueriesObserver')
-      .mockImplementation(fn => {
-        return new QueriesObserverMock(fn)
-      })
-
-    function Queries() {
-      useQueries([
-        {
-          queryKey: key1,
-          queryFn: async () => {
-            await sleep(10)
-            return 1
-          },
-        },
-      ])
-
-      return (
-        <div>
-          <span>queries</span>
-        </div>
-      )
-    }
-
-    function Page() {
-      const [mounted, setMounted] = React.useState(true)
-
-      return (
-        <div>
-          <button onClick={() => setMounted(false)}>unmount</button>
-          {mounted && <Queries />}
-        </div>
-      )
-    }
-
-    const { getByText } = renderWithClient(queryClient, <Page />)
-    fireEvent.click(getByText('unmount'))
-
-    // Should not display the console error
-    // "Warning: Can't perform a React state update on an unmounted component"
-
-    await sleep(20)
-    QueriesObserverSpy.mockRestore()
   })
 })
