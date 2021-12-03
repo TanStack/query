@@ -407,28 +407,20 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     }
   }, [setSort, sortFn])
 
-  const updateReceived = React.useRef(false)
+  const [unsortedQueries, setUnsortedQueries] = React.useState(
+    Object.values(queryCache.findAll())
+  )
 
-  const allQueries = useSyncExternalStore(
-    React.useCallback(
-      onStoreChange => {
-        return isOpen
-          ? queryCache.subscribe(() => {
-              updateReceived.current = true
-              onStoreChange()
-            })
-          : () => undefined
-      },
-      [queryCache, isOpen]
-    ),
-    () => {
-      if (updateReceived.current) {
-        updateReceived.current = false
-        return queryCache.getAll().slice()
-      }
-      return queryCache.getAll()
-    },
-    () => queryCache.getAll()
+  useSyncExternalStore(
+    React.useCallback(() => {
+      return isOpen
+        ? queryCache.subscribe(() => {
+            setUnsortedQueries(Object.values(queryCache.getAll()))
+          })
+        : () => undefined
+    }, [queryCache, isOpen]),
+    () => null,
+    () => null
   )
 
   const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
@@ -437,7 +429,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   )
 
   const queries = React.useMemo(() => {
-    const sorted = Object.values(allQueries).sort(sortFn)
+    const sorted = [...unsortedQueries].sort(sortFn)
 
     if (sortDesc) {
       sorted.reverse()
@@ -450,7 +442,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
       d => d.queryHash
     )
-  }, [sortDesc, sortFn, allQueries, filter])
+  }, [sortDesc, sortFn, unsortedQueries, filter])
 
   const activeQuery = React.useMemo(() => {
     return queries.find(query => query.queryHash === activeQueryHash)
