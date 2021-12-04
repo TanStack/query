@@ -184,6 +184,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "jvuoti",
+      "name": "Janne Vuoti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3702781?v=4",
+      "profile": "https://github.com/jvuoti",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
