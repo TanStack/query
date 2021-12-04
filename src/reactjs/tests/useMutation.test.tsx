@@ -445,6 +445,101 @@ describe('useMutation', () => {
     onlineMock.mockRestore()
   })
 
+  it('should call onMutate even if paused', async () => {
+    const onlineMock = mockNavigatorOnLine(false)
+    const onMutate = jest.fn()
+    let count = 0
+
+    function Page() {
+      const mutation = useMutation(
+        async (_text: string) => {
+          count++
+          await sleep(10)
+          return count
+        },
+        {
+          onMutate,
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status},
+            isPaused: {String(mutation.isPaused)}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: null, status: idle, isPaused: false')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('data: null, status: loading, isPaused: true')
+
+    expect(onMutate).toHaveBeenCalledTimes(1)
+    expect(onMutate).toHaveBeenCalledWith('todo')
+
+    onlineMock.mockReturnValue(true)
+    window.dispatchEvent(new Event('online'))
+
+    await rendered.findByText('data: 1, status: success, isPaused: false')
+
+    expect(onMutate).toHaveBeenCalledTimes(1)
+    expect(count).toBe(1)
+
+    onlineMock.mockRestore()
+  })
+
+  it('should optimistically go to paused state if offline', async () => {
+    const onlineMock = mockNavigatorOnLine(false)
+    let count = 0
+    const states: Array<string> = []
+
+    function Page() {
+      const mutation = useMutation(async (_text: string) => {
+        count++
+        await sleep(10)
+        return count
+      })
+
+      states.push(`${mutation.status}, ${mutation.isPaused}`)
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status},
+            isPaused: {String(mutation.isPaused)}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: null, status: idle, isPaused: false')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('data: null, status: loading, isPaused: true')
+
+    // no intermediate 'loading, false' state is expected because we don't start mutating!
+    expect(states[0]).toBe('idle, false')
+    expect(states[1]).toBe('loading, true')
+
+    onlineMock.mockReturnValue(true)
+    window.dispatchEvent(new Event('online'))
+
+    await rendered.findByText('data: 1, status: success, isPaused: false')
+
+    onlineMock.mockRestore()
+  })
+
   it('should be able to retry a mutation when online', async () => {
     const consoleMock = mockConsoleError()
     const onlineMock = mockNavigatorOnLine(false)
