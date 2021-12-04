@@ -121,7 +121,16 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       }
     )
 
-    return matchingObservers.concat(newOrReusedObservers)
+    const sortMatchesByOrderOfQueries = (
+      a: QueryObserverMatch,
+      b: QueryObserverMatch
+    ): number =>
+      defaultedQueryOptions.indexOf(a.defaultedQueryOptions) -
+      defaultedQueryOptions.indexOf(b.defaultedQueryOptions)
+
+    return matchingObservers
+      .concat(newOrReusedObservers)
+      .sort(sortMatchesByOrderOfQueries)
   }
 
   private getObserver(options: QueryObserverOptions): QueryObserver {
