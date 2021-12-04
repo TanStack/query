@@ -128,8 +128,8 @@ describe('useQueries', () => {
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
     ])
     expect(states[3]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 2, isPreviousData: true, isFetching: true },
+      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
     ])
     expect(states[4]).toMatchObject([
       { status: 'success', data: 2, isPreviousData: true, isFetching: true },
@@ -206,8 +206,8 @@ describe('useQueries', () => {
     ])
 
     expect(states[3]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 8, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
+      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
       {
         status: 'loading',
         data: undefined,
@@ -293,7 +293,7 @@ describe('useQueries', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(10))
+    await waitFor(() => expect(states.length).toBe(9))
 
     expect(states[0]).toMatchObject([
       {
@@ -324,7 +324,7 @@ describe('useQueries', () => {
     ])
     expect(states[3]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
     ])
     expect(states[4]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
@@ -335,18 +335,14 @@ describe('useQueries', () => {
       { status: 'success', data: 15, isPreviousData: false, isFetching: false },
     ])
     expect(states[6]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
       { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
     ])
     expect(states[7]).toMatchObject([
       { status: 'success', data: 10, isPreviousData: false, isFetching: true },
       { status: 'success', data: 15, isPreviousData: false, isFetching: false },
     ])
     expect(states[8]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[9]).toMatchObject([
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
       { status: 'success', data: 15, isPreviousData: false, isFetching: false },
     ])
@@ -390,7 +386,7 @@ describe('useQueries', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(9))
+    await waitFor(() => expect(states.length).toBe(8))
 
     expect(states[0]).toMatchObject([
       {
@@ -426,18 +422,14 @@ describe('useQueries', () => {
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[5]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
       { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[6]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: true },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[7]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[8]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
