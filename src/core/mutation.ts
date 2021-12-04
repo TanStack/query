@@ -4,7 +4,7 @@ import type { MutationObserver } from './mutationObserver'
 import { getLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
-import { Retryer } from './retryer'
+import { canFetch, Retryer } from './retryer'
 import { noop } from './utils'
 
 // TYPES
@@ -330,7 +330,7 @@ export class Mutation<
           context: action.context,
           data: undefined,
           error: null,
-          isPaused: false,
+          isPaused: !canFetch(this.options.networkMode),
           status: 'loading',
           variables: action.variables,
         }
