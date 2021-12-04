@@ -2317,7 +2317,7 @@ describe('useQuery', () => {
     let renders = 0
 
     const queryFn = async () => {
-      await sleep(10)
+      await sleep(15)
       return 'data'
     }
 
