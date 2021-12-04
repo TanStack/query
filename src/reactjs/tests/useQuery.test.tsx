@@ -513,7 +513,7 @@ describe('useQuery', () => {
     const consoleMock = mockConsoleError()
 
     function Page() {
-      useQuery<unknown>(
+      const { status } = useQuery(
         key,
         async () => {
           await sleep(10)
@@ -523,13 +523,15 @@ describe('useQuery', () => {
           onError,
         }
       )
-      return null
+      return <span>status: {status}</span>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
     await sleep(5)
     await queryClient.cancelQueries(key)
+    // query cancellation will reset the query to it's initial state
+    await waitFor(() => rendered.getByText('status: idle'))
     expect(onError).not.toHaveBeenCalled()
     consoleMock.mockRestore()
   })
