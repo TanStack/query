@@ -291,7 +291,7 @@ export class Mutation<
   }
 
   private dispatch(action: Action<TData, TError, TVariables, TContext>): void {
-    this.state = reducer(this.state, action)
+    this.state = this.reducer(action)
 
     notifyManager.batch(() => {
       this.observers.forEach(observer => {
@@ -303,6 +303,62 @@ export class Mutation<
         action,
       })
     })
+  }
+
+  private reducer(
+    action: Action<TData, TError, TVariables, TContext>
+  ): MutationState<TData, TError, TVariables, TContext> {
+    switch (action.type) {
+      case 'failed':
+        return {
+          ...this.state,
+          failureCount: this.state.failureCount + 1,
+        }
+      case 'pause':
+        return {
+          ...this.state,
+          isPaused: true,
+        }
+      case 'continue':
+        return {
+          ...this.state,
+          isPaused: false,
+        }
+      case 'loading':
+        return {
+          ...this.state,
+          context: action.context,
+          data: undefined,
+          error: null,
+          isPaused: false,
+          status: 'loading',
+          variables: action.variables,
+        }
+      case 'success':
+        return {
+          ...this.state,
+          data: action.data,
+          error: null,
+          status: 'success',
+          isPaused: false,
+        }
+      case 'error':
+        return {
+          ...this.state,
+          data: undefined,
+          error: action.error,
+          failureCount: this.state.failureCount + 1,
+          isPaused: false,
+          status: 'error',
+        }
+      case 'setState':
+        return {
+          ...this.state,
+          ...action.state,
+        }
+      default:
+        return this.state
+    }
   }
 }
 
@@ -320,62 +376,5 @@ export function getDefaultState<
     isPaused: false,
     status: 'idle',
     variables: undefined,
-  }
-}
-
-function reducer<TData, TError, TVariables, TContext>(
-  state: MutationState<TData, TError, TVariables, TContext>,
-  action: Action<TData, TError, TVariables, TContext>
-): MutationState<TData, TError, TVariables, TContext> {
-  switch (action.type) {
-    case 'failed':
-      return {
-        ...state,
-        failureCount: state.failureCount + 1,
-      }
-    case 'pause':
-      return {
-        ...state,
-        isPaused: true,
-      }
-    case 'continue':
-      return {
-        ...state,
-        isPaused: false,
-      }
-    case 'loading':
-      return {
-        ...state,
-        context: action.context,
-        data: undefined,
-        error: null,
-        isPaused: false,
-        status: 'loading',
-        variables: action.variables,
-      }
-    case 'success':
-      return {
-        ...state,
-        data: action.data,
-        error: null,
-        status: 'success',
-        isPaused: false,
-      }
-    case 'error':
-      return {
-        ...state,
-        data: undefined,
-        error: action.error,
-        failureCount: state.failureCount + 1,
-        isPaused: false,
-        status: 'error',
-      }
-    case 'setState':
-      return {
-        ...state,
-        ...action.state,
-      }
-    default:
-      return state
   }
 }
