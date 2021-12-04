@@ -112,48 +112,8 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('data1: 4, data2: 10'))
     await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(7))
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[6]).toMatchObject([
+    expect(states[states.length - 1]).toMatchObject([
       { status: 'success', data: 4, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
@@ -196,77 +156,8 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('data: 6,12,18'))
     await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(8))
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 8, isPreviousData: false, isFetching: false },
-    ])
-
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 8, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[6]).toMatchObject([
-      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 12, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[7]).toMatchObject([
+    expect(states[states.length - 1]).toMatchObject([
       { status: 'success', data: 6, isPreviousData: false, isFetching: false },
       { status: 'success', data: 12, isPreviousData: false, isFetching: false },
       { status: 'success', data: 18, isPreviousData: false, isFetching: false },
@@ -322,51 +213,8 @@ describe('useQueries', () => {
 
     await waitFor(() => rendered.getByText('data1: 10, data2: 15'))
     await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(9))
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[6]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[7]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[8]).toMatchObject([
+    expect(states[states.length - 1]).toMatchObject([
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
       { status: 'success', data: 15, isPreviousData: false, isFetching: false },
     ])
