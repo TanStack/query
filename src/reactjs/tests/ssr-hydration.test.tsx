@@ -23,9 +23,11 @@ function setIsServer(isServer: boolean) {
   utils.isServer = isServer
 }
 
+// @ts-expect-error
+const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
+
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
-  // @ts-expect-error
-  if (String(process.env.REACTJS_VERSION || '18') === '18') {
+  if (isReact18()) {
     let root: Root
     ReactDOMTestUtils.act(() => {
       root = ReactDOM.hydrateRoot(container, element)
@@ -62,6 +64,9 @@ describe('Server side rendering with de/rehydration', () => {
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
   })
   it('should not mismatch on success', async () => {
+    if (!isReact18()) {
+      return
+    }
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
@@ -126,6 +131,9 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on error', async () => {
+    if (!isReact18()) {
+      return
+    }
     const consoleMock = mockConsoleError()
     const fetchDataError = jest.fn(() => {
       throw new Error('fetchDataError')
@@ -195,6 +203,9 @@ describe('Server side rendering with de/rehydration', () => {
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
+    if (!isReact18()) {
+      return
+    }
     const fetchDataSuccess = jest.fn(fetchData)
 
     // -- Shared part --
