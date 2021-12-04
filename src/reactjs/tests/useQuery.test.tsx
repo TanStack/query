@@ -137,7 +137,10 @@ describe('useQuery', () => {
     const states: UseQueryResult<string>[] = []
 
     function Page() {
-      const state = useQuery<string, Error>(key, () => 'test')
+      const state = useQuery<string, Error>(key, async () => {
+        await sleep(10)
+        return 'test'
+      })
 
       states.push(state)
 
@@ -164,9 +167,9 @@ describe('useQuery', () => {
       return <span>{state.data}</span>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => rendered.getByText('test'))
 
     expect(states.length).toEqual(2)
 
