@@ -20,7 +20,7 @@ type Post = {
 
 function usePosts() {
   return useQuery(
-    "posts",
+    ["posts"],
     async (): Promise<Array<Post>> => {
       const { data } = await axios.get(
         "https://jsonplaceholder.typicode.com/posts"
