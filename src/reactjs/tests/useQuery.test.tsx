@@ -691,52 +691,78 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'data' })
   })
 
-  it('should create a new query when re-mounting with cacheTime 0', async () => {
+  it('should pick up a query when re-mounting with cacheTime 0', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
     function Page() {
       const [toggle, setToggle] = React.useState(false)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setToggle(true)
-        }, 20)
-      }, [setToggle])
-
-      return toggle ? <Component key="1" /> : <Component key="2" />
+      return (
+        <div>
+          <button onClick={() => setToggle(true)}>toggle</button>
+          {toggle ? (
+            <Component key="2" value="2" />
+          ) : (
+            <Component key="1" value="1" />
+          )}
+        </div>
+      )
     }
 
-    function Component() {
+    function Component({ value }: { value: string }) {
       const state = useQuery(
         key,
         async () => {
-          await sleep(5)
-          return 'data'
+          await sleep(10)
+          return 'data: ' + value
         },
         {
           cacheTime: 0,
+          notifyOnChangeProps: 'all',
         }
       )
       states.push(state)
-      return null
+      return (
+        <div>
+          <div>{state.data}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await rendered.findByText('data: 1')
 
-    expect(states.length).toBe(5)
+    rendered.getByRole('button', { name: /toggle/i }).click()
+
+    await rendered.findByText('data: 2')
+
+    expect(states.length).toBe(4)
     // First load
-    expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[0]).toMatchObject({
+      isLoading: true,
+      isSuccess: false,
+      isFetching: true,
+    })
     // First success
-    expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
-    // Switch
-    expect(states[2]).toMatchObject({ isLoading: false, isSuccess: true })
-    // Second load
-    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[1]).toMatchObject({
+      isLoading: false,
+      isSuccess: true,
+      isFetching: false,
+    })
+    // Switch, goes to fetching
+    expect(states[2]).toMatchObject({
+      isLoading: false,
+      isSuccess: true,
+      isFetching: true,
+    })
     // Second success
-    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[3]).toMatchObject({
+      isLoading: false,
+      isSuccess: true,
+      isFetching: false,
+    })
   })
 
   it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
