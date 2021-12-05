@@ -528,7 +528,7 @@ describe('query', () => {
     expect(queryCache.find(key)).toBeDefined()
     await sleep(10)
     // should be removed after an additional staleTime wait
-    expect(queryCache.find(key)).toBeUndefined()
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
   })
 
   test('should not be garbage collected unless there are no subscribers', async () => {
