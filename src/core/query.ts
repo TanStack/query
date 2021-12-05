@@ -35,7 +35,6 @@ interface QueryConfig<
   cache: QueryCache
   queryKey: TQueryKey
   queryHash: string
-  optimistic?: boolean
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
