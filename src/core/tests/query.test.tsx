@@ -13,6 +13,7 @@ import {
   onlineManager,
   QueryFunctionContext,
 } from '../..'
+import { waitFor } from '@testing-library/react'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -472,7 +473,6 @@ describe('query', () => {
   })
 
   test('queries with cacheTime 0 should be removed immediately after unsubscribing', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
@@ -486,13 +486,12 @@ describe('query', () => {
     })
     const unsubscribe1 = observer.subscribe()
     unsubscribe1()
-    await sleep(10)
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
     const unsubscribe2 = observer.subscribe()
     unsubscribe2()
-    await sleep(10)
-    expect(count).toBe(2)
-    expect(queryCache.find(key)).toBeUndefined()
-    consoleMock.mockRestore()
+
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
+    expect(count).toBe(1)
   })
 
   test('should be garbage collected when unsubscribed to', async () => {
