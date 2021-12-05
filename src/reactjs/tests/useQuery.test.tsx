@@ -5097,64 +5097,6 @@ describe('useQuery', () => {
 
       onlineMock.mockRestore()
     })
-
-    it('online queries with cacheTime:0 should not fetch if paused and then unmounted', async () => {
-      const key = queryKey()
-      let count = 0
-
-      function Component() {
-        const state = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            count++
-            await sleep(10)
-            return 'data' + count
-          },
-          cacheTime: 0,
-        })
-
-        return (
-          <div>
-            <div>
-              status: {state.status}, fetchStatus: {state.fetchStatus}
-            </div>
-            <div>data: {state.data}</div>
-          </div>
-        )
-      }
-
-      function Page() {
-        const [show, setShow] = React.useState(true)
-
-        return (
-          <div>
-            {show && <Component />}
-            <button onClick={() => setShow(false)}>hide</button>
-          </div>
-        )
-      }
-
-      const onlineMock = mockNavigatorOnLine(false)
-
-      const rendered = renderWithClient(queryClient, <Page />)
-
-      await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: paused')
-      )
-
-      rendered.getByRole('button', { name: /hide/i }).click()
-
-      onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
-
-      await sleep(15)
-
-      expect(queryClient.getQueryState(key)).not.toBeDefined()
-
-      expect(count).toBe(0)
-
-      onlineMock.mockRestore()
-    })
   })
 
   describe('networkMode always', () => {
