@@ -134,7 +134,7 @@ export class Mutation<
     if (this.cacheTime) {
       this.scheduleGc()
     } else {
-      this.mutationCache.remove(this)
+      this.optionalRemove()
     }
 
     this.mutationCache.notify({

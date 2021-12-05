@@ -746,4 +746,78 @@ describe('useMutation', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should call cache callbacks when unmounted', async () => {
+    const onSuccess = jest.fn()
+    const onSuccessMutate = jest.fn()
+    const onSettled = jest.fn()
+    const onSettledMutate = jest.fn()
+    const mutationKey = queryKey()
+    let count = 0
+
+    function Page() {
+      const [show, setShow] = React.useState(true)
+      return (
+        <div>
+          <button onClick={() => setShow(false)}>hide</button>
+          {show && <Component />}
+        </div>
+      )
+    }
+
+    function Component() {
+      const mutation = useMutation(
+        async (_text: string) => {
+          count++
+          await sleep(10)
+          return count
+        },
+        {
+          mutationKey,
+          cacheTime: 0,
+          onSuccess,
+          onSettled,
+        }
+      )
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              mutation.mutate('todo', {
+                onSuccess: onSuccessMutate,
+                onSettled: onSettledMutate,
+              })
+            }
+          >
+            mutate
+          </button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status},
+            isPaused: {String(mutation.isPaused)}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: null, status: idle, isPaused: false')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+    rendered.getByRole('button', { name: /hide/i }).click()
+
+    await waitFor(() => {
+      expect(
+        queryClient.getMutationCache().findAll({ mutationKey })
+      ).toHaveLength(0)
+    })
+
+    expect(count).toBe(1)
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSettled).toHaveBeenCalledTimes(1)
+    expect(onSuccessMutate).toHaveBeenCalledTimes(0)
+    expect(onSettledMutate).toHaveBeenCalledTimes(0)
+  })
 })

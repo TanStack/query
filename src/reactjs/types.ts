@@ -77,6 +77,7 @@ export interface UseMutationOptions<
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
+  cacheTime?: number
   onMutate?: (
     variables: TVariables
   ) => Promise<TContext | undefined> | TContext | undefined
