@@ -505,7 +505,7 @@ describe('query', () => {
     const unsubscribe = observer.subscribe()
     expect(queryCache.find(key)).toBeDefined()
     unsubscribe()
-    expect(queryCache.find(key)).toBeUndefined()
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
   })
 
   test('should be garbage collected later when unsubscribed and query is fetching', async () => {
