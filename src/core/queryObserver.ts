@@ -309,17 +309,13 @@ export class QueryObserver<
 
     const query = this.client
       .getQueryCache()
-      .build(
-        this.client,
-        defaultedOptions as QueryOptions<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >
-      )
+      .build(this.client, defaultedOptions)
+    query.isFetchingOptimistic = true
 
-    return query.fetch().then(() => this.createResult(query, defaultedOptions))
+    return query.fetch().then(() => {
+      query.isFetchingOptimistic = false
+      return this.createResult(query, defaultedOptions)
+    })
   }
 
   protected fetch(
@@ -655,17 +651,7 @@ export class QueryObserver<
   }
 
   private updateQuery(): void {
-    const query = this.client
-      .getQueryCache()
-      .build(
-        this.client,
-        this.options as QueryOptions<
-          TQueryFnData,
-          TError,
-          TQueryData,
-          TQueryKey
-        >
-      )
+    const query = this.client.getQueryCache().build(this.client, this.options)
 
     if (query === this.currentQuery) {
       return
