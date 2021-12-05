@@ -451,10 +451,8 @@ export class Query<
         // Notify cache callback
         this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
 
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
-        }
+        // Remove query after fetching
+        this.scheduleGc()
       },
       onError: (error: TError | { silent?: boolean }) => {
         // Optimistically update state if needed
@@ -473,10 +471,8 @@ export class Query<
           getLogger().error(error)
         }
 
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
-        }
+        // Remove query after fetching
+        this.scheduleGc()
       },
       onFail: () => {
         this.dispatch({ type: 'failed' })
