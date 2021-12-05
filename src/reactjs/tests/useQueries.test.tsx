@@ -270,7 +270,7 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
     await waitFor(() => rendered.getByText('isFetching: false'))
 
-    await waitFor(() => expect(states.length).toBe(7))
+    await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject([
       {
@@ -294,18 +294,14 @@ describe('useQueries', () => {
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[3]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
       { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[4]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: true },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[6]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
