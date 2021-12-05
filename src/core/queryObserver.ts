@@ -312,10 +312,7 @@ export class QueryObserver<
       .build(this.client, defaultedOptions)
     query.isFetchingOptimistic = true
 
-    return query.fetch().then(() => {
-      query.isFetchingOptimistic = false
-      return this.createResult(query, defaultedOptions)
-    })
+    return query.fetch().then(() => this.createResult(query, defaultedOptions))
   }
 
   protected fetch(

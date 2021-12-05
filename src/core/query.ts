@@ -195,12 +195,8 @@ export class Query<
   }
 
   protected optionalRemove() {
-    if (!this.observers.length) {
-      if (this.state.fetchStatus === 'idle') {
-        this.cache.remove(this)
-      } else {
-        this.scheduleGc()
-      }
+    if (!this.observers.length && this.state.fetchStatus === 'idle') {
+      this.cache.remove(this)
     }
   }
 
@@ -449,9 +445,10 @@ export class Query<
         this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
 
         if (!this.isFetchingOptimistic) {
-          // Remove query after fetching
+          // Schedule query gc after fetching
           this.scheduleGc()
         }
+        this.isFetchingOptimistic = false
       },
       onError: (error: TError | { silent?: boolean }) => {
         // Optimistically update state if needed
@@ -471,9 +468,10 @@ export class Query<
         }
 
         if (!this.isFetchingOptimistic) {
-          // Remove query after fetching
+          // Schedule query gc after fetching
           this.scheduleGc()
         }
+        this.isFetchingOptimistic = false
       },
       onFail: () => {
         this.dispatch({ type: 'failed' })
