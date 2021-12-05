@@ -1,6 +1,10 @@
 import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
-import type { QueryObserverOptions, QueryObserverResult } from './types'
+import type {
+  QueryObserverOptions,
+  QueryObserverResult,
+  DefaultedQueryObserverOptions,
+} from './types'
 import type { QueryClient } from './queryClient'
 import { NotifyOptions, QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
@@ -65,7 +69,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 
   getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
     return this.findMatchingObservers(queries).map(match =>
-      match.observer.getCurrentResult()
+      match.observer.getOptimisticResult(match.defaultedQueryOptions)
     )
   }
 
@@ -121,7 +125,16 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       }
     )
 
-    return matchingObservers.concat(newOrReusedObservers)
+    const sortMatchesByOrderOfQueries = (
+      a: QueryObserverMatch,
+      b: QueryObserverMatch
+    ): number =>
+      defaultedQueryOptions.indexOf(a.defaultedQueryOptions) -
+      defaultedQueryOptions.indexOf(b.defaultedQueryOptions)
+
+    return matchingObservers
+      .concat(newOrReusedObservers)
+      .sort(sortMatchesByOrderOfQueries)
   }
 
   private getObserver(options: QueryObserverOptions): QueryObserver {
@@ -196,6 +209,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 }
 
 type QueryObserverMatch = {
-  defaultedQueryOptions: QueryObserverOptions
+  defaultedQueryOptions: DefaultedQueryObserverOptions
   observer: QueryObserver
 }
