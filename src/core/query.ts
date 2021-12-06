@@ -154,6 +154,7 @@ export class Query<
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   meta: QueryMeta | undefined
+  isFetchingOptimistic?: boolean
 
   private cache: QueryCache
   private promise?: Promise<TData>
@@ -161,13 +162,11 @@ export class Query<
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
-  private hadObservers: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
     this.abortSignalConsumed = false
-    this.hadObservers = false
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -177,7 +176,6 @@ export class Query<
     this.initialState = config.state || this.getDefaultState(this.options)
     this.state = this.initialState
     this.meta = config.meta
-    this.scheduleGc()
   }
 
   private setOptions(
@@ -197,12 +195,8 @@ export class Query<
   }
 
   protected optionalRemove() {
-    if (!this.observers.length) {
-      if (this.state.fetchStatus === 'idle') {
-        this.cache.remove(this)
-      } else if (this.hadObservers) {
-        this.scheduleGc()
-      }
+    if (!this.observers.length && this.state.fetchStatus === 'idle') {
+      this.cache.remove(this)
     }
   }
 
@@ -307,7 +301,6 @@ export class Query<
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
-      this.hadObservers = true
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
@@ -331,11 +324,7 @@ export class Query<
           }
         }
 
-        if (this.cacheTime) {
-          this.scheduleGc()
-        } else {
-          this.cache.remove(this)
-        }
+        this.scheduleGc()
       }
 
       this.cache.notify({ type: 'observerRemoved', query: this, observer })
@@ -455,10 +444,11 @@ export class Query<
         // Notify cache callback
         this.cache.config.onSuccess?.(data, this as Query<any, any, any, any>)
 
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
+        if (!this.isFetchingOptimistic) {
+          // Schedule query gc after fetching
+          this.scheduleGc()
         }
+        this.isFetchingOptimistic = false
       },
       onError: (error: TError | { silent?: boolean }) => {
         // Optimistically update state if needed
@@ -477,10 +467,11 @@ export class Query<
           getLogger().error(error)
         }
 
-        // Remove query after fetching if cache time is 0
-        if (this.cacheTime === 0) {
-          this.optionalRemove()
+        if (!this.isFetchingOptimistic) {
+          // Schedule query gc after fetching
+          this.scheduleGc()
         }
+        this.isFetchingOptimistic = false
       },
       onFail: () => {
         this.dispatch({ type: 'failed' })
