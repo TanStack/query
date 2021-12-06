@@ -702,7 +702,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 'data' })
   })
 
-  it('should create a new query when re-mounting with cacheTime 0', async () => {
+  it('should pick up a query when re-mounting with cacheTime 0', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
@@ -712,45 +712,68 @@ describe('useQuery', () => {
       return (
         <div>
           <button onClick={() => setToggle(true)}>toggle</button>
-          {toggle ? <Component key="1" /> : <Component key="2" />}
+          {toggle ? (
+            <Component key="2" value="2" />
+          ) : (
+            <Component key="1" value="1" />
+          )}
         </div>
       )
     }
 
-    function Component() {
+    function Component({ value }: { value: string }) {
       const state = useQuery(
         key,
         async () => {
           await sleep(10)
-          return 'data'
+          return 'data: ' + value
         },
         {
           cacheTime: 0,
+          notifyOnChangeProps: 'all',
         }
       )
       states.push(state)
-      return <div>status: {state.status}</div>
+      return (
+        <div>
+          <div>{state.data}</div>
+        </div>
+      )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status: success'))
+    await rendered.findByText('data: 1')
+
     rendered.getByRole('button', { name: /toggle/i }).click()
-    await waitFor(() => rendered.getByText('status: loading'))
-    await waitFor(() => rendered.getByText('status: success'))
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await rendered.findByText('data: 2')
 
+    expect(states.length).toBe(4)
     // First load
-    expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[0]).toMatchObject({
+      isLoading: true,
+      isSuccess: false,
+      isFetching: true,
+    })
     // First success
-    expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
-    // Switch
-    expect(states[2]).toMatchObject({ isLoading: false, isSuccess: true })
-    // Second load
-    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
+    expect(states[1]).toMatchObject({
+      isLoading: false,
+      isSuccess: true,
+      isFetching: false,
+    })
+    // Switch, goes to fetching
+    expect(states[2]).toMatchObject({
+      isLoading: false,
+      isSuccess: true,
+      isFetching: true,
+    })
     // Second success
-    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+    expect(states[3]).toMatchObject({
+      isLoading: false,
+      isSuccess: true,
+      isFetching: false,
+    })
   })
 
   it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
@@ -5220,66 +5243,6 @@ describe('useQuery', () => {
       })
 
       expect(count).toBe(typeof AbortSignal === 'function' ? 1 : 2)
-
-      onlineMock.mockRestore()
-    })
-
-    it('online queries with cacheTime:0 should not fetch if paused and then unmounted', async () => {
-      const key = queryKey()
-      let count = 0
-
-      function Component() {
-        const state = useQuery({
-          queryKey: key,
-          queryFn: async () => {
-            count++
-            await sleep(10)
-            return 'data' + count
-          },
-          cacheTime: 0,
-        })
-
-        return (
-          <div>
-            <div>
-              status: {state.status}, fetchStatus: {state.fetchStatus}
-            </div>
-            <div>data: {state.data}</div>
-          </div>
-        )
-      }
-
-      function Page() {
-        const [show, setShow] = React.useState(true)
-
-        return (
-          <div>
-            {show && <Component />}
-            <button onClick={() => setShow(false)}>hide</button>
-          </div>
-        )
-      }
-
-      const onlineMock = mockNavigatorOnLine(false)
-
-      const rendered = renderWithClient(queryClient, <Page />)
-
-      await waitFor(() =>
-        rendered.getByText('status: loading, fetchStatus: paused')
-      )
-
-      rendered.getByRole('button', { name: /hide/i }).click()
-
-      await waitFor(() =>
-        expect(queryClient.getQueryState(key)).not.toBeDefined()
-      )
-
-      onlineMock.mockReturnValue(true)
-      window.dispatchEvent(new Event('online'))
-
-      await sleep(15)
-
-      expect(count).toBe(0)
 
       onlineMock.mockRestore()
     })

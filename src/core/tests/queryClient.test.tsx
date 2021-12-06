@@ -416,9 +416,10 @@ describe('queryClient', () => {
         },
         { cacheTime: 0 }
       )
-      const result2 = queryClient.getQueryData(key1)
       expect(result).toEqual(1)
-      expect(result2).toEqual(undefined)
+      await waitFor(() =>
+        expect(queryClient.getQueryData(key1)).toEqual(undefined)
+      )
     })
 
     test('should keep a query in cache if cache time is Infinity', async () => {

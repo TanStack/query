@@ -131,11 +131,7 @@ export class Mutation<
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
 
-    if (this.cacheTime) {
-      this.scheduleGc()
-    } else {
-      this.optionalRemove()
-    }
+    this.scheduleGc()
 
     this.mutationCache.notify({
       type: 'observerRemoved',
