@@ -1,6 +1,7 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
 import type {
+  FetchStatus,
   MutationFunction,
   MutationKey,
   MutationOptions,
@@ -33,9 +34,9 @@ export interface QueryFilters {
    */
   stale?: boolean
   /**
-   * Include or exclude fetching queries
+   * Include queries matching their fetchStatus
    */
-  fetching?: boolean
+  fetchStatus?: FetchStatus
 }
 
 export interface MutationFilters {
@@ -164,7 +165,14 @@ export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>
 ): boolean {
-  const { type = 'all', exact, fetching, predicate, queryKey, stale } = filters
+  const {
+    type = 'all',
+    exact,
+    fetchStatus,
+    predicate,
+    queryKey,
+    stale,
+  } = filters
 
   if (isQueryKey(queryKey)) {
     if (exact) {
@@ -190,7 +198,10 @@ export function matchQuery(
     return false
   }
 
-  if (typeof fetching === 'boolean' && query.isFetching() !== fetching) {
+  if (
+    typeof fetchStatus !== 'undefined' &&
+    fetchStatus !== query.state.fetchStatus
+  ) {
     return false
   }
 

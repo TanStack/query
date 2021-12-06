@@ -127,7 +127,7 @@ describe('ReactQueryDevtools', () => {
 
     // When the query is fetching then expect number of
     // fetching queries to be 1
-    expect(currentQuery?.isFetching()).toEqual(true)
+    expect(currentQuery?.state.fetchStatus).toEqual('fetching')
     await screen.findByText(
       getByTextContent(
         'fresh (0) fetching (1) paused (0) stale (0) inactive (0)'
@@ -138,7 +138,7 @@ describe('ReactQueryDevtools', () => {
     // until 300ms after, so expect the number of fresh
     // queries to be 1
     await waitFor(() => {
-      expect(currentQuery?.isFetching()).toEqual(false)
+      expect(currentQuery?.state.fetchStatus).toEqual('idle')
     })
     await screen.findByText(
       getByTextContent(
