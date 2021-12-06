@@ -256,10 +256,6 @@ export class Query<
     return this.observers.some(observer => observer.options.enabled !== false)
   }
 
-  isFetching(): boolean {
-    return this.state.fetchStatus === 'fetching'
-  }
-
   isStale(): boolean {
     return (
       this.state.isInvalidated ||
