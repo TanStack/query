@@ -377,52 +377,6 @@ describe('ReactQueryDevtools', () => {
     expect(count).toBe(2)
   })
 
-  it('should simulate offline mode', async () => {
-    const { queryClient } = createQueryClient()
-    let count = 0
-
-    function App() {
-      const { data, fetchStatus } = useQuery(['key'], () => {
-        count++
-        return Promise.resolve('test')
-      })
-
-      return (
-        <div>
-          <h1>
-            {data}, {fetchStatus}
-          </h1>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <App />, {
-      initialIsOpen: true,
-    })
-
-    await rendered.findByRole('heading', { name: /test/i })
-
-    rendered.getByRole('button', { name: /mock offline behavior/i }).click()
-
-    rendered
-      .getByRole('button', { name: 'Open query details for ["key"]' })
-      .click()
-
-    rendered.getByRole('button', { name: /refetch/i }).click()
-
-    await waitFor(() => {
-      expect(rendered.getByText('test, paused')).toBeInTheDocument()
-    })
-
-    rendered.getByRole('button', { name: /restore offline mock/i }).click()
-
-    await waitFor(() => {
-      expect(rendered.getByText('test, idle')).toBeInTheDocument()
-    })
-
-    expect(count).toBe(2)
-  })
-
   it('should sort the queries according to the sorting filter', async () => {
     const { queryClient, queryCache } = createQueryClient()
 
