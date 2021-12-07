@@ -8,8 +8,6 @@ type NotifyFunction = (callback: () => void) => void
 
 type BatchNotifyFunction = (callback: () => void) => void
 
-// CLASS
-
 export function createNotifyManager() {
   let queue: NotifyCallback[] = []
   let transactions = 0
