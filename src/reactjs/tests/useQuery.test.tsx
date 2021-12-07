@@ -4459,7 +4459,7 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      useEffect(() => {
+      React.useEffect(() => {
         renders++
       })
 
