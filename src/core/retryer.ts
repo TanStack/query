@@ -18,6 +18,14 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   networkMode: NetworkMode | undefined
 }
 
+export interface Retryer<TData = unknown> {
+  promise: Promise<TData>
+  cancel: (cancelOptions?: CancelOptions) => void
+  continue: () => void
+  cancelRetry: () => void
+  continueRetry: () => void
+}
+
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
 type ShouldRetryFunction<TError> = (
@@ -55,160 +63,152 @@ export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
-// CLASS
+export function createRetryer<TData = unknown, TError = unknown>(
+  config: RetryerConfig<TData, TError>
+): Retryer<TData> {
+  let isRetryCancelled = false
+  let failureCount = 0
+  let isResolved = false
+  const promise = new Promise<TData>((outerResolve, outerReject) => {
+    promiseResolve = outerResolve
+    promiseReject = outerReject
+  })
+  let continueFn: ((value?: unknown) => void) | undefined
+  let promiseResolve: (data: TData) => void
+  let promiseReject: (error: TError) => void
 
-export class Retryer<TData = unknown, TError = unknown> {
-  cancel: (options?: CancelOptions) => void
-  cancelRetry: () => void
-  continueRetry: () => void
-  continue: () => void
-  failureCount: number
-  isPaused: boolean
-  isResolved: boolean
-  promise: Promise<TData>
+  const cancel = (cancelOptions?: CancelOptions): void => {
+    if (!isResolved) {
+      reject(new CancelledError(cancelOptions))
 
-  constructor(config: RetryerConfig<TData, TError>) {
-    let cancelRetry = false
-    let continueFn: ((value?: unknown) => void) | undefined
-    let promiseResolve: (data: TData) => void
-    let promiseReject: (error: TError) => void
-
-    this.cancel = (cancelOptions?: CancelOptions): void => {
-      if (!this.isResolved) {
-        reject(new CancelledError(cancelOptions))
-
-        config.abort?.()
-      }
+      config.abort?.()
     }
-    this.cancelRetry = () => {
-      cancelRetry = true
-    }
+  }
+  const cancelRetry = () => {
+    isRetryCancelled = true
+  }
 
-    this.continueRetry = () => {
-      cancelRetry = false
-    }
+  const continueRetry = () => {
+    isRetryCancelled = false
+  }
 
-    const shouldPause = () =>
-      !focusManager.isFocused() ||
-      (config.networkMode !== 'always' && !onlineManager.isOnline())
+  const shouldPause = () =>
+    !focusManager.isFocused() ||
+    (config.networkMode !== 'always' && !onlineManager.isOnline())
 
-    this.continue = () => {
+  const resolve = (value: any) => {
+    if (!isResolved) {
+      isResolved = true
+      config.onSuccess?.(value)
       continueFn?.()
+      promiseResolve(value)
     }
-    this.failureCount = 0
-    this.isPaused = false
-    this.isResolved = false
-    this.promise = new Promise<TData>((outerResolve, outerReject) => {
-      promiseResolve = outerResolve
-      promiseReject = outerReject
+  }
+
+  const reject = (value: any) => {
+    if (!isResolved) {
+      isResolved = true
+      config.onError?.(value)
+      continueFn?.()
+      promiseReject(value)
+    }
+  }
+
+  const pause = () => {
+    return new Promise(continueResolve => {
+      continueFn = value => {
+        if (isResolved || !shouldPause()) {
+          return continueResolve(value)
+        }
+      }
+      config.onPause?.()
+    }).then(() => {
+      continueFn = undefined
+      if (!isResolved) {
+        config.onContinue?.()
+      }
     })
+  }
 
-    const resolve = (value: any) => {
-      if (!this.isResolved) {
-        this.isResolved = true
-        config.onSuccess?.(value)
-        continueFn?.()
-        promiseResolve(value)
-      }
+  // Create loop function
+  const run = () => {
+    // Do nothing if already resolved
+    if (isResolved) {
+      return
     }
 
-    const reject = (value: any) => {
-      if (!this.isResolved) {
-        this.isResolved = true
-        config.onError?.(value)
-        continueFn?.()
-        promiseReject(value)
-      }
+    let promiseOrValue: any
+
+    // Execute query
+    try {
+      promiseOrValue = config.fn()
+    } catch (error) {
+      promiseOrValue = Promise.reject(error)
     }
 
-    const pause = () => {
-      return new Promise(continueResolve => {
-        continueFn = value => {
-          if (this.isResolved || !shouldPause()) {
-            return continueResolve(value)
-          }
+    Promise.resolve(promiseOrValue)
+      .then(resolve)
+      .catch(error => {
+        // Stop if the fetch is already resolved
+        if (isResolved) {
+          return
         }
-        this.isPaused = true
-        config.onPause?.()
-      }).then(() => {
-        continueFn = undefined
-        this.isPaused = false
-        if (!this.isResolved) {
-          config.onContinue?.()
+
+        // Do we need to retry the request?
+        const retry = config.retry ?? 3
+        const retryDelay = config.retryDelay ?? defaultRetryDelay
+        const delay =
+          typeof retryDelay === 'function'
+            ? retryDelay(failureCount, error)
+            : retryDelay
+        const shouldRetry =
+          retry === true ||
+          (typeof retry === 'number' && failureCount < retry) ||
+          (typeof retry === 'function' && retry(failureCount, error))
+
+        if (isRetryCancelled || !shouldRetry) {
+          // We are done if the query does not need to be retried
+          reject(error)
+          return
         }
+
+        failureCount++
+
+        // Notify on fail
+        config.onFail?.(failureCount, error)
+
+        // Delay
+        sleep(delay)
+          // Pause if the document is not visible or when the device is offline
+          .then(() => {
+            if (shouldPause()) {
+              return pause()
+            }
+          })
+          .then(() => {
+            if (isRetryCancelled) {
+              reject(error)
+            } else {
+              run()
+            }
+          })
       })
-    }
+  }
 
-    // Create loop function
-    const run = () => {
-      // Do nothing if already resolved
-      if (this.isResolved) {
-        return
-      }
+  // Start loop
+  if (canFetch(config.networkMode)) {
+    run()
+  } else {
+    pause().then(run)
+  }
 
-      let promiseOrValue: any
-
-      // Execute query
-      try {
-        promiseOrValue = config.fn()
-      } catch (error) {
-        promiseOrValue = Promise.reject(error)
-      }
-
-      Promise.resolve(promiseOrValue)
-        .then(resolve)
-        .catch(error => {
-          // Stop if the fetch is already resolved
-          if (this.isResolved) {
-            return
-          }
-
-          // Do we need to retry the request?
-          const retry = config.retry ?? 3
-          const retryDelay = config.retryDelay ?? defaultRetryDelay
-          const delay =
-            typeof retryDelay === 'function'
-              ? retryDelay(this.failureCount, error)
-              : retryDelay
-          const shouldRetry =
-            retry === true ||
-            (typeof retry === 'number' && this.failureCount < retry) ||
-            (typeof retry === 'function' && retry(this.failureCount, error))
-
-          if (cancelRetry || !shouldRetry) {
-            // We are done if the query does not need to be retried
-            reject(error)
-            return
-          }
-
-          this.failureCount++
-
-          // Notify on fail
-          config.onFail?.(this.failureCount, error)
-
-          // Delay
-          sleep(delay)
-            // Pause if the document is not visible or when the device is offline
-            .then(() => {
-              if (shouldPause()) {
-                return pause()
-              }
-            })
-            .then(() => {
-              if (cancelRetry) {
-                reject(error)
-              } else {
-                run()
-              }
-            })
-        })
-    }
-
-    // Start loop
-    if (canFetch(config.networkMode)) {
-      run()
-    } else {
-      pause().then(run)
-    }
+  return {
+    promise,
+    cancel,
+    continue: () => {
+      continueFn?.()
+    },
+    cancelRetry,
+    continueRetry,
   }
 }
