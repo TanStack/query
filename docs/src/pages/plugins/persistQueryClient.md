@@ -1,28 +1,26 @@
 ---
 id: persistQueryClient
-title: persistQueryClient (Experimental)
+title: persistQueryClient
 ---
 
-> VERY IMPORTANT: This utility is currently in an experimental stage. This means that breaking changes will happen in minor AND patch releases. Use at your own risk. If you choose to rely on this in production in an experimental stage, please lock your version to a patch-level version to avoid unexpected breakages.
+`persistQueryClient` is a utility for persisting the state of your queryClient and its caches for later use. Different **persisters** can be used to store your client and cache to many different storage layers.
 
-`persistQueryClient` is a utility for persisting the state of your queryClient and its caches for later use. Different **persistors** can be used to store your client and cache to many different storage layers.
+## Officially Supported Persisters
 
-## Officially Supported Persistors
-
-- [createWebStoragePersistor (Experimental)](/plugins/createWebStoragePersistor)
-- [createAsyncStoragePersistor (Experimental)](/plugins/createAsyncStoragePersistor)
+- [createWebStoragePersister](/plugins/createWebStoragePersister)
+- [createAsyncStoragePersister](/plugins/createAsyncStoragePersister)
 
 ## Installation
 
-This utility comes packaged with `react-query` and is available under the `react-query/persistQueryClient-experimental` import.
+This utility comes packaged with `react-query` and is available under the `react-query/persistQueryClient` import.
 
 ## Usage
 
-Import the `persistQueryClient` function, and pass it your `QueryClient` instance (with a `cacheTime` set), and a Persistor interface (there are multiple persistor types you can use):
+Import the `persistQueryClient` function, and pass it your `QueryClient` instance (with a `cacheTime` set), and a Persister interface (there are multiple persister types you can use):
 
 ```ts
-import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
-import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
+import { persistQueryClient } from 'react-query/persistQueryClient'
+import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -32,11 +30,11 @@ const queryClient = new QueryClient({
   },
 })
 
-const localStoragePersistor = createWebStoragePersistor({storage: window.localStorage})
+const localStoragePersister = createWebStoragePersister({storage: window.localStorage})
 
 persistQueryClient({
   queryClient,
-  persistor: localStoragePersistor,
+  persister: localStoragePersister,
 })
 ```
 
@@ -52,11 +50,11 @@ You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
 As you use your application:
 
-- When your query/mutation cache is updated, it will be dehydrated and stored by the persistor you provided. **By default**, this action is throttled to happen at most every 1 second to save on potentially expensive writes to a persistor, but can be customized as you see fit.
+- When your query/mutation cache is updated, it will be dehydrated and stored by the persister you provided. **By default**, this action is throttled to happen at most every 1 second to save on potentially expensive writes to a persister, but can be customized as you see fit.
 
 When you reload/bootstrap your app:
 
-- Attempts to load a previously persisted dehydrated query/mutation cache from the persistor
+- Attempts to load a previously persisted dehydrated query/mutation cache from the persister
 - If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
 
 ## Cache Busting
@@ -64,17 +62,17 @@ When you reload/bootstrap your app:
 Sometimes you may make changes to your application or data that immediately invalidate any and all cached data. If and when this happens, you can pass a `buster` string option to `persistQueryClient`, and if the cache that is found does not also have that buster string, it will be discarded.
 
 ```ts
-persistQueryClient({ queryClient, persistor, buster: buildHash })
+persistQueryClient({ queryClient, persister, buster: buildHash })
 ```
 
 ## API
 
 ### `persistQueryClient`
 
-Pass this function a `QueryClient` instance and a persistor that will persist your cache. Both are **required**
+Pass this function a `QueryClient` instance and a persister that will persist your cache. Both are **required**
 
 ```ts
-persistQueryClient({ queryClient, persistor })
+persistQueryClient({ queryClient, persister })
 ```
 
 ### `Options`
@@ -85,9 +83,9 @@ An object of options:
 interface PersistQueryClientOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
-  /** The Persistor interface for storing and restoring the cache
+  /** The Persister interface for storing and restoring the cache
    * to/from a persisted location */
-  persistor: Persistor
+  persister: Persister
   /** The max-allowed age of the cache.
    * If a persisted cache is found that is older than this
    * time, it will be discarded */
@@ -111,12 +109,12 @@ The default options are:
 }
 ```
 
-## Building a Persistor
+## Building a Persister
 
-Persistors have the following interface:
+Persisters have the following interface:
 
 ```ts
-export interface Persistor {
+export interface Persister {
   persistClient(persistClient: PersistedClient): Promisable<void>
   restoreClient(): Promisable<PersistedClient | undefined>
   removeClient(): Promisable<void>
@@ -133,4 +131,4 @@ export interface PersistedClient {
 }
 ```
 
-Satisfy all of these interfaces and you've got yourself a persistor!
+Satisfy all of these interfaces and you've got yourself a persister!

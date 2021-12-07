@@ -3,7 +3,7 @@ import {
   queryKey,
   mockVisibilityState,
   mockConsoleError,
-} from '../../react/tests/utils'
+} from '../../reactjs/tests/utils'
 import {
   QueryCache,
   QueryClient,
@@ -13,6 +13,7 @@ import {
   onlineManager,
   QueryFunctionContext,
 } from '../..'
+import { waitFor } from '@testing-library/react'
 
 describe('query', () => {
   let queryClient: QueryClient
@@ -46,10 +47,8 @@ describe('query', () => {
   it('should continue retry after focus regain and resolve all promises', async () => {
     const key = queryKey()
 
-    const originalVisibilityState = document.visibilityState
-
     // make page unfocused
-    mockVisibilityState('hidden')
+    const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
     let result
@@ -83,7 +82,7 @@ describe('query', () => {
     expect(result).toBeUndefined()
 
     // Reset visibilityState to original value
-    mockVisibilityState(originalVisibilityState)
+    visibilityMock.mockRestore()
     window.dispatchEvent(new FocusEvent('focus'))
 
     // There should not be a result yet
@@ -144,10 +143,8 @@ describe('query', () => {
   it('should throw a CancelledError when a paused query is cancelled', async () => {
     const key = queryKey()
 
-    const originalVisibilityState = document.visibilityState
-
     // make page unfocused
-    mockVisibilityState('hidden')
+    const visibilityMock = mockVisibilityState('hidden')
 
     let count = 0
     let result
@@ -182,7 +179,7 @@ describe('query', () => {
     expect(isCancelledError(result)).toBe(true)
 
     // Reset visibilityState to original value
-    mockVisibilityState(originalVisibilityState)
+    visibilityMock.mockRestore()
     window.dispatchEvent(new FocusEvent('focus'))
   })
 
@@ -190,7 +187,10 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = jest
-      .fn<Promise<'data'>, [QueryFunctionContext<string>]>()
+      .fn<
+        Promise<'data'>,
+        [QueryFunctionContext<ReturnType<typeof queryKey>>]
+      >()
       .mockResolvedValue('data')
 
     queryClient.prefetchQuery(key, queryFn)
@@ -201,7 +201,7 @@ describe('query', () => {
     const args = queryFn.mock.calls[0]![0]
     expect(args).toBeDefined()
     expect(args.pageParam).toBeUndefined()
-    expect(args.queryKey).toEqual([key])
+    expect(args.queryKey).toEqual(key)
     if (typeof AbortSignal === 'function') {
       expect(args.signal).toBeInstanceOf(AbortSignal)
     } else {
@@ -277,7 +277,10 @@ describe('query', () => {
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn<Promise<void>, [QueryFunctionContext<string>]>()
+    const queryFn = jest.fn<
+      Promise<void>,
+      [QueryFunctionContext<ReturnType<typeof queryKey>>]
+    >()
     const onAbort = jest.fn()
     const abortListener = jest.fn()
     let error
@@ -327,43 +330,6 @@ describe('query', () => {
       expect(abortListener).toHaveBeenCalledTimes(1)
     }
     expect(isCancelledError(error)).toBe(true)
-  })
-
-  test('should call cancel() fn if it was provided and not continue when last observer unsubscribed', async () => {
-    const key = queryKey()
-
-    const cancel = jest.fn()
-
-    queryClient.prefetchQuery(key, async () => {
-      const promise = new Promise((resolve, reject) => {
-        sleep(100).then(() => resolve('data'))
-        cancel.mockImplementation(() => {
-          reject(new Error('Cancelled'))
-        })
-      }) as any
-      promise.cancel = cancel
-      return promise
-    })
-
-    await sleep(10)
-
-    // Subscribe and unsubscribe to simulate cancellation because the last observer unsubscribed
-    const observer = new QueryObserver(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    const unsubscribe = observer.subscribe()
-    unsubscribe()
-
-    await sleep(100)
-
-    const query = queryCache.find(key)!
-
-    expect(cancel).toHaveBeenCalled()
-    expect(query.state).toMatchObject({
-      data: undefined,
-      status: 'idle',
-    })
   })
 
   test('should not continue if explicitly cancelled', async () => {
@@ -507,7 +473,6 @@ describe('query', () => {
   })
 
   test('queries with cacheTime 0 should be removed immediately after unsubscribing', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
@@ -521,13 +486,12 @@ describe('query', () => {
     })
     const unsubscribe1 = observer.subscribe()
     unsubscribe1()
-    await sleep(10)
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
     const unsubscribe2 = observer.subscribe()
     unsubscribe2()
-    await sleep(10)
-    expect(count).toBe(2)
-    expect(queryCache.find(key)).toBeUndefined()
-    consoleMock.mockRestore()
+
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
+    expect(count).toBe(1)
   })
 
   test('should be garbage collected when unsubscribed to', async () => {
@@ -541,7 +505,7 @@ describe('query', () => {
     const unsubscribe = observer.subscribe()
     expect(queryCache.find(key)).toBeDefined()
     unsubscribe()
-    expect(queryCache.find(key)).toBeUndefined()
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
   })
 
   test('should be garbage collected later when unsubscribed and query is fetching', async () => {
@@ -564,7 +528,7 @@ describe('query', () => {
     expect(queryCache.find(key)).toBeDefined()
     await sleep(10)
     // should be removed after an additional staleTime wait
-    expect(queryCache.find(key)).toBeUndefined()
+    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
   })
 
   test('should not be garbage collected unless there are no subscribers', async () => {

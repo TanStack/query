@@ -14,6 +14,7 @@ const {
   isFetched,
   isFetchedAfterMount,
   isFetching,
+  isPaused,
   isIdle,
   isLoading,
   isLoadingError,
@@ -26,16 +27,17 @@ const {
   refetch,
   remove,
   status,
+  fetchStatus,
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
   enabled,
+  networkMode,
   initialData,
-  initialDataUpdatedAt
+  initialDataUpdatedAt,
   isDataEqual,
   keepPreviousData,
   meta,
   notifyOnChangeProps,
-  notifyOnChangePropsExclusions,
   onError,
   onSettled,
   onSuccess,
@@ -66,7 +68,7 @@ const result = useQuery({
 
 **Options**
 
-- `queryKey: string | unknown[]`
+- `queryKey:  unknown[]`
   - **Required**
   - The query key to use for this query.
   - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys) for more information.
@@ -74,12 +76,15 @@ const result = useQuery({
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
-  - Receives a `QueryFunctionContext` object with the following variables:
-    - `queryKey: EnsuredQueryKey`: the queryKey, guaranteed to be an Array
+  - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../guides/dependent-queries).
+- `networkMode: 'online' | 'always' | 'offlineFirst`
+  - optional
+  - defaults to `'online'`
+  - see [Network Mode](../guides/network-mode) for more information.
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
   - If `false`, failed queries will not retry by default.
   - If `true`, failed queries will retry infinitely.
@@ -126,18 +131,15 @@ const result = useQuery({
   - If set to `true`, the query will refetch on reconnect if the data is stale.
   - If set to `false`, the query will not refetch on reconnect.
   - If set to `"always"`, the query will always refetch on reconnect.
-- `notifyOnChangeProps: string[] | "tracked"`
+- `notifyOnChangeProps: string[] | "all"`
   - Optional
   - If set, the component will only re-render if any of the listed properties change.
   - If set to `['data', 'error']` for example, the component will only re-render when the `data` or `error` properties change.
-  - If set to `"tracked"`, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
-- `notifyOnChangePropsExclusions: string[]`
-  - Optional
-  - If set, the component will not re-render if any of the listed properties change.
-  - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
+  - If set to `"all"`, the component will opt-out of smart tracking and re-render whenever a query is updated.
+  - By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
 - `onSuccess: (data: TData) => void`
   - Optional
-  - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
+  - This function will fire any time the query successfully fetches new data.
 - `onError: (error: TError) => void`
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
@@ -223,9 +225,15 @@ const result = useQuery({
 - `isFetchedAfterMount: boolean`
   - Will be `true` if the query has been fetched after the component mounted.
   - This property can be used to not show any previously cached data.
+- `fetchStatus: FetchStatus`
+  - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `loading` as well as background refetches.
+  - `paused`: The query wanted to fetch, but has been `paused`
+  - `idle`: The query is not fetching
+  - see [Network Mode](../guides/network-mode) for more information.
 - `isFetching: boolean`
-  - Is `true` whenever a request is in-flight, which includes initial `loading` as well as background refetches.
-  - Will be `true` if the query is currently fetching, including background fetching.
+  - A derived boolean from the `fetchStatus` variable above, provided for convenience.
+- `isPaused: boolean`
+  - A derived boolean from the `fetchStatus` variable above, provided for convenience.
 - `isRefetching: boolean`
   - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading`
   - Is the same as `isFetching && !isLoading`
@@ -236,6 +244,9 @@ const result = useQuery({
 - `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`
   - A function to manually refetch the query.
   - If the query errors, the error will only be logged. If you want an error to be thrown, pass the `throwOnError: true` option
-  - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
+  - `cancelRefetch?: boolean`
+    - Defaults to `true`
+      - Per default, a currently running request will be cancelled before a new request is made
+    - When set to `false`, no refetch will be made if there is already a request running.
 - `remove: () => void`
   - A function to remove the query from the cache.

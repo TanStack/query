@@ -1,5 +1,5 @@
 import type { QueryBehavior } from './query'
-import { isCancelable } from './retryer'
+
 import type {
   InfiniteData,
   QueryFunctionContext,
@@ -73,11 +73,6 @@ export function infiniteQueryBehavior<
             buildNewPages(pages, param, page, previous)
           )
 
-          if (isCancelable(queryFnResult)) {
-            const promiseAsAny = promise as any
-            promiseAsAny.cancel = queryFnResult.cancel
-          }
-
           return promise
         }
 
@@ -148,15 +143,10 @@ export function infiniteQueryBehavior<
           pageParams: newPageParams,
         }))
 
-        const finalPromiseAsAny = finalPromise as any
-
-        finalPromiseAsAny.cancel = () => {
+        context.signal?.addEventListener('abort', () => {
           cancelled = true
           abortController?.abort()
-          if (isCancelable(promise)) {
-            promise.cancel()
-          }
-        }
+        })
 
         return finalPromise
       }

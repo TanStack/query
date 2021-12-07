@@ -1,6 +1,10 @@
 import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
-import type { QueryObserverOptions, QueryObserverResult } from './types'
+import type {
+  QueryObserverOptions,
+  QueryObserverResult,
+  DefaultedQueryObserverOptions,
+} from './types'
 import type { QueryClient } from './queryClient'
 import { NotifyOptions, QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
@@ -74,7 +78,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   ): QueryObserverMatch[] {
     const prevObservers = this.observers
     const defaultedQueryOptions = queries.map(options =>
-      this.client.defaultQueryObserverOptions(options)
+      this.client.defaultQueryOptions(options)
     )
 
     const matchingObservers: QueryObserverMatch[] = defaultedQueryOptions.flatMap(
@@ -134,7 +138,7 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   }
 
   private getObserver(options: QueryObserverOptions): QueryObserver {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
+    const defaultedOptions = this.client.defaultQueryOptions(options)
     const currentObserver = this.observersMap[defaultedOptions.queryHash!]
     return currentObserver ?? new QueryObserver(this.client, defaultedOptions)
   }
@@ -205,6 +209,6 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
 }
 
 type QueryObserverMatch = {
-  defaultedQueryOptions: QueryObserverOptions
+  defaultedQueryOptions: DefaultedQueryObserverOptions
   observer: QueryObserver
 }

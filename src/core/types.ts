@@ -1,13 +1,9 @@
 import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
-import type { QueryFilters } from './utils'
+import type { QueryFilters, QueryTypeFilter } from './utils'
 
-export type QueryKey = string | readonly unknown[]
-export type EnsuredQueryKey<T extends QueryKey> = T extends string
-  ? [T]
-  : Exclude<T, string>
-
+export type QueryKey = readonly unknown[]
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey
@@ -17,7 +13,7 @@ export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
   TPageParam = any
 > {
-  queryKey: EnsuredQueryKey<TQueryKey>
+  queryKey: TQueryKey
   signal?: AbortSignal
   pageParam?: TPageParam
   meta: QueryMeta | undefined
@@ -48,6 +44,8 @@ export interface InfiniteData<TData> {
 
 export type QueryMeta = Record<string, unknown>
 
+export type NetworkMode = 'online' | 'always' | 'offlineFirst'
+
 export interface QueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -62,6 +60,7 @@ export interface QueryOptions<
    */
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: NetworkMode
   cacheTime?: number
   isDataEqual?: (oldData: TData | undefined, newData: TData) => boolean
   queryFn?: QueryFunction<TQueryFnData, TQueryKey>
@@ -140,7 +139,7 @@ export interface QueryObserverOptions<
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
-   * Defaults to `true`.
+   * Defaults to the value of `networkOnline` (`true`)
    */
   refetchOnReconnect?: boolean | 'always'
   /**
@@ -158,13 +157,10 @@ export interface QueryObserverOptions<
   /**
    * If set, the component will only re-render if any of the listed properties change.
    * When set to `['data', 'error']`, the component will only re-render when the `data` or `error` properties change.
-   * When set to `tracked`, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
+   * When set to `'all'`, the component will re-render whenever a query is updated.
+   * By default, access to properties will be tracked, and the component will only re-render when one of the tracked properties change.
    */
-  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'tracked'
-  /**
-   * If set, the component will not re-render if any of the listed properties change.
-   */
-  notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
+  notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
   /**
    * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
    */
@@ -211,6 +207,18 @@ export interface QueryObserverOptions<
    */
   optimisticResults?: boolean
 }
+
+type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+export type DefaultedQueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> = WithRequired<
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  'useErrorBoundary' | 'refetchOnReconnect'
+>
 
 export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
@@ -270,8 +278,7 @@ export interface RefetchOptions extends ResultOptions {
 export interface InvalidateQueryFilters<TPageData = unknown>
   extends QueryFilters,
     RefetchPageFilters<TPageData> {
-  refetchActive?: boolean
-  refetchInactive?: boolean
+  refetchType?: QueryTypeFilter | 'none'
 }
 
 export interface RefetchQueryFilters<TPageData = unknown>
@@ -296,6 +303,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
 }
 
 export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
+export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   data: TData | undefined
@@ -310,6 +318,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isIdle: boolean
   isLoading: boolean
   isLoadingError: boolean
+  isPaused: boolean
   isPlaceholderData: boolean
   isPreviousData: boolean
   isRefetchError: boolean
@@ -321,6 +330,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
+  fetchStatus: FetchStatus
 }
 
 export interface QueryObserverIdleResult<TData = unknown, TError = unknown>
@@ -497,7 +507,7 @@ export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>
   | InfiniteQueryObserverSuccessResult<TData, TError>
 
-export type MutationKey = string | readonly unknown[]
+export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
@@ -537,6 +547,8 @@ export interface MutationOptions<
   ) => Promise<unknown> | void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  networkMode?: NetworkMode
+  cacheTime?: number
   _defaulted?: boolean
   meta?: MutationMeta
 }

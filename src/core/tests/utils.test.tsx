@@ -2,13 +2,12 @@ import {
   replaceEqualDeep,
   partialDeepEqual,
   isPlainObject,
-  mapQueryStatusFilter,
   parseMutationArgs,
   matchMutation,
   scheduleMicrotask,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
-import { queryKey } from '../../react/tests/utils'
+import { queryKey } from '../../reactjs/tests/utils'
 import { Mutation } from '../mutation'
 import { waitFor } from '@testing-library/dom'
 
@@ -340,36 +339,16 @@ describe('core/utils', () => {
     })
   })
 
-  describe('mapQueryStatusFilter', () => {
-    it.each`
-      active       | inactive     | statusFilter
-      ${true}      | ${true}      | ${'all'}
-      ${undefined} | ${undefined} | ${'all'}
-      ${false}     | ${false}     | ${'none'}
-      ${true}      | ${false}     | ${'active'}
-      ${true}      | ${undefined} | ${'active'}
-      ${undefined} | ${false}     | ${'active'}
-      ${false}     | ${true}      | ${'inactive'}
-      ${undefined} | ${true}      | ${'inactive'}
-      ${false}     | ${undefined} | ${'inactive'}
-    `(
-      'returns "$statusFilter" when active is $active, and inactive is $inactive',
-      ({ active, inactive, statusFilter }) => {
-        expect(mapQueryStatusFilter(active, inactive)).toBe(statusFilter)
-      }
-    )
-  })
-
   describe('parseMutationArgs', () => {
     it('should return mutation options', () => {
-      const options = { mutationKey: 'key' }
+      const options = { mutationKey: ['key'] }
       expect(parseMutationArgs(options)).toMatchObject(options)
     })
   })
 
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
-      const filters = { mutationKey: 'key1' }
+      const filters = { mutationKey: ['key1'] }
       const queryClient = new QueryClient()
       const mutation = new Mutation({
         mutationId: 1,

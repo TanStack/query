@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { sleep, queryKey } from '../../react/tests/utils'
+import { sleep, queryKey } from '../../reactjs/tests/utils'
 import {
   QueryClient,
   QueriesObserver,
@@ -53,34 +53,6 @@ describe('queriesObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
-  })
-
-  test('should return same value for multiple falsy query keys', async () => {
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
-    const observer = new QueriesObserver(queryClient, [
-      { queryKey: undefined, queryFn: queryFn1 },
-    ])
-    const results: QueryObserverResult[][] = []
-    results.push(observer.getCurrentResult())
-    const unsubscribe = observer.subscribe(result => {
-      results.push(result)
-    })
-    await sleep(1)
-    observer.setQueries([
-      { queryKey: undefined, queryFn: queryFn1 },
-      { queryKey: '', queryFn: queryFn2 },
-    ])
-    await sleep(1)
-    unsubscribe()
-    expect(results.length).toBe(4)
-    expect(results[0]).toMatchObject([{ status: 'idle', data: undefined }])
-    expect(results[1]).toMatchObject([{ status: 'loading', data: undefined }])
-    expect(results[2]).toMatchObject([{ status: 'success', data: 1 }])
-    expect(results[3]).toMatchObject([
-      { status: 'success', data: 1 },
-      { status: 'success', data: 1 },
-    ])
   })
 
   test('should update when a query updates', async () => {
@@ -146,11 +118,11 @@ describe('queriesObserver', () => {
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
     await sleep(1)
     const queryCache = queryClient.getQueryCache()
-    expect(queryCache.find(key1, { active: true })).toBeUndefined()
-    expect(queryCache.find(key2, { active: true })).toBeDefined()
+    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find(key2, { type: 'active' })).toBeDefined()
     unsubscribe()
-    expect(queryCache.find(key1, { active: true })).toBeUndefined()
-    expect(queryCache.find(key2, { active: true })).toBeUndefined()
+    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find(key2, { type: 'active' })).toBeUndefined()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
       { status: 'idle', data: undefined },

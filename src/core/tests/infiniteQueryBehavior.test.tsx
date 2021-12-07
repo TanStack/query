@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { queryKey, mockConsoleError } from '../../react/tests/utils'
+import { queryKey, mockConsoleError } from '../../reactjs/tests/utils'
 import {
   QueryClient,
   InfiniteQueryObserver,
@@ -80,7 +80,7 @@ describe('InfiniteQueryBehavior', () => {
     )
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: [key],
+      queryKey: key,
       pageParam: undefined,
       meta: undefined,
       signal: abortSignal,
@@ -92,7 +92,7 @@ describe('InfiniteQueryBehavior', () => {
     await observer.fetchNextPage()
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: [key],
+      queryKey: key,
       pageParam: 2,
       meta: undefined,
       signal: abortSignal,
@@ -111,7 +111,7 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: [key],
+      queryKey: key,
       pageParam: 2,
       meta: undefined,
       signal: abortSignal,

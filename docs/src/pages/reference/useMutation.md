@@ -17,13 +17,15 @@ const {
   reset,
   status,
 } = useMutation(mutationFn, {
+  cacheTime,
   mutationKey,
+  networkMode,
   onError,
   onMutate,
   onSettled,
   onSuccess,
   useErrorBoundary,
-  meta,
+  meta
 })
 
 mutate(variables, {
@@ -39,9 +41,16 @@ mutate(variables, {
   - **Required**
   - A function that performs an asynchronous task and returns a promise.
   - `variables` is an object that `mutate` will pass to your `mutationFn`
+- `cacheTime: number | Infinity`
+  - The time in milliseconds that unused/inactive cache data remains in memory. When a mutation's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
+  - If set to `Infinity`, will disable garbage collection
 - `mutationKey: string`
   - Optional
   - A mutation key can be set to inherit defaults set with `queryClient.setMutationDefaults` or to identify the mutation in the devtools.
+- `networkMode: 'online' | 'always' | 'offlineFirst`
+  - optional
+  - defaults to `'online'`
+  - see [Network Mode](../guides/network-mode) for more information.
 - `onMutate: (variables: TVariables) => Promise<TContext | void> | TContext | void`
   - Optional
   - This function will fire before the mutation function is fired and is passed the same variables the mutation function would receive
@@ -94,6 +103,9 @@ mutate(variables, {
     - `error` if the last mutation attempt resulted in an error.
     - `success` if the last mutation attempt was successful.
 - `isIdle`, `isLoading`, `isSuccess`, `isError`: boolean variables derived from `status`
+- `isPaused: boolean`
+  - will be `true` if the mutation has been `paused`
+  - see [Network Mode](../guides/network-mode) for more information.
 - `data: undefined | unknown`
   - Defaults to `undefined`
   - The last successfully resolved data for the query.

@@ -3,7 +3,7 @@ import {
   queryKey,
   mockConsoleError,
   expectType,
-} from '../../react/tests/utils'
+} from '../../reactjs/tests/utils'
 import {
   QueryClient,
   QueryObserver,
@@ -622,7 +622,7 @@ describe('queryObserver', () => {
       select: () => selectedData,
     })
 
-    await observer.refetch({ queryKey: key })
+    await observer.refetch()
     expect(observer.getCurrentResult().data).toBe(selectedData)
 
     unsubscribe()

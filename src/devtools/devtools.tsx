@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { Query, useQueryClient } from 'react-query'
+import { Query, useQueryClient, onlineManager } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
 import { useIsMounted, useSafeState } from './utils'
@@ -275,7 +275,7 @@ export function ReactQueryDevtools({
             {...(otherCloseButtonProps as unknown)}
             onClick={e => {
               setIsOpen(false)
-              onCloseClick && onCloseClick(e)
+              onCloseClick?.(e)
             }}
             style={{
               position: 'fixed',
@@ -314,7 +314,7 @@ export function ReactQueryDevtools({
           aria-expanded="false"
           onClick={e => {
             setIsOpen(true)
-            onToggleClick && onToggleClick(e)
+            onToggleClick?.(e)
           }}
           style={{
             background: 'none',
@@ -357,7 +357,13 @@ export function ReactQueryDevtools({
 }
 
 const getStatusRank = (q: Query) =>
-  q.state.isFetching ? 0 : !q.getObserversCount() ? 3 : q.isStale() ? 2 : 1
+  q.state.fetchStatus !== 'idle'
+    ? 0
+    : !q.getObserversCount()
+    ? 3
+    : q.isStale()
+    ? 2
+    : 1
 
 const sortFns: Record<string, (a: Query, b: Query) => number> = {
   'Status > Last Updated': (a, b) =>
@@ -433,6 +439,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     .length
   const hasFetching = queries.filter(q => getQueryStatusLabel(q) === 'fetching')
     .length
+  const hasPaused = queries.filter(q => getQueryStatusLabel(q) === 'paused')
+    .length
   const hasStale = queries.filter(q => getQueryStatusLabel(q) === 'stale')
     .length
   const hasInactive = queries.filter(q => getQueryStatusLabel(q) === 'inactive')
@@ -456,6 +464,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     const promise = activeQuery?.fetch()
     promise?.catch(noop)
   }
+
+  const [isMockOffline, setMockOffline] = React.useState(false)
 
   return (
     <ThemeProvider theme={theme}>
@@ -554,6 +564,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                 </QueryKey>{' '}
                 <QueryKey
                   style={{
+                    background: theme.paused,
+                    opacity: hasPaused ? 1 : 0.3,
+                  }}
+                >
+                  paused <Code>({hasPaused})</Code>
+                </QueryKey>{' '}
+                <QueryKey
+                  style={{
                     background: theme.warning,
                     color: 'black',
                     textShadow: '0',
@@ -613,9 +631,65 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       onClick={() => setSortDesc(old => !old)}
                       style={{
                         padding: '.3em .4em',
+                        marginRight: '.5em',
                       }}
                     >
                       {sortDesc ? '⬇ Desc' : '⬆ Asc'}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (isMockOffline) {
+                          onlineManager.setOnline(undefined)
+                          setMockOffline(false)
+                          window.dispatchEvent(new Event('online'))
+                        } else {
+                          onlineManager.setOnline(false)
+                          setMockOffline(true)
+                        }
+                      }}
+                      aria-label={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
+                      title={
+                        isMockOffline
+                          ? 'Restore offline mock'
+                          : 'Mock offline behavior'
+                      }
+                      style={{
+                        padding: '0',
+                        height: '2em',
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="2em"
+                        height="2em"
+                        viewBox="0 0 24 24"
+                        stroke={isMockOffline ? theme.danger : 'currentColor'}
+                        fill="none"
+                      >
+                        {isMockOffline ? (
+                          <>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                            <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
+                            <path d="M3.515 9.515a12 12 0 0 1 3.544 -2.455m3.101 -.92a12 12 0 0 1 10.325 3.374" />
+                            <line x1="3" y1="3" x2="21" y2="21" />
+                          </>
+                        ) : (
+                          <>
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                            <line x1="12" y1="18" x2="12.01" y2="18" />
+                            <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
+                            <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
+                            <path d="M3.515 9.515c4.686 -4.687 12.284 -4.687 17 0" />
+                          </>
+                        )}
+                      </svg>
                     </Button>
                   </>
                 ) : null}
@@ -799,7 +873,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               <Button
                 type="button"
                 onClick={handleRefetch}
-                disabled={activeQuery.state.isFetching}
+                disabled={activeQuery.state.fetchStatus === 'fetching'}
                 style={{
                   background: theme.active,
                 }}

@@ -36,7 +36,7 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import { CancelOptions } from './types'
+import { CancelOptions, DefaultedQueryObserverOptions } from './types'
 
 // TYPES
 
@@ -77,13 +77,13 @@ export class QueryClient {
 
   mount(): void {
     this.unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
+      if (focusManager.isFocused()) {
         this.mutationCache.onFocus()
         this.queryCache.onFocus()
       }
     })
     this.unsubscribeOnline = onlineManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
+      if (onlineManager.isOnline()) {
         this.mutationCache.onOnline()
         this.queryCache.onOnline()
       }
@@ -99,7 +99,7 @@ export class QueryClient {
   isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
-    filters.fetching = true
+    filters.fetchStatus = 'fetching'
     return this.queryCache.findAll(filters).length
   }
 
@@ -136,7 +136,7 @@ export class QueryClient {
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     return this.queryCache
       .build(this, defaultedOptions)
-      .setData(updater, options)
+      .setData(updater, { ...options, notifySuccess: false })
   }
 
   setQueriesData<TData>(
@@ -203,8 +203,8 @@ export class QueryClient {
     const queryCache = this.queryCache
 
     const refetchFilters: RefetchQueryFilters = {
+      type: 'active',
       ...filters,
-      active: true,
     }
 
     return notifyManager.batch(() => {
@@ -255,18 +255,18 @@ export class QueryClient {
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
-    const refetchFilters: RefetchQueryFilters = {
-      ...filters,
-      // if filters.refetchActive is not provided and filters.active is explicitly false,
-      // e.g. invalidateQueries({ active: false }), we don't want to refetch active queries
-      active: filters.refetchActive ?? filters.active ?? true,
-      inactive: filters.refetchInactive ?? false,
-    }
-
     return notifyManager.batch(() => {
       this.queryCache.findAll(filters).forEach(query => {
         query.invalidate()
       })
+
+      if (filters?.refetchType === 'none') {
+        return Promise.resolve()
+      }
+      const refetchFilters: RefetchQueryFilters = {
+        ...filters,
+        type: filters?.refetchType ?? filters?.type ?? 'active',
+      }
       return this.refetchQueries(refetchFilters, options)
     })
   }
@@ -291,6 +291,7 @@ export class QueryClient {
       this.queryCache.findAll(filters).map(query =>
         query.fetch(undefined, {
           ...options,
+          cancelRefetch: options?.cancelRefetch ?? true,
           meta: { refetchPage: filters?.refetchPage },
         })
       )
@@ -499,26 +500,8 @@ export class QueryClient {
       .catch(noop)
   }
 
-  cancelMutations(): Promise<void> {
-    const promises = notifyManager.batch(() =>
-      this.mutationCache.getAll().map(mutation => mutation.cancel())
-    )
-    return Promise.all(promises).then(noop).catch(noop)
-  }
-
   resumePausedMutations(): Promise<void> {
     return this.getMutationCache().resumePausedMutations()
-  }
-
-  executeMutation<
-    TData = unknown,
-    TError = unknown,
-    TVariables = void,
-    TContext = unknown
-  >(
-    options: MutationOptions<TData, TError, TVariables, TContext>
-  ): Promise<TData> {
-    return this.mutationCache.build(this, options).execute()
   }
 
   getQueryCache(): QueryCache {
@@ -591,16 +574,30 @@ export class QueryClient {
     TQueryData,
     TQueryKey extends QueryKey
   >(
-    options?: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
+    options?:
+      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | DefaultedQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >
+  ): DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {
     if (options?._defaulted) {
-      return options
+      return options as DefaultedQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
     }
 
     const defaultedOptions = {
@@ -608,13 +605,7 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    } as QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    }
 
     if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
@@ -623,25 +614,22 @@ export class QueryClient {
       )
     }
 
-    return defaultedOptions
-  }
+    // dependent default values
+    if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
+      defaultedOptions.refetchOnReconnect =
+        defaultedOptions.networkMode !== 'always'
+    }
+    if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
+      defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
+    }
 
-  defaultQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey
-  >(
-    options?: QueryObserverOptions<
+    return defaultedOptions as DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
     >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
-    return this.defaultQueryOptions(options)
   }
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(
