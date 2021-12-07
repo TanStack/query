@@ -4175,12 +4175,12 @@ describe('useQuery', () => {
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string, unknown>[] = []
+    const states: UseQueryResult<string>[] = []
 
     const queryFn: QueryFunction<string, [typeof key, number]> = async ctx => {
       const [, limit] = ctx.queryKey
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
-      await sleep(10)
+      await sleep(25)
       return value
     }
 
@@ -4190,6 +4190,7 @@ describe('useQuery', () => {
       return (
         <div>
           <h1>Status: {state.status}</h1>
+          <h1>data: {state.data}</h1>
         </div>
       )
     }
@@ -4205,9 +4206,9 @@ describe('useQuery', () => {
     )
 
     await waitFor(() => rendered.getByText('off'))
-    await sleep(10)
+    await sleep(20)
 
-    expect(states).toHaveLength(4)
+    await waitFor(() => expect(states).toHaveLength(4))
 
     expect(queryCache.find([key, 0])?.state).toMatchObject({
       data: 'data 0',
