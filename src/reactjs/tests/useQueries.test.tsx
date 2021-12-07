@@ -30,14 +30,14 @@ describe('useQueries', () => {
         {
           queryKey: key1,
           queryFn: async () => {
-            await sleep(5)
+            await sleep(10)
             return 1
           },
         },
         {
           queryKey: key2,
           queryFn: async () => {
-            await sleep(35)
+            await sleep(100)
             return 2
           },
         },
