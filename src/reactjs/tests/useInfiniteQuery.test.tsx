@@ -190,6 +190,7 @@ describe('useInfiniteQuery', () => {
         {
           getNextPageParam: () => 1,
           keepPreviousData: true,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -316,6 +317,7 @@ describe('useInfiniteQuery', () => {
             pages: [...data.pages].reverse(),
             pageParams: [...data.pageParams].reverse(),
           }),
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -540,6 +542,7 @@ describe('useInfiniteQuery', () => {
         {
           getPreviousPageParam: firstPage => firstPage - 1,
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 
@@ -639,6 +642,7 @@ describe('useInfiniteQuery', () => {
         },
         {
           getNextPageParam: lastPage => lastPage + 1,
+          notifyOnChangeProps: 'all',
         }
       )
 

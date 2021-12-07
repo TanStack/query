@@ -99,7 +99,7 @@ export class QueryClient {
   isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
-    filters.fetching = true
+    filters.fetchStatus = 'fetching'
     return this.queryCache.findAll(filters).length
   }
 

@@ -78,6 +78,7 @@ describe('queryCache', () => {
     test('should filter correctly', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
+      const keyFetching = queryKey()
       await queryClient.prefetchQuery(key1, () => 'data1')
       await queryClient.prefetchQuery(key2, () => 'data2')
       await queryClient.prefetchQuery([{ a: 'a', b: 'b' }], () => 'data3')
@@ -137,6 +138,26 @@ describe('queryCache', () => {
         queryCache.findAll({ predicate: query => query === query3 })
       ).toEqual([query3])
       expect(queryCache.findAll(['posts'])).toEqual([query4])
+
+      expect(queryCache.findAll({ fetchStatus: 'idle' })).toEqual([
+        query1,
+        query2,
+        query3,
+        query4,
+      ])
+      expect(queryCache.findAll(key2, { fetchStatus: undefined })).toEqual([
+        query2,
+      ])
+
+      const promise = queryClient.prefetchQuery(keyFetching, async () => {
+        await sleep(20)
+        return 'dataFetching'
+      })
+      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([
+        queryCache.find(keyFetching),
+      ])
+      await promise
+      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([])
     })
 
     test('should return all the queries when no filters are defined', async () => {
