@@ -1,10 +1,10 @@
 import { sleep } from '../utils'
-import { createFocusManager } from '../focusManager'
+import { focusManager } from '../focusManager'
 
 describe('focusManager', () => {
-  let focusManager: ReturnType<typeof createFocusManager>
-  beforeEach(() => {
-    focusManager = createFocusManager()
+  afterEach(() => {
+    // Reset removeEventListener private property to avoid side effects between tests
+    focusManager['removeEventListener'] = undefined
   })
 
   it('should call previous remove handler when replacing an event listener', () => {
@@ -69,7 +69,7 @@ describe('focusManager', () => {
 
     const setEventListenerSpy = jest.spyOn(focusManager, 'setEventListener')
 
-    const unsubscribe = focusManager.subscribe(() => undefined)
+    const unsubscribe = focusManager.subscribe()
     expect(setEventListenerSpy).toHaveBeenCalledTimes(0)
 
     unsubscribe()
@@ -88,7 +88,7 @@ describe('focusManager', () => {
     )
 
     // Should set the default event listener with window event listeners
-    const unsubscribe = focusManager.subscribe(() => undefined)
+    const unsubscribe = focusManager.subscribe()
     expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
 
     // Should replace the window default event listener by a new one
