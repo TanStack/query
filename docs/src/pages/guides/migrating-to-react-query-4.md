@@ -207,6 +207,16 @@ new QueryClient({
 })
 ```
 
+### new API for `useQueries`
+
+The `useQueries` hook now accepts an object with a `queries` prop as its input. The value of the `queries` prop is an array of queries (this array is identical to what was passed into `useQueries` in v3).
+
+```diff
+- useQueries([{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }])
++ useQueries({ queries: [{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }] })
+```
+
+
 ### Removed undocumented methods from the `queryClient`
 
 The methods `cancelMutatations` and `executeMutation` were undocumented and unused internally, so we removed them. Since they were just wrappers around methods available on the `mutationCache`, you can still use the functionality.
