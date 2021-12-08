@@ -1,10 +1,10 @@
-import { onlineManager } from '../onlineManager'
+import { createOnlineManager } from '../onlineManager'
 import { sleep } from '../utils'
 
 describe('onlineManager', () => {
-  afterEach(() => {
-    // Reset removeEventListener private property to avoid side effects between tests
-    onlineManager['removeEventListener'] = undefined
+  let onlineManager: ReturnType<typeof createOnlineManager>
+  beforeEach(() => {
+    onlineManager = createOnlineManager()
   })
 
   test('isOnline should return true if navigator is undefined', () => {
@@ -64,7 +64,7 @@ describe('onlineManager', () => {
 
     const setEventListenerSpy = jest.spyOn(onlineManager, 'setEventListener')
 
-    const unsubscribe = onlineManager.subscribe()
+    const unsubscribe = onlineManager.subscribe(() => undefined)
     expect(setEventListenerSpy).toHaveBeenCalledTimes(0)
 
     unsubscribe()
@@ -83,7 +83,7 @@ describe('onlineManager', () => {
     )
 
     // Should set the default event listener with window event listeners
-    const unsubscribe = onlineManager.subscribe()
+    const unsubscribe = onlineManager.subscribe(() => undefined)
     expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
 
     // Should replace the window default event listener by a new one

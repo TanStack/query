@@ -1,76 +1,31 @@
-import { Subscribable } from './subscribable'
-import { isServer } from './utils'
+import { createEventManager } from './eventManager'
 
-class OnlineManager extends Subscribable {
-  private online?: boolean
-  private removeEventListener?: () => void
+export const createOnlineManager = () => {
+  const { setEventListener, subscribe, ...manager } = createEventManager([
+    'online',
+    'offline',
+  ])
 
-  protected onSubscribe(): void {
-    if (!this.removeEventListener) {
-      this.setDefaultEventListener()
-    }
-  }
-
-  setEventListener(
-    setup: (setOnline: (online?: boolean) => void) => () => void
-  ): void {
-    if (this.removeEventListener) {
-      this.removeEventListener()
-    }
-    this.removeEventListener = setup((online?: boolean) => {
-      if (typeof online === 'boolean') {
-        this.setOnline(online)
-      } else {
-        this.onOnline()
+  return {
+    subscribe,
+    setEventListener,
+    setOnline: manager.setValue,
+    isOnline: (): boolean => {
+      const value = manager.getValue()
+      if (typeof value === 'boolean') {
+        return value
       }
-    })
-  }
 
-  setOnline(online?: boolean): void {
-    this.online = online
+      if (
+        typeof navigator === 'undefined' ||
+        typeof navigator.onLine === 'undefined'
+      ) {
+        return true
+      }
 
-    if (online) {
-      this.onOnline()
-    }
-  }
-
-  onOnline(): void {
-    this.listeners.forEach(listener => {
-      listener()
-    })
-  }
-
-  isOnline(): boolean {
-    if (typeof this.online === 'boolean') {
-      return this.online
-    }
-
-    if (
-      typeof navigator === 'undefined' ||
-      typeof navigator.onLine === 'undefined'
-    ) {
-      return true
-    }
-
-    return navigator.onLine
-  }
-
-  private setDefaultEventListener() {
-    if (!isServer && window?.addEventListener) {
-      this.setEventListener(onOnline => {
-        const listener = () => onOnline()
-        // Listen to online
-        window.addEventListener('online', listener, false)
-        window.addEventListener('offline', listener, false)
-
-        return () => {
-          // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('online', listener)
-          window.removeEventListener('offline', listener)
-        }
-      })
-    }
+      return navigator.onLine
+    },
   }
 }
 
-export const onlineManager = new OnlineManager()
+export const onlineManager = createOnlineManager()
