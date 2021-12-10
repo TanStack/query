@@ -103,8 +103,8 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('next'))
     await sleep(10)
 
-    expect(states.length).toBe(3)
-    expect(states[2]).toMatchObject({
+    expect(states.length).toBe(2)
+    expect(states[1]).toMatchObject({
       data: { pages: [2], pageParams: [undefined] },
       status: 'success',
     })
