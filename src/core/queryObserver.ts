@@ -72,7 +72,7 @@ export class QueryObserver<
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private currentRefetchInterval?: number | false
-  private trackedProps!: Array<keyof QueryObserverResult>
+  private trackedProps!: Set<keyof QueryObserverResult>
 
   constructor(
     client: QueryClient,
@@ -88,7 +88,7 @@ export class QueryObserver<
 
     this.client = client
     this.options = options
-    this.trackedProps = []
+    this.trackedProps = new Set()
     this.previousSelectError = null
     this.bindMethods()
     this.setOptions(options)
@@ -235,25 +235,19 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
 
-    const trackProp = (key: keyof QueryObserverResult) => {
-      if (!this.trackedProps.includes(key)) {
-        this.trackedProps.push(key)
-      }
-    }
-
     Object.keys(result).forEach(key => {
       Object.defineProperty(trackedResult, key, {
         configurable: false,
         enumerable: true,
         get: () => {
-          trackProp(key as keyof QueryObserverResult)
+          this.trackedProps.add(key as keyof QueryObserverResult)
           return result[key as keyof QueryObserverResult]
         },
       })
     })
 
     if (defaultedOptions.useErrorBoundary) {
-      trackProp('error')
+      this.trackedProps.add('error')
     }
 
     return trackedResult
@@ -605,18 +599,17 @@ export class QueryObserver<
 
     if (
       notifyOnChangeProps === 'all' ||
-      (!notifyOnChangeProps && !this.trackedProps.length)
+      (!notifyOnChangeProps && !this.trackedProps.size)
     ) {
       return true
     }
 
-    const includedProps = notifyOnChangeProps ?? this.trackedProps
+    const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
 
     return Object.keys(result).some(key => {
       const typedKey = key as keyof QueryObserverResult
       const changed = result[typedKey] !== prevResult[typedKey]
-      const isIncluded = includedProps?.some(x => x === key)
-      return changed && (!includedProps || isIncluded)
+      return changed && includedProps.has(typedKey)
     })
   }
 
