@@ -111,9 +111,11 @@ type QueriesResults<
   : // Fallback
     UseQueryResult[]
 
-export function useQueries<T extends any[]>(
+export function useQueries<T extends any[]>({
+  queries,
+}: {
   queries: readonly [...QueriesOptions<T>]
-): QueriesResults<T> {
+}): QueriesResults<T> {
   const queryClient = useQueryClient()
 
   const defaultedQueries = React.useMemo(

@@ -21,7 +21,7 @@ import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
 import { notifyManager } from './notifyManager'
 import { getLogger } from './logger'
-import { Retryer, isCancelledError, canFetch } from './retryer'
+import { Retryer, isCancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
 
 // TYPES
@@ -158,7 +158,7 @@ export class Query<
 
   private cache: QueryCache
   private promise?: Promise<TData>
-  private retryer?: Retryer<TData, TError>
+  private retryer?: Retryer<TData>
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
@@ -431,7 +431,7 @@ export class Query<
     }
 
     // Try to fetch the data
-    this.retryer = new Retryer({
+    this.retryer = createRetryer({
       fn: context.fetchFn as () => TData,
       abort: abortController?.abort?.bind(abortController),
       onSuccess: data => {
