@@ -6,7 +6,11 @@ import type {
   InfiniteQueryObserverResult,
 } from './types'
 import type { QueryClient } from './queryClient'
-import { ObserverFetchOptions, QueryObserver } from './queryObserver'
+import {
+  NotifyOptions,
+  ObserverFetchOptions,
+  QueryObserver,
+} from './queryObserver'
 import {
   hasNextPage,
   hasPreviousPage,
@@ -67,12 +71,16 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData
-    >
+    >,
+    notifyOptions?: NotifyOptions
   ): void {
-    super.setOptions({
-      ...options,
-      behavior: infiniteQueryBehavior(),
-    })
+    super.setOptions(
+      {
+        ...options,
+        behavior: infiniteQueryBehavior(),
+      },
+      notifyOptions
+    )
   }
 
   getOptimisticResult(

@@ -68,10 +68,12 @@ import { AppState } from 'react-native'
 import { focusManager } from 'react-query'
 
 focusManager.setEventListener(handleFocus => {
-  AppState.addEventListener('change', handleFocus)
+  const subscription = AppState.addEventListener('change', state => {
+    handleFocus(state === 'active')
+  })
 
   return () => {
-   AppState.removeEventListener('change', handleFocus)
+    subscription.remove()
   }
 })
 ```
