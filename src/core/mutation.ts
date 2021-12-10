@@ -4,7 +4,7 @@ import type { MutationObserver } from './mutationObserver'
 import { getLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
-import { canFetch, Retryer } from './retryer'
+import { canFetch, Retryer, createRetryer } from './retryer'
 import { noop } from './utils'
 
 // TYPES
@@ -90,7 +90,7 @@ export class Mutation<
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
   private mutationCache: MutationCache
-  private retryer?: Retryer<TData, TError>
+  private retryer?: Retryer<TData>
 
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
     super()
@@ -262,7 +262,7 @@ export class Mutation<
   }
 
   private executeMutation(): Promise<TData> {
-    this.retryer = new Retryer({
+    this.retryer = createRetryer({
       fn: () => {
         if (!this.options.mutationFn) {
           return Promise.reject('No mutationFn found')
