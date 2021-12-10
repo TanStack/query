@@ -38,7 +38,7 @@ const globalState = {
 }
 ```
 
-This also means that with a few hook calls to `useQuery` and `useMutation`, we also get to remove any boilerplate code that use to manage our server state eg.
+This also means that with a few hook calls to `useQuery` and `useMutation`, we also get to remove any boilerplate code that was used to manage our server state eg.
 
 - Connectors
 - Action Creators
