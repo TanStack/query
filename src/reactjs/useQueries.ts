@@ -110,9 +110,11 @@ type QueriesResults<
   : // Fallback
     UseQueryResult[]
 
-export function useQueries<T extends any[]>(
+export function useQueries<T extends any[]>({
+  queries,
+}: {
   queries: readonly [...QueriesOptions<T>]
-): QueriesResults<T> {
+}): QueriesResults<T> {
   const mountedRef = React.useRef(false)
   const [, forceUpdate] = React.useState(0)
 
