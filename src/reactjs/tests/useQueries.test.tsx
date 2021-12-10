@@ -280,73 +280,33 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setSeries2(3)
-        }, 20)
-      }, [])
+      const isFetching = result.some(r => r.isFetching)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setSeries1(2)
-        }, 50)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <div>
+            data1: {result[0]?.data ?? 'null'}, data2:{' '}
+            {result[1]?.data ?? 'null'}
+          </div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setSeries2(3)}>setSeries2</button>
+          <button onClick={() => setSeries1(2)}>setSeries1</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(9))
+    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
+    rendered.getByRole('button', { name: /setSeries2/i }).click()
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[6]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[7]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[8]).toMatchObject([
+    await waitFor(() => rendered.getByText('data1: 5, data2: 15'))
+    rendered.getByRole('button', { name: /setSeries1/i }).click()
+
+    await waitFor(() => rendered.getByText('data1: 10, data2: 15'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+
+    expect(states[states.length - 1]).toMatchObject([
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
       { status: 'success', data: 15, isPreviousData: false, isFetching: false },
     ])
