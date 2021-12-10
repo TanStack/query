@@ -197,25 +197,28 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage()
-        }, 50)
-        setActTimeout(() => {
-          setOrder('asc')
-        }, 100)
-      }, [fetchNextPage])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+          <button onClick={() => setOrder('asc')}>order</button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(300)
+    await waitFor(() => rendered.getByText('data: 0-desc'))
+    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
 
-    expect(states.length).toBe(7)
+    await waitFor(() => rendered.getByText('data: 0-desc,1-desc'))
+    rendered.getByRole('button', { name: /order/i }).click()
+
+    await waitFor(() => rendered.getByText('data: 0-asc'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(7))
+
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: true,
