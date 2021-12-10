@@ -69,7 +69,7 @@ describe('focusManager', () => {
 
     const setEventListenerSpy = jest.spyOn(focusManager, 'setEventListener')
 
-    const unsubscribe = focusManager.subscribe()
+    const unsubscribe = focusManager.subscribe(() => undefined)
     expect(setEventListenerSpy).toHaveBeenCalledTimes(0)
 
     unsubscribe()
@@ -88,7 +88,7 @@ describe('focusManager', () => {
     )
 
     // Should set the default event listener with window event listeners
-    const unsubscribe = focusManager.subscribe()
+    const unsubscribe = focusManager.subscribe(() => undefined)
     expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
 
     // Should replace the window default event listener by a new one

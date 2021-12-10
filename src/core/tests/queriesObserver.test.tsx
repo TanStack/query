@@ -248,7 +248,7 @@ describe('queriesObserver', () => {
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
     unsubscribe()
     expect(queryFn1).toHaveBeenCalledTimes(1)

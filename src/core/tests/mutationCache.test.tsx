@@ -164,7 +164,7 @@ describe('mutationCache', () => {
         cacheTime: 10,
         mutationFn: () => Promise.resolve(),
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
 
       expect(queryClient.getMutationCache().getAll()).toHaveLength(0)
       observer.mutate(1)
@@ -231,7 +231,7 @@ describe('mutationCache', () => {
         },
         onSuccess,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       observer.mutate(1)
       unsubscribe()
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
@@ -257,7 +257,7 @@ describe('mutationCache', () => {
         },
         onSuccess,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       observer.mutate(1)
       unsubscribe()
       await waitFor(() => {
