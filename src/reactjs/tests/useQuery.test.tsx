@@ -2672,6 +2672,30 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should update with data if we observe no properties and useErrorBoundary', async () => {
+    const key = queryKey()
+
+    let result: UseQueryResult<string> | undefined
+
+    function Page() {
+      const query = useQuery(key, () => Promise.resolve('data'), {
+        useErrorBoundary: true,
+      })
+
+      React.useEffect(() => {
+        result = query
+      })
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(result?.data).toBe('data')
+  })
+
   it('should set status to error instead of throwing when error should not be thrown', async () => {
     const key = queryKey()
     const consoleMock = mockConsoleError()

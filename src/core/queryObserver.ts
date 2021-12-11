@@ -1,4 +1,4 @@
-import { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
+import { RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -224,14 +224,7 @@ export class QueryObserver<
   }
 
   trackResult(
-    result: QueryObserverResult<TData, TError>,
-    defaultedOptions: DefaultedQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    result: QueryObserverResult<TData, TError>
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
 
@@ -245,10 +238,6 @@ export class QueryObserver<
         },
       })
     })
-
-    if (defaultedOptions.useErrorBoundary) {
-      this.trackedProps.add('error')
-    }
 
     return trackedResult
   }
@@ -605,6 +594,10 @@ export class QueryObserver<
     }
 
     const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
+
+    if (this.options.useErrorBoundary) {
+      includedProps.add('error')
+    }
 
     return Object.keys(result).some(key => {
       const typedKey = key as keyof QueryObserverResult
