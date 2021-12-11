@@ -8,7 +8,7 @@ import { Action, Query, QueryState } from './query'
 import type { QueryKey, QueryOptions } from './types'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
-import { Notifiable } from './notifiable'
+import { Subscribable } from './subscribable'
 import { QueryObserver } from './queryObserver'
 
 // TYPES
@@ -63,9 +63,11 @@ type QueryCacheNotifyEvent =
   | NotifyEventQueryObserverRemoved
   | NotifyEventQueryObserverResultsUpdated
 
+type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
+
 // CLASS
 
-export class QueryCache extends Notifiable<QueryCacheNotifyEvent> {
+export class QueryCache extends Subscribable<QueryCacheListener> {
   config: QueryCacheConfig
 
   private queries: Query<any, any, any, any>[]
@@ -175,6 +177,14 @@ export class QueryCache extends Notifiable<QueryCacheNotifyEvent> {
     return Object.keys(filters).length > 0
       ? this.queries.filter(query => matchQuery(filters, query))
       : this.queries
+  }
+
+  notify(event: QueryCacheNotifyEvent) {
+    notifyManager.batch(() => {
+      this.listeners.forEach(listener => {
+        listener(event)
+      })
+    })
   }
 
   onFocus(): void {
