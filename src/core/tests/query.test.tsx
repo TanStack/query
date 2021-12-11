@@ -224,7 +224,7 @@ describe('query', () => {
       queryKey: key,
       enabled: false,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     unsubscribe()
 
     await sleep(100)
@@ -253,7 +253,7 @@ describe('query', () => {
       queryKey: key,
       enabled: false,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     unsubscribe()
 
     await sleep(100)
@@ -484,10 +484,10 @@ describe('query', () => {
       cacheTime: 0,
       staleTime: Infinity,
     })
-    const unsubscribe1 = observer.subscribe()
+    const unsubscribe1 = observer.subscribe(() => undefined)
     unsubscribe1()
     await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
-    const unsubscribe2 = observer.subscribe()
+    const unsubscribe2 = observer.subscribe(() => undefined)
     unsubscribe2()
 
     await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
@@ -502,7 +502,7 @@ describe('query', () => {
       cacheTime: 0,
     })
     expect(queryCache.find(key)).toBeDefined()
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     expect(queryCache.find(key)).toBeDefined()
     unsubscribe()
     await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
@@ -518,7 +518,7 @@ describe('query', () => {
       },
       cacheTime: 10,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(20)
     expect(queryCache.find(key)).toBeDefined()
     observer.refetch()
@@ -539,7 +539,7 @@ describe('query', () => {
       cacheTime: 0,
     })
     expect(queryCache.find(key)).toBeDefined()
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(100)
     expect(queryCache.find(key)).toBeDefined()
     unsubscribe()
@@ -560,9 +560,9 @@ describe('query', () => {
 
     expect(query?.getObserversCount()).toEqual(0)
 
-    const unsubscribe1 = observer.subscribe()
-    const unsubscribe2 = observer2.subscribe()
-    const unsubscribe3 = observer3.subscribe()
+    const unsubscribe1 = observer.subscribe(() => undefined)
+    const unsubscribe2 = observer2.subscribe(() => undefined)
+    const unsubscribe3 = observer3.subscribe(() => undefined)
     expect(query?.getObserversCount()).toEqual(3)
 
     unsubscribe3()
@@ -658,7 +658,7 @@ describe('query', () => {
     })
 
     const refetchSpy = jest.spyOn(observer, 'refetch')
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     queryCache.onOnline()
 
     // Should refetch the observer
@@ -821,7 +821,7 @@ describe('query', () => {
       retry: false,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(10)
     expect(consoleMock).toHaveBeenCalledWith('Missing queryFn')
 

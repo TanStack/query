@@ -722,8 +722,8 @@ describe('queryClient', () => {
         queryKey: key1,
         enabled: false,
       })
-      observer1.subscribe()
-      observer2.subscribe()
+      observer1.subscribe(() => undefined)
+      observer2.subscribe(() => undefined)
       await queryClient.refetchQueries()
       observer1.destroy()
       observer2.destroy()
@@ -743,7 +743,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries({ type: 'active', stale: false })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -761,7 +761,7 @@ describe('queryClient', () => {
         queryKey: key1,
         queryFn: queryFn1,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       queryClient.invalidateQueries(key1)
       await queryClient.refetchQueries({ stale: true })
       unsubscribe()
@@ -782,7 +782,7 @@ describe('queryClient', () => {
         queryKey: key1,
         queryFn: queryFn1,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries(
         { type: 'active', stale: true },
         { cancelRefetch: false }
@@ -804,7 +804,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries()
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -823,7 +823,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries({ type: 'all' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -842,7 +842,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries({ type: 'active' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -861,7 +861,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries({ type: 'inactive' })
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
@@ -906,7 +906,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       queryClient.invalidateQueries(key1)
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -925,7 +925,7 @@ describe('queryClient', () => {
         enabled: false,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       queryClient.invalidateQueries(key1)
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(1)
@@ -944,7 +944,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       queryClient.invalidateQueries(key1, {
         refetchType: 'none',
       })
@@ -966,7 +966,7 @@ describe('queryClient', () => {
         staleTime: Infinity,
         enabled: false,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       queryClient.invalidateQueries(key1, {
         refetchType: 'inactive',
       })
@@ -987,7 +987,7 @@ describe('queryClient', () => {
         queryFn: queryFn1,
         staleTime: Infinity,
       })
-      const unsubscribe = observer.subscribe()
+      const unsubscribe = observer.subscribe(() => undefined)
       queryClient.invalidateQueries({
         refetchType: 'all',
       })
@@ -1005,7 +1005,7 @@ describe('queryClient', () => {
         enabled: false,
         initialData: 1,
       })
-      observer.subscribe()
+      observer.subscribe(() => undefined)
 
       queryClient.fetchQuery(key, ({ signal }) => {
         const promise = new Promise(resolve => {
@@ -1036,7 +1036,7 @@ describe('queryClient', () => {
         enabled: false,
         initialData: 1,
       })
-      observer.subscribe()
+      observer.subscribe(() => undefined)
 
       queryClient.fetchQuery(key, ({ signal }) => {
         const promise = new Promise(resolve => {
@@ -1125,8 +1125,8 @@ describe('queryClient', () => {
         queryFn: queryFn2,
         enabled: false,
       })
-      observer1.subscribe()
-      observer2.subscribe()
+      observer1.subscribe(() => undefined)
+      observer2.subscribe(() => undefined)
       await queryClient.resetQueries()
       observer2.destroy()
       observer1.destroy()
