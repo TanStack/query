@@ -8,15 +8,13 @@ export class Subscribable<TListener extends Function = Listener> {
     this.subscribe = this.subscribe.bind(this)
   }
 
-  subscribe(listener?: TListener): () => void {
-    const callback = listener || (() => undefined)
-
-    this.listeners.push(callback as TListener)
+  subscribe(listener: TListener): () => void {
+    this.listeners.push(listener as TListener)
 
     this.onSubscribe()
 
     return () => {
-      this.listeners = this.listeners.filter(x => x !== callback)
+      this.listeners = this.listeners.filter(x => x !== listener)
       this.onUnsubscribe()
     }
   }

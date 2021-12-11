@@ -27,7 +27,7 @@ describe('queryObserver', () => {
     const key = queryKey()
     const queryFn = jest.fn()
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -315,7 +315,7 @@ describe('queryObserver', () => {
       queryFn,
       enabled: false,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -441,7 +441,7 @@ describe('queryObserver', () => {
       retry: 10,
       retryDelay: 50,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(70)
     unsubscribe()
     await sleep(200)
@@ -459,7 +459,7 @@ describe('queryObserver', () => {
       cacheTime: 0,
       refetchInterval: 1,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     // @ts-expect-error
     expect(observer.refetchIntervalId).not.toBeUndefined()
     unsubscribe()
@@ -511,7 +511,7 @@ describe('queryObserver', () => {
       retryDelay: 20,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
 
     // Simulate a race condition when an unsubscribe and a retry occur.
     await sleep(20)
@@ -588,7 +588,7 @@ describe('queryObserver', () => {
       refetchInterval: 10,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(30)
 
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -610,7 +610,7 @@ describe('queryObserver', () => {
       select: () => data,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
 
     await sleep(10)
     expect(observer.getCurrentResult().data).toBe(data)
