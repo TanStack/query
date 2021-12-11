@@ -79,6 +79,7 @@ export default inputSrcs
           replace({
             'process.env.NODE_ENV': `"production"`,
             delimiters: ['', ''],
+            preventAssignment: true,
           }),
           resolve(resolveConfig),
           babel(babelConfig),

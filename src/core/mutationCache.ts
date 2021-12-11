@@ -4,7 +4,7 @@ import type { QueryClient } from './queryClient'
 import { notifyManager } from './notifyManager'
 import { Action, Mutation, MutationState } from './mutation'
 import { matchMutation, MutationFilters, noop } from './utils'
-import { Notifiable } from './notifiable'
+import { Subscribable } from './subscribable'
 
 // TYPES
 
@@ -61,9 +61,11 @@ type MutationCacheNotifyEvent =
   | NotifyEventMutationObserverRemoved
   | NotifyEventMutationUpdated
 
+type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
+
 // CLASS
 
-export class MutationCache extends Notifiable<MutationCacheNotifyEvent> {
+export class MutationCache extends Subscribable<MutationCacheListener> {
   config: MutationCacheConfig
 
   private mutations: Mutation<any, any, any, any>[]
@@ -132,6 +134,14 @@ export class MutationCache extends Notifiable<MutationCacheNotifyEvent> {
 
   findAll(filters: MutationFilters): Mutation[] {
     return this.mutations.filter(mutation => matchMutation(filters, mutation))
+  }
+
+  notify(event: MutationCacheNotifyEvent) {
+    notifyManager.batch(() => {
+      this.listeners.forEach(listener => {
+        listener(event)
+      })
+    })
   }
 
   onFocus(): void {
