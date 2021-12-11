@@ -223,13 +223,13 @@ export type DefaultedQueryObserverOptions<
 export interface InfiniteQueryObserverOptions<
   TQueryFnData = unknown,
   TError = unknown,
-  TData = TQueryFnData,
+  TData = InfiniteData<TQueryFnData>,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
 > extends QueryObserverOptions<
     TQueryFnData,
     TError,
-    InfiniteData<TData>,
+    TData,
     InfiniteData<TQueryData>,
     TQueryKey
   > {}

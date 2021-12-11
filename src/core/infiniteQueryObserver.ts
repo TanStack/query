@@ -52,7 +52,7 @@ export class InfiniteQueryObserver<
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
-      TData,
+      InfiniteData<TData>,
       TQueryData
     >
   ) {
@@ -69,7 +69,7 @@ export class InfiniteQueryObserver<
     options?: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
-      TData,
+      InfiniteData<TData>,
       TQueryData
     >,
     notifyOptions?: NotifyOptions
@@ -87,7 +87,7 @@ export class InfiniteQueryObserver<
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
-      TData,
+      InfiniteData<TData>,
       TQueryData
     >
   ): InfiniteQueryObserverResult<TData, TError> {
@@ -128,7 +128,7 @@ export class InfiniteQueryObserver<
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
-      TData,
+      InfiniteData<TData>,
       TQueryData
     >
   ): InfiniteQueryObserverResult<TData, TError> {

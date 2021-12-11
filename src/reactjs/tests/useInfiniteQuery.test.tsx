@@ -274,7 +274,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to select a part of the data', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<string>[] = []
+    const states: UseInfiniteQueryResult<InfiniteData<string>>[] = []
 
     function Page() {
       const state = useInfiniteQuery(key, () => ({ count: 1 }), {
@@ -302,9 +302,42 @@ describe('useInfiniteQuery', () => {
     })
   })
 
+  it('should be able to select arbitrary data', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<number>[] = []
+
+    function Page() {
+      const state = useInfiniteQuery(key, () => ({ count: 1 }), {
+        placeholderData: {
+          pages: [{ count: 500 }],
+          pageParams: [],
+        },
+        select: data => data.pages.reduce((acc, value) => acc + value.count, 0),
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({
+      data: 500,
+      isSuccess: true,
+    })
+    expect(states[1]).toMatchObject({
+      data: 1,
+      isSuccess: true,
+    })
+  })
+
   it('should be able to select a new result and not cause infinite renders', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<{ count: number; id: number }>[] = []
+    const states: UseInfiniteQueryResult<
+      InfiniteData<{ count: number; id: number }>
+    >[] = []
     let selectCalled = 0
 
     function Page() {
@@ -339,7 +372,7 @@ describe('useInfiniteQuery', () => {
 
   it('should be able to reverse the data', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
+    const states: UseInfiniteQueryResult<InfiniteData<number>>[] = []
 
     function Page() {
       const state = useInfiniteQuery(
@@ -1388,7 +1421,7 @@ describe('useInfiniteQuery', () => {
 
   it('should not use selected data when computing hasNextPage', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<string>[] = []
+    const states: UseInfiniteQueryResult<InfiniteData<string>>[] = []
 
     function Page() {
       const state = useInfiniteQuery(
