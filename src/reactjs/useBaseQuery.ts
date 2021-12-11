@@ -121,6 +121,6 @@ export function useBaseQuery<
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps
-    ? observer.trackResult(result, defaultedOptions)
+    ? observer.trackResult(result)
     : result
 }
