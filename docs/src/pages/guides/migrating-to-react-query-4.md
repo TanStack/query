@@ -243,6 +243,10 @@ The methods `cancelMutatations` and `executeMutation` were undocumented and unus
 - }
 ```
 
+### TypeScript
+
+Types now require using TypeScript v4.1 or greater
+
 ## New Features 🚀
 
 ### Proper offline support
