@@ -11,6 +11,13 @@ class FocusManager extends Subscribable {
     }
   }
 
+  protected onUnsubscribe() {
+    if (!this.hasListeners()) {
+      this.removeEventListener?.()
+      this.removeEventListener = undefined
+    }
+  }
+
   setEventListener(
     setup: (setFocused: (focused?: boolean) => void) => () => void
   ): void {

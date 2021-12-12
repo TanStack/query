@@ -103,4 +103,25 @@ describe('focusManager', () => {
     addEventListenerSpy.mockRestore()
     removeEventListenerSpy.mockRestore()
   })
+
+  test('should call removeEventListener when last listener unsubscribes', () => {
+    const addEventListenerSpy = jest.spyOn(
+      globalThis.window,
+      'addEventListener'
+    )
+
+    const removeEventListenerSpy = jest.spyOn(
+      globalThis.window,
+      'removeEventListener'
+    )
+
+    const unsubscribe1 = focusManager.subscribe(() => undefined)
+    const unsubscribe2 = focusManager.subscribe(() => undefined)
+    expect(addEventListenerSpy).toHaveBeenCalledTimes(2) // visibilitychange + focus
+
+    unsubscribe1()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
+    unsubscribe2()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(2) // visibilitychange + focus
+  })
 })

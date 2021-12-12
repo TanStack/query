@@ -98,4 +98,25 @@ describe('onlineManager', () => {
     addEventListenerSpy.mockRestore()
     removeEventListenerSpy.mockRestore()
   })
+
+  test('should call removeEventListener when last listener unsubscribes', () => {
+    const addEventListenerSpy = jest.spyOn(
+      globalThis.window,
+      'addEventListener'
+    )
+
+    const removeEventListenerSpy = jest.spyOn(
+      globalThis.window,
+      'removeEventListener'
+    )
+
+    const unsubscribe1 = onlineManager.subscribe(() => undefined)
+    const unsubscribe2 = onlineManager.subscribe(() => undefined)
+    expect(addEventListenerSpy).toHaveBeenCalledTimes(2) // online + offline
+
+    unsubscribe1()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
+    unsubscribe2()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(2) // online + offline
+  })
 })

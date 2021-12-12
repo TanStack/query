@@ -11,6 +11,13 @@ class OnlineManager extends Subscribable {
     }
   }
 
+  protected onUnsubscribe() {
+    if (!this.hasListeners()) {
+      this.removeEventListener?.()
+      this.removeEventListener = undefined
+    }
+  }
+
   setEventListener(
     setup: (setOnline: (online?: boolean) => void) => () => void
   ): void {
