@@ -1,7 +1,13 @@
 import React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
-
-import { Query, useQueryClient, onlineManager } from 'react-query'
+import { notifyManager } from '../core'
+import {
+  Query,
+  useQueryClient,
+  onlineManager,
+  QueryCache,
+  QueryKey as QueryKeyType,
+} from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
 import { useIsMounted } from './utils'
@@ -378,6 +384,21 @@ const sortFns: Record<string, (a: Query, b: Query) => number> = {
     a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
 
+const useSubscribeToQueryCache = <T,>(
+  queryCache: QueryCache,
+  getSnapshot: () => T
+): T => {
+  return useSyncExternalStore(
+    React.useCallback(
+      onStoreChange =>
+        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [queryCache]
+    ),
+    getSnapshot,
+    getSnapshot
+  )
+}
+
 export const ReactQueryDevtoolsPanel = React.forwardRef<
   HTMLDivElement,
   DevtoolsPanelOptions
@@ -407,20 +428,9 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     }
   }, [setSort, sortFn])
 
-  const [unsortedQueries, setUnsortedQueries] = React.useState(
-    Object.values(queryCache.findAll())
-  )
-
-  useSyncExternalStore(
-    React.useCallback(() => {
-      return isOpen
-        ? queryCache.subscribe(() => {
-            setUnsortedQueries(Object.values(queryCache.getAll()))
-          })
-        : () => undefined
-    }, [queryCache, isOpen]),
-    () => null,
-    () => null
+  const queriesCount = useSubscribeToQueryCache(
+    queryCache,
+    () => queryCache.getAll().length
   )
 
   const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
@@ -429,7 +439,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   )
 
   const queries = React.useMemo(() => {
-    const sorted = [...unsortedQueries].sort(sortFn)
+    const unsortedQueries = queryCache.getAll()
+    const sorted = queriesCount > 0 ? [...unsortedQueries].sort(sortFn) : []
 
     if (sortDesc) {
       sorted.reverse()
@@ -442,22 +453,40 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
       d => d.queryHash
     )
-  }, [sortDesc, sortFn, unsortedQueries, filter])
+  }, [sortDesc, sortFn, filter, queriesCount, queryCache])
 
   const activeQuery = React.useMemo(() => {
     return queries.find(query => query.queryHash === activeQueryHash)
   }, [activeQueryHash, queries])
 
-  const hasFresh = queries.filter(q => getQueryStatusLabel(q) === 'fresh')
-    .length
-  const hasFetching = queries.filter(q => getQueryStatusLabel(q) === 'fetching')
-    .length
-  const hasPaused = queries.filter(q => getQueryStatusLabel(q) === 'paused')
-    .length
-  const hasStale = queries.filter(q => getQueryStatusLabel(q) === 'stale')
-    .length
-  const hasInactive = queries.filter(q => getQueryStatusLabel(q) === 'inactive')
-    .length
+  const hasFresh = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fresh').length
+  )
+  const hasFetching = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fetching')
+        .length
+  )
+  const hasPaused = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'paused')
+        .length
+  )
+  const hasStale = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'stale').length
+  )
+  const hasInactive = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'inactive')
+        .length
+  )
 
   const handleRefetch = () => {
     const promise = activeQuery?.fetch()
@@ -702,73 +731,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             }}
           >
             {queries.map((query, i) => {
-              const isDisabled =
-                query.getObserversCount() > 0 && !query.isActive()
               return (
-                <div
-                  key={query.queryHash || i}
-                  role="button"
-                  aria-label={`Open query details for ${query.queryHash}`}
-                  onClick={() =>
-                    setActiveQueryHash(
-                      activeQueryHash === query.queryHash ? '' : query.queryHash
-                    )
-                  }
-                  style={{
-                    display: 'flex',
-                    borderBottom: `solid 1px ${theme.grayAlt}`,
-                    cursor: 'pointer',
-                    background:
-                      query === activeQuery
-                        ? 'rgba(255,255,255,.1)'
-                        : undefined,
-                  }}
-                >
-                  <div
-                    style={{
-                      flex: '0 0 auto',
-                      width: '2em',
-                      height: '2em',
-                      background: getQueryStatusColor(query, theme),
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 'bold',
-                      textShadow:
-                        getQueryStatusLabel(query) === 'stale'
-                          ? '0'
-                          : '0 0 10px black',
-                      color:
-                        getQueryStatusLabel(query) === 'stale'
-                          ? 'black'
-                          : 'white',
-                    }}
-                  >
-                    {query.getObserversCount()}
-                  </div>
-                  {isDisabled ? (
-                    <div
-                      style={{
-                        flex: '0 0 auto',
-                        height: '2em',
-                        background: theme.gray,
-                        display: 'flex',
-                        alignItems: 'center',
-                        fontWeight: 'bold',
-                        padding: '0 0.5em',
-                      }}
-                    >
-                      disabled
-                    </div>
-                  ) : null}
-                  <Code
-                    style={{
-                      padding: '.5em',
-                    }}
-                  >
-                    {`${query.queryHash}`}
-                  </Code>
-                </div>
+                <QueryRow
+                  queryKey={query.queryKey}
+                  activeQueryHash={activeQueryHash}
+                  setActiveQueryHash={setActiveQueryHash}
+                  key={query.queryHash ?? i}
+                  queryCache={queryCache}
+                />
               )
             })}
           </div>
@@ -960,3 +930,87 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     </ThemeProvider>
   )
 })
+
+interface QueryRowProps {
+  queryKey: QueryKeyType
+  setActiveQueryHash: (hash: string) => void
+  activeQueryHash?: string
+  queryCache: QueryCache
+}
+
+const QueryRow = ({
+  queryKey,
+  setActiveQueryHash,
+  activeQueryHash,
+  queryCache,
+}: QueryRowProps) => {
+  const query = useSubscribeToQueryCache(queryCache, () =>
+    queryCache.find(queryKey)
+  )
+
+  if (!query) {
+    return null
+  }
+
+  const isDisabled = query.getObserversCount() > 0 && !query.isActive()
+  return (
+    <div
+      role="button"
+      aria-label={`Open query details for ${query.queryHash}`}
+      onClick={() =>
+        setActiveQueryHash(
+          activeQueryHash === query.queryHash ? '' : query.queryHash
+        )
+      }
+      style={{
+        display: 'flex',
+        borderBottom: `solid 1px ${theme.grayAlt}`,
+        cursor: 'pointer',
+        background:
+          query.queryHash === activeQueryHash
+            ? 'rgba(255,255,255,.1)'
+            : undefined,
+      }}
+    >
+      <div
+        style={{
+          flex: '0 0 auto',
+          width: '2em',
+          height: '2em',
+          background: getQueryStatusColor(query, theme),
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontWeight: 'bold',
+          textShadow:
+            getQueryStatusLabel(query) === 'stale' ? '0' : '0 0 10px black',
+          color: getQueryStatusLabel(query) === 'stale' ? 'black' : 'white',
+        }}
+      >
+        {query.getObserversCount()}
+      </div>
+      {isDisabled ? (
+        <div
+          style={{
+            flex: '0 0 auto',
+            height: '2em',
+            background: theme.gray,
+            display: 'flex',
+            alignItems: 'center',
+            fontWeight: 'bold',
+            padding: '0 0.5em',
+          }}
+        >
+          disabled
+        </div>
+      ) : null}
+      <Code
+        style={{
+          padding: '.5em',
+        }}
+      >
+        {`${query.queryHash}`}
+      </Code>
+    </div>
+  )
+}
