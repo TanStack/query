@@ -459,35 +459,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     return queries.find(query => query.queryHash === activeQueryHash)
   }, [activeQueryHash, queries])
 
-  const hasFresh = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fresh').length
-  )
-  const hasFetching = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fetching')
-        .length
-  )
-  const hasPaused = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'paused')
-        .length
-  )
-  const hasStale = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'stale').length
-  )
-  const hasInactive = useSubscribeToQueryCache(
-    queryCache,
-    () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'inactive')
-        .length
-  )
-
   const handleRefetch = () => {
     const promise = activeQuery?.fetch()
     promise?.catch(noop)
@@ -573,50 +544,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                 flexDirection: 'column',
               }}
             >
-              <QueryKeys style={{ marginBottom: '.5em' }}>
-                <QueryKey
-                  style={{
-                    background: theme.success,
-                    opacity: hasFresh ? 1 : 0.3,
-                  }}
-                >
-                  fresh <Code>({hasFresh})</Code>
-                </QueryKey>{' '}
-                <QueryKey
-                  style={{
-                    background: theme.active,
-                    opacity: hasFetching ? 1 : 0.3,
-                  }}
-                >
-                  fetching <Code>({hasFetching})</Code>
-                </QueryKey>{' '}
-                <QueryKey
-                  style={{
-                    background: theme.paused,
-                    opacity: hasPaused ? 1 : 0.3,
-                  }}
-                >
-                  paused <Code>({hasPaused})</Code>
-                </QueryKey>{' '}
-                <QueryKey
-                  style={{
-                    background: theme.warning,
-                    color: 'black',
-                    textShadow: '0',
-                    opacity: hasStale ? 1 : 0.3,
-                  }}
-                >
-                  stale <Code>({hasStale})</Code>
-                </QueryKey>{' '}
-                <QueryKey
-                  style={{
-                    background: theme.gray,
-                    opacity: hasInactive ? 1 : 0.3,
-                  }}
-                >
-                  inactive <Code>({hasInactive})</Code>
-                </QueryKey>
-              </QueryKeys>
+              <QueryStatusCount queryCache={queryCache} />
               <div
                 style={{
                   display: 'flex',
@@ -791,7 +719,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     borderRadius: '0.4em',
                     fontWeight: 'bold',
                     textShadow: '0 2px 10px black',
-                    background: getQueryStatusColor(activeQuery, theme),
+                    background: getQueryStatusColor({
+                      queryState: activeQuery.state,
+                      isStale: activeQuery.isStale(),
+                      observerCount: activeQuery.getObserversCount(),
+                      theme,
+                    }),
                     flexShrink: 0,
                   }}
                 >
@@ -931,6 +864,83 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   )
 })
 
+const QueryStatusCount = ({ queryCache }: { queryCache: QueryCache }) => {
+  const hasFresh = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fresh').length
+  )
+  const hasFetching = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fetching')
+        .length
+  )
+  const hasPaused = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'paused')
+        .length
+  )
+  const hasStale = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'stale').length
+  )
+  const hasInactive = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'inactive')
+        .length
+  )
+  return (
+    <QueryKeys style={{ marginBottom: '.5em' }}>
+      <QueryKey
+        style={{
+          background: theme.success,
+          opacity: hasFresh ? 1 : 0.3,
+        }}
+      >
+        fresh <Code>({hasFresh})</Code>
+      </QueryKey>{' '}
+      <QueryKey
+        style={{
+          background: theme.active,
+          opacity: hasFetching ? 1 : 0.3,
+        }}
+      >
+        fetching <Code>({hasFetching})</Code>
+      </QueryKey>{' '}
+      <QueryKey
+        style={{
+          background: theme.paused,
+          opacity: hasPaused ? 1 : 0.3,
+        }}
+      >
+        paused <Code>({hasPaused})</Code>
+      </QueryKey>{' '}
+      <QueryKey
+        style={{
+          background: theme.warning,
+          color: 'black',
+          textShadow: '0',
+          opacity: hasStale ? 1 : 0.3,
+        }}
+      >
+        stale <Code>({hasStale})</Code>
+      </QueryKey>{' '}
+      <QueryKey
+        style={{
+          background: theme.gray,
+          opacity: hasInactive ? 1 : 0.3,
+        }}
+      >
+        inactive <Code>({hasInactive})</Code>
+      </QueryKey>
+    </QueryKeys>
+  )
+}
+
 interface QueryRowProps {
   queryKey: QueryKeyType
   setActiveQueryHash: (hash: string) => void
@@ -944,32 +954,50 @@ const QueryRow = ({
   activeQueryHash,
   queryCache,
 }: QueryRowProps) => {
-  const query = useSubscribeToQueryCache(queryCache, () =>
-    queryCache.find(queryKey)
+  const queryHash =
+    useSubscribeToQueryCache(
+      queryCache,
+      () => queryCache.find(queryKey)?.queryHash
+    ) ?? ''
+
+  const queryState = useSubscribeToQueryCache(
+    queryCache,
+    () => queryCache.find(queryKey)?.state
   )
 
-  if (!query) {
+  const isStale =
+    useSubscribeToQueryCache(queryCache, () =>
+      queryCache.find(queryKey)?.isStale()
+    ) ?? false
+
+  const isActive =
+    useSubscribeToQueryCache(queryCache, () =>
+      queryCache.find(queryKey)?.isActive()
+    ) ?? false
+
+  const observerCount =
+    useSubscribeToQueryCache(queryCache, () =>
+      queryCache.find(queryKey)?.getObserversCount()
+    ) ?? 0
+
+  if (!queryState) {
     return null
   }
 
-  const isDisabled = query.getObserversCount() > 0 && !query.isActive()
+  const isDisabled = observerCount > 0 && !isActive
   return (
     <div
       role="button"
-      aria-label={`Open query details for ${query.queryHash}`}
+      aria-label={`Open query details for ${queryHash}`}
       onClick={() =>
-        setActiveQueryHash(
-          activeQueryHash === query.queryHash ? '' : query.queryHash
-        )
+        setActiveQueryHash(activeQueryHash === queryHash ? '' : queryHash)
       }
       style={{
         display: 'flex',
         borderBottom: `solid 1px ${theme.grayAlt}`,
         cursor: 'pointer',
         background:
-          query.queryHash === activeQueryHash
-            ? 'rgba(255,255,255,.1)'
-            : undefined,
+          queryHash === activeQueryHash ? 'rgba(255,255,255,.1)' : undefined,
       }}
     >
       <div
@@ -977,17 +1005,21 @@ const QueryRow = ({
           flex: '0 0 auto',
           width: '2em',
           height: '2em',
-          background: getQueryStatusColor(query, theme),
+          background: getQueryStatusColor({
+            queryState,
+            isStale,
+            observerCount,
+            theme,
+          }),
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           fontWeight: 'bold',
-          textShadow:
-            getQueryStatusLabel(query) === 'stale' ? '0' : '0 0 10px black',
-          color: getQueryStatusLabel(query) === 'stale' ? 'black' : 'white',
+          textShadow: isStale ? '0' : '0 0 10px black',
+          color: isStale ? 'black' : 'white',
         }}
       >
-        {query.getObserversCount()}
+        {observerCount}
       </div>
       {isDisabled ? (
         <div
@@ -1009,7 +1041,7 @@ const QueryRow = ({
           padding: '.5em',
         }}
       >
-        {`${query.queryHash}`}
+        {`${queryHash}`}
       </Code>
     </div>
   )

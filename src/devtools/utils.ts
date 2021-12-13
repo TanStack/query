@@ -25,14 +25,24 @@ type StyledComponent<T> = T extends 'button'
   ? React.HTMLAttributes<HTMLElementTagNameMap[T]>
   : never
 
-export function getQueryStatusColor(query: Query, theme: Theme) {
-  return query.state.fetchStatus === 'fetching'
+export function getQueryStatusColor({
+  queryState,
+  observerCount,
+  isStale,
+  theme,
+}: {
+  queryState: Query['state']
+  observerCount: number
+  isStale: boolean
+  theme: Theme
+}) {
+  return queryState.fetchStatus === 'fetching'
     ? theme.active
-    : !query.getObserversCount()
+    : !observerCount
     ? theme.gray
-    : query.state.fetchStatus === 'paused'
+    : queryState.fetchStatus === 'paused'
     ? theme.paused
-    : query.isStale()
+    : isStale
     ? theme.warning
     : theme.success
 }
