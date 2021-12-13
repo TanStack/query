@@ -6,6 +6,7 @@ import {
   useQueryClient,
   onlineManager,
   QueryCache,
+  QueryClient,
   QueryKey as QueryKeyType,
 } from 'react-query'
 import { matchSorter } from 'match-sorter'
@@ -455,15 +456,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     )
   }, [sortDesc, sortFn, filter, queriesCount, queryCache])
 
-  const activeQuery = React.useMemo(() => {
-    return queries.find(query => query.queryHash === activeQueryHash)
-  }, [activeQueryHash, queries])
-
-  const handleRefetch = () => {
-    const promise = activeQuery?.fetch()
-    promise?.catch(noop)
-  }
-
   const [isMockOffline, setMockOffline] = React.useState(false)
 
   return (
@@ -672,197 +664,249 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
           </div>
         </div>
 
-        {activeQuery ? (
-          <ActiveQueryPanel>
-            <div
-              style={{
-                padding: '.5em',
-                background: theme.backgroundAlt,
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
-              }}
-            >
-              Query Details
-            </div>
-            <div
-              style={{
-                padding: '.5em',
-              }}
-            >
-              <div
-                style={{
-                  marginBottom: '.5em',
-                  display: 'flex',
-                  alignItems: 'stretch',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <Code
-                  style={{
-                    lineHeight: '1.8em',
-                  }}
-                >
-                  <pre
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      overflow: 'auto',
-                    }}
-                  >
-                    {JSON.stringify(activeQuery.queryKey, null, 2)}
-                  </pre>
-                </Code>
-                <span
-                  style={{
-                    padding: '0.3em .6em',
-                    borderRadius: '0.4em',
-                    fontWeight: 'bold',
-                    textShadow: '0 2px 10px black',
-                    background: getQueryStatusColor({
-                      queryState: activeQuery.state,
-                      isStale: activeQuery.isStale(),
-                      observerCount: activeQuery.getObserversCount(),
-                      theme,
-                    }),
-                    flexShrink: 0,
-                  }}
-                >
-                  {getQueryStatusLabel(activeQuery)}
-                </span>
-              </div>
-              <div
-                style={{
-                  marginBottom: '.5em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                Observers: <Code>{activeQuery.getObserversCount()}</Code>
-              </div>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                Last Updated:{' '}
-                <Code>
-                  {new Date(
-                    activeQuery.state.dataUpdatedAt
-                  ).toLocaleTimeString()}
-                </Code>
-              </div>
-            </div>
-            <div
-              style={{
-                background: theme.backgroundAlt,
-                padding: '.5em',
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
-              }}
-            >
-              Actions
-            </div>
-            <div
-              style={{
-                padding: '0.5em',
-              }}
-            >
-              <Button
-                type="button"
-                onClick={handleRefetch}
-                disabled={activeQuery.state.fetchStatus === 'fetching'}
-                style={{
-                  background: theme.active,
-                }}
-              >
-                Refetch
-              </Button>{' '}
-              <Button
-                type="button"
-                onClick={() => queryClient.invalidateQueries(activeQuery)}
-                style={{
-                  background: theme.warning,
-                  color: theme.inputTextColor,
-                }}
-              >
-                Invalidate
-              </Button>{' '}
-              <Button
-                type="button"
-                onClick={() => queryClient.resetQueries(activeQuery)}
-                style={{
-                  background: theme.gray,
-                }}
-              >
-                Reset
-              </Button>{' '}
-              <Button
-                type="button"
-                onClick={() => queryClient.removeQueries(activeQuery)}
-                style={{
-                  background: theme.danger,
-                }}
-              >
-                Remove
-              </Button>
-            </div>
-            <div
-              style={{
-                background: theme.backgroundAlt,
-                padding: '.5em',
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
-              }}
-            >
-              Data Explorer
-            </div>
-            <div
-              style={{
-                padding: '.5em',
-              }}
-            >
-              <Explorer
-                label="Data"
-                value={activeQuery?.state?.data}
-                defaultExpanded={{}}
-              />
-            </div>
-            <div
-              style={{
-                background: theme.backgroundAlt,
-                padding: '.5em',
-                position: 'sticky',
-                top: 0,
-                zIndex: 1,
-              }}
-            >
-              Query Explorer
-            </div>
-            <div
-              style={{
-                padding: '.5em',
-              }}
-            >
-              <Explorer
-                label="Query"
-                value={activeQuery}
-                defaultExpanded={{
-                  queryKey: true,
-                }}
-              />
-            </div>
-          </ActiveQueryPanel>
+        {activeQueryHash ? (
+          <ActiveQuery
+            activeQueryHash={activeQueryHash}
+            queryCache={queryCache}
+            queryClient={queryClient}
+          />
         ) : null}
       </Panel>
     </ThemeProvider>
   )
 })
+
+const ActiveQuery = ({
+  queryCache,
+  activeQueryHash,
+  queryClient,
+}: {
+  queryCache: QueryCache
+  activeQueryHash: string
+  queryClient: QueryClient
+}) => {
+  const activeQuery = useSubscribeToQueryCache(queryCache, () =>
+    queryCache.getAll().find(query => query.queryHash === activeQueryHash)
+  )
+
+  const activeQueryState = useSubscribeToQueryCache(
+    queryCache,
+    () =>
+      queryCache.getAll().find(query => query.queryHash === activeQueryHash)
+        ?.state
+  )
+
+  const isStale =
+    useSubscribeToQueryCache(queryCache, () =>
+      queryCache
+        .getAll()
+        .find(query => query.queryHash === activeQueryHash)
+        ?.isStale()
+    ) ?? false
+
+  const observerCount =
+    useSubscribeToQueryCache(queryCache, () =>
+      queryCache
+        .getAll()
+        .find(query => query.queryHash === activeQueryHash)
+        ?.getObserversCount()
+    ) ?? 0
+
+  const handleRefetch = () => {
+    const promise = activeQuery?.fetch()
+    promise?.catch(noop)
+  }
+
+  if (!activeQuery || !activeQueryState) {
+    return null
+  }
+
+  return (
+    <ActiveQueryPanel>
+      <div
+        style={{
+          padding: '.5em',
+          background: theme.backgroundAlt,
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+        }}
+      >
+        Query Details
+      </div>
+      <div
+        style={{
+          padding: '.5em',
+        }}
+      >
+        <div
+          style={{
+            marginBottom: '.5em',
+            display: 'flex',
+            alignItems: 'stretch',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Code
+            style={{
+              lineHeight: '1.8em',
+            }}
+          >
+            <pre
+              style={{
+                margin: 0,
+                padding: 0,
+                overflow: 'auto',
+              }}
+            >
+              {JSON.stringify(activeQuery?.queryKey, null, 2)}
+            </pre>
+          </Code>
+          <span
+            style={{
+              padding: '0.3em .6em',
+              borderRadius: '0.4em',
+              fontWeight: 'bold',
+              textShadow: '0 2px 10px black',
+              background: getQueryStatusColor({
+                queryState: activeQueryState,
+                isStale: isStale,
+                observerCount: observerCount,
+                theme,
+              }),
+              flexShrink: 0,
+            }}
+          >
+            {getQueryStatusLabel(activeQuery)}
+          </span>
+        </div>
+        <div
+          style={{
+            marginBottom: '.5em',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          Observers: <Code>{observerCount}</Code>
+        </div>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          Last Updated:{' '}
+          <Code>
+            {new Date(activeQueryState?.dataUpdatedAt).toLocaleTimeString()}
+          </Code>
+        </div>
+      </div>
+      <div
+        style={{
+          background: theme.backgroundAlt,
+          padding: '.5em',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+        }}
+      >
+        Actions
+      </div>
+      <div
+        style={{
+          padding: '0.5em',
+        }}
+      >
+        <Button
+          type="button"
+          onClick={handleRefetch}
+          disabled={activeQueryState.fetchStatus === 'fetching'}
+          style={{
+            background: theme.active,
+          }}
+        >
+          Refetch
+        </Button>{' '}
+        <Button
+          type="button"
+          onClick={() => queryClient.invalidateQueries(activeQuery)}
+          style={{
+            background: theme.warning,
+            color: theme.inputTextColor,
+          }}
+        >
+          Invalidate
+        </Button>{' '}
+        <Button
+          type="button"
+          onClick={() => queryClient.resetQueries(activeQuery)}
+          style={{
+            background: theme.gray,
+          }}
+        >
+          Reset
+        </Button>{' '}
+        <Button
+          type="button"
+          onClick={() => queryClient.removeQueries(activeQuery)}
+          style={{
+            background: theme.danger,
+          }}
+        >
+          Remove
+        </Button>
+      </div>
+      <div
+        style={{
+          background: theme.backgroundAlt,
+          padding: '.5em',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+        }}
+      >
+        Data Explorer
+      </div>
+      <div
+        style={{
+          padding: '.5em',
+        }}
+      >
+        <Explorer
+          label="Data"
+          value={activeQueryState?.data}
+          defaultExpanded={{}}
+        />
+      </div>
+      <div
+        style={{
+          background: theme.backgroundAlt,
+          padding: '.5em',
+          position: 'sticky',
+          top: 0,
+          zIndex: 1,
+        }}
+      >
+        Query Explorer
+      </div>
+      <div
+        style={{
+          padding: '.5em',
+        }}
+      >
+        <Explorer
+          label="Query"
+          value={activeQuery}
+          defaultExpanded={{
+            queryKey: true,
+          }}
+        />
+      </div>
+    </ActiveQueryPanel>
+  )
+}
 
 const QueryStatusCount = ({ queryCache }: { queryCache: QueryCache }) => {
   const hasFresh = useSubscribeToQueryCache(
