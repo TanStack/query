@@ -891,6 +891,76 @@ describe("useQuery's in Suspense mode", () => {
     consoleMock.mockRestore()
   })
 
+  it('should error catched in error boundary without infinite loop when enabled changed', async () => {
+    const consoleMock = mockConsoleError()
+
+    const succeed = false
+
+    function Page() {
+      const queryKeys = '1'
+      const [enabled, setEnabled] = React.useState(false)
+
+      const result = useQuery(
+        [queryKeys],
+        async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          suspense: true,
+          enabled,
+        }
+      )
+      return (
+        <div>
+          <span>rendered</span> <span>{result.data}</span>
+          <button
+            aria-label="fail"
+            onClick={() => {
+              setEnabled(true)
+            }}
+          >
+            fail
+          </button>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render empty data with 'rendered' when enabled is false
+    await waitFor(() => rendered.getByText('rendered'))
+
+    // change enabled to true
+    fireEvent.click(rendered.getByLabelText('fail'))
+
+    // render pending fallback
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    // render error boundary fallback (error boundary)
+    await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
+  })
+
   it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
     const key = queryKey()
     let state: UseQueryResult<number> | null = null
