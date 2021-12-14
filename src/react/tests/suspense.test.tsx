@@ -898,7 +898,7 @@ describe("useQuery's in Suspense mode", () => {
 
     function Page() {
       const queryKeys = '1'
-      const [enabled, setEnabled] = React.useState(false);
+      const [enabled, setEnabled] = React.useState(false)
 
       const result = useQuery(
         [queryKeys],
@@ -919,9 +919,12 @@ describe("useQuery's in Suspense mode", () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
-          <button aria-label="fail" onClick={() => {
-            setEnabled(true)
-          }}>
+          <button
+            aria-label="fail"
+            onClick={() => {
+              setEnabled(true)
+            }}
+          >
             fail
           </button>
         </div>
