@@ -1,30 +1,51 @@
 import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
-class OnlineManager extends Subscribable {
+type SetupFn = (
+  setOnline: (online?: boolean) => void
+) => (() => void) | undefined
+
+export class OnlineManager extends Subscribable {
   private online?: boolean
-  private removeEventListener?: () => void
+  private cleanup?: () => void
+
+  private setup: SetupFn
+
+  constructor() {
+    super()
+    this.setup = onOnline => {
+      if (!isServer && window?.addEventListener) {
+        const listener = () => onOnline()
+        // Listen to online
+        window.addEventListener('online', listener, false)
+        window.addEventListener('offline', listener, false)
+
+        return () => {
+          // Be sure to unsubscribe if a new handler is set
+          window.removeEventListener('online', listener)
+          window.removeEventListener('offline', listener)
+        }
+      }
+    }
+  }
 
   protected onSubscribe(): void {
-    if (!this.removeEventListener) {
-      this.setDefaultEventListener()
+    if (!this.cleanup) {
+      this.setEventListener(this.setup)
     }
   }
 
   protected onUnsubscribe() {
     if (!this.hasListeners()) {
-      this.removeEventListener?.()
-      this.removeEventListener = undefined
+      this.cleanup?.()
+      this.cleanup = undefined
     }
   }
 
-  setEventListener(
-    setup: (setOnline: (online?: boolean) => void) => () => void
-  ): void {
-    if (this.removeEventListener) {
-      this.removeEventListener()
-    }
-    this.removeEventListener = setup((online?: boolean) => {
+  setEventListener(setup: SetupFn): void {
+    this.setup = setup
+    this.cleanup?.()
+    this.cleanup = setup((online?: boolean) => {
       if (typeof online === 'boolean') {
         this.setOnline(online)
       } else {
@@ -60,23 +81,6 @@ class OnlineManager extends Subscribable {
     }
 
     return navigator.onLine
-  }
-
-  private setDefaultEventListener() {
-    if (!isServer && window?.addEventListener) {
-      this.setEventListener(onOnline => {
-        const listener = () => onOnline()
-        // Listen to online
-        window.addEventListener('online', listener, false)
-        window.addEventListener('offline', listener, false)
-
-        return () => {
-          // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('online', listener)
-          window.removeEventListener('offline', listener)
-        }
-      })
-    }
   }
 }
 
