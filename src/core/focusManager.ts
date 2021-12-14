@@ -1,23 +1,51 @@
 import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
-class FocusManager extends Subscribable {
-  private focused?: boolean
-  private removeEventListener?: () => void
+type SetupFn = (
+  setFocused: (focused?: boolean) => void
+) => (() => void) | undefined
 
-  protected onSubscribe(): void {
-    if (!this.removeEventListener) {
-      this.setDefaultEventListener()
+export class FocusManager extends Subscribable {
+  private focused?: boolean
+  private cleanup?: () => void
+
+  private setup: SetupFn
+
+  constructor() {
+    super()
+    this.setup = onFocus => {
+      if (!isServer && window?.addEventListener) {
+        const listener = () => onFocus()
+        // Listen to visibillitychange and focus
+        window.addEventListener('visibilitychange', listener, false)
+        window.addEventListener('focus', listener, false)
+
+        return () => {
+          // Be sure to unsubscribe if a new handler is set
+          window.removeEventListener('visibilitychange', listener)
+          window.removeEventListener('focus', listener)
+        }
+      }
     }
   }
 
-  setEventListener(
-    setup: (setFocused: (focused?: boolean) => void) => () => void
-  ): void {
-    if (this.removeEventListener) {
-      this.removeEventListener()
+  protected onSubscribe(): void {
+    if (!this.cleanup) {
+      this.setEventListener(this.setup)
     }
-    this.removeEventListener = setup(focused => {
+  }
+
+  protected onUnsubscribe() {
+    if (!this.hasListeners()) {
+      this.cleanup?.()
+      this.cleanup = undefined
+    }
+  }
+
+  setEventListener(setup: SetupFn): void {
+    this.setup = setup
+    this.cleanup?.()
+    this.cleanup = setup(focused => {
       if (typeof focused === 'boolean') {
         this.setFocused(focused)
       } else {
@@ -53,23 +81,6 @@ class FocusManager extends Subscribable {
     return [undefined, 'visible', 'prerender'].includes(
       document.visibilityState
     )
-  }
-
-  private setDefaultEventListener() {
-    if (!isServer && window?.addEventListener) {
-      this.setEventListener(onFocus => {
-        const listener = () => onFocus()
-        // Listen to visibillitychange and focus
-        window.addEventListener('visibilitychange', listener, false)
-        window.addEventListener('focus', listener, false)
-
-        return () => {
-          // Be sure to unsubscribe if a new handler is set
-          window.removeEventListener('visibilitychange', listener)
-          window.removeEventListener('focus', listener)
-        }
-      })
-    }
   }
 }
 
