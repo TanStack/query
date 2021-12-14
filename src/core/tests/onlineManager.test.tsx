@@ -1,10 +1,10 @@
-import { onlineManager } from '../onlineManager'
+import { OnlineManager } from '../onlineManager'
 import { sleep } from '../utils'
 
 describe('onlineManager', () => {
-  afterEach(() => {
-    // Reset removeEventListener private property to avoid side effects between tests
-    onlineManager['removeEventListener'] = undefined
+  let onlineManager: OnlineManager
+  beforeEach(() => {
+    onlineManager = new OnlineManager()
   })
 
   test('isOnline should return true if navigator is undefined', () => {
@@ -56,16 +56,14 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  test('setEventListener should not set window listener if window.addEventListener is not defined', async () => {
+  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
-    const setEventListenerSpy = jest.spyOn(onlineManager, 'setEventListener')
-
     const unsubscribe = onlineManager.subscribe()
-    expect(setEventListenerSpy).toHaveBeenCalledTimes(0)
+    expect(onlineManager['cleanup']).toBeUndefined()
 
     unsubscribe()
     globalThis.window.addEventListener = addEventListener
@@ -97,5 +95,44 @@ describe('onlineManager', () => {
     unsubscribe()
     addEventListenerSpy.mockRestore()
     removeEventListenerSpy.mockRestore()
+  })
+
+  test('should call removeEventListener when last listener unsubscribes', () => {
+    const addEventListenerSpy = jest.spyOn(
+      globalThis.window,
+      'addEventListener'
+    )
+
+    const removeEventListenerSpy = jest.spyOn(
+      globalThis.window,
+      'removeEventListener'
+    )
+
+    const unsubscribe1 = onlineManager.subscribe(() => undefined)
+    const unsubscribe2 = onlineManager.subscribe(() => undefined)
+    expect(addEventListenerSpy).toHaveBeenCalledTimes(2) // online + offline
+
+    unsubscribe1()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(0)
+    unsubscribe2()
+    expect(removeEventListenerSpy).toHaveBeenCalledTimes(2) // online + offline
+  })
+
+  test('should keep setup function even if last listener unsubscribes', () => {
+    const setupSpy = jest.fn().mockImplementation(() => () => undefined)
+
+    onlineManager.setEventListener(setupSpy)
+
+    const unsubscribe1 = onlineManager.subscribe(() => undefined)
+
+    expect(setupSpy).toHaveBeenCalledTimes(1)
+
+    unsubscribe1()
+
+    const unsubscribe2 = onlineManager.subscribe(() => undefined)
+
+    expect(setupSpy).toHaveBeenCalledTimes(2)
+
+    unsubscribe2()
   })
 })
