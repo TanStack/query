@@ -96,6 +96,7 @@ const result = useQuery({
   - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
 - `cacheTime: number | Infinity`
+  - Defaults to `5 * 60 * 1000` (5 minutes)
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
