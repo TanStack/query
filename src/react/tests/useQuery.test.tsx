@@ -3951,6 +3951,53 @@ describe('useQuery', () => {
     expect(placeholderFunctionRunCount).toEqual(1)
   })
 
+  it('select should only run when dependencies change if memoized', async () => {
+    const key1 = queryKey()
+
+    let selectRun = 0
+
+    function Page() {
+      const [count, inc] = React.useReducer(prev => prev + 1, 2)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return 0
+        },
+        {
+          select: React.useCallback(
+            (data: number) => {
+              selectRun++
+              return `selected ${data + count}`
+            },
+            [count]
+          ),
+          placeholderData: 99,
+        }
+      )
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <button onClick={inc}>inc: {count}</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: selected 101')) // 99 + 2
+    expect(selectRun).toBe(1)
+
+    await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
+    expect(selectRun).toBe(2)
+
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
+    expect(selectRun).toBe(3)
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
