@@ -42,8 +42,8 @@ In v4, `notifyOnChangeProps` defaults to the `"tracked"` behavior of v3 instead 
 The `cancelRefetch` can be passed to all functions that imperatively fetch a query, namely:
 
 - `queryClient.refetchQueries`
-  - `queryClient.invalidateQueries`
-  - `queryClient.resetQueries`
+- `queryClient.invalidateQueries`
+- `queryClient.resetQueries`
 - `refetch` returned from `useQuery`
 - `fetchNextPage` and `fetchPreviousPage` returned from `useInfiniteQuery`
 
