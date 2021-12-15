@@ -45,9 +45,9 @@ The `cancelRefetch` can be passed to all functions that imperatively fetch a que
   - `queryClient.invalidateQueries`
   - `queryClient.resetQueries`
 - `refetch` returned from `useQuery`
-- `fetchNetPage` and `fetchPreviousPage` returned from `useInfiniteQuery`
+- `fetchNextPage` and `fetchPreviousPage` returned from `useInfiniteQuery`
 
-Except for `fetchNetxPage` and `fetchPreviousPage`, this flag was defaulting to `false`, which was inconsistent and potentially troublesome: Calling `refetchQueries` or `invalidateQueries` after a mutation might not yield the latest result if a previous slow fetch was already ongoing, because this refetch would have been skipped.
+Except for `fetchNextPage` and `fetchPreviousPage`, this flag was defaulting to `false`, which was inconsistent and potentially troublesome: Calling `refetchQueries` or `invalidateQueries` after a mutation might not yield the latest result if a previous slow fetch was already ongoing, because this refetch would have been skipped.
 
 We believe that if a query is actively refetched by some code you write, it should, per default, re-start the fetch.
 
