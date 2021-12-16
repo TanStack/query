@@ -58,7 +58,7 @@ function asyncThrottle<Args extends readonly unknown[], Result>(
   if (typeof func !== 'function') throw new Error('argument is not function.')
   const running = { current: false }
   let lastTime = 0
-  let timeout: number
+  let timeout: ReturnType<typeof setTimeout>
   const queue: Array<Args> = []
   return (...args: Args) =>
     (async () => {

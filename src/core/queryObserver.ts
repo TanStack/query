@@ -69,8 +69,8 @@ export class QueryObserver<
   >
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private previousSelectError: TError | null
-  private staleTimeoutId?: number
-  private refetchIntervalId?: number
+  private staleTimeoutId?: ReturnType<typeof setTimeout>
+  private refetchIntervalId?: ReturnType<typeof setInterval>
   private currentRefetchInterval?: number | false
   private trackedProps!: Set<keyof QueryObserverResult>
 
@@ -397,12 +397,12 @@ export class QueryObserver<
   }
 
   private clearStaleTimeout(): void {
-    clearTimeout(this.staleTimeoutId)
+    clearTimeout(this.staleTimeoutId!)
     this.staleTimeoutId = undefined
   }
 
   private clearRefetchInterval(): void {
-    clearInterval(this.refetchIntervalId)
+    clearInterval(this.refetchIntervalId!)
     this.refetchIntervalId = undefined
   }
 
@@ -484,7 +484,9 @@ export class QueryObserver<
           }
           this.previousSelectError = null
         } catch (selectError) {
-          getLogger().error(selectError)
+          if (process.env.NODE_ENV !== 'production') {
+            getLogger().error(selectError)
+          }
           error = selectError as TError
           this.previousSelectError = selectError as TError
           errorUpdatedAt = Date.now()
@@ -527,7 +529,9 @@ export class QueryObserver<
             }
             this.previousSelectError = null
           } catch (selectError) {
-            getLogger().error(selectError)
+            if (process.env.NODE_ENV !== 'production') {
+              getLogger().error(selectError)
+            }
             error = selectError as TError
             this.previousSelectError = selectError as TError
             errorUpdatedAt = Date.now()

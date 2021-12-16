@@ -379,7 +379,7 @@ describe('core/utils', () => {
             // Do no throw an uncaught exception that cannot be tested with
             // this jest version
           }
-          return 0
+          return 0 as any
         })
       scheduleMicrotask(callback)
       jest.runAllTimers()
