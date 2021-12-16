@@ -2,7 +2,7 @@ import { isValidTimeout } from './utils'
 
 export abstract class Removable {
   cacheTime!: number
-  private gcTimeout?: number
+  private gcTimeout?: ReturnType<typeof setTimeout>
 
   destroy(): void {
     this.clearGcTimeout()
@@ -27,7 +27,7 @@ export abstract class Removable {
   }
 
   protected clearGcTimeout() {
-    clearTimeout(this.gcTimeout)
+    clearTimeout(this.gcTimeout!)
     this.gcTimeout = undefined
   }
 

@@ -367,6 +367,16 @@ export class Query<
       }
     }
 
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      !Array.isArray(this.options.queryKey)
+    ) {
+      getLogger().error(
+        'As of v4, queryKey needs to be an Array, but the queryKey used was:',
+        JSON.stringify(this.options.queryKey)
+      )
+    }
+
     const abortController = getAbortController()
 
     // Create query function context
@@ -459,8 +469,9 @@ export class Query<
           // Notify cache callback
           this.cache.config.onError?.(error, this as Query<any, any, any, any>)
 
-          // Log error
-          getLogger().error(error)
+          if (process.env.NODE_ENV !== 'production') {
+            getLogger().error(error)
+          }
         }
 
         if (!this.isFetchingOptimistic) {

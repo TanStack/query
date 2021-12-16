@@ -5,6 +5,8 @@ import {
   QueriesObserver,
   QueryObserverResult,
   QueryObserver,
+  Logger,
+  setLogger,
 } from '../..'
 import { QueryKey } from '..'
 
@@ -39,6 +41,14 @@ describe('queriesObserver', () => {
   })
 
   test('should still return value for undefined query key', async () => {
+    const logger: Logger = {
+      error: jest.fn(),
+      log: jest.fn(),
+      warn: jest.fn(),
+    }
+
+    setLogger(logger)
+
     const key1 = queryKey()
     const queryFn1 = jest.fn().mockReturnValue(1)
     const queryFn2 = jest.fn().mockReturnValue(2)
@@ -53,6 +63,9 @@ describe('queriesObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
+
+    expect(logger.error).toHaveBeenCalledTimes(1)
+    setLogger(console)
   })
 
   test('should update when a query updates', async () => {

@@ -96,7 +96,7 @@ function throttle<TArgs extends any[]>(
   func: (...args: TArgs) => any,
   wait = 100
 ) {
-  let timer: number | null = null
+  let timer: ReturnType<typeof setTimeout> | null = null
   let params: TArgs
   return function (...args: TArgs) {
     params = args
