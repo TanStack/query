@@ -257,7 +257,7 @@ describe('QueryErrorResetBoundary', () => {
     )
 
     await waitFor(() => rendered.getByText('status: idle'))
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('error boundary'))
 
     consoleMock.mockRestore()

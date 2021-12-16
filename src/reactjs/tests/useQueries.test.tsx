@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
 import {
@@ -112,7 +112,7 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data1: 2, data2: 5'))
-    rendered.getByRole('button', { name: /inc/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
     await waitFor(() => rendered.getByText('data1: 4, data2: 10'))
     await waitFor(() => rendered.getByText('isFetching: false'))
@@ -156,7 +156,7 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 4,8'))
-    rendered.getByRole('button', { name: /inc/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
     await waitFor(() => rendered.getByText('data: 6,12,18'))
     await waitFor(() => rendered.getByText('isFetching: false'))
@@ -210,10 +210,10 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
-    rendered.getByRole('button', { name: /setSeries2/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /setSeries2/i }))
 
     await waitFor(() => rendered.getByText('data1: 5, data2: 15'))
-    rendered.getByRole('button', { name: /setSeries1/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /setSeries1/i }))
 
     await waitFor(() => rendered.getByText('data1: 10, data2: 15'))
     await waitFor(() => rendered.getByText('isFetching: false'))
@@ -265,11 +265,11 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
-    rendered.getByRole('button', { name: /set1Disabled/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /set1Disabled/i }))
 
     await waitFor(() => rendered.getByText('data1: 10, data2: null'))
     await waitFor(() => rendered.getByText('isFetching: false'))
-    rendered.getByRole('button', { name: /set2Enabled/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /set2Enabled/i }))
 
     await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
     await waitFor(() => rendered.getByText('isFetching: false'))

@@ -38,13 +38,13 @@ describe('useMutation', () => {
 
     expect(getByRole('heading').textContent).toBe('empty')
 
-    getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe('mutation')
     })
 
-    getByRole('button', { name: /reset/i }).click()
+    fireEvent.click(getByRole('button', { name: /reset/i }))
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe('empty')
@@ -76,7 +76,7 @@ describe('useMutation', () => {
       expect(queryByRole('heading')).toBeNull()
     })
 
-    getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe(
@@ -84,7 +84,7 @@ describe('useMutation', () => {
       )
     })
 
-    getByRole('button', { name: /reset/i }).click()
+    fireEvent.click(getByRole('button', { name: /reset/i }))
 
     await waitFor(() => {
       expect(queryByRole('heading')).toBeNull()
@@ -123,9 +123,9 @@ describe('useMutation', () => {
 
     expect(getByRole('heading').textContent).toBe('0')
 
-    getByRole('button', { name: /mutate/i }).click()
-    getByRole('button', { name: /mutate/i }).click()
-    getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe('3')
@@ -186,9 +186,9 @@ describe('useMutation', () => {
 
     expect(getByRole('heading').textContent).toBe('0')
 
-    getByRole('button', { name: /mutate/i }).click()
-    getByRole('button', { name: /mutate/i }).click()
-    getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe('3')
@@ -432,7 +432,7 @@ describe('useMutation', () => {
       ).toBeInTheDocument()
     })
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(
@@ -491,7 +491,7 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: loading, isPaused: true')
 
@@ -538,7 +538,7 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: loading, isPaused: true')
 
@@ -819,8 +819,8 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
-    rendered.getByRole('button', { name: /hide/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
     await waitFor(() => {
       expect(

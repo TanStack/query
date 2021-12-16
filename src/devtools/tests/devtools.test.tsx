@@ -279,7 +279,7 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    screen.getByRole('button', { name: /enable query/i }).click()
+    fireEvent.click(screen.getByRole('button', { name: /enable query/i }))
 
     await waitFor(() => {
       expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
@@ -316,7 +316,7 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    screen.getByRole('button', { name: /hide query/i }).click()
+    fireEvent.click(screen.getByRole('button', { name: /hide query/i }))
 
     await waitFor(() => {
       expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()

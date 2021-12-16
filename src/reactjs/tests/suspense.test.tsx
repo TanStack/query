@@ -767,7 +767,7 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(queryFn).toHaveBeenCalledTimes(0)
 
-    rendered.getByRole('button', { name: /fire/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
 
     await waitFor(() => {
       expect(rendered.getByRole('heading').textContent).toBe('23')

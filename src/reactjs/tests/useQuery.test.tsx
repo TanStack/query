@@ -745,7 +745,7 @@ describe('useQuery', () => {
 
     await rendered.findByText('data: 1')
 
-    rendered.getByRole('button', { name: /toggle/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /toggle/i }))
 
     await rendered.findByText('data: 2')
 
@@ -1067,10 +1067,10 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 1'))
-    rendered.getByRole('button', { name: /remove/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /remove/i }))
 
     await sleep(20)
-    rendered.getByRole('button', { name: /rerender/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
     await waitFor(() => rendered.getByText('data: 2'))
 
     expect(states.length).toBe(4)
@@ -1115,10 +1115,10 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 1'))
-    rendered.getByRole('button', { name: /remove/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /remove/i }))
 
     await sleep(50)
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('data: 2'))
 
     expect(states.length).toBe(4)
@@ -1176,7 +1176,7 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('data: false'))
     await sleep(20)
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('data: true'))
 
     await waitFor(() => expect(states.length).toBe(4))
@@ -1230,7 +1230,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: set'))
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('data: fetched'))
 
     await waitFor(() => expect(results.length).toBe(3))
@@ -1271,7 +1271,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 1'))
-    rendered.getByRole('button', { name: /invalidate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
     await waitFor(() => rendered.getByText('data: 2'))
 
     await waitFor(() => expect(states.length).toBe(4))
@@ -1904,7 +1904,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 1'))
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -2885,9 +2885,9 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     await waitFor(() => rendered.getByText('failureCount: 1'))
-    rendered.getByRole('button', { name: /hide/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     await waitFor(() => rendered.getByRole('button', { name: /show/i }))
-    rendered.getByRole('button', { name: /show/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /show/i }))
     await waitFor(() => rendered.getByText('error: some error'))
 
     expect(count).toBe(3)
@@ -2939,10 +2939,10 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     await waitFor(() => rendered.getByText('failureCount: 1'))
-    rendered.getByRole('button', { name: /hide/i }).click()
-    rendered.getByRole('button', { name: /cancel/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /cancel/i }))
     await waitFor(() => rendered.getByRole('button', { name: /show/i }))
-    rendered.getByRole('button', { name: /show/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /show/i }))
     await waitFor(() => rendered.getByText('error: some error'))
 
     // initial fetch (1), which will be cancelled, followed by new mount(2) + 2 retries = 4
@@ -4200,7 +4200,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
     expect(selectRun).toBe(2)
 
-    rendered.getByRole('button', { name: /inc/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
     await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
     expect(selectRun).toBe(3)
@@ -4408,7 +4408,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 1'))
-    rendered.getByRole('button', { name: /reset/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -4478,10 +4478,10 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: null'))
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() => rendered.getByText('data: 1'))
-    rendered.getByRole('button', { name: /reset/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /reset/i }))
 
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => expect(states.length).toBe(4))
@@ -4815,7 +4815,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('data: data1'))
 
       const onlineMock = mockNavigatorOnLine(false)
-      rendered.getByRole('button', { name: /invalidate/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
         rendered.getByText(
@@ -4878,7 +4878,7 @@ describe('useQuery', () => {
       await waitFor(() => rendered.getByText('data: data1'))
 
       const onlineMock = mockNavigatorOnLine(false)
-      rendered.getByRole('button', { name: /invalidate/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
         rendered.getByText('status: success, fetchStatus: paused')
@@ -4931,7 +4931,7 @@ describe('useQuery', () => {
         rendered.getByText('status: loading, fetchStatus: paused')
       )
 
-      rendered.getByRole('button', { name: /invalidate/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await sleep(15)
 
@@ -4985,7 +4985,7 @@ describe('useQuery', () => {
         expect(rendered.getByText('data: initial')).toBeInTheDocument()
       })
 
-      rendered.getByRole('button', { name: /invalidate/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await sleep(15)
 
@@ -5040,7 +5040,7 @@ describe('useQuery', () => {
       })
 
       // triggers one pause
-      rendered.getByRole('button', { name: /invalidate/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await sleep(15)
 
@@ -5172,7 +5172,7 @@ describe('useQuery', () => {
         rendered.getByText('status: loading, fetchStatus: paused')
       )
 
-      rendered.getByRole('button', { name: /hide/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
@@ -5227,7 +5227,7 @@ describe('useQuery', () => {
         rendered.getByText('status: loading, fetchStatus: paused')
       )
 
-      rendered.getByRole('button', { name: /cancel/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /cancel/i }))
 
       await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
 
@@ -5293,13 +5293,13 @@ describe('useQuery', () => {
 
       const onlineMock = mockNavigatorOnLine(false)
 
-      rendered.getByRole('button', { name: /invalidate/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /invalidate/i }))
 
       await waitFor(() =>
         rendered.getByText('status: success, fetchStatus: paused')
       )
 
-      rendered.getByRole('button', { name: /hide/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
       await sleep(15)
 

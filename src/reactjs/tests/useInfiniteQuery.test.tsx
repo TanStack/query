@@ -210,10 +210,10 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 0-desc'))
-    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
     await waitFor(() => rendered.getByText('data: 0-desc,1-desc'))
-    rendered.getByRole('button', { name: /order/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /order/i }))
 
     await waitFor(() => rendered.getByText('data: 0-asc'))
     await waitFor(() => rendered.getByText('isFetching: false'))
@@ -373,7 +373,7 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 0'))
-    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
     await waitFor(() => rendered.getByText('data: 1,0'))
 
@@ -500,12 +500,14 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 10'))
-    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
     await waitFor(() => rendered.getByText('data: 10,11'))
-    rendered.getByRole('button', { name: /fetchPreviousPage/i }).click()
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i })
+    )
     await waitFor(() => rendered.getByText('data: 9,10,11'))
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() => rendered.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(8))
@@ -600,12 +602,14 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 10'))
-    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
     await waitFor(() => rendered.getByText('data: 10,11'))
-    rendered.getByRole('button', { name: /fetchPreviousPage/i }).click()
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i })
+    )
     await waitFor(() => rendered.getByText('data: 9,10,11'))
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() => rendered.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(8))
@@ -706,10 +710,10 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 10'))
-    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
     await waitFor(() => rendered.getByText('data: 10,11'))
-    rendered.getByRole('button', { name: /refetchPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /refetchPage/i }))
 
     await waitFor(() => rendered.getByText('data: 20,11'))
     await waitFor(() => rendered.getByText('isFetching: false'))
