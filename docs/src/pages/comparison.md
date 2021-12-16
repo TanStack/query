@@ -44,7 +44,7 @@ Feature/Capability Key:
 | Render Batching & Optimization<sup>2</sup>         | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
 | Auto Garbage Collection                            | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
 | Mutation Hooks                                     | ✅                                       | 🟡                          | ✅                                    | ✅                                   |
-| Offline Mutation Support                           | ✅                                       | 🛑                          | 🟡                                    | 🛑                                   |
+| Offline Mutation Support                           | ✅                                       | ✅                          | 🟡                                    | 🛑                                   |
 | Prefetching APIs                                   | ✅                                       | 🔶                          | ✅                                    | ✅                                   |
 | Query Cancellation                                 | ✅                                       | 🛑                          | 🛑                                    | 🛑                                   |
 | Partial Query Matching<sup>3</sup>                 | ✅                                       | 🛑                          | 🛑                                    | ✅                                   |
