@@ -43,7 +43,10 @@ describe("useQuery's in Suspense mode", () => {
       states.push(state)
 
       return (
-        <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+        <div>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          data: {String(state.data)}
+        </div>
       )
     }
 
@@ -54,12 +57,10 @@ describe("useQuery's in Suspense mode", () => {
       </React.Suspense>
     )
 
-    await sleep(20)
-
-    await waitFor(() => rendered.getByLabelText('toggle'))
+    await waitFor(() => rendered.getByText('data: 1'))
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await sleep(20)
+    await waitFor(() => rendered.getByText('data: 2'))
 
     expect(renders).toBe(4)
     expect(states.length).toBe(2)
