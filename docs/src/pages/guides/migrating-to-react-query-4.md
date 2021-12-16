@@ -247,6 +247,11 @@ The methods `cancelMutatations` and `executeMutation` were undocumented and unus
 
 Types now require using TypeScript v4.1 or greater
 
+### Logging
+
+Starting with v4, react-query will no longer log errors (e.g. failed fetches) to the console in production mode, as this was confusing to many.
+Errors will still show up in development mode.
+
 ## New Features 🚀
 
 ### Proper offline support

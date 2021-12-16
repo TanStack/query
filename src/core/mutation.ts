@@ -235,8 +235,9 @@ export class Mutation<
           this as Mutation<unknown, unknown, unknown, unknown>
         )
 
-        // Log error
-        getLogger().error(error)
+        if (process.env.NODE_ENV !== 'production') {
+          getLogger().error(error)
+        }
 
         return Promise.resolve()
           .then(() =>
