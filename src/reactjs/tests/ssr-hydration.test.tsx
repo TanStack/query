@@ -23,7 +23,6 @@ function setIsServer(isServer: boolean) {
   utils.isServer = isServer
 }
 
-// @ts-expect-error
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
