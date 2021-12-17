@@ -4505,4 +4505,80 @@ describe('useQuery', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('should have no error in loading state when refetching after error occurred', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    const error = new Error('oops')
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          if (count === 0) {
+            count++
+            throw error
+          }
+          return 5
+        },
+        {
+          retry: false,
+        }
+      )
+
+      states.push(state)
+
+      if (state.isLoading) {
+        return <div>status: loading</div>
+      }
+      if (state.error instanceof Error) {
+        return (
+          <div>
+            <div>error</div>
+            <button onClick={() => state.refetch()}>refetch</button>
+          </div>
+        )
+      }
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('error'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await waitFor(() => rendered.getByText('data: 5'))
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      error: null,
+    })
+
+    expect(states[1]).toMatchObject({
+      status: 'error',
+      data: undefined,
+      error,
+    })
+
+    expect(states[2]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      error: null,
+    })
+
+    expect(states[3]).toMatchObject({
+      status: 'success',
+      data: 5,
+      error: null,
+    })
+
+    consoleMock.mockRestore()
+  })
 })
