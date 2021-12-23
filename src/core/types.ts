@@ -20,7 +20,7 @@ export interface QueryFunctionContext<
   queryKey: EnsuredQueryKey<TQueryKey>
   signal?: AbortSignal
   pageParam?: TPageParam
-  meta: QueryMeta | undefined
+  meta?: QueryMeta | undefined
 }
 
 export type InitialDataFunction<T> = () => T | undefined
