@@ -3,8 +3,7 @@ import { Query } from '../core'
 
 import { Theme, useTheme } from './theme'
 import useMediaQuery from './useMediaQuery'
-
-export const isServer = typeof window === 'undefined'
+import { useIsMounted } from '../react/utils'
 
 type StyledComponent<T> = T extends 'button'
   ? React.DetailedHTMLProps<
@@ -84,20 +83,6 @@ export function styled<T extends keyof HTMLElementTagNameMap>(
       })
     }
   )
-}
-
-export function useIsMounted() {
-  const mountedRef = React.useRef(false)
-  const isMounted = React.useCallback(() => mountedRef.current, [])
-
-  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
-    mountedRef.current = true
-    return () => {
-      mountedRef.current = false
-    }
-  }, [])
-
-  return isMounted
 }
 
 /**

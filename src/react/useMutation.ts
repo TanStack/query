@@ -10,7 +10,7 @@ import {
   UseMutationResult,
 } from './types'
 import { MutationFunction, MutationKey } from '../core/types'
-import { shouldThrowError } from './utils'
+import { shouldThrowError, useIsMounted } from './utils'
 
 // HOOK
 
@@ -74,7 +74,7 @@ export function useMutation<
     | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const mountedRef = React.useRef(false)
+  const isMounted = useIsMounted()
   const [, forceUpdate] = React.useState(0)
 
   const options = parseMutationArgs(arg1, arg2, arg3)
@@ -91,20 +91,17 @@ export function useMutation<
   const currentResult = obsRef.current.getCurrentResult()
 
   React.useEffect(() => {
-    mountedRef.current = true
-
     const unsubscribe = obsRef.current!.subscribe(
       notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
+        if (isMounted()) {
           forceUpdate(x => x + 1)
         }
       })
     )
     return () => {
-      mountedRef.current = false
       unsubscribe()
     }
-  }, [])
+  }, [isMounted])
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TContext>

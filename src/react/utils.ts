@@ -1,3 +1,7 @@
+import React from 'react'
+
+import { isServer } from '../core/utils'
+
 export function shouldThrowError<TError>(
   suspense: boolean | undefined,
   _useErrorBoundary: boolean | ((err: TError) => boolean) | undefined,
@@ -13,4 +17,18 @@ export function shouldThrowError<TError>(
 
   // If suspense is enabled default to throwing errors
   return !!suspense
+}
+
+export function useIsMounted() {
+  const mountedRef = React.useRef(false)
+  const isMounted = React.useCallback(() => mountedRef.current, [])
+
+  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
+    mountedRef.current = true
+    return () => {
+      mountedRef.current = false
+    }
+  }, [])
+
+  return isMounted
 }

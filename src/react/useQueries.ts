@@ -5,6 +5,7 @@ import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
+import { useIsMounted } from './utils'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -113,7 +114,7 @@ type QueriesResults<
 export function useQueries<T extends any[]>(
   queries: readonly [...QueriesOptions<T>]
 ): QueriesResults<T> {
-  const mountedRef = React.useRef(false)
+  const isMounted = useIsMounted()
   const [, forceUpdate] = React.useState(0)
 
   const queryClient = useQueryClient()
@@ -140,21 +141,18 @@ export function useQueries<T extends any[]>(
   const result = observer.getOptimisticResult(defaultedQueries)
 
   React.useEffect(() => {
-    mountedRef.current = true
-
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
+        if (isMounted()) {
           forceUpdate(x => x + 1)
         }
       })
     )
 
     return () => {
-      mountedRef.current = false
       unsubscribe()
     }
-  }, [observer])
+  }, [observer, isMounted])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because

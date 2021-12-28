@@ -6,7 +6,7 @@ import { QueryObserver } from '../core/queryObserver'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
-import { shouldThrowError } from './utils'
+import { shouldThrowError, useIsMounted } from './utils'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -24,7 +24,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver
 ) {
-  const mountedRef = React.useRef(false)
+  const isMounted = useIsMounted()
   const [, forceUpdate] = React.useState(0)
 
   const queryClient = useQueryClient()
@@ -85,13 +85,11 @@ export function useBaseQuery<
   let result = observer.getOptimisticResult(defaultedOptions)
 
   React.useEffect(() => {
-    mountedRef.current = true
-
     errorResetBoundary.clearReset()
 
     const unsubscribe = observer.subscribe(
       notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
+        if (isMounted()) {
           forceUpdate(x => x + 1)
         }
       })
@@ -102,10 +100,9 @@ export function useBaseQuery<
     observer.updateResult()
 
     return () => {
-      mountedRef.current = false
       unsubscribe()
     }
-  }, [errorResetBoundary, observer])
+  }, [errorResetBoundary, observer, isMounted])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because

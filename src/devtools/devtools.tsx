@@ -3,7 +3,7 @@ import React from 'react'
 import { Query, useQueryClient } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
-import { useIsMounted, useSafeState } from './utils'
+import { useSafeState } from './utils'
 
 import {
   Panel,
@@ -20,6 +20,7 @@ import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
 import { noop } from '../core/utils'
+import { useIsMounted } from '../react/utils'
 
 interface DevtoolsOptions {
   /**
