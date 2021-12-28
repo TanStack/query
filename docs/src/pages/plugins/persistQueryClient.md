@@ -89,7 +89,7 @@ persistQueryClientRestore({
   persister,
   maxAge = 1000 * 60 * 60 * 24, // 24 hours
   buster = '',
-  hydrateOptions,
+  hydrateOptions = undefined,
 })
 ```
 
@@ -102,7 +102,7 @@ persistQueryClientSave({
   queryClient,
   persister,
   buster = '',
-  dehydrateOptions,
+  dehydrateOptions = undefined,
 })
 ```
 
@@ -118,7 +118,7 @@ persistQueryClientSubscribe({
   queryClient,
   persister,
   buster = '',
-  dehydrateOptions,
+  dehydrateOptions = undefined,
 })
 ```
 
@@ -132,8 +132,8 @@ persistQueryClient({
   persister,
   maxAge = 1000 * 60 * 60 * 24, // 24 hours
   buster = '',
-  hydrateOptions,
-  dehydrateOptions,
+  hydrateOptions = undefined,
+  dehydrateOptions = undefined,
 })
 ```
 
