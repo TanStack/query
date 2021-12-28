@@ -69,7 +69,10 @@ export class QueryObserver<
   >
   private previousQueryResult?: QueryObserverResult<TData, TError>
   private previousSelectError: TError | null
-  private previousSelectFn?: (data: TQueryData) => TData
+  private previousSelect?: {
+    fn: (data: TQueryData) => TData
+    result: TData
+  }
   private staleTimeoutId?: ReturnType<typeof setTimeout>
   private refetchIntervalId?: ReturnType<typeof setInterval>
   private currentRefetchInterval?: number | false
@@ -473,14 +476,17 @@ export class QueryObserver<
       if (
         prevResult &&
         state.data === prevResultState?.data &&
-        options.select === this.previousSelectFn &&
+        options.select === this.previousSelect?.fn &&
         !this.previousSelectError
       ) {
-        data = prevResult.data
+        data = this.previousSelect.result
       } else {
         try {
-          this.previousSelectFn = options.select
           data = options.select(state.data)
+          this.previousSelect = {
+            fn: options.select,
+            result: data,
+          }
           if (options.structuralSharing !== false) {
             data = replaceEqualDeep(prevResult?.data, data)
           }

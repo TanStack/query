@@ -572,7 +572,10 @@ export class Query<
           fetchStatus: canFetch(this.options.networkMode)
             ? 'fetching'
             : 'paused',
-          status: !state.dataUpdatedAt ? 'loading' : state.status,
+          ...(!state.dataUpdatedAt && {
+            error: null,
+            status: 'loading',
+          }),
         }
       case 'success':
         return {
