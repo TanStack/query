@@ -4206,6 +4206,56 @@ describe('useQuery', () => {
     expect(selectRun).toBe(3)
   })
 
+  it('select should always return the correct state', async () => {
+    const key1 = queryKey()
+
+    function Page() {
+      const [count, inc] = React.useReducer(prev => prev + 1, 2)
+      const [forceValue, forceUpdate] = React.useReducer(prev => prev + 1, 1)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return 0
+        },
+        {
+          select: React.useCallback(
+            (data: number) => {
+              return `selected ${data + count}`
+            },
+            [count]
+          ),
+          placeholderData: 99,
+        }
+      )
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={inc}>inc: {count}</button>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: selected 101')) // 99 + 2
+
+    await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
+
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
+
+    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+
+    await waitFor(() => rendered.getByText('forceValue: 2'))
+    // data should still be 3 after an independent re-render
+    await waitFor(() => rendered.getByText('Data: selected 3'))
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
@@ -4323,17 +4373,9 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    const queryFn = () => {
-      let cancelFn = jest.fn()
-
-      const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = jest.fn(() => reject('Cancelled'))
-        sleep(50).then(() => resolve('OK'))
-      })
-
-      ;(promise as any).cancel = cancelFn
-
-      return promise
+    const queryFn = async () => {
+      await sleep(50)
+      return 'OK'
     }
 
     function Page() {
@@ -4727,6 +4769,82 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByLabelText('change'))
     await waitFor(() => rendered.getByText('status: fetching'))
     await waitFor(() => rendered.getByText('error'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should have no error in loading state when refetching after error occurred', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    const error = new Error('oops')
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          if (count === 0) {
+            count++
+            throw error
+          }
+          return 5
+        },
+        {
+          retry: false,
+        }
+      )
+
+      states.push(state)
+
+      if (state.isLoading) {
+        return <div>status: loading</div>
+      }
+      if (state.error instanceof Error) {
+        return (
+          <div>
+            <div>error</div>
+            <button onClick={() => state.refetch()}>refetch</button>
+          </div>
+        )
+      }
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('error'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await waitFor(() => rendered.getByText('data: 5'))
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      error: null,
+    })
+
+    expect(states[1]).toMatchObject({
+      status: 'error',
+      data: undefined,
+      error,
+    })
+
+    expect(states[2]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      error: null,
+    })
+
+    expect(states[3]).toMatchObject({
+      status: 'success',
+      data: 5,
+      error: null,
+    })
 
     consoleMock.mockRestore()
   })

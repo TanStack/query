@@ -1,16 +1,12 @@
-import { RetryValue, RetryDelayValue } from '../core/retryer'
 import {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   MutationObserverResult,
-  MutationKey,
   QueryObserverOptions,
   QueryObserverResult,
   QueryKey,
-  MutationFunction,
-  MutateOptions,
-  MutationMeta,
-  NetworkMode,
+  MutationObserverOptions,
+  MutateFunction,
 } from '../core/types'
 
 export interface UseBaseQueryOptions<
@@ -74,35 +70,10 @@ export interface UseMutationOptions<
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> {
-  mutationFn?: MutationFunction<TData, TVariables>
-  mutationKey?: MutationKey
-  cacheTime?: number
-  onMutate?: (
-    variables: TVariables
-  ) => Promise<TContext | undefined> | TContext | undefined
-  onSuccess?: (
-    data: TData,
-    variables: TVariables,
-    context: TContext | undefined
-  ) => Promise<unknown> | void
-  onError?: (
-    error: TError,
-    variables: TVariables,
-    context: TContext | undefined
-  ) => Promise<unknown> | void
-  onSettled?: (
-    data: TData | undefined,
-    error: TError | null,
-    variables: TVariables,
-    context: TContext | undefined
-  ) => Promise<unknown> | void
-  retry?: RetryValue<TError>
-  retryDelay?: RetryDelayValue<TError>
-  networkMode?: NetworkMode
-  useErrorBoundary?: boolean | ((error: TError) => boolean)
-  meta?: MutationMeta
-}
+> extends Omit<
+    MutationObserverOptions<TData, TError, TVariables, TContext>,
+    '_defaulted' | 'variables'
+  > {}
 
 export type UseMutateFunction<
   TData = unknown,
@@ -110,8 +81,7 @@ export type UseMutateFunction<
   TVariables = void,
   TContext = unknown
 > = (
-  variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TContext>
+  ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
 ) => void
 
 export type UseMutateAsyncFunction<
@@ -119,10 +89,7 @@ export type UseMutateAsyncFunction<
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> = (
-  variables: TVariables,
-  options?: MutateOptions<TData, TError, TVariables, TContext>
-) => Promise<TData>
+> = MutateFunction<TData, TError, TVariables, TContext>
 
 export type UseBaseMutationResult<
   TData = unknown,
