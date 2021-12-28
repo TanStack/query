@@ -134,7 +134,7 @@ export function persistQueryClientSubscribe(
 export async function persistQueryClient(props: PersistQueryClientOptions) {
   if (typeof window !== 'undefined') {
     // Attempt restore
-    persistQueryClientRestore(props)
+    await persistQueryClientRestore(props)
 
     // Subscribe to changes in the query cache to trigger the save
     return persistQueryClientSubscribe(props)
