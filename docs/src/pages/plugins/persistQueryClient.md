@@ -124,7 +124,7 @@ persistQueryClientSubscribe({
 
 ### `persistQueryClient`
 
-This will automatically restore any persisted cache and permanently subscribe to the query cache to persist any changes from the query cache to the persister.
+This will automatically restore any persisted cache and subscribes to the query cache to persist any changes from the query cache to the persister. It returns an `unsubscribe` function which you can use to discontinue the monitor; ending the updates to the persisted cache.
 
 ```ts
 persistQueryClient({
