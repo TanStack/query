@@ -4268,17 +4268,9 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    const queryFn = () => {
-      let cancelFn = jest.fn()
-
-      const promise = new Promise<string>((resolve, reject) => {
-        cancelFn = jest.fn(() => reject('Cancelled'))
-        sleep(50).then(() => resolve('OK'))
-      })
-
-      ;(promise as any).cancel = cancelFn
-
-      return promise
+    const queryFn = async () => {
+      await sleep(50)
+      return 'OK'
     }
 
     function Page() {

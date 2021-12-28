@@ -181,7 +181,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
     ["todos", { filter }],
-    () => fetchTodos({ filter })
+    fetchTodos
   );
 
   return (
@@ -370,9 +370,16 @@ function AddTodo() {
   );
 }
 
-function fetchTodos({ filter } = {}) {
+function fetchTodos({ signal, queryKey: [, { filter }] }) {
   console.info("fetchTodos", { filter });
-  const promise = new Promise((resolve, reject) => {
+
+  if (signal) {
+    signal.addEventListener("abort", () => {
+      console.info("cancelled", filter);
+    });
+  }
+
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
         return reject(
@@ -382,10 +389,6 @@ function fetchTodos({ filter } = {}) {
       resolve(list.filter((d) => d.name.includes(filter)));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
-
-  promise.cancel = () => console.info("cancelled", filter);
-
-  return promise;
 }
 
 function fetchTodoById({ id }) {
