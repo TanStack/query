@@ -3998,6 +3998,56 @@ describe('useQuery', () => {
     expect(selectRun).toBe(3)
   })
 
+  it('select should always return the correct state', async () => {
+    const key1 = queryKey()
+
+    function Page() {
+      const [count, inc] = React.useReducer(prev => prev + 1, 2)
+      const [forceValue, forceUpdate] = React.useReducer(prev => prev + 1, 1)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return 0
+        },
+        {
+          select: React.useCallback(
+            (data: number) => {
+              return `selected ${data + count}`
+            },
+            [count]
+          ),
+          placeholderData: 99,
+        }
+      )
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={inc}>inc: {count}</button>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: selected 101')) // 99 + 2
+
+    await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
+
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
+
+    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+
+    await waitFor(() => rendered.getByText('forceValue: 2'))
+    // data should still be 3 after an independent re-render
+    await waitFor(() => rendered.getByText('Data: selected 3'))
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
