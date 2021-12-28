@@ -79,12 +79,62 @@ When you reload/bootstrap your app:
 
 ## API
 
-### `persistQueryClient`
+### `persistQueryClientRestore`
 
-Pass this function a `QueryClient` instance and a persister that will persist your cache. Both are **required**
+This will attempt to restore a persister's stored cached to the active query cache.
 
 ```ts
-persistQueryClient({ queryClient, persister })
+persistQueryClientRestore({
+  queryClient,
+  persister,
+  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  buster = '',
+  hydrateOptions,
+})
+```
+
+### `persistQueryClientSave`
+
+This will attempt to save the current query cache with the persister. You can use this to explicitly persist the cache at the moments you choose.
+
+```ts
+persistQueryClientSave({
+  queryClient,
+  persister,
+  buster = '',
+  dehydrateOptions,
+})
+```
+
+### `persistQueryClientSubscribe`
+
+This will subscribe to query cache updates which will run `persistQueryClientSave`. For example: you might initiate the `subscribe` when a user logs-in and checks "Remember me".
+
+- It returns an `unsubscribe` function which you can use to discontinue the monitor; ending the updates to the persisted cache.
+- If you want to erase the persisted cache after the `unsubscribe`, you can send a new `buster` to `persistQueryClientRestore` which will trigger the persister's `removeClient` function and discard the persisted cache.
+
+```ts
+persistQueryClientSubscribe({
+  queryClient,
+  persister,
+  buster = '',
+  dehydrateOptions,
+})
+```
+
+### `persistQueryClient`
+
+This will automatically restore any persisted cache and permanently subscribe to the query cache to persist any changes from the query cache to the persister.
+
+```ts
+persistQueryClient({
+  queryClient,
+  persister,
+  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  buster = '',
+  hydrateOptions,
+  dehydrateOptions,
+})
 ```
 
 ### `Options`
@@ -110,15 +160,6 @@ interface PersistQueryClientOptions {
   hydrateOptions?: HydrateOptions
   /** The options passed to the dehydrate function */
   dehydrateOptions?: DehydrateOptions
-}
-```
-
-The default options are:
-
-```ts
-{
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
-  buster = '',
 }
 ```
 
