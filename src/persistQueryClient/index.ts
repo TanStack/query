@@ -137,6 +137,6 @@ export async function persistQueryClient(props: PersistQueryClientOptions) {
     persistQueryClientRestore(props)
 
     // Subscribe to changes in the query cache to trigger the save
-    persistQueryClientSubscribe(props)
+    return persistQueryClientSubscribe(props)
   }
 }
