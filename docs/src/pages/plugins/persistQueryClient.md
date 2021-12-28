@@ -70,7 +70,7 @@ persistQueryClient({ queryClient, persister, buster: buildHash })
 
 When you reload/bootstrap your app:
 
-- Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache.
+- Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
 - If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
 
 ### Removal
@@ -81,7 +81,7 @@ When you reload/bootstrap your app:
 
 ### `persistQueryClientRestore`
 
-This will attempt to restore a persister's stored cached to the active query cache.
+This will attempt to restore a persister's stored cached to the query cache of the passed queryClient.
 
 ```ts
 persistQueryClientRestore({
