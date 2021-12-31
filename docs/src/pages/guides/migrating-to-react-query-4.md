@@ -217,9 +217,9 @@ The `useQueries` hook now accepts an object with a `queries` prop as its input. 
 ```
 
 
-### Removed undocumented methods from the `queryClient`
+### Removed undocumented methods from the `queryClient` and `query`
 
-The methods `cancelMutatations` and `executeMutation` were undocumented and unused internally, so we removed them. Since they were just wrappers around methods available on the `mutationCache`, you can still use the functionality.
+The methods `cancelMutatations` and `executeMutation` on the `QueryClient` were undocumented and unused internally, so we removed them. Since they were just wrappers around methods available on the `mutationCache`, you can still use the functionality.
 
 ```diff
 - cancelMutations(): Promise<void> {
@@ -242,6 +242,8 @@ The methods `cancelMutatations` and `executeMutation` were undocumented and unus
 -   return this.mutationCache.build(this, options).execute()
 - }
 ```
+
+Additionally, `query.setDefaultOptions` was removed because it was also unused.
 
 ### TypeScript
 
