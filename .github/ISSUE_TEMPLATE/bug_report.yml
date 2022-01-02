@@ -30,8 +30,10 @@ body:
       description: |
         Please add a link to a minimal reproduction.
         Note:
-        - Your bug will may get fixed much faster if we can run your code and it doesn't have dependencies other than React.
-        - To create a shareable code example for web, you can use CodeSandbox (https://codesandbox.io/s/new) or Stackblitz (https://stackblitz.com/). Please no localhost URLs.
+        - Your bug may get fixed much faster if we can run your code and it doesn't have dependencies other than React.
+        - To create a shareable code example for web, you can use CodeSandbox (https://codesandbox.io/s/new) or Stackblitz (https://stackblitz.com/).
+        - Please make sure the example is complete and runnable - e.g. avoid localhost URLs.
+        - To stub out real api requests - Promise.resolve and Promise.reject are good options for easy reproduction
         - Feel free to fork any of the official CodeSandbox examples to reproduce your issue: https://react-query.tanstack.com/examples/simple
         - For React Native, you can use: https://snack.expo.dev/
         - For TypeScript related issues only, a TypeScript Playground link might be sufficient: https://www.typescriptlang.org/play
