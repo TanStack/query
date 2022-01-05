@@ -22,6 +22,8 @@ const {
   onMutate,
   onSettled,
   onSuccess,
+  retry,
+  retryDelay,
   useErrorBoundary,
   meta,
 })
@@ -60,7 +62,8 @@ mutate(variables, {
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
-  - If `false`, failed mutations will not retry by default.
+  - Defaults to `0`.
+  - If `false`, failed mutations will not retry.
   - If `true`, failed mutations will retry infinitely.
   - If set to an `number`, e.g. `3`, failed mutations will retry until the failed mutations count meets that number.
 - `retryDelay: number | (retryAttempt: number, error: TError) => number`
