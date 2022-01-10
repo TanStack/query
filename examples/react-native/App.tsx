@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform } from 'react-native';
+import { AppStateStatus, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClient, QueryClientProvider, focusManager } from 'react-query';
 
@@ -7,7 +7,7 @@ import { useAppState } from '@app/hooks/useAppState';
 import { MoviesStack } from '@app/navigation/MoviesStack';
 import { useOnlineManager } from '@app/hooks/useOnlineManager';
 
-function onAppStateChange(status: string) {
+function onAppStateChange(status: AppStateStatus) {
   // React Query already supports in web browser refetch on window focus by default
   if (Platform.OS !== 'web') {
     focusManager.setFocused(status === 'active');
