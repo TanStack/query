@@ -4048,6 +4048,52 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Data: selected 3'))
   })
 
+  it('select should structually share data', async () => {
+    const key1 = queryKey()
+    const states: Array<Array<number>> = []
+
+    function Page() {
+      const [forceValue, forceUpdate] = React.useReducer(prev => prev + 1, 1)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return [1, 2]
+        },
+        {
+          select: res => res.map(x => x + 1),
+        }
+      )
+
+      React.useEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      }, [state.data])
+
+      return (
+        <div>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: [2,3]'))
+    expect(states).toHaveLength(1)
+
+    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+
+    await waitFor(() => rendered.getByText('forceValue: 2'))
+    await waitFor(() => rendered.getByText('Data: [2,3]'))
+
+    // effect should not be triggered again due to structural sharing
+    expect(states).toHaveLength(1)
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
