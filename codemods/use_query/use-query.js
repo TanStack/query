@@ -1,42 +1,20 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const createUtilsObject = require('../utils')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const createQueryKeyReplacer = require('../utils/replacers/query-key-replacer')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const hookCallTransformer = require('../utils/transformers/hook-call-transformer')
+
 module.exports = (file, api) => {
-  const j = api.jscodeshift // eslint-disable-line id-length
-  const root = j(file.source)
+  const jscodeshift = api.jscodeshift
+  const root = jscodeshift(file.source)
 
-  const importSpecifier = root
-    .find(j.ImportDeclaration, {
-      source: {
-        type: 'StringLiteral',
-        value: 'react-query',
-      },
-    })
-    .find(j.ImportSpecifier, {
-      imported: {
-        type: 'Identifier',
-        name: 'useQuery',
-      },
-    })
+  const utils = createUtilsObject({ root, jscodeshift })
+  const replacer = createQueryKeyReplacer({ jscodeshift, root })
+  const transformer = hookCallTransformer({ jscodeshift, utils, root })
 
-  importSpecifier.paths().forEach(specifier => {
-    const localImportName = specifier.value.local.name
-
-    root
-      .find(j.CallExpression, {
-        callee: {
-          type: 'Identifier',
-          name: localImportName,
-        },
-      })
-      .replaceWith(({ node }) => {
-        const [queryKeyArgument, queryFnArgument] = node.arguments
-
-        return j.callExpression(j.identifier(localImportName), [
-          j.objectExpression([
-            j.property('init', j.identifier('queryKey'), queryKeyArgument),
-            j.property('init', j.identifier('queryFn'), queryFnArgument),
-          ]),
-        ])
-      })
-  })
+  transformer.execute('useQuery', replacer)
+  transformer.execute('useInfiniteQuery', replacer)
 
   return root.toSource({ quote: 'single' })
 }
