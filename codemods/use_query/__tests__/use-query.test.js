@@ -10,3 +10,7 @@ defineTest(__dirname, 'use-query', null, 'default-import', {
 defineTest(__dirname, 'use-query', null, 'named-import', {
   parser: 'tsx',
 })
+
+defineTest(__dirname, 'use-query', null, 'namespaced-import', {
+  parser: 'tsx',
+})

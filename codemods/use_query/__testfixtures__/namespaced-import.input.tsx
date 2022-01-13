@@ -1,73 +1,66 @@
 import * as React from 'react'
-import {
-  useQuery as useRenamedQuery,
-  useInfiniteQuery as useRenamedInfiniteQuery,
-} from 'react-query'
+import * as RQ from 'react-query'
 
 export const ExamplesWithUseQuery = () => {
   // The query key should be transformed into an array.
-  useRenamedQuery(['todos'])
+  RQ.useQuery('todos')
   // The query key should be transformed into an array.
-  useRenamedQuery(['todos'], fetchTodos)
+  RQ.useQuery('todos', fetchTodos)
   // The query key should stay as it is.
-  useRenamedQuery(['todos'], fetchTodos, { staleTime: 1000 })
+  RQ.useQuery(['todos'], fetchTodos, { staleTime: 1000 })
   // The query key should stay as it is.
-  useRenamedQuery(['todos'], { queryFn: fetchTodos, staleTime: 1000 })
+  RQ.useQuery(['todos'], { queryFn: fetchTodos, staleTime: 1000 })
   // The query key should be transformed into an array, the 'queryKey' property remains in the object.
-  useRenamedQuery(['todos'], {
+  RQ.useQuery('todos', {
     queryKey: ['notTodos'],
     queryFn: fetchTodos,
     staleTime: 1000,
   })
   // The 'stringKey' in the hook call should be in array in both cases.
   const stringKey = 'todos'
-  useRenamedQuery([stringKey], { queryFn: fetchTodos, staleTime: 1000 })
-  useRenamedQuery({
-    queryKey: [stringKey],
-    queryFn: fetchTodos,
-    staleTime: 1000
-  })
+  RQ.useQuery(stringKey, { queryFn: fetchTodos, staleTime: 1000 })
+  RQ.useQuery({ queryKey: stringKey, queryFn: fetchTodos, staleTime: 1000 })
   // The 'arrayKey' in the hook call should stay as it is.
   const arrayKey = ['todos']
-  useRenamedQuery(arrayKey, { queryFn: fetchTodos, staleTime: 1000 })
+  RQ.useQuery(arrayKey, { queryFn: fetchTodos, staleTime: 1000 })
   // It should trigger a warning on the console.
   const notExistingKey = createKey()
-  useRenamedQuery(notExistingKey, { queryFn: fetchTodos, staleTime: 1000 })
-  // The query key should be an array element in case of 'useRenamedQuery' function call.
-  const useQuery = () => useRenamedQuery(['todos'], {})
+  RQ.useQuery(notExistingKey, { queryFn: fetchTodos, staleTime: 1000 })
+  // The query key should be an array element in case of 'RQ.useQuery' function call.
+  const useQuery = () => RQ.useQuery('todos', {})
 
   return <div>Example Component</div>
 }
 
 export const ExamplesWithUseInfiniteQuery = () => {
   // The query key should be transformed into an array.
-  useRenamedInfiniteQuery(['todos'])
+  RQ.useInfiniteQuery('todos')
   // The query key should be transformed into an array.
-  useRenamedInfiniteQuery(['todos'], fetchTodos)
+  RQ.useInfiniteQuery('todos', fetchTodos)
   // The query key should stay as it is.
-  useRenamedInfiniteQuery(['todos'], fetchTodos, { staleTime: 1000 })
+  RQ.useInfiniteQuery(['todos'], fetchTodos, { staleTime: 1000 })
   // The query key should stay as it is.
-  useRenamedInfiniteQuery(['todos'], { queryFn: fetchTodos, staleTime: 1000 })
+  RQ.useInfiniteQuery(['todos'], { queryFn: fetchTodos, staleTime: 1000 })
   // The query key should be transformed into an array, the 'queryKey' property remains in the object.
-  useRenamedInfiniteQuery(['todos'], {
+  RQ.useInfiniteQuery('todos', {
     queryKey: ['notTodos'],
     queryFn: fetchTodos,
     staleTime: 1000,
   })
   // The 'stringKey' in the hook call should be in array in both cases.
   const stringKey = 'todos'
-  useRenamedInfiniteQuery([stringKey], { queryFn: fetchTodos, staleTime: 1000 })
-  useRenamedInfiniteQuery({
-    queryKey: [stringKey],
+  RQ.useInfiniteQuery(stringKey, { queryFn: fetchTodos, staleTime: 1000 })
+  RQ.useInfiniteQuery({
+    queryKey: stringKey,
     queryFn: fetchTodos,
-    staleTime: 1000
+    staleTime: 1000,
   })
   // The 'arrayKey' in the hook call should stay as it is.
   const arrayKey = ['todos']
-  useRenamedInfiniteQuery(arrayKey, { queryFn: fetchTodos, staleTime: 1000 })
+  RQ.useInfiniteQuery(arrayKey, { queryFn: fetchTodos, staleTime: 1000 })
   // It should trigger a warning on the console.
   const notExistingKey = createKey()
-  useRenamedInfiniteQuery(notExistingKey, {
+  RQ.useInfiniteQuery(notExistingKey, {
     queryFn: fetchTodos,
     staleTime: 1000,
   })
