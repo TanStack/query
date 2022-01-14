@@ -18,7 +18,7 @@ function delay(t: number, v: () => void) {
   });
 }
 
-export function fetchMovies(): Promise<Movie[]> {
+export async function fetchMovies() {
   console.log('fetchMovies');
   return delay(200 + Math.floor(Math.random() * 2000), () =>
     movies
@@ -27,7 +27,7 @@ export function fetchMovies(): Promise<Movie[]> {
   ) as Promise<Movie[]>;
 }
 
-export function fetchMovie(title: string): Promise<MovieDetails> {
+export async function fetchMovie(title: string) {
   console.log('fetchMovie', title);
   return delay(200 + Math.floor(Math.random() * 2000), () => {
     const result = movies.filter((item) => item.title === title);
