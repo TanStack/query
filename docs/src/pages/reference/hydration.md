@@ -48,7 +48,7 @@ const dehydratedState = dehydrate(queryClient, {
 
 ### limitations
 
-The hydration API requires values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
+Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
 
 ```js
 // server
@@ -56,13 +56,13 @@ const state = dehydrate(client, { shouldDehydrateQuery: () => true }) // to also
 const serializedState = mySerialize(state) // transform Error instances to objects
 
 // client
-const state = myDeserialize(serializedState)  // transform objects back to Error instances
+const state = myDeserialize(serializedState) // transform objects back to Error instances
 hydrate(client, state)
 ```
 
 ## `hydrate`
 
-`hydrate` adds a previously dehydrated state into a `cache`. If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them.
+`hydrate` adds a previously dehydrated state into a `cache`.
 
 ```js
 import { hydrate } from 'react-query'
@@ -84,6 +84,10 @@ hydrate(queryClient, dehydratedState, options)
     - Optional
     - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
     - `queries: QueryOptions` The default query options to use for the hydrated queries.
+
+### Limitations
+
+If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
 
 ## `useHydrate`
 
