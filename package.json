@@ -67,7 +67,6 @@
   "dependencies": {
     "@babel/runtime": "^7.5.5",
     "broadcast-channel": "^3.4.1",
-    "jscodeshift": "^0.13.1",
     "match-sorter": "^6.0.2"
   },
   "peerDependencies": {
@@ -119,6 +118,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
+    "jscodeshift": "^0.13.1",
     "prettier": "2.2.1",
     "react": "^16.13.0",
     "react-dom": "^16.13.1",
