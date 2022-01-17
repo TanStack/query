@@ -33,7 +33,7 @@ defineTest(
   __dirname,
   transformName,
   null,
-  'object-syntax-aware/first-parameter-is-identifier',
+  'object-syntax-aware/parameter-is-identifier',
   {
     parser: 'tsx',
   }
@@ -43,7 +43,7 @@ defineTest(
   __dirname,
   transformName,
   null,
-  'object-syntax-aware/object-expression-parameter',
+  'object-syntax-aware/parameter-is-object-expression',
   {
     parser: 'tsx',
   }
