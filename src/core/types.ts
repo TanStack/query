@@ -2,6 +2,8 @@ import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
+import type { QueryCache } from './queryCache'
+import type { MutationCache } from './mutationCache'
 
 export type QueryKey = string | readonly unknown[]
 export type EnsuredQueryKey<T extends QueryKey> = T extends string
@@ -668,6 +670,12 @@ export type MutationObserverResult<
   | MutationObserverLoadingResult<TData, TError, TVariables, TContext>
   | MutationObserverErrorResult<TData, TError, TVariables, TContext>
   | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
+
+export interface QueryClientConfig {
+  queryCache?: QueryCache
+  mutationCache?: MutationCache
+  defaultOptions?: DefaultOptions
+}
 
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>
