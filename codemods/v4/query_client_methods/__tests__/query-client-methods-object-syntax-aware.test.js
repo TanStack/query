@@ -33,16 +33,6 @@ defineTest(
   __dirname,
   transformName,
   null,
-  'object-syntax-aware/without-parameter',
-  {
-    parser: 'tsx',
-  }
-)
-
-defineTest(
-  __dirname,
-  transformName,
-  null,
   'object-syntax-aware/first-parameter-is-identifier',
   {
     parser: 'tsx',
