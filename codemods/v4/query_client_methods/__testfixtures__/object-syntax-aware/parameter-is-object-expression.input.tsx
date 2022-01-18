@@ -44,3 +44,36 @@ export const ExampleWithArrayExpressionIdentifier = () => {
 
   return <div>Example Component</div>
 }
+
+export const ExampleWithUnknownIdentifier1 = () => {
+  const createKey = (id) => ['todos', id]
+  const createdKey1 = createKey(1)
+  // Instantiated hook call.
+  const queryClient = useQueryClient()
+  queryClient.cancelQueries({ queryKey: createdKey1, exact: true }, options)
+  // Direct hook call.
+  useQueryClient().cancelQueries({ queryKey: createdKey1, exact: true }, options)
+
+  return <div>Example Component</div>
+}
+
+export const ExampleWithUnknownIdentifier2 = () => {
+  const createdKey2 = createKey()
+  // Instantiated hook call.
+  const queryClient = useQueryClient()
+  queryClient.cancelQueries({ queryKey: createdKey2, exact: true }, options)
+  // Direct hook call.
+  useQueryClient().cancelQueries({ queryKey: createdKey2, exact: true }, options)
+
+  return <div>Example Component</div>
+}
+
+export const ExampleWithUnknownIdentifier3 = () => {
+  // Instantiated hook call.
+  const queryClient = useQueryClient()
+  queryClient.cancelQueries({ queryKey: unknownQueryKey, exact: true }, options)
+  // Direct hook call.
+  useQueryClient().cancelQueries({ queryKey: unknownQueryKey, exact: true }, options)
+
+  return <div>Example Component</div>
+}
