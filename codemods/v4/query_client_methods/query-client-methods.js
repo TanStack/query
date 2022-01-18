@@ -13,6 +13,18 @@ module.exports = (file, api) => {
   const replacer = createKeyReplacer({ jscodeshift, root })
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
 
+  // Not object syntax-aware methods.
+  transformer.execute('getMutationDefaults', replacer)
+  transformer.execute('getQueriesData', replacer)
+  transformer.execute('getQueryData', replacer)
+  transformer.execute('getQueryDefaults', replacer)
+  transformer.execute('getQueryState', replacer)
+  transformer.execute('isFetching', replacer)
+  transformer.execute('setMutationDefaults', replacer)
+  transformer.execute('setQueriesData', replacer)
+  transformer.execute('setQueryData', replacer)
+  transformer.execute('setQueryDefaults', replacer)
+  // Object syntax-aware methods.
   transformer.execute('cancelQueries', replacer)
   transformer.execute('fetchInfiniteQuery', replacer)
   transformer.execute('fetchQuery', replacer)
