@@ -14,7 +14,11 @@ module.exports = (file, api) => {
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
 
   transformer.execute('cancelQueries', replacer)
+  transformer.execute('fetchInfiniteQuery', replacer)
+  transformer.execute('fetchQuery', replacer)
   transformer.execute('invalidateQueries', replacer)
+  transformer.execute('prefetchInfiniteQuery', replacer)
+  transformer.execute('prefetchQuery', replacer)
   transformer.execute('refetchQueries', replacer)
   transformer.execute('removeQueries', replacer)
   transformer.execute('resetQueries', replacer)
