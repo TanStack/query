@@ -1,9 +1,13 @@
 import * as React from 'react'
-import { useMutation } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 
 const options = {}
 
 export const ExampleWithStringLiteral = () => {
+  useQuery({
+    queryKey: ['todos'],
+    exact: true
+  }, options)
   useMutation({
     mutationKey: ['todos'],
     exact: true
@@ -13,9 +17,40 @@ export const ExampleWithStringLiteral = () => {
 }
 
 export const ExampleWithStringLiteralIdentifier = () => {
-  const queryKey1 = 'todos'
+  const stringLiteralKey = 'todos'
+  useQuery({
+    queryKey: [stringLiteralKey],
+    exact: true
+  }, options)
   useMutation({
-    mutationKey: [queryKey1],
+    mutationKey: [stringLiteralKey],
+    exact: true
+  }, options)
+
+  return <div>Example Component</div>
+}
+
+export const ExampleWithTemplateLiteral = () => {
+  useQuery({
+    queryKey: [`todos`],
+    exact: true
+  }, options)
+  useMutation({
+    mutationKey: [`todos`],
+    exact: true
+  }, options)
+
+  return <div>Example Component</div>
+}
+
+export const ExampleWithTemplateLiteralIdentifier = () => {
+  const templateLiteralKey = `todos`
+  useQuery({
+    queryKey: [templateLiteralKey],
+    exact: true
+  }, options)
+  useMutation({
+    mutationKey: [templateLiteralKey],
     exact: true
   }, options)
 
@@ -23,6 +58,10 @@ export const ExampleWithStringLiteralIdentifier = () => {
 }
 
 export const ExampleWithArrayExpression = () => {
+  useQuery({
+    queryKey: ['todos'],
+    exact: true
+  }, options)
   useMutation({
     mutationKey: ['todos'],
     exact: true
@@ -32,9 +71,13 @@ export const ExampleWithArrayExpression = () => {
 }
 
 export const ExampleWithArrayExpressionIdentifier = () => {
-  const queryKey2 = ['todos']
+  const arrayExpressionKey = ['todos']
+  useQuery({
+    queryKey: arrayExpressionKey,
+    exact: true
+  }, options)
   useMutation({
-    mutationKey: queryKey2,
+    mutationKey: arrayExpressionKey,
     exact: true
   }, options)
 
@@ -44,6 +87,7 @@ export const ExampleWithArrayExpressionIdentifier = () => {
 export const ExampleWithUnknownIdentifier1 = () => {
   const createKey = (id) => ['todos', id]
   const createdKey1 = createKey(1)
+  useQuery({ queryKey: createdKey1, exact: true }, options)
   useMutation({ mutationKey: createdKey1, exact: true }, options)
 
   return <div>Example Component</div>
@@ -51,12 +95,14 @@ export const ExampleWithUnknownIdentifier1 = () => {
 
 export const ExampleWithUnknownIdentifier2 = () => {
   const createdKey2 = createKey()
+  useQuery({ queryKey: createdKey2, exact: true }, options)
   useMutation({ mutationKey: createdKey2, exact: true }, options)
 
   return <div>Example Component</div>
 }
 
 export const ExampleWithUnknownIdentifier3 = () => {
+  useQuery({ queryKey: unknownQueryKey, exact: true }, options)
   useMutation({ mutationKey: unknownQueryKey, exact: true }, options)
 
   return <div>Example Component</div>
