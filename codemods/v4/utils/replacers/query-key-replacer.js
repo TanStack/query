@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const UnprocessableQueryKeyError = require('../unprocessable-query-key-error')
+const UnprocessableKeyError = require('../unprocessable-query-key-error')
 
-module.exports = ({ jscodeshift, root }) => {
+module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
   const isArrayExpression = node =>
     jscodeshift.match(node, { type: jscodeshift.ArrayExpression.name })
 
@@ -21,7 +21,7 @@ module.exports = ({ jscodeshift, root }) => {
     return declarations.length > 0 ? declarations[0] : null
   }
 
-  const createQueryKeyValue = node => {
+  const createKeyValue = node => {
     // When the node is an array expression we just simply return it because we want query keys to be arrays.
     if (isArrayExpression(node)) {
       return node
@@ -40,7 +40,7 @@ module.exports = ({ jscodeshift, root }) => {
       const variableDeclaration = findVariableDeclaration(node)
 
       if (!variableDeclaration) {
-        throw new UnprocessableQueryKeyError(
+        throw new UnprocessableKeyError(
           `At line ${node.loc.start.line} the type of identifier \`${node.name}\` couldn't be recognized, so the codemod couldn't be applied. Please do the migration manually.`
         )
       }
@@ -58,16 +58,16 @@ module.exports = ({ jscodeshift, root }) => {
       }
     }
 
-    throw new UnprocessableQueryKeyError(
-      `At line ${node.loc.start.line} the type of the \`queryKey\` couldn't be recognized, so the codemod couldn't be applied. Please do the migration manually.`
+    throw new UnprocessableKeyError(
+      `At line ${node.loc.start.line} the type of the \`${keyName}\` couldn't be recognized, so the codemod couldn't be applied. Please do the migration manually.`
     )
   }
 
-  const createQueryKeyProperty = node =>
+  const createKeyProperty = node =>
     jscodeshift.property(
       'init',
-      jscodeshift.identifier('queryKey'),
-      createQueryKeyValue(node)
+      jscodeshift.identifier(keyName),
+      createKeyValue(node)
     )
 
   const getPropertyFromObjectExpression = (objectExpression, propertyName) =>
@@ -97,24 +97,24 @@ module.exports = ({ jscodeshift, root }) => {
           type: jscodeshift.ObjectExpression.name,
         })
       ) {
-        const originalQueryKey = getPropertyFromObjectExpression(
+        const originalKey = getPropertyFromObjectExpression(
           firstArgument,
-          'queryKey'
+          keyName
         )
 
-        if (!originalQueryKey) {
-          throw new UnprocessableQueryKeyError(
-            `At line ${node.loc.start.line} the query key couldn't be found. Did you forget to add it?`
+        if (!originalKey) {
+          throw new UnprocessableKeyError(
+            `At line ${node.loc.start.line} the \`${keyName}\` couldn't be found. Did you forget to add it?`
           )
         }
 
         const restOfTheProperties = firstArgument.properties.filter(
-          item => item.key.name !== 'queryKey'
+          item => item.key.name !== keyName
         )
 
         return jscodeshift.callExpression(node.original.callee, [
           jscodeshift.objectExpression([
-            createQueryKeyProperty(originalQueryKey.value),
+            createKeyProperty(originalKey.value),
             ...restOfTheProperties,
           ]),
           ...restOfTheArguments,
@@ -122,11 +122,11 @@ module.exports = ({ jscodeshift, root }) => {
       }
 
       return jscodeshift.callExpression(node.original.callee, [
-        createQueryKeyValue(firstArgument),
+        createKeyValue(firstArgument),
         ...restOfTheArguments,
       ])
     } catch (error) {
-      if (error.name === 'UnprocessableQueryKeyError') {
+      if (error.name === 'UnprocessableKeyError') {
         console.warn(error.message)
         return node
       }

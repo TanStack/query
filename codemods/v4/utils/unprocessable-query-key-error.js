@@ -1,8 +1,8 @@
-class UnprocessableQueryKeyError extends Error {
+class UnprocessableKeyError extends Error {
   constructor(message) {
     super(message)
-    this.name = 'UnprocessableQueryKeyError'
+    this.name = 'UnprocessableKeyError'
   }
 }
 
-module.exports = UnprocessableQueryKeyError
+module.exports = UnprocessableKeyError
