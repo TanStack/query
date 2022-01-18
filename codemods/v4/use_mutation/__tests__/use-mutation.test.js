@@ -14,11 +14,3 @@ defineTest(__dirname, 'use-mutation', null, 'named-import', {
 defineTest(__dirname, 'use-mutation', null, 'namespaced-import', {
   parser: 'tsx',
 })
-
-defineTest(__dirname, 'use-mutation', null, 'parameter-is-identifier', {
-  parser: 'tsx',
-})
-
-defineTest(__dirname, 'use-mutation', null, 'parameter-is-object-expression', {
-  parser: 'tsx',
-})

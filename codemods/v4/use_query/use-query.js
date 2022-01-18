@@ -10,11 +10,17 @@ module.exports = (file, api) => {
   const root = jscodeshift(file.source)
 
   const utils = createUtilsObject({ root, jscodeshift })
-  const replacer = createKeyReplacer({ jscodeshift, root })
+  const queryKeyReplacer = createKeyReplacer({ jscodeshift, root })
+  const mutationKeyReplacer = createKeyReplacer({
+    jscodeshift,
+    root,
+    keyName: 'mutationKey',
+  })
   const transformer = hookCallTransformer({ jscodeshift, utils, root })
 
-  transformer.execute('useQuery', replacer)
-  transformer.execute('useInfiniteQuery', replacer)
+  transformer.execute('useQuery', queryKeyReplacer)
+  transformer.execute('useInfiniteQuery', queryKeyReplacer)
+  transformer.execute('useMutation', mutationKeyReplacer)
 
   return root.toSource({ quote: 'single' })
 }

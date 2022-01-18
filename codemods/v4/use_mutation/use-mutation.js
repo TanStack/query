@@ -10,11 +10,6 @@ module.exports = (file, api) => {
   const root = jscodeshift(file.source)
 
   const utils = createUtilsObject({ root, jscodeshift })
-  const replacer = createKeyReplacer({
-    jscodeshift,
-    root,
-    keyName: 'mutationKey',
-  })
   const transformer = hookCallTransformer({ jscodeshift, utils, root })
 
   transformer.execute('useMutation', replacer)

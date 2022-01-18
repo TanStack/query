@@ -14,3 +14,11 @@ defineTest(__dirname, 'use-query', null, 'named-import', {
 defineTest(__dirname, 'use-query', null, 'namespaced-import', {
   parser: 'tsx',
 })
+
+defineTest(__dirname, 'use-query', null, 'parameter-is-identifier', {
+  parser: 'tsx',
+})
+
+defineTest(__dirname, 'use-query', null, 'parameter-is-object-expression', {
+  parser: 'tsx',
+})
