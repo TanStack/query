@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const UnprocessableKeyError = require('../unprocessable-query-key-error')
+const UnprocessableKeyError = require('../unprocessable-key-error')
 
 module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
   const isArrayExpression = node =>

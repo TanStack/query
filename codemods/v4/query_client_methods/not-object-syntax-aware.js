@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createUtilsObject = require('../utils')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const createQueryKeyReplacer = require('../utils/replacers/query-key-replacer')
+const createKeyReplacer = require('../utils/replacers/key-replacer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const queryClientTransformer = require('../utils/transformers/query-client-transformer')
 
@@ -10,7 +10,7 @@ module.exports = (file, api) => {
   const root = jscodeshift(file.source)
 
   const utils = createUtilsObject({ root, jscodeshift })
-  const replacer = createQueryKeyReplacer({ jscodeshift, root })
+  const replacer = createKeyReplacer({ jscodeshift, root })
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
 
   transformer.execute('getMutationDefaults', replacer)
