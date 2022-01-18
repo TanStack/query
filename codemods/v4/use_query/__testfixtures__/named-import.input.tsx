@@ -4,6 +4,7 @@ import {
   useIsFetching as useRenamedIsFetching,
   useIsMutating as useRenamedIsMutating,
   useMutation as useRenamedMutation,
+  useQueries as useRenamedQueries,
   useQuery as useRenamedQuery,
 } from 'react-query'
 
@@ -13,6 +14,7 @@ export const Examples = () => {
   useRenamedMutation('todos')
   useRenamedIsFetching('todos')
   useRenamedIsMutating('todos')
+  useRenamedQueries([query1, query2])
 
   return <div>Example Component</div>
 }
