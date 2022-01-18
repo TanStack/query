@@ -3,7 +3,6 @@ module.exports = ({ root, jscodeshift }) => {
     root
       .find(jscodeshift.ImportDeclaration, {
         source: {
-          type: jscodeshift.StringLiteral.name,
           value: 'react-query',
         },
       })
@@ -18,7 +17,6 @@ module.exports = ({ root, jscodeshift }) => {
     root
       .find(jscodeshift.ImportDeclaration, {
         source: {
-          type: jscodeshift.StringLiteral.name,
           value: 'react-query',
         },
       })
