@@ -8,6 +8,9 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
   const isStringLiteral = node =>
     jscodeshift.match(node, { type: jscodeshift.StringLiteral.name })
 
+  const isTemplateLiteral = node =>
+    jscodeshift.match(node, { type: jscodeshift.TemplateLiteral.name })
+
   const findVariableDeclaration = node => {
     const declarations = root
       .find(jscodeshift.VariableDeclarator, {
@@ -34,6 +37,13 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
       ])
     }
 
+    // When the node is a template literal we convert it into an array of template literals.
+    if (isTemplateLiteral(node)) {
+      return jscodeshift.arrayExpression([
+        jscodeshift.templateLiteral(node.quasis, node.expressions),
+      ])
+    }
+
     if (jscodeshift.match(node, { type: jscodeshift.Identifier.name })) {
       // When the node is an identifier at first, we try to find its declaration, because we will try
       // to guess its type.
@@ -53,7 +63,7 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
       }
 
       // When it's a string, we just wrap it into an array expression.
-      if (isStringLiteral(initializer)) {
+      if (isStringLiteral(initializer) || isTemplateLiteral(initializer)) {
         return jscodeshift.arrayExpression([node])
       }
     }

@@ -77,3 +77,24 @@ export const ExampleWithUnknownIdentifier3 = () => {
 
   return <div>Example Component</div>
 }
+
+export const ExampleWithTemplateLiteral = () => {
+  // Instantiated hook call.
+  const queryClient = useQueryClient()
+  queryClient.cancelQueries({ queryKey: `todos`, exact: true }, options)
+  // Direct hook call.
+  useQueryClient().cancelQueries({ queryKey: `todos`, exact: true }, options)
+
+  return <div>Example Component</div>
+}
+
+export const ExampleWithTemplateLiteralExpression = () => {
+  const queryKey3 = `todos`
+  // Instantiated hook call.
+  const queryClient = useQueryClient()
+  queryClient.cancelQueries({ queryKey: queryKey3, exact: true }, options)
+  // Direct hook call.
+  useQueryClient().cancelQueries({ queryKey: queryKey3, exact: true }, options)
+
+  return <div>Example Component</div>
+}
