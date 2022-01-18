@@ -25,12 +25,22 @@ const transformUseQueriesUsages = ({ jscodeshift, transformer }) => {
   })
 }
 
+const transformUseQueryLikeUsages = ({ transformer, hookCalls }) => {
+  hookCalls.forEach(hookCall => {
+    transformer.execute(hookCall.name, hookCall.replacer)
+  })
+}
+
 module.exports = (file, api) => {
   const jscodeshift = api.jscodeshift
   const root = jscodeshift(file.source)
 
   const utils = createUtilsObject({ root, jscodeshift })
-  const queryKeyReplacer = createKeyReplacer({ jscodeshift, root })
+  const queryKeyReplacer = createKeyReplacer({
+    jscodeshift,
+    root,
+    keyName: 'queryKey',
+  })
   const mutationKeyReplacer = createKeyReplacer({
     jscodeshift,
     root,
@@ -38,11 +48,16 @@ module.exports = (file, api) => {
   })
   const transformer = hookCallTransformer({ jscodeshift, utils, root })
 
-  transformer.execute('useQuery', queryKeyReplacer)
-  transformer.execute('useInfiniteQuery', queryKeyReplacer)
-  transformer.execute('useIsFetching', queryKeyReplacer)
-  transformer.execute('useIsMutating', queryKeyReplacer)
-  transformer.execute('useMutation', mutationKeyReplacer)
+  transformUseQueryLikeUsages({
+    transformer,
+    hookCalls: [
+      { name: 'useQuery', replacer: queryKeyReplacer },
+      { name: 'useInfiniteQuery', replacer: queryKeyReplacer },
+      { name: 'useIsFetching', replacer: queryKeyReplacer },
+      { name: 'useIsMutating', replacer: queryKeyReplacer },
+      { name: 'useMutation', replacer: mutationKeyReplacer },
+    ],
+  })
 
   transformUseQueriesUsages({ jscodeshift, transformer })
 
