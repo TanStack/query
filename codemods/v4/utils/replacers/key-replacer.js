@@ -6,7 +6,8 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
     jscodeshift.match(node, { type: jscodeshift.ArrayExpression.name })
 
   const isStringLiteral = node =>
-    jscodeshift.match(node, { type: jscodeshift.StringLiteral.name })
+    jscodeshift.match(node, { type: jscodeshift.StringLiteral.name }) ||
+    jscodeshift.match(node, { type: jscodeshift.Literal.name })
 
   const isTemplateLiteral = node =>
     jscodeshift.match(node, { type: jscodeshift.TemplateLiteral.name })
