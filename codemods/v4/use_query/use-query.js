@@ -20,6 +20,8 @@ module.exports = (file, api) => {
 
   transformer.execute('useQuery', queryKeyReplacer)
   transformer.execute('useInfiniteQuery', queryKeyReplacer)
+  transformer.execute('useIsFetching', queryKeyReplacer)
+  transformer.execute('useIsMutating', queryKeyReplacer)
   transformer.execute('useMutation', mutationKeyReplacer)
 
   return root.toSource({ quote: 'single' })
