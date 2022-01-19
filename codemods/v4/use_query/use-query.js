@@ -4,6 +4,39 @@ const createUtilsObject = require('../utils')
 const createKeyReplacer = require('../utils/replacers/key-replacer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const hookCallTransformer = require('../utils/transformers/hook-call-transformer')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const queryClientTransformer = require('../utils/transformers/query-client-transformer')
+
+const transformQueryClientUsages = ({
+  jscodeshift,
+  utils,
+  root,
+  queryKeyReplacer,
+}) => {
+  const transformer = queryClientTransformer({ jscodeshift, utils, root })
+
+  // Not object syntax-aware methods.
+  transformer.execute('getMutationDefaults', queryKeyReplacer)
+  transformer.execute('getQueriesData', queryKeyReplacer)
+  transformer.execute('getQueryData', queryKeyReplacer)
+  transformer.execute('getQueryDefaults', queryKeyReplacer)
+  transformer.execute('getQueryState', queryKeyReplacer)
+  transformer.execute('isFetching', queryKeyReplacer)
+  transformer.execute('setMutationDefaults', queryKeyReplacer)
+  transformer.execute('setQueriesData', queryKeyReplacer)
+  transformer.execute('setQueryData', queryKeyReplacer)
+  transformer.execute('setQueryDefaults', queryKeyReplacer)
+  // Object syntax-aware methods.
+  transformer.execute('cancelQueries', queryKeyReplacer)
+  transformer.execute('fetchInfiniteQuery', queryKeyReplacer)
+  transformer.execute('fetchQuery', queryKeyReplacer)
+  transformer.execute('invalidateQueries', queryKeyReplacer)
+  transformer.execute('prefetchInfiniteQuery', queryKeyReplacer)
+  transformer.execute('prefetchQuery', queryKeyReplacer)
+  transformer.execute('refetchQueries', queryKeyReplacer)
+  transformer.execute('removeQueries', queryKeyReplacer)
+  transformer.execute('resetQueries', queryKeyReplacer)
+}
 
 const transformUseQueriesUsages = ({ jscodeshift, transformer }) => {
   transformer.execute('useQueries', ({ node }) => {
@@ -60,6 +93,8 @@ module.exports = (file, api) => {
   })
 
   transformUseQueriesUsages({ jscodeshift, transformer })
+
+  transformQueryClientUsages({ jscodeshift, utils, root, queryKeyReplacer })
 
   return root.toSource({ quote: 'single' })
 }
