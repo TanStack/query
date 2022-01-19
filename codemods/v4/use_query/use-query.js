@@ -7,41 +7,40 @@ const hookCallTransformer = require('../utils/transformers/hook-call-transformer
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const queryClientTransformer = require('../utils/transformers/query-client-transformer')
 
-const transformQueryClientUsages = ({
-  jscodeshift,
-  utils,
-  root,
-  queryKeyReplacer,
-}) => {
+const transformQueryClientUsages = ({ jscodeshift, utils, root }) => {
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
+  const replacer = createKeyReplacer({ jscodeshift, root })
 
   // Not object syntax-aware methods.
-  transformer.execute('getMutationDefaults', queryKeyReplacer)
-  transformer.execute('getQueriesData', queryKeyReplacer)
-  transformer.execute('getQueryData', queryKeyReplacer)
-  transformer.execute('getQueryDefaults', queryKeyReplacer)
-  transformer.execute('getQueryState', queryKeyReplacer)
-  transformer.execute('isFetching', queryKeyReplacer)
-  transformer.execute('setMutationDefaults', queryKeyReplacer)
-  transformer.execute('setQueriesData', queryKeyReplacer)
-  transformer.execute('setQueryData', queryKeyReplacer)
-  transformer.execute('setQueryDefaults', queryKeyReplacer)
+  transformer.execute('getMutationDefaults', replacer)
+  transformer.execute('getQueriesData', replacer)
+  transformer.execute('getQueryData', replacer)
+  transformer.execute('getQueryDefaults', replacer)
+  transformer.execute('getQueryState', replacer)
+  transformer.execute('isFetching', replacer)
+  transformer.execute('setMutationDefaults', replacer)
+  transformer.execute('setQueriesData', replacer)
+  transformer.execute('setQueryData', replacer)
+  transformer.execute('setQueryDefaults', replacer)
   // Object syntax-aware methods.
-  transformer.execute('cancelQueries', queryKeyReplacer)
-  transformer.execute('fetchInfiniteQuery', queryKeyReplacer)
-  transformer.execute('fetchQuery', queryKeyReplacer)
-  transformer.execute('invalidateQueries', queryKeyReplacer)
-  transformer.execute('prefetchInfiniteQuery', queryKeyReplacer)
-  transformer.execute('prefetchQuery', queryKeyReplacer)
-  transformer.execute('refetchQueries', queryKeyReplacer)
-  transformer.execute('removeQueries', queryKeyReplacer)
-  transformer.execute('resetQueries', queryKeyReplacer)
+  transformer.execute('cancelQueries', replacer)
+  transformer.execute('fetchInfiniteQuery', replacer)
+  transformer.execute('fetchQuery', replacer)
+  transformer.execute('invalidateQueries', replacer)
+  transformer.execute('prefetchInfiniteQuery', replacer)
+  transformer.execute('prefetchQuery', replacer)
+  transformer.execute('refetchQueries', replacer)
+  transformer.execute('removeQueries', replacer)
+  transformer.execute('resetQueries', replacer)
 }
 
-const transformUseQueriesUsages = ({ jscodeshift, transformer }) => {
-  transformer.execute('useQueries', ({ node }) => {
-    // When the node doesn't have the 'original' property, that means the codemod has been already applied,
-    // so we don't need to do any changes.
+const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
+  const transformer = hookCallTransformer({ jscodeshift, utils, root })
+  const replacer = ({ node }) => {
+    /**
+     * When the node doesn't have the 'original' property, that means the codemod has been already applied,
+     * so we don't need to do any changes.
+     */
     if (!node.original) {
       return node
     }
@@ -55,20 +54,13 @@ const transformUseQueriesUsages = ({ jscodeshift, transformer }) => {
         ),
       ]),
     ])
-  })
+  }
+
+  transformer.execute('useQueries', replacer)
 }
 
-const transformUseQueryLikeUsages = ({ transformer, hookCalls }) => {
-  hookCalls.forEach(hookCall => {
-    transformer.execute(hookCall.name, hookCall.replacer)
-  })
-}
-
-module.exports = (file, api) => {
-  const jscodeshift = api.jscodeshift
-  const root = jscodeshift(file.source)
-
-  const utils = createUtilsObject({ root, jscodeshift })
+const transformUseQueryLikeUsages = ({ jscodeshift, utils, root }) => {
+  const transformer = hookCallTransformer({ jscodeshift, utils, root })
   const queryKeyReplacer = createKeyReplacer({
     jscodeshift,
     root,
@@ -79,22 +71,26 @@ module.exports = (file, api) => {
     root,
     keyName: 'mutationKey',
   })
-  const transformer = hookCallTransformer({ jscodeshift, utils, root })
 
-  transformUseQueryLikeUsages({
-    transformer,
-    hookCalls: [
-      { name: 'useQuery', replacer: queryKeyReplacer },
-      { name: 'useInfiniteQuery', replacer: queryKeyReplacer },
-      { name: 'useIsFetching', replacer: queryKeyReplacer },
-      { name: 'useIsMutating', replacer: queryKeyReplacer },
-      { name: 'useMutation', replacer: mutationKeyReplacer },
-    ],
-  })
+  transformer.execute('useQuery', queryKeyReplacer)
+  transformer.execute('useInfiniteQuery', queryKeyReplacer)
+  transformer.execute('useIsFetching', queryKeyReplacer)
+  transformer.execute('useIsMutating', queryKeyReplacer)
+  transformer.execute('useMutation', mutationKeyReplacer)
+}
 
-  transformUseQueriesUsages({ jscodeshift, transformer })
+module.exports = (file, api) => {
+  const jscodeshift = api.jscodeshift
+  const root = jscodeshift(file.source)
 
-  transformQueryClientUsages({ jscodeshift, utils, root, queryKeyReplacer })
+  const utils = createUtilsObject({ root, jscodeshift })
+
+  // This function transforms usages like `useQuery` and `useMutation`.
+  transformUseQueryLikeUsages({ jscodeshift, utils, root })
+  // This function transforms usages of `useQueries`.
+  transformUseQueriesUsages({ jscodeshift, utils, root })
+  // This function transforms usages of `QueryClient`.
+  transformQueryClientUsages({ jscodeshift, utils, root })
 
   return root.toSource({ quote: 'single' })
 }
