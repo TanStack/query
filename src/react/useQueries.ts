@@ -30,12 +30,12 @@ type GetOptions<T extends any> =
     ? UseQueryOptions<TQueryFnData>
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
-        queryFn?: QueryFunction<infer TQueryFnData>
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptions<TQueryFnData, unknown, TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
-    ? UseQueryOptions<TQueryFnData>
+    ? UseQueryOptions<TQueryFnData, unknown, TData, TQueryKey>
+    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
+    ? UseQueryOptions<TQueryFnData, unknown, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptions
 
@@ -56,11 +56,11 @@ type GetResults<T> =
     ? UseQueryResult<TQueryFnData>
     : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
     T extends {
-        queryFn?: QueryFunction<any>
+        queryFn?: QueryFunction<any, any>
         select: (data: any) => infer TData
       }
     ? UseQueryResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
+    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
     ? UseQueryResult<TQueryFnData>
     : // Fallback
       UseQueryResult
