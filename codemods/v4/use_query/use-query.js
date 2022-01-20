@@ -6,6 +6,8 @@ const createKeyReplacer = require('../utils/replacers/key-replacer')
 const hookCallTransformer = require('../utils/transformers/hook-call-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const queryClientTransformer = require('../utils/transformers/query-client-transformer')
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const queryCacheTransformer = require('../utils/transformers/query-cache-transformer')
 
 const transformQueryClientUsages = ({ jscodeshift, utils, root }) => {
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
@@ -79,6 +81,13 @@ const transformUseQueryLikeUsages = ({ jscodeshift, utils, root }) => {
   transformer.execute('useMutation', mutationKeyReplacer)
 }
 
+const transformQueryCacheUsages = ({ jscodeshift, utils, root }) => {
+  const transformer = queryCacheTransformer({ jscodeshift, utils, root })
+  const replacer = createKeyReplacer({ jscodeshift, root })
+
+  transformer.execute(replacer)
+}
+
 module.exports = (file, api) => {
   const jscodeshift = api.jscodeshift
   const root = jscodeshift(file.source)
@@ -91,6 +100,8 @@ module.exports = (file, api) => {
   transformUseQueriesUsages({ jscodeshift, utils, root })
   // This function transforms usages of `QueryClient`.
   transformQueryClientUsages({ jscodeshift, utils, root })
+  // This function transforms usages of `QueryCache`.
+  transformQueryCacheUsages({ jscodeshift, utils, root })
 
   return root.toSource({ quote: 'single' })
 }

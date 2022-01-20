@@ -22,3 +22,7 @@ defineTest(__dirname, 'use-query', null, 'parameter-is-identifier', {
 defineTest(__dirname, 'use-query', null, 'parameter-is-object-expression', {
   parser: 'tsx',
 })
+
+defineTest(__dirname, 'use-query', null, 'query-cache', {
+  parser: 'tsx',
+})
