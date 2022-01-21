@@ -193,6 +193,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "arnaudbzn",
+      "name": "Arnaud",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20332397?v=4",
+      "profile": "http://seaviewlab.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,

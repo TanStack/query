@@ -18,6 +18,7 @@ import {
   QueryCache,
   QueryObserverResult,
   QueriesObserver,
+  QueryFunction,
 } from '../..'
 
 describe('useQueries', () => {
@@ -890,6 +891,66 @@ describe('useQueries', () => {
           someInvalidField: '',
         })),
       })
+    }
+  })
+
+  it('handles types for QueryFunction factory with strongly typed QueryKey', () => {
+    type QueryKeyA = ['queryA']
+    const getQueryKeyA = (): QueryKeyA => ['queryA']
+    type GetQueryFunctionA = () => QueryFunction<number, QueryKeyA>
+    const getQueryFunctionA: GetQueryFunctionA = () => async () => {
+      return 1
+    }
+    type SelectorA = (data: number) => [number, string]
+    const getSelectorA = (): SelectorA => data => [data, data.toString()]
+
+    type QueryKeyB = ['queryB', string]
+    const getQueryKeyB = (id: string): QueryKeyB => ['queryB', id]
+    type GetQueryFunctionB = () => QueryFunction<string, QueryKeyB>
+    const getQueryFunctionB: GetQueryFunctionB = () => async () => {
+      return '1'
+    }
+    type SelectorB = (data: string) => [string, number]
+    const getSelectorB = (): SelectorB => data => [data, +data]
+
+    // @ts-expect-error (Page component is not rendered)
+    // eslint-disable-next-line
+    function Page() {
+      const result = useQueries({
+        queries: [
+          {
+            queryKey: getQueryKeyA(),
+            queryFn: getQueryFunctionA(),
+          },
+          {
+            queryKey: getQueryKeyB('id'),
+            queryFn: getQueryFunctionB(),
+          },
+        ],
+      })
+      expectType<QueryObserverResult<number, unknown>>(result[0])
+      expectType<QueryObserverResult<string, unknown>>(result[1])
+
+      const withSelector = useQueries({
+        queries: [
+          {
+            queryKey: getQueryKeyA(),
+            queryFn: getQueryFunctionA(),
+            select: getSelectorA(),
+          },
+          {
+            queryKey: getQueryKeyB('id'),
+            queryFn: getQueryFunctionB(),
+            select: getSelectorB(),
+          },
+        ],
+      })
+      expectType<QueryObserverResult<[number, string], unknown>>(
+        withSelector[0]
+      )
+      expectType<QueryObserverResult<[string, number], unknown>>(
+        withSelector[1]
+      )
     }
   })
 
