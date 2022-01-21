@@ -29,4 +29,19 @@ describe('notifyManager', () => {
     expect(callbackBatchLevel2Spy).toHaveBeenCalledTimes(1)
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
   })
+
+  it('should flush if error is thrown', () => {
+    const notifyManagerTest = new NotifyManager()
+    const flushSpy = jest.fn()
+
+    notifyManagerTest.flush = flushSpy
+
+    try {
+      notifyManagerTest.batch(() => {
+        throw new Error('Foo')
+      })
+    } catch {}
+
+    expect(flushSpy).toHaveBeenCalledTimes(1)
+  })
 })
