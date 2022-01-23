@@ -15,6 +15,7 @@ const isMutatingPosts = useIsMutating(['posts'])
 
 **Options**
 
+- `mutationKey?: string | unknown[]`
 - `filters?: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
 
 **Returns**
