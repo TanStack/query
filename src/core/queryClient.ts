@@ -532,13 +532,35 @@ export class QueryClient {
     }
   }
 
+  findQueryDefaults(
+    queryKey?: QueryKey
+  ): QueryOptions<any, any, any> | undefined {
+    if (!queryKey) {
+      return undefined
+    }
+
+    // First retrieve all matching defaults for the given key
+    const matchingDefaults = this.queryDefaults.filter(x =>
+      partialMatchKey(queryKey, x.queryKey)
+    )
+    // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
+    if (process.env.NODE_ENV !== 'production' && matchingDefaults?.length > 1) {
+      console.warn(
+        `[QueryClient] Several defaults match with key '${JSON.stringify(
+          queryKey
+        )}'. The first matching query options are used. Please check how query defaults are registered. Order does matter here. cf. http://react-query.com/some/link/to/document#queryDefaults.`
+      )
+    }
+    // Explicitly returns the first one
+    const firstMatchingDefaults = matchingDefaults?.[0]
+    return firstMatchingDefaults?.defaultOptions || undefined
+  }
+
   getQueryDefaults(
     queryKey?: QueryKey
   ): QueryObserverOptions<any, any, any, any, any> | undefined {
-    return queryKey
-      ? this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
-          ?.defaultOptions
-      : undefined
+    const queryDefaults = this.findQueryDefaults(queryKey)
+    return queryDefaults
   }
 
   setMutationDefaults(
