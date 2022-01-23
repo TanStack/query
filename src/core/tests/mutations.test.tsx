@@ -369,33 +369,6 @@ describe('mutations', () => {
     consoleMock.mockRestore()
   })
 
-  test('cancel mutation should not call mutationFn if the current retrier is undefined', async () => {
-    const mutationFn = jest.fn().mockImplementation(async () => {
-      await sleep(20)
-      return 'data'
-    })
-
-    const observer = new MutationObserver(queryClient, {
-      mutationKey: ['key'],
-      mutationFn,
-    })
-
-    observer.mutate()
-    const mutation = queryClient
-      .getMutationCache()
-      .find({ mutationKey: ['key'] })!
-    await sleep(10)
-
-    // Force current mutation retryer to be undefined
-    // because not use case has been found
-    mutation['retryer'] = undefined
-    mutationFn.mockReset()
-    await mutation.cancel()
-
-    await sleep(30)
-    expect(mutationFn).toHaveBeenCalledTimes(0)
-  })
-
   test('reducer should return the state for an unknown action type', async () => {
     const observer = new MutationObserver(queryClient, {
       mutationKey: ['key'],
