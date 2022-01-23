@@ -1211,7 +1211,10 @@ describe('useQuery', () => {
           await sleep(10)
           return 'fetched'
         },
-        { enabled: false }
+        {
+          initialData: 'initial',
+          staleTime: Infinity,
+        }
       )
 
       results.push(result)
@@ -1306,7 +1309,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should update disabled query when updated with invalidateQueries', async () => {
+  it('should not update disabled query when refetched with refetchQueries', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
     let count = 0
@@ -1335,25 +1338,13 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await sleep(50)
 
-    expect(states.length).toBe(3)
+    expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: 1,
-      isFetching: false,
-      isSuccess: true,
       isStale: true,
     })
   })
@@ -4254,6 +4245,52 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('forceValue: 2'))
     // data should still be 3 after an independent re-render
     await waitFor(() => rendered.getByText('Data: selected 3'))
+  })
+
+  it('select should structually share data', async () => {
+    const key1 = queryKey()
+    const states: Array<Array<number>> = []
+
+    function Page() {
+      const [forceValue, forceUpdate] = React.useReducer(prev => prev + 1, 1)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return [1, 2]
+        },
+        {
+          select: res => res.map(x => x + 1),
+        }
+      )
+
+      React.useEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      }, [state.data])
+
+      return (
+        <div>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: [2,3]'))
+    expect(states).toHaveLength(1)
+
+    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+
+    await waitFor(() => rendered.getByText('forceValue: 2'))
+    await waitFor(() => rendered.getByText('Data: [2,3]'))
+
+    // effect should not be triggered again due to structural sharing
+    expect(states).toHaveLength(1)
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {

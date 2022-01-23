@@ -707,6 +707,41 @@ describe('queryClient', () => {
   })
 
   describe('refetchQueries', () => {
+    test('should not refetch if all observers are disabled', async () => {
+      const key = queryKey()
+      const queryFn = jest.fn()
+      await queryClient.fetchQuery(key, queryFn)
+      const observer1 = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        enabled: false,
+      })
+      observer1.subscribe(() => undefined)
+      await queryClient.refetchQueries()
+      observer1.destroy()
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+    test('should refetch if at least one observer is enabled', async () => {
+      const key = queryKey()
+      const queryFn = jest.fn()
+      await queryClient.fetchQuery(key, queryFn)
+      const observer1 = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        enabled: false,
+      })
+      const observer2 = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        refetchOnMount: false,
+      })
+      observer1.subscribe(() => undefined)
+      observer2.subscribe(() => undefined)
+      await queryClient.refetchQueries()
+      observer1.destroy()
+      observer2.destroy()
+      expect(queryFn).toHaveBeenCalledTimes(2)
+    })
     test('should refetch all queries when no arguments are given', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
@@ -716,11 +751,13 @@ describe('queryClient', () => {
       await queryClient.fetchQuery(key2, queryFn2)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
-        enabled: false,
+        staleTime: Infinity,
+        initialData: 'initial',
       })
       const observer2 = new QueryObserver(queryClient, {
         queryKey: key1,
-        enabled: false,
+        staleTime: Infinity,
+        initialData: 'initial',
       })
       observer1.subscribe(() => undefined)
       observer2.subscribe(() => undefined)
@@ -964,13 +1001,14 @@ describe('queryClient', () => {
         queryKey: key1,
         queryFn: queryFn1,
         staleTime: Infinity,
-        enabled: false,
+        refetchOnMount: false,
       })
       const unsubscribe = observer.subscribe(() => undefined)
-      queryClient.invalidateQueries(key1, {
+      unsubscribe()
+
+      await queryClient.invalidateQueries(key1, {
         refetchType: 'inactive',
       })
-      unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
       expect(queryFn2).toHaveBeenCalledTimes(1)
     })
@@ -1002,22 +1040,18 @@ describe('queryClient', () => {
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
-        enabled: false,
+        queryFn: ({ signal }) => {
+          return new Promise(resolve => {
+            fetchCount++
+            setTimeout(() => resolve(5), 10)
+            if (signal) {
+              signal.addEventListener('abort', abortFn)
+            }
+          })
+        },
         initialData: 1,
       })
       observer.subscribe(() => undefined)
-
-      queryClient.fetchQuery(key, ({ signal }) => {
-        const promise = new Promise(resolve => {
-          fetchCount++
-          setTimeout(() => resolve(5), 10)
-          if (signal) {
-            signal.addEventListener('abort', abortFn)
-          }
-        })
-
-        return promise
-      })
 
       await queryClient.refetchQueries()
       observer.destroy()
@@ -1033,22 +1067,18 @@ describe('queryClient', () => {
       let fetchCount = 0
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
-        enabled: false,
+        queryFn: ({ signal }) => {
+          return new Promise(resolve => {
+            fetchCount++
+            setTimeout(() => resolve(5), 10)
+            if (signal) {
+              signal.addEventListener('abort', abortFn)
+            }
+          })
+        },
         initialData: 1,
       })
       observer.subscribe(() => undefined)
-
-      queryClient.fetchQuery(key, ({ signal }) => {
-        const promise = new Promise(resolve => {
-          fetchCount++
-          setTimeout(() => resolve(5), 10)
-          if (signal) {
-            signal.addEventListener('abort', abortFn)
-          }
-        })
-
-        return promise
-      })
 
       await queryClient.refetchQueries(undefined, { cancelRefetch: false })
       observer.destroy()

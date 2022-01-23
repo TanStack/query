@@ -10,6 +10,7 @@ import {
   MutationFilters,
 } from './utils'
 import type {
+  QueryClientConfig,
   DefaultOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
@@ -39,12 +40,6 @@ import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { CancelOptions, DefaultedQueryObserverOptions } from './types'
 
 // TYPES
-
-interface QueryClientConfig {
-  queryCache?: QueryCache
-  mutationCache?: MutationCache
-  defaultOptions?: DefaultOptions
-}
 
 interface QueryDefaults {
   queryKey: QueryKey
@@ -288,13 +283,16 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.queryCache.findAll(filters).map(query =>
-        query.fetch(undefined, {
-          ...options,
-          cancelRefetch: options?.cancelRefetch ?? true,
-          meta: { refetchPage: filters?.refetchPage },
-        })
-      )
+      this.queryCache
+        .findAll(filters)
+        .filter(query => !query.isDisabled())
+        .map(query =>
+          query.fetch(undefined, {
+            ...options,
+            cancelRefetch: options?.cancelRefetch ?? true,
+            meta: { refetchPage: filters?.refetchPage },
+          })
+        )
     )
 
     let promise = Promise.all(promises).then(noop)

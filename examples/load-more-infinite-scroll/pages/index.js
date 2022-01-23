@@ -65,9 +65,9 @@ function Example() {
               onClick={() => fetchPreviousPage()}
               disabled={!hasPreviousPage || isFetchingPreviousPage}
             >
-              {isFetchingNextPage
+              {isFetchingPreviousPage
                 ? 'Loading more...'
-                : hasNextPage
+                : hasPreviousPage
                 ? 'Load Older'
                 : 'Nothing more to load'}
             </button>

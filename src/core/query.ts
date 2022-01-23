@@ -188,12 +188,6 @@ export class Query<
     this.updateCacheTime(this.options.cacheTime)
   }
 
-  setDefaultOptions(
-    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  ): void {
-    this.defaultOptions = options
-  }
-
   protected optionalRemove() {
     if (!this.observers.length && this.state.fetchStatus === 'idle') {
       this.cache.remove(this)
@@ -254,6 +248,10 @@ export class Query<
 
   isActive(): boolean {
     return this.observers.some(observer => observer.options.enabled !== false)
+  }
+
+  isDisabled(): boolean {
+    return this.getObserversCount() > 0 && !this.isActive()
   }
 
   isStale(): boolean {

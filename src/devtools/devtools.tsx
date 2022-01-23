@@ -1014,9 +1014,9 @@ const QueryRow = ({
       queryCache.find(queryKey)?.isStale()
     ) ?? false
 
-  const isActive =
+  const isDisabled =
     useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.isActive()
+      queryCache.find(queryKey)?.isDisabled()
     ) ?? false
 
   const observerCount =
@@ -1028,7 +1028,6 @@ const QueryRow = ({
     return null
   }
 
-  const isDisabled = observerCount > 0 && !isActive
   return (
     <div
       role="button"
