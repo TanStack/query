@@ -14,6 +14,7 @@ import {
   QueryCache,
   QueryClient,
   QueryFunction,
+  QueryFunctionContext,
   QueryObserver,
 } from '../..'
 import { focusManager, onlineManager } from '..'
@@ -129,6 +130,70 @@ describe('queryClient', () => {
       queryClient.setQueryDefaults(key, queryOptions1)
       queryClient.setQueryDefaults(key, queryOptions2)
       expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
+    })
+
+    test('should warn in dev if several query defaults match a given key', () => {
+      // Check discussion here: https://github.com/tannerlinsley/react-query/discussions/3199
+      const consoleWarnMock = jest.spyOn(console, 'warn')
+      consoleWarnMock.mockImplementation(() => true)
+
+      const keyABCD = [
+        {
+          a: 'a',
+          b: 'b',
+          c: 'c',
+          d: 'd',
+        },
+      ]
+
+      // The key below "contains" keyABCD => it is more generic
+      const keyABC = [
+        {
+          a: 'a',
+          b: 'b',
+          c: 'c',
+        },
+      ]
+
+      // The defaults for query matching key "ABCD" (least generic)
+      const defaultsOfABCD = {
+        queryFn: function ABCDQueryFn() {
+          return 'ABCD'
+        },
+      }
+
+      // The defaults for query matching key "ABC" (most generic)
+      const defaultsOfABC = {
+        queryFn: function ABCQueryFn() {
+          return 'ABC'
+        },
+      }
+
+      // No defaults, no warning
+      const noDefaults = queryClient.getQueryDefaults(keyABCD)
+      expect(noDefaults).toBeUndefined()
+      expect(consoleWarnMock).not.toHaveBeenCalled()
+
+      // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
+      queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
+      queryClient.setQueryDefaults(keyABC, defaultsOfABC)
+      // … then the "good" defaults are retrieved: we get the ones for key "ABCD"
+      const goodDefaults = queryClient.getQueryDefaults(keyABCD)
+      expect(goodDefaults).toBe(defaultsOfABCD)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
+
+      // Let's reset the defaults query options and change the order of registration
+      queryClient.queryDefaults.length = 0
+      // The defaults for key ABC (more generic) are registered **before** the ones of key ABCD…
+      queryClient.setQueryDefaults(keyABC, defaultsOfABC)
+      queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
+      // … then the "wrong" defaults are retrieved: we get the ones for key "ABC"
+      const badDefaults = queryClient.getQueryDefaults(keyABCD)
+      expect(badDefaults).not.toBe(defaultsOfABCD)
+      expect(badDefaults).toBe(defaultsOfABC)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+
+      consoleWarnMock.mockRestore()
     })
   })
 
