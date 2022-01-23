@@ -703,8 +703,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             }}
           >
             {queries.map((query, i) => {
-              const isDisabled =
-                query.getObserversCount() > 0 && !query.isActive()
               return (
                 <div
                   key={query.queryHash || i}
@@ -747,7 +745,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   >
                     {query.getObserversCount()}
                   </div>
-                  {isDisabled ? (
+                  {query.isDisabled() ? (
                     <div
                       style={{
                         flex: '0 0 auto',
