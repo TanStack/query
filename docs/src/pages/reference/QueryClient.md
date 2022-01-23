@@ -23,31 +23,32 @@ await queryClient.prefetchQuery(['posts'], fetchPosts)
 
 Its available methods are:
 
-- [`queryClient.fetchQuery`](#queryclientfetchquery)
-- [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
-- [`queryClient.prefetchQuery`](#queryclientprefetchquery)
-- [`queryClient.prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
-- [`queryClient.getQueryData`](#queryclientgetquerydata)
-- [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
-- [`queryClient.setQueryData`](#queryclientsetquerydata)
-- [`queryClient.getQueryState`](#queryclientgetquerystate)
-- [`queryClient.setQueriesData`](#queryclientsetqueriesdata)
-- [`queryClient.invalidateQueries`](#queryclientinvalidatequeries)
-- [`queryClient.refetchQueries`](#queryclientrefetchqueries)
-- [`queryClient.cancelQueries`](#queryclientcancelqueries)
-- [`queryClient.removeQueries`](#queryclientremovequeries)
-- [`queryClient.resetQueries`](#queryclientresetqueries)
-- [`queryClient.isFetching`](#queryclientisfetching)
-- [`queryClient.isMutating`](#queryclientismutating)
-- [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
-- [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
-- [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
-- [`queryClient.setQueryDefaults`](#queryclientsetquerydefaults)
-- [`queryClient.getMutationDefaults`](#queryclientgetmutationdefaults)
-- [`queryClient.setMutationDefaults`](#queryclientsetmutationdefaults)
-- [`queryClient.getQueryCache`](#queryclientgetquerycache)
-- [`queryClient.getMutationCache`](#queryclientgetmutationcache)
-- [`queryClient.clear`](#queryclientclear)
+* [`QueryClient`](#queryclient)
+* [`queryClient.fetchQuery`](#queryclientfetchquery)
+* [`queryClient.fetchInfiniteQuery`](#queryclientfetchinfinitequery)
+* [`queryClient.prefetchQuery`](#queryclientprefetchquery)
+* [`queryClient.prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
+* [`queryClient.getQueryData`](#queryclientgetquerydata)
+* [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
+* [`queryClient.setQueryData`](#queryclientsetquerydata)
+* [`queryClient.getQueryState`](#queryclientgetquerystate)
+* [`queryClient.setQueriesData`](#queryclientsetqueriesdata)
+* [`queryClient.invalidateQueries`](#queryclientinvalidatequeries)
+* [`queryClient.refetchQueries`](#queryclientrefetchqueries)
+* [`queryClient.cancelQueries`](#queryclientcancelqueries)
+* [`queryClient.removeQueries`](#queryclientremovequeries)
+* [`queryClient.resetQueries`](#queryclientresetqueries)
+* [`queryClient.isFetching`](#queryclientisfetching)
+* [`queryClient.isMutating`](#queryclientismutating)
+* [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
+* [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
+* [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
+* [`queryClient.setQueryDefaults`](#queryclientsetquerydefaults)
+* [`queryClient.getMutationDefaults`](#queryclientgetmutationdefaults)
+* [`queryClient.setMutationDefaults`](#queryclientsetmutationdefaults)
+* [`queryClient.getQueryCache`](#queryclientgetquerycache)
+* [`queryClient.getMutationCache`](#queryclientgetmutationcache)
+* [`queryClient.clear`](#queryclientclear)
 
 **Options**
 
@@ -474,6 +475,9 @@ The `getQueryDefaults` method returns the default options which have been set fo
 const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ```
 
+> Note that if several query defaults match the given query key, the **first** matching one is returned.
+> This could lead to unexpected behaviours. See [`setquerydefaults`](#queryclientsetquerydefaults).
+
 ## `queryClient.setQueryDefaults`
 
 `setQueryDefaults` can be used to set default options for specific queries:
@@ -490,6 +494,9 @@ function Component() {
 
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 - `options: QueryOptions`
+
+> As stated in [`getquerydefaults`](#queryclientgetquerydefaults), the order of registration of query defaults does matter.
+> Since the **first** matching defaults are returned by `getquerydefaults`, the registration should be made in the following order: from the **least generic key** to the **most generic one**. This way, in case of specific key, the first matching one would be the expected one.
 
 ## `queryClient.getMutationDefaults`
 
