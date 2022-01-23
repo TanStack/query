@@ -707,6 +707,41 @@ describe('queryClient', () => {
   })
 
   describe('refetchQueries', () => {
+    test('should not refetch if all observers are disabled', async () => {
+      const key = queryKey()
+      const queryFn = jest.fn()
+      await queryClient.fetchQuery(key, queryFn)
+      const observer1 = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        enabled: false,
+      })
+      observer1.subscribe(() => undefined)
+      await queryClient.refetchQueries()
+      observer1.destroy()
+      expect(queryFn).toHaveBeenCalledTimes(1)
+    })
+    test('should refetch if at least one observer is enabled', async () => {
+      const key = queryKey()
+      const queryFn = jest.fn()
+      await queryClient.fetchQuery(key, queryFn)
+      const observer1 = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        enabled: false,
+      })
+      const observer2 = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn,
+        refetchOnMount: false,
+      })
+      observer1.subscribe(() => undefined)
+      observer2.subscribe(() => undefined)
+      await queryClient.refetchQueries()
+      observer1.destroy()
+      observer2.destroy()
+      expect(queryFn).toHaveBeenCalledTimes(2)
+    })
     test('should refetch all queries when no arguments are given', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
