@@ -283,13 +283,16 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.queryCache.findAll(filters).map(query =>
-        query.fetch(undefined, {
-          ...options,
-          cancelRefetch: options?.cancelRefetch ?? true,
-          meta: { refetchPage: filters?.refetchPage },
-        })
-      )
+      this.queryCache
+        .findAll(filters)
+        .filter(query => !query.isDisabled())
+        .map(query =>
+          query.fetch(undefined, {
+            ...options,
+            cancelRefetch: options?.cancelRefetch ?? true,
+            meta: { refetchPage: filters?.refetchPage },
+          })
+        )
     )
 
     let promise = Promise.all(promises).then(noop)

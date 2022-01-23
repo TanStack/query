@@ -250,6 +250,10 @@ export class Query<
     return this.observers.some(observer => observer.options.enabled !== false)
   }
 
+  isDisabled(): boolean {
+    return this.getObserversCount() > 0 && !this.isActive()
+  }
+
   isStale(): boolean {
     return (
       this.state.isInvalidated ||

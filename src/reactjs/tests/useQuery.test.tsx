@@ -1180,7 +1180,10 @@ describe('useQuery', () => {
           await sleep(1)
           return 'fetched'
         },
-        { enabled: false }
+        {
+          initialData: 'initial',
+          staleTime: Infinity,
+        }
       )
 
       results.push(result)
@@ -1266,7 +1269,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should update disabled query when updated with invalidateQueries', async () => {
+  it('should not update disabled query when refetched with refetchQueries', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
     let count = 0
@@ -1295,25 +1298,13 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await sleep(50)
 
-    expect(states.length).toBe(3)
+    expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isStale: true,
-    })
-    expect(states[1]).toMatchObject({
-      data: undefined,
-      isFetching: true,
-      isSuccess: false,
-      isStale: true,
-    })
-    expect(states[2]).toMatchObject({
-      data: 1,
-      isFetching: false,
-      isSuccess: true,
       isStale: true,
     })
   })
