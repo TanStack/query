@@ -136,7 +136,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries(true)}>
+        <button onClick={() => queryClient.invalidateQueries()}>
           Force Refetch All
         </button>
       </div>
