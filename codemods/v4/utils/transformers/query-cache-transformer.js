@@ -79,7 +79,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
   const filterQueryCacheMethods = node =>
     isIdentifier(node) && ['find', 'findAll'].includes(node.name)
 
-  const largeFn = () => {
+  const findQueryCacheCalls = () => {
     /**
      * Here we collect all query client instantiations. We have to make aware of them because the query cache can be
      * accessed by the query client as well.
@@ -128,7 +128,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
 
   const execute = replacer => {
     if (utils.findImportSpecifier('QueryCache').paths().length > 0) {
-      largeFn().replaceWith(replacer)
+      findQueryCacheCalls().replaceWith(replacer)
     }
   }
 
