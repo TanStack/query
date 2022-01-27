@@ -3,26 +3,32 @@ const defineTest = require('jscodeshift/dist/testUtils').defineTest
 
 jest.autoMockOff()
 
-defineTest(__dirname, 'use-query', null, 'default-import', {
+defineTest(__dirname, 'key-transformation', null, 'default-import', {
   parser: 'tsx',
 })
 
-defineTest(__dirname, 'use-query', null, 'named-import', {
+defineTest(__dirname, 'key-transformation', null, 'named-import', {
   parser: 'tsx',
 })
 
-defineTest(__dirname, 'use-query', null, 'namespaced-import', {
+defineTest(__dirname, 'key-transformation', null, 'namespaced-import', {
   parser: 'tsx',
 })
 
-defineTest(__dirname, 'use-query', null, 'parameter-is-identifier', {
+defineTest(__dirname, 'key-transformation', null, 'parameter-is-identifier', {
   parser: 'tsx',
 })
 
-defineTest(__dirname, 'use-query', null, 'parameter-is-object-expression', {
-  parser: 'tsx',
-})
+defineTest(
+  __dirname,
+  'key-transformation',
+  null,
+  'parameter-is-object-expression',
+  {
+    parser: 'tsx',
+  }
+)
 
-defineTest(__dirname, 'use-query', null, 'query-cache', {
+defineTest(__dirname, 'key-transformation', null, 'query-cache', {
   parser: 'tsx',
 })
