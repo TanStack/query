@@ -19,11 +19,15 @@ export function createNotifyManager() {
   }
 
   const batch = <T>(callback: () => T): T => {
+    let result
     transactions++
-    const result = callback()
-    transactions--
-    if (!transactions) {
-      flush()
+    try {
+      result = callback()
+    } finally {
+      transactions--
+      if (!transactions) {
+        flush()
+      }
     }
     return result
   }

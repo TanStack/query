@@ -483,12 +483,12 @@ export class QueryObserver<
       } else {
         try {
           data = options.select(state.data)
+          if (options.structuralSharing !== false) {
+            data = replaceEqualDeep(prevResult?.data, data)
+          }
           this.previousSelect = {
             fn: options.select,
             result: data,
-          }
-          if (options.structuralSharing !== false) {
-            data = replaceEqualDeep(prevResult?.data, data)
           }
           this.previousSelectError = null
         } catch (selectError) {

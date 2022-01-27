@@ -29,4 +29,23 @@ describe('notifyManager', () => {
     expect(callbackBatchLevel2Spy).toHaveBeenCalledTimes(1)
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
   })
+
+  it('should notify if error is thrown', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const notifySpy = jest.fn()
+
+    notifyManagerTest.setNotifyFunction(notifySpy)
+
+    try {
+      notifyManagerTest.batch(() => {
+        notifyManagerTest.schedule(jest.fn)
+        throw new Error('Foo')
+      })
+    } catch {}
+
+    // needed for scheduleMicroTask to kick in
+    await sleep(1)
+
+    expect(notifySpy).toHaveBeenCalledTimes(1)
+  })
 })
