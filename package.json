@@ -63,7 +63,11 @@
     "lib",
     "reactjs",
     "scripts",
-    "types"
+    "types",
+    "codemods",
+    "!codemods/jest.config.js",
+    "!codemods/**/__testfixtures__",
+    "!codemods/**/__tests__"
   ],
   "dependencies": {
     "@babel/runtime": "^7.5.5",
