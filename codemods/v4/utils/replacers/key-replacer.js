@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const UnprocessableKeyError = require('../unprocessable-key-error')
 
-module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
+module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
   const isArrayExpression = node =>
     jscodeshift.match(node, { type: jscodeshift.ArrayExpression.name })
 
@@ -47,7 +47,7 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
 
       if (!variableDeclaration) {
         throw new UnprocessableKeyError(
-          `At line ${node.loc.start.line} the type of identifier \`${node.name}\` couldn't be recognized, so the codemod couldn't be applied. Please do the migration manually.`
+          `In file ${filePath} at line ${node.loc.start.line} the type of identifier \`${node.name}\` couldn't be recognized, so the codemod couldn't be applied. Please migrate manually.`
         )
       }
 
@@ -60,7 +60,7 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
     }
 
     throw new UnprocessableKeyError(
-      `At line ${node.loc.start.line} the type of the \`${keyName}\` couldn't be recognized, so the codemod couldn't be applied. Please do the migration manually.`
+      `In file ${filePath} at line ${node.loc.start.line} the type of the \`${keyName}\` couldn't be recognized, so the codemod couldn't be applied. Please migrate manually.`
     )
   }
 
@@ -105,7 +105,7 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
 
         if (!originalKey) {
           throw new UnprocessableKeyError(
-            `At line ${node.loc.start.line} the \`${keyName}\` couldn't be found. Did you forget to add it?`
+            `In file ${filePath} at line ${node.loc.start.line} the \`${keyName}\` couldn't be found. Did you forget to add it?`
           )
         }
 

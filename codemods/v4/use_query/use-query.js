@@ -9,9 +9,9 @@ const queryClientTransformer = require('../utils/transformers/query-client-trans
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const queryCacheTransformer = require('../utils/transformers/query-cache-transformer')
 
-const transformQueryClientUsages = ({ jscodeshift, utils, root }) => {
+const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
-  const replacer = createKeyReplacer({ jscodeshift, root })
+  const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
   // Not object syntax-aware methods.
   transformer.execute('getMutationDefaults', replacer)
@@ -61,16 +61,23 @@ const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
   transformer.execute('useQueries', replacer)
 }
 
-const transformUseQueryLikeUsages = ({ jscodeshift, utils, root }) => {
+const transformUseQueryLikeUsages = ({
+  jscodeshift,
+  utils,
+  root,
+  filePath,
+}) => {
   const transformer = hookCallTransformer({ jscodeshift, utils, root })
   const queryKeyReplacer = createKeyReplacer({
     jscodeshift,
     root,
+    filePath,
     keyName: 'queryKey',
   })
   const mutationKeyReplacer = createKeyReplacer({
     jscodeshift,
     root,
+    filePath,
     keyName: 'mutationKey',
   })
 
@@ -81,9 +88,9 @@ const transformUseQueryLikeUsages = ({ jscodeshift, utils, root }) => {
   transformer.execute('useMutation', mutationKeyReplacer)
 }
 
-const transformQueryCacheUsages = ({ jscodeshift, utils, root }) => {
+const transformQueryCacheUsages = ({ jscodeshift, utils, root, filePath }) => {
   const transformer = queryCacheTransformer({ jscodeshift, utils, root })
-  const replacer = createKeyReplacer({ jscodeshift, root })
+  const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
   transformer.execute(replacer)
 }
@@ -93,15 +100,16 @@ module.exports = (file, api) => {
   const root = jscodeshift(file.source)
 
   const utils = createUtilsObject({ root, jscodeshift })
+  const filePath = file.path
 
   // This function transforms usages like `useQuery` and `useMutation`.
-  transformUseQueryLikeUsages({ jscodeshift, utils, root })
+  transformUseQueryLikeUsages({ jscodeshift, utils, root, filePath })
   // This function transforms usages of `useQueries`.
   transformUseQueriesUsages({ jscodeshift, utils, root })
   // This function transforms usages of `QueryClient`.
-  transformQueryClientUsages({ jscodeshift, utils, root })
+  transformQueryClientUsages({ jscodeshift, utils, root, filePath })
   // This function transforms usages of `QueryCache`.
-  transformQueryCacheUsages({ jscodeshift, utils, root })
+  transformQueryCacheUsages({ jscodeshift, utils, root, filePath })
 
   return root.toSource({ quote: 'single' })
 }
