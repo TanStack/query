@@ -26,11 +26,6 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
   }
 
   const createKeyValue = node => {
-    // When the node is an array expression we just simply return it because we want query keys to be arrays.
-    if (isArrayExpression(node)) {
-      return node
-    }
-
     // When the node is a string literal we convert it into an array of strings.
     if (isStringLiteral(node)) {
       return jscodeshift.arrayExpression([
@@ -57,11 +52,6 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
       }
 
       const initializer = variableDeclaration.value.init
-
-      // Same as above, when it's an array expression, we're good to go.
-      if (isArrayExpression(initializer)) {
-        return node
-      }
 
       // When it's a string, we just wrap it into an array expression.
       if (isStringLiteral(initializer) || isTemplateLiteral(initializer)) {
@@ -130,6 +120,11 @@ module.exports = ({ jscodeshift, root, keyName = 'queryKey' }) => {
           ]),
           ...restOfTheArguments,
         ])
+      }
+
+      // When the node is an array expression we just simply return it because we want query keys to be arrays.
+      if (isArrayExpression(firstArgument)) {
+        return node
       }
 
       return jscodeshift.callExpression(node.original.callee, [

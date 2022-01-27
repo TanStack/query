@@ -106,52 +106,28 @@ export const ExampleWithTemplateLiteralIdentifier = () => {
 }
 
 export const ExampleWithArrayExpression = () => {
-  useQuery({
-    queryKey: ['todos'],
-    exact: true
-  }, options)
-  useMutation({
-    mutationKey: ['todos'],
-    exact: true
-  }, options)
+  useQuery({ queryKey: ['todos'], exact: true }, options)
+  useMutation({ mutationKey: ['todos'], exact: true }, options)
   // QueryClient methods
   // --- Instantiated hook call.
   const queryClient = useQueryClient()
-  queryClient.cancelQueries({
-    queryKey: ['todos'],
-    exact: true
-  }, options)
+  queryClient.cancelQueries({ queryKey: ['todos'], exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries({
-    queryKey: ['todos'],
-    exact: true
-  }, options)
+  useQueryClient().cancelQueries({ queryKey: ['todos'], exact: true }, options)
 
   return <div>Example Component</div>
 }
 
 export const ExampleWithArrayExpressionIdentifier = () => {
   const arrayExpressionKey = ['todos']
-  useQuery({
-    queryKey: arrayExpressionKey,
-    exact: true
-  }, options)
-  useMutation({
-    mutationKey: arrayExpressionKey,
-    exact: true
-  }, options)
+  useQuery({ queryKey: arrayExpressionKey, exact: true }, options)
+  useMutation({ mutationKey: arrayExpressionKey, exact: true }, options)
   // QueryClient methods
   // --- Instantiated hook call.
   const queryClient = useQueryClient()
-  queryClient.cancelQueries({
-    queryKey: arrayExpressionKey,
-    exact: true
-  }, options)
+  queryClient.cancelQueries({ queryKey: arrayExpressionKey, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries({
-    queryKey: arrayExpressionKey,
-    exact: true
-  }, options)
+  useQueryClient().cancelQueries({ queryKey: arrayExpressionKey, exact: true }, options)
 
   return <div>Example Component</div>
 }
