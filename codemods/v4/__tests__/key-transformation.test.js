@@ -32,3 +32,7 @@ defineTest(
 defineTest(__dirname, 'key-transformation', null, 'query-cache', {
   parser: 'tsx',
 })
+
+defineTest(__dirname, 'key-transformation', null, 'type-arguments', {
+  parser: 'tsx',
+})

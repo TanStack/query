@@ -47,7 +47,7 @@ const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
       return node
     }
 
-    return jscodeshift.callExpression(node.original.callee, [
+    const newCallExpression = jscodeshift.callExpression(node.original.callee, [
       jscodeshift.objectExpression([
         jscodeshift.property(
           'init',
@@ -56,6 +56,13 @@ const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
         ),
       ]),
     ])
+
+    // TODO: This should be part of one function!
+    if (node.typeParameters) {
+      newCallExpression.typeArguments = node.typeParameters
+    }
+
+    return newCallExpression
   }
 
   transformer.execute('useQueries', replacer)

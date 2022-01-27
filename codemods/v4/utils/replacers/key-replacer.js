@@ -76,6 +76,16 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
       property => property.key.name === propertyName
     ) ?? null
 
+  const buildWithTypeArguments = (node, builder) => {
+    const newNode = builder(node)
+
+    if (node.typeParameters) {
+      newNode.typeArguments = node.typeParameters
+    }
+
+    return newNode
+  }
+
   return ({ node }) => {
     // When the node doesn't have the 'original' property, that means the codemod has been already applied,
     // so we don't need to do any changes.
@@ -113,13 +123,15 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
           item => item.key.name !== keyName
         )
 
-        return jscodeshift.callExpression(node.original.callee, [
-          jscodeshift.objectExpression([
-            createKeyProperty(originalKey.value),
-            ...restOfTheProperties,
-          ]),
-          ...restOfTheArguments,
-        ])
+        return buildWithTypeArguments(node, originalNode =>
+          jscodeshift.callExpression(originalNode.original.callee, [
+            jscodeshift.objectExpression([
+              createKeyProperty(originalKey.value),
+              ...restOfTheProperties,
+            ]),
+            ...restOfTheArguments,
+          ])
+        )
       }
 
       // When the node is an array expression we just simply return it because we want query keys to be arrays.
@@ -127,10 +139,12 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
         return node
       }
 
-      return jscodeshift.callExpression(node.original.callee, [
-        createKeyValue(firstArgument),
-        ...restOfTheArguments,
-      ])
+      return buildWithTypeArguments(node, originalNode =>
+        jscodeshift.callExpression(originalNode.original.callee, [
+          createKeyValue(firstArgument),
+          ...restOfTheArguments,
+        ])
+      )
     } catch (error) {
       if (error.name === 'UnprocessableKeyError') {
         console.warn(error.message)
