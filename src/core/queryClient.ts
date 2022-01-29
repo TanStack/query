@@ -532,7 +532,7 @@ export class QueryClient {
     }
   }
 
-  findQueryDefaults(
+  findFirstMatchingQueryDefaults(
     queryKey?: QueryKey
   ): QueryOptions<any, any, any> | undefined {
     if (!queryKey) {
@@ -548,7 +548,7 @@ export class QueryClient {
       console.warn(
         `[QueryClient] Several defaults match with key '${JSON.stringify(
           queryKey
-        )}'. The first matching query options are used. Please check how query defaults are registered. Order does matter here. cf. http://react-query.com/some/link/to/document#queryDefaults.`
+        )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
       )
     }
     // Explicitly returns the first one
@@ -559,7 +559,7 @@ export class QueryClient {
   getQueryDefaults(
     queryKey?: QueryKey
   ): QueryObserverOptions<any, any, any, any, any> | undefined {
-    const queryDefaults = this.findQueryDefaults(queryKey)
+    const queryDefaults = this.findFirstMatchingQueryDefaults(queryKey)
     return queryDefaults
   }
 
