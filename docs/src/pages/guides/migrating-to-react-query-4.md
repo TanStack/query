@@ -260,10 +260,23 @@ Additionally, `query.setDefaultOptions` was removed because it was also unused. 
 
 Types now require using TypeScript v4.1 or greater
 
-### Logging
+### Logging in production
 
 Starting with v4, react-query will no longer log errors (e.g. failed fetches) to the console in production mode, as this was confusing to many.
 Errors will still show up in development mode.
+
+### `setLogger` is removed
+
+It was possible to change the logger globally by calling `setLogger`. In v4, that function is replaced with an optional field when creating a `QueryClient`.
+
+```diff
+- import { QueryClient, setLogger } from 'react-query';
++ import { QueryClient } from 'react-query';
+
+- setLogger(customLogger)
+- const queryClient = new QueryClient();
++ const queryClient = new QueryClient({ logger: customLogger })
+```
 
 ### Undefined is an illegale cache value for successful queries
 

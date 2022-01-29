@@ -17,8 +17,8 @@ import type {
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
+import { defaultLogger, Logger } from './logger'
 import { notifyManager } from './notifyManager'
-import { getLogger } from './logger'
 import { Retryer, isCancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
 
@@ -33,6 +33,7 @@ interface QueryConfig<
   cache: QueryCache
   queryKey: TQueryKey
   queryHash: string
+  logger?: Logger
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
@@ -155,6 +156,7 @@ export class Query<
   isFetchingOptimistic?: boolean
 
   private cache: QueryCache
+  private logger: Logger
   private promise?: Promise<TData>
   private retryer?: Retryer<TData>
   private observers: QueryObserver<any, any, any, any, any>[]
@@ -169,6 +171,7 @@ export class Query<
     this.setOptions(config.options)
     this.observers = []
     this.cache = config.cache
+    this.logger = config.logger || defaultLogger
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
     this.initialState = config.state || getDefaultState(this.options)
@@ -360,14 +363,13 @@ export class Query<
       }
     }
 
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      !Array.isArray(this.options.queryKey)
-    ) {
-      getLogger().error(
-        'As of v4, queryKey needs to be an Array, but the queryKey used was:',
-        JSON.stringify(this.options.queryKey)
-      )
+    if (!Array.isArray(this.options.queryKey)) {
+      if (process.env.NODE_ENV !== 'production') {
+        this.logger.error(
+          'As of v4, queryKey needs to be an Array, but the queryKey used was:',
+          JSON.stringify(this.options.queryKey)
+        )
+      }
     }
 
     const abortController = getAbortController()
@@ -447,7 +449,7 @@ export class Query<
         this.cache.config.onError?.(error, this as Query<any, any, any, any>)
 
         if (process.env.NODE_ENV !== 'production') {
-          getLogger().error(error)
+          this.logger.error(error)
         }
       }
 

@@ -7,4 +7,5 @@ module.exports = {
   moduleNameMapper: {
     'react-query': '<rootDir>/src/index.ts',
   },
+  clearMocks: true,
 }

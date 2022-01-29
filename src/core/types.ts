@@ -4,6 +4,7 @@ import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
+import { Logger } from './logger'
 
 export type QueryKey = readonly unknown[]
 export type QueryFunctionData<T> = T extends undefined ? never : T
@@ -695,6 +696,7 @@ export type MutationObserverResult<
 export interface QueryClientConfig {
   queryCache?: QueryCache
   mutationCache?: MutationCache
+  logger?: Logger
   defaultOptions?: DefaultOptions
 }
 

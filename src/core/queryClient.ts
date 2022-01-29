@@ -39,7 +39,7 @@ import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { CancelOptions, DefaultedQueryObserverOptions } from './types'
-import { getLogger } from './logger'
+import { defaultLogger, Logger } from './logger'
 
 // TYPES
 
@@ -58,6 +58,7 @@ interface MutationDefaults {
 export class QueryClient {
   private queryCache: QueryCache
   private mutationCache: MutationCache
+  private logger: Logger
   private defaultOptions: DefaultOptions
   private queryDefaults: QueryDefaults[]
   private mutationDefaults: MutationDefaults[]
@@ -67,6 +68,7 @@ export class QueryClient {
   constructor(config: QueryClientConfig = {}) {
     this.queryCache = config.queryCache || new QueryCache()
     this.mutationCache = config.mutationCache || new MutationCache()
+    this.logger = config.logger || defaultLogger
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
@@ -520,6 +522,10 @@ export class QueryClient {
     return this.mutationCache
   }
 
+  getLogger(): Logger {
+    return this.logger
+  }
+
   getDefaultOptions(): DefaultOptions {
     return this.defaultOptions
   }
@@ -562,11 +568,13 @@ export class QueryClient {
       )
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
       if (matchingDefaults.length > 1) {
-        getLogger().error(
-          `[QueryClient] Several query defaults match with key '${JSON.stringify(
-            queryKey
-          )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
-        )
+        if (process.env.NODE_ENV !== 'production') {
+          this.logger.error(
+            `[QueryClient] Several query defaults match with key '${JSON.stringify(
+              queryKey
+            )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
+          )
+        }
       }
     }
 
@@ -607,11 +615,13 @@ export class QueryClient {
       )
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
       if (matchingDefaults.length > 1) {
-        getLogger().error(
-          `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
-            mutationKey
-          )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`
-        )
+        if (process.env.NODE_ENV !== 'production') {
+          this.logger.error(
+            `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
+              mutationKey
+            )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`
+          )
+        }
       }
     }
 

@@ -2,7 +2,7 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey } from './utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import {
   QueryClient,
   QueryClientProvider,
@@ -16,7 +16,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
 
     function Page() {
       const { data } = useQuery(key, async () => {
@@ -49,8 +49,8 @@ describe('QueryClientProvider', () => {
     const queryCache1 = new QueryCache()
     const queryCache2 = new QueryCache()
 
-    const queryClient1 = new QueryClient({ queryCache: queryCache1 })
-    const queryClient2 = new QueryClient({ queryCache: queryCache2 })
+    const queryClient1 = createQueryClient({ queryCache: queryCache1 })
+    const queryClient2 = createQueryClient({ queryCache: queryCache2 })
 
     function Page1() {
       const { data } = useQuery(key1, async () => {
@@ -101,7 +101,7 @@ describe('QueryClientProvider', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({
+    const queryClient = createQueryClient({
       queryCache,
       defaultOptions: {
         queries: {
@@ -155,7 +155,7 @@ describe('QueryClientProvider', () => {
 
     test('should use window to get the context when contextSharing is true', () => {
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
 
       let queryClientFromHook: QueryClient | undefined
       let queryClientFromWindow: QueryClient | undefined
@@ -182,7 +182,7 @@ describe('QueryClientProvider', () => {
 
     test('should not use window to get the context when contextSharing is true and window does not exist', () => {
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
 
       // Mock a non web browser environment
       const windowSpy = jest
