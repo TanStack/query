@@ -48,7 +48,7 @@ function Example() {
   useIntersectionObserver({
     target: loadMoreButtonRef,
     onIntersect: fetchNextPage,
-    enabled: hasNextPage,
+    enabled: !!hasNextPage,
   })
 
   return (
