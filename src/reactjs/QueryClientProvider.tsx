@@ -43,14 +43,15 @@ export const useQueryClient = () => {
 
 export interface QueryClientProviderProps {
   client: QueryClient
+  children?: React.ReactNode
   contextSharing?: boolean
 }
 
-export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
+export const QueryClientProvider = ({
   client,
   contextSharing = false,
   children,
-}) => {
+}: QueryClientProviderProps): JSX.Element => {
   React.useEffect(() => {
     client.mount()
     return () => {
