@@ -38,6 +38,7 @@ import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { CancelOptions, DefaultedQueryObserverOptions } from './types'
+import { getLogger } from './logger'
 
 // TYPES
 
@@ -545,7 +546,7 @@ export class QueryClient {
     )
     // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
     if (process.env.NODE_ENV !== 'production' && matchingDefaults?.length > 1) {
-      console.warn(
+      getLogger().warn(
         `[QueryClient] Several defaults match with key '${JSON.stringify(
           queryKey
         )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
