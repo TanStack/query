@@ -14,7 +14,6 @@ import {
   QueryCache,
   QueryClient,
   QueryFunction,
-  QueryFunctionContext,
   QueryObserver,
 } from '../..'
 import { focusManager, onlineManager } from '..'
@@ -182,13 +181,13 @@ describe('queryClient', () => {
       expect(goodDefaults).toBe(defaultsOfABCD)
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
 
-      // Let's reset the defaults query options and change the order of registration
-      queryClient.queryDefaults.length = 0
+      // Let's create another queryClient and change the order of registration
+      const newQueryClient = new QueryClient()
       // The defaults for key ABC (more generic) are registered **before** the ones of key ABCD…
-      queryClient.setQueryDefaults(keyABC, defaultsOfABC)
-      queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
+      newQueryClient.setQueryDefaults(keyABC, defaultsOfABC)
+      newQueryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
       // … then the "wrong" defaults are retrieved: we get the ones for key "ABC"
-      const badDefaults = queryClient.getQueryDefaults(keyABCD)
+      const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
       expect(consoleWarnMock).toHaveBeenCalledTimes(2)
