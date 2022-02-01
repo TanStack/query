@@ -1,5 +1,7 @@
 import * as React from 'react'
 import {
+  QueryCache as RenamedQueryCache,
+  QueryClient as RenamedQueryClient,
   useInfiniteQuery as useRenamedInfiniteQuery,
   useIsFetching as useRenamedIsFetching,
   useIsMutating as useRenamedIsMutating,
@@ -62,6 +64,33 @@ export const Examples = () => {
   useRenamedQueryClient().refetchQueries('todos')
   useRenamedQueryClient().removeQueries('todos')
   useRenamedQueryClient().resetQueries('todos')
+  // QueryCache
+  // --- NewExpression
+  const queryCache1 = new RenamedQueryCache({
+    onError: (error) => console.log(error),
+    onSuccess: (success) => console.log(success)
+  })
+  queryCache1.find('todos')
+  queryCache1.findAll('todos')
+  // --- Instantiated hook call.
+  const queryClient1 = useRenamedQueryClient()
+  queryClient1.getQueryCache().find('todos')
+  queryClient1.getQueryCache().findAll('todos')
+  //
+  const queryClient2 = new RenamedQueryClient({})
+  queryClient2.getQueryCache().find('todos')
+  queryClient2.getQueryCache().findAll('todos')
+  //
+  const queryCache2 = queryClient1.getQueryCache()
+  queryCache2.find('todos')
+  queryCache2.findAll('todos')
+  // --- Direct hook call.
+  useRenamedQueryClient().getQueryCache().find('todos')
+  useRenamedQueryClient().getQueryCache().findAll('todos')
+  //
+  const queryCache3 = useRenamedQueryClient().getQueryCache()
+  queryCache3.find('todos')
+  queryCache3.findAll('todos')
 
   return <div>Example Component</div>
 }
