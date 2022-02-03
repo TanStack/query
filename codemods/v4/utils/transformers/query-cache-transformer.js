@@ -11,15 +11,38 @@ module.exports = ({ jscodeshift, utils, root }) => {
   const isMemberExpression = node =>
     jscodeshift.match(node, { type: jscodeshift.MemberExpression.name })
 
-  const isClassInstantiationOf = (node, className) =>
-    isNewExpression(node) &&
-    isIdentifier(node.callee) &&
-    node.callee.name === className
+  const isClassInstantiationOf = (node, selector) => {
+    if (!isNewExpression(node)) {
+      return false
+    }
 
-  const isFunctionCallOf = (node, functionName) =>
-    isCallExpression(node) &&
-    isIdentifier(node.callee) &&
-    node.callee.name === functionName
+    const parts = selector.split('.')
+
+    return parts.length === 1
+      ? isIdentifier(node.callee) && node.callee.name === parts[0]
+      : isMemberExpression(node.callee) &&
+          node.callee.object.name === parts[0] &&
+          node.callee.property.name === parts[1]
+  }
+
+  const isFunctionCallOf = (node, selector) => {
+    if (!isCallExpression(node)) {
+      return false
+    }
+
+    const parts = selector.split('.')
+
+    return parts.length === 1
+      ? isIdentifier(node.callee) && node.callee.name === parts[0]
+      : isMemberExpression(node.callee) &&
+          node.callee.object.name === parts[0] &&
+          node.callee.property.name === parts[1]
+  }
+
+  const getSelectorByImports = (imports, path) =>
+    imports.namespace
+      ? `${imports.namespace.name}.${imports[path].name}`
+      : imports[path].name
 
   const isGetQueryCacheMethodCall = (
     initializer,
@@ -38,49 +61,53 @@ module.exports = ({ jscodeshift, utils, root }) => {
 
     if (isValidInitializer(initializer)) {
       const instance = initializer.callee.object
-      const hasValidSomething =
-        isKnownQueryClient(instance) ||
-        isFunctionCallOf(instance, importIdentifiers.useQueryClient.name)
 
       return (
         isGetQueryCacheIdentifier(initializer.callee.property) &&
-        hasValidSomething
+        (isKnownQueryClient(instance) ||
+          isFunctionCallOf(
+            instance,
+            getSelectorByImports(importIdentifiers, 'useQueryClient')
+          ))
       )
     }
 
     return false
   }
 
-  const findQueryClientInstantiations = importIdentifiers => {
-    const queryClientName = importIdentifiers.queryClient.name
-    const useQueryClientName = importIdentifiers.useQueryClient.name
-
-    return root.find(jscodeshift.VariableDeclarator, {}).filter(node => {
+  const findQueryClientInstantiations = importIdentifiers =>
+    root.find(jscodeshift.VariableDeclarator, {}).filter(node => {
       if (node.value.init) {
         const initializer = node.value.init
 
         return (
-          isClassInstantiationOf(initializer, queryClientName) ||
-          isFunctionCallOf(initializer, useQueryClientName)
+          isClassInstantiationOf(
+            initializer,
+            getSelectorByImports(importIdentifiers, 'QueryClient')
+          ) ||
+          isFunctionCallOf(
+            initializer,
+            getSelectorByImports(importIdentifiers, 'useQueryClient')
+          )
         )
       }
 
       return false
     })
-  }
 
   const findQueryCacheInstantiations = (
     importIdentifiers,
     knownQueryClientIds
-  ) => {
-    const queryCacheName = importIdentifiers.queryCache.name
-
-    return root.find(jscodeshift.VariableDeclarator, {}).filter(node => {
+  ) =>
+    root.find(jscodeshift.VariableDeclarator, {}).filter(node => {
       if (node.value.init) {
         const initializer = node.value.init
 
         return (
-          isClassInstantiationOf(initializer, queryCacheName) ||
+          isClassInstantiationOf(
+            initializer,
+            getSelectorByImports(importIdentifiers, 'QueryCache')
+          ) ||
           isGetQueryCacheMethodCall(
             initializer,
             importIdentifiers,
@@ -91,7 +118,6 @@ module.exports = ({ jscodeshift, utils, root }) => {
 
       return false
     })
-  }
 
   const filterQueryCacheMethods = node =>
     isIdentifier(node) && ['find', 'findAll'].includes(node.name)
@@ -160,17 +186,34 @@ module.exports = ({ jscodeshift, utils, root }) => {
     return jscodeshift.identifier(name)
   }
 
+  const findNamespaceImportIdentifier = () => {
+    const specifier = utils.findNamespacedImportSpecifiers().paths()
+
+    return specifier.length > 0 ? specifier[0].value.local : null
+  }
+
+  const locateImports = () => {
+    const namespaceIdentifier = findNamespaceImportIdentifier()
+
+    if (namespaceIdentifier) {
+      return {
+        namespace: namespaceIdentifier,
+        QueryCache: jscodeshift.identifier('QueryCache'),
+        QueryClient: jscodeshift.identifier('QueryClient'),
+        useQueryClient: jscodeshift.identifier('useQueryClient'),
+      }
+    }
+
+    return {
+      namespace: null,
+      QueryCache: findImportIdentifierOf('QueryCache'),
+      QueryClient: findImportIdentifierOf('QueryClient'),
+      useQueryClient: findImportIdentifierOf('useQueryClient'),
+    }
+  }
+
   const execute = replacer => {
-    utils
-      .findImportSpecifier('QueryCache')
-      .paths()
-      .forEach(specifier => {
-        findQueryCacheCalls({
-          queryCache: specifier.value.local,
-          queryClient: findImportIdentifierOf('QueryClient'),
-          useQueryClient: findImportIdentifierOf('useQueryClient'),
-        }).replaceWith(replacer)
-      })
+    findQueryCacheCalls(locateImports()).replaceWith(replacer)
   }
 
   return {
