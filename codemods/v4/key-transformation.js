@@ -3,14 +3,14 @@ const createUtilsObject = require('./utils')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const createKeyReplacer = require('./utils/replacers/key-replacer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const hookCallTransformer = require('./utils/transformers/hook-call-transformer')
+const createUseQueryLikeTransformer = require('./utils/transformers/use-query-like-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const queryClientTransformer = require('./utils/transformers/query-client-transformer')
+const createQueryClientTransformer = require('./utils/transformers/query-client-transformer')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const queryCacheTransformer = require('./utils/transformers/query-cache-transformer')
+const createQueryCacheTransformer = require('./utils/transformers/query-cache-transformer')
 
 const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
-  const transformer = queryClientTransformer({ jscodeshift, utils, root })
+  const transformer = createQueryClientTransformer({ jscodeshift, utils, root })
   const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
   transformer.execute(
@@ -42,7 +42,11 @@ const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
 }
 
 const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
-  const transformer = hookCallTransformer({ jscodeshift, utils, root })
+  const transformer = createUseQueryLikeTransformer({
+    jscodeshift,
+    utils,
+    root,
+  })
   const replacer = ({ node }) => {
     /**
      * When the node doesn't have the 'original' property, that means the codemod has been already applied,
@@ -79,7 +83,11 @@ const transformUseQueryLikeUsages = ({
   root,
   filePath,
 }) => {
-  const transformer = hookCallTransformer({ jscodeshift, utils, root })
+  const transformer = createUseQueryLikeTransformer({
+    jscodeshift,
+    utils,
+    root,
+  })
 
   transformer.execute(
     ['useQuery', 'useInfiniteQuery', 'useIsFetching', 'useIsMutating'],
@@ -102,7 +110,7 @@ const transformUseQueryLikeUsages = ({
 }
 
 const transformQueryCacheUsages = ({ jscodeshift, utils, root, filePath }) => {
-  const transformer = queryCacheTransformer({ jscodeshift, utils, root })
+  const transformer = createQueryCacheTransformer({ jscodeshift, utils, root })
   const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
   transformer.execute(replacer)
