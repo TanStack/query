@@ -1,23 +1,29 @@
 module.exports = ({ jscodeshift, utils, root }) => {
-  const execute = (hooks, replacer) => {
-    const imports = utils.locateImports(hooks)
+  const filterUseQueryLikeHookCalls = (node, importIdentifiers, hooks) => {
+    for (const hook of hooks) {
+      const selector = utils.getSelectorByImports(importIdentifiers, hook)
 
-    const isHookCall = node => {
-      for (const hook of hooks) {
-        const selector = utils.getSelectorByImports(imports, hook)
-
-        if (utils.isFunctionCallOf(node.value, selector)) {
-          return true
-        }
+      if (utils.isFunctionCallOf(node, selector)) {
+        return true
       }
-
-      return false
     }
 
+    return false
+  }
+
+  const findUseQueryLikeHookCalls = (importIdentifiers, hooks) =>
     root
+      // First, we need to find all call expressions.
       .find(jscodeshift.CallExpression, {})
-      .filter(isHookCall)
-      .replaceWith(replacer)
+      // Then we narrow the collection to the `useQuery` like hook calls.
+      .filter(node =>
+        filterUseQueryLikeHookCalls(node.value, importIdentifiers, hooks)
+      )
+
+  const execute = (hooks, replacer) => {
+    findUseQueryLikeHookCalls(utils.locateImports(hooks), hooks).replaceWith(
+      replacer
+    )
   }
 
   return {
