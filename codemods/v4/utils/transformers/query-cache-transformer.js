@@ -1,21 +1,4 @@
 module.exports = ({ jscodeshift, utils, root }) => {
-  const isNewExpression = node =>
-    jscodeshift.match(node, { type: jscodeshift.NewExpression.name })
-
-  const isClassInstantiationOf = (node, selector) => {
-    if (!isNewExpression(node)) {
-      return false
-    }
-
-    const parts = selector.split('.')
-
-    return parts.length === 1
-      ? utils.isIdentifier(node.callee) && node.callee.name === parts[0]
-      : utils.isMemberExpression(node.callee) &&
-          node.callee.object.name === parts[0] &&
-          node.callee.property.name === parts[1]
-  }
-
   const isGetQueryCacheMethodCall = (
     initializer,
     importIdentifiers,
@@ -25,8 +8,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
       utils.isIdentifier(node) && knownQueryClientIds.includes(node.name)
 
     const isGetQueryCacheIdentifier = node =>
-      jscodeshift.match(node, { type: jscodeshift.Identifier.name }) &&
-      node.name === 'getQueryCache'
+      utils.isIdentifier(node) && node.name === 'getQueryCache'
 
     const isValidInitializer = node =>
       utils.isCallExpression(node) && utils.isMemberExpression(node.callee)
@@ -47,26 +29,6 @@ module.exports = ({ jscodeshift, utils, root }) => {
     return false
   }
 
-  const findQueryClientInstantiations = importIdentifiers =>
-    root.find(jscodeshift.VariableDeclarator, {}).filter(node => {
-      if (node.value.init) {
-        const initializer = node.value.init
-
-        return (
-          isClassInstantiationOf(
-            initializer,
-            utils.getSelectorByImports(importIdentifiers, 'QueryClient')
-          ) ||
-          utils.isFunctionCallOf(
-            initializer,
-            utils.getSelectorByImports(importIdentifiers, 'useQueryClient')
-          )
-        )
-      }
-
-      return false
-    })
-
   const findQueryCacheInstantiations = (
     importIdentifiers,
     knownQueryClientIds
@@ -76,7 +38,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
         const initializer = node.value.init
 
         return (
-          isClassInstantiationOf(
+          utils.isClassInstantiationOf(
             initializer,
             utils.getSelectorByImports(importIdentifiers, 'QueryCache')
           ) ||
@@ -91,19 +53,17 @@ module.exports = ({ jscodeshift, utils, root }) => {
       return false
     })
 
-  const filterQueryCacheMethods = node =>
+  const filterQueryCacheMethodCalls = node =>
     utils.isIdentifier(node) && ['find', 'findAll'].includes(node.name)
 
-  const findQueryCacheCalls = importIdentifiers => {
+  const findQueryCacheMethodCalls = importIdentifiers => {
     /**
      * Here we collect all query client instantiations. We have to make aware of them because the query cache can be
      * accessed by the query client as well.
      */
-    const queryClientIdentifiers = findQueryClientInstantiations(
+    const queryClientIdentifiers = utils.queryClient.findQueryClientIdentifiers(
       importIdentifiers
     )
-      .paths()
-      .map(node => node.value.id.name)
     /**
      * Here we collect all query cache instantiations. The reason is simple: the methods can be called on query cache
      * instances, to locate the possible usages we need to be aware of the identifier names.
@@ -116,25 +76,20 @@ module.exports = ({ jscodeshift, utils, root }) => {
       .map(node => node.value.id.name)
 
     return (
-      root
+      utils
         // First, we need to find all method calls.
-        .find(jscodeshift.CallExpression, {
-          callee: {
-            type: jscodeshift.MemberExpression.name,
-            property: {
-              type: jscodeshift.Identifier.name,
-            },
-          },
-        })
-        // Then we narrow the collection to all 'fetch' and 'fetchAll' methods.
-        .filter(node => filterQueryCacheMethods(node.value.callee.property))
+        .findAllMethodCalls()
+        // Then we narrow the collection to all `fetch` and `fetchAll` methods.
+        .filter(node => filterQueryCacheMethodCalls(node.value.callee.property))
         .filter(node => {
           const object = node.value.callee.object
 
+          // If the method is called on a `QueryCache` instance, we keep it in the collection.
           if (utils.isIdentifier(object)) {
             return queryCacheIdentifiers.includes(object.name)
           }
 
+          // If the method is called on a `QueryClient` instance, we keep it in the collection.
           if (utils.isCallExpression(object)) {
             return isGetQueryCacheMethodCall(
               object,
@@ -149,7 +104,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
   }
 
   const execute = replacer => {
-    findQueryCacheCalls(
+    findQueryCacheMethodCalls(
       utils.locateImports(['QueryCache', 'QueryClient', 'useQueryClient'])
     ).replaceWith(replacer)
   }

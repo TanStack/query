@@ -1,33 +1,4 @@
 module.exports = ({ root, jscodeshift }) => {
-  /**
-   * @deprecated
-   */
-  const findImportSpecifier = imported =>
-    root
-      .find(jscodeshift.ImportDeclaration, {
-        source: {
-          value: 'react-query',
-        },
-      })
-      .find(jscodeshift.ImportSpecifier, {
-        imported: {
-          type: jscodeshift.Identifier.name,
-          name: imported,
-        },
-      })
-
-  /**
-   * @deprecated
-   */
-  const findNamespacedImportSpecifiers = () =>
-    root
-      .find(jscodeshift.ImportDeclaration, {
-        source: {
-          value: 'react-query',
-        },
-      })
-      .find(jscodeshift.ImportNamespaceSpecifier)
-
   const findImportIdentifierOf = (importSpecifiers, identifier) => {
     const specifier = importSpecifiers
       .filter(node => node.value.imported.name === identifier)
@@ -51,7 +22,14 @@ module.exports = ({ root, jscodeshift }) => {
 
   const locateImports = identifiers => {
     const findNamespaceImportIdentifier = () => {
-      const specifier = findNamespacedImportSpecifiers().paths()
+      const specifier = root
+        .find(jscodeshift.ImportDeclaration, {
+          source: {
+            value: 'react-query',
+          },
+        })
+        .find(jscodeshift.ImportNamespaceSpecifier)
+        .paths()
 
       return specifier.length > 0 ? specifier[0].value.local : null
     }
@@ -91,6 +69,42 @@ module.exports = ({ root, jscodeshift }) => {
     }
   }
 
+  const findAllMethodCalls = () =>
+    root
+      // First, we need to find all method calls.
+      .find(jscodeshift.CallExpression, {
+        callee: {
+          type: jscodeshift.MemberExpression.name,
+          property: {
+            type: jscodeshift.Identifier.name,
+          },
+        },
+      })
+
+  const findQueryClientIdentifiers = importIdentifiers =>
+    root
+      .find(jscodeshift.VariableDeclarator, {})
+      .filter(node => {
+        if (node.value.init) {
+          const initializer = node.value.init
+
+          return (
+            isClassInstantiationOf(
+              initializer,
+              getSelectorByImports(importIdentifiers, 'QueryClient')
+            ) ||
+            isFunctionCallOf(
+              initializer,
+              getSelectorByImports(importIdentifiers, 'useQueryClient')
+            )
+          )
+        }
+
+        return false
+      })
+      .paths()
+      .map(node => node.value.id.name)
+
   const isCallExpression = node =>
     jscodeshift.match(node, { type: jscodeshift.CallExpression.name })
 
@@ -99,6 +113,23 @@ module.exports = ({ root, jscodeshift }) => {
 
   const isMemberExpression = node =>
     jscodeshift.match(node, { type: jscodeshift.MemberExpression.name })
+
+  const isNewExpression = node =>
+    jscodeshift.match(node, { type: jscodeshift.NewExpression.name })
+
+  const isClassInstantiationOf = (node, selector) => {
+    if (!isNewExpression(node)) {
+      return false
+    }
+
+    const parts = selector.split('.')
+
+    return parts.length === 1
+      ? isIdentifier(node.callee) && node.callee.name === parts[0]
+      : isMemberExpression(node.callee) &&
+          node.callee.object.name === parts[0] &&
+          node.callee.property.name === parts[1]
+  }
 
   const isFunctionCallOf = (node, selector) => {
     if (!isCallExpression(node)) {
@@ -120,13 +151,16 @@ module.exports = ({ root, jscodeshift }) => {
       : imports[path].name
 
   return {
-    findImportSpecifier,
-    findNamespacedImportSpecifiers,
+    findAllMethodCalls,
     getSelectorByImports,
     isCallExpression,
+    isClassInstantiationOf,
     isFunctionCallOf,
     isIdentifier,
     isMemberExpression,
     locateImports,
+    queryClient: {
+      findQueryClientIdentifiers,
+    },
   }
 }

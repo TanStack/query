@@ -13,27 +13,32 @@ const transformQueryClientUsages = ({ jscodeshift, utils, root, filePath }) => {
   const transformer = queryClientTransformer({ jscodeshift, utils, root })
   const replacer = createKeyReplacer({ jscodeshift, root, filePath })
 
-  // Not object syntax-aware methods.
-  transformer.execute('getMutationDefaults', replacer)
-  transformer.execute('getQueriesData', replacer)
-  transformer.execute('getQueryData', replacer)
-  transformer.execute('getQueryDefaults', replacer)
-  transformer.execute('getQueryState', replacer)
-  transformer.execute('isFetching', replacer)
-  transformer.execute('setMutationDefaults', replacer)
-  transformer.execute('setQueriesData', replacer)
-  transformer.execute('setQueryData', replacer)
-  transformer.execute('setQueryDefaults', replacer)
-  // Object syntax-aware methods.
-  transformer.execute('cancelQueries', replacer)
-  transformer.execute('fetchInfiniteQuery', replacer)
-  transformer.execute('fetchQuery', replacer)
-  transformer.execute('invalidateQueries', replacer)
-  transformer.execute('prefetchInfiniteQuery', replacer)
-  transformer.execute('prefetchQuery', replacer)
-  transformer.execute('refetchQueries', replacer)
-  transformer.execute('removeQueries', replacer)
-  transformer.execute('resetQueries', replacer)
+  transformer.execute(
+    [
+      // Not object syntax-aware methods.
+      'getMutationDefaults',
+      'getQueriesData',
+      'getQueryData',
+      'getQueryDefaults',
+      'getQueryState',
+      'isFetching',
+      'setMutationDefaults',
+      'setQueriesData',
+      'setQueryData',
+      'setQueryDefaults',
+      // Object syntax-aware methods.
+      'cancelQueries',
+      'fetchInfiniteQuery',
+      'fetchQuery',
+      'invalidateQueries',
+      'prefetchInfiniteQuery',
+      'prefetchQuery',
+      'refetchQueries',
+      'removeQueries',
+      'resetQueries',
+    ],
+    replacer
+  )
 }
 
 const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {

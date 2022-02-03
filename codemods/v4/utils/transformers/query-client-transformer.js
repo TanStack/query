@@ -1,146 +1,46 @@
 module.exports = ({ jscodeshift, utils, root }) => {
-  const findQueryClientInstantiationsByIdentifier = node =>
-    root.find(jscodeshift.VariableDeclarator, {
-      init: {
-        type: jscodeshift.CallExpression.name,
-        callee: {
-          type: jscodeshift.Identifier.name,
-          name: node.name,
-        },
-      },
-    })
+  const filterQueryClientMethodCalls = (node, methods) =>
+    utils.isIdentifier(node) && methods.includes(node.name)
 
-  const findQueryClientInstantiationsByMemberExpression = node =>
-    root.find(jscodeshift.VariableDeclarator, {
-      init: {
-        type: jscodeshift.CallExpression.name,
-        callee: {
-          type: jscodeshift.MemberExpression.name,
-          object: {
-            type: jscodeshift.Identifier.name,
-            name: node.object.name,
-          },
-          property: {
-            type: jscodeshift.Identifier.name,
-            name: node.property.name,
-          },
-        },
-      },
-    })
+  const findQueryClientMethodCalls = (importIdentifiers, methods) => {
+    /**
+     * Here we collect all query client instantiations. We have to make aware of them because some method calls might
+     * be invoked on these instances.
+     */
+    const queryClientIdentifiers = utils.queryClient.findQueryClientIdentifiers(
+      importIdentifiers
+    )
 
-  const findQueryClientNamespacedDirectMethodCalls = (node, method) =>
-    root.find(jscodeshift.CallExpression, {
-      callee: {
-        object: {
-          type: jscodeshift.CallExpression.name,
-          callee: {
-            type: jscodeshift.MemberExpression.name,
-            object: {
-              type: jscodeshift.Identifier.name,
-              name: node.object.name,
-            },
-            property: {
-              type: jscodeshift.Identifier.name,
-              name: node.property.name,
-            },
-          },
-        },
-        property: {
-          type: jscodeshift.Identifier.name,
-          name: method.name,
-        },
-      },
-    })
-
-  const findQueryClientDirectMethodCalls = (node, method) =>
-    root.find(jscodeshift.CallExpression, {
-      callee: {
-        type: jscodeshift.MemberExpression.name,
-        object: {
-          type: jscodeshift.CallExpression.name,
-          callee: {
-            type: jscodeshift.Identifier.name,
-            name: node.name,
-          },
-        },
-        property: {
-          type: jscodeshift.Identifier.name,
-          name: method.name,
-        },
-      },
-    })
-
-  const findQueryClientMethodCalls = (node, method) =>
-    root.find(jscodeshift.CallExpression, {
-      callee: {
-        type: jscodeshift.MemberExpression.name,
-        object: {
-          type: jscodeshift.Identifier.name,
-          name: node.name,
-        },
-        property: {
-          type: jscodeshift.Identifier.name,
-          name: method.name,
-        },
-      },
-    })
-
-  const execute = (methodName, replacer) => {
-    const hookIdentifier = jscodeshift.identifier('useQueryClient')
-    const methodIdentifier = jscodeshift.identifier(methodName)
-
-    utils
-      .findNamespacedImportSpecifiers()
-      .paths()
-      .forEach(specifier => {
-        const memberExpression = jscodeshift.memberExpression(
-          specifier.value.local,
-          hookIdentifier
+    return (
+      utils
+        // First, we need to find all method calls.
+        .findAllMethodCalls()
+        // Then we narrow the collection to `QueryClient` methods.
+        .filter(node =>
+          filterQueryClientMethodCalls(node.value.callee.property, methods)
         )
+        .filter(node => {
+          const object = node.value.callee.object
 
-        // Here we replace usages like:
-        // RQ.useQueryClient().methodToBeCalled(...)
-        findQueryClientNamespacedDirectMethodCalls(
-          memberExpression,
-          methodIdentifier
-        ).replaceWith(replacer)
+          // If the method is called on a `QueryClient` instance, we keep it in the collection.
+          if (utils.isIdentifier(object)) {
+            return queryClientIdentifiers.includes(object.name)
+          }
 
-        // Here we replace usages like:
-        // const queryClient = RQ.useQueryClient()
-        // queryClient.methodToBeCalled(...)
-        findQueryClientInstantiationsByMemberExpression(memberExpression)
-          .paths()
-          .forEach(declaration => {
-            findQueryClientMethodCalls(
-              declaration.value.id,
-              methodIdentifier
-            ).replaceWith(replacer)
-          })
-      })
+          // If the method is called on the return value of `useQueryClient` hook, we keep it in the collection.
+          return utils.isFunctionCallOf(
+            object,
+            utils.getSelectorByImports(importIdentifiers, 'useQueryClient')
+          )
+        })
+    )
+  }
 
-    utils
-      .findImportSpecifier(hookIdentifier.name)
-      .paths()
-      .forEach(specifier => {
-        // Here we replace usages like:
-        // useQueryClient().methodToBeCalled(...)
-        findQueryClientDirectMethodCalls(
-          specifier.value.local,
-          methodIdentifier
-        ).replaceWith(replacer)
-
-        // Here we replace usages like:
-        // const queryClient = useQueryClient()
-        // queryClient.methodToBeCalled(...)
-        findQueryClientInstantiationsByIdentifier(specifier.value.local)
-          .paths()
-          .forEach(declaration => {
-            findQueryClientMethodCalls(
-              declaration.value.id,
-              methodIdentifier
-            ).replaceWith(replacer)
-          })
-      })
+  const execute = (methods, replacer) => {
+    findQueryClientMethodCalls(
+      utils.locateImports(['QueryClient', 'useQueryClient']),
+      methods
+    ).replaceWith(replacer)
   }
 
   return {
