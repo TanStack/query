@@ -120,6 +120,8 @@ module.exports = (file, api) => {
   const jscodeshift = api.jscodeshift
   const root = jscodeshift(file.source)
 
+  // TODO: Execute the transformers only when it contains a `react-query` import!
+
   const utils = createUtilsObject({ root, jscodeshift })
   const filePath = file.path
 
