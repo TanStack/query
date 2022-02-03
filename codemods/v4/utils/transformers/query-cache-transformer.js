@@ -157,7 +157,7 @@ module.exports = ({ jscodeshift, utils, root }) => {
       return specifier[0].value.local
     }
 
-    return name
+    return jscodeshift.identifier(name)
   }
 
   const execute = replacer => {
