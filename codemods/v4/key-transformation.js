@@ -65,7 +65,7 @@ const transformUseQueriesUsages = ({ jscodeshift, utils, root }) => {
     return newCallExpression
   }
 
-  transformer.execute('useQueries', replacer)
+  transformer.execute(['useQueries'], replacer)
 }
 
 const transformUseQueryLikeUsages = ({
@@ -75,24 +75,25 @@ const transformUseQueryLikeUsages = ({
   filePath,
 }) => {
   const transformer = hookCallTransformer({ jscodeshift, utils, root })
-  const queryKeyReplacer = createKeyReplacer({
-    jscodeshift,
-    root,
-    filePath,
-    keyName: 'queryKey',
-  })
-  const mutationKeyReplacer = createKeyReplacer({
-    jscodeshift,
-    root,
-    filePath,
-    keyName: 'mutationKey',
-  })
 
-  transformer.execute('useQuery', queryKeyReplacer)
-  transformer.execute('useInfiniteQuery', queryKeyReplacer)
-  transformer.execute('useIsFetching', queryKeyReplacer)
-  transformer.execute('useIsMutating', queryKeyReplacer)
-  transformer.execute('useMutation', mutationKeyReplacer)
+  transformer.execute(
+    ['useQuery', 'useInfiniteQuery', 'useIsFetching', 'useIsMutating'],
+    createKeyReplacer({
+      jscodeshift,
+      root,
+      filePath,
+      keyName: 'queryKey',
+    })
+  )
+  transformer.execute(
+    ['useMutation'],
+    createKeyReplacer({
+      jscodeshift,
+      root,
+      filePath,
+      keyName: 'mutationKey',
+    })
+  )
 }
 
 const transformQueryCacheUsages = ({ jscodeshift, utils, root, filePath }) => {

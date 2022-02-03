@@ -1,46 +1,23 @@
 module.exports = ({ jscodeshift, utils, root }) => {
-  const findHookCallsByIdentifier = node =>
-    root.find(jscodeshift.CallExpression, {
-      callee: {
-        type: jscodeshift.Identifier.name,
-        name: node.name,
-      },
-    })
+  const execute = (hooks, replacer) => {
+    const imports = utils.locateImports(hooks)
 
-  const findHookCallsByMemberExpression = node =>
-    root.find(jscodeshift.CallExpression, {
-      callee: {
-        type: jscodeshift.MemberExpression.name,
-        object: {
-          type: jscodeshift.Identifier.name,
-          name: node.object.name,
-        },
-        property: {
-          type: jscodeshift.Identifier.name,
-          name: node.property.name,
-        },
-      },
-    })
+    const isHookCall = node => {
+      for (const hook of hooks) {
+        const selector = utils.getSelectorByImports(imports, hook)
 
-  const execute = (hookName, replacer) => {
-    utils
-      .findNamespacedImportSpecifiers()
-      .paths()
-      .forEach(specifier => {
-        findHookCallsByMemberExpression(
-          jscodeshift.memberExpression(
-            specifier.value.local,
-            jscodeshift.identifier(hookName)
-          )
-        ).replaceWith(replacer)
-      })
+        if (utils.isFunctionCallOf(node.value, selector)) {
+          return true
+        }
+      }
 
-    utils
-      .findImportSpecifier(hookName)
-      .paths()
-      .forEach(specifier => {
-        findHookCallsByIdentifier(specifier.value.local).replaceWith(replacer)
-      })
+      return false
+    }
+
+    root
+      .find(jscodeshift.CallExpression, {})
+      .filter(isHookCall)
+      .replaceWith(replacer)
   }
 
   return {
