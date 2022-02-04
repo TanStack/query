@@ -92,7 +92,7 @@ export type QueriesOptions<
 /**
  * QueriesResults reducer recursively maps type param to results
  */
-type QueriesResults<
+export type QueriesResults<
   T extends any[],
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = []
