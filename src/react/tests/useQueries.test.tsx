@@ -928,7 +928,7 @@ describe('useQueries', () => {
       queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
     ) {
       return useQueries(
-        queries.map((query: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>) => {
+        queries.map((query) => {
           const { queryFn: fn, queryKey: key, onError: err } = query;
           return {
             queryKey: key,
