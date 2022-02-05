@@ -545,7 +545,7 @@ export class QueryClient {
       partialMatchKey(queryKey, x.queryKey)
     )
     // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
-    if (matchingDefaults?.length > 1) {
+    if (matchingDefaults.length > 1) {
       getLogger().warn(
         `[QueryClient] Several defaults match with key '${JSON.stringify(
           queryKey
