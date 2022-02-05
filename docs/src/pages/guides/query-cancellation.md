@@ -99,6 +99,18 @@ const query = useQuery('todos', ({ signal }) => {
 
 ## Using `graphql-request`
 
+An `AbortSignal` can be set in the client `request` method.
+
+```js
+const client = new GraphQLClient(endpoint)
+
+const query = useQuery('todos', ({ signal }) => {
+  client.request({ document: query, signal })
+})
+```
+
+## Using `graphql-request`  version less than v4.0.0
+
 An `AbortSignal` can be set in the `GraphQLClient` constructor.
 
 ```js
