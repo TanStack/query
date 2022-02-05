@@ -928,8 +928,11 @@ describe('useQueries', () => {
       queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
     ) {
       return useQueries(
-        queries.map((query) => {
+        queries.map(
+          // no need to type the mapped query
+          (query) => {
           const { queryFn: fn, queryKey: key, onError: err } = query;
+          expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
           return {
             queryKey: key,
             onError: err,
