@@ -179,6 +179,7 @@ describe('queryClient', () => {
       // … then the "good" defaults are retrieved: we get the ones for key "ABCD"
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
+      // The warning is still raised since several defaults are matching
       expect(consoleWarnMock).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
@@ -188,6 +189,67 @@ describe('queryClient', () => {
       newQueryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
       // … then the "wrong" defaults are retrieved: we get the ones for key "ABC"
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
+      expect(badDefaults).not.toBe(defaultsOfABCD)
+      expect(badDefaults).toBe(defaultsOfABC)
+      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+
+      consoleWarnMock.mockRestore()
+    })
+
+    test('should warn in dev if several mutation defaults match a given key', () => {
+      // Check discussion here: https://github.com/tannerlinsley/react-query/discussions/3199
+      const consoleWarnMock = jest.spyOn(console, 'warn')
+      consoleWarnMock.mockImplementation(() => true)
+
+      const keyABCD = [
+        {
+          a: 'a',
+          b: 'b',
+          c: 'c',
+          d: 'd',
+        },
+      ]
+
+      // The key below "contains" keyABCD => it is more generic
+      const keyABC = [
+        {
+          a: 'a',
+          b: 'b',
+          c: 'c',
+        },
+      ]
+
+      // The defaults for mutation matching key "ABCD" (least generic)
+      const defaultsOfABCD = {
+        mutationFn: Promise.resolve,
+      }
+
+      // The defaults for mutation matching key "ABC" (most generic)
+      const defaultsOfABC = {
+        mutationFn: Promise.resolve,
+      }
+
+      // No defaults, no warning
+      const noDefaults = queryClient.getMutationDefaults(keyABCD)
+      expect(noDefaults).toBeUndefined()
+      expect(consoleWarnMock).not.toHaveBeenCalled()
+
+      // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
+      queryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
+      queryClient.setMutationDefaults(keyABC, defaultsOfABC)
+      // … then the "good" defaults are retrieved: we get the ones for key "ABCD"
+      const goodDefaults = queryClient.getMutationDefaults(keyABCD)
+      expect(goodDefaults).toBe(defaultsOfABCD)
+      // The warning is still raised since several defaults are matching
+      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
+
+      // Let's create another queryClient and change the order of registration
+      const newQueryClient = new QueryClient()
+      // The defaults for key ABC (more generic) are registered **before** the ones of key ABCD…
+      newQueryClient.setMutationDefaults(keyABC, defaultsOfABC)
+      newQueryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
+      // … then the "wrong" defaults are retrieved: we get the ones for key "ABC"
+      const badDefaults = newQueryClient.getMutationDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
       expect(consoleWarnMock).toHaveBeenCalledTimes(2)

@@ -522,6 +522,8 @@ function Component() {
 - `mutationKey: string | unknown[]`
 - `options: MutationOptions`
 
+> Similar to [`setQueryDefaults`](#queryclientsetquerydefaults), the order of registration does matter here.
+
 ## `queryClient.getQueryCache`
 
 The `getQueryCache` method returns the query cache this client is connected to.

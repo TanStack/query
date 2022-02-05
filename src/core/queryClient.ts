@@ -8,6 +8,7 @@ import {
   partialMatchKey,
   hashQueryKeyByOptions,
   MutationFilters,
+  assert,
 } from './utils'
 import type {
   QueryClientConfig,
@@ -38,7 +39,6 @@ import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { CancelOptions, DefaultedQueryObserverOptions } from './types'
-import { getLogger } from './logger'
 
 // TYPES
 
@@ -519,20 +519,6 @@ export class QueryClient {
     this.defaultOptions = options
   }
 
-  setQueryDefaults(
-    queryKey: QueryKey,
-    options: QueryObserverOptions<any, any, any, any>
-  ): void {
-    const result = this.queryDefaults.find(
-      x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
-    )
-    if (result) {
-      result.defaultOptions = options
-    } else {
-      this.queryDefaults.push({ queryKey, defaultOptions: options })
-    }
-  }
-
   findFirstMatchingQueryDefaults(
     queryKey?: QueryKey
   ): QueryOptions<any, any, any> | undefined {
@@ -545,16 +531,50 @@ export class QueryClient {
       partialMatchKey(queryKey, x.queryKey)
     )
     // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
-    if (matchingDefaults.length > 1) {
-      getLogger().warn(
-        `[QueryClient] Several defaults match with key '${JSON.stringify(
-          queryKey
-        )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
-      )
-    }
+    assert(
+      matchingDefaults.length <= 1,
+      `[QueryClient] Several query defaults match with key '${JSON.stringify(
+        queryKey
+      )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
+    )
     // Explicitly returns the first one
-    const firstMatchingDefaults = matchingDefaults?.[0]
-    return firstMatchingDefaults?.defaultOptions || undefined
+    return matchingDefaults[0]?.defaultOptions
+  }
+
+  findFirstMatchingMutationDefaults(
+    mutationKey?: MutationKey
+  ): MutationOptions<any, any, any, any> | undefined {
+    if (!mutationKey) {
+      return undefined
+    }
+
+    // First retrieve all matching defaults for the given key
+    const matchingDefaults = this.mutationDefaults.filter(x =>
+      partialMatchKey(mutationKey, x.mutationKey)
+    )
+    // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
+    assert(
+      matchingDefaults.length <= 1,
+      `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
+        mutationKey
+      )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`
+    )
+    // Explicitly returns the first one
+    return matchingDefaults[0]?.defaultOptions
+  }
+
+  setQueryDefaults(
+    queryKey: QueryKey,
+    options: QueryObserverOptions<any, any, any, any>
+  ): void {
+    const result = this.queryDefaults.find(
+      x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
+    )
+    if (result) {
+      result.defaultOptions = options
+    } else {
+      this.queryDefaults.push({ queryKey, defaultOptions: options })
+    }
   }
 
   getQueryDefaults(
@@ -581,11 +601,8 @@ export class QueryClient {
   getMutationDefaults(
     mutationKey?: MutationKey
   ): MutationObserverOptions<any, any, any, any> | undefined {
-    return mutationKey
-      ? this.mutationDefaults.find(x =>
-          partialMatchKey(mutationKey, x.mutationKey)
-        )?.defaultOptions
-      : undefined
+    const mutationDefaults = this.findFirstMatchingMutationDefaults(mutationKey)
+    return mutationDefaults
   }
 
   defaultQueryOptions<
