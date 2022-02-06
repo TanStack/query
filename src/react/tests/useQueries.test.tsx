@@ -924,24 +924,28 @@ describe('useQueries', () => {
     const getSelectorB = (): SelectorB => data => [data, +data]
 
     // Wrapper with strongly typed array-parameter
-    function useWrappedQueries<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
-      queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
-    ) {
+    function useWrappedQueries<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey extends QueryKey
+    >(queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]) {
       return useQueries(
         queries.map(
           // no need to type the mapped query
-          (query) => {
-          const { queryFn: fn, queryKey: key, onError: err } = query;
-          expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
-          return {
-            queryKey: key,
-            onError: err,
-            queryFn: (ctx: QueryFunctionContext<TQueryKey>) => {
-              expectType<EnsuredQueryKey<TQueryKey>>(ctx.queryKey)
-              return fn?.call({}, ctx);
+          query => {
+            const { queryFn: fn, queryKey: key, onError: err } = query
+            expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
+            return {
+              queryKey: key,
+              onError: err,
+              queryFn: (ctx: QueryFunctionContext<TQueryKey>) => {
+                expectType<EnsuredQueryKey<TQueryKey>>(ctx.queryKey)
+                return fn?.call({}, ctx)
+              },
             }
           }
-        })
+        )
       )
     }
 
@@ -980,13 +984,17 @@ describe('useQueries', () => {
         withSelector[1]
       )
 
-      const withWrappedQueries = useWrappedQueries(Array(10).map(() => ({
-        queryKey: getQueryKeyA(),
-        queryFn: getQueryFunctionA(),
-        select: getSelectorA(),
-      })))
+      const withWrappedQueries = useWrappedQueries(
+        Array(10).map(() => ({
+          queryKey: getQueryKeyA(),
+          queryFn: getQueryFunctionA(),
+          select: getSelectorA(),
+        }))
+      )
 
-      expectType<QueryObserverResult<number | undefined, unknown>[]>(withWrappedQueries);
+      expectType<QueryObserverResult<number | undefined, unknown>[]>(
+        withWrappedQueries
+      )
     }
   })
 
