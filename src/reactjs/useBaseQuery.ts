@@ -7,6 +7,7 @@ import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
 import { shouldThrowError } from './utils'
+import { useIsHydrating } from './Hydrate'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -28,11 +29,14 @@ export function useBaseQuery<
   const [, forceUpdate] = React.useState(0)
 
   const queryClient = useQueryClient()
+  const isHydrating = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryOptions(options)
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
-  defaultedOptions.optimisticResults = true
+  defaultedOptions._optimisticResults = isHydrating
+    ? 'isHydrating'
+    : 'optimistic'
 
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {
@@ -81,25 +85,29 @@ export function useBaseQuery<
   React.useEffect(() => {
     mountedRef.current = true
 
-    errorResetBoundary.clearReset()
+    let unsubscribe: (() => void) | undefined
 
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          forceUpdate(x => x + 1)
-        }
-      })
-    )
+    if (!isHydrating) {
+      errorResetBoundary.clearReset()
 
-    // Update result to make sure we did not miss any query updates
-    // between creating the observer and subscribing to it.
-    observer.updateResult()
+      unsubscribe = observer.subscribe(
+        notifyManager.batchCalls(() => {
+          if (mountedRef.current) {
+            forceUpdate(x => x + 1)
+          }
+        })
+      )
+
+      // Update result to make sure we did not miss any query updates
+      // between creating the observer and subscribing to it.
+      observer.updateResult()
+    }
 
     return () => {
       mountedRef.current = false
-      unsubscribe()
+      unsubscribe?.()
     }
-  }, [errorResetBoundary, observer])
+  }, [isHydrating, errorResetBoundary, observer])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
@@ -108,7 +116,7 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (defaultedOptions.suspense && result.isLoading) {
+  if (defaultedOptions.suspense && result.isLoading && !isHydrating) {
     throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {

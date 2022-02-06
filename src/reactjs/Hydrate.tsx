@@ -3,6 +3,11 @@ import React from 'react'
 import { hydrate, HydrateOptions } from '../core'
 import { useQueryClient } from './QueryClientProvider'
 
+const IsHydratingContext = React.createContext(false)
+
+export const useIsHydrating = () => React.useContext(IsHydratingContext)
+export const IsHydratingProvider = IsHydratingContext.Provider
+
 export function useHydrate(state: unknown, options?: HydrateOptions) {
   const queryClient = useQueryClient()
 

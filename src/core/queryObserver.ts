@@ -440,7 +440,7 @@ export class QueryObserver<
     let data: TData | undefined
 
     // Optimistically set result in fetching state if needed
-    if (options.optimisticResults) {
+    if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
       const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
@@ -455,6 +455,9 @@ export class QueryObserver<
         if (!dataUpdatedAt) {
           status = 'loading'
         }
+      }
+      if (options._optimisticResults === 'isHydrating') {
+        fetchStatus = 'paused'
       }
     }
 

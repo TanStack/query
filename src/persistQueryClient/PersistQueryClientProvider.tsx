@@ -1,22 +1,24 @@
 import React from 'react'
 
 import { persistQueryClient, PersistQueryClientOptions } from './persist'
-import { QueryClientProvider, QueryClientProviderProps } from '../reactjs'
+import {
+  QueryClientProvider,
+  QueryClientProviderProps,
+  IsHydratingProvider,
+} from '../reactjs'
 
 export interface PersistQueryClientProviderProps
   extends QueryClientProviderProps {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
-  loading?: React.ReactNode
 }
 
 export const PersistQueryClientProvider = ({
   client,
-  loading,
   children,
   persistOptions,
   ...props
 }: PersistQueryClientProviderProps): JSX.Element => {
-  const [initialized, setInitialized] = React.useState(false)
+  const [isHydrating, setIsHydrating] = React.useState(true)
   const options = React.useRef(persistOptions)
   React.useEffect(() => {
     let unsubscribe: (() => void) | undefined
@@ -26,7 +28,7 @@ export const PersistQueryClientProvider = ({
         ...options.current,
         queryClient: client,
       })
-      setInitialized(true)
+      setIsHydrating(false)
     }
 
     void run()
@@ -34,13 +36,9 @@ export const PersistQueryClientProvider = ({
     return unsubscribe
   }, [client])
 
-  if (!initialized) {
-    return <>{loading}</>
-  }
-
   return (
     <QueryClientProvider client={client} {...props}>
-      {children}
+      <IsHydratingProvider value={isHydrating}>{children}</IsHydratingProvider>
     </QueryClientProvider>
   )
 }

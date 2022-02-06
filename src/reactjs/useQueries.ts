@@ -5,6 +5,7 @@ import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
+import { useIsHydrating } from './Hydrate'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -119,6 +120,7 @@ export function useQueries<T extends any[]>({
   const [, forceUpdate] = React.useState(0)
 
   const queryClient = useQueryClient()
+  const isHydrating = useIsHydrating()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -126,11 +128,13 @@ export function useQueries<T extends any[]>({
         const defaultedOptions = queryClient.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions.optimisticResults = true
+        defaultedOptions._optimisticResults = isHydrating
+          ? 'isHydrating'
+          : 'optimistic'
 
         return defaultedOptions
       }),
-    [queries, queryClient]
+    [queries, queryClient, isHydrating]
   )
 
   const [observer] = React.useState(
@@ -142,19 +146,23 @@ export function useQueries<T extends any[]>({
   React.useEffect(() => {
     mountedRef.current = true
 
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          forceUpdate(x => x + 1)
-        }
-      })
-    )
+    let unsubscribe: (() => void) | undefined
+
+    if (!isHydrating) {
+      unsubscribe = observer.subscribe(
+        notifyManager.batchCalls(() => {
+          if (mountedRef.current) {
+            forceUpdate(x => x + 1)
+          }
+        })
+      )
+    }
 
     return () => {
       mountedRef.current = false
-      unsubscribe()
+      unsubscribe?.()
     }
-  }, [observer])
+  }, [isHydrating, observer])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
