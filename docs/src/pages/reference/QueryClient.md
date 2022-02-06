@@ -474,6 +474,9 @@ The `getQueryDefaults` method returns the default options which have been set fo
 const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ```
 
+> Note that if several query defaults match the given query key, the **first** matching one is returned.
+> This could lead to unexpected behaviours. See [`setQueryDefaults`](#queryclientsetquerydefaults).
+
 ## `queryClient.setQueryDefaults`
 
 `setQueryDefaults` can be used to set default options for specific queries:
@@ -490,6 +493,9 @@ function Component() {
 
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 - `options: QueryOptions`
+
+> As stated in [`getQueryDefaults`](#queryclientgetquerydefaults), the order of registration of query defaults does matter.
+> Since the **first** matching defaults are returned by `getQueryDefaults`, the registration should be made in the following order: from the **least generic key** to the **most generic one**. This way, in case of specific key, the first matching one would be the expected one.
 
 ## `queryClient.getMutationDefaults`
 
@@ -515,6 +521,8 @@ function Component() {
 
 - `mutationKey: string | unknown[]`
 - `options: MutationOptions`
+
+> Similar to [`setQueryDefaults`](#queryclientsetquerydefaults), the order of registration does matter here.
 
 ## `queryClient.getQueryCache`
 
