@@ -519,9 +519,23 @@ export class QueryClient {
     this.defaultOptions = options
   }
 
-  findFirstMatchingQueryDefaults(
+  setQueryDefaults(
+    queryKey: QueryKey,
+    options: QueryObserverOptions<any, any, any, any>
+  ): void {
+    const result = this.queryDefaults.find(
+      x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
+    )
+    if (result) {
+      result.defaultOptions = options
+    } else {
+      this.queryDefaults.push({ queryKey, defaultOptions: options })
+    }
+  }
+
+  getQueryDefaults(
     queryKey?: QueryKey
-  ): QueryOptions<any, any, any> | undefined {
+  ): QueryObserverOptions<any, any, any, any, any> | undefined {
     if (!queryKey) {
       return undefined
     }
@@ -547,13 +561,26 @@ export class QueryClient {
       }
     }
 
-    // Explicitly returns the first one
     return firstMatchingDefaults?.defaultOptions
   }
 
-  findFirstMatchingMutationDefaults(
+  setMutationDefaults(
+    mutationKey: MutationKey,
+    options: MutationObserverOptions<any, any, any, any>
+  ): void {
+    const result = this.mutationDefaults.find(
+      x => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey)
+    )
+    if (result) {
+      result.defaultOptions = options
+    } else {
+      this.mutationDefaults.push({ mutationKey, defaultOptions: options })
+    }
+  }
+
+  getMutationDefaults(
     mutationKey?: MutationKey
-  ): MutationOptions<any, any, any, any> | undefined {
+  ): MutationObserverOptions<any, any, any, any> | undefined {
     if (!mutationKey) {
       return undefined
     }
@@ -578,50 +605,8 @@ export class QueryClient {
         )
       }
     }
-    // Explicitly returns the first one
+
     return firstMatchingDefaults?.defaultOptions
-  }
-
-  setQueryDefaults(
-    queryKey: QueryKey,
-    options: QueryObserverOptions<any, any, any, any>
-  ): void {
-    const result = this.queryDefaults.find(
-      x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
-    )
-    if (result) {
-      result.defaultOptions = options
-    } else {
-      this.queryDefaults.push({ queryKey, defaultOptions: options })
-    }
-  }
-
-  getQueryDefaults(
-    queryKey?: QueryKey
-  ): QueryObserverOptions<any, any, any, any, any> | undefined {
-    const queryDefaults = this.findFirstMatchingQueryDefaults(queryKey)
-    return queryDefaults
-  }
-
-  setMutationDefaults(
-    mutationKey: MutationKey,
-    options: MutationObserverOptions<any, any, any, any>
-  ): void {
-    const result = this.mutationDefaults.find(
-      x => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey)
-    )
-    if (result) {
-      result.defaultOptions = options
-    } else {
-      this.mutationDefaults.push({ mutationKey, defaultOptions: options })
-    }
-  }
-
-  getMutationDefaults(
-    mutationKey?: MutationKey
-  ): MutationObserverOptions<any, any, any, any> | undefined {
-    const mutationDefaults = this.findFirstMatchingMutationDefaults(mutationKey)
-    return mutationDefaults
   }
 
   defaultQueryOptions<
