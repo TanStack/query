@@ -8,7 +8,6 @@ import {
   partialMatchKey,
   hashQueryKeyByOptions,
   MutationFilters,
-  assert,
 } from './utils'
 import type {
   QueryClientConfig,
@@ -39,6 +38,7 @@ import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { CancelOptions, DefaultedQueryObserverOptions } from './types'
+import { getLogger } from './logger'
 
 // TYPES
 
@@ -526,19 +526,29 @@ export class QueryClient {
       return undefined
     }
 
-    // First retrieve all matching defaults for the given key
-    const matchingDefaults = this.queryDefaults.filter(x =>
+    // Get the first matching defaults
+    const firstMatchingDefaults = this.queryDefaults.find(x =>
       partialMatchKey(queryKey, x.queryKey)
     )
-    // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
-    assert(
-      matchingDefaults.length <= 1,
-      `[QueryClient] Several query defaults match with key '${JSON.stringify(
-        queryKey
-      )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
-    )
+
+    // Additional checks and error in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      // Retrieve all matching defaults for the given key
+      const matchingDefaults = this.queryDefaults.filter(x =>
+        partialMatchKey(queryKey, x.queryKey)
+      )
+      // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
+      if (matchingDefaults.length > 1) {
+        getLogger().error(
+          `[QueryClient] Several query defaults match with key '${JSON.stringify(
+            queryKey
+          )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
+        )
+      }
+    }
+
     // Explicitly returns the first one
-    return matchingDefaults[0]?.defaultOptions
+    return firstMatchingDefaults?.defaultOptions
   }
 
   findFirstMatchingMutationDefaults(
@@ -548,19 +558,28 @@ export class QueryClient {
       return undefined
     }
 
-    // First retrieve all matching defaults for the given key
-    const matchingDefaults = this.mutationDefaults.filter(x =>
+    // Get the first matching defaults
+    const firstMatchingDefaults = this.mutationDefaults.find(x =>
       partialMatchKey(mutationKey, x.mutationKey)
     )
-    // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
-    assert(
-      matchingDefaults.length <= 1,
-      `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
-        mutationKey
-      )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`
-    )
+
+    // Additional checks and error in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      // Retrieve all matching defaults for the given key
+      const matchingDefaults = this.mutationDefaults.filter(x =>
+        partialMatchKey(mutationKey, x.mutationKey)
+      )
+      // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
+      if (matchingDefaults.length > 1) {
+        getLogger().error(
+          `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
+            mutationKey
+          )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`
+        )
+      }
+    }
     // Explicitly returns the first one
-    return matchingDefaults[0]?.defaultOptions
+    return firstMatchingDefaults?.defaultOptions
   }
 
   setQueryDefaults(

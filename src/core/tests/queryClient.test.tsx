@@ -133,8 +133,8 @@ describe('queryClient', () => {
 
     test('should warn in dev if several query defaults match a given key', () => {
       // Check discussion here: https://github.com/tannerlinsley/react-query/discussions/3199
-      const consoleWarnMock = jest.spyOn(console, 'warn')
-      consoleWarnMock.mockImplementation(() => true)
+      const consoleErrorMock = jest.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => true)
 
       const keyABCD = [
         {
@@ -171,7 +171,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(consoleWarnMock).not.toHaveBeenCalled()
+      expect(consoleErrorMock).not.toHaveBeenCalled()
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
@@ -180,7 +180,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
+      expect(consoleErrorMock).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = new QueryClient()
@@ -191,15 +191,15 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+      expect(consoleErrorMock).toHaveBeenCalledTimes(2)
 
-      consoleWarnMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
 
     test('should warn in dev if several mutation defaults match a given key', () => {
       // Check discussion here: https://github.com/tannerlinsley/react-query/discussions/3199
-      const consoleWarnMock = jest.spyOn(console, 'warn')
-      consoleWarnMock.mockImplementation(() => true)
+      const consoleErrorMock = jest.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => true)
 
       const keyABCD = [
         {
@@ -232,7 +232,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(consoleWarnMock).not.toHaveBeenCalled()
+      expect(consoleErrorMock).not.toHaveBeenCalled()
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
@@ -241,7 +241,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(consoleWarnMock).toHaveBeenCalledTimes(1)
+      expect(consoleErrorMock).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = new QueryClient()
@@ -252,9 +252,9 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getMutationDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(consoleWarnMock).toHaveBeenCalledTimes(2)
+      expect(consoleErrorMock).toHaveBeenCalledTimes(2)
 
-      consoleWarnMock.mockRestore()
+      consoleErrorMock.mockRestore()
     })
   })
 
