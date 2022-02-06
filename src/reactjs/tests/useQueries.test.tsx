@@ -21,7 +21,7 @@ import {
   UseQueryOptions,
   QueryKey,
 } from '../..'
-import { EnsuredQueryKey, QueryFunctionContext } from '../../core'
+import { QueryFunctionContext } from '../../core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -839,8 +839,8 @@ describe('useQueries', () => {
       TData,
       TQueryKey extends QueryKey
     >(queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]) {
-      return useQueries(
-        queries.map(
+      return useQueries({
+        queries: queries.map(
           // no need to type the mapped query
           query => {
             const { queryFn: fn, queryKey: key, onError: err } = query
@@ -849,13 +849,13 @@ describe('useQueries', () => {
               queryKey: key,
               onError: err,
               queryFn: (ctx: QueryFunctionContext<TQueryKey>) => {
-                expectType<EnsuredQueryKey<TQueryKey>>(ctx.queryKey)
+                expectType<TQueryKey>(ctx.queryKey)
                 return fn?.call({}, ctx)
               },
             }
           }
-        )
-      )
+        ),
+      })
     }
 
     // @ts-expect-error (Page component is not rendered)
