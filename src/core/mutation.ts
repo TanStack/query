@@ -5,7 +5,6 @@ import { getLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
 import { canFetch, Retryer, createRetryer } from './retryer'
-import { noop } from './utils'
 
 // TYPES
 
@@ -148,14 +147,6 @@ export class Mutation<
         this.mutationCache.remove(this)
       }
     }
-  }
-
-  cancel(): Promise<void> {
-    if (this.retryer) {
-      this.retryer.cancel()
-      return this.retryer.promise.then(noop).catch(noop)
-    }
-    return Promise.resolve()
   }
 
   continue(): Promise<TData> {

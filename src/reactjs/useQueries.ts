@@ -69,7 +69,7 @@ type GetResults<T> =
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
-type QueriesOptions<
+export type QueriesOptions<
   T extends any[],
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = []
@@ -85,15 +85,20 @@ type QueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
-  ? UseQueryOptions<TQueryFnData, TError, TData>[]
+  T extends UseQueryOptions<
+      infer TQueryFnData,
+      infer TError,
+      infer TData,
+      infer TQueryKey
+    >[]
+  ? UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
   : // Fallback
     UseQueryOptions[]
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
-type QueriesResults<
+export type QueriesResults<
   T extends any[],
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = []
@@ -105,7 +110,12 @@ type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
+  : T extends UseQueryOptions<
+      infer TQueryFnData,
+      infer TError,
+      infer TData,
+      any
+    >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
     UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
   : // Fallback
