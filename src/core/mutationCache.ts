@@ -106,7 +106,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
 
   remove(mutation: Mutation<any, any, any, any>): void {
     this.mutations = this.mutations.filter(x => x !== mutation)
-    mutation.cancel()
     this.notify({ type: 'removed', mutation })
   }
 

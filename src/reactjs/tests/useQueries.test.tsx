@@ -19,7 +19,10 @@ import {
   QueryObserverResult,
   QueriesObserver,
   QueryFunction,
+  UseQueryOptions,
+  QueryKey,
 } from '../..'
+import { EnsuredQueryKey, QueryFunctionContext } from '../../core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -894,7 +897,8 @@ describe('useQueries', () => {
     }
   })
 
-  it('handles types for QueryFunction factory with strongly typed QueryKey', () => {
+  it('handles strongly typed queryFn factories and useQueries wrappers', () => {
+    // QueryKey + queryFn factory
     type QueryKeyA = ['queryA']
     const getQueryKeyA = (): QueryKeyA => ['queryA']
     type GetQueryFunctionA = () => QueryFunction<number, QueryKeyA>
@@ -912,6 +916,32 @@ describe('useQueries', () => {
     }
     type SelectorB = (data: string) => [string, number]
     const getSelectorB = (): SelectorB => data => [data, +data]
+
+    // Wrapper with strongly typed array-parameter
+    function useWrappedQueries<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey extends QueryKey
+    >(queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]) {
+      return useQueries(
+        queries.map(
+          // no need to type the mapped query
+          query => {
+            const { queryFn: fn, queryKey: key, onError: err } = query
+            expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
+            return {
+              queryKey: key,
+              onError: err,
+              queryFn: (ctx: QueryFunctionContext<TQueryKey>) => {
+                expectType<EnsuredQueryKey<TQueryKey>>(ctx.queryKey)
+                return fn?.call({}, ctx)
+              },
+            }
+          }
+        )
+      )
+    }
 
     // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
@@ -950,6 +980,18 @@ describe('useQueries', () => {
       )
       expectType<QueryObserverResult<[string, number], unknown>>(
         withSelector[1]
+      )
+
+      const withWrappedQueries = useWrappedQueries(
+        Array(10).map(() => ({
+          queryKey: getQueryKeyA(),
+          queryFn: getQueryFunctionA(),
+          select: getSelectorA(),
+        }))
+      )
+
+      expectType<QueryObserverResult<number | undefined, unknown>[]>(
+        withWrappedQueries
       )
     }
   })
