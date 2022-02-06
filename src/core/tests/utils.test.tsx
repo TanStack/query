@@ -5,7 +5,6 @@ import {
   parseMutationArgs,
   matchMutation,
   scheduleMicrotask,
-  assert,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../reactjs/tests/utils'
@@ -388,26 +387,6 @@ describe('core/utils', () => {
       expect(errorSpy).toHaveBeenCalled()
       setTimeoutSpy.mockRestore()
       jest.useRealTimers()
-    })
-  })
-
-  describe('assert', () => {
-    it('should assert acccording to condition', () => {
-      const logger: Logger = {
-        error: jest.fn(),
-        log: jest.fn(),
-        warn: jest.fn(),
-      }
-      setLogger(logger)
-
-      assert(true, '')
-      expect(logger.warn).not.toHaveBeenCalled()
-      assert(false, '')
-      expect(logger.warn).toHaveBeenCalledTimes(1)
-      assert(false, '')
-      expect(logger.warn).toHaveBeenCalledTimes(2)
-
-      setLogger(console)
     })
   })
 })

@@ -1,4 +1,3 @@
-import { getLogger } from './logger'
 import type { Mutation } from './mutation'
 import type { Query } from './query'
 import type {
@@ -73,15 +72,6 @@ export const isServer = typeof window === 'undefined'
 
 export function noop(): undefined {
   return undefined
-}
-
-/**
- * Raise a dev warning message when the condition is not fulfilled
- */
-export function assert(condition: boolean, message: string): void {
-  if (process.env.NODE_ENV !== 'production' && !condition) {
-    getLogger().warn(message)
-  }
 }
 
 export function functionalUpdate<TInput, TOutput>(
