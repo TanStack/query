@@ -21,17 +21,14 @@ export const PersistQueryClientProvider = ({
   const [isHydrating, setIsHydrating] = React.useState(true)
   const options = React.useRef(persistOptions)
   React.useEffect(() => {
-    let unsubscribe: (() => void) | undefined
+    const [unsubscribe, promise] = persistQueryClient({
+      ...options.current,
+      queryClient: client,
+    })
 
-    async function run() {
-      unsubscribe = await persistQueryClient({
-        ...options.current,
-        queryClient: client,
-      })
+    promise.then(() => {
       setIsHydrating(false)
-    }
-
-    void run()
+    })
 
     return unsubscribe
   }, [client])

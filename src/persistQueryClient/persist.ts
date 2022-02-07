@@ -129,14 +129,26 @@ export function persistQueryClientSubscribe(
 
 /**
  * Restores persisted data to QueryCache and persists further changes.
- * (Retained for backwards compatibility)
  */
-export async function persistQueryClient(props: PersistQueryClientOptions) {
+export function persistQueryClient(
+  props: PersistQueryClientOptions
+): [() => void, Promise<void>] {
+  let hasUnsubscribed = false
+  let unsubscribe = () => {
+    hasUnsubscribed = true
+  }
+
+  let restorePromise = Promise.resolve()
+
   if (typeof window !== 'undefined') {
     // Attempt restore
-    await persistQueryClientRestore(props)
-
-    // Subscribe to changes in the query cache to trigger the save
-    return persistQueryClientSubscribe(props)
+    restorePromise = persistQueryClientRestore(props).then(() => {
+      if (!hasUnsubscribed) {
+        // Subscribe to changes in the query cache to trigger the save
+        unsubscribe = persistQueryClientSubscribe(props)
+      }
+    })
   }
+
+  return [unsubscribe, restorePromise]
 }
