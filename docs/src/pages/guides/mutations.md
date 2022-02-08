@@ -179,6 +179,24 @@ mutate(todo, {
 })
 ```
 
+For consequent mutations you may consider passing `onSuccess`, `onError` and `onSettled` to `mutate` function instead of `useMutation`. Then, these callbacks will fire only _once_ after last mutation is fulfilled. It might be useful performance optimisation (ie. when invalidating queries after mutation). This is due to the fact that mutation observer is removed and resubscribed every time when `mutate` function is called.
+
+```js
+useMutation(addTodo, {
+  onSuccess: (data, error, variables, context) => {
+    // Will be called 3 times
+  },
+})
+
+['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
+  mutate(todo, {
+    onSuccess: (data, error, variables, context) => {
+      // Will execute only once!
+    },
+  })
+})
+
+```
 ## Promises
 
 Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
