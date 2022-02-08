@@ -3447,7 +3447,7 @@ describe('useQuery', () => {
       const [enabled, setEnabled] = React.useState(false)
       const [isPrefetched, setPrefetched] = React.useState(false)
 
-      const query = useQuery(key, () => undefined, {
+      const query = useQuery(key, () => 'data', {
         enabled,
       })
 
@@ -3609,7 +3609,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const query = useQuery(key, () => undefined, {
+      const query = useQuery(key, () => 'data', {
         enabled: false,
       })
 

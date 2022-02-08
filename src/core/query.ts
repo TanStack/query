@@ -1,7 +1,5 @@
 import {
   getAbortController,
-  Updater,
-  functionalUpdate,
   noop,
   replaceEqualDeep,
   timeUntilStale,
@@ -195,13 +193,10 @@ export class Query<
   }
 
   setData(
-    updater: Updater<TData | undefined, TData>,
+    data: TData,
     options?: SetDataOptions & { notifySuccess: boolean }
   ): TData {
     const prevData = this.state.data
-
-    // Get the new data
-    let data = functionalUpdate(updater, prevData)
 
     // Use prev data if an isDataEqual function is defined and returns `true`
     if (this.options.isDataEqual?.(prevData, data)) {
@@ -438,11 +433,41 @@ export class Query<
       this.dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
     }
 
+    const onError = (error: TError | { silent?: boolean }) => {
+      // Optimistically update state if needed
+      if (!(isCancelledError(error) && error.silent)) {
+        this.dispatch({
+          type: 'error',
+          error: error as TError,
+        })
+      }
+
+      if (!isCancelledError(error)) {
+        // Notify cache callback
+        this.cache.config.onError?.(error, this as Query<any, any, any, any>)
+
+        if (process.env.NODE_ENV !== 'production') {
+          getLogger().error(error)
+        }
+      }
+
+      if (!this.isFetchingOptimistic) {
+        // Schedule query gc after fetching
+        this.scheduleGc()
+      }
+      this.isFetchingOptimistic = false
+    }
+
     // Try to fetch the data
     this.retryer = createRetryer({
       fn: context.fetchFn as () => TData,
       abort: abortController?.abort?.bind(abortController),
       onSuccess: data => {
+        if (typeof data === 'undefined') {
+          onError(new Error('Query data cannot be undefined') as any)
+          return
+        }
+
         this.setData(data as TData)
 
         // Notify cache callback
@@ -454,30 +479,7 @@ export class Query<
         }
         this.isFetchingOptimistic = false
       },
-      onError: (error: TError | { silent?: boolean }) => {
-        // Optimistically update state if needed
-        if (!(isCancelledError(error) && error.silent)) {
-          this.dispatch({
-            type: 'error',
-            error: error as TError,
-          })
-        }
-
-        if (!isCancelledError(error)) {
-          // Notify cache callback
-          this.cache.config.onError?.(error, this as Query<any, any, any, any>)
-
-          if (process.env.NODE_ENV !== 'production') {
-            getLogger().error(error)
-          }
-        }
-
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
-      },
+      onError,
       onFail: () => {
         this.dispatch({ type: 'failed' })
       },

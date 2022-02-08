@@ -6,10 +6,14 @@ import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
 
 export type QueryKey = readonly unknown[]
+export type QueryFunctionData<T> = T extends undefined ? never : T
+
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey
-> = (context: QueryFunctionContext<TQueryKey>) => T | Promise<T>
+> = (
+  context: QueryFunctionContext<TQueryKey>
+) => QueryFunctionData<T> | Promise<QueryFunctionData<T>>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,

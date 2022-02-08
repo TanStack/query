@@ -331,7 +331,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const callback = jest.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -346,7 +346,7 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,

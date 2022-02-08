@@ -224,6 +224,8 @@ queryClient.setQueryData(queryKey, updater)
 setQueryData(queryKey, newData)
 ```
 
+If the value is `undefined`, the query data is not updated.
+
 **Using an updater function**
 
 For convenience in syntax, you can also pass an updater function which receives the current data value and returns the new one:
@@ -231,6 +233,8 @@ For convenience in syntax, you can also pass an updater function which receives 
 ```js
 setQueryData(queryKey, oldData => newData)
 ```
+
+If the updater function returns `undefined`, the query data will not be updated.
 
 ## `queryClient.getQueryState`
 
