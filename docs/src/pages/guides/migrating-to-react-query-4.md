@@ -254,7 +254,7 @@ Further, it is an easy bug to produce `Promise<void>` by adding logging in the q
 ```js
 useQuery(
   ['key'],
-  () => axios.get(url).then(result => console.log(result.data)
+  () => axios.get(url).then(result => console.log(result.data))
 )
 ```
 
