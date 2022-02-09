@@ -60,7 +60,10 @@ describe('Server Side Rendering', () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = jest.fn(() => sleep(10))
+    const queryFn = jest.fn(() => {
+      sleep(10)
+      return 'data'
+    })
 
     function Page() {
       const query = useQuery(key, queryFn)

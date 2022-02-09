@@ -245,6 +245,21 @@ Types now require using TypeScript v4.1 or greater
 Starting with v4, react-query will no longer log errors (e.g. failed fetches) to the console in production mode, as this was confusing to many.
 Errors will still show up in development mode.
 
+### Undefined is an illegale cache value for successful queries
+
+In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](guides/initial-query-data#initial-data-function) will also _not_ set data.
+
+Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
+
+```js
+useQuery(
+  ['key'],
+  () => axios.get(url).then(result => console.log(result.data))
+)
+```
+
+This is now disallowed on type level; at runtime, `undefined` will be transformed to a _failed Promise_, which means you will get an `error`, which will also be logged to the console in development mode.
+
 ## New Features 🚀
 
 ### Proper offline support
@@ -265,3 +280,14 @@ Mutations can now also be garbage collected automatically, just like queries. Th
 ### Tracked Queries per default
 
 React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.6.0) and has now become the default behavior with v4.
+
+### Bailing out of updates with setQueryData
+
+When using the [functional updater form of setQueryData](../reference/QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
+
+```js
+ queryClient.setQueryData(
+   ['todo', id],
+   (previousTodo) => previousTodo ? { ...previousTodo, done: true } : undefined
+)
+ ```
