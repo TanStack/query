@@ -39,6 +39,7 @@ const {
   onError,
   onSettled,
   onSuccess,
+  placeholderData,
   queryKeyHashFn,
   refetchInterval,
   refetchIntervalInBackground,
