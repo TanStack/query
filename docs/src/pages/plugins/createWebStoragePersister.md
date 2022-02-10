@@ -72,3 +72,27 @@ The default options are:
   deserialize = JSON.parse,
 }
 ```
+
+#### `serialize` and `deserialize` options
+There is a limit to the amount of data which can be stored in `localStorage`. 
+If you need to store more data in `localStorage`, you can override the `serialize` and `deserialize` functions to compress and decrompress the data using a library like [lz-string](https://github.com/pieroxy/lz-string/).
+
+```js
+import { QueryClient } from 'react-query';
+import { persistQueryClient } from 'react-query/persistQueryClient'
+import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
+
+import { compress, decompress } from 'lz-string';
+
+const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: Infinity } } });
+
+persistQueryClient({
+  queryClient: connectionsQueryClient,
+  persistor: createWebStoragePersister({
+    storage: window.localStorage,
+    serialize: data => compress(JSON.stringify(data)),
+    deserialize: data => JSON.parse(decompress(data)),
+  }),
+  maxAge: Infinity,
+});
+```
