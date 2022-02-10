@@ -186,8 +186,33 @@ export class Mutation<
         })
     }
 
+    const executeMutation = () => {
+      this.retryer = createRetryer({
+        fn: () => {
+          if (!this.options.mutationFn) {
+            return Promise.reject('No mutationFn found')
+          }
+          return this.options.mutationFn(this.state.variables!)
+        },
+        onFail: () => {
+          this.dispatch({ type: 'failed' })
+        },
+        onPause: () => {
+          this.dispatch({ type: 'pause' })
+        },
+        onContinue: () => {
+          this.dispatch({ type: 'continue' })
+        },
+        retry: this.options.retry ?? 0,
+        retryDelay: this.options.retryDelay,
+        networkMode: this.options.networkMode,
+      })
+
+      return this.retryer.promise
+    }
+
     return promise
-      .then(() => this.executeMutation())
+      .then(executeMutation)
       .then(result => {
         data = result
         // Notify cache callback
@@ -251,31 +276,6 @@ export class Mutation<
             throw error
           })
       })
-  }
-
-  private executeMutation(): Promise<TData> {
-    this.retryer = createRetryer({
-      fn: () => {
-        if (!this.options.mutationFn) {
-          return Promise.reject('No mutationFn found')
-        }
-        return this.options.mutationFn(this.state.variables!)
-      },
-      onFail: () => {
-        this.dispatch({ type: 'failed' })
-      },
-      onPause: () => {
-        this.dispatch({ type: 'pause' })
-      },
-      onContinue: () => {
-        this.dispatch({ type: 'continue' })
-      },
-      retry: this.options.retry ?? 0,
-      retryDelay: this.options.retryDelay,
-      networkMode: this.options.networkMode,
-    })
-
-    return this.retryer.promise
   }
 
   private dispatch(action: Action<TData, TError, TVariables, TContext>): void {
