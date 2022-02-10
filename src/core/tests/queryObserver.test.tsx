@@ -25,7 +25,7 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
@@ -309,7 +309,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -323,7 +323,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -544,7 +544,7 @@ describe('queryObserver', () => {
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {

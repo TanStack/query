@@ -863,7 +863,7 @@ describe('queryClient', () => {
   describe('refetchQueries', () => {
     test('should not refetch if all observers are disabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn()
+      const queryFn = jest.fn().mockReturnValue('data')
       await queryClient.fetchQuery(key, queryFn)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -877,7 +877,7 @@ describe('queryClient', () => {
     })
     test('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn()
+      const queryFn = jest.fn().mockReturnValue('data')
       await queryClient.fetchQuery(key, queryFn)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,

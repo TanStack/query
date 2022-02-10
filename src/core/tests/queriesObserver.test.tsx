@@ -255,8 +255,8 @@ describe('queriesObserver', () => {
   test('should trigger all fetches when subscribed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn()
-    const queryFn2 = jest.fn()
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
