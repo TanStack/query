@@ -1,6 +1,6 @@
 ---
 id: react-native
-title: React Native
+title:  React Query in React Native
 ---
 
 React Query is designed to work out of the box with React Native, with the exception of the devtools, which are only supported with React DOM at this time.
