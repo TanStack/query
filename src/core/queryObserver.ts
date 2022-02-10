@@ -130,7 +130,8 @@ export class QueryObserver<
 
   destroy(): void {
     this.listeners = []
-    this.clearTimers()
+    this.clearStaleTimeout()
+    this.clearRefetchInterval()
     this.currentQuery.removeObserver(this)
   }
 
@@ -375,11 +376,6 @@ export class QueryObserver<
   private updateTimers(): void {
     this.updateStaleTimeout()
     this.updateRefetchInterval(this.computeRefetchInterval())
-  }
-
-  private clearTimers(): void {
-    this.clearStaleTimeout()
-    this.clearRefetchInterval()
   }
 
   private clearStaleTimeout(): void {
