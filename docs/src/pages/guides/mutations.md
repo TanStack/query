@@ -179,7 +179,7 @@ mutate(todo, {
 })
 ```
 
-For consequent mutations you may consider passing `onSuccess`, `onError` and `onSettled` to `mutate` function instead of `useMutation`. Then, these callbacks will fire only _once_ after last mutation is fulfilled. It might be useful performance optimisation (ie. when invalidating queries after mutation). This is due to the fact that mutation observer is removed and resubscribed every time when `mutate` function is called.
+For consecutive mutations, you may consider passing `onSuccess`, `onError` and `onSettled` to the `mutate` function instead of `useMutation`. Then, these callbacks will fire only _once_ after last mutation is fulfilled, and only if the component is still mounted. It might be useful for performance optimisation (ie. when invalidating queries after mutation). This is due to the fact that the mutation observer is removed and resubscribed every time when the `mutate` function is called.
 
 ```js
 useMutation(addTodo, {
