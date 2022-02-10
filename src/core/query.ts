@@ -500,7 +500,82 @@ export class Query<
   }
 
   private dispatch(action: Action<TData, TError>): void {
-    this.state = this.reducer(this.state, action)
+    const reducer = (
+      state: QueryState<TData, TError>
+    ): QueryState<TData, TError> => {
+      switch (action.type) {
+        case 'failed':
+          return {
+            ...state,
+            fetchFailureCount: state.fetchFailureCount + 1,
+          }
+        case 'pause':
+          return {
+            ...state,
+            fetchStatus: 'paused',
+          }
+        case 'continue':
+          return {
+            ...state,
+            fetchStatus: 'fetching',
+          }
+        case 'fetch':
+          return {
+            ...state,
+            fetchFailureCount: 0,
+            fetchMeta: action.meta ?? null,
+            fetchStatus: canFetch(this.options.networkMode)
+              ? 'fetching'
+              : 'paused',
+            ...(!state.dataUpdatedAt && {
+              error: null,
+              status: 'loading',
+            }),
+          }
+        case 'success':
+          return {
+            ...state,
+            data: action.data,
+            dataUpdateCount: state.dataUpdateCount + 1,
+            dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
+            error: null,
+            fetchFailureCount: 0,
+            isInvalidated: false,
+            fetchStatus: 'idle',
+            status: 'success',
+          }
+        case 'error':
+          const error = action.error as unknown
+
+          if (isCancelledError(error) && error.revert && this.revertState) {
+            return { ...this.revertState }
+          }
+
+          return {
+            ...state,
+            error: error as TError,
+            errorUpdateCount: state.errorUpdateCount + 1,
+            errorUpdatedAt: Date.now(),
+            fetchFailureCount: state.fetchFailureCount + 1,
+            fetchStatus: 'idle',
+            status: 'error',
+          }
+        case 'invalidate':
+          return {
+            ...state,
+            isInvalidated: true,
+          }
+        case 'setState':
+          return {
+            ...state,
+            ...action.state,
+          }
+        default:
+          return state
+      }
+    }
+
+    this.state = reducer(this.state)
 
     notifyManager.batch(() => {
       this.observers.forEach(observer => {
@@ -541,82 +616,6 @@ export class Query<
       isInvalidated: false,
       status: hasData ? 'success' : 'idle',
       fetchStatus: 'idle',
-    }
-  }
-
-  protected reducer(
-    state: QueryState<TData, TError>,
-    action: Action<TData, TError>
-  ): QueryState<TData, TError> {
-    switch (action.type) {
-      case 'failed':
-        return {
-          ...state,
-          fetchFailureCount: state.fetchFailureCount + 1,
-        }
-      case 'pause':
-        return {
-          ...state,
-          fetchStatus: 'paused',
-        }
-      case 'continue':
-        return {
-          ...state,
-          fetchStatus: 'fetching',
-        }
-      case 'fetch':
-        return {
-          ...state,
-          fetchFailureCount: 0,
-          fetchMeta: action.meta ?? null,
-          fetchStatus: canFetch(this.options.networkMode)
-            ? 'fetching'
-            : 'paused',
-          ...(!state.dataUpdatedAt && {
-            error: null,
-            status: 'loading',
-          }),
-        }
-      case 'success':
-        return {
-          ...state,
-          data: action.data,
-          dataUpdateCount: state.dataUpdateCount + 1,
-          dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
-          error: null,
-          fetchFailureCount: 0,
-          isInvalidated: false,
-          fetchStatus: 'idle',
-          status: 'success',
-        }
-      case 'error':
-        const error = action.error as unknown
-
-        if (isCancelledError(error) && error.revert && this.revertState) {
-          return { ...this.revertState }
-        }
-
-        return {
-          ...state,
-          error: error as TError,
-          errorUpdateCount: state.errorUpdateCount + 1,
-          errorUpdatedAt: Date.now(),
-          fetchFailureCount: state.fetchFailureCount + 1,
-          fetchStatus: 'idle',
-          status: 'error',
-        }
-      case 'invalidate':
-        return {
-          ...state,
-          isInvalidated: true,
-        }
-      case 'setState':
-        return {
-          ...state,
-          ...action.state,
-        }
-      default:
-        return state
     }
   }
 }
