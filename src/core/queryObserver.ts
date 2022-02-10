@@ -16,7 +16,6 @@ import type {
   QueryObserverResult,
   QueryOptions,
   RefetchOptions,
-  ResultOptions,
 } from './types'
 import type { Query, QueryState, Action, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
@@ -244,23 +243,6 @@ export class QueryObserver<
     })
 
     return trackedResult
-  }
-
-  getNextResult(
-    options?: ResultOptions
-  ): Promise<QueryObserverResult<TData, TError>> {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = this.subscribe(result => {
-        if (!result.isFetching) {
-          unsubscribe()
-          if (result.isError && options?.throwOnError) {
-            reject(result.error)
-          } else {
-            resolve(result)
-          }
-        }
-      })
-    })
   }
 
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {

@@ -394,40 +394,6 @@ describe('queryObserver', () => {
     expect(results2[1]).toMatchObject({ data: 'data' })
   })
 
-  test('should be able to resolve a promise', async () => {
-    const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
-    const observer = new QueryObserver<string>(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    let value
-    observer.getNextResult().then(x => {
-      value = x
-    })
-    queryClient.prefetchQuery(key, queryFn)
-    await sleep(50)
-    expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(value).toMatchObject({ data: 'data' })
-  })
-
-  test('should be able to resolve a promise with an error', async () => {
-    const consoleMock = mockConsoleError()
-    const key = queryKey()
-    const observer = new QueryObserver<string>(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    let error
-    observer.getNextResult({ throwOnError: true }).catch(e => {
-      error = e
-    })
-    queryClient.prefetchQuery(key, () => Promise.reject('reject'))
-    await sleep(50)
-    expect(error).toEqual('reject')
-    consoleMock.mockRestore()
-  })
-
   test('should stop retry when unsubscribing', async () => {
     const consoleMock = mockConsoleError()
     const key = queryKey()
