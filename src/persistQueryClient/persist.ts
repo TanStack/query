@@ -134,8 +134,10 @@ export function persistQueryClient(
   props: PersistQueryClientOptions
 ): [() => void, Promise<void>] {
   let hasUnsubscribed = false
-  let unsubscribe = () => {
+  let persistQueryClientUnsubscribe: (() => void) | undefined
+  const unsubscribe = () => {
     hasUnsubscribed = true
+    persistQueryClientUnsubscribe?.()
   }
 
   let restorePromise = Promise.resolve()
@@ -145,7 +147,7 @@ export function persistQueryClient(
     restorePromise = persistQueryClientRestore(props).then(() => {
       if (!hasUnsubscribed) {
         // Subscribe to changes in the query cache to trigger the save
-        unsubscribe = persistQueryClientSubscribe(props)
+        persistQueryClientUnsubscribe = persistQueryClientSubscribe(props)
       }
     })
   }
