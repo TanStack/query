@@ -171,7 +171,7 @@ export class Query<
     this.cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.initialState = config.state || this.getDefaultState(this.options)
+    this.initialState = config.state || getDefaultState(this.options)
     this.state = this.initialState
     this.meta = config.meta
   }
@@ -583,37 +583,42 @@ export class Query<
       this.cache.notify({ query: this, type: 'updated', action })
     })
   }
+}
 
-  protected getDefaultState(
-    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  ): QueryState<TData, TError> {
-    const data =
-      typeof options.initialData === 'function'
-        ? (options.initialData as InitialDataFunction<TData>)()
-        : options.initialData
+function getDefaultState<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey
+>(
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+): QueryState<TData, TError> {
+  const data =
+    typeof options.initialData === 'function'
+      ? (options.initialData as InitialDataFunction<TData>)()
+      : options.initialData
 
-    const hasInitialData = typeof options.initialData !== 'undefined'
+  const hasInitialData = typeof options.initialData !== 'undefined'
 
-    const initialDataUpdatedAt = hasInitialData
-      ? typeof options.initialDataUpdatedAt === 'function'
-        ? (options.initialDataUpdatedAt as () => number | undefined)()
-        : options.initialDataUpdatedAt
-      : 0
+  const initialDataUpdatedAt = hasInitialData
+    ? typeof options.initialDataUpdatedAt === 'function'
+      ? (options.initialDataUpdatedAt as () => number | undefined)()
+      : options.initialDataUpdatedAt
+    : 0
 
-    const hasData = typeof data !== 'undefined'
+  const hasData = typeof data !== 'undefined'
 
-    return {
-      data,
-      dataUpdateCount: 0,
-      dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
-      error: null,
-      errorUpdateCount: 0,
-      errorUpdatedAt: 0,
-      fetchFailureCount: 0,
-      fetchMeta: null,
-      isInvalidated: false,
-      status: hasData ? 'success' : 'idle',
-      fetchStatus: 'idle',
-    }
+  return {
+    data,
+    dataUpdateCount: 0,
+    dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
+    error: null,
+    errorUpdateCount: 0,
+    errorUpdatedAt: 0,
+    fetchFailureCount: 0,
+    fetchMeta: null,
+    isInvalidated: false,
+    status: hasData ? 'success' : 'idle',
+    fetchStatus: 'idle',
   }
 }
