@@ -711,18 +711,6 @@ describe('query', () => {
     query['dispatch'] = dispatchOriginal
   })
 
-  test('reducer should return the state for an unknown action type', async () => {
-    const key = queryKey()
-
-    await queryClient.prefetchQuery(key, () => 'data')
-    const query = queryCache.find(key)!
-
-    // Force unknown action type
-    //@ts-expect-error
-    const reducedState = query['reducer'](query.state, { type: 'unknown' })
-    expect(reducedState).toEqual(query.state)
-  })
-
   test('fetch should not dispatch "fetch" if state meta and fetchOptions meta are the same object', async () => {
     const key = queryKey()
 

@@ -330,8 +330,6 @@ export class Mutation<
             ...state,
             ...action.state,
           }
-        default:
-          return state
       }
     }
     this.state = reducer(this.state)

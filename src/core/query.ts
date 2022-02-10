@@ -570,8 +570,6 @@ export class Query<
             ...state,
             ...action.state,
           }
-        default:
-          return state
       }
     }
 
