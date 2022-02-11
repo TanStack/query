@@ -26,12 +26,12 @@ Together with Next.js's [`getStaticProps`](https://nextjs.org/docs/basic-feature
 
 ```js
 export async function getStaticProps() {
-  const posts = await getPosts()
-  return { props: { posts } }
+  const posts = await getPosts();
+  return { props: { posts } };
 }
 
 function Posts(props) {
-  const { data } = useQuery('posts', getPosts, { initialData: props.posts })
+  const { data } = useQuery("posts", getPosts, { initialData: props.posts });
 
   // ...
 }
@@ -55,10 +55,10 @@ To support caching queries on the server and set up hydration:
 
 ```js
 // _app.jsx
-import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 
 export default function MyApp({ Component, pageProps }) {
-  const [queryClient] = React.useState(() => new QueryClient())
+  const [queryClient] = React.useState(() => new QueryClient());
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -66,7 +66,7 @@ export default function MyApp({ Component, pageProps }) {
         <Component {...pageProps} />
       </Hydrate>
     </QueryClientProvider>
-  )
+  );
 }
 ```
 
@@ -78,28 +78,28 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 
 ```js
 // pages/posts.jsx
-import { dehydrate, QueryClient, useQuery } from 'react-query';
+import { dehydrate, QueryClient, useQuery } from "react-query";
 
 export async function getStaticProps() {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery('posts', getPosts)
+  await queryClient.prefetchQuery("posts", getPosts);
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
     },
-  }
+  };
 }
 
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the "Posts"-page, data will be available immediately either way
-  const { data } = useQuery('posts', getPosts)
+  const { data } = useQuery("posts", getPosts);
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: otherData } = useQuery('posts-2', getPosts)
+  const { data: otherData } = useQuery("posts-2", getPosts);
 
   // ...
 }
@@ -126,16 +126,22 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 - Dehydrate the client
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 - Serialize and embed the dehydrated cache to be sent to the client with the HTML
+- Clear the React Query caches after the dehydrated state has been sent by calling [`queryClient.clear()`](../reference/QueryClient#queryclientclear)
 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```js
-import { dehydrate, Hydrate, QueryClient, QueryClientProvider } from 'react-query';
+import {
+  dehydrate,
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from "react-query";
 
-function handleRequest (req, res) {
-  const queryClient = new QueryClient()
-  await queryClient.prefetchQuery('key', fn)
-  const dehydratedState = dehydrate(queryClient)
+function handleRequest(req, res) {
+  const queryClient = new QueryClient();
+  await queryClient.prefetchQuery("key", fn);
+  const dehydratedState = dehydrate(queryClient);
 
   const html = ReactDOM.renderToString(
     <QueryClientProvider client={queryClient}>
@@ -143,7 +149,7 @@ function handleRequest (req, res) {
         <App />
       </Hydrate>
     </QueryClientProvider>
-  )
+  );
 
   res.send(`
     <html>
@@ -154,7 +160,9 @@ function handleRequest (req, res) {
         </script>
       </body>
     </html>
-  `)
+  `);
+
+  queryClient.clear();
 }
 ```
 
@@ -165,11 +173,11 @@ function handleRequest (req, res) {
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
 ```js
-import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 
-const dehydratedState = window.__REACT_QUERY_STATE__
+const dehydratedState = window.__REACT_QUERY_STATE__;
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 ReactDOM.hydrate(
   <QueryClientProvider client={queryClient}>
@@ -177,8 +185,8 @@ ReactDOM.hydrate(
       <App />
     </Hydrate>
   </QueryClientProvider>,
-  document.getElementById('root')
-)
+  document.getElementById("root")
+);
 ```
 
 ## Tips, Tricks and Caveats
@@ -196,3 +204,9 @@ A query is considered stale depending on when it was `dataUpdatedAt`. A caveat h
 Because `staleTime` defaults to `0`, queries will be refetched in the background on page load by default. You might want to use a higher `staleTime` to avoid this double fetching, especially if you don't cache your markup.
 
 This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?
+
+### High memory consumption on server
+
+In case you are creating `QueryClient` for every request React Query creates the isolated cache for this client and this cache is preserved in memory for the `cacheTime` period. That may lead to high memory consumption on server in case of high number of requests during `cacheTime` period.
+
+To clear cache after it is not needed and by that lower memory consumption you can add call to the [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after request is handled and Query dehydrated state has been sent to the client.
