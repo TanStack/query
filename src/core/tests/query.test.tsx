@@ -12,6 +12,7 @@ import {
   isError,
   onlineManager,
   QueryFunctionContext,
+  QueryObserverResult,
 } from '../..'
 import { waitFor } from '@testing-library/react'
 
@@ -710,18 +711,6 @@ describe('query', () => {
     query['dispatch'] = dispatchOriginal
   })
 
-  test('reducer should return the state for an unknown action type', async () => {
-    const key = queryKey()
-
-    await queryClient.prefetchQuery(key, () => 'data')
-    const query = queryCache.find(key)!
-
-    // Force unknown action type
-    //@ts-expect-error
-    const reducedState = query['reducer'](query.state, { type: 'unknown' })
-    expect(reducedState).toEqual(query.state)
-  })
-
   test('fetch should not dispatch "fetch" if state meta and fetchOptions meta are the same object', async () => {
     const key = queryKey()
 
@@ -787,6 +776,7 @@ describe('query', () => {
     let signalTest: any
     await queryClient.prefetchQuery(key, ({ signal }) => {
       signalTest = signal
+      return 'data'
     })
 
     expect(signalTest).toBeUndefined()
@@ -812,6 +802,31 @@ describe('query', () => {
 
     unsubscribe()
     consoleMock.mockRestore()
+  })
+
+  test('fetch should dispatch an error if the queryFn returns undefined', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: (() => undefined) as any,
+      retry: false,
+    })
+
+    let observerResult: QueryObserverResult<unknown, unknown> | undefined
+
+    const unsubscribe = observer.subscribe(result => {
+      observerResult = result
+    })
+
+    await sleep(10)
+
+    expect(observerResult).toMatchObject({
+      isError: true,
+      error: new Error('Query data cannot be undefined'),
+    })
+
+    unsubscribe()
   })
 
   test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {

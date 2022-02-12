@@ -16,7 +16,6 @@ import type {
   QueryObserverResult,
   QueryOptions,
   RefetchOptions,
-  ResultOptions,
 } from './types'
 import type { Query, QueryState, Action, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
@@ -131,7 +130,8 @@ export class QueryObserver<
 
   destroy(): void {
     this.listeners = []
-    this.clearTimers()
+    this.clearStaleTimeout()
+    this.clearRefetchInterval()
     this.currentQuery.removeObserver(this)
   }
 
@@ -244,23 +244,6 @@ export class QueryObserver<
     })
 
     return trackedResult
-  }
-
-  getNextResult(
-    options?: ResultOptions
-  ): Promise<QueryObserverResult<TData, TError>> {
-    return new Promise((resolve, reject) => {
-      const unsubscribe = this.subscribe(result => {
-        if (!result.isFetching) {
-          unsubscribe()
-          if (result.isError && options?.throwOnError) {
-            reject(result.error)
-          } else {
-            resolve(result)
-          }
-        }
-      })
-    })
   }
 
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
@@ -393,11 +376,6 @@ export class QueryObserver<
   private updateTimers(): void {
     this.updateStaleTimeout()
     this.updateRefetchInterval(this.computeRefetchInterval())
-  }
-
-  private clearTimers(): void {
-    this.clearStaleTimeout()
-    this.clearRefetchInterval()
   }
 
   private clearStaleTimeout(): void {
@@ -588,36 +566,6 @@ export class QueryObserver<
     return result as QueryObserverResult<TData, TError>
   }
 
-  private shouldNotifyListeners(
-    result: QueryObserverResult,
-    prevResult?: QueryObserverResult
-  ): boolean {
-    if (!prevResult) {
-      return true
-    }
-
-    const { notifyOnChangeProps } = this.options
-
-    if (
-      notifyOnChangeProps === 'all' ||
-      (!notifyOnChangeProps && !this.trackedProps.size)
-    ) {
-      return true
-    }
-
-    const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
-
-    if (this.options.useErrorBoundary) {
-      includedProps.add('error')
-    }
-
-    return Object.keys(result).some(key => {
-      const typedKey = key as keyof QueryObserverResult
-      const changed = result[typedKey] !== prevResult[typedKey]
-      return changed && includedProps.has(typedKey)
-    })
-  }
-
   updateResult(notifyOptions?: NotifyOptions): void {
     const prevResult = this.currentResult as
       | QueryObserverResult<TData, TError>
@@ -637,10 +585,34 @@ export class QueryObserver<
     // Determine which callbacks to trigger
     const defaultNotifyOptions: NotifyOptions = { cache: true }
 
-    if (
-      notifyOptions?.listeners !== false &&
-      this.shouldNotifyListeners(this.currentResult, prevResult)
-    ) {
+    const shouldNotifyListeners = (): boolean => {
+      if (!prevResult) {
+        return true
+      }
+
+      const { notifyOnChangeProps } = this.options
+
+      if (
+        notifyOnChangeProps === 'all' ||
+        (!notifyOnChangeProps && !this.trackedProps.size)
+      ) {
+        return true
+      }
+
+      const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
+
+      if (this.options.useErrorBoundary) {
+        includedProps.add('error')
+      }
+
+      return Object.keys(this.currentResult).some(key => {
+        const typedKey = key as keyof QueryObserverResult
+        const changed = this.currentResult[typedKey] !== prevResult[typedKey]
+        return changed && includedProps.has(typedKey)
+      })
+    }
+
+    if (notifyOptions?.listeners !== false && shouldNotifyListeners()) {
       defaultNotifyOptions.listeners = true
     }
 

@@ -41,6 +41,7 @@ const {
   onError,
   onSettled,
   onSuccess,
+  placeholderData,
   queryKeyHashFn,
   refetchInterval,
   refetchIntervalInBackground,
@@ -68,7 +69,7 @@ const result = useQuery({
 
 **Options**
 
-- `queryKey:  unknown[]`
+- `queryKey: unknown[]`
   - **Required**
   - The query key to use for this query.
   - The query key will be hashed into a stable hash. See [Query Keys](../guides/query-keys) for more information.
@@ -77,7 +78,7 @@ const result = useQuery({
   - **Required, but only if no default query function has been defined** See [Default Query Function](../guides/default-query-function) for more information.
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
-  - Must return a promise that will either resolve data or throw an error.
+  - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
   - Can be used for [Dependent Queries](../guides/dependent-queries).

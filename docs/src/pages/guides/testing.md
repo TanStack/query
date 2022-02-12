@@ -128,7 +128,7 @@ await waitFor(() => {
 expect(result.current.data).toEqual({answer: 42});
 ```
 
-Here we are making use of `waitFor` and waiting until our the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
+Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
 
 ## Testing Load More / Infinite Scroll
 

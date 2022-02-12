@@ -835,4 +835,67 @@ describe('useMutation', () => {
     expect(onSuccessMutate).toHaveBeenCalledTimes(0)
     expect(onSettledMutate).toHaveBeenCalledTimes(0)
   })
+
+  it('should call mutate callbacks only for the last observer', async () => {
+    const onSuccess = jest.fn()
+    const onSuccessMutate = jest.fn()
+    const onSettled = jest.fn()
+    const onSettledMutate = jest.fn()
+    let count = 0
+
+    function Page() {
+      const mutation = useMutation(
+        async (_text: string) => {
+          count++
+          await sleep(10)
+          return `result${count}`
+        },
+        {
+          onSuccess,
+          onSettled,
+        }
+      )
+
+      return (
+        <div>
+          <button
+            onClick={() =>
+              mutation.mutate('todo', {
+                onSuccess: onSuccessMutate,
+                onSettled: onSettledMutate,
+              })
+            }
+          >
+            mutate
+          </button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: null, status: idle')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('data: result2, status: success')
+
+    expect(count).toBe(2)
+
+    expect(onSuccess).toHaveBeenCalledTimes(2)
+    expect(onSettled).toHaveBeenCalledTimes(2)
+    expect(onSuccessMutate).toHaveBeenCalledTimes(1)
+    expect(onSuccessMutate).toHaveBeenCalledWith('result2', 'todo', undefined)
+    expect(onSettledMutate).toHaveBeenCalledTimes(1)
+    expect(onSettledMutate).toHaveBeenCalledWith(
+      'result2',
+      null,
+      'todo',
+      undefined
+    )
+  })
 })

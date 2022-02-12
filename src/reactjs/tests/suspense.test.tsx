@@ -123,7 +123,10 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10))
+    queryFn.mockImplementation(() => {
+      sleep(10)
+      return 'data'
+    })
 
     function Page() {
       useQuery([key], queryFn, { suspense: true })
@@ -147,7 +150,14 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      useQuery(key, () => sleep(10), { suspense: true })
+      useQuery(
+        key,
+        () => {
+          sleep(10)
+          return 'data'
+        },
+        { suspense: true }
+      )
 
       return <>rendered</>
     }
@@ -221,10 +231,17 @@ describe("useQuery's in Suspense mode", () => {
     const successFn2 = jest.fn()
 
     function FirstComponent() {
-      useQuery(key, () => sleep(10), {
-        suspense: true,
-        onSuccess: successFn1,
-      })
+      useQuery(
+        key,
+        () => {
+          sleep(10)
+          return 'data'
+        },
+        {
+          suspense: true,
+          onSuccess: successFn1,
+        }
+      )
 
       return <span>first</span>
     }
