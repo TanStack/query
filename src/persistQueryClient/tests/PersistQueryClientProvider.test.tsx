@@ -62,7 +62,7 @@ describe('PersistQueryClientProvider', () => {
       </PersistQueryClientProvider>
     )
 
-    await waitFor(() => rendered.getByText('fetchStatus: paused'))
+    await waitFor(() => rendered.getByText('fetchStatus: idle'))
     await waitFor(() => rendered.getByText('hydrated'))
     await waitFor(() => rendered.getByText('fetched'))
 
@@ -70,7 +70,7 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[0]).toMatchObject({
       status: 'loading',
-      fetchStatus: 'paused',
+      fetchStatus: 'idle',
       data: undefined,
     })
 
@@ -148,7 +148,7 @@ describe('PersistQueryClientProvider', () => {
 
     expect(states[0]).toMatchObject({
       status: 'success',
-      fetchStatus: 'paused',
+      fetchStatus: 'idle',
       data: 'initial',
     })
 
@@ -200,7 +200,7 @@ describe('PersistQueryClientProvider', () => {
 
       return (
         <div>
-          <h1>{state.data}</h1>
+          <h1>data: {state.data ?? 'null'}</h1>
           <h2>fetchStatus: {state.fetchStatus}</h2>
         </div>
       )
@@ -215,14 +215,14 @@ describe('PersistQueryClientProvider', () => {
       </PersistQueryClientProvider>
     )
 
-    await waitFor(() => rendered.getByText('fetchStatus: paused'))
-    await waitFor(() => rendered.getByText('fetchStatus: idle'))
+    await waitFor(() => rendered.getByText('data: null'))
+    await waitFor(() => rendered.getByText('data: hydrated'))
 
     expect(states).toHaveLength(3)
 
     expect(states[0]).toMatchObject({
       status: 'loading',
-      fetchStatus: 'paused',
+      fetchStatus: 'idle',
       data: undefined,
     })
 
