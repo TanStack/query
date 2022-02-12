@@ -48,6 +48,58 @@ It should be set as the same value or higher than persistQueryClient's `maxAge` 
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
+## Usage with React
+
+[persistQueryClient](#persistQueryClient) will try to restore the cache and automatically subscribes you to further changes, thus syncing your client to the provided storage.
+
+However, restoring is asynchronous, because all persisters are async by nature, which means that if you render your App while you are restoring, you might get into race conditions if a query mounts and fetches at the same time.
+
+Further, if you subscribe to changes outside of react lifecycles, you have no way of unsubscribing:
+
+```js
+// 🚨 never unsubscribes from syncing
+persistQueryClient({
+  queryClient,
+  persister: localStoragePersister,
+})
+
+// 🚨 happens at the same time as restoring
+ReactDOM.render(<App />, rootElement)
+```
+
+### PeristQueryClientProvider
+
+For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal `QueryClientProvider`:
+
+```jsx
+
+import { PersistQueryClientProvider } from 'react-query/persistQueryClient'
+import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+})
+
+const persister = createWebStoragePersister({
+  storage: window.localStorage,
+})
+
+ReactDOM.render(
+  <PersistQueryClientProvider
+    client={queryClient}
+    persistOptions={{ persister }}
+  >
+    <App />
+  </PersistQueryClientProvider>,
+  rootElement
+)
+
+```
+
 ## How does it work?
 
 - A check for window `undefined` is performed prior to saving/restoring/removing your data (avoids build errors).
