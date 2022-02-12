@@ -204,4 +204,6 @@ This refetching of stale queries is a perfect match when caching markup in a CDN
 
 In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `cacheTime` period (which defaults to 5 minutes). That may lead to high memory consumption on server in case of high number of requests during that period.
 
-To clear cache after it is not needed and by that lower memory consumption you can add call to the [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after request is handled and Query dehydrated state has been sent to the client.
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+
+Alternatively, you can set a smaller `cacheTime`.
