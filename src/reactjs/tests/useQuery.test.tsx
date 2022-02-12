@@ -141,12 +141,6 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      if (state.isIdle) {
-        expectType<undefined>(state.data)
-        expectType<null>(state.error)
-        return <span>idle</span>
-      }
-
       if (state.isLoading) {
         expectType<undefined>(state.data)
         expectType<null>(state.error)
@@ -205,7 +199,7 @@ describe('useQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isIdle: false,
+      isIdle: true,
       isLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -314,7 +308,7 @@ describe('useQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isIdle: false,
+      isIdle: true,
       isLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
@@ -2344,7 +2338,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/170
-  it('should start with status idle if enabled is false', async () => {
+  it('should start with status loading, fetchStatus idle if enabled is false', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -2356,8 +2350,12 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>First Status: {first.status}</div>
-          <div>Second Status: {second.status}</div>
+          <div>
+            First Status: {first.status}, {first.fetchStatus}
+          </div>
+          <div>
+            Second Status: {second.status}, {second.fetchStatus}
+          </div>
         </div>
       )
     }
@@ -2366,9 +2364,9 @@ describe('useQuery', () => {
 
     // use "act" to wait for state update and prevent console warning
 
-    rendered.getByText('First Status: idle')
-    await waitFor(() => rendered.getByText('Second Status: loading'))
-    await waitFor(() => rendered.getByText('Second Status: success'))
+    rendered.getByText('First Status: loading, idle')
+    await waitFor(() => rendered.getByText('Second Status: loading, fetching'))
+    await waitFor(() => rendered.getByText('Second Status: success, idle'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
@@ -3489,7 +3487,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>Status: {query.status}</div>
+          <div>FetchStatus: {query.fetchStatus}</div>
           <h2>Data: {query.data || 'no data'}</h2>
           {query.isStale ? (
             <button onClick={() => setShouldFetch(true)}>fetch</button>
@@ -3500,14 +3498,14 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    rendered.getByText('Status: idle')
+    rendered.getByText('FetchStatus: idle')
     rendered.getByText('Data: no data')
 
     fireEvent.click(rendered.getByText('fetch'))
 
-    await waitFor(() => rendered.getByText('Status: loading'))
+    await waitFor(() => rendered.getByText('FetchStatus: fetching'))
     await waitFor(() => [
-      rendered.getByText('Status: success'),
+      rendered.getByText('FetchStatus: idle'),
       rendered.getByText('Data: data'),
     ])
   })
@@ -3589,23 +3587,23 @@ describe('useQuery', () => {
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
-      const { status } = useQuery({
+      const { fetchStatus } = useQuery({
         queryKey: key,
         queryFn,
         enabled: false,
       })
-      return <div>status: {status}</div>
+      return <div>fetchStatus: {fetchStatus}</div>
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
     expect(queryCache.find(key)).not.toBeUndefined()
-    rendered.getByText('status: idle')
+    rendered.getByText('fetchStatus: idle')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:idle when enabled is falsey', async () => {
+  test('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3615,14 +3613,16 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>status: {query.status}</div>
+          <div>
+            status: {query.status}, {query.fetchStatus}
+          </div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status: idle'))
+    await waitFor(() => rendered.getByText('status: loading, idle'))
   })
 
   test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
@@ -4271,7 +4271,8 @@ describe('useQuery', () => {
     if (typeof AbortSignal === 'function') {
       expect(queryCache.find([key, 1])?.state).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
     } else {
       expect(queryCache.find([key, 1])?.state).toMatchObject({
@@ -4290,7 +4291,8 @@ describe('useQuery', () => {
     if (typeof AbortSignal === 'function') {
       expect(queryCache.find([key, 3])?.state).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
     } else {
       expect(queryCache.find([key, 3])?.state).toMatchObject({
@@ -4452,7 +4454,7 @@ describe('useQuery', () => {
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
       data: undefined,
-      isLoading: false,
+      isLoading: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -4473,7 +4475,7 @@ describe('useQuery', () => {
     })
     expect(states[3]).toMatchObject({
       data: undefined,
-      isLoading: false,
+      isLoading: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -5264,7 +5266,9 @@ describe('useQuery', () => {
 
       rendered.getByRole('button', { name: /cancel/i }).click()
 
-      await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: idle')
+      )
 
       expect(count).toBe(0)
 
@@ -5273,7 +5277,9 @@ describe('useQuery', () => {
 
       await sleep(15)
 
-      await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: idle')
+      )
 
       expect(count).toBe(0)
 

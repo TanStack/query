@@ -308,7 +308,7 @@ export interface FetchPreviousPageOptions extends ResultOptions {
   pageParam?: unknown
 }
 
-export type QueryStatus = 'idle' | 'loading' | 'error' | 'success'
+export type QueryStatus = 'loading' | 'error' | 'success'
 export type FetchStatus = 'fetching' | 'paused' | 'idle'
 
 export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
@@ -337,19 +337,6 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   remove: () => void
   status: QueryStatus
   fetchStatus: FetchStatus
-}
-
-export interface QueryObserverIdleResult<TData = unknown, TError = unknown>
-  extends QueryObserverBaseResult<TData, TError> {
-  data: undefined
-  error: null
-  isError: false
-  isIdle: true
-  isLoading: false
-  isLoadingError: false
-  isRefetchError: false
-  isSuccess: false
-  status: 'idle'
 }
 
 export interface QueryObserverLoadingResult<TData = unknown, TError = unknown>
@@ -409,7 +396,6 @@ export interface QueryObserverSuccessResult<TData = unknown, TError = unknown>
 }
 
 export type QueryObserverResult<TData = unknown, TError = unknown> =
-  | QueryObserverIdleResult<TData, TError>
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
   | QueryObserverRefetchErrorResult<TData, TError>
@@ -429,21 +415,6 @@ export interface InfiniteQueryObserverBaseResult<
   hasPreviousPage?: boolean
   isFetchingNextPage: boolean
   isFetchingPreviousPage: boolean
-}
-
-export interface InfiniteQueryObserverIdleResult<
-  TData = unknown,
-  TError = unknown
-> extends InfiniteQueryObserverBaseResult<TData, TError> {
-  data: undefined
-  error: null
-  isError: false
-  isIdle: true
-  isLoading: false
-  isLoadingError: false
-  isRefetchError: false
-  isSuccess: false
-  status: 'idle'
 }
 
 export interface InfiniteQueryObserverLoadingResult<
@@ -507,7 +478,6 @@ export interface InfiniteQueryObserverSuccessResult<
 }
 
 export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
-  | InfiniteQueryObserverIdleResult<TData, TError>
   | InfiniteQueryObserverLoadingErrorResult<TData, TError>
   | InfiniteQueryObserverLoadingResult<TData, TError>
   | InfiniteQueryObserverRefetchErrorResult<TData, TError>

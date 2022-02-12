@@ -119,7 +119,8 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
       })
-      expect(observer.getCurrentResult().status).toBe('idle')
+      expect(observer.getCurrentResult().status).toBe('loading')
+      expect(observer.getCurrentResult().fetchStatus).toBe('idle')
     })
 
     test('should update existing query defaults', async () => {
@@ -835,7 +836,8 @@ describe('queryClient', () => {
       })
       expect(state3).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
       consoleMock.mockRestore()
     })
@@ -1273,7 +1275,8 @@ describe('queryClient', () => {
 
       expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
-      expect(state?.status).toEqual('idle')
+      expect(state?.status).toEqual('loading')
+      expect(state?.fetchStatus).toEqual('idle')
     })
 
     test('should reset query data to initial data if set', async () => {

@@ -116,7 +116,7 @@ describe('useInfiniteQuery', () => {
       isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
-      isIdle: false,
+      isIdle: true,
       isLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
