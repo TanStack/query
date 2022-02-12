@@ -863,7 +863,7 @@ describe('queryClient', () => {
   describe('refetchQueries', () => {
     test('should not refetch if all observers are disabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn()
+      const queryFn = jest.fn().mockReturnValue('data')
       await queryClient.fetchQuery(key, queryFn)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -877,7 +877,7 @@ describe('queryClient', () => {
     })
     test('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn()
+      const queryFn = jest.fn().mockReturnValue('data')
       await queryClient.fetchQuery(key, queryFn)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -1424,30 +1424,25 @@ describe('queryClient', () => {
         testClient.getQueryCache(),
         'onOnline'
       )
-      const mutationCacheOnFocusSpy = jest.spyOn(
+      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
         testClient.getMutationCache(),
-        'onFocus'
-      )
-      const mutationCacheOnOnlineSpy = jest.spyOn(
-        testClient.getMutationCache(),
-        'onOnline'
+        'resumePausedMutations'
       )
 
       focusManager.setFocused(false)
       expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
-      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       focusManager.setFocused(true)
       expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
-      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
-      expect(mutationCacheOnOnlineSpy).not.toHaveBeenCalled()
 
       queryCacheOnFocusSpy.mockRestore()
-      mutationCacheOnFocusSpy.mockRestore()
+      mutationCacheResumePausedMutationsSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
-      mutationCacheOnOnlineSpy.mockRestore()
+      focusManager.setFocused(undefined)
     })
 
     test('should notify queryCache and mutationCache if online', async () => {
@@ -1462,30 +1457,25 @@ describe('queryClient', () => {
         testClient.getQueryCache(),
         'onOnline'
       )
-      const mutationCacheOnFocusSpy = jest.spyOn(
+      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
         testClient.getMutationCache(),
-        'onFocus'
-      )
-      const mutationCacheOnOnlineSpy = jest.spyOn(
-        testClient.getMutationCache(),
-        'onOnline'
+        'resumePausedMutations'
       )
 
       onlineManager.setOnline(false)
       expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
-      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
 
       onlineManager.setOnline(true)
       expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
-      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
 
-      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
-      expect(mutationCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
 
       queryCacheOnFocusSpy.mockRestore()
-      mutationCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
-      mutationCacheOnOnlineSpy.mockRestore()
+      mutationCacheResumePausedMutationsSpy.mockRestore()
+      onlineManager.setOnline(undefined)
     })
   })
 
