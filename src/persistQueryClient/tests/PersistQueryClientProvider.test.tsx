@@ -238,4 +238,48 @@ describe('PersistQueryClientProvider', () => {
       data: 'hydrated',
     })
   })
+
+  test('should call onSuccess after successful restoring', async () => {
+    const key = queryKey()
+
+    const queryClient = new QueryClient()
+    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+
+    const persister = createMockPersister()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    function Page() {
+      const state = useQuery(key, async () => {
+        await sleep(10)
+        return 'fetched'
+      })
+
+      return (
+        <div>
+          <h1>{state.data}</h1>
+          <h2>fetchStatus: {state.fetchStatus}</h2>
+        </div>
+      )
+    }
+
+    const onSuccess = jest.fn()
+
+    const rendered = render(
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{ persister }}
+        onSuccess={onSuccess}
+      >
+        <Page />
+      </PersistQueryClientProvider>
+    )
+    expect(onSuccess).toHaveBeenCalledTimes(0)
+
+    await waitFor(() => rendered.getByText('hydrated'))
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    await waitFor(() => rendered.getByText('fetched'))
+  })
 })

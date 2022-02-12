@@ -8,7 +8,6 @@ export interface PersistQueryClientProviderProps
   extends QueryClientProviderProps {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
-  onError?: () => void
 }
 
 export const PersistQueryClientProvider = ({
@@ -16,14 +15,13 @@ export const PersistQueryClientProvider = ({
   children,
   persistOptions,
   onSuccess,
-  onError,
   ...props
 }: PersistQueryClientProviderProps): JSX.Element => {
   const [isHydrating, setIsHydrating] = React.useState(true)
-  const refs = React.useRef({ persistOptions, onSuccess, onError })
+  const refs = React.useRef({ persistOptions, onSuccess })
 
   React.useEffect(() => {
-    refs.current = { persistOptions, onSuccess, onError }
+    refs.current = { persistOptions, onSuccess }
   })
 
   React.useEffect(() => {
@@ -32,15 +30,10 @@ export const PersistQueryClientProvider = ({
       queryClient: client,
     })
 
-    promise
-      .then(() => {
-        refs.current.onSuccess?.()
-        setIsHydrating(false)
-      })
-      .catch(() => {
-        refs.current.onError?.()
-        setIsHydrating(false)
-      })
+    promise.then(() => {
+      refs.current.onSuccess?.()
+      setIsHydrating(false)
+    })
 
     return unsubscribe
   }, [client])
