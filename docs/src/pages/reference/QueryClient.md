@@ -214,7 +214,7 @@ queryClient.setQueryData(queryKey, updater)
 **Options**
 
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
-- `updater: TData | (oldData: TData | undefined) => TData`
+- `updater: TData | (oldData: TData | undefined) => TData | undefined`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
 
@@ -224,6 +224,8 @@ queryClient.setQueryData(queryKey, updater)
 setQueryData(queryKey, newData)
 ```
 
+If the value is `undefined`, the query data is not updated.
+
 **Using an updater function**
 
 For convenience in syntax, you can also pass an updater function which receives the current data value and returns the new one:
@@ -231,6 +233,8 @@ For convenience in syntax, you can also pass an updater function which receives 
 ```js
 setQueryData(queryKey, oldData => newData)
 ```
+
+If the updater function returns `undefined`, the query data will not be updated. If the updater function receives `undefined` as input, you can return `undefined` to bail out of the update and thus _not_ create a new cache entry.
 
 ## `queryClient.getQueryState`
 

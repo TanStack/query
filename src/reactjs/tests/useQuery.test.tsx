@@ -2416,7 +2416,7 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = useQuery(key, queryFn, {
@@ -3447,7 +3447,7 @@ describe('useQuery', () => {
       const [enabled, setEnabled] = React.useState(false)
       const [isPrefetched, setPrefetched] = React.useState(false)
 
-      const query = useQuery(key, () => undefined, {
+      const query = useQuery(key, () => 'data', {
         enabled,
       })
 
@@ -3609,7 +3609,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const query = useQuery(key, () => undefined, {
+      const query = useQuery(key, () => 'data', {
         enabled: false,
       })
 
@@ -3648,7 +3648,7 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const memoFn = jest.fn()
 
     function Page() {

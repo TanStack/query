@@ -1,7 +1,5 @@
 import {
   getAbortController,
-  Updater,
-  functionalUpdate,
   noop,
   replaceEqualDeep,
   timeUntilStale,
@@ -173,7 +171,7 @@ export class Query<
     this.cache = config.cache
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.initialState = config.state || this.getDefaultState(this.options)
+    this.initialState = config.state || getDefaultState(this.options)
     this.state = this.initialState
     this.meta = config.meta
   }
@@ -195,13 +193,10 @@ export class Query<
   }
 
   setData(
-    updater: Updater<TData | undefined, TData>,
+    data: TData,
     options?: SetDataOptions & { notifySuccess: boolean }
   ): TData {
     const prevData = this.state.data
-
-    // Get the new data
-    let data = functionalUpdate(updater, prevData)
 
     // Use prev data if an isDataEqual function is defined and returns `true`
     if (this.options.isDataEqual?.(prevData, data)) {
@@ -438,11 +433,41 @@ export class Query<
       this.dispatch({ type: 'fetch', meta: context.fetchOptions?.meta })
     }
 
+    const onError = (error: TError | { silent?: boolean }) => {
+      // Optimistically update state if needed
+      if (!(isCancelledError(error) && error.silent)) {
+        this.dispatch({
+          type: 'error',
+          error: error as TError,
+        })
+      }
+
+      if (!isCancelledError(error)) {
+        // Notify cache callback
+        this.cache.config.onError?.(error, this as Query<any, any, any, any>)
+
+        if (process.env.NODE_ENV !== 'production') {
+          getLogger().error(error)
+        }
+      }
+
+      if (!this.isFetchingOptimistic) {
+        // Schedule query gc after fetching
+        this.scheduleGc()
+      }
+      this.isFetchingOptimistic = false
+    }
+
     // Try to fetch the data
     this.retryer = createRetryer({
       fn: context.fetchFn as () => TData,
       abort: abortController?.abort?.bind(abortController),
       onSuccess: data => {
+        if (typeof data === 'undefined') {
+          onError(new Error('Query data cannot be undefined') as any)
+          return
+        }
+
         this.setData(data as TData)
 
         // Notify cache callback
@@ -454,30 +479,7 @@ export class Query<
         }
         this.isFetchingOptimistic = false
       },
-      onError: (error: TError | { silent?: boolean }) => {
-        // Optimistically update state if needed
-        if (!(isCancelledError(error) && error.silent)) {
-          this.dispatch({
-            type: 'error',
-            error: error as TError,
-          })
-        }
-
-        if (!isCancelledError(error)) {
-          // Notify cache callback
-          this.cache.config.onError?.(error, this as Query<any, any, any, any>)
-
-          if (process.env.NODE_ENV !== 'production') {
-            getLogger().error(error)
-          }
-        }
-
-        if (!this.isFetchingOptimistic) {
-          // Schedule query gc after fetching
-          this.scheduleGc()
-        }
-        this.isFetchingOptimistic = false
-      },
+      onError,
       onFail: () => {
         this.dispatch({ type: 'failed' })
       },
@@ -498,7 +500,80 @@ export class Query<
   }
 
   private dispatch(action: Action<TData, TError>): void {
-    this.state = this.reducer(this.state, action)
+    const reducer = (
+      state: QueryState<TData, TError>
+    ): QueryState<TData, TError> => {
+      switch (action.type) {
+        case 'failed':
+          return {
+            ...state,
+            fetchFailureCount: state.fetchFailureCount + 1,
+          }
+        case 'pause':
+          return {
+            ...state,
+            fetchStatus: 'paused',
+          }
+        case 'continue':
+          return {
+            ...state,
+            fetchStatus: 'fetching',
+          }
+        case 'fetch':
+          return {
+            ...state,
+            fetchFailureCount: 0,
+            fetchMeta: action.meta ?? null,
+            fetchStatus: canFetch(this.options.networkMode)
+              ? 'fetching'
+              : 'paused',
+            ...(!state.dataUpdatedAt && {
+              error: null,
+              status: 'loading',
+            }),
+          }
+        case 'success':
+          return {
+            ...state,
+            data: action.data,
+            dataUpdateCount: state.dataUpdateCount + 1,
+            dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
+            error: null,
+            fetchFailureCount: 0,
+            isInvalidated: false,
+            fetchStatus: 'idle',
+            status: 'success',
+          }
+        case 'error':
+          const error = action.error as unknown
+
+          if (isCancelledError(error) && error.revert && this.revertState) {
+            return { ...this.revertState }
+          }
+
+          return {
+            ...state,
+            error: error as TError,
+            errorUpdateCount: state.errorUpdateCount + 1,
+            errorUpdatedAt: Date.now(),
+            fetchFailureCount: state.fetchFailureCount + 1,
+            fetchStatus: 'idle',
+            status: 'error',
+          }
+        case 'invalidate':
+          return {
+            ...state,
+            isInvalidated: true,
+          }
+        case 'setState':
+          return {
+            ...state,
+            ...action.state,
+          }
+      }
+    }
+
+    this.state = reducer(this.state)
 
     notifyManager.batch(() => {
       this.observers.forEach(observer => {
@@ -508,113 +583,42 @@ export class Query<
       this.cache.notify({ query: this, type: 'updated', action })
     })
   }
+}
 
-  protected getDefaultState(
-    options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  ): QueryState<TData, TError> {
-    const data =
-      typeof options.initialData === 'function'
-        ? (options.initialData as InitialDataFunction<TData>)()
-        : options.initialData
+function getDefaultState<
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey extends QueryKey
+>(
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+): QueryState<TData, TError> {
+  const data =
+    typeof options.initialData === 'function'
+      ? (options.initialData as InitialDataFunction<TData>)()
+      : options.initialData
 
-    const hasInitialData = typeof options.initialData !== 'undefined'
+  const hasInitialData = typeof options.initialData !== 'undefined'
 
-    const initialDataUpdatedAt = hasInitialData
-      ? typeof options.initialDataUpdatedAt === 'function'
-        ? (options.initialDataUpdatedAt as () => number | undefined)()
-        : options.initialDataUpdatedAt
-      : 0
+  const initialDataUpdatedAt = hasInitialData
+    ? typeof options.initialDataUpdatedAt === 'function'
+      ? (options.initialDataUpdatedAt as () => number | undefined)()
+      : options.initialDataUpdatedAt
+    : 0
 
-    const hasData = typeof data !== 'undefined'
+  const hasData = typeof data !== 'undefined'
 
-    return {
-      data,
-      dataUpdateCount: 0,
-      dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
-      error: null,
-      errorUpdateCount: 0,
-      errorUpdatedAt: 0,
-      fetchFailureCount: 0,
-      fetchMeta: null,
-      isInvalidated: false,
-      status: hasData ? 'success' : 'idle',
-      fetchStatus: 'idle',
-    }
-  }
-
-  protected reducer(
-    state: QueryState<TData, TError>,
-    action: Action<TData, TError>
-  ): QueryState<TData, TError> {
-    switch (action.type) {
-      case 'failed':
-        return {
-          ...state,
-          fetchFailureCount: state.fetchFailureCount + 1,
-        }
-      case 'pause':
-        return {
-          ...state,
-          fetchStatus: 'paused',
-        }
-      case 'continue':
-        return {
-          ...state,
-          fetchStatus: 'fetching',
-        }
-      case 'fetch':
-        return {
-          ...state,
-          fetchFailureCount: 0,
-          fetchMeta: action.meta ?? null,
-          fetchStatus: canFetch(this.options.networkMode)
-            ? 'fetching'
-            : 'paused',
-          ...(!state.dataUpdatedAt && {
-            error: null,
-            status: 'loading',
-          }),
-        }
-      case 'success':
-        return {
-          ...state,
-          data: action.data,
-          dataUpdateCount: state.dataUpdateCount + 1,
-          dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
-          error: null,
-          fetchFailureCount: 0,
-          isInvalidated: false,
-          fetchStatus: 'idle',
-          status: 'success',
-        }
-      case 'error':
-        const error = action.error as unknown
-
-        if (isCancelledError(error) && error.revert && this.revertState) {
-          return { ...this.revertState }
-        }
-
-        return {
-          ...state,
-          error: error as TError,
-          errorUpdateCount: state.errorUpdateCount + 1,
-          errorUpdatedAt: Date.now(),
-          fetchFailureCount: state.fetchFailureCount + 1,
-          fetchStatus: 'idle',
-          status: 'error',
-        }
-      case 'invalidate':
-        return {
-          ...state,
-          isInvalidated: true,
-        }
-      case 'setState':
-        return {
-          ...state,
-          ...action.state,
-        }
-      default:
-        return state
-    }
+  return {
+    data,
+    dataUpdateCount: 0,
+    dataUpdatedAt: hasData ? initialDataUpdatedAt ?? Date.now() : 0,
+    error: null,
+    errorUpdateCount: 0,
+    errorUpdatedAt: 0,
+    fetchFailureCount: 0,
+    fetchMeta: null,
+    isInvalidated: false,
+    status: hasData ? 'success' : 'idle',
+    fetchStatus: 'idle',
   }
 }

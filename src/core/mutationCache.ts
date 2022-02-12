@@ -143,14 +143,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
     })
   }
 
-  onFocus(): void {
-    this.resumePausedMutations()
-  }
-
-  onOnline(): void {
-    this.resumePausedMutations()
-  }
-
   resumePausedMutations(): Promise<void> {
     const pausedMutations = this.mutations.filter(x => x.state.isPaused)
     return notifyManager.batch(() =>

@@ -25,7 +25,7 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
@@ -309,7 +309,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -323,7 +323,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -331,7 +331,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const callback = jest.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -346,7 +346,7 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -392,40 +392,6 @@ describe('queryObserver', () => {
     expect(results1[1]).toMatchObject({ data: 'data' })
     expect(results2[0]).toMatchObject({ data: undefined })
     expect(results2[1]).toMatchObject({ data: 'data' })
-  })
-
-  test('should be able to resolve a promise', async () => {
-    const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
-    const observer = new QueryObserver<string>(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    let value
-    observer.getNextResult().then(x => {
-      value = x
-    })
-    queryClient.prefetchQuery(key, queryFn)
-    await sleep(50)
-    expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(value).toMatchObject({ data: 'data' })
-  })
-
-  test('should be able to resolve a promise with an error', async () => {
-    const consoleMock = mockConsoleError()
-    const key = queryKey()
-    const observer = new QueryObserver<string>(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    let error
-    observer.getNextResult({ throwOnError: true }).catch(e => {
-      error = e
-    })
-    queryClient.prefetchQuery(key, () => Promise.reject('reject'))
-    await sleep(50)
-    expect(error).toEqual('reject')
-    consoleMock.mockRestore()
   })
 
   test('should stop retry when unsubscribing', async () => {
@@ -578,7 +544,7 @@ describe('queryObserver', () => {
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {

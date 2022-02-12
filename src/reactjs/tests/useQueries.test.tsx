@@ -933,10 +933,12 @@ describe('useQueries', () => {
             return {
               queryKey: key,
               onError: err,
-              queryFn: (ctx: QueryFunctionContext<TQueryKey>) => {
-                expectType<TQueryKey>(ctx.queryKey)
-                return fn?.call({}, ctx)
-              },
+              queryFn: fn
+                ? (ctx: QueryFunctionContext<TQueryKey>) => {
+                    expectType<TQueryKey>(ctx.queryKey)
+                    return fn.call({}, ctx)
+                  }
+                : undefined,
             }
           }
         ),
