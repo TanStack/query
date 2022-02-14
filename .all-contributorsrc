@@ -203,6 +203,15 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "zrwsk",
+      "name": "Jakub Żurawski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9089600?v=4",
+      "profile": "https://github.com/zrwsk",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
