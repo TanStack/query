@@ -321,7 +321,6 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isFetched: boolean
   isFetchedAfterMount: boolean
   isFetching: boolean
-  isIdle: boolean
   isLoading: boolean
   isLoadingError: boolean
   isPaused: boolean
@@ -344,7 +343,6 @@ export interface QueryObserverLoadingResult<TData = unknown, TError = unknown>
   data: undefined
   error: null
   isError: false
-  isIdle: false
   isLoading: true
   isLoadingError: false
   isRefetchError: false
@@ -359,7 +357,6 @@ export interface QueryObserverLoadingErrorResult<
   data: undefined
   error: TError
   isError: true
-  isIdle: false
   isLoading: false
   isLoadingError: true
   isRefetchError: false
@@ -374,7 +371,6 @@ export interface QueryObserverRefetchErrorResult<
   data: TData
   error: TError
   isError: true
-  isIdle: false
   isLoading: false
   isLoadingError: false
   isRefetchError: true
@@ -387,7 +383,6 @@ export interface QueryObserverSuccessResult<TData = unknown, TError = unknown>
   data: TData
   error: null
   isError: false
-  isIdle: false
   isLoading: false
   isLoadingError: false
   isRefetchError: false
@@ -424,7 +419,6 @@ export interface InfiniteQueryObserverLoadingResult<
   data: undefined
   error: null
   isError: false
-  isIdle: false
   isLoading: true
   isLoadingError: false
   isRefetchError: false
@@ -439,7 +433,6 @@ export interface InfiniteQueryObserverLoadingErrorResult<
   data: undefined
   error: TError
   isError: true
-  isIdle: false
   isLoading: false
   isLoadingError: true
   isRefetchError: false
@@ -454,7 +447,6 @@ export interface InfiniteQueryObserverRefetchErrorResult<
   data: InfiniteData<TData>
   error: TError
   isError: true
-  isIdle: false
   isLoading: false
   isLoadingError: false
   isRefetchError: true
@@ -469,7 +461,6 @@ export interface InfiniteQueryObserverSuccessResult<
   data: InfiniteData<TData>
   error: null
   isError: false
-  isIdle: false
   isLoading: false
   isLoadingError: false
   isRefetchError: false

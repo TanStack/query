@@ -541,7 +541,6 @@ export class QueryObserver<
       isLoading: status === 'loading',
       isSuccess: status === 'success',
       isError: status === 'error',
-      isIdle: fetchStatus === 'idle',
       data,
       dataUpdatedAt,
       error,
