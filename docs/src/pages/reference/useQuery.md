@@ -190,12 +190,9 @@ const result = useQuery({
 
 - `status: String`
   - Will be:
-    - `idle` if the query is idle. This only happens if a query is initialized with `enabled: false` and no initial data is available.
     - `loading` if the query is in a "hard" loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query's `enabled` property is set to `false` and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
-- `isIdle: boolean`
-  - A derived boolean from the `status` variable above, provided for convenience.
 - `isLoading: boolean`
   - A derived boolean from the `status` variable above, provided for convenience.
 - `isSuccess: boolean`
@@ -229,8 +226,8 @@ const result = useQuery({
   - This property can be used to not show any previously cached data.
 - `fetchStatus: FetchStatus`
   - `fetching`: Is `true` whenever the queryFn is executing, which includes initial `loading` as well as background refetches.
-  - `paused`: The query wanted to fetch, but has been `paused`
-  - `idle`: The query is not fetching
+  - `paused`: The query wanted to fetch, but has been `paused`.
+  - `idle`: The query is not fetching.
   - see [Network Mode](../guides/network-mode) for more information.
 - `isFetching: boolean`
   - A derived boolean from the `fetchStatus` variable above, provided for convenience.
