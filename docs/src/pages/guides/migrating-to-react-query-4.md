@@ -18,6 +18,20 @@ To streamline all apis, we've decided to make all keys Arrays only:
 + useQuery(['todos'], fetchTodos)
 ```
 
+To make this migration easier we decided to deliver a codemod. You can easily apply it by using one (or both) of the following commands.
+
+If you want to run it against `.js` or `.jsx` files, please use the command below:
+
+`npx jscodeshift --extensions=js,jsx --transform=./node_modules/react-query/codemods/v4/key-transformation.js ./path/to/src/`
+
+If you want to run it against `.ts` or `.tsx` files, please use the command below:
+
+`npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/react-query/codemods/v4/key-transformation.js ./path/to/src/`
+
+Please note in the case of `TypeScript` you need to use `tsx` as the parser otherwise, the codemod won't be applied properly!
+
+**Note:** Applying the codemod might break your code formatting, so please don't forget to run `prettier` and/or `eslint` after you've applied the codemod!
+
 ### Separate hydration exports have been removed
 
 With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
