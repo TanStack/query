@@ -18,7 +18,13 @@ To streamline all apis, we've decided to make all keys Arrays only:
 + useQuery(['todos'], fetchTodos)
 ```
 
-To make this migration easier we decided to deliver a codemod. You can easily apply it by using one (or both) of the following commands.
+#### Codemod
+
+To make this migration easier, we decided to deliver a codemod.
+
+> The codemod is a best efforts attempt to help you migrate the breaking change. Please review the generated code thoroughly! Also, there are edge cases that cannot be found by the code mod, so please keep an eye on the log output.
+
+You can easily apply it by using one (or both) of the following commands:
 
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
