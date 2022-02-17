@@ -9,5 +9,5 @@ const getPosts = async () => {
 };
 
 export default function usePosts() {
-  return useQuery("posts", getPosts);
+  return useQuery(['posts'], getPosts);
 }

@@ -29,7 +29,7 @@ async function fetchTodos(): Promise<Todos> {
 function useTodos<TData = Todos>(
   options?: UseQueryOptions<Todos, AxiosError, TData>
 ) {
-  return useQuery('todos', fetchTodos, options)
+  return useQuery(['todos'], fetchTodos, options)
 }
 
 function TodoCounter() {
@@ -59,14 +59,14 @@ function Example() {
       onMutate: async (newTodo: string) => {
         setText('')
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries('todos')
+        await queryClient.cancelQueries(['todos'])
 
         // Snapshot the previous value
-        const previousTodos = queryClient.getQueryData<Todos>('todos')
+        const previousTodos = queryClient.getQueryData<Todos>(['todos'])
 
         // Optimistically update to the new value
         if (previousTodos) {
-          queryClient.setQueryData<Todos>('todos', {
+          queryClient.setQueryData<Todos>(['todos'], {
             ...previousTodos,
             items: [
               ...previousTodos.items,
@@ -80,12 +80,12 @@ function Example() {
       // If the mutation fails, use the context returned from onMutate to roll back
       onError: (err, variables, context) => {
         if (context?.previousTodos) {
-          queryClient.setQueryData<Todos>('todos', context.previousTodos)
+          queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
         }
       },
       // Always refetch after error or success:
       onSettled: () => {
-        queryClient.invalidateQueries('todos')
+        queryClient.invalidateQueries(['todos'])
       },
     }
   )
