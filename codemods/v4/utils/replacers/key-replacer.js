@@ -147,7 +147,10 @@ module.exports = ({ jscodeshift, root, filePath, keyName = 'queryKey' }) => {
       )
     } catch (error) {
       if (error.name === 'UnprocessableKeyError') {
-        console.warn(error.message)
+        if (process.env.NODE_ENV !== 'test') {
+          console.warn(error.message)
+        }
+
         return node
       }
 
