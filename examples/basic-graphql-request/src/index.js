@@ -40,7 +40,7 @@ function App() {
 }
 
 function usePosts() {
-  return useQuery("posts", async () => {
+  return useQuery(['posts'], async () => {
     const {
       posts: { data },
     } = await request(

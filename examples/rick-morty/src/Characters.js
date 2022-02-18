@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import fetch from "./fetch";
 
 export default function Characters() {
-  const { status, data } = useQuery("characters", () =>
+  const { status, data } = useQuery(["characters"], () =>
     fetch("https://rickandmortyapi.com/api/character/")
   );
 
