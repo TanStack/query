@@ -4236,18 +4236,18 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
 
-    rendered.getByRole('button', { name: /inc/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
     await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
 
-    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /forceUpdate/i }))
 
     await waitFor(() => rendered.getByText('forceValue: 2'))
     // data should still be 3 after an independent re-render
     await waitFor(() => rendered.getByText('Data: selected 3'))
   })
 
-  it('select should structually share data', async () => {
+  it('select should structurally share data', async () => {
     const key1 = queryKey()
     const states: Array<Array<number>> = []
 
@@ -4284,7 +4284,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Data: [2,3]'))
     expect(states).toHaveLength(1)
 
-    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /forceUpdate/i }))
 
     await waitFor(() => rendered.getByText('forceValue: 2'))
     await waitFor(() => rendered.getByText('Data: [2,3]'))

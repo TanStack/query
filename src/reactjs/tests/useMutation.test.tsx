@@ -879,8 +879,8 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: result2, status: success')
 
