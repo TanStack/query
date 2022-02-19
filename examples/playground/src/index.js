@@ -136,7 +136,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries(true)}>
+        <button onClick={() => queryClient.invalidateQueries()}>
           Force Refetch All
         </button>
       </div>
@@ -254,7 +254,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const saveMutation = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries("todos");
+      queryClient.invalidateQueries(['todos']);
       queryClient.setQueryData(["todo", { id: editingIndex }], data);
     },
   });
@@ -340,7 +340,7 @@ function AddTodo() {
 
   const addMutation = useMutation(postTodo, {
     onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+      queryClient.invalidateQueries(['todos']);
     },
   });
 

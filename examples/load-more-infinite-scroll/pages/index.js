@@ -32,7 +32,7 @@ function Example() {
     hasNextPage,
     hasPreviousPage,
   } = useInfiniteQuery(
-    'projects',
+    ['projects'],
     async ({ pageParam = 0 }) => {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data

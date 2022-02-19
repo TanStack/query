@@ -23,17 +23,17 @@ export default function App() {
 function Example() {
   const queryClient = useQueryClient()
 
-  const { status, data, error } = useQuery('user', async () => {
+  const { status, data, error } = useQuery(['user'], async () => {
     const res = await axios.get('/api/user')
     return res.data
   })
 
   const logoutMutation = useMutation(logout, {
-    onSuccess: () => queryClient.invalidateQueries('user'),
+    onSuccess: () => queryClient.invalidateQueries(['user']),
   })
 
   const loginMutation = useMutation(login, {
-    onSuccess: () => queryClient.invalidateQueries('user'),
+    onSuccess: () => queryClient.invalidateQueries(['user']),
   })
 
   return (

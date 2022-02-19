@@ -37,7 +37,7 @@ function Example() {
   const rerender = React.useState(0)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)
 
-  const charactersQuery = useQuery('characters', getCharacters)
+  const charactersQuery = useQuery(['characters'], getCharacters)
 
   const characterQuery = useQuery(['character', selectedChar], () =>
     getCharacter(selectedChar)

@@ -805,6 +805,8 @@ describe('query', () => {
   })
 
   test('fetch should dispatch an error if the queryFn returns undefined', async () => {
+    const consoleMock = mockConsoleError()
+
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -821,12 +823,16 @@ describe('query', () => {
 
     await sleep(10)
 
+    const error = new Error('Query data cannot be undefined')
+
     expect(observerResult).toMatchObject({
       isError: true,
-      error: new Error('Query data cannot be undefined'),
+      error,
     })
 
+    expect(consoleMock).toHaveBeenCalledWith(error)
     unsubscribe()
+    consoleMock.mockRestore()
   })
 
   test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {

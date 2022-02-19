@@ -28,7 +28,7 @@ function Example() {
   const [value, setValue] = React.useState('')
 
   const { status, data, error, isFetching } = useQuery(
-    'todos',
+    ['todos'],
     async () => {
       const res = await axios.get('/api/data')
       return res.data
@@ -40,11 +40,11 @@ function Example() {
   )
 
   const addMutation = useMutation(value => fetch(`/api/data?add=${value}`), {
-    onSuccess: () => queryClient.invalidateQueries('todos'),
+    onSuccess: () => queryClient.invalidateQueries(['todos']),
   })
 
   const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryClient.invalidateQueries('todos'),
+    onSuccess: () => queryClient.invalidateQueries(['todos']),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>
