@@ -63,6 +63,18 @@ describe('dehydration and rehydration', () => {
     hydrationClient.clear()
   })
 
+  test('should not dehydrate queries if dehydrateQueries is set to false', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+    await queryClient.prefetchQuery('string', () => fetchData('string'))
+
+    const dehydrated = dehydrate(queryClient, { dehydrateQueries: false })
+
+    expect(dehydrated.queries.length).toBe(0)
+
+    queryClient.clear()
+  })
+
   test('should use the cache time from the client', async () => {
     const queryCache = new QueryCache()
     const queryClient = new QueryClient({ queryCache })
@@ -327,5 +339,90 @@ describe('dehydration and rehydration', () => {
 
     client.clear()
     consoleMock.mockRestore()
+  })
+
+  test('should not dehydrate mutations if dehydrateMutations is set to false', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    const serverAddTodo = jest
+      .fn()
+      .mockImplementation(() => Promise.reject('offline'))
+
+    const queryClient = new QueryClient()
+
+    queryClient.setMutationDefaults('addTodo', {
+      mutationFn: serverAddTodo,
+      retry: false,
+    })
+
+    queryClient
+      .executeMutation({
+        mutationKey: 'addTodo',
+        variables: { text: 'text' },
+      })
+      .catch(() => undefined)
+
+    await sleep(1)
+    const dehydrated = dehydrate(queryClient, { dehydrateMutations: false })
+
+    expect(dehydrated.mutations.length).toBe(0)
+
+    queryClient.clear()
+    consoleMock.mockRestore()
+  })
+
+  test('should not dehydrate mutation if mutation state is set to pause', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
+    const serverAddTodo = jest
+      .fn()
+      .mockImplementation(() => Promise.reject('offline'))
+
+    const queryClient = new QueryClient()
+
+    queryClient.setMutationDefaults('addTodo', {
+      mutationFn: serverAddTodo,
+      retry: 1,
+      retryDelay: 20,
+    })
+
+    queryClient
+      .executeMutation({
+        mutationKey: 'addTodo',
+        variables: { text: 'text' },
+      })
+      .catch(() => undefined)
+
+    // Dehydrate mutation between retries
+    await sleep(1)
+    const dehydrated = dehydrate(queryClient)
+
+    expect(dehydrated.mutations.length).toBe(0)
+
+    await sleep(30)
+    queryClient.clear()
+    consoleMock.mockRestore()
+  })
+
+  test('should not hydrate if the hydratedState is null or is not an object', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    expect(() => hydrate(queryClient, null)).not.toThrow()
+    expect(() => hydrate(queryClient, 'invalid')).not.toThrow()
+
+    queryClient.clear()
+  })
+
+  test('should support hydratedState with undefined queries and mutations', async () => {
+    const queryCache = new QueryCache()
+    const queryClient = new QueryClient({ queryCache })
+
+    expect(() => hydrate(queryClient, {})).not.toThrow()
+    expect(() => hydrate(queryClient, {})).not.toThrow()
+
+    queryClient.clear()
   })
 })

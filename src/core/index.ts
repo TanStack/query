@@ -17,6 +17,7 @@ export { dehydrate, hydrate } from './hydration'
 // Types
 export * from './types'
 export type { Query } from './query'
+export type { Mutation } from './mutation'
 export type { Logger } from './logger'
 export type {
   DehydrateOptions,

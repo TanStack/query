@@ -14,6 +14,8 @@ import {
   UseInfiniteQueryResult,
   QueryClient,
   QueryCache,
+  QueryFunctionContext,
+  InfiniteData,
 } from '../..'
 
 interface Result {
@@ -87,6 +89,7 @@ describe('useInfiniteQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
@@ -116,6 +119,7 @@ describe('useInfiniteQuery', () => {
       isPlaceholderData: false,
       isPreviousData: false,
       isRefetchError: false,
+      isRefetching: false,
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
@@ -286,6 +290,41 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[1]).toMatchObject({
       data: { pages: ['count: 1'] },
+      isSuccess: true,
+    })
+  })
+
+  it('should be able to select a new result and not cause infinite renders', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<{ count: number; id: number }>[] = []
+    let selectCalled = 0
+
+    function Page() {
+      const state = useInfiniteQuery(key, () => ({ count: 1 }), {
+        select: React.useCallback((data: InfiniteData<{ count: number }>) => {
+          selectCalled++
+          return {
+            pages: data.pages.map(x => ({ ...x, id: Math.random() })),
+            pageParams: data.pageParams,
+          }
+        }, []),
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+
+    expect(states.length).toBe(2)
+    expect(selectCalled).toBe(1)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [{ count: 1 }] },
       isSuccess: true,
     })
   })
@@ -743,6 +782,157 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isSuccess: true,
     })
+  })
+
+  it('should silently cancel an ongoing fetchNextPage request when another fetchNextPage is invoked', async () => {
+    const key = queryKey()
+    const start = 10
+    const onAborts: jest.Mock<any, any>[] = []
+    const abortListeners: jest.Mock<any, any>[] = []
+    const fetchPage = jest.fn<
+      Promise<number>,
+      [QueryFunctionContext<string, number>]
+    >(async ({ pageParam = start, signal }) => {
+      if (signal) {
+        const onAbort = jest.fn()
+        const abortListener = jest.fn()
+        onAborts.push(onAbort)
+        abortListeners.push(abortListener)
+        signal.onabort = onAbort
+        signal.addEventListener('abort', abortListener)
+      }
+      await sleep(50)
+      return Number(pageParam)
+    })
+
+    function Page() {
+      const { fetchNextPage } = useInfiniteQuery(key, fetchPage, {
+        getNextPageParam: lastPage => lastPage + 1,
+      })
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          fetchNextPage()
+        }, 100)
+        setActTimeout(() => {
+          fetchNextPage()
+        }, 110)
+      }, [fetchNextPage])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(300)
+
+    const expectedCallCount = 3
+    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(onAborts).toHaveLength(expectedCallCount)
+    expect(abortListeners).toHaveLength(expectedCallCount)
+
+    let callIndex = 0
+    const firstCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(firstCtx.pageParam).toBeUndefined()
+    expect(firstCtx.queryKey).toEqual([key])
+    if (typeof AbortSignal === 'function') {
+      expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
+      expect(firstCtx.signal?.aborted).toBe(false)
+      expect(onAborts[callIndex]).not.toHaveBeenCalled()
+      expect(abortListeners[callIndex]).not.toHaveBeenCalled()
+    }
+
+    callIndex = 1
+    const secondCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(secondCtx.pageParam).toBe(11)
+    expect(secondCtx.queryKey).toEqual([key])
+    if (typeof AbortSignal === 'function') {
+      expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
+      expect(secondCtx.signal?.aborted).toBe(true)
+      expect(onAborts[callIndex]).toHaveBeenCalledTimes(1)
+      expect(abortListeners[callIndex]).toHaveBeenCalledTimes(1)
+    }
+
+    callIndex = 2
+    const thirdCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(thirdCtx.pageParam).toBe(11)
+    expect(thirdCtx.queryKey).toEqual([key])
+    if (typeof AbortSignal === 'function') {
+      expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
+      expect(thirdCtx.signal?.aborted).toBe(false)
+      expect(onAborts[callIndex]).not.toHaveBeenCalled()
+      expect(abortListeners[callIndex]).not.toHaveBeenCalled()
+    }
+  })
+
+  it('should not cancel an ongoing fetchNextPage request when another fetchNextPage is invoked if `cancelRefetch: false` is used ', async () => {
+    const key = queryKey()
+    const start = 10
+    const onAborts: jest.Mock<any, any>[] = []
+    const abortListeners: jest.Mock<any, any>[] = []
+    const fetchPage = jest.fn<
+      Promise<number>,
+      [QueryFunctionContext<string, number>]
+    >(async ({ pageParam = start, signal }) => {
+      if (signal) {
+        const onAbort = jest.fn()
+        const abortListener = jest.fn()
+        onAborts.push(onAbort)
+        abortListeners.push(abortListener)
+        signal.onabort = onAbort
+        signal.addEventListener('abort', abortListener)
+      }
+      await sleep(50)
+      return Number(pageParam)
+    })
+
+    function Page() {
+      const { fetchNextPage } = useInfiniteQuery(key, fetchPage, {
+        getNextPageParam: lastPage => lastPage + 1,
+      })
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          fetchNextPage()
+        }, 100)
+        setActTimeout(() => {
+          fetchNextPage({ cancelRefetch: false })
+        }, 110)
+      }, [fetchNextPage])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(300)
+
+    const expectedCallCount = 2
+    expect(fetchPage).toBeCalledTimes(expectedCallCount)
+    expect(onAborts).toHaveLength(expectedCallCount)
+    expect(abortListeners).toHaveLength(expectedCallCount)
+
+    let callIndex = 0
+    const firstCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(firstCtx.pageParam).toBeUndefined()
+    expect(firstCtx.queryKey).toEqual([key])
+    if (typeof AbortSignal === 'function') {
+      expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
+      expect(firstCtx.signal?.aborted).toBe(false)
+      expect(onAborts[callIndex]).not.toHaveBeenCalled()
+      expect(abortListeners[callIndex]).not.toHaveBeenCalled()
+    }
+
+    callIndex = 1
+    const secondCtx = fetchPage.mock.calls[callIndex]![0]
+    expect(secondCtx.pageParam).toBe(11)
+    expect(secondCtx.queryKey).toEqual([key])
+    if (typeof AbortSignal === 'function') {
+      expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
+      expect(secondCtx.signal?.aborted).toBe(false)
+      expect(onAborts[callIndex]).not.toHaveBeenCalled()
+      expect(abortListeners[callIndex]).not.toHaveBeenCalled()
+    }
   })
 
   it('should keep fetching first page when not loaded yet and triggering fetch more', async () => {

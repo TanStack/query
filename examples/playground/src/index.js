@@ -397,7 +397,7 @@ function fetchTodoById({ id }) {
           new Error(JSON.stringify({ fetchTodoById: { id } }, null, 2))
         );
       }
-      resolve(list.find((d) => d.id == id));
+      resolve(list.find((d) => d.id === id));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
 }

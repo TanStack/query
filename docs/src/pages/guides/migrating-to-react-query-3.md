@@ -335,7 +335,7 @@ If you do not want to refetch immediately, you can define a `staleTime`.
 
 ### The `QueryOptions.forceFetchOnMount` option has been replaced by `refetchOnMount: 'always'`
 
-Honestly, we were acruing way too many `refetchOn____` options, so this should clean things up.
+Honestly, we were accruing way too many `refetchOn____` options, so this should clean things up.
 
 ### The `QueryOptions.refetchOnMount` options now only applies to its parent component instead of all query observers
 
@@ -348,7 +348,7 @@ The `queryFnParamsFilter` option has been removed because query functions now ge
 
 Parameters can still be filtered within the query function itself as the `QueryFunctionContext` also contains the query key.
 
-### The `QueryOptions.notifyOnStatusChange` option has been superceded by the new `notifyOnChangeProps` and `notifyOnChangePropsExclusions` options.
+### The `QueryOptions.notifyOnStatusChange` option has been superseded by the new `notifyOnChangeProps` and `notifyOnChangePropsExclusions` options.
 
 With these new options it is possible to configure when a component should re-render on a granular level.
 
@@ -585,7 +585,7 @@ const fetches = useIsFetching(['posts'])
 
 #### Core separation
 
-The core of React Query is now fully separated from React, which means it can also be used standalone or in other frameworks. Use the `react-query/core` entrypoint to only import the core functionality:
+The core of React Query is now fully separated from React, which means it can also be used standalone or in other frameworks. Use the `react-query/core` entry point to only import the core functionality:
 
 ```js
 import { QueryClient } from 'react-query/core'

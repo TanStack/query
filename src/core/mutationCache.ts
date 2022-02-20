@@ -20,6 +20,10 @@ interface MutationCacheConfig {
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown, unknown>
   ) => void
+  onMutate?: (
+    variables: unknown,
+    mutation: Mutation<unknown, unknown, unknown, unknown>
+  ) => void
 }
 
 type MutationCacheListener = (mutation?: Mutation) => void
@@ -52,6 +56,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       defaultOptions: options.mutationKey
         ? client.getMutationDefaults(options.mutationKey)
         : undefined,
+      meta: options.meta,
     })
 
     this.add(mutation)

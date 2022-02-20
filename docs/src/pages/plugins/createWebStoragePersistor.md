@@ -13,7 +13,7 @@ This utility comes packaged with `react-query` and is available under the `react
 
 - Import the `createWebStoragePersistor` function
 - Create a new webStoragePersistor
-- Pass it to the [`persistQueryClient`](../persistQueryClient) function
+- Pass it to the [`persistQueryClient`](./persistQueryClient) function
 
 ```ts
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental'
@@ -57,6 +57,10 @@ interface CreateWebStoragePersistorOptions {
   /** To avoid spamming,
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
+  /** How to serialize the data to storage */
+  serialize?: (client: PersistedClient) => string
+  /** How to deserialize the data from storage */
+  deserialize?: (cachedString: string) => PersistedClient
 }
 ```
 
@@ -66,5 +70,7 @@ The default options are:
 {
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
+  serialize = JSON.stringify,
+  deserialize = JSON.parse,
 }
 ```

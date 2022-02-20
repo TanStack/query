@@ -1,11 +1,13 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { sleep } from './utils'
+import { CancelOptions } from './types'
 
 // TYPES
 
 interface RetryerConfig<TData = unknown, TError = unknown> {
   fn: () => TData | Promise<TData>
+  abort?: () => void
   onError?: (error: TError) => void
   onSuccess?: (data: TData) => void
   onFail?: (failureCount: number, error: TError) => void
@@ -41,11 +43,6 @@ export function isCancelable(value: any): value is Cancelable {
   return typeof value?.cancel === 'function'
 }
 
-export interface CancelOptions {
-  revert?: boolean
-  silent?: boolean
-}
-
 export class CancelledError {
   revert?: boolean
   silent?: boolean
@@ -64,12 +61,15 @@ export function isCancelledError(value: any): value is CancelledError {
 export class Retryer<TData = unknown, TError = unknown> {
   cancel: (options?: CancelOptions) => void
   cancelRetry: () => void
+  continueRetry: () => void
   continue: () => void
   failureCount: number
   isPaused: boolean
   isResolved: boolean
   isTransportCancelable: boolean
   promise: Promise<TData>
+
+  private abort?: () => void
 
   constructor(config: RetryerConfig<TData, TError>) {
     let cancelRetry = false
@@ -78,9 +78,13 @@ export class Retryer<TData = unknown, TError = unknown> {
     let promiseResolve: (data: TData) => void
     let promiseReject: (error: TError) => void
 
+    this.abort = config.abort
     this.cancel = cancelOptions => cancelFn?.(cancelOptions)
     this.cancelRetry = () => {
       cancelRetry = true
+    }
+    this.continueRetry = () => {
+      cancelRetry = false
     }
     this.continue = () => continueFn?.()
     this.failureCount = 0
@@ -142,6 +146,8 @@ export class Retryer<TData = unknown, TError = unknown> {
       cancelFn = cancelOptions => {
         if (!this.isResolved) {
           reject(new CancelledError(cancelOptions))
+
+          this.abort?.()
 
           // Cancel transport if supported
           if (isCancelable(promiseOrValue)) {

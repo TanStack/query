@@ -85,6 +85,10 @@ setLogger({
 })
 ```
 
+## Set cacheTime to Infinity with Jest
+
+`cacheTime` is set to 5 minutes by default. It means that the cache garbage collector timer will be triggered every 5 minutes. If you use Jest, you can set the `cacheTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message.
+
 ## Testing Network Calls
 
 The primary use for React Query is to cache network requests, so it's important that we can test our code is making the correct network requests in the first place.
@@ -121,10 +125,10 @@ await waitFor(() => {
   return result.current.isSuccess;
 });
 
-expect(result.current).toEqual({answer: 42});
+expect(result.current.data).toEqual({answer: 42});
 ```
 
-Here we are making use of `waitFor` and waiting until our the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
+Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
 
 ## Testing Load More / Infinite Scroll
 

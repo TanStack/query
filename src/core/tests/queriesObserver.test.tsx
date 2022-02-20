@@ -1,5 +1,12 @@
+import { waitFor } from '@testing-library/react'
 import { sleep, queryKey } from '../../react/tests/utils'
-import { QueryClient, QueriesObserver, QueryObserverResult } from '../..'
+import {
+  QueryClient,
+  QueriesObserver,
+  QueryObserverResult,
+  QueryObserver,
+} from '../..'
+import { QueryKey } from '..'
 
 describe('queriesObserver', () => {
   let queryClient: QueryClient
@@ -29,6 +36,51 @@ describe('queriesObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  test('should still return value for undefined query key', async () => {
+    const key1 = queryKey()
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: key1, queryFn: queryFn1 },
+      { queryKey: undefined, queryFn: queryFn2 },
+    ])
+    let observerResult
+    const unsubscribe = observer.subscribe(result => {
+      observerResult = result
+    })
+    await sleep(1)
+    unsubscribe()
+    expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
+  })
+
+  test('should return same value for multiple falsy query keys', async () => {
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
+    const observer = new QueriesObserver(queryClient, [
+      { queryKey: undefined, queryFn: queryFn1 },
+    ])
+    const results: QueryObserverResult[][] = []
+    results.push(observer.getCurrentResult())
+    const unsubscribe = observer.subscribe(result => {
+      results.push(result)
+    })
+    await sleep(1)
+    observer.setQueries([
+      { queryKey: undefined, queryFn: queryFn1 },
+      { queryKey: '', queryFn: queryFn2 },
+    ])
+    await sleep(1)
+    unsubscribe()
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject([{ status: 'idle', data: undefined }])
+    expect(results[1]).toMatchObject([{ status: 'loading', data: undefined }])
+    expect(results[2]).toMatchObject([{ status: 'success', data: 1 }])
+    expect(results[3]).toMatchObject([
+      { status: 'success', data: 1 },
+      { status: 'success', data: 1 },
+    ])
   })
 
   test('should update when a query updates', async () => {
@@ -229,5 +281,71 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(queryFn1).toHaveBeenCalledTimes(1)
     expect(queryFn2).toHaveBeenCalledTimes(1)
+  })
+
+  test('should not destroy the observer if there is still a subscription', async () => {
+    const key1 = queryKey()
+    const observer = new QueriesObserver(queryClient, [
+      {
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(20)
+          return 1
+        },
+      },
+    ])
+
+    const subscription1Handler = jest.fn()
+    const subscription2Handler = jest.fn()
+
+    const unsubscribe1 = observer.subscribe(subscription1Handler)
+    const unsubscribe2 = observer.subscribe(subscription2Handler)
+
+    unsubscribe1()
+
+    await waitFor(() => {
+      // 1 call: loading
+      expect(subscription1Handler).toBeCalledTimes(1)
+      // 1 call: success
+      expect(subscription2Handler).toBeCalledTimes(1)
+    })
+
+    // Clean-up
+    unsubscribe2()
+  })
+
+  test('onUpdate should not update the result for an unknown observer', async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+
+    const queriesObserver = new QueriesObserver(queryClient, [
+      {
+        queryKey: key1,
+        queryFn: () => 1,
+      },
+    ])
+
+    const newQueryObserver = new QueryObserver<
+      unknown,
+      unknown,
+      unknown,
+      unknown,
+      QueryKey
+    >(queryClient, {
+      queryKey: key2,
+      queryFn: () => 2,
+    })
+
+    // Force onUpdate with an unknown QueryObserver
+    // because no existing use case has been found in the lib
+    queriesObserver['onUpdate'](
+      newQueryObserver,
+      // The current queries observer result is re-used here
+      // to use a typescript friendly result
+      queriesObserver.getCurrentResult()[0]!
+    )
+
+    // Should not alter the result
+    expect(queriesObserver.getCurrentResult()[-1]).toBeUndefined()
   })
 })

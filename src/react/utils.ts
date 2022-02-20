@@ -8,7 +8,7 @@ export function shouldThrowError<T extends (...args: any[]) => boolean>(
     return _useErrorBoundary(...params)
   }
 
-  // Allow useErrorBoundary to override suspense's throwing behaviour
+  // Allow useErrorBoundary to override suspense's throwing behavior
   if (typeof _useErrorBoundary === 'boolean') return _useErrorBoundary
 
   // If suspense is enabled default to throwing errors

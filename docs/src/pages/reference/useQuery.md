@@ -20,6 +20,7 @@ const {
   isPlaceholderData,
   isPreviousData,
   isRefetchError,
+  isRefetching,
   isStale,
   isSuccess,
   refetch,
@@ -32,11 +33,13 @@ const {
   initialDataUpdatedAt
   isDataEqual,
   keepPreviousData,
+  meta,
   notifyOnChangeProps,
   notifyOnChangePropsExclusions,
   onError,
   onSettled,
   onSuccess,
+  placeholderData,
   queryKeyHashFn,
   refetchInterval,
   refetchIntervalInBackground,
@@ -94,14 +97,16 @@ const result = useQuery({
   - The time in milliseconds after data is considered stale. This value only applies to the hook it is defined on.
   - If set to `Infinity`, the data will never be considered stale
 - `cacheTime: number | Infinity`
+  - Defaults to `5 * 60 * 1000` (5 minutes)
   - The time in milliseconds that unused/inactive cache data remains in memory. When a query's cache becomes unused or inactive, that cache data will be garbage collected after this duration. When different cache times are specified, the longest one will be used.
   - If set to `Infinity`, will disable garbage collection
 - `queryKeyHashFn: (queryKey: QueryKey) => string`
   - Optional
   - If specified, this function is used to hash the `queryKey` to a string.
-- `refetchInterval: false | number`
+- `refetchInterval: number | false | ((data: TData | undefined, query: Query) => number | false)`
   - Optional
   - If set to a number, all queries will continuously refetch at this frequency in milliseconds
+  - If set to a function, the function will be executed with the latest data and query to compute a frequency
 - `refetchIntervalInBackground: boolean`
   - Optional
   - If set to `true`, queries that are set to continuously refetch with a `refetchInterval` will continue to refetch while their tab/window is in the background
@@ -134,7 +139,7 @@ const result = useQuery({
   - If set to `['isStale']` for example, the component will not re-render when the `isStale` property changes.
 - `onSuccess: (data: TData) => void`
   - Optional
-  - This function will fire any time the query successfully fetches new data.
+  - This function will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
 - `onError: (error: TError) => void`
   - Optional
   - This function will fire if the query encounters an error and will be passed the error.
@@ -173,8 +178,11 @@ const result = useQuery({
 - `useErrorBoundary: undefined | boolean | (error: TError, query: Query) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary
-  - Set this to `false` to disable `suspense`'s default behaviour of throwing errors to the error boundary.
+  - Set this to `false` to disable `suspense`'s default behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+- `meta: Record<string, unknown>`
+  - Optional
+  - If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the `query` is available, and is also part of the `QueryFunctionContext` provided to the `queryFn`.
 
 **Returns**
 
@@ -220,6 +228,9 @@ const result = useQuery({
 - `isFetching: boolean`
   - Is `true` whenever a request is in-flight, which includes initial `loading` as well as background refetches.
   - Will be `true` if the query is currently fetching, including background fetching.
+- `isRefetching: boolean`
+  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading`
+  - Is the same as `isFetching && !isLoading`
 - `failureCount: number`
   - The failure count for the query.
   - Incremented every time the query fails.

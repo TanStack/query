@@ -59,6 +59,12 @@ export function useBaseQuery<
     if (typeof defaultedOptions.staleTime !== 'number') {
       defaultedOptions.staleTime = 1000
     }
+
+    // Set cache time to 1 if the option has been set to 0
+    // when using suspense to prevent infinite loop of fetches
+    if (defaultedOptions.cacheTime === 0) {
+      defaultedOptions.cacheTime = 1
+    }
   }
 
   if (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) {
@@ -125,6 +131,7 @@ export function useBaseQuery<
   // Handle error boundary
   if (
     result.isError &&
+    !errorResetBoundary.isReset() &&
     !result.isFetching &&
     shouldThrowError(
       defaultedOptions.suspense,
@@ -137,7 +144,7 @@ export function useBaseQuery<
 
   // Handle result property usage tracking
   if (defaultedOptions.notifyOnChangeProps === 'tracked') {
-    result = observer.trackResult(result)
+    result = observer.trackResult(result, defaultedOptions)
   }
 
   return result

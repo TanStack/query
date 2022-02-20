@@ -10,7 +10,7 @@ type BatchNotifyFunction = (callback: () => void) => void
 
 // CLASS
 
-class NotifyManager {
+export class NotifyManager {
   private queue: NotifyCallback[]
   private transactions: number
   private notifyFn: NotifyFunction
@@ -30,11 +30,15 @@ class NotifyManager {
   }
 
   batch<T>(callback: () => T): T {
+    let result
     this.transactions++
-    const result = callback()
-    this.transactions--
-    if (!this.transactions) {
-      this.flush()
+    try {
+      result = callback()
+    } finally {
+      this.transactions--
+      if (!this.transactions) {
+        this.flush()
+      }
     }
     return result
   }

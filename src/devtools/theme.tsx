@@ -12,10 +12,12 @@ export const defaultTheme = {
   danger: '#ff0085',
   active: '#006bff',
   warning: '#ffb200',
-}
+} as const
 
+export type Theme = typeof defaultTheme
 interface ProviderProps {
-  theme: typeof defaultTheme
+  theme: Theme
+  children?: React.ReactNode
 }
 
 const ThemeContext = React.createContext(defaultTheme)

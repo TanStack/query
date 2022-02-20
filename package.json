@@ -15,8 +15,12 @@
   "types": "types/index.d.ts",
   "module": "es/index.js",
   "sideEffects": [
+    "es/index.js",
+    "es/react/index.js",
     "es/react/setBatchUpdatesFn.js",
     "es/react/setLogger.js",
+    "lib/index.js",
+    "lib/react/index.js",
     "lib/react/setBatchUpdatesFn.js",
     "lib/react/setLogger.js"
   ],
@@ -28,6 +32,7 @@
     "test:format": "yarn prettier --check",
     "test:types": "tsc",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:size": "yarn build:umd && bundlewatch",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
     "build:commonjs": "rimraf ./lib && cross-env BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
     "build:es": "rimraf ./es && babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir es",
@@ -75,6 +80,9 @@
       "optional": true
     }
   },
+  "typesVersions": {
+    "<4.1": { "types/*": ["types/ts3.8/*"] }
+  },
   "devDependencies": {
     "@babel/cli": "^7.11.6",
     "@babel/core": "^7.11.6",
@@ -95,6 +103,7 @@
     "babel-jest": "^26.0.1",
     "babel-plugin-const-enum": "^1.0.1",
     "babel-plugin-transform-async-to-promises": "^0.8.15",
+    "bundlewatch": "^0.3.2",
     "cross-env": "^7.0.2",
     "eslint": "7.x",
     "eslint-config-prettier": "^6.11.0",
@@ -108,7 +117,7 @@
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-react": "7.20.0",
-    "eslint-plugin-react-hooks": "4.0.4",
+    "eslint-plugin-react-hooks": "4.2.0",
     "eslint-plugin-standard": "^4.0.1",
     "is-ci-cli": "^2.1.1",
     "jest": "^26.0.1",
@@ -130,5 +139,16 @@
     "rollup-plugin-visualizer": "^4.0.4",
     "type-fest": "^0.21.0",
     "typescript": "^4.1.2"
+  },
+  "resolutions": {
+    "@types/react": "^16.9.41",
+    "@types/react-dom": "^16.9.8"
+  },
+  "bundlewatch": {
+    "files": [
+      {
+        "path": "dist/*.production.min.js"
+      }
+    ]
   }
 }

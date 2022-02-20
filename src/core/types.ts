@@ -1,7 +1,9 @@
 import type { MutationState } from './mutation'
-import type { Query, QueryBehavior } from './query'
+import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
+import type { QueryCache } from './queryCache'
+import type { MutationCache } from './mutationCache'
 
 export type QueryKey = string | readonly unknown[]
 export type EnsuredQueryKey<T extends QueryKey> = T extends string
@@ -18,7 +20,9 @@ export interface QueryFunctionContext<
   TPageParam = any
 > {
   queryKey: EnsuredQueryKey<TQueryKey>
+  signal?: AbortSignal
   pageParam?: TPageParam
+  meta: QueryMeta | undefined
 }
 
 export type InitialDataFunction<T> = () => T | undefined
@@ -43,6 +47,8 @@ export interface InfiniteData<TData> {
   pages: TData[]
   pageParams: unknown[]
 }
+
+export type QueryMeta = Record<string, unknown>
 
 export interface QueryOptions<
   TQueryFnData = unknown,
@@ -83,6 +89,11 @@ export interface QueryOptions<
    */
   getNextPageParam?: GetNextPageParamFunction<TQueryFnData>
   _defaulted?: boolean
+  /**
+   * Additional payload to be stored on each query.
+   * Use this property to pass information that can be used in other places.
+   */
+  meta?: QueryMeta
 }
 
 export interface QueryObserverOptions<
@@ -105,9 +116,16 @@ export interface QueryObserverOptions<
   staleTime?: number
   /**
    * If set to a number, the query will continuously refetch at this frequency in milliseconds.
+   * If set to a function, the function will be executed with the latest data and query to compute a frequency
    * Defaults to `false`.
    */
-  refetchInterval?: number | false
+  refetchInterval?:
+    | number
+    | false
+    | ((
+        data: TData | undefined,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => number | false)
   /**
    * If set to `true`, the query will continue to refetch while their tab/window is in the background.
    * Defaults to `false`.
@@ -150,7 +168,7 @@ export interface QueryObserverOptions<
    */
   notifyOnChangePropsExclusions?: Array<keyof InfiniteQueryObserverResult>
   /**
-   * This callback will fire any time the query successfully fetches new data.
+   * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
    */
   onSuccess?: (data: TData) => void
   /**
@@ -244,11 +262,11 @@ export interface ResultOptions {
   throwOnError?: boolean
 }
 
-export interface RefetchPageFilters<TQueryFnData = unknown> {
+export interface RefetchPageFilters<TPageData = unknown> {
   refetchPage?: (
-    lastPage: TQueryFnData,
+    lastPage: TPageData,
     index: number,
-    allPages: TQueryFnData[]
+    allPages: TPageData[]
   ) => boolean
 }
 
@@ -256,34 +274,31 @@ export interface RefetchOptions extends ResultOptions {
   cancelRefetch?: boolean
 }
 
-export interface InvalidateQueryFilters<TQueryFnData = unknown>
+export interface InvalidateQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {
+    RefetchPageFilters<TPageData> {
   refetchActive?: boolean
   refetchInactive?: boolean
 }
 
-export interface RefetchQueryFilters<TQueryFnData = unknown>
+export interface RefetchQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {}
+    RefetchPageFilters<TPageData> {}
 
-export interface ResetQueryFilters<TQueryFnData = unknown>
+export interface ResetQueryFilters<TPageData = unknown>
   extends QueryFilters,
-    RefetchPageFilters<TQueryFnData> {}
+    RefetchPageFilters<TPageData> {}
 
-export interface InvalidateOptions {
-  throwOnError?: boolean
-}
-
-export interface ResetOptions {
-  throwOnError?: boolean
-}
+export interface InvalidateOptions extends RefetchOptions {}
+export interface ResetOptions extends RefetchOptions {}
 
 export interface FetchNextPageOptions extends ResultOptions {
+  cancelRefetch?: boolean
   pageParam?: unknown
 }
 
 export interface FetchPreviousPageOptions extends ResultOptions {
+  cancelRefetch?: boolean
   pageParam?: unknown
 }
 
@@ -305,10 +320,11 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   isPlaceholderData: boolean
   isPreviousData: boolean
   isRefetchError: boolean
+  isRefetching: boolean
   isStale: boolean
   isSuccess: boolean
-  refetch: (
-    options?: RefetchOptions & RefetchQueryFilters<TData>
+  refetch: <TPageData>(
+    options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
   status: QueryStatus
@@ -492,6 +508,8 @@ export type MutationKey = string | readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
+export type MutationMeta = Record<string, unknown>
+
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables
 ) => Promise<TData>
@@ -527,6 +545,7 @@ export interface MutationOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
+  meta?: MutationMeta
 }
 
 export interface MutationObserverOptions<
@@ -657,7 +676,22 @@ export type MutationObserverResult<
   | MutationObserverErrorResult<TData, TError, TVariables, TContext>
   | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
 
+export interface QueryClientConfig {
+  queryCache?: QueryCache
+  mutationCache?: MutationCache
+  defaultOptions?: DefaultOptions
+}
+
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>
   mutations?: MutationObserverOptions<unknown, TError, unknown, unknown>
+}
+
+export interface CancelOptions {
+  revert?: boolean
+  silent?: boolean
+}
+
+export interface SetDataOptions {
+  updatedAt?: number
 }

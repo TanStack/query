@@ -10,6 +10,7 @@ import {
   MutationFilters,
 } from './utils'
 import type {
+  QueryClientConfig,
   DefaultOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
@@ -27,23 +28,18 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   ResetQueryFilters,
+  SetDataOptions,
 } from './types'
-import type { QueryState, SetDataOptions } from './query'
+import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
-import { CancelOptions } from './retryer'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { CancelOptions } from './types'
 
 // TYPES
-
-interface QueryClientConfig {
-  queryCache?: QueryCache
-  mutationCache?: MutationCache
-  defaultOptions?: DefaultOptions
-}
 
 interface QueryDefaults {
   queryKey: QueryKey
@@ -184,13 +180,13 @@ export class QueryClient {
     })
   }
 
-  resetQueries(
-    filters?: ResetQueryFilters,
+  resetQueries<TPageData = unknown>(
+    filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions
   ): Promise<void>
-  resetQueries(
+  resetQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: ResetQueryFilters,
+    filters?: ResetQueryFilters<TPageData>,
     options?: ResetOptions
   ): Promise<void>
   resetQueries(
@@ -238,13 +234,13 @@ export class QueryClient {
     return Promise.all(promises).then(noop).catch(noop)
   }
 
-  invalidateQueries(
-    filters?: InvalidateQueryFilters,
+  invalidateQueries<TPageData = unknown>(
+    filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions
   ): Promise<void>
-  invalidateQueries(
+  invalidateQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: InvalidateQueryFilters,
+    filters?: InvalidateQueryFilters<TPageData>,
     options?: InvalidateOptions
   ): Promise<void>
   invalidateQueries(
@@ -270,13 +266,13 @@ export class QueryClient {
     })
   }
 
-  refetchQueries(
-    filters?: RefetchQueryFilters,
+  refetchQueries<TPageData = unknown>(
+    filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions
   ): Promise<void>
-  refetchQueries(
+  refetchQueries<TPageData = unknown>(
     queryKey?: QueryKey,
-    filters?: RefetchQueryFilters,
+    filters?: RefetchQueryFilters<TPageData>,
     options?: RefetchOptions
   ): Promise<void>
   refetchQueries(
@@ -289,6 +285,7 @@ export class QueryClient {
     const promises = notifyManager.batch(() =>
       this.queryCache.findAll(filters).map(query =>
         query.fetch(undefined, {
+          ...options,
           meta: { refetchPage: filters?.refetchPage },
         })
       )

@@ -89,8 +89,8 @@ const queries = queryCache.findAll(queryKey)
 The `subscribe` method can be used to subscribe to the query cache as a whole and be informed of safe/known updates to the cache like query states changing or queries being updated, added or removed
 
 ```js
-const callback = query => {
-  console.log(query)
+const callback = event => {
+  console.log(event.type, event.query)
 }
 
 const unsubscribe = queryCache.subscribe(callback)
@@ -98,9 +98,8 @@ const unsubscribe = queryCache.subscribe(callback)
 
 **Options**
 
-- `callback: (query?: Query) => void`
+- `callback: (event: QueryCacheNotifyEvent) => void`
   - This function will be called with the query cache any time it is updated via its tracked update mechanisms (eg, `query.setState`, `queryClient.removeQueries`, etc). Out of scope mutations to the cache are not encouraged and will not fire subscription callbacks
-  - Additionally, for updates to the cache triggered by a specific query, the `query` will be passed as first argument to the callback
 
 **Returns**
 

@@ -34,7 +34,7 @@ In rare circumstances, you may want to manage your own window focus events that 
 
 ```js
 focusManager.setEventListener(handleFocus => {
-  // Listen to visibillitychange and focus
+  // Listen to visibilitychange and focus
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
     window.addEventListener('focus', handleFocus, false)
@@ -68,10 +68,12 @@ import { AppState } from 'react-native'
 import { focusManager } from 'react-query'
 
 focusManager.setEventListener(handleFocus => {
-  AppState.addEventListener('change', handleFocus)
+  const subscription = AppState.addEventListener('change', state => {
+    handleFocus(state === 'active')
+  })
 
   return () => {
-   AppState.removeEventListener('change', handleFocus)
+    subscription.remove()
   }
 })
 ```
@@ -87,3 +89,7 @@ focusManager.setFocused(true)
 // Fallback to the default focus check
 focusManager.setFocused(undefined)
 ```
+
+## Pitfalls & Caveats
+
+Some browser internal dialogue windows, such as spawned by `alert()` or file upload dialogues (as created by `<input type="file" />`) might also trigger focus refetching after they close. This can result in unwanted side effects, as the refetching might trigger component unmounts or remounts before your file upload handler is executed. See [this issue on GitHub](https://github.com/tannerlinsley/react-query/issues/2960) for background and possible workarounds.

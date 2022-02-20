@@ -231,7 +231,7 @@ const Home = ({ sponsors }) => {
             <h3 className="text-center text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 lg:leading-none mt-8">
               Sponsors
             </h3>
-            <div className="py-4 flex flex-wrap max-w-screen-md mx-auto">
+            <div className="py-4 flex flex-wrap mx-auto" style={{ maxWidth: '95%' }}>
               <ParentSize>
                 {({ width }) => {
                   return (

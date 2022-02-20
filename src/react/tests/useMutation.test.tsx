@@ -1,5 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import { useMutation, QueryClient, QueryCache, MutationCache } from '../..'
 import { UseMutationResult } from '../types'
@@ -475,5 +476,111 @@ describe('useMutation', () => {
     const { getByText } = renderWithClient(queryClient, <Page />)
     fireEvent.click(getByText('mutate'))
     fireEvent.click(getByText('unmount'))
+  })
+
+  it('should be able to throw an error when useErrorBoundary is set to true', async () => {
+    const consoleMock = mockConsoleError()
+
+    function Page() {
+      const { mutate } = useMutation<string, Error>(
+        () => {
+          const err = new Error('Expected mock error. All is well!')
+          err.stack = ''
+          return Promise.reject(err)
+        },
+        { useErrorBoundary: true }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={() => (
+          <div>
+            <span>error</span>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )
+
+    fireEvent.click(getByText('mutate'))
+
+    await waitFor(() => {
+      expect(queryByText('error')).not.toBeNull()
+    })
+
+    consoleMock.mockRestore()
+  })
+
+  it('should pass meta to mutation', async () => {
+    const consoleMock = mockConsoleError()
+
+    const errorMock = jest.fn()
+    const successMock = jest.fn()
+
+    const queryClientMutationMeta = new QueryClient({
+      mutationCache: new MutationCache({
+        onSuccess: (_, __, ___, mutation) => {
+          successMock(mutation.meta?.metaSuccessMessage)
+        },
+        onError: (_, __, ___, mutation) => {
+          errorMock(mutation.meta?.metaErrorMessage)
+        },
+      }),
+    })
+
+    const metaSuccessMessage = 'mutation succeeded'
+    const metaErrorMessage = 'mutation failed'
+
+    function Page() {
+      const { mutate: succeed, isSuccess } = useMutation(async () => '', {
+        meta: { metaSuccessMessage },
+      })
+      const { mutate: error, isError } = useMutation(
+        async () => {
+          throw new Error('')
+        },
+        {
+          meta: { metaErrorMessage },
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => succeed()}>succeed</button>
+          <button onClick={() => error()}>error</button>
+          {isSuccess && <div>successTest</div>}
+          {isError && <div>errorTest</div>}
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClientMutationMeta,
+      <Page />
+    )
+
+    fireEvent.click(getByText('succeed'))
+    fireEvent.click(getByText('error'))
+
+    await waitFor(() => {
+      expect(queryByText('successTest')).not.toBeNull()
+      expect(queryByText('errorTest')).not.toBeNull()
+    })
+
+    expect(successMock).toHaveBeenCalledTimes(1)
+    expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
+    expect(errorMock).toHaveBeenCalledTimes(1)
+    expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
+
+    consoleMock.mockRestore()
   })
 })

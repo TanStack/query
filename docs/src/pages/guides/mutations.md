@@ -9,7 +9,9 @@ Here's an example of a mutation that adds a new todo to the server:
 
 ```js
 function App() {
-  const mutation = useMutation(newTodo => axios.post('/todos', newTodo))
+  const mutation = useMutation(newTodo => {
+    return axios.post('/todos', newTodo)
+  })
 
   return (
     <div>
@@ -177,6 +179,28 @@ mutate(todo, {
 })
 ```
 
+### Consecutive mutations
+There is a slight difference in handling `onSuccess`, `onError` and `onSettled` callbacks when it comes to consecutive mutations. When passed to the `mutate` function, they will be fired up only _once_ and only if the component is still mounted.  This is due to the fact that mutation observer is removed and resubscribed every time when the `mutate` function is called. On the contrary, `useMutation` handlers execute for each `mutate` call.
+
+> Be aware that most likely, `mutationFn` passed to `useMutation` is ansynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
+
+```js
+useMutation(addTodo, {
+  onSuccess: (data, error, variables, context) => {
+    // Will be called 3 times
+  },
+})
+
+['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
+  mutate(todo, {
+    onSuccess: (data, error, variables, context) => {
+      // Will execute only once, for the last mutation (Todo 3),
+      // regardles which mutation resolves first 
+    },
+  })
+})
+
+```
 ## Promises
 
 Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
@@ -254,3 +278,8 @@ hydrate(queryClient, state)
 // Resume the paused mutations:
 queryClient.resumePausedMutations()
 ```
+
+## Further reading
+
+For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog#12-mastering-mutations-in-react-query) from
+the Community Resources.

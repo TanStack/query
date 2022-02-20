@@ -260,6 +260,43 @@ describe('ReactQueryDevtools', () => {
     expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
   })
 
+  it('should not show a disabled label for inactive queries', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data } = useQuery('key', () => Promise.resolve('test'), {
+        enabled: false,
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    function App() {
+      const [visible, setVisible] = React.useState(true)
+
+      return (
+        <div>
+          {visible ? <Page /> : null}
+          <button onClick={() => setVisible(false)}>Hide Query</button>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <App />, { initialIsOpen: true })
+
+    await screen.findByText(/disabled/i)
+
+    await act(async () => {
+      fireEvent.click(await screen.findByText(/hide query/i))
+    })
+
+    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+  })
+
   it('should sort the queries according to the sorting filter', async () => {
     const { queryClient, queryCache } = createQueryClient()
 
@@ -308,6 +345,7 @@ describe('ReactQueryDevtools', () => {
     // When sorted by query hash the queries get sorted according
     // to just the number, with the order being -> query-1, query-2, query-3
     fireEvent.change(sortSelect, { target: { value: 'Query Hash' } })
+
     /** To check the order of the queries we can use regex to find
      * all the row items in an array and then compare the items
      * one by one in the order we expect it
@@ -318,10 +356,14 @@ describe('ReactQueryDevtools', () => {
     expect(queries[1]?.textContent).toEqual(query2Hash)
     expect(queries[2]?.textContent).toEqual(query3Hash)
 
+    // Wait for the queries to be resolved
+    await sleep(70)
+
     // When sorted by the last updated date the queries are sorted by the time
     // they were updated and since the query-2 takes longest time to complete
     // and query-1 the shortest, so the order is -> query-2, query-3, query-1
     fireEvent.change(sortSelect, { target: { value: 'Last Updated' } })
+
     queries = await screen.findAllByText(/\["query-[1-3]"\]/)
     expect(queries[0]?.textContent).toEqual(query2Hash)
     expect(queries[1]?.textContent).toEqual(query3Hash)
@@ -331,7 +373,10 @@ describe('ReactQueryDevtools', () => {
     // query-3 takes precedence because its stale time being infinity, it
     // always remains fresh, the rest of the queries are sorted by their last
     // updated time, so the resulting order is -> query-3, query-2, query-1
-    fireEvent.change(sortSelect, { target: { value: 'Status > Last Updated' } })
+    fireEvent.change(sortSelect, {
+      target: { value: 'Status > Last Updated' },
+    })
+
     queries = await screen.findAllByText(/\["query-[1-3]"\]/)
     expect(queries[0]?.textContent).toEqual(query3Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
@@ -340,6 +385,7 @@ describe('ReactQueryDevtools', () => {
     // Switch the order form ascending to descending and expect the
     // query order to be reversed from previous state
     fireEvent.click(screen.getByRole('button', { name: /⬆ asc/i }))
+
     queries = await screen.findAllByText(/\["query-[1-3]"\]/)
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)

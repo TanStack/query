@@ -103,8 +103,8 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('next'))
     await sleep(10)
 
-    expect(states.length).toBe(3)
-    expect(states[2]).toMatchObject({
+    expect(states.length).toBe(2)
+    expect(states[1]).toMatchObject({
       data: { pages: [2], pageParams: [undefined] },
       status: 'success',
     })
@@ -889,5 +889,120 @@ describe("useQuery's in Suspense mode", () => {
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
     consoleMock.mockRestore()
+  })
+
+  it('should error catched in error boundary without infinite loop when enabled changed', async () => {
+    const consoleMock = mockConsoleError()
+
+    const succeed = false
+
+    function Page() {
+      const queryKeys = '1'
+      const [enabled, setEnabled] = React.useState(false)
+
+      const result = useQuery(
+        [queryKeys],
+        async () => {
+          await sleep(10)
+          if (!succeed) {
+            throw new Error('Suspense Error Bingo')
+          } else {
+            return 'data'
+          }
+        },
+        {
+          retry: false,
+          suspense: true,
+          enabled,
+        }
+      )
+      return (
+        <div>
+          <span>rendered</span> <span>{result.data}</span>
+          <button
+            aria-label="fail"
+            onClick={() => {
+              setEnabled(true)
+            }}
+          >
+            fail
+          </button>
+        </div>
+      )
+    }
+
+    function App() {
+      const { reset } = useQueryErrorResetBoundary()
+      return (
+        <ErrorBoundary
+          onReset={reset}
+          fallbackRender={() => <div>error boundary</div>}
+        >
+          <React.Suspense fallback="Loading...">
+            <Page />
+          </React.Suspense>
+        </ErrorBoundary>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    // render empty data with 'rendered' when enabled is false
+    await waitFor(() => rendered.getByText('rendered'))
+
+    // change enabled to true
+    fireEvent.click(rendered.getByLabelText('fail'))
+
+    // render pending fallback
+    await waitFor(() => rendered.getByText('Loading...'))
+
+    // render error boundary fallback (error boundary)
+    await waitFor(() => rendered.getByText('error boundary'))
+    consoleMock.mockRestore()
+  })
+
+  it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
+    const key = queryKey()
+    let state: UseQueryResult<number> | null = null
+
+    let count = 0
+    let renders = 0
+
+    function Page() {
+      renders++
+
+      state = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return count
+        },
+        { suspense: true, cacheTime: 0 }
+      )
+
+      return (
+        <div>
+          <span>rendered</span>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <React.Suspense fallback="loading">
+        <Page />
+      </React.Suspense>
+    )
+
+    await waitFor(() =>
+      expect(state).toMatchObject({
+        data: 1,
+        status: 'success',
+      })
+    )
+
+    expect(renders).toBe(2)
+    expect(rendered.queryByText('rendered')).not.toBeNull()
   })
 })

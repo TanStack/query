@@ -22,7 +22,10 @@ const {
   onMutate,
   onSettled,
   onSuccess,
+  retry,
+  retryDelay,
   useErrorBoundary,
+  meta,
 })
 
 mutate(variables, {
@@ -59,7 +62,8 @@ mutate(variables, {
   - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
   - If a promise is returned, it will be awaited and resolved before proceeding
 - `retry: boolean | number | (failureCount: number, error: TError) => boolean`
-  - If `false`, failed mutations will not retry by default.
+  - Defaults to `0`.
+  - If `false`, failed mutations will not retry.
   - If `true`, failed mutations will retry infinitely.
   - If set to an `number`, e.g. `3`, failed mutations will retry until the failed mutations count meets that number.
 - `retryDelay: number | (retryAttempt: number, error: TError) => number`
@@ -69,8 +73,11 @@ mutate(variables, {
 - `useErrorBoundary: undefined | boolean | (error: TError) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
   - Set this to `true` if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
-  - Set this to `false` to disable the behaviour of throwing errors to the error boundary.
+  - Set this to `false` to disable the behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
+- `meta: Record<string, unknown>`
+  - Optional
+  - If set, stores additional information on the mutation cache entry that can be used as needed. It will be accessible wherever the `mutation` is available (eg. `onError`, `onSuccess` functions of the `MutationCache`).
 
 **Returns**
 

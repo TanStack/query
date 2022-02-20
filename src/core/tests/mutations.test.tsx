@@ -300,4 +300,118 @@ describe('mutations', () => {
     expect(onSuccess).toHaveBeenCalled()
     expect(onSettled).toHaveBeenCalled()
   })
+
+  test('setState should update the mutation state', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+      onMutate: text => text,
+    })
+    await mutation.mutate()
+    expect(mutation.getCurrentResult().data).toEqual('update')
+
+    // Force setState usage
+    // because no use case has been found using mutation.setState
+    const currentMutation = mutation['currentMutation']
+    currentMutation?.setState({
+      context: undefined,
+      variables: undefined,
+      data: 'new',
+      error: undefined,
+      failureCount: 0,
+      isPaused: false,
+      status: 'success',
+    })
+
+    expect(mutation.getCurrentResult().data).toEqual('new')
+  })
+
+  test('addObserver should not add an existing observer', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+      onMutate: text => text,
+    })
+    await mutation.mutate()
+
+    // Force addObserver usage to add an existing observer
+    // because no use case has been found
+    const currentMutation = mutation['currentMutation']!
+    expect(currentMutation['observers'].length).toEqual(1)
+    currentMutation?.addObserver(mutation)
+
+    expect(currentMutation['observers'].length).toEqual(1)
+  })
+
+  test('executeMutation should throw an error if no mutationFn found', async () => {
+    const consoleMock = mockConsoleError()
+
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: undefined,
+      retry: false,
+    })
+
+    let error: any
+    try {
+      await mutation.mutate()
+    } catch (err) {
+      error = err
+    }
+    expect(error).toEqual('No mutationFn found')
+
+    consoleMock.mockRestore()
+  })
+
+  test('cancel mutation should not call mutationFn if the current retrier is undefined', async () => {
+    const mutationFn = jest.fn().mockImplementation(async () => {
+      await sleep(20)
+      return 'data'
+    })
+
+    const observer = new MutationObserver(queryClient, {
+      mutationKey: 'key',
+      mutationFn,
+    })
+
+    observer.mutate()
+    const mutation = queryClient
+      .getMutationCache()
+      .find({ mutationKey: 'key' })!
+    await sleep(10)
+
+    // Force current mutation retryer to be undefined
+    // because not use case has been found
+    mutation['retryer'] = undefined
+    mutationFn.mockReset()
+    await mutation.cancel()
+
+    await sleep(30)
+    expect(mutationFn).toHaveBeenCalledTimes(0)
+  })
+
+  test('reducer should return the state for an unknown action type', async () => {
+    const observer = new MutationObserver(queryClient, {
+      mutationKey: 'key',
+      mutationFn: async () => 'data',
+    })
+
+    const spy = jest.fn()
+    const unsubscribe = observer.subscribe(spy)
+    observer.mutate()
+    const mutation = queryClient
+      .getMutationCache()
+      .find({ mutationKey: 'key' })!
+    const prevState = observer.getCurrentResult()
+    spy.mockReset()
+
+    // Force dispatch unknown action type
+    // because no use case has been found
+    //@ts-expect-error
+    mutation.dispatch({ type: 'unknown' })
+    expect(spy).toHaveBeenCalledWith(prevState)
+
+    unsubscribe()
+  })
 })

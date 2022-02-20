@@ -3,9 +3,14 @@ import {
   partialDeepEqual,
   isPlainObject,
   mapQueryStatusFilter,
+  parseMutationArgs,
+  matchMutation,
+  scheduleMicrotask,
 } from '../utils'
 import { QueryClient, QueryCache, setLogger, Logger } from '../..'
 import { queryKey } from '../../react/tests/utils'
+import { Mutation } from '../mutation'
+import { waitFor } from '@testing-library/dom'
 
 describe('core/utils', () => {
   it('setLogger should override the default logger', async () => {
@@ -52,6 +57,33 @@ describe('core/utils', () => {
 
     it('should return `false` for undefined', () => {
       expect(isPlainObject(undefined)).toEqual(false)
+    })
+
+    it('should return `true` for object with an undefined constructor', () => {
+      expect(isPlainObject(Object.create(null))).toBeTruthy()
+    })
+
+    it('should return `false` if constructor does not have an Object-specific method', () => {
+      class Foo {
+        abc: any
+        constructor() {
+          this.abc = {}
+        }
+      }
+      expect(isPlainObject(new Foo())).toBeFalsy()
+    })
+
+    it('should return `false` if the object has a modified prototype', () => {
+      function Graph(this: any) {
+        this.vertices = []
+        this.edges = []
+      }
+
+      Graph.prototype.addVertex = function (v: any) {
+        this.vertices.push(v)
+      }
+
+      expect(isPlainObject(Object.create(Graph))).toBeFalsy()
     })
   })
 
@@ -326,5 +358,56 @@ describe('core/utils', () => {
         expect(mapQueryStatusFilter(active, inactive)).toBe(statusFilter)
       }
     )
+  })
+
+  describe('parseMutationArgs', () => {
+    it('should return mutation options', () => {
+      const options = { mutationKey: 'key' }
+      expect(parseMutationArgs(options)).toMatchObject(options)
+    })
+  })
+
+  describe('matchMutation', () => {
+    it('should return false if mutationKey options is undefined', () => {
+      const filters = { mutationKey: 'key1' }
+      const queryClient = new QueryClient()
+      const mutation = new Mutation({
+        mutationId: 1,
+        mutationCache: queryClient.getMutationCache(),
+        options: {},
+      })
+      expect(matchMutation(filters, mutation)).toBeFalsy()
+    })
+  })
+
+  describe('scheduleMicrotask', () => {
+    it('should throw an exception if the callback throw an error', async () => {
+      const error = new Error('error')
+      const callback = () => {
+        throw error
+      }
+      const errorSpy = jest.fn().mockImplementation(err => err)
+      jest.useFakeTimers()
+      const setTimeoutSpy = jest
+        .spyOn(globalThis, 'setTimeout')
+        .mockImplementation(function (handler: TimerHandler) {
+          try {
+            if (typeof handler === 'function') {
+              handler(errorSpy(error))
+            }
+          } catch (err: any) {
+            expect(err.message).toEqual('error')
+            // Do no throw an uncaught exception that cannot be tested with
+            // this jest version
+          }
+          return 0
+        })
+      scheduleMicrotask(callback)
+      jest.runAllTimers()
+      await waitFor(() => expect(setTimeoutSpy).toHaveBeenCalled())
+      expect(errorSpy).toHaveBeenCalled()
+      setTimeoutSpy.mockRestore()
+      jest.useRealTimers()
+    })
   })
 })

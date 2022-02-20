@@ -4,7 +4,12 @@ import {
   mockConsoleError,
   expectType,
 } from '../../react/tests/utils'
-import { QueryClient, QueryObserver, QueryObserverResult } from '../..'
+import {
+  QueryClient,
+  QueryObserver,
+  QueryObserverResult,
+  focusManager,
+} from '../..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient
@@ -489,5 +494,276 @@ describe('queryObserver', () => {
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject({ status: 'success', data: 'placeholder' })
     expect(results[1]).toMatchObject({ status: 'success', data: 'data' })
+  })
+
+  test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    let count = 0
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => {
+        count++
+        return Promise.reject(`reject ${count}`)
+      },
+      retry: 1,
+      retryDelay: 20,
+    })
+
+    const unsubscribe = observer.subscribe()
+
+    // Simulate a race condition when an unsubscribe and a retry occur.
+    await sleep(20)
+    unsubscribe()
+
+    // A second reject is triggered for the retry
+    // but the retryer has already set isResolved to true
+    // so it does nothing and no error is thrown
+
+    // Should not log an error
+    queryClient.clear()
+    await sleep(40)
+    expect(consoleMock).not.toHaveBeenNthCalledWith(1, 'reject 1')
+
+    consoleMock.mockRestore()
+  })
+
+  test('should throw an error if enabled option type is not valid', async () => {
+    const key = queryKey()
+
+    expect(
+      () =>
+        new QueryObserver(queryClient, {
+          queryKey: key,
+          queryFn: () => 'data',
+          //@ts-expect-error
+          enabled: null,
+        })
+    ).toThrowError('Expected enabled to be a boolean')
+  })
+
+  test('getCurrentQuery should return the current query', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+    })
+
+    expect(observer.getCurrentQuery().queryKey).toEqual(key)
+  })
+
+  test('should throw an error if throwOnError option is true', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.reject('error'),
+      retry: false,
+    })
+
+    let error: string | null = null
+    try {
+      await observer.refetch({ throwOnError: true })
+    } catch (err) {
+      error = err as string
+    }
+
+    expect(error).toEqual('error')
+
+    consoleMock.mockRestore()
+  })
+
+  test('should not refetch in background if refetchIntervalInBackground is false', async () => {
+    const key = queryKey()
+    const queryFn = jest.fn()
+
+    focusManager.setFocused(false)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      refetchIntervalInBackground: false,
+      refetchInterval: 10,
+    })
+
+    const unsubscribe = observer.subscribe()
+    await sleep(30)
+
+    expect(queryFn).toHaveBeenCalledTimes(1)
+
+    // Clean-up
+    unsubscribe()
+    focusManager.setFocused(true)
+  })
+
+  test('should not use replaceEqualDeep for select value when structuralSharing option is true', async () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const selectedData = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+      select: () => data,
+    })
+
+    const unsubscribe = observer.subscribe()
+
+    await sleep(10)
+    expect(observer.getCurrentResult().data).toBe(data)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      structuralSharing: false,
+      select: () => selectedData,
+    })
+
+    await observer.refetch({ queryKey: key })
+    expect(observer.getCurrentResult().data).toBe(selectedData)
+
+    unsubscribe()
+  })
+
+  test('select function error using placeholderdata should log an error', () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+
+    new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => 'data',
+      placeholderData: 'placeholderdata',
+      select: () => {
+        throw new Error('error')
+      },
+    })
+
+    expect(consoleMock).toHaveBeenNthCalledWith(1, new Error('error'))
+
+    consoleMock.mockRestore()
+  })
+
+  test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const selectedData1 = { value: 'data' }
+    const selectedData2 = { value: 'data' }
+    const placeholderData1 = { value: 'data' }
+    const placeholderData2 = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+      select: () => data,
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      select: () => {
+        if (true) return selectedData1
+      },
+      placeholderData: placeholderData1,
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      select: () => {
+        return selectedData2
+      },
+      placeholderData: placeholderData2,
+      structuralSharing: false,
+    })
+
+    expect(observer.getCurrentResult().data).toBe(selectedData2)
+  })
+
+  test('should not use an undefined value returned by select as placeholderdata', () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const selectedData = { value: 'data' }
+    const placeholderData1 = { value: 'data' }
+    const placeholderData2 = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+      select: () => data,
+    })
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      select: () => {
+        if (true) return selectedData
+      },
+      placeholderData: placeholderData1,
+    })
+
+    expect(observer.getCurrentResult().isPlaceholderData).toBe(true)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => data,
+      //@ts-expect-error
+      select: () => undefined,
+      placeholderData: placeholderData2,
+    })
+
+    expect(observer.getCurrentResult().isPlaceholderData).toBe(false)
+  })
+
+  test('updateResult should not notify cache listeners if cache option is false', async () => {
+    const key = queryKey()
+
+    const data1 = { value: 'data 1' }
+    const data2 = { value: 'data 2' }
+
+    await queryClient.prefetchQuery(key, () => data1)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+    await queryClient.prefetchQuery(key, () => data2)
+
+    const spy = jest.fn()
+    const unsubscribe = queryClient.getQueryCache().subscribe(spy)
+    observer.updateResult({ cache: false })
+
+    expect(spy).toHaveBeenCalledTimes(0)
+
+    unsubscribe()
+  })
+
+  test('should not notify observer when the stale timeout expires and the current result is stale', async () => {
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    await queryClient.prefetchQuery(key, queryFn)
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn,
+      staleTime: 20,
+    })
+
+    const spy = jest.fn()
+    const unsubscribe = observer.subscribe(spy)
+    await queryClient.refetchQueries(key)
+    await sleep(10)
+
+    // Force isStale to true
+    // because no use case has been found to reproduce this condition
+    // @ts-ignore
+    observer['currentResult'].isStale = true
+    spy.mockReset()
+    await sleep(30)
+    expect(spy).not.toHaveBeenCalled()
+
+    unsubscribe()
   })
 })

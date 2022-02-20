@@ -87,7 +87,7 @@ export function functionalUpdate<TInput, TOutput>(
     : updater
 }
 
-export function isValidTimeout(value: any): value is number {
+export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
@@ -446,4 +446,10 @@ export function scheduleMicrotask(callback: () => void): void {
         throw error
       })
     )
+}
+
+export function getAbortController(): AbortController | undefined {
+  if (typeof AbortController === 'function') {
+    return new AbortController()
+  }
 }

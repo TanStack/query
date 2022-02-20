@@ -91,7 +91,7 @@ try {
 
 **Options**
 
-The options for `fetchQuery` are exactly the same as those of [`useQuery`](./useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, notifyOnChangePropsExclusions, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are stictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
+The options for `fetchQuery` are exactly the same as those of [`useQuery`](./useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, notifyOnChangePropsExclusions, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
 
 **Returns**
 
@@ -203,7 +203,9 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 ## `queryClient.setQueryData`
 
-`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**.
+`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead. 
+
+After successful changing query's cached data via `setQueryData`, it will also trigger `onSuccess` callback from that query.
 
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
@@ -248,7 +250,7 @@ console.log(state.dataUpdatedAt)
 
 ## `queryClient.setQueriesData`
 
-`setQueriesData` is a synchronous function that can be used to immediately update cached data of multiple queries. Only queries that match the passed queryKey or queryFilter will be updated - no new cache entries will be created. Under the hood, [`setQueryData`](#queryclientsetquerydata) is called for each query.
+`setQueriesData` is a synchronous function that can be used to immediately update cached data of multiple queries by using filter function or partially matching the query key. Only queries that match the passed queryKey or queryFilter will be updated - no new cache entries will be created. Under the hood, [`setQueryData`](#queryclientsetquerydata) is called for each query.
 
 ```js
 queryClient.setQueriesData(queryKey | filters, updater)
@@ -257,7 +259,7 @@ queryClient.setQueriesData(queryKey | filters, updater)
 **Options**
 
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys) | `filters: QueryFilters`: [Query Filters](../guides/filters#query-filters)
-  - if a queryKey is passed as first argument, queryKeys fuzzily matching this param will be updated
+  - if a queryKey is passed as first argument, queryKeys partially matching this param will be updated
   - if a filter is passed, queryKeys matching the filter will be updated
 - `updater: TData | (oldData: TData | undefined) => TData`
   - the [setQueryData](#queryclientsetquerydata) updater function or new data, will be called for each matching queryKey
@@ -274,7 +276,7 @@ await queryClient.invalidateQueries('posts', {
   exact,
   refetchActive: true,
   refetchInactive: false
-}, { throwOnError })
+}, { throwOnError, cancelRefetch })
 ```
 
 **Options**
@@ -290,9 +292,11 @@ await queryClient.invalidateQueries('posts', {
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `refetchOptions?: RefetchOptions`:
+- `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 ## `queryClient.refetchQueries`
 
@@ -321,9 +325,11 @@ await queryClient.refetchQueries(['posts', 1], { active: true, exact: true })
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `refetchOptions?: RefetchOptions`:
+- `options?: RefetchOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 **Returns**
 
@@ -387,9 +393,11 @@ queryClient.resetQueries(queryKey, { exact: true })
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
-- `resetOptions?: ResetOptions`:
+- `options?: ResetOptions`:
   - `throwOnError?: boolean`
     - When set to `true`, this method will throw if any of the query refetch tasks fail.
+  - cancelRefetch?: boolean
+    - When set to `true`, then the current request will be cancelled before a new request is made
 
 **Returns**
 
