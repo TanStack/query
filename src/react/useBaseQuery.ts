@@ -136,7 +136,7 @@ export function useBaseQuery<
     shouldThrowError(
       defaultedOptions.suspense,
       defaultedOptions.useErrorBoundary,
-      result.error
+      [result.error, observer.getCurrentQuery()]
     )
   ) {
     throw result.error

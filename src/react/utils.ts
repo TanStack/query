@@ -1,11 +1,11 @@
-export function shouldThrowError<TError>(
+export function shouldThrowError<T extends (...args: any[]) => boolean>(
   suspense: boolean | undefined,
-  _useErrorBoundary: boolean | ((err: TError) => boolean) | undefined,
-  error: TError
+  _useErrorBoundary: boolean | T | undefined,
+  params: Parameters<T>
 ): boolean {
   // Allow useErrorBoundary function to override throwing behavior on a per-error basis
   if (typeof _useErrorBoundary === 'function') {
-    return _useErrorBoundary(error)
+    return _useErrorBoundary(...params)
   }
 
   // Allow useErrorBoundary to override suspense's throwing behavior

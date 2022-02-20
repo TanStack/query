@@ -80,7 +80,9 @@ export function useMutation<
   const options = parseMutationArgs(arg1, arg2, arg3)
   const queryClient = useQueryClient()
 
-  const obsRef = React.useRef<MutationObserver<any, any, any, any>>()
+  const obsRef = React.useRef<
+    MutationObserver<TData, TError, TVariables, TContext>
+  >()
 
   if (!obsRef.current) {
     obsRef.current = new MutationObserver(queryClient, options)
@@ -114,11 +116,9 @@ export function useMutation<
 
   if (
     currentResult.error &&
-    shouldThrowError(
-      undefined,
-      obsRef.current.options.useErrorBoundary,
-      currentResult.error
-    )
+    shouldThrowError(undefined, obsRef.current.options.useErrorBoundary, [
+      currentResult.error,
+    ])
   ) {
     throw currentResult.error
   }
