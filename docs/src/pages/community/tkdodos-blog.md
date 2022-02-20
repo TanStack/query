@@ -53,3 +53,9 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 ## [#12: Mastering Mutations in React Query](https://tkdodo.eu/blog/mastering-mutations-in-react-query)
 
 > Mutations are the important, second part necessary to work with server data - for situations where you need to update it. This blog post covers what mutations are and how they are different from queries. You'll learn the difference between `mutate` and `mutateAsync` as well as how you can tie queries and mutations together. [Read more...](https://tkdodo.eu/blog/mastering-mutations-in-react-query)
+
+
+## [#13: Offline React Query](https://tkdodo.eu/blog/offline-react-query)
+
+> You'll learn about the different offline strategies with React Query.
+[Read more...](https://tkdodo.eu/blog/offline-react-query)
