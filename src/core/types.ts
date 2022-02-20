@@ -183,10 +183,15 @@ export interface QueryObserverOptions<
    * Whether errors should be thrown instead of setting the `error` property.
    * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
    * If set to `false` and `suspense` is `false`, errors are returned as state.
-   * If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
+   * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?: boolean | ((error: TError) => boolean)
+  useErrorBoundary?:
+    | boolean
+    | ((
+        error: TError,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean)
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
