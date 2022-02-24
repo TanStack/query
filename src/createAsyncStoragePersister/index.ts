@@ -1,4 +1,5 @@
 import { PersistedClient, Persister } from '../persistQueryClient'
+import { asyncThrottle } from './asyncThrottle'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
@@ -49,44 +50,4 @@ export const createAsyncStoragePersister = ({
     },
     removeClient: () => storage.removeItem(key),
   }
-}
-
-function asyncThrottle<Args extends readonly unknown[], Result>(
-  func: (...args: Args) => Promise<Result>,
-  { interval = 1000, limit = 1 }: { interval?: number; limit?: number } = {}
-) {
-  if (typeof func !== 'function') throw new Error('argument is not function.')
-  const running = { current: false }
-  let lastTime = 0
-  let timeout: ReturnType<typeof setTimeout>
-  const queue: Array<Args> = []
-  return (...args: Args) =>
-    (async () => {
-      if (running.current) {
-        lastTime = Date.now()
-        if (queue.length > limit) {
-          queue.shift()
-        }
-
-        queue.push(args)
-        clearTimeout(timeout)
-      }
-      if (Date.now() - lastTime > interval) {
-        running.current = true
-        await func(...args)
-        lastTime = Date.now()
-        running.current = false
-      } else {
-        if (queue.length > 0) {
-          const lastArgs = queue[queue.length - 1]!
-          timeout = setTimeout(async () => {
-            if (!running.current) {
-              running.current = true
-              await func(...lastArgs)
-              running.current = false
-            }
-          }, interval)
-        }
-      }
-    })()
 }
