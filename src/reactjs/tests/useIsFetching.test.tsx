@@ -8,7 +8,7 @@ describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
 
     function Page() {
@@ -45,7 +45,7 @@ describe('useIsFetching', () => {
 
   it('should not update state while rendering', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -98,7 +98,7 @@ describe('useIsFetching', () => {
 
   it('should be able to filter', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key1 = queryKey()
     const key2 = queryKey()
 

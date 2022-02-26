@@ -1,7 +1,16 @@
 import { act, render } from '@testing-library/react'
 import React from 'react'
 
-import { MutationOptions, QueryClient, QueryClientProvider } from '../..'
+import {
+  MutationOptions,
+  QueryClient,
+  QueryClientConfig,
+  QueryClientProvider,
+} from '../..'
+
+export function createQueryClient(config?: QueryClientConfig): QueryClient {
+  return new QueryClient({ logger: mockLogger, ...config })
+}
 
 export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
   const { rerender, ...result } = render(
@@ -24,10 +33,10 @@ export function mockNavigatorOnLine(value: boolean) {
   return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
-export function mockConsoleError() {
-  const consoleMock = jest.spyOn(console, 'error')
-  consoleMock.mockImplementation(() => undefined)
-  return consoleMock
+export const mockLogger = {
+  log: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
 }
 
 let queryKeyCount = 0

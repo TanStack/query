@@ -1,15 +1,19 @@
 import { waitFor, fireEvent } from '@testing-library/react'
 import React from 'react'
-import { QueryClient } from '../../core'
 import { useIsMutating } from '../useIsMutating'
 import { useMutation } from '../useMutation'
-import { renderWithClient, setActTimeout, sleep } from './utils'
+import {
+  createQueryClient,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
 import * as MutationCacheModule from '../../core/mutationCache'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
     const isMutatings: number[] = []
-    const queryClient = new QueryClient()
+    const queryClient = createQueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating()
@@ -43,7 +47,7 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by mutationKey', async () => {
     const isMutatings: number[] = []
-    const queryClient = new QueryClient()
+    const queryClient = createQueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating(['mutation1'])
@@ -75,7 +79,7 @@ describe('useIsMutating', () => {
 
   it('should filter correctly by predicate', async () => {
     const isMutatings: number[] = []
-    const queryClient = new QueryClient()
+    const queryClient = createQueryClient()
 
     function IsMutating() {
       const isMutating = useIsMutating({
@@ -124,7 +128,7 @@ describe('useIsMutating', () => {
         return new MutationCacheMock(fn)
       })
 
-    const queryClient = new QueryClient()
+    const queryClient = createQueryClient()
 
     function IsMutating() {
       useIsMutating()

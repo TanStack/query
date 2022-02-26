@@ -85,6 +85,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   ): Mutation<TData, TError, TVariables, TContext> {
     const mutation = new Mutation({
       mutationCache: this,
+      logger: client.getLogger(),
       mutationId: ++this.mutationId,
       options: client.defaultMutationOptions(options),
       state,

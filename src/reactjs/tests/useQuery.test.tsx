@@ -6,16 +6,16 @@ import {
   expectType,
   queryKey,
   mockVisibilityState,
-  mockConsoleError,
   sleep,
   renderWithClient,
   setActTimeout,
   Blink,
   mockNavigatorOnLine,
+  mockLogger,
+  createQueryClient,
 } from './utils'
 import {
   useQuery,
-  QueryClient,
   UseQueryResult,
   QueryCache,
   QueryFunction,
@@ -25,7 +25,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = createQueryClient({ queryCache })
 
   it('should return the correct types', () => {
     const key = queryKey()
@@ -144,12 +144,6 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      if (state.isIdle) {
-        expectType<undefined>(state.data)
-        expectType<null>(state.error)
-        return <span>idle</span>
-      }
-
       if (state.isLoading) {
         expectType<undefined>(state.data)
         expectType<null>(state.error)
@@ -184,7 +178,6 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isIdle: false,
       isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -210,7 +203,6 @@ describe('useQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isIdle: false,
       isLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -228,7 +220,6 @@ describe('useQuery', () => {
 
   it('should return the correct states for an unsuccessful query', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     const states: UseQueryResult<undefined, string>[] = []
 
@@ -267,7 +258,6 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isIdle: false,
       isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -293,7 +283,6 @@ describe('useQuery', () => {
       isFetchedAfterMount: false,
       isFetching: true,
       isPaused: false,
-      isIdle: false,
       isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -319,7 +308,6 @@ describe('useQuery', () => {
       isFetchedAfterMount: true,
       isFetching: false,
       isPaused: false,
-      isIdle: false,
       isLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
@@ -333,8 +321,6 @@ describe('useQuery', () => {
       status: 'error',
       fetchStatus: 'idle',
     })
-
-    consoleMock.mockRestore()
   })
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
@@ -487,7 +473,6 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<unknown>[] = []
     const onError = jest.fn()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const state = useQuery<unknown>(key, () => Promise.reject('error'), {
@@ -504,13 +489,11 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(onError).toHaveBeenCalledTimes(1)
     expect(onError).toHaveBeenCalledWith('error')
-    consoleMock.mockRestore()
   })
 
   it('should not call onError when receiving a CancelledError', async () => {
     const key = queryKey()
     const onError = jest.fn()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { status } = useQuery(
@@ -533,7 +516,6 @@ describe('useQuery', () => {
     // query cancellation will reset the query to it's initial state
     await waitFor(() => rendered.getByText('status: idle'))
     expect(onError).not.toHaveBeenCalled()
-    consoleMock.mockRestore()
   })
 
   it('should call onSettled after a query has been fetched', async () => {
@@ -559,7 +541,6 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
     const onSettled = jest.fn()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const state = useQuery(key, () => Promise.reject('error'), {
@@ -576,7 +557,6 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
-    consoleMock.mockRestore()
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -946,7 +926,6 @@ describe('useQuery', () => {
   })
 
   it('should throw an error when a selector throws', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
     const error = new Error('Select Error')
@@ -965,13 +944,11 @@ describe('useQuery', () => {
 
     await sleep(10)
 
-    expect(consoleMock).toHaveBeenCalledWith(error)
+    expect(mockLogger.error).toHaveBeenCalledWith(error)
     expect(states.length).toBe(2)
 
     expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
     expect(states[1]).toMatchObject({ status: 'error', error })
-
-    consoleMock.mockRestore()
   })
 
   it('should track properties and only re-render when a tracked property changes', async () => {
@@ -1512,7 +1489,6 @@ describe('useQuery', () => {
 
   it('should transition to error state when keepPreviousData is set', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
     const states: UseQueryResult<number>[] = []
 
     function Page({ count }: { count: number }) {
@@ -1614,8 +1590,6 @@ describe('useQuery', () => {
       isPreviousData: false,
     })
     expect(states[7]?.error).toHaveProperty('message', 'Error test')
-
-    consoleMock.mockRestore()
   })
 
   it('should not show initial data from next query if keepPreviousData is set', async () => {
@@ -2415,7 +2389,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/170
-  it('should start with status idle if enabled is false', async () => {
+  it('should start with status loading, fetchStatus idle if enabled is false', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
@@ -2427,8 +2401,12 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>First Status: {first.status}</div>
-          <div>Second Status: {second.status}</div>
+          <div>
+            First Status: {first.status}, {first.fetchStatus}
+          </div>
+          <div>
+            Second Status: {second.status}, {second.fetchStatus}
+          </div>
         </div>
       )
     }
@@ -2437,9 +2415,9 @@ describe('useQuery', () => {
 
     // use "act" to wait for state update and prevent console warning
 
-    rendered.getByText('First Status: idle')
-    await waitFor(() => rendered.getByText('Second Status: loading'))
-    await waitFor(() => rendered.getByText('Second Status: success'))
+    rendered.getByText('First Status: loading, idle')
+    await waitFor(() => rendered.getByText('Second Status: loading, fetching'))
+    await waitFor(() => rendered.getByText('Second Status: success, idle'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/144
@@ -2676,7 +2654,6 @@ describe('useQuery', () => {
 
   it('should set status to error if queryFn throws', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { status, error } = useQuery<undefined, string>(
@@ -2699,13 +2676,10 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error'))
     await waitFor(() => rendered.getByText('Error test jaylen'))
-
-    consoleMock.mockRestore()
   })
 
   it('should throw error if queryFn throws and useErrorBoundary is in use', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { status, error } = useQuery<undefined, string>(
@@ -2730,8 +2704,6 @@ describe('useQuery', () => {
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
-
-    consoleMock.mockRestore()
   })
 
   it('should update with data if we observe no properties and useErrorBoundary', async () => {
@@ -2760,7 +2732,6 @@ describe('useQuery', () => {
 
   it('should set status to error instead of throwing when error should not be thrown', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { status, error } = useQuery<undefined, string>(
@@ -2789,13 +2760,10 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error'))
     await waitFor(() => rendered.getByText('Local Error'))
-
-    consoleMock.mockRestore()
   })
 
   it('should throw error instead of setting status when error should be thrown', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { status, error } = useQuery<undefined, string>(
@@ -2831,13 +2799,10 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('error boundary'))
     await waitFor(() => rendered.getByText('Remote Error'))
-
-    consoleMock.mockRestore()
   })
 
   it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
     let count = 0
 
     function Page() {
@@ -2882,13 +2847,10 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('error: some error'))
 
     expect(count).toBe(3)
-
-    consoleMock.mockRestore()
   })
 
   it('should restart when observers unmount and remount while waiting for a retry when query was cancelled in between (#3031)', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
     let count = 0
 
     function Page() {
@@ -2938,8 +2900,6 @@ describe('useQuery', () => {
 
     // initial fetch (1), which will be cancelled, followed by new mount(2) + 2 retries = 4
     expect(count).toBe(4)
-
-    consoleMock.mockRestore()
   })
 
   it('should always fetch if refetchOnMount is set to always', async () => {
@@ -3148,7 +3108,6 @@ describe('useQuery', () => {
 
   it('should retry specified number of times', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     const queryFn = jest.fn()
     queryFn.mockImplementation(() => {
@@ -3178,13 +3137,10 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Failed 2 times'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
-    consoleMock.mockRestore()
   })
 
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     const queryFn = jest.fn()
 
@@ -3224,12 +3180,10 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('NoRetry'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
-    consoleMock.mockRestore()
   })
 
   it('should extract retryDelay from error', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     type DelayError = { delay: number }
 
@@ -3261,14 +3215,11 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Failed 2 times'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
-    consoleMock.mockRestore()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/160
   it('should continue retry after focus regain', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     // make page unfocused
     const visibilityMock = mockVisibilityState('hidden')
@@ -3324,9 +3275,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('failureCount 4'))
 
     // Check if the error has been logged in the console
-    expect(consoleMock).toHaveBeenCalledWith('fetching error 4')
-
-    consoleMock.mockRestore()
+    expect(mockLogger.error).toHaveBeenCalledWith('fetching error 4')
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {
@@ -3363,7 +3312,6 @@ describe('useQuery', () => {
   it('should refetch after focus regain', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const consoleMock = mockConsoleError()
 
     // make page unfocused
     const visibilityMock = mockVisibilityState('hidden')
@@ -3418,8 +3366,6 @@ describe('useQuery', () => {
         isStale: true,
       },
     ])
-
-    consoleMock.mockRestore()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/195
@@ -3490,8 +3436,6 @@ describe('useQuery', () => {
   it('should reset failureCount on successful fetch', async () => {
     const key = queryKey()
 
-    const consoleMock = mockConsoleError()
-
     function Page() {
       let counter = 0
 
@@ -3519,8 +3463,6 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('failureCount 2'))
     await waitFor(() => rendered.getByText('failureCount 0'))
-
-    consoleMock.mockRestore()
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/199
@@ -3584,7 +3526,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>Status: {query.status}</div>
+          <div>FetchStatus: {query.fetchStatus}</div>
           <h2>Data: {query.data || 'no data'}</h2>
           {query.isStale ? (
             <button onClick={() => setShouldFetch(true)}>fetch</button>
@@ -3595,14 +3537,14 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    rendered.getByText('Status: idle')
+    rendered.getByText('FetchStatus: idle')
     rendered.getByText('Data: no data')
 
     fireEvent.click(rendered.getByText('fetch'))
 
-    await waitFor(() => rendered.getByText('Status: loading'))
+    await waitFor(() => rendered.getByText('FetchStatus: fetching'))
     await waitFor(() => [
-      rendered.getByText('Status: success'),
+      rendered.getByText('FetchStatus: idle'),
       rendered.getByText('Data: data'),
     ])
   })
@@ -3684,23 +3626,23 @@ describe('useQuery', () => {
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
-      const { status } = useQuery({
+      const { fetchStatus } = useQuery({
         queryKey: key,
         queryFn,
         enabled: false,
       })
-      return <div>status: {status}</div>
+      return <div>fetchStatus: {fetchStatus}</div>
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
     expect(queryFn).not.toHaveBeenCalled()
     expect(queryCache.find(key)).not.toBeUndefined()
-    rendered.getByText('status: idle')
+    rendered.getByText('fetchStatus: idle')
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:idle when enabled is falsey', async () => {
+  test('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3710,14 +3652,16 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>status: {query.status}</div>
+          <div>
+            status: {query.status}, {query.fetchStatus}
+          </div>
         </div>
       )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status: idle'))
+    await waitFor(() => rendered.getByText('status: loading, idle'))
   })
 
   test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
@@ -4376,7 +4320,8 @@ describe('useQuery', () => {
     if (typeof AbortSignal === 'function') {
       expect(queryCache.find([key, 1])?.state).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
     } else {
       expect(queryCache.find([key, 1])?.state).toMatchObject({
@@ -4395,7 +4340,8 @@ describe('useQuery', () => {
     if (typeof AbortSignal === 'function') {
       expect(queryCache.find([key, 3])?.state).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
     } else {
       expect(queryCache.find([key, 3])?.state).toMatchObject({
@@ -4569,7 +4515,7 @@ describe('useQuery', () => {
 
     expect(states[0]).toMatchObject({
       data: undefined,
-      isLoading: false,
+      isLoading: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -4590,7 +4536,7 @@ describe('useQuery', () => {
     })
     expect(states[3]).toMatchObject({
       data: undefined,
-      isLoading: false,
+      isLoading: true,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -4626,8 +4572,6 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const consoleMock = mockConsoleError()
-
     const queryFn = jest.fn()
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -4682,13 +4626,9 @@ describe('useQuery', () => {
     // // change to enabled to true
     fireEvent.click(rendered.getByLabelText('retry'))
     expect(queryFn).toBeCalledTimes(2)
-
-    consoleMock.mockRestore()
   })
 
   it('should refetch when query key changed when previous status is error', async () => {
-    const consoleMock = mockConsoleError()
-
     function Page({ id }: { id: number }) {
       const { error, isLoading } = useQuery(
         [id],
@@ -4745,13 +4685,9 @@ describe('useQuery', () => {
     // change to mount new query
     fireEvent.click(rendered.getByLabelText('change'))
     await waitFor(() => rendered.getByText('error'))
-
-    consoleMock.mockRestore()
   })
 
   it('should refetch when query key changed when switching between erroneous queries', async () => {
-    const consoleMock = mockConsoleError()
-
     function Page({ id }: { id: boolean }) {
       const { error, isFetching } = useQuery(
         [id],
@@ -4806,12 +4742,9 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByLabelText('change'))
     await waitFor(() => rendered.getByText('status: fetching'))
     await waitFor(() => rendered.getByText('error'))
-
-    consoleMock.mockRestore()
   })
 
   it('should have no error in loading state when refetching after error occurred', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
     const error = new Error('oops')
@@ -4882,8 +4815,6 @@ describe('useQuery', () => {
       data: 5,
       error: null,
     })
-
-    consoleMock.mockRestore()
   })
 
   describe('networkMode online', () => {
@@ -5226,7 +5157,6 @@ describe('useQuery', () => {
 
     it('online queries should pause retries if you are offline', async () => {
       const key = queryKey()
-      const consoleMock = mockConsoleError()
       let count = 0
 
       function Page() {
@@ -5281,7 +5211,6 @@ describe('useQuery', () => {
       expect(count).toBe(3)
 
       onlineMock.mockRestore()
-      consoleMock.mockRestore()
     })
 
     it('online queries should fetch if paused and we go online even if already unmounted (because not cancelled)', async () => {
@@ -5384,7 +5313,9 @@ describe('useQuery', () => {
 
       fireEvent.click(rendered.getByRole('button', { name: /cancel/i }))
 
-      await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: idle')
+      )
 
       expect(count).toBe(0)
 
@@ -5393,7 +5324,9 @@ describe('useQuery', () => {
 
       await sleep(15)
 
-      await waitFor(() => rendered.getByText('status: idle, fetchStatus: idle'))
+      await waitFor(() =>
+        rendered.getByText('status: loading, fetchStatus: idle')
+      )
 
       expect(count).toBe(0)
 
@@ -5517,7 +5450,6 @@ describe('useQuery', () => {
 
     it('always queries should not pause retries', async () => {
       const onlineMock = mockNavigatorOnLine(false)
-      const consoleMock = mockConsoleError()
 
       const key = queryKey()
       let count = 0
@@ -5557,14 +5489,12 @@ describe('useQuery', () => {
 
       expect(count).toBe(2)
 
-      consoleMock.mockRestore()
       onlineMock.mockRestore()
     })
   })
 
   describe('networkMode offlineFirst', () => {
     it('offlineFirst queries should start fetching if you are offline, but pause retries', async () => {
-      const consoleMock = mockConsoleError()
       const onlineMock = mockNavigatorOnLine(false)
 
       const key = queryKey()
@@ -5613,7 +5543,6 @@ describe('useQuery', () => {
       expect(count).toBe(3)
 
       onlineMock.mockRestore()
-      consoleMock.mockRestore()
     })
   })
 })

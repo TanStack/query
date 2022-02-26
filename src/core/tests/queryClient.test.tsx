@@ -5,8 +5,9 @@ import React from 'react'
 import {
   sleep,
   queryKey,
-  mockConsoleError,
   renderWithClient,
+  mockLogger,
+  createQueryClient,
 } from '../../reactjs/tests/utils'
 import {
   useQuery,
@@ -23,7 +24,7 @@ describe('queryClient', () => {
   let queryCache: QueryCache
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
@@ -37,7 +38,7 @@ describe('queryClient', () => {
       const key = queryKey()
 
       const queryFn = () => 'data'
-      const testClient = new QueryClient({
+      const testClient = createQueryClient({
         defaultOptions: { queries: { queryFn } },
       })
 
@@ -47,7 +48,7 @@ describe('queryClient', () => {
     test('should merge defaultOptions when query is added to cache', async () => {
       const key = queryKey()
 
-      const testClient = new QueryClient({
+      const testClient = createQueryClient({
         defaultOptions: {
           queries: { cacheTime: Infinity },
         },
@@ -62,7 +63,7 @@ describe('queryClient', () => {
     test('should get defaultOptions', async () => {
       const queryFn = () => 'data'
       const defaultOptions = { queries: { queryFn } }
-      const testClient = new QueryClient({
+      const testClient = createQueryClient({
         defaultOptions,
       })
       expect(testClient.getDefaultOptions()).toMatchObject(defaultOptions)
@@ -97,7 +98,6 @@ describe('queryClient', () => {
     })
 
     test('should not match if the query key is a subset', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       queryClient.setQueryDefaults([key, 'a'], { queryFn: () => 'data' })
       const observer = new QueryObserver(queryClient, {
@@ -107,7 +107,6 @@ describe('queryClient', () => {
       })
       const { status } = await observer.refetch()
       expect(status).toBe('error')
-      consoleMock.mockRestore()
     })
 
     test('should also set defaults for observers', async () => {
@@ -119,7 +118,8 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: [key],
       })
-      expect(observer.getCurrentResult().status).toBe('idle')
+      expect(observer.getCurrentResult().status).toBe('loading')
+      expect(observer.getCurrentResult().fetchStatus).toBe('idle')
     })
 
     test('should update existing query defaults', async () => {
@@ -133,9 +133,6 @@ describe('queryClient', () => {
 
     test('should warn in dev if several query defaults match a given key', () => {
       // Check discussion here: https://github.com/tannerlinsley/react-query/discussions/3199
-      const consoleErrorMock = jest.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => true)
-
       const keyABCD = [
         {
           a: 'a',
@@ -171,7 +168,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(consoleErrorMock).not.toHaveBeenCalled()
+      expect(mockLogger.error).not.toHaveBeenCalled()
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
@@ -180,10 +177,10 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
-      const newQueryClient = new QueryClient()
+      const newQueryClient = createQueryClient()
       // The defaults for key ABC (more generic) are registered **before** the ones of key ABCD…
       newQueryClient.setQueryDefaults(keyABC, defaultsOfABC)
       newQueryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
@@ -191,16 +188,11 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(consoleErrorMock).toHaveBeenCalledTimes(2)
-
-      consoleErrorMock.mockRestore()
+      expect(mockLogger.error).toHaveBeenCalledTimes(2)
     })
 
     test('should warn in dev if several mutation defaults match a given key', () => {
       // Check discussion here: https://github.com/tannerlinsley/react-query/discussions/3199
-      const consoleErrorMock = jest.spyOn(console, 'error')
-      consoleErrorMock.mockImplementation(() => true)
-
       const keyABCD = [
         {
           a: 'a',
@@ -232,7 +224,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(consoleErrorMock).not.toHaveBeenCalled()
+      expect(mockLogger.error).not.toHaveBeenCalled()
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
@@ -241,10 +233,10 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(consoleErrorMock).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledTimes(1)
 
       // Let's create another queryClient and change the order of registration
-      const newQueryClient = new QueryClient()
+      const newQueryClient = createQueryClient()
       // The defaults for key ABC (more generic) are registered **before** the ones of key ABCD…
       newQueryClient.setMutationDefaults(keyABC, defaultsOfABC)
       newQueryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
@@ -252,9 +244,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getMutationDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(consoleErrorMock).toHaveBeenCalledTimes(2)
-
-      consoleErrorMock.mockRestore()
+      expect(mockLogger.error).toHaveBeenCalledTimes(2)
     })
   })
 
@@ -280,7 +270,7 @@ describe('queryClient', () => {
 
     test('should use default options', () => {
       const key = queryKey()
-      const testClient = new QueryClient({
+      const testClient = createQueryClient({
         defaultOptions: { queries: { queryKeyHashFn: () => 'someKey' } },
       })
       const testCache = testClient.getQueryCache()
@@ -537,8 +527,6 @@ describe('queryClient', () => {
 
     // https://github.com/tannerlinsley/react-query/issues/652
     test('should not retry by default', async () => {
-      const consoleMock = mockConsoleError()
-
       const key = queryKey()
 
       await expect(
@@ -546,8 +534,6 @@ describe('queryClient', () => {
           throw new Error('error')
         })
       ).rejects.toEqual(new Error('error'))
-
-      consoleMock.mockRestore()
     })
 
     test('should return the cached data on cache hit', async () => {
@@ -735,8 +721,6 @@ describe('queryClient', () => {
     })
 
     test('should return undefined when an error is thrown', async () => {
-      const consoleMock = mockConsoleError()
-
       const key = queryKey()
 
       const result = await queryClient.prefetchQuery(
@@ -750,9 +734,7 @@ describe('queryClient', () => {
       )
 
       expect(result).toBeUndefined()
-      expect(consoleMock).toHaveBeenCalled()
-
-      consoleMock.mockRestore()
+      expect(mockLogger.error).toHaveBeenCalled()
     })
 
     test('should be garbage collected after cacheTime if unused', async () => {
@@ -793,7 +775,6 @@ describe('queryClient', () => {
 
   describe('cancelQueries', () => {
     test('should revert queries to their previous state', async () => {
-      const consoleMock = mockConsoleError()
       const key1 = queryKey()
       const key2 = queryKey()
       const key3 = queryKey()
@@ -835,13 +816,12 @@ describe('queryClient', () => {
       })
       expect(state3).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
-      consoleMock.mockRestore()
     })
 
     test('should not revert if revert option is set to false', async () => {
-      const consoleMock = mockConsoleError()
       const key1 = queryKey()
       await queryClient.fetchQuery(key1, async () => {
         return 'data'
@@ -856,7 +836,6 @@ describe('queryClient', () => {
       expect(state1).toMatchObject({
         status: 'error',
       })
-      consoleMock.mockRestore()
     })
   })
 
@@ -1060,7 +1039,6 @@ describe('queryClient', () => {
     })
 
     test('should throw an error if throwOnError option is set to true', async () => {
-      const consoleMock = mockConsoleError()
       const key1 = queryKey()
       const queryFnError = () => Promise.reject('error')
       try {
@@ -1080,7 +1058,6 @@ describe('queryClient', () => {
         error = err
       }
       expect(error).toEqual('error')
-      consoleMock.mockRestore()
     })
   })
 
@@ -1273,7 +1250,8 @@ describe('queryClient', () => {
 
       expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
-      expect(state?.status).toEqual('idle')
+      expect(state?.status).toEqual('loading')
+      expect(state?.fetchStatus).toEqual('idle')
     })
 
     test('should reset query data to initial data if set', async () => {
@@ -1413,7 +1391,7 @@ describe('queryClient', () => {
 
   describe('focusManager and onlineManager', () => {
     test('should notify queryCache and mutationCache if focused', async () => {
-      const testClient = new QueryClient()
+      const testClient = createQueryClient()
       testClient.mount()
 
       const queryCacheOnFocusSpy = jest.spyOn(
@@ -1446,7 +1424,7 @@ describe('queryClient', () => {
     })
 
     test('should notify queryCache and mutationCache if online', async () => {
-      const testClient = new QueryClient()
+      const testClient = createQueryClient()
       testClient.mount()
 
       const queryCacheOnFocusSpy = jest.spyOn(

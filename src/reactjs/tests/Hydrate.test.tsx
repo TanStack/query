@@ -2,7 +2,6 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import {
-  QueryClient,
   QueryClientProvider,
   QueryCache,
   useQuery,
@@ -10,7 +9,7 @@ import {
   useHydrate,
   Hydrate,
 } from '../..'
-import { sleep } from './utils'
+import { createQueryClient, sleep } from './utils'
 import * as coreModule from '../../core/index'
 
 describe('React hydration', () => {
@@ -21,7 +20,7 @@ describe('React hydration', () => {
 
   beforeAll(async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(['string'], () => dataQuery(['string']))
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
@@ -32,7 +31,7 @@ describe('React hydration', () => {
     test('should hydrate queries to the cache on context', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
 
       function Page() {
         useHydrate(dehydratedState)
@@ -60,7 +59,7 @@ describe('React hydration', () => {
     test('should hydrate new queries if queries change', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
 
       function Page({ queryKey }: { queryKey: [string] }) {
         const { data } = useQuery(queryKey, () => dataQuery(queryKey))
@@ -83,7 +82,7 @@ describe('React hydration', () => {
       rendered.getByText('string')
 
       const intermediateCache = new QueryCache()
-      const intermediateClient = new QueryClient({
+      const intermediateClient = createQueryClient({
         queryCache: intermediateCache,
       })
       await intermediateClient.prefetchQuery(['string'], () =>
@@ -117,7 +116,7 @@ describe('React hydration', () => {
     test('should hydrate queries to new cache if cache changes', async () => {
       const dehydratedState = JSON.parse(stringifiedState)
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
 
       function Page() {
         const { data } = useQuery(['string'], () => dataQuery(['string']))
@@ -140,7 +139,7 @@ describe('React hydration', () => {
       rendered.getByText('string')
 
       const newClientQueryCache = new QueryCache()
-      const newClientQueryClient = new QueryClient({
+      const newClientQueryClient = createQueryClient({
         queryCache: newClientQueryCache,
       })
 
@@ -162,7 +161,7 @@ describe('React hydration', () => {
 
   test('should not hydrate queries if state is null', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
 
     const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
 
@@ -185,7 +184,7 @@ describe('React hydration', () => {
 
   test('should not hydrate queries if state is undefined', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
 
     const hydrateSpy = jest.spyOn(coreModule, 'hydrate')
 

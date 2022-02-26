@@ -2,23 +2,17 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import React from 'react'
 
-import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
-import {
-  useQuery,
-  QueryClient,
-  QueryCache,
-  QueryErrorResetBoundary,
-} from '../..'
+import { sleep, queryKey, renderWithClient, createQueryClient } from './utils'
+import { useQuery, QueryCache, QueryErrorResetBoundary } from '../..'
 
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = createQueryClient({ queryCache })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { data } = useQuery(
@@ -69,15 +63,12 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw error if query is disabled', async () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { data, status } = useQuery(
@@ -134,15 +125,12 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('status: error'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw error if query is disabled, and refetch if query becomes enabled again', async () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
@@ -200,17 +188,13 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
-
-    consoleMock.mockRestore()
   })
 
   it('should throw error if query is disabled and manually refetched', async () => {
     const key = queryKey()
 
-    const consoleMock = mockConsoleError()
-
     function Page() {
-      const { data, refetch, status } = useQuery(
+      const { data, refetch, status, fetchStatus } = useQuery(
         key,
         async () => {
           throw new Error('Error')
@@ -225,7 +209,9 @@ describe('QueryErrorResetBoundary', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          <div>status: {status}</div>
+          <div>
+            status: {status}, fetchStatus: {fetchStatus}
+          </div>
           <div>{data}</div>
         </div>
       )
@@ -259,15 +245,12 @@ describe('QueryErrorResetBoundary', () => {
     await waitFor(() => rendered.getByText('status: idle'))
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('error boundary'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not retry fetch if the reset error boundary has not been reset', async () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { data } = useQuery(
@@ -317,15 +300,12 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('error boundary'))
-
-    consoleMock.mockRestore()
   })
 
   it('should retry fetch if the reset error boundary has been reset and the query contains data from a previous fetch', async () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { data } = useQuery(
@@ -377,8 +357,6 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not retry fetch if the reset error boundary has not been reset after a previous reset', async () => {
@@ -386,7 +364,6 @@ describe('QueryErrorResetBoundary', () => {
 
     let succeed = false
     let shouldReset = true
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { data } = useQuery(
@@ -445,13 +422,10 @@ describe('QueryErrorResetBoundary', () => {
     shouldReset = false
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('error boundary'))
-
-    consoleMock.mockRestore()
   })
 
   it('should throw again on error after the reset error boundary has been reset', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
     let fetchCount = 0
 
     function Page() {
@@ -503,13 +477,10 @@ describe('QueryErrorResetBoundary', () => {
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('error boundary'))
     expect(fetchCount).toBe(3)
-
-    consoleMock.mockRestore()
   })
 
   it('should never render the component while the query is in error state', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
     let fetchCount = 0
     let renders = 0
 
@@ -570,8 +541,6 @@ describe('QueryErrorResetBoundary', () => {
     await waitFor(() => rendered.getByText('data'))
     expect(fetchCount).toBe(3)
     expect(renders).toBe(1)
-
-    consoleMock.mockRestore()
   })
 
   it('should render children', async () => {
@@ -597,7 +566,6 @@ describe('QueryErrorResetBoundary', () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       const { data } = useQuery(
@@ -648,7 +616,5 @@ describe('QueryErrorResetBoundary', () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('data'))
-
-    consoleMock.mockRestore()
   })
 })

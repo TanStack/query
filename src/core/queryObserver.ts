@@ -21,7 +21,6 @@ import type { Query, QueryState, Action, FetchOptions } from './query'
 import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
-import { getLogger } from './logger'
 import { canFetch, isCancelledError } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
@@ -471,7 +470,7 @@ export class QueryObserver<
           this.previousSelectError = null
         } catch (selectError) {
           if (process.env.NODE_ENV !== 'production') {
-            getLogger().error(selectError)
+            this.client.getLogger().error(selectError)
           }
           error = selectError as TError
           this.previousSelectError = selectError as TError
@@ -489,7 +488,7 @@ export class QueryObserver<
     if (
       typeof options.placeholderData !== 'undefined' &&
       typeof data === 'undefined' &&
-      (status === 'loading' || status === 'idle')
+      status === 'loading'
     ) {
       let placeholderData
 
@@ -516,7 +515,7 @@ export class QueryObserver<
             this.previousSelectError = null
           } catch (selectError) {
             if (process.env.NODE_ENV !== 'production') {
-              getLogger().error(selectError)
+              this.client.getLogger().error(selectError)
             }
             error = selectError as TError
             this.previousSelectError = selectError as TError
@@ -541,7 +540,6 @@ export class QueryObserver<
       isLoading: status === 'loading',
       isSuccess: status === 'success',
       isError: status === 'error',
-      isIdle: status === 'idle',
       data,
       dataUpdatedAt,
       error,

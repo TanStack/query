@@ -4,15 +4,14 @@ import React from 'react'
 import {
   queryKey,
   sleep,
-  mockConsoleError,
   renderWithClient,
   setActTimeout,
   Blink,
+  createQueryClient,
 } from './utils'
 import {
   useInfiniteQuery,
   UseInfiniteQueryResult,
-  QueryClient,
   QueryCache,
   QueryFunctionContext,
   InfiniteData,
@@ -44,7 +43,7 @@ const fetchItems = async (
 
 describe('useInfiniteQuery', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = createQueryClient({ queryCache })
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
@@ -84,7 +83,6 @@ describe('useInfiniteQuery', () => {
       isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
-      isIdle: false,
       isLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -116,7 +114,6 @@ describe('useInfiniteQuery', () => {
       isPaused: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
-      isIdle: false,
       isLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
@@ -133,7 +130,6 @@ describe('useInfiniteQuery', () => {
   })
 
   it('should not throw when fetchNextPage returns an error', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let noThrow: boolean
 
@@ -172,7 +168,6 @@ describe('useInfiniteQuery', () => {
     renderWithClient(queryClient, <Page />)
 
     await waitFor(() => expect(noThrow).toBe(true))
-    consoleMock.mockRestore()
   })
 
   it('should keep the previous data when keepPreviousData is set', async () => {

@@ -9,7 +9,7 @@ Since React Query is most often used for data fetching in combination with data 
 
 ## Network Mode: online
 
-In this mode, Queries and Mutations will not fire unless you have network connection. This is the default mode. If a fetch is initiated for a query, it will always stay in the `state` (`loading`, `idle`, `error`, `success`) it is in if the fetch cannot be made because there is no network connection. However, a `fetchStatus` is exposed additionally. This can be either:
+In this mode, Queries and Mutations will not fire unless you have network connection. This is the default mode. If a fetch is initiated for a query, it will always stay in the `state` (`loading`, `error`, `success`) it is in if the fetch cannot be made because there is no network connection. However, a [fetchStatus](./queries#fetchstatus) is exposed additionally. This can be either:
 
 - `fetching`: The `queryFn` is really executing - a request is in-flight.
 - `paused`: The query is not executing - it is `paused` until you have connection again
@@ -41,6 +41,6 @@ The [React Query Devtools](../devtools) will show Queries in a `paused` state if
 
 ## Signature
 
-- `networkMode: 'online' | 'always' | 'offlineFirst`
+- `networkMode: 'online' | 'always' | 'offlineFirst'`
   - optional
   - defaults to `'online'`

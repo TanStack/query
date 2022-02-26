@@ -95,7 +95,7 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (defaultedOptions.suspense && result.isLoading) {
+  if (defaultedOptions.suspense && result.isLoading && result.isFetching) {
     throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {

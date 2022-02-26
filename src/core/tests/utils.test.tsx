@@ -7,40 +7,10 @@ import {
   scheduleMicrotask,
   sleep,
 } from '../utils'
-import { QueryClient, QueryCache, setLogger, Logger } from '../..'
-import { queryKey } from '../../reactjs/tests/utils'
 import { Mutation } from '../mutation'
+import { createQueryClient } from '../../reactjs/tests/utils'
 
 describe('core/utils', () => {
-  it('setLogger should override the default logger', async () => {
-    const key = queryKey()
-
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
-    const logger: Logger = {
-      error: jest.fn(),
-      log: jest.fn(),
-      warn: jest.fn(),
-    }
-
-    setLogger(logger)
-
-    await queryClient.prefetchQuery(
-      key,
-      async () => {
-        throw new Error('Test')
-      },
-      {
-        retry: 0,
-      }
-    )
-
-    expect(logger.error).toHaveBeenCalled()
-
-    setLogger(console)
-  })
-
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toEqual(true)
@@ -349,7 +319,7 @@ describe('core/utils', () => {
   describe('matchMutation', () => {
     it('should return false if mutationKey options is undefined', () => {
       const filters = { mutationKey: ['key1'] }
-      const queryClient = new QueryClient()
+      const queryClient = createQueryClient()
       const mutation = new Mutation({
         mutationId: 1,
         mutationCache: queryClient.getMutationCache(),
