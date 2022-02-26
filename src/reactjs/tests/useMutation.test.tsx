@@ -924,12 +924,13 @@ describe('useMutation', () => {
   test('should go to error state if onError callback errors', async () => {
     const consoleMock = mockConsoleError()
     const error = new Error('error from onError')
+    const mutateFnError = new Error('mutateFnError')
 
     function Page() {
       const mutation = useMutation(
         async (_text: string) => {
           await sleep(10)
-          throw new Error('something')
+          throw mutateFnError
         },
         {
           onError: () => Promise.reject(error),
@@ -954,7 +955,7 @@ describe('useMutation', () => {
 
     rendered.getByRole('button', { name: /mutate/i }).click()
 
-    await rendered.findByText('error: error from onError, status: error')
+    await rendered.findByText('error: mutateFnError, status: error')
 
     consoleMock.mockRestore()
   })
@@ -973,6 +974,7 @@ describe('useMutation', () => {
         },
         {
           onSettled: () => Promise.reject(error),
+          onError,
         }
       )
 
@@ -994,7 +996,7 @@ describe('useMutation', () => {
 
     rendered.getByRole('button', { name: /mutate/i }).click()
 
-    await rendered.findByText('error: error from onSettled, status: error')
+    await rendered.findByText('error: mutateFnError, status: error')
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
     consoleMock.mockRestore()
