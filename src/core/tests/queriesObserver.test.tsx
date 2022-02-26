@@ -1,12 +1,15 @@
 import { waitFor } from '@testing-library/react'
-import { sleep, queryKey } from '../../reactjs/tests/utils'
+import {
+  sleep,
+  queryKey,
+  createQueryClient,
+  mockLogger,
+} from '../../reactjs/tests/utils'
 import {
   QueryClient,
   QueriesObserver,
   QueryObserverResult,
   QueryObserver,
-  Logger,
-  setLogger,
 } from '../..'
 import { QueryKey } from '..'
 
@@ -14,7 +17,7 @@ describe('queriesObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -41,14 +44,6 @@ describe('queriesObserver', () => {
   })
 
   test('should still return value for undefined query key', async () => {
-    const logger: Logger = {
-      error: jest.fn(),
-      log: jest.fn(),
-      warn: jest.fn(),
-    }
-
-    setLogger(logger)
-
     const key1 = queryKey()
     const queryFn1 = jest.fn().mockReturnValue(1)
     const queryFn2 = jest.fn().mockReturnValue(2)
@@ -64,8 +59,7 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(logger.error).toHaveBeenCalledTimes(1)
-    setLogger(console)
+    expect(mockLogger.error).toHaveBeenCalledTimes(1)
   })
 
   test('should update when a query updates', async () => {

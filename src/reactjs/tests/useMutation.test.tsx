@@ -3,10 +3,10 @@ import '@testing-library/jest-dom'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { useMutation, QueryClient, QueryCache, MutationCache } from '../..'
+import { useMutation, QueryCache, MutationCache } from '../..'
 import { UseMutationResult } from '../types'
 import {
-  mockConsoleError,
+  createQueryClient,
   mockNavigatorOnLine,
   queryKey,
   renderWithClient,
@@ -17,7 +17,7 @@ import {
 describe('useMutation', () => {
   const queryCache = new QueryCache()
   const mutationCache = new MutationCache()
-  const queryClient = new QueryClient({ queryCache, mutationCache })
+  const queryClient = createQueryClient({ queryCache, mutationCache })
 
   it('should be able to reset `data`', async () => {
     function Page() {
@@ -52,8 +52,6 @@ describe('useMutation', () => {
   })
 
   it('should be able to reset `error`', async () => {
-    const consoleMock = mockConsoleError()
-
     function Page() {
       const { mutate, error, reset } = useMutation<string, Error>(() => {
         const err = new Error('Expected mock error. All is well!')
@@ -88,8 +86,6 @@ describe('useMutation', () => {
     fireEvent.click(getByText('reset'))
 
     await waitFor(() => expect(queryByTestId('error')).toBeNull())
-
-    consoleMock.mockRestore()
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
@@ -142,8 +138,6 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
-    const consoleMock = mockConsoleError()
-
     const onErrorMock = jest.fn()
     const onSettledMock = jest.fn()
     let count = 0
@@ -208,8 +202,6 @@ describe('useMutation', () => {
     )
 
     expect(getByTestId('title').textContent).toBe('3')
-
-    consoleMock.mockRestore()
   })
 
   it('should be able to override the useMutation success callbacks', async () => {
@@ -258,8 +250,6 @@ describe('useMutation', () => {
   })
 
   it('should be able to override the error callbacks when using mutateAsync', async () => {
-    const consoleMock = mockConsoleError()
-
     const callbacks: string[] = []
 
     function Page() {
@@ -306,8 +296,6 @@ describe('useMutation', () => {
       'mutateAsync.onSettled',
       'mutateAsync.error:oops',
     ])
-
-    consoleMock.mockRestore()
   })
 
   it('should be able to use mutation defaults', async () => {
@@ -346,8 +334,6 @@ describe('useMutation', () => {
   })
 
   it('should be able to retry a failed mutation', async () => {
-    const consoleMock = mockConsoleError()
-
     let count = 0
 
     function Page() {
@@ -376,12 +362,9 @@ describe('useMutation', () => {
     await sleep(100)
 
     expect(count).toBe(2)
-
-    consoleMock.mockRestore()
   })
 
   it('should not retry mutations while offline', async () => {
-    const consoleMock = mockConsoleError()
     const onlineMock = mockNavigatorOnLine(false)
 
     let count = 0
@@ -441,7 +424,6 @@ describe('useMutation', () => {
 
     expect(count).toBe(2)
 
-    consoleMock.mockRestore()
     onlineMock.mockRestore()
   })
 
@@ -541,7 +523,6 @@ describe('useMutation', () => {
   })
 
   it('should be able to retry a mutation when online', async () => {
-    const consoleMock = mockConsoleError()
     const onlineMock = mockNavigatorOnLine(false)
 
     let count = 0
@@ -617,7 +598,6 @@ describe('useMutation', () => {
       data: 'data',
     })
 
-    consoleMock.mockRestore()
     onlineMock.mockRestore()
   })
 
@@ -642,8 +622,6 @@ describe('useMutation', () => {
   })
 
   it('should be able to throw an error when useErrorBoundary is set to true', async () => {
-    const consoleMock = mockConsoleError()
-
     function Page() {
       const { mutate } = useMutation<string, Error>(
         () => {
@@ -679,17 +657,13 @@ describe('useMutation', () => {
     await waitFor(() => {
       expect(queryByText('error')).not.toBeNull()
     })
-
-    consoleMock.mockRestore()
   })
 
   it('should pass meta to mutation', async () => {
-    const consoleMock = mockConsoleError()
-
     const errorMock = jest.fn()
     const successMock = jest.fn()
 
-    const queryClientMutationMeta = new QueryClient({
+    const queryClientMutationMeta = createQueryClient({
       mutationCache: new MutationCache({
         onSuccess: (_, __, ___, mutation) => {
           successMock(mutation.meta?.metaSuccessMessage)
@@ -743,8 +717,6 @@ describe('useMutation', () => {
     expect(successMock).toHaveBeenCalledWith(metaSuccessMessage)
     expect(errorMock).toHaveBeenCalledTimes(1)
     expect(errorMock).toHaveBeenCalledWith(metaErrorMessage)
-
-    consoleMock.mockRestore()
   })
 
   it('should call cache callbacks when unmounted', async () => {

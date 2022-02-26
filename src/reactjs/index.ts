@@ -1,6 +1,5 @@
 // Side effects
 import './setBatchUpdatesFn'
-import './setLogger'
 
 export { QueryClientProvider, useQueryClient } from './QueryClientProvider'
 export {

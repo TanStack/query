@@ -6,10 +6,9 @@ import React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey } from './utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import {
   useQuery,
-  QueryClient,
   QueryClientProvider,
   QueryCache,
   useInfiniteQuery,
@@ -18,7 +17,7 @@ import {
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn().mockReturnValue('data')
 
@@ -47,7 +46,7 @@ describe('Server Side Rendering', () => {
 
   it('should add prefetched data to cache', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
     const fetchFn = () => Promise.resolve('data')
     const data = await queryClient.fetchQuery(key, fetchFn)
@@ -58,7 +57,7 @@ describe('Server Side Rendering', () => {
 
   it('should return existing data from the cache', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn(() => {
       sleep(10)
@@ -94,7 +93,7 @@ describe('Server Side Rendering', () => {
     const key = queryKey()
 
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
 
     function Page() {
       const [page, setPage] = React.useState(1)
@@ -124,7 +123,7 @@ describe('Server Side Rendering', () => {
 
   it('useInfiniteQuery should return the correct state', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
     const queryFn = jest.fn(async () => {
       await sleep(5)

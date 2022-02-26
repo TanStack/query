@@ -4,6 +4,7 @@ import React from 'react'
 import * as QueriesObserverModule from '../../core/queriesObserver'
 
 import {
+  createQueryClient,
   expectType,
   expectTypeNotAny,
   queryKey,
@@ -13,7 +14,6 @@ import {
 } from './utils'
 import {
   useQueries,
-  QueryClient,
   UseQueryResult,
   QueryCache,
   QueryObserverResult,
@@ -26,7 +26,7 @@ import { QueryFunctionContext } from '../../core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = createQueryClient({ queryCache })
 
   it('should return the correct states', async () => {
     const key1 = queryKey()

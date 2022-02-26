@@ -2,10 +2,9 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import React from 'react'
 
-import { sleep, queryKey, mockConsoleError, renderWithClient } from './utils'
+import { sleep, queryKey, renderWithClient, createQueryClient } from './utils'
 import {
   useQuery,
-  QueryClient,
   QueryCache,
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
@@ -16,7 +15,7 @@ import {
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
-  const queryClient = new QueryClient({ queryCache })
+  const queryClient = createQueryClient({ queryCache })
 
   it('should render the correct amount of times in Suspense mode', async () => {
     const key = queryKey()
@@ -265,7 +264,6 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -325,15 +323,12 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('retry'))
 
     await waitFor(() => rendered.getByText('rendered'))
-
-    consoleMock.mockRestore()
   })
 
   it('should retry fetch if the reset error boundary has been reset', async () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -390,8 +385,6 @@ describe("useQuery's in Suspense mode", () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('rendered'))
-
-    consoleMock.mockRestore()
   })
 
   it('should refetch when re-mounting', async () => {
@@ -506,7 +499,6 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     let succeed = false
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -563,14 +555,10 @@ describe("useQuery's in Suspense mode", () => {
     succeed = true
     fireEvent.click(rendered.getByText('retry'))
     await waitFor(() => rendered.getByText('rendered'))
-
-    consoleMock.mockRestore()
   })
 
   it('should throw errors to the error boundary by default', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -607,14 +595,10 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when useErrorBoundary: false', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -652,14 +636,10 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('rendered'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a useErrorBoundary function returns true', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -697,14 +677,10 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('error boundary'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not throw errors to the error boundary when a useErrorBoundary function returns false', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     function Page() {
       useQuery(
@@ -742,8 +718,6 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText('rendered'))
-
-    consoleMock.mockRestore()
   })
 
   it('should not call the queryFn when not enabled', async () => {
@@ -776,8 +750,6 @@ describe("useQuery's in Suspense mode", () => {
 
   it('should error catched in error boundary without infinite loop', async () => {
     const key = queryKey()
-
-    const consoleMock = mockConsoleError()
 
     let succeed = true
 
@@ -841,12 +813,9 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    consoleMock.mockRestore()
   })
 
   it('should error catched in error boundary without infinite loop when query keys changed', async () => {
-    const consoleMock = mockConsoleError()
-
     let succeed = true
 
     function Page() {
@@ -905,12 +874,9 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByLabelText('fail'))
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    consoleMock.mockRestore()
   })
 
   it('should error catched in error boundary without infinite loop when enabled changed', async () => {
-    const consoleMock = mockConsoleError()
-
     const succeed = false
 
     function Page() {
@@ -975,7 +941,6 @@ describe("useQuery's in Suspense mode", () => {
 
     // render error boundary fallback (error boundary)
     await waitFor(() => rendered.getByText('error boundary'))
-    consoleMock.mockRestore()
   })
 
   it('should render the correct amount of times in Suspense mode when cacheTime is set to 0', async () => {
