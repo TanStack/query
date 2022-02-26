@@ -877,8 +877,6 @@ describe("useQuery's in Suspense mode", () => {
   })
 
   it('should error catched in error boundary without infinite loop when enabled changed', async () => {
-    const succeed = false
-
     function Page() {
       const queryKeys = '1'
       const [enabled, setEnabled] = React.useState(false)
@@ -887,11 +885,7 @@ describe("useQuery's in Suspense mode", () => {
         [queryKeys],
         async () => {
           await sleep(10)
-          if (!succeed) {
-            throw new Error('Suspense Error Bingo')
-          } else {
-            return 'data'
-          }
+          throw new Error('Suspense Error Bingo')
         },
         {
           retry: false,

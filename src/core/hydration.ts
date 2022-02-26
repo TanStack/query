@@ -75,14 +75,12 @@ function defaultShouldDehydrateQuery(query: Query) {
 
 export function dehydrate(
   client: QueryClient,
-  options?: DehydrateOptions
+  options: DehydrateOptions = {}
 ): DehydratedState {
-  options = options || {}
-
   const mutations: DehydratedMutation[] = []
   const queries: DehydratedQuery[] = []
 
-  if (options?.dehydrateMutations !== false) {
+  if (options.dehydrateMutations !== false) {
     const shouldDehydrateMutation =
       options.shouldDehydrateMutation || defaultShouldDehydrateMutation
 
@@ -96,7 +94,7 @@ export function dehydrate(
       })
   }
 
-  if (options?.dehydrateQueries !== false) {
+  if (options.dehydrateQueries !== false) {
     const shouldDehydrateQuery =
       options.shouldDehydrateQuery || defaultShouldDehydrateQuery
 
@@ -125,7 +123,9 @@ export function hydrate(
   const mutationCache = client.getMutationCache()
   const queryCache = client.getQueryCache()
 
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const mutations = (dehydratedState as DehydratedState).mutations || []
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const queries = (dehydratedState as DehydratedState).queries || []
 
   mutations.forEach(dehydratedMutation => {

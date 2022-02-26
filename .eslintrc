@@ -12,6 +12,7 @@
     "es6": true
   },
   "parserOptions": {
+    "project": "./tsconfig.json",
     "sourceType": "module"
   },
   "rules": {
@@ -21,6 +22,7 @@
     "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-non-null-assertion": "off",
+    "@typescript-eslint/no-unnecessary-condition": "error",
     "@typescript-eslint/no-inferrable-types": [
       "error",
       {
