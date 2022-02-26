@@ -282,7 +282,7 @@ This is now disallowed on type level; at runtime, `undefined` will be transforme
 
 ### Supported Browsers
 
-As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements)
+As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
 ## New Features 🚀
 

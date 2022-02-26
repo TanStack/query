@@ -41,6 +41,6 @@ The [React Query Devtools](../devtools) will show Queries in a `paused` state if
 
 ## Signature
 
-- `networkMode: 'online' | 'always' | 'offlineFirst`
+- `networkMode: 'online' | 'always' | 'offlineFirst'`
   - optional
   - defaults to `'online'`

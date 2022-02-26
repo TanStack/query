@@ -44,4 +44,4 @@ iOS >= 12.0
 opera >= 53
 ```
 
-> Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from node_modules yourselves.
+> Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
