@@ -56,8 +56,7 @@ describe('useQueries', () => {
       return (
         <div>
           <div>
-            data1: {result[0].data ?? 'null'}, data2:{' '}
-            {result[1].data ?? 'null'}
+            data1: {result[0].data ?? 'null'}, data2: {result[1].data ?? 'null'}
           </div>
         </div>
       )
@@ -107,8 +106,7 @@ describe('useQueries', () => {
       return (
         <div>
           <div>
-            data1: {result[0].data ?? 'null'}, data2:{' '}
-            {result[1].data ?? 'null'}
+            data1: {result[0].data ?? 'null'}, data2: {result[1].data ?? 'null'}
           </div>
           <div>isFetching: {String(isFetching)}</div>
           <button onClick={() => setCount(prev => prev + 1)}>inc</button>
