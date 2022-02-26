@@ -496,7 +496,7 @@ describe('useQuery', () => {
     const onError = jest.fn()
 
     function Page() {
-      const { status } = useQuery(
+      const { status, fetchStatus } = useQuery(
         key,
         async () => {
           await sleep(10)
@@ -506,7 +506,11 @@ describe('useQuery', () => {
           onError,
         }
       )
-      return <span>status: {status}</span>
+      return (
+        <span>
+          status: {status}, fetchStatus: {fetchStatus}
+        </span>
+      )
     }
 
     const rendered = renderWithClient(queryClient, <Page />)
@@ -514,7 +518,9 @@ describe('useQuery', () => {
     await sleep(5)
     await queryClient.cancelQueries(key)
     // query cancellation will reset the query to it's initial state
-    await waitFor(() => rendered.getByText('status: idle'))
+    await waitFor(() =>
+      rendered.getByText('status: loading, fetchStatus: idle')
+    )
     expect(onError).not.toHaveBeenCalled()
   })
 
