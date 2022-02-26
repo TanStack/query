@@ -16,7 +16,6 @@ module.exports = {
     '@babel/react',
   ],
   plugins: [
-    'babel-plugin-transform-async-to-promises',
     cjs && ['@babel/transform-modules-commonjs', { loose }],
     [
       '@babel/transform-runtime',
