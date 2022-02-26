@@ -24,7 +24,7 @@ export function broadcastQueryClient({
   const queryCache = queryClient.getQueryCache()
 
   queryClient.getQueryCache().subscribe(queryEvent => {
-    if (transaction || !queryEvent?.query) {
+    if (transaction) {
       return
     }
 
@@ -32,10 +32,7 @@ export function broadcastQueryClient({
       query: { queryHash, queryKey, state },
     } = queryEvent
 
-    if (
-      queryEvent.type === 'updated' &&
-      queryEvent.action?.type === 'success'
-    ) {
+    if (queryEvent.type === 'updated' && queryEvent.action.type === 'success') {
       channel.postMessage({
         type: 'updated',
         queryHash,

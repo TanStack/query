@@ -196,8 +196,8 @@ describe('dehydration and rehydration', () => {
 
     // This is testing implementation details that can change and are not
     // part of the public API, but is important for keeping the payload small
-    const dehydratedQuery = dehydrated?.queries.find(
-      query => query?.queryKey[0] === 'string'
+    const dehydratedQuery = dehydrated.queries.find(
+      query => query.queryKey[0] === 'string'
     )
     expect(dehydratedQuery).toBeUndefined()
 

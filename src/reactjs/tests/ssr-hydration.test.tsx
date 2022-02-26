@@ -9,15 +9,7 @@ import {
   dehydrate,
   hydrate,
 } from '../..'
-import * as utils from '../../core/utils'
-import { createQueryClient, mockLogger, sleep } from './utils'
-
-// This monkey-patches the isServer-value from utils,
-// so that we can pretend to be in a server environment
-function setIsServer(isServer: boolean) {
-  // @ts-ignore
-  utils.isServer = isServer
-}
+import { createQueryClient, mockLogger, setIsServer, sleep } from './utils'
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
   await sleep(ms || 1)

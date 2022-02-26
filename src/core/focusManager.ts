@@ -14,7 +14,7 @@ export class FocusManager extends Subscribable {
   constructor() {
     super()
     this.setup = onFocus => {
-      if (!isServer && window?.addEventListener) {
+      if (!isServer) {
         const listener = () => onFocus()
         // Listen to visibillitychange and focus
         window.addEventListener('visibilitychange', listener, false)

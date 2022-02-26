@@ -267,12 +267,12 @@ export class QueryClient {
         query.invalidate()
       })
 
-      if (filters?.refetchType === 'none') {
+      if (filters.refetchType === 'none') {
         return Promise.resolve()
       }
       const refetchFilters: RefetchQueryFilters = {
         ...filters,
-        type: filters?.refetchType ?? filters?.type ?? 'active',
+        type: filters.refetchType ?? filters.type ?? 'active',
       }
       return this.refetchQueries(refetchFilters, options)
     })
@@ -302,7 +302,7 @@ export class QueryClient {
           query.fetch(undefined, {
             ...options,
             cancelRefetch: options?.cancelRefetch ?? true,
-            meta: { refetchPage: filters?.refetchPage },
+            meta: { refetchPage: filters.refetchPage },
           })
         )
     )

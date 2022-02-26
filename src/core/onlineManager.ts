@@ -14,7 +14,7 @@ export class OnlineManager extends Subscribable {
   constructor() {
     super()
     this.setup = onOnline => {
-      if (!isServer && window?.addEventListener) {
+      if (!isServer) {
         const listener = () => onOnline()
         // Listen to online
         window.addEventListener('online', listener, false)

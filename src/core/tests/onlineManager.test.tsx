@@ -1,5 +1,6 @@
 import { OnlineManager } from '../onlineManager'
 import { sleep } from '../utils'
+import { setIsServer } from '../../reactjs/tests/utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
@@ -56,17 +57,14 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
-  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
-    const { addEventListener } = globalThis.window
-
-    // @ts-expect-error
-    globalThis.window.addEventListener = undefined
+  test('cleanup should still be undefined if window is not defined', async () => {
+    const restoreIsServer = setIsServer(true)
 
     const unsubscribe = onlineManager.subscribe(() => undefined)
     expect(onlineManager['cleanup']).toBeUndefined()
 
     unsubscribe()
-    globalThis.window.addEventListener = addEventListener
+    restoreIsServer()
   })
 
   test('it should replace default window listener when a new event listener is set', async () => {
