@@ -9,6 +9,7 @@ import {
 } from '../..'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
+  jest.spyOn(console, 'error').mockImplementation(() => undefined)
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
