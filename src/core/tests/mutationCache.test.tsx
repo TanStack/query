@@ -1,20 +1,19 @@
 import { waitFor } from '@testing-library/react'
 import {
   queryKey,
-  mockConsoleError,
   sleep,
   executeMutation,
+  createQueryClient,
 } from '../../reactjs/tests/utils'
-import { MutationCache, MutationObserver, QueryClient } from '../..'
+import { MutationCache, MutationObserver } from '../..'
 
 describe('mutationCache', () => {
   describe('MutationCacheConfig.onError', () => {
     test('should be called when a mutation errors', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onError = jest.fn()
       const testCache = new MutationCache({ onError })
-      const testClient = new QueryClient({ mutationCache: testCache })
+      const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(testClient, {
@@ -23,9 +22,7 @@ describe('mutationCache', () => {
           mutationFn: () => Promise.reject('error'),
           onMutate: () => 'context',
         })
-      } catch {
-        consoleMock.mockRestore()
-      }
+      } catch {}
 
       const mutation = testCache.getAll()[0]
       expect(onError).toHaveBeenCalledWith('error', 'vars', 'context', mutation)
@@ -33,11 +30,10 @@ describe('mutationCache', () => {
   })
   describe('MutationCacheConfig.onSuccess', () => {
     test('should be called when a mutation is successful', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onSuccess = jest.fn()
       const testCache = new MutationCache({ onSuccess })
-      const testClient = new QueryClient({ mutationCache: testCache })
+      const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(testClient, {
@@ -46,9 +42,7 @@ describe('mutationCache', () => {
           mutationFn: () => Promise.resolve({ data: 5 }),
           onMutate: () => 'context',
         })
-      } catch {
-        consoleMock.mockRestore()
-      }
+      } catch {}
 
       const mutation = testCache.getAll()[0]
       expect(onSuccess).toHaveBeenCalledWith(
@@ -61,11 +55,10 @@ describe('mutationCache', () => {
   })
   describe('MutationCacheConfig.onMutate', () => {
     test('should be called before a mutation executes', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onMutate = jest.fn()
       const testCache = new MutationCache({ onMutate })
-      const testClient = new QueryClient({ mutationCache: testCache })
+      const testClient = createQueryClient({ mutationCache: testCache })
 
       try {
         await executeMutation(testClient, {
@@ -74,9 +67,7 @@ describe('mutationCache', () => {
           mutationFn: () => Promise.resolve({ data: 5 }),
           onMutate: () => 'context',
         })
-      } catch {
-        consoleMock.mockRestore()
-      }
+      } catch {}
 
       const mutation = testCache.getAll()[0]
       expect(onMutate).toHaveBeenCalledWith('vars', mutation)
@@ -86,7 +77,7 @@ describe('mutationCache', () => {
   describe('find', () => {
     test('should filter correctly', async () => {
       const testCache = new MutationCache()
-      const testClient = new QueryClient({ mutationCache: testCache })
+      const testClient = createQueryClient({ mutationCache: testCache })
       const key = ['mutation', 'vars']
       await executeMutation(testClient, {
         mutationKey: key,
@@ -108,7 +99,7 @@ describe('mutationCache', () => {
   describe('findAll', () => {
     test('should filter correctly', async () => {
       const testCache = new MutationCache()
-      const testClient = new QueryClient({ mutationCache: testCache })
+      const testClient = createQueryClient({ mutationCache: testCache })
       await executeMutation(testClient, {
         mutationKey: ['a', 1],
         variables: 1,
@@ -139,7 +130,7 @@ describe('mutationCache', () => {
   describe('garbage collection', () => {
     test('should remove unused mutations after cacheTime has elapsed', async () => {
       const testCache = new MutationCache()
-      const testClient = new QueryClient({ mutationCache: testCache })
+      const testClient = createQueryClient({ mutationCache: testCache })
       const onSuccess = jest.fn()
       await executeMutation(testClient, {
         mutationKey: ['a', 1],
@@ -158,7 +149,7 @@ describe('mutationCache', () => {
     })
 
     test('should not remove mutations if there are active observers', async () => {
-      const queryClient = new QueryClient()
+      const queryClient = createQueryClient()
       const observer = new MutationObserver(queryClient, {
         variables: 1,
         cacheTime: 10,
@@ -180,7 +171,7 @@ describe('mutationCache', () => {
     })
 
     test('should only remove when the last observer unsubscribes', async () => {
-      const queryClient = new QueryClient()
+      const queryClient = createQueryClient()
       const observer1 = new MutationObserver(queryClient, {
         variables: 1,
         cacheTime: 10,
@@ -220,7 +211,7 @@ describe('mutationCache', () => {
     })
 
     test('should be garbage collected later when unsubscribed and mutation is loading', async () => {
-      const queryClient = new QueryClient()
+      const queryClient = createQueryClient()
       const onSuccess = jest.fn()
       const observer = new MutationObserver(queryClient, {
         variables: 1,
@@ -247,7 +238,7 @@ describe('mutationCache', () => {
     })
 
     test('should call callbacks even with cacheTime 0 and mutation still loading', async () => {
-      const queryClient = new QueryClient()
+      const queryClient = createQueryClient()
       const onSuccess = jest.fn()
       const observer = new MutationObserver(queryClient, {
         variables: 1,

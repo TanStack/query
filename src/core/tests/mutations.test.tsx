@@ -1,7 +1,7 @@
 import { QueryClient } from '../..'
 import {
+  createQueryClient,
   executeMutation,
-  mockConsoleError,
   queryKey,
   sleep,
 } from '../../reactjs/tests/utils'
@@ -12,7 +12,7 @@ describe('mutations', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -151,8 +151,6 @@ describe('mutations', () => {
   })
 
   test('mutation should set correct error states', async () => {
-    const consoleMock = mockConsoleError()
-
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {
         await sleep(20)
@@ -243,8 +241,6 @@ describe('mutations', () => {
       status: 'error',
       variables: 'todo',
     })
-
-    consoleMock.mockRestore()
   })
 
   test('should be able to restore a mutation', async () => {
@@ -351,8 +347,6 @@ describe('mutations', () => {
   })
 
   test('mutate should throw an error if no mutationFn found', async () => {
-    const consoleMock = mockConsoleError()
-
     const mutation = new MutationObserver(queryClient, {
       mutationFn: undefined,
       retry: false,
@@ -365,7 +359,5 @@ describe('mutations', () => {
       error = err
     }
     expect(error).toEqual('No mutationFn found')
-
-    consoleMock.mockRestore()
   })
 })

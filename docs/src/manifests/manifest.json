@@ -196,6 +196,11 @@
           "editUrl": "/guides/suspense.md"
         },
         {
+          "title": "Custom Logger",
+          "path": "/guides/custom-logger",
+          "editUrl": "/guides/custom-logger.md"
+        },
+        {
           "title": "Testing",
           "path": "/guides/testing",
           "editUrl": "/guides/testing.md"
@@ -443,11 +448,6 @@
           "title": "onlineManager",
           "path": "/reference/onlineManager",
           "editUrl": "/reference/onlineManager.md"
-        },
-        {
-          "title": "setLogger",
-          "path": "/reference/setLogger",
-          "editUrl": "/reference/setLogger.md"
         },
         {
           "title": "hydration",

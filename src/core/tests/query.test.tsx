@@ -2,7 +2,8 @@ import {
   sleep,
   queryKey,
   mockVisibilityState,
-  mockConsoleError,
+  mockLogger,
+  createQueryClient,
 } from '../../reactjs/tests/utils'
 import {
   QueryCache,
@@ -21,7 +22,7 @@ describe('query', () => {
   let queryCache: QueryCache
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryCache = queryClient.getQueryCache()
     queryClient.mount()
   })
@@ -429,8 +430,6 @@ describe('query', () => {
   })
 
   test('cancelling a rejected query should not have any effect', async () => {
-    const consoleMock = mockConsoleError()
-
     const key = queryKey()
 
     await queryClient.prefetchQuery(key, async () => {
@@ -442,12 +441,9 @@ describe('query', () => {
 
     expect(isError(query.state.error)).toBe(true)
     expect(isCancelledError(query.state.error)).toBe(false)
-
-    consoleMock.mockRestore()
   })
 
   test('the previous query status should be kept when refetching', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
 
     await queryClient.prefetchQuery(key, () => 'data')
@@ -471,8 +467,6 @@ describe('query', () => {
 
     await sleep(100)
     expect(query.state.status).toBe('error')
-
-    consoleMock.mockRestore()
   })
 
   test('queries with cacheTime 0 should be removed immediately after unsubscribing', async () => {
@@ -789,7 +783,6 @@ describe('query', () => {
   })
 
   test('fetch should throw an error if the queryFn is not defined', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -800,15 +793,12 @@ describe('query', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(10)
-    expect(consoleMock).toHaveBeenCalledWith('Missing queryFn')
+    expect(mockLogger.error).toHaveBeenCalledWith('Missing queryFn')
 
     unsubscribe()
-    consoleMock.mockRestore()
   })
 
   test('fetch should dispatch an error if the queryFn returns undefined', async () => {
-    const consoleMock = mockConsoleError()
-
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -832,9 +822,8 @@ describe('query', () => {
       error,
     })
 
-    expect(consoleMock).toHaveBeenCalledWith(error)
+    expect(mockLogger.error).toHaveBeenCalledWith(error)
     unsubscribe()
-    consoleMock.mockRestore()
   })
 
   test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {

@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { queryKey, mockConsoleError } from '../../reactjs/tests/utils'
+import { createQueryClient, queryKey } from '../../reactjs/tests/utils'
 import {
   QueryClient,
   InfiniteQueryObserver,
@@ -10,7 +10,7 @@ describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -19,7 +19,6 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   test('InfiniteQueryBehavior should throw an error if the queryFn is not defined', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -43,7 +42,6 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     unsubscribe()
-    consoleMock.mockRestore()
   })
 
   test('InfiniteQueryBehavior should not refetch the first page if another page refetched', async () => {
