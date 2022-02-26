@@ -69,13 +69,14 @@ export function createRetryer<TData = unknown, TError = unknown>(
   let isRetryCancelled = false
   let failureCount = 0
   let isResolved = false
+  let continueFn: ((value?: unknown) => void) | undefined
+  let promiseResolve: (data: TData) => void
+  let promiseReject: (error: TError) => void
+
   const promise = new Promise<TData>((outerResolve, outerReject) => {
     promiseResolve = outerResolve
     promiseReject = outerReject
   })
-  let continueFn: ((value?: unknown) => void) | undefined
-  let promiseResolve: (data: TData) => void
-  let promiseReject: (error: TError) => void
 
   const cancel = (cancelOptions?: CancelOptions): void => {
     if (!isResolved) {
