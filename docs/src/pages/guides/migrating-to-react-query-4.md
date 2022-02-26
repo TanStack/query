@@ -280,6 +280,10 @@ useQuery(
 
 This is now disallowed on type level; at runtime, `undefined` will be transformed to a _failed Promise_, which means you will get an `error`, which will also be logged to the console in development mode.
 
+### Supported Browsers
+
+As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements)
+
 ## New Features 🚀
 
 ### Proper offline support
