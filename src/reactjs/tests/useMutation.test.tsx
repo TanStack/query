@@ -883,4 +883,120 @@ describe('useMutation', () => {
       undefined
     )
   })
+
+  test('should go to error state if onSuccess callback errors', async () => {
+    const consoleMock = mockConsoleError()
+    const error = new Error('error from onSuccess')
+    const onError = jest.fn()
+
+    function Page() {
+      const mutation = useMutation(
+        async (_text: string) => {
+          await sleep(10)
+          return 'result'
+        },
+        {
+          onSuccess: () => Promise.reject(error),
+          onError,
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>status: {mutation.status}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('status: idle')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('status: error')
+
+    expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
+    consoleMock.mockRestore()
+  })
+
+  test('should go to error state if onError callback errors', async () => {
+    const consoleMock = mockConsoleError()
+    const error = new Error('error from onError')
+
+    function Page() {
+      const mutation = useMutation(
+        async (_text: string) => {
+          await sleep(10)
+          throw new Error('something')
+        },
+        {
+          onError: () => Promise.reject(error),
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            error:{' '}
+            {mutation.error instanceof Error ? mutation.error.message : 'null'},
+            status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('error: null, status: idle')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('error: error from onError, status: error')
+
+    consoleMock.mockRestore()
+  })
+
+  test('should go to error state if onSettled callback errors', async () => {
+    const consoleMock = mockConsoleError()
+    const error = new Error('error from onSettled')
+    const mutateFnError = new Error('mutateFnError')
+    const onError = jest.fn()
+
+    function Page() {
+      const mutation = useMutation(
+        async (_text: string) => {
+          await sleep(10)
+          throw mutateFnError
+        },
+        {
+          onSettled: () => Promise.reject(error),
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            error:{' '}
+            {mutation.error instanceof Error ? mutation.error.message : 'null'},
+            status: {mutation.status}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('error: null, status: idle')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('error: error from onSettled, status: error')
+
+    expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
+    consoleMock.mockRestore()
+  })
 })
