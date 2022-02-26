@@ -82,6 +82,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/babycourageous"><img src="https://avatars.githubusercontent.com/u/14936212?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rene Dellefont</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=babycourageous" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/commits?author=babycourageous" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/jvuoti"><img src="https://avatars.githubusercontent.com/u/3702781?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Janne Vuoti</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=jvuoti" title="Code">💻</a></td>
     <td align="center"><a href="http://seaviewlab.com"><img src="https://avatars.githubusercontent.com/u/20332397?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Arnaud</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=arnaudbzn" title="Code">💻</a> <a href="https://github.com/tannerlinsley/react-query/commits?author=arnaudbzn" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/zrwsk"><img src="https://avatars.githubusercontent.com/u/9089600?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jakub Żurawski</b></sub></a><br /><a href="https://github.com/tannerlinsley/react-query/commits?author=zrwsk" title="Documentation">📖</a></td>
   </tr>
 </table>
 

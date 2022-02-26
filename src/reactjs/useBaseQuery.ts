@@ -116,7 +116,12 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (defaultedOptions.suspense && result.isLoading && !isHydrating) {
+  if (
+    defaultedOptions.suspense &&
+    result.isLoading &&
+    result.isFetching &&
+    !isHydrating
+  ) {
     throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {
@@ -135,7 +140,10 @@ export function useBaseQuery<
     result.isError &&
     !errorResetBoundary.isReset() &&
     !result.isFetching &&
-    shouldThrowError(defaultedOptions.useErrorBoundary, result.error)
+    shouldThrowError(defaultedOptions.useErrorBoundary, [
+      result.error,
+      observer.getCurrentQuery(),
+    ])
   ) {
     throw result.error
   }

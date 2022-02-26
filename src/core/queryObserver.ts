@@ -492,7 +492,7 @@ export class QueryObserver<
     if (
       typeof options.placeholderData !== 'undefined' &&
       typeof data === 'undefined' &&
-      (status === 'loading' || status === 'idle')
+      status === 'loading'
     ) {
       let placeholderData
 
@@ -544,7 +544,6 @@ export class QueryObserver<
       isLoading: status === 'loading',
       isSuccess: status === 'success',
       isError: status === 'error',
-      isIdle: status === 'idle',
       data,
       dataUpdatedAt,
       error,

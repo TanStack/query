@@ -210,7 +210,7 @@ describe('QueryErrorResetBoundary', () => {
     const consoleMock = mockConsoleError()
 
     function Page() {
-      const { data, refetch, status } = useQuery(
+      const { data, refetch, status, fetchStatus } = useQuery(
         key,
         async () => {
           throw new Error('Error')
@@ -225,7 +225,9 @@ describe('QueryErrorResetBoundary', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          <div>status: {status}</div>
+          <div>
+            status: {status}, fetchStatus: {fetchStatus}
+          </div>
           <div>{data}</div>
         </div>
       )
@@ -256,7 +258,9 @@ describe('QueryErrorResetBoundary', () => {
       </QueryErrorResetBoundary>
     )
 
-    await waitFor(() => rendered.getByText('status: idle'))
+    await waitFor(() =>
+      rendered.getByText('status: loading, fetchStatus: idle')
+    )
     rendered.getByRole('button', { name: /refetch/i }).click()
     await waitFor(() => rendered.getByText('error boundary'))
 

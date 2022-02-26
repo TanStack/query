@@ -618,7 +618,7 @@ function getDefaultState<
     fetchFailureCount: 0,
     fetchMeta: null,
     isInvalidated: false,
-    status: hasData ? 'success' : 'idle',
+    status: hasData ? 'success' : 'loading',
     fetchStatus: 'idle',
   }
 }

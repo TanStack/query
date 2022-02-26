@@ -2,11 +2,11 @@
 
 ## Questions
 
-If you have questions about implementation details, help or support, then please use our dedicated community forum at [Github Discussions](https://github.com/tannerlinsley/react-query/discussions) **PLEASE NOTE:** If you choose to instead open an issue for your question, your issue will be immediately closed and redirected to the forum.
+If you have questions about implementation details, help or support, then please use our dedicated community forum at [GitHub Discussions](https://github.com/tannerlinsley/react-query/discussions) **PLEASE NOTE:** If you choose to instead open an issue for your question, your issue will be immediately closed and redirected to the forum.
 
 ## Reporting Issues
 
-If you have found what you think is a bug, please [file an issue](https://github.com/tannerlinsley/react-query/issues/new). **PLEASE NOTE:** Issues that are identified as implementation questions or non-issues will be immediately closed and redirected to [Github Discussions](https://github.com/tannerlinsley/react-query/discussions)
+If you have found what you think is a bug, please [file an issue](https://github.com/tannerlinsley/react-query/issues/new). **PLEASE NOTE:** Issues that are identified as implementation questions or non-issues will be immediately closed and redirected to [GitHub Discussions](https://github.com/tannerlinsley/react-query/discussions)
 
 ## Suggesting new features
 
@@ -122,4 +122,4 @@ Use an appropriate commit type. Be especially careful with breaking changes.
 
 ## Releases
 
-For each new commit added to `master` with `git push` or by merging a pull request or merging from another branch, a github action is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.
+For each new commit added to `master` with `git push` or by merging a pull request or merging from another branch, a GitHub action is triggered and runs the `semantic-release` command to make a release if there are codebase changes since the last release that affect the package functionalities.

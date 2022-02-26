@@ -264,12 +264,14 @@ describe('query', () => {
     if (typeof AbortSignal === 'function') {
       expect(query.state).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
     } else {
       expect(query.state).toMatchObject({
         data: 'data',
         status: 'success',
+        fetchStatus: 'idle',
         dataUpdateCount: 1,
       })
     }
@@ -390,7 +392,7 @@ describe('query', () => {
     // The query should
     expect(queryFn).toHaveBeenCalledTimes(1) // have been called,
     expect(query.state.error).toBe(null) // not have an error, and
-    expect(query.state.status).toBe('idle') // not be loading any longer
+    expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
   })
 
   test('should be able to refetch a cancelled query', async () => {
@@ -805,6 +807,8 @@ describe('query', () => {
   })
 
   test('fetch should dispatch an error if the queryFn returns undefined', async () => {
+    const consoleMock = mockConsoleError()
+
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -821,12 +825,16 @@ describe('query', () => {
 
     await sleep(10)
 
+    const error = new Error('Query data cannot be undefined')
+
     expect(observerResult).toMatchObject({
       isError: true,
-      error: new Error('Query data cannot be undefined'),
+      error,
     })
 
+    expect(consoleMock).toHaveBeenCalledWith(error)
     unsubscribe()
+    consoleMock.mockRestore()
   })
 
   test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {
