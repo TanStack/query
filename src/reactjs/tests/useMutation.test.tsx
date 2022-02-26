@@ -87,8 +87,6 @@ describe('useMutation', () => {
     await waitFor(() => {
       expect(queryByRole('heading')).toBeNull()
     })
-
-    consoleMock.mockRestore()
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {

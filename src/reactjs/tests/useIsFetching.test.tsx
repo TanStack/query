@@ -1,8 +1,14 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
-import { queryKey, renderWithClient, setActTimeout, sleep } from './utils'
-import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
+import {
+  createQueryClient,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
+import { useQuery, useIsFetching, QueryCache } from '../..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
