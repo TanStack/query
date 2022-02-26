@@ -107,7 +107,6 @@ describe('Server side rendering with de/rehydration', () => {
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
 
     // -- Client part --
-    const consoleMock = mockConsoleError()
     const el = document.createElement('div')
     el.innerHTML = markup
 
@@ -222,7 +221,7 @@ describe('Server side rendering with de/rehydration', () => {
     // -- Server part --
     setIsServer(true)
 
-    const prefetchClient = new QueryClient()
+    const prefetchClient = createQueryClient()
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderClient = createQueryClient()
     hydrate(renderClient, dehydratedStateServer)
@@ -241,7 +240,6 @@ describe('Server side rendering with de/rehydration', () => {
     expect(markup).toBe(expectedMarkup)
 
     // -- Client part --
-    const consoleMock = mockConsoleError()
     const el = document.createElement('div')
     el.innerHTML = markup
 
