@@ -13,7 +13,6 @@ module.exports = {
           '@babel/plugin-transform-regenerator',
           '@babel/plugin-transform-parameters',
         ],
-        debug: true,
       },
     ],
     '@babel/preset-typescript',
