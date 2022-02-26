@@ -264,12 +264,14 @@ describe('query', () => {
     if (typeof AbortSignal === 'function') {
       expect(query.state).toMatchObject({
         data: undefined,
-        status: 'idle',
+        status: 'loading',
+        fetchStatus: 'idle',
       })
     } else {
       expect(query.state).toMatchObject({
         data: 'data',
         status: 'success',
+        fetchStatus: 'idle',
         dataUpdateCount: 1,
       })
     }
@@ -390,7 +392,7 @@ describe('query', () => {
     // The query should
     expect(queryFn).toHaveBeenCalledTimes(1) // have been called,
     expect(query.state.error).toBe(null) // not have an error, and
-    expect(query.state.status).toBe('idle') // not be loading any longer
+    expect(query.state.fetchStatus).toBe('idle') // not be loading any longer
   })
 
   test('should be able to refetch a cancelled query', async () => {
