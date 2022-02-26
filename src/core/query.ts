@@ -461,7 +461,7 @@ export class Query<
     // Try to fetch the data
     this.retryer = createRetryer({
       fn: context.fetchFn as () => TData,
-      abort: abortController?.abort?.bind(abortController),
+      abort: abortController?.abort.bind(abortController),
       onSuccess: data => {
         if (typeof data === 'undefined') {
           onError(new Error('Query data cannot be undefined') as any)

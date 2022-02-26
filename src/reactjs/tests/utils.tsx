@@ -7,6 +7,7 @@ import {
   QueryClientConfig,
   QueryClientProvider,
 } from '../..'
+import * as utils from '../../core/utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -93,4 +94,17 @@ export const executeMutation = (
   options: MutationOptions<any, any, any, any>
 ): Promise<unknown> => {
   return queryClient.getMutationCache().build(queryClient, options).execute()
+}
+
+// This monkey-patches the isServer-value from utils,
+// so that we can pretend to be in a server environment
+export function setIsServer(isServer: boolean) {
+  const original = utils.isServer
+  // @ts-ignore
+  utils.isServer = isServer
+
+  return () => {
+    // @ts-ignore
+    utils.isServer = original
+  }
 }

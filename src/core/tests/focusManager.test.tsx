@@ -1,9 +1,11 @@
 import { sleep } from '../utils'
 import { FocusManager } from '../focusManager'
+import { setIsServer } from '../../reactjs/tests/utils'
 
 describe('focusManager', () => {
   let focusManager: FocusManager
   beforeEach(() => {
+    jest.resetModules()
     focusManager = new FocusManager()
   })
 
@@ -61,17 +63,14 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
-    const { addEventListener } = globalThis.window
-
-    // @ts-expect-error
-    globalThis.window.addEventListener = undefined
+  test('cleanup should still be undefined if window is not defined', async () => {
+    const restoreIsServer = setIsServer(true)
 
     const unsubscribe = focusManager.subscribe(() => undefined)
     expect(focusManager['cleanup']).toBeUndefined()
 
     unsubscribe()
-    globalThis.window.addEventListener = addEventListener
+    restoreIsServer()
   })
 
   it('should replace default window listener when a new event listener is set', async () => {
