@@ -1,4 +1,4 @@
-import { sleep, queryKey, mockConsoleError } from '../../reactjs/tests/utils'
+import { sleep, queryKey, createQueryClient } from '../../reactjs/tests/utils'
 import { QueryCache, QueryClient } from '../..'
 import { Query } from '.././query'
 
@@ -7,7 +7,7 @@ describe('queryCache', () => {
   let queryCache: QueryCache
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryCache = queryClient.getQueryCache()
   })
 
@@ -171,13 +171,11 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig.onError', () => {
     test('should be called when a query errors', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onError = jest.fn()
       const testCache = new QueryCache({ onError })
-      const testClient = new QueryClient({ queryCache: testCache })
+      const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery(key, () => Promise.reject('error'))
-      consoleMock.mockRestore()
       const query = testCache.find(key)
       expect(onError).toHaveBeenCalledWith('error', query)
     })
@@ -185,13 +183,11 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig.onSuccess', () => {
     test('should be called when a query is successful', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onSuccess = jest.fn()
       const testCache = new QueryCache({ onSuccess })
-      const testClient = new QueryClient({ queryCache: testCache })
+      const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery(key, () => Promise.resolve({ data: 5 }))
-      consoleMock.mockRestore()
       const query = testCache.find(key)
       expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
     })

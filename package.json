@@ -18,11 +18,9 @@
     "es/index.js",
     "es/reactjs/index.js",
     "es/reactjs/setBatchUpdatesFn.js",
-    "es/reactjs/setLogger.js",
     "lib/index.js",
     "lib/reactjs/index.js",
-    "lib/reactjs/setBatchUpdatesFn.js",
-    "lib/reactjs/setLogger.js"
+    "lib/reactjs/setBatchUpdatesFn.js"
   ],
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",

@@ -2,19 +2,20 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 
 import {
-  mockConsoleError,
+  createQueryClient,
+  mockLogger,
   queryKey,
   renderWithClient,
   setActTimeout,
   sleep,
 } from './utils'
-import { useQuery, useIsFetching, QueryClient, QueryCache } from '../..'
+import { useQuery, useIsFetching, QueryCache } from '../..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
   it('should update as queries start and stop fetching', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
 
     function Page() {
@@ -50,9 +51,8 @@ describe('useIsFetching', () => {
   })
 
   it('should not update state while rendering', async () => {
-    const consoleMock = mockConsoleError()
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
 
     const key1 = queryKey()
     const key2 = queryKey()
@@ -101,15 +101,12 @@ describe('useIsFetching', () => {
 
     renderWithClient(queryClient, <Page />)
     await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
-    expect(consoleMock).not.toHaveBeenCalled()
-    expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
-
-    consoleMock.mockRestore()
+    expect(mockLogger.error).not.toHaveBeenCalled()
   })
 
   it('should be able to filter', async () => {
     const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
+    const queryClient = createQueryClient({ queryCache })
     const key1 = queryKey()
     const key2 = queryKey()
 

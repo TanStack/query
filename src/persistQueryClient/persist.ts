@@ -6,7 +6,6 @@ import {
   HydrateOptions,
   hydrate,
 } from '../core'
-import { getLogger } from '../core/logger'
 import { Promisable } from 'type-fest'
 
 export interface Persister {
@@ -84,10 +83,14 @@ export async function persistQueryClientRestore({
         }
       }
     } catch (err) {
-      getLogger().error(err)
-      getLogger().warn(
-        'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
-      )
+      if (process.env.NODE_ENV !== 'production') {
+        queryClient.getLogger().error(err)
+        queryClient
+          .getLogger()
+          .warn(
+            'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
+          )
+      }
       persister.removeClient()
     }
   }
