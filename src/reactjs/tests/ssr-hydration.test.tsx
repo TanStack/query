@@ -23,7 +23,7 @@ const ReactHydrate = (element: React.ReactElement, container: Element) => {
       root = ReactDOM.hydrateRoot(container, element)
     })
     return () => {
-      root?.unmount()
+      root.unmount()
     }
   }
 
