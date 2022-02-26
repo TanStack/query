@@ -15,6 +15,7 @@ const createMockPersister = (): Persister => {
       storedState = persistClient
     },
     async restoreClient() {
+      await sleep(10)
       return storedState
     },
     removeClient() {
