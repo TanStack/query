@@ -32,7 +32,7 @@ function Example() {
     hasNextPage,
     hasPreviousPage,
   } = useInfiniteQuery(
-    'projects',
+    ['projects'],
     async ({ pageParam = 0 }) => {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data
@@ -48,7 +48,7 @@ function Example() {
   useIntersectionObserver({
     target: loadMoreButtonRef,
     onIntersect: fetchNextPage,
-    enabled: hasNextPage,
+    enabled: !!hasNextPage,
   })
 
   return (
@@ -65,9 +65,9 @@ function Example() {
               onClick={() => fetchPreviousPage()}
               disabled={!hasPreviousPage || isFetchingPreviousPage}
             >
-              {isFetchingNextPage
+              {isFetchingPreviousPage
                 ? 'Loading more...'
-                : hasNextPage
+                : hasPreviousPage
                 ? 'Load Older'
                 : 'Nothing more to load'}
             </button>

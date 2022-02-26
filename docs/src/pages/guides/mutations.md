@@ -179,6 +179,28 @@ mutate(todo, {
 })
 ```
 
+### Consecutive mutations
+There is a slight difference in handling `onSuccess`, `onError` and `onSettled` callbacks when it comes to consecutive mutations. When passed to the `mutate` function, they will be fired up only _once_ and only if the component is still mounted.  This is due to the fact that mutation observer is removed and resubscribed every time when the `mutate` function is called. On the contrary, `useMutation` handlers execute for each `mutate` call.
+
+> Be aware that most likely, `mutationFn` passed to `useMutation` is ansynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
+
+```js
+useMutation(addTodo, {
+  onSuccess: (data, error, variables, context) => {
+    // Will be called 3 times
+  },
+})
+
+['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
+  mutate(todo, {
+    onSuccess: (data, error, variables, context) => {
+      // Will execute only once, for the last mutation (Todo 3),
+      // regardles which mutation resolves first 
+    },
+  })
+})
+
+```
 ## Promises
 
 Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
@@ -216,34 +238,34 @@ Mutations can be persisted to storage if needed and resumed at a later point. Th
 const queryClient = new QueryClient()
 
 // Define the "addTodo" mutation
-queryClient.setMutationDefaults('addTodo', {
+queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
   onMutate: async (variables) => {
     // Cancel current queries for the todos list
-    await queryClient.cancelQueries('todos')
+    await queryClient.cancelQueries(['todos'])
 
     // Create optimistic todo
     const optimisticTodo = { id: uuid(), title: variables.title }
 
     // Add optimistic todo to todos list
-    queryClient.setQueryData('todos', old => [...old, optimisticTodo])
+    queryClient.setQueryData(['todos'], old => [...old, optimisticTodo])
 
     // Return context with the optimistic todo
     return { optimisticTodo }
   },
   onSuccess: (result, variables, context) => {
     // Replace optimistic todo in the todos list with the result
-    queryClient.setQueryData('todos', old => old.map(todo => todo.id === context.optimisticTodo.id ? result : todo))
+    queryClient.setQueryData(['todos'], old => old.map(todo => todo.id === context.optimisticTodo.id ? result : todo))
   },
   onError: (error, variables, context) => {
     // Remove optimistic todo from the todos list
-    queryClient.setQueryData('todos', old => old.filter(todo => todo.id !== context.optimisticTodo.id))
+    queryClient.setQueryData(['todos'], old => old.filter(todo => todo.id !== context.optimisticTodo.id))
   },
   retry: 3,
 })
 
 // Start mutation in some component:
-const mutation = useMutation('addTodo')
+const mutation = useMutation(['addTodo'])
 mutation.mutate({ title: 'title' })
 
 // If the mutation has been paused because the device is for example offline,

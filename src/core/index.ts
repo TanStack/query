@@ -6,7 +6,6 @@ export { QueriesObserver } from './queriesObserver'
 export { InfiniteQueryObserver } from './infiniteQueryObserver'
 export { MutationCache } from './mutationCache'
 export { MutationObserver } from './mutationObserver'
-export { setLogger } from './logger'
 export { notifyManager } from './notifyManager'
 export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
@@ -17,6 +16,7 @@ export { dehydrate, hydrate } from './hydration'
 // Types
 export * from './types'
 export type { Query } from './query'
+export type { Mutation } from './mutation'
 export type { Logger } from './logger'
 export type {
   DehydrateOptions,

@@ -65,6 +65,8 @@ export const QueryKey = styled('span', {
 
 export const Code = styled('code', {
   fontSize: '.9em',
+  color: 'inherit',
+  background: 'inherit',
 })
 
 export const Input = styled('input', (_props, theme) => ({

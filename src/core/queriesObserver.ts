@@ -1,6 +1,10 @@
 import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
-import type { QueryObserverOptions, QueryObserverResult } from './types'
+import type {
+  QueryObserverOptions,
+  QueryObserverResult,
+  DefaultedQueryObserverOptions,
+} from './types'
 import type { QueryClient } from './queryClient'
 import { NotifyOptions, QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
@@ -56,65 +60,28 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     notifyOptions?: NotifyOptions
   ): void {
     this.queries = queries
-    this.updateObservers(notifyOptions)
-  }
 
-  getCurrentResult(): QueryObserverResult[] {
-    return this.result
-  }
-
-  getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
-    return queries.map((options, index) => {
-      const defaultedOptions = this.client.defaultQueryObserverOptions(options)
-      return this.getObserver(defaultedOptions, index).getOptimisticResult(
-        defaultedOptions
-      )
-    })
-  }
-
-  private getObserver(
-    options: QueryObserverOptions,
-    index: number
-  ): QueryObserver {
-    const defaultedOptions = this.client.defaultQueryObserverOptions(options)
-    let currentObserver = this.observersMap[defaultedOptions.queryHash!]
-    if (!currentObserver && defaultedOptions.keepPreviousData) {
-      currentObserver = this.observers[index]
-    }
-    return currentObserver ?? new QueryObserver(this.client, defaultedOptions)
-  }
-
-  private updateObservers(notifyOptions?: NotifyOptions): void {
     notifyManager.batch(() => {
-      let hasIndexChange = false as boolean
-
       const prevObservers = this.observers
-      const prevObserversMap = this.observersMap
 
-      const newResult: QueryObserverResult[] = []
-      const newObservers: QueryObserver[] = []
-      const newObserversMap: Record<string, QueryObserver> = {}
+      const newObserverMatches = this.findMatchingObservers(this.queries)
 
-      this.queries.forEach((options, i) => {
-        const defaultedOptions = this.client.defaultQueryObserverOptions(
-          options
-        )
-        const queryHash = defaultedOptions.queryHash!
-        const observer = this.getObserver(defaultedOptions, i)
+      // set options for the new observers to notify of changes
+      newObserverMatches.forEach(match =>
+        match.observer.setOptions(match.defaultedQueryOptions, notifyOptions)
+      )
 
-        if (prevObserversMap[queryHash] || defaultedOptions.keepPreviousData) {
-          observer.setOptions(defaultedOptions, notifyOptions)
-        }
+      const newObservers = newObserverMatches.map(match => match.observer)
+      const newObserversMap = Object.fromEntries(
+        newObservers.map(observer => [observer.options.queryHash, observer])
+      )
+      const newResult = newObservers.map(observer =>
+        observer.getCurrentResult()
+      )
 
-        if (observer !== prevObservers[i]) {
-          hasIndexChange = true
-        }
-
-        newObservers.push(observer)
-        newResult.push(observer.getCurrentResult())
-        newObserversMap[queryHash] = observer
-      })
-
+      const hasIndexChange = newObservers.some(
+        (observer, index) => observer !== prevObservers[index]
+      )
       if (prevObservers.length === newObservers.length && !hasIndexChange) {
         return
       }
@@ -141,6 +108,86 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
     })
   }
 
+  getCurrentResult(): QueryObserverResult[] {
+    return this.result
+  }
+
+  getOptimisticResult(queries: QueryObserverOptions[]): QueryObserverResult[] {
+    return this.findMatchingObservers(queries).map(match =>
+      match.observer.getOptimisticResult(match.defaultedQueryOptions)
+    )
+  }
+
+  private findMatchingObservers(
+    queries: QueryObserverOptions[]
+  ): QueryObserverMatch[] {
+    const prevObservers = this.observers
+    const defaultedQueryOptions = queries.map(options =>
+      this.client.defaultQueryOptions(options)
+    )
+
+    const matchingObservers: QueryObserverMatch[] = defaultedQueryOptions.flatMap(
+      defaultedOptions => {
+        const match = prevObservers.find(
+          observer => observer.options.queryHash === defaultedOptions.queryHash
+        )
+        if (match != null) {
+          return [{ defaultedQueryOptions: defaultedOptions, observer: match }]
+        }
+        return []
+      }
+    )
+
+    const matchedQueryHashes = matchingObservers.map(
+      match => match.defaultedQueryOptions.queryHash
+    )
+    const unmatchedQueries = defaultedQueryOptions.filter(
+      defaultedOptions =>
+        !matchedQueryHashes.includes(defaultedOptions.queryHash)
+    )
+
+    const unmatchedObservers = prevObservers.filter(
+      prevObserver =>
+        !matchingObservers.some(match => match.observer === prevObserver)
+    )
+
+    const getObserver = (options: QueryObserverOptions): QueryObserver => {
+      const defaultedOptions = this.client.defaultQueryOptions(options)
+      const currentObserver = this.observersMap[defaultedOptions.queryHash!]
+      return currentObserver ?? new QueryObserver(this.client, defaultedOptions)
+    }
+
+    const newOrReusedObservers: QueryObserverMatch[] = unmatchedQueries.map(
+      (options, index) => {
+        if (options.keepPreviousData) {
+          // return previous data from one of the observers that no longer match
+          const previouslyUsedObserver = unmatchedObservers[index]
+          if (previouslyUsedObserver !== undefined) {
+            return {
+              defaultedQueryOptions: options,
+              observer: previouslyUsedObserver,
+            }
+          }
+        }
+        return {
+          defaultedQueryOptions: options,
+          observer: getObserver(options),
+        }
+      }
+    )
+
+    const sortMatchesByOrderOfQueries = (
+      a: QueryObserverMatch,
+      b: QueryObserverMatch
+    ): number =>
+      defaultedQueryOptions.indexOf(a.defaultedQueryOptions) -
+      defaultedQueryOptions.indexOf(b.defaultedQueryOptions)
+
+    return matchingObservers
+      .concat(newOrReusedObservers)
+      .sort(sortMatchesByOrderOfQueries)
+  }
+
   private onUpdate(observer: QueryObserver, result: QueryObserverResult): void {
     const index = this.observers.indexOf(observer)
     if (index !== -1) {
@@ -156,4 +203,9 @@ export class QueriesObserver extends Subscribable<QueriesObserverListener> {
       })
     })
   }
+}
+
+type QueryObserverMatch = {
+  defaultedQueryOptions: DefaultedQueryObserverOptions
+  observer: QueryObserver
 }

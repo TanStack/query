@@ -6,7 +6,7 @@ import { styled } from './utils'
 
 export const Entry = styled('div', {
   fontFamily: 'Menlo, monospace',
-  fontSize: '0.9em',
+  fontSize: '1em',
   lineHeight: '1.7',
   outline: 'none',
   wordBreak: 'break-word',

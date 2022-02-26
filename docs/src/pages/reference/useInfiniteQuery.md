@@ -26,9 +26,7 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](/refer
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** [`defaultQueryFn`](/guides/default-query-function)
   - The function that the query will use to request data.
-  - Receives a `QueryFunctionContext` object with the following variables:
-    - `queryKey: EnsuredQueryKey`: the queryKey, guaranteed to be an Array
-    - `pageParam: unknown | undefined`
+  - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error.
   - Make sure you return the data *and* the `pageParam` if needed for use in the props below.
 - `getNextPageParam: (lastPage, allPages) => unknown | undefined`

@@ -8,8 +8,10 @@ import {
   partialMatchKey,
   hashQueryKeyByOptions,
   MutationFilters,
+  functionalUpdate,
 } from './utils'
 import type {
+  QueryClientConfig,
   DefaultOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
@@ -27,23 +29,19 @@ import type {
   RefetchQueryFilters,
   ResetOptions,
   ResetQueryFilters,
+  SetDataOptions,
 } from './types'
-import type { QueryState, SetDataOptions } from './query'
+import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
 import { MutationCache } from './mutationCache'
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
-import { CancelOptions } from './retryer'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
+import { CancelOptions, DefaultedQueryObserverOptions } from './types'
+import { defaultLogger, Logger } from './logger'
 
 // TYPES
-
-interface QueryClientConfig {
-  queryCache?: QueryCache
-  mutationCache?: MutationCache
-  defaultOptions?: DefaultOptions
-}
 
 interface QueryDefaults {
   queryKey: QueryKey
@@ -60,6 +58,7 @@ interface MutationDefaults {
 export class QueryClient {
   private queryCache: QueryCache
   private mutationCache: MutationCache
+  private logger: Logger
   private defaultOptions: DefaultOptions
   private queryDefaults: QueryDefaults[]
   private mutationDefaults: MutationDefaults[]
@@ -69,6 +68,7 @@ export class QueryClient {
   constructor(config: QueryClientConfig = {}) {
     this.queryCache = config.queryCache || new QueryCache()
     this.mutationCache = config.mutationCache || new MutationCache()
+    this.logger = config.logger || defaultLogger
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
@@ -76,14 +76,14 @@ export class QueryClient {
 
   mount(): void {
     this.unsubscribeFocus = focusManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
-        this.mutationCache.onFocus()
+      if (focusManager.isFocused()) {
+        this.resumePausedMutations()
         this.queryCache.onFocus()
       }
     })
     this.unsubscribeOnline = onlineManager.subscribe(() => {
-      if (focusManager.isFocused() && onlineManager.isOnline()) {
-        this.mutationCache.onOnline()
+      if (onlineManager.isOnline()) {
+        this.resumePausedMutations()
         this.queryCache.onOnline()
       }
     })
@@ -98,7 +98,7 @@ export class QueryClient {
   isFetching(queryKey?: QueryKey, filters?: QueryFilters): number
   isFetching(arg1?: QueryKey | QueryFilters, arg2?: QueryFilters): number {
     const [filters] = parseFilterArgs(arg1, arg2)
-    filters.fetching = true
+    filters.fetchStatus = 'fetching'
     return this.queryCache.findAll(filters).length
   }
 
@@ -128,14 +128,22 @@ export class QueryClient {
 
   setQueryData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData> | undefined,
     options?: SetDataOptions
-  ): TData {
+  ): TData | undefined {
+    const query = this.queryCache.find<TData>(queryKey)
+    const prevData = query?.state.data
+    const data = functionalUpdate(updater, prevData)
+
+    if (typeof data === 'undefined') {
+      return undefined
+    }
+
     const parsedOptions = parseQueryArgs(queryKey)
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     return this.queryCache
       .build(this, defaultedOptions)
-      .setData(updater, options)
+      .setData(data, { ...options, notifySuccess: false })
   }
 
   setQueriesData<TData>(
@@ -154,7 +162,7 @@ export class QueryClient {
     queryKeyOrFilters: QueryKey | QueryFilters,
     updater: Updater<TData | undefined, TData>,
     options?: SetDataOptions
-  ): [QueryKey, TData][] {
+  ): [QueryKey, TData | undefined][] {
     return notifyManager.batch(() =>
       this.getQueryCache()
         .findAll(queryKeyOrFilters)
@@ -202,8 +210,8 @@ export class QueryClient {
     const queryCache = this.queryCache
 
     const refetchFilters: RefetchQueryFilters = {
+      type: 'active',
       ...filters,
-      active: true,
     }
 
     return notifyManager.batch(() => {
@@ -254,18 +262,18 @@ export class QueryClient {
   ): Promise<void> {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
-    const refetchFilters: RefetchQueryFilters = {
-      ...filters,
-      // if filters.refetchActive is not provided and filters.active is explicitly false,
-      // e.g. invalidateQueries({ active: false }), we don't want to refetch active queries
-      active: filters.refetchActive ?? filters.active ?? true,
-      inactive: filters.refetchInactive ?? false,
-    }
-
     return notifyManager.batch(() => {
       this.queryCache.findAll(filters).forEach(query => {
         query.invalidate()
       })
+
+      if (filters?.refetchType === 'none') {
+        return Promise.resolve()
+      }
+      const refetchFilters: RefetchQueryFilters = {
+        ...filters,
+        type: filters?.refetchType ?? filters?.type ?? 'active',
+      }
       return this.refetchQueries(refetchFilters, options)
     })
   }
@@ -287,12 +295,16 @@ export class QueryClient {
     const [filters, options] = parseFilterArgs(arg1, arg2, arg3)
 
     const promises = notifyManager.batch(() =>
-      this.queryCache.findAll(filters).map(query =>
-        query.fetch(undefined, {
-          ...options,
-          meta: { refetchPage: filters.refetchPage },
-        })
-      )
+      this.queryCache
+        .findAll(filters)
+        .filter(query => !query.isDisabled())
+        .map(query =>
+          query.fetch(undefined, {
+            ...options,
+            cancelRefetch: options?.cancelRefetch ?? true,
+            meta: { refetchPage: filters?.refetchPage },
+          })
+        )
     )
 
     let promise = Promise.all(promises).then(noop)
@@ -498,26 +510,8 @@ export class QueryClient {
       .catch(noop)
   }
 
-  cancelMutations(): Promise<void> {
-    const promises = notifyManager.batch(() =>
-      this.mutationCache.getAll().map(mutation => mutation.cancel())
-    )
-    return Promise.all(promises).then(noop).catch(noop)
-  }
-
   resumePausedMutations(): Promise<void> {
-    return this.getMutationCache().resumePausedMutations()
-  }
-
-  executeMutation<
-    TData = unknown,
-    TError = unknown,
-    TVariables = void,
-    TContext = unknown
-  >(
-    options: MutationOptions<TData, TError, TVariables, TContext>
-  ): Promise<TData> {
-    return this.mutationCache.build(this, options).execute()
+    return this.mutationCache.resumePausedMutations()
   }
 
   getQueryCache(): QueryCache {
@@ -526,6 +520,10 @@ export class QueryClient {
 
   getMutationCache(): MutationCache {
     return this.mutationCache
+  }
+
+  getLogger(): Logger {
+    return this.logger
   }
 
   getDefaultOptions(): DefaultOptions {
@@ -553,10 +551,34 @@ export class QueryClient {
   getQueryDefaults(
     queryKey?: QueryKey
   ): QueryObserverOptions<any, any, any, any, any> | undefined {
-    return queryKey
-      ? this.queryDefaults.find(x => partialMatchKey(queryKey, x.queryKey))
-          ?.defaultOptions
-      : undefined
+    if (!queryKey) {
+      return undefined
+    }
+
+    // Get the first matching defaults
+    const firstMatchingDefaults = this.queryDefaults.find(x =>
+      partialMatchKey(queryKey, x.queryKey)
+    )
+
+    // Additional checks and error in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      // Retrieve all matching defaults for the given key
+      const matchingDefaults = this.queryDefaults.filter(x =>
+        partialMatchKey(queryKey, x.queryKey)
+      )
+      // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
+      if (matchingDefaults.length > 1) {
+        if (process.env.NODE_ENV !== 'production') {
+          this.logger.error(
+            `[QueryClient] Several query defaults match with key '${JSON.stringify(
+              queryKey
+            )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`
+          )
+        }
+      }
+    }
+
+    return firstMatchingDefaults?.defaultOptions
   }
 
   setMutationDefaults(
@@ -576,11 +598,34 @@ export class QueryClient {
   getMutationDefaults(
     mutationKey?: MutationKey
   ): MutationObserverOptions<any, any, any, any> | undefined {
-    return mutationKey
-      ? this.mutationDefaults.find(x =>
-          partialMatchKey(mutationKey, x.mutationKey)
-        )?.defaultOptions
-      : undefined
+    if (!mutationKey) {
+      return undefined
+    }
+
+    // Get the first matching defaults
+    const firstMatchingDefaults = this.mutationDefaults.find(x =>
+      partialMatchKey(mutationKey, x.mutationKey)
+    )
+
+    // Additional checks and error in dev mode
+    if (process.env.NODE_ENV !== 'production') {
+      // Retrieve all matching defaults for the given key
+      const matchingDefaults = this.mutationDefaults.filter(x =>
+        partialMatchKey(mutationKey, x.mutationKey)
+      )
+      // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
+      if (matchingDefaults.length > 1) {
+        if (process.env.NODE_ENV !== 'production') {
+          this.logger.error(
+            `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
+              mutationKey
+            )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`
+          )
+        }
+      }
+    }
+
+    return firstMatchingDefaults?.defaultOptions
   }
 
   defaultQueryOptions<
@@ -590,16 +635,30 @@ export class QueryClient {
     TQueryData,
     TQueryKey extends QueryKey
   >(
-    options?: QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
+    options?:
+      | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+      | DefaultedQueryObserverOptions<
+          TQueryFnData,
+          TError,
+          TData,
+          TQueryData,
+          TQueryKey
+        >
+  ): DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  > {
     if (options?._defaulted) {
-      return options
+      return options as DefaultedQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >
     }
 
     const defaultedOptions = {
@@ -607,13 +666,7 @@ export class QueryClient {
       ...this.getQueryDefaults(options?.queryKey),
       ...options,
       _defaulted: true,
-    } as QueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
-    >
+    }
 
     if (!defaultedOptions.queryHash && defaultedOptions.queryKey) {
       defaultedOptions.queryHash = hashQueryKeyByOptions(
@@ -622,25 +675,22 @@ export class QueryClient {
       )
     }
 
-    return defaultedOptions
-  }
+    // dependent default values
+    if (typeof defaultedOptions.refetchOnReconnect === 'undefined') {
+      defaultedOptions.refetchOnReconnect =
+        defaultedOptions.networkMode !== 'always'
+    }
+    if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
+      defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
+    }
 
-  defaultQueryObserverOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey
-  >(
-    options?: QueryObserverOptions<
+    return defaultedOptions as DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
       TQueryData,
       TQueryKey
     >
-  ): QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {
-    return this.defaultQueryOptions(options)
   }
 
   defaultMutationOptions<T extends MutationOptions<any, any, any, any>>(

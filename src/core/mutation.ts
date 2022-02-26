@@ -1,10 +1,10 @@
-import type { MutationOptions, MutationStatus } from './types'
+import type { MutationOptions, MutationStatus, MutationMeta } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
-import { getLogger } from './logger'
+import { defaultLogger, Logger } from './logger'
 import { notifyManager } from './notifyManager'
-import { Retryer } from './retryer'
-import { noop } from './utils'
+import { Removable } from './removable'
+import { canFetch, Retryer, createRetryer } from './retryer'
 
 // TYPES
 
@@ -12,8 +12,10 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   mutationId: number
   mutationCache: MutationCache
   options: MutationOptions<TData, TError, TVariables, TContext>
+  logger?: Logger
   defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
+  meta?: MutationMeta
 }
 
 export interface MutationState<
@@ -80,24 +82,33 @@ export class Mutation<
   TError = unknown,
   TVariables = void,
   TContext = unknown
-> {
+> extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
+  meta: MutationMeta | undefined
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
   private mutationCache: MutationCache
-  private retryer?: Retryer<TData, TError>
+  private logger: Logger
+  private retryer?: Retryer<TData>
 
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
+    super()
+
     this.options = {
       ...config.defaultOptions,
       ...config.options,
     }
     this.mutationId = config.mutationId
     this.mutationCache = config.mutationCache
+    this.logger = config.logger || defaultLogger
     this.observers = []
     this.state = config.state || getDefaultState()
+    this.meta = config.meta
+
+    this.updateCacheTime(this.options.cacheTime)
+    this.scheduleGc()
   }
 
   setState(state: MutationState<TData, TError, TVariables, TContext>): void {
@@ -107,19 +118,38 @@ export class Mutation<
   addObserver(observer: MutationObserver<any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
+
+      // Stop the mutation from being garbage collected
+      this.clearGcTimeout()
+
+      this.mutationCache.notify({
+        type: 'observerAdded',
+        mutation: this,
+        observer,
+      })
     }
   }
 
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
     this.observers = this.observers.filter(x => x !== observer)
+
+    this.scheduleGc()
+
+    this.mutationCache.notify({
+      type: 'observerRemoved',
+      mutation: this,
+      observer,
+    })
   }
 
-  cancel(): Promise<void> {
-    if (this.retryer) {
-      this.retryer.cancel()
-      return this.retryer.promise.then(noop).catch(noop)
+  protected optionalRemove() {
+    if (!this.observers.length) {
+      if (this.state.status === 'loading') {
+        this.scheduleGc()
+      } else {
+        this.mutationCache.remove(this)
+      }
     }
-    return Promise.resolve()
   }
 
   continue(): Promise<TData> {
@@ -140,6 +170,13 @@ export class Mutation<
     if (!restored) {
       this.dispatch({ type: 'loading', variables: this.options.variables! })
       promise = promise
+        .then(() => {
+          // Notify cache callback
+          this.mutationCache.config.onMutate?.(
+            this.state.variables,
+            this as Mutation<unknown, unknown, unknown, unknown>
+          )
+        })
         .then(() => this.options.onMutate?.(this.state.variables!))
         .then(context => {
           if (context !== this.state.context) {
@@ -152,8 +189,33 @@ export class Mutation<
         })
     }
 
+    const executeMutation = () => {
+      this.retryer = createRetryer({
+        fn: () => {
+          if (!this.options.mutationFn) {
+            return Promise.reject('No mutationFn found')
+          }
+          return this.options.mutationFn(this.state.variables!)
+        },
+        onFail: () => {
+          this.dispatch({ type: 'failed' })
+        },
+        onPause: () => {
+          this.dispatch({ type: 'pause' })
+        },
+        onContinue: () => {
+          this.dispatch({ type: 'continue' })
+        },
+        retry: this.options.retry ?? 0,
+        retryDelay: this.options.retryDelay,
+        networkMode: this.options.networkMode,
+      })
+
+      return this.retryer.promise
+    }
+
     return promise
-      .then(() => this.executeMutation())
+      .then(executeMutation)
       .then(result => {
         data = result
         // Notify cache callback
@@ -192,8 +254,9 @@ export class Mutation<
           this as Mutation<unknown, unknown, unknown, unknown>
         )
 
-        // Log error
-        getLogger().error(error)
+        if (process.env.NODE_ENV !== 'production') {
+          this.logger.error(error)
+        }
 
         return Promise.resolve()
           .then(() =>
@@ -218,38 +281,71 @@ export class Mutation<
       })
   }
 
-  private executeMutation(): Promise<TData> {
-    this.retryer = new Retryer({
-      fn: () => {
-        if (!this.options.mutationFn) {
-          return Promise.reject('No mutationFn found')
-        }
-        return this.options.mutationFn(this.state.variables!)
-      },
-      onFail: () => {
-        this.dispatch({ type: 'failed' })
-      },
-      onPause: () => {
-        this.dispatch({ type: 'pause' })
-      },
-      onContinue: () => {
-        this.dispatch({ type: 'continue' })
-      },
-      retry: this.options.retry ?? 0,
-      retryDelay: this.options.retryDelay,
-    })
-
-    return this.retryer.promise
-  }
-
   private dispatch(action: Action<TData, TError, TVariables, TContext>): void {
-    this.state = reducer(this.state, action)
+    const reducer = (
+      state: MutationState<TData, TError, TVariables, TContext>
+    ): MutationState<TData, TError, TVariables, TContext> => {
+      switch (action.type) {
+        case 'failed':
+          return {
+            ...state,
+            failureCount: state.failureCount + 1,
+          }
+        case 'pause':
+          return {
+            ...state,
+            isPaused: true,
+          }
+        case 'continue':
+          return {
+            ...state,
+            isPaused: false,
+          }
+        case 'loading':
+          return {
+            ...state,
+            context: action.context,
+            data: undefined,
+            error: null,
+            isPaused: !canFetch(this.options.networkMode),
+            status: 'loading',
+            variables: action.variables,
+          }
+        case 'success':
+          return {
+            ...state,
+            data: action.data,
+            error: null,
+            status: 'success',
+            isPaused: false,
+          }
+        case 'error':
+          return {
+            ...state,
+            data: undefined,
+            error: action.error,
+            failureCount: state.failureCount + 1,
+            isPaused: false,
+            status: 'error',
+          }
+        case 'setState':
+          return {
+            ...state,
+            ...action.state,
+          }
+      }
+    }
+    this.state = reducer(this.state)
 
     notifyManager.batch(() => {
       this.observers.forEach(observer => {
         observer.onMutationUpdate(action)
       })
-      this.mutationCache.notify(this)
+      this.mutationCache.notify({
+        mutation: this,
+        type: 'updated',
+        action,
+      })
     })
   }
 }
@@ -268,62 +364,5 @@ export function getDefaultState<
     isPaused: false,
     status: 'idle',
     variables: undefined,
-  }
-}
-
-function reducer<TData, TError, TVariables, TContext>(
-  state: MutationState<TData, TError, TVariables, TContext>,
-  action: Action<TData, TError, TVariables, TContext>
-): MutationState<TData, TError, TVariables, TContext> {
-  switch (action.type) {
-    case 'failed':
-      return {
-        ...state,
-        failureCount: state.failureCount + 1,
-      }
-    case 'pause':
-      return {
-        ...state,
-        isPaused: true,
-      }
-    case 'continue':
-      return {
-        ...state,
-        isPaused: false,
-      }
-    case 'loading':
-      return {
-        ...state,
-        context: action.context,
-        data: undefined,
-        error: null,
-        isPaused: false,
-        status: 'loading',
-        variables: action.variables,
-      }
-    case 'success':
-      return {
-        ...state,
-        data: action.data,
-        error: null,
-        status: 'success',
-        isPaused: false,
-      }
-    case 'error':
-      return {
-        ...state,
-        data: undefined,
-        error: action.error,
-        failureCount: state.failureCount + 1,
-        isPaused: false,
-        status: 'error',
-      }
-    case 'setState':
-      return {
-        ...state,
-        ...action.state,
-      }
-    default:
-      return state
   }
 }

@@ -12,4 +12,4 @@ export type {
   ShouldDehydrateMutationFunction,
   ShouldDehydrateQueryFunction,
 } from '../core/hydration'
-export type { HydrateProps } from '../react/Hydrate'
+export type { HydrateProps } from '../reactjs/Hydrate'

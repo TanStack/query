@@ -9,8 +9,23 @@ import {
   QueryClientProvider,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { persistQueryClient } from 'react-query/persistQueryClient';
+import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+})
+
+const localStoragePersister = createWebStoragePersister({storage: window.localStorage})
+
+persistQueryClient({
+  queryClient,
+  persister: localStoragePersister,
+})
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
@@ -38,7 +53,7 @@ function App() {
 }
 
 function usePosts() {
-  return useQuery("posts", async () => {
+  return useQuery(["posts"], async () => {
     const { data } = await axios.get(
       "https://jsonplaceholder.typicode.com/posts"
     );

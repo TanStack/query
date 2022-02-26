@@ -1,0 +1,16 @@
+{
+  "root": true,
+  "extends": "@callstack",
+  "rules": {
+    "react-native/no-raw-text": 0,
+    "promise/prefer-await-to-then": 0
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@app", "./src"]],
+        "extensions": [".ts", ".tsx", ".js", ".jsx", ".json"]
+      }
+    }
+  }
+}

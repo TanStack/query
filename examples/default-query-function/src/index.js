@@ -56,7 +56,7 @@ function Posts({ setPostId }) {
   const queryClient = useQueryClient();
 
   // All you have to do now is pass a key!
-  const { status, data, error, isFetching } = useQuery("/posts");
+  const { status, data, error, isFetching } = useQuery(['/posts']);
 
   return (
     <div>
@@ -100,7 +100,7 @@ function Posts({ setPostId }) {
 
 function Post({ postId, setPostId }) {
   // You can even leave out the queryFn and just go straight into options
-  const { status, data, error, isFetching } = useQuery(`/posts/${postId}`, {
+  const { status, data, error, isFetching } = useQuery([`/posts/${postId}`], {
     enabled: !!postId,
   });
 

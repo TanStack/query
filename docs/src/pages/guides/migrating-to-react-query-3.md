@@ -244,7 +244,7 @@ const {
 This allows for easier manipulation of the data and the page params, like, for example, removing the first page of data along with it's params:
 
 ```js
-queryClient.setQueryData('projects', data => ({
+queryClient.setQueryData(['projects'], data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
@@ -335,7 +335,7 @@ If you do not want to refetch immediately, you can define a `staleTime`.
 
 ### The `QueryOptions.forceFetchOnMount` option has been replaced by `refetchOnMount: 'always'`
 
-Honestly, we were acruing way too many `refetchOn____` options, so this should clean things up.
+Honestly, we were accruing way too many `refetchOn____` options, so this should clean things up.
 
 ### The `QueryOptions.refetchOnMount` options now only applies to its parent component instead of all query observers
 
@@ -348,7 +348,7 @@ The `queryFnParamsFilter` option has been removed because query functions now ge
 
 Parameters can still be filtered within the query function itself as the `QueryFunctionContext` also contains the query key.
 
-### The `QueryOptions.notifyOnStatusChange` option has been superceded by the new `notifyOnChangeProps` and `notifyOnChangePropsExclusions` options.
+### The `QueryOptions.notifyOnStatusChange` option has been superseded by the new `notifyOnChangeProps` and `notifyOnChangePropsExclusions` options.
 
 With these new options it is possible to configure when a component should re-render on a granular level.
 
@@ -358,7 +358,7 @@ Only re-render when the `data` or `error` properties change:
 import { useQuery } from 'react-query'
 
 function User() {
-  const { data } = useQuery('user', fetchUser, {
+  const { data } = useQuery(['user'], fetchUser, {
     notifyOnChangeProps: ['data', 'error'],
   })
   return <div>Username: {data.username}</div>
@@ -371,7 +371,7 @@ Prevent re-render when the `isStale` property changes:
 import { useQuery } from 'react-query'
 
 function User() {
-  const { data } = useQuery('user', fetchUser, {
+  const { data } = useQuery(['user'], fetchUser, {
     notifyOnChangePropsExclusions: ['isStale'],
   })
   return <div>Username: {data.username}</div>
@@ -459,7 +459,7 @@ The `useQuery` and `useInfiniteQuery` hooks now have a `select` option to select
 import { useQuery } from 'react-query'
 
 function User() {
-  const { data } = useQuery('user', fetchUser, {
+  const { data } = useQuery(['user'], fetchUser, {
     select: user => user.username,
   })
   return <div>Username: {data}</div>
@@ -556,10 +556,10 @@ const unsubscribe = observer.subscribe(result => {
 The `QueryClient.setQueryDefaults()` method can be used to set default options for specific queries:
 
 ```js
-queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
+queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
 
 function Component() {
-  const { data } = useQuery('posts')
+  const { data } = useQuery(['posts'])
 }
 ```
 
@@ -568,10 +568,10 @@ function Component() {
 The `QueryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
 
 ```js
-queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
+queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
-  const { mutate } = useMutation('addPost')
+  const { mutate } = useMutation(['addPost'])
 }
 ```
 
@@ -585,7 +585,7 @@ const fetches = useIsFetching(['posts'])
 
 #### Core separation
 
-The core of React Query is now fully separated from React, which means it can also be used standalone or in other frameworks. Use the `react-query/core` entrypoint to only import the core functionality:
+The core of React Query is now fully separated from React, which means it can also be used standalone or in other frameworks. Use the `react-query/core` entry point to only import the core functionality:
 
 ```js
 import { QueryClient } from 'react-query/core'

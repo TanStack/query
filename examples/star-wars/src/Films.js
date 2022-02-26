@@ -5,7 +5,7 @@ import { useQuery } from "react-query";
 import fetch from "./fetch";
 
 export default function Films(props) {
-  const { data, status, error } = useQuery("films", () =>
+  const { data, status, error } = useQuery(["films"], () =>
     fetch("https://swapi.dev/api/films/")
   );
 

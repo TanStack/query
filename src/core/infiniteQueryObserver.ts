@@ -6,7 +6,11 @@ import type {
   InfiniteQueryObserverResult,
 } from './types'
 import type { QueryClient } from './queryClient'
-import { ObserverFetchOptions, QueryObserver } from './queryObserver'
+import {
+  NotifyOptions,
+  ObserverFetchOptions,
+  QueryObserver,
+} from './queryObserver'
 import {
   hasNextPage,
   hasPreviousPage,
@@ -39,7 +43,7 @@ export class InfiniteQueryObserver<
 
   // Type override
   protected fetch!: (
-    fetchOptions?: ObserverFetchOptions
+    fetchOptions: ObserverFetchOptions
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
@@ -67,12 +71,16 @@ export class InfiniteQueryObserver<
       TError,
       TData,
       TQueryData
-    >
+    >,
+    notifyOptions?: NotifyOptions
   ): void {
-    super.setOptions({
-      ...options,
-      behavior: infiniteQueryBehavior(),
-    })
+    super.setOptions(
+      {
+        ...options,
+        behavior: infiniteQueryBehavior(),
+      },
+      notifyOptions
+    )
   }
 
   getOptimisticResult(
@@ -90,28 +98,27 @@ export class InfiniteQueryObserver<
     >
   }
 
-  fetchNextPage(
-    options?: FetchNextPageOptions
-  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
+  fetchNextPage({ pageParam, ...options }: FetchNextPageOptions = {}): Promise<
+    InfiniteQueryObserverResult<TData, TError>
+  > {
     return this.fetch({
-      // TODO consider removing `?? true` in future breaking change, to be consistent with `refetch` API (see https://github.com/tannerlinsley/react-query/issues/2617)
-      cancelRefetch: options?.cancelRefetch ?? true,
-      throwOnError: options?.throwOnError,
+      ...options,
       meta: {
-        fetchMore: { direction: 'forward', pageParam: options?.pageParam },
+        fetchMore: { direction: 'forward', pageParam },
       },
     })
   }
 
-  fetchPreviousPage(
-    options?: FetchPreviousPageOptions
-  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
+  fetchPreviousPage({
+    pageParam,
+    ...options
+  }: FetchPreviousPageOptions = {}): Promise<
+    InfiniteQueryObserverResult<TData, TError>
+  > {
     return this.fetch({
-      // TODO consider removing `?? true` in future breaking change, to be consistent with `refetch` API (see https://github.com/tannerlinsley/react-query/issues/2617)
-      cancelRefetch: options?.cancelRefetch ?? true,
-      throwOnError: options?.throwOnError,
+      ...options,
       meta: {
-        fetchMore: { direction: 'backward', pageParam: options?.pageParam },
+        fetchMore: { direction: 'backward', pageParam },
       },
     })
   }
@@ -134,9 +141,10 @@ export class InfiniteQueryObserver<
       hasNextPage: hasNextPage(options, state.data?.pages),
       hasPreviousPage: hasPreviousPage(options, state.data?.pages),
       isFetchingNextPage:
-        state.isFetching && state.fetchMeta?.fetchMore?.direction === 'forward',
+        state.fetchStatus === 'fetching' &&
+        state.fetchMeta?.fetchMore?.direction === 'forward',
       isFetchingPreviousPage:
-        state.isFetching &&
+        state.fetchStatus === 'fetching' &&
         state.fetchMeta?.fetchMore?.direction === 'backward',
     }
   }

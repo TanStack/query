@@ -8,7 +8,7 @@ title: QueryObserver
 The `QueryObserver` can be used to observe and switch between queries.
 
 ```js
-const observer = new QueryObserver(queryClient, { queryKey: 'posts' })
+const observer = new QueryObserver(queryClient, { queryKey: ['posts'] })
 
 const unsubscribe = observer.subscribe(result => {
   console.log(result)

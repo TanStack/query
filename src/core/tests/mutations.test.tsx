@@ -1,5 +1,10 @@
 import { QueryClient } from '../..'
-import { mockConsoleError, queryKey, sleep } from '../../react/tests/utils'
+import {
+  createQueryClient,
+  executeMutation,
+  queryKey,
+  sleep,
+} from '../../reactjs/tests/utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
@@ -7,7 +12,7 @@ describe('mutations', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -16,7 +21,7 @@ describe('mutations', () => {
   })
 
   test('mutate should trigger a mutation', async () => {
-    const result = await queryClient.executeMutation({
+    const result = await executeMutation(queryClient, {
       mutationFn: async (text: string) => text,
       variables: 'todo',
     })
@@ -48,7 +53,7 @@ describe('mutations', () => {
       mutationFn: async (text: string) => text,
     })
 
-    const result = await queryClient.executeMutation({
+    const result = await executeMutation(queryClient, {
       mutationKey: key,
       variables: 'todo',
     })
@@ -146,8 +151,6 @@ describe('mutations', () => {
   })
 
   test('mutation should set correct error states', async () => {
-    const consoleMock = mockConsoleError()
-
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {
         await sleep(20)
@@ -238,8 +241,6 @@ describe('mutations', () => {
       status: 'error',
       variables: 'todo',
     })
-
-    consoleMock.mockRestore()
   })
 
   test('should be able to restore a mutation', async () => {
@@ -299,5 +300,64 @@ describe('mutations', () => {
     expect(onMutate).not.toHaveBeenCalled()
     expect(onSuccess).toHaveBeenCalled()
     expect(onSettled).toHaveBeenCalled()
+  })
+
+  test('setState should update the mutation state', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+      onMutate: text => text,
+    })
+    await mutation.mutate()
+    expect(mutation.getCurrentResult().data).toEqual('update')
+
+    // Force setState usage
+    // because no use case has been found using mutation.setState
+    const currentMutation = mutation['currentMutation']
+    currentMutation?.setState({
+      context: undefined,
+      variables: undefined,
+      data: 'new',
+      error: undefined,
+      failureCount: 0,
+      isPaused: false,
+      status: 'success',
+    })
+
+    expect(mutation.getCurrentResult().data).toEqual('new')
+  })
+
+  test('addObserver should not add an existing observer', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: async () => {
+        return 'update'
+      },
+      onMutate: text => text,
+    })
+    await mutation.mutate()
+
+    // Force addObserver usage to add an existing observer
+    // because no use case has been found
+    const currentMutation = mutation['currentMutation']!
+    expect(currentMutation['observers'].length).toEqual(1)
+    currentMutation?.addObserver(mutation)
+
+    expect(currentMutation['observers'].length).toEqual(1)
+  })
+
+  test('mutate should throw an error if no mutationFn found', async () => {
+    const mutation = new MutationObserver(queryClient, {
+      mutationFn: undefined,
+      retry: false,
+    })
+
+    let error: any
+    try {
+      await mutation.mutate()
+    } catch (err) {
+      error = err
+    }
+    expect(error).toEqual('No mutationFn found')
   })
 })

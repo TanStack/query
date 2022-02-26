@@ -31,7 +31,7 @@ export async function getStaticProps() {
 }
 
 function Posts(props) {
-  const { data } = useQuery('posts', getPosts, { initialData: props.posts })
+  const { data } = useQuery(['posts'], getPosts, { initialData: props.posts })
 
   // ...
 }
@@ -95,17 +95,23 @@ export async function getStaticProps() {
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the "Posts"-page, data will be available immediately either way
-  const { data } = useQuery('posts', getPosts)
+  const { data } = useQuery(['posts'], getPosts)
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: otherData } = useQuery('posts-2', getPosts)
+  const { data: otherData } = useQuery(['posts-2'], getPosts)
 
   // ...
 }
 ```
 
 As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
+
+### Caveat for Next.js rewrites
+
+There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/docs/api-reference/next.config.js/rewrites) together with [Automatic Static Optimization](https://nextjs.org/docs/advanced-features/automatic-static-optimization) or `getStaticProps`: It will cause a second hydration by React Query. That's because [Next.js needs to ensure that they parse the rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewrite-parameters) on the client and collect any params after hydration so that they can be provided in `router.query`.
+
+The result is missing referential equality for all the hydration data, which for example triggers whereever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.
 
 ## Using Other Frameworks or Custom SSR Frameworks
 
@@ -120,15 +126,16 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 - Dehydrate the client
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 - Serialize and embed the dehydrated cache to be sent to the client with the HTML
+- Clear the React Query caches after the dehydrated state has been sent by calling [`queryClient.clear()`](../reference/QueryClient#queryclientclear)
 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
 ```js
 import { dehydrate, Hydrate, QueryClient, QueryClientProvider } from 'react-query';
 
-function handleRequest (req, res) {
+async function handleRequest (req, res) {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery('key', fn)
+  await queryClient.prefetchQuery(['key'], fn)
   const dehydratedState = dehydrate(queryClient)
 
   const html = ReactDOM.renderToString(
@@ -149,6 +156,8 @@ function handleRequest (req, res) {
       </body>
     </html>
   `)
+
+  queryClient.clear()
 }
 ```
 
@@ -179,7 +188,7 @@ ReactDOM.hydrate(
 
 ### Only successful queries are included in dehydration
 
-Any query with an error is automatically excluded from dehydration. This means that the default behaviour is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the queryClient. This happens regardless of error.
+Any query with an error is automatically excluded from dehydration. This means that the default behavior is to pretend these queries were never loaded on the server, usually showing a loading state instead, and retrying the queries on the queryClient. This happens regardless of error.
 
 Sometimes this behavior is not desirable, maybe you want to render an error page with a correct status code instead on certain errors or queries. In those cases, use `fetchQuery` and catch any errors to handle those manually.
 
@@ -190,3 +199,11 @@ A query is considered stale depending on when it was `dataUpdatedAt`. A caveat h
 Because `staleTime` defaults to `0`, queries will be refetched in the background on page load by default. You might want to use a higher `staleTime` to avoid this double fetching, especially if you don't cache your markup.
 
 This refetching of stale queries is a perfect match when caching markup in a CDN! You can set the cache time of the page itself decently high to avoid having to re-render pages on the server, but configure the `staleTime` of the queries lower to make sure data is refetched in the background as soon as a user visits the page. Maybe you want to cache the pages for a week, but refetch the data automatically on page load if it's older than a day?
+
+### High memory consumption on server
+
+In case you are creating the `QueryClient` for every request, React Query creates the isolated cache for this client, which is preserved in memory for the `cacheTime` period (which defaults to 5 minutes). That may lead to high memory consumption on server in case of high number of requests during that period.
+
+To clear the cache after it is not needed and to lower memory consumption, you can add a call to [`queryClient.clear()`](../reference/QueryClient#queryclientclear) after the request is handled and dehydrated state has been sent to the client.
+
+Alternatively, you can set a smaller `cacheTime`.

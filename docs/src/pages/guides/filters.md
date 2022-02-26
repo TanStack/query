@@ -14,31 +14,30 @@ A query filter is an object with certain conditions to match a query with:
 await queryClient.cancelQueries()
 
 // Remove all inactive queries that begin with `posts` in the key
-queryClient.removeQueries('posts', { inactive: true })
+queryClient.removeQueries(['posts'], { type: 'inactive' })
 
 // Refetch all active queries
-await queryClient.refetchQueries({ active: true })
+await queryClient.refetchQueries({ type: 'active' })
 
 // Refetch all active queries that begin with `posts` in the key
-await queryClient.refetchQueries('posts', { active: true })
+await queryClient.refetchQueries(['posts'], { type: 'active' })
 ```
 
 A query filter object supports the following properties:
 
 - `exact?: boolean`
   - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
-- `active?: boolean`
-  - When set to `true` it will match active queries.
-  - When set to `false` it will match inactive queries.
-- `inactive?: boolean`
-  - When set to `true` it will match inactive queries.
-  - When set to `false` it will match active queries.
+- `type?: 'active' | 'inactive' | 'all'`
+  - Defaults to `all`
+  - When set to `active` it will match active queries.
+  - When set to `inactive` it will match inactive queries.
 - `stale?: boolean`
   - When set to `true` it will match stale queries.
   - When set to `false` it will match fresh queries.
-- `fetching?: boolean`
-  - When set to `true` it will match queries that are currently fetching.
-  - When set to `false` it will match queries that are not fetching.
+- `fetchStatus?: FetchStatus`
+  - When set to `fetching` it will match queries that are currently fetching.
+  - When set to `paused` it will match queries that wanted to fetch, but have been `paused`.
+  - When set to `idle` it will match queries that are not fetching.
 - `predicate?: (query: Query) => boolean`
   - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
 - `queryKey?: QueryKey`
@@ -53,7 +52,7 @@ A mutation filter is an object with certain conditions to match a mutation with:
 await queryClient.isMutating()
 
 // Filter mutations by mutationKey
-await queryClient.isMutating({ mutationKey: "post" })
+await queryClient.isMutating({ mutationKey: ["post"] })
 
 // Filter mutations using a predicate function
 await queryClient.isMutating({ predicate: (mutation) => mutation.options.variables?.id === 1 })

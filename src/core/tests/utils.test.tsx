@@ -2,41 +2,15 @@ import {
   replaceEqualDeep,
   partialDeepEqual,
   isPlainObject,
-  mapQueryStatusFilter,
+  parseMutationArgs,
+  matchMutation,
+  scheduleMicrotask,
 } from '../utils'
-import { QueryClient, QueryCache, setLogger, Logger } from '../..'
-import { queryKey } from '../../react/tests/utils'
+import { Mutation } from '../mutation'
+import { waitFor } from '@testing-library/dom'
+import { createQueryClient } from '../../reactjs/tests/utils'
 
 describe('core/utils', () => {
-  it('setLogger should override the default logger', async () => {
-    const key = queryKey()
-
-    const queryCache = new QueryCache()
-    const queryClient = new QueryClient({ queryCache })
-
-    const logger: Logger = {
-      error: jest.fn(),
-      log: jest.fn(),
-      warn: jest.fn(),
-    }
-
-    setLogger(logger)
-
-    await queryClient.prefetchQuery(
-      key,
-      async () => {
-        throw new Error('Test')
-      },
-      {
-        retry: 0,
-      }
-    )
-
-    expect(logger.error).toHaveBeenCalled()
-
-    setLogger(console)
-  })
-
   describe('isPlainObject', () => {
     it('should return `true` for a plain object', () => {
       expect(isPlainObject({})).toEqual(true)
@@ -52,6 +26,33 @@ describe('core/utils', () => {
 
     it('should return `false` for undefined', () => {
       expect(isPlainObject(undefined)).toEqual(false)
+    })
+
+    it('should return `true` for object with an undefined constructor', () => {
+      expect(isPlainObject(Object.create(null))).toBeTruthy()
+    })
+
+    it('should return `false` if constructor does not have an Object-specific method', () => {
+      class Foo {
+        abc: any
+        constructor() {
+          this.abc = {}
+        }
+      }
+      expect(isPlainObject(new Foo())).toBeFalsy()
+    })
+
+    it('should return `false` if the object has a modified prototype', () => {
+      function Graph(this: any) {
+        this.vertices = []
+        this.edges = []
+      }
+
+      Graph.prototype.addVertex = function (v: any) {
+        this.vertices.push(v)
+      }
+
+      expect(isPlainObject(Object.create(Graph))).toBeFalsy()
     })
   })
 
@@ -308,23 +309,54 @@ describe('core/utils', () => {
     })
   })
 
-  describe('mapQueryStatusFilter', () => {
-    it.each`
-      active       | inactive     | statusFilter
-      ${true}      | ${true}      | ${'all'}
-      ${undefined} | ${undefined} | ${'all'}
-      ${false}     | ${false}     | ${'none'}
-      ${true}      | ${false}     | ${'active'}
-      ${true}      | ${undefined} | ${'active'}
-      ${undefined} | ${false}     | ${'active'}
-      ${false}     | ${true}      | ${'inactive'}
-      ${undefined} | ${true}      | ${'inactive'}
-      ${false}     | ${undefined} | ${'inactive'}
-    `(
-      'returns "$statusFilter" when active is $active, and inactive is $inactive',
-      ({ active, inactive, statusFilter }) => {
-        expect(mapQueryStatusFilter(active, inactive)).toBe(statusFilter)
+  describe('parseMutationArgs', () => {
+    it('should return mutation options', () => {
+      const options = { mutationKey: ['key'] }
+      expect(parseMutationArgs(options)).toMatchObject(options)
+    })
+  })
+
+  describe('matchMutation', () => {
+    it('should return false if mutationKey options is undefined', () => {
+      const filters = { mutationKey: ['key1'] }
+      const queryClient = createQueryClient()
+      const mutation = new Mutation({
+        mutationId: 1,
+        mutationCache: queryClient.getMutationCache(),
+        options: {},
+      })
+      expect(matchMutation(filters, mutation)).toBeFalsy()
+    })
+  })
+
+  describe('scheduleMicrotask', () => {
+    it('should throw an exception if the callback throw an error', async () => {
+      const error = new Error('error')
+      const callback = () => {
+        throw error
       }
-    )
+      const errorSpy = jest.fn().mockImplementation(err => err)
+      jest.useFakeTimers()
+      const setTimeoutSpy = jest
+        .spyOn(globalThis, 'setTimeout')
+        .mockImplementation(function (handler: TimerHandler) {
+          try {
+            if (typeof handler === 'function') {
+              handler(errorSpy(error))
+            }
+          } catch (err: any) {
+            expect(err.message).toEqual('error')
+            // Do no throw an uncaught exception that cannot be tested with
+            // this jest version
+          }
+          return 0 as any
+        })
+      scheduleMicrotask(callback)
+      jest.runAllTimers()
+      await waitFor(() => expect(setTimeoutSpy).toHaveBeenCalled())
+      expect(errorSpy).toHaveBeenCalled()
+      setTimeoutSpy.mockRestore()
+      jest.useRealTimers()
+    })
   })
 })
