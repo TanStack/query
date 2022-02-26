@@ -193,14 +193,14 @@ describe('mutationCache', () => {
 
       // we currently have no way to add multiple observers to the same mutation
       const currentMutation = observer1['currentMutation']!
-      currentMutation?.addObserver(observer1)
-      currentMutation?.addObserver(observer2)
+      currentMutation.addObserver(observer1)
+      currentMutation.addObserver(observer2)
 
       expect(currentMutation['observers'].length).toEqual(2)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
 
-      currentMutation?.removeObserver(observer1)
-      currentMutation?.removeObserver(observer2)
+      currentMutation.removeObserver(observer1)
+      currentMutation.removeObserver(observer2)
       expect(currentMutation['observers'].length).toEqual(0)
       expect(queryClient.getMutationCache().getAll()).toHaveLength(1)
       // wait for cacheTime to gc

@@ -341,7 +341,7 @@ describe('mutations', () => {
     // because no use case has been found
     const currentMutation = mutation['currentMutation']!
     expect(currentMutation['observers'].length).toEqual(1)
-    currentMutation?.addObserver(mutation)
+    currentMutation.addObserver(mutation)
 
     expect(currentMutation['observers'].length).toEqual(1)
   })

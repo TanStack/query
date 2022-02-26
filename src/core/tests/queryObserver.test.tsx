@@ -619,7 +619,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: () => data,
       select: () => {
-        if (true) return selectedData1
+        return selectedData1
       },
       placeholderData: placeholderData1,
     })
@@ -655,7 +655,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: () => data,
       select: () => {
-        if (true) return selectedData
+        return selectedData
       },
       placeholderData: placeholderData1,
     })

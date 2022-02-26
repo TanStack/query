@@ -420,9 +420,7 @@ export class Query<
 
     addSignalProperty(context)
 
-    if (this.options.behavior?.onFetch) {
-      this.options.behavior?.onFetch(context)
-    }
+    this.options.behavior?.onFetch(context)
 
     // Store state in case the current fetch needs to be reverted
     this.revertState = this.state
@@ -463,7 +461,7 @@ export class Query<
     // Try to fetch the data
     this.retryer = createRetryer({
       fn: context.fetchFn as () => TData,
-      abort: abortController?.abort?.bind(abortController),
+      abort: abortController?.abort.bind(abortController),
       onSuccess: data => {
         if (typeof data === 'undefined') {
           onError(new Error('Query data cannot be undefined') as any)
