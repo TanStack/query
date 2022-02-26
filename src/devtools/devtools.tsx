@@ -130,7 +130,7 @@ export function ReactQueryDevtools({
 
     const run = (moveEvent: MouseEvent) => {
       const delta = dragInfo.pageY - moveEvent.pageY
-      const newHeight = dragInfo?.originalHeight + delta
+      const newHeight = dragInfo.originalHeight + delta
 
       setDevtoolsHeight(newHeight)
 
@@ -161,13 +161,13 @@ export function ReactQueryDevtools({
     const ref = panelRef.current
     if (ref) {
       const handlePanelTransitionStart = () => {
-        if (ref && isResolvedOpen) {
+        if (isResolvedOpen) {
           ref.style.visibility = 'visible'
         }
       }
 
       const handlePanelTransitionEnd = () => {
-        if (ref && !isResolvedOpen) {
+        if (!isResolvedOpen) {
           ref.style.visibility = 'hidden'
         }
       }
@@ -650,13 +650,13 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               flex: '1',
             }}
           >
-            {queries.map((query, i) => {
+            {queries.map(query => {
               return (
                 <QueryRow
                   queryKey={query.queryKey}
                   activeQueryHash={activeQueryHash}
                   setActiveQueryHash={setActiveQueryHash}
-                  key={query.queryHash ?? i}
+                  key={query.queryHash}
                   queryCache={queryCache}
                 />
               )
@@ -759,7 +759,7 @@ const ActiveQuery = ({
                 overflow: 'auto',
               }}
             >
-              {JSON.stringify(activeQuery?.queryKey, null, 2)}
+              {JSON.stringify(activeQuery.queryKey, null, 2)}
             </pre>
           </Code>
           <span
@@ -799,7 +799,7 @@ const ActiveQuery = ({
         >
           Last Updated:{' '}
           <Code>
-            {new Date(activeQueryState?.dataUpdatedAt).toLocaleTimeString()}
+            {new Date(activeQueryState.dataUpdatedAt).toLocaleTimeString()}
           </Code>
         </div>
       </div>
@@ -876,7 +876,7 @@ const ActiveQuery = ({
       >
         <Explorer
           label="Data"
-          value={activeQueryState?.data}
+          value={activeQueryState.data}
           defaultExpanded={{}}
         />
       </div>

@@ -399,7 +399,9 @@ export class QueryObserver<
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.currentQuery
     const prevOptions = this.options
-    const prevResult = this.currentResult
+    const prevResult = this.currentResult as
+      | QueryObserverResult<TData, TError>
+      | undefined
     const prevResultState = this.currentResultState
     const prevResultOptions = this.currentResultOptions
     const queryChange = query !== prevQuery
@@ -624,7 +626,9 @@ export class QueryObserver<
       return
     }
 
-    const prevQuery = this.currentQuery
+    const prevQuery = this.currentQuery as
+      | Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      | undefined
     this.currentQuery = query
     this.currentQueryInitialState = query.state
     this.previousQueryResult = this.currentResult

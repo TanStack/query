@@ -160,35 +160,7 @@ export class Mutation<
     return this.execute()
   }
 
-  execute(): Promise<TData> {
-    let data: TData
-
-    const restored = this.state.status === 'loading'
-
-    let promise = Promise.resolve()
-
-    if (!restored) {
-      this.dispatch({ type: 'loading', variables: this.options.variables! })
-      promise = promise
-        .then(() => {
-          // Notify cache callback
-          this.mutationCache.config.onMutate?.(
-            this.state.variables,
-            this as Mutation<unknown, unknown, unknown, unknown>
-          )
-        })
-        .then(() => this.options.onMutate?.(this.state.variables!))
-        .then(context => {
-          if (context !== this.state.context) {
-            this.dispatch({
-              type: 'loading',
-              context,
-              variables: this.state.variables,
-            })
-          }
-        })
-    }
-
+  async execute(): Promise<TData> {
     const executeMutation = () => {
       this.retryer = createRetryer({
         fn: () => {
@@ -214,38 +186,51 @@ export class Mutation<
       return this.retryer.promise
     }
 
-    return promise
-      .then(executeMutation)
-      .then(result => {
-        data = result
+    const restored = this.state.status === 'loading'
+    try {
+      if (!restored) {
+        this.dispatch({ type: 'loading', variables: this.options.variables! })
         // Notify cache callback
-        this.mutationCache.config.onSuccess?.(
-          data,
+        this.mutationCache.config.onMutate?.(
           this.state.variables,
-          this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>
         )
-      })
-      .then(() =>
-        this.options.onSuccess?.(
-          data,
-          this.state.variables!,
-          this.state.context!
-        )
+        const context = await this.options.onMutate?.(this.state.variables!)
+        if (context !== this.state.context) {
+          this.dispatch({
+            type: 'loading',
+            context,
+            variables: this.state.variables,
+          })
+        }
+      }
+      const data = await executeMutation()
+
+      // Notify cache callback
+      this.mutationCache.config.onSuccess?.(
+        data,
+        this.state.variables,
+        this.state.context,
+        this as Mutation<unknown, unknown, unknown, unknown>
       )
-      .then(() =>
-        this.options.onSettled?.(
-          data,
-          null,
-          this.state.variables!,
-          this.state.context
-        )
+
+      await this.options.onSuccess?.(
+        data,
+        this.state.variables!,
+        this.state.context!
       )
-      .then(() => {
-        this.dispatch({ type: 'success', data })
-        return data
-      })
-      .catch(error => {
+
+      await this.options.onSettled?.(
+        data,
+        null,
+        this.state.variables!,
+        this.state.context
+      )
+
+      this.dispatch({ type: 'success', data })
+      return data
+    } catch (error) {
+      try {
         // Notify cache callback
         this.mutationCache.config.onError?.(
           error,
@@ -258,27 +243,23 @@ export class Mutation<
           this.logger.error(error)
         }
 
-        return Promise.resolve()
-          .then(() =>
-            this.options.onError?.(
-              error,
-              this.state.variables!,
-              this.state.context
-            )
-          )
-          .then(() =>
-            this.options.onSettled?.(
-              undefined,
-              error,
-              this.state.variables!,
-              this.state.context
-            )
-          )
-          .then(() => {
-            this.dispatch({ type: 'error', error })
-            throw error
-          })
-      })
+        await this.options.onError?.(
+          error as TError,
+          this.state.variables!,
+          this.state.context
+        )
+
+        await this.options.onSettled?.(
+          undefined,
+          error as TError,
+          this.state.variables!,
+          this.state.context
+        )
+        throw error
+      } finally {
+        this.dispatch({ type: 'error', error: error as TError })
+      }
+    }
   }
 
   private dispatch(action: Action<TData, TError, TVariables, TContext>): void {

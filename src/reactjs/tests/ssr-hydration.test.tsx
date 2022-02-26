@@ -12,15 +12,7 @@ import {
   dehydrate,
   hydrate,
 } from '../..'
-import * as utils from '../../core/utils'
-import { createQueryClient, mockLogger, sleep } from './utils'
-
-// This monkey-patches the isServer-value from utils,
-// so that we can pretend to be in a server environment
-function setIsServer(isServer: boolean) {
-  // @ts-ignore
-  utils.isServer = isServer
-}
+import { createQueryClient, mockLogger, setIsServer, sleep } from './utils'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
