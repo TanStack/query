@@ -1,8 +1,9 @@
 import {
   sleep,
   queryKey,
-  mockConsoleError,
   expectType,
+  mockLogger,
+  createQueryClient,
 } from '../../reactjs/tests/utils'
 import {
   QueryClient,
@@ -15,7 +16,7 @@ describe('queryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -246,7 +247,6 @@ describe('queryObserver', () => {
   })
 
   test('should always run the selector again if selector throws an error', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     const results: QueryObserverResult[] = []
     const select = () => {
@@ -290,7 +290,6 @@ describe('queryObserver', () => {
       isFetching: false,
       data: undefined,
     })
-    consoleMock.mockRestore()
   })
 
   test('should structurally share the selector', async () => {
@@ -395,7 +394,6 @@ describe('queryObserver', () => {
   })
 
   test('should stop retry when unsubscribing', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
@@ -412,7 +410,6 @@ describe('queryObserver', () => {
     unsubscribe()
     await sleep(200)
     expect(count).toBe(2)
-    consoleMock.mockRestore()
   })
 
   test('should clear interval when unsubscribing to a refetchInterval query', async () => {
@@ -463,7 +460,6 @@ describe('queryObserver', () => {
   })
 
   test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let count = 0
 
@@ -490,9 +486,7 @@ describe('queryObserver', () => {
     // Should not log an error
     queryClient.clear()
     await sleep(40)
-    expect(consoleMock).not.toHaveBeenNthCalledWith(1, 'reject 1')
-
-    consoleMock.mockRestore()
+    expect(mockLogger.error).not.toHaveBeenNthCalledWith(1, 'reject 1')
   })
 
   test('should throw an error if enabled option type is not valid', async () => {
@@ -522,7 +516,6 @@ describe('queryObserver', () => {
 
   test('should throw an error if throwOnError option is true', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -538,8 +531,6 @@ describe('queryObserver', () => {
     }
 
     expect(error).toEqual('error')
-
-    consoleMock.mockRestore()
   })
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
@@ -596,7 +587,6 @@ describe('queryObserver', () => {
 
   test('select function error using placeholderdata should log an error', () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     new QueryObserver(queryClient, {
       queryKey: key,
@@ -607,9 +597,7 @@ describe('queryObserver', () => {
       },
     })
 
-    expect(consoleMock).toHaveBeenNthCalledWith(1, new Error('error'))
-
-    consoleMock.mockRestore()
+    expect(mockLogger.error).toHaveBeenNthCalledWith(1, new Error('error'))
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {

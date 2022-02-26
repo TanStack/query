@@ -39,6 +39,7 @@ Its available methods are:
 - [`queryClient.resetQueries`](#queryclientresetqueries)
 - [`queryClient.isFetching`](#queryclientisfetching)
 - [`queryClient.isMutating`](#queryclientismutating)
+- [`queryClient.getLogger`](#queryclientgetlogger)
 - [`queryClient.getDefaultOptions`](#queryclientgetdefaultoptions)
 - [`queryClient.setDefaultOptions`](#queryclientsetdefaultoptions)
 - [`queryClient.getQueryDefaults`](#queryclientgetquerydefaults)
@@ -57,6 +58,9 @@ Its available methods are:
 - `mutationCache?: MutationCache`
   - Optional
   - The mutation cache this client is connected to.
+- `logger?: Logger`
+  - Optional
+  - The logger this client uses to log debugging information, warnings and errors. If not set, `console` is the default logger.
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
@@ -203,7 +207,7 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 ## `queryClient.setQueryData`
 
-`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead. 
+`setQueryData` is a synchronous function that can be used to immediately update a query's cached data. If the query does not exist, it will be created. **If the query is not utilized by a query hook in the default `cacheTime` of 5 minutes, the query will be garbage collected**. To update multiple queries at once and match query keys partially, you need to use [`queryClient.setQueriesData`](#queryclientsetqueriesdata) instead.
 
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
@@ -450,6 +454,14 @@ React Query also exports a handy [`useIsMutating`](./useIsMutating) hook that wi
 **Returns**
 
 This method returns the number of fetching mutations.
+## `queryClient.getLogger`
+
+The `getLogger` method returns the logger which have been set when creating the client.
+
+```js
+const logger = queryClient.getLogger()
+```
+
 ## `queryClient.getDefaultOptions`
 
 The `getDefaultOptions` method returns the default options which have been set when creating the client or with `setDefaultOptions`.
