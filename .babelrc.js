@@ -5,7 +5,7 @@ const loose = true
 module.exports = {
   presets: [
     [
-      '@babel/env',
+      '@babel/preset-env',
       {
         loose,
         modules: false,
