@@ -26,25 +26,8 @@ async function fetchTodos(): Promise<Todos> {
   return res.data
 }
 
-function useTodos<TData = Todos>(
-  options?: UseQueryOptions<Todos, AxiosError, TData>
-) {
-  return useQuery(['todos'], fetchTodos, options)
-}
-
-function TodoCounter() {
-  // subscribe only to changes in the 'data' prop, which will be the
-  // amount of todos because of the select function
-  const counterQuery = useTodos({
-    select: data => data.items.length,
-    notifyOnChangeProps: ['data'],
-  })
-
-  React.useEffect(() => {
-    console.log('rendering counter')
-  })
-
-  return <div>TodoCounter: {counterQuery.data ?? 0}</div>
+function useTodos() {
+  return useQuery(['todos'], fetchTodos)
 }
 
 function Example() {
@@ -129,7 +112,7 @@ function Example() {
         </>
       )}
       {queryInfo.isLoading && 'Loading'}
-      {queryInfo.error?.message}
+      {queryInfo.error instanceof Error && queryInfo.error.message}
     </div>
   )
 }
@@ -138,7 +121,6 @@ export default function App() {
   return (
     <QueryClientProvider client={client}>
       <Example />
-      <TodoCounter />
       <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
   )
