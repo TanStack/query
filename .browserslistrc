@@ -1,6 +1,7 @@
 # Browsers we support
 Chrome >= 73
-Firefox >= 67
+Firefox >= 78
 Edge >= 79
-Safari >= 11.1
-iOS >= 11.3
+Safari >= 12.0
+iOS >= 12.0
+opera >= 53

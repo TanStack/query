@@ -9,7 +9,11 @@ module.exports = {
       {
         loose,
         modules: false,
-        exclude: ['@babel/plugin-transform-regenerator'],
+        exclude: [
+          '@babel/plugin-transform-regenerator',
+          '@babel/plugin-transform-parameters',
+        ],
+        debug: true,
       },
     ],
     '@babel/preset-typescript',
