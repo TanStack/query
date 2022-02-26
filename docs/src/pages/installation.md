@@ -30,3 +30,18 @@ If you're not using a module bundler or package manager we also have a global ("
 Once you've added this you will have access to the `window.ReactQuery` object and its exports.
 
 > This installation/usage requires the [React CDN script bundles](https://reactjs.org/docs/cdn-links.html) to be on the page as well.
+
+### Requirements
+
+React Query is optimized for modern browsers. It is compatible with the following browsers config
+
+```
+Chrome >= 73
+Firefox >= 78
+Edge >= 79
+Safari >= 12.0
+iOS >= 12.0
+opera >= 53
+```
+
+> Depending on your environment, you might need to add polyfills. If you want to support older browsers, you need to transpile the library from `node_modules` yourselves.
