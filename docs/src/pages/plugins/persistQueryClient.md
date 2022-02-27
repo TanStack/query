@@ -50,11 +50,11 @@ You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
 ## Usage with React
 
-[persistQueryClient](#persistQueryClient) will try to restore the cache and automatically subscribes you to further changes, thus syncing your client to the provided storage.
+[persistQueryClient](#persistQueryClient) will try to restore the cache and automatically subscribes to further changes, thus syncing your client to the provided storage.
 
 However, restoring is asynchronous, because all persisters are async by nature, which means that if you render your App while you are restoring, you might get into race conditions if a query mounts and fetches at the same time.
 
-Further, if you subscribe to changes outside of react lifecycles, you have no way of unsubscribing:
+Further, if you subscribe to changes outside of the React component lifecycle, you have no way of unsubscribing:
 
 ```js
 // 🚨 never unsubscribes from syncing
@@ -69,7 +69,7 @@ ReactDOM.render(<App />, rootElement)
 
 ### PeristQueryClientProvider
 
-For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal `QueryClientProvider`:
+For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](../reference/QueryClientProvider):
 
 ```jsx
 
@@ -97,8 +97,18 @@ ReactDOM.render(
   </PersistQueryClientProvider>,
   rootElement
 )
-
 ```
+
+#### Props
+
+`PersistQueryClientProvider` takes the same props as [QueryClientProvider](../reference/QueryClientProvider), and additionally:
+
+- `persistOptions: PersistQueryClientOptions`
+  - all [options](#options) you cann pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
+- `onSuccess?: () => void`
+  - optional
+  - will be called when the initial restore is finished
+  - can be used to [resumePausedMutations](../reference/QueryClient#queryclientresumepausedmutations)
 
 ## How does it work?
 
