@@ -73,6 +73,19 @@ describe('focusManager', () => {
     restoreIsServer()
   })
 
+  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
+    const { addEventListener } = globalThis.window
+
+    // @ts-expect-error
+    globalThis.window.addEventListener = undefined
+
+    const unsubscribe = focusManager.subscribe(() => undefined)
+    expect(focusManager['cleanup']).toBeUndefined()
+
+    unsubscribe()
+    globalThis.window.addEventListener = addEventListener
+  })
+
   it('should replace default window listener when a new event listener is set', async () => {
     const addEventListenerSpy = jest.spyOn(
       globalThis.window,
