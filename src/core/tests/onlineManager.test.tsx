@@ -67,6 +67,19 @@ describe('onlineManager', () => {
     restoreIsServer()
   })
 
+  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
+    const { addEventListener } = globalThis.window
+
+    // @ts-expect-error
+    globalThis.window.addEventListener = undefined
+
+    const unsubscribe = onlineManager.subscribe(() => undefined)
+    expect(onlineManager['cleanup']).toBeUndefined()
+
+    unsubscribe()
+    globalThis.window.addEventListener = addEventListener
+  })
+
   test('it should replace default window listener when a new event listener is set', async () => {
     const addEventListenerSpy = jest.spyOn(
       globalThis.window,

@@ -14,7 +14,9 @@ export class OnlineManager extends Subscribable {
   constructor() {
     super()
     this.setup = onOnline => {
-      if (!isServer) {
+      // addEventListener does not exist in React Native, but window does
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!isServer && window.addEventListener) {
         const listener = () => onOnline()
         // Listen to online
         window.addEventListener('online', listener, false)
