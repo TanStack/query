@@ -1,4 +1,4 @@
-import { RefetchPageFilters } from './types'
+import { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -205,7 +205,7 @@ export class QueryObserver<
   }
 
   getOptimisticResult(
-    options: QueryObserverOptions<
+    options: DefaultedQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
@@ -213,13 +213,9 @@ export class QueryObserver<
       TQueryKey
     >
   ): QueryObserverResult<TData, TError> {
-    const defaultedOptions = this.client.defaultQueryOptions(options)
+    const query = this.client.getQueryCache().build(this.client, options)
 
-    const query = this.client
-      .getQueryCache()
-      .build(this.client, defaultedOptions)
-
-    return this.createResult(query, defaultedOptions)
+    return this.createResult(query, options)
   }
 
   getCurrentResult(): QueryObserverResult<TData, TError> {
