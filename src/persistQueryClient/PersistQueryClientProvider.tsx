@@ -8,6 +8,7 @@ export interface PersistQueryClientProviderProps
   extends QueryClientProviderProps {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
+  onError?: (error: unknown) => Promise<unknown> | void
 }
 
 export const PersistQueryClientProvider = ({
@@ -15,25 +16,38 @@ export const PersistQueryClientProvider = ({
   children,
   persistOptions,
   onSuccess,
+  onError,
   ...props
 }: PersistQueryClientProviderProps): JSX.Element => {
   const [isHydrating, setIsHydrating] = React.useState(true)
-  const refs = React.useRef({ persistOptions, onSuccess })
+  const refs = React.useRef({ persistOptions, onSuccess, onError })
+  const previousPromise = React.useRef(Promise.resolve())
 
   React.useEffect(() => {
-    refs.current = { persistOptions, onSuccess }
+    refs.current = { persistOptions, onSuccess, onError }
   })
 
   React.useEffect(() => {
+    setIsHydrating(true)
     const [unsubscribe, promise] = persistQueryClient({
       ...refs.current.persistOptions,
       queryClient: client,
     })
 
-    promise.then(() => {
-      refs.current.onSuccess?.()
-      setIsHydrating(false)
-    })
+    async function handlePersist() {
+      try {
+        await previousPromise.current
+        previousPromise.current = promise
+        await promise
+        refs.current.onSuccess?.()
+      } catch (error) {
+        refs.current.onError?.(error)
+      } finally {
+        setIsHydrating(false)
+      }
+    }
+
+    void handlePersist()
 
     return unsubscribe
   }, [client])

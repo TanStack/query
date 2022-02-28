@@ -359,4 +359,118 @@ describe('PersistQueryClientProvider', () => {
     expect(onSuccess).toHaveBeenCalledTimes(1)
     await waitFor(() => rendered.getByText('fetched'))
   })
+
+  test('should be able to persist into multiple clients', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[] = []
+
+    const queryClient = new QueryClient()
+    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+
+    const persister = createMockPersister()
+
+    await persistQueryClientSave({ queryClient, persister })
+
+    queryClient.clear()
+
+    const onSuccess = jest.fn()
+
+    const queryFn1 = jest.fn().mockImplementation(async () => {
+      await sleep(10)
+      return 'queryFn1'
+    })
+    const queryFn2 = jest.fn().mockImplementation(async () => {
+      await sleep(10)
+      return 'queryFn2'
+    })
+
+    function App() {
+      const [client, setClient] = React.useState(
+        () =>
+          new QueryClient({
+            defaultOptions: {
+              queries: {
+                queryFn: queryFn1,
+              },
+            },
+          })
+      )
+
+      React.useEffect(() => {
+        setClient(
+          new QueryClient({
+            defaultOptions: {
+              queries: {
+                queryFn: queryFn2,
+              },
+            },
+          })
+        )
+      }, [])
+
+      return (
+        <PersistQueryClientProvider
+          client={client}
+          persistOptions={{ persister }}
+          onSuccess={onSuccess}
+        >
+          <Page />
+        </PersistQueryClientProvider>
+      )
+    }
+
+    function Page() {
+      const state = useQuery(key)
+
+      states.push(state)
+
+      return (
+        <div>
+          <h1>{String(state.data)}</h1>
+          <h2>fetchStatus: {state.fetchStatus}</h2>
+        </div>
+      )
+    }
+
+    const rendered = render(<App />)
+
+    await waitFor(() => rendered.getByText('hydrated'))
+    await waitFor(() => rendered.getByText('queryFn2'))
+
+    expect(queryFn1).toHaveBeenCalledTimes(0)
+    expect(queryFn2).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledTimes(2)
+
+    expect(states).toHaveLength(5)
+
+    expect(states[0]).toMatchObject({
+      status: 'loading',
+      fetchStatus: 'idle',
+      data: undefined,
+    })
+
+    expect(states[1]).toMatchObject({
+      status: 'loading',
+      fetchStatus: 'idle',
+      data: undefined,
+    })
+
+    expect(states[2]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[3]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'fetching',
+      data: 'hydrated',
+    })
+
+    expect(states[4]).toMatchObject({
+      status: 'success',
+      fetchStatus: 'idle',
+      data: 'queryFn2',
+    })
+  })
 })
