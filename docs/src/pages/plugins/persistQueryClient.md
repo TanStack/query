@@ -51,23 +51,6 @@ If data is found to be expired (see `maxAge`), busted (see `buster`), error (ex:
 
 ## API
 
-### `persistQueryClientRestore`
-
-- Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
-- If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
-
-You can use this to restore the cache at moment(s) you choose.
-
-```ts
-persistQueryClientRestore({
-  queryClient,
-  persister,
-  maxAge = 1000 * 60 * 60 * 24, // 24 hours
-  buster = '',
-  hydrateOptions = undefined,
-})
-```
-
 ### `persistQueryClientSave`
 
 - Your query/mutation are [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided. 
@@ -97,6 +80,23 @@ persistQueryClientSubscribe({
   persister,
   buster = '',
   dehydrateOptions = undefined,
+})
+```
+
+### `persistQueryClientRestore`
+
+- Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
+- If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
+
+You can use this to restore the cache at moment(s) you choose.
+
+```ts
+persistQueryClientRestore({
+  queryClient,
+  persister,
+  maxAge = 1000 * 60 * 60 * 24, // 24 hours
+  buster = '',
+  hydrateOptions = undefined,
 })
 ```
 
