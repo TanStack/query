@@ -185,4 +185,33 @@ export interface PersistedClient {
 }
 ```
 
-Satisfy all of these interfaces and you've got yourself a persister!
+You can import these (to build a persister):
+```ts
+import { PersistedClient, Persister } from "react-query/persistQueryClient";
+```
+
+### Building A Persister
+You can persist however you like.  Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister.
+
+```ts
+import { get, set, del } from "idb-keyval";
+import { PersistedClient, Persister } from "react-query/persistQueryClient";
+
+/**
+ * Creates an Indexed DB persister
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API
+ */
+export function createIDBPersister(idbValidKey: IDBValidKey = "reactQuery") {
+  return {
+    persistClient: async (client: PersistedClient) => {
+      set(idbValidKey, client);
+    },
+    restoreClient: async () => {
+      return await get<PersistedClient>(idbValidKey);
+    },
+    removeClient: async () => {
+      await del(idbValidKey);
+    },
+  } as Persister;
+}
+```
