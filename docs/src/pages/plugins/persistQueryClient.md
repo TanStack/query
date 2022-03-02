@@ -181,7 +181,7 @@ import { PersistedClient, Persister } from "react-query/persistQueryClient";
 ```
 
 ### Building A Persister
-You can persist however you like.  Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister.
+You can persist however you like.  Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Indexed DB is useful because it is fast, stores more volume, and doesn't require serialization.  That means it can readily store Javascript native types, such as `Date` and `File` (unlike `Web Storage API`).
 
 ```ts
 import { get, set, del } from "idb-keyval";
