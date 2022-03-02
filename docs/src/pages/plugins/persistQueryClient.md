@@ -123,8 +123,8 @@ persistQueryClient({
 ### `Options`
 
 The following options are available.  Note:
-- `persistQueryClientSave` and `persistQueryClientSubscribe` do not consider `hydrateOptions` (hydrate is only used to restore)
-- `persistQueryClientRestore` does not consider `dehydrateOptions` (dehydrate is only used to save)
+- `persistQueryClientSave` and `persistQueryClientSubscribe` do not consider `hydrateOptions` (hydrate is only used to restore).  This interface is available in this case: `PersistedQueryClientSaveOptions`.
+- `persistQueryClientRestore` does not consider `dehydrateOptions` (dehydrate is only used to save). This interface is available in this case: `PersistedQueryClientRestoreOptions`.
 
 ```ts
 interface PersistQueryClientOptions {
