@@ -48,40 +48,31 @@ It should be set as the same value or higher than persistQueryClient's `maxAge` 
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
-## How does it work?
+### Environment Checking
+A check for window `undefined` is performed prior to saving/restoring/removing your data (avoids build errors).
 
-- A check for window `undefined` is performed prior to saving/restoring/removing your data (avoids build errors).
+### Cache Busting
 
-### Storing
-
-As you use your application:
-
-- When your query/mutation cache is updated, it will be [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided. The officially supported persisters throttle this action to happen at most every 1 second to save on potentially expensive writes, but can be customized as you see fit.
-
-#### Cache Busting
-
-Sometimes you may make changes to your application or data that immediately invalidate any and all cached data. If and when this happens, you can pass a `buster` string option to `persistQueryClient`, and if the cache that is found does not also have that buster string, it will be discarded.
+Sometimes you may make changes to your application or data that immediately invalidate any and all cached data. If and when this happens, you can pass a `buster` string option. If the cache that is found does not also have that buster string, it will be discarded.  The following several functions accept this option:
 
 ```ts
 persistQueryClient({ queryClient, persister, buster: buildHash })
+persistQueryClientSave({ queryClient, persister, buster: buildHash })
+persistQueryClientRestore({ queryClient, persister, buster: buildHash })
 ```
-
-### Restoring
-
-When you reload/bootstrap your app:
-
-- Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
-- If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
 
 ### Removal
 
-- If data is found to be expired (see `maxAge`), busted (see `buster`), error (ex: `throws ...`), or empty (ex: `undefined`), the persister `removeClient()` is called and the cache is immediately discarded.
+If data is found to be expired (see `maxAge`), busted (see `buster`), error (ex: `throws ...`), or empty (ex: `undefined`), the persister `removeClient()` is called and the cache is immediately discarded.
 
 ## API
 
 ### `persistQueryClientRestore`
 
-This will attempt to restore a persister's stored cached to the query cache of the passed queryClient.
+- Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
+- If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
+
+You can use this to restore the cache at moment(s) you choose.
 
 ```ts
 persistQueryClientRestore({
@@ -95,7 +86,10 @@ persistQueryClientRestore({
 
 ### `persistQueryClientSave`
 
-This will attempt to save the current query cache with the persister. You can use this to explicitly persist the cache at the moments you choose.
+- Your query/mutation are [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided. 
+- `createWebStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes, but can be customized as you see fit. 
+
+You can use this to explicitly persist the cache at the moment(s) you choose.
 
 ```ts
 persistQueryClientSave({
@@ -108,7 +102,7 @@ persistQueryClientSave({
 
 ### `persistQueryClientSubscribe`
 
-This will subscribe to query cache updates which will run `persistQueryClientSave`. For example: you might initiate the `subscribe` when a user logs-in and checks "Remember me".
+Runs `persistQueryClientSave` whenever the cache changes for your `queryClient`. For example: you might initiate the `subscribe` when a user logs-in and checks "Remember me".
 
 - It returns an `unsubscribe` function which you can use to discontinue the monitor; ending the updates to the persisted cache.
 - If you want to erase the persisted cache after the `unsubscribe`, you can send a new `buster` to `persistQueryClientRestore` which will trigger the persister's `removeClient` function and discard the persisted cache.
@@ -124,7 +118,12 @@ persistQueryClientSubscribe({
 
 ### `persistQueryClient`
 
-This will automatically restore any persisted cache and subscribes to the query cache to persist any changes from the query cache to the persister. It returns an `unsubscribe` function which you can use to discontinue the monitor; ending the updates to the persisted cache.
+Takes the following actions:
+
+1. Immediately restores any persisted cache ([see `persistQueryClientRestore`](#persistqueryclientrestore))
+2. Subscribes to the query cache and returns the `unsubscribe` function ([see `persistQueryClientSubscribe`](#persistqueryclientsubscribe)).
+
+This functionality is preserved from version 3.x.
 
 ```ts
 persistQueryClient({
@@ -139,7 +138,9 @@ persistQueryClient({
 
 ### `Options`
 
-An object of options:
+The following options are available.  Note:
+- `persistQueryClientSave` and `persistQueryClientSubscribe` do not consider `hydrateOptions` (hydrate is only used to restore)
+- `persistQueryClientRestore` does not consider `dehydrateOptions` (dehydrate is only used to save)
 
 ```ts
 interface PersistQueryClientOptions {
