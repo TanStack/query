@@ -16,27 +16,14 @@ This utility comes packaged with `react-query` and is available under the `react
 
 ## Usage
 
-Import the `persistQueryClient` function, and pass it your `QueryClient` instance (with a `cacheTime` set), and a Persister interface (there are multiple persister types you can use):
 
 ```ts
-import { persistQueryClient } from 'react-query/persistQueryClient'
-import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       cacheTime: 1000 * 60 * 60 * 24, // 24 hours
     },
   },
-})
-
-const localStoragePersister = createWebStoragePersister({
-  storage: window.localStorage,
-})
-
-persistQueryClient({
-  queryClient,
-  persister: localStoragePersister,
 })
 ```
 
