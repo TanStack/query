@@ -164,9 +164,11 @@ interface PersistQueryClientOptions {
 }
 ```
 
-## Building a Persister
+## Persisters
 
-Persisters have the following interface:
+### Persisters Interface
+
+Persisters have the following interfaces:
 
 ```ts
 export interface Persister {
