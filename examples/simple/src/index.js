@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import axios from "axios";
 
 const queryClient = new QueryClient();
 
@@ -16,16 +17,9 @@ export default function App() {
 
 function Example() {
   const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
-    fetch(
+    axios.get(
       "https://api.github.com/repos/tannerlinsley/react-query"
-    ).then((res) => {
-      // Manually throwing error if request was not successful
-      // https://react-query.tanstack.com/guides/query-functions#usage-with-fetch-and-other-clients-that-do-not-throw-by-default
-      if (!res.ok) {
-        throw new Error('Response was not ok')
-      }
-      return res.json()
-    })
+    ).then((res) => res.data)
   );
 
   if (isLoading) return "Loading...";
