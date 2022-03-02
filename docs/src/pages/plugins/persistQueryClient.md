@@ -3,18 +3,23 @@ id: persistQueryClient
 title: persistQueryClient
 ---
 
-`persistQueryClient` is a utility for persisting the state of your queryClient and its caches for later use. Different **persisters** can be used to store your client and cache to many different storage layers.
+This is set of utilities for interacting with "persisters" which save your queryClient for later use. Different **persisters** can be used to store your client and cache to many different storage layers.
 
-## Officially Supported Persisters
+## Build Persisters
 
 - [createWebStoragePersister](/plugins/createWebStoragePersister)
 - [createAsyncStoragePersister](/plugins/createAsyncStoragePersister)
+- [create a custom persister](#persisters)
 
-## Installation
+## How It Works
 
-This utility comes packaged with `react-query` and is available under the `react-query/persistQueryClient` import.
+**IMPORTANT** - for persist to work properly, you need to pass `QueryClient` a `cacheTime` value to override the default during hydration (as shown above).
 
-## Usage
+If it is not set when creating the `QueryClient` instance, it will default to `300000` (5 minutes) for hydration, and the stored cache will be discarded after 5 minutes of inactivity. This is the default garbage collection behavior.
+
+It should be set as the same value or higher than persistQueryClient's `maxAge` option. E.g. if `maxAge` is 24 hours (the default) then `cacheTime` should be 24 hours or higher. If lower than `maxAge`, garbage collection will kick in and discard the stored cache earlier than expected.
+
+You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
 
 ```ts
@@ -26,14 +31,6 @@ const queryClient = new QueryClient({
   },
 })
 ```
-
-**IMPORTANT** - for persist to work properly, you need to pass `QueryClient` a `cacheTime` value to override the default during hydration (as shown above).
-
-If it is not set when creating the `QueryClient` instance, it will default to `300000` (5 minutes) for hydration, and the stored cache will be discarded after 5 minutes of inactivity. This is the default garbage collection behavior.
-
-It should be set as the same value or higher than persistQueryClient's `maxAge` option. E.g. if `maxAge` is 24 hours (the default) then `cacheTime` should be 24 hours or higher. If lower than `maxAge`, garbage collection will kick in and discard the stored cache earlier than expected.
-
-You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
 ### Environment Checking
 A check for window `undefined` is performed prior to saving/restoring/removing your data (avoids build errors).
