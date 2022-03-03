@@ -1,4 +1,5 @@
 import type {
+  DefaultedInfiniteQueryObserverOptions,
   FetchNextPageOptions,
   FetchPreviousPageOptions,
   InfiniteData,
@@ -84,7 +85,7 @@ export class InfiniteQueryObserver<
   }
 
   getOptimisticResult(
-    options: InfiniteQueryObserverOptions<
+    options: DefaultedInfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,

@@ -246,6 +246,23 @@ export interface InfiniteQueryObserverOptions<
     TQueryKey
   > {}
 
+export type DefaultedInfiniteQueryObserverOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> = WithRequired<
+  InfiniteQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+  'useErrorBoundary' | 'refetchOnReconnect'
+>
+
 export interface FetchQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
