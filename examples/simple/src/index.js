@@ -3,6 +3,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { QueryClient, QueryClientProvider, useQuery } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import axios from "axios";
 
 const queryClient = new QueryClient();
 
@@ -16,9 +17,9 @@ export default function App() {
 
 function Example() {
   const { isLoading, error, data, isFetching } = useQuery("repoData", () =>
-    fetch(
+    axios.get(
       "https://api.github.com/repos/tannerlinsley/react-query"
-    ).then((res) => res.json())
+    ).then((res) => res.data)
   );
 
   if (isLoading) return "Loading...";
