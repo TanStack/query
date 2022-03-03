@@ -57,5 +57,4 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 
 ## [#13: Offline React Query](https://tkdodo.eu/blog/offline-react-query)
 
-> You'll learn about the different offline strategies with React Query.
-[Read more...](https://tkdodo.eu/blog/offline-react-query)
+> There are many ways to produce promises - which is everything React Query needs - but by far the biggest use-case is data fetching. Very often, that requires an active network connection. But sometimes, especially on mobile devices where, the network connection can be unreliable, you need your app to also work without it. In this article, you'll learn about the different offline strategies React Query offers. [Read more...](https://tkdodo.eu/blog/offline-react-query)
