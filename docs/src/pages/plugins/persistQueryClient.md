@@ -13,14 +13,13 @@ This is set of utilities for interacting with "persisters" which save your query
 
 ## How It Works
 
-**IMPORTANT** - for persist to work properly, you need to pass `QueryClient` a `cacheTime` value to override the default during hydration (as shown above).
+**IMPORTANT** - for persist to work properly, you probably want to pass `QueryClient` a `cacheTime` value to override the default during hydration (as shown above).
 
 If it is not set when creating the `QueryClient` instance, it will default to `300000` (5 minutes) for hydration, and the stored cache will be discarded after 5 minutes of inactivity. This is the default garbage collection behavior.
 
 It should be set as the same value or higher than persistQueryClient's `maxAge` option. E.g. if `maxAge` is 24 hours (the default) then `cacheTime` should be 24 hours or higher. If lower than `maxAge`, garbage collection will kick in and discard the stored cache earlier than expected.
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
-
 
 ```ts
 const queryClient = new QueryClient({
@@ -47,14 +46,21 @@ persistQueryClientRestore({ queryClient, persister, buster: buildHash })
 
 ### Removal
 
-If data is found to be expired (see `maxAge`), busted (see `buster`), error (ex: `throws ...`), or empty (ex: `undefined`), the persister `removeClient()` is called and the cache is immediately discarded.
+If data is found to be any of the following:
+
+1. expired (see `maxAge`)
+2. busted (see `buster`)
+3. error (ex: `throws ...`)
+4. empty (ex: `undefined`)
+
+the persister `removeClient()` is called and the cache is immediately discarded.
 
 ## API
 
 ### `persistQueryClientSave`
 
 - Your query/mutation are [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided. 
-- `createWebStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes, but can be customized as you see fit. 
+- `createWebStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes.  Review their documentation to see how to customize their throttle timing. 
 
 You can use this to explicitly persist the cache at the moment(s) you choose.
 
@@ -86,7 +92,7 @@ persistQueryClientSubscribe({
 ### `persistQueryClientRestore`
 
 - Attempts to [`hydrate`](../reference/hydration#hydrate) a previously persisted dehydrated query/mutation cache from the persister back into the query cache of the passed query client.
-- If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This can be customized as you see fit.
+- If a cache is found that is older than the `maxAge` (which by default is 24 hours), it will be discarded. This timing can be customized as you see fit.
 
 You can use this to restore the cache at moment(s) you choose.
 
@@ -122,9 +128,7 @@ persistQueryClient({
 
 ### `Options`
 
-The following options are available.  Note:
-- `persistQueryClientSave` and `persistQueryClientSubscribe` do not consider `hydrateOptions` (hydrate is only used to restore).  This interface is available in this case: `PersistedQueryClientSaveOptions`.
-- `persistQueryClientRestore` does not consider `dehydrateOptions` (dehydrate is only used to save). This interface is available in this case: `PersistedQueryClientRestoreOptions`.
+All options available are as follows:
 
 ```ts
 interface PersistQueryClientOptions {
@@ -141,12 +145,19 @@ interface PersistQueryClientOptions {
   /** A unique string that can be used to forcefully
    * invalidate existing caches if they do not share the same buster string */
   buster?: string
-  /** The options passed to the hydrate function */
+  /** The options passed to the hydrate function
+   * Not used on `persistQueryClientSave` or `persistQueryClientSubscribe` */
   hydrateOptions?: HydrateOptions
-  /** The options passed to the dehydrate function */
+  /** The options passed to the dehydrate function 
+  * Not used on `persistQueryClientRestore` */
   dehydrateOptions?: DehydrateOptions
 }
 ```
+
+There are actually three interfaces available: 
+- `PersistedQueryClientSaveOptions` is used for `persistQueryClientSave` and `persistQueryClientSubscribe` (doesn't use `hydrateOptions`).
+- `PersistedQueryClientRestoreOptions` is used for `persistQueryClientRestore` (doesn't use `dehydrateOptions`).
+- `PersistQueryClientOptions` is used for `persistQueryClient`
 
 ## Persisters
 
@@ -178,7 +189,7 @@ import { PersistedClient, Persister } from "react-query/persistQueryClient";
 ```
 
 ### Building A Persister
-You can persist however you like.  Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Indexed DB is useful because it is fast, stores more volume, and doesn't require serialization.  That means it can readily store Javascript native types, such as `Date` and `File` (unlike `Web Storage API`).
+You can persist however you like.  Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Compared to `Web Storage API`, Indexed DB is faster, stores more than 5MB, and doesn't require serialization.  That means it can readily store Javascript native types, such as `Date` and `File`.
 
 ```ts
 import { get, set, del } from "idb-keyval";
