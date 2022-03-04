@@ -7,6 +7,7 @@ import {
   replaceEqualDeep,
   timeUntilStale,
   ensureQueryKeyArray,
+  CompatWeakRef,
 } from './utils'
 import type {
   InitialDataFunction,
@@ -204,8 +205,10 @@ export class Query<
     this.clearGcTimeout()
 
     if (isValidTimeout(this.cacheTime)) {
+      const thisRef = new CompatWeakRef(this)
+
       this.gcTimeout = setTimeout(() => {
-        this.optionalRemove()
+        thisRef.deref()?.optionalRemove()
       }, this.cacheTime)
     }
   }

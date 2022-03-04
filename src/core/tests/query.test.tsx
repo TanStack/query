@@ -920,4 +920,41 @@ describe('query', () => {
 
     expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
   })
+
+  test.skip('short cacheTime should not let a query self-reference to remain in memory', async () => {
+    let weakQuery
+    let query
+    ;(() => {
+      query = new QueryObserver(new QueryClient(), {
+        queryKey: queryKey(),
+        queryFn: async () => 'data',
+        cacheTime: 3,
+      }).getCurrentQuery()
+
+      weakQuery = new WeakRef(query)
+      query = null
+    })()
+    await sleep(30)
+    // global.gc() // This test needs node to run jest run with --expose-gc
+    expect(query).toBe(null)
+    expect(weakQuery.deref()).toBeUndefined()
+  })
+  test.skip('long cacheTime should not let a query self-reference to remain in memory', async () => {
+    let weakQuery
+    let query
+    ;(() => {
+      query = new QueryObserver(new QueryClient(), {
+        queryKey: queryKey(),
+        queryFn: async () => 'data',
+        cacheTime: 3000,
+      }).getCurrentQuery()
+
+      weakQuery = new WeakRef(query)
+      query = null
+    })()
+    await sleep(30)
+    // global.gc() // This test needs node to run jest run with --expose-gc
+    expect(query).toBe(null)
+    expect(weakQuery.deref()).toBeUndefined()
+  })
 })
