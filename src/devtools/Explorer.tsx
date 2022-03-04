@@ -59,11 +59,11 @@ type Entry = {
 type RendererProps = {
   HandleEntry: HandleEntryComponent
   label?: string
-  value?: unknown
-  subEntries?: Entry[]
-  subEntryPages?: Entry[][]
-  type?: string
-  expanded?: boolean
+  value: unknown
+  subEntries: Entry[]
+  subEntryPages: Entry[][]
+  type: string
+  expanded: boolean
   toggleExpanded: () => void
   pageSize: number
 }
