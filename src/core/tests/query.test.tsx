@@ -882,7 +882,7 @@ describe('query', () => {
     expect(initialDataUpdatedAtSpy).toHaveBeenCalled()
   })
 
-  test('short cacheTime should not let a query self-reference to remain in memory', async () => {
+  test.skip('short cacheTime should not let a query self-reference to remain in memory', async () => {
     let query
 
     query = new QueryObserver(new QueryClient(), {
@@ -899,7 +899,7 @@ describe('query', () => {
     expect(query).toBe(null)
     expect(weakQuery.deref()).toBeUndefined()
   })
-  test('long cacheTime should not let a query self-reference to remain in memory', async () => {
+  test.skip('long cacheTime should not let a query self-reference to remain in memory', async () => {
     let query
 
     query = new QueryObserver(new QueryClient(), {
