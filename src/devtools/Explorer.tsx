@@ -59,7 +59,7 @@ type Entry = {
 type RendererProps = {
   HandleEntry: HandleEntryComponent
   label?: string
-  value?: any
+  value?: unknown
   subEntries?: Entry[]
   subEntryPages?: Entry[][]
   type?: string
@@ -177,6 +177,10 @@ type Property = {
   value: unknown
 }
 
+function isIterable(x: any): x is Iterable<unknown> {
+  return Symbol.iterator in x
+}
+
 export default function Explorer({
   value,
   defaultExpanded,
@@ -212,6 +216,7 @@ export default function Explorer({
   } else if (
     value !== null &&
     typeof value === 'object' &&
+    isIterable(value) &&
     typeof value[Symbol.iterator] === 'function'
   ) {
     type = 'Iterable'
