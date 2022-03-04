@@ -413,3 +413,21 @@ export function getAbortController(): AbortController | undefined {
     return new AbortController()
   }
 }
+
+/**
+ * Gracefully degrade a WeakRef to a "StrongRef" if support is missing.
+ */
+const StrongRef = (function StrongRef<T extends object>(
+  this: { [Symbol.toStringTag]: 'WeakRef'; deref(): T | undefined },
+  target: T
+) {
+  this.deref = () => target
+
+  if (typeof Symbol === 'function' && typeof Symbol.toStringTag === 'symbol') {
+    this[Symbol.toStringTag] = 'WeakRef'
+  }
+} as Function) as {
+  readonly prototype: WeakRef<any>
+  new <T extends object>(target: T): WeakRef<T>
+}
+export const CompatWeakRef = typeof WeakRef === 'function' ? WeakRef : StrongRef

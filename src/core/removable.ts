@@ -1,4 +1,4 @@
-import { isValidTimeout } from './utils'
+import { CompatWeakRef, isValidTimeout } from './utils'
 
 export abstract class Removable {
   cacheTime!: number
@@ -12,8 +12,10 @@ export abstract class Removable {
     this.clearGcTimeout()
 
     if (isValidTimeout(this.cacheTime)) {
+      const thisRef = new CompatWeakRef(this)
+
       this.gcTimeout = setTimeout(() => {
-        this.optionalRemove()
+        thisRef.deref()?.optionalRemove()
       }, this.cacheTime)
     }
   }
