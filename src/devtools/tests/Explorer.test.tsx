@@ -36,9 +36,12 @@ describe('Explorer', () => {
           label="the top level label"
           toggleExpanded={toggleExpanded}
           pageSize={10}
-          handleEntry={() => <></>}
           expanded={false}
-          subEntryPages={[[{ label: 'A lovely lable' }]]}
+          subEntryPages={[[{ label: 'A lovely label' }]]}
+          HandleEntry={() => <></>}
+          value={undefined}
+          subEntries={[]}
+          type="string"
         />
       )
 
