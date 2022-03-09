@@ -2,6 +2,7 @@ import {
   getAbortController,
   Updater,
   functionalUpdate,
+  isServer,
   isValidTimeout,
   noop,
   replaceEqualDeep,
@@ -187,10 +188,10 @@ export class Query<
 
     this.meta = options?.meta
 
-    // Default to 5 minutes if not cache time is set
+    // Default to 5 minutes (Infinity for server-side) if not cache time is set
     this.cacheTime = Math.max(
       this.cacheTime || 0,
-      this.options.cacheTime ?? 5 * 60 * 1000
+      this.options.cacheTime ?? (isServer ? Infinity : 5 * 60 * 1000)
     )
   }
 
