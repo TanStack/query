@@ -195,7 +195,7 @@ useMutation(addTodo, {
   mutate(todo, {
     onSuccess: (data, error, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),
-      // regardles which mutation resolves first 
+      // regardless which mutation resolves first 
     },
   })
 })
