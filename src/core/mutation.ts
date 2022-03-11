@@ -241,7 +241,7 @@ export class Mutation<
       },
       onError: (error) => {
         this.dispatch({type: 'error',error: error })
-      }
+      },
       onPause: () => {
         this.dispatch({ type: 'pause' })
       },
