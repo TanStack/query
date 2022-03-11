@@ -239,6 +239,9 @@ export class Mutation<
       onFail: () => {
         this.dispatch({ type: 'failed' })
       },
+      onError: (error) => {
+        this.dispatch({type: 'error',error: error })
+      }
       onPause: () => {
         this.dispatch({ type: 'pause' })
       },
