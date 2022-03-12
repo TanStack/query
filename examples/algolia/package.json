@@ -1,0 +1,33 @@
+{
+  "name": "react-query-algolia",
+  "version": "1.0.0",
+  "description": "React Query with Algolia",
+  "keywords": [],
+  "main": "src/index.tsx",
+  "dependencies": {
+    "@algolia/client-search": "4.11.0",
+    "@algolia/transporter": "4.11.0",
+    "algoliasearch": "4.12.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-query": "3.34.16",
+    "react-scripts": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "17.0.20",
+    "@types/react-dom": "17.0.9",
+    "typescript": "4.4.2"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}

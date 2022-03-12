@@ -1,0 +1,14 @@
+{
+    "include": [
+        "./src/**/*"
+    ],
+    "compilerOptions": {
+        "strict": true,
+        "esModuleInterop": true,
+        "lib": [
+            "dom",
+            "es2019"
+        ],
+        "jsx": "react-jsx"
+    }
+}
