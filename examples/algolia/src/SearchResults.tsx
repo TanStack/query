@@ -22,7 +22,7 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
   } = useAlgolia<Product>({
     indexName: 'bestbuy',
     query,
-    hitsPerPage:5,
+    hitsPerPage: 5,
     staleTime: 1000 * 20, // 30s
     cacheTime: 1000 * 60 * 15, // 15m
   })
@@ -40,11 +40,13 @@ export default function SearchResults({ query = '' }: SearchResultsProps) {
             hits.map(product => (
               <li key={product.objectID} className="product">
                 <span className="product-name">{product.name}</span>
-                <br />
                 {product.shortDescription && (
-                  <span className="product-description">
-                    {product.shortDescription}
-                  </span>
+                  <>
+                    <br />
+                    <span className="product-description">
+                      {product.shortDescription}
+                    </span>
+                  </>
                 )}
                 <br />
                 <span className="product-price">${product.salePrice}</span>
