@@ -190,7 +190,6 @@ export class Mutation<
         )
       )
       .then(() => {
-        this.dispatch({ type: 'success', data })
         return data
       })
       .catch(error => {
@@ -222,7 +221,6 @@ export class Mutation<
             )
           )
           .then(() => {
-            this.dispatch({ type: 'error', error })
             throw error
           })
       })
@@ -235,6 +233,13 @@ export class Mutation<
           return Promise.reject('No mutationFn found')
         }
         return this.options.mutationFn(this.state.variables!)
+      },
+
+      onSuccess: (data) => {
+        this.dispatch({ type: 'success', data })
+      },
+      onError: (error) =>{
+        this.dispatch({ type: 'error', error: error })
       },
       onFail: () => {
         this.dispatch({ type: 'failed' })

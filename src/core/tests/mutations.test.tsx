@@ -56,6 +56,47 @@ describe('mutations', () => {
     expect(result).toBe(result)
   })
 
+  test('executeMutation should propagate error to the mutation cache after retrier rejects', async () => {
+    const key = queryKey()
+
+    const error = new Error("bad error / network issue");
+    queryClient.setMutationDefaults(key, {
+      mutationFn: async () => { throw error},
+      retry: false
+    })
+
+    try{
+      await queryClient.executeMutation({
+        variables: 'todo',
+        mutationKey: key,
+      })
+    }
+    catch (e){ expect(e).toEqual(error);}
+
+    const cache = queryClient.getMutationCache().getAll().find(x => x.state.error);
+
+    expect(cache?.state.error).toEqual(error)
+  })
+
+  test('executeMutation should propagate success to the mutation cache after retrier resolves', async () => {
+    const key = queryKey()
+
+    const data = "hello world";
+    queryClient.setMutationDefaults(key, {
+      mutationFn: async () => { return  data},
+      retry: false
+    })
+
+    await queryClient.executeMutation({
+        variables: 'todo',
+        mutationKey: key,
+      })
+
+    const cache = queryClient.getMutationCache().getAll().find(x => x.state.data);
+
+    expect(cache?.state.data).toEqual(data)
+  })
+
   test('mutation should set correct success states', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async (text: string) => {
@@ -364,7 +405,7 @@ describe('mutations', () => {
     consoleMock.mockRestore()
   })
 
-  test('cancel mutation should not call mutationFn if the current retrier is undefined', async () => {
+  test('cancel mutation should not call mutationFn if the current retier is undefined', async () => {
     const mutationFn = jest.fn().mockImplementation(async () => {
       await sleep(20)
       return 'data'
