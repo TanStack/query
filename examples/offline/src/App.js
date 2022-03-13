@@ -22,6 +22,13 @@ import {
 } from "@tanstack/react-location";
 
 import * as api from "api";
+import { movieKeys, useMovie } from "./movies";
+
+const persister = createWebStoragePersister({
+  storage: window.localStorage,
+});
+
+const location = new ReactLocation();
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,19 +50,13 @@ const queryClient = new QueryClient({
 });
 
 // we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(["movies"], {
+queryClient.setMutationDefaults(movieKeys.all(), {
   mutationFn: async ({ id, comment }) => {
     // to avoid clashes with our optimistic update when an offline mutation continues
-    await queryClient.cancelQueries(["movies", id]);
+    await queryClient.cancelQueries(movieKeys.detail(id));
     return api.updateMovie(id, comment);
   },
 });
-
-const persister = createWebStoragePersister({
-  storage: window.localStorage,
-});
-
-const location = new ReactLocation();
 
 export default function App() {
   return (
@@ -81,11 +82,11 @@ export default function App() {
             element: <Detail />,
             errorElement: <MovieError />,
             loader: ({ params: { movieId } }) =>
-              queryClient.getQueryData(["movies", movieId]) ??
+              queryClient.getQueryData(movieKeys.detail(movieId)) ??
               // do not load if we are offline because it returns a promise that is pending until we go online again
               // we just let the Detail component handle it
               (onlineManager.isOnline()
-                ? queryClient.fetchQuery(["movies", movieId], () =>
+                ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
                     api.fetchMovie(movieId)
                   )
                 : undefined),
@@ -101,7 +102,7 @@ export default function App() {
 }
 
 function List() {
-  const moviesQuery = useQuery(["movies"], api.fetchMovies);
+  const moviesQuery = useQuery(movieKeys.list(), api.fetchMovies);
 
   if (moviesQuery.isLoading && moviesQuery.isFetching) {
     return "Loading...";
@@ -119,7 +120,7 @@ function List() {
         <ul>
           {moviesQuery.data.movies.map((movie) => (
             <li key={movie.id}>
-              <Link to={`./${movie.id}`} preload={1}>
+              <Link to={`./${movie.id}`} preload>
                 {movie.title}
               </Link>
             </li>
@@ -153,37 +154,7 @@ function Detail() {
   const {
     params: { movieId },
   } = useMatch();
-
-  const [comment, setComment] = React.useState();
-
-  const movieQuery = useQuery(["movies", movieId], () =>
-    api.fetchMovie(movieId)
-  );
-  const updateMovie = useMutation({
-    mutationKey: ["movies", movieId],
-    onMutate: async () => {
-      await queryClient.cancelQueries(["movies", movieId]);
-      const previousData = queryClient.getQueryData(["movies", movieId]);
-
-      queryClient.setQueryData(["movies", movieId], {
-        ...previousData,
-        movie: {
-          ...previousData.movie,
-          comment,
-        },
-      });
-
-      return { previousData };
-    },
-    onError: (_, __, context) => {
-      queryClient.setQueryData(["movies", movieId], context.previousData);
-    },
-    onSettled: () => {
-      // remove local state so that server state is taken instead
-      setComment(undefined);
-      queryClient.invalidateQueries(["movies", movieId]);
-    },
-  });
+  const { comment, setComment, updateMovie, movieQuery } = useMovie(movieId);
 
   if (movieQuery.isLoading && movieQuery.isFetching) {
     return "Loading...";
@@ -217,7 +188,7 @@ function Detail() {
             Comment: <br />
             <textarea
               name="comment"
-              value={comment ?? movieQuery.data.movie.comment}
+              value={comment}
               onChange={(event) => setComment(event.target.value)}
             />
           </label>
