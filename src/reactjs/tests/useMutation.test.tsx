@@ -674,6 +674,57 @@ describe('useMutation', () => {
     })
   })
 
+  it('should be able to throw an error when useErrorBoundary is a function that returns true', async () => {
+    let boundary = false
+    function Page() {
+      const { mutate, error } = useMutation<string, Error>(
+        () => {
+          const err = new Error('mock error')
+          err.stack = ''
+          return Promise.reject(err)
+        },
+        {
+          useErrorBoundary: () => {
+            boundary = !boundary
+            return !boundary
+          },
+        }
+      )
+
+      return (
+        <div>
+          <button onClick={() => mutate()}>mutate</button>
+          {error && error.message}
+        </div>
+      )
+    }
+
+    const { getByText, queryByText } = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={() => (
+          <div>
+            <span>error boundary</span>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>
+    )
+
+    // first error goes to component
+    fireEvent.click(getByText('mutate'))
+    await waitFor(() => {
+      expect(queryByText('mock error')).not.toBeNull()
+    })
+
+    // second error goes to boundary
+    fireEvent.click(getByText('mutate'))
+    await waitFor(() => {
+      expect(queryByText('error boundary')).not.toBeNull()
+    })
+  })
+
   it('should pass meta to mutation', async () => {
     const errorMock = jest.fn()
     const successMock = jest.fn()
