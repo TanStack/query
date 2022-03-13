@@ -1,5 +1,5 @@
 export function shouldThrowError<T extends (...args: any[]) => boolean>(
-  _useErrorBoundary: boolean | T,
+  _useErrorBoundary: boolean | T | undefined,
   params: Parameters<T>
 ): boolean {
   // Allow useErrorBoundary function to override throwing behavior on a per-error basis
@@ -7,5 +7,5 @@ export function shouldThrowError<T extends (...args: any[]) => boolean>(
     return _useErrorBoundary(...params)
   }
 
-  return _useErrorBoundary
+  return !!_useErrorBoundary
 }
