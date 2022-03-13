@@ -8,7 +8,6 @@ export interface PersistQueryClientProviderProps
   extends QueryClientProviderProps {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
-  onError?: (error: unknown) => Promise<unknown> | void
 }
 
 export const PersistQueryClientProvider = ({
@@ -16,15 +15,14 @@ export const PersistQueryClientProvider = ({
   children,
   persistOptions,
   onSuccess,
-  onError,
   ...props
 }: PersistQueryClientProviderProps): JSX.Element => {
   const [isHydrating, setIsHydrating] = React.useState(true)
-  const refs = React.useRef({ persistOptions, onSuccess, onError })
+  const refs = React.useRef({ persistOptions, onSuccess })
   const previousPromise = React.useRef(Promise.resolve())
 
   React.useEffect(() => {
-    refs.current = { persistOptions, onSuccess, onError }
+    refs.current = { persistOptions, onSuccess }
   })
 
   React.useEffect(() => {
@@ -40,8 +38,6 @@ export const PersistQueryClientProvider = ({
         previousPromise.current = promise
         await promise
         refs.current.onSuccess?.()
-      } catch (error) {
-        refs.current.onError?.(error)
       } finally {
         setIsHydrating(false)
       }
