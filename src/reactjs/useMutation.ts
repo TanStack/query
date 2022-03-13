@@ -116,7 +116,7 @@ export function useMutation<
 
   if (
     currentResult.error &&
-    shouldThrowError(!!obsRef.current.options.useErrorBoundary, [
+    shouldThrowError(obsRef.current.options.useErrorBoundary, [
       currentResult.error,
     ])
   ) {
