@@ -78,25 +78,6 @@ describe('mutations', () => {
     expect(cache?.state.error).toEqual(error)
   })
 
-  test('executeMutation should propagate success to the mutation cache after retrier resolves', async () => {
-    const key = queryKey()
-
-    const data = "hello world";
-    queryClient.setMutationDefaults(key, {
-      mutationFn: async () => { return  data},
-      retry: false
-    })
-
-    await queryClient.executeMutation({
-        variables: 'todo',
-        mutationKey: key,
-      })
-
-    const cache = queryClient.getMutationCache().getAll().find(x => x.state.data);
-
-    expect(cache?.state.data).toEqual(data)
-  })
-
   test('mutation should set correct success states', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async (text: string) => {

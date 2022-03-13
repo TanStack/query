@@ -190,6 +190,7 @@ export class Mutation<
         )
       )
       .then(() => {
+        this.dispatch({ type: 'success', data })
         return data
       })
       .catch(error => {
@@ -235,9 +236,6 @@ export class Mutation<
         return this.options.mutationFn(this.state.variables!)
       },
 
-      onSuccess: (data) => {
-        this.dispatch({ type: 'success', data })
-      },
       onError: (error) =>{
         this.dispatch({ type: 'error', error: error })
       },
