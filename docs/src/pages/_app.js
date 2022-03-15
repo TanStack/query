@@ -18,9 +18,6 @@ function loadScript(src, attrs = {}) {
 function MyApp({ Component, pageProps }) {
   React.useEffect(() => {
     loadScript('https://buttons.github.io/buttons.js')
-    loadScript('https://tanstack.ck.page/e394781e7a/index.js', {
-      'data-uid': 'e394781e7a',
-    })
   }, [])
 
   return (
@@ -29,22 +26,6 @@ function MyApp({ Component, pageProps }) {
         <link
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
-        />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-        @media (max-width: 390px) {
-            .formkit-slide-in {
-              display: none;
-            }
-          }
-          @media (max-height: 740px) {
-            .formkit-slide-in {
-              display: none;
-            }
-          }
-          `,
-          }}
         />
       </Head>
       {/* eslint-disable-next-line jsx-a11y/alt-text */}
