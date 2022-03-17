@@ -4677,4 +4677,38 @@ describe('useQuery', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('it should have status=error on mount when a query has failed', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    const error = new Error('oops')
+
+    const queryFn = async () => {
+      throw error
+    }
+
+    function Page() {
+      const state = useQuery(key, queryFn, {
+        retry: false,
+        retryOnMount: false,
+      })
+
+      states.push(state)
+
+      return <></>
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states).toHaveLength(1))
+
+    expect(states[0]).toMatchObject({
+      status: 'error',
+      error,
+    })
+
+    consoleMock.mockRestore()
+  })
 })
