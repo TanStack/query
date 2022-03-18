@@ -7,7 +7,7 @@ export interface AsyncStorage {
   removeItem: (key: string) => Promise<void>
 }
 
-export interface CreateAsyncStoragePersistorOptions {
+export interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage
   /** The key to use when storing the cache */
