@@ -65,34 +65,32 @@ export async function persistQueryClientRestore({
   buster = '',
   hydrateOptions,
 }: PersistedQueryClientRestoreOptions) {
-  if (typeof window !== 'undefined') {
-    try {
-      const persistedClient = await persister.restoreClient()
+  try {
+    const persistedClient = await persister.restoreClient()
 
-      if (persistedClient) {
-        if (persistedClient.timestamp) {
-          const expired = Date.now() - persistedClient.timestamp > maxAge
-          const busted = persistedClient.buster !== buster
-          if (expired || busted) {
-            persister.removeClient()
-          } else {
-            hydrate(queryClient, persistedClient.clientState, hydrateOptions)
-          }
-        } else {
+    if (persistedClient) {
+      if (persistedClient.timestamp) {
+        const expired = Date.now() - persistedClient.timestamp > maxAge
+        const busted = persistedClient.buster !== buster
+        if (expired || busted) {
           persister.removeClient()
+        } else {
+          hydrate(queryClient, persistedClient.clientState, hydrateOptions)
         }
+      } else {
+        persister.removeClient()
       }
-    } catch (err) {
-      if (process.env.NODE_ENV !== 'production') {
-        queryClient.getLogger().error(err)
-        queryClient
-          .getLogger()
-          .warn(
-            'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
-          )
-      }
-      persister.removeClient()
     }
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      queryClient.getLogger().error(err)
+      queryClient
+        .getLogger()
+        .warn(
+          'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
+        )
+    }
+    persister.removeClient()
   }
 }
 
@@ -107,15 +105,13 @@ export async function persistQueryClientSave({
   buster = '',
   dehydrateOptions,
 }: PersistedQueryClientSaveOptions) {
-  if (typeof window !== 'undefined') {
-    const persistClient: PersistedClient = {
-      buster,
-      timestamp: Date.now(),
-      clientState: dehydrate(queryClient, dehydrateOptions),
-    }
-
-    await persister.persistClient(persistClient)
+  const persistClient: PersistedClient = {
+    buster,
+    timestamp: Date.now(),
+    clientState: dehydrate(queryClient, dehydrateOptions),
   }
+
+  await persister.persistClient(persistClient)
 }
 
 /**
@@ -135,11 +131,9 @@ export function persistQueryClientSubscribe(
  * (Retained for backwards compatibility)
  */
 export async function persistQueryClient(props: PersistQueryClientOptions) {
-  if (typeof window !== 'undefined') {
-    // Attempt restore
-    await persistQueryClientRestore(props)
+  // Attempt restore
+  await persistQueryClientRestore(props)
 
-    // Subscribe to changes in the query cache to trigger the save
-    return persistQueryClientSubscribe(props)
-  }
+  // Subscribe to changes in the query cache to trigger the save
+  return persistQueryClientSubscribe(props)
 }
