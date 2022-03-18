@@ -1,13 +1,13 @@
 import { PersistedClient, Persister } from '../persistQueryClient'
 import { asyncThrottle } from './asyncThrottle'
 
-interface AsyncStorage {
+export interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
   setItem: (key: string, value: string) => Promise<void>
   removeItem: (key: string) => Promise<void>
 }
 
-interface CreateAsyncStoragePersisterOptions {
+export interface CreateAsyncStoragePersistorOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage
   /** The key to use when storing the cache */
