@@ -19,30 +19,33 @@ export const PersistQueryClientProvider = ({
 }: PersistQueryClientProviderProps): JSX.Element => {
   const [isHydrating, setIsHydrating] = React.useState(true)
   const refs = React.useRef({ persistOptions, onSuccess })
+  const previousPromise = React.useRef(Promise.resolve())
 
   React.useEffect(() => {
     refs.current = { persistOptions, onSuccess }
   })
 
   React.useEffect(() => {
-    let isStale = false
     setIsHydrating(true)
     const [unsubscribe, promise] = persistQueryClient({
       ...refs.current.persistOptions,
       queryClient: client,
     })
 
-    promise.then(() => {
-      if (!isStale) {
+    async function handlePersist() {
+      try {
+        await previousPromise.current
+        previousPromise.current = promise
+        await promise
         refs.current.onSuccess?.()
+      } finally {
         setIsHydrating(false)
       }
-    })
-
-    return () => {
-      isStale = true
-      unsubscribe()
     }
+
+    void handlePersist()
+
+    return unsubscribe
   }, [client])
 
   return (
