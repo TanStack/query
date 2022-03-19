@@ -1,11 +1,11 @@
-import { sleep, queryKey } from '../../react/tests/utils'
+import { sleep, queryKey, createQueryClient } from '../../reactjs/tests/utils'
 import { QueryClient, InfiniteQueryObserver } from '../..'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 

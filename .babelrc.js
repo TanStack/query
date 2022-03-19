@@ -5,24 +5,20 @@ const loose = true
 module.exports = {
   presets: [
     [
-      '@babel/env',
+      '@babel/preset-env',
       {
         loose,
         modules: false,
-        exclude: ['@babel/plugin-transform-regenerator'],
+        exclude: [
+          '@babel/plugin-transform-regenerator',
+          '@babel/plugin-transform-parameters',
+        ],
       },
     ],
     '@babel/preset-typescript',
     '@babel/react',
   ],
   plugins: [
-    [
-      'const-enum',
-      {
-        transform: 'constObject',
-      },
-    ],
-    'babel-plugin-transform-async-to-promises',
     cjs && ['@babel/transform-modules-commonjs', { loose }],
     [
       '@babel/transform-runtime',

@@ -9,7 +9,7 @@ The `InfiniteQueryObserver` can be used to observe and switch between infinite q
 
 ```js
 const observer = new InfiniteQueryObserver(queryClient, {
-  queryKey: 'posts',
+  queryKey: ['posts'],
   queryFn: fetchPosts,
   getNextPageParam: (lastPage, allPages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,

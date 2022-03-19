@@ -47,7 +47,7 @@ useQuery(['todos', todoId], async () => {
 
 ## Query Function Variables
 
-Query keys are not just for uniquely identifying the data you are fetching, but are also conveniently passed into your query function and while not always necessary, this makes it possible to extract your query functions if needed:
+Query keys are not just for uniquely identifying the data you are fetching, but are also conveniently passed into your query function as part of the QueryFunctionContext. While not always necessary, this makes it possible to extract your query functions if needed:
 
 ```js
 function Todos({ status, page }) {
@@ -60,6 +60,20 @@ function fetchTodoList({ queryKey }) {
   return new Promise()
 }
 ```
+
+### QueryFunctionContext
+
+The `QueryFunctionContext` is the object passed to each query function. It consists of:
+
+- `queryKey: QueryKey`: [Query Keys](./query-keys)
+- `pageParam: unknown | undefined`
+  - only for [Infinite Queries](./infinite-queries.md)
+  - the page parameter used to fetch the current page
+- signal?: AbortSignal
+  - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by react-query
+  - Can be used for [Query Cancellation](./query-cancellation.md)
+- `meta?: Record<string, unknown>`
+  - an optional field you can fill with additional information about your query
 
 ## Using a Query Object instead of parameters
 

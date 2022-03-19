@@ -76,6 +76,11 @@
           "editUrl": "/guides/query-functions.md"
         },
         {
+          "title": "Network Mode",
+          "path": "/guides/network-mode",
+          "editUrl": "/guides/network-mode.md"
+        },
+        {
           "title": "Parallel Queries",
           "path": "/guides/parallel-queries",
           "editUrl": "/guides/parallel-queries.md"
@@ -191,6 +196,11 @@
           "editUrl": "/guides/suspense.md"
         },
         {
+          "title": "Custom Logger",
+          "path": "/guides/custom-logger",
+          "editUrl": "/guides/custom-logger.md"
+        },
+        {
           "title": "Testing",
           "path": "/guides/testing",
           "editUrl": "/guides/testing.md"
@@ -204,6 +214,11 @@
           "title": "Migrating to React Query 3",
           "path": "/guides/migrating-to-react-query-3",
           "editUrl": "/guides/migrating-to-react-query-3.md"
+        },
+        {
+          "title": "Migrating to React Query 4",
+          "path": "/guides/migrating-to-react-query-4",
+          "editUrl": "/guides/migrating-to-react-query-4.md"
         }
       ]
     },
@@ -319,19 +334,19 @@
       "heading": true,
       "routes": [
         {
-          "title": "persistQueryClient (Experimental)",
+          "title": "persistQueryClient",
           "path": "/plugins/persistQueryClient",
           "editUrl": "/plugins/persistQueryClient.md"
         },
         {
-          "title": "createWebStoragePersistor (Experimental)",
-          "path": "/plugins/createWebStoragePersistor",
-          "editUrl": "/plugins/createWebStoragePersistor.md"
+          "title": "createWebStoragePersister",
+          "path": "/plugins/createWebStoragePersister",
+          "editUrl": "/plugins/createWebStoragePersister.md"
         },
         {
-          "title": "createAsyncStoragePersistor (Experimental)",
-          "path": "/plugins/createAsyncStoragePersistor",
-          "editUrl": "/plugins/createAsyncStoragePersistor.md"
+          "title": "createAsyncStoragePersister",
+          "path": "/plugins/createAsyncStoragePersister",
+          "editUrl": "/plugins/createAsyncStoragePersister.md"
         },
         {
           "title": "broadcastQueryClient (Experimental)",
@@ -433,11 +448,6 @@
           "title": "onlineManager",
           "path": "/reference/onlineManager",
           "editUrl": "/reference/onlineManager.md"
-        },
-        {
-          "title": "setLogger",
-          "path": "/reference/setLogger",
-          "editUrl": "/reference/setLogger.md"
         },
         {
           "title": "hydration",

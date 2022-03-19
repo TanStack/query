@@ -15,12 +15,28 @@ import {
   createQueryClient,
 } from './utils'
 
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+})
+
 describe('ReactQueryDevtools', () => {
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
+    const onCloseClick = jest.fn()
+    const onToggleClick = jest.fn()
 
     function Page() {
-      const { data = 'default' } = useQuery('check', async () => {
+      const { data = 'default' } = useQuery(['check'], async () => {
         await sleep(10)
         return 'test'
       })
@@ -32,7 +48,11 @@ describe('ReactQueryDevtools', () => {
       )
     }
 
-    renderWithClient(queryClient, <Page />, { initialIsOpen: false })
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: false,
+      closeButtonProps: { onClick: onCloseClick },
+      toggleButtonProps: { onClick: onToggleClick },
+    })
 
     const closeButton = screen.queryByRole('button', {
       name: /close react query devtools/i,
@@ -45,11 +65,16 @@ describe('ReactQueryDevtools', () => {
     await waitForElementToBeRemoved(() =>
       screen.queryByRole('button', { name: /open react query devtools/i })
     )
+
+    expect(onToggleClick).toHaveBeenCalledTimes(1)
+
     fireEvent.click(
       screen.getByRole('button', { name: /close react query devtools/i })
     )
 
     await screen.findByRole('button', { name: /open react query devtools/i })
+
+    expect(onCloseClick).toHaveBeenCalledTimes(1)
   })
 
   it('should display the correct query states', async () => {
@@ -57,7 +82,7 @@ describe('ReactQueryDevtools', () => {
 
     function Page() {
       const { data = 'default' } = useQuery(
-        'check',
+        ['check'],
         async () => {
           await sleep(100)
           return 'test'
@@ -98,23 +123,27 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    const currentQuery = queryCache.find('check')
+    const currentQuery = queryCache.find(['check'])
 
     // When the query is fetching then expect number of
     // fetching queries to be 1
-    expect(currentQuery?.isFetching()).toEqual(true)
+    expect(currentQuery?.state.fetchStatus).toEqual('fetching')
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (1) stale (0) inactive (0)')
+      getByTextContent(
+        'fresh (0) fetching (1) paused (0) stale (0) inactive (0)'
+      )
     )
 
     // When we are done fetching the query doesn't go stale
     // until 300ms after, so expect the number of fresh
     // queries to be 1
     await waitFor(() => {
-      expect(currentQuery?.isFetching()).toEqual(false)
+      expect(currentQuery?.state.fetchStatus).toEqual('idle')
     })
     await screen.findByText(
-      getByTextContent('fresh (1) fetching (0) stale (0) inactive (0)')
+      getByTextContent(
+        'fresh (1) fetching (0) paused (0) stale (0) inactive (0)'
+      )
     )
 
     // Then wait for the query to go stale and then
@@ -123,7 +152,9 @@ describe('ReactQueryDevtools', () => {
       expect(currentQuery?.isStale()).toEqual(false)
     })
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (0) stale (1) inactive (0)')
+      getByTextContent(
+        'fresh (0) fetching (0) paused (0) stale (1) inactive (0)'
+      )
     )
 
     // Unmount the page component thus making the query inactive
@@ -132,7 +163,9 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /toggle page visibility/i })
     )
     await screen.findByText(
-      getByTextContent('fresh (0) fetching (0) stale (0) inactive (1)')
+      getByTextContent(
+        'fresh (0) fetching (0) paused (0) stale (0) inactive (1)'
+      )
     )
   })
 
@@ -140,7 +173,7 @@ describe('ReactQueryDevtools', () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery('check', async () => {
+      const { data = 'default' } = useQuery(['check'], async () => {
         await sleep(10)
         return 'test'
       })
@@ -158,7 +191,7 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    const currentQuery = queryCache.find('check')
+    const currentQuery = queryCache.find(['check'])
 
     await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
 
@@ -175,17 +208,17 @@ describe('ReactQueryDevtools', () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const fooResult = useQuery('foo', async () => {
+      const fooResult = useQuery(['foo'], async () => {
         await sleep(10)
         return 'foo-result'
       })
 
-      const barResult = useQuery('bar', async () => {
+      const barResult = useQuery(['bar'], async () => {
         await sleep(10)
         return 'bar-result'
       })
 
-      const bazResult = useQuery('baz', async () => {
+      const bazResult = useQuery(['baz'], async () => {
         await sleep(10)
         return 'baz-result'
       })
@@ -205,9 +238,9 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    const fooQueryHash = queryCache.find('foo')?.queryHash ?? 'invalid hash'
-    const barQueryHash = queryCache.find('bar')?.queryHash ?? 'invalid hash'
-    const bazQueryHash = queryCache.find('baz')?.queryHash ?? 'invalid hash'
+    const fooQueryHash = queryCache.find(['foo'])?.queryHash ?? 'invalid hash'
+    const barQueryHash = queryCache.find(['bar'])?.queryHash ?? 'invalid hash'
+    const bazQueryHash = queryCache.find(['baz'])?.queryHash ?? 'invalid hash'
 
     await screen.findByText(fooQueryHash)
     screen.getByText(barQueryHash)
@@ -231,7 +264,7 @@ describe('ReactQueryDevtools', () => {
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
       const { data } = useQuery(
-        'key',
+        ['key'],
         async () => {
           await sleep(10)
           return 'test'
@@ -264,7 +297,7 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data } = useQuery('key', () => Promise.resolve('test'), {
+      const { data } = useQuery(['key'], () => Promise.resolve('test'), {
         enabled: false,
       })
 
@@ -297,22 +330,68 @@ describe('ReactQueryDevtools', () => {
     expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
   })
 
+  it('should simulate offline mode', async () => {
+    const { queryClient } = createQueryClient()
+    let count = 0
+
+    function App() {
+      const { data, fetchStatus } = useQuery(['key'], () => {
+        count++
+        return Promise.resolve('test')
+      })
+
+      return (
+        <div>
+          <h1>
+            {data}, {fetchStatus}
+          </h1>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />, {
+      initialIsOpen: true,
+    })
+
+    await rendered.findByRole('heading', { name: /test/i })
+
+    rendered.getByRole('button', { name: /mock offline behavior/i }).click()
+
+    rendered
+      .getByRole('button', { name: 'Open query details for ["key"]' })
+      .click()
+
+    rendered.getByRole('button', { name: /refetch/i }).click()
+
+    await waitFor(() => {
+      expect(rendered.getByText('test, paused')).toBeInTheDocument()
+    })
+
+    rendered.getByRole('button', { name: /restore offline mock/i }).click()
+
+    await waitFor(() => {
+      expect(rendered.getByText('test, idle')).toBeInTheDocument()
+    })
+
+    expect(count).toBe(2)
+  })
+
   it('should sort the queries according to the sorting filter', async () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const query1Result = useQuery('query-1', async () => {
+      const query1Result = useQuery(['query-1'], async () => {
         await sleep(20)
         return 'query-1-result'
       })
 
-      const query2Result = useQuery('query-2', async () => {
+      const query2Result = useQuery(['query-2'], async () => {
         await sleep(60)
         return 'query-2-result'
       })
 
       const query3Result = useQuery(
-        'query-3',
+        ['query-3'],
         async () => {
           await sleep(40)
           return 'query-3-result'
@@ -335,9 +414,9 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    const query1Hash = queryCache.find('query-1')?.queryHash ?? 'invalid hash'
-    const query2Hash = queryCache.find('query-2')?.queryHash ?? 'invalid hash'
-    const query3Hash = queryCache.find('query-3')?.queryHash ?? 'invalid hash'
+    const query1Hash = queryCache.find(['query-1'])?.queryHash ?? 'invalid hash'
+    const query2Hash = queryCache.find(['query-2'])?.queryHash ?? 'invalid hash'
+    const query3Hash = queryCache.find(['query-3'])?.queryHash ?? 'invalid hash'
 
     const sortSelect = screen.getByLabelText(/sort queries/i)
     let queries = []

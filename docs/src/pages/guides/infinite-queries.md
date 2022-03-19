@@ -56,7 +56,7 @@ function Projects() {
     isFetching,
     isFetchingNextPage,
     status,
-  } = useInfiniteQuery('projects', fetchProjects, {
+  } = useInfiniteQuery(['projects'], fetchProjects, {
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -100,7 +100,7 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 If you only want to actively refetch a subset of all pages, you can pass the `refetchPage` function to `refetch` returned from `useInfiniteQuery`.
 
 ```js
-const { refetch } = useInfiniteQuery('projects', fetchProjects, {
+const { refetch } = useInfiniteQuery(['projects'], fetchProjects, {
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
 })
 
@@ -132,7 +132,7 @@ function Projects() {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteQuery('projects', fetchProjects, {
+  } = useInfiniteQuery(['projects'], fetchProjects, {
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -146,7 +146,7 @@ function Projects() {
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
 
 ```js
-useInfiniteQuery('projects', fetchProjects, {
+useInfiniteQuery(['projects'], fetchProjects, {
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 })
@@ -157,7 +157,7 @@ useInfiniteQuery('projects', fetchProjects, {
 Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
 
 ```js
-useInfiniteQuery('projects', fetchProjects, {
+useInfiniteQuery(['projects'], fetchProjects, {
   select: data => ({
     pages: [...data.pages].reverse(),
     pageParams: [...data.pageParams].reverse(),
@@ -170,7 +170,7 @@ useInfiniteQuery('projects', fetchProjects, {
 Manually removing first page:
 
 ```js
-queryClient.setQueryData('projects', data => ({
+queryClient.setQueryData(['projects'], data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
@@ -183,7 +183,7 @@ const newPagesArray = oldPagesArray?.pages.map((page) =>
   page.filter((val) => val.id !== updatedId)
 ) ?? []
 
-queryClient.setQueryData('projects', data => ({
+queryClient.setQueryData(['projects'], data => ({
   pages: newPagesArray,
   pageParams: data.pageParams,
 }))

@@ -23,34 +23,34 @@ interface QueryHashMap {
 }
 
 interface NotifyEventQueryAdded {
-  type: 'queryAdded'
+  type: 'added'
   query: Query<any, any, any, any>
 }
 
 interface NotifyEventQueryRemoved {
-  type: 'queryRemoved'
+  type: 'removed'
   query: Query<any, any, any, any>
 }
 
 interface NotifyEventQueryUpdated {
-  type: 'queryUpdated'
+  type: 'updated'
   query: Query<any, any, any, any>
   action: Action<any, any>
 }
 
-interface NotifyEventObserverAdded {
+interface NotifyEventQueryObserverAdded {
   type: 'observerAdded'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventObserverRemoved {
+interface NotifyEventQueryObserverRemoved {
   type: 'observerRemoved'
   query: Query<any, any, any, any>
   observer: QueryObserver<any, any, any, any, any>
 }
 
-interface NotifyEventObserverResultsUpdated {
+interface NotifyEventQueryObserverResultsUpdated {
   type: 'observerResultsUpdated'
   query: Query<any, any, any, any>
 }
@@ -59,11 +59,11 @@ type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
   | NotifyEventQueryUpdated
-  | NotifyEventObserverAdded
-  | NotifyEventObserverRemoved
-  | NotifyEventObserverResultsUpdated
+  | NotifyEventQueryObserverAdded
+  | NotifyEventQueryObserverRemoved
+  | NotifyEventQueryObserverResultsUpdated
 
-type QueryCacheListener = (event?: QueryCacheNotifyEvent) => void
+type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 
 // CLASS
 
@@ -93,6 +93,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     if (!query) {
       query = new Query({
         cache: this,
+        logger: client.getLogger(),
         queryKey,
         queryHash,
         options: client.defaultQueryOptions(options),
@@ -111,7 +112,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       this.queriesMap[query.queryHash] = query
       this.queries.push(query)
       this.notify({
-        type: 'queryAdded',
+        type: 'added',
         query,
       })
     }
@@ -129,7 +130,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
         delete this.queriesMap[query.queryHash]
       }
 
-      this.notify({ type: 'queryRemoved', query })
+      this.notify({ type: 'removed', query })
     }
   }
 

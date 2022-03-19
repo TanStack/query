@@ -14,7 +14,9 @@ export class FocusManager extends Subscribable {
   constructor() {
     super()
     this.setup = onFocus => {
-      if (!isServer && window?.addEventListener) {
+      // addEventListener does not exist in React Native, but window does
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (!isServer && window.addEventListener) {
         const listener = () => onFocus()
         // Listen to visibillitychange and focus
         window.addEventListener('visibilitychange', listener, false)

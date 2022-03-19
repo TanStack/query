@@ -1,5 +1,10 @@
 import { waitFor } from '@testing-library/react'
-import { sleep, queryKey } from '../../react/tests/utils'
+import {
+  sleep,
+  queryKey,
+  createQueryClient,
+  mockLogger,
+} from '../../reactjs/tests/utils'
 import {
   QueryClient,
   QueriesObserver,
@@ -12,7 +17,7 @@ describe('queriesObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -53,34 +58,8 @@ describe('queriesObserver', () => {
     await sleep(1)
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
-  })
 
-  test('should return same value for multiple falsy query keys', async () => {
-    const queryFn1 = jest.fn().mockReturnValue(1)
-    const queryFn2 = jest.fn().mockReturnValue(2)
-    const observer = new QueriesObserver(queryClient, [
-      { queryKey: undefined, queryFn: queryFn1 },
-    ])
-    const results: QueryObserverResult[][] = []
-    results.push(observer.getCurrentResult())
-    const unsubscribe = observer.subscribe(result => {
-      results.push(result)
-    })
-    await sleep(1)
-    observer.setQueries([
-      { queryKey: undefined, queryFn: queryFn1 },
-      { queryKey: '', queryFn: queryFn2 },
-    ])
-    await sleep(1)
-    unsubscribe()
-    expect(results.length).toBe(4)
-    expect(results[0]).toMatchObject([{ status: 'idle', data: undefined }])
-    expect(results[1]).toMatchObject([{ status: 'loading', data: undefined }])
-    expect(results[2]).toMatchObject([{ status: 'success', data: 1 }])
-    expect(results[3]).toMatchObject([
-      { status: 'success', data: 1 },
-      { status: 'success', data: 1 },
-    ])
+    expect(mockLogger.error).toHaveBeenCalledTimes(1)
   })
 
   test('should update when a query updates', async () => {
@@ -103,20 +82,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'idle', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -146,27 +125,27 @@ describe('queriesObserver', () => {
     observer.setQueries([{ queryKey: key2, queryFn: queryFn2 }])
     await sleep(1)
     const queryCache = queryClient.getQueryCache()
-    expect(queryCache.find(key1, { active: true })).toBeUndefined()
-    expect(queryCache.find(key2, { active: true })).toBeDefined()
+    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find(key2, { type: 'active' })).toBeDefined()
     unsubscribe()
-    expect(queryCache.find(key1, { active: true })).toBeUndefined()
-    expect(queryCache.find(key2, { active: true })).toBeUndefined()
+    expect(queryCache.find(key1, { type: 'active' })).toBeUndefined()
+    expect(queryCache.find(key2, { type: 'active' })).toBeUndefined()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'idle', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -198,20 +177,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(6)
     expect(results[0]).toMatchObject([
-      { status: 'idle', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -246,20 +225,20 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(results.length).toBe(5)
     expect(results[0]).toMatchObject([
-      { status: 'idle', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[1]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'idle', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'idle', data: undefined },
     ])
     expect(results[2]).toMatchObject([
-      { status: 'loading', data: undefined },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[3]).toMatchObject([
       { status: 'success', data: 1 },
-      { status: 'loading', data: undefined },
+      { status: 'loading', fetchStatus: 'fetching', data: undefined },
     ])
     expect(results[4]).toMatchObject([
       { status: 'success', data: 1 },
@@ -270,13 +249,13 @@ describe('queriesObserver', () => {
   test('should trigger all fetches when subscribed', async () => {
     const key1 = queryKey()
     const key2 = queryKey()
-    const queryFn1 = jest.fn()
-    const queryFn2 = jest.fn()
+    const queryFn1 = jest.fn().mockReturnValue(1)
+    const queryFn2 = jest.fn().mockReturnValue(2)
     const observer = new QueriesObserver(queryClient, [
       { queryKey: key1, queryFn: queryFn1 },
       { queryKey: key2, queryFn: queryFn2 },
     ])
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
     unsubscribe()
     expect(queryFn1).toHaveBeenCalledTimes(1)

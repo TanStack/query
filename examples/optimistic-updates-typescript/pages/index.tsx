@@ -26,25 +26,8 @@ async function fetchTodos(): Promise<Todos> {
   return res.data
 }
 
-function useTodos<TData = Todos>(
-  options?: UseQueryOptions<Todos, AxiosError, TData>
-) {
-  return useQuery('todos', fetchTodos, options)
-}
-
-function TodoCounter() {
-  // subscribe only to changes in the 'data' prop, which will be the
-  // amount of todos because of the select function
-  const counterQuery = useTodos({
-    select: data => data.items.length,
-    notifyOnChangeProps: ['data'],
-  })
-
-  React.useEffect(() => {
-    console.log('rendering counter')
-  })
-
-  return <div>TodoCounter: {counterQuery.data ?? 0}</div>
+function useTodos() {
+  return useQuery(['todos'], fetchTodos)
 }
 
 function Example() {
@@ -59,14 +42,14 @@ function Example() {
       onMutate: async (newTodo: string) => {
         setText('')
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries('todos')
+        await queryClient.cancelQueries(['todos'])
 
         // Snapshot the previous value
-        const previousTodos = queryClient.getQueryData<Todos>('todos')
+        const previousTodos = queryClient.getQueryData<Todos>(['todos'])
 
         // Optimistically update to the new value
         if (previousTodos) {
-          queryClient.setQueryData<Todos>('todos', {
+          queryClient.setQueryData<Todos>(['todos'], {
             ...previousTodos,
             items: [
               ...previousTodos.items,
@@ -80,12 +63,12 @@ function Example() {
       // If the mutation fails, use the context returned from onMutate to roll back
       onError: (err, variables, context) => {
         if (context?.previousTodos) {
-          queryClient.setQueryData<Todos>('todos', context.previousTodos)
+          queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
         }
       },
       // Always refetch after error or success:
       onSettled: () => {
-        queryClient.invalidateQueries('todos')
+        queryClient.invalidateQueries(['todos'])
       },
     }
   )
@@ -129,7 +112,7 @@ function Example() {
         </>
       )}
       {queryInfo.isLoading && 'Loading'}
-      {queryInfo.error?.message}
+      {queryInfo.error instanceof Error && queryInfo.error.message}
     </div>
   )
 }
@@ -138,7 +121,6 @@ export default function App() {
   return (
     <QueryClientProvider client={client}>
       <Example />
-      <TodoCounter />
       <ReactQueryDevtools initialIsOpen />
     </QueryClientProvider>
   )

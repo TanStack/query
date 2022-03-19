@@ -1,0 +1,6 @@
+{
+  "internal": true,
+  "main": "../lib/createWebStoragePersister/index.js",
+  "module": "../es/createWebStoragePersister/index.js",
+  "types": "../types/createWebStoragePersister/index.d.ts"
+}

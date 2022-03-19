@@ -1,4 +1,4 @@
-import { sleep, queryKey, mockConsoleError } from '../../react/tests/utils'
+import { sleep, queryKey, createQueryClient } from '../../reactjs/tests/utils'
 import { QueryCache, QueryClient } from '../..'
 import { Query } from '.././query'
 
@@ -7,7 +7,7 @@ describe('queryCache', () => {
   let queryCache: QueryCache
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryCache = queryClient.getQueryCache()
   })
 
@@ -23,7 +23,7 @@ describe('queryCache', () => {
       queryClient.setQueryData(key, 'foo')
       const query = queryCache.find(key)
       await sleep(1)
-      expect(subscriber).toHaveBeenCalledWith({ query, type: 'queryAdded' })
+      expect(subscriber).toHaveBeenCalledWith({ query, type: 'added' })
       unsubscribe()
     })
 
@@ -43,7 +43,7 @@ describe('queryCache', () => {
       queryClient.prefetchQuery(key, () => 'data')
       const query = queryCache.find(key)
       await sleep(100)
-      expect(callback).toHaveBeenCalledWith({ query, type: 'queryAdded' })
+      expect(callback).toHaveBeenCalledWith({ query, type: 'added' })
     })
 
     test('should notify subscribers when new query with initialData is added', async () => {
@@ -78,6 +78,7 @@ describe('queryCache', () => {
     test('should filter correctly', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
+      const keyFetching = queryKey()
       await queryClient.prefetchQuery(key1, () => 'data1')
       await queryClient.prefetchQuery(key2, () => 'data2')
       await queryClient.prefetchQuery([{ a: 'a', b: 'b' }], () => 'data3')
@@ -89,23 +90,24 @@ describe('queryCache', () => {
       const query4 = queryCache.find(['posts', 1])!
 
       expect(queryCache.findAll(key1)).toEqual([query1])
-      expect(queryCache.findAll([key1])).toEqual([query1])
+      // wrapping in an extra array doesn't yield the same results anymore since v4 because keys need to be an array
+      expect(queryCache.findAll([key1])).toEqual([])
       expect(queryCache.findAll()).toEqual([query1, query2, query3, query4])
       expect(queryCache.findAll({})).toEqual([query1, query2, query3, query4])
-      expect(queryCache.findAll(key1, { active: false })).toEqual([query1])
-      expect(queryCache.findAll(key1, { active: true })).toEqual([])
+      expect(queryCache.findAll(key1, { type: 'inactive' })).toEqual([query1])
+      expect(queryCache.findAll(key1, { type: 'active' })).toEqual([])
       expect(queryCache.findAll(key1, { stale: true })).toEqual([])
       expect(queryCache.findAll(key1, { stale: false })).toEqual([query1])
-      expect(queryCache.findAll(key1, { stale: false, active: true })).toEqual(
-        []
-      )
       expect(
-        queryCache.findAll(key1, { stale: false, active: false })
+        queryCache.findAll(key1, { stale: false, type: 'active' })
+      ).toEqual([])
+      expect(
+        queryCache.findAll(key1, { stale: false, type: 'inactive' })
       ).toEqual([query1])
       expect(
         queryCache.findAll(key1, {
           stale: false,
-          active: false,
+          type: 'inactive',
           exact: true,
         })
       ).toEqual([query1])
@@ -128,14 +130,34 @@ describe('queryCache', () => {
         query3,
       ])
       expect(queryCache.findAll([{ a: 'a' }], { stale: true })).toEqual([])
-      expect(queryCache.findAll([{ a: 'a' }], { active: true })).toEqual([])
-      expect(queryCache.findAll([{ a: 'a' }], { inactive: true })).toEqual([
+      expect(queryCache.findAll([{ a: 'a' }], { type: 'active' })).toEqual([])
+      expect(queryCache.findAll([{ a: 'a' }], { type: 'inactive' })).toEqual([
         query3,
       ])
       expect(
         queryCache.findAll({ predicate: query => query === query3 })
       ).toEqual([query3])
-      expect(queryCache.findAll('posts')).toEqual([query4])
+      expect(queryCache.findAll(['posts'])).toEqual([query4])
+
+      expect(queryCache.findAll({ fetchStatus: 'idle' })).toEqual([
+        query1,
+        query2,
+        query3,
+        query4,
+      ])
+      expect(queryCache.findAll(key2, { fetchStatus: undefined })).toEqual([
+        query2,
+      ])
+
+      const promise = queryClient.prefetchQuery(keyFetching, async () => {
+        await sleep(20)
+        return 'dataFetching'
+      })
+      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([
+        queryCache.find(keyFetching),
+      ])
+      await promise
+      expect(queryCache.findAll({ fetchStatus: 'fetching' })).toEqual([])
     })
 
     test('should return all the queries when no filters are defined', async () => {
@@ -149,13 +171,11 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig.onError', () => {
     test('should be called when a query errors', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onError = jest.fn()
       const testCache = new QueryCache({ onError })
-      const testClient = new QueryClient({ queryCache: testCache })
+      const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery(key, () => Promise.reject('error'))
-      consoleMock.mockRestore()
       const query = testCache.find(key)
       expect(onError).toHaveBeenCalledWith('error', query)
     })
@@ -163,13 +183,11 @@ describe('queryCache', () => {
 
   describe('QueryCacheConfig.onSuccess', () => {
     test('should be called when a query is successful', async () => {
-      const consoleMock = mockConsoleError()
       const key = queryKey()
       const onSuccess = jest.fn()
       const testCache = new QueryCache({ onSuccess })
-      const testClient = new QueryClient({ queryCache: testCache })
+      const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery(key, () => Promise.resolve({ data: 5 }))
-      consoleMock.mockRestore()
       const query = testCache.find(key)
       expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
     })

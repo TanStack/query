@@ -1,9 +1,10 @@
 import {
   sleep,
   queryKey,
-  mockConsoleError,
   expectType,
-} from '../../react/tests/utils'
+  mockLogger,
+  createQueryClient,
+} from '../../reactjs/tests/utils'
 import {
   QueryClient,
   QueryObserver,
@@ -15,7 +16,7 @@ describe('queryObserver', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -25,9 +26,9 @@ describe('queryObserver', () => {
 
   test('should trigger a fetch when subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, { queryKey: key, queryFn })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -246,7 +247,6 @@ describe('queryObserver', () => {
   })
 
   test('should always run the selector again if selector throws an error', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     const results: QueryObserverResult[] = []
     const select = () => {
@@ -290,7 +290,6 @@ describe('queryObserver', () => {
       isFetching: false,
       data: undefined,
     })
-    consoleMock.mockRestore()
   })
 
   test('should structurally share the selector', async () => {
@@ -309,13 +308,13 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when subscribed and disabled', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
       enabled: false,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(1)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -323,7 +322,7 @@ describe('queryObserver', () => {
 
   test('should not trigger a fetch when not subscribed', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     new QueryObserver(queryClient, { queryKey: key, queryFn })
     await sleep(1)
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -331,7 +330,7 @@ describe('queryObserver', () => {
 
   test('should be able to watch a query without defining a query function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const callback = jest.fn()
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -346,7 +345,7 @@ describe('queryObserver', () => {
 
   test('should accept unresolved query config in update function', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       enabled: false,
@@ -394,42 +393,7 @@ describe('queryObserver', () => {
     expect(results2[1]).toMatchObject({ data: 'data' })
   })
 
-  test('should be able to resolve a promise', async () => {
-    const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
-    const observer = new QueryObserver<string>(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    let value
-    observer.getNextResult().then(x => {
-      value = x
-    })
-    queryClient.prefetchQuery(key, queryFn)
-    await sleep(50)
-    expect(queryFn).toHaveBeenCalledTimes(1)
-    expect(value).toMatchObject({ data: 'data' })
-  })
-
-  test('should be able to resolve a promise with an error', async () => {
-    const consoleMock = mockConsoleError()
-    const key = queryKey()
-    const observer = new QueryObserver<string>(queryClient, {
-      queryKey: key,
-      enabled: false,
-    })
-    let error
-    observer.getNextResult({ throwOnError: true }).catch(e => {
-      error = e
-    })
-    queryClient.prefetchQuery(key, () => Promise.reject('reject'))
-    await sleep(50)
-    expect(error).toEqual('reject')
-    consoleMock.mockRestore()
-  })
-
   test('should stop retry when unsubscribing', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let count = 0
     const observer = new QueryObserver(queryClient, {
@@ -441,12 +405,11 @@ describe('queryObserver', () => {
       retry: 10,
       retryDelay: 50,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(70)
     unsubscribe()
     await sleep(200)
     expect(count).toBe(2)
-    consoleMock.mockRestore()
   })
 
   test('should clear interval when unsubscribing to a refetchInterval query', async () => {
@@ -459,7 +422,7 @@ describe('queryObserver', () => {
       cacheTime: 0,
       refetchInterval: 1,
     })
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     // @ts-expect-error
     expect(observer.refetchIntervalId).not.toBeUndefined()
     unsubscribe()
@@ -497,7 +460,6 @@ describe('queryObserver', () => {
   })
 
   test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
     let count = 0
 
@@ -511,7 +473,7 @@ describe('queryObserver', () => {
       retryDelay: 20,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
 
     // Simulate a race condition when an unsubscribe and a retry occur.
     await sleep(20)
@@ -524,9 +486,7 @@ describe('queryObserver', () => {
     // Should not log an error
     queryClient.clear()
     await sleep(40)
-    expect(consoleMock).not.toHaveBeenNthCalledWith(1, 'reject 1')
-
-    consoleMock.mockRestore()
+    expect(mockLogger.error).not.toHaveBeenNthCalledWith(1, 'reject 1')
   })
 
   test('should throw an error if enabled option type is not valid', async () => {
@@ -556,7 +516,6 @@ describe('queryObserver', () => {
 
   test('should throw an error if throwOnError option is true', async () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
@@ -572,13 +531,11 @@ describe('queryObserver', () => {
     }
 
     expect(error).toEqual('error')
-
-    consoleMock.mockRestore()
   })
 
   test('should not refetch in background if refetchIntervalInBackground is false', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn().mockReturnValue('data')
 
     focusManager.setFocused(false)
     const observer = new QueryObserver(queryClient, {
@@ -588,7 +545,7 @@ describe('queryObserver', () => {
       refetchInterval: 10,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
     await sleep(30)
 
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -610,7 +567,7 @@ describe('queryObserver', () => {
       select: () => data,
     })
 
-    const unsubscribe = observer.subscribe()
+    const unsubscribe = observer.subscribe(() => undefined)
 
     await sleep(10)
     expect(observer.getCurrentResult().data).toBe(data)
@@ -622,7 +579,7 @@ describe('queryObserver', () => {
       select: () => selectedData,
     })
 
-    await observer.refetch({ queryKey: key })
+    await observer.refetch()
     expect(observer.getCurrentResult().data).toBe(selectedData)
 
     unsubscribe()
@@ -630,7 +587,6 @@ describe('queryObserver', () => {
 
   test('select function error using placeholderdata should log an error', () => {
     const key = queryKey()
-    const consoleMock = mockConsoleError()
 
     new QueryObserver(queryClient, {
       queryKey: key,
@@ -641,9 +597,7 @@ describe('queryObserver', () => {
       },
     })
 
-    expect(consoleMock).toHaveBeenNthCalledWith(1, new Error('error'))
-
-    consoleMock.mockRestore()
+    expect(mockLogger.error).toHaveBeenNthCalledWith(1, new Error('error'))
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
@@ -665,7 +619,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: () => data,
       select: () => {
-        if (true) return selectedData1
+        return selectedData1
       },
       placeholderData: placeholderData1,
     })
@@ -701,7 +655,7 @@ describe('queryObserver', () => {
       queryKey: key,
       queryFn: () => data,
       select: () => {
-        if (true) return selectedData
+        return selectedData
       },
       placeholderData: placeholderData1,
     })

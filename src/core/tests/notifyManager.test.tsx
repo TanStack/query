@@ -1,9 +1,9 @@
-import { NotifyManager } from '../notifyManager'
+import { createNotifyManager } from '../notifyManager'
 import { sleep } from '../../devtools/tests/utils'
 
 describe('notifyManager', () => {
   it('should use default notifyFn', async () => {
-    const notifyManagerTest = new NotifyManager()
+    const notifyManagerTest = createNotifyManager()
     const callbackSpy = jest.fn()
     notifyManagerTest.schedule(callbackSpy)
     await sleep(1)
@@ -11,7 +11,7 @@ describe('notifyManager', () => {
   })
 
   it('should use default batchNotifyFn', async () => {
-    const notifyManagerTest = new NotifyManager()
+    const notifyManagerTest = createNotifyManager()
     const callbackScheduleSpy = jest
       .fn()
       .mockImplementation(async () => await sleep(20))
@@ -30,18 +30,22 @@ describe('notifyManager', () => {
     expect(callbackScheduleSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('should flush if error is thrown', () => {
-    const notifyManagerTest = new NotifyManager()
-    const flushSpy = jest.fn()
+  it('should notify if error is thrown', async () => {
+    const notifyManagerTest = createNotifyManager()
+    const notifySpy = jest.fn()
 
-    notifyManagerTest.flush = flushSpy
+    notifyManagerTest.setNotifyFunction(notifySpy)
 
     try {
       notifyManagerTest.batch(() => {
+        notifyManagerTest.schedule(jest.fn)
         throw new Error('Foo')
       })
     } catch {}
 
-    expect(flushSpy).toHaveBeenCalledTimes(1)
+    // needed for scheduleMicroTask to kick in
+    await sleep(1)
+
+    expect(notifySpy).toHaveBeenCalledTimes(1)
   })
 })

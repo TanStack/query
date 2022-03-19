@@ -21,7 +21,7 @@ Once installed, a simple test can be written. Given the following custom hook:
 
 ```
 export function useCustomHook() {
-  return useQuery('customHook', () => 'Hello');
+  return useQuery(['customHook'], () => 'Hello');
 }
 ```
 
@@ -71,17 +71,18 @@ This will set the defaults for all queries in the component tree to "no retries"
 ## Turn off network error logging
 
 When testing we want to suppress network errors being logged to the console.
-To do this, we can use `react-query`'s `setLogger()` function.
+To do this, we can pass a custom logger to `QueryClient`:
 
 ```ts
-// as part of your test setup
-import { setLogger } from 'react-query'
+import { QueryClient } from 'react-query'
 
-setLogger({
-  log: console.log,
-  warn: console.warn,
-  // ✅ no more errors on the console
-  error: () => {},
+const queryClient = new QueryClient({
+  logger: {
+    log: console.log,
+    warn: console.warn,
+    // ✅ no more errors on the console for tests
+    error: process.env.NODE_ENV === 'test' ? () => {} : console.error,
+  },
 })
 ```
 
@@ -99,7 +100,7 @@ Given the following custom hook:
 
 ```
 function useFetchData() {
-  return useQuery('fetchData', () => request('/api/data'));
+  return useQuery(['fetchData'], () => request('/api/data'));
 }
 ```
 
@@ -181,6 +182,7 @@ expect(result.current.data.pages).toStrictEqual([
 
 expectation.done();
 ```
+
 ## Further reading
 
 For additional tips and an alternative setup using `mock-service-worker`, have a look at [Testing React Query](../community/tkdodos-blog#5-testing-react-query) from

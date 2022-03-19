@@ -1,7 +1,7 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
-import { EnsuredQueryKey } from './types'
 import type {
+  FetchStatus,
   MutationFunction,
   MutationKey,
   MutationOptions,
@@ -14,17 +14,13 @@ import type {
 
 export interface QueryFilters {
   /**
-   * Include or exclude active queries
+   * Filter to active queries, inactive queries or all queries
    */
-  active?: boolean
+  type?: QueryTypeFilter
   /**
    * Match query key exactly
    */
   exact?: boolean
-  /**
-   * Include or exclude inactive queries
-   */
-  inactive?: boolean
   /**
    * Include queries matching this predicate function
    */
@@ -38,9 +34,9 @@ export interface QueryFilters {
    */
   stale?: boolean
   /**
-   * Include or exclude fetching queries
+   * Include queries matching their fetchStatus
    */
-  fetching?: boolean
+  fetchStatus?: FetchStatus
 }
 
 export interface MutationFilters {
@@ -68,7 +64,7 @@ export type Updater<TInput, TOutput> =
   | TOutput
   | DataUpdateFunction<TInput, TOutput>
 
-export type QueryStatusFilter = 'all' | 'active' | 'inactive' | 'none'
+export type QueryTypeFilter = 'all' | 'active' | 'inactive'
 
 // UTILS
 
@@ -89,14 +85,6 @@ export function functionalUpdate<TInput, TOutput>(
 
 export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
-}
-
-export function ensureQueryKeyArray<T extends QueryKey>(
-  value: T
-): EnsuredQueryKey<T> {
-  return (Array.isArray(value)
-    ? value
-    : ([value] as unknown)) as EnsuredQueryKey<T>
 }
 
 export function difference<T>(array1: T[], array2: T[]): T[] {
@@ -173,34 +161,14 @@ export function parseMutationFilterArgs(
   return isQueryKey(arg1) ? { ...arg2, mutationKey: arg1 } : arg1
 }
 
-export function mapQueryStatusFilter(
-  active?: boolean,
-  inactive?: boolean
-): QueryStatusFilter {
-  if (
-    (active === true && inactive === true) ||
-    (active == null && inactive == null)
-  ) {
-    return 'all'
-  } else if (active === false && inactive === false) {
-    return 'none'
-  } else {
-    // At this point, active|inactive can only be true|false or false|true
-    // so, when only one value is provided, the missing one has to be the negated value
-    const isActive = active ?? !inactive
-    return isActive ? 'active' : 'inactive'
-  }
-}
-
 export function matchQuery(
   filters: QueryFilters,
   query: Query<any, any, any, any>
 ): boolean {
   const {
-    active,
+    type = 'all',
     exact,
-    fetching,
-    inactive,
+    fetchStatus,
     predicate,
     queryKey,
     stale,
@@ -216,16 +184,12 @@ export function matchQuery(
     }
   }
 
-  const queryStatusFilter = mapQueryStatusFilter(active, inactive)
-
-  if (queryStatusFilter === 'none') {
-    return false
-  } else if (queryStatusFilter !== 'all') {
+  if (type !== 'all') {
     const isActive = query.isActive()
-    if (queryStatusFilter === 'active' && !isActive) {
+    if (type === 'active' && !isActive) {
       return false
     }
-    if (queryStatusFilter === 'inactive' && isActive) {
+    if (type === 'inactive' && isActive) {
       return false
     }
   }
@@ -234,7 +198,10 @@ export function matchQuery(
     return false
   }
 
-  if (typeof fetching === 'boolean' && query.isFetching() !== fetching) {
+  if (
+    typeof fetchStatus !== 'undefined' &&
+    fetchStatus !== query.state.fetchStatus
+  ) {
     return false
   }
 
@@ -289,17 +256,10 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
 
 /**
  * Default query keys hash function.
- */
-export function hashQueryKey(queryKey: QueryKey): string {
-  const asArray = ensureQueryKeyArray(queryKey)
-  return stableValueHash(asArray)
-}
-
-/**
  * Hashes the value into a stable hash.
  */
-export function stableValueHash(value: any): string {
-  return JSON.stringify(value, (_, val) =>
+export function hashQueryKey(queryKey: QueryKey): string {
+  return JSON.stringify(queryKey, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
           .sort()
@@ -315,7 +275,7 @@ export function stableValueHash(value: any): string {
  * Checks if key `b` partially matches with key `a`.
  */
 export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(ensureQueryKeyArray(a), ensureQueryKeyArray(b))
+  return partialDeepEqual(a, b)
 }
 
 /**
@@ -420,8 +380,8 @@ function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
 }
 
-export function isQueryKey(value: any): value is QueryKey {
-  return typeof value === 'string' || Array.isArray(value)
+export function isQueryKey(value: unknown): value is QueryKey {
+  return Array.isArray(value)
 }
 
 export function isError(value: any): value is Error {

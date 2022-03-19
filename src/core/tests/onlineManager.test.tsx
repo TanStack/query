@@ -1,5 +1,6 @@
 import { OnlineManager } from '../onlineManager'
 import { sleep } from '../utils'
+import { setIsServer } from '../../reactjs/tests/utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager
@@ -56,13 +57,23 @@ describe('onlineManager', () => {
     expect(remove2Spy).not.toHaveBeenCalled()
   })
 
+  test('cleanup should still be undefined if window is not defined', async () => {
+    const restoreIsServer = setIsServer(true)
+
+    const unsubscribe = onlineManager.subscribe(() => undefined)
+    expect(onlineManager['cleanup']).toBeUndefined()
+
+    unsubscribe()
+    restoreIsServer()
+  })
+
   test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
-    const unsubscribe = onlineManager.subscribe()
+    const unsubscribe = onlineManager.subscribe(() => undefined)
     expect(onlineManager['cleanup']).toBeUndefined()
 
     unsubscribe()
@@ -81,7 +92,7 @@ describe('onlineManager', () => {
     )
 
     // Should set the default event listener with window event listeners
-    const unsubscribe = onlineManager.subscribe()
+    const unsubscribe = onlineManager.subscribe(() => undefined)
     expect(addEventListenerSpy).toHaveBeenCalledTimes(2)
 
     // Should replace the window default event listener by a new one

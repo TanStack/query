@@ -29,14 +29,14 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 
 ## Online one-click setup
 
-You can use Gitpod(An Online Open Source VS Code like IDE which is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
+You can use Gitpod (An Online Open Source VS Code like IDE which is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
 
 - clone the `react-query` repo.
 - install all the dependencies in `/` and `/docs`.
 - run `yarn start` in the root(`/`) to Auto-build files.
 - run `yarn dev` in `/docs`.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/from-referrer/)
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/tannerlinsley/react-query)
 
 ## Commit message conventions
 

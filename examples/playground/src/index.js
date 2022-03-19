@@ -136,7 +136,7 @@ function App() {
   return (
     <div className="App">
       <div>
-        <button onClick={() => queryClient.invalidateQueries(true)}>
+        <button onClick={() => queryClient.invalidateQueries()}>
           Force Refetch All
         </button>
       </div>
@@ -181,7 +181,7 @@ function Todos({ initialFilter = "", setEditingIndex }) {
 
   const { status, data, isFetching, error, failureCount, refetch } = useQuery(
     ["todos", { filter }],
-    () => fetchTodos({ filter })
+    fetchTodos
   );
 
   return (
@@ -254,7 +254,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const saveMutation = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries("todos");
+      queryClient.invalidateQueries(['todos']);
       queryClient.setQueryData(["todo", { id: editingIndex }], data);
     },
   });
@@ -340,7 +340,7 @@ function AddTodo() {
 
   const addMutation = useMutation(postTodo, {
     onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+      queryClient.invalidateQueries(['todos']);
     },
   });
 
@@ -370,9 +370,16 @@ function AddTodo() {
   );
 }
 
-function fetchTodos({ filter } = {}) {
+function fetchTodos({ signal, queryKey: [, { filter }] }) {
   console.info("fetchTodos", { filter });
-  const promise = new Promise((resolve, reject) => {
+
+  if (signal) {
+    signal.addEventListener("abort", () => {
+      console.info("cancelled", filter);
+    });
+  }
+
+  return new Promise((resolve, reject) => {
     setTimeout(() => {
       if (Math.random() < errorRate) {
         return reject(
@@ -382,10 +389,6 @@ function fetchTodos({ filter } = {}) {
       resolve(list.filter((d) => d.name.includes(filter)));
     }, queryTimeMin + Math.random() * (queryTimeMax - queryTimeMin));
   });
-
-  promise.cancel = () => console.info("cancelled", filter);
-
-  return promise;
 }
 
 function fetchTodoById({ id }) {

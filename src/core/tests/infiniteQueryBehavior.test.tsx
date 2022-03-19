@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { queryKey, mockConsoleError } from '../../react/tests/utils'
+import { createQueryClient, queryKey } from '../../reactjs/tests/utils'
 import {
   QueryClient,
   InfiniteQueryObserver,
@@ -10,7 +10,7 @@ describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -19,7 +19,6 @@ describe('InfiniteQueryBehavior', () => {
   })
 
   test('InfiniteQueryBehavior should throw an error if the queryFn is not defined', async () => {
-    const consoleMock = mockConsoleError()
     const key = queryKey()
 
     const observer = new InfiniteQueryObserver(queryClient, {
@@ -43,7 +42,6 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     unsubscribe()
-    consoleMock.mockRestore()
   })
 
   test('InfiniteQueryBehavior should not refetch the first page if another page refetched', async () => {
@@ -80,7 +78,7 @@ describe('InfiniteQueryBehavior', () => {
     )
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: [key],
+      queryKey: key,
       pageParam: undefined,
       meta: undefined,
       signal: abortSignal,
@@ -92,7 +90,7 @@ describe('InfiniteQueryBehavior', () => {
     await observer.fetchNextPage()
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: [key],
+      queryKey: key,
       pageParam: 2,
       meta: undefined,
       signal: abortSignal,
@@ -111,7 +109,7 @@ describe('InfiniteQueryBehavior', () => {
     })
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {
-      queryKey: [key],
+      queryKey: key,
       pageParam: 2,
       meta: undefined,
       signal: abortSignal,

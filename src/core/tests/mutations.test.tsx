@@ -1,5 +1,10 @@
 import { QueryClient } from '../..'
-import { mockConsoleError, queryKey, sleep } from '../../react/tests/utils'
+import {
+  createQueryClient,
+  executeMutation,
+  queryKey,
+  sleep,
+} from '../../reactjs/tests/utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
@@ -7,7 +12,7 @@ describe('mutations', () => {
   let queryClient: QueryClient
 
   beforeEach(() => {
-    queryClient = new QueryClient()
+    queryClient = createQueryClient()
     queryClient.mount()
   })
 
@@ -16,7 +21,7 @@ describe('mutations', () => {
   })
 
   test('mutate should trigger a mutation', async () => {
-    const result = await queryClient.executeMutation({
+    const result = await executeMutation(queryClient, {
       mutationFn: async (text: string) => text,
       variables: 'todo',
     })
@@ -48,7 +53,7 @@ describe('mutations', () => {
       mutationFn: async (text: string) => text,
     })
 
-    const result = await queryClient.executeMutation({
+    const result = await executeMutation(queryClient, {
       mutationKey: key,
       variables: 'todo',
     })
@@ -146,8 +151,6 @@ describe('mutations', () => {
   })
 
   test('mutation should set correct error states', async () => {
-    const consoleMock = mockConsoleError()
-
     const mutation = new MutationObserver(queryClient, {
       mutationFn: async () => {
         await sleep(20)
@@ -238,8 +241,6 @@ describe('mutations', () => {
       status: 'error',
       variables: 'todo',
     })
-
-    consoleMock.mockRestore()
   })
 
   test('should be able to restore a mutation', async () => {
@@ -340,14 +341,12 @@ describe('mutations', () => {
     // because no use case has been found
     const currentMutation = mutation['currentMutation']!
     expect(currentMutation['observers'].length).toEqual(1)
-    currentMutation?.addObserver(mutation)
+    currentMutation.addObserver(mutation)
 
     expect(currentMutation['observers'].length).toEqual(1)
   })
 
-  test('executeMutation should throw an error if no mutationFn found', async () => {
-    const consoleMock = mockConsoleError()
-
+  test('mutate should throw an error if no mutationFn found', async () => {
     const mutation = new MutationObserver(queryClient, {
       mutationFn: undefined,
       retry: false,
@@ -360,58 +359,5 @@ describe('mutations', () => {
       error = err
     }
     expect(error).toEqual('No mutationFn found')
-
-    consoleMock.mockRestore()
-  })
-
-  test('cancel mutation should not call mutationFn if the current retrier is undefined', async () => {
-    const mutationFn = jest.fn().mockImplementation(async () => {
-      await sleep(20)
-      return 'data'
-    })
-
-    const observer = new MutationObserver(queryClient, {
-      mutationKey: 'key',
-      mutationFn,
-    })
-
-    observer.mutate()
-    const mutation = queryClient
-      .getMutationCache()
-      .find({ mutationKey: 'key' })!
-    await sleep(10)
-
-    // Force current mutation retryer to be undefined
-    // because not use case has been found
-    mutation['retryer'] = undefined
-    mutationFn.mockReset()
-    await mutation.cancel()
-
-    await sleep(30)
-    expect(mutationFn).toHaveBeenCalledTimes(0)
-  })
-
-  test('reducer should return the state for an unknown action type', async () => {
-    const observer = new MutationObserver(queryClient, {
-      mutationKey: 'key',
-      mutationFn: async () => 'data',
-    })
-
-    const spy = jest.fn()
-    const unsubscribe = observer.subscribe(spy)
-    observer.mutate()
-    const mutation = queryClient
-      .getMutationCache()
-      .find({ mutationKey: 'key' })!
-    const prevState = observer.getCurrentResult()
-    spy.mockReset()
-
-    // Force dispatch unknown action type
-    // because no use case has been found
-    //@ts-expect-error
-    mutation.dispatch({ type: 'unknown' })
-    expect(spy).toHaveBeenCalledWith(prevState)
-
-    unsubscribe()
   })
 })

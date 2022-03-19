@@ -19,7 +19,7 @@ There may be times when you already have the initial data for a query available 
 
 ```js
 function Todos() {
-  const result = useQuery('todos', () => fetch('/todos'), {
+  const result = useQuery(['todos'], () => fetch('/todos'), {
     initialData: initialTodos,
   })
 }
@@ -34,7 +34,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   ```js
   function Todos() {
     // Will show initialTodos immediately, but also immediately refetch todos after mount
-    const result = useQuery('todos', () => fetch('/todos'), {
+    const result = useQuery(['todos'], () => fetch('/todos'), {
       initialData: initialTodos,
     })
   }
@@ -45,7 +45,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   ```js
   function Todos() {
     // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
-    const result = useQuery('todos', () => fetch('/todos'), {
+    const result = useQuery(['todos'], () => fetch('/todos'), {
       initialData: initialTodos,
       staleTime: 1000,
     })
@@ -56,7 +56,7 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   ```js
   function Todos() {
     // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
-    const result = useQuery('todos', () => fetch('/todos'), {
+    const result = useQuery(['todos'], () => fetch('/todos'), {
       initialData: initialTodos,
       staleTime: 60 * 1000 // 1 minute
       // This could be 10 seconds ago or 10 minutes ago
@@ -74,7 +74,7 @@ If the process for accessing a query's initial data is intensive or just not som
 
 ```js
 function Todos() {
-  const result = useQuery('todos', () => fetch('/todos'), {
+  const result = useQuery(['todos'], () => fetch('/todos'), {
     initialData: () => {
       return getExpensiveTodos()
     },
@@ -91,7 +91,7 @@ function Todo({ todoId }) {
   const result = useQuery(['todo', todoId], () => fetch('/todos'), {
     initialData: () => {
       // Use a todo from the 'todos' query as the initial data for this todo query
-      return queryClient.getQueryData('todos')?.find(d => d.id === todoId)
+      return queryClient.getQueryData(['todos'])?.find(d => d.id === todoId)
     },
   })
 }
@@ -105,9 +105,9 @@ Getting initial data from the cache means the source query you're using to look 
 function Todo({ todoId }) {
   const result = useQuery(['todo', todoId], () => fetch(`/todos/${todoId}`), {
     initialData: () =>
-      queryClient.getQueryData('todos')?.find(d => d.id === todoId),
+      queryClient.getQueryData(['todos'])?.find(d => d.id === todoId),
     initialDataUpdatedAt: () =>
-      queryClient.getQueryState('todos')?.dataUpdatedAt,
+      queryClient.getQueryState(['todos'])?.dataUpdatedAt,
   })
 }
 ```
@@ -121,7 +121,7 @@ function Todo({ todoId }) {
   const result = useQuery(['todo', todoId], () => fetch(`/todos/${todoId}`), {
     initialData: () => {
       // Get the query state
-      const state = queryClient.getQueryState('todos')
+      const state = queryClient.getQueryState(['todos'])
 
       // If the query exists and has data that is no older than 10 seconds...
       if (state && Date.now() - state.dataUpdatedAt <= 10 * 1000) {

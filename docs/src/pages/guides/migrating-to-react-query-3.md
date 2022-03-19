@@ -244,7 +244,7 @@ const {
 This allows for easier manipulation of the data and the page params, like, for example, removing the first page of data along with it's params:
 
 ```js
-queryClient.setQueryData('projects', data => ({
+queryClient.setQueryData(['projects'], data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
@@ -358,7 +358,7 @@ Only re-render when the `data` or `error` properties change:
 import { useQuery } from 'react-query'
 
 function User() {
-  const { data } = useQuery('user', fetchUser, {
+  const { data } = useQuery(['user'], fetchUser, {
     notifyOnChangeProps: ['data', 'error'],
   })
   return <div>Username: {data.username}</div>
@@ -371,7 +371,7 @@ Prevent re-render when the `isStale` property changes:
 import { useQuery } from 'react-query'
 
 function User() {
-  const { data } = useQuery('user', fetchUser, {
+  const { data } = useQuery(['user'], fetchUser, {
     notifyOnChangePropsExclusions: ['isStale'],
   })
   return <div>Username: {data.username}</div>
@@ -459,7 +459,7 @@ The `useQuery` and `useInfiniteQuery` hooks now have a `select` option to select
 import { useQuery } from 'react-query'
 
 function User() {
-  const { data } = useQuery('user', fetchUser, {
+  const { data } = useQuery(['user'], fetchUser, {
     select: user => user.username,
   })
   return <div>Username: {data}</div>
@@ -556,10 +556,10 @@ const unsubscribe = observer.subscribe(result => {
 The `QueryClient.setQueryDefaults()` method can be used to set default options for specific queries:
 
 ```js
-queryClient.setQueryDefaults('posts', { queryFn: fetchPosts })
+queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
 
 function Component() {
-  const { data } = useQuery('posts')
+  const { data } = useQuery(['posts'])
 }
 ```
 
@@ -568,10 +568,10 @@ function Component() {
 The `QueryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
 
 ```js
-queryClient.setMutationDefaults('addPost', { mutationFn: addPost })
+queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
-  const { mutate } = useMutation('addPost')
+  const { mutate } = useMutation(['addPost'])
 }
 ```
 

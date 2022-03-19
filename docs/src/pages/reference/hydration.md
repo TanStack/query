@@ -15,8 +15,6 @@ const dehydratedState = dehydrate(queryClient, {
 })
 ```
 
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `dehydrate` from `react-query/hydration`
-
 **Options**
 
 - `client: QueryClient`
@@ -50,7 +48,7 @@ const dehydratedState = dehydrate(queryClient, {
 
 ### limitations
 
-The hydration API requires values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
+Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
 
 ```js
 // server
@@ -58,21 +56,19 @@ const state = dehydrate(client, { shouldDehydrateQuery: () => true }) // to also
 const serializedState = mySerialize(state) // transform Error instances to objects
 
 // client
-const state = myDeserialize(serializedState)  // transform objects back to Error instances
+const state = myDeserialize(serializedState) // transform objects back to Error instances
 hydrate(client, state)
 ```
 
 ## `hydrate`
 
-`hydrate` adds a previously dehydrated state into a `cache`. If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them.
+`hydrate` adds a previously dehydrated state into a `cache`.
 
 ```js
 import { hydrate } from 'react-query'
 
 hydrate(queryClient, dehydratedState, options)
 ```
-
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `hydrate` from `react-query/hydration`
 
 **Options**
 
@@ -89,6 +85,10 @@ hydrate(queryClient, dehydratedState, options)
     - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
     - `queries: QueryOptions` The default query options to use for the hydrated queries.
 
+### Limitations
+
+If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
+
 ## `useHydrate`
 
 `useHydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
@@ -98,8 +98,6 @@ import { useHydrate } from 'react-query'
 
 useHydrate(dehydratedState, options)
 ```
-
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `useHydrate` from `react-query/hydration`
 
 **Options**
 
@@ -122,8 +120,6 @@ function App() {
   return <Hydrate state={dehydratedState}>...</Hydrate>
 }
 ```
-
-> Note: Since version `3.22.0` hydration utilities moved into to core. If you using lower version your should import `Hydrate` from `react-query/hydration`
 
 **Options**
 
