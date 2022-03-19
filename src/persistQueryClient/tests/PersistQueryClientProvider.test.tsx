@@ -501,7 +501,7 @@ describe('PersistQueryClientProvider', () => {
 
     expect(queryFn1).toHaveBeenCalledTimes(0)
     expect(queryFn2).toHaveBeenCalledTimes(1)
-    expect(onSuccess).toHaveBeenCalledTimes(2)
+    expect(onSuccess).toHaveBeenCalledTimes(1)
 
     expect(states).toHaveLength(5)
 
