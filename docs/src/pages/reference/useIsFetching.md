@@ -18,7 +18,7 @@ const isFetchingPosts = useIsFetching(['posts'])
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 - `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, the default will be used.
+  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
 **Returns**
 

@@ -52,7 +52,7 @@ function App() {
   - Defaults to `bottom-left`
   - The position of the React Query logo to open and close the devtools panel
 - `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, the default will be used.
+  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
 ## Embedded Mode
 

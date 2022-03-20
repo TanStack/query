@@ -12,7 +12,7 @@ import type { QueryClient } from '../core/queryClient'
 
 export interface ContextOptions {
   /**
-   * Use this to pass your React Query context. Otherwise, the default will be used.
+   * Use this to pass your React Query context. Otherwise, `defaultContext` will be used.
    */
   context?: React.Context<QueryClient | undefined>
 }

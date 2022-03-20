@@ -85,7 +85,7 @@ hydrate(queryClient, dehydratedState, options)
     - `mutations: MutationOptions` The default mutation options to use for the hydrated mutations.
     - `queries: QueryOptions` The default query options to use for the hydrated queries.
   - `context?: React.Context<QueryClient | undefined>`
-    - Use this to use a custom React Query context. Otherwise, the default will be used.
+    - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
 ### Limitations
 
@@ -111,7 +111,7 @@ useHydrate(dehydratedState, options)
   - `defaultOptions: QueryOptions`
     - The default query options to use for the hydrated queries.
   - `context?: React.Context<QueryClient | undefined>`
-    - Use this to use a custom React Query context. Otherwise, the default will be used.
+    - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
 ## `Hydrate`
 
@@ -134,4 +134,4 @@ function App() {
   - `defaultOptions: QueryOptions`
     - The default query options to use for the hydrated queries.
   - `context?: React.Context<QueryClient | undefined>`
-    - Use this to use a custom React Query context. Otherwise, the default will be used.
+    - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.

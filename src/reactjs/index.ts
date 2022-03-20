@@ -1,7 +1,11 @@
 // Side effects
 import './setBatchUpdatesFn'
 
-export { QueryClientProvider, useQueryClient } from './QueryClientProvider'
+export {
+  defaultContext,
+  QueryClientProvider,
+  useQueryClient,
+} from './QueryClientProvider'
 export {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,

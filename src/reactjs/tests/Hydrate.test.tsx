@@ -71,13 +71,9 @@ describe('React hydration', () => {
 
       function Page() {
         useHydrate(dehydratedState, { context })
-        const { data } = useQuery(
-          ['string'],
-          () => dataQuery(['stringCached']),
-          {
-            context,
-          }
-        )
+        const { data } = useQuery(['string'], () => dataQuery(['string']), {
+          context,
+        })
         return (
           <div>
             <h1>{data}</h1>

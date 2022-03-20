@@ -9,7 +9,9 @@ declare global {
   }
 }
 
-const defaultContext = React.createContext<QueryClient | undefined>(undefined)
+export const defaultContext = React.createContext<QueryClient | undefined>(
+  undefined
+)
 const QueryClientSharingContext = React.createContext<boolean>(false)
 
 // If we are given a context, we will use it.

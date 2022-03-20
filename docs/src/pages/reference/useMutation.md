@@ -88,7 +88,7 @@ mutate(variables, {
   - Optional
   - If set, stores additional information on the mutation cache entry that can be used as needed. It will be accessible wherever the `mutation` is available (eg. `onError`, `onSuccess` functions of the `MutationCache`).
 - `context?: React.Context<QueryClient | undefined>`
-  - Use this to use a custom React Query context. Otherwise, the default will be used.
+  - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
 **Returns**
 
