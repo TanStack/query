@@ -96,8 +96,11 @@ export const Footer = props => {
               Subscribe to Bytes
             </h4>
             <p className="mt-4 text-gray-500 text-base leading-6 mb-4">
-              The best JavaScript newsletter! Delivered every Monday to over
-              76,000 devs.
+              The{' '}
+              <a href="https://bytes.dev/?r=tanstack">
+                best JavaScript newsletter!
+              </a>{' '}
+              Delivered every Monday to over 76,000 devs.
             </p>
             <BytesForm />
           </div>
