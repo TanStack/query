@@ -28,6 +28,7 @@
     "body-scroll-lock": "^3.1.5",
     "classnames": "^2.2.6",
     "copy-to-clipboard": "^3.3.1",
+    "country-emoji": "^1.5.6",
     "date-fns": "^2.16.1",
     "docsearch.js": "^2.6.3",
     "framer-motion": "^1.11.1",
