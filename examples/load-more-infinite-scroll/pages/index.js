@@ -1,13 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
-
+import { useInView } from 'react-intersection-observer'
 import { useInfiniteQuery, QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
-
-//
-
-import useIntersectionObserver from '../hooks/useIntersectionObserver'
 
 const queryClient = new QueryClient()
 
@@ -20,6 +16,8 @@ export default function App() {
 }
 
 function Example() {
+  const { ref, inView } = useInView()
+
   const {
     status,
     data,
@@ -38,18 +36,16 @@ function Example() {
       return res.data
     },
     {
-      getPreviousPageParam: firstPage => firstPage.previousId ?? false,
-      getNextPageParam: lastPage => lastPage.nextId ?? false,
+      getPreviousPageParam: firstPage => firstPage.previousId ?? undefined,
+      getNextPageParam: lastPage => lastPage.nextId ?? undefined,
     }
   )
 
-  const loadMoreButtonRef = React.useRef()
-
-  useIntersectionObserver({
-    target: loadMoreButtonRef,
-    onIntersect: fetchNextPage,
-    enabled: !!hasNextPage,
-  })
+  React.useEffect(() => {
+    if (inView) {
+      fetchNextPage()
+    }
+  }, [inView])
 
   return (
     <div>
@@ -91,7 +87,7 @@ function Example() {
           ))}
           <div>
             <button
-              ref={loadMoreButtonRef}
+              ref={ref}
               onClick={() => fetchNextPage()}
               disabled={!hasNextPage || isFetchingNextPage}
             >

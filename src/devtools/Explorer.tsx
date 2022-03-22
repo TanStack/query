@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 import React from 'react'
 
 import { styled } from './utils'
@@ -13,11 +11,15 @@ export const Entry = styled('div', {
 })
 
 export const Label = styled('span', {
+  color: 'white',
+})
+
+export const LabelButton = styled('button', {
   cursor: 'pointer',
   color: 'white',
 })
 
-export const Value = styled('span', (props, theme) => ({
+export const Value = styled('span', (_props, theme) => ({
   color: theme.danger,
 }))
 
@@ -32,7 +34,12 @@ export const Info = styled('span', {
   fontSize: '.7em',
 })
 
-export const Expander = ({ expanded, style = {}, ...rest }) => (
+type ExpanderProps = {
+  expanded: boolean
+  style?: React.CSSProperties
+}
+
+export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
   <span
     style={{
       display: 'inline-block',
@@ -45,43 +52,81 @@ export const Expander = ({ expanded, style = {}, ...rest }) => (
   </span>
 )
 
-const DefaultRenderer = ({
-  handleEntry,
+type Entry = {
+  label: string
+}
+
+type RendererProps = {
+  HandleEntry: HandleEntryComponent
+  label?: string
+  value: unknown
+  subEntries: Entry[]
+  subEntryPages: Entry[][]
+  type: string
+  expanded: boolean
+  toggleExpanded: () => void
+  pageSize: number
+}
+
+/**
+ * Chunk elements in the array by size
+ *
+ * when the array cannot be chunked evenly by size, the last chunk will be
+ * filled with the remaining elements
+ *
+ * @example
+ * chunkArray(['a','b', 'c', 'd', 'e'], 2) // returns [['a','b'], ['c', 'd'], ['e']]
+ */
+export function chunkArray<T>(array: T[], size: number): T[][] {
+  if (size < 1) return []
+  let i = 0
+  const result: T[][] = []
+  while (i < array.length) {
+    result.push(array.slice(i, i + size))
+    i = i + size
+  }
+  return result
+}
+
+type Renderer = (props: RendererProps) => JSX.Element
+
+export const DefaultRenderer: Renderer = ({
+  HandleEntry,
   label,
   value,
-  // path,
-  subEntries,
-  subEntryPages,
+  subEntries = [],
+  subEntryPages = [],
   type,
-  // depth,
-  expanded,
-  toggle,
+  expanded = false,
+  toggleExpanded,
   pageSize,
 }) => {
-  const [expandedPages, setExpandedPages] = React.useState([])
+  const [expandedPages, setExpandedPages] = React.useState<number[]>([])
 
   return (
     <Entry key={label}>
       {subEntryPages?.length ? (
         <>
-          <Label onClick={() => toggle()}>
+          <button onClick={() => toggleExpanded()}>
             <Expander expanded={expanded} /> {label}{' '}
             <Info>
               {String(type).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries.length} {subEntries.length > 1 ? `items` : `item`}
             </Info>
-          </Label>
+          </button>
           {expanded ? (
             subEntryPages.length === 1 ? (
               <SubEntries>
-                {subEntries.map(entry => handleEntry(entry))}
+                {subEntries.map(entry => (
+                  <HandleEntry entry={entry} />
+                ))}
               </SubEntries>
             ) : (
               <SubEntries>
                 {subEntryPages.map((entries, index) => (
                   <div key={index}>
                     <Entry>
-                      <Label
+                      <LabelButton
                         onClick={() =>
                           setExpandedPages(old =>
                             old.includes(index)
@@ -92,10 +137,12 @@ const DefaultRenderer = ({
                       >
                         <Expander expanded={expanded} /> [{index * pageSize} ...{' '}
                         {index * pageSize + pageSize - 1}]
-                      </Label>
+                      </LabelButton>
                       {expandedPages.includes(index) ? (
                         <SubEntries>
-                          {entries.map(entry => handleEntry(entry))}
+                          {entries.map(entry => (
+                            <HandleEntry entry={entry} />
+                          ))}
                         </SubEntries>
                       ) : null}
                     </Entry>
@@ -117,36 +164,43 @@ const DefaultRenderer = ({
   )
 }
 
+type HandleEntryComponent = (props: { entry: Entry }) => JSX.Element
+
+type ExplorerProps = Partial<RendererProps> & {
+  renderer?: Renderer
+  defaultExpanded?: true | Record<string, boolean>
+}
+
+type Property = {
+  defaultExpanded?: boolean | Record<string, boolean>
+  label: string
+  value: unknown
+}
+
+function isIterable(x: any): x is Iterable<unknown> {
+  return Symbol.iterator in x
+}
+
 export default function Explorer({
   value,
   defaultExpanded,
   renderer = DefaultRenderer,
   pageSize = 100,
-  depth = 0,
   ...rest
-}) {
-  const [expanded, setExpanded] = React.useState(defaultExpanded)
+}: ExplorerProps) {
+  const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
+  const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
 
-  const toggle = set => {
-    setExpanded(old => (typeof set !== 'undefined' ? set : !old))
-  }
+  let type: string = typeof value
+  let subEntries: Property[] = []
 
-  const path = []
-
-  let type = typeof value
-  let subEntries
-  const subEntryPages = []
-
-  const makeProperty = sub => {
-    const newPath = path.concat(sub.label)
+  const makeProperty = (sub: { label: string; value: unknown }): Property => {
     const subDefaultExpanded =
       defaultExpanded === true
         ? { [sub.label]: true }
         : defaultExpanded?.[sub.label]
     return {
       ...sub,
-      path: newPath,
-      depth: depth + 1,
       defaultExpanded: subDefaultExpanded,
     }
   }
@@ -155,54 +209,45 @@ export default function Explorer({
     type = 'array'
     subEntries = value.map((d, i) =>
       makeProperty({
-        label: i,
+        label: i.toString(),
         value: d,
       })
     )
   } else if (
     value !== null &&
     typeof value === 'object' &&
+    isIterable(value) &&
     typeof value[Symbol.iterator] === 'function'
   ) {
     type = 'Iterable'
     subEntries = Array.from(value, (val, i) =>
       makeProperty({
-        label: i,
+        label: i.toString(),
         value: val,
       })
     )
   } else if (typeof value === 'object' && value !== null) {
     type = 'object'
-    // eslint-disable-next-line no-shadow
-    subEntries = Object.entries(value).map(([label, value]) =>
+    subEntries = Object.entries(value).map(([key, val]) =>
       makeProperty({
-        label,
-        value,
+        label: key,
+        value: val,
       })
     )
   }
 
-  if (subEntries) {
-    let i = 0
-
-    while (i < subEntries.length) {
-      subEntryPages.push(subEntries.slice(i, i + pageSize))
-      i = i + pageSize
-    }
-  }
+  const subEntryPages = chunkArray(subEntries, pageSize)
 
   return renderer({
-    handleEntry: entry => (
-      <Explorer key={entry.label} renderer={renderer} {...rest} {...entry} />
+    HandleEntry: ({ entry }) => (
+      <Explorer value={value} renderer={renderer} {...rest} {...entry} />
     ),
     type,
     subEntries,
     subEntryPages,
-    depth,
     value,
-    path,
     expanded,
-    toggle,
+    toggleExpanded,
     pageSize,
     ...rest,
   })
