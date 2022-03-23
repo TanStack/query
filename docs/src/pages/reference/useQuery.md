@@ -15,7 +15,6 @@ const {
   isFetchedAfterMount,
   isFetching,
   isPaused,
-  isIdle,
   isLoading,
   isLoadingError,
   isPlaceholderData,

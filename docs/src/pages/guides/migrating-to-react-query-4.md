@@ -282,7 +282,7 @@ It was possible to change the logger globally by calling `setLogger`. In v4, tha
 + const queryClient = new QueryClient({ logger: customLogger })
 ```
 
-### Undefined is an illegale cache value for successful queries
+### Undefined is an illegal cache value for successful queries
 
 In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](guides/initial-query-data#initial-data-function) will also _not_ set data.
 
@@ -300,6 +300,20 @@ This is now disallowed on type level; at runtime, `undefined` will be transforme
 ### Supported Browsers
 
 As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
+
+### The idle state has been removed
+
+With the introduction of the new [fetchStatus](../guides/queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../guides/queries#why-two-different-states).
+
+This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
+
+```diff
+- status: 'idle'
++ status: 'loading'
++ fetchStatus: 'idle'
+```
+
+Also, have a look at [the guide on dependent queries](../guides/dependent-queries)
 
 ## New Features 🚀
 
