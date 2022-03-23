@@ -346,3 +346,90 @@ When using the [functional updater form of setQueryData](../reference/QueryClien
    (previousTodo) => previousTodo ? { ...previousTodo, done: true } : undefined
 )
  ```
+
+ ### Custom Contexts for Multiple Providers
+
+Custom contexts can now be specified to pair hooks with their matching `Provider`. This is critical when there may be multiple React Query `Provider` instances in the component tree and you need to ensure your hook uses the correct `Provider` instance.
+
+An example:
+
+1) Create a data package.
+
+```tsx
+// Our first data package: @my-scope/container-data
+
+const context = React.createContext<QueryClient | undefined>();
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache, context })
+
+
+export const useUser = () => {
+  return useQuery(USER_KEY, USER_FETCHER, {
+    context,
+  })
+}
+
+export const ContainerDataProvider: React.FC = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient} context={context}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+
+```
+
+2) Create a second data package.
+
+```tsx
+// Our second data package: @my-scope/my-component-data
+
+const context = React.createContext<QueryClient | undefined>();
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache, context })
+
+
+export const useItems = () => {
+  return useQuery(ITEMS_KEY, ITEMS_FETCHER, {
+    context,
+  })
+}
+
+export const MyComponentDataProvider: React.FC = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient} context={context}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+
+```
+
+3) Use these two data packages in your application.
+
+```tsx
+// Our application
+
+import { ContainerDataProvider, useUser } from "@my-scope/container-data";
+import { AppDataProvider } from "@my-scope/app-data";
+import { MyComponentDataProvider, useItems } from "@my-scope/my-component-data";
+
+<ContainerDataProvider> // <-- Provides container data (like "user") using its own React Query provider
+  ...
+  <AppDataProvider> // <-- Provides app data using its own React Query provider (unused in this example)
+    ...
+      <MyComponentDataProvider> // <-- Provides component data (like "items") using its own React Query provider
+        <MyComponent />
+      </MyComponentDataProvider>
+    ...
+  </AppDataProvider>
+  ...
+</ContainerDataProvider>
+
+// Example of hooks provided by the "DataProvider" components above:
+const MyComponent = () => {
+  const user = useUser(); // <-- Uses the context specified in ContainerDataProvider.
+  const items = useItems(); // <-- Uses the context specified in MyComponentDataProvider
+  ...
+}
+```

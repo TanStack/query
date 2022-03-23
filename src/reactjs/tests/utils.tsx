@@ -6,6 +6,7 @@ import {
   QueryClient,
   QueryClientConfig,
   QueryClientProvider,
+  ContextOptions,
 } from '../..'
 import * as utils from '../../core/utils'
 
@@ -14,15 +15,23 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
-export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
+export function renderWithClient(
+  client: QueryClient,
+  ui: React.ReactElement,
+  options: ContextOptions = {}
+) {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={client} context={options.context}>
+      {ui}
+    </QueryClientProvider>
   )
   return {
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>
+        <QueryClientProvider client={client} context={options.context}>
+          {rerenderUi}
+        </QueryClientProvider>
       ),
   }
 }

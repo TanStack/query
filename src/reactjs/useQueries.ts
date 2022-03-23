@@ -1,10 +1,19 @@
 import React from 'react'
-import { QueryFunction } from '../core/types'
+import { QueryKey, QueryFunction } from '../core/types'
 
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
+
+// This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
+// - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
+type UseQueryOptionsForUseQueries<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
+> = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -16,28 +25,33 @@ type GetOptions<T> =
     error?: infer TError
     data: infer TData
   }
-    ? UseQueryOptions<TQueryFnData, TError, TData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
     : T extends { queryFnData: infer TQueryFnData; error?: infer TError }
-    ? UseQueryOptions<TQueryFnData, TError>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
     : T extends { data: infer TData; error?: infer TError }
-    ? UseQueryOptions<unknown, TError, TData>
+    ? UseQueryOptionsForUseQueries<unknown, TError, TData>
     : // Part 2: responsible for applying explicit type parameter to function arguments, if tuple [TQueryFnData, TError, TData]
     T extends [infer TQueryFnData, infer TError, infer TData]
-    ? UseQueryOptions<TQueryFnData, TError, TData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData>
     : T extends [infer TQueryFnData, infer TError]
-    ? UseQueryOptions<TQueryFnData, TError>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, TError>
     : T extends [infer TQueryFnData]
-    ? UseQueryOptions<TQueryFnData>
+    ? UseQueryOptionsForUseQueries<TQueryFnData>
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptions<TQueryFnData, unknown, TData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, unknown, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptions<TQueryFnData, unknown, TQueryFnData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<
+        TQueryFnData,
+        unknown,
+        TQueryFnData,
+        TQueryKey
+      >
     : // Fallback
-      UseQueryOptions
+      UseQueryOptionsForUseQueries
 
 type GetResults<T> =
   // Part 1: responsible for mapping explicit type parameter to function result, if object
@@ -73,7 +87,7 @@ export type QueriesOptions<
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = []
 > = Depth['length'] extends MAXIMUM_DEPTH
-  ? UseQueryOptions[]
+  ? UseQueryOptionsForUseQueries[]
   : T extends []
   ? []
   : T extends [infer Head]
@@ -84,15 +98,15 @@ export type QueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptions<
+  T extends UseQueryOptionsForUseQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
       infer TQueryKey
     >[]
-  ? UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
+  ? UseQueryOptionsForUseQueries<TQueryFnData, TError, TData, TQueryKey>[]
   : // Fallback
-    UseQueryOptions[]
+    UseQueryOptionsForUseQueries[]
 
 /**
  * QueriesResults reducer recursively maps type param to results
@@ -109,7 +123,7 @@ export type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends UseQueryOptions<
+  : T extends UseQueryOptionsForUseQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
@@ -122,13 +136,15 @@ export type QueriesResults<
 
 export function useQueries<T extends any[]>({
   queries,
+  context,
 }: {
   queries: readonly [...QueriesOptions<T>]
+  context?: UseQueryOptions['context']
 }): QueriesResults<T> {
   const mountedRef = React.useRef(false)
   const [, forceUpdate] = React.useState(0)
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context })
 
   const defaultedQueries = React.useMemo(
     () =>
