@@ -315,6 +315,14 @@ This will mostly affect `disabled` queries that don't have any `data` yet, as th
 
 Also, have a look at [the guide on dependent queries](../guides/dependent-queries)
 
+### No _default_ manual Garbage Collection server-side
+
+In v3, React Query would cache query results for a default of 5 minutes, then manually garbage collect that data. This default was applied to server-side React Query as well.
+
+This lead to high memory consumption and hanging processes waiting for this manual garbage collection to complete. In v4, by default the server-side `cacheTime` is now set to `Infinity` effectively disabling manual garbage collection (the NodeJS process will clear everything once a request is complete).
+
+This change only impacts users of server-side React Query, such as with Next.js. If you are setting a `cacheTime` manually this will not impact you (although you may want to mirror behavior).
+
 ## New Features 🚀
 
 ### Proper offline support
