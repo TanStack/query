@@ -101,7 +101,7 @@ describe('useIsFetching', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
+    await waitFor(() => expect(isFetchings).toEqual([0, 1, 1, 2, 1, 0]))
     expect(mockLogger.error).not.toHaveBeenCalled()
   })
 
@@ -163,7 +163,7 @@ describe('useIsFetching', () => {
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
       const key = queryKey()
 
       function Page() {
@@ -205,7 +205,7 @@ describe('useIsFetching', () => {
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       const queryCache = new QueryCache()
-      const queryClient = new QueryClient({ queryCache })
+      const queryClient = createQueryClient({ queryCache })
       const key = queryKey()
 
       function Page() {
@@ -236,5 +236,30 @@ describe('useIsFetching', () => {
 
       await waitFor(() => rendered.getByText('error boundary'))
     })
+  })
+
+  it('should show the correct fetching state when mounted after a query', async () => {
+    const queryClient = createQueryClient()
+    const key = queryKey()
+
+    function Page() {
+      useQuery(key, async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      const isFetching = useIsFetching()
+
+      return (
+        <div>
+          <div>isFetching: {isFetching}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('isFetching: 1')
+    await rendered.findByText('isFetching: 0')
   })
 })

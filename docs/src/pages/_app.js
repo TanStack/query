@@ -18,9 +18,6 @@ function loadScript(src, attrs = {}) {
 function MyApp({ Component, pageProps }) {
   React.useEffect(() => {
     loadScript('https://buttons.github.io/buttons.js')
-    loadScript('https://tanstack.ck.page/e394781e7a/index.js', {
-      'data-uid': 'e394781e7a',
-    })
   }, [])
 
   return (
@@ -30,25 +27,12 @@ function MyApp({ Component, pageProps }) {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
-        <style
-          dangerouslySetInnerHTML={{
-            __html: `
-        @media (max-width: 390px) {
-            .formkit-slide-in {
-              display: none;
-            }
-          }
-          @media (max-height: 740px) {
-            .formkit-slide-in {
-              display: none;
-            }
-          }
-          `,
-          }}
-        />
       </Head>
       {/* eslint-disable-next-line jsx-a11y/alt-text */}
-      <img src="https://static.scarf.sh/a.png?x-pxid=c03d3ddd-b47e-4e26-a9b2-9df68b2ac970" />
+      <img
+        src="https://static.scarf.sh/a.png?x-pxid=c03d3ddd-b47e-4e26-a9b2-9df68b2ac970"
+        className="h-0"
+      />
       <SearchProvider>
         <Component {...pageProps} />
       </SearchProvider>

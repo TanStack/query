@@ -4,9 +4,22 @@ import { notifyManager } from '../core/notifyManager'
 import { QueryKey } from '../core/types'
 import { ContextOptions } from '../reactjs/types'
 import { parseFilterArgs, QueryFilters } from '../core/utils'
+import { QueryClient } from '../core'
 import { useQueryClient } from './QueryClientProvider'
 
 interface Options extends ContextOptions {}
+
+const checkIsFetching = (
+  queryClient: QueryClient,
+  filters: QueryFilters,
+  isFetching: number,
+  setIsFetching: React.Dispatch<React.SetStateAction<number>>
+) => {
+  const newIsFetching = queryClient.isFetching(filters)
+  if (isFetching !== newIsFetching) {
+    setIsFetching(newIsFetching)
+  }
+}
 
 export function useIsFetching(filters?: QueryFilters, options?: Options): number
 export function useIsFetching(
@@ -37,13 +50,22 @@ export function useIsFetching(
   React.useEffect(() => {
     mountedRef.current = true
 
+    checkIsFetching(
+      queryClient,
+      filtersRef.current,
+      isFetchingRef.current,
+      setIsFetching
+    )
+
     const unsubscribe = queryClient.getQueryCache().subscribe(
       notifyManager.batchCalls(() => {
         if (mountedRef.current) {
-          const newIsFetching = queryClient.isFetching(filtersRef.current)
-          if (isFetchingRef.current !== newIsFetching) {
-            setIsFetching(newIsFetching)
-          }
+          checkIsFetching(
+            queryClient,
+            filtersRef.current,
+            isFetchingRef.current,
+            setIsFetching
+          )
         }
       })
     )

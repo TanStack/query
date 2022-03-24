@@ -3,9 +3,11 @@ import Link from 'next/link'
 import logoSrc from '../images/logo.svg'
 import { siteConfig } from 'siteConfig'
 import { Search } from './Search'
+import { PPPBanner } from './PPPBanner'
 
 export const Nav = () => (
   <div className="bg-white border-b border-gray-200">
+    <PPPBanner />
     <div className="container mx-auto">
       <div className="flex flex-wrap items-center">
         <div className="w-60 flex items-center h-16 pt-4 md:pt-0">
