@@ -5,6 +5,7 @@ import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
+import { useIsHydrating } from './Hydrate'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -145,6 +146,7 @@ export function useQueries<T extends any[]>({
   const [, forceUpdate] = React.useState(0)
 
   const queryClient = useQueryClient({ context })
+  const isHydrating = useIsHydrating()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -152,11 +154,13 @@ export function useQueries<T extends any[]>({
         const defaultedOptions = queryClient.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions.optimisticResults = true
+        defaultedOptions._optimisticResults = isHydrating
+          ? 'isHydrating'
+          : 'optimistic'
 
         return defaultedOptions
       }),
-    [queries, queryClient]
+    [queries, queryClient, isHydrating]
   )
 
   const [observer] = React.useState(
@@ -168,19 +172,23 @@ export function useQueries<T extends any[]>({
   React.useEffect(() => {
     mountedRef.current = true
 
-    const unsubscribe = observer.subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          forceUpdate(x => x + 1)
-        }
-      })
-    )
+    let unsubscribe: (() => void) | undefined
+
+    if (!isHydrating) {
+      unsubscribe = observer.subscribe(
+        notifyManager.batchCalls(() => {
+          if (mountedRef.current) {
+            forceUpdate(x => x + 1)
+          }
+        })
+      )
+    }
 
     return () => {
       mountedRef.current = false
-      unsubscribe()
+      unsubscribe?.()
     }
-  }, [observer])
+  }, [isHydrating, observer])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because

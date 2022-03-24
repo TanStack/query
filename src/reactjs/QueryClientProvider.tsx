@@ -53,6 +53,7 @@ export const useQueryClient = ({ context }: ContextOptions = {}) => {
 
 type QueryClientProviderPropsBase = {
   client: QueryClient
+  children?: React.ReactNode
 }
 type QueryClientProviderPropsWithContext = ContextOptions & {
   contextSharing?: never
@@ -66,12 +67,12 @@ export type QueryClientProviderProps =
   | QueryClientProviderPropsWithContext
   | QueryClientProviderPropsWithContextSharing
 
-export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
+export const QueryClientProvider = ({
   client,
   children,
   context,
   contextSharing = false,
-}) => {
+}: QueryClientProviderProps): JSX.Element => {
   React.useEffect(() => {
     client.mount()
     return () => {
