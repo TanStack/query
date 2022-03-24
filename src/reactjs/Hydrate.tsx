@@ -8,8 +8,8 @@ const IsHydratingContext = React.createContext(false)
 export const useIsHydrating = () => React.useContext(IsHydratingContext)
 export const IsHydratingProvider = IsHydratingContext.Provider
 
-export function useHydrate(state: unknown, options?: HydrateOptions) {
-  const queryClient = useQueryClient()
+export function useHydrate(state: unknown, options: HydrateOptions = {}) {
+  const queryClient = useQueryClient({ context: options.context })
 
   const optionsRef = React.useRef(options)
   optionsRef.current = options
