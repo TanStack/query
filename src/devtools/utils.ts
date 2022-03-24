@@ -124,6 +124,19 @@ export function useSafeState<T>(initialState: T): [T, (value: T) => void] {
 }
 
 /**
+ * Displays a string regardless the type of the data
+ * @param {any} value Value to be stringified
+ */
+ export const displayValue = (value: any) => {
+  let newValue = value
+  const name = Object.getOwnPropertyNames(Object(value))
+  if (typeof value === 'bigint') {
+    newValue = `${value.toString()}n`
+  }
+  return JSON.stringify(newValue, name)
+}
+
+/**
  * Schedules a microtask.
  * This can be useful to schedule state updates after rendering.
  */

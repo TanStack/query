@@ -2,6 +2,7 @@ import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 
 import { chunkArray, DefaultRenderer } from '../Explorer'
+import { displayValue } from '../utils'
 
 describe('Explorer', () => {
   describe('chunkArray', () => {
@@ -53,5 +54,9 @@ describe('Explorer', () => {
 
       expect(toggleExpanded).toHaveBeenCalledTimes(1)
     })
+  })
+
+  it('when the value is a BigInt', () => {
+    expect(displayValue(BigInt(1))).toBe('"1n"')
   })
 })
