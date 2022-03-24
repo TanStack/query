@@ -4,8 +4,7 @@ import { persistQueryClient, PersistQueryClientOptions } from './persist'
 import { QueryClientProvider, QueryClientProviderProps } from '../reactjs'
 import { IsHydratingProvider } from '../reactjs/Hydrate'
 
-export interface PersistQueryClientProviderProps
-  extends QueryClientProviderProps {
+export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
   onSuccess?: () => void
 }
