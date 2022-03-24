@@ -75,7 +75,9 @@ Feature/Capability Key:
 
 > **<sup>6</sup> Normalized Caching** - React Query, SWR and RTK-Query do not currently support automatic-normalized caching which describes storing entities in a flat architecture to avoid some high-level data duplication.
 
-> **<sup>6</sup> SWR's Immutable Mode** - SWR ships with an "immutable" mode that does allow you to only fetch a query once for the life of the cache, but it still does not have the concept of stale-time or conditional auto-revalidation
+> **<sup>7</sup> SWR's Immutable Mode** - SWR ships with an "immutable" mode that does allow you to only fetch a query once for the life of the cache, but it still does not have the concept of stale-time or conditional auto-revalidation
+
+> **<sup>8</sup> RTK-Query's bundle size** [can vary][rtk-query-bundle-size] depending on whether you already use redux-toolkit or not
 
 > **<sup>7</sup> React Router cache persistence** - React Router does not cache data beyond the currently matched routes. If a route is left, its data is lost.
 
@@ -106,12 +108,13 @@ Feature/Capability Key:
 
 [rtk-query]: https://redux-toolkit.js.org/rtk-query/overview
 [rtk-query-comparison]: https://redux-toolkit.js.org/rtk-query/comparison
+[rtk-query-bundle-size]: https://redux-toolkit.js.org/rtk-query/comparison#bundle-size
 [bp-rtk]: https://badgen.net/bundlephobia/minzip/@reduxjs/toolkit?label=💾
-[bp-rtk-query]: https://badgen.net/bundlephobia/minzip/@rtk-incubator/rtk-query?label=💾
-[gh-rtk-query]: https://github.com/rtk-incubator/rtk-query
-[stars-rtk-query]: https://img.shields.io/github/stars/rtk-incubator/rtk-query?label=%F0%9F%8C%9F
+[bp-rtk-query]: https://badgen.net/bundlephobia/minzip/@reduxjs/toolkit?label=💾
+[gh-rtk-query]: https://github.com/reduxjs/redux-toolkit
+[stars-rtk-query]: https://img.shields.io/github/stars/reduxjs/redux-toolkit?label=🌟
 [bpl-rtk]: https://bundlephobia.com/result?p=@reduxjs/toolkit
-[bpl-rtk-query]: https://bundlephobia.com/result?p=@rtk-incubator/rtk-query
+[bpl-rtk-query]: https://bundlephobia.com/package/@reduxjs/toolkit
 
  <!--  -->
 

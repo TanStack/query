@@ -2,6 +2,8 @@ import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters } from './utils'
+import type { QueryCache } from './queryCache'
+import type { MutationCache } from './mutationCache'
 
 export type QueryKey = string | readonly unknown[]
 export type EnsuredQueryKey<T extends QueryKey> = T extends string
@@ -181,10 +183,15 @@ export interface QueryObserverOptions<
    * Whether errors should be thrown instead of setting the `error` property.
    * If set to `true` or `suspense` is `true`, all errors will be thrown to the error boundary.
    * If set to `false` and `suspense` is `false`, errors are returned as state.
-   * If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
+   * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?: boolean | ((error: TError) => boolean)
+  useErrorBoundary?:
+    | boolean
+    | ((
+        error: TError,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean)
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
@@ -501,6 +508,8 @@ export type MutationKey = string | readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
+export type MutationMeta = Record<string, unknown>
+
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables
 ) => Promise<TData>
@@ -536,6 +545,7 @@ export interface MutationOptions<
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   _defaulted?: boolean
+  meta?: MutationMeta
 }
 
 export interface MutationObserverOptions<
@@ -665,6 +675,12 @@ export type MutationObserverResult<
   | MutationObserverLoadingResult<TData, TError, TVariables, TContext>
   | MutationObserverErrorResult<TData, TError, TVariables, TContext>
   | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
+
+export interface QueryClientConfig {
+  queryCache?: QueryCache
+  mutationCache?: MutationCache
+  defaultOptions?: DefaultOptions
+}
 
 export interface DefaultOptions<TError = unknown> {
   queries?: QueryObserverOptions<unknown, TError>

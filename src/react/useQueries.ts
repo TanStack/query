@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { QueryFunction } from '../core/types'
 
 import { notifyManager } from '../core/notifyManager'
@@ -30,12 +30,12 @@ type GetOptions<T extends any> =
     ? UseQueryOptions<TQueryFnData>
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
     T extends {
-        queryFn?: QueryFunction<infer TQueryFnData>
+        queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptions<TQueryFnData, unknown, TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
-    ? UseQueryOptions<TQueryFnData>
+    ? UseQueryOptions<TQueryFnData, unknown, TData, TQueryKey>
+    : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
+    ? UseQueryOptions<TQueryFnData, unknown, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptions
 
@@ -56,11 +56,11 @@ type GetResults<T> =
     ? UseQueryResult<TQueryFnData>
     : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
     T extends {
-        queryFn?: QueryFunction<any>
+        queryFn?: QueryFunction<any, any>
         select: (data: any) => infer TData
       }
     ? UseQueryResult<TData>
-    : T extends { queryFn?: QueryFunction<infer TQueryFnData> }
+    : T extends { queryFn?: QueryFunction<infer TQueryFnData, any> }
     ? UseQueryResult<TQueryFnData>
     : // Fallback
       UseQueryResult
@@ -68,7 +68,7 @@ type GetResults<T> =
 /**
  * QueriesOptions reducer recursively unwraps function arguments to infer/enforce type param
  */
-type QueriesOptions<
+export type QueriesOptions<
   T extends any[],
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = []
@@ -84,15 +84,20 @@ type QueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
-  ? UseQueryOptions<TQueryFnData, TError, TData>[]
+  T extends UseQueryOptions<
+      infer TQueryFnData,
+      infer TError,
+      infer TData,
+      infer TQueryKey
+    >[]
+  ? UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]
   : // Fallback
     UseQueryOptions[]
 
 /**
  * QueriesResults reducer recursively maps type param to results
  */
-type QueriesResults<
+export type QueriesResults<
   T extends any[],
   Result extends any[] = [],
   Depth extends ReadonlyArray<number> = []
@@ -104,7 +109,12 @@ type QueriesResults<
   ? [...Result, GetResults<Head>]
   : T extends [infer Head, ...infer Tail]
   ? QueriesResults<[...Tail], [...Result, GetResults<Head>], [...Depth, 1]>
-  : T extends UseQueryOptions<infer TQueryFnData, infer TError, infer TData>[]
+  : T extends UseQueryOptions<
+      infer TQueryFnData,
+      infer TError,
+      infer TData,
+      any
+    >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
     UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
   : // Fallback
@@ -118,14 +128,20 @@ export function useQueries<T extends any[]>(
 
   const queryClient = useQueryClient()
 
-  const defaultedQueries = queries.map(options => {
-    const defaultedOptions = queryClient.defaultQueryObserverOptions(options)
+  const defaultedQueries = useMemo(
+    () =>
+      queries.map(options => {
+        const defaultedOptions = queryClient.defaultQueryObserverOptions(
+          options
+        )
 
-    // Make sure the results are already in fetching state before subscribing or updating options
-    defaultedOptions.optimisticResults = true
+        // Make sure the results are already in fetching state before subscribing or updating options
+        defaultedOptions.optimisticResults = true
 
-    return defaultedOptions
-  })
+        return defaultedOptions
+      }),
+    [queries, queryClient]
+  )
 
   const [observer] = React.useState(
     () => new QueriesObserver(queryClient, defaultedQueries)

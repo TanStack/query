@@ -43,7 +43,7 @@ persistQueryClient({
 
 ### `createAsyncStoragePersistor`
 
-Call this function to create an asyncStoragePersistor that you can use later with `persisteQueryClient`.
+Call this function to create an asyncStoragePersistor that you can use later with `persistQueryClient`.
 
 ```js
 createAsyncStoragePersistor(options: CreateAsyncStoragePersistorOptions)
@@ -55,9 +55,9 @@ createAsyncStoragePersistor(options: CreateAsyncStoragePersistorOptions)
 interface CreateAsyncStoragePersistorOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage
-  /** The key to use when storing the cache to localstorage */
+  /** The key to use when storing the cache to localStorage */
   key?: string
-  /** To avoid localstorage spamming,
+  /** To avoid localStorage spamming,
    * pass a time in ms to throttle saving the cache to disk */
   throttleTime?: number
   /** How to serialize the data to storage */

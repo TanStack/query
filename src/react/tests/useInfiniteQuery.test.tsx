@@ -15,6 +15,7 @@ import {
   QueryClient,
   QueryCache,
   QueryFunctionContext,
+  InfiniteData,
 } from '../..'
 
 interface Result {
@@ -289,6 +290,41 @@ describe('useInfiniteQuery', () => {
     })
     expect(states[1]).toMatchObject({
       data: { pages: ['count: 1'] },
+      isSuccess: true,
+    })
+  })
+
+  it('should be able to select a new result and not cause infinite renders', async () => {
+    const key = queryKey()
+    const states: UseInfiniteQueryResult<{ count: number; id: number }>[] = []
+    let selectCalled = 0
+
+    function Page() {
+      const state = useInfiniteQuery(key, () => ({ count: 1 }), {
+        select: React.useCallback((data: InfiniteData<{ count: number }>) => {
+          selectCalled++
+          return {
+            pages: data.pages.map(x => ({ ...x, id: Math.random() })),
+            pageParams: data.pageParams,
+          }
+        }, []),
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(20)
+
+    expect(states.length).toBe(2)
+    expect(selectCalled).toBe(1)
+    expect(states[0]).toMatchObject({
+      data: undefined,
+      isSuccess: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: { pages: [{ count: 1 }] },
       isSuccess: true,
     })
   })

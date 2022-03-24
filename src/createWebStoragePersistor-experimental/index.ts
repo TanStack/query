@@ -28,10 +28,47 @@ export function createWebStoragePersistor({
   serialize = JSON.stringify,
   deserialize = JSON.parse,
 }: CreateWebStoragePersistorOptions): Persistor {
+  //try to save data to storage
+  function trySave(persistedClient: PersistedClient) {
+    try {
+      storage.setItem(key, serialize(persistedClient))
+    } catch {
+      return false
+    }
+    return true
+  }
+
   if (typeof storage !== 'undefined') {
     return {
       persistClient: throttle(persistedClient => {
-        storage.setItem(key, serialize(persistedClient))
+        if (trySave(persistedClient) !== true) {
+          const mutations = [...persistedClient.clientState.mutations]
+          const queries = [...persistedClient.clientState.queries]
+          const client: PersistedClient = {
+            ...persistedClient,
+            clientState: { mutations, queries },
+          }
+
+          // sort queries by dataUpdatedAt (oldest first)
+          const sortedQueries = [...queries].sort(
+            (a, b) => a.state.dataUpdatedAt - b.state.dataUpdatedAt
+          )
+          // clean old queries and try to save
+          while (sortedQueries.length > 0) {
+            const oldestData = sortedQueries.shift()
+            client.clientState.queries = queries.filter(q => q !== oldestData)
+            if (trySave(client)) {
+              return // save success
+            }
+          }
+
+          // clean mutations and try to save
+          while (mutations.shift()) {
+            if (trySave(client)) {
+              return // save success
+            }
+          }
+        }
       }, throttleTime),
       restoreClient: () => {
         const cacheString = storage.getItem(key)

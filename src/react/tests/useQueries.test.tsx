@@ -18,7 +18,11 @@ import {
   QueryCache,
   QueryObserverResult,
   QueriesObserver,
+  QueryFunction,
+  UseQueryOptions,
+  QueryKey,
 } from '../..'
+import { EnsuredQueryKey, QueryFunctionContext } from '../../core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
@@ -249,6 +253,189 @@ describe('useQueries', () => {
       { status: 'success', data: 6, isPreviousData: false, isFetching: false },
       { status: 'success', data: 12, isPreviousData: false, isFetching: false },
       { status: 'success', data: 18, isPreviousData: false, isFetching: false },
+    ])
+  })
+
+  it('should keep previous data when switching between queries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[][] = []
+
+    function Page() {
+      const [series1, setSeries1] = React.useState(1)
+      const [series2, setSeries2] = React.useState(2)
+      const ids = [series1, series2]
+
+      const result = useQueries(
+        ids.map(id => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => {
+              await sleep(5)
+              return id * 5
+            },
+            keepPreviousData: true,
+          }
+        })
+      )
+
+      states.push(result)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setSeries2(3)
+        }, 20)
+      }, [])
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setSeries1(2)
+        }, 50)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(9))
+
+    expect(states[0]).toMatchObject([
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[1]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[2]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[3]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
+    ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: true, isFetching: true },
+    ])
+    expect(states[5]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[6]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[7]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[8]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+    ])
+  })
+
+  it('should not go to infinite render loop with previous data when toggling queries', async () => {
+    const key = queryKey()
+    const states: UseQueryResult[][] = []
+
+    function Page() {
+      const [enableId1, setEnableId1] = React.useState(true)
+      const ids = enableId1 ? [1, 2] : [2]
+
+      const result = useQueries(
+        ids.map(id => {
+          return {
+            queryKey: [key, id],
+            queryFn: async () => {
+              await sleep(5)
+              return id * 5
+            },
+            keepPreviousData: true,
+          }
+        })
+      )
+
+      states.push(result)
+
+      React.useEffect(() => {
+        setActTimeout(() => {
+          setEnableId1(false)
+        }, 20)
+
+        setActTimeout(() => {
+          setEnableId1(true)
+        }, 30)
+      }, [])
+
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states.length).toBe(8))
+
+    expect(states[0]).toMatchObject([
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[1]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      {
+        status: 'loading',
+        data: undefined,
+        isPreviousData: false,
+        isFetching: true,
+      },
+    ])
+    expect(states[2]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[3]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[4]).toMatchObject([
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[5]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[6]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+    ])
+    expect(states[7]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
   })
 
@@ -712,6 +899,101 @@ describe('useQueries', () => {
         Array(10).map(() => ({
           someInvalidField: '',
         }))
+      )
+    }
+  })
+
+  it('handles strongly typed queryFn factories and useQueries wrappers', () => {
+    // QueryKey + queryFn factory
+    type QueryKeyA = ['queryA']
+    const getQueryKeyA = (): QueryKeyA => ['queryA']
+    type GetQueryFunctionA = () => QueryFunction<number, QueryKeyA>
+    const getQueryFunctionA: GetQueryFunctionA = () => async () => {
+      return 1
+    }
+    type SelectorA = (data: number) => [number, string]
+    const getSelectorA = (): SelectorA => data => [data, data.toString()]
+
+    type QueryKeyB = ['queryB', string]
+    const getQueryKeyB = (id: string): QueryKeyB => ['queryB', id]
+    type GetQueryFunctionB = () => QueryFunction<string, QueryKeyB>
+    const getQueryFunctionB: GetQueryFunctionB = () => async () => {
+      return '1'
+    }
+    type SelectorB = (data: string) => [string, number]
+    const getSelectorB = (): SelectorB => data => [data, +data]
+
+    // Wrapper with strongly typed array-parameter
+    function useWrappedQueries<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryKey extends QueryKey
+    >(queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]) {
+      return useQueries(
+        queries.map(
+          // no need to type the mapped query
+          query => {
+            const { queryFn: fn, queryKey: key, onError: err } = query
+            expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
+            return {
+              queryKey: key,
+              onError: err,
+              queryFn: (ctx: QueryFunctionContext<TQueryKey>) => {
+                expectType<EnsuredQueryKey<TQueryKey>>(ctx.queryKey)
+                return fn?.call({}, ctx)
+              },
+            }
+          }
+        )
+      )
+    }
+
+    // @ts-expect-error (Page component is not rendered)
+    // eslint-disable-next-line
+    function Page() {
+      const result = useQueries([
+        {
+          queryKey: getQueryKeyA(),
+          queryFn: getQueryFunctionA(),
+        },
+        {
+          queryKey: getQueryKeyB('id'),
+          queryFn: getQueryFunctionB(),
+        },
+      ])
+      expectType<QueryObserverResult<number, unknown>>(result[0])
+      expectType<QueryObserverResult<string, unknown>>(result[1])
+
+      const withSelector = useQueries([
+        {
+          queryKey: getQueryKeyA(),
+          queryFn: getQueryFunctionA(),
+          select: getSelectorA(),
+        },
+        {
+          queryKey: getQueryKeyB('id'),
+          queryFn: getQueryFunctionB(),
+          select: getSelectorB(),
+        },
+      ])
+      expectType<QueryObserverResult<[number, string], unknown>>(
+        withSelector[0]
+      )
+      expectType<QueryObserverResult<[string, number], unknown>>(
+        withSelector[1]
+      )
+
+      const withWrappedQueries = useWrappedQueries(
+        Array(10).map(() => ({
+          queryKey: getQueryKeyA(),
+          queryFn: getQueryFunctionA(),
+          select: getSelectorA(),
+        }))
+      )
+
+      expectType<QueryObserverResult<number | undefined, unknown>[]>(
+        withWrappedQueries
       )
     }
   })

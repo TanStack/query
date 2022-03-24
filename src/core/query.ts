@@ -163,9 +163,11 @@ export class Query<
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
+  private hadObservers: boolean
 
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     this.abortSignalConsumed = false
+    this.hadObservers = false
     this.defaultOptions = config.defaultOptions
     this.setOptions(config.options)
     this.observers = []
@@ -214,8 +216,14 @@ export class Query<
   }
 
   private optionalRemove() {
-    if (!this.observers.length && !this.state.isFetching) {
-      this.cache.remove(this)
+    if (!this.observers.length) {
+      if (this.state.isFetching) {
+        if (this.hadObservers) {
+          this.scheduleGc()
+        }
+      } else {
+        this.cache.remove(this)
+      }
     }
   }
 
@@ -318,6 +326,7 @@ export class Query<
   addObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) === -1) {
       this.observers.push(observer)
+      this.hadObservers = true
 
       // Stop the query from being garbage collected
       this.clearGcTimeout()
@@ -371,6 +380,8 @@ export class Query<
         // Silently cancel current fetch if the user wants to cancel refetches
         this.cancel({ silent: true })
       } else if (this.promise) {
+        // make sure that retries that were potentially cancelled due to unmounts can continue
+        this.retryer?.continueRetry()
         // Return current promise if we are already fetching
         return this.promise
       }
@@ -573,7 +584,10 @@ export class Query<
           fetchMeta: action.meta ?? null,
           isFetching: true,
           isPaused: false,
-          status: !state.dataUpdatedAt ? 'loading' : state.status,
+          ...(!state.dataUpdatedAt && {
+            error: null,
+            status: 'loading',
+          }),
         }
       case 'success':
         return {

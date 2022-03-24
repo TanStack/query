@@ -131,11 +131,12 @@ export function useBaseQuery<
   // Handle error boundary
   if (
     result.isError &&
+    !errorResetBoundary.isReset() &&
     !result.isFetching &&
     shouldThrowError(
       defaultedOptions.suspense,
       defaultedOptions.useErrorBoundary,
-      result.error
+      [result.error, observer.getCurrentQuery()]
     )
   ) {
     throw result.error
@@ -143,7 +144,7 @@ export function useBaseQuery<
 
   // Handle result property usage tracking
   if (defaultedOptions.notifyOnChangeProps === 'tracked') {
-    result = observer.trackResult(result)
+    result = observer.trackResult(result, defaultedOptions)
   }
 
   return result

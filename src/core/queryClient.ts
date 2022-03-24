@@ -10,6 +10,7 @@ import {
   MutationFilters,
 } from './utils'
 import type {
+  QueryClientConfig,
   DefaultOptions,
   FetchInfiniteQueryOptions,
   FetchQueryOptions,
@@ -39,12 +40,6 @@ import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import { CancelOptions } from './types'
 
 // TYPES
-
-interface QueryClientConfig {
-  queryCache?: QueryCache
-  mutationCache?: MutationCache
-  defaultOptions?: DefaultOptions
-}
 
 interface QueryDefaults {
   queryKey: QueryKey

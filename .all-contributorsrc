@@ -148,6 +148,71 @@
         "review"
       ]
     },
+    {
+      "login": "KATT",
+      "name": "Alex Johansson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/459267?v=4",
+      "profile": "https://katt.dev",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "EddyVinck",
+      "name": "Eddy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23434753?v=4",
+      "profile": "http://www.eddyvinck.nl",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "prateek3255",
+      "name": "Prateek Surana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21277179?v=4",
+      "profile": "http://prateeksurana.me",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "babycourageous",
+      "name": "Rene Dellefont",
+      "avatar_url": "https://avatars.githubusercontent.com/u/14936212?v=4",
+      "profile": "https://github.com/babycourageous",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "jvuoti",
+      "name": "Janne Vuoti",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3702781?v=4",
+      "profile": "https://github.com/jvuoti",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "arnaudbzn",
+      "name": "Arnaud",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20332397?v=4",
+      "profile": "http://seaviewlab.com",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "zrwsk",
+      "name": "Jakub Żurawski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9089600?v=4",
+      "profile": "https://github.com/zrwsk",
+      "contributions": [
+        "doc"
+      ]
+    }
   ],
   "contributorsPerLine": 7,
   "skipCi": true

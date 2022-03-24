@@ -2671,6 +2671,111 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should continue retries when observers unmount and remount while waiting for a retry (#3031)', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+    let count = 0
+
+    function Page() {
+      const result = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return Promise.reject('some error')
+        },
+        {
+          retry: 2,
+          retryDelay: 100,
+        }
+      )
+
+      return (
+        <div>
+          <div>error: {result.error ?? 'null'}</div>
+          <div>failureCount: {result.failureCount}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [show, toggle] = React.useReducer(x => !x, true)
+
+      return (
+        <div>
+          <button onClick={toggle}>{show ? 'hide' : 'show'}</button>
+          {show && <Page />}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('failureCount: 1'))
+    rendered.getByRole('button', { name: /hide/i }).click()
+    rendered.getByRole('button', { name: /show/i }).click()
+    await waitFor(() => rendered.getByText('error: some error'))
+
+    expect(count).toBe(3)
+
+    consoleMock.mockRestore()
+  })
+
+  it('should restart when observers unmount and remount while waiting for a retry when query was cancelled in between (#3031)', async () => {
+    const key = queryKey()
+    const consoleMock = mockConsoleError()
+    let count = 0
+
+    function Page() {
+      const result = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return Promise.reject('some error')
+        },
+        {
+          retry: 2,
+          retryDelay: 100,
+        }
+      )
+
+      return (
+        <div>
+          <div>error: {result.error ?? 'null'}</div>
+          <div>failureCount: {result.failureCount}</div>
+        </div>
+      )
+    }
+
+    function App() {
+      const [show, toggle] = React.useReducer(x => !x, true)
+
+      return (
+        <div>
+          <button onClick={toggle}>{show ? 'hide' : 'show'}</button>
+          <button onClick={() => queryClient.cancelQueries({ queryKey: key })}>
+            cancel
+          </button>
+          {show && <Page />}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('failureCount: 1'))
+    rendered.getByRole('button', { name: /hide/i }).click()
+    rendered.getByRole('button', { name: /cancel/i }).click()
+    rendered.getByRole('button', { name: /show/i }).click()
+    await waitFor(() => rendered.getByText('error: some error'))
+
+    // initial fetch (1), which will be cancelled, followed by new mount(2) + 2 retries = 4
+    expect(count).toBe(4)
+
+    consoleMock.mockRestore()
+  })
+
   it('should always fetch if refetchOnMount is set to always', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -3846,6 +3951,149 @@ describe('useQuery', () => {
     expect(placeholderFunctionRunCount).toEqual(1)
   })
 
+  it('select should only run when dependencies change if memoized', async () => {
+    const key1 = queryKey()
+
+    let selectRun = 0
+
+    function Page() {
+      const [count, inc] = React.useReducer(prev => prev + 1, 2)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return 0
+        },
+        {
+          select: React.useCallback(
+            (data: number) => {
+              selectRun++
+              return `selected ${data + count}`
+            },
+            [count]
+          ),
+          placeholderData: 99,
+        }
+      )
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <button onClick={inc}>inc: {count}</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: selected 101')) // 99 + 2
+    expect(selectRun).toBe(1)
+
+    await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
+    expect(selectRun).toBe(2)
+
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
+    expect(selectRun).toBe(3)
+  })
+
+  it('select should always return the correct state', async () => {
+    const key1 = queryKey()
+
+    function Page() {
+      const [count, inc] = React.useReducer(prev => prev + 1, 2)
+      const [forceValue, forceUpdate] = React.useReducer(prev => prev + 1, 1)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return 0
+        },
+        {
+          select: React.useCallback(
+            (data: number) => {
+              return `selected ${data + count}`
+            },
+            [count]
+          ),
+          placeholderData: 99,
+        }
+      )
+
+      return (
+        <div>
+          <h2>Data: {state.data}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={inc}>inc: {count}</button>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: selected 101')) // 99 + 2
+
+    await waitFor(() => rendered.getByText('Data: selected 2')) // 0 + 2
+
+    rendered.getByRole('button', { name: /inc/i }).click()
+
+    await waitFor(() => rendered.getByText('Data: selected 3')) // 0 + 3
+
+    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+
+    await waitFor(() => rendered.getByText('forceValue: 2'))
+    // data should still be 3 after an independent re-render
+    await waitFor(() => rendered.getByText('Data: selected 3'))
+  })
+
+  it('select should structually share data', async () => {
+    const key1 = queryKey()
+    const states: Array<Array<number>> = []
+
+    function Page() {
+      const [forceValue, forceUpdate] = React.useReducer(prev => prev + 1, 1)
+
+      const state = useQuery(
+        key1,
+        async () => {
+          await sleep(10)
+          return [1, 2]
+        },
+        {
+          select: res => res.map(x => x + 1),
+        }
+      )
+
+      React.useEffect(() => {
+        if (state.data) {
+          states.push(state.data)
+        }
+      }, [state.data])
+
+      return (
+        <div>
+          <h2>Data: {JSON.stringify(state.data)}</h2>
+          <h2>forceValue: {forceValue}</h2>
+          <button onClick={forceUpdate}>forceUpdate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+    await waitFor(() => rendered.getByText('Data: [2,3]'))
+    expect(states).toHaveLength(1)
+
+    rendered.getByRole('button', { name: /forceUpdate/i }).click()
+
+    await waitFor(() => rendered.getByText('forceValue: 2'))
+    await waitFor(() => rendered.getByText('Data: [2,3]'))
+
+    // effect should not be triggered again due to structural sharing
+    expect(states).toHaveLength(1)
+  })
+
   it('should cancel the query function when there are no more subscriptions', async () => {
     const key = queryKey()
     let cancelFn: jest.Mock = jest.fn()
@@ -4350,6 +4598,82 @@ describe('useQuery', () => {
     fireEvent.click(rendered.getByLabelText('change'))
     await waitFor(() => rendered.getByText('status: fetching'))
     await waitFor(() => rendered.getByText('error'))
+
+    consoleMock.mockRestore()
+  })
+
+  it('should have no error in loading state when refetching after error occurred', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    const error = new Error('oops')
+
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          if (count === 0) {
+            count++
+            throw error
+          }
+          return 5
+        },
+        {
+          retry: false,
+        }
+      )
+
+      states.push(state)
+
+      if (state.isLoading) {
+        return <div>status: loading</div>
+      }
+      if (state.error instanceof Error) {
+        return (
+          <div>
+            <div>error</div>
+            <button onClick={() => state.refetch()}>refetch</button>
+          </div>
+        )
+      }
+      return <div>data: {state.data}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('error'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await waitFor(() => rendered.getByText('data: 5'))
+
+    await waitFor(() => expect(states.length).toBe(4))
+
+    expect(states[0]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      error: null,
+    })
+
+    expect(states[1]).toMatchObject({
+      status: 'error',
+      data: undefined,
+      error,
+    })
+
+    expect(states[2]).toMatchObject({
+      status: 'loading',
+      data: undefined,
+      error: null,
+    })
+
+    expect(states[3]).toMatchObject({
+      status: 'success',
+      data: 5,
+      error: null,
+    })
 
     consoleMock.mockRestore()
   })
