@@ -1,6 +1,6 @@
 ---
 id: comparison
-title: Comparison | React Query vs SWR vs Apollo vs RTK Query
+title: Comparison | React Query vs SWR vs Apollo vs RTK Query vs React Router
 ---
 
 > This comparison table strives to be as accurate and as unbiased as possible. If you use any of these libraries and feel the information could be improved, feel free to suggest changes (with notes or evidence of claims) using the "Edit this page on Github" link at the bottom of this page.
@@ -27,7 +27,7 @@ Feature/Capability Key:
 | Bundle Size                                        | [![][bp-react-query]][bpl-react-query]   | [![][bp-swr]][bpl-swr]      | [![][bp-apollo]][bpl-apollo]               | [![][bp-rtk-query]][bpl-rtk-query]   | [![][bp-react-router]][bpl-react-router] + [![][bp-history]][bpl-history] |
 | API Definition Location                            | Component, External Config               | Component                   | GraphQL Schema                             | External Config                      | Route Tree Configuration                                                  |
 | Queries                                            | ✅                                       | ✅                          | ✅                                         | ✅                                   | ✅                                                                        |
-| Cache Persistence                                  | ✅                                       | ✅                          | ✅                                         | ✅                                   | 🛑 Active Routes Only <sup>7</sup>                                        |
+| Cache Persistence                                  | ✅                                       | ✅                          | ✅                                         | ✅                                   | 🛑 Active Routes Only <sup>8</sup>                                        |
 | Devtools                                           | ✅                                       | 🟡                          | ✅                                         | ✅                                   | 🛑                                                                        |
 | Polling/Intervals                                  | ✅                                       | ✅                          | ✅                                         | ✅                                   | 🛑                                                                        |
 | Parallel Queries                                   | ✅                                       | ✅                          | ✅                                         | ✅                                   | ✅                                                                        |
@@ -50,7 +50,7 @@ Feature/Capability Key:
 | Query Cancellation                                 | ✅                                       | 🛑                          | 🛑                                         | 🛑                                   | ✅                                                                        |
 | Partial Query Matching<sup>3</sup>                 | ✅                                       | 🛑                          | 🛑                                         | ✅                                   | N/A                                                                       |
 | Stale While Revalidate                             | ✅                                       | ✅                          | ✅                                         | ✅                                   | 🛑                                                                        |
-| Stale Time Configuration                           | ✅                                       | 🛑                          | 🛑                                         | ✅                                   | 🛑                                                                        |
+| Stale Time Configuration                           | ✅                                       | 🛑<sup>7</sup>              | 🛑                                         | ✅                                   | 🛑                                                                        |
 | Pre-usage Query/Mutation Configuration<sup>4</sup> | ✅                                       | 🛑                          | 🛑                                         | ✅                                   | ✅                                                                        |
 | Window Focus Refetching                            | ✅                                       | ✅                          | 🛑                                         | 🔶                                   | 🛑                                                                        |
 | Network Status Refetching                          | ✅                                       | ✅                          | ✅                                         | 🔶                                   | 🛑                                                                        |
@@ -77,9 +77,7 @@ Feature/Capability Key:
 
 > **<sup>7</sup> SWR's Immutable Mode** - SWR ships with an "immutable" mode that does allow you to only fetch a query once for the life of the cache, but it still does not have the concept of stale-time or conditional auto-revalidation
 
-> **<sup>8</sup> RTK-Query's bundle size** [can vary][rtk-query-bundle-size] depending on whether you already use redux-toolkit or not
-
-> **<sup>7</sup> React Router cache persistence** - React Router does not cache data beyond the currently matched routes. If a route is left, its data is lost.
+> **<sup>8</sup> React Router cache persistence** - React Router does not cache data beyond the currently matched routes. If a route is left, its data is lost.
 
 <!-- -->
 
