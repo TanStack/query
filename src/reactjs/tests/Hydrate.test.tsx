@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import {
+  QueryClient,
   QueryClientProvider,
   QueryCache,
   useQuery,
@@ -21,7 +22,9 @@ describe('React hydration', () => {
   beforeAll(async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
-    await queryClient.prefetchQuery(['string'], () => dataQuery(['string']))
+    await queryClient.prefetchQuery(['string'], () =>
+      dataQuery(['stringCached'])
+    )
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
     queryClient.clear()
@@ -49,9 +52,49 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
+      rendered.getByText('stringCached')
       await sleep(10)
       rendered.getByText('string')
       queryClient.clear()
+    })
+
+    test('should hydrate queries to the cache on custom context', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      const queryCacheOuter = new QueryCache()
+      const queryCacheInner = new QueryCache()
+
+      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
+      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
+
+      const dehydratedState = JSON.parse(stringifiedState)
+
+      function Page() {
+        useHydrate(dehydratedState, { context })
+        const { data } = useQuery(['string'], () => dataQuery(['string']), {
+          context,
+        })
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = render(
+        <QueryClientProvider client={queryClientOuter} context={context}>
+          <QueryClientProvider client={queryClientInner}>
+            <Page />
+          </QueryClientProvider>
+        </QueryClientProvider>
+      )
+
+      rendered.getByText('stringCached')
+      await sleep(10)
+      rendered.getByText('string')
+
+      queryClientInner.clear()
+      queryClientOuter.clear()
     })
   })
 

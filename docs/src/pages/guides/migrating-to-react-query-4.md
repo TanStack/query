@@ -301,6 +301,20 @@ This is now disallowed on type level; at runtime, `undefined` will be transforme
 
 As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
+### The idle state has been removed
+
+With the introduction of the new [fetchStatus](../guides/queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../guides/queries#why-two-different-states).
+
+This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
+
+```diff
+- status: 'idle'
++ status: 'loading'
++ fetchStatus: 'idle'
+```
+
+Also, have a look at [the guide on dependent queries](../guides/dependent-queries)
+
 ### No _default_ manual Garbage Collection server-side
 
 In v3, React Query would cache query results for a default of 5 minutes, then manually garbage collect that data. This default was applied to server-side React Query as well.
@@ -340,3 +354,90 @@ When using the [functional updater form of setQueryData](../reference/QueryClien
    (previousTodo) => previousTodo ? { ...previousTodo, done: true } : undefined
 )
  ```
+
+ ### Custom Contexts for Multiple Providers
+
+Custom contexts can now be specified to pair hooks with their matching `Provider`. This is critical when there may be multiple React Query `Provider` instances in the component tree and you need to ensure your hook uses the correct `Provider` instance.
+
+An example:
+
+1) Create a data package.
+
+```tsx
+// Our first data package: @my-scope/container-data
+
+const context = React.createContext<QueryClient | undefined>();
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache, context })
+
+
+export const useUser = () => {
+  return useQuery(USER_KEY, USER_FETCHER, {
+    context,
+  })
+}
+
+export const ContainerDataProvider: React.FC = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient} context={context}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+
+```
+
+2) Create a second data package.
+
+```tsx
+// Our second data package: @my-scope/my-component-data
+
+const context = React.createContext<QueryClient | undefined>();
+const queryCache = new QueryCache()
+const queryClient = new QueryClient({ queryCache, context })
+
+
+export const useItems = () => {
+  return useQuery(ITEMS_KEY, ITEMS_FETCHER, {
+    context,
+  })
+}
+
+export const MyComponentDataProvider: React.FC = ({ children }) => {
+  return (
+    <QueryClientProvider client={queryClient} context={context}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+
+```
+
+3) Use these two data packages in your application.
+
+```tsx
+// Our application
+
+import { ContainerDataProvider, useUser } from "@my-scope/container-data";
+import { AppDataProvider } from "@my-scope/app-data";
+import { MyComponentDataProvider, useItems } from "@my-scope/my-component-data";
+
+<ContainerDataProvider> // <-- Provides container data (like "user") using its own React Query provider
+  ...
+  <AppDataProvider> // <-- Provides app data using its own React Query provider (unused in this example)
+    ...
+      <MyComponentDataProvider> // <-- Provides component data (like "items") using its own React Query provider
+        <MyComponent />
+      </MyComponentDataProvider>
+    ...
+  </AppDataProvider>
+  ...
+</ContainerDataProvider>
+
+// Example of hooks provided by the "DataProvider" components above:
+const MyComponent = () => {
+  const user = useUser(); // <-- Uses the context specified in ContainerDataProvider.
+  const items = useItems(); // <-- Uses the context specified in MyComponentDataProvider
+  ...
+}
+```

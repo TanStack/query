@@ -78,7 +78,7 @@ export function useMutation<
   const [, forceUpdate] = React.useState(0)
 
   const options = parseMutationArgs(arg1, arg2, arg3)
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context: options.context })
 
   const obsRef = React.useRef<
     MutationObserver<TData, TError, TVariables, TContext>
