@@ -864,39 +864,35 @@ describe('useMutation', () => {
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       function Page() {
-        const { mutate, data = '', reset } = useMutation(
+        const { mutate, data = 'empty', reset } = useMutation(
           () => Promise.resolve('mutation'),
           { context }
         )
 
         return (
           <div>
-            <h1 data-testid="title">{data}</h1>
+            <h1>{data}</h1>
             <button onClick={() => reset()}>reset</button>
             <button onClick={() => mutate()}>mutate</button>
           </div>
         )
       }
 
-      const { getByTestId, getByText } = renderWithClient(
-        queryClient,
-        <Page />,
-        { context }
-      )
+      const { getByRole } = renderWithClient(queryClient, <Page />, { context })
 
-      expect(getByTestId('title').textContent).toBe('')
+      expect(getByRole('heading').textContent).toBe('empty')
 
-      fireEvent.click(getByText('mutate'))
+      fireEvent.click(getByRole('button', { name: /mutate/i }))
 
-      await waitFor(() => getByTestId('title'))
+      await waitFor(() => {
+        expect(getByRole('heading').textContent).toBe('mutation')
+      })
 
-      expect(getByTestId('title').textContent).toBe('mutation')
+      fireEvent.click(getByRole('button', { name: /reset/i }))
 
-      fireEvent.click(getByText('reset'))
-
-      await waitFor(() => getByTestId('title'))
-
-      expect(getByTestId('title').textContent).toBe('')
+      await waitFor(() => {
+        expect(getByRole('heading').textContent).toBe('empty')
+      })
     })
 
     it('should throw if the context is not passed to useMutation', async () => {
