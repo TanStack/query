@@ -8,6 +8,7 @@ import {
   QueryCache,
   QueryClient,
   QueryKey as QueryKeyType,
+  ContextOptions,
 } from 'react-query'
 import { matchSorter } from 'match-sorter'
 import useLocalStorage from './useLocalStorage'
@@ -29,7 +30,7 @@ import Explorer from './Explorer'
 import Logo from './Logo'
 import { noop } from '../core/utils'
 
-interface DevtoolsOptions {
+interface DevtoolsOptions extends ContextOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */
@@ -68,7 +69,7 @@ interface DevtoolsOptions {
   containerElement?: string | any
 }
 
-interface DevtoolsPanelOptions {
+interface DevtoolsPanelOptions extends ContextOptions {
   /**
    * The standard React style object used to style a component with inline styles
    */
@@ -100,6 +101,7 @@ export function ReactQueryDevtools({
   toggleButtonProps = {},
   position = 'bottom-left',
   containerElement: Container = 'aside',
+  context,
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -237,6 +239,7 @@ export function ReactQueryDevtools({
       <ThemeProvider theme={theme}>
         <ReactQueryDevtoolsPanel
           ref={panelRef as any}
+          context={context}
           {...otherPanelProps}
           style={{
             position: 'fixed',
@@ -404,9 +407,15 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   HTMLDivElement,
   DevtoolsPanelOptions
 >(function ReactQueryDevtoolsPanel(props, ref): React.ReactElement {
-  const { isOpen = true, setIsOpen, handleDragStart, ...panelProps } = props
+  const {
+    isOpen = true,
+    setIsOpen,
+    handleDragStart,
+    context,
+    ...panelProps
+  } = props
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context })
   const queryCache = queryClient.getQueryCache()
 
   const [sort, setSort] = useLocalStorage(

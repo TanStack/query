@@ -212,12 +212,8 @@ export interface QueryObserverOptions<
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    */
   placeholderData?: TQueryData | PlaceholderDataFunction<TQueryData>
-  /**
-   * If set, the observer will optimistically set the result in fetching state before the query has actually started fetching.
-   * This is to make sure the results are not lagging behind.
-   * Defaults to `true`.
-   */
-  optimisticResults?: boolean
+
+  _optimisticResults?: 'optimistic' | 'isHydrating'
 }
 
 type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>

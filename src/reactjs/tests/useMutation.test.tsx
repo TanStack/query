@@ -3,7 +3,7 @@ import '@testing-library/jest-dom'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import { useMutation, QueryCache, MutationCache } from '../..'
+import { QueryClient, useMutation, QueryCache, MutationCache } from '../..'
 import { UseMutationResult } from '../types'
 import {
   createQueryClient,
@@ -857,6 +857,71 @@ describe('useMutation', () => {
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSuccessMutate).toHaveBeenCalledTimes(0)
     expect(onSettledMutate).toHaveBeenCalledTimes(0)
+  })
+
+  describe('with custom context', () => {
+    it('should be able to reset `data`', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      function Page() {
+        const { mutate, data = '', reset } = useMutation(
+          () => Promise.resolve('mutation'),
+          { context }
+        )
+
+        return (
+          <div>
+            <h1 data-testid="title">{data}</h1>
+            <button onClick={() => reset()}>reset</button>
+            <button onClick={() => mutate()}>mutate</button>
+          </div>
+        )
+      }
+
+      const { getByTestId, getByText } = renderWithClient(
+        queryClient,
+        <Page />,
+        { context }
+      )
+
+      expect(getByTestId('title').textContent).toBe('')
+
+      fireEvent.click(getByText('mutate'))
+
+      await waitFor(() => getByTestId('title'))
+
+      expect(getByTestId('title').textContent).toBe('mutation')
+
+      fireEvent.click(getByText('reset'))
+
+      await waitFor(() => getByTestId('title'))
+
+      expect(getByTestId('title').textContent).toBe('')
+    })
+
+    it('should throw if the context is not passed to useMutation', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      function Page() {
+        const { data = '' } = useMutation(() => Promise.resolve('mutation'))
+
+        return (
+          <div>
+            <h1 data-testid="title">{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        { context }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+    })
   })
 
   it('should call mutate callbacks only for the last observer', async () => {

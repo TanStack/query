@@ -1,7 +1,10 @@
 import React from 'react'
-import { fireEvent, screen, waitFor } from '@testing-library/react'
+
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
+import { ErrorBoundary } from 'react-error-boundary'
+
 import '@testing-library/jest-dom'
-import { useQuery } from '../..'
+import { useQuery, QueryClient } from '../..'
 import {
   getByTextContent,
   renderWithClient,
@@ -68,6 +71,39 @@ describe('ReactQueryDevtools', () => {
     await screen.findByRole('button', { name: /open react query devtools/i })
 
     expect(onCloseClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('should be able to drag devtools without error', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const result = renderWithClient(queryClient, <Page />, {
+      initialIsOpen: false,
+    })
+
+    const draggableElement = result.container
+      .querySelector('#ReactQueryDevtoolsPanel')
+      ?.querySelector('div')
+
+    if (!draggableElement) {
+      throw new Error('Could not find the draggable element')
+    }
+
+    await act(async () => {
+      fireEvent.mouseDown(draggableElement)
+    })
   })
 
   it('should display the correct query states', async () => {
@@ -476,5 +512,101 @@ describe('ReactQueryDevtools', () => {
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
     expect(queries[2]?.textContent).toEqual(query3Hash)
+  })
+
+  describe('with custom context', () => {
+    it('should render without error when the custom context aligns', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+      const { queryClient } = createQueryClient()
+
+      function Page() {
+        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+          context,
+        })
+
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      renderWithClient(queryClient, <Page />, {
+        initialIsOpen: false,
+        context,
+      })
+
+      await screen.findByRole('button', { name: /open react query devtools/i })
+    })
+
+    it('should render with error when the custom context is not passed to useQuery', async () => {
+      const consoleErrorMock = jest.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
+
+      const context = React.createContext<QueryClient | undefined>(undefined)
+      const { queryClient } = createQueryClient()
+
+      function Page() {
+        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+          useErrorBoundary: true,
+        })
+
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        {
+          initialIsOpen: false,
+          context,
+        }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+
+      consoleErrorMock.mockRestore()
+    })
+
+    it('should render with error when the custom context is not passed to ReactQueryDevtools', async () => {
+      const consoleErrorMock = jest.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
+
+      const context = React.createContext<QueryClient | undefined>(undefined)
+      const { queryClient } = createQueryClient()
+
+      function Page() {
+        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+          useErrorBoundary: true,
+          context,
+        })
+
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        {
+          initialIsOpen: false,
+        }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+
+      consoleErrorMock.mockRestore()
+    })
   })
 })

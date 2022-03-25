@@ -8,10 +8,10 @@ import { QueryClient, QueryClientProvider, QueryCache } from '../..'
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  devtoolsOptions?: Parameters<typeof ReactQueryDevtools>[number]
+  devtoolsOptions: Parameters<typeof ReactQueryDevtools>[number] = {}
 ) {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={client} context={devtoolsOptions.context}>
       <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
     </QueryClientProvider>
@@ -20,7 +20,7 @@ export function renderWithClient(
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client}>
+        <QueryClientProvider client={client} context={devtoolsOptions.context}>
           <ReactQueryDevtools {...devtoolsOptions} />
           {rerenderUi}
         </QueryClientProvider>

@@ -135,6 +135,71 @@ describe('QueryClientProvider', () => {
     expect(queryCache.find(key)?.options.cacheTime).toBe(Infinity)
   })
 
+  describe('with custom context', () => {
+    it('uses the correct context', async () => {
+      const key = queryKey()
+
+      const contextOuter = React.createContext<QueryClient | undefined>(
+        undefined
+      )
+      const contextInner = React.createContext<QueryClient | undefined>(
+        undefined
+      )
+
+      const queryCacheOuter = new QueryCache()
+      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
+
+      const queryCacheInner = new QueryCache()
+      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
+
+      const queryCacheInnerInner = new QueryCache()
+      const queryClientInnerInner = new QueryClient({
+        queryCache: queryCacheInnerInner,
+      })
+
+      function Page() {
+        const { data: testOuter } = useQuery(key, async () => 'testOuter', {
+          context: contextOuter,
+        })
+        const { data: testInner } = useQuery(key, async () => 'testInner', {
+          context: contextInner,
+        })
+        const { data: testInnerInner } = useQuery(
+          key,
+          async () => 'testInnerInner'
+        )
+
+        return (
+          <div>
+            <h1>
+              {testOuter} {testInner} {testInnerInner}
+            </h1>
+          </div>
+        )
+      }
+
+      // contextSharing should be ignored when passing a custom context.
+      const contextSharing = true
+
+      const rendered = render(
+        <QueryClientProvider client={queryClientOuter} context={contextOuter}>
+          <QueryClientProvider client={queryClientInner} context={contextInner}>
+            <QueryClientProvider
+              client={queryClientInnerInner}
+              contextSharing={contextSharing}
+            >
+              <Page />
+            </QueryClientProvider>
+          </QueryClientProvider>
+        </QueryClientProvider>
+      )
+
+      await waitFor(() =>
+        rendered.getByText('testOuter testInner testInnerInner')
+      )
+    })
+  })
+
   describe('useQueryClient', () => {
     test('should throw an error if no query client has been set', () => {
       const consoleMock = jest

@@ -76,7 +76,7 @@ export function useMutation<
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
   const options = parseMutationArgs(arg1, arg2, arg3)
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context: options.context })
 
   const [observer] = React.useState(
     () =>

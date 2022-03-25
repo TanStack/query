@@ -49,6 +49,7 @@ Its available methods are:
 - [`queryClient.getQueryCache`](#queryclientgetquerycache)
 - [`queryClient.getMutationCache`](#queryclientgetmutationcache)
 - [`queryClient.clear`](#queryclientclear)
+- - [`queryClient.resumePausedMutations`](#queryclientresumepausedmutations)
 
 **Options**
 
@@ -562,4 +563,12 @@ The `clear` method clears all connected caches.
 
 ```js
 queryClient.clear()
+```
+
+## `queryClient.resumePausedMutations`
+
+Can be used to resume mutations that have been paused because there was no network connection.
+
+```js
+queryClient.resumePausedMutations()
 ```

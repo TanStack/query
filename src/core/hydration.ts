@@ -1,3 +1,4 @@
+import type { ContextOptions } from '../reactjs/types'
 import type { QueryClient } from './queryClient'
 import type { Query, QueryState } from './query'
 import type {
@@ -17,7 +18,7 @@ export interface DehydrateOptions {
   shouldDehydrateQuery?: ShouldDehydrateQueryFunction
 }
 
-export interface HydrateOptions {
+export interface HydrateOptions extends ContextOptions {
   defaultOptions?: {
     queries?: QueryOptions
     mutations?: MutationOptions

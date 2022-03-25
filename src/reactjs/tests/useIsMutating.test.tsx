@@ -8,6 +8,8 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
+import { ErrorBoundary } from 'react-error-boundary'
+import { QueryClient } from '../../core'
 import * as MutationCacheModule from '../../core/mutationCache'
 
 describe('useIsMutating', () => {
@@ -162,5 +164,87 @@ describe('useIsMutating', () => {
 
     await sleep(20)
     MutationCacheSpy.mockRestore()
+  })
+
+  describe('with custom context', () => {
+    it('should return the number of fetching mutations', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      const isMutatings: number[] = []
+      const queryClient = new QueryClient()
+
+      function IsMutating() {
+        const isMutating = useIsMutating(undefined, { context })
+        isMutatings.push(isMutating)
+        return null
+      }
+
+      function Page() {
+        const { mutate: mutate1 } = useMutation(
+          ['mutation1'],
+          async () => {
+            await sleep(150)
+            return 'data'
+          },
+          { context }
+        )
+        const { mutate: mutate2 } = useMutation(
+          ['mutation2'],
+          async () => {
+            await sleep(50)
+            return 'data'
+          },
+          { context }
+        )
+
+        React.useEffect(() => {
+          mutate1()
+          setActTimeout(() => {
+            mutate2()
+          }, 50)
+        }, [mutate1, mutate2])
+
+        return <IsMutating />
+      }
+
+      renderWithClient(queryClient, <Page />, { context })
+      await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
+    })
+
+    it('should throw if the context is not passed to useIsMutating', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      const isMutatings: number[] = []
+      const queryClient = new QueryClient()
+
+      function IsMutating() {
+        const isMutating = useIsMutating(undefined)
+        isMutatings.push(isMutating)
+        return null
+      }
+
+      function Page() {
+        const { mutate } = useMutation(['mutation'], async () => 'data', {
+          useErrorBoundary: true,
+          context,
+        })
+
+        React.useEffect(() => {
+          mutate()
+        }, [mutate])
+
+        return <IsMutating />
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        { context }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+    })
   })
 })

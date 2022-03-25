@@ -6,6 +6,7 @@ import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
 import { shouldThrowError } from './utils'
+import { useIsHydrating } from './Hydrate'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -23,12 +24,15 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver
 ) {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context: options.context })
+  const isHydrating = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryOptions(options)
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
-  defaultedOptions.optimisticResults = true
+  defaultedOptions._optimisticResults = isHydrating
+    ? 'isHydrating'
+    : 'optimistic'
 
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {
@@ -77,8 +81,10 @@ export function useBaseQuery<
   useSyncExternalStore(
     React.useCallback(
       onStoreChange =>
-        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer]
+        isHydrating
+          ? () => undefined
+          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer, isHydrating]
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult()
@@ -95,7 +101,12 @@ export function useBaseQuery<
   }, [defaultedOptions, observer])
 
   // Handle suspense
-  if (defaultedOptions.suspense && result.isLoading && result.isFetching) {
+  if (
+    defaultedOptions.suspense &&
+    result.isLoading &&
+    result.isFetching &&
+    !isHydrating
+  ) {
     throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {

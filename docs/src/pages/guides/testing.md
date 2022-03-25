@@ -88,7 +88,7 @@ const queryClient = new QueryClient({
 
 ## Set cacheTime to Infinity with Jest
 
-`cacheTime` is set to 5 minutes by default. It means that the cache garbage collector timer will be triggered every 5 minutes. If you use Jest, you can set the `cacheTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message.
+If you use Jest, you can set the `cacheTime` to `Infinity` to prevent "Jest did not exit one second after the test run completed" error message. This is the default behavior on the server, and is only necessary to set if you are explicitly setting a `cacheTime`.
 
 ## Testing Network Calls
 
