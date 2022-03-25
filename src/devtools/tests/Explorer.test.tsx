@@ -56,7 +56,13 @@ describe('Explorer', () => {
     })
   })
 
-  it('when the value is a BigInt', () => {
-    expect(displayValue(BigInt(1))).toBe('"1n"')
+  describe('displayValue', () => {
+    it('when the value is a boolean', () => {
+      expect(displayValue(true)).toBe('true')
+    })
+
+    it('when the value is a BigInt', () => {
+      expect(displayValue(BigInt(1))).toBe('"1n"')
+    })
   })
 })
