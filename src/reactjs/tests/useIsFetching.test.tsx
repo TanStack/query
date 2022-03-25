@@ -172,7 +172,7 @@ describe('useIsFetching', () => {
         useQuery(
           key,
           async () => {
-            await sleep(1000)
+            await sleep(50)
             return 'test'
           },
           {
@@ -189,14 +189,18 @@ describe('useIsFetching', () => {
         )
       }
 
-      const rendered = renderWithClient(queryClient, <Page />, {
-        context,
-      })
+      const { findByText, getByRole } = renderWithClient(
+        queryClient,
+        <Page />,
+        {
+          context,
+        }
+      )
 
-      await waitFor(() => rendered.getByText('isFetching: 0'))
-      fireEvent.click(rendered.getByText('setReady'))
-      await waitFor(() => rendered.getByText('isFetching: 1'))
-      await waitFor(() => rendered.getByText('isFetching: 0'))
+      await findByText('isFetching: 0')
+      fireEvent.click(getByRole('button', { name: /setReady/i }))
+      await findByText('isFetching: 1')
+      await findByText('isFetching: 0')
     })
 
     it('should throw if the context is not passed to useIsFetching', async () => {
