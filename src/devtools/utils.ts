@@ -125,14 +125,12 @@ export function useSafeState<T>(initialState: T): [T, (value: T) => void] {
 
 /**
  * Displays a string regardless the type of the data
- * @param {any} value Value to be stringified
+ * @param {unknown} value Value to be stringified
  */
- export const displayValue = (value: any) => {
-  let newValue = value
+export const displayValue = (value: unknown) => {
   const name = Object.getOwnPropertyNames(Object(value))
-  if (typeof value === 'bigint') {
-    newValue = `${value.toString()}n`
-  }
+  const newValue = typeof value === 'bigint' ? `${value.toString()}n` : value
+
   return JSON.stringify(newValue, name)
 }
 
