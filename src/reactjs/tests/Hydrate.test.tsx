@@ -52,9 +52,8 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      rendered.getByText('stringCached')
-      await sleep(10)
-      rendered.getByText('string')
+      await rendered.findByText('stringCached')
+      await rendered.findByText('string')
       queryClient.clear()
     })
 
