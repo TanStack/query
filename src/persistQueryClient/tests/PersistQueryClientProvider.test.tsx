@@ -318,7 +318,7 @@ describe('PersistQueryClientProvider', () => {
     await waitFor(() => rendered.getByText('data: null'))
     await waitFor(() => rendered.getByText('data: hydrated'))
 
-    expect(states).toHaveLength(3)
+    expect(states).toHaveLength(2)
 
     expect(states[0]).toMatchObject({
       status: 'loading',
@@ -327,12 +327,6 @@ describe('PersistQueryClientProvider', () => {
     })
 
     expect(states[1]).toMatchObject({
-      status: 'success',
-      fetchStatus: 'idle',
-      data: 'hydrated',
-    })
-
-    expect(states[2]).toMatchObject({
       status: 'success',
       fetchStatus: 'idle',
       data: 'hydrated',
