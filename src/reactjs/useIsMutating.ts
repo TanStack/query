@@ -34,6 +34,7 @@ export function useIsMutating(
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache]
     ),
+    () => queryClient.isMutating(filters),
     () => queryClient.isMutating(filters)
   )
 }

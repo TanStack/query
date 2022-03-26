@@ -175,6 +175,7 @@ export function useQueries<T extends any[]>({
           : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
       [observer, isHydrating]
     ),
+    () => observer.getCurrentResult(),
     () => observer.getCurrentResult()
   )
 

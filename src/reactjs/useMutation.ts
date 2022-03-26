@@ -96,6 +96,7 @@ export function useMutation<
         observer.subscribe(notifyManager.batchCalls(onStoreChange)),
       [observer]
     ),
+    () => observer.getCurrentResult(),
     () => observer.getCurrentResult()
   )
 
