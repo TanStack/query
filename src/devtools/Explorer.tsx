@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { styled } from './utils'
+import { displayValue, styled } from './utils'
 
 export const Entry = styled('div', {
   fontFamily: 'Menlo, monospace',
@@ -154,10 +154,7 @@ export const DefaultRenderer: Renderer = ({
         </>
       ) : (
         <>
-          <Label>{label}:</Label>{' '}
-          <Value>
-            {JSON.stringify(value, Object.getOwnPropertyNames(Object(value)))}
-          </Value>
+          <Label>{label}:</Label> <Value>{displayValue(value)}</Value>
         </>
       )}
     </Entry>
