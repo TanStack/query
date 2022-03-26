@@ -398,7 +398,6 @@ const useSubscribeToQueryCache = <T,>(
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache]
     ),
-    getSnapshot,
     getSnapshot
   )
 }

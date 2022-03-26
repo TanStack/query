@@ -29,7 +29,6 @@ export function useIsFetching(
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
       [queryCache]
     ),
-    () => queryClient.isFetching(filters),
     () => queryClient.isFetching(filters)
   )
 }
