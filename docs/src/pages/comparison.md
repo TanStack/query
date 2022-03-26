@@ -114,7 +114,7 @@ Feature/Capability Key:
 [bpl-rtk]: https://bundlephobia.com/result?p=@reduxjs/toolkit
 [bpl-rtk-query]: https://bundlephobia.com/package/@reduxjs/toolkit
 
-<!--  -->
+<!-- -->
 
 [react-router]: https://github.com/remix-run/react-router
 [bp-react-router]: https://badgen.net/bundlephobia/minzip/react-router-dom?label=💾
