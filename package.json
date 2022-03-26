@@ -96,6 +96,7 @@
     "@rollup/plugin-replace": "^3.0.0",
     "@svgr/rollup": "^6.1.1",
     "@testing-library/react": "^13.0.0-alpha.6",
+    "@testing-library/react-17": "npm:@testing-library/react@^12.1.4",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/jest": "^26.0.4",
     "@types/jscodeshift": "^0.11.3",
