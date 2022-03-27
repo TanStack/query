@@ -118,7 +118,7 @@ export const DefaultRenderer: Renderer = ({
             subEntryPages.length === 1 ? (
               <SubEntries>
                 {subEntries.map(entry => (
-                  <HandleEntry entry={entry} />
+                  <HandleEntry key={entry.label} entry={entry} />
                 ))}
               </SubEntries>
             ) : (
@@ -141,7 +141,7 @@ export const DefaultRenderer: Renderer = ({
                       {expandedPages.includes(index) ? (
                         <SubEntries>
                           {entries.map(entry => (
-                            <HandleEntry entry={entry} />
+                            <HandleEntry key={entry.label} entry={entry} />
                           ))}
                         </SubEntries>
                       ) : null}
