@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
   QueryClient,
-  QueryClientProvider,
+  QueryClientProvider
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
@@ -72,7 +72,7 @@ function Posts({ setPostId }) {
                       queryClient.getQueryData(["post", post.id])
                         ? {
                             fontWeight: "bold",
-                            color: "green",
+                            color: "green"
                           }
                         : {}
                     }
@@ -99,7 +99,7 @@ const getPostById = async (id) => {
 
 function usePost(postId) {
   return useQuery(["post", postId], () => getPostById(postId), {
-    enabled: !!postId,
+    enabled: !!postId
   });
 }
 
