@@ -15,6 +15,7 @@
     "sourceType": "module"
   },
   "rules": {
+    "react/jsx-key": ["error", { "checkFragmentShorthand": true }],
     "@typescript-eslint/ban-types": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
