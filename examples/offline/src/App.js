@@ -1,11 +1,9 @@
 import * as React from "react";
-import "./App.css";
 
 import {
   useQuery,
   QueryClient,
   MutationCache,
-  useMutation,
   onlineManager,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
