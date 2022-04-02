@@ -5,6 +5,7 @@ import {
   QueryClient,
   MutationCache,
   onlineManager,
+  useIsHydrating,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import toast, { Toaster } from "react-hot-toast";
@@ -19,7 +20,7 @@ import {
   useMatch,
 } from "@tanstack/react-location";
 
-import * as api from "api";
+import * as api from "./api";
 import { movieKeys, useMovie } from "./movies";
 
 const persister = createWebStoragePersister({
@@ -68,34 +69,41 @@ export default function App() {
         });
       }}
     >
-      <Router
-        location={location}
-        routes={[
-          {
-            path: "/",
-            element: <List />,
-          },
-          {
-            path: ":movieId",
-            element: <Detail />,
-            errorElement: <MovieError />,
-            loader: ({ params: { movieId } }) =>
-              queryClient.getQueryData(movieKeys.detail(movieId)) ??
-              // do not load if we are offline because it returns a promise that is pending until we go online again
-              // we just let the Detail component handle it
-              (onlineManager.isOnline()
-                ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
-                    api.fetchMovie(movieId)
-                  )
-                : undefined),
-          },
-        ]}
-      >
-        <Outlet />
-        <Toaster />
-      </Router>
+      <Movies />
       <ReactQueryDevtools initialIsOpen />
     </PersistQueryClientProvider>
+  );
+}
+
+function Movies() {
+  const isHydrating = useIsHydrating();
+  return (
+    <Router
+      location={location}
+      routes={[
+        {
+          path: "/",
+          element: <List />,
+        },
+        {
+          path: ":movieId",
+          element: <Detail />,
+          errorElement: <MovieError />,
+          loader: ({ params: { movieId } }) =>
+            queryClient.getQueryData(movieKeys.detail(movieId)) ??
+            // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
+            // we just let the Detail component handle it
+            (onlineManager.isOnline() && !isHydrating
+              ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
+                  api.fetchMovie(movieId)
+                )
+              : undefined),
+        },
+      ]}
+    >
+      <Outlet />
+      <Toaster />
+    </Router>
   );
 }
 
