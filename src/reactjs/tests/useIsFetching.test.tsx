@@ -262,29 +262,4 @@ describe('useIsFetching', () => {
     await rendered.findByText('isFetching: 1')
     await rendered.findByText('isFetching: 0')
   })
-
-  it('should show the correct fetching state when mounted after a query', async () => {
-    const queryClient = new QueryClient()
-    const key = queryKey()
-
-    function Page() {
-      useQuery(key, async () => {
-        await sleep(10)
-        return 'test'
-      })
-
-      const isFetching = useIsFetching()
-
-      return (
-        <div>
-          <div>isFetching: {isFetching}</div>
-        </div>
-      )
-    }
-
-    const rendered = renderWithClient(queryClient, <Page />)
-
-    await rendered.findByText('isFetching: 1')
-    await rendered.findByText('isFetching: 0')
-  })
 })
