@@ -42,7 +42,10 @@ describe("useQuery's in Suspense mode", () => {
       states.push(state)
 
       return (
-        <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+        <div>
+          <button aria-label="toggle" onClick={() => setStateKey(queryKey())} />
+          data: {String(state.data)}
+        </div>
       )
     }
 
@@ -53,12 +56,10 @@ describe("useQuery's in Suspense mode", () => {
       </React.Suspense>
     )
 
-    await sleep(20)
-
-    await waitFor(() => rendered.getByLabelText('toggle'))
+    await waitFor(() => rendered.getByText('data: 1'))
     fireEvent.click(rendered.getByLabelText('toggle'))
 
-    await sleep(20)
+    await waitFor(() => rendered.getByText('data: 2'))
 
     expect(renders).toBe(4)
     expect(states.length).toBe(2)
@@ -74,14 +75,22 @@ describe("useQuery's in Suspense mode", () => {
       const [multiplier, setMultiplier] = React.useState(1)
       const state = useInfiniteQuery(
         [`${key}_${multiplier}`],
-        ({ pageParam = 1 }) => Number(pageParam * multiplier),
+        async ({ pageParam = 1 }) => {
+          await sleep(10)
+          return Number(pageParam * multiplier)
+        },
         {
           suspense: true,
           getNextPageParam: lastPage => lastPage + 1,
         }
       )
       states.push(state)
-      return <button onClick={() => setMultiplier(2)}>next</button>
+      return (
+        <div>
+          <button onClick={() => setMultiplier(2)}>next</button>
+          data: {state.data?.pages.join(',')}
+        </div>
+      )
     }
 
     const rendered = renderWithClient(
@@ -91,7 +100,7 @@ describe("useQuery's in Suspense mode", () => {
       </React.Suspense>
     )
 
-    await sleep(10)
+    await waitFor(() => rendered.getByText('data: 1'))
 
     expect(states.length).toBe(1)
     expect(states[0]).toMatchObject({
@@ -100,7 +109,7 @@ describe("useQuery's in Suspense mode", () => {
     })
 
     fireEvent.click(rendered.getByText('next'))
-    await sleep(10)
+    await waitFor(() => rendered.getByText('data: 2'))
 
     expect(states.length).toBe(2)
     expect(states[1]).toMatchObject({
@@ -210,8 +219,8 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('rendered'))
 
-    expect(successFn).toHaveBeenCalledTimes(1)
-    expect(successFn).toHaveBeenCalledWith('selected')
+    await waitFor(() => expect(successFn).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(successFn).toHaveBeenCalledWith('selected'))
   })
 
   it('should call every onSuccess handler within a suspense boundary', async () => {
@@ -255,8 +264,8 @@ describe("useQuery's in Suspense mode", () => {
 
     await waitFor(() => rendered.getByText('second'))
 
-    expect(successFn1).toHaveBeenCalledTimes(1)
-    expect(successFn2).toHaveBeenCalledTimes(1)
+    await waitFor(() => expect(successFn1).toHaveBeenCalledTimes(1))
+    await waitFor(() => expect(successFn2).toHaveBeenCalledTimes(1))
   })
 
   // https://github.com/tannerlinsley/react-query/issues/468
@@ -724,13 +733,21 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     const queryFn = jest.fn()
-    queryFn.mockImplementation(() => sleep(10))
+    queryFn.mockImplementation(async () => {
+      await sleep(10)
+      return '23'
+    })
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      useQuery([key], queryFn, { suspense: true, enabled })
+      const result = useQuery([key], queryFn, { suspense: true, enabled })
 
-      return <button aria-label="fire" onClick={() => setEnabled(true)} />
+      return (
+        <div>
+          <button onClick={() => setEnabled(true)}>fire</button>
+          <h1>{result.data}</h1>
+        </div>
+      )
     }
 
     const rendered = renderWithClient(
@@ -742,10 +759,13 @@ describe("useQuery's in Suspense mode", () => {
 
     expect(queryFn).toHaveBeenCalledTimes(0)
 
-    fireEvent.click(rendered.getByLabelText('fire'))
+    fireEvent.click(rendered.getByRole('button', { name: /fire/i }))
+
+    await waitFor(() => {
+      expect(rendered.getByRole('heading').textContent).toBe('23')
+    })
 
     expect(queryFn).toHaveBeenCalledTimes(1)
-    await waitFor(() => rendered.getByLabelText('fire'))
   })
 
   it('should error catched in error boundary without infinite loop', async () => {

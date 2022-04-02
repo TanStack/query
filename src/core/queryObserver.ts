@@ -415,7 +415,7 @@ export class QueryObserver<
     let data: TData | undefined
 
     // Optimistically set result in fetching state if needed
-    if (options.optimisticResults) {
+    if (options._optimisticResults) {
       const mounted = this.hasListeners()
 
       const fetchOnMount = !mounted && shouldFetchOnMount(query, options)
@@ -430,6 +430,9 @@ export class QueryObserver<
         if (!dataUpdatedAt) {
           status = 'loading'
         }
+      }
+      if (options._optimisticResults === 'isHydrating') {
+        fetchStatus = 'idle'
       }
     }
 
@@ -567,14 +570,16 @@ export class QueryObserver<
       | QueryObserverResult<TData, TError>
       | undefined
 
-    this.currentResult = this.createResult(this.currentQuery, this.options)
+    const nextResult = this.createResult(this.currentQuery, this.options)
     this.currentResultState = this.currentQuery.state
     this.currentResultOptions = this.options
 
-    // Only notify if something has changed
-    if (shallowEqualObjects(this.currentResult, prevResult)) {
+    // Only notify and update result if something has changed
+    if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }
+
+    this.currentResult = nextResult
 
     // Determine which callbacks to trigger
     const defaultNotifyOptions: NotifyOptions = { cache: true }

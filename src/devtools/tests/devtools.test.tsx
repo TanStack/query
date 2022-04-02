@@ -1,13 +1,10 @@
 import React from 'react'
-import {
-  fireEvent,
-  screen,
-  waitFor,
-  act,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
+
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
+import { ErrorBoundary } from 'react-error-boundary'
+
 import '@testing-library/jest-dom'
-import { useQuery } from '../..'
+import { useQuery, QueryClient } from '../..'
 import {
   getByTextContent,
   renderWithClient,
@@ -30,6 +27,9 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 describe('ReactQueryDevtools', () => {
+  beforeEach(() => {
+    localStorage.removeItem('reactQueryDevtoolsOpen')
+  })
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
     const onCloseClick = jest.fn()
@@ -62,10 +62,6 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
-    await waitForElementToBeRemoved(() =>
-      screen.queryByRole('button', { name: /open react query devtools/i })
-    )
-
     expect(onToggleClick).toHaveBeenCalledTimes(1)
 
     fireEvent.click(
@@ -75,6 +71,39 @@ describe('ReactQueryDevtools', () => {
     await screen.findByRole('button', { name: /open react query devtools/i })
 
     expect(onCloseClick).toHaveBeenCalledTimes(1)
+  })
+
+  it('should be able to drag devtools without error', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const result = renderWithClient(queryClient, <Page />, {
+      initialIsOpen: false,
+    })
+
+    const draggableElement = result.container
+      .querySelector('#ReactQueryDevtoolsPanel')
+      ?.querySelector('div')
+
+    if (!draggableElement) {
+      throw new Error('Could not find the draggable element')
+    }
+
+    await act(async () => {
+      fireEvent.mouseDown(draggableElement)
+    })
   })
 
   it('should display the correct query states', async () => {
@@ -195,11 +224,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
 
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: `Open query details for ${currentQuery?.queryHash}`,
-      })
-    )
+    const queryButton = await screen.findByRole('button', {
+      name: `Open query details for ${currentQuery?.queryHash}`,
+    })
+
+    fireEvent.click(queryButton)
 
     await screen.findByText(/query details/i)
   })
@@ -286,11 +315,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    await act(async () => {
-      fireEvent.click(await screen.findByText(/enable query/i))
-    })
+    fireEvent.click(screen.getByRole('button', { name: /enable query/i }))
 
-    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    })
   })
 
   it('should not show a disabled label for inactive queries', async () => {
@@ -323,11 +352,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    await act(async () => {
-      fireEvent.click(await screen.findByText(/hide query/i))
-    })
+    fireEvent.click(screen.getByRole('button', { name: /hide query/i }))
 
-    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    })
   })
 
   it('should simulate offline mode', async () => {
@@ -349,28 +378,36 @@ describe('ReactQueryDevtools', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />, {
+    renderWithClient(queryClient, <App />, {
       initialIsOpen: true,
     })
 
-    await rendered.findByRole('heading', { name: /test/i })
+    await screen.findByRole('heading', { name: /test/i })
 
-    rendered.getByRole('button', { name: /mock offline behavior/i }).click()
+    fireEvent.click(
+      screen.getByRole('button', { name: /mock offline behavior/i })
+    )
 
-    rendered
-      .getByRole('button', { name: 'Open query details for ["key"]' })
-      .click()
+    const queryButton = await screen.findByRole('button', {
+      name: 'Open query details for ["key"]',
+    })
+    fireEvent.click(queryButton)
 
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    const refetchButton = await screen.findByRole('button', {
+      name: /refetch/i,
+    })
+    fireEvent.click(refetchButton)
 
     await waitFor(() => {
-      expect(rendered.getByText('test, paused')).toBeInTheDocument()
+      expect(screen.getByText('test, paused')).toBeInTheDocument()
     })
 
-    rendered.getByRole('button', { name: /restore offline mock/i }).click()
+    fireEvent.click(
+      screen.getByRole('button', { name: /restore offline mock/i })
+    )
 
     await waitFor(() => {
-      expect(rendered.getByText('test, idle')).toBeInTheDocument()
+      expect(screen.getByText('test, idle')).toBeInTheDocument()
     })
 
     expect(count).toBe(2)
@@ -385,18 +422,24 @@ describe('ReactQueryDevtools', () => {
         return 'query-1-result'
       })
 
-      const query2Result = useQuery(['query-2'], async () => {
-        await sleep(60)
-        return 'query-2-result'
-      })
-
       const query3Result = useQuery(
         ['query-3'],
         async () => {
-          await sleep(40)
+          await sleep(10)
           return 'query-3-result'
         },
-        { staleTime: Infinity }
+        { staleTime: Infinity, enabled: typeof query1Result.data === 'string' }
+      )
+
+      const query2Result = useQuery(
+        ['query-2'],
+        async () => {
+          await sleep(10)
+          return 'query-2-result'
+        },
+        {
+          enabled: typeof query3Result.data === 'string',
+        }
       )
 
       return (
@@ -436,7 +479,7 @@ describe('ReactQueryDevtools', () => {
     expect(queries[2]?.textContent).toEqual(query3Hash)
 
     // Wait for the queries to be resolved
-    await sleep(70)
+    await screen.findByText(/query-1-result query-2-result query-3-result/i)
 
     // When sorted by the last updated date the queries are sorted by the time
     // they were updated and since the query-2 takes longest time to complete
@@ -469,5 +512,101 @@ describe('ReactQueryDevtools', () => {
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
     expect(queries[2]?.textContent).toEqual(query3Hash)
+  })
+
+  describe('with custom context', () => {
+    it('should render without error when the custom context aligns', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+      const { queryClient } = createQueryClient()
+
+      function Page() {
+        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+          context,
+        })
+
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      renderWithClient(queryClient, <Page />, {
+        initialIsOpen: false,
+        context,
+      })
+
+      await screen.findByRole('button', { name: /open react query devtools/i })
+    })
+
+    it('should render with error when the custom context is not passed to useQuery', async () => {
+      const consoleErrorMock = jest.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
+
+      const context = React.createContext<QueryClient | undefined>(undefined)
+      const { queryClient } = createQueryClient()
+
+      function Page() {
+        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+          useErrorBoundary: true,
+        })
+
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        {
+          initialIsOpen: false,
+          context,
+        }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+
+      consoleErrorMock.mockRestore()
+    })
+
+    it('should render with error when the custom context is not passed to ReactQueryDevtools', async () => {
+      const consoleErrorMock = jest.spyOn(console, 'error')
+      consoleErrorMock.mockImplementation(() => undefined)
+
+      const context = React.createContext<QueryClient | undefined>(undefined)
+      const { queryClient } = createQueryClient()
+
+      function Page() {
+        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+          useErrorBoundary: true,
+          context,
+        })
+
+        return (
+          <div>
+            <h1>{data}</h1>
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        {
+          initialIsOpen: false,
+        }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+
+      consoleErrorMock.mockRestore()
+    })
   })
 })

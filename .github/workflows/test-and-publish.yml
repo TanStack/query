@@ -13,11 +13,12 @@ on:
 
 jobs:
   test:
-    name: 'Node ${{ matrix.node }}'
+    name: 'Node ${{ matrix.node }}, React ${{ matrix.react }}'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node: [12, 14, 16]
+        react: [17, 18]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -26,8 +27,10 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
       - run: yarn test:ci
+        env:
+          REACTJS_VERSION: ${{ matrix.react }}
       - run: yarn test:size
-        if: matrix.node == '16'
+        if: matrix.node == '16' && matrix.react == '18'
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
       - name: Upload coverage to Codecov

@@ -1,4 +1,4 @@
-import { isValidTimeout } from './utils'
+import { isServer, isValidTimeout } from './utils'
 
 export abstract class Removable {
   cacheTime!: number
@@ -19,10 +19,10 @@ export abstract class Removable {
   }
 
   protected updateCacheTime(newCacheTime: number | undefined): void {
-    // Default to 5 minutes if no cache time is set
+    // Default to 5 minutes (Infinity for server-side) if no cache time is set
     this.cacheTime = Math.max(
       this.cacheTime || 0,
-      newCacheTime ?? 5 * 60 * 1000
+      newCacheTime ?? (isServer ? Infinity : 5 * 60 * 1000)
     )
   }
 

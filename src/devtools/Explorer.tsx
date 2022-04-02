@@ -105,7 +105,7 @@ export const DefaultRenderer: Renderer = ({
 
   return (
     <Entry key={label}>
-      {subEntryPages?.length ? (
+      {subEntryPages.length ? (
         <>
           <button onClick={() => toggleExpanded()}>
             <Expander expanded={expanded} /> {label}{' '}

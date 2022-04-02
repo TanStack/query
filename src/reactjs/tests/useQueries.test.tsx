@@ -1,5 +1,6 @@
-import { waitFor, fireEvent } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 
 import * as QueriesObserverModule from '../../core/queriesObserver'
 
@@ -9,10 +10,10 @@ import {
   expectTypeNotAny,
   queryKey,
   renderWithClient,
-  setActTimeout,
   sleep,
 } from './utils'
 import {
+  QueryClient,
   useQueries,
   UseQueryResult,
   QueryCache,
@@ -39,26 +40,33 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: async () => {
-              await sleep(5)
+              await sleep(10)
               return 1
             },
           },
           {
             queryKey: key2,
             queryFn: async () => {
-              await sleep(10)
+              await sleep(100)
               return 2
             },
           },
         ],
       })
       results.push(result)
-      return null
+
+      return (
+        <div>
+          <div>
+            data1: {result[0].data ?? 'null'}, data2: {result[1].data ?? 'null'}
+          </div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(30)
+    await waitFor(() => rendered.getByText('data1: 1, data2: 2'))
 
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject([{ data: undefined }, { data: undefined }])
@@ -79,7 +87,7 @@ describe('useQueries', () => {
             queryKey: [key1, count],
             keepPreviousData: true,
             queryFn: async () => {
-              await sleep(5)
+              await sleep(10)
               return count * 2
             },
           },
@@ -87,7 +95,7 @@ describe('useQueries', () => {
             queryKey: [key2, count],
             keepPreviousData: true,
             queryFn: async () => {
-              await sleep(10)
+              await sleep(35)
               return count * 5
             },
           },
@@ -95,59 +103,28 @@ describe('useQueries', () => {
       })
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(prev => prev + 1)
-        }, 20)
-      }, [])
+      const isFetching = result.some(r => r.isFetching)
 
-      return null
+      return (
+        <div>
+          <div>
+            data1: {result[0].data ?? 'null'}, data2: {result[1].data ?? 'null'}
+          </div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setCount(prev => prev + 1)}>inc</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(7))
+    await waitFor(() => rendered.getByText('data1: 2, data2: 5'))
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 2, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 5, isPreviousData: true, isFetching: true },
-    ])
-    expect(states[6]).toMatchObject([
+    await waitFor(() => rendered.getByText('data1: 4, data2: 10'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+
+    expect(states[states.length - 1]).toMatchObject([
       { status: 'success', data: 4, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
@@ -164,7 +141,7 @@ describe('useQueries', () => {
           queryKey: [key, count, i + 1],
           keepPreviousData: true,
           queryFn: async () => {
-            await sleep(5 * (i + 1))
+            await sleep(35 * (i + 1))
             return (i + 1) * count * 2
           },
         })),
@@ -172,88 +149,26 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(prev => prev + 1)
-        }, 20)
-      }, [])
+      const isFetching = result.some(r => r.isFetching)
 
-      return null
+      return (
+        <div>
+          <div>data: {result.map(it => it.data).join(',')}</div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setCount(prev => prev + 1)}>inc</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(8))
+    await waitFor(() => rendered.getByText('data: 4,8'))
+    fireEvent.click(rendered.getByRole('button', { name: /inc/i }))
 
-    expect(states[0]).toMatchObject([
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[1]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[2]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 8, isPreviousData: false, isFetching: false },
-    ])
+    await waitFor(() => rendered.getByText('data: 6,12,18'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
 
-    expect(states[3]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[4]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: true, isFetching: true },
-      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[5]).toMatchObject([
-      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 8, isPreviousData: true, isFetching: true },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[6]).toMatchObject([
-      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 12, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
-    ])
-    expect(states[7]).toMatchObject([
+    expect(states[states.length - 1]).toMatchObject([
       { status: 'success', data: 6, isPreviousData: false, isFetching: false },
       { status: 'success', data: 12, isPreviousData: false, isFetching: false },
       { status: 'success', data: 18, isPreviousData: false, isFetching: false },
@@ -302,10 +217,10 @@ describe('useQueries', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
-    rendered.getByRole('button', { name: /setSeries2/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /setSeries2/i }))
 
     await waitFor(() => rendered.getByText('data1: 5, data2: 15'))
-    rendered.getByRole('button', { name: /setSeries1/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /setSeries1/i }))
 
     await waitFor(() => rendered.getByText('data1: 10, data2: 15'))
     await waitFor(() => rendered.getByText('isFetching: false'))
@@ -339,22 +254,34 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setEnableId1(false)
-        }, 20)
+      const isFetching = result.some(r => r.isFetching)
 
-        setActTimeout(() => {
-          setEnableId1(true)
-        }, 30)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <div>
+            data1: {result[0]?.data ?? 'null'}, data2:{' '}
+            {result[1]?.data ?? 'null'}
+          </div>
+          <div>isFetching: {String(isFetching)}</div>
+          <button onClick={() => setEnableId1(false)}>set1Disabled</button>
+          <button onClick={() => setEnableId1(true)}>set2Enabled</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(8))
+    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /set1Disabled/i }))
+
+    await waitFor(() => rendered.getByText('data1: 10, data2: null'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    fireEvent.click(rendered.getByRole('button', { name: /set2Enabled/i }))
+
+    await waitFor(() => rendered.getByText('data1: 5, data2: 10'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+
+    await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject([
       {
@@ -372,32 +299,20 @@ describe('useQueries', () => {
     ])
     expect(states[1]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      {
-        status: 'loading',
-        data: undefined,
-        isPreviousData: false,
-        isFetching: true,
-      },
+      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[2]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[3]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[4]).toMatchObject([
+      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[6]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[7]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
@@ -1055,5 +970,86 @@ describe('useQueries', () => {
 
     await sleep(20)
     QueriesObserverSpy.mockRestore()
+  })
+
+  describe('with custom context', () => {
+    it('should return the correct states', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const results: UseQueryResult[][] = []
+
+      function Page() {
+        const result = useQueries({
+          context,
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: async () => {
+                await sleep(5)
+                return 1
+              },
+            },
+            {
+              queryKey: key2,
+              queryFn: async () => {
+                await sleep(10)
+                return 2
+              },
+            },
+          ],
+        })
+        results.push(result)
+        return null
+      }
+
+      renderWithClient(queryClient, <Page />, { context })
+
+      await sleep(30)
+
+      expect(results.length).toBe(3)
+      expect(results[0]).toMatchObject([
+        { data: undefined },
+        { data: undefined },
+      ])
+      expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
+      expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+    })
+
+    it('should throw if the context is necessary and is not passed to useQueries', async () => {
+      const context = React.createContext<QueryClient | undefined>(undefined)
+
+      const key1 = queryKey()
+      const key2 = queryKey()
+      const results: UseQueryResult[][] = []
+
+      function Page() {
+        const result = useQueries({
+          queries: [
+            {
+              queryKey: key1,
+              queryFn: async () => 1,
+            },
+            {
+              queryKey: key2,
+              queryFn: async () => 2,
+            },
+          ],
+        })
+        results.push(result)
+        return null
+      }
+
+      const rendered = renderWithClient(
+        queryClient,
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>,
+        { context }
+      )
+
+      await waitFor(() => rendered.getByText('error boundary'))
+    })
   })
 })

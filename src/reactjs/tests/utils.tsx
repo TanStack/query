@@ -6,6 +6,7 @@ import {
   QueryClient,
   QueryClientConfig,
   QueryClientProvider,
+  ContextOptions,
 } from '../..'
 import * as utils from '../../core/utils'
 
@@ -14,15 +15,23 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
-export function renderWithClient(client: QueryClient, ui: React.ReactElement) {
+export function renderWithClient(
+  client: QueryClient,
+  ui: React.ReactElement,
+  options: ContextOptions = {}
+) {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client}>{ui}</QueryClientProvider>
+    <QueryClientProvider client={client} context={options.context}>
+      {ui}
+    </QueryClientProvider>
   )
   return {
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client}>{rerenderUi}</QueryClientProvider>
+        <QueryClientProvider client={client} context={options.context}>
+          {rerenderUi}
+        </QueryClientProvider>
       ),
   }
 }
@@ -54,7 +63,7 @@ export function sleep(timeout: number): Promise<void> {
 }
 
 export function setActTimeout(fn: () => void, ms?: number) {
-  setTimeout(() => {
+  return setTimeout(() => {
     act(() => {
       fn()
     })
@@ -80,7 +89,7 @@ export const Blink: React.FC<{ duration: number }> = ({
 
   React.useEffect(() => {
     setShouldShow(true)
-    const timeout = setTimeout(() => setShouldShow(false), duration)
+    const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {
       clearTimeout(timeout)
     }

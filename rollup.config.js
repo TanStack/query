@@ -44,6 +44,13 @@ const inputSrcs = [
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
 const babelConfig = { extensions, runtimeHelpers: true }
 const resolveConfig = { extensions }
+const commonJsConfig = {
+  namedExports: {
+    'node_modules/use-sync-external-store/shim/index.js': [
+      'useSyncExternalStore',
+    ],
+  },
+}
 
 export default inputSrcs
   .map(([input, name, file]) => {
@@ -61,7 +68,7 @@ export default inputSrcs
         plugins: [
           resolve(resolveConfig),
           babel(babelConfig),
-          commonJS(),
+          commonJS(commonJsConfig),
           externalDeps(),
         ],
       },
@@ -83,7 +90,7 @@ export default inputSrcs
           }),
           resolve(resolveConfig),
           babel(babelConfig),
-          commonJS(),
+          commonJS(commonJsConfig),
           externalDeps(),
           terser(),
           size(),

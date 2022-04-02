@@ -1,6 +1,7 @@
 import React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
-import { notifyManager } from '../core/notifyManager'
+import { notifyManager } from '../core'
 import { noop, parseMutationArgs } from '../core/utils'
 import { MutationObserver } from '../core/mutationObserver'
 import { useQueryClient } from './QueryClientProvider'
@@ -74,54 +75,46 @@ export function useMutation<
     | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>
 ): UseMutationResult<TData, TError, TVariables, TContext> {
-  const mountedRef = React.useRef(false)
-  const [, forceUpdate] = React.useState(0)
-
   const options = parseMutationArgs(arg1, arg2, arg3)
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context: options.context })
 
-  const obsRef = React.useRef<
-    MutationObserver<TData, TError, TVariables, TContext>
-  >()
-
-  if (!obsRef.current) {
-    obsRef.current = new MutationObserver(queryClient, options)
-  } else {
-    obsRef.current.setOptions(options)
-  }
-
-  const currentResult = obsRef.current.getCurrentResult()
+  const [observer] = React.useState(
+    () =>
+      new MutationObserver<TData, TError, TVariables, TContext>(
+        queryClient,
+        options
+      )
+  )
 
   React.useEffect(() => {
-    mountedRef.current = true
+    observer.setOptions(options)
+  }, [observer, options])
 
-    const unsubscribe = obsRef.current!.subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          forceUpdate(x => x + 1)
-        }
-      })
-    )
-    return () => {
-      mountedRef.current = false
-      unsubscribe()
-    }
-  }, [])
+  const result = useSyncExternalStore(
+    React.useCallback(
+      onStoreChange =>
+        observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer]
+    ),
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  )
 
   const mutate = React.useCallback<
     UseMutateFunction<TData, TError, TVariables, TContext>
-  >((variables, mutateOptions) => {
-    obsRef.current!.mutate(variables, mutateOptions).catch(noop)
-  }, [])
+  >(
+    (variables, mutateOptions) => {
+      observer.mutate(variables, mutateOptions).catch(noop)
+    },
+    [observer]
+  )
 
   if (
-    currentResult.error &&
-    shouldThrowError(obsRef.current.options.useErrorBoundary, [
-      currentResult.error,
-    ])
+    result.error &&
+    shouldThrowError(observer.options.useErrorBoundary, [result.error])
   ) {
-    throw currentResult.error
+    throw result.error
   }
 
-  return { ...currentResult, mutate, mutateAsync: currentResult.mutate }
+  return { ...result, mutate, mutateAsync: result.mutate }
 }

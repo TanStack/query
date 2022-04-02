@@ -1,3 +1,4 @@
+import { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import React from 'react'
 import { ReactQueryDevtools } from '../'
@@ -7,10 +8,10 @@ import { QueryClient, QueryClientProvider, QueryCache } from '../..'
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  devtoolsOptions?: Parameters<typeof ReactQueryDevtools>[number]
+  devtoolsOptions: Parameters<typeof ReactQueryDevtools>[number] = {}
 ) {
   const { rerender, ...result } = render(
-    <QueryClientProvider client={client}>
+    <QueryClientProvider client={client} context={devtoolsOptions.context}>
       <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
     </QueryClientProvider>
@@ -19,7 +20,7 @@ export function renderWithClient(
     ...result,
     rerender: (rerenderUi: React.ReactElement) =>
       rerender(
-        <QueryClientProvider client={client}>
+        <QueryClientProvider client={client} context={devtoolsOptions.context}>
           <ReactQueryDevtools {...devtoolsOptions} />
           {rerenderUi}
         </QueryClientProvider>
@@ -41,11 +42,14 @@ export function sleep(timeout: number): Promise<void> {
  * @param textToMatch The string that needs to be matched
  * @reference https://stackoverflow.com/a/56859650/8252081
  */
-export const getByTextContent = (textToMatch: string) => (
-  _content: string,
-  node: HTMLElement
-): boolean => {
-  const hasText = (currentNode: HTMLElement) =>
+export const getByTextContent = (textToMatch: string): MatcherFunction => (
+  _content,
+  node
+) => {
+  if (!node) {
+    return false
+  }
+  const hasText = (currentNode: Element) =>
     currentNode.textContent === textToMatch
   const nodeHasText = hasText(node)
   const childrenDontHaveText = Array.from(node.children).every(
