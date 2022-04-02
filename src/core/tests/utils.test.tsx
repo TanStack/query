@@ -5,9 +5,9 @@ import {
   parseMutationArgs,
   matchMutation,
   scheduleMicrotask,
+  sleep,
 } from '../utils'
 import { Mutation } from '../mutation'
-import { waitFor } from '@testing-library/dom'
 import { createQueryClient } from '../../reactjs/tests/utils'
 
 describe('core/utils', () => {
@@ -330,33 +330,13 @@ describe('core/utils', () => {
   })
 
   describe('scheduleMicrotask', () => {
-    it('should throw an exception if the callback throw an error', async () => {
-      const error = new Error('error')
-      const callback = () => {
-        throw error
-      }
-      const errorSpy = jest.fn().mockImplementation(err => err)
-      jest.useFakeTimers()
-      const setTimeoutSpy = jest
-        .spyOn(globalThis, 'setTimeout')
-        .mockImplementation(function (handler: TimerHandler) {
-          try {
-            if (typeof handler === 'function') {
-              handler(errorSpy(error))
-            }
-          } catch (err: any) {
-            expect(err.message).toEqual('error')
-            // Do no throw an uncaught exception that cannot be tested with
-            // this jest version
-          }
-          return 0 as any
-        })
+    it('should defer execution of callback', async () => {
+      const callback = jest.fn()
+
       scheduleMicrotask(callback)
-      jest.runAllTimers()
-      await waitFor(() => expect(setTimeoutSpy).toHaveBeenCalled())
-      expect(errorSpy).toHaveBeenCalled()
-      setTimeoutSpy.mockRestore()
-      jest.useRealTimers()
+      expect(callback).not.toHaveBeenCalled()
+      await sleep(0)
+      expect(callback).toHaveBeenCalledTimes(1)
     })
   })
 })

@@ -1,4 +1,4 @@
-import { waitFor } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
 
@@ -379,7 +379,7 @@ describe('queryClient', () => {
       const rendered = renderWithClient(queryClient, <Page />)
 
       await waitFor(() => rendered.getByText('data: data'))
-      rendered.getByRole('button', { name: /setQueryData/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
       await waitFor(() => rendered.getByText('data: newData'))
 
       expect(onSuccess).toHaveBeenCalledTimes(1)
@@ -409,7 +409,7 @@ describe('queryClient', () => {
       const rendered = renderWithClient(queryClient, <Page />)
 
       await waitFor(() => rendered.getByText('data: data'))
-      rendered.getByRole('button', { name: /setQueryData/i }).click()
+      fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
       await waitFor(() => rendered.getByText('data: newData'))
       await waitFor(() => {
         expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()

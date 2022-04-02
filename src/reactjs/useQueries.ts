@@ -1,6 +1,7 @@
 import React from 'react'
-import { QueryKey, QueryFunction } from '../core/types'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
+import { QueryKey, QueryFunction } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
@@ -142,9 +143,6 @@ export function useQueries<T extends any[]>({
   queries: readonly [...QueriesOptions<T>]
   context?: UseQueryOptions['context']
 }): QueriesResults<T> {
-  const mountedRef = React.useRef(false)
-  const [, forceUpdate] = React.useState(0)
-
   const queryClient = useQueryClient({ context })
   const isHydrating = useIsHydrating()
 
@@ -169,26 +167,17 @@ export function useQueries<T extends any[]>({
 
   const result = observer.getOptimisticResult(defaultedQueries)
 
-  React.useEffect(() => {
-    mountedRef.current = true
-
-    let unsubscribe: (() => void) | undefined
-
-    if (!isHydrating) {
-      unsubscribe = observer.subscribe(
-        notifyManager.batchCalls(() => {
-          if (mountedRef.current) {
-            forceUpdate(x => x + 1)
-          }
-        })
-      )
-    }
-
-    return () => {
-      mountedRef.current = false
-      unsubscribe?.()
-    }
-  }, [isHydrating, observer])
+  useSyncExternalStore(
+    React.useCallback(
+      onStoreChange =>
+        isHydrating
+          ? () => undefined
+          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer, isHydrating]
+    ),
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  )
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because

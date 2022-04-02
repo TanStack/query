@@ -1,12 +1,8 @@
 import React from 'react'
+
+import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import {
-  fireEvent,
-  screen,
-  waitFor,
-  act,
-  waitForElementToBeRemoved,
-} from '@testing-library/react'
+
 import '@testing-library/jest-dom'
 import { useQuery, QueryClient } from '../..'
 import {
@@ -31,6 +27,9 @@ Object.defineProperty(window, 'matchMedia', {
 })
 
 describe('ReactQueryDevtools', () => {
+  beforeEach(() => {
+    localStorage.removeItem('reactQueryDevtoolsOpen')
+  })
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
     const onCloseClick = jest.fn()
@@ -61,10 +60,6 @@ describe('ReactQueryDevtools', () => {
     expect(closeButton).toBeNull()
     fireEvent.click(
       screen.getByRole('button', { name: /open react query devtools/i })
-    )
-
-    await waitForElementToBeRemoved(() =>
-      screen.queryByRole('button', { name: /open react query devtools/i })
     )
 
     expect(onToggleClick).toHaveBeenCalledTimes(1)
@@ -229,11 +224,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
 
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: `Open query details for ${currentQuery?.queryHash}`,
-      })
-    )
+    const queryButton = await screen.findByRole('button', {
+      name: `Open query details for ${currentQuery?.queryHash}`,
+    })
+
+    fireEvent.click(queryButton)
 
     await screen.findByText(/query details/i)
   })
@@ -320,11 +315,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    await act(async () => {
-      fireEvent.click(await screen.findByText(/enable query/i))
-    })
+    fireEvent.click(screen.getByRole('button', { name: /enable query/i }))
 
-    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    })
   })
 
   it('should not show a disabled label for inactive queries', async () => {
@@ -357,11 +352,11 @@ describe('ReactQueryDevtools', () => {
 
     await screen.findByText(/disabled/i)
 
-    await act(async () => {
-      fireEvent.click(await screen.findByText(/hide query/i))
-    })
+    fireEvent.click(screen.getByRole('button', { name: /hide query/i }))
 
-    expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText(/disabled/i)).not.toBeInTheDocument()
+    })
   })
 
   it('should simulate offline mode', async () => {
@@ -383,28 +378,36 @@ describe('ReactQueryDevtools', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <App />, {
+    renderWithClient(queryClient, <App />, {
       initialIsOpen: true,
     })
 
-    await rendered.findByRole('heading', { name: /test/i })
+    await screen.findByRole('heading', { name: /test/i })
 
-    rendered.getByRole('button', { name: /mock offline behavior/i }).click()
+    fireEvent.click(
+      screen.getByRole('button', { name: /mock offline behavior/i })
+    )
 
-    rendered
-      .getByRole('button', { name: 'Open query details for ["key"]' })
-      .click()
+    const queryButton = await screen.findByRole('button', {
+      name: 'Open query details for ["key"]',
+    })
+    fireEvent.click(queryButton)
 
-    rendered.getByRole('button', { name: /refetch/i }).click()
+    const refetchButton = await screen.findByRole('button', {
+      name: /refetch/i,
+    })
+    fireEvent.click(refetchButton)
 
     await waitFor(() => {
-      expect(rendered.getByText('test, paused')).toBeInTheDocument()
+      expect(screen.getByText('test, paused')).toBeInTheDocument()
     })
 
-    rendered.getByRole('button', { name: /restore offline mock/i }).click()
+    fireEvent.click(
+      screen.getByRole('button', { name: /restore offline mock/i })
+    )
 
     await waitFor(() => {
-      expect(rendered.getByText('test, idle')).toBeInTheDocument()
+      expect(screen.getByText('test, idle')).toBeInTheDocument()
     })
 
     expect(count).toBe(2)
@@ -419,18 +422,24 @@ describe('ReactQueryDevtools', () => {
         return 'query-1-result'
       })
 
-      const query2Result = useQuery(['query-2'], async () => {
-        await sleep(60)
-        return 'query-2-result'
-      })
-
       const query3Result = useQuery(
         ['query-3'],
         async () => {
-          await sleep(40)
+          await sleep(10)
           return 'query-3-result'
         },
-        { staleTime: Infinity }
+        { staleTime: Infinity, enabled: typeof query1Result.data === 'string' }
+      )
+
+      const query2Result = useQuery(
+        ['query-2'],
+        async () => {
+          await sleep(10)
+          return 'query-2-result'
+        },
+        {
+          enabled: typeof query3Result.data === 'string',
+        }
       )
 
       return (
@@ -470,7 +479,7 @@ describe('ReactQueryDevtools', () => {
     expect(queries[2]?.textContent).toEqual(query3Hash)
 
     // Wait for the queries to be resolved
-    await sleep(70)
+    await screen.findByText(/query-1-result query-2-result query-3-result/i)
 
     // When sorted by the last updated date the queries are sorted by the time
     // they were updated and since the query-2 takes longest time to complete

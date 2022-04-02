@@ -21,34 +21,34 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const { mutate, data = '', reset } = useMutation(() =>
+      const { mutate, data = 'empty', reset } = useMutation(() =>
         Promise.resolve('mutation')
       )
 
       return (
         <div>
-          <h1 data-testid="title">{data}</h1>
+          <h1>{data}</h1>
           <button onClick={() => reset()}>reset</button>
           <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(getByTestId('title').textContent).toBe('')
+    expect(getByRole('heading').textContent).toBe('empty')
 
-    fireEvent.click(getByText('mutate'))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
-    await waitFor(() => getByTestId('title'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('mutation')
+    })
 
-    expect(getByTestId('title').textContent).toBe('mutation')
+    fireEvent.click(getByRole('button', { name: /reset/i }))
 
-    fireEvent.click(getByText('reset'))
-
-    await waitFor(() => getByTestId('title'))
-
-    expect(getByTestId('title').textContent).toBe('')
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('empty')
+    })
   })
 
   it('should be able to reset `error`', async () => {
@@ -61,31 +61,32 @@ describe('useMutation', () => {
 
       return (
         <div>
-          {error && <h1 data-testid="error">{error.message}</h1>}
+          {error && <h1>{error.message}</h1>}
           <button onClick={() => reset()}>reset</button>
           <button onClick={() => mutate()}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText, queryByTestId } = renderWithClient(
-      queryClient,
-      <Page />
-    )
+    const { getByRole, queryByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(queryByTestId('error')).toBeNull()
+    await waitFor(() => {
+      expect(queryByRole('heading')).toBeNull()
+    })
 
-    fireEvent.click(getByText('mutate'))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
-    await waitFor(() => getByTestId('error'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe(
+        'Expected mock error. All is well!'
+      )
+    })
 
-    expect(getByTestId('error').textContent).toBe(
-      'Expected mock error. All is well!'
-    )
+    fireEvent.click(getByRole('button', { name: /reset/i }))
 
-    fireEvent.click(getByText('reset'))
-
-    await waitFor(() => expect(queryByTestId('error')).toBeNull())
+    await waitFor(() => {
+      expect(queryByRole('heading')).toBeNull()
+    })
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
@@ -95,7 +96,7 @@ describe('useMutation', () => {
 
     function Page() {
       const { mutate } = useMutation(
-        async (vars: { count: number }) => Promise.resolve(vars.count),
+        (vars: { count: number }) => Promise.resolve(vars.count),
         {
           onSuccess: data => {
             onSuccessMock(data)
@@ -108,33 +109,39 @@ describe('useMutation', () => {
 
       return (
         <div>
-          <h1 data-testid="title">{count}</h1>
+          <h1>{count}</h1>
           <button onClick={() => mutate({ count: ++count })}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(getByTestId('title').textContent).toBe('0')
+    expect(getByRole('heading').textContent).toBe('0')
 
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
-    await waitFor(() => getByTestId('title'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('3')
+    })
 
-    expect(onSuccessMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onSuccessMock).toHaveBeenCalledTimes(3)
+    })
+
     expect(onSuccessMock).toHaveBeenCalledWith(1)
     expect(onSuccessMock).toHaveBeenCalledWith(2)
     expect(onSuccessMock).toHaveBeenCalledWith(3)
 
-    expect(onSettledMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onSettledMock).toHaveBeenCalledTimes(3)
+    })
+
     expect(onSettledMock).toHaveBeenCalledWith(1)
     expect(onSettledMock).toHaveBeenCalledWith(2)
     expect(onSettledMock).toHaveBeenCalledWith(3)
-
-    expect(getByTestId('title').textContent).toBe('3')
   })
 
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
@@ -163,23 +170,27 @@ describe('useMutation', () => {
 
       return (
         <div>
-          <h1 data-testid="title">{count}</h1>
+          <h1>{count}</h1>
           <button onClick={() => mutate({ count: ++count })}>mutate</button>
         </div>
       )
     }
 
-    const { getByTestId, getByText } = renderWithClient(queryClient, <Page />)
+    const { getByRole } = renderWithClient(queryClient, <Page />)
 
-    expect(getByTestId('title').textContent).toBe('0')
+    expect(getByRole('heading').textContent).toBe('0')
 
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
-    fireEvent.click(getByText('mutate'))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
+    fireEvent.click(getByRole('button', { name: /mutate/i }))
 
-    await waitFor(() => getByTestId('title'))
+    await waitFor(() => {
+      expect(getByRole('heading').textContent).toBe('3')
+    })
 
-    expect(onErrorMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onErrorMock).toHaveBeenCalledTimes(3)
+    })
     expect(onErrorMock).toHaveBeenCalledWith(
       'Expected mock error. All is well! 1'
     )
@@ -190,7 +201,9 @@ describe('useMutation', () => {
       'Expected mock error. All is well! 3'
     )
 
-    expect(onSettledMock).toHaveBeenCalledTimes(3)
+    await waitFor(() => {
+      expect(onSettledMock).toHaveBeenCalledTimes(3)
+    })
     expect(onSettledMock).toHaveBeenCalledWith(
       'Expected mock error. All is well! 1'
     )
@@ -200,8 +213,6 @@ describe('useMutation', () => {
     expect(onSettledMock).toHaveBeenCalledWith(
       'Expected mock error. All is well! 3'
     )
-
-    expect(getByTestId('title').textContent).toBe('3')
   })
 
   it('should be able to override the useMutation success callbacks', async () => {
@@ -302,7 +313,10 @@ describe('useMutation', () => {
     const key = queryKey()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: async (text: string) => {
+        await sleep(10)
+        return text
+      },
     })
 
     const states: UseMutationResult<any, any, any, any>[] = []
@@ -401,7 +415,7 @@ describe('useMutation', () => {
       ).toBeInTheDocument()
     })
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await waitFor(() => {
       expect(
@@ -459,7 +473,7 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: loading, isPaused: true')
 
@@ -506,7 +520,7 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: null, status: loading, isPaused: true')
 
@@ -530,7 +544,8 @@ describe('useMutation', () => {
 
     function Page() {
       const state = useMutation(
-        (_text: string) => {
+        async (_text: string) => {
+          await sleep(1)
           count++
           return count > 1 ? Promise.resolve('data') : Promise.reject('oops')
         },
@@ -827,8 +842,8 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle, isPaused: false')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
-    rendered.getByRole('button', { name: /hide/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
 
     await waitFor(() => {
       expect(
@@ -849,39 +864,35 @@ describe('useMutation', () => {
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       function Page() {
-        const { mutate, data = '', reset } = useMutation(
+        const { mutate, data = 'empty', reset } = useMutation(
           () => Promise.resolve('mutation'),
           { context }
         )
 
         return (
           <div>
-            <h1 data-testid="title">{data}</h1>
+            <h1>{data}</h1>
             <button onClick={() => reset()}>reset</button>
             <button onClick={() => mutate()}>mutate</button>
           </div>
         )
       }
 
-      const { getByTestId, getByText } = renderWithClient(
-        queryClient,
-        <Page />,
-        { context }
-      )
+      const { getByRole } = renderWithClient(queryClient, <Page />, { context })
 
-      expect(getByTestId('title').textContent).toBe('')
+      expect(getByRole('heading').textContent).toBe('empty')
 
-      fireEvent.click(getByText('mutate'))
+      fireEvent.click(getByRole('button', { name: /mutate/i }))
 
-      await waitFor(() => getByTestId('title'))
+      await waitFor(() => {
+        expect(getByRole('heading').textContent).toBe('mutation')
+      })
 
-      expect(getByTestId('title').textContent).toBe('mutation')
+      fireEvent.click(getByRole('button', { name: /reset/i }))
 
-      fireEvent.click(getByText('reset'))
-
-      await waitFor(() => getByTestId('title'))
-
-      expect(getByTestId('title').textContent).toBe('')
+      await waitFor(() => {
+        expect(getByRole('heading').textContent).toBe('empty')
+      })
     })
 
     it('should throw if the context is not passed to useMutation', async () => {
@@ -952,8 +963,8 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle')
 
-    rendered.getByRole('button', { name: /mutate/i }).click()
-    rendered.getByRole('button', { name: /mutate/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
 
     await rendered.findByText('data: result2, status: success')
 

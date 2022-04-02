@@ -205,10 +205,10 @@ describe('useInfiniteQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => rendered.getByText('data: 0-desc'))
-    rendered.getByRole('button', { name: /fetchNextPage/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
     await waitFor(() => rendered.getByText('data: 0-desc,1-desc'))
-    rendered.getByRole('button', { name: /order/i }).click()
+    fireEvent.click(rendered.getByRole('button', { name: /order/i }))
 
     await waitFor(() => rendered.getByText('data: 0-asc'))
     await waitFor(() => rendered.getByText('isFetching: false'))
@@ -339,7 +339,10 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        ({ pageParam = 0 }) => Number(pageParam),
+        async ({ pageParam = 0 }) => {
+          await sleep(10)
+          return Number(pageParam)
+        },
         {
           select: data => ({
             pages: [...data.pages].reverse(),
@@ -351,22 +354,25 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage({ pageParam: 1 })
-        }, 10)
-      }, [fetchNextPage])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage({ pageParam: 1 })}>
+            fetchNextPage
+          </button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {state.isFetching}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => rendered.getByText('data: 0'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    expect(states.length).toBe(4)
+    await waitFor(() => rendered.getByText('data: 1,0'))
+
+    await waitFor(() => expect(states.length).toBe(4))
     expect(states[0]).toMatchObject({
       data: undefined,
       isSuccess: false,
@@ -464,36 +470,43 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(
-        key,
-        ({ pageParam = 10 }) => Number(pageParam),
-        { notifyOnChangeProps: 'all' }
-      )
+      const state = useInfiniteQuery(key, async ({ pageParam = 10 }) => {
+        await sleep(10)
+        return Number(pageParam)
+      })
 
       states.push(state)
 
-      const { fetchNextPage, fetchPreviousPage, refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage({ pageParam: 11 })
-        }, 10)
-        setActTimeout(() => {
-          fetchPreviousPage({ pageParam: 9 })
-        }, 20)
-        setActTimeout(() => {
-          refetch()
-        }, 30)
-      }, [fetchNextPage, fetchPreviousPage, refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage({ pageParam: 11 })}>
+            fetchNextPage
+          </button>
+          <button onClick={() => state.fetchPreviousPage({ pageParam: 9 })}>
+            fetchPreviousPage
+          </button>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    expect(states.length).toBe(8)
+    await waitFor(() => rendered.getByText('data: 10,11'))
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i })
+    )
+    await waitFor(() => rendered.getByText('data: 9,10,11'))
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(8))
+
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -555,7 +568,10 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        ({ pageParam = 10 }) => Number(pageParam),
+        async ({ pageParam = 10 }) => {
+          await sleep(10)
+          return Number(pageParam)
+        },
         {
           getPreviousPageParam: firstPage => firstPage - 1,
           getNextPageParam: lastPage => lastPage + 1,
@@ -565,28 +581,34 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchNextPage, fetchPreviousPage, refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage()
-        }, 10)
-        setActTimeout(() => {
-          fetchPreviousPage()
-        }, 20)
-        setActTimeout(() => {
-          refetch()
-        }, 30)
-      }, [fetchNextPage, fetchPreviousPage, refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+          <button onClick={() => state.fetchPreviousPage()}>
+            fetchPreviousPage
+          </button>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    expect(states.length).toBe(8)
+    await waitFor(() => rendered.getByText('data: 10,11'))
+    fireEvent.click(
+      rendered.getByRole('button', { name: /fetchPreviousPage/i })
+    )
+    await waitFor(() => rendered.getByText('data: 9,10,11'))
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(8))
+
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -649,7 +671,10 @@ describe('useInfiniteQuery', () => {
       const multiplier = React.useRef(1)
       const state = useInfiniteQuery(
         key,
-        ({ pageParam = 10 }) => Number(pageParam) * multiplier.current,
+        async ({ pageParam = 10 }) => {
+          await sleep(10)
+          return Number(pageParam) * multiplier.current
+        },
         {
           getNextPageParam: lastPage => lastPage + 1,
           notifyOnChangeProps: 'all',
@@ -658,28 +683,37 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchNextPage, refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage()
-        }, 10)
-        setActTimeout(() => {
-          multiplier.current = 2
-          refetch({
-            refetchPage: (_, index) => index === 0,
-          })
-        }, 20)
-      }, [fetchNextPage, refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
+          <button
+            onClick={() => {
+              multiplier.current = 2
+              state.refetch({
+                refetchPage: (_, index) => index === 0,
+              })
+            }}
+          >
+            refetchPage
+          </button>
+          <div>data: {state.data?.pages.join(',') ?? 'null'}</div>
+          <div>isFetching: {String(state.isFetching)}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => rendered.getByText('data: 10'))
+    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
 
-    expect(states.length).toBe(6)
+    await waitFor(() => rendered.getByText('data: 10,11'))
+    fireEvent.click(rendered.getByRole('button', { name: /refetchPage/i }))
+
+    await waitFor(() => rendered.getByText('data: 20,11'))
+    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => expect(states.length).toBe(6))
+
     // Initial fetch
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1154,7 +1188,7 @@ describe('useInfiniteQuery', () => {
 
     await sleep(100)
 
-    expect(states.length).toBe(6)
+    expect(states.length).toBe(5)
     expect(states[0]).toMatchObject({
       hasNextPage: undefined,
       data: undefined,
@@ -1178,16 +1212,8 @@ describe('useInfiniteQuery', () => {
       isFetchingNextPage: false,
       isSuccess: true,
     })
-    // Hook state update
-    expect(states[3]).toMatchObject({
-      hasNextPage: true,
-      data: { pages: [7, 8] },
-      isFetching: false,
-      isFetchingNextPage: false,
-      isSuccess: true,
-    })
     // Refetch
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       hasNextPage: true,
       data: { pages: [7, 8] },
       isFetching: true,
@@ -1195,7 +1221,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
     })
     // Refetch done
-    expect(states[5]).toMatchObject({
+    expect(states[4]).toMatchObject({
       hasNextPage: true,
       data: { pages: [7, 8] },
       isFetching: false,

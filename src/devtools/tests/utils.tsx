@@ -1,3 +1,4 @@
+import { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import React from 'react'
 import { ReactQueryDevtools } from '../'
@@ -41,11 +42,14 @@ export function sleep(timeout: number): Promise<void> {
  * @param textToMatch The string that needs to be matched
  * @reference https://stackoverflow.com/a/56859650/8252081
  */
-export const getByTextContent = (textToMatch: string) => (
-  _content: string,
-  node: HTMLElement
-): boolean => {
-  const hasText = (currentNode: HTMLElement) =>
+export const getByTextContent = (textToMatch: string): MatcherFunction => (
+  _content,
+  node
+) => {
+  if (!node) {
+    return false
+  }
+  const hasText = (currentNode: Element) =>
     currentNode.textContent === textToMatch
   const nodeHasText = hasText(node)
   const childrenDontHaveText = Array.from(node.children).every(

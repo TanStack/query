@@ -52,9 +52,8 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      rendered.getByText('stringCached')
-      await sleep(10)
-      rendered.getByText('string')
+      await rendered.findByText('stringCached')
+      await rendered.findByText('string')
       queryClient.clear()
     })
 
@@ -89,9 +88,8 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      rendered.getByText('stringCached')
-      await sleep(10)
-      rendered.getByText('string')
+      await rendered.findByText('stringCached')
+      await rendered.findByText('string')
 
       queryClientInner.clear()
       queryClientOuter.clear()
@@ -121,8 +119,7 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      await sleep(10)
-      rendered.getByText('string')
+      await rendered.findByText('string')
 
       const intermediateCache = new QueryCache()
       const intermediateClient = createQueryClient({
@@ -178,8 +175,7 @@ describe('React hydration', () => {
         </QueryClientProvider>
       )
 
-      await sleep(10)
-      rendered.getByText('string')
+      await rendered.findByText('string')
 
       const newClientQueryCache = new QueryCache()
       const newClientQueryClient = createQueryClient({

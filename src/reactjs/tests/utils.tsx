@@ -63,7 +63,7 @@ export function sleep(timeout: number): Promise<void> {
 }
 
 export function setActTimeout(fn: () => void, ms?: number) {
-  setTimeout(() => {
+  return setTimeout(() => {
     act(() => {
       fn()
     })
@@ -89,7 +89,7 @@ export const Blink: React.FC<{ duration: number }> = ({
 
   React.useEffect(() => {
     setShouldShow(true)
-    const timeout = setTimeout(() => setShouldShow(false), duration)
+    const timeout = setActTimeout(() => setShouldShow(false), duration)
     return () => {
       clearTimeout(timeout)
     }

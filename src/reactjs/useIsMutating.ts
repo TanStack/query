@@ -1,4 +1,5 @@
 import React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
 import { notifyManager } from '../core/notifyManager'
 import { MutationKey } from '../core/types'
@@ -22,39 +23,18 @@ export function useIsMutating(
   arg2?: Omit<MutationFilters, 'mutationKey'> | Options,
   arg3?: Options
 ): number {
-  const mountedRef = React.useRef(false)
   const [filters, options = {}] = parseMutationFilterArgs(arg1, arg2, arg3)
 
   const queryClient = useQueryClient({ context: options.context })
+  const queryCache = queryClient.getQueryCache()
 
-  const [isMutating, setIsMutating] = React.useState(
-    queryClient.isMutating(filters)
+  return useSyncExternalStore(
+    React.useCallback(
+      onStoreChange =>
+        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [queryCache]
+    ),
+    () => queryClient.isMutating(filters),
+    () => queryClient.isMutating(filters)
   )
-
-  const filtersRef = React.useRef(filters)
-  filtersRef.current = filters
-  const isMutatingRef = React.useRef(isMutating)
-  isMutatingRef.current = isMutating
-
-  React.useEffect(() => {
-    mountedRef.current = true
-
-    const unsubscribe = queryClient.getMutationCache().subscribe(
-      notifyManager.batchCalls(() => {
-        if (mountedRef.current) {
-          const newIsMutating = queryClient.isMutating(filtersRef.current)
-          if (isMutatingRef.current !== newIsMutating) {
-            setIsMutating(newIsMutating)
-          }
-        }
-      })
-    )
-
-    return () => {
-      mountedRef.current = false
-      unsubscribe()
-    }
-  }, [queryClient])
-
-  return isMutating
 }

@@ -570,14 +570,16 @@ export class QueryObserver<
       | QueryObserverResult<TData, TError>
       | undefined
 
-    this.currentResult = this.createResult(this.currentQuery, this.options)
+    const nextResult = this.createResult(this.currentQuery, this.options)
     this.currentResultState = this.currentQuery.state
     this.currentResultOptions = this.options
 
-    // Only notify if something has changed
-    if (shallowEqualObjects(this.currentResult, prevResult)) {
+    // Only notify and update result if something has changed
+    if (shallowEqualObjects(nextResult, prevResult)) {
       return
     }
+
+    this.currentResult = nextResult
 
     // Determine which callbacks to trigger
     const defaultNotifyOptions: NotifyOptions = { cache: true }

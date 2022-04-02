@@ -1,8 +1,7 @@
 import React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 
-import { QueryKey } from '../core'
-import { notifyManager } from '../core/notifyManager'
-import { QueryObserver } from '../core/queryObserver'
+import { QueryKey, notifyManager, QueryObserver } from '../core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
@@ -25,9 +24,6 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver
 ) {
-  const mountedRef = React.useRef(false)
-  const [, forceUpdate] = React.useState(0)
-
   const queryClient = useQueryClient({ context: options.context })
   const isHydrating = useIsHydrating()
   const errorResetBoundary = useQueryErrorResetBoundary()
@@ -80,34 +76,23 @@ export function useBaseQuery<
       )
   )
 
-  let result = observer.getOptimisticResult(defaultedOptions)
+  const result = observer.getOptimisticResult(defaultedOptions)
+
+  useSyncExternalStore(
+    React.useCallback(
+      onStoreChange =>
+        isHydrating
+          ? () => undefined
+          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [observer, isHydrating]
+    ),
+    () => observer.getCurrentResult(),
+    () => observer.getCurrentResult()
+  )
 
   React.useEffect(() => {
-    mountedRef.current = true
-
-    let unsubscribe: (() => void) | undefined
-
-    if (!isHydrating) {
-      errorResetBoundary.clearReset()
-
-      unsubscribe = observer.subscribe(
-        notifyManager.batchCalls(() => {
-          if (mountedRef.current) {
-            forceUpdate(x => x + 1)
-          }
-        })
-      )
-
-      // Update result to make sure we did not miss any query updates
-      // between creating the observer and subscribing to it.
-      observer.updateResult()
-    }
-
-    return () => {
-      mountedRef.current = false
-      unsubscribe?.()
-    }
-  }, [isHydrating, errorResetBoundary, observer])
+    errorResetBoundary.clearReset()
+  }, [errorResetBoundary])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
@@ -149,9 +134,7 @@ export function useBaseQuery<
   }
 
   // Handle result property usage tracking
-  if (!defaultedOptions.notifyOnChangeProps) {
-    result = observer.trackResult(result)
-  }
-
-  return result
+  return !defaultedOptions.notifyOnChangeProps
+    ? observer.trackResult(result)
+    : result
 }

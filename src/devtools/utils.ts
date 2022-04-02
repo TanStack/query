@@ -25,14 +25,24 @@ type StyledComponent<T> = T extends 'button'
   ? React.HTMLAttributes<HTMLElementTagNameMap[T]>
   : never
 
-export function getQueryStatusColor(query: Query, theme: Theme) {
-  return query.state.fetchStatus === 'fetching'
+export function getQueryStatusColor({
+  queryState,
+  observerCount,
+  isStale,
+  theme,
+}: {
+  queryState: Query['state']
+  observerCount: number
+  isStale: boolean
+  theme: Theme
+}) {
+  return queryState.fetchStatus === 'fetching'
     ? theme.active
-    : !query.getObserversCount()
+    : !observerCount
     ? theme.gray
-    : query.state.fetchStatus === 'paused'
+    : queryState.fetchStatus === 'paused'
     ? theme.paused
-    : query.isStale()
+    : isStale
     ? theme.warning
     : theme.success
 }
@@ -105,29 +115,6 @@ export function useIsMounted() {
 }
 
 /**
- * This hook is a safe useState version which schedules state updates in microtasks
- * to prevent updating a component state while React is rendering different components
- * or when the component is not mounted anymore.
- */
-export function useSafeState<T>(initialState: T): [T, (value: T) => void] {
-  const isMounted = useIsMounted()
-  const [state, setState] = React.useState(initialState)
-
-  const safeSetState = React.useCallback(
-    (value: T) => {
-      scheduleMicrotask(() => {
-        if (isMounted()) {
-          setState(value)
-        }
-      })
-    },
-    [isMounted]
-  )
-
-  return [state, safeSetState]
-}
-
-/**
  * Displays a string regardless the type of the data
  * @param {unknown} value Value to be stringified
  */
@@ -136,18 +123,4 @@ export const displayValue = (value: unknown) => {
   const newValue = typeof value === 'bigint' ? `${value.toString()}n` : value
 
   return JSON.stringify(newValue, name)
-}
-
-/**
- * Schedules a microtask.
- * This can be useful to schedule state updates after rendering.
- */
-function scheduleMicrotask(callback: () => void) {
-  Promise.resolve()
-    .then(callback)
-    .catch(error =>
-      setTimeout(() => {
-        throw error
-      })
-    )
 }
