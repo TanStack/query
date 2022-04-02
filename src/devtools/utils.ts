@@ -121,5 +121,6 @@ export function useIsMounted() {
 export const displayValue = (value: unknown) => {
   const name = Object.getOwnPropertyNames(Object(value))
   const newValue = typeof value === 'bigint' ? `${value.toString()}n` : value
+
   return JSON.stringify(newValue, name)
 }
