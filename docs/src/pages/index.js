@@ -72,12 +72,12 @@ const Home = ({ sponsors }) => {
                   </div>
                   <div className="mt-5">
                     <p>
-                      Still using v2? No problem!{' '}
+                      Want to skip the docs?{' '}
                       <a
-                        href="https://react-query-v2.tanstack.com/docs/overview"
+                        href="https://ui.dev/checkout/react-query?from=tanstack"
                         className="text-blue-600 font-semibold transition-colors duration-150 ease-out"
                       >
-                        Find the v2 docs here.
+                        Take the offical course
                       </a>
                     </p>
                   </div>
@@ -137,6 +137,55 @@ const Home = ({ sponsors }) => {
               </div>
             </div>
           </div>
+          <div className="bg-gray-900 text-white">
+            <div className="py-32">
+              <div className="mx-auto container text-center">
+                <div className="text-xl">THE OFFICIAL</div>
+                <div className="text-3xl md:text-5xl font-bold">
+                  React Query Course
+                </div>
+                <div className="text-xl italic">
+                  Created by <strong>Tanner Linsley</strong> and{' '}
+                  <strong>ui.dev</strong>
+                </div>
+
+                <p className="mt-4 text-xl max-w-3xl mx-auto leading-7 text-gray-300">
+                  "This is the fastest way to learn how to build
+                  enterprise-level applications with React Query and support my
+                  open source work. Win. Win."
+                  <br />
+                  -Tanner Linsley
+                </p>
+                <div className="grid pt-8 text-white max-w-screen-lg mx-auto text-lg">
+                  <span className="mb-2">
+                    <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                      <Check />
+                    </span>
+                    Save time by learning with a guided approach
+                  </span>
+                  <span className="mb-2">
+                    <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                      <Check />
+                    </span>
+                    Get hands-on experience building a real world application
+                  </span>
+                  <span className="mb-2">
+                    <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
+                      <Check />
+                    </span>
+                    Never worry about data fetching again
+                  </span>
+                </div>
+                <a
+                  href="https://ui.dev/checkout/react-query?from=tanstack"
+                  target="_blank"
+                  className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
+                >
+                  ENROLL NOW
+                </a>
+              </div>
+            </div>
+          </div>
           <div className="py-6">
             <div className="uppercase tracking-wider text-sm font-semibold text-center text-gray-400 mb-3">
               Trusted in Production by
@@ -145,52 +194,7 @@ const Home = ({ sponsors }) => {
             <ClientsMarquee />
           </div>
         </div>
-        <div className="bg-gray-900 text-white">
-          <div className="py-32">
-            <div className="mx-auto container text-center">
-              <div className="text-xl">ANNOUNCING</div>
-              <div className="text-3xl md:text-5xl font-bold">
-                React Query Essentials
-              </div>
-              <div className="text-xl italic">
-                The <strong>official</strong> React Query course by{' '}
-                <strong>Tanner Linsley</strong>
-              </div>
-              <a
-                href="https://learn.tanstack.com"
-                className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
-              >
-                ENROLL NOW
-              </a>
-              <div className="grid pt-8 text-white max-w-screen-lg mx-auto text-lg">
-                <span className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  50+ Lessons
-                </span>
-                <span className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  3+ Hours of Live-Code Training
-                </span>
-                <span className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Lesson Source Code
-                </span>
-                <span className="mb-2">
-                  <span className="bg-coral text-gray-800 w-4 h-4 mr-2 rounded-full inline-flex items-center justify-center">
-                    <Check />
-                  </span>
-                  Full API coverage
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+
         <div className="relative text-lg border-t border-gray-200 bg-gray-100 overflow-hidden">
           <div className="lg:block lg:absolute lg:inset-0">
             <svg
@@ -231,7 +235,10 @@ const Home = ({ sponsors }) => {
             <h3 className="text-center text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl sm:leading-10 lg:leading-none mt-8">
               Sponsors
             </h3>
-            <div className="py-4 flex flex-wrap mx-auto" style={{ maxWidth: '95%' }}>
+            <div
+              className="py-4 flex flex-wrap mx-auto"
+              style={{ maxWidth: '95%' }}
+            >
               <ParentSize>
                 {({ width }) => {
                   return (
@@ -368,19 +375,16 @@ const Home = ({ sponsors }) => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 md:mt-0">
               <div className="inline-flex rounded-md shadow">
-                <Link href="/overview">
-                  <a className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
-                    Okay, let's get started!
+                  <a href="https://ui.dev/checkout/react-query?from=tanstack" className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                    Take the course
                   </a>
-                </Link>
               </div>
               <div className="ml-3 inline-flex rounded-md shadow">
-                <a
-                  href={siteConfig.repoUrl}
-                  className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-coral bg-white hover:text-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
-                >
-                  Take me to the GitHub repo.
-                </a>
+                <Link href="/overview">
+                  <a className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-coral bg-white hover:text-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                    Read the docs
+                  </a>
+                </Link>
               </div>
             </div>
           </div>
