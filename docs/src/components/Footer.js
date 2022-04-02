@@ -1,6 +1,8 @@
 import * as React from 'react'
 import Link from 'next/link'
 import CarbonAds from './CarbonAds'
+import BytesForm from './BytesForm'
+
 export const Footer = props => {
   return (
     <div className="bg-gray-50 border-t border-gray-200">
@@ -91,56 +93,16 @@ export const Footer = props => {
           </div>
           <div className="mt-8 xl:mt-0">
             <h4 className="text-sm leading-5 font-semibold tracking-wider text-gray-400 uppercase">
-              Subscribe to our newsletter
+              Subscribe to Bytes
             </h4>
             <p className="mt-4 text-gray-500 text-base leading-6 mb-4">
-              The latest TanStack news, articles, and resources, sent to your
-              inbox.
+              The{' '}
+              <a href="https://bytes.dev/?r=tanstack">
+                best JavaScript newsletter!
+              </a>{' '}
+              Delivered every Monday to over 76,000 devs.
             </p>
-            <form
-              action="https://app.convertkit.com/forms/1513638/subscriptions"
-              className=""
-              method="post"
-              data-sv-form="1513638"
-              data-uid="4fc050bc50"
-              data-format="inline"
-              data-version="5"
-              data-options='{"settings":{"after_subscribe":{"action":"message","success_message":"Success! Please, check your email to confirm your subscription.","redirect_url":""},"modal":{"trigger":null,"scroll_percentage":null,"timer":null,"devices":null,"show_once_every":null},"recaptcha":{"enabled":false},"slide_in":{"display_in":null,"trigger":null,"scroll_percentage":null,"timer":null,"devices":null,"show_once_every":null}}}'
-            >
-              <ul
-                className="formkit-alert formkit-alert-error"
-                data-element="errors"
-                data-group="alert"
-              />
-
-              <div
-                data-element="fields"
-                className="seva-fields grid grid-cols-3 gap-2 max-w-lg"
-              >
-                <input
-                  className="formkit-input border rounded p-2 mb-4 w-full col-span-2"
-                  name="email_address"
-                  placeholder="Your email address"
-                  type="text"
-                  required=""
-                />
-                <button
-                  data-element="submit"
-                  className="formkit-submit mb-4 border rounded bg-coral border-none text-white"
-                >
-                  <span>Subscribe</span>
-                </button>
-              </div>
-              <div
-                data-element="guarantee"
-                className="formkit-guarantee text-gray-400 text-xs mt-4"
-              >
-                <p>I won't send you spam.</p>
-                <p>
-                  Unsubscribe at <em>any</em> time.
-                </p>
-              </div>
-            </form>
+            <BytesForm />
           </div>
         </div>
         <div className="mt-8 border-t border-gray-200 pt-8 md:flex md:items-center md:justify-between">

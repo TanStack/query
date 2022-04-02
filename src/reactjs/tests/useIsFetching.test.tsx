@@ -100,8 +100,11 @@ describe('useIsFetching', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isFetchings).toEqual([0, 0, 1, 2, 1, 0]))
-    expect(mockLogger.error).not.toHaveBeenCalled()
+    await waitFor(() => expect(isFetchings).toEqual([0, 1, 1, 2, 1, 0]))
+    expect(consoleMock).not.toHaveBeenCalled()
+    expect(consoleMock.mock.calls[0]?.[0] ?? '').not.toMatch('setState')
+
+    consoleMock.mockRestore()
   })
 
   it('should be able to filter', async () => {
@@ -155,5 +158,30 @@ describe('useIsFetching', () => {
 
     await sleep(100)
     expect(isFetchings).toEqual([0, 0, 1, 0])
+  })
+
+  it('should show the correct fetching state when mounted after a query', async () => {
+    const queryClient = new QueryClient()
+    const key = queryKey()
+
+    function Page() {
+      useQuery(key, async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      const isFetching = useIsFetching()
+
+      return (
+        <div>
+          <div>isFetching: {isFetching}</div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('isFetching: 1')
+    await rendered.findByText('isFetching: 0')
   })
 })
