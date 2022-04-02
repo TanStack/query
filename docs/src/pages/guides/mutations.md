@@ -195,7 +195,7 @@ useMutation(addTodo, {
   mutate(todo, {
     onSuccess: (data, error, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),
-      // regardless which mutation resolves first 
+      // regardless which mutation resolves first
     },
   })
 })
@@ -278,6 +278,49 @@ hydrate(queryClient, state)
 // Resume the paused mutations:
 queryClient.resumePausedMutations()
 ```
+
+### Persisting Offline mutations
+
+If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
+
+This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggeres the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
+
+```js
+const persister = createWebStoragePersister({
+  storage: window.localStorage,
+})
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+    },
+  },
+})
+
+// we need a default mutation function so that paused mutations can resume after a page reload
+queryClient.setMutationDefaults(['todos'], {
+  mutationFn: ({ id, data }) => {
+    return api.upateTodo(id, data)
+  },
+})
+
+export default function App() {
+  return (
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister }}
+      onSuccess={() => {
+        // resume mutations after initial restore from localStorage was successful
+        queryClient.resumePausedMutations()
+      }}
+    >
+      <RestOfTheApp />
+    </PersistQueryClientProvider>
+  )
+}
+```
+
+We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
 
 ## Further reading
 
