@@ -1,4 +1,5 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { fireEvent, waitFor, screen } from '@testing-library/react'
+import '@testing-library/jest-dom'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -104,12 +105,9 @@ describe('useIsFetching', () => {
   })
 
   it('should be able to filter', async () => {
-    const queryCache = new QueryCache()
-    const queryClient = createQueryClient({ queryCache })
+    const queryClient = createQueryClient()
     const key1 = queryKey()
     const key2 = queryKey()
-
-    const isFetchings: number[] = []
 
     function One() {
       useQuery(key1, async () => {
@@ -130,30 +128,30 @@ describe('useIsFetching', () => {
     function Page() {
       const [started, setStarted] = React.useState(false)
       const isFetching = useIsFetching(key1)
-      isFetchings.push(isFetching)
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setStarted(true)
-        }, 5)
-      }, [])
-
-      if (!started) {
-        return null
-      }
 
       return (
         <div>
-          <One />
-          <Two />
+          <button onClick={() => setStarted(true)}>setStarted</button>
+          <div>isFetching: {isFetching}</div>
+          {started ? (
+            <>
+              <One />
+              <Two />
+            </>
+          ) : null}
         </div>
       )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const { findByText, getByRole } = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
-    expect(isFetchings).toEqual([0, 0, 1, 0])
+    await findByText('isFetching: 0')
+    fireEvent.click(getByRole('button', { name: /setStarted/i }))
+    await findByText('isFetching: 1')
+    await waitFor(() => {
+      expect(screen.queryByText('isFetching: 2')).not.toBeInTheDocument()
+    })
+    await findByText('isFetching: 0')
   })
 
   describe('with custom context', () => {
