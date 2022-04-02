@@ -4,7 +4,6 @@ import { useSyncExternalStore } from 'use-sync-external-store/shim'
 import { ContextOptions } from './types'
 import { QueryKey, notifyManager } from '../core'
 import { parseFilterArgs, QueryFilters } from '../core/utils'
-import { QueryClient } from '../core'
 import { useQueryClient } from './QueryClientProvider'
 
 interface Options extends ContextOptions {}
