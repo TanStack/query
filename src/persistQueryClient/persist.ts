@@ -119,15 +119,28 @@ export async function persistQueryClientSave({
 }
 
 /**
- * Subscribe to QueryCache updates (for persisting)
+ * Subscribe to QueryCache and MutationCache updates (for persisting)
  * @returns an unsubscribe function (to discontinue monitoring)
  */
 export function persistQueryClientSubscribe(
   props: PersistedQueryClientSaveOptions
 ) {
-  return props.queryClient.getQueryCache().subscribe(() => {
-    persistQueryClientSave(props)
-  })
+  const unsubscribeQueryCache = props.queryClient
+    .getQueryCache()
+    .subscribe(() => {
+      persistQueryClientSave(props)
+    })
+
+  const unusbscribeMutationCache = props.queryClient
+    .getMutationCache()
+    .subscribe(() => {
+      persistQueryClientSave(props)
+    })
+
+  return () => {
+    unsubscribeQueryCache()
+    unusbscribeMutationCache()
+  }
 }
 
 /**
