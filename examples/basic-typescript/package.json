@@ -7,11 +7,11 @@
     "eject": "rescripts eject"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.26.1",
     "broadcast-channel": "^3.4.1",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-query": "^3.13.3",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-query": "^4.0.0-beta.1",
     "react-scripts": "3.0.1",
     "stop-runaway-react-effects": "^1.2.0",
     "styled-components": "^4.3.2",

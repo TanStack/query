@@ -1,5 +1,4 @@
-import { fireEvent, waitFor, screen } from '@testing-library/react'
-import '@testing-library/jest-dom'
+import { fireEvent, waitFor } from '@testing-library/react'
 import React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -109,6 +108,8 @@ describe('useIsFetching', () => {
     const key1 = queryKey()
     const key2 = queryKey()
 
+    const isFetchings: number[] = []
+
     function One() {
       useQuery(key1, async () => {
         await sleep(10)
@@ -129,6 +130,8 @@ describe('useIsFetching', () => {
       const [started, setStarted] = React.useState(false)
       const isFetching = useIsFetching(key1)
 
+      isFetchings.push(isFetching)
+
       return (
         <div>
           <button onClick={() => setStarted(true)}>setStarted</button>
@@ -148,10 +151,9 @@ describe('useIsFetching', () => {
     await findByText('isFetching: 0')
     fireEvent.click(getByRole('button', { name: /setStarted/i }))
     await findByText('isFetching: 1')
-    await waitFor(() => {
-      expect(screen.queryByText('isFetching: 2')).not.toBeInTheDocument()
-    })
     await findByText('isFetching: 0')
+    // at no point should we have isFetching: 2
+    expect(isFetchings).toEqual(expect.not.arrayContaining([2]))
   })
 
   describe('with custom context', () => {

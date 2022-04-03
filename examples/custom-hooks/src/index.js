@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider, useQueryClient } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
@@ -102,4 +102,4 @@ function Post({ postId, setPostId }) {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.createRoot(rootElement).render(<App />);

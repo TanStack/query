@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 
 import {
   QueryClient,
@@ -254,7 +254,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const saveMutation = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries(['todos']);
+      queryClient.invalidateQueries(["todos"]);
       queryClient.setQueryData(["todo", { id: editingIndex }], data);
     },
   });
@@ -340,7 +340,7 @@ function AddTodo() {
 
   const addMutation = useMutation(postTodo, {
     onSuccess: () => {
-      queryClient.invalidateQueries(['todos']);
+      queryClient.invalidateQueries(["todos"]);
     },
   });
 
@@ -440,4 +440,4 @@ function patchTodo(todo) {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<Root />, rootElement);
+ReactDOM.createRoot(rootElement).render(<Root />);

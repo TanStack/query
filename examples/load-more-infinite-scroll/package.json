@@ -10,7 +10,7 @@
     "react": "16.13.0",
     "react-dom": "16.13.0",
     "react-intersection-observer": "^8.33.1",
-    "react-query": "^3.5.0"
+    "react-query": "^4.0.0-beta.1"
   },
   "scripts": {
     "dev": "next",
