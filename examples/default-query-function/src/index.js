@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import axios from "axios";
 import {
   useQuery,
@@ -56,7 +56,7 @@ function Posts({ setPostId }) {
   const queryClient = useQueryClient();
 
   // All you have to do now is pass a key!
-  const { status, data, error, isFetching } = useQuery(['/posts']);
+  const { status, data, error, isFetching } = useQuery(["/posts"]);
 
   return (
     <div>
@@ -129,4 +129,4 @@ function Post({ postId, setPostId }) {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.createRoot(rootElement).render(<App />);

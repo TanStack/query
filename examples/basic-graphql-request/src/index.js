@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import ReactDOM from "react-dom";
+import ReactDOM from "react-dom/client";
 import {
   useQuery,
   useQueryClient,
@@ -40,7 +40,7 @@ function App() {
 }
 
 function usePosts() {
-  return useQuery(['posts'], async () => {
+  return useQuery(["posts"], async () => {
     const {
       posts: { data },
     } = await request(
@@ -157,4 +157,4 @@ function Post({ postId, setPostId }) {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.render(<App />, rootElement);
+ReactDOM.createRoot(rootElement).render(<App />);
