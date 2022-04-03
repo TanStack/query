@@ -3,10 +3,8 @@ import * as React from "react";
 import ReactDOM from "react-dom/client";
 import axios from "axios";
 import { useQuery, useQueryClient, QueryClient } from "react-query";
-import {
-  PersistQueryClientProvider,
-  createWebStoragePersister,
-} from "react-query/persistQueryClient";
+import { PersistQueryClientProvider } from "react-query/persistQueryClient";
+import { createWebStoragePersister } from "react-query/createWebStoragePersister";
 import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient({
