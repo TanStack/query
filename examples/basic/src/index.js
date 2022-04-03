@@ -9,25 +9,8 @@ import {
   QueryClientProvider,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
-import { persistQueryClient } from "react-query/persistQueryClient";
-import { createWebStoragePersister } from "react-query/createWebStoragePersister";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      cacheTime: 1000 * 60 * 60 * 24, // 24 hours
-    },
-  },
-});
-
-const localStoragePersister = createWebStoragePersister({
-  storage: window.localStorage,
-});
-
-persistQueryClient({
-  queryClient,
-  persister: localStoragePersister,
-});
+const queryClient = new QueryClient();
 
 function App() {
   const [postId, setPostId] = React.useState(-1);
