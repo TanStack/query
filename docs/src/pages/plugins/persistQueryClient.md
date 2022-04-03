@@ -59,8 +59,8 @@ the persister `removeClient()` is called and the cache is immediately discarded.
 
 ### `persistQueryClientSave`
 
-- Your query/mutation are [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided. 
-- `createWebStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes.  Review their documentation to see how to customize their throttle timing. 
+- Your query/mutation are [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided.
+- `createWebStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes.  Review their documentation to see how to customize their throttle timing.
 
 You can use this to explicitly persist the cache at the moment(s) you choose.
 
@@ -148,13 +148,13 @@ interface PersistQueryClientOptions {
   /** The options passed to the hydrate function
    * Not used on `persistQueryClientSave` or `persistQueryClientSubscribe` */
   hydrateOptions?: HydrateOptions
-  /** The options passed to the dehydrate function 
+  /** The options passed to the dehydrate function
   * Not used on `persistQueryClientRestore` */
   dehydrateOptions?: DehydrateOptions
 }
 ```
 
-There are actually three interfaces available: 
+There are actually three interfaces available:
 - `PersistedQueryClientSaveOptions` is used for `persistQueryClientSave` and `persistQueryClientSubscribe` (doesn't use `hydrateOptions`).
 - `PersistedQueryClientRestoreOptions` is used for `persistQueryClientRestore` (doesn't use `dehydrateOptions`).
 - `PersistQueryClientOptions` is used for `persistQueryClient`
@@ -175,7 +175,7 @@ persistQueryClient({
 })
 
 // 🚨 happens at the same time as restoring
-ReactDOM.render(<App />, rootElement)
+ReactDOM.createRoot(rootElement).render(<App />)
 ```
 
 ### PeristQueryClientProvider
@@ -199,14 +199,13 @@ const persister = createWebStoragePersister({
   storage: window.localStorage,
 })
 
-ReactDOM.render(
+ReactDOM.createRoot(rootElement).render(
   <PersistQueryClientProvider
     client={queryClient}
     persistOptions={{ persister }}
   >
     <App />
-  </PersistQueryClientProvider>,
-  rootElement
+  </PersistQueryClientProvider>
 )
 ```
 
