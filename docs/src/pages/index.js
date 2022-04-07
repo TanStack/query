@@ -74,7 +74,7 @@ const Home = ({ sponsors }) => {
                     <p>
                       Want to skip the docs?{' '}
                       <a
-                        href="https://ui.dev/checkout/react-query?from=tanstack"
+                        href="https://ui.dev/react-query?from=tanstack"
                         className="text-blue-600 font-semibold transition-colors duration-150 ease-out"
                       >
                         Take the offical course
@@ -177,7 +177,7 @@ const Home = ({ sponsors }) => {
                   </span>
                 </div>
                 <a
-                  href="https://ui.dev/checkout/react-query?from=tanstack"
+                  href="https://ui.dev/react-query?from=tanstack"
                   target="_blank"
                   className="inline-block mt-8 rounded shadow-lg bg-coral text-white font-bold text-xl px-4 py-3"
                 >
@@ -375,7 +375,7 @@ const Home = ({ sponsors }) => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 md:mt-0">
               <div className="inline-flex rounded-md shadow">
-                  <a href="https://ui.dev/checkout/react-query?from=tanstack" className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
+                  <a href="https://ui.dev/react-query?from=tanstack" className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
                     Take the course
                   </a>
               </div>
