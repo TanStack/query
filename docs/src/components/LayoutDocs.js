@@ -119,7 +119,7 @@ export const LayoutDocs = props => {
                         <p className='text-sm'>
                           Fast track your learning and {' '}
                           <a
-                            href="https://ui.dev/checkout/react-query?from=tanstack"
+                            href="https://ui.dev/react-query?from=tanstack"
                             className="text-blue-600 font-semibold transition-colors duration-150 ease-out"
                           >
                             take the offical course ↗️
