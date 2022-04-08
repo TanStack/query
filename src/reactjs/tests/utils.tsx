@@ -81,7 +81,7 @@ export const expectType = <T,>(_: T): void => undefined
 export const expectTypeNotAny = <T,>(_: 0 extends 1 & T ? never : T): void =>
   undefined
 
-export const Blink: React.FC<{ duration: number }> = ({
+export const Blink: React.FC<React.PropsWithChildren<{ duration: number }>> = ({
   duration,
   children,
 }) => {

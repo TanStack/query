@@ -38,9 +38,9 @@ export interface QueryErrorResetBoundaryProps {
     | React.ReactNode
 }
 
-export const QueryErrorResetBoundary: React.FC<QueryErrorResetBoundaryProps> = ({
-  children,
-}) => {
+export const QueryErrorResetBoundary: React.FC<
+  React.PropsWithChildren<QueryErrorResetBoundaryProps>
+> = ({ children }) => {
   const value = React.useMemo(() => createValue(), [])
   return (
     <QueryErrorResetBoundaryContext.Provider value={value}>

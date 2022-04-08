@@ -30,7 +30,7 @@ export interface HydrateProps {
   options?: HydrateOptions
 }
 
-export const Hydrate: React.FC<HydrateProps> = ({
+export const Hydrate: React.FC<React.PropsWithChildren<HydrateProps>> = ({
   children,
   options,
   state,
