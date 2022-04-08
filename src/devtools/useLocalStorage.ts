@@ -31,7 +31,7 @@ export default function useLocalStorage<T>(
   }, [defaultValue, key])
 
   const setter = React.useCallback(
-    updater => {
+    (updater: any) => {
       setValue(old => {
         let newVal = updater
 

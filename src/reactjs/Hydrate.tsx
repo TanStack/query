@@ -28,10 +28,10 @@ export function useHydrate(state: unknown, options: HydrateOptions = {}) {
 export interface HydrateProps {
   state?: unknown
   options?: HydrateOptions
-  children: React.ReactElement
+  children: React.ReactNode
 }
 
 export const Hydrate = ({ children, options, state }: HydrateProps) => {
   useHydrate(state, options)
-  return children
+  return children as React.ReactElement
 }
