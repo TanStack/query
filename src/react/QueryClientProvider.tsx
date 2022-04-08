@@ -46,7 +46,7 @@ export interface QueryClientProviderProps {
   contextSharing?: boolean
 }
 
-export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
+export const QueryClientProvider: React.FC<React.PropsWithChildren<QueryClientProviderProps>> = ({
   client,
   contextSharing = false,
   children,
