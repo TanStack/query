@@ -194,7 +194,7 @@ describe('QueryErrorResetBoundary', () => {
     const key = queryKey()
 
     function Page() {
-      const { data, refetch, status, fetchStatus } = useQuery(
+      const { data, refetch, status, fetchStatus } = useQuery<string>(
         key,
         async () => {
           throw new Error('Error')
@@ -431,7 +431,7 @@ describe('QueryErrorResetBoundary', () => {
     let fetchCount = 0
 
     function Page() {
-      const { data } = useQuery(
+      const { data } = useQuery<string>(
         key,
         async () => {
           fetchCount++

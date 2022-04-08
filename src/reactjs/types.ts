@@ -9,6 +9,7 @@ import {
   MutateFunction,
 } from '../core/types'
 import type { QueryClient } from '../core/queryClient'
+import * as React from 'react'
 
 export interface ContextOptions {
   /**

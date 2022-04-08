@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM, { Root } from 'react-dom'
+import ReactDOM from 'react-dom'
 import ReactDOMTestUtils from 'react-dom/test-utils'
 import ReactDOMServer from 'react-dom/server'
 // eslint-disable-next-line import/no-unresolved -- types only for module augmentation
@@ -18,8 +18,9 @@ const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
   if (isReact18()) {
-    let root: Root
+    let root: any
     ReactDOMTestUtils.act(() => {
+      // @ts-expect-error
       root = ReactDOM.hydrateRoot(container, element)
     })
     return () => {

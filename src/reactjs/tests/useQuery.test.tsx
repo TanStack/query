@@ -153,7 +153,7 @@ describe('useQuery', () => {
       if (state.isLoadingError) {
         expectType<undefined>(state.data)
         expectType<Error>(state.error)
-        return <span>{state.error}</span>
+        return <span>{state.error.message}</span>
       }
 
       expectType<string>(state.data)
@@ -2772,19 +2772,19 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<undefined, Error>(
         key,
-        () => Promise.reject('Remote Error'),
+        () => Promise.reject(new Error('Remote Error')),
         {
           retry: false,
-          useErrorBoundary: err => err !== 'Local Error',
+          useErrorBoundary: err => err.message !== 'Local Error',
         }
       )
 
       return (
         <div>
           <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h2>{error?.message ?? ''}</h2>
         </div>
       )
     }
@@ -2795,7 +2795,7 @@ describe('useQuery', () => {
         fallbackRender={({ error }) => (
           <div>
             <div>error boundary</div>
-            <div>{error}</div>
+            <div>{error.message}</div>
           </div>
         )}
       >
@@ -2812,7 +2812,7 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const result = useQuery(
+      const result = useQuery<number, string>(
         key,
         async () => {
           count++
@@ -2860,7 +2860,7 @@ describe('useQuery', () => {
     let count = 0
 
     function Page() {
-      const result = useQuery(
+      const result = useQuery<number, string>(
         key,
         async () => {
           count++

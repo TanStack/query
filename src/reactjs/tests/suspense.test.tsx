@@ -901,7 +901,7 @@ describe("useQuery's in Suspense mode", () => {
       const queryKeys = '1'
       const [enabled, setEnabled] = React.useState(false)
 
-      const result = useQuery(
+      const result = useQuery<string>(
         [queryKeys],
         async () => {
           await sleep(10)
