@@ -37,7 +37,7 @@ export const Nav = () => (
             </div>
             <div>
               <a
-                href="https://learn.tanstack.com/p/react-query-essentials"
+                href="https://ui.dev/react-query?from=tanstack"
                 target="_blank"
                 className="leading-6 font-medium"
               >
