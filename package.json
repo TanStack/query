@@ -131,7 +131,7 @@
     "react-17": "npm:react@^17.0.2",
     "react-dom": "^18.0.0",
     "react-dom-17": "npm:react-dom@^17.0.2",
-    "react-error-boundary": "^2.2.2",
+    "react-error-boundary": "^3.1.4",
     "replace": "^1.2.0",
     "rimraf": "^3.0.2",
     "rollup": "^2.68.0",
