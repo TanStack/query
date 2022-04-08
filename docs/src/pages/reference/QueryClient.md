@@ -49,7 +49,7 @@ Its available methods are:
 - [`queryClient.getQueryCache`](#queryclientgetquerycache)
 - [`queryClient.getMutationCache`](#queryclientgetmutationcache)
 - [`queryClient.clear`](#queryclientclear)
-- - [`queryClient.resumePausedMutations`](#queryclientresumepausedmutations)
+- [`queryClient.resumePausedMutations`](#queryclientresumepausedmutations)
 
 **Options**
 
