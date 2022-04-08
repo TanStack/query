@@ -58,8 +58,8 @@ describe('useQueries', () => {
       return (
         <div>
           <div>
-            data1: {String(result[0].data) || 'null'}, data2:{' '}
-            {String(result[1].data) || 'null'}
+            data1: {String(result[0].data ?? 'null')}, data2:{' '}
+            {String(result[1].data ?? 'null')}
           </div>
         </div>
       )
@@ -109,8 +109,8 @@ describe('useQueries', () => {
       return (
         <div>
           <div>
-            data1: {String(result[0].data) || 'null'}, data2:{' '}
-            {String(result[1].data) || 'null'}
+            data1: {String(result[0].data ?? 'null')}, data2:{' '}
+            {String(result[1].data ?? 'null')}
           </div>
           <div>isFetching: {String(isFetching)}</div>
           <button onClick={() => setCount(prev => prev + 1)}>inc</button>
@@ -206,8 +206,8 @@ describe('useQueries', () => {
       return (
         <div>
           <div>
-            data1: {String(result[0]?.data) || 'null'}, data2:{' '}
-            {String(result[1]?.data) || 'null'}
+            data1: {String(result[0]?.data ?? 'null')}, data2:{' '}
+            {String(result[1]?.data ?? 'null')}
           </div>
           <div>isFetching: {String(isFetching)}</div>
           <button onClick={() => setSeries2(3)}>setSeries2</button>
@@ -261,8 +261,8 @@ describe('useQueries', () => {
       return (
         <div>
           <div>
-            data1: {String(result[0]?.data) || 'null'}, data2:{' '}
-            {String(result[1]?.data) || 'null'}
+            data1: {String(result[0]?.data ?? 'null')}, data2:{' '}
+            {String(result[1]?.data ?? 'null')}
           </div>
           <div>isFetching: {String(isFetching)}</div>
           <button onClick={() => setEnableId1(false)}>set1Disabled</button>
