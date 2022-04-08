@@ -46,11 +46,9 @@ export interface QueryClientProviderProps {
   contextSharing?: boolean
 }
 
-export const QueryClientProvider: React.FC<QueryClientProviderProps> = ({
-  client,
-  contextSharing = false,
-  children,
-}) => {
+export const QueryClientProvider: React.FC<
+  React.PropsWithChildren<QueryClientProviderProps>
+> = ({ client, contextSharing = false, children }) => {
   React.useEffect(() => {
     client.mount()
     return () => {
