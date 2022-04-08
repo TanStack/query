@@ -128,14 +128,19 @@ export const LayoutDocs = props => {
                       </div>
                       <div className="mt-12 relative">
                         <h4 className="font-semibold uppercase text-sm mb-2 mt-2 text-gray-500">
-                          Subscribe to Bytes
+                          Subscribe to{' '}
+                          <a
+                            className="text-blue-600"
+                            href="https://bytes.dev?r=tanstack"
+                          >
+                            Bytes
+                          </a>
                         </h4>
                         <p className="mt-4  text-sm leading-6 mb-4">
-                          The best JavaScript newsletter! Delivered every
-                          Monday to over 76,000 devs.
+                          Your weekly dose of JavaScript news. Delivered every
+                          Monday to over 80,000 devs, for free.
                         </p>
                         <BytesForm />
-                        
                       </div>
                     </div>
                   </div>
