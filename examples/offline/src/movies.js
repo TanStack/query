@@ -32,6 +32,9 @@ export const useMovie = (movieId) => {
       await queryClient.cancelQueries(movieKeys.detail(movieId));
       const previousData = queryClient.getQueryData(movieKeys.detail(movieId));
 
+      // remove local state so that server state is taken instead
+      setComment(undefined);
+
       queryClient.setQueryData(movieKeys.detail(movieId), {
         ...previousData,
         movie: {
@@ -46,8 +49,6 @@ export const useMovie = (movieId) => {
       queryClient.setQueryData(movieKeys.detail(movieId), context.previousData);
     },
     onSettled: () => {
-      // remove local state so that server state is taken instead
-      setComment(undefined);
       queryClient.invalidateQueries(movieKeys.detail(movieId));
     },
   });
