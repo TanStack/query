@@ -31,6 +31,7 @@
     "test:coverage": "yarn test:ci; open coverage/lcov-report/index.html",
     "test:format": "yarn prettier --check",
     "test:types": "tsc",
+    "test:type-coverage": "type-coverage",
     "test:eslint": "eslint --ext .ts,.tsx ./src",
     "test:size": "yarn build:umd && bundlewatch",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
@@ -138,6 +139,7 @@
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-visualizer": "^4.0.4",
     "type-fest": "^0.21.0",
+    "type-coverage": "^2.21.1",
     "typescript": "^4.1.2"
   },
   "resolutions": {
@@ -150,5 +152,10 @@
         "path": "dist/*.production.min.js"
       }
     ]
+  },
+  "typeCoverage": {
+    "atLeast": 98,
+    "detail": true,
+    "ignoreFiles": ["**/tests/*"]
   }
 }
