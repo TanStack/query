@@ -67,10 +67,10 @@ export const expectType = <T,>(_: T): void => undefined
 export const expectTypeNotAny = <T,>(_: 0 extends 1 & T ? never : T): void =>
   undefined
 
-export const Blink: React.FC<{ duration: number }> = ({
-  duration,
-  children,
-}) => {
+export const Blink: React.FC<{
+  duration: number
+  children?: React.ReactNode
+}> = ({ duration, children }) => {
   const [shouldShow, setShouldShow] = React.useState<boolean>(true)
 
   React.useEffect(() => {
