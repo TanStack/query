@@ -804,7 +804,7 @@ describe('query', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       // @ts-expect-error (queryFn must not return undefined)
-      queryFn: (() => undefined),
+      queryFn: () => undefined,
       retry: false,
     })
 
