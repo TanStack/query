@@ -9,7 +9,10 @@ This example very briefly illustrates the 3 core concepts of React Query:
 - [Mutations](./guides/mutations)
 - [Query Invalidation](./guides/query-invalidation)
 
+You can copy and paste it into `index.js` in a freshly-created app made with `create-react-app`.
+
 ```js
+import { render } from 'react-dom'
 import {
   useQuery,
   useMutation,
@@ -17,7 +20,16 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
-import { getTodos, postTodo } from '../my-api'
+
+// Provide some stub/dummy query functions.
+// In a real implementation, getTodos and postTodo would
+// make requests to a backend.
+let todos = []
+const getTodos = () => todos
+const postTodo = async (todo) => {
+  todos.push(todo);
+  return todos;
+};
 
 // Create a client
 const queryClient = new QueryClient()
@@ -49,7 +61,7 @@ function Todos() {
   return (
     <div>
       <ul>
-        {query.data.map(todo => (
+        {query.data?.map(todo => (
           <li key={todo.id}>{todo.title}</li>
         ))}
       </ul>
