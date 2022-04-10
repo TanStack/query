@@ -147,7 +147,7 @@ describe('PersistQueryClientProvider', () => {
 
       return (
         <div>
-          <h1>{String(state.data)}</h1>
+          <h1>{state.data}</h1>
           <h2>fetchStatus: {state.fetchStatus}</h2>
         </div>
       )

@@ -14,7 +14,7 @@ export type QueryFunction<
   TQueryKey extends QueryKey = QueryKey
 > = (
   context: QueryFunctionContext<TQueryKey>
-) => QueryFunctionData<T> | Promise<QueryFunctionData<T>>
+) => QueryFunctionData<T | Promise<T>>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
@@ -106,7 +106,7 @@ export interface QueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
-> extends QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey> {
+>  extends QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey> {
   /**
    * Set this to `false` to disable automatic refetching when the query mounts or changes query keys.
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.

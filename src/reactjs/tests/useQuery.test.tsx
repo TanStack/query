@@ -38,6 +38,10 @@ describe('useQuery', () => {
       expectType<unknown>(noQueryFn.data)
       expectType<unknown>(noQueryFn.error)
 
+      // it should not be possible for queryFn to return undefined
+      // @ts-expect-error (queryFn returns undefined)
+      useQuery(key, () => undefined)
+
       // it should infer the result type from the query function
       const fromQueryFn = useQuery(key, () => 'test')
       expectType<string | undefined>(fromQueryFn.data)

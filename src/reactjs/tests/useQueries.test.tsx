@@ -776,8 +776,25 @@ describe('useQueries', () => {
       expectType<QueryObserverResult<string, unknown>>(result4[1])
       expectType<QueryObserverResult<number, unknown>>(result4[2])
 
-      // Array as const does not throw error
+      // handles when queryFn returns a Promise
       const result5 = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => Promise.resolve('string'),
+            onSuccess: (a: string) => {
+              expectType<string>(a)
+              expectTypeNotAny(a)
+            },
+            // @ts-expect-error (refuses to accept a Promise)
+            onSettled: (a: Promise<string>) => null,
+          },
+        ],
+      })
+      expectType<QueryObserverResult<string, unknown>>(result5[0])
+
+      // Array as const does not throw error
+      const result6 = useQueries({
         queries: [
           {
             queryKey: ['key1'],
@@ -789,8 +806,8 @@ describe('useQueries', () => {
           },
         ],
       } as const)
-      expectType<QueryObserverResult<string, unknown>>(result5[0])
-      expectType<QueryObserverResult<number, unknown>>(result5[1])
+      expectType<QueryObserverResult<string, unknown>>(result6[0])
+      expectType<QueryObserverResult<number, unknown>>(result6[1])
 
       // field names should be enforced - array literal
       useQueries({
