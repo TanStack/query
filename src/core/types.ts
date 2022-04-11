@@ -14,7 +14,7 @@ export type QueryFunction<
   TQueryKey extends QueryKey = QueryKey
 > = (
   context: QueryFunctionContext<TQueryKey>
-) => QueryFunctionData<T> | Promise<QueryFunctionData<T>>
+) => QueryFunctionData<T | Promise<T>>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
