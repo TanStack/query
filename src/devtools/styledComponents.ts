@@ -61,6 +61,7 @@ export const QueryKey = styled('span', {
   fontWeight: 'bold',
   textShadow: '0 0 10px black',
   borderRadius: '.2em',
+  height: 'fit-content',
 })
 
 export const Code = styled('code', {
