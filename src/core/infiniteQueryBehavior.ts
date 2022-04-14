@@ -31,13 +31,13 @@ export function infiniteQueryBehavior<
             enumerable: true,
             get: () => {
               if (context.signal?.aborted) {
-                cancelled = true;
+                cancelled = true
               } else {
                 context.signal?.addEventListener('abort', () => {
                   cancelled = true
                 })
               }
-              return context.signal;
+              return context.signal
             },
           })
         }
@@ -79,7 +79,7 @@ export function infiniteQueryBehavior<
             meta: context.meta,
           }
 
-          addSignalProperty(queryFnContext);
+          addSignalProperty(queryFnContext)
 
           const queryFnResult = queryFn(queryFnContext)
 
