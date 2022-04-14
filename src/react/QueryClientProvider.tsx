@@ -42,6 +42,7 @@ export const useQueryClient = () => {
 }
 
 export interface QueryClientProviderProps {
+  children?: React.ReactNode
   client: QueryClient
   contextSharing?: boolean
 }
