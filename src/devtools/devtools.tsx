@@ -723,7 +723,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                 style={{
                   marginBottom: '.5em',
                   display: 'flex',
-                  alignItems: 'stretch',
+                  alignItems: 'start',
                   justifyContent: 'space-between',
                 }}
               >
