@@ -431,7 +431,7 @@ export class QueryObserver<
           status = 'loading'
         }
       }
-      if (options._optimisticResults === 'isHydrating') {
+      if (options._optimisticResults === 'isRestoring') {
         fetchStatus = 'idle'
       }
     }

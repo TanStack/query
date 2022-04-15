@@ -2,7 +2,7 @@ import React from 'react'
 
 import { persistQueryClient, PersistQueryClientOptions } from './persist'
 import { QueryClientProvider, QueryClientProviderProps } from '../reactjs'
-import { IsHydratingProvider } from '../reactjs/Hydrate'
+import { IsRestoringProvider } from '../reactjs/isRestoring'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>
@@ -16,7 +16,7 @@ export const PersistQueryClientProvider = ({
   onSuccess,
   ...props
 }: PersistQueryClientProviderProps): JSX.Element => {
-  const [isHydrating, setIsHydrating] = React.useState(true)
+  const [isRestoring, setIsRestoring] = React.useState(true)
   const refs = React.useRef({ persistOptions, onSuccess })
 
   React.useEffect(() => {
@@ -25,7 +25,7 @@ export const PersistQueryClientProvider = ({
 
   React.useEffect(() => {
     let isStale = false
-    setIsHydrating(true)
+    setIsRestoring(true)
     const [unsubscribe, promise] = persistQueryClient({
       ...refs.current.persistOptions,
       queryClient: client,
@@ -34,7 +34,7 @@ export const PersistQueryClientProvider = ({
     promise.then(() => {
       if (!isStale) {
         refs.current.onSuccess?.()
-        setIsHydrating(false)
+        setIsRestoring(false)
       }
     })
 
@@ -46,7 +46,7 @@ export const PersistQueryClientProvider = ({
 
   return (
     <QueryClientProvider client={client} {...props}>
-      <IsHydratingProvider value={isHydrating}>{children}</IsHydratingProvider>
+      <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
     </QueryClientProvider>
   )
 }
