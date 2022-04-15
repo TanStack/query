@@ -77,7 +77,7 @@ const Home = ({ sponsors }) => {
                         href="https://ui.dev/react-query?from=tanstack"
                         className="text-blue-600 font-semibold transition-colors duration-150 ease-out"
                       >
-                        Take the offical course
+                        Take the official course
                       </a>
                     </p>
                   </div>
