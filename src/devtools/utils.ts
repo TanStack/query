@@ -1,5 +1,5 @@
 import React from 'react'
-import { Query } from '../core'
+import type { Query } from 'react-query'
 
 import { Theme, useTheme } from './theme'
 import useMediaQuery from './useMediaQuery'

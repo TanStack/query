@@ -1,10 +1,10 @@
 import React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
-import { notifyManager } from '../core'
 import {
   Query,
   useQueryClient,
   onlineManager,
+  notifyManager,
   QueryCache,
   QueryClient,
   QueryKey as QueryKeyType,
