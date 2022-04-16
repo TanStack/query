@@ -137,21 +137,39 @@ export interface QueryObserverOptions<
    * If set to `'always'`, the query will always refetch on window focus.
    * Defaults to `true`.
    */
-  refetchOnWindowFocus?: boolean | 'always'
+  refetchOnWindowFocus?:
+    | boolean
+    | 'always'
+    | ((
+        data: TData | undefined,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
    * Defaults to `true`.
    */
-  refetchOnReconnect?: boolean | 'always'
+  refetchOnReconnect?:
+    | boolean
+    | 'always'
+    | ((
+        data: TData | undefined,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on mount if the data is stale.
    * If set to `false`, will disable additional instances of a query to trigger background refetches.
    * If set to `'always'`, the query will always refetch on mount.
    * Defaults to `true`.
    */
-  refetchOnMount?: boolean | 'always'
+  refetchOnMount?:
+    | boolean
+    | 'always'
+    | ((
+        data: TData | undefined,
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `false`, the query will not be retried on mount if it contains an error.
    * Defaults to `true`.
