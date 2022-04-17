@@ -28,6 +28,7 @@
       "import": "./lib/index.mjs",
       "default": "./lib/index.mjs"
     },
+    "./package.json": "./package.json",
     "./core": {
       "import": "./lib/core/index.mjs",
       "default": "./lib/core/index.js"
