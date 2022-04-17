@@ -137,7 +137,6 @@
     "@rollup/plugin-commonjs": "^21.1.0",
     "@rollup/plugin-node-resolve": "^13.2.1",
     "@rollup/plugin-replace": "^3.0.0",
-    "@svgr/rollup": "^6.1.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/react-17": "npm:@testing-library/react@^12.1.4",
