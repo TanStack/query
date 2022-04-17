@@ -23,13 +23,10 @@ export function useHydrate(state: unknown, options?: HydrateOptions) {
 export interface HydrateProps {
   state?: unknown
   options?: HydrateOptions
+  children?: React.ReactNode
 }
 
-export const Hydrate: React.FC<HydrateProps> = ({
-  children,
-  options,
-  state,
-}) => {
+export const Hydrate = ({ children, options, state }: HydrateProps) => {
   useHydrate(state, options)
-  return children as React.ReactElement<any>
+  return children as React.ReactElement
 }
