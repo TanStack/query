@@ -70,7 +70,7 @@
     "match-sorter": "^6.0.2"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "peerDependenciesMeta": {
     "react-dom": {
