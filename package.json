@@ -42,12 +42,12 @@
         "import": "./lib/devtools/index.mjs",
         "default": "./lib/devtools/index.js"
       },
-      "production": {
-        "import": "./lib/devtools/noop.mjs",
-        "default": "./lib/devtools/noop.js"
-      },
       "import": "./lib/devtools/noop.mjs",
       "default": "./lib/devtools/noop.js"
+    },
+    "./devtools/development": {
+      "import": "./lib/devtools/index.mjs",
+      "default": "./lib/devtools/index.js"
     },
     "./persistQueryClient": {
       "import": "./lib/persistQueryClient/index.mjs",
