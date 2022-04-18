@@ -247,6 +247,7 @@ export class Mutation<
       },
       retry: this.options.retry ?? 0,
       retryDelay: this.options.retryDelay,
+      failureCount: this.state.failureCount,
     })
 
     return this.retryer.promise
