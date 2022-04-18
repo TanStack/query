@@ -15,6 +15,7 @@ interface RetryerConfig<TData = unknown, TError = unknown> {
   onContinue?: () => void
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
+  failureCount: number
 }
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
@@ -87,7 +88,7 @@ export class Retryer<TData = unknown, TError = unknown> {
       cancelRetry = false
     }
     this.continue = () => continueFn?.()
-    this.failureCount = 0
+    this.failureCount = config.failureCount
     this.isPaused = false
     this.isResolved = false
     this.isTransportCancelable = false

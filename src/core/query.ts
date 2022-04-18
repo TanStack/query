@@ -459,6 +459,7 @@ export class Query<
     // Try to fetch the data
     this.retryer = new Retryer({
       fn: context.fetchFn as () => TData,
+      failureCount: this.state.fetchFailureCount,
       abort: abortController?.abort?.bind(abortController),
       onSuccess: data => {
         this.setData(data as TData)
