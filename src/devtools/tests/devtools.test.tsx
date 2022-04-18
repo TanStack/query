@@ -16,10 +16,6 @@ import {
 } from './utils'
 
 describe('ReactQueryDevtools', () => {
-  afterEach(() => {
-    window.__webpack_nonce__ = undefined
-  })
-
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
 
@@ -403,37 +399,14 @@ describe('ReactQueryDevtools', () => {
       return <div></div>
     }
 
-    renderWithClient(queryClient, <Page />, {
+    const { container } = renderWithClient(queryClient, <Page />, {
       styleNonce: 'test-nonce',
       initialIsOpen: false,
     })
-    const styleTag = screen.queryByTestId('react-query-devtools-panel-style')
-
+    const styleTag = container.querySelector('style')
     expect(styleTag).toHaveAttribute('scoped')
     expect(styleTag).toHaveAttribute('nonce', 'test-nonce')
 
     await screen.findByRole('button', { name: /react query devtools/i })
   })
-
-  it('style accepts __webpack_nonce__', async () => {
-    const { queryClient } = createQueryClient()
-
-    function Page() {
-      return <div></div>
-    }
-
-    window.__webpack_nonce__ = 'test-webpack_nonce'
-    renderWithClient(queryClient, <Page />, { initialIsOpen: false })
-
-    const styleTag = screen.queryByTestId('react-query-devtools-panel-style')
-    expect(styleTag).toHaveAttribute('nonce', 'test-webpack_nonce')
-
-    await screen.findByRole('button')
-  })
 })
-
-declare global {
-  interface Window {
-    __webpack_nonce__: string | undefined
-  }
-}

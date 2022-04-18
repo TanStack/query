@@ -238,7 +238,7 @@ export function ReactQueryDevtools({
       <ThemeProvider theme={theme}>
         <ReactQueryDevtoolsPanel
           ref={panelRef as any}
-          styleNonce={styleNonce || (window as any).__webpack_nonce__}
+          styleNonce={styleNonce}
           {...otherPanelProps}
           style={{
             position: 'fixed',
@@ -485,7 +485,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
         <style
           scoped
           nonce={styleNonce}
-          data-testid="react-query-devtools-panel-style"
           dangerouslySetInnerHTML={{
             __html: `
             .ReactQueryDevtoolsPanel * {
