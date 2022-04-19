@@ -676,10 +676,10 @@ export type MutationObserverResult<
   | MutationObserverErrorResult<TData, TError, TVariables, TContext>
   | MutationObserverSuccessResult<TData, TError, TVariables, TContext>
 
-export interface QueryClientConfig {
+export interface QueryClientConfig<TError = unknown> {
   queryCache?: QueryCache
   mutationCache?: MutationCache
-  defaultOptions?: DefaultOptions
+  defaultOptions?: DefaultOptions<TError>
 }
 
 export interface DefaultOptions<TError = unknown> {
