@@ -4701,12 +4701,12 @@ describe('useQuery', () => {
         </div>
     }
     const rendered = renderWithClient(queryClient, <Page />)
-    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-    await sleep(50);
-    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-    await sleep(50);
-    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
-    await sleep(50);
+    const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 2'))
+    fireEvent.click(fetchBtn)
     await waitFor(() => rendered.getByText('data: 3'))
 
     consoleMock.mockRestore()
