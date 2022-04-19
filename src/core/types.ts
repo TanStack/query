@@ -142,7 +142,6 @@ export interface QueryObserverOptions<
     | boolean
     | 'always'
     | ((
-        data: TData | undefined,
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
       ) => boolean | 'always')
   /**
@@ -156,7 +155,6 @@ export interface QueryObserverOptions<
     | boolean
     | 'always'
     | ((
-        data: TData | undefined,
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
       ) => boolean | 'always')
   /**
@@ -170,7 +168,6 @@ export interface QueryObserverOptions<
     | boolean
     | 'always'
     | ((
-        data: TData | undefined,
         query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
       ) => boolean | 'always')
   /**

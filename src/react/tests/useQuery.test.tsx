@@ -2512,7 +2512,7 @@ describe('useQuery', () => {
         {
           staleTime: 0,
           retry: 0,
-          refetchOnWindowFocus: (data = 0) => data < 1,
+          refetchOnWindowFocus: query => (query.state.data || 0) < 1,
         }
       )
       states.push(state)

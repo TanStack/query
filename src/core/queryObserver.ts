@@ -768,14 +768,12 @@ function shouldFetchOnMount(
 function shouldFetchOn(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
-  field:
-    | typeof options['refetchOnMount']
-    | typeof options['refetchOnWindowFocus']
-    | typeof options['refetchOnReconnect']
+  field: typeof options['refetchOnMount'] &
+    typeof options['refetchOnWindowFocus'] &
+    typeof options['refetchOnReconnect']
 ) {
   if (options.enabled !== false) {
-    const value =
-      typeof field === 'function' ? field(query.state.data, query) : field
+    const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
   }
