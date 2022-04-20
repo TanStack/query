@@ -4702,7 +4702,6 @@ describe('useQuery', () => {
     }
     const rendered = renderWithClient(queryClient, <Page />)
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
-    fireEvent.click(fetchBtn)
     await waitFor(() => rendered.getByText('data: 1'))
     fireEvent.click(fetchBtn)
     await waitFor(() => rendered.getByText('data: 2'))
