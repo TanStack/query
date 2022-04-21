@@ -2634,7 +2634,7 @@ describe('useQuery', () => {
       const state = useQuery(
         key,
         async () => {
-          await sleep(1)
+          await sleep(10)
           return count++
         },
         {
@@ -2644,12 +2644,12 @@ describe('useQuery', () => {
         }
       )
       states.push(state)
-      return null
+      return <div>data: {String(state.data)}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await rendered.findByText('data: 0')
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
@@ -2659,7 +2659,7 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await sleep(10)
+    await rendered.findByText('data: 1')
 
     // refetch should happen
     expect(states.length).toBe(4)
@@ -2671,7 +2671,7 @@ describe('useQuery', () => {
       window.dispatchEvent(new FocusEvent('focus'))
     })
 
-    await sleep(10)
+    await sleep(20)
 
     // no more refetch now
     expect(states.length).toBe(4)
