@@ -49,7 +49,7 @@ export function PPPBanner() {
             Course with code{' '}
             <a
               className="underline cursor-pointer"
-              href={`/checkout/react-query?from=tanstack&coupon_code=${data.coupon}`}
+              href={`https://ui.dev/react-query?from=tanstack&coupon_code=${data.coupon}`}
             >
               <strong>{data.coupon}</strong>
             </a>

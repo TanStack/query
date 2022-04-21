@@ -362,14 +362,21 @@ describe('useQuery', () => {
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'data'
+        },
+        { onSuccess }
+      )
       states.push(state)
-      return null
+      return <div>data: {state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await rendered.findByText('data: data')
     expect(states.length).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
@@ -379,34 +386,37 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
     const onSuccess = jest.fn()
+    let count = 0
 
     function Page() {
       const state = useQuery(
         key,
         async () => {
+          count++
           await sleep(10)
-          return 'data'
+          return 'data' + count
         },
-        { onSuccess, notifyOnChangeProps: 'all' }
+        { onSuccess }
       )
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 20)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
-    expect(states.length).toBe(4)
+    await rendered.findByText('data: data1')
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await rendered.findByText('data: data2')
+
+    expect(states.length).toBe(3) //loading, success, success after refetch
+    expect(count).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(2)
   })
 
@@ -2529,6 +2539,35 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
   })
 
+  it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => count++, {
+        staleTime: 0,
+        refetchOnWindowFocus: () => false,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+  })
+
   it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
@@ -2594,6 +2633,58 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
     expect(states[2]).toMatchObject({ data: 0, isFetching: true })
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+  })
+
+  it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return count++
+        },
+        {
+          staleTime: 0,
+          retry: 0,
+          refetchOnWindowFocus: query => (query.state.data || 0) < 1,
+        }
+      )
+      states.push(state)
+      return <div>data: {String(state.data)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: 0')
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await rendered.findByText('data: 1')
+
+    // refetch should happen
+    expect(states.length).toBe(4)
+
+    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
+    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(20)
+
+    // no more refetch now
+    expect(states.length).toBe(4)
   })
 
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
@@ -5553,6 +5644,37 @@ describe('useQuery', () => {
       expect(count).toBe(3)
 
       onlineMock.mockRestore()
+    })
+  })
+
+  it('it should have status=error on mount when a query has failed', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    const error = new Error('oops')
+
+    const queryFn = async () => {
+      throw error
+    }
+
+    function Page() {
+      const state = useQuery(key, queryFn, {
+        retry: false,
+        retryOnMount: false,
+      })
+
+      states.push(state)
+
+      return <></>
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states).toHaveLength(1))
+
+    expect(states[0]).toMatchObject({
+      status: 'error',
+      error,
     })
   })
 })

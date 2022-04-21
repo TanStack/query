@@ -357,7 +357,7 @@ When using the [functional updater form of setQueryData](../reference/QueryClien
 
  ### Custom Contexts for Multiple Providers
 
-Custom contexts can now be specified to pair hooks with their matching `Provider`. This is critical when there may be multiple React Query `Provider` instances in the component tree and you need to ensure your hook uses the correct `Provider` instance.
+Custom contexts can now be specified to pair hooks with their matching `Provider`. This is critical when there may be multiple React Query `Provider` instances in the component tree, and you need to ensure your hook uses the correct `Provider` instance.
 
 An example:
 
@@ -366,10 +366,8 @@ An example:
 ```tsx
 // Our first data package: @my-scope/container-data
 
-const context = React.createContext<QueryClient | undefined>();
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache, context })
-
+const context = React.createContext<QueryClient | undefined>(undefined)
+const queryClient = new QueryClient()
 
 export const useUser = () => {
   return useQuery(USER_KEY, USER_FETCHER, {
@@ -377,12 +375,12 @@ export const useUser = () => {
   })
 }
 
-export const ContainerDataProvider: React.FC = ({ children }) => {
+export const ContainerDataProvider = ({ children }: { children: React.ReactNode}) => {
   return (
     <QueryClientProvider client={queryClient} context={context}>
       {children}
     </QueryClientProvider>
-  );
+  )
 }
 
 ```
@@ -392,9 +390,8 @@ export const ContainerDataProvider: React.FC = ({ children }) => {
 ```tsx
 // Our second data package: @my-scope/my-component-data
 
-const context = React.createContext<QueryClient | undefined>();
-const queryCache = new QueryCache()
-const queryClient = new QueryClient({ queryCache, context })
+const context = React.createContext<QueryClient | undefined>(undefined)
+const queryClient = new QueryClient()
 
 
 export const useItems = () => {
@@ -403,12 +400,12 @@ export const useItems = () => {
   })
 }
 
-export const MyComponentDataProvider: React.FC = ({ children }) => {
+export const MyComponentDataProvider = ({ children }: { children: React.ReactNode}) => {
   return (
     <QueryClientProvider client={queryClient} context={context}>
       {children}
     </QueryClientProvider>
-  );
+  )
 }
 
 ```
@@ -436,8 +433,8 @@ import { MyComponentDataProvider, useItems } from "@my-scope/my-component-data";
 
 // Example of hooks provided by the "DataProvider" components above:
 const MyComponent = () => {
-  const user = useUser(); // <-- Uses the context specified in ContainerDataProvider.
-  const items = useItems(); // <-- Uses the context specified in MyComponentDataProvider
+  const user = useUser() // <-- Uses the context specified in ContainerDataProvider.
+  const items = useItems() // <-- Uses the context specified in MyComponentDataProvider
   ...
 }
 ```

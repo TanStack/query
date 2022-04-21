@@ -67,6 +67,10 @@ interface DevtoolsOptions extends ContextOptions {
    * Defaults to 'aside'.
    */
   containerElement?: string | any
+  /**
+   * nonce for style element for CSP
+   */
+  styleNonce?: string
 }
 
 interface DevtoolsPanelOptions extends ContextOptions {
@@ -82,6 +86,10 @@ interface DevtoolsPanelOptions extends ContextOptions {
    * A boolean variable indicating whether the panel is open or closed
    */
   isOpen?: boolean
+  /**
+   * nonce for style element for CSP
+   */
+  styleNonce?: string
   /**
    * A function that toggles the open and close state of the panel
    */
@@ -102,6 +110,7 @@ export function ReactQueryDevtools({
   position = 'bottom-left',
   containerElement: Container = 'aside',
   context,
+  styleNonce,
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -240,6 +249,7 @@ export function ReactQueryDevtools({
         <ReactQueryDevtoolsPanel
           ref={panelRef as any}
           context={context}
+          styleNonce={styleNonce}
           {...otherPanelProps}
           style={{
             position: 'fixed',
@@ -409,6 +419,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 >(function ReactQueryDevtoolsPanel(props, ref): React.ReactElement {
   const {
     isOpen = true,
+    styleNonce,
     setIsOpen,
     handleDragStart,
     context,
@@ -477,6 +488,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
         {...panelProps}
       >
         <style
+          nonce={styleNonce}
           dangerouslySetInnerHTML={{
             __html: `
             .ReactQueryDevtoolsPanel * {
