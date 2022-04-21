@@ -3,7 +3,6 @@ import { defineConfig } from 'rollup'
 import resolve from '@rollup/plugin-node-resolve'
 import externals from 'rollup-plugin-node-externals'
 import { extensions } from './common'
-import alias from '@rollup/plugin-alias'
 
 export default defineConfig({
   input: [
@@ -35,15 +34,17 @@ export default defineConfig({
     },
   ],
   plugins: [
-    alias({
-      entries: [{ find: 'react-query', replacement: './src/index.ts' }],
-    }),
     externals({
       deps: true,
       devDeps: true,
       peerDeps: true,
     }),
-    resolve({ extensions }),
+    resolve({
+      extensions,
+      resolveOnly(module) {
+        return module !== 'react-query'
+      },
+    }),
     babel({ extensions, babelHelpers: 'runtime' }),
   ],
 })
