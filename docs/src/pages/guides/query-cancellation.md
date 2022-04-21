@@ -129,8 +129,8 @@ You might want to cancel a query manually. For example, if the request takes a l
 ```js
 const [queryKey] = useState('todos')
 
-const query = useQuery(queryKey, await ({ signal }) => {
-  const resp = fetch('/todos', { signal })
+const query = useQuery(queryKey, async ({ signal }) => {
+  const resp = await fetch('/todos', { signal })
   return resp.json()
 })
 
