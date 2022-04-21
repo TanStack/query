@@ -222,7 +222,7 @@ ReactDOM.createRoot(rootElement).render(
 
 ### useIsRestoring
 
-If you use the `PersistQueryClientProvider`, you can also use the `useIsRestoring` hook alongside it to check if you a restore is currently in progress. `useQuery` and friends also check this internally to avoid race conditions between the restore and mounting queries.
+If you are using the `PersistQueryClientProvider`, you can also use the `useIsRestoring` hook alongside it to check if a restore is currently in progress. `useQuery` and friends also check this internally to avoid race conditions between the restore and mounting queries.
 
 ## Persisters
 
