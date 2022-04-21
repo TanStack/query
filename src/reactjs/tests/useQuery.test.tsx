@@ -42,6 +42,18 @@ describe('useQuery', () => {
       // @ts-expect-error (queryFn returns undefined)
       useQuery(key, () => undefined)
 
+      // it should not be possible for queryFn to have explicit void return type
+      // @ts-expect-error (queryFn explicit return type is void)
+      useQuery(key, (): void => undefined)
+
+      // it should not be possible for queryFn to have explicit Promise<void> return type
+      // @ts-expect-error (queryFn explicit return type is Promise<void>)
+      useQuery(key, (): Promise<void> => Promise.resolve())
+
+      // it should not be possible for queryFn to have explicit Promise<undefined> return type
+      // @ts-expect-error (queryFn explicit return type is Promise<undefined>)
+      useQuery(key, (): Promise<undefined> => Promise.resolve(undefined))
+
       // it should infer the result type from the query function
       const fromQueryFn = useQuery(key, () => 'test')
       expectType<string | undefined>(fromQueryFn.data)
@@ -62,6 +74,24 @@ describe('useQuery', () => {
         onSuccess: data => expectType<boolean>(data),
         onSettled: data => expectType<boolean | undefined>(data),
       })
+
+      // it should be possible to specify a union type as result type
+      const unionTypeSync = useQuery(
+        key,
+        () => (Math.random() > 0.5 ? 'a' : 'b'),
+        {
+          onSuccess: data => expectType<'a' | 'b'>(data),
+        }
+      )
+      expectType<'a' | 'b' | undefined>(unionTypeSync.data)
+      const unionTypeAsync = useQuery<'a' | 'b'>(
+        key,
+        () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
+        {
+          onSuccess: data => expectType<'a' | 'b'>(data),
+        }
+      )
+      expectType<'a' | 'b' | undefined>(unionTypeAsync.data)
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
