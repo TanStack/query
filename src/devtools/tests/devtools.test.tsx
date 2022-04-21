@@ -392,7 +392,7 @@ describe('ReactQueryDevtools', () => {
     expect(queries[2]?.textContent).toEqual(query3Hash)
   })
 
-  it('style should have scoped and nonce', async () => {
+  it('style should have a nonce', async () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
