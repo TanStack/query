@@ -122,11 +122,19 @@ export class QueryObserver<
   }
 
   shouldFetchOnReconnect(): boolean {
-    return shouldFetchOnReconnect(this.currentQuery, this.options)
+    return shouldFetchOn(
+      this.currentQuery,
+      this.options,
+      this.options.refetchOnReconnect
+    )
   }
 
   shouldFetchOnWindowFocus(): boolean {
-    return shouldFetchOnWindowFocus(this.currentQuery, this.options)
+    return shouldFetchOn(
+      this.currentQuery,
+      this.options,
+      this.options.refetchOnWindowFocus
+    )
   }
 
   destroy(): void {
@@ -746,47 +754,30 @@ function shouldLoadOnMount(
   )
 }
 
-function shouldRefetchOnMount(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any>
-): boolean {
-  return (
-    options.enabled !== false &&
-    query.state.dataUpdatedAt > 0 &&
-    (options.refetchOnMount === 'always' ||
-      (options.refetchOnMount !== false && isStale(query, options)))
-  )
-}
-
 function shouldFetchOnMount(
   query: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>
 ): boolean {
   return (
-    shouldLoadOnMount(query, options) || shouldRefetchOnMount(query, options)
+    shouldLoadOnMount(query, options) ||
+    (query.state.dataUpdatedAt > 0 &&
+      shouldFetchOn(query, options, options.refetchOnMount))
   )
 }
 
-function shouldFetchOnReconnect(
+function shouldFetchOn(
   query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>
-): boolean {
-  return (
-    options.enabled !== false &&
-    (options.refetchOnReconnect === 'always' ||
-      (options.refetchOnReconnect !== false && isStale(query, options)))
-  )
-}
+  options: QueryObserverOptions<any, any, any, any, any>,
+  field: typeof options['refetchOnMount'] &
+    typeof options['refetchOnWindowFocus'] &
+    typeof options['refetchOnReconnect']
+) {
+  if (options.enabled !== false) {
+    const value = typeof field === 'function' ? field(query) : field
 
-function shouldFetchOnWindowFocus(
-  query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>
-): boolean {
-  return (
-    options.enabled !== false &&
-    (options.refetchOnWindowFocus === 'always' ||
-      (options.refetchOnWindowFocus !== false && isStale(query, options)))
-  )
+    return value === 'always' || (value !== false && isStale(query, options))
+  }
+  return false
 }
 
 function shouldFetchOptionally(

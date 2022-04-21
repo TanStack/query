@@ -135,23 +135,41 @@ export interface QueryObserverOptions<
    * If set to `true`, the query will refetch on window focus if the data is stale.
    * If set to `false`, the query will not refetch on window focus.
    * If set to `'always'`, the query will always refetch on window focus.
+   * If set to a function, the function will be executed with the latest data and query to compute the value.
    * Defaults to `true`.
    */
-  refetchOnWindowFocus?: boolean | 'always'
+  refetchOnWindowFocus?:
+    | boolean
+    | 'always'
+    | ((
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
+   * If set to a function, the function will be executed with the latest data and query to compute the value.
    * Defaults to `true`.
    */
-  refetchOnReconnect?: boolean | 'always'
+  refetchOnReconnect?:
+    | boolean
+    | 'always'
+    | ((
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on mount if the data is stale.
    * If set to `false`, will disable additional instances of a query to trigger background refetches.
    * If set to `'always'`, the query will always refetch on mount.
+   * If set to a function, the function will be executed with the latest data and query to compute the value
    * Defaults to `true`.
    */
-  refetchOnMount?: boolean | 'always'
+  refetchOnMount?:
+    | boolean
+    | 'always'
+    | ((
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `false`, the query will not be retried on mount if it contains an error.
    * Defaults to `true`.

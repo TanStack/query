@@ -2401,6 +2401,35 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
   })
 
+  it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => count++, {
+        staleTime: 0,
+        refetchOnWindowFocus: () => false,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+  })
+
   it('should not refetch fresh query on focus when `refetchOnWindowFocus` is set to `true`', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
@@ -2466,6 +2495,58 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
     expect(states[2]).toMatchObject({ data: 0, isFetching: true })
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+  })
+
+  it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(1)
+          return count++
+        },
+        {
+          staleTime: 0,
+          retry: 0,
+          refetchOnWindowFocus: query => (query.state.data || 0) < 1,
+        }
+      )
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(10)
+
+    // refetch should happen
+    expect(states.length).toBe(4)
+
+    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
+    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(10)
+
+    // no more refetch now
+    expect(states.length).toBe(4)
   })
 
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
