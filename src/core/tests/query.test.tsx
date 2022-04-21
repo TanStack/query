@@ -153,7 +153,7 @@ describe('query', () => {
 
     const promise = queryClient.fetchQuery(
       key,
-      async (): Promise<string> => {
+      async (): Promise<unknown> => {
         count++
         throw new Error(`error${count}`)
       },
@@ -282,7 +282,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = jest.fn<
-      Promise<string>,
+      Promise<unknown>,
       [QueryFunctionContext<ReturnType<typeof queryKey>>]
     >()
     const onAbort = jest.fn()
@@ -434,7 +434,7 @@ describe('query', () => {
 
     await queryClient.prefetchQuery(
       key,
-      async (): Promise<string> => {
+      async (): Promise<unknown> => {
         throw new Error('error')
       }
     )
@@ -464,9 +464,9 @@ describe('query', () => {
 
     queryClient.prefetchQuery(
       key,
-      async (): Promise<string> => {
+      async () => {
         await sleep(10)
-        return Promise.reject('reject')
+        return Promise.reject<unknown>('reject')
       },
       { retry: false }
     )
