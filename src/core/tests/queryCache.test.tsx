@@ -175,7 +175,9 @@ describe('queryCache', () => {
       const onError = jest.fn()
       const testCache = new QueryCache({ onError })
       const testClient = createQueryClient({ queryCache: testCache })
-      await testClient.prefetchQuery(key, () => Promise.reject('error'))
+      await testClient.prefetchQuery(key, () =>
+        Promise.reject<unknown>('error')
+      )
       const query = testCache.find(key)
       expect(onError).toHaveBeenCalledWith('error', query)
     })

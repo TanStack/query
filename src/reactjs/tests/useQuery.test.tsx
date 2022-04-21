@@ -553,7 +553,7 @@ describe('useQuery', () => {
     const onSettled = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => Promise.reject('error'), {
+      const state = useQuery(key, () => Promise.reject<unknown>('error'), {
         retry: false,
         onSettled,
       })
@@ -2475,7 +2475,7 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = useQuery(key, queryFn, {
@@ -2666,7 +2666,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<unknown, string>(
         key,
         () => {
           return Promise.reject('Error test jaylen')
@@ -2692,7 +2692,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<unknown, string>(
         key,
         () => Promise.reject('Error test jaylen'),
         { retry: false, useErrorBoundary: true }
@@ -2744,7 +2744,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<unknown, string>(
         key,
         () => Promise.reject('Local Error'),
         {
@@ -2776,7 +2776,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, Error>(
+      const { status, error } = useQuery<unknown, Error>(
         key,
         () => Promise.reject(new Error('Remote Error')),
         {
@@ -3119,7 +3119,7 @@ describe('useQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(() => {
       return Promise.reject('Error test Barrett')
     })
@@ -3152,7 +3152,7 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject('Error test Tanner')
@@ -3164,7 +3164,7 @@ describe('useQuery', () => {
 
     function Page() {
       const { status, failureCount, error } = useQuery<
-        undefined,
+        unknown,
         string,
         [string]
       >(key, queryFn, {
@@ -3197,7 +3197,7 @@ describe('useQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3241,7 +3241,7 @@ describe('useQuery', () => {
         key,
         () => {
           count++
-          return Promise.reject(`fetching error ${count}`)
+          return Promise.reject<unknown>(`fetching error ${count}`)
         },
         {
           retry: 3,
@@ -3383,10 +3383,10 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn()
+    const prefetchQueryFn = jest.fn<string, unknown[]>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery(key, prefetchQueryFn, {
@@ -3412,10 +3412,10 @@ describe('useQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn()
+    const prefetchQueryFn = jest.fn<Promise<string>, unknown[]>()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -3632,7 +3632,7 @@ describe('useQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -3697,7 +3697,7 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
     const memoFn = jest.fn()
 
     function Page() {
@@ -3894,7 +3894,7 @@ describe('useQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
 
     function Disabled() {
       useQuery(key, queryFn, { enabled: false })
@@ -4582,7 +4582,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))
@@ -4703,7 +4703,7 @@ describe('useQuery', () => {
         [id],
         async () => {
           await sleep(10)
-          return Promise.reject(new Error('Error'))
+          return Promise.reject<unknown>(new Error('Error'))
         },
         {
           retry: false,
@@ -5172,7 +5172,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
             throw new Error('failed' + count)
@@ -5467,7 +5467,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
             throw new Error('error ' + count)
@@ -5513,7 +5513,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
             throw new Error('failed' + count)
