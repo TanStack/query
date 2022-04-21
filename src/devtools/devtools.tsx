@@ -483,7 +483,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
         {...panelProps}
       >
         <style
-          scoped
           nonce={styleNonce}
           dangerouslySetInnerHTML={{
             __html: `

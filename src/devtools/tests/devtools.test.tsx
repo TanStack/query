@@ -404,7 +404,6 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: false,
     })
     const styleTag = container.querySelector('style')
-    expect(styleTag).toHaveAttribute('scoped')
     expect(styleTag).toHaveAttribute('nonce', 'test-nonce')
 
     await screen.findByRole('button', { name: /react query devtools/i })
