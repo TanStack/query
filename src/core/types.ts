@@ -231,7 +231,7 @@ export interface QueryObserverOptions<
    */
   placeholderData?: TQueryData | PlaceholderDataFunction<TQueryData>
 
-  _optimisticResults?: 'optimistic' | 'isHydrating'
+  _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
 type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
