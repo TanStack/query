@@ -4687,18 +4687,18 @@ describe('useQuery', () => {
       const { refetch, errorUpdateCount } = useQuery(
         key,
         async () => {
-          throw error;
+          throw error
         },
         {
           retry: false,
         }
       )
-      return <div>
-        <button onClick={() => refetch()}>refetch</button>
-        <span>
-          data: {errorUpdateCount}
-        </span>
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <span>data: {errorUpdateCount}</span>
         </div>
+      )
     }
     const rendered = renderWithClient(queryClient, <Page />)
     const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
