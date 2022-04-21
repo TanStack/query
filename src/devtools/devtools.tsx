@@ -58,6 +58,10 @@ interface DevtoolsOptions {
    * Defaults to 'aside'.
    */
   containerElement?: string | any
+  /**
+   * nonce for style element for CSP
+   */
+  styleNonce?: string
 }
 
 interface DevtoolsPanelOptions {
@@ -73,6 +77,10 @@ interface DevtoolsPanelOptions {
    * A boolean variable indicating whether the panel is open or closed
    */
   isOpen?: boolean
+  /**
+   * nonce for style element for CSP
+   */
+  styleNonce?: string
   /**
    * A function that toggles the open and close state of the panel
    */
@@ -92,6 +100,7 @@ export function ReactQueryDevtools({
   toggleButtonProps = {},
   position = 'bottom-left',
   containerElement: Container = 'aside',
+  styleNonce,
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -229,6 +238,7 @@ export function ReactQueryDevtools({
       <ThemeProvider theme={theme}>
         <ReactQueryDevtoolsPanel
           ref={panelRef as any}
+          styleNonce={styleNonce}
           {...otherPanelProps}
           style={{
             position: 'fixed',
@@ -375,7 +385,13 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   HTMLDivElement,
   DevtoolsPanelOptions
 >(function ReactQueryDevtoolsPanel(props, ref): React.ReactElement {
-  const { isOpen = true, setIsOpen, handleDragStart, ...panelProps } = props
+  const {
+    isOpen = true,
+    styleNonce,
+    setIsOpen,
+    handleDragStart,
+    ...panelProps
+  } = props
 
   const queryClient = useQueryClient()
   const queryCache = queryClient.getQueryCache()
@@ -467,6 +483,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
         {...panelProps}
       >
         <style
+          nonce={styleNonce}
           dangerouslySetInnerHTML={{
             __html: `
             .ReactQueryDevtoolsPanel * {
