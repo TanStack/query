@@ -21,6 +21,7 @@
     "lib/reactjs/index.mjs",
     "lib/reactjs/setBatchUpdatesFn.js",
     "lib/reactjs/setBatchUpdatesFn.mjs",
+    "src/reactjs/index.ts",
     "src/reactjs/setBatchUpdatesFn.ts"
   ],
   "exports": {
