@@ -362,14 +362,21 @@ describe('useQuery', () => {
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'data'
+        },
+        { onSuccess }
+      )
       states.push(state)
-      return null
+      return <div>data: {state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await rendered.findByText('data: data')
     expect(states.length).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
@@ -379,34 +386,37 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
     const onSuccess = jest.fn()
+    let count = 0
 
     function Page() {
       const state = useQuery(
         key,
         async () => {
+          count++
           await sleep(10)
-          return 'data'
+          return 'data' + count
         },
-        { onSuccess, notifyOnChangeProps: 'all' }
+        { onSuccess }
       )
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 20)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
-    expect(states.length).toBe(4)
+    await rendered.findByText('data: data1')
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await rendered.findByText('data: data2')
+
+    expect(states.length).toBe(3) //loading, success, success after refetch
+    expect(count).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(2)
   })
 
