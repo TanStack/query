@@ -4764,7 +4764,7 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
-  it('errorUpdateCount should increased on each refetch', async () => {
+  it('errorUpdateCount should increased on each fetch failure', async () => {
     const consoleMock = mockConsoleError()
     const key = queryKey()
     const error = new Error('oops')
@@ -4793,9 +4793,9 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 2'))
     fireEvent.click(fetchBtn)
     await waitFor(() => rendered.getByText('data: 3'))
-    
+
     consoleMock.mockRestore()
-    }) 
+  })
 
   it('it should have status=error on mount when a query has failed', async () => {
     const consoleMock = mockConsoleError()
