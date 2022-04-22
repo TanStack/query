@@ -4797,4 +4797,37 @@ describe('useQuery', () => {
 
     consoleMock.mockRestore()
   })
+
+  it('errorUpdateCount should increased on each fetch failure', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const error = new Error('oops')
+
+    function Page() {
+      const { refetch, errorUpdateCount } = useQuery(
+        key,
+        async () => {
+          throw error
+        },
+        {
+          retry: false,
+        }
+      )
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <span>data: {errorUpdateCount}</span>
+        </div>
+      )
+    }
+    const rendered = renderWithClient(queryClient, <Page />)
+    const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 2'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 3'))
+
+    consoleMock.mockRestore()
+  })
 })
