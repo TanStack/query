@@ -14,9 +14,9 @@ export type QueryFunction<
 > = (
   context: QueryFunctionContext<TQueryKey>
 ) => [T] extends [undefined]
-  ? never
+  ? never | 'queryFn must not return undefined or void'
   : [T] extends [void]
-  ? never
+  ? never | 'queryFn must not return undefined or void'
   : T | Promise<T>
 
 export interface QueryFunctionContext<
