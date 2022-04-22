@@ -19,6 +19,16 @@ export const LabelButton = styled('button', {
   color: 'white',
 })
 
+export const ExpandButton = styled('button', {
+  cursor: 'pointer',
+  color: 'inherit',
+  font: 'inherit',
+  outline: 'inherit',
+  background: 'transparent',
+  border: 'none',
+  padding: 0,
+})
+
 export const Value = styled('span', (_props, theme) => ({
   color: theme.danger,
 }))
@@ -107,13 +117,13 @@ export const DefaultRenderer: Renderer = ({
     <Entry key={label}>
       {subEntryPages?.length ? (
         <>
-          <button onClick={() => toggleExpanded()}>
+          <ExpandButton onClick={() => toggleExpanded()}>
             <Expander expanded={expanded} /> {label}{' '}
             <Info>
               {String(type).toLowerCase() === 'iterable' ? '(Iterable) ' : ''}
               {subEntries.length} {subEntries.length > 1 ? `items` : `item`}
             </Info>
-          </button>
+          </ExpandButton>
           {expanded ? (
             subEntryPages.length === 1 ? (
               <SubEntries>
