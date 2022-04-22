@@ -328,6 +328,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
   error: TError | null
   errorUpdatedAt: number
   failureCount: number
+  errorUpdateCount: number
   isError: boolean
   isFetched: boolean
   isFetchedAfterMount: boolean
