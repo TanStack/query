@@ -149,6 +149,7 @@
     "@typescript-eslint/parser": "^5.6.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.1",
+    "babel-plugin-add-import-extension": "^1.6.0",
     "bundlewatch": "^0.3.2",
     "cross-env": "^7.0.2",
     "eslint": "7.x",
