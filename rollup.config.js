@@ -46,8 +46,7 @@ const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
 
 const babelConfig = {
   extensions,
-  babelHelpers: 'runtime',
-  exclude: 'node_modules/**',
+  babelHelpers: 'bundled',
 }
 
 const resolveConfig = { extensions }

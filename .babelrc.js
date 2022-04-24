@@ -22,7 +22,8 @@ module.exports = {
   plugins: [
     cjs && ['@babel/transform-modules-commonjs', { loose }],
     es && ['babel-plugin-add-import-extension', { extension: 'mjs' }],
-    [
+    // no runtime for umd builds
+    BABEL_ENV && [
       '@babel/transform-runtime',
       {
         version: require('./package.json').dependencies[
