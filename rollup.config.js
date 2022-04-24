@@ -6,7 +6,6 @@ import resolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
-import { extensions } from './common'
 import { defineConfig } from 'rollup'
 
 const external = ['react', 'react-dom', 'react-query']
@@ -43,11 +42,14 @@ const inputSrcs = [
   ],
 ]
 
+const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
+
 const babelConfig = {
   extensions,
   babelHelpers: 'runtime',
   exclude: 'node_modules/**',
 }
+
 const resolveConfig = { extensions }
 
 const externalPeerDeps = () =>

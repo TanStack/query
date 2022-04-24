@@ -1,5 +1,6 @@
-const { NODE_ENV } = process.env
-const cjs = NODE_ENV === 'test'
+const { NODE_ENV, BABEL_ENV } = process.env
+const cjs = NODE_ENV === 'test' || BABEL_ENV === 'commonjs'
+const es = BABEL_ENV === 'es'
 const loose = true
 
 module.exports = {
@@ -20,6 +21,7 @@ module.exports = {
   ],
   plugins: [
     cjs && ['@babel/transform-modules-commonjs', { loose }],
+    es && ['babel-plugin-add-import-extension', { extension: 'mjs' }],
     [
       '@babel/transform-runtime',
       {
