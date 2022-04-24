@@ -184,10 +184,6 @@
     "type-fest": "^0.21.0",
     "typescript": "4.5.3"
   },
-  "resolutions": {
-    "@types/react": "^16.9.41",
-    "@types/react-dom": "^16.9.8"
-  },
   "bundlewatch": {
     "files": [
       {

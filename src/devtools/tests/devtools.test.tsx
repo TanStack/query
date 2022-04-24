@@ -514,6 +514,23 @@ describe('ReactQueryDevtools', () => {
     expect(queries[2]?.textContent).toEqual(query3Hash)
   })
 
+  it('style should have a nonce', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      return <div></div>
+    }
+
+    const { container } = renderWithClient(queryClient, <Page />, {
+      styleNonce: 'test-nonce',
+      initialIsOpen: false,
+    })
+    const styleTag = container.querySelector('style')
+    expect(styleTag).toHaveAttribute('nonce', 'test-nonce')
+
+    await screen.findByRole('button', { name: /react query devtools/i })
+  })
+
   describe('with custom context', () => {
     it('should render without error when the custom context aligns', async () => {
       const context = React.createContext<QueryClient | undefined>(undefined)
