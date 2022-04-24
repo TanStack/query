@@ -5,7 +5,7 @@ import {
   QueryClient,
   MutationCache,
   onlineManager,
-  useisRestoring,
+  useIsRestoring,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import toast, { Toaster } from "react-hot-toast";
@@ -76,7 +76,7 @@ export default function App() {
 }
 
 function Movies() {
-  const isRestoring = isRestoring();
+  const isRestoring = useIsRestoring();
   return (
     <Router
       location={location}
