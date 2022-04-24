@@ -1,5 +1,10 @@
-import { PersistedClient, Persister } from '../persistQueryClient'
+import {
+  PersistedClient,
+  Persister,
+  PersistErrorHandler,
+} from '../persistQueryClient'
 import { asyncThrottle } from './asyncThrottle'
+import { noop } from '../core/utils'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
@@ -9,7 +14,7 @@ interface AsyncStorage {
 
 interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
-  storage: AsyncStorage
+  storage: AsyncStorage | undefined
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -25,6 +30,8 @@ interface CreateAsyncStoragePersisterOptions {
    * @default `JSON.parse`
    */
   deserialize?: (cachedString: string) => PersistedClient
+
+  handlePersistError?: PersistErrorHandler
 }
 
 export const createAsyncStoragePersister = ({
@@ -34,20 +41,28 @@ export const createAsyncStoragePersister = ({
   serialize = JSON.stringify,
   deserialize = JSON.parse,
 }: CreateAsyncStoragePersisterOptions): Persister => {
+  if (typeof storage !== 'undefined') {
+    return {
+      persistClient: asyncThrottle(
+        persistedClient => storage.setItem(key, serialize(persistedClient)),
+        { interval: throttleTime }
+      ),
+      restoreClient: async () => {
+        const cacheString = await storage.getItem(key)
+
+        if (!cacheString) {
+          return
+        }
+
+        return deserialize(cacheString) as PersistedClient
+      },
+      removeClient: () => storage.removeItem(key),
+    }
+  }
+
   return {
-    persistClient: asyncThrottle(
-      persistedClient => storage.setItem(key, serialize(persistedClient)),
-      { interval: throttleTime }
-    ),
-    restoreClient: async () => {
-      const cacheString = await storage.getItem(key)
-
-      if (!cacheString) {
-        return
-      }
-
-      return deserialize(cacheString) as PersistedClient
-    },
-    removeClient: () => storage.removeItem(key),
+    persistClient: noop,
+    restoreClient: noop,
+    removeClient: noop,
   }
 }

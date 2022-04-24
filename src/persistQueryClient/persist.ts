@@ -7,7 +7,7 @@ import {
   hydrate,
 } from '../core'
 
-type Promisable<T> = T | PromiseLike<T>
+export type Promisable<T> = T | PromiseLike<T>
 
 export interface Persister {
   persistClient(persistClient: PersistedClient): Promisable<void>
