@@ -11,6 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "main": "lib/index.js",
+  "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
   "unpkg": "dist/react-query.development.js",
   "sideEffects": [
