@@ -6,7 +6,8 @@ import {
   HydrateOptions,
   hydrate,
 } from '../core'
-import { Promisable } from 'type-fest'
+
+type Promisable<T> = T | PromiseLike<T>
 
 export interface Persister {
   persistClient(persistClient: PersistedClient): Promisable<void>
