@@ -109,7 +109,7 @@
     "!codemods/**/__tests__"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.5.5",
+    "@babel/runtime": "^7.17.9",
     "@types/use-sync-external-store": "^0.0.3",
     "broadcast-channel": "^3.4.1",
     "match-sorter": "^6.0.2",
