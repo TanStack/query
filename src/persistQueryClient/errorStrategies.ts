@@ -6,7 +6,7 @@ export type PersistErrorHandler = (props: {
   errorCount: number
 }) => PersistedClient
 
-export const purgeOldestQuery: PersistErrorHandler = ({
+export const removeOldestQuery: PersistErrorHandler = ({
   persistedClient,
   error,
 }) => {

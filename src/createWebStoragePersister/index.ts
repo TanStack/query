@@ -44,14 +44,18 @@ export function createWebStoragePersister({
       }
     }
     return {
-      persistClient: throttle(async persistedClient => {
+      persistClient: throttle(persistedClient => {
         let client: PersistedClient = persistedClient
         let error = trySave(client)
         let errorCount = 0
         while (error) {
           if (handlePersistError) {
             errorCount++
-            client = handlePersistError({ persistedClient, error, errorCount })
+            client = handlePersistError({
+              persistedClient,
+              error,
+              errorCount,
+            })
           } else {
             throw error
           }
