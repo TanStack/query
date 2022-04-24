@@ -26,13 +26,10 @@ type Post = {
 };
 
 function usePosts() {
-  return useQuery(
+  return useQuery<Array<Post>>(
     ["posts"],
-    async (): Promise<Array<Post>> => {
-      const { data } = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      return data;
+    () => axios.get<Array<Post>>('https://jsonplaceholder.typicode.com/posts').then(({data}) => data), {
+      initialData: [{ id: 1, title: "Post 1", body: "Body 1" }],
     }
   );
 }
@@ -44,6 +41,8 @@ function Posts({
 }) {
   const queryClient = useQueryClient();
   const { status, data, error, isFetching } = usePosts();
+  // This shouldn't result in a TypeScript Error
+  console.log(data[0].id);
 
   return (
     <div>
@@ -160,4 +159,4 @@ function App() {
 }
 
 const rootElement = document.getElementById("root");
-ReactDOM.createRoot(rootElement).render(<App />);
+ReactDOM.createRoot(rootElement as HTMLElement).render(<App />);
