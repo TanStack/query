@@ -26,7 +26,7 @@
   "exports": {
     ".": {
       "import": "./lib/index.mjs",
-      "default": "./lib/index.mjs"
+      "default": "./lib/index.js"
     },
     "./package.json": "./package.json",
     "./core": {
@@ -35,7 +35,7 @@
     },
     "./reactjs": {
       "import": "./lib/reactjs/index.mjs",
-      "default": "./lib/reactjs/index.mjs"
+      "default": "./lib/reactjs/index.js"
     },
     "./devtools": {
       "development": {
