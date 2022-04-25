@@ -48,7 +48,6 @@ const babelConfig = {
   extensions,
   babelHelpers: 'bundled',
 }
-
 const resolveConfig = { extensions }
 
 const externalPeerDeps = () =>
