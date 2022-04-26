@@ -11,17 +11,60 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "main": "lib/index.js",
+  "module": "lib/index.mjs",
+  "types": "lib/index.d.ts",
   "unpkg": "dist/react-query.development.js",
-  "types": "types/index.d.ts",
-  "module": "es/index.js",
   "sideEffects": [
-    "es/index.js",
-    "es/reactjs/index.js",
-    "es/reactjs/setBatchUpdatesFn.js",
     "lib/index.js",
+    "lib/index.mjs",
     "lib/reactjs/index.js",
-    "lib/reactjs/setBatchUpdatesFn.js"
+    "lib/reactjs/index.mjs",
+    "lib/reactjs/setBatchUpdatesFn.js",
+    "lib/reactjs/setBatchUpdatesFn.mjs"
   ],
+  "exports": {
+    ".": {
+      "import": "./lib/index.mjs",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json",
+    "./core": {
+      "import": "./lib/core/index.mjs",
+      "default": "./lib/core/index.js"
+    },
+    "./reactjs": {
+      "import": "./lib/reactjs/index.mjs",
+      "default": "./lib/reactjs/index.js"
+    },
+    "./devtools": {
+      "development": {
+        "import": "./lib/devtools/index.mjs",
+        "default": "./lib/devtools/index.js"
+      },
+      "import": "./lib/devtools/noop.mjs",
+      "default": "./lib/devtools/noop.js"
+    },
+    "./devtools/development": {
+      "import": "./lib/devtools/index.mjs",
+      "default": "./lib/devtools/index.js"
+    },
+    "./persistQueryClient": {
+      "import": "./lib/persistQueryClient/index.mjs",
+      "default": "./lib/persistQueryClient/index.js"
+    },
+    "./createWebStoragePersister": {
+      "import": "./lib/createWebStoragePersister/index.mjs",
+      "default": "./lib/createWebStoragePersister/index.js"
+    },
+    "./createAsyncStoragePersister": {
+      "import": "./lib/createAsyncStoragePersister/index.mjs",
+      "default": "./lib/createAsyncStoragePersister/index.js"
+    },
+    "./broadcastQueryClient-experimental": {
+      "import": "./lib/broadcastQueryClient-experimental/index.mjs",
+      "default": "./lib/broadcastQueryClient-experimental/index.js"
+    }
+  },
   "scripts": {
     "test": "is-ci \"test:ci\" \"test:dev\"",
     "test:dev": "npm run test:types && npm run test:format && npm run test:eslint && npm run test:codemod && jest --watch",
@@ -34,15 +77,15 @@
     "test:size": "yarn build:umd && bundlewatch",
     "test:codemod": "jest --config codemods/jest.config.js",
     "build": "yarn build:commonjs && yarn build:es && yarn build:umd && yarn build:types",
-    "build:commonjs": "rimraf ./lib && cross-env BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
-    "build:es": "rimraf ./es && babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir es",
+    "build:commonjs": "rimraf './lib/**/*.js' && cross-env BABEL_ENV=commonjs babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
+    "build:es": "rimraf './lib/**/*.mjs' && cross-env BABEL_ENV=es babel --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib --out-file-extension .mjs",
     "build:umd": "rimraf ./dist && cross-env NODE_ENV=production rollup -c && rollup-plugin-visualizer stats-react.json",
-    "build:types": "rimraf ./types && tsc --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
-    "watch": "yarn watch:commonjs & yarn watch:es & yarn watch:umd & yarn watch:types",
-    "watch:commonjs": "rimraf ./lib && cross-env BABEL_ENV=commonjs babel --watch --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
-    "watch:es": "rimraf ./es && babel --watch --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir es",
+    "build:types": "rimraf './lib/**/*.d.ts' && tsc --project ./tsconfig.types.json",
+    "watch": "yarn watch:commonjs && watch:es & yarn watch:umd & yarn watch:types",
+    "watch:commonjs": "rimraf './lib/**/*.js' && cross-env BABEL_ENV=commonjs babel --watch --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib",
+    "watch:es": "rimraf './lib/**/*.mjs' && cross-env BABEL_ENV=es babel --watch --extensions .ts,.tsx --ignore ./src/**/tests/**/* ./src --out-dir lib --out-file-extension .mjs",
     "watch:umd": "rimraf ./dist && cross-env NODE_ENV=production rollup -w -c && rollup-plugin-visualizer stats-react.json",
-    "watch:types": "rimraf ./types && tsc --watch --project ./tsconfig.types.json && replace 'import type' 'import' ./types -r --silent && replace 'export type' 'export' ./types -r --silent",
+    "watch:types": "rimraf './lib/**/*.d.ts' && tsc --watch --project ./tsconfig.types.json",
     "now-build": "yarn && cd www && yarn && yarn build",
     "prettier": "prettier \"{.,src,src/**,example/src,example/src/**,types}/*.{md,js,jsx,ts,tsx,json}\"",
     "start": "yarn watch",
@@ -50,26 +93,22 @@
     "stats": "open ./stats.html"
   },
   "files": [
-    "core",
     "dist",
-    "es",
-    "hydration",
+    "lib",
+    "core",
     "devtools",
     "persistQueryClient",
     "createWebStoragePersister",
     "createAsyncStoragePersister",
     "broadcastQueryClient-experimental",
-    "lib",
     "reactjs",
-    "scripts",
-    "types",
     "codemods",
     "!codemods/jest.config.js",
     "!codemods/**/__testfixtures__",
     "!codemods/**/__tests__"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.5.5",
+    "@babel/runtime": "^7.17.9",
     "@types/use-sync-external-store": "^0.0.3",
     "broadcast-channel": "^3.4.1",
     "match-sorter": "^6.0.2",
@@ -88,16 +127,18 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.17.6",
-    "@babel/core": "^7.17.5",
+    "@babel/core": "^7.17.9",
     "@babel/plugin-transform-runtime": "^7.17.0",
     "@babel/preset-env": "^7.16.11",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
-    "@rollup/plugin-replace": "^3.0.0",
-    "@svgr/rollup": "^6.1.1",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "21.1.0",
+    "@rollup/plugin-node-resolve": "^13.2.1",
+    "@rollup/plugin-replace": "^4.0.0",
+    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/react-17": "npm:@testing-library/react@^12.1.4",
-    "@testing-library/jest-dom": "^5.14.1",
     "@types/jest": "^26.0.4",
     "@types/jscodeshift": "^0.11.3",
     "@types/node": "^16.11.10",
@@ -107,6 +148,7 @@
     "@typescript-eslint/parser": "^5.6.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.0.1",
+    "babel-plugin-add-import-extension": "^1.6.0",
     "bundlewatch": "^0.3.2",
     "cross-env": "^7.0.2",
     "eslint": "7.x",
@@ -134,13 +176,8 @@
     "react-error-boundary": "^3.1.4",
     "replace": "^1.2.0",
     "rimraf": "^3.0.2",
-    "rollup": "^2.68.0",
-    "rollup-plugin-babel": "^4.4.0",
-    "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-jscc": "^2.0.0",
-    "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-peer-deps-external": "^2.2.4",
-    "rollup-plugin-prettier": "^2.2.2",
+    "rollup": "^2.70.2",
+    "rollup-plugin-node-externals": "^4.0.0",
     "rollup-plugin-size": "^0.2.2",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-visualizer": "^5.6.0",
