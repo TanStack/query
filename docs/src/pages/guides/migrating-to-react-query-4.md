@@ -5,6 +5,10 @@ title: Migrating to React Query 4
 
 ## Breaking Changes
 
+### ESM Support
+
+React Query now supports [package.json `"exports"`](https://nodejs.org/api/packages.html#exports) and is fully compatible with Node's native resolution for both CommonJS and ESM. We don't expect this to be a breaking change for most users, but this restricts the files you can import into your project to only the entry points we officially support.
+
 ### Query Keys (and Mutation Keys) need to be an Array
 
 In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./default-query-function) easier.
@@ -222,12 +226,12 @@ Even though React Query is an Async State Manager that can be used for anything 
 new QueryClient({
   defaultOptions: {
     queries: {
-      networkMode: 'offlineFirst'
+      networkMode: 'offlineFirst',
     },
     mutations: {
-      networkmode: 'offlineFirst'
-    }
-  }
+      networkmode: 'offlineFirst',
+    },
+  },
 })
 ```
 
@@ -239,7 +243,6 @@ The `useQueries` hook now accepts an object with a `queries` prop as its input. 
 - useQueries([{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }])
 + useQueries({ queries: [{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }] })
 ```
-
 
 ### Removed undocumented methods from the `queryClient`, `query` and `mutation`
 
@@ -289,10 +292,7 @@ In order to make bailing out of updates possible by returning `undefined`, we ha
 Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
 
 ```js
-useQuery(
-  ['key'],
-  () => axios.get(url).then(result => console.log(result.data))
-)
+useQuery(['key'], () => axios.get(url).then(result => console.log(result.data)))
 ```
 
 This is now disallowed on type level; at runtime, `undefined` will be transformed to a _failed Promise_, which means you will get an `error`, which will also be logged to the console in development mode.
@@ -349,19 +349,18 @@ React Query defaults to "tracking" query properties, which should give you a nic
 When using the [functional updater form of setQueryData](../reference/QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
 ```js
- queryClient.setQueryData(
-   ['todo', id],
-   (previousTodo) => previousTodo ? { ...previousTodo, done: true } : undefined
+queryClient.setQueryData(['todo', id], previousTodo =>
+  previousTodo ? { ...previousTodo, done: true } : undefined
 )
- ```
+```
 
- ### Custom Contexts for Multiple Providers
+### Custom Contexts for Multiple Providers
 
 Custom contexts can now be specified to pair hooks with their matching `Provider`. This is critical when there may be multiple React Query `Provider` instances in the component tree, and you need to ensure your hook uses the correct `Provider` instance.
 
 An example:
 
-1) Create a data package.
+1. Create a data package.
 
 ```tsx
 // Our first data package: @my-scope/container-data
@@ -375,17 +374,20 @@ export const useUser = () => {
   })
 }
 
-export const ContainerDataProvider = ({ children }: { children: React.ReactNode}) => {
+export const ContainerDataProvider = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
   return (
     <QueryClientProvider client={queryClient} context={context}>
       {children}
     </QueryClientProvider>
   )
 }
-
 ```
 
-2) Create a second data package.
+2. Create a second data package.
 
 ```tsx
 // Our second data package: @my-scope/my-component-data
@@ -393,24 +395,26 @@ export const ContainerDataProvider = ({ children }: { children: React.ReactNode}
 const context = React.createContext<QueryClient | undefined>(undefined)
 const queryClient = new QueryClient()
 
-
 export const useItems = () => {
   return useQuery(ITEMS_KEY, ITEMS_FETCHER, {
     context,
   })
 }
 
-export const MyComponentDataProvider = ({ children }: { children: React.ReactNode}) => {
+export const MyComponentDataProvider = ({
+  children,
+}: {
+  children: React.ReactNode
+}) => {
   return (
     <QueryClientProvider client={queryClient} context={context}>
       {children}
     </QueryClientProvider>
   )
 }
-
 ```
 
-3) Use these two data packages in your application.
+3. Use these two data packages in your application.
 
 ```tsx
 // Our application
