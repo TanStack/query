@@ -2,8 +2,10 @@ import { noop } from '../core/utils'
 import { PersistedClient, Persister } from '../persistQueryClient'
 
 interface CreateWebStoragePersisterOptions {
-  /** The storage client used for setting an retrieving items from cache */
-  storage: Storage
+  /** The storage client used for setting an retrieving items from cache.
+   * For SSR pass in `undefined`. 
+   */
+  storage?: Storage
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -31,7 +33,7 @@ export function createWebStoragePersister({
   //try to save data to storage
   function trySave(persistedClient: PersistedClient) {
     try {
-      storage.setItem(key, serialize(persistedClient))
+      storage?.setItem(key, serialize(persistedClient))
     } catch {
       return false
     }
