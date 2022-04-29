@@ -28,11 +28,9 @@ onlineManager.setEventListener(setOnline => {
 ## Refetch on App focus
 
 In React Native you have to use React Query `focusManager` to refetch when the App is focused.
-You can use 'react-native-appstate-hook' to be notified when the App state has changed.
 
 ```ts
 import { focusManager } from 'react-query'
-import useAppState from 'react-native-appstate-hook'
 
 function onAppStateChange(status: AppStateStatus) {
   if (Platform.OS !== 'web') {
@@ -40,9 +38,11 @@ function onAppStateChange(status: AppStateStatus) {
   }
 }
 
-useAppState({
-  onChange: onAppStateChange,
-})
+useEffect(() => {
+  const subscription = AppState.addEventListener('change', onAppStateChange)
+
+  return () => subscription.remove()
+}, [])
 ```
 
 ## Refresh on Screen focus
