@@ -173,7 +173,7 @@ export function getPreviousPageParam(
  * Returns `undefined` if it cannot be determined.
  */
 export function hasNextPage(
-  options: QueryOptions<any, any>,
+  options: QueryOptions<any, any, any, any>,
   pages?: unknown
 ): boolean | undefined {
   if (options.getNextPageParam && Array.isArray(pages)) {
@@ -191,7 +191,7 @@ export function hasNextPage(
  * Returns `undefined` if it cannot be determined.
  */
 export function hasPreviousPage(
-  options: QueryOptions<any, any>,
+  options: QueryOptions<any, any, any, any>,
   pages?: unknown
 ): boolean | undefined {
   if (options.getPreviousPageParam && Array.isArray(pages)) {
