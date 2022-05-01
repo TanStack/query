@@ -462,21 +462,18 @@ export class QueryObserver<
       if (
         prevResult &&
         state.data === prevResultState?.data &&
-        options.select === this.previousSelect?.fn &&
-        !this.previousSelectError
+        options.select === this.selectFn
       ) {
-        data = this.previousSelect.result
+        data = this.selectResult
       } else {
         try {
+          this.selectFn = options.select
           data = options.select(state.data)
           if (options.structuralSharing !== false) {
             data = replaceEqualDeep(prevResult?.data, data)
           }
-          this.previousSelect = {
-            fn: options.select,
-            result: data,
-          }
-          this.previousSelectError = null
+          this.selectResult = data
+          this.selectError = null
         } catch (selectError) {
           if (process.env.NODE_ENV !== 'production') {
             this.client.getLogger().error(selectError)
@@ -521,7 +518,7 @@ export class QueryObserver<
                 placeholderData
               )
             }
-            this.previousSelectError = null
+            this.selectError = null
           } catch (selectError) {
             if (process.env.NODE_ENV !== 'production') {
               this.client.getLogger().error(selectError)
