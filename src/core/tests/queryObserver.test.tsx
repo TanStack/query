@@ -245,18 +245,17 @@ describe('queryObserver', () => {
     expect(observerResult2.data).toMatchObject({ myCount: 1 })
   })
 
-  test('should always run the selector again if selector throws an error', async () => {
+  test('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
     const consoleMock = mockConsoleError()
     const key = queryKey()
     const results: QueryObserverResult[] = []
-    const select = () => {
-      throw new Error('selector error')
-    }
     const queryFn = () => ({ count: 1 })
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
-      select,
+      select: () => {
+        throw new Error('selector error')
+      },
     })
     const unsubscribe = observer.subscribe(result => {
       results.push(result)
@@ -264,7 +263,7 @@ describe('queryObserver', () => {
     await sleep(1)
     await observer.refetch()
     unsubscribe()
-    expect(results.length).toBe(5)
+    expect(results.length).toBe(4)
     expect(results[0]).toMatchObject({
       status: 'loading',
       isFetching: true,
@@ -285,11 +284,60 @@ describe('queryObserver', () => {
       isFetching: false,
       data: undefined,
     })
-    expect(results[4]).toMatchObject({
+    consoleMock.mockRestore()
+  })
+
+  test('should return stale data if selector throws an error', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const results: QueryObserverResult[] = []
+    let shouldError = false
+    const error = new Error('select error')
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => (shouldError ? 2 : 1),
+      select: num => {
+        if (shouldError) {
+          throw error
+        }
+        shouldError = true
+        return String(num)
+      },
+    })
+
+    const unsubscribe = observer.subscribe(result => {
+      results.push(result)
+    })
+    await sleep(10)
+    await observer.refetch()
+    unsubscribe()
+
+    expect(results.length).toBe(4)
+    expect(results[0]).toMatchObject({
+      status: 'loading',
+      isFetching: true,
+      data: undefined,
+      error: null,
+    })
+    expect(results[1]).toMatchObject({
+      status: 'success',
+      isFetching: false,
+      data: '1',
+      error: null,
+    })
+    expect(results[2]).toMatchObject({
+      status: 'success',
+      isFetching: true,
+      data: '1',
+      error: null,
+    })
+    expect(results[3]).toMatchObject({
       status: 'error',
       isFetching: false,
-      data: undefined,
+      data: '1',
+      error,
     })
+
     consoleMock.mockRestore()
   })
 

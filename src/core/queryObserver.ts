@@ -68,11 +68,9 @@ export class QueryObserver<
     TQueryKey
   >
   private previousQueryResult?: QueryObserverResult<TData, TError>
-  private previousSelectError: Error | null
-  private previousSelect?: {
-    fn: (data: TQueryData) => TData
-    result: TData
-  }
+  private selectError: Error | null
+  private selectFn?: (data: TQueryData) => TData
+  private selectResult?: TData
   private staleTimeoutId?: number
   private refetchIntervalId?: number
   private currentRefetchInterval?: number | false
@@ -93,7 +91,7 @@ export class QueryObserver<
     this.client = client
     this.options = options
     this.trackedProps = []
-    this.previousSelectError = null
+    this.selectError = null
     this.bindMethods()
     this.setOptions(options)
   }
@@ -508,27 +506,21 @@ export class QueryObserver<
       if (
         prevResult &&
         state.data === prevResultState?.data &&
-        options.select === this.previousSelect?.fn &&
-        !this.previousSelectError
+        options.select === this.selectFn
       ) {
-        data = this.previousSelect.result
+        data = this.selectResult
       } else {
         try {
+          this.selectFn = options.select
           data = options.select(state.data)
           if (options.structuralSharing !== false) {
             data = replaceEqualDeep(prevResult?.data, data)
           }
-          this.previousSelect = {
-            fn: options.select,
-            result: data,
-          }
-          this.previousSelectError = null
+          this.selectResult = data
+          this.selectError = null
         } catch (selectError) {
           getLogger().error(selectError)
-          error = selectError
-          this.previousSelectError = selectError
-          errorUpdatedAt = Date.now()
-          status = 'error'
+          this.selectError = selectError
         }
       }
     }
@@ -565,13 +557,10 @@ export class QueryObserver<
                 placeholderData
               )
             }
-            this.previousSelectError = null
+            this.selectError = null
           } catch (selectError) {
             getLogger().error(selectError)
-            error = selectError
-            this.previousSelectError = selectError
-            errorUpdatedAt = Date.now()
-            status = 'error'
+            this.selectError = selectError
           }
         }
       }
@@ -581,6 +570,13 @@ export class QueryObserver<
         data = placeholderData as TData
         isPlaceholderData = true
       }
+    }
+
+    if (this.selectError) {
+      error = this.selectError as any
+      data = this.selectResult
+      errorUpdatedAt = Date.now()
+      status = 'error'
     }
 
     const result: QueryObserverBaseResult<TData, TError> = {

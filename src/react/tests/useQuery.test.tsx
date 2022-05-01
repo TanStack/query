@@ -820,6 +820,47 @@ describe('useQuery', () => {
     consoleMock.mockRestore()
   })
 
+  it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
+    const consoleMock = mockConsoleError()
+    const key = queryKey()
+    const error = new Error('Select Error')
+    let runs = 0
+
+    function Page() {
+      const [, rerender] = React.useReducer(() => ({}), {})
+      const state = useQuery<string, Error>(
+        key,
+        () => (runs === 0 ? 'test' : 'test2'),
+        {
+          select: React.useCallback(() => {
+            runs++
+            throw error
+          }, []),
+        }
+      )
+      return (
+        <div>
+          <div>error: {state.error?.message}</div>
+          <button onClick={rerender}>rerender</button>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('error: Select Error'))
+    expect(runs).toEqual(1)
+    fireEvent.click(rendered.getByRole('button', { name: 'rerender' }))
+    await sleep(10)
+    expect(runs).toEqual(1)
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await sleep(10)
+    expect(runs).toEqual(2)
+
+    consoleMock.mockRestore()
+  })
+
   it('should re-render when dataUpdatedAt changes but data remains the same', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -4134,7 +4175,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Data: selected 3'))
   })
 
-  it('select should structually share data', async () => {
+  it('select should structurally share data', async () => {
     const key1 = queryKey()
     const states: Array<Array<number>> = []
 
