@@ -15,27 +15,6 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
-export function renderWithClient(
-  client: QueryClient,
-  ui: React.ReactElement,
-  options: ContextOptions = {}
-) {
-  const { rerender, ...result } = render(
-    <QueryClientProvider client={client} context={options.context}>
-      {ui}
-    </QueryClientProvider>
-  )
-  return {
-    ...result,
-    rerender: (rerenderUi: React.ReactElement) =>
-      rerender(
-        <QueryClientProvider client={client} context={options.context}>
-          {rerenderUi}
-        </QueryClientProvider>
-      ),
-  }
-}
-
 export function mockVisibilityState(value: VisibilityState) {
   return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
@@ -73,33 +52,13 @@ export function setActTimeout(fn: () => void, ms?: number) {
 /**
  * Assert the parameter is of a specific type.
  */
-export const expectType = <T,>(_: T): void => undefined
+export const expectType = <T>(_: T): void => undefined
 
 /**
  * Assert the parameter is not typed as `any`
  */
-export const expectTypeNotAny = <T,>(_: 0 extends 1 & T ? never : T): void =>
+export const expectTypeNotAny = <T>(_: 0 extends 1 & T ? never : T): void =>
   undefined
-
-export const Blink = ({
-  duration,
-  children,
-}: {
-  duration: number
-  children: React.ReactNode
-}) => {
-  const [shouldShow, setShouldShow] = React.useState<boolean>(true)
-
-  React.useEffect(() => {
-    setShouldShow(true)
-    const timeout = setActTimeout(() => setShouldShow(false), duration)
-    return () => {
-      clearTimeout(timeout)
-    }
-  }, [duration, children])
-
-  return shouldShow ? <>{children}</> : <>off</>
-}
 
 export const executeMutation = (
   queryClient: QueryClient,
