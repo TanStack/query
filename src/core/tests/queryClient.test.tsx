@@ -5,10 +5,10 @@ import React from 'react'
 import {
   sleep,
   queryKey,
-  renderWithClient,
   mockLogger,
   createQueryClient,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
+import { renderWithClient } from '../../reactjs/tests/utils'
 import {
   useQuery,
   InfiniteQueryObserver,

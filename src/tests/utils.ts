@@ -1,14 +1,7 @@
-import { act, render } from '@testing-library/react'
-import React from 'react'
+import { act } from '@testing-library/react'
 
-import {
-  MutationOptions,
-  QueryClient,
-  QueryClientConfig,
-  QueryClientProvider,
-  ContextOptions,
-} from '../..'
-import * as utils from '../../core/utils'
+import { MutationOptions, QueryClient, QueryClientConfig } from '..'
+import * as utils from '../core/utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)

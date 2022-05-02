@@ -2,11 +2,7 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
 import { QueryClient, useQuery, UseQueryResult, useQueries } from '../..'
-import {
-  createQueryClient,
-  mockLogger,
-  queryKey,
-} from '../../reactjs/tests/utils'
+import { createQueryClient, mockLogger, queryKey } from '../../tests/utils'
 import { sleep } from '../../core/utils'
 import { PersistedClient, Persister, persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'

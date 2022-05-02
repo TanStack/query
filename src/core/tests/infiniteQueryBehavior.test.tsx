@@ -1,10 +1,10 @@
 import { waitFor } from '@testing-library/react'
-import { createQueryClient, queryKey } from '../../reactjs/tests/utils'
 import {
   QueryClient,
   InfiniteQueryObserver,
   InfiniteQueryObserverResult,
 } from '../..'
+import { createQueryClient, queryKey } from '../../tests/utils'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient

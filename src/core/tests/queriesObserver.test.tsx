@@ -4,7 +4,7 @@ import {
   queryKey,
   createQueryClient,
   mockLogger,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
 import {
   QueryClient,
   QueriesObserver,

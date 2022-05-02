@@ -1,6 +1,5 @@
 import { OnlineManager } from '../onlineManager'
-import { sleep } from '../utils'
-import { setIsServer } from '../../reactjs/tests/utils'
+import { setIsServer, sleep } from '../../tests/utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager

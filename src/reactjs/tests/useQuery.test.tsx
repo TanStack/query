@@ -1,19 +1,17 @@
 import { act, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
-
 import {
   expectType,
   queryKey,
   mockVisibilityState,
   sleep,
-  renderWithClient,
   setActTimeout,
-  Blink,
   mockNavigatorOnLine,
   mockLogger,
   createQueryClient,
-} from './utils'
+} from '../../tests/utils'
+import { renderWithClient, Blink } from './utils'
 import {
   useQuery,
   UseQueryResult,
