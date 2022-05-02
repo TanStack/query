@@ -1,6 +1,5 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import React from 'react'
 
 import {
   sleep,
@@ -8,9 +7,7 @@ import {
   mockLogger,
   createQueryClient,
 } from '../../tests/utils'
-import { renderWithClient } from '../../reactjs/tests/utils'
 import {
-  useQuery,
   InfiniteQueryObserver,
   QueryCache,
   QueryClient,
@@ -358,62 +355,6 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, newData)
 
       expect(queryCache.find(key)!.state.data).toBe(newData)
-    })
-
-    test('should not call onSuccess callback of active observers', async () => {
-      const key = queryKey()
-      const onSuccess = jest.fn()
-
-      function Page() {
-        const state = useQuery(key, () => 'data', { onSuccess })
-        return (
-          <div>
-            <div>data: {state.data}</div>
-            <button onClick={() => queryClient.setQueryData(key, 'newData')}>
-              setQueryData
-            </button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-
-      await waitFor(() => rendered.getByText('data: data'))
-      fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
-      await waitFor(() => rendered.getByText('data: newData'))
-
-      expect(onSuccess).toHaveBeenCalledTimes(1)
-      expect(onSuccess).toHaveBeenCalledWith('data')
-    })
-
-    test('should respect updatedAt', async () => {
-      const key = queryKey()
-
-      function Page() {
-        const state = useQuery(key, () => 'data')
-        return (
-          <div>
-            <div>data: {state.data}</div>
-            <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
-            <button
-              onClick={() =>
-                queryClient.setQueryData(key, 'newData', { updatedAt: 100 })
-              }
-            >
-              setQueryData
-            </button>
-          </div>
-        )
-      }
-
-      const rendered = renderWithClient(queryClient, <Page />)
-
-      await waitFor(() => rendered.getByText('data: data'))
-      fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
-      await waitFor(() => rendered.getByText('data: newData'))
-      await waitFor(() => {
-        expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
-      })
     })
   })
 
