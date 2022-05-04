@@ -546,7 +546,7 @@ export class QueryObserver<
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
       fetchStatus,
-      isLoading: status === 'loading',
+      isLoading: status === 'loading' && isFetching,
       isSuccess: status === 'success',
       isError: status === 'error',
       data,

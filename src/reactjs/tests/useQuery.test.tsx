@@ -3743,7 +3743,7 @@ describe('useQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
+  test('should init to status:loading, fetchStatus:idle, isLoading:false when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -3754,7 +3754,7 @@ describe('useQuery', () => {
       return (
         <div>
           <div>
-            status: {query.status}, {query.fetchStatus}
+            status: {query.status}, {query.fetchStatus}, {query.isLoading ? 'isLoading=true' : 'isLoading=false'}
           </div>
         </div>
       )
@@ -3762,7 +3762,7 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => rendered.getByText('status: loading, idle'))
+    await waitFor(() => rendered.getByText('status: loading, idle, isLoading=false'))
   })
 
   test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
@@ -4616,7 +4616,7 @@ describe('useQuery', () => {
 
     expect(states[0]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isLoading: false,
       isFetching: false,
       isSuccess: false,
       isStale: true,
@@ -4637,7 +4637,7 @@ describe('useQuery', () => {
     })
     expect(states[3]).toMatchObject({
       data: undefined,
-      isLoading: true,
+      isLoading: false,
       isFetching: false,
       isSuccess: false,
       isStale: true,
