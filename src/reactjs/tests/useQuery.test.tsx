@@ -5679,10 +5679,10 @@ describe('useQuery', () => {
 
   it('it should have status=error on mount when a query has failed', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: UseQueryResult<unknown>[] = []
     const error = new Error('oops')
 
-    const queryFn = async () => {
+    const queryFn = async (): Promise<unknown> => {
       throw error
     }
 
