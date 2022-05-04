@@ -55,16 +55,19 @@ import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 
 export function useRefreshOnFocus<T>(refetch: () => Promise<T>) {
-  const enabledRef = React.useRef(false)
+  const firstTimeRef = React.useRef(true)
 
   useFocusEffect(
     React.useCallback(() => {
-      if (enabledRef.current) {
-        refetch()
-      } else {
-        enabledRef.current = true
+      if (firstTimeRef.current) {
+         firstTimeRef.current = false;
+         return;
       }
+
+      refetch()
     }, [refetch])
   )
 }
 ```
+
+In the above code, `refetch` is skipped the first time because `useFocusEffect` calls our callback on mount in addition to screen focus.

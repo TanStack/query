@@ -16,7 +16,8 @@ export { useMutation } from './useMutation'
 export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'
 export { useInfiniteQuery } from './useInfiniteQuery'
-export { useHydrate, Hydrate, useIsHydrating } from './Hydrate'
+export { useHydrate, Hydrate } from './Hydrate'
+export { useIsRestoring } from './isRestoring'
 
 // Types
 export * from './types'

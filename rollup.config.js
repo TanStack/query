@@ -1,11 +1,12 @@
-import babel from 'rollup-plugin-babel'
+import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
-import externalDeps from 'rollup-plugin-peer-deps-external'
-import resolve from 'rollup-plugin-node-resolve'
-import commonJS from 'rollup-plugin-commonjs'
+import externals from 'rollup-plugin-node-externals'
+import resolve from '@rollup/plugin-node-resolve'
+import commonJS from '@rollup/plugin-commonjs'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
+import { defineConfig } from 'rollup'
 
 const external = ['react', 'react-dom', 'react-query']
 
@@ -42,19 +43,19 @@ const inputSrcs = [
 ]
 
 const extensions = ['.js', '.jsx', '.es6', '.es', '.mjs', '.ts', '.tsx']
-const babelConfig = { extensions, runtimeHelpers: true }
-const resolveConfig = { extensions }
-const commonJsConfig = {
-  namedExports: {
-    'node_modules/use-sync-external-store/shim/index.js': [
-      'useSyncExternalStore',
-    ],
-  },
+
+const babelConfig = {
+  extensions,
+  babelHelpers: 'bundled',
 }
+const resolveConfig = { extensions }
+
+const externalPeerDeps = () =>
+  externals({ deps: false, devDeps: false, peerDeps: true })
 
 export default inputSrcs
   .map(([input, name, file]) => {
-    return [
+    return defineConfig([
       {
         input: input,
         output: {
@@ -66,10 +67,10 @@ export default inputSrcs
         },
         external,
         plugins: [
+          externalPeerDeps(),
           resolve(resolveConfig),
           babel(babelConfig),
-          commonJS(commonJsConfig),
-          externalDeps(),
+          commonJS(),
         ],
       },
       {
@@ -88,10 +89,10 @@ export default inputSrcs
             delimiters: ['', ''],
             preventAssignment: true,
           }),
+          externalPeerDeps(),
           resolve(resolveConfig),
           babel(babelConfig),
-          commonJS(commonJsConfig),
-          externalDeps(),
+          commonJS(),
           terser(),
           size(),
           visualizer({
@@ -100,6 +101,6 @@ export default inputSrcs
           }),
         ],
       },
-    ]
+    ])
   })
   .flat()

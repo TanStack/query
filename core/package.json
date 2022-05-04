@@ -1,6 +1,0 @@
-{
-  "internal": true,
-  "main": "../lib/core/index.js",
-  "module": "../es/core/index.js",
-  "types": "../types/core/index.d.ts"
-}

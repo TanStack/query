@@ -1,12 +1,12 @@
 import React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim'
+import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 
 import { QueryKey, QueryFunction } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
 import { QueriesObserver } from '../core/queriesObserver'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
-import { useIsHydrating } from './Hydrate'
+import { useIsRestoring } from './isRestoring'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -152,7 +152,7 @@ export function useQueries<T extends any[]>({
   context?: UseQueryOptions['context']
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context })
-  const isHydrating = useIsHydrating()
+  const isRestoring = useIsRestoring()
 
   const defaultedQueries = React.useMemo(
     () =>
@@ -160,13 +160,13 @@ export function useQueries<T extends any[]>({
         const defaultedOptions = queryClient.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
-        defaultedOptions._optimisticResults = isHydrating
-          ? 'isHydrating'
+        defaultedOptions._optimisticResults = isRestoring
+          ? 'isRestoring'
           : 'optimistic'
 
         return defaultedOptions
       }),
-    [queries, queryClient, isHydrating]
+    [queries, queryClient, isRestoring]
   )
 
   const [observer] = React.useState(
@@ -178,10 +178,10 @@ export function useQueries<T extends any[]>({
   useSyncExternalStore(
     React.useCallback(
       onStoreChange =>
-        isHydrating
+        isRestoring
           ? () => undefined
           : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isHydrating]
+      [observer, isRestoring]
     ),
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult()

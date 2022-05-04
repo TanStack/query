@@ -5,7 +5,7 @@ import {
   QueryClient,
   MutationCache,
   onlineManager,
-  useIsHydrating,
+  useIsRestoring,
 } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import toast, { Toaster } from "react-hot-toast";
@@ -76,7 +76,7 @@ export default function App() {
 }
 
 function Movies() {
-  const isHydrating = useIsHydrating();
+  const isRestoring = useIsRestoring();
   return (
     <Router
       location={location}
@@ -93,7 +93,7 @@ function Movies() {
             queryClient.getQueryData(movieKeys.detail(movieId)) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
-            (onlineManager.isOnline() && !isHydrating
+            (onlineManager.isOnline() && !isRestoring
               ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
                   api.fetchMovie(movieId)
                 )
