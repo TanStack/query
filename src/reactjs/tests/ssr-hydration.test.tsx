@@ -12,7 +12,12 @@ import {
   dehydrate,
   hydrate,
 } from '../..'
-import { createQueryClient, mockLogger, setIsServer, sleep } from './utils'
+import {
+  createQueryClient,
+  mockLogger,
+  setIsServer,
+  sleep,
+} from '../../tests/utils'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 

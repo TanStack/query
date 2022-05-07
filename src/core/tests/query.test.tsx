@@ -4,7 +4,7 @@ import {
   mockVisibilityState,
   mockLogger,
   createQueryClient,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
 import {
   QueryCache,
   QueryClient,

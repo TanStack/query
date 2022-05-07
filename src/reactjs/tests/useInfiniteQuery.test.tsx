@@ -4,11 +4,11 @@ import React from 'react'
 import {
   queryKey,
   sleep,
-  renderWithClient,
   setActTimeout,
-  Blink,
   createQueryClient,
-} from './utils'
+} from '../../tests/utils'
+
+import { renderWithClient, Blink } from './utils'
 import {
   useInfiniteQuery,
   UseInfiniteQueryResult,

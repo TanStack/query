@@ -6,7 +6,7 @@ import React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey, createQueryClient } from './utils'
+import { sleep, queryKey, createQueryClient } from '../../tests/utils'
 import {
   useQuery,
   QueryClientProvider,

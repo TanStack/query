@@ -9,9 +9,9 @@ import {
   expectType,
   expectTypeNotAny,
   queryKey,
-  renderWithClient,
   sleep,
-} from './utils'
+} from '../../tests/utils'
+import { renderWithClient } from './utils'
 import {
   QueryClient,
   useQueries,

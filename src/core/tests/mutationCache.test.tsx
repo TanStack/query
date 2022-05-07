@@ -4,7 +4,7 @@ import {
   sleep,
   executeMutation,
   createQueryClient,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
 import { MutationCache, MutationObserver } from '../..'
 
 describe('mutationCache', () => {

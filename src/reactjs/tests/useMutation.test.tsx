@@ -9,10 +9,10 @@ import {
   createQueryClient,
   mockNavigatorOnLine,
   queryKey,
-  renderWithClient,
   setActTimeout,
   sleep,
-} from './utils'
+} from '../../tests/utils'
+import { renderWithClient } from './utils'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()
