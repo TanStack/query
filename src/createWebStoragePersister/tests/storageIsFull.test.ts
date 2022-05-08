@@ -12,7 +12,7 @@ function getMockStorage(limitSize?: number) {
     },
 
     setItem(key: string, value: string) {
-      if (limitSize) {
+      if (typeof limitSize !== 'undefined') {
         const currentSize = Array.from(dataSet.entries()).reduce(
           (n, d) => d[0].length + d[1].length + n,
           0
@@ -122,5 +122,31 @@ describe('createWebStoragePersister ', () => {
     expect(
       restoredClient2?.clientState.queries.find(q => q.queryKey[0] === 'B')
     ).toBeUndefined()
+  })
+  test('should clear storage as default error handling', async () => {
+    const queryCache = new QueryCache()
+    const mutationCache = new MutationCache()
+    const queryClient = new QueryClient({ queryCache, mutationCache })
+
+    const N = 2000
+    const storage = getMockStorage(0)
+    const webStoragePersister = createWebStoragePersister({
+      throttleTime: 0,
+      storage,
+      handlePersistError: removeOldestQuery,
+    })
+
+    await queryClient.prefetchQuery(['A'], () => Promise.resolve('A'.repeat(N)))
+    await sleep(1)
+
+    const persistClient = {
+      buster: 'test-limit',
+      timestamp: Date.now(),
+      clientState: dehydrate(queryClient),
+    }
+    webStoragePersister.persistClient(persistClient)
+    await sleep(10)
+    const restoredClient = await webStoragePersister.restoreClient()
+    expect(restoredClient).toEqual(undefined)
   })
 })
