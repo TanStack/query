@@ -4,12 +4,9 @@ export type PersistErrorHandler = (props: {
   persistedClient: PersistedClient
   error: Error
   errorCount: number
-}) => PersistedClient
+}) => PersistedClient | null
 
-export const removeOldestQuery: PersistErrorHandler = ({
-  persistedClient,
-  error,
-}) => {
+export const removeOldestQuery: PersistErrorHandler = ({ persistedClient }) => {
   const mutations = [...persistedClient.clientState.mutations]
   const queries = [...persistedClient.clientState.queries]
   const client: PersistedClient = {
@@ -29,6 +26,5 @@ export const removeOldestQuery: PersistErrorHandler = ({
     return client
   }
 
-  // throw the original error if we run out of queries to remove
-  throw error
+  return null
 }

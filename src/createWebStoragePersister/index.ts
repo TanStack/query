@@ -33,7 +33,7 @@ export function createWebStoragePersister({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  handlePersistError,
+  handlePersistError = () => null,
 }: CreateWebStoragePersisterOptions): Persister {
   if (typeof storage !== 'undefined') {
     const trySave = (persistedClient: PersistedClient): Error | undefined => {
@@ -43,23 +43,27 @@ export function createWebStoragePersister({
         return error as Error
       }
     }
+    const removeClient = () => {
+      storage.removeItem(key)
+    }
     return {
       persistClient: throttle(persistedClient => {
-        let client: PersistedClient = persistedClient
+        let client: PersistedClient | null = persistedClient
         let error = trySave(client)
         let errorCount = 0
-        while (error) {
-          if (handlePersistError) {
-            errorCount++
-            client = handlePersistError({
-              persistedClient,
-              error,
-              errorCount,
-            })
+        while (error && client) {
+          errorCount++
+          client = handlePersistError({
+            persistedClient: client,
+            error,
+            errorCount,
+          })
+
+          if (client) {
+            error = trySave(client)
           } else {
-            throw error
+            removeClient()
           }
-          error = trySave(client)
         }
       }, throttleTime),
       restoreClient: () => {
@@ -71,9 +75,7 @@ export function createWebStoragePersister({
 
         return deserialize(cacheString) as PersistedClient
       },
-      removeClient: () => {
-        storage.removeItem(key)
-      },
+      removeClient,
     }
   }
 
