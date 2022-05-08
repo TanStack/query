@@ -278,7 +278,6 @@ export function ReactQueryDevtools({
         {isResolvedOpen ? (
           <Button
             type="button"
-            aria-label="Close React Query Devtools"
             aria-controls="ReactQueryDevtoolsPanel"
             aria-haspopup="true"
             aria-expanded="true"
@@ -540,12 +539,24 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               alignItems: 'center',
             }}
           >
-            <Logo
-              aria-hidden
+            <button
+              type="button"
+              aria-label="Close React Query Devtools"
+              aria-controls="ReactQueryDevtoolsPanel"
+              aria-haspopup="true"
+              aria-expanded="true"
+              onClick={() => setIsOpen(false)}
               style={{
+                display: 'inline-flex',
+                background: 'none',
+                border: 0,
+                padding: 0,
                 marginRight: '.5em',
+                cursor: 'pointer',
               }}
-            />
+            >
+              <Logo aria-hidden />
+            </button>
             <div
               style={{
                 display: 'flex',
@@ -605,6 +616,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   style={{
                     flex: '1',
                     marginRight: '.5em',
+                    width: '100%',
                   }}
                 />
                 {!filter ? (
