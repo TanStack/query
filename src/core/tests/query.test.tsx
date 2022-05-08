@@ -4,7 +4,7 @@ import {
   mockVisibilityState,
   mockLogger,
   createQueryClient,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
 import {
   QueryCache,
   QueryClient,
@@ -153,7 +153,7 @@ describe('query', () => {
 
     const promise = queryClient.fetchQuery(
       key,
-      async () => {
+      async (): Promise<unknown> => {
         count++
         throw new Error(`error${count}`)
       },
@@ -282,7 +282,7 @@ describe('query', () => {
     const key = queryKey()
 
     const queryFn = jest.fn<
-      Promise<void>,
+      Promise<unknown>,
       [QueryFunctionContext<ReturnType<typeof queryKey>>]
     >()
     const onAbort = jest.fn()
@@ -339,7 +339,7 @@ describe('query', () => {
   test('should not continue if explicitly cancelled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -369,7 +369,7 @@ describe('query', () => {
   test('should not error if reset while loading', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
 
     queryFn.mockImplementation(async () => {
       await sleep(10)
@@ -399,7 +399,7 @@ describe('query', () => {
   test('should be able to refetch a cancelled query', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
 
     queryFn.mockImplementation(async () => {
       await sleep(50)
@@ -432,9 +432,12 @@ describe('query', () => {
   test('cancelling a rejected query should not have any effect', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, async () => {
-      throw new Error('error')
-    })
+    await queryClient.prefetchQuery(
+      key,
+      async (): Promise<unknown> => {
+        throw new Error('error')
+      }
+    )
     const query = queryCache.find(key)!
     query.cancel()
     await sleep(10)
@@ -450,16 +453,20 @@ describe('query', () => {
     const query = queryCache.find(key)!
     expect(query.state.status).toBe('success')
 
-    await queryClient.prefetchQuery(key, () => Promise.reject('reject'), {
-      retry: false,
-    })
+    await queryClient.prefetchQuery(
+      key,
+      () => Promise.reject<string>('reject'),
+      {
+        retry: false,
+      }
+    )
     expect(query.state.status).toBe('error')
 
     queryClient.prefetchQuery(
       key,
       async () => {
         await sleep(10)
-        return Promise.reject('reject')
+        return Promise.reject<unknown>('reject')
       },
       { retry: false }
     )

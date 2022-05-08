@@ -6,7 +6,7 @@ import React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey, createQueryClient } from './utils'
+import { sleep, queryKey, createQueryClient } from '../../tests/utils'
 import {
   useQuery,
   QueryClientProvider,
@@ -19,7 +19,7 @@ describe('Server Side Rendering', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
 
     function Page() {
       const query = useQuery(key, queryFn)

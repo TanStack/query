@@ -1,7 +1,7 @@
 import { dehydrate, MutationCache, QueryCache, QueryClient } from '../../core'
 import { createWebStoragePersister } from '../index'
-import { sleep } from '../../reactjs/tests/utils'
 import { removeOldestQuery } from '../../persistQueryClient'
+import { sleep } from '../../tests/utils'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()

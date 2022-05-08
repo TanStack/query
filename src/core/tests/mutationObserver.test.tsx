@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { createQueryClient, sleep } from '../../reactjs/tests/utils'
+import { createQueryClient, sleep } from '../../tests/utils'
 import { QueryClient, MutationObserver } from '../..'
 
 describe('mutationObserver', () => {

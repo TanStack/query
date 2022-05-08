@@ -7,14 +7,17 @@ import type { MutationCache } from './mutationCache'
 import { Logger } from './logger'
 
 export type QueryKey = readonly unknown[]
-export type QueryFunctionData<T> = T extends undefined ? never : T
 
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey
 > = (
   context: QueryFunctionContext<TQueryKey>
-) => QueryFunctionData<T | Promise<T>>
+) => [T] extends [undefined]
+  ? never | 'queryFn must not return undefined or void'
+  : [T] extends [void]
+  ? never | 'queryFn must not return undefined or void'
+  : T | Promise<T>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,

@@ -2,7 +2,8 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import React from 'react'
 
-import { sleep, queryKey, renderWithClient, createQueryClient } from './utils'
+import { sleep, queryKey, createQueryClient } from '../../tests/utils'
+import { renderWithClient } from './utils'
 import {
   useQuery,
   QueryCache,
@@ -121,7 +122,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn twice when used in Suspense mode', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => {
       sleep(10)
       return 'data'
@@ -246,10 +247,17 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     function SecondComponent() {
-      useQuery(key, () => sleep(20), {
-        suspense: true,
-        onSuccess: successFn2,
-      })
+      useQuery(
+        key,
+        () => {
+          sleep(10)
+          return 'data'
+        },
+        {
+          suspense: true,
+          onSuccess: successFn2,
+        }
+      )
 
       return <span>second</span>
     }
@@ -572,7 +580,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       useQuery(
         key,
-        async () => {
+        async (): Promise<unknown> => {
           await sleep(10)
           throw new Error('Suspense Error a1x')
         },
@@ -612,7 +620,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       useQuery(
         key,
-        async () => {
+        async (): Promise<unknown> => {
           await sleep(10)
           throw new Error('Suspense Error a2x')
         },
@@ -653,7 +661,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       useQuery(
         key,
-        async () => {
+        async (): Promise<unknown> => {
           await sleep(10)
           return Promise.reject('Remote Error')
         },
@@ -694,7 +702,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       useQuery(
         key,
-        async () => {
+        async (): Promise<unknown> => {
           await sleep(10)
           return Promise.reject('Local Error')
         },
@@ -732,7 +740,7 @@ describe("useQuery's in Suspense mode", () => {
   it('should not call the queryFn when not enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<Promise<string>, unknown[]>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return '23'

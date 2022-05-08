@@ -8,7 +8,7 @@ import {
   sleep,
 } from '../utils'
 import { Mutation } from '../mutation'
-import { createQueryClient } from '../../reactjs/tests/utils'
+import { createQueryClient } from '../../tests/utils'
 
 describe('core/utils', () => {
   describe('isPlainObject', () => {

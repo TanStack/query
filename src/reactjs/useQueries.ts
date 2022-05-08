@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim'
+import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 
 import { QueryKey, QueryFunction } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
@@ -16,6 +16,10 @@ type UseQueryOptionsForUseQueries<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey
 > = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+
+type InvalidQueryFn = QueryFunction<
+  undefined | Promise<undefined> | void | Promise<void>
+>
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -40,7 +44,9 @@ type GetOptions<T> =
     : T extends [infer TQueryFnData]
     ? UseQueryOptionsForUseQueries<TQueryFnData>
     : // Part 3: responsible for inferring and enforcing type if no explicit parameter was provided
-    T extends {
+    T extends { queryFn?: InvalidQueryFn }
+    ? never | 'queryFn must not return undefined or void'
+    : T extends {
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
@@ -72,7 +78,7 @@ type GetResults<T> =
     ? UseQueryResult<TQueryFnData>
     : // Part 3: responsible for mapping inferred type to results, if no explicit parameter was provided
     T extends {
-        queryFn?: QueryFunction<any, any>
+        queryFn?: QueryFunction<unknown, any>
         select: (data: any) => infer TData
       }
     ? UseQueryResult<TData>
@@ -100,7 +106,9 @@ export type QueriesOptions<
   ? T
   : // If T is *some* array but we couldn't assign unknown[] to it, then it must hold some known/homogenous type!
   // use this to infer the param types in the case of Array.map() argument
-  T extends UseQueryOptionsForUseQueries<
+  T extends { queryFn: InvalidQueryFn }[]
+  ? (never | 'queryFn must not return undefined or void')[]
+  : T extends UseQueryOptionsForUseQueries<
       infer TQueryFnData,
       infer TError,
       infer TData,
