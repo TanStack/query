@@ -54,11 +54,29 @@ describe('ReactQueryDevtools', () => {
       toggleButtonProps: { onClick: onToggleClick },
     })
 
-    const closeButton = screen.queryByRole('button', {
-      name: /close react query devtools/i,
-    })
-    expect(closeButton).toBeNull()
-    fireEvent.click(
+    const verifyDevtoolsIsOpen = () => {
+      expect(
+        screen.queryByRole('generic', { name: /react query devtools panel/i })
+      ).not.toBeNull()
+      expect(
+        screen.queryByRole('button', { name: /open react query devtools/i })
+      ).toBeNull()
+    }
+    const verifyDevtoolsIsClosed = () => {
+      expect(
+        screen.queryByRole('generic', { name: /react query devtools panel/i })
+      ).toBeNull()
+      expect(
+        screen.queryByRole('button', { name: /open react query devtools/i })
+      ).not.toBeNull()
+    }
+
+    const waitForDevtoolsToOpen = () =>
+      screen.findByRole('button', { name: /close react query devtools/i })
+    const waitForDevtoolsToClose = () =>
+      screen.findByRole('button', { name: /open react query devtools/i })
+
+    const getOpenLogoButton = () =>
       screen.getByRole('button', { name: /open react query devtools/i })
     )
 
@@ -66,7 +84,8 @@ describe('ReactQueryDevtools', () => {
 
     fireEvent.click(
       screen.getByRole('button', { name: /close react query devtools/i })
-    )
+    const getCloseButton = () =>
+      screen.getByRole('button', { name: /^close$/i })
 
     await screen.findByRole('button', { name: /open react query devtools/i })
 
