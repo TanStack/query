@@ -63,7 +63,10 @@ describe('Server side rendering with de/rehydration', () => {
     if (!isReact18()) {
       return
     }
-    const fetchDataSuccess = jest.fn(fetchData)
+    const fetchDataSuccess = jest.fn<
+      ReturnType<typeof fetchData>,
+      Parameters<typeof fetchData>
+    >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {
@@ -206,7 +209,10 @@ describe('Server side rendering with de/rehydration', () => {
     if (!isReact18()) {
       return
     }
-    const fetchDataSuccess = jest.fn(fetchData)
+    const fetchDataSuccess = jest.fn<
+      ReturnType<typeof fetchData>,
+      Parameters<typeof fetchData>
+    >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {

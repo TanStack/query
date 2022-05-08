@@ -607,6 +607,76 @@ describe('useQueries', () => {
     // @ts-expect-error (Page component is not rendered)
     // eslint-disable-next-line
     function Page() {
+      // Rejects queryFn that returns/resolved to undefined or void
+      // @ts-expect-error (queryFn must not return undefined)
+      useQueries({ queries: [{ queryKey: key1, queryFn: () => undefined }] })
+      // @ts-expect-error (queryFn must not return void)
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      useQueries({ queries: [{ queryKey: key1, queryFn: () => {} }] })
+
+      useQueries({
+        // @ts-expect-error (queryFn must not return explicitly undefined)
+        queries: [{ queryKey: key1, queryFn: (): undefined => undefined }],
+      })
+
+      useQueries({
+        // @ts-expect-error (queryFn must not return explicitly void)
+        queries: [{ queryKey: key1, queryFn: (): void => undefined }],
+      })
+
+      useQueries({
+        // @ts-expect-error (queryFn must not return explicitly Promise<void>)
+        queries: [{ queryKey: key1, queryFn: (): Promise<void> => undefined }],
+      })
+
+      useQueries({
+        queries: [
+          // @ts-expect-error (queryFn must not return explicitly Promise<undefined>)
+          { queryKey: key1, queryFn: (): Promise<undefined> => undefined },
+        ],
+      })
+      useQueries({
+        queries: [
+          // @ts-expect-error (queryFn must not return Promise<undefined>)
+          { queryKey: key2, queryFn: () => Promise.resolve(undefined) },
+        ],
+      })
+      useQueries({
+        // @ts-expect-error (queryFn must not return Promise<undefined>)
+        queries: Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => Promise.resolve(undefined),
+        })),
+      })
+
+      // Rejects queryFn that always throws
+      useQueries({
+        queries: [
+          // @ts-expect-error (queryFn must not return undefined)
+          {
+            queryKey: key3,
+            queryFn: async () => {
+              throw new Error('')
+            },
+          },
+        ],
+      })
+
+      // Accepts queryFn that *sometimes* throws
+      useQueries({
+        queries: [
+          {
+            queryKey: key3,
+            queryFn: async () => {
+              if (Math.random() > 0.1) {
+                throw new Error('')
+              }
+              return 'result'
+            },
+          },
+        ],
+      })
+
       // Array.map preserves TQueryFnData
       const result1 = useQueries({
         queries: Array(50).map((_, i) => ({

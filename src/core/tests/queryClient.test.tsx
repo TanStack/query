@@ -471,9 +471,12 @@ describe('queryClient', () => {
       const key = queryKey()
 
       await expect(
-        queryClient.fetchQuery(key, async () => {
-          throw new Error('error')
-        })
+        queryClient.fetchQuery(
+          key,
+          async (): Promise<unknown> => {
+            throw new Error('error')
+          }
+        )
       ).rejects.toEqual(new Error('error'))
     })
 
@@ -666,7 +669,7 @@ describe('queryClient', () => {
 
       const result = await queryClient.prefetchQuery(
         key,
-        async () => {
+        async (): Promise<unknown> => {
           throw new Error('error')
         },
         {
@@ -724,7 +727,7 @@ describe('queryClient', () => {
       })
       try {
         await queryClient.fetchQuery(key2, async () => {
-          return Promise.reject('err')
+          return Promise.reject<unknown>('err')
         })
       } catch {}
       queryClient.fetchQuery(key1, async () => {
@@ -734,7 +737,7 @@ describe('queryClient', () => {
       try {
         queryClient.fetchQuery(key2, async () => {
           await sleep(1000)
-          return Promise.reject('err2')
+          return Promise.reject<unknown>('err2')
         })
       } catch {}
       queryClient.fetchQuery(key3, async () => {
@@ -783,7 +786,7 @@ describe('queryClient', () => {
   describe('refetchQueries', () => {
     test('should not refetch if all observers are disabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn().mockReturnValue('data')
+      const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
       await queryClient.fetchQuery(key, queryFn)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -797,7 +800,7 @@ describe('queryClient', () => {
     })
     test('should refetch if at least one observer is enabled', async () => {
       const key = queryKey()
-      const queryFn = jest.fn().mockReturnValue('data')
+      const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
       await queryClient.fetchQuery(key, queryFn)
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key,
@@ -819,8 +822,8 @@ describe('queryClient', () => {
     test('should refetch all queries when no arguments are given', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer1 = new QueryObserver(queryClient, {
@@ -845,8 +848,8 @@ describe('queryClient', () => {
     test('should be able to refetch all fresh queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -864,8 +867,8 @@ describe('queryClient', () => {
     test('should be able to refetch all stale queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -884,8 +887,8 @@ describe('queryClient', () => {
     test('should be able to refetch all stale and active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       queryClient.invalidateQueries(key1)
@@ -906,8 +909,8 @@ describe('queryClient', () => {
     test('should be able to refetch all active and inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -925,8 +928,8 @@ describe('queryClient', () => {
     test('should be able to refetch all active and inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -944,8 +947,8 @@ describe('queryClient', () => {
     test('should be able to refetch only active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -963,8 +966,8 @@ describe('queryClient', () => {
     test('should be able to refetch only inactive queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -981,7 +984,7 @@ describe('queryClient', () => {
 
     test('should throw an error if throwOnError option is set to true', async () => {
       const key1 = queryKey()
-      const queryFnError = () => Promise.reject('error')
+      const queryFnError = () => Promise.reject<unknown>('error')
       try {
         await queryClient.fetchQuery({
           queryKey: key1,
@@ -1006,8 +1009,8 @@ describe('queryClient', () => {
     test('should refetch active queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -1025,8 +1028,8 @@ describe('queryClient', () => {
     test('should not refetch inactive queries by default', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -1044,8 +1047,8 @@ describe('queryClient', () => {
     test('should not refetch active queries when "refetch" is "none"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -1065,8 +1068,8 @@ describe('queryClient', () => {
     test('should refetch inactive queries when "refetch" is "inactive"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -1088,8 +1091,8 @@ describe('queryClient', () => {
     test('should refetch active and inactive queries when "refetch" is "all"', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       await queryClient.fetchQuery(key1, queryFn1)
       await queryClient.fetchQuery(key2, queryFn2)
       const observer = new QueryObserver(queryClient, {
@@ -1216,8 +1219,8 @@ describe('queryClient', () => {
     test('should refetch all active queries', async () => {
       const key1 = queryKey()
       const key2 = queryKey()
-      const queryFn1 = jest.fn().mockReturnValue('data1')
-      const queryFn2 = jest.fn().mockReturnValue('data2')
+      const queryFn1 = jest.fn<string, unknown[]>().mockReturnValue('data1')
+      const queryFn2 = jest.fn<string, unknown[]>().mockReturnValue('data2')
       const observer1 = new QueryObserver(queryClient, {
         queryKey: key1,
         queryFn: queryFn1,

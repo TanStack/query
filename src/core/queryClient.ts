@@ -536,7 +536,7 @@ export class QueryClient {
 
   setQueryDefaults(
     queryKey: QueryKey,
-    options: QueryObserverOptions<any, any, any, any>
+    options: QueryObserverOptions<unknown, any, any, any>
   ): void {
     const result = this.queryDefaults.find(
       x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)
