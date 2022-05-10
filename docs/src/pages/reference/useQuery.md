@@ -77,6 +77,9 @@ const result = useQuery({
   - The function that the query will use to request data.
   - Receives a `QueryFunctionContext` object with the following variables:
     - `queryKey: EnsuredQueryKey`: the queryKey, guaranteed to be an Array
+    - `signal: signal | undefined`: AbortSignal instance, undefined if runtime environment does not support it
+    - `pageParam: unknown | undefined`: page param from useInfiniteQuery
+    - `meta: Record<string, unknown>`: If set, stores additional information on the query cache entry that can be used as needed. It will be accessible wherever the query is available.
   - Must return a promise that will either resolve data or throw an error.
 - `enabled: boolean`
   - Set this to `false` to disable this query from automatically running.
