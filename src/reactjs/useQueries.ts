@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
+import { useSyncExternalStore } from './useSyncExternalStore'
 
 import { QueryKey, QueryFunction } from '../core/types'
 import { notifyManager } from '../core/notifyManager'
