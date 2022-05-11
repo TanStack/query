@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
+import { useSyncExternalStore } from './useSyncExternalStore'
 
 import { QueryKey, notifyManager, QueryObserver } from '../core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
