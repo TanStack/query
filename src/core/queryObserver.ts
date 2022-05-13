@@ -650,7 +650,7 @@ export class QueryObserver<
     const notifyOptions: NotifyOptions = {}
 
     if (action.type === 'success') {
-      notifyOptions.onSuccess = action.manual ?? true
+      notifyOptions.onSuccess = !action.manual
     } else if (action.type === 'error' && !isCancelledError(action.error)) {
       notifyOptions.onError = true
     }
