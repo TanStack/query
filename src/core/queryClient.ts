@@ -128,7 +128,7 @@ export class QueryClient {
 
   setQueryData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData> | undefined,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): TData | undefined {
     const query = this.queryCache.find<TData>(queryKey)
