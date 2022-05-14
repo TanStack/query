@@ -311,8 +311,8 @@ describe('queryClient', () => {
 
     test('should not update query data if updater returns undefined', () => {
       const key = queryKey()
-      queryClient.setQueryData(key, 'qux')
-      queryClient.setQueryData(key, () => undefined)
+      queryClient.setQueryData<string>(key, 'qux')
+      queryClient.setQueryData<string>(key, () => undefined)
       expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
