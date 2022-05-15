@@ -2,6 +2,7 @@ import {
   defaultErrorHandler,
   PersistedClient,
   Persister,
+  Promisable,
 } from '../persistQueryClient'
 import { asyncThrottle } from './asyncThrottle'
 import { noop } from '../core/utils'
@@ -16,7 +17,7 @@ export type AsyncPersistErrorHandler = (props: {
   persistedClient: PersistedClient
   error: Error
   errorCount: number
-}) => Promise<PersistedClient>
+}) => Promisable<PersistedClient>
 
 interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
@@ -46,7 +47,7 @@ export const createAsyncStoragePersister = ({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  handlePersistError = async props => defaultErrorHandler(props),
+  handlePersistError = defaultErrorHandler,
 }: CreateAsyncStoragePersisterOptions): Persister => {
   if (typeof storage !== 'undefined') {
     const trySave = async (
