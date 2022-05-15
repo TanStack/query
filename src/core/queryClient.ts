@@ -128,7 +128,7 @@ export class QueryClient {
 
   setQueryData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData> | undefined,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): TData | undefined {
     const query = this.queryCache.find<TData>(queryKey)
@@ -143,7 +143,7 @@ export class QueryClient {
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     return this.queryCache
       .build(this, defaultedOptions)
-      .setData(data, { ...options, notifySuccess: false })
+      .setData(data, { ...options, manual: true })
   }
 
   setQueriesData<TData>(

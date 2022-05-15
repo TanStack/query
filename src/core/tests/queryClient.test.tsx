@@ -311,8 +311,8 @@ describe('queryClient', () => {
 
     test('should not update query data if updater returns undefined', () => {
       const key = queryKey()
-      queryClient.setQueryData(key, 'qux')
-      queryClient.setQueryData(key, () => undefined)
+      queryClient.setQueryData<string>(key, 'qux')
+      queryClient.setQueryData<string>(key, () => undefined)
       expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
@@ -355,6 +355,29 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, newData)
 
       expect(queryCache.find(key)!.state.data).toBe(newData)
+    })
+
+    test('should not set isFetching to false', async () => {
+      const key = queryKey()
+      queryClient.prefetchQuery(key, async () => {
+        await sleep(10)
+        return 23
+      })
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: undefined,
+        fetchStatus: 'fetching',
+      })
+      queryClient.setQueryData(key, 42)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: 42,
+        fetchStatus: 'fetching',
+      })
+      await waitFor(() =>
+        expect(queryClient.getQueryState(key)).toMatchObject({
+          data: 23,
+          fetchStatus: 'idle',
+        })
+      )
     })
   })
 
