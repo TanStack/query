@@ -8,7 +8,7 @@ interface AsyncStorage {
   removeItem: (key: string) => Promise<void>
 }
 
-export type AsyncPersistErrorHandler = (props: {
+export type AsyncPersistRetryer = (props: {
   persistedClient: PersistedClient
   error: Error
   errorCount: number
@@ -33,7 +33,7 @@ interface CreateAsyncStoragePersisterOptions {
    */
   deserialize?: (cachedString: string) => PersistedClient
 
-  handlePersistError?: AsyncPersistErrorHandler
+  retry?: AsyncPersistRetryer
 }
 
 export const createAsyncStoragePersister = ({
@@ -42,7 +42,7 @@ export const createAsyncStoragePersister = ({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  handlePersistError,
+  retry,
 }: CreateAsyncStoragePersisterOptions): Persister => {
   if (typeof storage !== 'undefined') {
     const trySave = async (
@@ -63,7 +63,7 @@ export const createAsyncStoragePersister = ({
           let errorCount = 0
           while (error && client) {
             errorCount++
-            client = await handlePersistError?.({
+            client = await retry?.({
               persistedClient: client,
               error,
               errorCount,

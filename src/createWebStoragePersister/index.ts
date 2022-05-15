@@ -2,7 +2,7 @@ import { noop } from '../core/utils'
 import {
   PersistedClient,
   Persister,
-  PersistErrorHandler,
+  PersistRetryer,
 } from '../persistQueryClient'
 
 interface CreateWebStoragePersisterOptions {
@@ -24,7 +24,7 @@ interface CreateWebStoragePersisterOptions {
    */
   deserialize?: (cachedString: string) => PersistedClient
 
-  handlePersistError?: PersistErrorHandler
+  retry?: PersistRetryer
 }
 
 export function createWebStoragePersister({
@@ -33,7 +33,7 @@ export function createWebStoragePersister({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  handlePersistError,
+  retry,
 }: CreateWebStoragePersisterOptions): Persister {
   if (typeof storage !== 'undefined') {
     const trySave = (persistedClient: PersistedClient): Error | undefined => {
@@ -50,7 +50,7 @@ export function createWebStoragePersister({
         let errorCount = 0
         while (error && client) {
           errorCount++
-          client = handlePersistError?.({
+          client = retry?.({
             persistedClient: client,
             error,
             errorCount,

@@ -75,7 +75,7 @@ describe('createWebStoragePersister ', () => {
     const webStoragePersister = createWebStoragePersister({
       throttleTime: 0,
       storage,
-      handlePersistError: removeOldestQuery,
+      retry: removeOldestQuery,
     })
 
     await queryClient.prefetchQuery(['A'], () => Promise.resolve('A'.repeat(N)))
@@ -133,7 +133,7 @@ describe('createWebStoragePersister ', () => {
     const webStoragePersister = createWebStoragePersister({
       throttleTime: 0,
       storage,
-      handlePersistError: removeOldestQuery,
+      retry: removeOldestQuery,
     })
 
     await queryClient.prefetchQuery(['A'], () => Promise.resolve('A'.repeat(N)))

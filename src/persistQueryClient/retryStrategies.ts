@@ -1,12 +1,12 @@
 import { PersistedClient } from './persist'
 
-export type PersistErrorHandler = (props: {
+export type PersistRetryer = (props: {
   persistedClient: PersistedClient
   error: Error
   errorCount: number
 }) => PersistedClient | undefined
 
-export const removeOldestQuery: PersistErrorHandler = ({ persistedClient }) => {
+export const removeOldestQuery: PersistRetryer = ({ persistedClient }) => {
   const mutations = [...persistedClient.clientState.mutations]
   const queries = [...persistedClient.clientState.queries]
   const client: PersistedClient = {
