@@ -4,11 +4,11 @@ import React from 'react'
 import {
   queryKey,
   sleep,
-  renderWithClient,
   setActTimeout,
-  Blink,
   createQueryClient,
-} from './utils'
+} from '../../tests/utils'
+
+import { renderWithClient, Blink } from './utils'
 import {
   useInfiniteQuery,
   UseInfiniteQueryResult,
@@ -1237,7 +1237,7 @@ describe('useInfiniteQuery', () => {
     function Page() {
       const state = useInfiniteQuery(
         key,
-        async ({ pageParam }) => {
+        async ({ pageParam }): Promise<number> => {
           await sleep(10)
           return pageParam
         },
@@ -1340,10 +1340,14 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, ({ pageParam = 10 }) => pageParam, {
-        initialData: { pages: [10], pageParams: [undefined] },
-        getNextPageParam: lastPage => (lastPage === 10 ? 11 : undefined),
-      })
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 10 }): number => pageParam,
+        {
+          initialData: { pages: [10], pageParams: [undefined] },
+          getNextPageParam: lastPage => (lastPage === 10 ? 11 : undefined),
+        }
+      )
 
       states.push(state)
 
@@ -1376,10 +1380,14 @@ describe('useInfiniteQuery', () => {
     const states: UseInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const state = useInfiniteQuery(key, ({ pageParam = 10 }) => pageParam, {
-        initialData: { pages: [10], pageParams: [undefined] },
-        getNextPageParam: () => undefined,
-      })
+      const state = useInfiniteQuery(
+        key,
+        ({ pageParam = 10 }): number => pageParam,
+        {
+          initialData: { pages: [10], pageParams: [undefined] },
+          getNextPageParam: () => undefined,
+        }
+      )
 
       states.push(state)
 

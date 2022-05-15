@@ -34,6 +34,19 @@
     "import/no-cycle": "error",
     "import/no-unresolved": ["error", { "ignore": ["react-query"] }],
     "import/no-unused-modules": ["off", { "unusedExports": true }],
+    "import/no-restricted-paths": [
+      "error",
+      {
+        "zones": [
+          { "target": "src/core", "from": "src/broadcastQueryClient-experimental" },
+          { "target": "src/core", "from": "src/createAsyncStoragePersister" },
+          { "target": "src/core", "from": "src/createWebStoragePersister" },
+          { "target": "src/core", "from": "src/devtools" },
+          { "target": "src/core", "from": "src/persistQueryClient" },
+          { "target": "src/core", "from": "src/reactjs" }
+        ]
+      }
+    ],
     "no-redeclare": "off"
   }
 }

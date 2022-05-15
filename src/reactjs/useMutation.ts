@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim'
+import { useSyncExternalStore } from './useSyncExternalStore'
 
 import { notifyManager } from '../core'
 import { noop, parseMutationArgs } from '../core/utils'

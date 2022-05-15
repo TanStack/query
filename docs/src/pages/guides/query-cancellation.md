@@ -127,8 +127,8 @@ const query = useQuery(['todos'], ({ signal }) => {
 You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)`, which will cancel the query and revert it back to its previous state. If `promise.cancel` is available, or you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
 
 ```js
-const query = useQuery(['todos'], await ({ signal }) => {
-  const resp = fetch('/todos', { signal })
+const query = useQuery(['todos'], async ({ signal }) => {
+  const resp = await fetch('/todos', { signal })
   return resp.json()
 })
 

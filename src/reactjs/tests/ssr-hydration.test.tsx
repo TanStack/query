@@ -12,7 +12,12 @@ import {
   dehydrate,
   hydrate,
 } from '../..'
-import { createQueryClient, mockLogger, setIsServer, sleep } from './utils'
+import {
+  createQueryClient,
+  mockLogger,
+  setIsServer,
+  sleep,
+} from '../../tests/utils'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
@@ -58,7 +63,10 @@ describe('Server side rendering with de/rehydration', () => {
     if (!isReact18()) {
       return
     }
-    const fetchDataSuccess = jest.fn(fetchData)
+    const fetchDataSuccess = jest.fn<
+      ReturnType<typeof fetchData>,
+      Parameters<typeof fetchData>
+    >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {
@@ -201,7 +209,10 @@ describe('Server side rendering with de/rehydration', () => {
     if (!isReact18()) {
       return
     }
-    const fetchDataSuccess = jest.fn(fetchData)
+    const fetchDataSuccess = jest.fn<
+      ReturnType<typeof fetchData>,
+      Parameters<typeof fetchData>
+    >(fetchData)
 
     // -- Shared part --
     function SuccessComponent() {

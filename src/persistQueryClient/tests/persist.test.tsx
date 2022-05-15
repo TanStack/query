@@ -1,4 +1,4 @@
-import { createQueryClient } from '../../reactjs/tests/utils'
+import { createQueryClient } from '../../tests/utils'
 import { sleep } from '../../core/utils'
 import {
   PersistedClient,

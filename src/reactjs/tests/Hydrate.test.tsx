@@ -10,7 +10,7 @@ import {
   useHydrate,
   Hydrate,
 } from '../..'
-import { createQueryClient, sleep } from './utils'
+import { createQueryClient, sleep } from '../../tests/utils'
 import * as coreModule from '../../core/index'
 
 describe('React hydration', () => {

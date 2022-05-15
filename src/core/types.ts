@@ -7,14 +7,17 @@ import type { MutationCache } from './mutationCache'
 import { Logger } from './logger'
 
 export type QueryKey = readonly unknown[]
-export type QueryFunctionData<T> = T extends undefined ? never : T
 
 export type QueryFunction<
   T = unknown,
   TQueryKey extends QueryKey = QueryKey
 > = (
   context: QueryFunctionContext<TQueryKey>
-) => QueryFunctionData<T | Promise<T>>
+) => [T] extends [undefined]
+  ? never | 'queryFn must not return undefined or void'
+  : [T] extends [void]
+  ? never | 'queryFn must not return undefined or void'
+  : T | Promise<T>
 
 export interface QueryFunctionContext<
   TQueryKey extends QueryKey = QueryKey,
@@ -139,23 +142,41 @@ export interface QueryObserverOptions<
    * If set to `true`, the query will refetch on window focus if the data is stale.
    * If set to `false`, the query will not refetch on window focus.
    * If set to `'always'`, the query will always refetch on window focus.
+   * If set to a function, the function will be executed with the latest data and query to compute the value.
    * Defaults to `true`.
    */
-  refetchOnWindowFocus?: boolean | 'always'
+  refetchOnWindowFocus?:
+    | boolean
+    | 'always'
+    | ((
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on reconnect if the data is stale.
    * If set to `false`, the query will not refetch on reconnect.
    * If set to `'always'`, the query will always refetch on reconnect.
+   * If set to a function, the function will be executed with the latest data and query to compute the value.
    * Defaults to the value of `networkOnline` (`true`)
    */
-  refetchOnReconnect?: boolean | 'always'
+  refetchOnReconnect?:
+    | boolean
+    | 'always'
+    | ((
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `true`, the query will refetch on mount if the data is stale.
    * If set to `false`, will disable additional instances of a query to trigger background refetches.
    * If set to `'always'`, the query will always refetch on mount.
+   * If set to a function, the function will be executed with the latest data and query to compute the value
    * Defaults to `true`.
    */
-  refetchOnMount?: boolean | 'always'
+  refetchOnMount?:
+    | boolean
+    | 'always'
+    | ((
+        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
+      ) => boolean | 'always')
   /**
    * If set to `false`, the query will not be retried on mount if it contains an error.
    * Defaults to `true`.
@@ -213,7 +234,7 @@ export interface QueryObserverOptions<
    */
   placeholderData?: TQueryData | PlaceholderDataFunction<TQueryData>
 
-  _optimisticResults?: 'optimistic' | 'isHydrating'
+  _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
 type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>

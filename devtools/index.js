@@ -1,12 +1,5 @@
 if (process.env.NODE_ENV !== 'development') {
-  module.exports = {
-    ReactQueryDevtools: function () {
-      return null
-    },
-    ReactQueryDevtoolsPanel: function () {
-      return null
-    },
-  }
+  module.exports = require('../lib/devtools/noop')
 } else {
-  module.exports = require('./development')
+  module.exports = require('../lib/devtools/index')
 }

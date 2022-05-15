@@ -2,12 +2,9 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import React from 'react'
 import { useIsMutating } from '../useIsMutating'
 import { useMutation } from '../useMutation'
-import {
-  createQueryClient,
-  renderWithClient,
-  setActTimeout,
-  sleep,
-} from './utils'
+import { createQueryClient, setActTimeout, sleep } from '../../tests/utils'
+
+import { renderWithClient } from './utils'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient } from '../../core'
 import * as MutationCacheModule from '../../core/mutationCache'
