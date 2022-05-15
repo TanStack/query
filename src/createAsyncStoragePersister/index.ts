@@ -1,9 +1,4 @@
-import {
-  defaultErrorHandler,
-  PersistedClient,
-  Persister,
-  Promisable,
-} from '../persistQueryClient'
+import { PersistedClient, Persister, Promisable } from '../persistQueryClient'
 import { asyncThrottle } from './asyncThrottle'
 import { noop } from '../core/utils'
 
@@ -17,7 +12,7 @@ export type AsyncPersistErrorHandler = (props: {
   persistedClient: PersistedClient
   error: Error
   errorCount: number
-}) => Promisable<PersistedClient>
+}) => Promisable<PersistedClient | undefined>
 
 interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
@@ -47,7 +42,7 @@ export const createAsyncStoragePersister = ({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  handlePersistError = defaultErrorHandler,
+  handlePersistError,
 }: CreateAsyncStoragePersisterOptions): Persister => {
   if (typeof storage !== 'undefined') {
     const trySave = async (
@@ -60,27 +55,23 @@ export const createAsyncStoragePersister = ({
       }
     }
 
-    const removeClient = () => storage.removeItem(key)
-
     return {
       persistClient: asyncThrottle(
         async persistedClient => {
-          let client = persistedClient
+          let client: PersistedClient | undefined = persistedClient
           let error = await trySave(client)
           let errorCount = 0
-          try {
-            while (error) {
-              errorCount++
-              client = await handlePersistError({
-                persistedClient: client,
-                error,
-                errorCount,
-              })
+          while (error && client) {
+            errorCount++
+            client = await handlePersistError?.({
+              persistedClient: client,
+              error,
+              errorCount,
+            })
 
+            if (client) {
               error = await trySave(client)
             }
-          } catch {
-            await removeClient()
           }
         },
         { interval: throttleTime }
@@ -94,7 +85,7 @@ export const createAsyncStoragePersister = ({
 
         return deserialize(cacheString) as PersistedClient
       },
-      removeClient,
+      removeClient: () => storage.removeItem(key),
     }
   }
 

@@ -1,6 +1,5 @@
 import { noop } from '../core/utils'
 import {
-  defaultErrorHandler,
   PersistedClient,
   Persister,
   PersistErrorHandler,
@@ -34,7 +33,7 @@ export function createWebStoragePersister({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
-  handlePersistError = defaultErrorHandler,
+  handlePersistError,
 }: CreateWebStoragePersisterOptions): Persister {
   if (typeof storage !== 'undefined') {
     const trySave = (persistedClient: PersistedClient): Error | undefined => {
@@ -44,27 +43,22 @@ export function createWebStoragePersister({
         return error as Error
       }
     }
-    const removeClient = () => {
-      storage.removeItem(key)
-    }
     return {
       persistClient: throttle(persistedClient => {
-        let client = persistedClient
+        let client: PersistedClient | undefined = persistedClient
         let error = trySave(client)
         let errorCount = 0
-        try {
-          while (error) {
-            errorCount++
-            client = handlePersistError({
-              persistedClient: client,
-              error,
-              errorCount,
-            })
+        while (error && client) {
+          errorCount++
+          client = handlePersistError?.({
+            persistedClient: client,
+            error,
+            errorCount,
+          })
 
+          if (client) {
             error = trySave(client)
           }
-        } catch {
-          removeClient()
         }
       }, throttleTime),
       restoreClient: () => {
@@ -76,7 +70,9 @@ export function createWebStoragePersister({
 
         return deserialize(cacheString) as PersistedClient
       },
-      removeClient,
+      removeClient: () => {
+        storage.removeItem(key)
+      },
     }
   }
 
