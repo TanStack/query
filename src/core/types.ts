@@ -243,7 +243,7 @@ export interface InfiniteQueryObserverOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   SData = unknown,
-  TQueryKey extends QueryKey = QueryKey,
+  TQueryKey extends QueryKey = QueryKey
 > extends QueryObserverOptions<
     TQueryFnData,
     TError,
@@ -270,7 +270,7 @@ export interface FetchInfiniteQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   SData = unknown,
-  TQueryKey extends QueryKey = QueryKey,
+  TQueryKey extends QueryKey = QueryKey
 > extends FetchQueryOptions<
     TQueryFnData,
     TError,
@@ -524,7 +524,11 @@ export interface InfiniteQueryObserverSuccessResult<
   status: 'success'
 }
 
-export type InfiniteQueryObserverResult<TData = unknown, TError = unknown, SData = unknown> =
+export type InfiniteQueryObserverResult<
+  TData = unknown,
+  TError = unknown,
+  SData = unknown
+> =
   | InfiniteQueryObserverIdleResult<TData, TError, SData>
   | InfiniteQueryObserverLoadingErrorResult<TData, TError, SData>
   | InfiniteQueryObserverLoadingResult<TData, TError, SData>

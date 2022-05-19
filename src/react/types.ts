@@ -42,7 +42,7 @@ export interface UseInfiniteQueryOptions<
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   SData = unknown,
-  TQueryKey extends QueryKey = QueryKey,
+  TQueryKey extends QueryKey = QueryKey
 > extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,

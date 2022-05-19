@@ -106,4 +106,3 @@ export function useInfiniteQuery<
     InfiniteQueryObserver as typeof QueryObserver
   ) as UseInfiniteQueryResult<TData, TError, SData>
 }
-
