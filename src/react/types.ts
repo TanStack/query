@@ -41,12 +41,14 @@ export interface UseInfiniteQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  SData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
 > extends InfiniteQueryObserverOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryData,
+    SData,
     TQueryKey
   > {}
 
@@ -62,8 +64,9 @@ export type UseQueryResult<
 
 export type UseInfiniteQueryResult<
   TData = unknown,
-  TError = unknown
-> = InfiniteQueryObserverResult<TData, TError>
+  TError = unknown,
+  SData = unknown
+> = InfiniteQueryObserverResult<TData, TError, SData>
 
 export interface UseMutationOptions<
   TData = unknown,

@@ -11,8 +11,9 @@ import { getAbortController } from './utils'
 export function infiniteQueryBehavior<
   TQueryFnData,
   TError,
-  TData
->(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
+  TData,
+  SData
+>(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData, SData>> {
   return {
     onFetch: context => {
       context.fetchFn = () => {

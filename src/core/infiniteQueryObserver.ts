@@ -18,33 +18,34 @@ import {
 } from './infiniteQueryBehavior'
 import { Query } from './query'
 
-type InfiniteQueryObserverListener<TData, TError> = (
-  result: InfiniteQueryObserverResult<TData, TError>
+type InfiniteQueryObserverListener<TData, TError, SData> = (
+  result: InfiniteQueryObserverResult<TData, TError, SData>
 ) => void
 
 export class InfiniteQueryObserver<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
+  TQueryData = TQueryFnData,
+  SData = unknown
 > extends QueryObserver<
   TQueryFnData,
   TError,
-  InfiniteData<TData>,
+  InfiniteData<TData, SData>,
   InfiniteData<TQueryData>
 > {
   // Type override
   subscribe!: (
-    listener?: InfiniteQueryObserverListener<TData, TError>
+    listener?: InfiniteQueryObserverListener<TData, TError, SData>
   ) => () => void
 
   // Type override
-  getCurrentResult!: () => InfiniteQueryObserverResult<TData, TError>
+  getCurrentResult!: () => InfiniteQueryObserverResult<TData, TError, SData>
 
   // Type override
   protected fetch!: (
     fetchOptions?: ObserverFetchOptions
-  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  ) => Promise<InfiniteQueryObserverResult<TData, TError, SData>>
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
   constructor(
@@ -53,7 +54,8 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      SData
     >
   ) {
     super(client, options)
@@ -70,7 +72,8 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      SData
     >,
     notifyOptions?: NotifyOptions
   ): void {
@@ -88,19 +91,21 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      SData
     >
-  ): InfiniteQueryObserverResult<TData, TError> {
+  ): InfiniteQueryObserverResult<TData, TError, SData> {
     options.behavior = infiniteQueryBehavior()
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
       TData,
-      TError
+      TError,
+      SData
     >
   }
 
   fetchNextPage(
     options?: FetchNextPageOptions
-  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
+  ): Promise<InfiniteQueryObserverResult<TData, TError, SData>> {
     return this.fetch({
       // TODO consider removing `?? true` in future breaking change, to be consistent with `refetch` API (see https://github.com/tannerlinsley/react-query/issues/2617)
       cancelRefetch: options?.cancelRefetch ?? true,
@@ -113,7 +118,7 @@ export class InfiniteQueryObserver<
 
   fetchPreviousPage(
     options?: FetchPreviousPageOptions
-  ): Promise<InfiniteQueryObserverResult<TData, TError>> {
+  ): Promise<InfiniteQueryObserverResult<TData, TError, SData>> {
     return this.fetch({
       // TODO consider removing `?? true` in future breaking change, to be consistent with `refetch` API (see https://github.com/tannerlinsley/react-query/issues/2617)
       cancelRefetch: options?.cancelRefetch ?? true,
@@ -130,9 +135,10 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      SData
     >
-  ): InfiniteQueryObserverResult<TData, TError> {
+  ): InfiniteQueryObserverResult<TData, TError, SData> {
     const { state } = query
     const result = super.createResult(query, options)
     return {

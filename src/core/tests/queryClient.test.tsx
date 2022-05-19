@@ -440,6 +440,7 @@ describe('queryClient', () => {
           StrictData,
           any,
           StrictData,
+          any,
           StrictQueryKey
         >(key, fetchFn)
       ).resolves.toEqual(data)
@@ -476,6 +477,7 @@ describe('queryClient', () => {
         StrictData,
         any,
         StrictData,
+        any,
         StrictQueryKey
       >(key, fetchFn)
 

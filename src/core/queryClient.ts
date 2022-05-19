@@ -402,48 +402,53 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
-    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  ): Promise<InfiniteData<TData>>
+    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
+  ): Promise<InfiniteData<TData, SData>>
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
     queryKey: TQueryKey,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  ): Promise<InfiniteData<TData>>
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
+  ): Promise<InfiniteData<TData, SData>>
   fetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  ): Promise<InfiniteData<TData>>
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
+  ): Promise<InfiniteData<TData, SData>>
   fetchInfiniteQuery<
     TQueryFnData,
     TError,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
     arg1:
       | TQueryKey
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>,
     arg2?:
       | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>,
+    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
   ): Promise<InfiniteData<TData>> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
     parsedOptions.behavior = infiniteQueryBehavior<
       TQueryFnData,
       TError,
-      TData
+      TData,
+      SData
     >()
     return this.fetchQuery(parsedOptions)
   }
@@ -452,42 +457,46 @@ export class QueryClient {
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
-    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    options: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
     queryKey: TQueryKey,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
     TError = unknown,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    options?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData,
     TError,
     TData = TQueryFnData,
+    SData = unknown,
     TQueryKey extends QueryKey = QueryKey
   >(
     arg1:
       | TQueryKey
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>,
     arg2?:
       | QueryFunction<TQueryFnData, TQueryKey>
-      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+      | FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>,
+    arg3?: FetchInfiniteQueryOptions<TQueryFnData, TError, TData, SData, TQueryKey>
   ): Promise<void> {
     return this.fetchInfiniteQuery(arg1 as any, arg2 as any, arg3)
       .then(noop)

@@ -11,6 +11,7 @@ export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
+  SData = unknown,
   TQueryKey extends QueryKey = QueryKey
 >(
   options: UseInfiniteQueryOptions<
@@ -18,13 +19,15 @@ export function useInfiniteQuery<
     TError,
     TData,
     TQueryFnData,
+    SData,
     TQueryKey
   >
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, SData>
 export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
+  SData = unknown,
   TQueryKey extends QueryKey = QueryKey
 >(
   queryKey: TQueryKey,
@@ -34,15 +37,17 @@ export function useInfiniteQuery<
       TError,
       TData,
       TQueryFnData,
+      SData,
       TQueryKey
     >,
     'queryKey'
   >
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, SData>
 export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
+  SData = unknown,
   TQueryKey extends QueryKey = QueryKey
 >(
   queryKey: TQueryKey,
@@ -53,15 +58,17 @@ export function useInfiniteQuery<
       TError,
       TData,
       TQueryFnData,
+      SData,
       TQueryKey
     >,
     'queryKey' | 'queryFn'
   >
-): UseInfiniteQueryResult<TData, TError>
+): UseInfiniteQueryResult<TData, TError, SData>
 export function useInfiniteQuery<
   TQueryFnData,
   TError,
   TData = TQueryFnData,
+  SData = unknown,
   TQueryKey extends QueryKey = QueryKey
 >(
   arg1:
@@ -71,6 +78,7 @@ export function useInfiniteQuery<
         TError,
         TData,
         TQueryFnData,
+        SData,
         TQueryKey
       >,
   arg2?:
@@ -80,6 +88,7 @@ export function useInfiniteQuery<
         TError,
         TData,
         TQueryFnData,
+        SData,
         TQueryKey
       >,
   arg3?: UseInfiniteQueryOptions<
@@ -87,12 +96,14 @@ export function useInfiniteQuery<
     TError,
     TData,
     TQueryFnData,
+    SData,
     TQueryKey
   >
-): UseInfiniteQueryResult<TData, TError> {
+): UseInfiniteQueryResult<TData, TError, SData> {
   const options = parseQueryArgs(arg1, arg2, arg3)
   return useBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver
-  ) as UseInfiniteQueryResult<TData, TError>
+  ) as UseInfiniteQueryResult<TData, TError, SData>
 }
+

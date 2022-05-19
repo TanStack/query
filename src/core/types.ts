@@ -43,10 +43,10 @@ export type GetNextPageParamFunction<TQueryFnData = unknown> = (
   allPages: TQueryFnData[]
 ) => unknown
 
-export interface InfiniteData<TData> {
+export type InfiniteData<TData, SData = unknown> = {
   pages: TData[]
   pageParams: unknown[]
-}
+} & SData
 
 export type QueryMeta = Record<string, unknown>
 
@@ -242,11 +242,12 @@ export interface InfiniteQueryObserverOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  SData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
 > extends QueryObserverOptions<
     TQueryFnData,
     TError,
-    InfiniteData<TData>,
+    InfiniteData<TData, SData>,
     InfiniteData<TQueryData>,
     TQueryKey
   > {}
@@ -268,11 +269,12 @@ export interface FetchInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  SData = unknown,
+  TQueryKey extends QueryKey = QueryKey,
 > extends FetchQueryOptions<
     TQueryFnData,
     TError,
-    InfiniteData<TData>,
+    InfiniteData<TData, SData>,
     TQueryKey
   > {}
 
@@ -427,14 +429,15 @@ export type QueryObserverResult<TData = unknown, TError = unknown> =
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
-  TError = unknown
-> extends QueryObserverBaseResult<InfiniteData<TData>, TError> {
+  TError = unknown,
+  SData = unknown
+> extends QueryObserverBaseResult<InfiniteData<TData, SData>, TError> {
   fetchNextPage: (
     options?: FetchNextPageOptions
-  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  ) => Promise<InfiniteQueryObserverResult<TData, TError, SData>>
   fetchPreviousPage: (
     options?: FetchPreviousPageOptions
-  ) => Promise<InfiniteQueryObserverResult<TData, TError>>
+  ) => Promise<InfiniteQueryObserverResult<TData, TError, SData>>
   hasNextPage?: boolean
   hasPreviousPage?: boolean
   isFetchingNextPage: boolean
@@ -443,8 +446,9 @@ export interface InfiniteQueryObserverBaseResult<
 
 export interface InfiniteQueryObserverIdleResult<
   TData = unknown,
-  TError = unknown
-> extends InfiniteQueryObserverBaseResult<TData, TError> {
+  TError = unknown,
+  SData = unknown
+> extends InfiniteQueryObserverBaseResult<TData, TError, SData> {
   data: undefined
   error: null
   isError: false
@@ -458,8 +462,9 @@ export interface InfiniteQueryObserverIdleResult<
 
 export interface InfiniteQueryObserverLoadingResult<
   TData = unknown,
-  TError = unknown
-> extends InfiniteQueryObserverBaseResult<TData, TError> {
+  TError = unknown,
+  SData = unknown
+> extends InfiniteQueryObserverBaseResult<TData, TError, SData> {
   data: undefined
   error: null
   isError: false
@@ -473,8 +478,9 @@ export interface InfiniteQueryObserverLoadingResult<
 
 export interface InfiniteQueryObserverLoadingErrorResult<
   TData = unknown,
-  TError = unknown
-> extends InfiniteQueryObserverBaseResult<TData, TError> {
+  TError = unknown,
+  SData = unknown
+> extends InfiniteQueryObserverBaseResult<TData, TError, SData> {
   data: undefined
   error: TError
   isError: true
@@ -488,9 +494,10 @@ export interface InfiniteQueryObserverLoadingErrorResult<
 
 export interface InfiniteQueryObserverRefetchErrorResult<
   TData = unknown,
-  TError = unknown
-> extends InfiniteQueryObserverBaseResult<TData, TError> {
-  data: InfiniteData<TData>
+  TError = unknown,
+  SData = unknown
+> extends InfiniteQueryObserverBaseResult<TData, TError, SData> {
+  data: InfiniteData<TData, SData>
   error: TError
   isError: true
   isIdle: false
@@ -503,9 +510,10 @@ export interface InfiniteQueryObserverRefetchErrorResult<
 
 export interface InfiniteQueryObserverSuccessResult<
   TData = unknown,
-  TError = unknown
-> extends InfiniteQueryObserverBaseResult<TData, TError> {
-  data: InfiniteData<TData>
+  TError = unknown,
+  SData = unknown
+> extends InfiniteQueryObserverBaseResult<TData, TError, SData> {
+  data: InfiniteData<TData, SData>
   error: null
   isError: false
   isIdle: false
@@ -516,12 +524,12 @@ export interface InfiniteQueryObserverSuccessResult<
   status: 'success'
 }
 
-export type InfiniteQueryObserverResult<TData = unknown, TError = unknown> =
-  | InfiniteQueryObserverIdleResult<TData, TError>
-  | InfiniteQueryObserverLoadingErrorResult<TData, TError>
-  | InfiniteQueryObserverLoadingResult<TData, TError>
-  | InfiniteQueryObserverRefetchErrorResult<TData, TError>
-  | InfiniteQueryObserverSuccessResult<TData, TError>
+export type InfiniteQueryObserverResult<TData = unknown, TError = unknown, SData = unknown> =
+  | InfiniteQueryObserverIdleResult<TData, TError, SData>
+  | InfiniteQueryObserverLoadingErrorResult<TData, TError, SData>
+  | InfiniteQueryObserverLoadingResult<TData, TError, SData>
+  | InfiniteQueryObserverRefetchErrorResult<TData, TError, SData>
+  | InfiniteQueryObserverSuccessResult<TData, TError, SData>
 
 export type MutationKey = string | readonly unknown[]
 
