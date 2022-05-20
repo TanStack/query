@@ -93,7 +93,12 @@ describe('core/utils', () => {
       const b = { a: { b: 'b' }, c: 'c', d: [] }
       expect(partialDeepEqual(a, b)).toEqual(true)
     })
+    it('should return true if a and b are dates', () => {
+      const a = { a: new Date('December 17, 1995 03:24:00') }
+      const b = { a: new Date('December 17, 1995 03:24:00') }
 
+      expect(partialDeepEqual(a, b)).toEqual(true)
+    })
     it('should return `false` if a does not include b', () => {
       const a = { a: { b: 'b' }, c: 'c', d: [] }
       const b = { a: { b: 'b' }, c: 'c', d: [{ d: 'd ' }] }
@@ -140,9 +145,16 @@ describe('core/utils', () => {
       expect(replaceEqualDeep(null, null)).toBe(null)
       expect(replaceEqualDeep(undefined, undefined)).toBe(undefined)
     })
+
+    it('should return the previous value when the next value is an equal Date', () => {
+      const a = new Date('December 17, 1995 03:24:00')
+      const b = new Date('December 17, 1995 03:24:00')
+      expect(replaceEqualDeep(a, b)).toBe(a)
+    })
+
     it('should return the next value when the previous value is a different value', () => {
-      const date1 = new Date()
-      const date2 = new Date()
+      const date1 = new Date('December 17, 1995 03:24:00')
+      const date2 = new Date('December 18, 1995 03:24:00')
       expect(replaceEqualDeep(1, 0)).toBe(0)
       expect(replaceEqualDeep(1, 2)).toBe(2)
       expect(replaceEqualDeep('1', '2')).toBe('2')

@@ -369,6 +369,10 @@ export function replaceEqualDeep(a: any, b: any): any {
     return aSize === bSize && equalItems === aSize ? a : copy
   }
 
+  if (a instanceof Date && b instanceof Date) {
+    return a.getTime() === b.getTime() ? a : b
+  }
+
   return b
 }
 
