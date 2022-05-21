@@ -36,7 +36,7 @@ persistQueryClient({
 
 ## Retries
 
-Persistence can fail, e.g. if the size exceeds the available space on the storage. Errors can be handled gracefully by providing a `retry` function persister.
+Persistence can fail, e.g. if the size exceeds the available space on the storage. Errors can be handled gracefully by providing a `retry` function to the persister.
 
 The retry function receives the `persistedClient` it tried to save, as well as the `error` and the `errorCount` as input. It is expected to return a _new_ `PersistedClient`, with which it tries to persist again. If _undefined_ is returned, there will be no further attempt to persist.
 
@@ -54,6 +54,13 @@ Per default, no retry will occur. You can use one of the predefined strategies t
 
 - `removeOldestQuery`
   - will return a new `PersistedClient` with the oldest query removed.
+
+```js
+const localStoragePersister = createWebStoragePersister({
+  storage: window.localStorage,
+  retry: removeOldestQuery
+})
+```
 
 ## API
 
