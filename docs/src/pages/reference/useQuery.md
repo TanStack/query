@@ -25,6 +25,7 @@ const {
   isSuccess,
   refetch,
   remove,
+  update,
   status,
 } = useQuery(queryKey, queryFn?, {
   cacheTime,
@@ -246,3 +247,7 @@ const result = useQuery({
   - If `cancelRefetch` is `true`, then the current request will be cancelled before a new request is made
 - `remove: () => void`
   - A function to remove the query from the cache.
+- `update: (updater: TData | (oldData: TData | undefined) => TData) => void`
+  - A convenience function to optimistically update the query.
+  - It calls [`queryClient.setQueryData`](../reference/QueryClient#queryclientsetquerydata) internally with the key that was provided to the `useQuery` hook
+  - If its called without providing a query key to the `useQuery` hook, it will throw a warning in the console
