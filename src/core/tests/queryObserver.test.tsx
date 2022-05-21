@@ -814,4 +814,18 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('optimistically update result after calling the update method', async () => {
+    const key = queryKey()
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => Promise.reject({ count: 1 }),
+    })
+
+    observer.update({ count: 2 })
+
+    expect(observer.getOptimisticResult(observer.options)).toMatchObject({
+      data: { count: 2 },
+    })
+  })
 })

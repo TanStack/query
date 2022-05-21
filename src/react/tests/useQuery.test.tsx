@@ -185,6 +185,7 @@ describe('useQuery', () => {
       isSuccess: false,
       refetch: expect.any(Function),
       remove: expect.any(Function),
+      update: expect.any(Function), 
       status: 'loading',
     })
 
@@ -210,6 +211,7 @@ describe('useQuery', () => {
       isSuccess: true,
       refetch: expect.any(Function),
       remove: expect.any(Function),
+      update: expect.any(Function),
       status: 'success',
     })
   })
@@ -265,6 +267,7 @@ describe('useQuery', () => {
       isSuccess: false,
       refetch: expect.any(Function),
       remove: expect.any(Function),
+      update: expect.any(Function),
       status: 'loading',
     })
 
@@ -290,6 +293,7 @@ describe('useQuery', () => {
       isSuccess: false,
       refetch: expect.any(Function),
       remove: expect.any(Function),
+      update: expect.any(Function),
       status: 'loading',
     })
 
@@ -315,6 +319,7 @@ describe('useQuery', () => {
       isSuccess: false,
       refetch: expect.any(Function),
       remove: expect.any(Function),
+      update: expect.any(Function),
       status: 'error',
     })
 
@@ -4870,5 +4875,62 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('data: 3'))
 
     consoleMock.mockRestore()
+  })
+  it('should optimistically update query after calling update', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery<string>(key, () => Promise.resolve('data'))
+      states.push(state)
+      return (
+        <>
+          <button onClick={() => state.update('updated')}>update</button>
+          <div>{state.data}</div>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    const fetchBtn = rendered.getByRole('button', { name: 'update' })
+    await waitFor(() => rendered.getByText('data'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('updated'))
+
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'data' })
+    expect(states[2]).toMatchObject({ data: 'updated' })
+    expect(queryClient.getQueryData(key)).toBe('updated')
+    expect(queryCache.find(key)?.state.data).toBe('updated')
+  })
+
+  it('should optimistically update query after calling update with an updater function', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const state = useQuery<string>(key, () => Promise.resolve('data'))
+      states.push(state)
+      return (
+        <>
+          <button onClick={() => state.update((old: string) => 'new ' + old)}>update</button>
+          <div>{state.data}</div>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    const fetchBtn = rendered.getByRole('button', { name: 'update' })
+    await waitFor(() => rendered.getByText('data'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('new data'))
+
+    expect(states[0]).toMatchObject({ data: undefined })
+    expect(states[1]).toMatchObject({ data: 'data' })
+    expect(states[2]).toMatchObject({ data: 'new data' })
+    expect(queryClient.getQueryData(key)).toBe('new data')
+    expect(queryCache.find(key)?.state.data).toBe('new data')
   })
 })

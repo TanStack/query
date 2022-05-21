@@ -346,6 +346,7 @@ export interface QueryObserverBaseResult<TData = unknown, TError = unknown> {
     options?: RefetchOptions & RefetchQueryFilters<TPageData>
   ) => Promise<QueryObserverResult<TData, TError>>
   remove: () => void
+  update: (updater: any, setDataOptions?: SetDataOptions | undefined) => void
   status: QueryStatus
 }
 

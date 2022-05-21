@@ -1,4 +1,4 @@
-import { RefetchQueryFilters } from './types'
+import { RefetchQueryFilters, SetDataOptions } from './types'
 import {
   isServer,
   isValidTimeout,
@@ -99,6 +99,7 @@ export class QueryObserver<
   protected bindMethods(): void {
     this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
+    this.update = this.update.bind(this)
   }
 
   protected onSubscribe(): void {
@@ -309,6 +310,18 @@ export class QueryObserver<
       ...options,
       meta: { refetchPage: options?.refetchPage },
     })
+  }
+
+  update(updater: any, setDataOptions?: SetDataOptions | undefined) {
+    if (this?.options?.queryKey) {
+      return this.client.setQueryData(
+        this.options.queryKey,
+        updater,
+        setDataOptions
+      )
+    }
+
+    getLogger().warn('Called update on a query without queryKey being set')
   }
 
   fetchOptimistic(
@@ -604,6 +617,7 @@ export class QueryObserver<
       isStale: isStale(query, options),
       refetch: this.refetch,
       remove: this.remove,
+      update: this.update,
     }
 
     return result as QueryObserverResult<TData, TError>
