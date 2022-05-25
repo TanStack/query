@@ -630,6 +630,35 @@ describe('queryObserver', () => {
     unsubscribe()
   })
 
+  test('should prefer isDataEqual to structuralSharing', async () => {
+    const key = queryKey()
+
+    const data = { value: 'data' }
+    const newData = { value: 'data' }
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+      queryFn: () => data,
+    })
+
+    const unsubscribe = observer.subscribe(() => undefined)
+
+    await sleep(10)
+    expect(observer.getCurrentResult().data).toBe(data)
+
+    observer.setOptions({
+      queryKey: key,
+      queryFn: () => newData,
+      isDataEqual: () => true,
+      structuralSharing: false,
+    })
+
+    await observer.refetch()
+    expect(observer.getCurrentResult().data).toBe(data)
+
+    unsubscribe()
+  })
+
   test('select function error using placeholderdata should log an error', () => {
     const key = queryKey()
 

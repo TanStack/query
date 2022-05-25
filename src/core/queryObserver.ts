@@ -3,7 +3,7 @@ import {
   isServer,
   isValidTimeout,
   noop,
-  replaceEqualDeep,
+  replaceData,
   shallowEqualObjects,
   timeUntilStale,
 } from './utils'
@@ -467,9 +467,7 @@ export class QueryObserver<
         try {
           this.selectFn = options.select
           data = options.select(state.data)
-          if (options.structuralSharing !== false) {
-            data = replaceEqualDeep(prevResult?.data, data)
-          }
+          data = replaceData(prevResult?.data, data, options)
           this.selectResult = data
           this.selectError = null
         } catch (selectError) {
@@ -507,12 +505,11 @@ export class QueryObserver<
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
             placeholderData = options.select(placeholderData)
-            if (options.structuralSharing !== false) {
-              placeholderData = replaceEqualDeep(
-                prevResult?.data,
-                placeholderData
-              )
-            }
+            placeholderData = replaceData(
+              prevResult?.data,
+              placeholderData,
+              options
+            )
             this.selectError = null
           } catch (selectError) {
             if (process.env.NODE_ENV !== 'production') {
