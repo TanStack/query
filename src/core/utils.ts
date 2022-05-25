@@ -413,3 +413,17 @@ export function getAbortController(): AbortController | undefined {
     return new AbortController()
   }
 }
+
+export function replaceData<
+  TData,
+  TOptions extends QueryOptions<any, any, any, any>
+>(prevData: TData | undefined, data: TData, options: TOptions): TData {
+  // Use prev data if an isDataEqual function is defined and returns `true`
+  if (options.isDataEqual?.(prevData, data)) {
+    return prevData as TData
+  } else if (options.structuralSharing !== false) {
+    // Structurally share data between prev and new data if needed
+    return replaceEqualDeep(prevData, data)
+  }
+  return data
+}
