@@ -1045,11 +1045,13 @@ describe('useInfiniteQuery', () => {
         async ({ pageParam = 0, signal: _ }) => {
           fetches++
           await sleep(50)
-          return Number(pageParam) * 5
+          return Number(pageParam) * 10
         },
         {
           initialData,
-          getNextPageParam: lastPage => lastPage + 1,
+          getNextPageParam: (_, allPages) => {
+            return allPages.length === 4 ? undefined : allPages.length
+          },
         }
       )
 
@@ -1073,7 +1075,6 @@ describe('useInfiniteQuery', () => {
     await sleep(300)
 
     if (typeof AbortSignal === 'function') {
-      console.log('with abortSignal')
       expect(fetches).toBe(2)
       expect(queryClient.getQueryState(key)).toMatchObject({
         data: initialData,
@@ -1081,11 +1082,10 @@ describe('useInfiniteQuery', () => {
         error: null,
       })
     } else {
-      console.log('without abortSignal')
-      // if AbortSignal is not consumed (not available in node14), fetches should not abort
+      // if AbortSignal is not consumed, fetches should not abort
       expect(fetches).toBe(4)
       expect(queryClient.getQueryState(key)).toMatchObject({
-        data: { pages: [0, 5, 10, 15], pageParams: [0, 1, 2, 3] },
+        data: { pages: [0, 10, 20, 30], pageParams: [0, 1, 2, 3] },
         status: 'success',
         error: null,
       })
