@@ -205,6 +205,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -230,6 +231,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: true,
       isFetchedAfterMount: true,
@@ -285,6 +287,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -310,6 +313,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -335,6 +339,7 @@ describe('useQuery', () => {
       error: 'rejected',
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
+      errorUpdateCount: 1,
       isError: true,
       isFetched: true,
       isFetchedAfterMount: true,
@@ -997,6 +1002,44 @@ describe('useQuery', () => {
 
     expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
     expect(states[1]).toMatchObject({ status: 'error', error })
+  })
+
+  it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
+    const key = queryKey()
+    const error = new Error('Select Error')
+    let runs = 0
+
+    function Page() {
+      const [, rerender] = React.useReducer(() => ({}), {})
+      const state = useQuery<string, Error>(
+        key,
+        () => (runs === 0 ? 'test' : 'test2'),
+        {
+          select: React.useCallback(() => {
+            runs++
+            throw error
+          }, []),
+        }
+      )
+      return (
+        <div>
+          <div>error: {state.error?.message}</div>
+          <button onClick={rerender}>rerender</button>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('error: Select Error'))
+    expect(runs).toEqual(1)
+    fireEvent.click(rendered.getByRole('button', { name: 'rerender' }))
+    await sleep(10)
+    expect(runs).toEqual(1)
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await sleep(10)
+    expect(runs).toEqual(2)
   })
 
   it('should track properties and only re-render when a tracked property changes', async () => {
@@ -5760,5 +5803,35 @@ describe('useQuery', () => {
     await waitFor(() => {
       expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
     })
+  })
+
+  it('errorUpdateCount should increased on each fetch failure', async () => {
+    const key = queryKey()
+    const error = new Error('oops')
+
+    function Page() {
+      const { refetch, errorUpdateCount } = useQuery(
+        key,
+        async (): Promise<unknown> => {
+          throw error
+        },
+        {
+          retry: false,
+        }
+      )
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <span>data: {errorUpdateCount}</span>
+        </div>
+      )
+    }
+    const rendered = renderWithClient(queryClient, <Page />)
+    const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 2'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 3'))
   })
 })
