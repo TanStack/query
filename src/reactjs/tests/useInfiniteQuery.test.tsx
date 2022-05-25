@@ -1033,28 +1033,25 @@ describe('useInfiniteQuery', () => {
     })
   })
 
-  it('should stop fetching additional pages when the component is unmounted', async () => {
+  it('should stop fetching additional pages when the component is unmounted and AbortSignal is consumed', async () => {
     const key = queryKey()
-    const states: UseInfiniteQueryResult<number>[] = []
     let fetches = 0
 
-    const initialData = { pages: [1, 2, 3, 4], pageParams: [1, 2, 3, 4] }
+    const initialData = { pages: [1, 2, 3, 4], pageParams: [0, 1, 2, 3] }
 
     function List() {
-      const state = useInfiniteQuery(
+      useInfiniteQuery(
         key,
-        async ({ pageParam }) => {
+        async ({ pageParam = 0, signal: _ }) => {
           fetches++
           await sleep(50)
-          return Number(pageParam)
+          return Number(pageParam) * 5
         },
         {
           initialData,
           getNextPageParam: lastPage => lastPage + 1,
         }
       )
-
-      states.push(state)
 
       return null
     }
@@ -1075,13 +1072,24 @@ describe('useInfiniteQuery', () => {
 
     await sleep(300)
 
-    expect(states.length).toBe(1)
-    expect(fetches).toBe(2)
-    expect(queryClient.getQueryState(key)).toMatchObject({
-      data: initialData,
-      status: 'success',
-      error: null,
-    })
+    if (typeof AbortSignal === 'function') {
+      console.log('with abortSignal')
+      expect(fetches).toBe(2)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: initialData,
+        status: 'success',
+        error: null,
+      })
+    } else {
+      console.log('without abortSignal')
+      // if AbortSignal is not consumed (not available in node14), fetches should not abort
+      expect(fetches).toBe(4)
+      expect(queryClient.getQueryState(key)).toMatchObject({
+        data: { pages: [0, 5, 10, 15], pageParams: [0, 1, 2, 3] },
+        status: 'success',
+        error: null,
+      })
+    }
   })
 
   it('should be able to override the cursor in the fetchNextPage callback', async () => {
