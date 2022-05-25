@@ -1,9 +1,4 @@
-import {
-  getAbortController,
-  noop,
-  replaceEqualDeep,
-  timeUntilStale,
-} from './utils'
+import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
 import type {
   InitialDataFunction,
   QueryKey,
@@ -195,16 +190,11 @@ export class Query<
     }
   }
 
-  setData(data: TData, options?: SetDataOptions & { manual: boolean }): TData {
-    const prevData = this.state.data
-
-    // Use prev data if an isDataEqual function is defined and returns `true`
-    if (this.options.isDataEqual?.(prevData, data)) {
-      data = prevData as TData
-    } else if (this.options.structuralSharing !== false) {
-      // Structurally share data between prev and new data if needed
-      data = replaceEqualDeep(prevData, data)
-    }
+  setData(
+    newData: TData,
+    options?: SetDataOptions & { manual: boolean }
+  ): TData {
+    const data = replaceData(this.state.data, newData, this.options)
 
     // Set data and mark it as cached
     this.dispatch({
