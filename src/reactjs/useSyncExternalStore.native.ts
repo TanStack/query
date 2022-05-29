@@ -1,2 +1,4 @@
 // @ts-ignore
-export { useSyncExternalStore } from 'use-sync-external-store/shim/index.native.js'
+import pkg from 'use-sync-external-store/shim/index.native.js'
+
+export const useSyncExternalStore = pkg.useSyncExternalStore
