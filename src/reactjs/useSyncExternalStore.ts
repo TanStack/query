@@ -1,1 +1,2 @@
-export { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
+import pkg from 'use-sync-external-store/shim/index.js'
+export const useSyncExternalStore = pkg.useSyncExternalStore
