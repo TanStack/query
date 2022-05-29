@@ -6,7 +6,6 @@ import type {
   QueryOptions,
   RefetchQueryFilters,
 } from './types'
-import { getAbortController } from './utils'
 
 export function infiniteQueryBehavior<
   TQueryFnData,
@@ -24,10 +23,24 @@ export function infiniteQueryBehavior<
         const isFetchingPreviousPage = fetchMore?.direction === 'backward'
         const oldPages = context.state.data?.pages || []
         const oldPageParams = context.state.data?.pageParams || []
-        const abortController = getAbortController()
-        const abortSignal = abortController?.signal
         let newPageParams = oldPageParams
         let cancelled = false
+
+        const addSignalProperty = (object: unknown) => {
+          Object.defineProperty(object, 'signal', {
+            enumerable: true,
+            get: () => {
+              if (context.signal?.aborted) {
+                cancelled = true
+              } else {
+                context.signal?.addEventListener('abort', () => {
+                  cancelled = true
+                })
+              }
+              return context.signal
+            },
+          })
+        }
 
         // Get query function
         const queryFn =
@@ -62,10 +75,11 @@ export function infiniteQueryBehavior<
 
           const queryFnContext: QueryFunctionContext = {
             queryKey: context.queryKey,
-            signal: abortSignal,
             pageParam: param,
             meta: context.meta,
           }
+
+          addSignalProperty(queryFnContext)
 
           const queryFnResult = queryFn(queryFnContext)
 
@@ -142,11 +156,6 @@ export function infiniteQueryBehavior<
           pages,
           pageParams: newPageParams,
         }))
-
-        context.signal?.addEventListener('abort', () => {
-          cancelled = true
-          abortController?.abort()
-        })
 
         return finalPromise
       }
