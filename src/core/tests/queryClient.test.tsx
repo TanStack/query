@@ -386,9 +386,8 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 1], 1)
       queryClient.setQueryData(['key', 2], 2)
 
-      const result = queryClient.setQueriesData<number>(
-        ['key'],
-        old => old! + 5
+      const result = queryClient.setQueriesData<number>(['key'], old =>
+        old ? old + 5 : undefined
       )
 
       expect(result).toEqual([

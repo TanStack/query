@@ -148,19 +148,19 @@ export class QueryClient {
 
   setQueriesData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): [QueryKey, TData][]
+  ): [QueryKey, TData | undefined][]
 
   setQueriesData<TData>(
     filters: QueryFilters,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): [QueryKey, TData][]
+  ): [QueryKey, TData | undefined][]
 
   setQueriesData<TData>(
     queryKeyOrFilters: QueryKey | QueryFilters,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): [QueryKey, TData | undefined][] {
     return notifyManager.batch(() =>
