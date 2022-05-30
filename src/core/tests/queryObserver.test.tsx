@@ -266,7 +266,6 @@ describe('queryObserver', () => {
     await sleep(50)
     await observer.refetch()
     unsubscribe()
-    expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
       status: 'loading',
       isFetching: true,
@@ -283,11 +282,6 @@ describe('queryObserver', () => {
       data: undefined,
     })
     expect(results[3]).toMatchObject({
-      status: 'error',
-      isFetching: false,
-      data: undefined,
-    })
-    expect(results[4]).toMatchObject({
       status: 'error',
       isFetching: false,
       data: undefined,
@@ -322,7 +316,6 @@ describe('queryObserver', () => {
     await observer.refetch()
     unsubscribe()
 
-    expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
       status: 'loading',
       isFetching: true,
@@ -342,12 +335,6 @@ describe('queryObserver', () => {
       error: null,
     })
     expect(results[3]).toMatchObject({
-      status: 'error',
-      isFetching: false,
-      data: '1',
-      error,
-    })
-    expect(results[4]).toMatchObject({
       status: 'error',
       isFetching: false,
       data: '1',
