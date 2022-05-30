@@ -31,9 +31,6 @@ const queryClient = new QueryClient({
 })
 ```
 
-### Environment Checking
-A check for window `undefined` is performed prior to saving/restoring/removing your data (avoids build errors).
-
 ### Cache Busting
 
 Sometimes you may make changes to your application or data that immediately invalidate any and all cached data. If and when this happens, you can pass a `buster` string option. If the cache that is found does not also have that buster string, it will be discarded.  The following several functions accept this option:
