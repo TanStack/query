@@ -249,7 +249,10 @@ describe('queryObserver', () => {
   test('should always run the selector again if selector throws an error and selector is not referentially stable', async () => {
     const key = queryKey()
     const results: QueryObserverResult[] = []
-    const queryFn = () => ({ count: 1 })
+    const queryFn = async () => {
+      await sleep(10)
+      return { count: 1 }
+    }
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -260,10 +263,10 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe(result => {
       results.push(result)
     })
-    await sleep(1)
+    await sleep(50)
     await observer.refetch()
     unsubscribe()
-    expect(results.length).toBe(4)
+    expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
       status: 'loading',
       isFetching: true,
@@ -280,6 +283,11 @@ describe('queryObserver', () => {
       data: undefined,
     })
     expect(results[3]).toMatchObject({
+      status: 'error',
+      isFetching: false,
+      data: undefined,
+    })
+    expect(results[4]).toMatchObject({
       status: 'error',
       isFetching: false,
       data: undefined,
@@ -293,7 +301,11 @@ describe('queryObserver', () => {
     const error = new Error('select error')
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
-      queryFn: () => (shouldError ? 2 : 1),
+      retry: 0,
+      queryFn: async () => {
+        await sleep(10)
+        return shouldError ? 2 : 1
+      },
       select: num => {
         if (shouldError) {
           throw error
@@ -306,11 +318,11 @@ describe('queryObserver', () => {
     const unsubscribe = observer.subscribe(result => {
       results.push(result)
     })
-    await sleep(10)
+    await sleep(50)
     await observer.refetch()
     unsubscribe()
 
-    expect(results.length).toBe(4)
+    expect(results.length).toBe(5)
     expect(results[0]).toMatchObject({
       status: 'loading',
       isFetching: true,
@@ -330,6 +342,12 @@ describe('queryObserver', () => {
       error: null,
     })
     expect(results[3]).toMatchObject({
+      status: 'error',
+      isFetching: false,
+      data: '1',
+      error,
+    })
+    expect(results[4]).toMatchObject({
       status: 'error',
       isFetching: false,
       data: '1',
