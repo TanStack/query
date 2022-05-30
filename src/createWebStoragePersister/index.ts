@@ -6,7 +6,9 @@ import {
 } from '../persistQueryClient'
 
 interface CreateWebStoragePersisterOptions {
-  /** The storage client used for setting and retrieving items from cache */
+  /** The storage client used for setting and retrieving items from cache.
+   * For SSR pass in `undefined`.
+   */
   storage: Storage | undefined
   /** The key to use when storing the cache */
   key?: string

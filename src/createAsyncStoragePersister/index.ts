@@ -15,7 +15,9 @@ export type AsyncPersistRetryer = (props: {
 }) => Promisable<PersistedClient | undefined>
 
 interface CreateAsyncStoragePersisterOptions {
-  /** The storage client used for setting an retrieving items from cache */
+  /** The storage client used for setting and retrieving items from cache.
+   * For SSR pass in `undefined`.
+   */
   storage: AsyncStorage | undefined
   /** The key to use when storing the cache */
   key?: string
