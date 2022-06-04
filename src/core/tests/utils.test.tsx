@@ -258,6 +258,13 @@ describe('core/utils', () => {
       expect(result[1]).toBe(prev[1])
     })
 
+    it('should support objects which are not plain arrays', () => {
+      const prev = Object.assign([1, 2], { a: { b: 'b' }, c: 'c' })
+      const next = Object.assign([1, 2], { a: { b: 'b' }, c: 'c' })
+      const result = replaceEqualDeep(prev, next)
+      expect(result).toBe(next)
+    })
+
     it('should replace all parent objects if some nested value changes', () => {
       const prev = {
         todo: { id: '1', meta: { createdAt: 0 }, state: { done: false } },
