@@ -6,6 +6,7 @@ import {
   matchMutation,
   scheduleMicrotask,
   sleep,
+  isPlainArray,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from '../../tests/utils'
@@ -53,6 +54,16 @@ describe('core/utils', () => {
       }
 
       expect(isPlainObject(Object.create(Graph))).toBeFalsy()
+    })
+  })
+
+  describe('isPlainArray', () => {
+    it('should return `true` for plain arrays', () => {
+      expect(isPlainArray([1, 2])).toEqual(true)
+    })
+
+    it('should return `false` for non plain arrays', () => {
+      expect(isPlainArray(Object.assign([1, 2], { a: 'b' }))).toEqual(false)
     })
   })
 

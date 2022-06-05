@@ -355,8 +355,8 @@ export function shallowEqualObjects<T>(a: T, b: T): boolean {
   return true
 }
 
-export function isPlainArray(a: any) {
-  return Array.isArray(a) && a.length === Object.keys(a).length
+export function isPlainArray(value: unknown) {
+  return Array.isArray(value) && value.length === Object.keys(value).length
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
