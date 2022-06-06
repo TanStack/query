@@ -5,6 +5,12 @@ import {
   PersistRetryer,
 } from '../persistQueryClient'
 
+interface Storage {
+  getItem: (key: string) => string | null
+  setItem: (key: string, value: string) => void
+  removeItem: (key: string) => void
+}
+
 interface CreateWebStoragePersisterOptions {
   /** The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`.
