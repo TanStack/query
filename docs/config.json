@@ -10,39 +10,39 @@
       "children": [
         {
           "label": "Overview",
-          "path": "overview"
+          "to": "overview"
         },
         {
           "label": "Installation",
-          "path": "installation"
+          "to": "installation"
         },
         {
           "label": "Quick Start",
-          "path": "quick-start"
+          "to": "quick-start"
         },
         {
           "label": "Devtools",
-          "path": "devtools"
+          "to": "devtools"
         },
         {
           "label": "Videos & Talks",
-          "path": "videos"
+          "to": "videos"
         },
         {
           "label": "Comparison",
-          "path": "comparison"
+          "to": "comparison"
         },
         {
           "label": "TypeScript",
-          "path": "typescript"
+          "to": "typescript"
         },
         {
           "label": "GraphQL",
-          "path": "graphql"
+          "to": "graphql"
         },
         {
           "label": "React Native",
-          "path": "react-native"
+          "to": "react-native"
         }
       ]
     },
@@ -51,135 +51,135 @@
       "children": [
         {
           "label": "Important Defaults",
-          "path": "guides/important-defaults"
+          "to": "guides/important-defaults"
         },
         {
           "label": "Queries",
-          "path": "guides/queries"
+          "to": "guides/queries"
         },
         {
           "label": "Query Keys",
-          "path": "guides/query-keys"
+          "to": "guides/query-keys"
         },
         {
           "label": "Query Functions",
-          "path": "guides/query-functions"
+          "to": "guides/query-functions"
         },
         {
           "label": "Network Mode",
-          "path": "guides/network-mode"
+          "to": "guides/network-mode"
         },
         {
           "label": "Parallel Queries",
-          "path": "guides/parallel-queries"
+          "to": "guides/parallel-queries"
         },
         {
           "label": "Dependent Queries",
-          "path": "guides/dependent-queries"
+          "to": "guides/dependent-queries"
         },
         {
           "label": "Background Fetching Indicators",
-          "path": "guides/background-fetching-indicators"
+          "to": "guides/background-fetching-indicators"
         },
         {
           "label": "Window Focus Refetching",
-          "path": "guides/window-focus-refetching"
+          "to": "guides/window-focus-refetching"
         },
         {
           "label": "Disabling/Pausing Queries",
-          "path": "guides/disabling-queries"
+          "to": "guides/disabling-queries"
         },
         {
           "label": "Query Retries",
-          "path": "guides/query-retries"
+          "to": "guides/query-retries"
         },
         {
           "label": "Paginated Queries",
-          "path": "guides/paginated-queries"
+          "to": "guides/paginated-queries"
         },
         {
           "label": "Infinite Queries",
-          "path": "guides/infinite-queries"
+          "to": "guides/infinite-queries"
         },
         {
           "label": "Placeholder Query Data",
-          "path": "guides/placeholder-query-data"
+          "to": "guides/placeholder-query-data"
         },
         {
           "label": "Initial Query Data",
-          "path": "guides/initial-query-data"
+          "to": "guides/initial-query-data"
         },
         {
           "label": "Prefetching",
-          "path": "guides/prefetching"
+          "to": "guides/prefetching"
         },
         {
           "label": "Mutations",
-          "path": "guides/mutations"
+          "to": "guides/mutations"
         },
         {
           "label": "Query Invalidation",
-          "path": "guides/query-invalidation"
+          "to": "guides/query-invalidation"
         },
         {
           "label": "Invalidation from Mutations",
-          "path": "guides/invalidations-from-mutations"
+          "to": "guides/invalidations-from-mutations"
         },
         {
           "label": "Updates from Mutation Responses",
-          "path": "guides/updates-from-mutation-responses"
+          "to": "guides/updates-from-mutation-responses"
         },
         {
           "label": "Optimistic Updates",
-          "path": "guides/optimistic-updates"
+          "to": "guides/optimistic-updates"
         },
         {
           "label": "Query Cancellation",
-          "path": "guides/query-cancellation"
+          "to": "guides/query-cancellation"
         },
         {
           "label": "Scroll Restoration",
-          "path": "guides/scroll-restoration"
+          "to": "guides/scroll-restoration"
         },
         {
           "label": "Filters",
-          "path": "guides/filters"
+          "to": "guides/filters"
         },
         {
           "label": "SSR & Next.js",
-          "path": "guides/ssr"
+          "to": "guides/ssr"
         },
         {
           "label": "Caching",
-          "path": "guides/caching"
+          "to": "guides/caching"
         },
         {
           "label": "Default Query Fn",
-          "path": "guides/default-query-function"
+          "to": "guides/default-query-function"
         },
         {
           "label": "Suspense",
-          "path": "guides/suspense"
+          "to": "guides/suspense"
         },
         {
           "label": "Custom Logger",
-          "path": "guides/custom-logger"
+          "to": "guides/custom-logger"
         },
         {
           "label": "Testing",
-          "path": "guides/testing"
+          "to": "guides/testing"
         },
         {
           "label": "Does this replace [Redux, MobX, etc]?",
-          "path": "guides/does-this-replace-client-state"
+          "to": "guides/does-this-replace-client-state"
         },
         {
           "label": "Migrating to React Query 3",
-          "path": "guides/migrating-to-react-query-3"
+          "to": "guides/migrating-to-react-query-3"
         },
         {
           "label": "Migrating to React Query 4",
-          "path": "guides/migrating-to-react-query-4"
+          "to": "guides/migrating-to-react-query-4"
         }
       ]
     },
@@ -188,7 +188,7 @@
       "children": [
         {
           "label": "TkDodo's Blog",
-          "path": "community/tkdodos-blog"
+          "to": "community/tkdodos-blog"
         }
       ]
     },
@@ -197,79 +197,79 @@
       "children": [
         {
           "label": "Simple",
-          "path": "examples/react/simple"
+          "to": "examples/react/simple"
         },
         {
           "label": "Basic",
-          "path": "examples/react/basic"
+          "to": "examples/react/basic"
         },
         {
           "label": "Basic w/ GraphQL-Request",
-          "path": "examples/react/basic-graphql-request"
+          "to": "examples/react/basic-graphql-request"
         },
         {
           "label": "Custom Hooks",
-          "path": "examples/react/custom-hooks"
+          "to": "examples/react/custom-hooks"
         },
         {
           "label": "Auto Refetching / Polling / Realtime",
-          "path": "examples/react/auto-refetching"
+          "to": "examples/react/auto-refetching"
         },
         {
           "label": "Window Refocus Refetching",
-          "path": "examples/react/focus-refetching"
+          "to": "examples/react/focus-refetching"
         },
         {
           "label": "Optimistic Updates",
-          "path": "examples/react/optimistic-updates"
+          "to": "examples/react/optimistic-updates"
         },
         {
           "label": "Optimistic Updates in TypeScript",
-          "path": "examples/react/optimistic-updates-typescript"
+          "to": "examples/react/optimistic-updates-typescript"
         },
         {
           "label": "Pagination",
-          "path": "examples/react/pagination"
+          "to": "examples/react/pagination"
         },
         {
           "label": "Load-More & Infinite Scroll",
-          "path": "examples/react/load-more-infinite-scroll"
+          "to": "examples/react/load-more-infinite-scroll"
         },
         {
           "label": "Suspense",
-          "path": "examples/react/suspense"
+          "to": "examples/react/suspense"
         },
         {
           "label": "Default Query Function",
-          "path": "examples/react/default-query-function"
+          "to": "examples/react/default-query-function"
         },
         {
           "label": "Playground",
-          "path": "examples/react/playground"
+          "to": "examples/react/playground"
         },
         {
           "label": "Prefetching",
-          "path": "examples/react/prefetching"
+          "to": "examples/react/prefetching"
         },
         {
           "label": "Star Wars",
-          "path": "examples/react/star-wars"
+          "to": "examples/react/star-wars"
         },
         {
           "label": "Rick And Morty",
-          "path": "examples/react/rick-morty"
+          "to": "examples/react/rick-morty"
         },
         {
           "label": "Next.js",
-          "path": "examples/react/nextjs"
+          "to": "examples/react/nextjs"
         },
         {
           "label": "React Native",
-          "path": "examples/react/react-native"
+          "to": "examples/react/react-native"
         },
         {
           "label": "Offline Queries and Mutations",
-          "path": "examples/react/offline"
+          "to": "examples/react/offline"
         }
       ]
     },
@@ -278,19 +278,19 @@
       "children": [
         {
           "label": "persistQueryClient",
-          "path": "plugins/persistQueryClient"
+          "to": "plugins/persistQueryClient"
         },
         {
           "label": "createWebStoragePersister",
-          "path": "plugins/createWebStoragePersister"
+          "to": "plugins/createWebStoragePersister"
         },
         {
           "label": "createAsyncStoragePersister",
-          "path": "plugins/createAsyncStoragePersister"
+          "to": "plugins/createAsyncStoragePersister"
         },
         {
           "label": "broadcastQueryClient (Experimental)",
-          "path": "plugins/broadcastQueryClient"
+          "to": "plugins/broadcastQueryClient"
         }
       ]
     },
@@ -299,79 +299,79 @@
       "children": [
         {
           "label": "useQuery",
-          "path": "reference/useQuery"
+          "to": "reference/useQuery"
         },
         {
           "label": "useQueries",
-          "path": "reference/useQueries"
+          "to": "reference/useQueries"
         },
         {
           "label": "useInfiniteQuery",
-          "path": "reference/useInfiniteQuery"
+          "to": "reference/useInfiniteQuery"
         },
         {
           "label": "useMutation",
-          "path": "reference/useMutation"
+          "to": "reference/useMutation"
         },
         {
           "label": "useIsFetching",
-          "path": "reference/useIsFetching"
+          "to": "reference/useIsFetching"
         },
         {
           "label": "useIsMutating",
-          "path": "reference/useIsMutating"
+          "to": "reference/useIsMutating"
         },
         {
           "label": "QueryClient",
-          "path": "reference/QueryClient"
+          "to": "reference/QueryClient"
         },
         {
           "label": "QueryClientProvider",
-          "path": "reference/QueryClientProvider"
+          "to": "reference/QueryClientProvider"
         },
         {
           "label": "useQueryClient",
-          "path": "reference/useQueryClient"
+          "to": "reference/useQueryClient"
         },
         {
           "label": "QueryCache",
-          "path": "reference/QueryCache"
+          "to": "reference/QueryCache"
         },
         {
           "label": "MutationCache",
-          "path": "reference/MutationCache"
+          "to": "reference/MutationCache"
         },
         {
           "label": "QueryObserver",
-          "path": "reference/QueryObserver"
+          "to": "reference/QueryObserver"
         },
         {
           "label": "InfiniteQueryObserver",
-          "path": "reference/InfiniteQueryObserver"
+          "to": "reference/InfiniteQueryObserver"
         },
         {
           "label": "QueriesObserver",
-          "path": "reference/QueriesObserver"
+          "to": "reference/QueriesObserver"
         },
         {
           "label": "QueryErrorResetBoundary",
-          "path": "reference/QueryErrorResetBoundary"
+          "to": "reference/QueryErrorResetBoundary"
         },
         {
           "label": "useQueryErrorResetBoundary",
-          "path": "reference/useQueryErrorResetBoundary"
+          "to": "reference/useQueryErrorResetBoundary"
         },
         {
           "label": "focusManager",
-          "path": "reference/focusManager"
+          "to": "reference/focusManager"
         },
         {
           "label": "onlineManager",
-          "path": "reference/onlineManager"
+          "to": "reference/onlineManager"
         },
         {
           "label": "hydration",
-          "path": "reference/hydration"
+          "to": "reference/hydration"
         }
       ]
     }
