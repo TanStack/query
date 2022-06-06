@@ -1,0 +1,402 @@
+{
+  "docSearch": {
+    "appId": "BH4D9OD16A",
+    "apiKey": "c97369bb0f67e99c8acf34bfd732cca7",
+    "indexName": "tanstack_react-query"
+  },
+  "menu": [
+    {
+      "label": "Getting Started",
+      "children": [
+        {
+          "label": "Overview",
+          "path": "overview"
+        },
+        {
+          "label": "Installation",
+          "path": "installation"
+        },
+        {
+          "label": "Quick Start",
+          "path": "quick-start"
+        },
+        {
+          "label": "Devtools",
+          "path": "devtools"
+        },
+        {
+          "label": "Videos & Talks",
+          "path": "videos"
+        },
+        {
+          "label": "Comparison",
+          "path": "comparison"
+        },
+        {
+          "label": "TypeScript",
+          "path": "typescript"
+        },
+        {
+          "label": "GraphQL",
+          "path": "graphql"
+        },
+        {
+          "label": "React Native",
+          "path": "react-native"
+        }
+      ]
+    },
+    {
+      "label": "Guides & Concepts",
+      "children": [
+        {
+          "label": "Important Defaults",
+          "path": "guides/important-defaults"
+        },
+        {
+          "label": "Queries",
+          "path": "guides/queries"
+        },
+        {
+          "label": "Query Keys",
+          "path": "guides/query-keys"
+        },
+        {
+          "label": "Query Functions",
+          "path": "guides/query-functions"
+        },
+        {
+          "label": "Network Mode",
+          "path": "guides/network-mode"
+        },
+        {
+          "label": "Parallel Queries",
+          "path": "guides/parallel-queries"
+        },
+        {
+          "label": "Dependent Queries",
+          "path": "guides/dependent-queries"
+        },
+        {
+          "label": "Background Fetching Indicators",
+          "path": "guides/background-fetching-indicators"
+        },
+        {
+          "label": "Window Focus Refetching",
+          "path": "guides/window-focus-refetching"
+        },
+        {
+          "label": "Disabling/Pausing Queries",
+          "path": "guides/disabling-queries"
+        },
+        {
+          "label": "Query Retries",
+          "path": "guides/query-retries"
+        },
+        {
+          "label": "Paginated Queries",
+          "path": "guides/paginated-queries"
+        },
+        {
+          "label": "Infinite Queries",
+          "path": "guides/infinite-queries"
+        },
+        {
+          "label": "Placeholder Query Data",
+          "path": "guides/placeholder-query-data"
+        },
+        {
+          "label": "Initial Query Data",
+          "path": "guides/initial-query-data"
+        },
+        {
+          "label": "Prefetching",
+          "path": "guides/prefetching"
+        },
+        {
+          "label": "Mutations",
+          "path": "guides/mutations"
+        },
+        {
+          "label": "Query Invalidation",
+          "path": "guides/query-invalidation"
+        },
+        {
+          "label": "Invalidation from Mutations",
+          "path": "guides/invalidations-from-mutations"
+        },
+        {
+          "label": "Updates from Mutation Responses",
+          "path": "guides/updates-from-mutation-responses"
+        },
+        {
+          "label": "Optimistic Updates",
+          "path": "guides/optimistic-updates"
+        },
+        {
+          "label": "Query Cancellation",
+          "path": "guides/query-cancellation"
+        },
+        {
+          "label": "Scroll Restoration",
+          "path": "guides/scroll-restoration"
+        },
+        {
+          "label": "Filters",
+          "path": "guides/filters"
+        },
+        {
+          "label": "SSR & Next.js",
+          "path": "guides/ssr"
+        },
+        {
+          "label": "Caching",
+          "path": "guides/caching"
+        },
+        {
+          "label": "Default Query Fn",
+          "path": "guides/default-query-function"
+        },
+        {
+          "label": "Suspense",
+          "path": "guides/suspense"
+        },
+        {
+          "label": "Custom Logger",
+          "path": "guides/custom-logger"
+        },
+        {
+          "label": "Testing",
+          "path": "guides/testing"
+        },
+        {
+          "label": "Does this replace [Redux, MobX, etc]?",
+          "path": "guides/does-this-replace-client-state"
+        },
+        {
+          "label": "Migrating to React Query 3",
+          "path": "guides/migrating-to-react-query-3"
+        },
+        {
+          "label": "Migrating to React Query 4",
+          "path": "guides/migrating-to-react-query-4"
+        }
+      ]
+    },
+    {
+      "label": "Community Resources",
+      "children": [
+        {
+          "label": "TkDodo's Blog",
+          "path": "community/tkdodos-blog"
+        }
+      ]
+    },
+    {
+      "label": "Examples",
+      "children": [
+        {
+          "label": "Simple",
+          "path": "examples/react/simple"
+        },
+        {
+          "label": "Basic",
+          "path": "examples/react/basic"
+        },
+        {
+          "label": "Basic w/ GraphQL-Request",
+          "path": "examples/react/basic-graphql-request"
+        },
+        {
+          "label": "Custom Hooks",
+          "path": "examples/react/custom-hooks"
+        },
+        {
+          "label": "Auto Refetching / Polling / Realtime",
+          "path": "examples/react/auto-refetching"
+        },
+        {
+          "label": "Window Refocus Refetching",
+          "path": "examples/react/focus-refetching"
+        },
+        {
+          "label": "Optimistic Updates",
+          "path": "examples/react/optimistic-updates"
+        },
+        {
+          "label": "Optimistic Updates in TypeScript",
+          "path": "examples/react/optimistic-updates-typescript"
+        },
+        {
+          "label": "Pagination",
+          "path": "examples/react/pagination"
+        },
+        {
+          "label": "Load-More & Infinite Scroll",
+          "path": "examples/react/load-more-infinite-scroll"
+        },
+        {
+          "label": "Suspense",
+          "path": "examples/react/suspense"
+        },
+        {
+          "label": "Default Query Function",
+          "path": "examples/react/default-query-function"
+        },
+        {
+          "label": "Playground",
+          "path": "examples/react/playground"
+        },
+        {
+          "label": "Prefetching",
+          "path": "examples/react/prefetching"
+        },
+        {
+          "label": "Star Wars",
+          "path": "examples/react/star-wars"
+        },
+        {
+          "label": "Rick And Morty",
+          "path": "examples/react/rick-morty"
+        },
+        {
+          "label": "Next.js",
+          "path": "examples/react/nextjs"
+        },
+        {
+          "label": "React Native",
+          "path": "examples/react/react-native"
+        },
+        {
+          "label": "Offline Queries and Mutations",
+          "path": "examples/react/offline"
+        }
+      ]
+    },
+    {
+      "label": "Plugins",
+      "children": [
+        {
+          "label": "persistQueryClient",
+          "path": "plugins/persistQueryClient"
+        },
+        {
+          "label": "createWebStoragePersister",
+          "path": "plugins/createWebStoragePersister"
+        },
+        {
+          "label": "createAsyncStoragePersister",
+          "path": "plugins/createAsyncStoragePersister"
+        },
+        {
+          "label": "broadcastQueryClient (Experimental)",
+          "path": "plugins/broadcastQueryClient"
+        }
+      ]
+    },
+    {
+      "label": "API Reference",
+      "children": [
+        {
+          "label": "useQuery",
+          "path": "reference/useQuery"
+        },
+        {
+          "label": "useQueries",
+          "path": "reference/useQueries"
+        },
+        {
+          "label": "useInfiniteQuery",
+          "path": "reference/useInfiniteQuery"
+        },
+        {
+          "label": "useMutation",
+          "path": "reference/useMutation"
+        },
+        {
+          "label": "useIsFetching",
+          "path": "reference/useIsFetching"
+        },
+        {
+          "label": "useIsMutating",
+          "path": "reference/useIsMutating"
+        },
+        {
+          "label": "QueryClient",
+          "path": "reference/QueryClient"
+        },
+        {
+          "label": "QueryClientProvider",
+          "path": "reference/QueryClientProvider"
+        },
+        {
+          "label": "useQueryClient",
+          "path": "reference/useQueryClient"
+        },
+        {
+          "label": "QueryCache",
+          "path": "reference/QueryCache"
+        },
+        {
+          "label": "MutationCache",
+          "path": "reference/MutationCache"
+        },
+        {
+          "label": "QueryObserver",
+          "path": "reference/QueryObserver"
+        },
+        {
+          "label": "InfiniteQueryObserver",
+          "path": "reference/InfiniteQueryObserver"
+        },
+        {
+          "label": "QueriesObserver",
+          "path": "reference/QueriesObserver"
+        },
+        {
+          "label": "QueryErrorResetBoundary",
+          "path": "reference/QueryErrorResetBoundary"
+        },
+        {
+          "label": "useQueryErrorResetBoundary",
+          "path": "reference/useQueryErrorResetBoundary"
+        },
+        {
+          "label": "focusManager",
+          "path": "reference/focusManager"
+        },
+        {
+          "label": "onlineManager",
+          "path": "reference/onlineManager"
+        },
+        {
+          "label": "hydration",
+          "path": "reference/hydration"
+        }
+      ]
+    }
+  ],
+  "users": [
+    "Google",
+    "Walmart",
+    "Facebook",
+    "PayPal",
+    "Amazon",
+    "American Express",
+    "Microsoft",
+    "Target",
+    "Ebay",
+    "Autodesk",
+    "CarFAX",
+    "Docusign",
+    "HP",
+    "MLB",
+    "Volvo",
+    "Ocado",
+    "UPC.ch",
+    "EFI.com",
+    "ReactBricks",
+    "Nozzle.io",
+    "Uber"
+  ]
+}
