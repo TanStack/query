@@ -5,10 +5,6 @@ title: Migrating to React Query 4
 
 ## Breaking Changes
 
-### ESM Support
-
-React Query now supports [package.json `"exports"`](https://nodejs.org/api/packages.html#exports) and is fully compatible with Node's native resolution for both CommonJS and ESM. We don't expect this to be a breaking change for most users, but this restricts the files you can import into your project to only the entry points we officially support.
-
 ### Query Keys (and Mutation Keys) need to be an Array
 
 In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./default-query-function) easier.
@@ -46,13 +42,58 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser othe
 
 **Note:** Applying the codemod might break your code formatting, so please don't forget to run `prettier` and/or `eslint` after you've applied the codemod!
 
-### Separate hydration exports have been removed
+### The idle state has been removed
 
-With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
+With the introduction of the new [fetchStatus](../guides/queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../guides/queries#why-two-different-states).
+
+This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
 
 ```diff
-- import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration'
-+ import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query'
+- status: 'idle'
++ status: 'loading'
++ fetchStatus: 'idle'
+```
+
+Also, have a look at [the guide on dependent queries](../guides/dependent-queries)
+
+### new API for `useQueries`
+
+The `useQueries` hook now accepts an object with a `queries` prop as its input. The value of the `queries` prop is an array of queries (this array is identical to what was passed into `useQueries` in v3).
+
+```diff
+- useQueries([{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }])
++ useQueries({ queries: [{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }] })
+```
+
+### Undefined is an illegal cache value for successful queries
+
+In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](guides/initial-query-data#initial-data-function) will also _not_ set data.
+
+Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
+
+```js
+useQuery(['key'], () => axios.get(url).then(result => console.log(result.data)))
+```
+
+This is now disallowed on type level; at runtime, `undefined` will be transformed to a _failed Promise_, which means you will get an `error`, which will also be logged to the console in development mode.
+
+### Queries and mutations, per default, need network connection to run
+
+Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../guides/network-mode)
+
+Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no network connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
+
+```js
+new QueryClient({
+  defaultOptions: {
+    queries: {
+      networkMode: 'offlineFirst',
+    },
+    mutations: {
+      networkmode: 'offlineFirst',
+    },
+  },
+})
 ```
 
 ### `notifyOnChangeProps` property no longer accepts `"tracked"` as a value
@@ -145,44 +186,6 @@ For the same reason, those have also been combined:
 
 This flag defaults to `active` because `refetchActive` defaulted to `true`. This means we also need a way to tell `invalidateQueries` to not refetch at all, which is why a fourth option (`none`) is also allowed here.
 
-### Streamlined NotifyEvents
-
-Subscribing manually to the `QueryCache` has always given you a `QueryCacheNotifyEvent`, but this was not true for the `MutationCache`. We have streamlined the behavior and also adapted event names accordingly.
-
-#### QueryCacheNotifyEvent
-
-```diff
-- type: 'queryAdded'
-+ type: 'added'
-- type: 'queryRemoved'
-+ type: 'removed'
-- type: 'queryUpdated'
-+ type: 'updated'
-```
-
-#### MutationCacheNotifyEvent
-
-The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent`.
-
-> Note: This is only relevant if you manually subscribe to the caches via `queryCache.subscribe` or `mutationCache.subscribe`
-
-### The `src/react` directory was renamed to `src/reactjs`
-
-Previously, React Query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
-
-```
-TypeError: Cannot read property 'createContext' of undefined
-```
-
-With the renamed directory this no longer is an issue.
-
-If you were importing anything from `'react-query/react'` directly in your project (as opposed to just `'react-query'`), then you need to update your imports:
-
-```diff
-- import { QueryClientProvider } from 'react-query/react';
-+ import { QueryClientProvider } from 'react-query/reactjs';
-```
-
 ### `onSuccess` is no longer called from `setQueryData`
 
 This was confusing to many and also created infinite loops if `setQueryData` was called from within `onSuccess`. It was also a frequent source of error when combined with `staleTime`, because if data was read from the cache only, `onSuccess` was _not_ called.
@@ -216,32 +219,72 @@ Since these plugins are no longer experimental, their import paths have also bee
 
 The [old `cancel` method](../guides/query-cancellation#old-cancel-function) that allowed you to define a `cancel` function on promises, which was then used by the library to support query cancellation, has been removed. We recommend to use the [newer API](../guides/query-cancellation) (introduced with v3.30.0) for query cancellation that uses the [`AbortController` API](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) internally and provides you with an [`AbortSignal` instance](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) for your query function to support query cancellation.
 
-### Queries and mutations, per default, need network connection to run
+### TypeScript
 
-Please read the [New Features announcement](#proper-offline-support) about online / offline support, and also the dedicated page about [Network mode](../guides/network-mode)
+Types now require using TypeScript v4.1 or greater
 
-Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no network connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
+### Supported Browsers
 
-```js
-new QueryClient({
-  defaultOptions: {
-    queries: {
-      networkMode: 'offlineFirst',
-    },
-    mutations: {
-      networkmode: 'offlineFirst',
-    },
-  },
-})
-```
+As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
 
-### new API for `useQueries`
+### `setLogger` is removed
 
-The `useQueries` hook now accepts an object with a `queries` prop as its input. The value of the `queries` prop is an array of queries (this array is identical to what was passed into `useQueries` in v3).
+It was possible to change the logger globally by calling `setLogger`. In v4, that function is replaced with an optional field when creating a `QueryClient`.
 
 ```diff
-- useQueries([{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }])
-+ useQueries({ queries: [{ queryKey1, queryFn1, options1 }, { queryKey2, queryFn2, options2 }] })
+- import { QueryClient, setLogger } from 'react-query';
++ import { QueryClient } from 'react-query';
+
+- setLogger(customLogger)
+- const queryClient = new QueryClient();
++ const queryClient = new QueryClient({ logger: customLogger })
+```
+
+### No _default_ manual Garbage Collection server-side
+
+In v3, React Query would cache query results for a default of 5 minutes, then manually garbage collect that data. This default was applied to server-side React Query as well.
+
+This lead to high memory consumption and hanging processes waiting for this manual garbage collection to complete. In v4, by default the server-side `cacheTime` is now set to `Infinity` effectively disabling manual garbage collection (the NodeJS process will clear everything once a request is complete).
+
+This change only impacts users of server-side React Query, such as with Next.js. If you are setting a `cacheTime` manually this will not impact you (although you may want to mirror behavior).
+
+### Logging in production
+
+Starting with v4, react-query will no longer log errors (e.g. failed fetches) to the console in production mode, as this was confusing to many.
+Errors will still show up in development mode.
+
+### ESM Support
+
+React Query now supports [package.json `"exports"`](https://nodejs.org/api/packages.html#exports) and is fully compatible with Node's native resolution for both CommonJS and ESM. We don't expect this to be a breaking change for most users, but this restricts the files you can import into your project to only the entry points we officially support.
+
+### Streamlined NotifyEvents
+
+Subscribing manually to the `QueryCache` has always given you a `QueryCacheNotifyEvent`, but this was not true for the `MutationCache`. We have streamlined the behavior and also adapted event names accordingly.
+
+#### QueryCacheNotifyEvent
+
+```diff
+- type: 'queryAdded'
++ type: 'added'
+- type: 'queryRemoved'
++ type: 'removed'
+- type: 'queryUpdated'
++ type: 'updated'
+```
+
+#### MutationCacheNotifyEvent
+
+The `MutationCacheNotifyEvent` uses the same types as the `QueryCacheNotifyEvent`.
+
+> Note: This is only relevant if you manually subscribe to the caches via `queryCache.subscribe` or `mutationCache.subscribe`
+
+### Separate hydration exports have been removed
+
+With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.22.0), hydration utilities moved into the React Query core. With v3, you could still use the old exports from `react-query/hydration`, but these exports have been removed with v4.
+
+```diff
+- import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration'
++ import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query'
 ```
 
 ### Removed undocumented methods from the `queryClient`, `query` and `mutation`
@@ -263,65 +306,22 @@ The methods `cancelMutatations` and `executeMutation` on the `QueryClient` were 
 
 Additionally, `query.setDefaultOptions` was removed because it was also unused. `mutation.cancel` was removed because it didn't actually cancel the outgoing request.
 
-### TypeScript
+### The `src/react` directory was renamed to `src/reactjs`
 
-Types now require using TypeScript v4.1 or greater
+Previously, React Query had a directory named `react` which imported from the `react` module. This could cause problems with some Jest configurations, resulting in errors when running tests like:
 
-### Logging in production
+```
+TypeError: Cannot read property 'createContext' of undefined
+```
 
-Starting with v4, react-query will no longer log errors (e.g. failed fetches) to the console in production mode, as this was confusing to many.
-Errors will still show up in development mode.
+With the renamed directory this no longer is an issue.
 
-### `setLogger` is removed
-
-It was possible to change the logger globally by calling `setLogger`. In v4, that function is replaced with an optional field when creating a `QueryClient`.
+If you were importing anything from `'react-query/react'` directly in your project (as opposed to just `'react-query'`), then you need to update your imports:
 
 ```diff
-- import { QueryClient, setLogger } from 'react-query';
-+ import { QueryClient } from 'react-query';
-
-- setLogger(customLogger)
-- const queryClient = new QueryClient();
-+ const queryClient = new QueryClient({ logger: customLogger })
+- import { QueryClientProvider } from 'react-query/react';
++ import { QueryClientProvider } from 'react-query/reactjs';
 ```
-
-### Undefined is an illegal cache value for successful queries
-
-In order to make bailing out of updates possible by returning `undefined`, we had to make `undefined` an illegal cache value. This is in-line with other concepts of react-query, for example, returning `undefined` from the [initialData function](guides/initial-query-data#initial-data-function) will also _not_ set data.
-
-Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
-
-```js
-useQuery(['key'], () => axios.get(url).then(result => console.log(result.data)))
-```
-
-This is now disallowed on type level; at runtime, `undefined` will be transformed to a _failed Promise_, which means you will get an `error`, which will also be logged to the console in development mode.
-
-### Supported Browsers
-
-As of v4, React Query is optimized for modern browsers. We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
-
-### The idle state has been removed
-
-With the introduction of the new [fetchStatus](../guides/queries#fetchstatus) for better offline support, the `idle` state became irrelevant, because `fetchStatus: 'idle'` captures the same state better. For more information, please read [Why two different states](../guides/queries#why-two-different-states).
-
-This will mostly affect `disabled` queries that don't have any `data` yet, as those were in `idle` state before:
-
-```diff
-- status: 'idle'
-+ status: 'loading'
-+ fetchStatus: 'idle'
-```
-
-Also, have a look at [the guide on dependent queries](../guides/dependent-queries)
-
-### No _default_ manual Garbage Collection server-side
-
-In v3, React Query would cache query results for a default of 5 minutes, then manually garbage collect that data. This default was applied to server-side React Query as well.
-
-This lead to high memory consumption and hanging processes waiting for this manual garbage collection to complete. In v4, by default the server-side `cacheTime` is now set to `Infinity` effectively disabling manual garbage collection (the NodeJS process will clear everything once a request is complete).
-
-This change only impacts users of server-side React Query, such as with Next.js. If you are setting a `cacheTime` manually this will not impact you (although you may want to mirror behavior).
 
 ## New Features 🚀
 
@@ -336,10 +336,6 @@ In v3, React Query has always fired off queries and mutations, but then taken th
 
 With v4, React Query introduces a new `networkMode` to tackle all these issues. Please read the dedicated page about the new [Network mode](../guides/network-mode) for more information.
 
-### Mutation Cache Garbage Collection
-
-Mutations can now also be garbage collected automatically, just like queries. The default `cacheTime` for mutations is also set to 5 minutes.
-
 ### Tracked Queries per default
 
 React Query defaults to "tracking" query properties, which should give you a nice boost in render optimization. The feature has existed since [v3.6.0](https://github.com/tannerlinsley/react-query/releases/tag/v3.6.0) and has now become the default behavior with v4.
@@ -353,6 +349,10 @@ queryClient.setQueryData(['todo', id], previousTodo =>
   previousTodo ? { ...previousTodo, done: true } : undefined
 )
 ```
+
+### Mutation Cache Garbage Collection
+
+Mutations can now also be garbage collected automatically, just like queries. The default `cacheTime` for mutations is also set to 5 minutes.
 
 ### Custom Contexts for Multiple Providers
 
