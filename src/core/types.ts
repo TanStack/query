@@ -548,7 +548,7 @@ export interface MutationOptions<
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    context: TContext | undefined
+    context: TContext
   ) => Promise<unknown> | void
   onError?: (
     error: TError,
