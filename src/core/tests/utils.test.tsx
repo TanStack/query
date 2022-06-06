@@ -6,6 +6,7 @@ import {
   matchMutation,
   scheduleMicrotask,
   sleep,
+  isPlainArray,
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from '../../tests/utils'
@@ -53,6 +54,16 @@ describe('core/utils', () => {
       }
 
       expect(isPlainObject(Object.create(Graph))).toBeFalsy()
+    })
+  })
+
+  describe('isPlainArray', () => {
+    it('should return `true` for plain arrays', () => {
+      expect(isPlainArray([1, 2])).toEqual(true)
+    })
+
+    it('should return `false` for non plain arrays', () => {
+      expect(isPlainArray(Object.assign([1, 2], { a: 'b' }))).toEqual(false)
     })
   })
 
@@ -256,6 +267,13 @@ describe('core/utils', () => {
       expect(result).not.toBe(next)
       expect(result[0]).toBe(next[0])
       expect(result[1]).toBe(prev[1])
+    })
+
+    it('should support objects which are not plain arrays', () => {
+      const prev = Object.assign([1, 2], { a: { b: 'b' }, c: 'c' })
+      const next = Object.assign([1, 2], { a: { b: 'b' }, c: 'c' })
+      const result = replaceEqualDeep(prev, next)
+      expect(result).toBe(next)
     })
 
     it('should replace all parent objects if some nested value changes', () => {

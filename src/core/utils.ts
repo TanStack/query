@@ -314,7 +314,7 @@ export function replaceEqualDeep(a: any, b: any): any {
     return a
   }
 
-  const array = Array.isArray(a) && Array.isArray(b)
+  const array = isPlainArray(a) && isPlainArray(b)
 
   if (array || (isPlainObject(a) && isPlainObject(b))) {
     const aSize = array ? a.length : Object.keys(a).length
@@ -353,6 +353,10 @@ export function shallowEqualObjects<T>(a: T, b: T): boolean {
   }
 
   return true
+}
+
+export function isPlainArray(value: unknown) {
+  return Array.isArray(value) && value.length === Object.keys(value).length
 }
 
 // Copied from: https://github.com/jonschlinkert/is-plain-object
