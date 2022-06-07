@@ -13,4 +13,4 @@ You can use [GraphQL-Codegen](https://graphql-code-generator.com/) to generate r
 
 ## Examples
 
-- [basic-graphql-request](../docs/examples/basic-graphql-request) (The "basic" example, but implemented with [`graphql-request`](https://github.com/prisma-labs/graphql-request))
+- [basic-graphql-request](../examples/react/basic-graphql-request) (The "basic" example, but implemented with [`graphql-request`](https://github.com/prisma-labs/graphql-request))
