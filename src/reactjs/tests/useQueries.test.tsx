@@ -1058,13 +1058,14 @@ describe('useQueries', () => {
 
       await sleep(30)
 
-      expect(results.length).toBe(3)
       expect(results[0]).toMatchObject([
         { data: undefined },
         { data: undefined },
       ])
-      expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
-      expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+      expect(results[results.length - 1]).toMatchObject([
+        { data: 1 },
+        { data: 2 },
+      ])
     })
 
     it('should throw if the context is necessary and is not passed to useQueries', async () => {
