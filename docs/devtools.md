@@ -59,6 +59,9 @@ function App() {
 - `position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
   - The position of the React Query logo to open and close the devtools panel
+- `panelPosition?: "top" | "bottom" | "left" | "right"`
+  - Defaults to `bottom`
+  - The position of the React Query devtools panel
 - `context?: React.Context<QueryClient | undefined>`
   - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
@@ -87,3 +90,7 @@ Use these options to style the dev tools.
   - The standard React style object used to style a component with inline styles
 - `className: string`
   - The standard React className property used to style a component with classes
+- `showCloseButton?: boolean`
+  - Show a close button inside the devtools panel
+- `closeButtonProps: PropsObject`
+  - Use this to add props to the close button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.

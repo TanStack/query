@@ -12,7 +12,18 @@ import {
 } from '@tanstack/react-query'
 import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
-import { useIsMounted } from './utils'
+import {
+  Corner,
+  isVerticalSide,
+  Side,
+  useIsMounted,
+  getSidePanelStyle,
+  minPanelSize,
+  getResizeHandleStyle,
+  getSidedProp,
+  useIsomorphicEffect,
+  isServer,
+} from './utils'
 
 import {
   Panel,
@@ -37,29 +48,25 @@ interface DevtoolsOptions extends ContextOptions {
   /**
    * Use this to add props to the panel. For example, you can add className, style (merge and override default style), etc.
    */
-  panelProps?: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  >
+  panelProps?: React.ComponentPropsWithoutRef<'div'>
   /**
    * Use this to add props to the close button. For example, you can add className, style (merge and override default style), onClick (extend default handler), etc.
    */
-  closeButtonProps?: React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >
+  closeButtonProps?: React.ComponentPropsWithoutRef<'button'>
   /**
    * Use this to add props to the toggle button. For example, you can add className, style (merge and override default style), onClick (extend default handler), etc.
    */
-  toggleButtonProps?: React.DetailedHTMLProps<
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
-    HTMLButtonElement
-  >
+  toggleButtonProps?: React.ComponentPropsWithoutRef<'button'>
   /**
    * The position of the React Query logo to open and close the devtools panel.
    * Defaults to 'bottom-left'.
    */
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
+  position?: Corner
+  /**
+   * The position of the React Query devtools panel.
+   * Defaults to 'bottom'.
+   */
+  panelPosition?: Side
   /**
    * Use this to render the devtools inside a different type of container element for a11y purposes.
    * Any string which corresponds to a valid intrinsic JSX element is allowed.
@@ -96,10 +103,25 @@ interface DevtoolsPanelOptions extends ContextOptions {
   /**
    * Handles the opening and closing the devtools panel
    */
-  handleDragStart: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  onDragStart: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
+  /**
+   * The position of the React Query devtools panel.
+   * Defaults to 'bottom'.
+   */
+  position?: Side
+  /**
+   * Handles the panel position select change
+   */
+  onPositionChange?: (side: Side) => void
+  /**
+   * Show a close button inside the panel
+   */
+  showCloseButton?: boolean
+  /**
+   * Use this to add props to the close button. For example, you can add className, style (merge and override default style), onClick (extend default handler), etc.
+   */
+  closeButtonProps?: React.ComponentPropsWithoutRef<'button'>
 }
-
-const isServer = typeof window === 'undefined'
 
 export function ReactQueryDevtools({
   initialIsOpen,
@@ -110,6 +132,7 @@ export function ReactQueryDevtools({
   containerElement: Container = 'aside',
   context,
   styleNonce,
+  panelPosition: initialPanelPosition = 'bottom',
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -121,6 +144,16 @@ export function ReactQueryDevtools({
     'reactQueryDevtoolsHeight',
     null,
   )
+  const [devtoolsWidth, setDevtoolsWidth] = useLocalStorage<number | null>(
+    'reactQueryDevtoolsWidth',
+    null,
+  )
+
+  const [panelPosition = 'bottom', setPanelPosition] = useLocalStorage<Side>(
+    'reactQueryDevtoolsPanelPosition',
+    initialPanelPosition,
+  )
+
   const [isResolvedOpen, setIsResolvedOpen] = React.useState(false)
   const [isResizing, setIsResizing] = React.useState(false)
   const isMounted = useIsMounted()
@@ -129,22 +162,41 @@ export function ReactQueryDevtools({
     panelElement: HTMLDivElement | null,
     startEvent: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
+    if (!panelElement) return
     if (startEvent.button !== 0) return // Only allow left click for drag
-
+    const isVertical = isVerticalSide(panelPosition)
     setIsResizing(true)
 
-    const dragInfo = {
-      originalHeight: panelElement?.getBoundingClientRect().height ?? 0,
-      pageY: startEvent.pageY,
-    }
+    const { height, width } = panelElement.getBoundingClientRect()
+    const startX = startEvent.clientX
+    const startY = startEvent.clientY
+    let newSize = 0
 
     const run = (moveEvent: MouseEvent) => {
-      const delta = dragInfo.pageY - moveEvent.pageY
-      const newHeight = dragInfo.originalHeight + delta
+      // prevent mouse selecting stuff with mouse drag
+      moveEvent.preventDefault()
 
-      setDevtoolsHeight(newHeight)
+      // calculate the correct size based on mouse position and current panel position
+      // hint: it is different formula for the opposite sides
+      if (isVertical) {
+        newSize =
+          width +
+          (panelPosition === 'right'
+            ? startX - moveEvent.clientX
+            : moveEvent.clientX - startX)
+        // directly apply the style to the dom element for a smother animation
+        // hint: we sync state to localStorage which makes resize sluggish if we relied on it instead of direct dom access
+        panelElement.style.width = `${newSize}px`
+      } else {
+        newSize =
+          height +
+          (panelPosition === 'bottom'
+            ? startY - moveEvent.clientY
+            : moveEvent.clientY - startY)
+        panelElement.style.height = `${newSize}px`
+      }
 
-      if (newHeight < 70) {
+      if (newSize < minPanelSize) {
         setIsOpen(false)
       } else {
         setIsOpen(true)
@@ -152,13 +204,23 @@ export function ReactQueryDevtools({
     }
 
     const unsub = () => {
-      setIsResizing(false)
-      document.removeEventListener('mousemove', run)
-      document.removeEventListener('mouseUp', unsub)
+      if (isResizing) {
+        // save the new size to localStorage
+        if (isVertical) {
+          setDevtoolsWidth(newSize)
+        } else {
+          setDevtoolsHeight(newSize)
+        }
+        setIsResizing(false)
+        newSize = 0
+      }
+
+      document.removeEventListener('mousemove', run, false)
+      document.removeEventListener('mouseUp', unsub, false)
     }
 
-    document.addEventListener('mousemove', run)
-    document.addEventListener('mouseup', unsub)
+    document.addEventListener('mousemove', run, false)
+    document.addEventListener('mouseup', unsub, false)
   }
 
   React.useEffect(() => {
@@ -192,20 +254,30 @@ export function ReactQueryDevtools({
     }
   }, [isResolvedOpen])
 
-  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
+  useIsomorphicEffect(() => {
     if (isResolvedOpen) {
-      const previousValue = rootRef.current?.parentElement?.style.paddingBottom
-
+      const styleProp = getSidedProp('padding', panelPosition)
+      const isVertical = isVerticalSide(panelPosition)
+      const previousValue = rootRef.current?.parentElement?.style[styleProp]
       const run = () => {
-        const containerHeight = panelRef.current?.getBoundingClientRect().height
         if (rootRef.current?.parentElement) {
-          rootRef.current.parentElement.style.paddingBottom = `${containerHeight}px`
+          // reset the padding
+          rootRef.current.parentElement.style.padding = '0px'
+          rootRef.current.parentElement.style.paddingTop = '0px'
+          rootRef.current.parentElement.style.paddingBottom = '0px'
+          rootRef.current.parentElement.style.paddingLeft = '0px'
+          rootRef.current.parentElement.style.paddingRight = '0px'
+          // set the new padding based on the new panel position
+
+          rootRef.current.parentElement.style[styleProp] = `${
+            isVertical ? devtoolsWidth : devtoolsHeight
+          }px`
         }
       }
 
       run()
 
-      if (typeof window !== 'undefined') {
+      if (!isServer) {
         window.addEventListener('resize', run)
 
         return () => {
@@ -214,26 +286,31 @@ export function ReactQueryDevtools({
             rootRef.current?.parentElement &&
             typeof previousValue === 'string'
           ) {
-            rootRef.current.parentElement.style.paddingBottom = previousValue
+            rootRef.current.parentElement.style[styleProp] = previousValue
           }
         }
       }
     }
-  }, [isResolvedOpen])
+  }, [isResolvedOpen, panelPosition, devtoolsHeight, devtoolsWidth])
 
   const { style: panelStyle = {}, ...otherPanelProps } = panelProps
-
-  const {
-    style: closeButtonStyle = {},
-    onClick: onCloseClick,
-    ...otherCloseButtonProps
-  } = closeButtonProps
 
   const {
     style: toggleButtonStyle = {},
     onClick: onToggleClick,
     ...otherToggleButtonProps
   } = toggleButtonProps
+
+  // get computed style based on panel position
+  const style = getSidePanelStyle({
+    position: panelPosition,
+    devtoolsTheme: theme,
+    isOpen: isResolvedOpen,
+    height: devtoolsHeight,
+    width: devtoolsWidth,
+    isResizing,
+    panelStyle,
+  })
 
   // Do not render on the server
   if (!isMounted()) return null
@@ -249,79 +326,16 @@ export function ReactQueryDevtools({
           ref={panelRef as any}
           context={context}
           styleNonce={styleNonce}
+          position={panelPosition}
+          onPositionChange={setPanelPosition}
+          showCloseButton
+          closeButtonProps={closeButtonProps}
           {...otherPanelProps}
-          style={{
-            position: 'fixed',
-            bottom: '0',
-            right: '0',
-            zIndex: 99999,
-            width: '100%',
-            height: devtoolsHeight ?? 500,
-            maxHeight: '90%',
-            boxShadow: '0 0 20px rgba(0,0,0,.3)',
-            borderTop: `1px solid ${theme.gray}`,
-            transformOrigin: 'top',
-            // visibility will be toggled after transitions, but set initial state here
-            visibility: isOpen ? 'visible' : 'hidden',
-            ...panelStyle,
-            ...(isResizing
-              ? {
-                  transition: `none`,
-                }
-              : { transition: `all .2s ease` }),
-            ...(isResolvedOpen
-              ? {
-                  opacity: 1,
-                  pointerEvents: 'all',
-                  transform: `translateY(0) scale(1)`,
-                }
-              : {
-                  opacity: 0,
-                  pointerEvents: 'none',
-                  transform: `translateY(15px) scale(1.02)`,
-                }),
-          }}
+          style={style}
           isOpen={isResolvedOpen}
           setIsOpen={setIsOpen}
-          handleDragStart={(e) => handleDragStart(panelRef.current, e)}
+          onDragStart={(e) => handleDragStart(panelRef.current, e)}
         />
-        {isResolvedOpen ? (
-          <Button
-            type="button"
-            aria-controls="ReactQueryDevtoolsPanel"
-            aria-haspopup="true"
-            aria-expanded="true"
-            {...(otherCloseButtonProps as Record<string, unknown>)}
-            onClick={(e) => {
-              setIsOpen(false)
-              onCloseClick?.(e)
-            }}
-            style={{
-              position: 'fixed',
-              zIndex: 99999,
-              margin: '.5em',
-              bottom: 0,
-              ...(position === 'top-right'
-                ? {
-                    right: '0',
-                  }
-                : position === 'top-left'
-                ? {
-                    left: '0',
-                  }
-                : position === 'bottom-right'
-                ? {
-                    right: '0',
-                  }
-                : {
-                    left: '0',
-                  }),
-              ...closeButtonStyle,
-            }}
-          >
-            Close
-          </Button>
-        ) : null}
       </ThemeProvider>
       {!isResolvedOpen ? (
         <button
@@ -419,10 +433,16 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     isOpen = true,
     styleNonce,
     setIsOpen,
-    handleDragStart,
     context,
+    onDragStart,
+    onPositionChange,
+    showCloseButton,
+    position,
+    closeButtonProps = {},
     ...panelProps
   } = props
+
+  const { onClick: onCloseClick, ...otherCloseButtonProps } = closeButtonProps
 
   const queryClient = useQueryClient({ context })
   const queryCache = queryClient.getQueryCache()
@@ -511,17 +531,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
           }}
         />
         <div
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: '100%',
-            height: '4px',
-            marginBottom: '-4px',
-            cursor: 'row-resize',
-            zIndex: 100000,
-          }}
-          onMouseDown={handleDragStart}
+          style={getResizeHandleStyle(position)}
+          onMouseDown={onDragStart}
         ></div>
         <div
           style={{
@@ -676,6 +687,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               </div>
             </div>
           </div>
+
           <div
             style={{
               overflowY: 'auto',
@@ -702,6 +714,48 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             queryCache={queryCache}
             queryClient={queryClient}
           />
+        ) : null}
+        {isOpen && (showCloseButton || position) ? (
+          <div
+            style={{
+              position: 'absolute',
+              zIndex: 99999,
+              margin: '.5em',
+              bottom: 0,
+              left: 0,
+              display: 'flex',
+              placeItems: 'center',
+            }}
+          >
+            {showCloseButton ? (
+              <Button
+                type="button"
+                aria-controls="ReactQueryDevtoolsPanel"
+                aria-haspopup="true"
+                aria-expanded="true"
+                {...(otherCloseButtonProps as Record<string, unknown>)}
+                onClick={(e) => {
+                  setIsOpen(false)
+                  onCloseClick?.(e)
+                }}
+              >
+                Close
+              </Button>
+            ) : null}
+            {position && onPositionChange ? (
+              <Select
+                aria-label="Panel position"
+                value={position}
+                style={{ marginInlineStart: '.5em' }}
+                onChange={(e) => onPositionChange(e.target.value as Side)}
+              >
+                <option value="left">Left</option>
+                <option value="right">Right</option>
+                <option value="top">Top</option>
+                <option value="bottom">Bottom</option>
+              </Select>
+            ) : null}
+          </div>
         ) : null}
       </Panel>
     </ThemeProvider>
