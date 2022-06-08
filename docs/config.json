@@ -47,6 +47,27 @@
       ]
     },
     {
+      "label": "Adapters",
+      "children": [
+        {
+          "label": "React Query",
+          "to": "adapters/react-query"
+        },
+        {
+          "label": "Solid Query (Coming Soon)",
+          "to": "#"
+        },
+        {
+          "label": "Vue Query (Coming Soon)",
+          "to": "#"
+        },
+        {
+          "label": "Svelte Query (Coming Soon)",
+          "to": "#"
+        }
+      ]
+    },
+    {
       "label": "Guides & Concepts",
       "children": [
         {
