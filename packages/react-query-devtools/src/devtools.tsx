@@ -23,6 +23,7 @@ import {
   getSidedProp,
   useIsomorphicEffect,
   isServer,
+  defaultPanelSize,
 } from './utils'
 
 import {
@@ -140,13 +141,13 @@ export function ReactQueryDevtools({
     'reactQueryDevtoolsOpen',
     initialIsOpen,
   )
-  const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage<number | null>(
+  const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage<number>(
     'reactQueryDevtoolsHeight',
-    null,
+    defaultPanelSize,
   )
-  const [devtoolsWidth, setDevtoolsWidth] = useLocalStorage<number | null>(
+  const [devtoolsWidth, setDevtoolsWidth] = useLocalStorage<number>(
     'reactQueryDevtoolsWidth',
-    null,
+    defaultPanelSize,
   )
 
   const [panelPosition = 'bottom', setPanelPosition] = useLocalStorage<Side>(
@@ -184,16 +185,14 @@ export function ReactQueryDevtools({
           (panelPosition === 'right'
             ? startX - moveEvent.clientX
             : moveEvent.clientX - startX)
-        // directly apply the style to the dom element for a smother animation
-        // hint: we sync state to localStorage which makes resize sluggish if we relied on it instead of direct dom access
-        panelElement.style.width = `${newSize}px`
+        setDevtoolsWidth(newSize)
       } else {
         newSize =
           height +
           (panelPosition === 'bottom'
             ? startY - moveEvent.clientY
             : moveEvent.clientY - startY)
-        panelElement.style.height = `${newSize}px`
+        setDevtoolsHeight(newSize)
       }
 
       if (newSize < minPanelSize) {
@@ -205,14 +204,7 @@ export function ReactQueryDevtools({
 
     const unsub = () => {
       if (isResizing) {
-        // save the new size to localStorage
-        if (isVertical) {
-          setDevtoolsWidth(newSize)
-        } else {
-          setDevtoolsHeight(newSize)
-        }
         setIsResizing(false)
-        newSize = 0
       }
 
       document.removeEventListener('mousemove', run, false)

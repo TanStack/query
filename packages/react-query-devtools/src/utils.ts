@@ -174,12 +174,12 @@ export interface SidePanelStyleOptions {
    * Staring height for the panel, it is set if the position is horizontal eg 'top' or 'bottom'
    * Defaults to 500
    */
-  height?: React.CSSProperties['height'] | null
+  height?: number
   /**
    * Staring width for the panel, it is set if the position is vertical eg 'left' or 'right'
    * Defaults to 500
    */
-  width?: React.CSSProperties['width'] | null
+  width?: number
   /**
    * RQ devtools theme
    */
@@ -200,8 +200,8 @@ export interface SidePanelStyleOptions {
 
 export function getSidePanelStyle({
   position = 'bottom',
-  height: devtoolsHeight,
-  width: devtoolsWidth,
+  height,
+  width,
   devtoolsTheme,
   isOpen,
   isResizing,
@@ -246,13 +246,19 @@ export function getSidePanelStyle({
           top: 0,
           height: '100vh',
           maxWidth: '90%',
-          width: devtoolsWidth ?? defaultPanelSize,
+          width:
+            typeof width === 'number' && width >= minPanelSize
+              ? width
+              : defaultPanelSize,
         }
       : {
           left: 0,
           width: '100%',
           maxHeight: '90%',
-          height: devtoolsHeight ?? defaultPanelSize,
+          height:
+            typeof height === 'number' && height >= minPanelSize
+              ? height
+              : defaultPanelSize,
         }),
   }
 }
