@@ -1,5 +1,5 @@
 import { dehydrate, MutationCache, QueryCache, QueryClient } from '../../core'
-import { createWebStoragePersister } from '../index'
+import { createSyncStoragePersister } from '../index'
 import { removeOldestQuery } from '../../persistQueryClient'
 import { sleep } from '../../tests/utils'
 
@@ -34,14 +34,14 @@ function getMockStorage(limitSize?: number) {
   } as any) as Storage
 }
 
-describe('createWebStoragePersister ', () => {
+describe('createSyncStoragePersister ', () => {
   test('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })
 
     const storage = getMockStorage()
-    const webStoragePersister = createWebStoragePersister({
+    const syncStoragePersister = createSyncStoragePersister({
       throttleTime: 0,
       storage,
     })
@@ -59,9 +59,9 @@ describe('createWebStoragePersister ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersister.persistClient(persistClient)
+    syncStoragePersister.persistClient(persistClient)
     await sleep(1)
-    const restoredClient = await webStoragePersister.restoreClient()
+    const restoredClient = await syncStoragePersister.restoreClient()
     expect(restoredClient).toEqual(persistClient)
   })
 
@@ -72,7 +72,7 @@ describe('createWebStoragePersister ', () => {
 
     const N = 2000
     const storage = getMockStorage(N * 5) // can save 4 items;
-    const webStoragePersister = createWebStoragePersister({
+    const webStoragePersister = createSyncStoragePersister({
       throttleTime: 0,
       storage,
       retry: removeOldestQuery,
@@ -130,7 +130,7 @@ describe('createWebStoragePersister ', () => {
 
     const N = 2000
     const storage = getMockStorage(0)
-    const webStoragePersister = createWebStoragePersister({
+    const webStoragePersister = createSyncStoragePersister({
       throttleTime: 0,
       storage,
       retry: removeOldestQuery,

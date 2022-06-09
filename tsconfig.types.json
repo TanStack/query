@@ -13,7 +13,7 @@
     "./src/index.ts",
     "./src/devtools/index.ts",
     "./src/persistQueryClient/index.ts",
-    "./src/createWebStoragePersister/index.ts",
+    "./src/createSyncStoragePersister/index.ts",
     "./src/createAsyncStoragePersister/index.ts",
     "./src/broadcastQueryClient-experimental/index.ts"
   ],

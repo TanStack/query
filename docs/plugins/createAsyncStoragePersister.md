@@ -39,7 +39,7 @@ persistQueryClient({
 
 ## Retries
 
-Retries work the same as for a [WebStoragePersister](./createWebStoragePersister), except that they can also be asynchronous. You can also use all the predefined retry handlers.
+Retries work the same as for a [WebStoragePersister](./createSyncStoragePersister), except that they can also be asynchronous. You can also use all the predefined retry handlers.
 
 ## API
 

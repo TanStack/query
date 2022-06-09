@@ -26,9 +26,9 @@ const inputSrcs = [
     'persistQueryClient',
   ],
   [
-    'src/createWebStoragePersister/index.ts',
-    'ReactQueryCreateWebStoragePersister',
-    'createWebStoragePersister',
+    'src/createSyncStoragePersister/index.ts',
+    'ReactQueryCreateSyncStoragePersister',
+    'createSyncStoragePersister',
   ],
   [
     'src/createAsyncStoragePersister/index.ts',

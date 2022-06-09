@@ -11,7 +11,7 @@ interface Storage {
   removeItem: (key: string) => void
 }
 
-interface CreateWebStoragePersisterOptions {
+interface CreateSyncStoragePersisterOptions {
   /** The storage client used for setting and retrieving items from cache.
    * For SSR pass in `undefined`.
    */
@@ -35,14 +35,14 @@ interface CreateWebStoragePersisterOptions {
   retry?: PersistRetryer
 }
 
-export function createWebStoragePersister({
+export function createSyncStoragePersister({
   storage,
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
   retry,
-}: CreateWebStoragePersisterOptions): Persister {
+}: CreateSyncStoragePersisterOptions): Persister {
   if (typeof storage !== 'undefined') {
     const trySave = (persistedClient: PersistedClient): Error | undefined => {
       try {

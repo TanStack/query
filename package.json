@@ -52,9 +52,9 @@
       "import": "./lib/persistQueryClient/index.mjs",
       "default": "./lib/persistQueryClient/index.js"
     },
-    "./createWebStoragePersister": {
-      "import": "./lib/createWebStoragePersister/index.mjs",
-      "default": "./lib/createWebStoragePersister/index.js"
+    "./createSyncStoragePersister": {
+      "import": "./lib/createSyncStoragePersister/index.mjs",
+      "default": "./lib/createSyncStoragePersister/index.js"
     },
     "./createAsyncStoragePersister": {
       "import": "./lib/createAsyncStoragePersister/index.mjs",
@@ -98,7 +98,7 @@
     "core",
     "devtools",
     "persistQueryClient",
-    "createWebStoragePersister",
+    "createSyncStoragePersister",
     "createAsyncStoragePersister",
     "broadcastQueryClient-experimental",
     "reactjs",

@@ -7,7 +7,7 @@ This is set of utilities for interacting with "persisters" which save your query
 
 ## Build Persisters
 
-- [createWebStoragePersister](/plugins/createWebStoragePersister)
+- [createSyncStoragePersister](/plugins/createSyncStoragePersister)
 - [createAsyncStoragePersister](/plugins/createAsyncStoragePersister)
 - [create a custom persister](#persisters)
 
@@ -57,7 +57,7 @@ the persister `removeClient()` is called and the cache is immediately discarded.
 ### `persistQueryClientSave`
 
 - Your query/mutation are [`dehydrated`](../reference/hydration#dehydrate) and stored by the persister you provided.
-- `createWebStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes.  Review their documentation to see how to customize their throttle timing.
+- `createSyncStoragePersister` and `createAsyncStoragePersister` throttle this action to happen at most every 1 second to save on potentially expensive writes.  Review their documentation to see how to customize their throttle timing.
 
 You can use this to explicitly persist the cache at the moment(s) you choose.
 
@@ -182,7 +182,7 @@ For this use-case, you can use the `PersistQueryClientProvider`. It will make su
 ```jsx
 
 import { PersistQueryClientProvider } from 'react-query/persistQueryClient'
-import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
+import { createSyncStoragePersister } from 'react-query/createSyncStoragePersister'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -192,7 +192,7 @@ const queryClient = new QueryClient({
   },
 })
 
-const persister = createWebStoragePersister({
+const persister = createSyncStoragePersister({
   storage: window.localStorage,
 })
 
