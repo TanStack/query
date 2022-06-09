@@ -67,7 +67,7 @@ type Entry = {
 }
 
 type RendererProps = {
-  handleEntry: (entry: Entry) => JSX.Element,
+  handleEntry: (entry: Entry) => JSX.Element
   label?: string
   value: unknown
   subEntries: Entry[]
@@ -126,9 +126,7 @@ export const DefaultRenderer: Renderer = ({
           </ExpandButton>
           {expanded ? (
             subEntryPages.length === 1 ? (
-              <SubEntries>
-                {subEntries.map(handleEntry)}
-              </SubEntries>
+              <SubEntries>{subEntries.map(handleEntry)}</SubEntries>
             ) : (
               <SubEntries>
                 {subEntryPages.map((entries, index) => (
@@ -147,9 +145,7 @@ export const DefaultRenderer: Renderer = ({
                         {index * pageSize + pageSize - 1}]
                       </LabelButton>
                       {expandedPages.includes(index) ? (
-                        <SubEntries>
-                          {entries.map(handleEntry)}
-                        </SubEntries>
+                        <SubEntries>{entries.map(handleEntry)}</SubEntries>
                       ) : null}
                     </Entry>
                   </div>
@@ -240,8 +236,14 @@ export default function Explorer({
   const subEntryPages = chunkArray(subEntries, pageSize)
 
   return renderer({
-    handleEntry: (entry) => (
-      <Explorer key={entry.label} value={value} renderer={renderer} {...rest} {...entry} />
+    handleEntry: entry => (
+      <Explorer
+        key={entry.label}
+        value={value}
+        renderer={renderer}
+        {...rest}
+        {...entry}
+      />
     ),
     type,
     subEntries,

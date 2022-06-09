@@ -39,7 +39,7 @@ describe('Explorer', () => {
           pageSize={10}
           expanded={false}
           subEntryPages={[[{ label: 'A lovely label' }]]}
-          HandleEntry={() => <></>}
+          handleEntry={() => <></>}
           value={undefined}
           subEntries={[]}
           type="string"
