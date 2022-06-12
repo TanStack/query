@@ -23,9 +23,13 @@ import { getTodos, postTodo } from '../my-api'
 const queryClient = new QueryClient()
 
 function App() {
+
+  //Stabilise the client between renders
+  const [client] = useState(queryClient)
+
   return (
     // Provide the client to your App
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={client}>
       <Todos />
     </QueryClientProvider>
   )
