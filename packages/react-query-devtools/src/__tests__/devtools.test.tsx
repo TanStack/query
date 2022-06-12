@@ -3,6 +3,7 @@ import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
 import { useQuery, QueryClient } from '@tanstack/react-query'
+import { sortFns } from '../devtools'
 import {
   getByTextContent,
   renderWithClient,
@@ -550,6 +551,108 @@ describe('ReactQueryDevtools', () => {
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
     expect(queries[2]?.textContent).toEqual(query3Hash)
+  })
+
+  it('should initialize filtering and sorting values with defaults when they are not stored in localstorage', () => {
+    localStorage.removeItem('reactQueryDevtoolsSortDesc')
+    localStorage.removeItem('reactQueryDevtoolsSortFn')
+    localStorage.removeItem('reactQueryDevtoolsFilter')
+
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: true,
+    })
+
+    const filterInput: HTMLInputElement = screen.getByLabelText(
+      /Filter by queryhash/i
+    )
+    expect(filterInput.value).toEqual('')
+
+    const sortCombobox: HTMLSelectElement = screen.getByLabelText(
+      /Sort queries/i
+    )
+    expect(sortCombobox.value).toEqual(Object.keys(sortFns)[0])
+
+    screen.getByRole('button', { name: /Asc/i })
+
+    const detailsPanel = screen.queryByText(/Query Details/i)
+    expect(detailsPanel).not.toBeInTheDocument()
+  })
+
+  it('should initialize sorting values with ones stored in localstorage', async () => {
+    localStorage.setItem('reactQueryDevtoolsSortDesc', 'true')
+    localStorage.setItem(
+      'reactQueryDevtoolsSortFn',
+      JSON.stringify(Object.keys(sortFns)[1])
+    )
+
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: true,
+    })
+
+    const sortCombobox: HTMLSelectElement = screen.getByLabelText(
+      /Sort queries/i
+    )
+    expect(sortCombobox.value).toEqual(Object.keys(sortFns)[1])
+
+    screen.getByRole('button', { name: /Desc/i })
+  })
+
+  it('should initialize filter value with one stored in localstorage', () => {
+    localStorage.setItem('reactQueryDevtoolsFilter', JSON.stringify('posts'))
+
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => {
+        await sleep(10)
+        return 'test'
+      })
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: true,
+    })
+
+    const filterInput: HTMLInputElement = screen.getByLabelText(
+      /Filter by queryhash/i
+    )
+    expect(filterInput.value).toEqual('posts')
   })
 
   it('style should have a nonce', async () => {
