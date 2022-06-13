@@ -587,7 +587,7 @@ describe('ReactQueryDevtools', () => {
     )
     expect(sortCombobox.value).toEqual(Object.keys(sortFns)[0])
 
-    screen.getByRole('button', { name: /Asc/i })
+    expect(screen.getByRole('button', { name: /Asc/i })).toBeInTheDocument()
 
     const detailsPanel = screen.queryByText(/Query Details/i)
     expect(detailsPanel).not.toBeInTheDocument()
@@ -624,7 +624,7 @@ describe('ReactQueryDevtools', () => {
     )
     expect(sortCombobox.value).toEqual(Object.keys(sortFns)[1])
 
-    screen.getByRole('button', { name: /Desc/i })
+    expect(screen.getByRole('button', { name: /Desc/i })).toBeInTheDocument()
   })
 
   it('should initialize filter value with one stored in localstorage', () => {
