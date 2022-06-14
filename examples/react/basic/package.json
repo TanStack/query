@@ -1,4 +1,6 @@
 {
+  "name": "@tanstack/query-example-react-basic",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
     "start": "rescripts start",

@@ -1,5 +1,6 @@
 {
-  "name": "nextjs",
+  "name": "@tanstack/query-example-react-nextjs",
+  "private": true,
   "version": "1.0.0",
   "scripts": {
     "dev": "next",

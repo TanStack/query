@@ -1,5 +1,7 @@
 {
+  "name": "@tanstack/query-example-react-offline",
   "private": true,
+  "version": "0.0.1",
   "scripts": {
     "start": "rescripts start",
     "build": "rescripts build",

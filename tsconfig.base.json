@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "strictNullChecks": true,
+    "jsx": "react",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@tanstack/virtual-core": ["packages/virtual-core"],
+      "@tanstack/react-virtual": ["packages/react-virtual"],
+      "@tanstack/query-core": ["packages/query-core"],
+      "@tanstack/query-async-storage-persister": [
+        "packages/query-async-storage-persister"
+      ],
+      "@tanstack/query-broadcast-client": ["packages/query-broadcast-client"],
+      "@tanstack/query-sync-storage-persister": [
+        "packages/query-sync-storage-persister"
+      ],
+      "@tanstack/react-query": ["packages/react-query"],
+      "@tanstack/react-query-devtools": ["packages/react-query-devtools"],
+      "@tanstack/react-query-persist-client": [
+        "packages/react-query-persist-client"
+      ]
+    }
+  }
+}

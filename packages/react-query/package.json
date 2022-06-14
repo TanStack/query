@@ -1,0 +1,51 @@
+{
+  "name": "react-query",
+  "version": "4.0.0-beta.1",
+  "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "module": "build/esm/index.js",
+  "main": "build/cjs/packages/query-core/src/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/index.d.ts",
+  "sideEffects": [
+    "lib/index.js",
+    "lib/index.mjs",
+    "lib/reactjs/index.js",
+    "lib/reactjs/index.mjs",
+    "lib/reactjs/setBatchUpdatesFn.js",
+    "lib/reactjs/setBatchUpdatesFn.mjs"
+  ],
+  "scripts": {
+    "test:dev:17": "npm run test:types && npm run test:format && npm run test:eslint && npm run test:codemod && REACTJS_VERSION=17 jest --watch"
+  },
+  "files": [
+    "build",
+    "src",
+    "codemods",
+    "!codemods/jest.config.js",
+    "!codemods/**/__testfixtures__",
+    "!codemods/**/__tests__"
+  ],
+  "dependencies": {
+    "@types/use-sync-external-store": "^0.0.3",
+    "use-sync-external-store": "^1.1.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  }
+}

@@ -1,5 +1,6 @@
 {
-  "name": "optimistic-updates",
+  "name": "@tanstack/query-example-react-optimistic-updates",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

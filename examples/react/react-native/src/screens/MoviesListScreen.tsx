@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
 import { useQuery } from 'react-query';
 

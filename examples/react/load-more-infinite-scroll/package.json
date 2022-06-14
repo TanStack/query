@@ -1,5 +1,6 @@
 {
-  "name": "load-more-infinite-scroll",
+  "name": "@tanstack/query-example-react-load-more-infinite-scroll",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

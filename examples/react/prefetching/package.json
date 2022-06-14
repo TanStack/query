@@ -1,5 +1,6 @@
 {
-  "name": "prefetching",
+  "name": "@tanstack/query-example-react-prefetching",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
