@@ -6,16 +6,18 @@ import './setBatchUpdatesFn'
 
 // React Query
 export * from './types'
-export { QueriesResults, useQueries, QueriesOptions } from './useQueries'
+export { useQueries } from './useQueries'
+export type { QueriesResults, QueriesOptions } from './useQueries'
 export { useQuery } from './useQuery'
 export {
-  QueryClientProviderProps,
   defaultContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'
-export { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
-export { HydrateProps, useHydrate, Hydrate } from './Hydrate'
+export type { QueryClientProviderProps } from './QueryClientProvider'
+export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
+export { useHydrate, Hydrate } from './Hydrate'
+export type { HydrateProps } from './Hydrate'
 export {
   QueryErrorResetBoundary,
   useQueryErrorResetBoundary,
