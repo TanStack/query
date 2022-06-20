@@ -43,7 +43,7 @@ describe('Explorer', () => {
           value={undefined}
           subEntries={[]}
           type="string"
-        />
+        />,
       )
 
       const expandButton = screen.getByRole('button', {

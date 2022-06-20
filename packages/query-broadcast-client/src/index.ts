@@ -23,7 +23,7 @@ export function broadcastQueryClient({
 
   const queryCache = queryClient.getQueryCache()
 
-  queryClient.getQueryCache().subscribe(queryEvent => {
+  queryClient.getQueryCache().subscribe((queryEvent) => {
     if (transaction) {
       return
     }
@@ -50,7 +50,7 @@ export function broadcastQueryClient({
     }
   })
 
-  channel.onmessage = action => {
+  channel.onmessage = (action) => {
     if (!action?.type) {
       return
     }
@@ -72,7 +72,7 @@ export function broadcastQueryClient({
             queryKey,
             queryHash,
           },
-          state
+          state,
         )
       } else if (type === 'removed') {
         const query = queryCache.get(queryHash)

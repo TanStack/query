@@ -1,4 +1,3 @@
-
 import {
   PersistedClient,
   Persister,
@@ -52,7 +51,7 @@ export function createWebStoragePersister({
       }
     }
     return {
-      persistClient: throttle(persistedClient => {
+      persistClient: throttle((persistedClient) => {
         let client: PersistedClient | undefined = persistedClient
         let error = trySave(client)
         let errorCount = 0
@@ -93,7 +92,7 @@ export function createWebStoragePersister({
 
 function throttle<TArgs extends any[]>(
   func: (...args: TArgs) => any,
-  wait = 100
+  wait = 100,
 ) {
   let timer: ReturnType<typeof setTimeout> | null = null
   let params: TArgs
@@ -108,4 +107,4 @@ function throttle<TArgs extends any[]>(
   }
 }
 
-function noop () {}
+function noop() {}

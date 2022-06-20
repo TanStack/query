@@ -42,7 +42,7 @@ describe('queryObserver', () => {
       queryKey: key1,
       queryFn: () => 1,
     })
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -61,10 +61,10 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: data => ({ myCount: data.count }),
+      select: (data) => ({ myCount: data.count }),
     })
     let observerResult
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       expectType<QueryObserverResult<{ myCount: number }>>(result)
       observerResult = result
     })
@@ -78,7 +78,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: data => ({ myCount: data.count }),
+      select: (data) => ({ myCount: data.count }),
     })
     const observerResult = await observer.refetch()
     expectType<{ myCount: number } | undefined>(observerResult.data)
@@ -90,10 +90,10 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: data => ({ myCount: data.count }),
+      select: (data) => ({ myCount: data.count }),
     })
     let observerResult
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
     await sleep(1)
@@ -107,7 +107,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count }),
-      select: data => {
+      select: (data) => {
         count++
         return { myCount: data.count }
       },
@@ -137,7 +137,7 @@ describe('queryObserver', () => {
       queryFn,
       select: select1,
     })
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -192,7 +192,7 @@ describe('queryObserver', () => {
       queryFn,
       select,
     })
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -234,7 +234,7 @@ describe('queryObserver', () => {
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => ({ count: 1 }),
-      select: data => {
+      select: (data) => {
         count++
         return { myCount: data.count }
       },
@@ -260,7 +260,7 @@ describe('queryObserver', () => {
         throw new Error('selector error')
       },
     })
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(50)
@@ -300,7 +300,7 @@ describe('queryObserver', () => {
         await sleep(10)
         return shouldError ? 2 : 1
       },
-      select: num => {
+      select: (num) => {
         if (shouldError) {
           throw error
         }
@@ -309,7 +309,7 @@ describe('queryObserver', () => {
       },
     })
 
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(50)
@@ -401,7 +401,7 @@ describe('queryObserver', () => {
       enabled: false,
     })
     const results: QueryObserverResult<unknown>[] = []
-    const unsubscribe = observer.subscribe(x => {
+    const unsubscribe = observer.subscribe((x) => {
       results.push(x)
     })
     observer.setOptions({ enabled: false, staleTime: 10 })
@@ -424,10 +424,10 @@ describe('queryObserver', () => {
     })
     const results1: QueryObserverResult<string>[] = []
     const results2: QueryObserverResult<string>[] = []
-    const unsubscribe1 = observer.subscribe(x => {
+    const unsubscribe1 = observer.subscribe((x) => {
       results1.push(x)
     })
-    const unsubscribe2 = observer.subscribe(x => {
+    const unsubscribe2 = observer.subscribe((x) => {
       results2.push(x)
     })
     await queryClient.fetchQuery(key, queryFn)
@@ -497,7 +497,7 @@ describe('queryObserver', () => {
 
     const results: QueryObserverResult<unknown>[] = []
 
-    const unsubscribe = observer.subscribe(x => {
+    const unsubscribe = observer.subscribe((x) => {
       results.push(x)
     })
 
@@ -549,7 +549,7 @@ describe('queryObserver', () => {
           queryFn: () => 'data',
           //@ts-expect-error
           enabled: null,
-        })
+        }),
     ).toThrowError('Expected enabled to be a boolean')
   })
 

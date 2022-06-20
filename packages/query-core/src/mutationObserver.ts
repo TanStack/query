@@ -12,7 +12,7 @@ import type {
 // TYPES
 
 type MutationObserverListener<TData, TError, TVariables, TContext> = (
-  result: MutationObserverResult<TData, TError, TVariables, TContext>
+  result: MutationObserverResult<TData, TError, TVariables, TContext>,
 ) => void
 
 interface NotifyOptions {
@@ -27,7 +27,7 @@ export class MutationObserver<
   TData = unknown,
   TError = unknown,
   TVariables = void,
-  TContext = unknown
+  TContext = unknown,
 > extends Subscribable<
   MutationObserverListener<TData, TError, TVariables, TContext>
 > {
@@ -45,7 +45,7 @@ export class MutationObserver<
 
   constructor(
     client: QueryClient,
-    options: MutationObserverOptions<TData, TError, TVariables, TContext>
+    options: MutationObserverOptions<TData, TError, TVariables, TContext>,
   ) {
     super()
 
@@ -61,7 +61,7 @@ export class MutationObserver<
   }
 
   setOptions(
-    options?: MutationObserverOptions<TData, TError, TVariables, TContext>
+    options?: MutationObserverOptions<TData, TError, TVariables, TContext>,
   ) {
     this.options = this.client.defaultMutationOptions(options)
   }
@@ -106,7 +106,7 @@ export class MutationObserver<
 
   mutate(
     variables?: TVariables,
-    options?: MutateOptions<TData, TError, TVariables, TContext>
+    options?: MutateOptions<TData, TError, TVariables, TContext>,
   ): Promise<TData> {
     this.mutateOptions = options
 
@@ -161,32 +161,32 @@ export class MutationObserver<
           this.mutateOptions.onSuccess?.(
             this.currentResult.data!,
             this.currentResult.variables!,
-            this.currentResult.context!
+            this.currentResult.context!,
           )
           this.mutateOptions.onSettled?.(
             this.currentResult.data!,
             null,
             this.currentResult.variables!,
-            this.currentResult.context
+            this.currentResult.context,
           )
         } else if (options.onError) {
           this.mutateOptions.onError?.(
             this.currentResult.error!,
             this.currentResult.variables!,
-            this.currentResult.context
+            this.currentResult.context,
           )
           this.mutateOptions.onSettled?.(
             undefined,
             this.currentResult.error,
             this.currentResult.variables!,
-            this.currentResult.context
+            this.currentResult.context,
           )
         }
       }
 
       // Then trigger the listeners
       if (options.listeners) {
-        this.listeners.forEach(listener => {
+        this.listeners.forEach((listener) => {
           listener(this.currentResult)
         })
       }

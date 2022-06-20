@@ -30,7 +30,7 @@ describe('InfiniteQueryBehavior', () => {
       | InfiniteQueryObserverResult<unknown, unknown>
       | undefined
 
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
 
@@ -58,14 +58,14 @@ describe('InfiniteQueryBehavior', () => {
     const observer = new InfiniteQueryObserver<number>(queryClient, {
       queryKey: key,
       queryFn: queryFnSpy,
-      getNextPageParam: lastPage => lastPage + 1,
+      getNextPageParam: (lastPage) => lastPage + 1,
     })
 
     let observerResult:
       | InfiniteQueryObserverResult<unknown, unknown>
       | undefined
 
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
 
@@ -74,7 +74,7 @@ describe('InfiniteQueryBehavior', () => {
       expect(observerResult).toMatchObject({
         isFetching: false,
         data: { pages: [1] },
-      })
+      }),
     )
 
     expect(queryFnSpy).toHaveBeenNthCalledWith(1, {

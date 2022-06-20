@@ -1,11 +1,16 @@
-import { dehydrate, MutationCache, QueryCache, QueryClient } from '@tanstack/query-core'
+import {
+  dehydrate,
+  MutationCache,
+  QueryCache,
+  QueryClient,
+} from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client'
 import { createWebStoragePersister } from '../index'
 import { sleep } from '../../tests/utils'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()
-  return ({
+  return {
     getItem(key: string): string | null {
       const value = dataSet.get(key)
       return value === undefined ? null : value
@@ -15,14 +20,14 @@ function getMockStorage(limitSize?: number) {
       if (typeof limitSize !== 'undefined') {
         const currentSize = Array.from(dataSet.entries()).reduce(
           (n, d) => d[0].length + d[1].length + n,
-          0
+          0,
         )
         if (
           currentSize - (dataSet.get(key)?.length || 0) + value.length >
           limitSize
         ) {
           throw Error(
-            `Failed to execute 'setItem' on 'Storage': Setting the value of '${key}' exceeded the quota.`
+            `Failed to execute 'setItem' on 'Storage': Setting the value of '${key}' exceeded the quota.`,
           )
         }
       }
@@ -31,7 +36,7 @@ function getMockStorage(limitSize?: number) {
     removeItem(key: string) {
       return dataSet.delete(key)
     },
-  } as any) as Storage
+  } as any as Storage
 }
 
 describe('createWebStoragePersister ', () => {
@@ -51,7 +56,7 @@ describe('createWebStoragePersister ', () => {
     await queryClient.prefetchQuery(['boolean'], () => Promise.resolve(true))
     await queryClient.prefetchQuery(['null'], () => Promise.resolve(null))
     await queryClient.prefetchQuery(['array'], () =>
-      Promise.resolve(['string', 0])
+      Promise.resolve(['string', 0]),
     )
 
     const persistClient = {
@@ -99,10 +104,10 @@ describe('createWebStoragePersister ', () => {
     const restoredClient = await webStoragePersister.restoreClient()
     expect(restoredClient?.clientState.queries.length).toEqual(4)
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey[0] === 'A')
+      restoredClient?.clientState.queries.find((q) => q.queryKey[0] === 'A'),
     ).toBeUndefined()
     expect(
-      restoredClient?.clientState.queries.find(q => q.queryKey[0] === 'B')
+      restoredClient?.clientState.queries.find((q) => q.queryKey[0] === 'B'),
     ).not.toBeUndefined()
 
     // update query Data
@@ -117,10 +122,10 @@ describe('createWebStoragePersister ', () => {
     const restoredClient2 = await webStoragePersister.restoreClient()
     expect(restoredClient2?.clientState.queries.length).toEqual(4)
     expect(
-      restoredClient2?.clientState.queries.find(q => q.queryKey[0] === 'A')
+      restoredClient2?.clientState.queries.find((q) => q.queryKey[0] === 'A'),
     ).toHaveProperty('state.data', 'a'.repeat(N))
     expect(
-      restoredClient2?.clientState.queries.find(q => q.queryKey[0] === 'B')
+      restoredClient2?.clientState.queries.find((q) => q.queryKey[0] === 'B'),
     ).toBeUndefined()
   })
   test('should clear storage as default error handling', async () => {

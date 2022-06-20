@@ -76,7 +76,7 @@ export function noop(): undefined {
 
 export function functionalUpdate<TInput, TOutput>(
   updater: Updater<TInput, TOutput>,
-  input: TInput
+  input: TInput,
 ): TOutput {
   return typeof updater === 'function'
     ? (updater as DataUpdateFunction<TInput, TOutput>)(input)
@@ -88,7 +88,7 @@ export function isValidTimeout(value: unknown): value is number {
 }
 
 export function difference<T>(array1: T[], array2: T[]): T[] {
-  return array1.filter(x => array2.indexOf(x) === -1)
+  return array1.filter((x) => array2.indexOf(x) === -1)
 }
 
 export function replaceAt<T>(array: T[], index: number, value: T): T[] {
@@ -103,11 +103,11 @@ export function timeUntilStale(updatedAt: number, staleTime?: number): number {
 
 export function parseQueryArgs<
   TOptions extends QueryOptions<any, any, any, TQueryKey>,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 >(
   arg1: TQueryKey | TOptions,
   arg2?: QueryFunction<any, TQueryKey> | TOptions,
-  arg3?: TOptions
+  arg3?: TOptions,
 ): TOptions {
   if (!isQueryKey(arg1)) {
     return arg1 as TOptions
@@ -121,11 +121,11 @@ export function parseQueryArgs<
 }
 
 export function parseMutationArgs<
-  TOptions extends MutationOptions<any, any, any, any>
+  TOptions extends MutationOptions<any, any, any, any>,
 >(
   arg1: MutationKey | MutationFunction<any, any> | TOptions,
   arg2?: MutationFunction<any, any> | TOptions,
-  arg3?: TOptions
+  arg3?: TOptions,
 ): TOptions {
   if (isQueryKey(arg1)) {
     if (typeof arg2 === 'function') {
@@ -143,33 +143,35 @@ export function parseMutationArgs<
 
 export function parseFilterArgs<
   TFilters extends QueryFilters,
-  TOptions = unknown
+  TOptions = unknown,
 >(
   arg1?: QueryKey | TFilters,
   arg2?: TFilters | TOptions,
-  arg3?: TOptions
+  arg3?: TOptions,
 ): [TFilters, TOptions | undefined] {
-  return (isQueryKey(arg1)
-    ? [{ ...arg2, queryKey: arg1 }, arg3]
-    : [arg1 || {}, arg2]) as [TFilters, TOptions]
+  return (
+    isQueryKey(arg1) ? [{ ...arg2, queryKey: arg1 }, arg3] : [arg1 || {}, arg2]
+  ) as [TFilters, TOptions]
 }
 
 export function parseMutationFilterArgs<
   TFilters extends MutationFilters,
-  TOptions = unknown
+  TOptions = unknown,
 >(
   arg1?: QueryKey | TFilters,
   arg2?: TFilters | TOptions,
-  arg3?: TOptions
+  arg3?: TOptions,
 ): [TFilters, TOptions | undefined] {
-  return (isQueryKey(arg1)
-    ? [{ ...arg2, mutationKey: arg1 }, arg3]
-    : [arg1 || {}, arg2]) as [TFilters, TOptions]
+  return (
+    isQueryKey(arg1)
+      ? [{ ...arg2, mutationKey: arg1 }, arg3]
+      : [arg1 || {}, arg2]
+  ) as [TFilters, TOptions]
 }
 
 export function matchQuery(
   filters: QueryFilters,
-  query: Query<any, any, any, any>
+  query: Query<any, any, any, any>,
 ): boolean {
   const {
     type = 'all',
@@ -220,7 +222,7 @@ export function matchQuery(
 
 export function matchMutation(
   filters: MutationFilters,
-  mutation: Mutation<any, any>
+  mutation: Mutation<any, any>,
 ): boolean {
   const { exact, fetching, predicate, mutationKey } = filters
   if (isQueryKey(mutationKey)) {
@@ -254,7 +256,7 @@ export function matchMutation(
 
 export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
-  options?: QueryOptions<any, any, any, TQueryKey>
+  options?: QueryOptions<any, any, any, TQueryKey>,
 ): string {
   const hashFn = options?.queryKeyHashFn || hashQueryKey
   return hashFn(queryKey)
@@ -273,7 +275,7 @@ export function hashQueryKey(queryKey: QueryKey): string {
             result[key] = val[key]
             return result
           }, {} as any)
-      : val
+      : val,
   )
 }
 
@@ -297,7 +299,7 @@ export function partialDeepEqual(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return !Object.keys(b).some(key => !partialDeepEqual(a[key], b[key]))
+    return !Object.keys(b).some((key) => !partialDeepEqual(a[key], b[key]))
   }
 
   return false
@@ -399,7 +401,7 @@ export function isError(value: any): value is Error {
 }
 
 export function sleep(timeout: number): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, timeout)
   })
 }
@@ -420,7 +422,7 @@ export function getAbortController(): AbortController | undefined {
 
 export function replaceData<
   TData,
-  TOptions extends QueryOptions<any, any, any, any>
+  TOptions extends QueryOptions<any, any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
   // Use prev data if an isDataEqual function is defined and returns `true`
   if (options.isDataEqual?.(prevData, data)) {

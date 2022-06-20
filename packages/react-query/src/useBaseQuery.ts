@@ -13,7 +13,7 @@ export function useBaseQuery<
   TError,
   TData,
   TQueryData,
-  TQueryKey extends QueryKey
+  TQueryKey extends QueryKey,
 >(
   options: UseBaseQueryOptions<
     TQueryFnData,
@@ -22,7 +22,7 @@ export function useBaseQuery<
     TQueryData,
     TQueryKey
   >,
-  Observer: typeof QueryObserver
+  Observer: typeof QueryObserver,
 ) {
   const queryClient = useQueryClient({ context: options.context })
   const isRestoring = useIsRestoring()
@@ -37,19 +37,19 @@ export function useBaseQuery<
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {
     defaultedOptions.onError = notifyManager.batchCalls(
-      defaultedOptions.onError
+      defaultedOptions.onError,
     )
   }
 
   if (defaultedOptions.onSuccess) {
     defaultedOptions.onSuccess = notifyManager.batchCalls(
-      defaultedOptions.onSuccess
+      defaultedOptions.onSuccess,
     )
   }
 
   if (defaultedOptions.onSettled) {
     defaultedOptions.onSettled = notifyManager.batchCalls(
-      defaultedOptions.onSettled
+      defaultedOptions.onSettled,
     )
   }
 
@@ -72,22 +72,22 @@ export function useBaseQuery<
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
         queryClient,
-        defaultedOptions
-      )
+        defaultedOptions,
+      ),
   )
 
   const result = observer.getOptimisticResult(defaultedOptions)
 
   useSyncExternalStore(
     React.useCallback(
-      onStoreChange =>
+      (onStoreChange) =>
         isRestoring
           ? () => undefined
           : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isRestoring]
+      [observer, isRestoring],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult()
+    () => observer.getCurrentResult(),
   )
 
   React.useEffect(() => {
@@ -113,7 +113,7 @@ export function useBaseQuery<
         defaultedOptions.onSuccess?.(data as TData)
         defaultedOptions.onSettled?.(data, null)
       })
-      .catch(error => {
+      .catch((error) => {
         errorResetBoundary.clearReset()
         defaultedOptions.onError?.(error)
         defaultedOptions.onSettled?.(undefined, error)

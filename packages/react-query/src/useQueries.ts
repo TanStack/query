@@ -1,7 +1,12 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import { QueryKey, QueryFunction, notifyManager, QueriesObserver } from '@tanstack/query-core'
+import {
+  QueryKey,
+  QueryFunction,
+  notifyManager,
+  QueriesObserver,
+} from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
@@ -12,7 +17,7 @@ type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
 
 // Avoid TS depth-limit error in case of large array literal
@@ -85,7 +90,7 @@ type GetResults<T> =
 export type QueriesOptions<
   T extends any[],
   Result extends any[] = [],
-  Depth extends ReadonlyArray<number> = []
+  Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
   ? UseQueryOptionsForUseQueries[]
   : T extends []
@@ -114,7 +119,7 @@ export type QueriesOptions<
 export type QueriesResults<
   T extends any[],
   Result extends any[] = [],
-  Depth extends ReadonlyArray<number> = []
+  Depth extends ReadonlyArray<number> = [],
 > = Depth['length'] extends MAXIMUM_DEPTH
   ? UseQueryResult[]
   : T extends []
@@ -146,7 +151,7 @@ export function useQueries<T extends any[]>({
 
   const defaultedQueries = React.useMemo(
     () =>
-      queries.map(options => {
+      queries.map((options) => {
         const defaultedOptions = queryClient.defaultQueryOptions(options)
 
         // Make sure the results are already in fetching state before subscribing or updating options
@@ -156,25 +161,25 @@ export function useQueries<T extends any[]>({
 
         return defaultedOptions
       }),
-    [queries, queryClient, isRestoring]
+    [queries, queryClient, isRestoring],
   )
 
   const [observer] = React.useState(
-    () => new QueriesObserver(queryClient, defaultedQueries)
+    () => new QueriesObserver(queryClient, defaultedQueries),
   )
 
   const result = observer.getOptimisticResult(defaultedQueries)
 
   useSyncExternalStore(
     React.useCallback(
-      onStoreChange =>
+      (onStoreChange) =>
         isRestoring
           ? () => undefined
           : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [observer, isRestoring]
+      [observer, isRestoring],
     ),
     () => observer.getCurrentResult(),
-    () => observer.getCurrentResult()
+    () => observer.getCurrentResult(),
   )
 
   React.useEffect(() => {

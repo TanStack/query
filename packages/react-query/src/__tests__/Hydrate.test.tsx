@@ -14,16 +14,17 @@ import { createQueryClient, sleep } from '../../tests/utils'
 import * as coreModule from '../../core/index'
 
 describe('React hydration', () => {
-  const fetchData: (value: string) => Promise<string> = value =>
-    new Promise(res => setTimeout(() => res(value), 10))
-  const dataQuery: (key: [string]) => Promise<string> = key => fetchData(key[0])
+  const fetchData: (value: string) => Promise<string> = (value) =>
+    new Promise((res) => setTimeout(() => res(value), 10))
+  const dataQuery: (key: [string]) => Promise<string> = (key) =>
+    fetchData(key[0])
   let stringifiedState: string
 
   beforeAll(async () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(['string'], () =>
-      dataQuery(['stringCached'])
+      dataQuery(['stringCached']),
     )
     const dehydrated = dehydrate(queryClient)
     stringifiedState = JSON.stringify(dehydrated)
@@ -49,7 +50,7 @@ describe('React hydration', () => {
       const rendered = render(
         <QueryClientProvider client={queryClient}>
           <Page />
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       await rendered.findByText('stringCached')
@@ -85,7 +86,7 @@ describe('React hydration', () => {
           <QueryClientProvider client={queryClientInner}>
             <Page />
           </QueryClientProvider>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       await rendered.findByText('stringCached')
@@ -116,7 +117,7 @@ describe('React hydration', () => {
           <Hydrate state={dehydratedState}>
             <Page queryKey={['string']} />
           </Hydrate>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       await rendered.findByText('string')
@@ -126,10 +127,10 @@ describe('React hydration', () => {
         queryCache: intermediateCache,
       })
       await intermediateClient.prefetchQuery(['string'], () =>
-        dataQuery(['should change'])
+        dataQuery(['should change']),
       )
       await intermediateClient.prefetchQuery(['added string'], () =>
-        dataQuery(['added string'])
+        dataQuery(['added string']),
       )
       const dehydrated = dehydrate(intermediateClient)
       intermediateClient.clear()
@@ -140,7 +141,7 @@ describe('React hydration', () => {
             <Page queryKey={['string']} />
             <Page queryKey={['added string']} />
           </Hydrate>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       // Existing query data should be overwritten if older,
@@ -172,7 +173,7 @@ describe('React hydration', () => {
           <Hydrate state={dehydratedState}>
             <Page />
           </Hydrate>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       await rendered.findByText('string')
@@ -187,7 +188,7 @@ describe('React hydration', () => {
           <Hydrate state={dehydratedState}>
             <Page />
           </Hydrate>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       await sleep(10)
@@ -212,7 +213,7 @@ describe('React hydration', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     expect(hydrateSpy).toHaveBeenCalledTimes(0)
@@ -235,7 +236,7 @@ describe('React hydration', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     expect(hydrateSpy).toHaveBeenCalledTimes(0)

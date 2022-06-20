@@ -1,5 +1,6 @@
 import * as React from 'react'
-import { useSyncExternalStore, 
+import {
+  useSyncExternalStore,
   Query,
   useQueryClient,
   onlineManager,
@@ -114,11 +115,11 @@ export function ReactQueryDevtools({
   const panelRef = React.useRef<HTMLDivElement>(null)
   const [isOpen, setIsOpen] = useLocalStorage(
     'reactQueryDevtoolsOpen',
-    initialIsOpen
+    initialIsOpen,
   )
   const [devtoolsHeight, setDevtoolsHeight] = useLocalStorage<number | null>(
     'reactQueryDevtoolsHeight',
-    null
+    null,
   )
   const [isResolvedOpen, setIsResolvedOpen] = React.useState(false)
   const [isResizing, setIsResizing] = React.useState(false)
@@ -126,7 +127,7 @@ export function ReactQueryDevtools({
 
   const handleDragStart = (
     panelElement: HTMLDivElement | null,
-    startEvent: React.MouseEvent<HTMLDivElement, MouseEvent>
+    startEvent: React.MouseEvent<HTMLDivElement, MouseEvent>,
   ) => {
     if (startEvent.button !== 0) return // Only allow left click for drag
 
@@ -282,7 +283,7 @@ export function ReactQueryDevtools({
           }}
           isOpen={isResolvedOpen}
           setIsOpen={setIsOpen}
-          handleDragStart={e => handleDragStart(panelRef.current, e)}
+          handleDragStart={(e) => handleDragStart(panelRef.current, e)}
         />
         {isResolvedOpen ? (
           <Button
@@ -291,7 +292,7 @@ export function ReactQueryDevtools({
             aria-haspopup="true"
             aria-expanded="true"
             {...(otherCloseButtonProps as unknown)}
-            onClick={e => {
+            onClick={(e) => {
               setIsOpen(false)
               onCloseClick?.(e)
             }}
@@ -330,7 +331,7 @@ export function ReactQueryDevtools({
           aria-controls="ReactQueryDevtoolsPanel"
           aria-haspopup="true"
           aria-expanded="false"
-          onClick={e => {
+          onClick={(e) => {
             setIsOpen(true)
             onToggleClick?.(e)
           }}
@@ -397,16 +398,16 @@ const sortFns: Record<string, (a: Query, b: Query) => number> = {
 
 const useSubscribeToQueryCache = <T,>(
   queryCache: QueryCache,
-  getSnapshot: () => T
+  getSnapshot: () => T,
 ): T => {
   return useSyncExternalStore(
     React.useCallback(
-      onStoreChange =>
+      (onStoreChange) =>
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [queryCache]
+      [queryCache],
     ),
     getSnapshot,
-    getSnapshot
+    getSnapshot,
   )
 }
 
@@ -428,14 +429,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const [sort, setSort] = useLocalStorage(
     'reactQueryDevtoolsSortFn',
-    Object.keys(sortFns)[0]
+    Object.keys(sortFns)[0],
   )
 
   const [filter, setFilter] = useLocalStorage('reactQueryDevtoolsFilter', '')
 
   const [sortDesc, setSortDesc] = useLocalStorage(
     'reactQueryDevtoolsSortDesc',
-    false
+    false,
   )
 
   const sortFn = React.useMemo(() => sortFns[sort as string], [sort])
@@ -448,12 +449,12 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const queriesCount = useSubscribeToQueryCache(
     queryCache,
-    () => queryCache.getAll().length
+    () => queryCache.getAll().length,
   )
 
   const [activeQueryHash, setActiveQueryHash] = useLocalStorage(
     'reactQueryDevtoolsActiveQueryHash',
-    ''
+    '',
   )
 
   const queries = React.useMemo(() => {
@@ -469,7 +470,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     }
 
     return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
-      d => d.queryHash
+      (d) => d.queryHash,
     )
   }, [sortDesc, sortFn, filter, queriesCount, queryCache])
 
@@ -577,8 +578,8 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                   placeholder="Filter"
                   aria-label="Filter by queryhash"
                   value={filter ?? ''}
-                  onChange={e => setFilter(e.target.value)}
-                  onKeyDown={e => {
+                  onChange={(e) => setFilter(e.target.value)}
+                  onKeyDown={(e) => {
                     if (e.key === 'Escape') setFilter('')
                   }}
                   style={{
@@ -592,14 +593,14 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     <Select
                       aria-label="Sort queries"
                       value={sort}
-                      onChange={e => setSort(e.target.value)}
+                      onChange={(e) => setSort(e.target.value)}
                       style={{
                         flex: '1',
                         minWidth: 75,
                         marginRight: '.5em',
                       }}
                     >
-                      {Object.keys(sortFns).map(key => (
+                      {Object.keys(sortFns).map((key) => (
                         <option key={key} value={key}>
                           Sort by {key}
                         </option>
@@ -607,7 +608,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                     </Select>
                     <Button
                       type="button"
-                      onClick={() => setSortDesc(old => !old)}
+                      onClick={() => setSortDesc((old) => !old)}
                       style={{
                         padding: '.3em .4em',
                         marginRight: '.5em',
@@ -681,7 +682,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               flex: '1',
             }}
           >
-            {queries.map(query => {
+            {queries.map((query) => {
               return (
                 <QueryRow
                   queryKey={query.queryKey}
@@ -717,30 +718,30 @@ const ActiveQuery = ({
   queryClient: QueryClient
 }) => {
   const activeQuery = useSubscribeToQueryCache(queryCache, () =>
-    queryCache.getAll().find(query => query.queryHash === activeQueryHash)
+    queryCache.getAll().find((query) => query.queryHash === activeQueryHash),
   )
 
   const activeQueryState = useSubscribeToQueryCache(
     queryCache,
     () =>
-      queryCache.getAll().find(query => query.queryHash === activeQueryHash)
-        ?.state
+      queryCache.getAll().find((query) => query.queryHash === activeQueryHash)
+        ?.state,
   )
 
   const isStale =
     useSubscribeToQueryCache(queryCache, () =>
       queryCache
         .getAll()
-        .find(query => query.queryHash === activeQueryHash)
-        ?.isStale()
+        .find((query) => query.queryHash === activeQueryHash)
+        ?.isStale(),
     ) ?? false
 
   const observerCount =
     useSubscribeToQueryCache(queryCache, () =>
       queryCache
         .getAll()
-        .find(query => query.queryHash === activeQueryHash)
-        ?.getObserversCount()
+        .find((query) => query.queryHash === activeQueryHash)
+        ?.getObserversCount(),
     ) ?? 0
 
   const handleRefetch = () => {
@@ -943,30 +944,32 @@ const QueryStatusCount = ({ queryCache }: { queryCache: QueryCache }) => {
   const hasFresh = useSubscribeToQueryCache(
     queryCache,
     () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fresh').length
+      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'fresh')
+        .length,
   )
   const hasFetching = useSubscribeToQueryCache(
     queryCache,
     () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'fetching')
-        .length
+      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'fetching')
+        .length,
   )
   const hasPaused = useSubscribeToQueryCache(
     queryCache,
     () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'paused')
-        .length
+      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'paused')
+        .length,
   )
   const hasStale = useSubscribeToQueryCache(
     queryCache,
     () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'stale').length
+      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'stale')
+        .length,
   )
   const hasInactive = useSubscribeToQueryCache(
     queryCache,
     () =>
-      queryCache.getAll().filter(q => getQueryStatusLabel(q) === 'inactive')
-        .length
+      queryCache.getAll().filter((q) => getQueryStatusLabel(q) === 'inactive')
+        .length,
   )
   return (
     <QueryKeys style={{ marginBottom: '.5em' }}>
@@ -1032,27 +1035,27 @@ const QueryRow = ({
   const queryHash =
     useSubscribeToQueryCache(
       queryCache,
-      () => queryCache.find(queryKey)?.queryHash
+      () => queryCache.find(queryKey)?.queryHash,
     ) ?? ''
 
   const queryState = useSubscribeToQueryCache(
     queryCache,
-    () => queryCache.find(queryKey)?.state
+    () => queryCache.find(queryKey)?.state,
   )
 
   const isStale =
     useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.isStale()
+      queryCache.find(queryKey)?.isStale(),
     ) ?? false
 
   const isDisabled =
     useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.isDisabled()
+      queryCache.find(queryKey)?.isDisabled(),
     ) ?? false
 
   const observerCount =
     useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.getObserversCount()
+      queryCache.find(queryKey)?.getObserversCount(),
     ) ?? 0
 
   if (!queryState) {
@@ -1121,4 +1124,4 @@ const QueryRow = ({
   )
 }
 
-function noop () {}
+function noop() {}

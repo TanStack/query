@@ -2,7 +2,7 @@ import * as React from 'react'
 import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
-import { useQuery, QueryClient } from '../..'
+import { useQuery, QueryClient } from '@tanstack/react-query'
 import {
   getByTextContent,
   renderWithClient,
@@ -54,18 +54,18 @@ describe('ReactQueryDevtools', () => {
 
     const verifyDevtoolsIsOpen = () => {
       expect(
-        screen.queryByRole('generic', { name: /react query devtools panel/i })
+        screen.queryByRole('generic', { name: /react query devtools panel/i }),
       ).not.toBeNull()
       expect(
-        screen.queryByRole('button', { name: /open react query devtools/i })
+        screen.queryByRole('button', { name: /open react query devtools/i }),
       ).toBeNull()
     }
     const verifyDevtoolsIsClosed = () => {
       expect(
-        screen.queryByRole('generic', { name: /react query devtools panel/i })
+        screen.queryByRole('generic', { name: /react query devtools panel/i }),
       ).toBeNull()
       expect(
-        screen.queryByRole('button', { name: /open react query devtools/i })
+        screen.queryByRole('button', { name: /open react query devtools/i }),
       ).not.toBeNull()
     }
 
@@ -147,7 +147,7 @@ describe('ReactQueryDevtools', () => {
           await sleep(100)
           return 'test'
         },
-        { staleTime: 300 }
+        { staleTime: 300 },
       )
 
       return (
@@ -159,8 +159,8 @@ describe('ReactQueryDevtools', () => {
 
     function PageParent() {
       const [isPageVisible, togglePageVisible] = React.useReducer(
-        visible => !visible,
-        true
+        (visible) => !visible,
+        true,
       )
 
       return (
@@ -180,7 +180,7 @@ describe('ReactQueryDevtools', () => {
     renderWithClient(queryClient, <PageParent />)
 
     fireEvent.click(
-      screen.getByRole('button', { name: /open react query devtools/i })
+      screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
     const currentQuery = queryCache.find(['check'])
@@ -190,8 +190,8 @@ describe('ReactQueryDevtools', () => {
     expect(currentQuery?.state.fetchStatus).toEqual('fetching')
     await screen.findByText(
       getByTextContent(
-        'fresh (0) fetching (1) paused (0) stale (0) inactive (0)'
-      )
+        'fresh (0) fetching (1) paused (0) stale (0) inactive (0)',
+      ),
     )
 
     // When we are done fetching the query doesn't go stale
@@ -202,8 +202,8 @@ describe('ReactQueryDevtools', () => {
     })
     await screen.findByText(
       getByTextContent(
-        'fresh (1) fetching (0) paused (0) stale (0) inactive (0)'
-      )
+        'fresh (1) fetching (0) paused (0) stale (0) inactive (0)',
+      ),
     )
 
     // Then wait for the query to go stale and then
@@ -213,19 +213,19 @@ describe('ReactQueryDevtools', () => {
     })
     await screen.findByText(
       getByTextContent(
-        'fresh (0) fetching (0) paused (0) stale (1) inactive (0)'
-      )
+        'fresh (0) fetching (0) paused (0) stale (1) inactive (0)',
+      ),
     )
 
     // Unmount the page component thus making the query inactive
     // and expect number of inactive queries to be 1
     fireEvent.click(
-      screen.getByRole('button', { name: /toggle page visibility/i })
+      screen.getByRole('button', { name: /toggle page visibility/i }),
     )
     await screen.findByText(
       getByTextContent(
-        'fresh (0) fetching (0) paused (0) stale (0) inactive (1)'
-      )
+        'fresh (0) fetching (0) paused (0) stale (0) inactive (1)',
+      ),
     )
   })
 
@@ -248,7 +248,7 @@ describe('ReactQueryDevtools', () => {
     renderWithClient(queryClient, <Page />)
 
     fireEvent.click(
-      screen.getByRole('button', { name: /open react query devtools/i })
+      screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
     const currentQuery = queryCache.find(['check'])
@@ -295,7 +295,7 @@ describe('ReactQueryDevtools', () => {
     renderWithClient(queryClient, <Page />)
 
     fireEvent.click(
-      screen.getByRole('button', { name: /open react query devtools/i })
+      screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
     const fooQueryHash = queryCache.find(['foo'])?.queryHash ?? 'invalid hash'
@@ -331,7 +331,7 @@ describe('ReactQueryDevtools', () => {
         },
         {
           enabled,
-        }
+        },
       )
 
       return (
@@ -416,7 +416,7 @@ describe('ReactQueryDevtools', () => {
     await screen.findByRole('heading', { name: /test/i })
 
     fireEvent.click(
-      screen.getByRole('button', { name: /mock offline behavior/i })
+      screen.getByRole('button', { name: /mock offline behavior/i }),
     )
 
     const queryButton = await screen.findByRole('button', {
@@ -434,7 +434,7 @@ describe('ReactQueryDevtools', () => {
     })
 
     fireEvent.click(
-      screen.getByRole('button', { name: /restore offline mock/i })
+      screen.getByRole('button', { name: /restore offline mock/i }),
     )
 
     await waitFor(() => {
@@ -459,7 +459,7 @@ describe('ReactQueryDevtools', () => {
           await sleep(10)
           return 'query-3-result'
         },
-        { staleTime: Infinity, enabled: typeof query1Result.data === 'string' }
+        { staleTime: Infinity, enabled: typeof query1Result.data === 'string' },
       )
 
       const query2Result = useQuery(
@@ -470,7 +470,7 @@ describe('ReactQueryDevtools', () => {
         },
         {
           enabled: typeof query3Result.data === 'string',
-        }
+        },
       )
 
       return (
@@ -485,7 +485,7 @@ describe('ReactQueryDevtools', () => {
     renderWithClient(queryClient, <Page />)
 
     fireEvent.click(
-      screen.getByRole('button', { name: /open react query devtools/i })
+      screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
     const query1Hash = queryCache.find(['query-1'])?.queryHash ?? 'invalid hash'
@@ -614,7 +614,7 @@ describe('ReactQueryDevtools', () => {
         {
           initialIsOpen: false,
           context,
-        }
+        },
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
@@ -649,7 +649,7 @@ describe('ReactQueryDevtools', () => {
         </ErrorBoundary>,
         {
           initialIsOpen: false,
-        }
+        },
       )
 
       await waitFor(() => rendered.getByText('error boundary'))

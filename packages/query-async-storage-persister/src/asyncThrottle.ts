@@ -9,7 +9,7 @@ const noop = () => {
 
 export function asyncThrottle<Args extends readonly unknown[]>(
   func: (...args: Args) => Promise<void>,
-  { interval = 1000, onError = noop }: AsyncThrottleOptions = {}
+  { interval = 1000, onError = noop }: AsyncThrottleOptions = {},
 ) {
   if (typeof func !== 'function') throw new Error('argument is not function.')
 

@@ -82,7 +82,7 @@ describe('useIsMutating', () => {
 
     function IsMutating() {
       const isMutating = useIsMutating({
-        predicate: mutation =>
+        predicate: (mutation) =>
           mutation.options.mutationKey?.[0] === 'mutation1',
       })
       isMutatings.push(isMutating)
@@ -123,7 +123,7 @@ describe('useIsMutating', () => {
 
     const MutationCacheSpy = jest
       .spyOn(MutationCacheModule, 'MutationCache')
-      .mockImplementation(fn => {
+      .mockImplementation((fn) => {
         return new MutationCacheMock(fn)
       })
 
@@ -183,7 +183,7 @@ describe('useIsMutating', () => {
             await sleep(150)
             return 'data'
           },
-          { context }
+          { context },
         )
         const { mutate: mutate2 } = useMutation(
           ['mutation2'],
@@ -191,7 +191,7 @@ describe('useIsMutating', () => {
             await sleep(50)
             return 'data'
           },
-          { context }
+          { context },
         )
 
         React.useEffect(() => {
@@ -238,7 +238,7 @@ describe('useIsMutating', () => {
         <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
           <Page />
         </ErrorBoundary>,
-        { context }
+        { context },
       )
 
       await waitFor(() => rendered.getByText('error boundary'))

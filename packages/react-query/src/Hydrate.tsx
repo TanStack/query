@@ -6,7 +6,7 @@ import { ContextOptions } from './types'
 
 export function useHydrate(
   state: unknown,
-  options: HydrateOptions & ContextOptions = {}
+  options: HydrateOptions & ContextOptions = {},
 ) {
   const queryClient = useQueryClient({ context: options.context })
 

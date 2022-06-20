@@ -2,7 +2,7 @@ import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
 type SetupFn = (
-  setOnline: (online?: boolean) => void
+  setOnline: (online?: boolean) => void,
 ) => (() => void) | undefined
 
 export class OnlineManager extends Subscribable {
@@ -13,7 +13,7 @@ export class OnlineManager extends Subscribable {
 
   constructor() {
     super()
-    this.setup = onOnline => {
+    this.setup = (onOnline) => {
       // addEventListener does not exist in React Native, but window does
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isServer && window.addEventListener) {
@@ -65,7 +65,7 @@ export class OnlineManager extends Subscribable {
   }
 
   onOnline(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       listener()
     })
   }

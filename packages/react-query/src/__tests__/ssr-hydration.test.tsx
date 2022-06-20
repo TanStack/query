@@ -84,7 +84,7 @@ describe('Server side rendering with de/rehydration', () => {
       queryCache: prefetchCache,
     })
     await prefetchClient.prefetchQuery(['success'], () =>
-      fetchDataSuccess('success')
+      fetchDataSuccess('success'),
     )
     const dehydratedStateServer = dehydrate(prefetchClient)
     const renderCache = new QueryCache()
@@ -95,7 +95,7 @@ describe('Server side rendering with de/rehydration', () => {
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     renderClient.clear()
@@ -119,7 +119,7 @@ describe('Server side rendering with de/rehydration', () => {
       <QueryClientProvider client={queryClient}>
         <SuccessComponent />
       </QueryClientProvider>,
-      el
+      el,
     )
 
     // Check that we have no React hydration mismatches
@@ -165,7 +165,7 @@ describe('Server side rendering with de/rehydration', () => {
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <ErrorComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     renderClient.clear()
@@ -188,7 +188,7 @@ describe('Server side rendering with de/rehydration', () => {
       <QueryClientProvider client={queryClient}>
         <ErrorComponent />
       </QueryClientProvider>,
-      el
+      el,
     )
 
     // We expect exactly one console.error here, which is from the
@@ -198,7 +198,7 @@ describe('Server side rendering with de/rehydration', () => {
     await sleep(50)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
-      '<!-- -->ErrorComponent - status:error fetching:false data:undefined'
+      '<!-- -->ErrorComponent - status:error fetching:false data:undefined',
     )
 
     unmount()
@@ -232,7 +232,7 @@ describe('Server side rendering with de/rehydration', () => {
     const markup = ReactDOMServer.renderToString(
       <QueryClientProvider client={renderClient}>
         <SuccessComponent />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
     const stringifiedState = JSON.stringify(dehydratedStateServer)
     renderClient.clear()
@@ -255,7 +255,7 @@ describe('Server side rendering with de/rehydration', () => {
       <QueryClientProvider client={queryClient}>
         <SuccessComponent />
       </QueryClientProvider>,
-      el
+      el,
     )
 
     // Check that we have no React hydration mismatches
@@ -265,7 +265,7 @@ describe('Server side rendering with de/rehydration', () => {
     await sleep(50)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(
-      '<!-- -->SuccessComponent - status:success fetching:false data:success!'
+      '<!-- -->SuccessComponent - status:success fetching:false data:success!',
     )
 
     unmount()

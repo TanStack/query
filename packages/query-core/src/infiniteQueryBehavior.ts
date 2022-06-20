@@ -10,10 +10,10 @@ import type {
 export function infiniteQueryBehavior<
   TQueryFnData,
   TError,
-  TData
+  TData,
 >(): QueryBehavior<TQueryFnData, TError, InfiniteData<TData>> {
   return {
-    onFetch: context => {
+    onFetch: (context) => {
       context.fetchFn = () => {
         const refetchPage: RefetchQueryFilters['refetchPage'] | undefined =
           context.fetchOptions?.meta?.refetchPage
@@ -50,7 +50,7 @@ export function infiniteQueryBehavior<
           pages: unknown[],
           param: unknown,
           page: unknown,
-          previous?: boolean
+          previous?: boolean,
         ) => {
           newPageParams = previous
             ? [param, ...newPageParams]
@@ -63,7 +63,7 @@ export function infiniteQueryBehavior<
           pages: unknown[],
           manual?: boolean,
           param?: unknown,
-          previous?: boolean
+          previous?: boolean,
         ): Promise<unknown[]> => {
           if (cancelled) {
             return Promise.reject('Cancelled')
@@ -83,8 +83,8 @@ export function infiniteQueryBehavior<
 
           const queryFnResult = queryFn(queryFnContext)
 
-          const promise = Promise.resolve(queryFnResult).then(page =>
-            buildNewPages(pages, param, page, previous)
+          const promise = Promise.resolve(queryFnResult).then((page) =>
+            buildNewPages(pages, param, page, previous),
           )
 
           return promise
@@ -133,7 +133,7 @@ export function infiniteQueryBehavior<
 
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
-            promise = promise.then(pages => {
+            promise = promise.then((pages) => {
               const shouldFetchNextPage =
                 refetchPage && oldPages[i]
                   ? refetchPage(oldPages[i], i, oldPages)
@@ -146,13 +146,13 @@ export function infiniteQueryBehavior<
                 return fetchPage(pages, manual, param)
               }
               return Promise.resolve(
-                buildNewPages(pages, oldPageParams[i], oldPages[i])
+                buildNewPages(pages, oldPageParams[i], oldPages[i]),
               )
             })
           }
         }
 
-        const finalPromise = promise.then(pages => ({
+        const finalPromise = promise.then((pages) => ({
           pages,
           pageParams: newPageParams,
         }))
@@ -165,14 +165,14 @@ export function infiniteQueryBehavior<
 
 export function getNextPageParam(
   options: QueryOptions<any, any>,
-  pages: unknown[]
+  pages: unknown[],
 ): unknown | undefined {
   return options.getNextPageParam?.(pages[pages.length - 1], pages)
 }
 
 export function getPreviousPageParam(
   options: QueryOptions<any, any>,
-  pages: unknown[]
+  pages: unknown[],
 ): unknown | undefined {
   return options.getPreviousPageParam?.(pages[0], pages)
 }
@@ -183,7 +183,7 @@ export function getPreviousPageParam(
  */
 export function hasNextPage(
   options: QueryOptions<any, any, any, any>,
-  pages?: unknown
+  pages?: unknown,
 ): boolean | undefined {
   if (options.getNextPageParam && Array.isArray(pages)) {
     const nextPageParam = getNextPageParam(options, pages)
@@ -201,7 +201,7 @@ export function hasNextPage(
  */
 export function hasPreviousPage(
   options: QueryOptions<any, any, any, any>,
-  pages?: unknown
+  pages?: unknown,
 ): boolean | undefined {
   if (options.getPreviousPageParam && Array.isArray(pages)) {
     const previousPageParam = getPreviousPageParam(options, pages)

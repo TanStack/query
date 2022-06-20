@@ -30,14 +30,14 @@ export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
 type ShouldRetryFunction<TError> = (
   failureCount: number,
-  error: TError
+  error: TError,
 ) => boolean
 
 export type RetryDelayValue<TError> = number | RetryDelayFunction<TError>
 
 type RetryDelayFunction<TError = unknown> = (
   failureCount: number,
-  error: TError
+  error: TError,
 ) => number
 
 function defaultRetryDelay(failureCount: number) {
@@ -64,7 +64,7 @@ export function isCancelledError(value: any): value is CancelledError {
 }
 
 export function createRetryer<TData = unknown, TError = unknown>(
-  config: RetryerConfig<TData, TError>
+  config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {
   let isRetryCancelled = false
   let failureCount = 0
@@ -116,8 +116,8 @@ export function createRetryer<TData = unknown, TError = unknown>(
   }
 
   const pause = () => {
-    return new Promise(continueResolve => {
-      continueFn = value => {
+    return new Promise((continueResolve) => {
+      continueFn = (value) => {
         if (isResolved || !shouldPause()) {
           return continueResolve(value)
         }
@@ -149,7 +149,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
 
     Promise.resolve(promiseOrValue)
       .then(resolve)
-      .catch(error => {
+      .catch((error) => {
         // Stop if the fetch is already resolved
         if (isResolved) {
           return

@@ -36,7 +36,7 @@ describe('Server Side Rendering', () => {
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     expect(markup).toContain('status loading')
@@ -81,7 +81,7 @@ describe('Server Side Rendering', () => {
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     expect(markup).toContain('status success')
@@ -112,10 +112,10 @@ describe('Server Side Rendering', () => {
     renderToString(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
-    const keys = queryCache.getAll().map(query => query.queryKey)
+    const keys = queryCache.getAll().map((query) => query.queryKey)
 
     expect(keys).toEqual([[key, 1]])
     queryCache.clear()
@@ -134,7 +134,7 @@ describe('Server Side Rendering', () => {
       const query = useInfiniteQuery(key, queryFn)
       return (
         <ul>
-          {query.data?.pages.map(page => (
+          {query.data?.pages.map((page) => (
             <li key={page}>{page}</li>
           ))}
         </ul>
@@ -146,7 +146,7 @@ describe('Server Side Rendering', () => {
     const markup = renderToString(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     expect(markup).toContain('page 1')

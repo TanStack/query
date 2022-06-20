@@ -37,7 +37,7 @@ describe("useQuery's in Suspense mode", () => {
           await sleep(10)
           return count
         },
-        { suspense: true }
+        { suspense: true },
       )
 
       states.push(state)
@@ -54,7 +54,7 @@ describe("useQuery's in Suspense mode", () => {
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     await waitFor(() => rendered.getByText('data: 1'))
@@ -82,8 +82,8 @@ describe("useQuery's in Suspense mode", () => {
         },
         {
           suspense: true,
-          getNextPageParam: lastPage => lastPage + 1,
-        }
+          getNextPageParam: (lastPage) => lastPage + 1,
+        },
       )
       states.push(state)
       return (
@@ -98,7 +98,7 @@ describe("useQuery's in Suspense mode", () => {
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     await waitFor(() => rendered.getByText('data: 1'))
@@ -138,7 +138,7 @@ describe("useQuery's in Suspense mode", () => {
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     await waitFor(() => rendered.getByText('rendered'))
@@ -156,7 +156,7 @@ describe("useQuery's in Suspense mode", () => {
           sleep(10)
           return 'data'
         },
-        { suspense: true }
+        { suspense: true },
       )
 
       return <>rendered</>
@@ -168,7 +168,10 @@ describe("useQuery's in Suspense mode", () => {
       return (
         <>
           <React.Suspense fallback="loading">{show && <Page />}</React.Suspense>
-          <button aria-label="toggle" onClick={() => setShow(prev => !prev)} />
+          <button
+            aria-label="toggle"
+            onClick={() => setShow((prev) => !prev)}
+          />
         </>
       )
     }
@@ -205,7 +208,7 @@ describe("useQuery's in Suspense mode", () => {
           suspense: true,
           select: () => 'selected',
           onSuccess: successFn,
-        }
+        },
       )
 
       return <>rendered</>
@@ -215,7 +218,7 @@ describe("useQuery's in Suspense mode", () => {
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     await waitFor(() => rendered.getByText('rendered'))
@@ -240,7 +243,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           suspense: true,
           onSuccess: successFn1,
-        }
+        },
       )
 
       return <span>first</span>
@@ -256,7 +259,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           suspense: true,
           onSuccess: successFn2,
-        }
+        },
       )
 
       return <span>second</span>
@@ -267,7 +270,7 @@ describe("useQuery's in Suspense mode", () => {
       <React.Suspense fallback="loading">
         <FirstComponent />
         <SecondComponent />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     await waitFor(() => rendered.getByText('second'))
@@ -297,7 +300,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retryDelay: 10,
           suspense: true,
-        }
+        },
       )
 
       return <div>rendered</div>
@@ -328,7 +331,7 @@ describe("useQuery's in Suspense mode", () => {
             </React.Suspense>
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('Loading...'))
@@ -361,7 +364,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       return <div>rendered</div>
     }
@@ -390,7 +393,7 @@ describe("useQuery's in Suspense mode", () => {
             </React.Suspense>
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('Loading...'))
@@ -420,7 +423,7 @@ describe("useQuery's in Suspense mode", () => {
           retry: false,
           suspense: true,
           staleTime: 0,
-        }
+        },
       )
       return (
         <div>
@@ -476,7 +479,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       return <div>data: {result.data}</div>
     }
@@ -508,7 +511,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText(`data: ${key2}`))
     expect(
       // @ts-expect-error
-      queryClient.getQueryCache().find(key2)!.observers[0].listeners.length
+      queryClient.getQueryCache().find(key2)!.observers[0].listeners.length,
     ).toBe(1)
   })
 
@@ -531,7 +534,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       return <div>rendered</div>
     }
@@ -587,7 +590,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       return <div>rendered</div>
     }
@@ -628,7 +631,7 @@ describe("useQuery's in Suspense mode", () => {
           retry: false,
           suspense: true,
           useErrorBoundary: false,
-        }
+        },
       )
       return <div>rendered</div>
     }
@@ -668,8 +671,8 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          useErrorBoundary: err => err !== 'Local Error',
-        }
+          useErrorBoundary: (err) => err !== 'Local Error',
+        },
       )
       return <div>rendered</div>
     }
@@ -709,8 +712,8 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          useErrorBoundary: err => err !== 'Local Error',
-        }
+          useErrorBoundary: (err) => err !== 'Local Error',
+        },
       )
       return <div>rendered</div>
     }
@@ -762,7 +765,7 @@ describe("useQuery's in Suspense mode", () => {
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     expect(queryFn).toHaveBeenCalledTimes(0)
@@ -797,7 +800,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       return (
         <div>
@@ -847,7 +850,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = true
 
     function Page() {
-      const [key, rerender] = React.useReducer(x => x + 1, 0)
+      const [key, rerender] = React.useReducer((x) => x + 1, 0)
       const queryKeys = [key, succeed]
 
       const result = useQuery(
@@ -863,7 +866,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       return (
         <div>
@@ -919,7 +922,7 @@ describe("useQuery's in Suspense mode", () => {
           retry: false,
           suspense: true,
           enabled,
-        }
+        },
       )
       return (
         <div>
@@ -982,7 +985,7 @@ describe("useQuery's in Suspense mode", () => {
           await sleep(10)
           return count
         },
-        { suspense: true, cacheTime: 0 }
+        { suspense: true, cacheTime: 0 },
       )
 
       return (
@@ -996,14 +999,14 @@ describe("useQuery's in Suspense mode", () => {
       queryClient,
       <React.Suspense fallback="loading">
         <Page />
-      </React.Suspense>
+      </React.Suspense>,
     )
 
     await waitFor(() =>
       expect(state).toMatchObject({
         data: 1,
         status: 'success',
-      })
+      }),
     )
 
     expect(renders).toBe(2)

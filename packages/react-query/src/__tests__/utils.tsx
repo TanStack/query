@@ -1,17 +1,21 @@
 import * as React from 'react'
 import { render } from '@testing-library/react'
 import { setActTimeout } from '../../tests/utils'
-import { QueryClient, ContextOptions, QueryClientProvider } from '../../build/types'
+import {
+  QueryClient,
+  ContextOptions,
+  QueryClientProvider,
+} from '../../build/types'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  options: ContextOptions = {}
+  options: ContextOptions = {},
 ) {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client} context={options.context}>
       {ui}
-    </QueryClientProvider>
+    </QueryClientProvider>,
   )
   return {
     ...result,
@@ -19,7 +23,7 @@ export function renderWithClient(
       rerender(
         <QueryClientProvider client={client} context={options.context}>
           {rerenderUi}
-        </QueryClientProvider>
+        </QueryClientProvider>,
       ),
   }
 }

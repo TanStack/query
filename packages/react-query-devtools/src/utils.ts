@@ -66,7 +66,7 @@ type Styles =
 export function styled<T extends keyof HTMLElementTagNameMap>(
   type: T,
   newStyles: Styles,
-  queries: Record<string, Styles> = {}
+  queries: Record<string, Styles> = {},
 ) {
   return React.forwardRef<HTMLElementTagNameMap[T], StyledComponent<T>>(
     ({ style, ...rest }, ref) => {
@@ -82,7 +82,7 @@ export function styled<T extends keyof HTMLElementTagNameMap>(
               }
             : current
         },
-        {}
+        {},
       )
 
       return React.createElement(type, {
@@ -96,7 +96,7 @@ export function styled<T extends keyof HTMLElementTagNameMap>(
         },
         ref,
       })
-    }
+    },
   )
 }
 

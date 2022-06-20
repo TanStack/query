@@ -75,7 +75,7 @@ function defaultShouldDehydrateQuery(query: Query) {
 
 export function dehydrate(
   client: QueryClient,
-  options: DehydrateOptions = {}
+  options: DehydrateOptions = {},
 ): DehydratedState {
   const mutations: DehydratedMutation[] = []
   const queries: DehydratedQuery[] = []
@@ -87,7 +87,7 @@ export function dehydrate(
     client
       .getMutationCache()
       .getAll()
-      .forEach(mutation => {
+      .forEach((mutation) => {
         if (shouldDehydrateMutation(mutation)) {
           mutations.push(dehydrateMutation(mutation))
         }
@@ -101,7 +101,7 @@ export function dehydrate(
     client
       .getQueryCache()
       .getAll()
-      .forEach(query => {
+      .forEach((query) => {
         if (shouldDehydrateQuery(query)) {
           queries.push(dehydrateQuery(query))
         }
@@ -114,7 +114,7 @@ export function dehydrate(
 export function hydrate(
   client: QueryClient,
   dehydratedState: unknown,
-  options?: HydrateOptions
+  options?: HydrateOptions,
 ): void {
   if (typeof dehydratedState !== 'object' || dehydratedState === null) {
     return
@@ -128,18 +128,18 @@ export function hydrate(
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   const queries = (dehydratedState as DehydratedState).queries || []
 
-  mutations.forEach(dehydratedMutation => {
+  mutations.forEach((dehydratedMutation) => {
     mutationCache.build(
       client,
       {
         ...options?.defaultOptions?.mutations,
         mutationKey: dehydratedMutation.mutationKey,
       },
-      dehydratedMutation.state
+      dehydratedMutation.state,
     )
   })
 
-  queries.forEach(dehydratedQuery => {
+  queries.forEach((dehydratedQuery) => {
     const query = queryCache.get(dehydratedQuery.queryHash)
 
     // Do not hydrate if an existing query exists with newer data
@@ -158,7 +158,7 @@ export function hydrate(
         queryKey: dehydratedQuery.queryKey,
         queryHash: dehydratedQuery.queryHash,
       },
-      dehydratedQuery.state
+      dehydratedQuery.state,
     )
   })
 }

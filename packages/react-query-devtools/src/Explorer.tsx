@@ -127,7 +127,7 @@ export const DefaultRenderer: Renderer = ({
           {expanded ? (
             subEntryPages.length === 1 ? (
               <SubEntries>
-                {subEntries.map(entry => (
+                {subEntries.map((entry) => (
                   <HandleEntry key={entry.label} entry={entry} />
                 ))}
               </SubEntries>
@@ -138,10 +138,10 @@ export const DefaultRenderer: Renderer = ({
                     <Entry>
                       <LabelButton
                         onClick={() =>
-                          setExpandedPages(old =>
+                          setExpandedPages((old) =>
                             old.includes(index)
-                              ? old.filter(d => d !== index)
-                              : [...old, index]
+                              ? old.filter((d) => d !== index)
+                              : [...old, index],
                           )
                         }
                       >
@@ -150,7 +150,7 @@ export const DefaultRenderer: Renderer = ({
                       </LabelButton>
                       {expandedPages.includes(index) ? (
                         <SubEntries>
-                          {entries.map(entry => (
+                          {entries.map((entry) => (
                             <HandleEntry key={entry.label} entry={entry} />
                           ))}
                         </SubEntries>
@@ -196,7 +196,7 @@ export default function Explorer({
   ...rest
 }: ExplorerProps) {
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
-  const toggleExpanded = React.useCallback(() => setExpanded(old => !old), [])
+  const toggleExpanded = React.useCallback(() => setExpanded((old) => !old), [])
 
   let type: string = typeof value
   let subEntries: Property[] = []
@@ -218,7 +218,7 @@ export default function Explorer({
       makeProperty({
         label: i.toString(),
         value: d,
-      })
+      }),
     )
   } else if (
     value !== null &&
@@ -231,7 +231,7 @@ export default function Explorer({
       makeProperty({
         label: i.toString(),
         value: val,
-      })
+      }),
     )
   } else if (typeof value === 'object' && value !== null) {
     type = 'object'
@@ -239,7 +239,7 @@ export default function Explorer({
       makeProperty({
         label: key,
         value: val,
-      })
+      }),
     )
   }
 

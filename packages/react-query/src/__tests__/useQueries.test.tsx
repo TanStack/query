@@ -104,7 +104,7 @@ describe('useQueries', () => {
       })
       states.push(result)
 
-      const isFetching = result.some(r => r.isFetching)
+      const isFetching = result.some((r) => r.isFetching)
 
       return (
         <div>
@@ -113,7 +113,7 @@ describe('useQueries', () => {
             {String(result[1].data ?? 'null')}
           </div>
           <div>isFetching: {String(isFetching)}</div>
-          <button onClick={() => setCount(prev => prev + 1)}>inc</button>
+          <button onClick={() => setCount((prev) => prev + 1)}>inc</button>
         </div>
       )
     }
@@ -151,13 +151,13 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      const isFetching = result.some(r => r.isFetching)
+      const isFetching = result.some((r) => r.isFetching)
 
       return (
         <div>
-          <div>data: {result.map(it => it.data).join(',')}</div>
+          <div>data: {result.map((it) => it.data).join(',')}</div>
           <div>isFetching: {String(isFetching)}</div>
-          <button onClick={() => setCount(prev => prev + 1)}>inc</button>
+          <button onClick={() => setCount((prev) => prev + 1)}>inc</button>
         </div>
       )
     }
@@ -187,7 +187,7 @@ describe('useQueries', () => {
       const ids = [series1, series2]
 
       const result = useQueries({
-        queries: ids.map(id => {
+        queries: ids.map((id) => {
           return {
             queryKey: [key, id],
             queryFn: async () => {
@@ -201,7 +201,7 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      const isFetching = result.some(r => r.isFetching)
+      const isFetching = result.some((r) => r.isFetching)
 
       return (
         <div>
@@ -242,7 +242,7 @@ describe('useQueries', () => {
       const ids = enableId1 ? [1, 2] : [2]
 
       const result = useQueries({
-        queries: ids.map(id => {
+        queries: ids.map((id) => {
           return {
             queryKey: [key, id],
             queryFn: async () => {
@@ -256,7 +256,7 @@ describe('useQueries', () => {
 
       states.push(result)
 
-      const isFetching = result.some(r => r.isFetching)
+      const isFetching = result.some((r) => r.isFetching)
 
       return (
         <div>
@@ -360,7 +360,7 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return a.toLowerCase()
@@ -369,7 +369,7 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return parseInt(a)
@@ -388,12 +388,12 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return a.toLowerCase()
             },
-            onSuccess: a => {
+            onSuccess: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
             },
@@ -404,16 +404,16 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return parseInt(a)
             },
-            onSuccess: a => {
+            onSuccess: (a) => {
               expectType<number>(a)
               expectTypeNotAny(a)
             },
-            onError: e => {
+            onError: (e) => {
               expectType<boolean>(e)
               expectTypeNotAny(e)
             },
@@ -450,7 +450,7 @@ describe('useQueries', () => {
         [
           { queryFnData: number },
           { queryFnData: string },
-          { queryFnData: string[]; error: boolean }
+          { queryFnData: string[]; error: boolean },
         ]
       >({
         queries: [
@@ -480,14 +480,14 @@ describe('useQueries', () => {
       const result2 = useQueries<
         [
           { queryFnData: string; data: string },
-          { queryFnData: string; data: number }
+          { queryFnData: string; data: number },
         ]
       >({
         queries: [
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return a.toLowerCase()
@@ -496,7 +496,7 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return parseInt(a)
@@ -515,7 +515,7 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<unknown>(a)
               expectTypeNotAny(a)
               return a as string
@@ -524,7 +524,7 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<unknown>(a)
               expectTypeNotAny(a)
               return a as number
@@ -541,19 +541,19 @@ describe('useQueries', () => {
       useQueries<
         [
           { queryFnData: string; data: string },
-          { queryFnData: string; data: number; error: boolean }
+          { queryFnData: string; data: number; error: boolean },
         ]
       >({
         queries: [
           {
             queryKey: key1,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return a.toLowerCase()
             },
-            onSuccess: a => {
+            onSuccess: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
             },
@@ -564,16 +564,16 @@ describe('useQueries', () => {
           {
             queryKey: key2,
             queryFn: () => 'string',
-            select: a => {
+            select: (a) => {
               expectType<string>(a)
               expectTypeNotAny(a)
               return parseInt(a)
             },
-            onSuccess: a => {
+            onSuccess: (a) => {
               expectType<number>(a)
               expectTypeNotAny(a)
             },
-            onError: e => {
+            onError: (e) => {
               expectType<boolean>(e)
               expectTypeNotAny(e)
             },
@@ -680,9 +680,9 @@ describe('useQueries', () => {
             queryKey: key1,
             queryFn: () => 'string',
             // @ts-expect-error (noImplicitAny)
-            onSuccess: a => null,
+            onSuccess: (a) => null,
             // @ts-expect-error (noImplicitAny)
-            onSettled: a => null,
+            onSettled: (a) => null,
           },
           // however you can add a type to the callback
           {
@@ -744,9 +744,9 @@ describe('useQueries', () => {
             queryKey: key1,
             queryFn: () => 'string',
             // @ts-expect-error (noImplicitAny)
-            onSuccess: a => null,
+            onSuccess: (a) => null,
             // @ts-expect-error (noImplicitAny)
-            onSettled: a => null,
+            onSettled: (a) => null,
           },
           {
             queryKey: key2,
@@ -845,7 +845,8 @@ describe('useQueries', () => {
       useQueries({
         queries: Array(50).map((_, i) => ({
           queryKey: ['key', i] as const,
-          queryFn: () => fetch('return Promise<any>').then(resp => resp.json()),
+          queryFn: () =>
+            fetch('return Promise<any>').then((resp) => resp.json()),
         })),
       })
 
@@ -855,7 +856,7 @@ describe('useQueries', () => {
           {
             queryKey: key1,
             queryFn: () =>
-              fetch('return Promise<any>').then(resp => resp.json()),
+              fetch('return Promise<any>').then((resp) => resp.json()),
           },
         ],
       })
@@ -871,7 +872,7 @@ describe('useQueries', () => {
       return 1
     }
     type SelectorA = (data: number) => [number, string]
-    const getSelectorA = (): SelectorA => data => [data, data.toString()]
+    const getSelectorA = (): SelectorA => (data) => [data, data.toString()]
 
     type QueryKeyB = ['queryB', string]
     const getQueryKeyB = (id: string): QueryKeyB => ['queryB', id]
@@ -880,19 +881,19 @@ describe('useQueries', () => {
       return '1'
     }
     type SelectorB = (data: string) => [string, number]
-    const getSelectorB = (): SelectorB => data => [data, +data]
+    const getSelectorB = (): SelectorB => (data) => [data, +data]
 
     // Wrapper with strongly typed array-parameter
     function useWrappedQueries<
       TQueryFnData,
       TError,
       TData,
-      TQueryKey extends QueryKey
+      TQueryKey extends QueryKey,
     >(queries: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>[]) {
       return useQueries({
         queries: queries.map(
           // no need to type the mapped query
-          query => {
+          (query) => {
             const { queryFn: fn, queryKey: key, onError: err } = query
             expectType<QueryFunction<TQueryFnData, TQueryKey> | undefined>(fn)
             return {
@@ -905,7 +906,7 @@ describe('useQueries', () => {
                   }
                 : undefined,
             }
-          }
+          },
         ),
       })
     }
@@ -943,10 +944,10 @@ describe('useQueries', () => {
         ],
       })
       expectType<QueryObserverResult<[number, string], unknown>>(
-        withSelector[0]
+        withSelector[0],
       )
       expectType<QueryObserverResult<[string, number], unknown>>(
-        withSelector[1]
+        withSelector[1],
       )
 
       const withWrappedQueries = useWrappedQueries(
@@ -954,11 +955,11 @@ describe('useQueries', () => {
           queryKey: getQueryKeyA(),
           queryFn: getQueryFunctionA(),
           select: getSelectorA(),
-        }))
+        })),
       )
 
       expectType<QueryObserverResult<number | undefined, unknown>[]>(
-        withWrappedQueries
+        withWrappedQueries,
       )
     }
   })
@@ -977,7 +978,7 @@ describe('useQueries', () => {
 
     const QueriesObserverSpy = jest
       .spyOn(QueriesObserverModule, 'QueriesObserver')
-      .mockImplementation(fn => {
+      .mockImplementation((fn) => {
         return new QueriesObserverMock(fn)
       })
 
@@ -1097,7 +1098,7 @@ describe('useQueries', () => {
         <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
           <Page />
         </ErrorBoundary>,
-        { context }
+        { context },
       )
 
       await waitFor(() => rendered.getByText('error boundary'))

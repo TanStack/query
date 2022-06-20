@@ -10,7 +10,7 @@ declare global {
 }
 
 export const defaultContext = React.createContext<QueryClient | undefined>(
-  undefined
+  undefined,
 )
 const QueryClientSharingContext = React.createContext<boolean>(false)
 
@@ -23,7 +23,7 @@ const QueryClientSharingContext = React.createContext<boolean>(false)
 // of module scoping.
 function getQueryClientContext(
   context: React.Context<QueryClient | undefined> | undefined,
-  contextSharing: boolean
+  contextSharing: boolean,
 ) {
   if (context) {
     return context
@@ -41,7 +41,7 @@ function getQueryClientContext(
 
 export const useQueryClient = ({ context }: ContextOptions = {}) => {
   const queryClient = React.useContext(
-    getQueryClientContext(context, React.useContext(QueryClientSharingContext))
+    getQueryClientContext(context, React.useContext(QueryClientSharingContext)),
   )
 
   if (!queryClient) {

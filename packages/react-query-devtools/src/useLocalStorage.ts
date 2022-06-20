@@ -14,7 +14,7 @@ const getItem = (key: string): unknown => {
 
 export default function useLocalStorage<T>(
   key: string,
-  defaultValue: T | undefined
+  defaultValue: T | undefined,
 ): [T | undefined, (newVal: T | ((prevVal: T) => T)) => void] {
   const [value, setValue] = React.useState<T>()
 
@@ -23,7 +23,7 @@ export default function useLocalStorage<T>(
 
     if (typeof initialValue === 'undefined' || initialValue === null) {
       setValue(
-        typeof defaultValue === 'function' ? defaultValue() : defaultValue
+        typeof defaultValue === 'function' ? defaultValue() : defaultValue,
       )
     } else {
       setValue(initialValue)
@@ -32,7 +32,7 @@ export default function useLocalStorage<T>(
 
   const setter = React.useCallback(
     (updater: any) => {
-      setValue(old => {
+      setValue((old) => {
         let newVal = updater
 
         if (typeof updater == 'function') {
@@ -45,7 +45,7 @@ export default function useLocalStorage<T>(
         return newVal
       })
     },
-    [key]
+    [key],
   )
 
   return [value, setter]

@@ -89,12 +89,12 @@ describe('focusManager', () => {
   it('should replace default window listener when a new event listener is set', async () => {
     const addEventListenerSpy = jest.spyOn(
       globalThis.window,
-      'addEventListener'
+      'addEventListener',
     )
 
     const removeEventListenerSpy = jest.spyOn(
       globalThis.window,
-      'removeEventListener'
+      'removeEventListener',
     )
 
     // Should set the default event listener with window event listeners
@@ -117,12 +117,12 @@ describe('focusManager', () => {
   test('should call removeEventListener when last listener unsubscribes', () => {
     const addEventListenerSpy = jest.spyOn(
       globalThis.window,
-      'addEventListener'
+      'addEventListener',
     )
 
     const removeEventListenerSpy = jest.spyOn(
       globalThis.window,
-      'removeEventListener'
+      'removeEventListener',
     )
 
     const unsubscribe1 = focusManager.subscribe(() => undefined)

@@ -18,13 +18,13 @@ describe('InfiniteQueryObserver', () => {
     const observer = new InfiniteQueryObserver(queryClient, {
       queryKey: key,
       queryFn: () => 1,
-      select: data => ({
-        pages: data.pages.map(x => `${x}`),
+      select: (data) => ({
+        pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
     })
     let observerResult
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
     await sleep(1)
@@ -45,13 +45,13 @@ describe('InfiniteQueryObserver', () => {
       meta,
       queryKey: key,
       queryFn,
-      select: data => ({
-        pages: data.pages.map(x => `${x}`),
+      select: (data) => ({
+        pages: data.pages.map((x) => `${x}`),
         pageParams: data.pageParams,
       }),
     })
     let observerResult
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
     await sleep(1)

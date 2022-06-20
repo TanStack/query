@@ -22,7 +22,7 @@ export abstract class Removable {
     // Default to 5 minutes (Infinity for server-side) if no cache time is set
     this.cacheTime = Math.max(
       this.cacheTime || 0,
-      newCacheTime ?? (isServer ? Infinity : 5 * 60 * 1000)
+      newCacheTime ?? (isServer ? Infinity : 5 * 60 * 1000),
     )
   }
 

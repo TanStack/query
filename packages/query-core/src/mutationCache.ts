@@ -13,17 +13,17 @@ interface MutationCacheConfig {
     error: unknown,
     variables: unknown,
     context: unknown,
-    mutation: Mutation<unknown, unknown, unknown>
+    mutation: Mutation<unknown, unknown, unknown>,
   ) => void
   onSuccess?: (
     data: unknown,
     variables: unknown,
     context: unknown,
-    mutation: Mutation<unknown, unknown, unknown>
+    mutation: Mutation<unknown, unknown, unknown>,
   ) => void
   onMutate?: (
     variables: unknown,
-    mutation: Mutation<unknown, unknown, unknown, unknown>
+    mutation: Mutation<unknown, unknown, unknown, unknown>,
   ) => void
 }
 
@@ -81,7 +81,7 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   build<TData, TError, TVariables, TContext>(
     client: QueryClient,
     options: MutationOptions<TData, TError, TVariables, TContext>,
-    state?: MutationState<TData, TError, TVariables, TContext>
+    state?: MutationState<TData, TError, TVariables, TContext>,
   ): Mutation<TData, TError, TVariables, TContext> {
     const mutation = new Mutation({
       mutationCache: this,
@@ -106,13 +106,13 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   remove(mutation: Mutation<any, any, any, any>): void {
-    this.mutations = this.mutations.filter(x => x !== mutation)
+    this.mutations = this.mutations.filter((x) => x !== mutation)
     this.notify({ type: 'removed', mutation })
   }
 
   clear(): void {
     notifyManager.batch(() => {
-      this.mutations.forEach(mutation => {
+      this.mutations.forEach((mutation) => {
         this.remove(mutation)
       })
     })
@@ -123,35 +123,35 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
   }
 
   find<TData = unknown, TError = unknown, TVariables = any, TContext = unknown>(
-    filters: MutationFilters
+    filters: MutationFilters,
   ): Mutation<TData, TError, TVariables, TContext> | undefined {
     if (typeof filters.exact === 'undefined') {
       filters.exact = true
     }
 
-    return this.mutations.find(mutation => matchMutation(filters, mutation))
+    return this.mutations.find((mutation) => matchMutation(filters, mutation))
   }
 
   findAll(filters: MutationFilters): Mutation[] {
-    return this.mutations.filter(mutation => matchMutation(filters, mutation))
+    return this.mutations.filter((mutation) => matchMutation(filters, mutation))
   }
 
   notify(event: MutationCacheNotifyEvent) {
     notifyManager.batch(() => {
-      this.listeners.forEach(listener => {
+      this.listeners.forEach((listener) => {
         listener(event)
       })
     })
   }
 
   resumePausedMutations(): Promise<void> {
-    const pausedMutations = this.mutations.filter(x => x.state.isPaused)
+    const pausedMutations = this.mutations.filter((x) => x.state.isPaused)
     return notifyManager.batch(() =>
       pausedMutations.reduce(
         (promise, mutation) =>
           promise.then(() => mutation.continue().catch(noop)),
-        Promise.resolve()
-      )
+        Promise.resolve(),
+      ),
     )
   }
 }

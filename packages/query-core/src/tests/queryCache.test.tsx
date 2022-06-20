@@ -99,17 +99,17 @@ describe('queryCache', () => {
       expect(queryCache.findAll(key1, { stale: true })).toEqual([])
       expect(queryCache.findAll(key1, { stale: false })).toEqual([query1])
       expect(
-        queryCache.findAll(key1, { stale: false, type: 'active' })
+        queryCache.findAll(key1, { stale: false, type: 'active' }),
       ).toEqual([])
       expect(
-        queryCache.findAll(key1, { stale: false, type: 'inactive' })
+        queryCache.findAll(key1, { stale: false, type: 'inactive' }),
       ).toEqual([query1])
       expect(
         queryCache.findAll(key1, {
           stale: false,
           type: 'inactive',
           exact: true,
-        })
+        }),
       ).toEqual([query1])
 
       expect(queryCache.findAll(key2)).toEqual([query2])
@@ -121,9 +121,9 @@ describe('queryCache', () => {
         query3,
       ])
       expect(queryCache.findAll([{ a: 'a' }], { exact: true })).toEqual([])
-      expect(
-        queryCache.findAll([{ a: 'a', b: 'b' }], { exact: true })
-      ).toEqual([query3])
+      expect(queryCache.findAll([{ a: 'a', b: 'b' }], { exact: true })).toEqual(
+        [query3],
+      )
       expect(queryCache.findAll([{ a: 'a', b: 'b' }])).toEqual([query3])
       expect(queryCache.findAll([{ a: 'a', b: 'b', c: 'c' }])).toEqual([])
       expect(queryCache.findAll([{ a: 'a' }], { stale: false })).toEqual([
@@ -135,7 +135,7 @@ describe('queryCache', () => {
         query3,
       ])
       expect(
-        queryCache.findAll({ predicate: query => query === query3 })
+        queryCache.findAll({ predicate: (query) => query === query3 }),
       ).toEqual([query3])
       expect(queryCache.findAll(['posts'])).toEqual([query4])
 
@@ -176,7 +176,7 @@ describe('queryCache', () => {
       const testCache = new QueryCache({ onError })
       const testClient = createQueryClient({ queryCache: testCache })
       await testClient.prefetchQuery(key, () =>
-        Promise.reject<unknown>('error')
+        Promise.reject<unknown>('error'),
       )
       const query = testCache.find(key)
       expect(onError).toHaveBeenCalledWith('error', query)

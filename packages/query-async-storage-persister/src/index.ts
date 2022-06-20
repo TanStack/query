@@ -1,5 +1,8 @@
-
-import { PersistedClient, Persister, Promisable } from '@tanstack/query-persist-client'
+import {
+  PersistedClient,
+  Persister,
+  Promisable,
+} from '@tanstack/query-persist-client'
 import { asyncThrottle } from './asyncThrottle'
 
 interface AsyncStorage {
@@ -48,7 +51,7 @@ export const createAsyncStoragePersister = ({
 }: CreateAsyncStoragePersisterOptions): Persister => {
   if (typeof storage !== 'undefined') {
     const trySave = async (
-      persistedClient: PersistedClient
+      persistedClient: PersistedClient,
     ): Promise<Error | undefined> => {
       try {
         await storage.setItem(key, serialize(persistedClient))
@@ -59,7 +62,7 @@ export const createAsyncStoragePersister = ({
 
     return {
       persistClient: asyncThrottle(
-        async persistedClient => {
+        async (persistedClient) => {
           let client: PersistedClient | undefined = persistedClient
           let error = await trySave(client)
           let errorCount = 0
@@ -76,7 +79,7 @@ export const createAsyncStoragePersister = ({
             }
           }
         },
-        { interval: throttleTime }
+        { interval: throttleTime },
       ),
       restoreClient: async () => {
         const cacheString = await storage.getItem(key)
@@ -98,4 +101,4 @@ export const createAsyncStoragePersister = ({
   }
 }
 
-function noop () {}
+function noop() {}

@@ -1,4 +1,10 @@
-import { QueryObserver, InfiniteQueryObserver, QueryFunction, QueryKey, parseQueryArgs } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  InfiniteQueryObserver,
+  QueryFunction,
+  QueryKey,
+  parseQueryArgs,
+} from '@tanstack/query-core'
 import { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
@@ -8,7 +14,7 @@ export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 >(
   options: UseInfiniteQueryOptions<
     TQueryFnData,
@@ -16,13 +22,13 @@ export function useInfiniteQuery<
     TData,
     TQueryFnData,
     TQueryKey
-  >
+  >,
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
   options?: Omit<
@@ -34,13 +40,13 @@ export function useInfiniteQuery<
       TQueryKey
     >,
     'queryKey'
-  >
+  >,
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
@@ -53,13 +59,13 @@ export function useInfiniteQuery<
       TQueryKey
     >,
     'queryKey' | 'queryFn'
-  >
+  >,
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData,
   TError,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 >(
   arg1:
     | TQueryKey
@@ -85,11 +91,11 @@ export function useInfiniteQuery<
     TData,
     TQueryFnData,
     TQueryKey
-  >
+  >,
 ): UseInfiniteQueryResult<TData, TError> {
   const options = parseQueryArgs(arg1, arg2, arg3)
   return useBaseQuery(
     options,
-    InfiniteQueryObserver as typeof QueryObserver
+    InfiniteQueryObserver as typeof QueryObserver,
   ) as UseInfiniteQueryResult<TData, TError>
 }

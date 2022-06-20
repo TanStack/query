@@ -11,7 +11,7 @@ type BatchNotifyFunction = (callback: () => void) => void
 export function createNotifyManager() {
   let queue: NotifyCallback[] = []
   let transactions = 0
-  let notifyFn: NotifyFunction = callback => {
+  let notifyFn: NotifyFunction = (callback) => {
     callback()
   }
   let batchNotifyFn: BatchNotifyFunction = (callback: () => void) => {
@@ -59,7 +59,7 @@ export function createNotifyManager() {
     if (originalQueue.length) {
       scheduleMicrotask(() => {
         batchNotifyFn(() => {
-          originalQueue.forEach(callback => {
+          originalQueue.forEach((callback) => {
             notifyFn(callback)
           })
         })

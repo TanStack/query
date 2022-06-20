@@ -1,7 +1,12 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import { notifyManager, MutationKey, MutationFilters, parseMutationFilterArgs } from '@tanstack/query-core'
+import {
+  notifyManager,
+  MutationKey,
+  MutationFilters,
+  parseMutationFilterArgs,
+} from '@tanstack/query-core'
 import { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
 
@@ -9,17 +14,17 @@ interface Options extends ContextOptions {}
 
 export function useIsMutating(
   filters?: MutationFilters,
-  options?: Options
+  options?: Options,
 ): number
 export function useIsMutating(
   mutationKey?: MutationKey,
   filters?: Omit<MutationFilters, 'mutationKey'>,
-  options?: Options
+  options?: Options,
 ): number
 export function useIsMutating(
   arg1?: MutationKey | MutationFilters,
   arg2?: Omit<MutationFilters, 'mutationKey'> | Options,
-  arg3?: Options
+  arg3?: Options,
 ): number {
   const [filters, options = {}] = parseMutationFilterArgs(arg1, arg2, arg3)
 
@@ -28,11 +33,11 @@ export function useIsMutating(
 
   return useSyncExternalStore(
     React.useCallback(
-      onStoreChange =>
+      (onStoreChange) =>
         queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [queryCache]
+      [queryCache],
     ),
     () => queryClient.isMutating(filters),
-    () => queryClient.isMutating(filters)
+    () => queryClient.isMutating(filters),
   )
 }

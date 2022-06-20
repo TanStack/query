@@ -1,7 +1,11 @@
 import * as React from 'react'
 
 import { persistQueryClient, PersistQueryClientOptions } from './persist'
-import { QueryClientProvider, QueryClientProviderProps, IsRestoringProvider } from '@tanstack/react-query'
+import {
+  QueryClientProvider,
+  QueryClientProviderProps,
+  IsRestoringProvider,
+} from '@tanstack/react-query'
 
 export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   persistOptions: Omit<PersistQueryClientOptions, 'queryClient'>

@@ -22,7 +22,7 @@ export interface MutationState<
   TData = unknown,
   TError = unknown,
   TVariables = void,
-  TContext = unknown
+  TContext = unknown,
 > {
   context: TContext | undefined
   data: TData | undefined
@@ -81,7 +81,7 @@ export class Mutation<
   TData = unknown,
   TError = unknown,
   TVariables = void,
-  TContext = unknown
+  TContext = unknown,
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
@@ -131,7 +131,7 @@ export class Mutation<
   }
 
   removeObserver(observer: MutationObserver<any, any, any, any>): void {
-    this.observers = this.observers.filter(x => x !== observer)
+    this.observers = this.observers.filter((x) => x !== observer)
 
     this.scheduleGc()
 
@@ -193,7 +193,7 @@ export class Mutation<
         // Notify cache callback
         this.mutationCache.config.onMutate?.(
           this.state.variables,
-          this as Mutation<unknown, unknown, unknown, unknown>
+          this as Mutation<unknown, unknown, unknown, unknown>,
         )
         const context = await this.options.onMutate?.(this.state.variables!)
         if (context !== this.state.context) {
@@ -211,20 +211,20 @@ export class Mutation<
         data,
         this.state.variables,
         this.state.context,
-        this as Mutation<unknown, unknown, unknown, unknown>
+        this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
       await this.options.onSuccess?.(
         data,
         this.state.variables!,
-        this.state.context!
+        this.state.context!,
       )
 
       await this.options.onSettled?.(
         data,
         null,
         this.state.variables!,
-        this.state.context
+        this.state.context,
       )
 
       this.dispatch({ type: 'success', data })
@@ -236,7 +236,7 @@ export class Mutation<
           error,
           this.state.variables,
           this.state.context,
-          this as Mutation<unknown, unknown, unknown, unknown>
+          this as Mutation<unknown, unknown, unknown, unknown>,
         )
 
         if (process.env.NODE_ENV !== 'production') {
@@ -246,14 +246,14 @@ export class Mutation<
         await this.options.onError?.(
           error as TError,
           this.state.variables!,
-          this.state.context
+          this.state.context,
         )
 
         await this.options.onSettled?.(
           undefined,
           error as TError,
           this.state.variables!,
-          this.state.context
+          this.state.context,
         )
         throw error
       } finally {
@@ -264,7 +264,7 @@ export class Mutation<
 
   private dispatch(action: Action<TData, TError, TVariables, TContext>): void {
     const reducer = (
-      state: MutationState<TData, TError, TVariables, TContext>
+      state: MutationState<TData, TError, TVariables, TContext>,
     ): MutationState<TData, TError, TVariables, TContext> => {
       switch (action.type) {
         case 'failed':
@@ -319,7 +319,7 @@ export class Mutation<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.observers.forEach(observer => {
+      this.observers.forEach((observer) => {
         observer.onMutationUpdate(action)
       })
       this.mutationCache.notify({
@@ -335,7 +335,7 @@ export function getDefaultState<
   TData,
   TError,
   TVariables,
-  TContext
+  TContext,
 >(): MutationState<TData, TError, TVariables, TContext> {
   return {
     context: undefined,

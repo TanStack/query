@@ -21,9 +21,11 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const { mutate, data = 'empty', reset } = useMutation(() =>
-        Promise.resolve('mutation')
-      )
+      const {
+        mutate,
+        data = 'empty',
+        reset,
+      } = useMutation(() => Promise.resolve('mutation'))
 
       return (
         <div>
@@ -78,7 +80,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(getByRole('heading').textContent).toBe(
-        'Expected mock error. All is well!'
+        'Expected mock error. All is well!',
       )
     })
 
@@ -98,13 +100,13 @@ describe('useMutation', () => {
       const { mutate } = useMutation(
         (vars: { count: number }) => Promise.resolve(vars.count),
         {
-          onSuccess: data => {
+          onSuccess: (data) => {
             onSuccessMock(data)
           },
-          onSettled: data => {
+          onSettled: (data) => {
             onSettledMock(data)
           },
-        }
+        },
       )
 
       return (
@@ -153,7 +155,7 @@ describe('useMutation', () => {
       const { mutate } = useMutation(
         (vars: { count: number }) => {
           const error = new Error(
-            `Expected mock error. All is well! ${vars.count}`
+            `Expected mock error. All is well! ${vars.count}`,
           )
           error.stack = ''
           return Promise.reject(error)
@@ -165,7 +167,7 @@ describe('useMutation', () => {
           onSettled: (_data, error) => {
             onSettledMock(error?.message)
           },
-        }
+        },
       )
 
       return (
@@ -192,26 +194,26 @@ describe('useMutation', () => {
       expect(onErrorMock).toHaveBeenCalledTimes(3)
     })
     expect(onErrorMock).toHaveBeenCalledWith(
-      'Expected mock error. All is well! 1'
+      'Expected mock error. All is well! 1',
     )
     expect(onErrorMock).toHaveBeenCalledWith(
-      'Expected mock error. All is well! 2'
+      'Expected mock error. All is well! 2',
     )
     expect(onErrorMock).toHaveBeenCalledWith(
-      'Expected mock error. All is well! 3'
+      'Expected mock error. All is well! 3',
     )
 
     await waitFor(() => {
       expect(onSettledMock).toHaveBeenCalledTimes(3)
     })
     expect(onSettledMock).toHaveBeenCalledWith(
-      'Expected mock error. All is well! 1'
+      'Expected mock error. All is well! 1',
     )
     expect(onSettledMock).toHaveBeenCalledWith(
-      'Expected mock error. All is well! 2'
+      'Expected mock error. All is well! 2',
     )
     expect(onSettledMock).toHaveBeenCalledWith(
-      'Expected mock error. All is well! 3'
+      'Expected mock error. All is well! 3',
     )
   })
 
@@ -273,7 +275,7 @@ describe('useMutation', () => {
           onSettled: async () => {
             callbacks.push('useMutation.onSettled')
           },
-        }
+        },
       )
 
       React.useEffect(() => {
@@ -359,7 +361,7 @@ describe('useMutation', () => {
         {
           retry: 1,
           retryDelay: 5,
-        }
+        },
       )
 
       React.useEffect(() => {
@@ -392,7 +394,7 @@ describe('useMutation', () => {
         {
           retry: 1,
           retryDelay: 5,
-        }
+        },
       )
 
       return (
@@ -411,7 +413,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        rendered.getByText('error: null, status: idle, isPaused: false')
+        rendered.getByText('error: null, status: idle, isPaused: false'),
       ).toBeInTheDocument()
     })
 
@@ -419,7 +421,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        rendered.getByText('error: null, status: loading, isPaused: true')
+        rendered.getByText('error: null, status: loading, isPaused: true'),
       ).toBeInTheDocument()
     })
 
@@ -432,7 +434,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        rendered.getByText('error: oops, status: error, isPaused: false')
+        rendered.getByText('error: oops, status: error, isPaused: false'),
       ).toBeInTheDocument()
     })
 
@@ -455,7 +457,7 @@ describe('useMutation', () => {
         },
         {
           onMutate,
-        }
+        },
       )
 
       return (
@@ -553,7 +555,7 @@ describe('useMutation', () => {
           retry: 1,
           retryDelay: 5,
           networkMode: 'offlineFirst',
-        }
+        },
       )
 
       states.push(state)
@@ -644,7 +646,7 @@ describe('useMutation', () => {
           err.stack = ''
           return Promise.reject(err)
         },
-        { useErrorBoundary: true }
+        { useErrorBoundary: true },
       )
 
       return (
@@ -664,7 +666,7 @@ describe('useMutation', () => {
         )}
       >
         <Page />
-      </ErrorBoundary>
+      </ErrorBoundary>,
     )
 
     fireEvent.click(getByText('mutate'))
@@ -688,7 +690,7 @@ describe('useMutation', () => {
             boundary = !boundary
             return !boundary
           },
-        }
+        },
       )
 
       return (
@@ -709,7 +711,7 @@ describe('useMutation', () => {
         )}
       >
         <Page />
-      </ErrorBoundary>
+      </ErrorBoundary>,
     )
 
     // first error goes to component
@@ -753,7 +755,7 @@ describe('useMutation', () => {
         },
         {
           meta: { metaErrorMessage },
-        }
+        },
       )
 
       return (
@@ -768,7 +770,7 @@ describe('useMutation', () => {
 
     const { getByText, queryByText } = renderWithClient(
       queryClientMutationMeta,
-      <Page />
+      <Page />,
     )
 
     fireEvent.click(getByText('succeed'))
@@ -815,7 +817,7 @@ describe('useMutation', () => {
           cacheTime: 0,
           onSuccess,
           onSettled,
-        }
+        },
       )
 
       return (
@@ -847,7 +849,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        queryClient.getMutationCache().findAll({ mutationKey })
+        queryClient.getMutationCache().findAll({ mutationKey }),
       ).toHaveLength(0)
     })
 
@@ -864,10 +866,11 @@ describe('useMutation', () => {
       const context = React.createContext<QueryClient | undefined>(undefined)
 
       function Page() {
-        const { mutate, data = 'empty', reset } = useMutation(
-          () => Promise.resolve('mutation'),
-          { context }
-        )
+        const {
+          mutate,
+          data = 'empty',
+          reset,
+        } = useMutation(() => Promise.resolve('mutation'), { context })
 
         return (
           <div>
@@ -913,7 +916,7 @@ describe('useMutation', () => {
         <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
           <Page />
         </ErrorBoundary>,
-        { context }
+        { context },
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
@@ -937,7 +940,7 @@ describe('useMutation', () => {
         {
           onSuccess,
           onSettled,
-        }
+        },
       )
 
       return (
@@ -979,7 +982,7 @@ describe('useMutation', () => {
       'result2',
       null,
       'todo',
-      undefined
+      undefined,
     )
   })
 
@@ -996,7 +999,7 @@ describe('useMutation', () => {
         {
           onSuccess: () => Promise.reject(error),
           onError,
-        }
+        },
       )
 
       return (
@@ -1030,7 +1033,7 @@ describe('useMutation', () => {
         },
         {
           onError: () => Promise.reject(error),
-        }
+        },
       )
 
       return (
@@ -1068,7 +1071,7 @@ describe('useMutation', () => {
         {
           onSettled: () => Promise.reject(error),
           onError,
-        }
+        },
       )
 
       return (

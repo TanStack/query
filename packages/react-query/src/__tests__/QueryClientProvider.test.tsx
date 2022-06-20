@@ -34,7 +34,7 @@ describe('QueryClientProvider', () => {
     const rendered = render(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('test'))
@@ -85,7 +85,7 @@ describe('QueryClientProvider', () => {
         <QueryClientProvider client={queryClient2}>
           <Page2 />
         </QueryClientProvider>
-      </>
+      </>,
     )
 
     await waitFor(() => rendered.getByText('test1'))
@@ -126,7 +126,7 @@ describe('QueryClientProvider', () => {
     const rendered = render(
       <QueryClientProvider client={queryClient}>
         <Page />
-      </QueryClientProvider>
+      </QueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('test'))
@@ -140,10 +140,10 @@ describe('QueryClientProvider', () => {
       const key = queryKey()
 
       const contextOuter = React.createContext<QueryClient | undefined>(
-        undefined
+        undefined,
       )
       const contextInner = React.createContext<QueryClient | undefined>(
-        undefined
+        undefined,
       )
 
       const queryCacheOuter = new QueryCache()
@@ -166,7 +166,7 @@ describe('QueryClientProvider', () => {
         })
         const { data: testInnerInner } = useQuery(
           key,
-          async () => 'testInnerInner'
+          async () => 'testInnerInner',
         )
 
         return (
@@ -191,11 +191,11 @@ describe('QueryClientProvider', () => {
               <Page />
             </QueryClientProvider>
           </QueryClientProvider>
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       await waitFor(() =>
-        rendered.getByText('testOuter testInner testInnerInner')
+        rendered.getByText('testOuter testInner testInnerInner'),
       )
     })
   })
@@ -212,7 +212,7 @@ describe('QueryClientProvider', () => {
       }
 
       expect(() => render(<Page />)).toThrow(
-        'No QueryClient set, use QueryClientProvider to set one'
+        'No QueryClient set, use QueryClientProvider to set one',
       )
 
       consoleMock.mockRestore()
@@ -230,7 +230,7 @@ describe('QueryClientProvider', () => {
         queryClientFromWindow = React.useContext(
           window.ReactQueryClientContext as React.Context<
             QueryClient | undefined
-          >
+          >,
         )
         return null
       }
@@ -238,7 +238,7 @@ describe('QueryClientProvider', () => {
       render(
         <QueryClientProvider client={queryClient} contextSharing={true}>
           <Page />
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       expect(queryClientFromHook).toEqual(queryClient)
@@ -264,7 +264,7 @@ describe('QueryClientProvider', () => {
       renderToString(
         <QueryClientProvider client={queryClient} contextSharing={true}>
           <Page />
-        </QueryClientProvider>
+        </QueryClientProvider>,
       )
 
       expect(queryClientFromHook).toEqual(queryClient)

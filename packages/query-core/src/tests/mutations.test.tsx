@@ -67,7 +67,7 @@ describe('mutations', () => {
         await sleep(10)
         return text
       },
-      onMutate: text => text,
+      onMutate: (text) => text,
       variables: 'todo',
     })
 
@@ -89,7 +89,7 @@ describe('mutations', () => {
 
     const states: MutationState<string, unknown, string, string>[] = []
 
-    mutation.subscribe(state => {
+    mutation.subscribe((state) => {
       states.push(state)
     })
 
@@ -156,7 +156,7 @@ describe('mutations', () => {
         await sleep(20)
         return Promise.reject('err')
       },
-      onMutate: text => text,
+      onMutate: (text) => text,
       variables: 'todo',
       retry: 1,
       retryDelay: 1,
@@ -164,7 +164,7 @@ describe('mutations', () => {
 
     const states: MutationState<string, unknown, string, string>[] = []
 
-    mutation.subscribe(state => {
+    mutation.subscribe((state) => {
       states.push(state)
     })
 
@@ -272,7 +272,7 @@ describe('mutations', () => {
           isPaused: true,
           status: 'loading',
           variables: 'todo',
-        }
+        },
       )
 
     expect(mutation.state).toEqual({
@@ -307,7 +307,7 @@ describe('mutations', () => {
       mutationFn: async () => {
         return 'update'
       },
-      onMutate: text => text,
+      onMutate: (text) => text,
     })
     await mutation.mutate()
     expect(mutation.getCurrentResult().data).toEqual('update')
@@ -333,7 +333,7 @@ describe('mutations', () => {
       mutationFn: async () => {
         return 'update'
       },
-      onMutate: text => text,
+      onMutate: (text) => text,
     })
     await mutation.mutate()
 

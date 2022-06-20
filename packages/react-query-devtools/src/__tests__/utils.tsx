@@ -1,20 +1,20 @@
 import { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import * as React from 'react'
-import { ReactQueryDevtools } from '../..'
+import { ReactQueryDevtools } from '../'
 
 import { QueryClient, QueryClientProvider, QueryCache } from '../..'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
-  devtoolsOptions: Parameters<typeof ReactQueryDevtools>[number] = {}
+  devtoolsOptions: Parameters<typeof ReactQueryDevtools>[number] = {},
 ) {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client} context={devtoolsOptions.context}>
       <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
-    </QueryClientProvider>
+    </QueryClientProvider>,
   )
   return {
     ...result,
@@ -23,13 +23,13 @@ export function renderWithClient(
         <QueryClientProvider client={client} context={devtoolsOptions.context}>
           <ReactQueryDevtools {...devtoolsOptions} />
           {rerenderUi}
-        </QueryClientProvider>
+        </QueryClientProvider>,
       ),
   }
 }
 
 export function sleep(timeout: number): Promise<void> {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, timeout)
   })
 }
@@ -42,22 +42,21 @@ export function sleep(timeout: number): Promise<void> {
  * @param textToMatch The string that needs to be matched
  * @reference https://stackoverflow.com/a/56859650/8252081
  */
-export const getByTextContent = (textToMatch: string): MatcherFunction => (
-  _content,
-  node
-) => {
-  if (!node) {
-    return false
-  }
-  const hasText = (currentNode: Element) =>
-    currentNode.textContent === textToMatch
-  const nodeHasText = hasText(node)
-  const childrenDontHaveText = Array.from(node.children).every(
-    child => !hasText(child as HTMLElement)
-  )
+export const getByTextContent =
+  (textToMatch: string): MatcherFunction =>
+  (_content, node) => {
+    if (!node) {
+      return false
+    }
+    const hasText = (currentNode: Element) =>
+      currentNode.textContent === textToMatch
+    const nodeHasText = hasText(node)
+    const childrenDontHaveText = Array.from(node.children).every(
+      (child) => !hasText(child as HTMLElement),
+    )
 
-  return nodeHasText && childrenDontHaveText
-}
+    return nodeHasText && childrenDontHaveText
+  }
 
 interface CreateQueryClientResponse {
   queryClient: QueryClient

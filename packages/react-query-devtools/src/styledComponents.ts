@@ -17,7 +17,7 @@ export const Panel = styled(
       fontSize: '.9em',
       // flexDirection: 'column',
     },
-  }
+  },
 )
 
 export const ActiveQueryPanel = styled(
@@ -33,7 +33,7 @@ export const ActiveQueryPanel = styled(
     '(max-width: 700px)': (_props, theme) => ({
       borderTop: `2px solid ${theme.gray}`,
     }),
-  }
+  },
 )
 
 export const Button = styled('button', (props, theme) => ({
@@ -104,5 +104,5 @@ export const Select = styled(
     '(max-width: 500px)': {
       display: 'none',
     },
-  }
+  },
 )

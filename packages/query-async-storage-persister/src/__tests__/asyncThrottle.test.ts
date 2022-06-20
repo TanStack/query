@@ -12,7 +12,7 @@ describe('asyncThrottle', () => {
         if (complete) {
           complete(id)
         }
-      }
+      },
     )
     const testFunc = asyncThrottle(mockFunc, { interval })
 
@@ -20,13 +20,13 @@ describe('asyncThrottle', () => {
     await delay(1)
     testFunc(2)
     await delay(1)
-    await new Promise(resolve => testFunc(3, resolve))
+    await new Promise((resolve) => testFunc(3, resolve))
 
     expect(mockFunc).toBeCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
-      interval
+      interval,
     )
   })
 
@@ -40,7 +40,7 @@ describe('asyncThrottle', () => {
         if (complete) {
           complete(id)
         }
-      }
+      },
     )
     const testFunc = asyncThrottle(mockFunc, { interval })
 
@@ -49,13 +49,13 @@ describe('asyncThrottle', () => {
     await delay(35)
     testFunc(3)
     await delay(35)
-    await new Promise(resolve => testFunc(4, resolve))
+    await new Promise((resolve) => testFunc(4, resolve))
 
     expect(mockFunc).toBeCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(4)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
-      interval
+      interval,
     )
   })
 
@@ -69,19 +69,19 @@ describe('asyncThrottle', () => {
         if (complete) {
           complete(id)
         }
-      }
+      },
     )
     const testFunc = asyncThrottle(mockFunc, { interval })
 
     testFunc(1)
     testFunc(2)
-    await new Promise(resolve => testFunc(3, resolve))
+    await new Promise((resolve) => testFunc(3, resolve))
 
     expect(mockFunc).toBeCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(3)
     expect(execTimeStamps.length).toBe(2)
     expect(execTimeStamps[1]! - execTimeStamps[0]!).toBeGreaterThanOrEqual(
-      interval
+      interval,
     )
   })
 
@@ -93,19 +93,19 @@ describe('asyncThrottle', () => {
         if (complete) {
           complete(id)
         }
-      }
+      },
     )
     const testFunc = asyncThrottle(mockFunc, { interval: 10 })
 
     testFunc(1)
     await delay(1)
-    await new Promise(resolve => testFunc(2, resolve))
+    await new Promise((resolve) => testFunc(2, resolve))
 
     expect(mockFunc).toBeCalledTimes(2)
     expect(mockFunc.mock.calls[1]?.[0]).toBe(2)
   })
 
-  test('"onError" should be called when "func" throw error', done => {
+  test('"onError" should be called when "func" throw error', (done) => {
     const err = new Error('error')
     const handleError = (e: unknown) => {
       expect(e).toBe(err)
@@ -116,7 +116,7 @@ describe('asyncThrottle', () => {
       () => {
         throw err
       },
-      { onError: handleError }
+      { onError: handleError },
     )
     testFunc()
   })

@@ -23,7 +23,7 @@ interface QueryConfig<
   TQueryFnData,
   TError,
   TData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > {
   cache: QueryCache
   queryKey: TQueryKey
@@ -53,7 +53,7 @@ export interface FetchContext<
   TQueryFnData,
   TError,
   TData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
@@ -68,10 +68,10 @@ export interface QueryBehavior<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > {
   onFetch: (
-    context: FetchContext<TQueryFnData, TError, TData, TQueryKey>
+    context: FetchContext<TQueryFnData, TError, TData, TQueryKey>,
   ) => void
 }
 
@@ -139,7 +139,7 @@ export class Query<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > extends Removable {
   queryKey: TQueryKey
   queryHash: string
@@ -175,7 +175,7 @@ export class Query<
   }
 
   private setOptions(
-    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+    options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.defaultOptions, ...options }
 
@@ -192,7 +192,7 @@ export class Query<
 
   setData(
     newData: TData,
-    options?: SetDataOptions & { manual: boolean }
+    options?: SetDataOptions & { manual: boolean },
   ): TData {
     const data = replaceData(this.state.data, newData, this.options)
 
@@ -209,7 +209,7 @@ export class Query<
 
   setState(
     state: QueryState<TData, TError>,
-    setStateOptions?: SetStateOptions
+    setStateOptions?: SetStateOptions,
   ): void {
     this.dispatch({ type: 'setState', state, setStateOptions })
   }
@@ -232,7 +232,7 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.observers.some(observer => observer.options.enabled !== false)
+    return this.observers.some((observer) => observer.options.enabled !== false)
   }
 
   isDisabled(): boolean {
@@ -243,7 +243,7 @@ export class Query<
     return (
       this.state.isInvalidated ||
       !this.state.dataUpdatedAt ||
-      this.observers.some(observer => observer.getCurrentResult().isStale)
+      this.observers.some((observer) => observer.getCurrentResult().isStale)
     )
   }
 
@@ -256,7 +256,7 @@ export class Query<
   }
 
   onFocus(): void {
-    const observer = this.observers.find(x => x.shouldFetchOnWindowFocus())
+    const observer = this.observers.find((x) => x.shouldFetchOnWindowFocus())
 
     if (observer) {
       observer.refetch({ cancelRefetch: false })
@@ -267,7 +267,7 @@ export class Query<
   }
 
   onOnline(): void {
-    const observer = this.observers.find(x => x.shouldFetchOnReconnect())
+    const observer = this.observers.find((x) => x.shouldFetchOnReconnect())
 
     if (observer) {
       observer.refetch({ cancelRefetch: false })
@@ -290,7 +290,7 @@ export class Query<
 
   removeObserver(observer: QueryObserver<any, any, any, any, any>): void {
     if (this.observers.indexOf(observer) !== -1) {
-      this.observers = this.observers.filter(x => x !== observer)
+      this.observers = this.observers.filter((x) => x !== observer)
 
       if (!this.observers.length) {
         // If the transport layer does not support cancellation
@@ -322,7 +322,7 @@ export class Query<
 
   fetch(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    fetchOptions?: FetchOptions
+    fetchOptions?: FetchOptions,
   ): Promise<TData> {
     if (this.state.fetchStatus !== 'idle') {
       if (this.state.dataUpdatedAt && fetchOptions?.cancelRefetch) {
@@ -344,7 +344,7 @@ export class Query<
     // Use the options from the first observer with a query function if no function is found.
     // This can happen when the query is hydrated or created with setQueryData.
     if (!this.options.queryFn) {
-      const observer = this.observers.find(x => x.options.queryFn)
+      const observer = this.observers.find((x) => x.options.queryFn)
       if (observer) {
         this.setOptions(observer.options)
       }
@@ -353,7 +353,7 @@ export class Query<
     if (!Array.isArray(this.options.queryKey)) {
       if (process.env.NODE_ENV !== 'production') {
         this.logger.error(
-          `As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`
+          `As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`,
         )
       }
     }
@@ -448,7 +448,7 @@ export class Query<
     this.retryer = createRetryer({
       fn: context.fetchFn as () => TData,
       abort: abortController?.abort.bind(abortController),
-      onSuccess: data => {
+      onSuccess: (data) => {
         if (typeof data === 'undefined') {
           onError(new Error('Query data cannot be undefined') as any)
           return
@@ -487,7 +487,7 @@ export class Query<
 
   private dispatch(action: Action<TData, TError>): void {
     const reducer = (
-      state: QueryState<TData, TError>
+      state: QueryState<TData, TError>,
     ): QueryState<TData, TError> => {
       switch (action.type) {
         case 'failed':
@@ -564,7 +564,7 @@ export class Query<
     this.state = reducer(this.state)
 
     notifyManager.batch(() => {
-      this.observers.forEach(observer => {
+      this.observers.forEach((observer) => {
         observer.onQueryUpdate(action)
       })
 
@@ -577,9 +577,9 @@ function getDefaultState<
   TQueryFnData,
   TError,
   TData,
-  TQueryKey extends QueryKey
+  TQueryKey extends QueryKey,
 >(
-  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): QueryState<TData, TError> {
   const data =
     typeof options.initialData === 'function'

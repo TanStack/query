@@ -9,7 +9,12 @@ import {
   sleep,
 } from '../../tests/utils'
 import { renderWithClient } from './utils'
-import { QueryClient, useQuery, useIsFetching, QueryCache } from '../../build/types'
+import {
+  QueryClient,
+  useQuery,
+  useIsFetching,
+  QueryCache,
+} from '../../build/types'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -31,7 +36,7 @@ describe('useIsFetching', () => {
         },
         {
           enabled: ready,
-        }
+        },
       )
 
       return (
@@ -178,7 +183,7 @@ describe('useIsFetching', () => {
           {
             enabled: ready,
             context,
-          }
+          },
         )
 
         return (
@@ -194,7 +199,7 @@ describe('useIsFetching', () => {
         <Page />,
         {
           context,
-        }
+        },
       )
 
       await findByText('isFetching: 0')
@@ -233,7 +238,7 @@ describe('useIsFetching', () => {
         </ErrorBoundary>,
         {
           context,
-        }
+        },
       )
 
       await waitFor(() => rendered.getByText('error boundary'))

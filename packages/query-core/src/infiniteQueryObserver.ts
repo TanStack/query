@@ -21,7 +21,7 @@ import {
 import { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (
-  result: InfiniteQueryObserverResult<TData, TError>
+  result: InfiniteQueryObserverResult<TData, TError>,
 ) => void
 
 export class InfiniteQueryObserver<
@@ -29,7 +29,7 @@ export class InfiniteQueryObserver<
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > extends QueryObserver<
   TQueryFnData,
   TError,
@@ -39,7 +39,7 @@ export class InfiniteQueryObserver<
 > {
   // Type override
   subscribe!: (
-    listener?: InfiniteQueryObserverListener<TData, TError>
+    listener?: InfiniteQueryObserverListener<TData, TError>,
   ) => () => void
 
   // Type override
@@ -47,7 +47,7 @@ export class InfiniteQueryObserver<
 
   // Type override
   protected fetch!: (
-    fetchOptions: ObserverFetchOptions
+    fetchOptions: ObserverFetchOptions,
   ) => Promise<InfiniteQueryObserverResult<TData, TError>>
 
   // eslint-disable-next-line @typescript-eslint/no-useless-constructor
@@ -59,7 +59,7 @@ export class InfiniteQueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ) {
     super(client, options)
   }
@@ -78,14 +78,14 @@ export class InfiniteQueryObserver<
       TQueryData,
       TQueryKey
     >,
-    notifyOptions?: NotifyOptions
+    notifyOptions?: NotifyOptions,
   ): void {
     super.setOptions(
       {
         ...options,
         behavior: infiniteQueryBehavior(),
       },
-      notifyOptions
+      notifyOptions,
     )
   }
 
@@ -96,7 +96,7 @@ export class InfiniteQueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ): InfiniteQueryObserverResult<TData, TError> {
     options.behavior = infiniteQueryBehavior()
     return super.getOptimisticResult(options) as InfiniteQueryObserverResult<
@@ -138,7 +138,7 @@ export class InfiniteQueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
     const result = super.createResult(query, options)

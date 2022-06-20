@@ -319,7 +319,7 @@ describe('queryClient', () => {
     test('should accept an update function', () => {
       const key = queryKey()
 
-      const updater = jest.fn(oldData => `new data + ${oldData}`)
+      const updater = jest.fn((oldData) => `new data + ${oldData}`)
 
       queryClient.setQueryData(key, 'test data')
       queryClient.setQueryData(key, updater)
@@ -376,7 +376,7 @@ describe('queryClient', () => {
         expect(queryClient.getQueryState(key)).toMatchObject({
           data: 23,
           fetchStatus: 'idle',
-        })
+        }),
       )
     })
   })
@@ -386,8 +386,8 @@ describe('queryClient', () => {
       queryClient.setQueryData(['key', 1], 1)
       queryClient.setQueryData(['key', 2], 2)
 
-      const result = queryClient.setQueriesData<number>(['key'], old =>
-        old ? old + 5 : undefined
+      const result = queryClient.setQueriesData<number>(['key'], (old) =>
+        old ? old + 5 : undefined,
       )
 
       expect(result).toEqual([
@@ -404,8 +404,8 @@ describe('queryClient', () => {
       const query1 = queryCache.find(['key', 1])!
 
       const result = queryClient.setQueriesData<number>(
-        { predicate: query => query === query1 },
-        old => old! + 5
+        { predicate: (query) => query === query1 },
+        (old) => old! + 5,
       )
 
       expect(result).toEqual([[['key', 1], 6]])
@@ -464,7 +464,7 @@ describe('queryClient', () => {
       const query1 = queryCache.find(['key', 1])!
 
       const result = queryClient.getQueriesData({
-        predicate: query => query === query1,
+        predicate: (query) => query === query1,
       })
 
       expect(result).toEqual([[['key', 1], 1]])
@@ -483,8 +483,8 @@ describe('queryClient', () => {
       await expect(
         queryClient.fetchQuery<StrictData, any, StrictData, StrictQueryKey>(
           key,
-          fetchFn
-        )
+          fetchFn,
+        ),
       ).resolves.toEqual('data')
     })
 
@@ -493,12 +493,9 @@ describe('queryClient', () => {
       const key = queryKey()
 
       await expect(
-        queryClient.fetchQuery(
-          key,
-          async (): Promise<unknown> => {
-            throw new Error('error')
-          }
-        )
+        queryClient.fetchQuery(key, async (): Promise<unknown> => {
+          throw new Error('error')
+        }),
       ).rejects.toEqual(new Error('error'))
     })
 
@@ -520,11 +517,11 @@ describe('queryClient', () => {
           await sleep(10)
           return 1
         },
-        { cacheTime: 0 }
+        { cacheTime: 0 },
       )
       expect(result).toEqual(1)
       await waitFor(() =>
-        expect(queryClient.getQueryData(key1)).toEqual(undefined)
+        expect(queryClient.getQueryData(key1)).toEqual(undefined),
       )
     })
 
@@ -536,7 +533,7 @@ describe('queryClient', () => {
           await sleep(10)
           return 1
         },
-        { cacheTime: Infinity }
+        { cacheTime: Infinity },
       )
       const result2 = queryClient.getQueryData(key1)
       expect(result).toEqual(1)
@@ -603,7 +600,7 @@ describe('queryClient', () => {
           any,
           StrictData,
           StrictQueryKey
-        >(key, fetchFn)
+        >(key, fetchFn),
       ).resolves.toEqual(data)
     })
 
@@ -611,7 +608,7 @@ describe('queryClient', () => {
       const key = queryKey()
       const result = await queryClient.fetchInfiniteQuery(
         key,
-        ({ pageParam = 10 }) => Number(pageParam)
+        ({ pageParam = 10 }) => Number(pageParam),
       )
       const result2 = queryClient.getQueryData(key)
 
@@ -653,7 +650,7 @@ describe('queryClient', () => {
       const key = queryKey()
 
       await queryClient.prefetchInfiniteQuery(key, ({ pageParam = 10 }) =>
-        Number(pageParam)
+        Number(pageParam),
       )
 
       const result = queryClient.getQueryData(key)
@@ -696,7 +693,7 @@ describe('queryClient', () => {
         },
         {
           retry: false,
-        }
+        },
       )
 
       expect(result).toBeUndefined()
@@ -711,7 +708,7 @@ describe('queryClient', () => {
         async () => {
           return 'data'
         },
-        { cacheTime: 10 }
+        { cacheTime: 10 },
       )
       expect(queryCache.find(key)).toBeDefined()
       await sleep(15)
@@ -731,7 +728,7 @@ describe('queryClient', () => {
 
       // check the error doesn't occur
       expect(() =>
-        queryClient.removeQueries({ queryKey: key, exact: true })
+        queryClient.removeQueries({ queryKey: key, exact: true }),
       ).not.toThrow()
 
       // check query was successful removed
@@ -921,7 +918,7 @@ describe('queryClient', () => {
       const unsubscribe = observer.subscribe(() => undefined)
       await queryClient.refetchQueries(
         { type: 'active', stale: true },
-        { cancelRefetch: false }
+        { cancelRefetch: false },
       )
       unsubscribe()
       expect(queryFn1).toHaveBeenCalledTimes(2)
@@ -1018,7 +1015,7 @@ describe('queryClient', () => {
       try {
         await queryClient.refetchQueries(
           { queryKey: key1 },
-          { throwOnError: true }
+          { throwOnError: true },
         )
       } catch (err) {
         error = err
@@ -1138,7 +1135,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn: ({ signal }) => {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             fetchCount++
             setTimeout(() => resolve(5), 10)
             if (signal) {
@@ -1165,7 +1162,7 @@ describe('queryClient', () => {
       const observer = new QueryObserver(queryClient, {
         queryKey: key,
         queryFn: ({ signal }) => {
-          return new Promise(resolve => {
+          return new Promise((resolve) => {
             fetchCount++
             setTimeout(() => resolve(5), 10)
             if (signal) {
@@ -1270,7 +1267,7 @@ describe('queryClient', () => {
       const observer = new InfiniteQueryObserver<number>(queryClient, {
         queryKey: key,
         queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
-        getNextPageParam: lastPage => lastPage + 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
       })
 
       await observer.fetchNextPage()
@@ -1297,7 +1294,7 @@ describe('queryClient', () => {
       const observer = new InfiniteQueryObserver<number>(queryClient, {
         queryKey: key,
         queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
-        getNextPageParam: lastPage => lastPage + 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
       })
 
       await observer.fetchNextPage()
@@ -1328,7 +1325,7 @@ describe('queryClient', () => {
       new InfiniteQueryObserver<number>(queryClient, {
         queryKey: key,
         queryFn: ({ pageParam = 10 }) => Number(pageParam) * multiplier,
-        getNextPageParam: lastPage => lastPage + 1,
+        getNextPageParam: (lastPage) => lastPage + 1,
         initialData: () => ({
           pages: [10, 11],
           pageParams: [10, 11],
@@ -1362,15 +1359,15 @@ describe('queryClient', () => {
 
       const queryCacheOnFocusSpy = jest.spyOn(
         testClient.getQueryCache(),
-        'onFocus'
+        'onFocus',
       )
       const queryCacheOnOnlineSpy = jest.spyOn(
         testClient.getQueryCache(),
-        'onOnline'
+        'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = jest.spyOn(
         testClient.getMutationCache(),
-        'resumePausedMutations'
+        'resumePausedMutations',
       )
 
       focusManager.setFocused(false)
@@ -1395,15 +1392,15 @@ describe('queryClient', () => {
 
       const queryCacheOnFocusSpy = jest.spyOn(
         testClient.getQueryCache(),
-        'onFocus'
+        'onFocus',
       )
       const queryCacheOnOnlineSpy = jest.spyOn(
         testClient.getQueryCache(),
-        'onOnline'
+        'onOnline',
       )
       const mutationCacheResumePausedMutationsSpy = jest.spyOn(
         testClient.getMutationCache(),
-        'resumePausedMutations'
+        'resumePausedMutations',
       )
 
       onlineManager.setOnline(false)
@@ -1431,7 +1428,7 @@ describe('queryClient', () => {
       queryClient.setMutationDefaults(key, mutationOptions1)
       queryClient.setMutationDefaults(key, mutationOptions2)
       expect(queryClient.getMutationDefaults(key)).toMatchObject(
-        mutationOptions2
+        mutationOptions2,
       )
     })
   })

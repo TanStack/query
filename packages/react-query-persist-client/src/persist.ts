@@ -88,7 +88,7 @@ export async function persistQueryClientRestore({
       queryClient
         .getLogger()
         .warn(
-          'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
+          'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.',
         )
     }
     persister.removeClient()
@@ -120,7 +120,7 @@ export async function persistQueryClientSave({
  * @returns an unsubscribe function (to discontinue monitoring)
  */
 export function persistQueryClientSubscribe(
-  props: PersistedQueryClientSaveOptions
+  props: PersistedQueryClientSaveOptions,
 ) {
   const unsubscribeQueryCache = props.queryClient
     .getQueryCache()
@@ -144,7 +144,7 @@ export function persistQueryClientSubscribe(
  * Restores persisted data to QueryCache and persists further changes.
  */
 export function persistQueryClient(
-  props: PersistQueryClientOptions
+  props: PersistQueryClientOptions,
 ): [() => void, Promise<void>] {
   let hasUnsubscribed = false
   let persistQueryClientUnsubscribe: (() => void) | undefined

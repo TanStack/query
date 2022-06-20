@@ -69,10 +69,10 @@ describe('query', () => {
       {
         retry: 3,
         retryDelay: 1,
-      }
+      },
     )
 
-    promise.then(data => {
+    promise.then((data) => {
       result = data
     })
 
@@ -117,10 +117,10 @@ describe('query', () => {
       {
         retry: 3,
         retryDelay: 1,
-      }
+      },
     )
 
-    promise.then(data => {
+    promise.then((data) => {
       result = data
     })
 
@@ -160,10 +160,10 @@ describe('query', () => {
       {
         retry: 3,
         retryDelay: 1,
-      }
+      },
     )
 
-    promise.catch(data => {
+    promise.catch((data) => {
       result = data
     })
 
@@ -307,7 +307,7 @@ describe('query', () => {
       retryDelay: 10,
     })
 
-    promise.catch(e => {
+    promise.catch((e) => {
       error = e
     })
 
@@ -353,7 +353,7 @@ describe('query', () => {
       retryDelay: 10,
     })
 
-    promise.catch(e => {
+    promise.catch((e) => {
       error = e
     })
 
@@ -432,12 +432,9 @@ describe('query', () => {
   test('cancelling a rejected query should not have any effect', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(
-      key,
-      async (): Promise<unknown> => {
-        throw new Error('error')
-      }
-    )
+    await queryClient.prefetchQuery(key, async (): Promise<unknown> => {
+      throw new Error('error')
+    })
     const query = queryCache.find(key)!
     query.cancel()
     await sleep(10)
@@ -458,7 +455,7 @@ describe('query', () => {
       () => Promise.reject<string>('reject'),
       {
         retry: false,
-      }
+      },
     )
     expect(query.state.status).toBe('error')
 
@@ -468,7 +465,7 @@ describe('query', () => {
         await sleep(10)
         return Promise.reject<unknown>('reject')
       },
-      { retry: false }
+      { retry: false },
     )
     expect(query.state.status).toBe('error')
 
@@ -634,7 +631,7 @@ describe('query', () => {
     expect(queryFn).toBeCalledWith(
       expect.objectContaining({
         meta,
-      })
+      }),
     )
   })
 
@@ -735,7 +732,7 @@ describe('query', () => {
       },
       {
         meta,
-      }
+      },
     )
 
     // Spy on private dispatch method
@@ -754,7 +751,7 @@ describe('query', () => {
         // cancelRefetch must be set to true to enter in the case to test
         // where isFetching is true
         cancelRefetch: true,
-      }
+      },
     )
 
     // Should not call dispatch with type set to fetch
@@ -816,7 +813,7 @@ describe('query', () => {
 
     let observerResult: QueryObserverResult<unknown, unknown> | undefined
 
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
 

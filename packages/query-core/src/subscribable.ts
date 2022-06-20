@@ -14,7 +14,7 @@ export class Subscribable<TListener extends Function = Listener> {
     this.onSubscribe()
 
     return () => {
-      this.listeners = this.listeners.filter(x => x !== listener)
+      this.listeners = this.listeners.filter((x) => x !== listener)
       this.onUnsubscribe()
     }
   }

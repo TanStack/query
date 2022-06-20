@@ -2,7 +2,7 @@ import { Subscribable } from './subscribable'
 import { isServer } from './utils'
 
 type SetupFn = (
-  setFocused: (focused?: boolean) => void
+  setFocused: (focused?: boolean) => void,
 ) => (() => void) | undefined
 
 export class FocusManager extends Subscribable {
@@ -13,7 +13,7 @@ export class FocusManager extends Subscribable {
 
   constructor() {
     super()
-    this.setup = onFocus => {
+    this.setup = (onFocus) => {
       // addEventListener does not exist in React Native, but window does
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isServer && window.addEventListener) {
@@ -47,7 +47,7 @@ export class FocusManager extends Subscribable {
   setEventListener(setup: SetupFn): void {
     this.setup = setup
     this.cleanup?.()
-    this.cleanup = setup(focused => {
+    this.cleanup = setup((focused) => {
       if (typeof focused === 'boolean') {
         this.setFocused(focused)
       } else {
@@ -65,7 +65,7 @@ export class FocusManager extends Subscribable {
   }
 
   onFocus(): void {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       listener()
     })
   }
@@ -81,7 +81,7 @@ export class FocusManager extends Subscribable {
     }
 
     return [undefined, 'visible', 'prerender'].includes(
-      document.visibilityState
+      document.visibilityState,
     )
   }
 }

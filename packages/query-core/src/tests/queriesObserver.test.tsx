@@ -35,7 +35,7 @@ describe('queriesObserver', () => {
       { queryKey: key2, queryFn: queryFn2 },
     ])
     let observerResult
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
     await sleep(1)
@@ -52,7 +52,7 @@ describe('queriesObserver', () => {
       { queryKey: undefined, queryFn: queryFn2 },
     ])
     let observerResult
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       observerResult = result
     })
     await sleep(1)
@@ -73,7 +73,7 @@ describe('queriesObserver', () => {
     ])
     const results: QueryObserverResult[][] = []
     results.push(observer.getCurrentResult())
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -118,7 +118,7 @@ describe('queriesObserver', () => {
     ])
     const results: QueryObserverResult[][] = []
     results.push(observer.getCurrentResult())
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -165,7 +165,7 @@ describe('queriesObserver', () => {
     ])
     const results: QueryObserverResult[][] = []
     results.push(observer.getCurrentResult())
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -213,7 +213,7 @@ describe('queriesObserver', () => {
     ])
     const results: QueryObserverResult[][] = []
     results.push(observer.getCurrentResult())
-    const unsubscribe = observer.subscribe(result => {
+    const unsubscribe = observer.subscribe((result) => {
       results.push(result)
     })
     await sleep(1)
@@ -321,7 +321,7 @@ describe('queriesObserver', () => {
       newQueryObserver,
       // The current queries observer result is re-used here
       // to use a typescript friendly result
-      queriesObserver.getCurrentResult()[0]!
+      queriesObserver.getCurrentResult()[0]!,
     )
 
     // Should not alter the result

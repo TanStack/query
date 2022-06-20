@@ -24,7 +24,7 @@ import { Subscribable } from './subscribable'
 import { canFetch, isCancelledError } from './retryer'
 
 type QueryObserverListener<TData, TError> = (
-  result: QueryObserverResult<TData, TError>
+  result: QueryObserverResult<TData, TError>,
 ) => void
 
 export interface NotifyOptions {
@@ -43,7 +43,7 @@ export class QueryObserver<
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > extends Subscribable<QueryObserverListener<TData, TError>> {
   options: QueryObserverOptions<
     TQueryFnData,
@@ -82,7 +82,7 @@ export class QueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ) {
     super()
 
@@ -121,7 +121,7 @@ export class QueryObserver<
     return shouldFetchOn(
       this.currentQuery,
       this.options,
-      this.options.refetchOnReconnect
+      this.options.refetchOnReconnect,
     )
   }
 
@@ -129,7 +129,7 @@ export class QueryObserver<
     return shouldFetchOn(
       this.currentQuery,
       this.options,
-      this.options.refetchOnWindowFocus
+      this.options.refetchOnWindowFocus,
     )
   }
 
@@ -148,7 +148,7 @@ export class QueryObserver<
       TQueryData,
       TQueryKey
     >,
-    notifyOptions?: NotifyOptions
+    notifyOptions?: NotifyOptions,
   ): void {
     const prevOptions = this.options
     const prevQuery = this.currentQuery
@@ -178,7 +178,7 @@ export class QueryObserver<
         this.currentQuery,
         prevQuery,
         this.options,
-        prevOptions
+        prevOptions,
       )
     ) {
       this.executeFetch()
@@ -217,7 +217,7 @@ export class QueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ): QueryObserverResult<TData, TError> {
     const query = this.client.getQueryCache().build(this.client, options)
 
@@ -229,11 +229,11 @@ export class QueryObserver<
   }
 
   trackResult(
-    result: QueryObserverResult<TData, TError>
+    result: QueryObserverResult<TData, TError>,
   ): QueryObserverResult<TData, TError> {
     const trackedResult = {} as QueryObserverResult<TData, TError>
 
-    Object.keys(result).forEach(key => {
+    Object.keys(result).forEach((key) => {
       Object.defineProperty(trackedResult, key, {
         configurable: false,
         enumerable: true,
@@ -274,7 +274,7 @@ export class QueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ): Promise<QueryObserverResult<TData, TError>> {
     const defaultedOptions = this.client.defaultQueryOptions(options)
 
@@ -287,7 +287,7 @@ export class QueryObserver<
   }
 
   protected fetch(
-    fetchOptions: ObserverFetchOptions
+    fetchOptions: ObserverFetchOptions,
   ): Promise<QueryObserverResult<TData, TError>> {
     return this.executeFetch({
       ...fetchOptions,
@@ -299,7 +299,7 @@ export class QueryObserver<
   }
 
   private executeFetch(
-    fetchOptions?: ObserverFetchOptions
+    fetchOptions?: ObserverFetchOptions,
   ): Promise<TQueryData | undefined> {
     // Make sure we reference the latest query as the current one might have been removed
     this.updateQuery()
@@ -307,7 +307,7 @@ export class QueryObserver<
     // Fetch
     let promise: Promise<TQueryData | undefined> = this.currentQuery.fetch(
       this.options as QueryOptions<TQueryFnData, TError, TQueryData, TQueryKey>,
-      fetchOptions
+      fetchOptions,
     )
 
     if (!fetchOptions?.throwOnError) {
@@ -330,7 +330,7 @@ export class QueryObserver<
 
     const time = timeUntilStale(
       this.currentResult.dataUpdatedAt,
-      this.options.staleTime
+      this.options.staleTime,
     )
 
     // The timeout is sometimes triggered 1 ms before the stale time expiration.
@@ -397,7 +397,7 @@ export class QueryObserver<
       TData,
       TQueryData,
       TQueryKey
-    >
+    >,
   ): QueryObserverResult<TData, TError> {
     const prevQuery = this.currentQuery
     const prevOptions = this.options
@@ -480,7 +480,7 @@ export class QueryObserver<
     }
     // Use query data
     else {
-      data = (state.data as unknown) as TData
+      data = state.data as unknown as TData
     }
 
     // Show placeholder data if needed
@@ -508,7 +508,7 @@ export class QueryObserver<
             placeholderData = replaceData(
               prevResult?.data,
               placeholderData,
-              options
+              options,
             )
             this.selectError = null
           } catch (selectError) {
@@ -606,7 +606,7 @@ export class QueryObserver<
         includedProps.add('error')
       }
 
-      return Object.keys(this.currentResult).some(key => {
+      return Object.keys(this.currentResult).some((key) => {
         const typedKey = key as keyof QueryObserverResult
         const changed = this.currentResult[typedKey] !== prevResult[typedKey]
         return changed && includedProps.has(typedKey)
@@ -669,7 +669,7 @@ export class QueryObserver<
 
       // Then trigger the listeners
       if (notifyOptions.listeners) {
-        this.listeners.forEach(listener => {
+        this.listeners.forEach((listener) => {
           listener(this.currentResult)
         })
       }
@@ -687,7 +687,7 @@ export class QueryObserver<
 
 function shouldLoadOnMount(
   query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any>
+  options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
     options.enabled !== false &&
@@ -698,7 +698,7 @@ function shouldLoadOnMount(
 
 function shouldFetchOnMount(
   query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>
+  options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
     shouldLoadOnMount(query, options) ||
@@ -712,7 +712,7 @@ function shouldFetchOn(
   options: QueryObserverOptions<any, any, any, any, any>,
   field: typeof options['refetchOnMount'] &
     typeof options['refetchOnWindowFocus'] &
-    typeof options['refetchOnReconnect']
+    typeof options['refetchOnReconnect'],
 ) {
   if (options.enabled !== false) {
     const value = typeof field === 'function' ? field(query) : field
@@ -726,7 +726,7 @@ function shouldFetchOptionally(
   query: Query<any, any, any, any>,
   prevQuery: Query<any, any, any, any>,
   options: QueryObserverOptions<any, any, any, any, any>,
-  prevOptions: QueryObserverOptions<any, any, any, any, any>
+  prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
     options.enabled !== false &&
@@ -738,7 +738,7 @@ function shouldFetchOptionally(
 
 function isStale(
   query: Query<any, any, any, any>,
-  options: QueryObserverOptions<any, any, any, any, any>
+  options: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return query.isStaleByTime(options.staleTime)
 }

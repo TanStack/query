@@ -29,7 +29,7 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-        }
+        },
       )
       return <div>{data}</div>
     }
@@ -56,7 +56,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -86,7 +86,7 @@ describe('QueryErrorResetBoundary', () => {
           retry: false,
           enabled: !succeed,
           useErrorBoundary: true,
-        }
+        },
       )
       return (
         <div>
@@ -118,7 +118,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -149,7 +149,7 @@ describe('QueryErrorResetBoundary', () => {
           retry: false,
           enabled,
           useErrorBoundary: true,
-        }
+        },
       )
 
       React.useEffect(() => {
@@ -181,7 +181,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -204,7 +204,7 @@ describe('QueryErrorResetBoundary', () => {
           retry: false,
           enabled: false,
           useErrorBoundary: true,
-        }
+        },
       )
 
       return (
@@ -240,11 +240,11 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() =>
-      rendered.getByText('status: loading, fetchStatus: idle')
+      rendered.getByText('status: loading, fetchStatus: idle'),
     )
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
     await waitFor(() => rendered.getByText('error boundary'))
@@ -269,7 +269,7 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-        }
+        },
       )
       return <div>{data}</div>
     }
@@ -295,7 +295,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -325,7 +325,7 @@ describe('QueryErrorResetBoundary', () => {
           retry: false,
           useErrorBoundary: true,
           initialData: 'initial',
-        }
+        },
       )
       return <div>{data}</div>
     }
@@ -352,7 +352,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -382,7 +382,7 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-        }
+        },
       )
       return <div>{data}</div>
     }
@@ -413,7 +413,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -442,7 +442,7 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-        }
+        },
       )
       return <div>{data}</div>
     }
@@ -469,7 +469,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -502,7 +502,7 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           suspense: true,
-        }
+        },
       )
       renders++
       return <div>{data}</div>
@@ -532,7 +532,7 @@ describe('QueryErrorResetBoundary', () => {
             </React.Suspense>
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))
@@ -559,7 +559,7 @@ describe('QueryErrorResetBoundary', () => {
       queryClient,
       <QueryErrorResetBoundary>
         <Page />
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     expect(rendered.queryByText('page')).not.toBeNull()
@@ -584,7 +584,7 @@ describe('QueryErrorResetBoundary', () => {
         {
           retry: false,
           useErrorBoundary: true,
-        }
+        },
       )
       return <div>{data}</div>
     }
@@ -611,7 +611,7 @@ describe('QueryErrorResetBoundary', () => {
             <Page />
           </ErrorBoundary>
         )}
-      </QueryErrorResetBoundary>
+      </QueryErrorResetBoundary>,
     )
 
     await waitFor(() => rendered.getByText('error boundary'))

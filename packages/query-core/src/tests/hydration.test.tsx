@@ -22,7 +22,7 @@ describe('dehydration and rehydration', () => {
     await queryClient.prefetchQuery(['null'], () => fetchData(null))
     await queryClient.prefetchQuery(['array'], () => fetchData(['string', 0]))
     await queryClient.prefetchQuery(['nested'], () =>
-      fetchData({ key: [{ nestedKey: 1 }] })
+      fetchData({ key: [{ nestedKey: 1 }] }),
     )
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
@@ -128,7 +128,7 @@ describe('dehydration and rehydration', () => {
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
-      () => fetchData('string')
+      () => fetchData('string'),
     )
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
@@ -140,14 +140,14 @@ describe('dehydration and rehydration', () => {
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     hydrate(hydrationClient, parsed)
     expect(
-      hydrationCache.find(['string', { key: ['string'], key2: 0 }])?.state.data
+      hydrationCache.find(['string', { key: ['string'], key2: 0 }])?.state.data,
     ).toBe('string')
 
     const fetchDataAfterHydration = jest.fn<unknown, unknown[]>()
     await hydrationClient.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
       fetchDataAfterHydration,
-      { staleTime: 100 }
+      { staleTime: 100 },
     )
     expect(fetchDataAfterHydration).toHaveBeenCalledTimes(0)
 
@@ -191,13 +191,13 @@ describe('dehydration and rehydration', () => {
     await queryClient.prefetchQuery(['string'], () => fetchData('string'))
     await queryClient.prefetchQuery(['number'], () => fetchData(1))
     const dehydrated = dehydrate(queryClient, {
-      shouldDehydrateQuery: query => query.queryKey[0] !== 'string',
+      shouldDehydrateQuery: (query) => query.queryKey[0] !== 'string',
     })
 
     // This is testing implementation details that can change and are not
     // part of the public API, but is important for keeping the payload small
     const dehydratedQuery = dehydrated.queries.find(
-      query => query.queryKey[0] === 'string'
+      (query) => query.queryKey[0] === 'string',
     )
     expect(dehydratedQuery).toBeUndefined()
 
@@ -220,7 +220,7 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(['string'], () =>
-      fetchData('string-older', 5)
+      fetchData('string-older', 5),
     )
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
@@ -231,7 +231,7 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     await hydrationClient.prefetchQuery(['string'], () =>
-      fetchData('string-newer', 5)
+      fetchData('string-newer', 5),
     )
 
     hydrate(hydrationClient, parsed)
@@ -245,7 +245,7 @@ describe('dehydration and rehydration', () => {
     const hydrationCache = new QueryCache()
     const hydrationClient = createQueryClient({ queryCache: hydrationCache })
     await hydrationClient.prefetchQuery(['string'], () =>
-      fetchData('string-older', 5)
+      fetchData('string-older', 5),
     )
 
     // ---
@@ -253,7 +253,7 @@ describe('dehydration and rehydration', () => {
     const queryCache = new QueryCache()
     const queryClient = createQueryClient({ queryCache })
     await queryClient.prefetchQuery(['string'], () =>
-      fetchData('string-newer', 5)
+      fetchData('string-newer', 5),
     )
     const dehydrated = dehydrate(queryClient)
     const stringified = JSON.stringify(dehydrated)
@@ -276,7 +276,7 @@ describe('dehydration and rehydration', () => {
     const serverAddTodo = jest
       .fn()
       .mockImplementation(() => Promise.reject('offline'))
-    const serverOnMutate = jest.fn().mockImplementation(variables => {
+    const serverOnMutate = jest.fn().mockImplementation((variables) => {
       const optimisticTodo = { id: 1, text: variables.text }
       return { optimisticTodo }
     })
@@ -311,10 +311,10 @@ describe('dehydration and rehydration', () => {
     const parsed = JSON.parse(stringified)
     const client = createQueryClient()
 
-    const clientAddTodo = jest.fn().mockImplementation(variables => {
+    const clientAddTodo = jest.fn().mockImplementation((variables) => {
       return { id: 2, text: variables.text }
     })
-    const clientOnMutate = jest.fn().mockImplementation(variables => {
+    const clientOnMutate = jest.fn().mockImplementation((variables) => {
       const optimisticTodo = { id: 1, text: variables.text }
       return { optimisticTodo }
     })
@@ -338,7 +338,7 @@ describe('dehydration and rehydration', () => {
     expect(clientOnSuccess).toHaveBeenCalledWith(
       { id: 2, text: 'text' },
       { text: 'text' },
-      { optimisticTodo: { id: 1, text: 'text' } }
+      { optimisticTodo: { id: 1, text: 'text' } },
     )
 
     client.clear()
