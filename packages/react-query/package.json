@@ -23,7 +23,9 @@
     "lib/reactjs/setBatchUpdatesFn.mjs"
   ],
   "scripts": {
-    "test:dev:17": "npm run test:types && npm run test:format && npm run test:eslint && npm run test:codemod && REACTJS_VERSION=17 jest --watch"
+    "test:dev:17": "npm run test:types && npm run test:format && npm run test:eslint && npm run test:codemod && REACTJS_VERSION=17 jest --watch",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "files": [
     "build",
