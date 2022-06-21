@@ -2,7 +2,7 @@ import {
   PersistedClient,
   Persister,
   Promisable,
-} from '@tanstack/query-persist-client'
+} from '@tanstack/react-query-persist-client'
 import { asyncThrottle } from './asyncThrottle'
 
 interface AsyncStorage {
@@ -96,9 +96,10 @@ export const createAsyncStoragePersister = ({
 
   return {
     persistClient: noop,
-    restoreClient: noop,
+    restoreClient: () => Promise.resolve(undefined),
     removeClient: noop,
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

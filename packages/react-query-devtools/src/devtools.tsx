@@ -1,6 +1,6 @@
 import * as React from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim/index'
 import {
-  useSyncExternalStore,
   Query,
   useQueryClient,
   onlineManager,
@@ -291,7 +291,7 @@ export function ReactQueryDevtools({
             aria-controls="ReactQueryDevtoolsPanel"
             aria-haspopup="true"
             aria-expanded="true"
-            {...(otherCloseButtonProps as unknown)}
+            {...(otherCloseButtonProps as Record<string, unknown>)}
             onClick={(e) => {
               setIsOpen(false)
               onCloseClick?.(e)

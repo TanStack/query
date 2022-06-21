@@ -1,17 +1,13 @@
 import * as React from 'react'
 import { render } from '@testing-library/react'
-import { setActTimeout } from '../../tests/utils'
-import {
-  QueryClient,
-  ContextOptions,
-  QueryClientProvider,
-} from '../../build/types'
+import { setActTimeout } from '../../../../tests/utils'
+import { QueryClient, ContextOptions, QueryClientProvider } from '..'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
   options: ContextOptions = {},
-) {
+): ReturnType<typeof render> {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client} context={options.context}>
       {ui}

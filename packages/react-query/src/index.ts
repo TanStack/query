@@ -1,8 +1,8 @@
-// Re-export core
-export * from '@tanstack/query-core'
-
 // Side effects
 import './setBatchUpdatesFn'
+
+// Re-export core
+export * from '@tanstack/query-core'
 
 // React Query
 export * from './types'
@@ -26,4 +26,4 @@ export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
 export { useMutation } from './useMutation'
 export { useInfiniteQuery } from './useInfiniteQuery'
-export { useIsRestoring } from './isRestoring'
+export { useIsRestoring, IsRestoringProvider } from './isRestoring'

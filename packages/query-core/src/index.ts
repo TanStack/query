@@ -17,6 +17,7 @@ export {
   parseMutationFilterArgs,
   parseMutationArgs,
   MutationFilters,
+  QueryFilters,
 } from './utils'
 export { isCancelledError } from './retryer'
 export { dehydrate, hydrate } from './hydration'

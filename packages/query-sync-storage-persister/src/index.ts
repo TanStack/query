@@ -2,7 +2,7 @@ import {
   PersistedClient,
   Persister,
   PersistRetryer,
-} from '@tanstack/query-persist-client'
+} from '@tanstack/react-query-persist-client'
 
 interface Storage {
   getItem: (key: string) => string | null
@@ -85,7 +85,7 @@ export function createWebStoragePersister({
 
   return {
     persistClient: noop,
-    restoreClient: noop,
+    restoreClient: () => undefined,
     removeClient: noop,
   }
 }
@@ -107,4 +107,5 @@ function throttle<TArgs extends any[]>(
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}

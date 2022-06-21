@@ -4,7 +4,7 @@ import {
   QueryCache,
   QueryClient,
 } from '@tanstack/query-core'
-import { removeOldestQuery } from '@tanstack/query-persist-client'
+import { removeOldestQuery } from '@tanstack/react-query-persist-client'
 import { createWebStoragePersister } from '../index'
 import { sleep } from '../../../../tests/utils'
 

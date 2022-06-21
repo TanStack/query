@@ -21,5 +21,10 @@
   "scripts": {
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@types/use-sync-external-store": "^0.0.3",
+    "match-sorter": "^6.0.2",
+    "use-sync-external-store": "^1.1.0"
   }
 }
