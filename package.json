@@ -77,6 +77,7 @@
     "eslint-config-react-app": "^5.2.1",
     "eslint-config-standard": "^14.1.1",
     "eslint-config-standard-react": "^9.2.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-flowtype": "5.x",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "6.x",

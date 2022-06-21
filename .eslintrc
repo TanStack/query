@@ -16,6 +16,20 @@
     "project": "./tsconfig.base.json",
     "sourceType": "module"
   },
+  "settings": {
+    "import/parsers": {
+      "@typescript-eslint/parser": [".ts", ".tsx"]
+    },
+    "import/resolver": {
+      "node": true,
+      "typescript": {
+        "project": "packages/*/tsconfig.json"
+      }
+    },
+    "react": {
+      "version": "detect"
+    }
+  },
   "rules": {
     "react/jsx-key": ["error", { "checkFragmentShorthand": true }],
     "@typescript-eslint/ban-types": "off",

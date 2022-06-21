@@ -17,5 +17,9 @@
   "files": [
     "build",
     "src"
-  ]
+  ],
+  "scripts": {
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  }
 }
