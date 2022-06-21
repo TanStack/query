@@ -23,8 +23,10 @@
     "lib/reactjs/setBatchUpdatesFn.mjs"
   ],
   "scripts": {
-    "test:dev:17": "npm run test:types && npm run test:format && npm run test:eslint && npm run test:codemod && REACTJS_VERSION=17 jest --watch",
+    "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "yarn test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
+    "test:jest:dev": "yarn test:jest --watch",
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "files": [
@@ -35,6 +37,10 @@
     "!codemods/**/__testfixtures__",
     "!codemods/**/__tests__"
   ],
+  "devDependencies": {
+    "@types/jscodeshift": "^0.11.3",
+    "jscodeshift": "^0.13.1"
+  },
   "dependencies": {
     "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.1.0"
