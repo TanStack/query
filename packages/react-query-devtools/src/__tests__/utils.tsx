@@ -1,15 +1,19 @@
 import { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import * as React from 'react'
-import { ReactQueryDevtools } from '../'
+import { ReactQueryDevtools } from '..'
 
-import { QueryClient, QueryClientProvider, QueryCache } from '../..'
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryCache,
+} from '@tanstack/react-query'
 
 export function renderWithClient(
   client: QueryClient,
   ui: React.ReactElement,
   devtoolsOptions: Parameters<typeof ReactQueryDevtools>[number] = {},
-) {
+): ReturnType<typeof render> {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client} context={devtoolsOptions.context}>
       <ReactQueryDevtools {...devtoolsOptions} />

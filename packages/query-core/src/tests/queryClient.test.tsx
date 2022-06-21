@@ -6,14 +6,14 @@ import {
   queryKey,
   mockLogger,
   createQueryClient,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import {
   InfiniteQueryObserver,
   QueryCache,
   QueryClient,
   QueryFunction,
   QueryObserver,
-} from '../..'
+} from '..'
 import { focusManager, onlineManager } from '..'
 
 describe('queryClient', () => {

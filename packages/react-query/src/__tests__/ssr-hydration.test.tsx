@@ -11,13 +11,13 @@ import {
   QueryCache,
   dehydrate,
   hydrate,
-} from '../..'
+} from '..'
 import {
   createQueryClient,
   mockLogger,
   setIsServer,
   sleep,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 

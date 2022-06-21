@@ -4,7 +4,7 @@ import {
   mockVisibilityState,
   mockLogger,
   createQueryClient,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import {
   QueryCache,
   QueryClient,
@@ -14,7 +14,7 @@ import {
   onlineManager,
   QueryFunctionContext,
   QueryObserverResult,
-} from '../..'
+} from '..'
 import { waitFor } from '@testing-library/react'
 
 describe('query', () => {

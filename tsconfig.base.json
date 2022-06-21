@@ -6,6 +6,11 @@
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
     "jsx": "react",
@@ -15,20 +20,18 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@tanstack/virtual-core": ["packages/virtual-core"],
-      "@tanstack/react-virtual": ["packages/react-virtual"],
-      "@tanstack/query-core": ["packages/query-core"],
+      "@tanstack/query-core": ["packages/query-core/src"],
       "@tanstack/query-async-storage-persister": [
-        "packages/query-async-storage-persister"
+        "packages/query-async-storage-persister/src"
       ],
-      "@tanstack/query-broadcast-client": ["packages/query-broadcast-client"],
+      "@tanstack/query-broadcast-client": ["packages/query-broadcast-client/src"],
       "@tanstack/query-sync-storage-persister": [
-        "packages/query-sync-storage-persister"
+        "packages/query-sync-storage-persister/src"
       ],
-      "@tanstack/react-query": ["packages/react-query"],
-      "@tanstack/react-query-devtools": ["packages/react-query-devtools"],
+      "@tanstack/react-query": ["packages/react-query/src"],
+      "@tanstack/react-query-devtools": ["packages/react-query-devtools/src"],
       "@tanstack/react-query-persist-client": [
-        "packages/react-query-persist-client"
+        "packages/react-query-persist-client/src"
       ]
     }
   }

@@ -1,5 +1,4 @@
-import { createQueryClient } from '../../tests/utils'
-import { sleep } from '../../core/utils'
+import { createQueryClient, sleep } from '../../../../tests/utils'
 import {
   PersistedClient,
   Persister,

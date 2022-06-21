@@ -6,7 +6,7 @@ import {
   sleep,
   setActTimeout,
   createQueryClient,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 
 import { renderWithClient, Blink } from './utils'
 import {
@@ -15,7 +15,7 @@ import {
   QueryCache,
   QueryFunctionContext,
   InfiniteData,
-} from '../..'
+} from '..'
 
 interface Result {
   items: number[]
@@ -1483,6 +1483,7 @@ describe('useInfiniteQuery', () => {
       const [count, setCount] = React.useState(0)
 
       if (concurrent) {
+        // @ts-ignore
         React.useEffect = dummyUseEffect
       }
 
@@ -1500,6 +1501,7 @@ describe('useInfiniteQuery', () => {
       )
 
       if (concurrent) {
+        // @ts-ignore
         React.useEffect = originalUseEffect
       }
 
@@ -1647,11 +1649,11 @@ describe('useInfiniteQuery', () => {
           {status === 'loading' ? (
             'Loading...'
           ) : status === 'error' ? (
-            <span>Error: {error?.message}</span>
+            <span>Error: {error.message}</span>
           ) : (
             <>
               <div>Data:</div>
-              {data?.pages.map((page, i) => (
+              {data.pages.map((page, i) => (
                 <div key={i}>
                   <div>
                     Page {i}: {page.ts}
@@ -1777,11 +1779,11 @@ describe('useInfiniteQuery', () => {
           {status === 'loading' ? (
             'Loading...'
           ) : status === 'error' ? (
-            <span>Error: {error?.message}</span>
+            <span>Error: {error.message}</span>
           ) : (
             <>
               <div>Data:</div>
-              {data?.pages.map((page, i) => (
+              {data.pages.map((page, i) => (
                 <div key={i}>
                   <div>
                     Page {i}: {page.ts}

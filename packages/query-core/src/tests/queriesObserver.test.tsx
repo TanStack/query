@@ -4,13 +4,13 @@ import {
   queryKey,
   createQueryClient,
   mockLogger,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import {
   QueryClient,
   QueriesObserver,
   QueryObserverResult,
   QueryObserver,
-} from '../..'
+} from '..'
 import { QueryKey } from '..'
 
 describe('queriesObserver', () => {

@@ -3,8 +3,8 @@ import {
   QueryClient,
   InfiniteQueryObserver,
   InfiniteQueryObserverResult,
-} from '../..'
-import { createQueryClient, queryKey } from '../../tests/utils'
+} from '@tanstack/query-core'
+import { createQueryClient, queryKey } from '../../../../tests/utils'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient

@@ -1,10 +1,10 @@
-import { QueryClient } from '../..'
+import { QueryClient } from '..'
 import {
   createQueryClient,
   executeMutation,
   queryKey,
   sleep,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 

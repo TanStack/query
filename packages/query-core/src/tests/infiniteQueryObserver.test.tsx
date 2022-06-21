@@ -1,5 +1,5 @@
-import { createQueryClient, queryKey, sleep } from '../../tests/utils'
-import { QueryClient, InfiniteQueryObserver } from '../..'
+import { createQueryClient, queryKey, sleep } from '../../../../tests/utils'
+import { QueryClient, InfiniteQueryObserver } from '..'
 
 describe('InfiniteQueryObserver', () => {
   let queryClient: QueryClient

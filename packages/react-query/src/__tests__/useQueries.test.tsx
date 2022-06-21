@@ -2,7 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import * as QueriesObserverModule from '../../core/queriesObserver'
+import * as QueriesObserverModule from '../../../query-core/src/queriesObserver'
 
 import {
   createQueryClient,
@@ -10,7 +10,7 @@ import {
   expectTypeNotAny,
   queryKey,
   sleep,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import { renderWithClient } from './utils'
 import {
   QueryClient,
@@ -22,8 +22,8 @@ import {
   QueryFunction,
   UseQueryOptions,
   QueryKey,
-} from '../..'
-import { QueryFunctionContext } from '../../core'
+} from '..'
+import { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()

@@ -7,14 +7,9 @@ import {
   queryKey,
   setActTimeout,
   sleep,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import { renderWithClient } from './utils'
-import {
-  QueryClient,
-  useQuery,
-  useIsFetching,
-  QueryCache,
-} from '../../build/types'
+import { QueryClient, useQuery, useIsFetching, QueryCache } from '..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

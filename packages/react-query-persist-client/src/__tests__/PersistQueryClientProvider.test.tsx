@@ -1,9 +1,18 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
-import { QueryClient, useQuery, UseQueryResult, useQueries } from '../..'
-import { createQueryClient, mockLogger, queryKey } from '../../tests/utils'
-import { sleep } from '../../core/utils'
+import {
+  QueryClient,
+  useQuery,
+  UseQueryResult,
+  useQueries,
+} from '@tanstack/react-query'
+import {
+  createQueryClient,
+  mockLogger,
+  queryKey,
+  sleep,
+} from '../../../../tests/utils'
 import { PersistedClient, Persister, persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 
@@ -25,7 +34,7 @@ const createMockPersister = (): Persister => {
 }
 
 const createMockErrorPersister = (
-  removeClient: Persister['removeClient']
+  removeClient: Persister['removeClient'],
 ): [Error, Persister] => {
   const error = new Error('restore failed')
   return [
@@ -79,7 +88,7 @@ describe('PersistQueryClientProvider', () => {
         persistOptions={{ persister }}
       >
         <Page />
-      </PersistQueryClientProvider>
+      </PersistQueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('fetchStatus: idle'))
@@ -155,7 +164,7 @@ describe('PersistQueryClientProvider', () => {
         persistOptions={{ persister }}
       >
         <Page />
-      </PersistQueryClientProvider>
+      </PersistQueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('fetchStatus: idle'))
@@ -214,7 +223,7 @@ describe('PersistQueryClientProvider', () => {
           // make sure that initial data is older than the hydration data
           // otherwise initialData would be newer and takes precedence
           initialDataUpdatedAt: 1,
-        }
+        },
       )
 
       states.push(state)
@@ -233,7 +242,7 @@ describe('PersistQueryClientProvider', () => {
         persistOptions={{ persister }}
       >
         <Page />
-      </PersistQueryClientProvider>
+      </PersistQueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('initial'))
@@ -289,7 +298,7 @@ describe('PersistQueryClientProvider', () => {
         },
         {
           staleTime: Infinity,
-        }
+        },
       )
 
       states.push(state)
@@ -308,7 +317,7 @@ describe('PersistQueryClientProvider', () => {
         persistOptions={{ persister }}
       >
         <Page />
-      </PersistQueryClientProvider>
+      </PersistQueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('data: null'))
@@ -364,7 +373,7 @@ describe('PersistQueryClientProvider', () => {
         onSuccess={onSuccess}
       >
         <Page />
-      </PersistQueryClientProvider>
+      </PersistQueryClientProvider>,
     )
     expect(onSuccess).toHaveBeenCalledTimes(0)
 
@@ -403,7 +412,7 @@ describe('PersistQueryClientProvider', () => {
         persistOptions={{ persister }}
       >
         <Page />
-      </PersistQueryClientProvider>
+      </PersistQueryClientProvider>,
     )
 
     await waitFor(() => rendered.getByText('fetched'))
@@ -445,7 +454,7 @@ describe('PersistQueryClientProvider', () => {
                 queryFn: queryFn1,
               },
             },
-          })
+          }),
       )
 
       React.useEffect(() => {
@@ -456,7 +465,7 @@ describe('PersistQueryClientProvider', () => {
                 queryFn: queryFn2,
               },
             },
-          })
+          }),
         )
       }, [])
 

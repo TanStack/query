@@ -2,12 +2,16 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { useIsMutating } from '../useIsMutating'
 import { useMutation } from '../useMutation'
-import { createQueryClient, setActTimeout, sleep } from '../../tests/utils'
+import {
+  createQueryClient,
+  setActTimeout,
+  sleep,
+} from '../../../../tests/utils'
 
 import { renderWithClient } from './utils'
 import { ErrorBoundary } from 'react-error-boundary'
-import { QueryClient } from '../../core'
-import * as MutationCacheModule from '../../core/mutationCache'
+import { QueryClient } from '@tanstack/query-core'
+import * as MutationCacheModule from '../../../query-core/src/mutationCache'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {

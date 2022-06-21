@@ -1,6 +1,10 @@
 import { act } from '@testing-library/react'
 
-import { MutationOptions, QueryClient, QueryClientConfig } from 'packages/react-query/src/index'
+import {
+  MutationOptions,
+  QueryClient,
+  QueryClientConfig,
+} from '@tanstack/query-core'
 import * as utils from 'packages/query-core/src/utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
@@ -8,7 +12,7 @@ export function createQueryClient(config?: QueryClientConfig): QueryClient {
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
-export function mockVisibilityState(value: VisibilityState) {
+export function mockVisibilityState(value: DocumentVisibilityState) {
   return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
@@ -55,7 +59,7 @@ export const expectTypeNotAny = <T>(_: 0 extends 1 & T ? never : T): void =>
 
 export const executeMutation = (
   queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>
+  options: MutationOptions<any, any, any, any>,
 ): Promise<unknown> => {
   return queryClient.getMutationCache().build(queryClient, options).execute()
 }

@@ -4,13 +4,13 @@ import {
   expectType,
   mockLogger,
   createQueryClient,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import {
   QueryClient,
   QueryObserver,
   QueryObserverResult,
   focusManager,
-} from '../..'
+} from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient

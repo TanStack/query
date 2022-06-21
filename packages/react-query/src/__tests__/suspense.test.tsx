@@ -2,7 +2,7 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { sleep, queryKey, createQueryClient } from '../../tests/utils'
+import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
 import { renderWithClient } from './utils'
 import {
   useQuery,
@@ -12,7 +12,7 @@ import {
   UseQueryResult,
   UseInfiniteQueryResult,
   useInfiniteQuery,
-} from '../..'
+} from '..'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()

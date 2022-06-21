@@ -6,13 +6,8 @@ import * as React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey, createQueryClient } from '../../tests/utils'
-import {
-  useQuery,
-  QueryClientProvider,
-  QueryCache,
-  useInfiniteQuery,
-} from '../..'
+import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
+import { useQuery, QueryClientProvider, QueryCache, useInfiniteQuery } from '..'
 
 describe('Server Side Rendering', () => {
   it('should not trigger fetch', () => {

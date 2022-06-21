@@ -1,5 +1,5 @@
-import { sleep, queryKey, createQueryClient } from '../../tests/utils'
-import { QueryCache, QueryClient } from '../..'
+import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
+import { QueryCache, QueryClient } from '..'
 import { Query } from '.././query'
 
 describe('queryCache', () => {

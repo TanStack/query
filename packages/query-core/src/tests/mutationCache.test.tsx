@@ -4,8 +4,8 @@ import {
   sleep,
   executeMutation,
   createQueryClient,
-} from '../../tests/utils'
-import { MutationCache, MutationObserver } from '../..'
+} from '../../../../tests/utils'
+import { MutationCache, MutationObserver } from '..'
 
 describe('mutationCache', () => {
   describe('MutationCacheConfig.onError', () => {

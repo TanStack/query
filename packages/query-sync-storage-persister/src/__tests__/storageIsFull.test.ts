@@ -6,7 +6,7 @@ import {
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/query-persist-client'
 import { createWebStoragePersister } from '../index'
-import { sleep } from '../../tests/utils'
+import { sleep } from '../../../../tests/utils'
 
 function getMockStorage(limitSize?: number) {
   const dataSet = new Map<string, string>()

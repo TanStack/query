@@ -9,9 +9,9 @@ import {
   dehydrate,
   useHydrate,
   Hydrate,
-} from '../../build/types'
-import { createQueryClient, sleep } from '../../tests/utils'
-import * as coreModule from '../../core/index'
+} from '@tanstack/react-query'
+import { createQueryClient, sleep } from '../../../../tests/utils'
+import * as coreModule from '@tanstack/query-core'
 
 describe('React hydration', () => {
   const fetchData: (value: string) => Promise<string> = (value) =>

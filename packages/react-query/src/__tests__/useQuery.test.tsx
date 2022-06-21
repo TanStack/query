@@ -10,7 +10,7 @@ import {
   mockNavigatorOnLine,
   mockLogger,
   createQueryClient,
-} from '../../tests/utils'
+} from '../../../../tests/utils'
 import { renderWithClient, Blink } from './utils'
 import {
   useQuery,
@@ -19,7 +19,7 @@ import {
   QueryFunction,
   QueryFunctionContext,
   UseQueryOptions,
-} from '../..'
+} from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {
@@ -2268,6 +2268,7 @@ describe('useQuery', () => {
     const originalUseEffect = React.useEffect
 
     // Try to simulate useEffect timing delay
+    // @ts-ignore
     React.useEffect = (...args: any[]) => {
       originalUseEffect(() => {
         setTimeout(() => {
@@ -2286,6 +2287,7 @@ describe('useQuery', () => {
     queryClient.setQueryData(key, 'data')
     await sleep(50)
 
+    // @ts-ignore
     React.useEffect = originalUseEffect
 
     expect(states.length).toBe(2)
@@ -2308,6 +2310,7 @@ describe('useQuery', () => {
       const [count, setCount] = React.useState(0)
 
       if (concurrent) {
+        // @ts-ignore
         React.useEffect = dummyUseEffect
       }
 
@@ -2321,6 +2324,7 @@ describe('useQuery', () => {
       )
 
       if (concurrent) {
+        // @ts-ignore
         React.useEffect = originalUseEffect
       }
 
