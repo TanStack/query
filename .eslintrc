@@ -47,16 +47,8 @@
     ],
     "no-shadow": "error",
     "import/no-cycle": "error",
-    "import/no-unresolved": ["error", { "ignore": ["react-query"] }],
+    "import/no-unresolved": ["error",  { "ignore": ["^@tanstack/"] }],
     "import/no-unused-modules": ["off", { "unusedExports": true }],
     "no-redeclare": "off"
-  },
-  "overrides": [
-    {
-      "files": ["**/*.test.{ts,tsx}"],
-      "rules": {
-        "import/no-unresolved": "off"
-      }
-    }
-  ]
+  }
 }
