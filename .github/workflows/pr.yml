@@ -16,6 +16,7 @@ jobs:
       - run: |
           yarn install --frozen-lockfile
           yarn test:ci
+          yarn build
         env:
           REACTJS_VERSION: ${{ matrix.react }}
       - run: yarn test:size
