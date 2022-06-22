@@ -9,6 +9,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@tanstack/match-sorter-utils@^8.0.0-alpha.82":
+  version "8.0.0-alpha.82"
+  resolved "https://registry.yarnpkg.com/@tanstack/match-sorter-utils/-/match-sorter-utils-8.0.0-alpha.82.tgz#81132042898f4994d02e51d32534a77cc4d4bd32"
+  integrity sha512-ugMrs6vaqAE0GAlqo5vkWqXJEk+rhIiTZjX4tUcOItw7HJ2OfObJXpPHJsbTj0gLQXtMsYWUqjthRtR6KjmrDw==
+  dependencies:
+    remove-accents "0.4.2"
+
 "@types/use-sync-external-store@^0.0.3":
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/@types/use-sync-external-store/-/use-sync-external-store-0.0.3.tgz#b6725d5f4af24ace33b36fafd295136e75509f43"

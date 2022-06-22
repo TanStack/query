@@ -10,7 +10,7 @@ import {
   QueryKey as QueryKeyType,
   ContextOptions,
 } from '@tanstack/react-query'
-import { matchSorter } from 'match-sorter'
+import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
 import { useIsMounted } from './utils'
 
@@ -459,7 +459,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const queries = React.useMemo(() => {
     const unsortedQueries = queryCache.getAll()
-    const sorted = queriesCount > 0 ? [...unsortedQueries].sort(sortFn) : []
+    let sorted = queriesCount > 0 ? [...unsortedQueries].sort(sortFn) : []
 
     if (sortDesc) {
       sorted.reverse()
@@ -469,9 +469,16 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
       return sorted
     }
 
-    return matchSorter(sorted, filter, { keys: ['queryHash'] }).filter(
-      (d) => d.queryHash,
-    )
+    let ranked = sorted.map((item) => [
+      item,
+      rankItem(item, filter, { keys: ['queryHash'] }),
+    ])
+
+    ranked = ranked.filter((d) => d[1].passed)
+
+    ranked = ranked.sort((a, b) => compareItems(a[1], b[1]))
+
+    return ranked.map((d) => d[0])
   }, [sortDesc, sortFn, filter, queriesCount, queryCache])
 
   const [isMockOffline, setMockOffline] = React.useState(false)
