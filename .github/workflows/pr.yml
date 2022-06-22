@@ -6,7 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node: [16]
+        node: [14, 16]
+        react: [17, 18]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -14,5 +15,12 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: |
           yarn install --frozen-lockfile
-          yarn build
-          yarn test
+          yarn test:ci
+        env:
+          REACTJS_VERSION: ${{ matrix.react }}
+      - run: yarn test:size
+        if: matrix.node == '16' && matrix.react == '18'
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2
