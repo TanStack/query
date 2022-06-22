@@ -469,7 +469,9 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
       return sorted
     }
 
-    let ranked = sorted.map((item) => [item, rankItem(item, filter)] as const)
+    let ranked = sorted.map(
+      (item) => [item, rankItem(item.queryHash, filter)] as const,
+    )
 
     ranked = ranked.filter((d) => d[1].passed)
 
