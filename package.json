@@ -1,4 +1,5 @@
 {
+  "private": true,
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
     "test": "(is-ci && yarn test:ci) || yarn test:dev",
