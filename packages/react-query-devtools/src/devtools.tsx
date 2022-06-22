@@ -459,7 +459,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const queries = React.useMemo(() => {
     const unsortedQueries = queryCache.getAll()
-    let sorted = queriesCount > 0 ? [...unsortedQueries].sort(sortFn) : []
+    const sorted = queriesCount > 0 ? [...unsortedQueries].sort(sortFn) : []
 
     if (sortDesc) {
       sorted.reverse()
@@ -469,10 +469,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
       return sorted
     }
 
-    let ranked = sorted.map((item) => [
-      item,
-      rankItem(item, filter, { keys: ['queryHash'] }),
-    ])
+    let ranked = sorted.map((item) => [item, rankItem(item, filter)] as const)
 
     ranked = ranked.filter((d) => d[1].passed)
 
