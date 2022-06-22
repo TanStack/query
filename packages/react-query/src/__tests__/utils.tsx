@@ -21,7 +21,7 @@ export function renderWithClient(
           {rerenderUi}
         </QueryClientProvider>,
       ),
-  }
+  } as any
 }
 
 export const Blink = ({

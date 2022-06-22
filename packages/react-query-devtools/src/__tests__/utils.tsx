@@ -29,7 +29,7 @@ export function renderWithClient(
           {rerenderUi}
         </QueryClientProvider>,
       ),
-  }
+  } as any
 }
 
 export function sleep(timeout: number): Promise<void> {
