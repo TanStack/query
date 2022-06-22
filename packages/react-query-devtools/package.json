@@ -25,7 +25,6 @@
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.0.0-alpha.82",
     "@types/use-sync-external-store": "^0.0.3",
-    "match-sorter": "^6.0.2",
     "use-sync-external-store": "^1.1.0"
   }
 }
