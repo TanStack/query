@@ -3,9 +3,11 @@ const { lstatSync, readdirSync } = require('fs')
 
 // get listing of packages in the mono repo
 const basePath = path.resolve(__dirname, 'packages')
-const packages = readdirSync(basePath).filter((name) => {
-  return lstatSync(path.join(basePath, name)).isDirectory()
-})
+const packages = readdirSync(basePath)
+  .filter((name) => {
+    return lstatSync(path.join(basePath, name)).isDirectory()
+  })
+  .sort((a, b) => b.length - a.length)
 
 const { namespace } = require('./package.json')
 
@@ -22,9 +24,10 @@ const moduleNameMapper = {
 module.exports = {
   projects: packages.map((d) => ({
     displayName: d,
+    clearMocks: true,
     testEnvironment: 'jsdom',
-    testMatch: [`<rootDir>/package/${d}/**/*.test.[jt]s?(x)`],
-    setFilesAfterEnv: [`<rootDir>/packages/${d}/__tests__/jest.setup.js`],
+    testMatch: [`<rootDir>/packages/${d}/**/*.test.[jt]s?(x)`],
+    setupFilesAfterEnv: [`<rootDir>/jest.setup.js`],
     snapshotFormat: {
       printBasicPrototype: false,
     },

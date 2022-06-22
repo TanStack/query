@@ -1,9 +1,9 @@
 import { act } from '@testing-library/react'
 
-import { notifyManager } from './src'
+import { notifyManager } from '@tanstack/query-core'
 
 // Wrap notifications with act to make sure React knows about React Query updates
-notifyManager.setNotifyFunction(fn => {
+notifyManager.setNotifyFunction((fn) => {
   act(fn)
 })
 
