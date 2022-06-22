@@ -172,7 +172,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      '<!-- -->ErrorComponent - status:loading fetching:true data:undefined'
+      'ErrorComponent - status:loading fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
@@ -198,7 +198,7 @@ describe('Server side rendering with de/rehydration', () => {
     await sleep(50)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(
-      '<!-- -->ErrorComponent - status:error fetching:false data:undefined',
+      'ErrorComponent - status:error fetching:false data:undefined',
     )
 
     unmount()
@@ -239,7 +239,7 @@ describe('Server side rendering with de/rehydration', () => {
     setIsServer(false)
 
     const expectedMarkup =
-      '<!-- -->SuccessComponent - status:loading fetching:true data:undefined'
+      'SuccessComponent - status:loading fetching:true data:undefined'
 
     expect(markup).toBe(expectedMarkup)
 
@@ -265,7 +265,7 @@ describe('Server side rendering with de/rehydration', () => {
     await sleep(50)
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(
-      '<!-- -->SuccessComponent - status:success fetching:false data:success!',
+      'SuccessComponent - status:success fetching:false data:success!',
     )
 
     unmount()
