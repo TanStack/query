@@ -3,7 +3,7 @@
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
     "test": "(is-ci && yarn test:ci) || yarn test:dev",
-    "test:ci": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest",
+    "test:ci": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest && yarn build",
     "test:dev": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest:dev",
     "test:eslint": "lerna run test:eslint --stream --no-bail",
     "test:format": "yarn prettier --check",

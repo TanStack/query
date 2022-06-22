@@ -13,10 +13,9 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - run: |
-          yarn install --frozen-lockfile
-          yarn test:ci
-          yarn build
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+      - run: yarn test:ci
         env:
           REACTJS_VERSION: ${{ matrix.react }}
       - run: yarn test:size
