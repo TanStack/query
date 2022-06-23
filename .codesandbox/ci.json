@@ -1,5 +1,5 @@
 {
   "installCommand": "install:csb",
-  "sandboxes": ["/examples/basic", "/examples/basic-typescript"],
+  "sandboxes": ["/examples/react/basic", "/examples/react/basic-typescript"],
   "node": "16"
 }
