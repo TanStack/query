@@ -63,6 +63,27 @@ export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
+class PromiseCompleter<TData, TError> {
+  promise: Promise<TData>
+  resolve!: (data: TData) => void
+  reject!: (error: TError) => void
+  isResolved = false
+
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = (data: TData) => {
+        if (this.isResolved) {
+          return
+        }
+        const result = resolve(data)
+        this.isResolved = true
+        return result
+      }
+      this.reject = reject
+    })
+  }
+}
+
 export function createRetryer<TData = unknown, TError = unknown>(
   config: RetryerConfig<TData, TError>
 ): Retryer<TData> {
@@ -70,13 +91,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
   let failureCount = 0
   let isResolved = false
   let continueFn: ((value?: unknown) => void) | undefined
-  let promiseResolve: (data: TData) => void
-  let promiseReject: (error: TError) => void
-
-  const promise = new Promise<TData>((outerResolve, outerReject) => {
-    promiseResolve = outerResolve
-    promiseReject = outerReject
-  })
+  const completer = new PromiseCompleter<TData, TError>()
 
   const cancel = (cancelOptions?: CancelOptions): void => {
     if (!isResolved) {
@@ -102,7 +117,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
       isResolved = true
       config.onSuccess?.(value)
       continueFn?.()
-      promiseResolve(value)
+      completer.resolve(value)
     }
   }
 
@@ -111,7 +126,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
       isResolved = true
       config.onError?.(value)
       continueFn?.()
-      promiseReject(value)
+      completer.reject(value)
     }
   }
 
@@ -204,7 +219,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
   }
 
   return {
-    promise,
+    promise: completer.promise,
     cancel,
     continue: () => {
       continueFn?.()
