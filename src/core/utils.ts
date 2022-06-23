@@ -431,3 +431,24 @@ export function replaceData<
   }
   return data
 }
+
+export class PromiseCompleter<TData, TError> {
+  promise: Promise<TData>
+  resolve!: (data: TData) => void
+  reject!: (error: TError) => void
+  isResolved = false
+
+  constructor() {
+    this.promise = new Promise((resolve, reject) => {
+      this.resolve = (data: TData) => {
+        if (this.isResolved) {
+          return
+        }
+        const result = resolve(data)
+        this.isResolved = true
+        return result
+      }
+      this.reject = reject
+    })
+  }
+}
