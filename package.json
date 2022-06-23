@@ -2,9 +2,11 @@
   "private": true,
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
+    "install:csb": "yarn install && node ./scripts/fix-package-json.js",
     "test": "(is-ci && yarn test:ci) || yarn test:dev",
     "test:ci": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest",
     "test:dev": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest:dev",
+    "test:dev:17": "REACTJS_VERSION=17 jest --watch",
     "test:eslint": "lerna run test:eslint --stream --no-bail",
     "test:format": "yarn prettier --check",
     "test:jest": "lerna run test:codemods --stream --no-bail && jest --config ./jest.config.ts",

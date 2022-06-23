@@ -1,5 +1,5 @@
 {
-  "packages": ["./"],
+  "installCommand": "install:csb",
   "sandboxes": ["/examples/basic", "/examples/basic-typescript"],
-  "node": "14"
+  "node": "16"
 }
