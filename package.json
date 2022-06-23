@@ -2,7 +2,7 @@
   "private": true,
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
-    "install:csb": "yarn install && node ./scripts/fix-package-json.js",
+    "install:csb": "yarn install --frozen-lockfile && node ./scripts/fix-package-json.js",
     "test": "(is-ci && yarn test:ci) || yarn test:dev",
     "test:ci": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest",
     "test:dev": "yarn compile && yarn test:format && yarn test:eslint && yarn test:jest:dev",
