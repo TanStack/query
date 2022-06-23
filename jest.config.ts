@@ -22,12 +22,12 @@ const moduleNameMapper = {
 }
 
 module.exports = {
+  collectCoverage: true,
+  coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
   projects: packages.map((d) => ({
     displayName: d,
     clearMocks: true,
     testEnvironment: 'jsdom',
-    collectCoverage: true,
-    coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
     testMatch: [`<rootDir>/packages/${d}/**/*.test.[jt]s?(x)`],
     setupFilesAfterEnv: [`<rootDir>/jest.setup.js`],
     snapshotFormat: {
