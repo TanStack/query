@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 export const ExampleWithStringLiteralKey = () => {
   const stringLiteralKey = 'todos'

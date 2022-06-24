@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as RQ from '@tanstack/react-query'
+import * as RQ from 'react-query'
 
 export const Examples = () => {
   RQ.useQuery(['todos'])
@@ -8,7 +8,7 @@ export const Examples = () => {
   RQ.useIsFetching(['todos'])
   RQ.useIsMutating(['todos'])
   RQ.useQueries({
-    queries: [query1, query2],
+    queries: [query1, query2]
   })
   // QueryClient methods
   // --- Instantiated hook call.
@@ -60,7 +60,7 @@ export const Examples = () => {
   // --- NewExpression
   const queryCache1 = new RQ.QueryCache({
     onError: (error) => console.log(error),
-    onSuccess: (success) => console.log(success),
+    onSuccess: (success) => console.log(success)
   })
   queryCache1.find(['todos'])
   queryCache1.findAll(['todos'])

@@ -9,7 +9,7 @@ import {
   useQueries,
   useQuery,
   useQueryClient,
-} from '@tanstack/react-query'
+} from 'react-query'
 
 export const Examples = () => {
   useQuery(['todos'])
@@ -18,7 +18,7 @@ export const Examples = () => {
   useIsFetching(['todos'])
   useIsMutating(['todos'])
   useQueries({
-    queries: [query1, query2],
+    queries: [query1, query2]
   })
   // QueryClient methods
   // --- Instantiated hook call.
@@ -68,7 +68,7 @@ export const Examples = () => {
   // --- NewExpression
   const queryCache1 = new QueryCache({
     onError: (error) => console.log(error),
-    onSuccess: (success) => console.log(success),
+    onSuccess: (success) => console.log(success)
   })
   queryCache1.find(['todos'])
   queryCache1.findAll(['todos'])

@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useQueries, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQueries, useQuery, useQueryClient } from 'react-query'
 
 type Todos = {
   items: readonly {

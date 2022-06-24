@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 
 const options = {}
 
@@ -23,15 +23,9 @@ export const ExampleWithStringLiteralIdentifier = () => {
   // QueryClient methods
   // --- Instantiated hook call.
   const queryClient = useQueryClient()
-  queryClient.cancelQueries(
-    { queryKey: stringLiteralKey, exact: true },
-    options,
-  )
+  queryClient.cancelQueries({ queryKey: stringLiteralKey, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries(
-    { queryKey: stringLiteralKey, exact: true },
-    options,
-  )
+  useQueryClient().cancelQueries({ queryKey: stringLiteralKey, exact: true }, options)
 
   return <div>Example Component</div>
 }
@@ -56,15 +50,9 @@ export const ExampleWithTemplateLiteralIdentifier = () => {
   // QueryClient methods
   // --- Instantiated hook call.
   const queryClient = useQueryClient()
-  queryClient.cancelQueries(
-    { queryKey: templateLiteralKey, exact: true },
-    options,
-  )
+  queryClient.cancelQueries({ queryKey: templateLiteralKey, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries(
-    { queryKey: templateLiteralKey, exact: true },
-    options,
-  )
+  useQueryClient().cancelQueries({ queryKey: templateLiteralKey, exact: true }, options)
 
   return <div>Example Component</div>
 }
@@ -89,15 +77,9 @@ export const ExampleWithArrayExpressionIdentifier = () => {
   // QueryClient methods
   // --- Instantiated hook call.
   const queryClient = useQueryClient()
-  queryClient.cancelQueries(
-    { queryKey: arrayExpressionKey, exact: true },
-    options,
-  )
+  queryClient.cancelQueries({ queryKey: arrayExpressionKey, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries(
-    { queryKey: arrayExpressionKey, exact: true },
-    options,
-  )
+  useQueryClient().cancelQueries({ queryKey: arrayExpressionKey, exact: true }, options)
 
   return <div>Example Component</div>
 }
@@ -112,10 +94,7 @@ export const ExampleWithUnknownIdentifier1 = () => {
   const queryClient = useQueryClient()
   queryClient.cancelQueries({ queryKey: createdKey1, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries(
-    { queryKey: createdKey1, exact: true },
-    options,
-  )
+  useQueryClient().cancelQueries({ queryKey: createdKey1, exact: true }, options)
 
   return <div>Example Component</div>
 }
@@ -129,10 +108,7 @@ export const ExampleWithUnknownIdentifier2 = () => {
   const queryClient = useQueryClient()
   queryClient.cancelQueries({ queryKey: createdKey2, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries(
-    { queryKey: createdKey2, exact: true },
-    options,
-  )
+  useQueryClient().cancelQueries({ queryKey: createdKey2, exact: true }, options)
 
   return <div>Example Component</div>
 }
@@ -145,10 +121,8 @@ export const ExampleWithUnknownIdentifier3 = () => {
   const queryClient = useQueryClient()
   queryClient.cancelQueries({ queryKey: unknownQueryKey, exact: true }, options)
   // --- Direct hook call.
-  useQueryClient().cancelQueries(
-    { queryKey: unknownQueryKey, exact: true },
-    options,
-  )
+  useQueryClient().cancelQueries({ queryKey: unknownQueryKey, exact: true }, options)
 
   return <div>Example Component</div>
 }
+
