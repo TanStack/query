@@ -32,6 +32,7 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [React Tabl
 
 Still on **React Query v2**? No problem! Check out the v2 docs here: https://react-query-v2.tanstack.com/. <br />
 Would you like to try **React Query v4beta**? Check out the v4 beta docs here: https://react-query-beta.tanstack.com/.
+
 ## Quick Features
 
 - Transport/protocol/backend agnostic data fetching (REST, GraphQL, promises, whatever!)
@@ -94,4 +95,4 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-<!-- Force 3 -->
+<!-- Use the force, Luke -->
