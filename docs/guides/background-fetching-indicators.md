@@ -35,7 +35,7 @@ function Todos() {
 In addition to individual query loading states, if you would like to show a global loading indicator when **any** queries are fetching (including in the background), you can use the `useIsFetching` hook:
 
 ```js
-import { useIsFetching } from 'react-query'
+import { useIsFetching } from '@tanstack/react-query'
 
 function GlobalLoadingIndicator() {
   const isFetching = useIsFetching()

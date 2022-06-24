@@ -1,5 +1,5 @@
 import * as React from 'react'
-import * as RQ from 'react-query'
+import * as RQ from '@tanstack/react-query'
 
 export const Examples = () => {
   RQ.useQuery('todos')
@@ -58,7 +58,7 @@ export const Examples = () => {
   // --- NewExpression
   const queryCache1 = new RQ.QueryCache({
     onError: (error) => console.log(error),
-    onSuccess: (success) => console.log(success)
+    onSuccess: (success) => console.log(success),
   })
   queryCache1.find('todos')
   queryCache1.findAll('todos')

@@ -8,7 +8,7 @@ title: hydration
 `dehydrate` creates a frozen representation of a `cache` that can later be hydrated with `Hydrate`, `useHydrate`, or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localStorage or other persistent locations. It only includes currently successful queries by default.
 
 ```js
-import { dehydrate } from 'react-query'
+import { dehydrate } from '@tanstack/react-query'
 
 const dehydratedState = dehydrate(queryClient, {
   shouldDehydrateQuery,
@@ -65,7 +65,7 @@ hydrate(client, state)
 `hydrate` adds a previously dehydrated state into a `cache`.
 
 ```js
-import { hydrate } from 'react-query'
+import { hydrate } from '@tanstack/react-query'
 
 hydrate(queryClient, dehydratedState, options)
 ```
@@ -96,7 +96,7 @@ If the queries included in dehydration already exist in the queryCache, `hydrate
 `useHydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
 
 ```jsx
-import { useHydrate } from 'react-query'
+import { useHydrate } from '@tanstack/react-query'
 
 useHydrate(dehydratedState, options)
 ```
@@ -118,7 +118,7 @@ useHydrate(dehydratedState, options)
 `Hydrate` wraps `useHydrate` into component. Can be useful when you need hydrate in class component or need hydrate on same level where `QueryClientProvider` rendered.
 
 ```js
-import { Hydrate } from 'react-query'
+import { Hydrate } from '@tanstack/react-query'
 
 function App() {
   return <Hydrate state={dehydratedState}>...</Hydrate>

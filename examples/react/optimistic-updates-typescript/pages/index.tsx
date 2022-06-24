@@ -8,7 +8,7 @@ import {
   QueryClient,
   QueryClientProvider,
   UseQueryOptions,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 const client = new QueryClient()
@@ -36,7 +36,7 @@ function Example() {
   const { isFetching, ...queryInfo } = useTodos()
 
   const addTodoMutation = useMutation(
-    newTodo => axios.post('/api/data', { text: newTodo }),
+    (newTodo) => axios.post('/api/data', { text: newTodo }),
     {
       // When mutate is called:
       onMutate: async (newTodo: string) => {
@@ -70,7 +70,7 @@ function Example() {
       onSettled: () => {
         queryClient.invalidateQueries(['todos'])
       },
-    }
+    },
   )
 
   return (
@@ -84,14 +84,14 @@ function Example() {
         again refetched from the server.
       </p>
       <form
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault()
           addTodoMutation.mutate(text)
         }}
       >
         <input
           type="text"
-          onChange={event => setText(event.target.value)}
+          onChange={(event) => setText(event.target.value)}
           value={text}
         />
         <button disabled={addTodoMutation.isLoading}>Create</button>
@@ -104,7 +104,7 @@ function Example() {
             Updated At: {new Date(queryInfo.data.ts).toLocaleTimeString()}
           </div>
           <ul>
-            {queryInfo.data.items.map(todo => (
+            {queryInfo.data.items.map((todo) => (
               <li key={todo.id}>{todo.text}</li>
             ))}
           </ul>

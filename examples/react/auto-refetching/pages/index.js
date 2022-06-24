@@ -9,7 +9,7 @@ import {
   useMutation,
   QueryClient,
   QueryClientProvider,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 const queryClient = new QueryClient()
@@ -36,10 +36,10 @@ function Example() {
     {
       // Refetch the data every second
       refetchInterval: intervalMs,
-    }
+    },
   )
 
-  const addMutation = useMutation(value => fetch(`/api/data?add=${value}`), {
+  const addMutation = useMutation((value) => fetch(`/api/data?add=${value}`), {
     onSuccess: () => queryClient.invalidateQueries(['todos']),
   })
 
@@ -62,7 +62,7 @@ function Example() {
         Query Interval speed (ms):{' '}
         <input
           value={intervalMs}
-          onChange={ev => setIntervalMs(Number(ev.target.value))}
+          onChange={(ev) => setIntervalMs(Number(ev.target.value))}
           type="number"
           step="100"
         />{' '}
@@ -81,7 +81,7 @@ function Example() {
       </label>
       <h2>Todo List</h2>
       <form
-        onSubmit={event => {
+        onSubmit={(event) => {
           event.preventDefault()
           addMutation.mutate(value, {
             onSuccess: () => {
@@ -93,11 +93,11 @@ function Example() {
         <input
           placeholder="enter something"
           value={value}
-          onChange={ev => setValue(ev.target.value)}
+          onChange={(ev) => setValue(ev.target.value)}
         />
       </form>
       <ul>
-        {data.map(item => (
+        {data.map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ul>

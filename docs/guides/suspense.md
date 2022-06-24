@@ -11,7 +11,7 @@ Global configuration:
 
 ```js
 // Configure for all queries
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,7 +33,7 @@ function Root() {
 Query configuration:
 
 ```js
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 // Enable for an individual query
 useQuery(queryKey, queryFn, { suspense: true })
@@ -52,7 +52,7 @@ Query errors can be reset with the `QueryErrorResetBoundary` component or with t
 When using the component it will reset any query errors within the boundaries of the component:
 
 ```js
-import { QueryErrorResetBoundary } from 'react-query'
+import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
 const App: React.FC = () => (
@@ -77,7 +77,7 @@ const App: React.FC = () => (
 When using the hook it will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
 
 ```js
-import { useQueryErrorResetBoundary } from 'react-query'
+import { useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
 const App: React.FC = () => {

@@ -7,7 +7,7 @@ The `react-query` package offers a 1st-class API for using TanStack Query via Re
 ## Example
 
 ```tsx
-import { QueryClient, useQuery } from 'react-query'
+import { QueryClient, useQuery } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 

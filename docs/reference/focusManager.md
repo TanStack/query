@@ -18,7 +18,7 @@ Its available methods are:
 `setEventListener` can be used to set a custom event listener:
 
 ```js
-import { focusManager } from 'react-query'
+import { focusManager } from '@tanstack/react-query'
 
 focusManager.setEventListener(handleFocus => {
   // Listen to visibilitychange and focus
@@ -40,7 +40,7 @@ focusManager.setEventListener(handleFocus => {
 `setFocused` can be used to manually set the focus state. Set `undefined` to fallback to the default focus check.
 
 ```js
-import { focusManager } from 'react-query'
+import { focusManager } from '@tanstack/react-query'
 
 // Set focused
 focusManager.setFocused(true)

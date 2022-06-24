@@ -2,15 +2,14 @@ import React from 'react'
 import Link from 'next/link'
 import fetch from '../../libs/fetch'
 
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export default () => {
   const id =
     typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
 
-  const { status, data, error, isFetching } = useQuery(
-    ['team', id],
-    () => fetch('/api/data?id=' + id)
+  const { status, data, error, isFetching } = useQuery(['team', id], () =>
+    fetch('/api/data?id=' + id),
   )
 
   return (

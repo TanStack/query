@@ -9,7 +9,7 @@ import {
   useQueries as useRenamedQueries,
   useQuery as useRenamedQuery,
   useQueryClient as useRenamedQueryClient,
-} from 'react-query'
+} from '@tanstack/react-query'
 
 export const Examples = () => {
   useRenamedQuery('todos')
@@ -68,7 +68,7 @@ export const Examples = () => {
   // --- NewExpression
   const queryCache1 = new RenamedQueryCache({
     onError: (error) => console.log(error),
-    onSuccess: (success) => console.log(success)
+    onSuccess: (success) => console.log(success),
   })
   queryCache1.find('todos')
   queryCache1.findAll('todos')

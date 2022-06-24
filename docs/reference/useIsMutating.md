@@ -6,7 +6,7 @@ title: useIsMutating
 `useIsMutating` is an optional hook that returns the `number` of mutations that your application is fetching (useful for app-wide loading indicators).
 
 ```js
-import { useIsMutating } from 'react-query'
+import { useIsMutating } from '@tanstack/react-query'
 // How many mutations are fetching?
 const isMutating = useIsMutating()
 // How many mutations matching the posts prefix are fetching?
