@@ -7,7 +7,7 @@ import {
   useMutation,
   QueryClient,
   QueryClientProvider,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 const queryClient = new QueryClient()
@@ -30,18 +30,18 @@ function Example() {
   })
 
   const addTodoMutation = useMutation(
-    text => axios.post('/api/data', { text }),
+    (text) => axios.post('/api/data', { text }),
     {
       // Optimistically update the cache value on mutate, but store
       // the old value and return it so that it's accessible in case of
       // an error
-      onMutate: async text => {
+      onMutate: async (text) => {
         setText('')
         await queryClient.cancelQueries(['todos'])
 
         const previousValue = queryClient.getQueryData(['todos'])
 
-        queryClient.setQueryData(['todos'], old => ({
+        queryClient.setQueryData(['todos'], (old) => ({
           ...old,
           items: [...old.items, text],
         }))
@@ -55,7 +55,7 @@ function Example() {
       onSettled: () => {
         queryClient.invalidateQueries(['todos'])
       },
-    }
+    },
   )
 
   return (
@@ -69,14 +69,14 @@ function Example() {
         again refetched from the server.
       </p>
       <form
-        onSubmit={e => {
+        onSubmit={(e) => {
           e.preventDefault()
           addTodoMutation.mutate(text)
         }}
       >
         <input
           type="text"
-          onChange={event => setText(event.target.value)}
+          onChange={(event) => setText(event.target.value)}
           value={text}
         />
         <button>{addTodoMutation.isLoading ? 'Creating...' : 'Create'}</button>
@@ -90,7 +90,7 @@ function Example() {
         <>
           <div>Updated At: {new Date(data.ts).toLocaleTimeString()}</div>
           <ul>
-            {data.items.map(datum => (
+            {data.items.map((datum) => (
               <li key={datum}>{datum}</li>
             ))}
           </ul>

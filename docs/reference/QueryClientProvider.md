@@ -6,7 +6,7 @@ title: QueryClientProvider
 Use the `QueryClientProvider` component to connect and provide a `QueryClient` to your application:
 
 ```js
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 

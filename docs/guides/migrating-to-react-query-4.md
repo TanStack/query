@@ -5,6 +5,16 @@ title: Migrating to React Query 4
 
 ## Breaking Changes
 
+### react-query is now @tanstack/react-query
+
+```diff
+- import { useQuery } from 'react-query'
+- import { ReactQueryDevtools } from 'react-query/devtools'
+
++ import { useQuery } from '@tanstack/react-query'
++ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+```
+
 ### Query Keys (and Mutation Keys) need to be an Array
 
 In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./default-query-function) easier.
@@ -29,13 +39,13 @@ You can easily apply it by using one (or both) of the following commands:
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=js,jsx --transform=./node_modules/react-query/codemods/v4/key-transformation.js ./path/to/src/
+npx jscodeshift --extensions=js,jsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/react-query/codemods/v4/key-transformation.js ./path/to/src/
+npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser otherwise, the codemod won't be applied properly!
@@ -210,9 +220,9 @@ Since these plugins are no longer experimental, their import paths have also bee
 - import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental'
 - import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
 
-+ import { persistQueryClient } from 'react-query/persistQueryClient'
-+ import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
-+ import { createAsyncStoragePersister } from 'react-query/createAsyncStoragePersister'
++ import { persistQueryClient } from '@tanstack/react-query-persist-client'
++ import { createWebStoragePersister } from '@tanstack/query-sync-storage-persister'
++ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 ```
 
 ### The `cancel` method on promises is no longer supported
@@ -233,7 +243,7 @@ It was possible to change the logger globally by calling `setLogger`. In v4, tha
 
 ```diff
 - import { QueryClient, setLogger } from 'react-query';
-+ import { QueryClient } from 'react-query';
++ import { QueryClient } from '@tanstack/react-query';
 
 - setLogger(customLogger)
 - const queryClient = new QueryClient();
@@ -284,7 +294,7 @@ With version [3.22.0](https://github.com/tannerlinsley/react-query/releases/tag/
 
 ```diff
 - import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query/hydration'
-+ import { dehydrate, hydrate, useHydrate, Hydrate } from 'react-query'
++ import { dehydrate, hydrate, useHydrate, Hydrate } from '@tanstack/react-query'
 ```
 
 ### Removed undocumented methods from the `queryClient`, `query` and `mutation`

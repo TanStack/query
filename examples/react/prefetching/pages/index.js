@@ -5,19 +5,19 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 const getCharacters = async () => {
-  await new Promise(r => setTimeout(r, 500))
+  await new Promise((r) => setTimeout(r, 500))
   const { data } = await axios.get('https://rickandmortyapi.com/api/character/')
   return data
 }
 
-const getCharacter = async selectedChar => {
-  await new Promise(r => setTimeout(r, 500))
+const getCharacter = async (selectedChar) => {
+  await new Promise((r) => setTimeout(r, 500))
   const { data } = await axios.get(
-    `https://rickandmortyapi.com/api/character/${selectedChar}`
+    `https://rickandmortyapi.com/api/character/${selectedChar}`,
   )
   return data
 }
@@ -40,7 +40,7 @@ function Example() {
   const charactersQuery = useQuery(['characters'], getCharacters)
 
   const characterQuery = useQuery(['character', selectedChar], () =>
-    getCharacter(selectedChar)
+    getCharacter(selectedChar),
   )
 
   return (
@@ -56,7 +56,7 @@ function Example() {
       ) : (
         <>
           <ul>
-            {charactersQuery.data?.results.map(char => (
+            {charactersQuery.data?.results.map((char) => (
               <li
                 key={char.id}
                 onClick={() => {
@@ -68,7 +68,7 @@ function Example() {
                     () => getCharacter(char.id),
                     {
                       staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-                    }
+                    },
                   )
 
                   setTimeout(() => {

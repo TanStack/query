@@ -18,10 +18,13 @@ describe('useIsFetching', () => {
     const queryClient = createQueryClient({ queryCache })
     const key = queryKey()
 
-    function Page() {
-      const [ready, setReady] = React.useState(false)
-
+    function IsFetching() {
       const isFetching = useIsFetching()
+      return <div>isFetching: {isFetching}</div>
+    }
+
+    function Query() {
+      const [ready, setReady] = React.useState(false)
 
       useQuery(
         key,
@@ -34,10 +37,14 @@ describe('useIsFetching', () => {
         },
       )
 
+      return <button onClick={() => setReady(true)}>setReady</button>
+    }
+
+    function Page() {
       return (
         <div>
-          <div>isFetching: {isFetching}</div>
-          <button onClick={() => setReady(true)}>setReady</button>
+          <IsFetching />
+          <Query />
         </div>
       )
     }

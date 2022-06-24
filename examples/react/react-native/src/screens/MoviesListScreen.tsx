@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FlatList, RefreshControl } from 'react-native';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { LoadingIndicator } from '@app/components/LoadingIndicator';

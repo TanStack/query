@@ -5,7 +5,7 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 const queryClient = new QueryClient()
@@ -30,14 +30,14 @@ function Example() {
   const { status, data, error, isFetching, isPreviousData } = useQuery(
     ['projects', page],
     () => fetchProjects(page),
-    { keepPreviousData: true, staleTime: 5000 }
+    { keepPreviousData: true, staleTime: 5000 },
   )
 
   // Prefetch the next page!
   React.useEffect(() => {
     if (data?.hasMore) {
       queryClient.prefetchQuery(['projects', page + 1], () =>
-        fetchProjects(page + 1)
+        fetchProjects(page + 1),
       )
     }
   }, [data, page, queryClient])
@@ -60,21 +60,21 @@ function Example() {
         // `data` will either resolve to the latest page's data
         // or if fetching a new page, the last successful page's data
         <div>
-          {data.projects.map(project => (
+          {data.projects.map((project) => (
             <p key={project.id}>{project.name}</p>
           ))}
         </div>
       )}
       <div>Current Page: {page + 1}</div>
       <button
-        onClick={() => setPage(old => Math.max(old - 1, 0))}
+        onClick={() => setPage((old) => Math.max(old - 1, 0))}
         disabled={page === 0}
       >
         Previous Page
       </button>{' '}
       <button
         onClick={() => {
-          setPage(old => (data?.hasMore ? old + 1 : old))
+          setPage((old) => (data?.hasMore ? old + 1 : old))
         }}
         disabled={isPreviousData || !data?.hasMore}
       >

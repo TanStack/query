@@ -42,7 +42,7 @@ With this information, we can create a "Load More" UI by:
 > Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. e.g. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
 
 ```js
-import { useInfiniteQuery } from 'react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 
 function Projects() {
   const fetchProjects = ({ pageParam = 0 }) =>

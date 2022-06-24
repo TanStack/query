@@ -8,7 +8,7 @@ The `QueryCache` is the storage mechanism for React Query. It stores all the dat
 **Normally, you will not interact with the QueryCache directly and instead use the `QueryClient` for a specific cache.**
 
 ```js
-import { QueryCache } from 'react-query'
+import { QueryCache } from '@tanstack/react-query'
 
 const queryCache = new QueryCache({
   onError: error => {

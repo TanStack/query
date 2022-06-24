@@ -80,7 +80,7 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
 Anywhere the `[queryKey, queryFn, config]` signature is supported throughout React Query's API, you can also use an object to express the same configuration:
 
 ```js
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 useQuery({
   queryKey: ['todo', 7],
