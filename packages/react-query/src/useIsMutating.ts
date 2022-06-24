@@ -29,13 +29,13 @@ export function useIsMutating(
   const [filters, options = {}] = parseMutationFilterArgs(arg1, arg2, arg3)
 
   const queryClient = useQueryClient({ context: options.context })
-  const queryCache = queryClient.getQueryCache()
+  const mutationCache = queryClient.getMutationCache()
 
   return useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
-      [queryCache],
+        mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [mutationCache],
     ),
     () => queryClient.isMutating(filters),
     () => queryClient.isMutating(filters),

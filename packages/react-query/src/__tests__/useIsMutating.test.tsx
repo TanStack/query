@@ -24,7 +24,7 @@ describe('useIsMutating', () => {
       return null
     }
 
-    function Page() {
+    function Mutations() {
       const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
         await sleep(150)
         return 'data'
@@ -41,7 +41,16 @@ describe('useIsMutating', () => {
         }, 50)
       }, [mutate1, mutate2])
 
-      return <IsMutating />
+      return null
+    }
+
+    function Page() {
+      return (
+        <div>
+          <IsMutating />
+          <Mutations />
+        </div>
+      )
     }
 
     renderWithClient(queryClient, <Page />)
@@ -77,7 +86,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -112,7 +121,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
   })
 
   it('should not change state if unmounted', async () => {
@@ -209,7 +218,7 @@ describe('useIsMutating', () => {
       }
 
       renderWithClient(queryClient, <Page />, { context })
-      await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
+      await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
     })
 
     it('should throw if the context is not passed to useIsMutating', async () => {
