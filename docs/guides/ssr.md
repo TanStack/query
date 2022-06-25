@@ -111,7 +111,7 @@ As demonstrated, it's fine to prefetch some queries and let others fetch on the 
 
 There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/docs/api-reference/next.config.js/rewrites) together with [Automatic Static Optimization](https://nextjs.org/docs/advanced-features/automatic-static-optimization) or `getStaticProps`: It will cause a second hydration by React Query. That's because [Next.js needs to ensure that they parse the rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewrite-parameters) on the client and collect any params after hydration so that they can be provided in `router.query`.
 
-The result is missing referential equality for all the hydration data, which for example triggers whereever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.
+The result is missing referential equality for all the hydration data, which for example triggers wherever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.
 
 ## Using Other Frameworks or Custom SSR Frameworks
 
