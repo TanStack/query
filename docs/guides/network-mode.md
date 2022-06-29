@@ -19,7 +19,7 @@ The flags `isFetching` and `isPaused` are derived from this state and exposed fo
 
 > Keep in mind that it might not be enough to check for `loading` state to show a loading spinner. Queries can be in `state: 'loading'`, but `fetchStatus: 'paused'` if they are mounting for the first time, and you have no network connection.
 
-If a query runs because you are online, but you go offline while the fetch is still happening, React Query will also pause the retry mechanism. Paused queries will then continue to run once you re-gain network connection. This is independent of `refetchOnReconnect` (which also defaults to `true` in this mode), because it is not a `refetch`, but rather a `continue`. If the query has been [cancelled](./query-cancellation) in the meantime, it will not continue.
+If a query runs because you are online, but you go offline while the fetch is still happening, React Query will also pause the retry mechanism. Paused queries will then continue to run once you re-gain network connection. This is independent of `refetchOnReconnect` (which also defaults to `true` in this mode), because it is not a `refetch`, but rather a `continue`. If the query has been [cancelled](../guides/query-cancellation) in the meantime, it will not continue.
 
 ## Network Mode: always
 
