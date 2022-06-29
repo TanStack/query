@@ -3,13 +3,13 @@ id: network-mode
 title: Network Mode
 ---
 
-React Query provides three different network modes to distinguish how [Queries](./queries) and [Mutations](./mutations) should behave if you have no network connection. This mode can be set for each Query / Mutation individually, or globally via the query / mutation defaults.
+React Query provides three different network modes to distinguish how [Queries](../guides/queries) and [Mutations](../guides/mutations) should behave if you have no network connection. This mode can be set for each Query / Mutation individually, or globally via the query / mutation defaults.
 
 Since React Query is most often used for data fetching in combination with data fetching libraries, the default network mode is [online](#network-mode-online).
 
 ## Network Mode: online
 
-In this mode, Queries and Mutations will not fire unless you have network connection. This is the default mode. If a fetch is initiated for a query, it will always stay in the `state` (`loading`, `error`, `success`) it is in if the fetch cannot be made because there is no network connection. However, a [fetchStatus](./queries#fetchstatus) is exposed additionally. This can be either:
+In this mode, Queries and Mutations will not fire unless you have network connection. This is the default mode. If a fetch is initiated for a query, it will always stay in the `state` (`loading`, `error`, `success`) it is in if the fetch cannot be made because there is no network connection. However, a [fetchStatus](../guides/queries#fetchstatus) is exposed additionally. This can be either:
 
 - `fetching`: The `queryFn` is really executing - a request is in-flight.
 - `paused`: The query is not executing - it is `paused` until you have connection again
