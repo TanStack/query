@@ -7,7 +7,6 @@ import {
   QueryKey,
   MutationObserverOptions,
   MutateFunction,
-  InitialDataFunction,
 } from '../core/types'
 import type { QueryClient } from '../core/queryClient'
 import * as React from 'react'
@@ -27,19 +26,6 @@ export interface UseBaseQueryOptions<
   TQueryKey extends QueryKey = QueryKey
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
-
-export type UseBaseQueryOptionsInitialDataDefined<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryData,
-  TQueryKey extends QueryKey
-> = Omit<
-  UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  'initialData'
-> & {
-  initialData: TData | InitialDataFunction<TData>
-}
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
@@ -63,7 +49,7 @@ export type UseQueryOptionsInitialDataDefined<
   UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   'initialData'
 > & {
-  initialData: TData | InitialDataFunction<TData>
+  initialData: TQueryFnData
 }
 
 export interface UseInfiniteQueryOptions<

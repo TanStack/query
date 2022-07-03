@@ -26,7 +26,7 @@ type Post = {
 };
 
 function usePosts() {
-  return useQuery<Array<Post>>(
+  return useQuery(
     ["posts"],
     () => axios.get<Array<Post>>('https://jsonplaceholder.typicode.com/posts').then(({data}) => data), {
       initialData: [{ id: 1, title: "Post 1", body: "Body 1" }],

@@ -1,7 +1,13 @@
 import { QueryObserver } from '../core'
 import { QueryFunction, QueryKey } from '../core/types'
 import { parseQueryArgs } from '../core/utils'
-import { UseQueryOptions, UseQueryResultWithOptions } from './types'
+import {
+  UseQueryOptions,
+  UseQueryResultWithOptions,
+  UseQueryOptionsInitialDataDefined,
+  UseQueryResultDataDefined,
+  UseQueryResult,
+} from './types'
 import { useBaseQuery } from './useBaseQuery'
 
 // HOOK
@@ -41,17 +47,23 @@ export function useQuery<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TQueryOpts extends UseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  > = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  TQueryOpts extends Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn'
+  > = Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn'
+  >
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<TQueryOpts, 'queryKey' | 'queryFn'>
-): UseQueryResultWithOptions<TQueryOpts, TQueryFnData, TError, TData, TQueryKey>
+  options?: TQueryOpts
+): TQueryOpts extends Omit<
+  UseQueryOptionsInitialDataDefined<TQueryFnData, TError, TData, TQueryKey>,
+  'queryKey' | 'queryFn'
+>
+  ? UseQueryResultDataDefined<TData, TError>
+  : UseQueryResult<TData, TError>
 export function useQuery<
   TQueryFnData,
   TError,
@@ -75,5 +87,14 @@ export function useQuery<
   TQueryKey
 > {
   const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-  return useBaseQuery(parsedOptions, QueryObserver)
+  return useBaseQuery(
+    parsedOptions,
+    QueryObserver
+  ) as UseQueryResultWithOptions<
+    TQueryOpts,
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  >
 }
