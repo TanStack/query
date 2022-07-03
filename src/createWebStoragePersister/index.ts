@@ -1,9 +1,21 @@
 import { noop } from '../core/utils'
-import { PersistedClient, Persister } from '../persistQueryClient'
+import {
+  PersistedClient,
+  Persister,
+  PersistRetryer,
+} from '../persistQueryClient'
+
+interface Storage {
+  getItem: (key: string) => string | null
+  setItem: (key: string, value: string) => void
+  removeItem: (key: string) => void
+}
 
 interface CreateWebStoragePersisterOptions {
-  /** The storage client used for setting an retrieving items from cache */
-  storage: Storage
+  /** The storage client used for setting and retrieving items from cache.
+   * For SSR pass in `undefined`.
+   */
+  storage: Storage | undefined
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -19,6 +31,8 @@ interface CreateWebStoragePersisterOptions {
    * @default `JSON.parse`
    */
   deserialize?: (cachedString: string) => PersistedClient
+
+  retry?: PersistRetryer
 }
 
 export function createWebStoragePersister({
@@ -27,46 +41,31 @@ export function createWebStoragePersister({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
+  retry,
 }: CreateWebStoragePersisterOptions): Persister {
-  //try to save data to storage
-  function trySave(persistedClient: PersistedClient) {
-    try {
-      storage.setItem(key, serialize(persistedClient))
-    } catch {
-      return false
-    }
-    return true
-  }
-
   if (typeof storage !== 'undefined') {
+    const trySave = (persistedClient: PersistedClient): Error | undefined => {
+      try {
+        storage.setItem(key, serialize(persistedClient))
+      } catch (error) {
+        return error as Error
+      }
+    }
     return {
       persistClient: throttle(persistedClient => {
-        if (trySave(persistedClient) !== true) {
-          const mutations = [...persistedClient.clientState.mutations]
-          const queries = [...persistedClient.clientState.queries]
-          const client: PersistedClient = {
-            ...persistedClient,
-            clientState: { mutations, queries },
-          }
+        let client: PersistedClient | undefined = persistedClient
+        let error = trySave(client)
+        let errorCount = 0
+        while (error && client) {
+          errorCount++
+          client = retry?.({
+            persistedClient: client,
+            error,
+            errorCount,
+          })
 
-          // sort queries by dataUpdatedAt (oldest first)
-          const sortedQueries = [...queries].sort(
-            (a, b) => a.state.dataUpdatedAt - b.state.dataUpdatedAt
-          )
-          // clean old queries and try to save
-          while (sortedQueries.length > 0) {
-            const oldestData = sortedQueries.shift()
-            client.clientState.queries = queries.filter(q => q !== oldestData)
-            if (trySave(client)) {
-              return // save success
-            }
-          }
-
-          // clean mutations and try to save
-          while (mutations.shift()) {
-            if (trySave(client)) {
-              return // save success
-            }
+          if (client) {
+            error = trySave(client)
           }
         }
       }, throttleTime),

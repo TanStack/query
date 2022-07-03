@@ -1,25 +1,24 @@
 import { act, waitFor, fireEvent } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import React from 'react'
-
 import {
   expectType,
   queryKey,
   mockVisibilityState,
   sleep,
-  renderWithClient,
   setActTimeout,
-  Blink,
   mockNavigatorOnLine,
   mockLogger,
   createQueryClient,
-} from './utils'
+} from '../../tests/utils'
+import { renderWithClient, Blink } from './utils'
 import {
   useQuery,
   UseQueryResult,
   QueryCache,
   QueryFunction,
   QueryFunctionContext,
+  UseQueryOptions,
 } from '../..'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -58,6 +57,24 @@ describe('useQuery', () => {
         onSuccess: data => expectType<boolean>(data),
         onSettled: data => expectType<boolean | undefined>(data),
       })
+
+      // it should be possible to specify a union type as result type
+      const unionTypeSync = useQuery(
+        key,
+        () => (Math.random() > 0.5 ? 'a' : 'b'),
+        {
+          onSuccess: data => expectType<'a' | 'b'>(data),
+        }
+      )
+      expectType<'a' | 'b' | undefined>(unionTypeSync.data)
+      const unionTypeAsync = useQuery<'a' | 'b'>(
+        key,
+        () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
+        {
+          onSuccess: data => expectType<'a' | 'b'>(data),
+        }
+      )
+      expectType<'a' | 'b' | undefined>(unionTypeAsync.data)
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
@@ -105,6 +122,49 @@ describe('useQuery', () => {
         queryKey: ['1'],
         queryFn: getMyDataStringKey,
       })
+
+      // it should handle query-functions that return Promise<any>
+      useQuery(key, () =>
+        fetch('return Promise<any>').then(resp => resp.json())
+      )
+
+      // handles wrapped queries with custom fetcher passed as inline queryFn
+      const useWrappedQuery = <
+        TQueryKey extends [string, Record<string, unknown>?],
+        TQueryFnData,
+        TError,
+        TData = TQueryFnData
+      >(
+        qk: TQueryKey,
+        fetcher: (
+          obj: TQueryKey[1],
+          token: string
+          // return type must be wrapped with TQueryFnReturn
+        ) => Promise<TQueryFnData>,
+        options?: Omit<
+          UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey' | 'queryFn'
+        >
+      ) => useQuery(qk, () => fetcher(qk[1], 'token'), options)
+      const test = useWrappedQuery([''], async () => '1')
+      expectType<string | undefined>(test.data)
+
+      // handles wrapped queries with custom fetcher passed directly to useQuery
+      const useWrappedFuncStyleQuery = <
+        TQueryKey extends [string, Record<string, unknown>?],
+        TQueryFnData,
+        TError,
+        TData = TQueryFnData
+      >(
+        qk: TQueryKey,
+        fetcher: () => Promise<TQueryFnData>,
+        options?: Omit<
+          UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey' | 'queryFn'
+        >
+      ) => useQuery(qk, fetcher, options)
+      const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
+      expectType<boolean | undefined>(testFuncStyle.data)
     }
   })
 
@@ -173,6 +233,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -198,6 +259,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: true,
       isFetchedAfterMount: true,
@@ -253,6 +315,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -278,6 +341,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
+      errorUpdateCount: 0,
       isError: false,
       isFetched: false,
       isFetchedAfterMount: false,
@@ -303,6 +367,7 @@ describe('useQuery', () => {
       error: 'rejected',
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
+      errorUpdateCount: 1,
       isError: true,
       isFetched: true,
       isFetchedAfterMount: true,
@@ -358,14 +423,21 @@ describe('useQuery', () => {
     const onSuccess = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => 'data', { onSuccess })
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return 'data'
+        },
+        { onSuccess }
+      )
       states.push(state)
-      return null
+      return <div>data: {state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await rendered.findByText('data: data')
     expect(states.length).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
@@ -375,34 +447,37 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
     const onSuccess = jest.fn()
+    let count = 0
 
     function Page() {
       const state = useQuery(
         key,
         async () => {
+          count++
           await sleep(10)
-          return 'data'
+          return 'data' + count
         },
-        { onSuccess, notifyOnChangeProps: 'all' }
+        { onSuccess }
       )
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 20)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
-    expect(states.length).toBe(4)
+    await rendered.findByText('data: data1')
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await rendered.findByText('data: data2')
+
+    expect(states.length).toBe(3) //loading, success, success after refetch
+    expect(count).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(2)
   })
 
@@ -549,7 +624,7 @@ describe('useQuery', () => {
     const onSettled = jest.fn()
 
     function Page() {
-      const state = useQuery(key, () => Promise.reject('error'), {
+      const state = useQuery(key, () => Promise.reject<unknown>('error'), {
         retry: false,
         onSettled,
       })
@@ -955,6 +1030,44 @@ describe('useQuery', () => {
 
     expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
     expect(states[1]).toMatchObject({ status: 'error', error })
+  })
+
+  it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
+    const key = queryKey()
+    const error = new Error('Select Error')
+    let runs = 0
+
+    function Page() {
+      const [, rerender] = React.useReducer(() => ({}), {})
+      const state = useQuery<string, Error>(
+        key,
+        () => (runs === 0 ? 'test' : 'test2'),
+        {
+          select: React.useCallback(() => {
+            runs++
+            throw error
+          }, []),
+        }
+      )
+      return (
+        <div>
+          <div>error: {state.error?.message}</div>
+          <button onClick={rerender}>rerender</button>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('error: Select Error'))
+    expect(runs).toEqual(1)
+    fireEvent.click(rendered.getByRole('button', { name: 'rerender' }))
+    await sleep(10)
+    expect(runs).toEqual(1)
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+    await sleep(10)
+    expect(runs).toEqual(2)
   })
 
   it('should track properties and only re-render when a tracked property changes', async () => {
@@ -2471,7 +2584,7 @@ describe('useQuery', () => {
 
   it('should not refetch query on focus when `enabled` is set to `false`', async () => {
     const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
 
     function Page() {
       const { data = 'default' } = useQuery(key, queryFn, {
@@ -2505,6 +2618,35 @@ describe('useQuery', () => {
       const state = useQuery(key, () => count++, {
         staleTime: 0,
         refetchOnWindowFocus: false,
+      })
+      states.push(state)
+      return null
+    }
+
+    renderWithClient(queryClient, <Page />)
+
+    await sleep(10)
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(10)
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+  })
+
+  it('should not refetch stale query on focus when `refetchOnWindowFocus` is set to a function that returns `false`', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(key, () => count++, {
+        staleTime: 0,
+        refetchOnWindowFocus: () => false,
       })
       states.push(state)
       return null
@@ -2592,6 +2734,58 @@ describe('useQuery', () => {
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
   })
 
+  it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return count++
+        },
+        {
+          staleTime: 0,
+          retry: 0,
+          refetchOnWindowFocus: query => (query.state.data || 0) < 1,
+        }
+      )
+      states.push(state)
+      return <div>data: {String(state.data)}</div>
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: 0')
+
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
+    expect(states[1]).toMatchObject({ data: 0, isFetching: false })
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await rendered.findByText('data: 1')
+
+    // refetch should happen
+    expect(states.length).toBe(4)
+
+    expect(states[2]).toMatchObject({ data: 0, isFetching: true })
+    expect(states[3]).toMatchObject({ data: 1, isFetching: false })
+
+    act(() => {
+      window.dispatchEvent(new FocusEvent('focus'))
+    })
+
+    await sleep(20)
+
+    // no more refetch now
+    expect(states.length).toBe(4)
+  })
+
   it('should refetch fresh query when refetchOnMount is set to always', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -2662,7 +2856,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<unknown, string>(
         key,
         () => {
           return Promise.reject('Error test jaylen')
@@ -2688,7 +2882,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<unknown, string>(
         key,
         () => Promise.reject('Error test jaylen'),
         { retry: false, useErrorBoundary: true }
@@ -2740,7 +2934,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, string>(
+      const { status, error } = useQuery<unknown, string>(
         key,
         () => Promise.reject('Local Error'),
         {
@@ -2772,7 +2966,7 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<undefined, Error>(
+      const { status, error } = useQuery<unknown, Error>(
         key,
         () => Promise.reject(new Error('Remote Error')),
         {
@@ -3115,7 +3309,7 @@ describe('useQuery', () => {
   it('should retry specified number of times', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(() => {
       return Promise.reject('Error test Barrett')
     })
@@ -3148,7 +3342,7 @@ describe('useQuery', () => {
   it('should not retry if retry function `false`', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
 
     queryFn.mockImplementationOnce(() => {
       return Promise.reject('Error test Tanner')
@@ -3160,7 +3354,7 @@ describe('useQuery', () => {
 
     function Page() {
       const { status, failureCount, error } = useQuery<
-        undefined,
+        unknown,
         string,
         [string]
       >(key, queryFn, {
@@ -3193,7 +3387,7 @@ describe('useQuery', () => {
 
     type DelayError = { delay: number }
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(() => {
       return Promise.reject({ delay: 50 })
     })
@@ -3237,7 +3431,7 @@ describe('useQuery', () => {
         key,
         () => {
           count++
-          return Promise.reject(`fetching error ${count}`)
+          return Promise.reject<unknown>(`fetching error ${count}`)
         },
         {
           retry: 3,
@@ -3379,10 +3573,10 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn()
+    const prefetchQueryFn = jest.fn<string, unknown[]>()
     prefetchQueryFn.mockImplementation(() => 'not yet...')
 
     await queryClient.prefetchQuery(key, prefetchQueryFn, {
@@ -3408,10 +3602,10 @@ describe('useQuery', () => {
   it('should not refetch if not stale after a prefetch', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => 'data')
 
-    const prefetchQueryFn = jest.fn()
+    const prefetchQueryFn = jest.fn<Promise<string>, unknown[]>()
     prefetchQueryFn.mockImplementation(async () => {
       await sleep(10)
       return 'not yet...'
@@ -3628,7 +3822,7 @@ describe('useQuery', () => {
 
   it('it should support enabled:false in query object syntax', async () => {
     const key = queryKey()
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<string, unknown[]>()
     queryFn.mockImplementation(() => 'data')
 
     function Page() {
@@ -3693,7 +3887,7 @@ describe('useQuery', () => {
 
   it('should not cause memo churn when data does not change', async () => {
     const key = queryKey()
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
     const memoFn = jest.fn()
 
     function Page() {
@@ -3890,7 +4084,7 @@ describe('useQuery', () => {
   it('should refetch if any query instance becomes enabled', async () => {
     const key = queryKey()
 
-    const queryFn = jest.fn().mockReturnValue('data')
+    const queryFn = jest.fn<string, unknown[]>().mockReturnValue('data')
 
     function Disabled() {
       useQuery(key, queryFn, { enabled: false })
@@ -4578,7 +4772,7 @@ describe('useQuery', () => {
   })
 
   it('should refetch when changed enabled to true in error state', async () => {
-    const queryFn = jest.fn()
+    const queryFn = jest.fn<unknown, unknown[]>()
     queryFn.mockImplementation(async () => {
       await sleep(10)
       return Promise.reject(new Error('Suspense Error Bingo'))
@@ -4699,7 +4893,7 @@ describe('useQuery', () => {
         [id],
         async () => {
           await sleep(10)
-          return Promise.reject(new Error('Error'))
+          return Promise.reject<unknown>(new Error('Error'))
         },
         {
           retry: false,
@@ -5168,7 +5362,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
             throw new Error('failed' + count)
@@ -5463,7 +5657,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
             throw new Error('error ' + count)
@@ -5509,7 +5703,7 @@ describe('useQuery', () => {
       function Page() {
         const state = useQuery({
           queryKey: key,
-          queryFn: async () => {
+          queryFn: async (): Promise<unknown> => {
             count++
             await sleep(10)
             throw new Error('failed' + count)
@@ -5550,5 +5744,122 @@ describe('useQuery', () => {
 
       onlineMock.mockRestore()
     })
+  })
+
+  it('it should have status=error on mount when a query has failed', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<unknown>[] = []
+    const error = new Error('oops')
+
+    const queryFn = async (): Promise<unknown> => {
+      throw error
+    }
+
+    function Page() {
+      const state = useQuery(key, queryFn, {
+        retry: false,
+        retryOnMount: false,
+      })
+
+      states.push(state)
+
+      return <></>
+    }
+
+    await queryClient.prefetchQuery(key, queryFn)
+    renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => expect(states).toHaveLength(1))
+
+    expect(states[0]).toMatchObject({
+      status: 'error',
+      error,
+    })
+  })
+
+  it('setQueryData - should not call onSuccess callback of active observers', async () => {
+    const key = queryKey()
+    const onSuccess = jest.fn()
+
+    function Page() {
+      const state = useQuery(key, () => 'data', { onSuccess })
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => queryClient.setQueryData(key, 'newData')}>
+            setQueryData
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: data'))
+    fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
+    await waitFor(() => rendered.getByText('data: newData'))
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  })
+
+  it('setQueryData - should respect updatedAt', async () => {
+    const key = queryKey()
+
+    function Page() {
+      const state = useQuery(key, () => 'data')
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
+          <button
+            onClick={() =>
+              queryClient.setQueryData(key, 'newData', { updatedAt: 100 })
+            }
+          >
+            setQueryData
+          </button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: data'))
+    fireEvent.click(rendered.getByRole('button', { name: /setQueryData/i }))
+    await waitFor(() => rendered.getByText('data: newData'))
+    await waitFor(() => {
+      expect(rendered.getByText('dataUpdatedAt: 100')).toBeInTheDocument()
+    })
+  })
+
+  it('errorUpdateCount should increased on each fetch failure', async () => {
+    const key = queryKey()
+    const error = new Error('oops')
+
+    function Page() {
+      const { refetch, errorUpdateCount } = useQuery(
+        key,
+        async (): Promise<unknown> => {
+          throw error
+        },
+        {
+          retry: false,
+        }
+      )
+      return (
+        <div>
+          <button onClick={() => refetch()}>refetch</button>
+          <span>data: {errorUpdateCount}</span>
+        </div>
+      )
+    }
+    const rendered = renderWithClient(queryClient, <Page />)
+    const fetchBtn = rendered.getByRole('button', { name: 'refetch' })
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 2'))
+    fireEvent.click(fetchBtn)
+    await waitFor(() => rendered.getByText('data: 3'))
   })
 })

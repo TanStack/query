@@ -5,6 +5,7 @@ import type {
   InfiniteData,
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
+  QueryKey,
 } from './types'
 import type { QueryClient } from './queryClient'
 import {
@@ -27,12 +28,14 @@ export class InfiniteQueryObserver<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryData = TQueryFnData
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey
 > extends QueryObserver<
   TQueryFnData,
   TError,
   InfiniteData<TData>,
-  InfiniteData<TQueryData>
+  InfiniteData<TQueryData>,
+  TQueryKey
 > {
   // Type override
   subscribe!: (
@@ -54,7 +57,8 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      TQueryKey
     >
   ) {
     super(client, options)
@@ -71,7 +75,8 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      TQueryKey
     >,
     notifyOptions?: NotifyOptions
   ): void {
@@ -89,7 +94,8 @@ export class InfiniteQueryObserver<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      TQueryKey
     >
   ): InfiniteQueryObserverResult<TData, TError> {
     options.behavior = infiniteQueryBehavior()
@@ -125,12 +131,13 @@ export class InfiniteQueryObserver<
   }
 
   protected createResult(
-    query: Query<TQueryFnData, TError, InfiniteData<TQueryData>>,
+    query: Query<TQueryFnData, TError, InfiniteData<TQueryData>, TQueryKey>,
     options: InfiniteQueryObserverOptions<
       TQueryFnData,
       TError,
       TData,
-      TQueryData
+      TQueryData,
+      TQueryKey
     >
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query

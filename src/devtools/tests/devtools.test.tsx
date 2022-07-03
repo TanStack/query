@@ -1,8 +1,6 @@
 import React from 'react'
-
 import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
-
 import '@testing-library/jest-dom'
 import { useQuery, QueryClient } from '../..'
 import {
@@ -54,23 +52,56 @@ describe('ReactQueryDevtools', () => {
       toggleButtonProps: { onClick: onToggleClick },
     })
 
-    const closeButton = screen.queryByRole('button', {
-      name: /close react query devtools/i,
-    })
-    expect(closeButton).toBeNull()
-    fireEvent.click(
+    const verifyDevtoolsIsOpen = () => {
+      expect(
+        screen.queryByRole('generic', { name: /react query devtools panel/i })
+      ).not.toBeNull()
+      expect(
+        screen.queryByRole('button', { name: /open react query devtools/i })
+      ).toBeNull()
+    }
+    const verifyDevtoolsIsClosed = () => {
+      expect(
+        screen.queryByRole('generic', { name: /react query devtools panel/i })
+      ).toBeNull()
+      expect(
+        screen.queryByRole('button', { name: /open react query devtools/i })
+      ).not.toBeNull()
+    }
+
+    const waitForDevtoolsToOpen = () =>
+      screen.findByRole('button', { name: /close react query devtools/i })
+    const waitForDevtoolsToClose = () =>
+      screen.findByRole('button', { name: /open react query devtools/i })
+
+    const getOpenLogoButton = () =>
       screen.getByRole('button', { name: /open react query devtools/i })
-    )
-
-    expect(onToggleClick).toHaveBeenCalledTimes(1)
-
-    fireEvent.click(
+    const getCloseLogoButton = () =>
       screen.getByRole('button', { name: /close react query devtools/i })
-    )
+    const getCloseButton = () =>
+      screen.getByRole('button', { name: /^close$/i })
 
-    await screen.findByRole('button', { name: /open react query devtools/i })
+    verifyDevtoolsIsClosed()
 
-    expect(onCloseClick).toHaveBeenCalledTimes(1)
+    fireEvent.click(getOpenLogoButton())
+    await waitForDevtoolsToOpen()
+
+    verifyDevtoolsIsOpen()
+
+    fireEvent.click(getCloseLogoButton())
+    await waitForDevtoolsToClose()
+
+    verifyDevtoolsIsClosed()
+
+    fireEvent.click(getOpenLogoButton())
+    await waitForDevtoolsToOpen()
+
+    verifyDevtoolsIsOpen()
+
+    fireEvent.click(getCloseButton())
+    await waitForDevtoolsToClose()
+
+    verifyDevtoolsIsClosed()
   })
 
   it('should be able to drag devtools without error', async () => {
@@ -512,6 +543,23 @@ describe('ReactQueryDevtools', () => {
     expect(queries[0]?.textContent).toEqual(query1Hash)
     expect(queries[1]?.textContent).toEqual(query2Hash)
     expect(queries[2]?.textContent).toEqual(query3Hash)
+  })
+
+  it('style should have a nonce', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      return <div></div>
+    }
+
+    const { container } = renderWithClient(queryClient, <Page />, {
+      styleNonce: 'test-nonce',
+      initialIsOpen: false,
+    })
+    const styleTag = container.querySelector('style')
+    expect(styleTag).toHaveAttribute('nonce', 'test-nonce')
+
+    await screen.findByRole('button', { name: /react query devtools/i })
   })
 
   describe('with custom context', () => {

@@ -2,11 +2,7 @@ import React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
 import { QueryClient, useQuery, UseQueryResult, useQueries } from '../..'
-import {
-  createQueryClient,
-  mockLogger,
-  queryKey,
-} from '../../reactjs/tests/utils'
+import { createQueryClient, mockLogger, queryKey } from '../../tests/utils'
 import { sleep } from '../../core/utils'
 import { PersistedClient, Persister, persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
@@ -147,7 +143,7 @@ describe('PersistQueryClientProvider', () => {
 
       return (
         <div>
-          <h1>{String(state.data)}</h1>
+          <h1>{state.data}</h1>
           <h2>fetchStatus: {state.fetchStatus}</h2>
         </div>
       )

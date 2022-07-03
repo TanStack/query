@@ -128,7 +128,7 @@ export class QueryClient {
 
   setQueryData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData> | undefined,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): TData | undefined {
     const query = this.queryCache.find<TData>(queryKey)
@@ -143,24 +143,24 @@ export class QueryClient {
     const defaultedOptions = this.defaultQueryOptions(parsedOptions)
     return this.queryCache
       .build(this, defaultedOptions)
-      .setData(data, { ...options, notifySuccess: false })
+      .setData(data, { ...options, manual: true })
   }
 
   setQueriesData<TData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): [QueryKey, TData][]
+  ): [QueryKey, TData | undefined][]
 
   setQueriesData<TData>(
     filters: QueryFilters,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
-  ): [QueryKey, TData][]
+  ): [QueryKey, TData | undefined][]
 
   setQueriesData<TData>(
     queryKeyOrFilters: QueryKey | QueryFilters,
-    updater: Updater<TData | undefined, TData>,
+    updater: Updater<TData | undefined, TData | undefined>,
     options?: SetDataOptions
   ): [QueryKey, TData | undefined][] {
     return notifyManager.batch(() =>
@@ -536,7 +536,7 @@ export class QueryClient {
 
   setQueryDefaults(
     queryKey: QueryKey,
-    options: QueryObserverOptions<any, any, any, any>
+    options: QueryObserverOptions<unknown, any, any, any>
   ): void {
     const result = this.queryDefaults.find(
       x => hashQueryKey(queryKey) === hashQueryKey(x.queryKey)

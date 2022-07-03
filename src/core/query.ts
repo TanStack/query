@@ -1,9 +1,4 @@
-import {
-  getAbortController,
-  noop,
-  replaceEqualDeep,
-  timeUntilStale,
-} from './utils'
+import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
 import type {
   InitialDataFunction,
   QueryKey,
@@ -98,7 +93,7 @@ interface SuccessAction<TData> {
   data: TData | undefined
   type: 'success'
   dataUpdatedAt?: number
-  notifySuccess?: boolean
+  manual?: boolean
 }
 
 interface ErrorAction<TError> {
@@ -196,25 +191,17 @@ export class Query<
   }
 
   setData(
-    data: TData,
-    options?: SetDataOptions & { notifySuccess: boolean }
+    newData: TData,
+    options?: SetDataOptions & { manual: boolean }
   ): TData {
-    const prevData = this.state.data
-
-    // Use prev data if an isDataEqual function is defined and returns `true`
-    if (this.options.isDataEqual?.(prevData, data)) {
-      data = prevData as TData
-    } else if (this.options.structuralSharing !== false) {
-      // Structurally share data between prev and new data if needed
-      data = replaceEqualDeep(prevData, data)
-    }
+    const data = replaceData(this.state.data, newData, this.options)
 
     // Set data and mark it as cached
     this.dispatch({
       data,
       type: 'success',
       dataUpdatedAt: options?.updatedAt,
-      notifySuccess: options?.notifySuccess,
+      manual: options?.manual,
     })
 
     return data
@@ -366,8 +353,7 @@ export class Query<
     if (!Array.isArray(this.options.queryKey)) {
       if (process.env.NODE_ENV !== 'production') {
         this.logger.error(
-          'As of v4, queryKey needs to be an Array, but the queryKey used was:',
-          JSON.stringify(this.options.queryKey)
+          `As of v4, queryKey needs to be an Array. If you are using a string like 'repoData', please change it to an Array, e.g. ['repoData']`
         )
       }
     }
@@ -539,10 +525,12 @@ export class Query<
             dataUpdateCount: state.dataUpdateCount + 1,
             dataUpdatedAt: action.dataUpdatedAt ?? Date.now(),
             error: null,
-            fetchFailureCount: 0,
             isInvalidated: false,
-            fetchStatus: 'idle',
             status: 'success',
+            ...(!action.manual && {
+              fetchStatus: 'idle',
+              fetchFailureCount: 0,
+            }),
           }
         case 'error':
           const error = action.error as unknown

@@ -6,7 +6,8 @@ import {
   HydrateOptions,
   hydrate,
 } from '../core'
-import { Promisable } from 'type-fest'
+
+export type Promisable<T> = T | PromiseLike<T>
 
 export interface Persister {
   persistClient(persistClient: PersistedClient): Promisable<void>
@@ -65,34 +66,32 @@ export async function persistQueryClientRestore({
   buster = '',
   hydrateOptions,
 }: PersistedQueryClientRestoreOptions) {
-  if (typeof window !== 'undefined') {
-    try {
-      const persistedClient = await persister.restoreClient()
+  try {
+    const persistedClient = await persister.restoreClient()
 
-      if (persistedClient) {
-        if (persistedClient.timestamp) {
-          const expired = Date.now() - persistedClient.timestamp > maxAge
-          const busted = persistedClient.buster !== buster
-          if (expired || busted) {
-            persister.removeClient()
-          } else {
-            hydrate(queryClient, persistedClient.clientState, hydrateOptions)
-          }
-        } else {
+    if (persistedClient) {
+      if (persistedClient.timestamp) {
+        const expired = Date.now() - persistedClient.timestamp > maxAge
+        const busted = persistedClient.buster !== buster
+        if (expired || busted) {
           persister.removeClient()
+        } else {
+          hydrate(queryClient, persistedClient.clientState, hydrateOptions)
         }
+      } else {
+        persister.removeClient()
       }
-    } catch (err) {
-      if (process.env.NODE_ENV !== 'production') {
-        queryClient.getLogger().error(err)
-        queryClient
-          .getLogger()
-          .warn(
-            'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
-          )
-      }
-      persister.removeClient()
     }
+  } catch (err) {
+    if (process.env.NODE_ENV !== 'production') {
+      queryClient.getLogger().error(err)
+      queryClient
+        .getLogger()
+        .warn(
+          'Encountered an error attempting to restore client cache from persisted location. As a precaution, the persisted cache will be discarded.'
+        )
+    }
+    persister.removeClient()
   }
 }
 
@@ -107,15 +106,13 @@ export async function persistQueryClientSave({
   buster = '',
   dehydrateOptions,
 }: PersistedQueryClientSaveOptions) {
-  if (typeof window !== 'undefined') {
-    const persistClient: PersistedClient = {
-      buster,
-      timestamp: Date.now(),
-      clientState: dehydrate(queryClient, dehydrateOptions),
-    }
-
-    await persister.persistClient(persistClient)
+  const persistClient: PersistedClient = {
+    buster,
+    timestamp: Date.now(),
+    clientState: dehydrate(queryClient, dehydrateOptions),
   }
+
+  await persister.persistClient(persistClient)
 }
 
 /**
@@ -156,17 +153,13 @@ export function persistQueryClient(
     persistQueryClientUnsubscribe?.()
   }
 
-  let restorePromise = Promise.resolve()
-
-  if (typeof window !== 'undefined') {
-    // Attempt restore
-    restorePromise = persistQueryClientRestore(props).then(() => {
-      if (!hasUnsubscribed) {
-        // Subscribe to changes in the query cache to trigger the save
-        persistQueryClientUnsubscribe = persistQueryClientSubscribe(props)
-      }
-    })
-  }
+  // Attempt restore
+  const restorePromise = persistQueryClientRestore(props).then(() => {
+    if (!hasUnsubscribed) {
+      // Subscribe to changes in the query cache to trigger the save
+      persistQueryClientUnsubscribe = persistQueryClientSubscribe(props)
+    }
+  })
 
   return [unsubscribe, restorePromise]
 }

@@ -3,7 +3,7 @@ import {
   executeMutation,
   mockNavigatorOnLine,
   sleep,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 
@@ -44,7 +44,7 @@ describe('dehydration and rehydration', () => {
       key: [{ nestedKey: 1 }],
     })
 
-    const fetchDataAfterHydration = jest.fn()
+    const fetchDataAfterHydration = jest.fn<unknown, unknown[]>()
     await hydrationClient.prefetchQuery(['string'], fetchDataAfterHydration, {
       staleTime: 1000,
     })
@@ -143,7 +143,7 @@ describe('dehydration and rehydration', () => {
       hydrationCache.find(['string', { key: ['string'], key2: 0 }])?.state.data
     ).toBe('string')
 
-    const fetchDataAfterHydration = jest.fn()
+    const fetchDataAfterHydration = jest.fn<unknown, unknown[]>()
     await hydrationClient.prefetchQuery(
       ['string', { key: ['string'], key2: 0 }],
       fetchDataAfterHydration,

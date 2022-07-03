@@ -1,5 +1,6 @@
-import { PersistedClient, Persister } from '../persistQueryClient'
+import { PersistedClient, Persister, Promisable } from '../persistQueryClient'
 import { asyncThrottle } from './asyncThrottle'
+import { noop } from '../core/utils'
 
 interface AsyncStorage {
   getItem: (key: string) => Promise<string | null>
@@ -7,9 +8,17 @@ interface AsyncStorage {
   removeItem: (key: string) => Promise<void>
 }
 
+export type AsyncPersistRetryer = (props: {
+  persistedClient: PersistedClient
+  error: Error
+  errorCount: number
+}) => Promisable<PersistedClient | undefined>
+
 interface CreateAsyncStoragePersisterOptions {
-  /** The storage client used for setting an retrieving items from cache */
-  storage: AsyncStorage
+  /** The storage client used for setting and retrieving items from cache.
+   * For SSR pass in `undefined`.
+   */
+  storage: AsyncStorage | undefined
   /** The key to use when storing the cache */
   key?: string
   /** To avoid spamming,
@@ -25,6 +34,8 @@ interface CreateAsyncStoragePersisterOptions {
    * @default `JSON.parse`
    */
   deserialize?: (cachedString: string) => PersistedClient
+
+  retry?: AsyncPersistRetryer
 }
 
 export const createAsyncStoragePersister = ({
@@ -33,21 +44,56 @@ export const createAsyncStoragePersister = ({
   throttleTime = 1000,
   serialize = JSON.stringify,
   deserialize = JSON.parse,
+  retry,
 }: CreateAsyncStoragePersisterOptions): Persister => {
-  return {
-    persistClient: asyncThrottle(
-      persistedClient => storage.setItem(key, serialize(persistedClient)),
-      { interval: throttleTime }
-    ),
-    restoreClient: async () => {
-      const cacheString = await storage.getItem(key)
-
-      if (!cacheString) {
-        return
+  if (typeof storage !== 'undefined') {
+    const trySave = async (
+      persistedClient: PersistedClient
+    ): Promise<Error | undefined> => {
+      try {
+        await storage.setItem(key, serialize(persistedClient))
+      } catch (error) {
+        return error as Error
       }
+    }
 
-      return deserialize(cacheString) as PersistedClient
-    },
-    removeClient: () => storage.removeItem(key),
+    return {
+      persistClient: asyncThrottle(
+        async persistedClient => {
+          let client: PersistedClient | undefined = persistedClient
+          let error = await trySave(client)
+          let errorCount = 0
+          while (error && client) {
+            errorCount++
+            client = await retry?.({
+              persistedClient: client,
+              error,
+              errorCount,
+            })
+
+            if (client) {
+              error = await trySave(client)
+            }
+          }
+        },
+        { interval: throttleTime }
+      ),
+      restoreClient: async () => {
+        const cacheString = await storage.getItem(key)
+
+        if (!cacheString) {
+          return
+        }
+
+        return deserialize(cacheString) as PersistedClient
+      },
+      removeClient: () => storage.removeItem(key),
+    }
+  }
+
+  return {
+    persistClient: noop,
+    restoreClient: noop,
+    removeClient: noop,
   }
 }

@@ -9,9 +9,9 @@ import {
   expectType,
   expectTypeNotAny,
   queryKey,
-  renderWithClient,
   sleep,
-} from './utils'
+} from '../../tests/utils'
+import { renderWithClient } from './utils'
 import {
   QueryClient,
   useQueries,
@@ -776,8 +776,25 @@ describe('useQueries', () => {
       expectType<QueryObserverResult<string, unknown>>(result4[1])
       expectType<QueryObserverResult<number, unknown>>(result4[2])
 
-      // Array as const does not throw error
+      // handles when queryFn returns a Promise
       const result5 = useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => Promise.resolve('string'),
+            onSuccess: (a: string) => {
+              expectType<string>(a)
+              expectTypeNotAny(a)
+            },
+            // @ts-expect-error (refuses to accept a Promise)
+            onSettled: (a: Promise<string>) => null,
+          },
+        ],
+      })
+      expectType<QueryObserverResult<string, unknown>>(result5[0])
+
+      // Array as const does not throw error
+      const result6 = useQueries({
         queries: [
           {
             queryKey: ['key1'],
@@ -789,8 +806,8 @@ describe('useQueries', () => {
           },
         ],
       } as const)
-      expectType<QueryObserverResult<string, unknown>>(result5[0])
-      expectType<QueryObserverResult<number, unknown>>(result5[1])
+      expectType<QueryObserverResult<string, unknown>>(result6[0])
+      expectType<QueryObserverResult<number, unknown>>(result6[1])
 
       // field names should be enforced - array literal
       useQueries({
@@ -810,6 +827,37 @@ describe('useQueries', () => {
         queries: Array(10).map(() => ({
           someInvalidField: '',
         })),
+      })
+
+      // field names should be enforced - array literal
+      useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () => 'string',
+            // @ts-expect-error (invalidField)
+            someInvalidField: [],
+          },
+        ],
+      })
+
+      // supports queryFn using fetch() to return Promise<any> - Array.map() result
+      useQueries({
+        queries: Array(50).map((_, i) => ({
+          queryKey: ['key', i] as const,
+          queryFn: () => fetch('return Promise<any>').then(resp => resp.json()),
+        })),
+      })
+
+      // supports queryFn using fetch() to return Promise<any> - array literal
+      useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              fetch('return Promise<any>').then(resp => resp.json()),
+          },
+        ],
       })
     }
   })
@@ -1010,13 +1058,14 @@ describe('useQueries', () => {
 
       await sleep(30)
 
-      expect(results.length).toBe(3)
       expect(results[0]).toMatchObject([
         { data: undefined },
         { data: undefined },
       ])
-      expect(results[1]).toMatchObject([{ data: 1 }, { data: undefined }])
-      expect(results[2]).toMatchObject([{ data: 1 }, { data: 2 }])
+      expect(results[results.length - 1]).toMatchObject([
+        { data: 1 },
+        { data: 2 },
+      ])
     })
 
     it('should throw if the context is necessary and is not passed to useQueries', async () => {

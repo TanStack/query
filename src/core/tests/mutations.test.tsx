@@ -4,7 +4,7 @@ import {
   executeMutation,
   queryKey,
   sleep,
-} from '../../reactjs/tests/utils'
+} from '../../tests/utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
