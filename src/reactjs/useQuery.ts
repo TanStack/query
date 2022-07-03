@@ -5,8 +5,6 @@ import {
   UseQueryOptions,
   UseQueryResultWithOptions,
   UseQueryOptionsInitialDataDefined,
-  UseQueryResultDataDefined,
-  UseQueryResult,
 } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
@@ -32,16 +30,25 @@ export function useQuery<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-  TQueryOpts extends UseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryKey
-  > = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  TQueryOpts extends Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey'
+  > = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'queryKey'>
 >(
   queryKey: TQueryKey,
   options?: Omit<TQueryOpts, 'queryKey'>
-): UseQueryResultWithOptions<TQueryOpts, TQueryFnData, TError, TData, TQueryKey>
+): UseQueryResultWithOptions<
+  TQueryOpts,
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  Omit<
+    UseQueryOptionsInitialDataDefined<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey'
+  >
+>
+
 export function useQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -58,12 +65,18 @@ export function useQuery<
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
   options?: TQueryOpts
-): TQueryOpts extends Omit<
-  UseQueryOptionsInitialDataDefined<TQueryFnData, TError, TData, TQueryKey>,
-  'queryKey' | 'queryFn'
+): UseQueryResultWithOptions<
+  TQueryOpts,
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryKey,
+  Omit<
+    UseQueryOptionsInitialDataDefined<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn'
+  >
 >
-  ? UseQueryResultDataDefined<TData, TError>
-  : UseQueryResult<TData, TError>
+
 export function useQuery<
   TQueryFnData,
   TError,

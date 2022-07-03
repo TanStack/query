@@ -89,13 +89,14 @@ export type UseQueryResultWithOptions<
   TQueryFnData,
   TError,
   TData,
-  TQueryKey extends QueryKey = QueryKey
-> = TQueryOpts extends UseQueryOptionsInitialDataDefined<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryKey
->
+  TQueryKey extends QueryKey = QueryKey,
+  TQueryOptionsWithInitialDataDefined extends UseQueryOptionsInitialDataDefined<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryKey
+  > = UseQueryOptionsInitialDataDefined<TQueryFnData, TError, TData, TQueryKey>
+> = TQueryOpts extends TQueryOptionsWithInitialDataDefined
   ? UseQueryResultDataDefined<TData, TError>
   : UseQueryResult<TData, TError>
 
