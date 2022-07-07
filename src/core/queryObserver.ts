@@ -440,7 +440,7 @@ export class QueryObserver<
   }
 
   private clearRefetchInterval(): void {
-    if (this.refetchIntervalId) { 
+    if (this.refetchIntervalId) {
       clearInterval(this.refetchIntervalId)
       this.refetchIntervalId = undefined
     }
