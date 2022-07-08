@@ -1,5 +1,6 @@
 {
-  "name": "refetch-interval",
+  "name": "@tanstack/query-example-react-refetch-interval",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

@@ -53,7 +53,7 @@ focusManager.setEventListener(handleFocus => {
 A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
 
 ```js
-import { focusManager } from 'react-query'
+import { focusManager } from '@tanstack/react-query'
 import onWindowFocus from './onWindowFocus' // The gist above
 
 focusManager.setEventListener(onWindowFocus) // Boom!
@@ -65,7 +65,7 @@ Instead of event listeners on `window`, React Native provides focus information 
 
 ```js
 import { AppState } from 'react-native'
-import { focusManager } from 'react-query'
+import { focusManager } from '@tanstack/react-query'
 
 focusManager.setEventListener(handleFocus => {
   const subscription = AppState.addEventListener('change', state => {
@@ -81,7 +81,7 @@ focusManager.setEventListener(handleFocus => {
 ## Managing focus state
 
 ```js
-import { focusManager } from 'react-query'
+import { focusManager } from '@tanstack/react-query'
 
 // Override the default focus state
 focusManager.setFocused(true)

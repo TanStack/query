@@ -13,7 +13,7 @@ You can configure retries both on a global level and an individual query level.
 - Setting `retry = (failureCount, error) => ...` allows for custom logic based on why the request failed.
 
 ```js
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 // Make a specific query retry a certain number of times
 const result = useQuery(['todos', 1], fetchTodoListPage, {
@@ -29,7 +29,7 @@ The default `retryDelay` is set to double (starting at `1000`ms) with each attem
 
 ```js
 // Configure for all queries
-import { QueryCache, QueryClient, QueryClientProvider } from 'react-query'
+import { QueryCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
   defaultOptions: {

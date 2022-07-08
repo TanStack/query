@@ -3,7 +3,7 @@ import { View, RefreshControl, StyleSheet, ScrollView } from 'react-native';
 import { Title, Paragraph } from 'react-native-paper';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RouteProp } from '@react-navigation/native';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { LoadingIndicator } from '@app/components/LoadingIndicator';
 import { ErrorMessage } from '@app/components/ErrorMessage';

@@ -108,7 +108,7 @@ There is a limit to the amount of data which can be stored in `localStorage`.
 If you need to store more data in `localStorage`, you can override the `serialize` and `deserialize` functions to compress and decrompress the data using a library like [lz-string](https://github.com/pieroxy/lz-string/).
 
 ```js
-import { QueryClient } from 'react-query';
+import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from 'react-query/persistQueryClient'
 import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
 

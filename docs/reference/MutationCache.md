@@ -8,7 +8,7 @@ The `MutationCache` is the storage for mutations.
 **Normally, you will not interact with the MutationCache directly and instead use the `QueryClient`.**
 
 ```js
-import { MutationCache } from 'react-query'
+import { MutationCache } from '@tanstack/react-query'
 
 const mutationCache = new MutationCache({
   onError: error => {

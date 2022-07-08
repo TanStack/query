@@ -74,7 +74,7 @@ When testing we want to suppress network errors being logged to the console.
 To do this, we can pass a custom logger to `QueryClient`:
 
 ```ts
-import { QueryClient } from 'react-query'
+import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
   logger: {

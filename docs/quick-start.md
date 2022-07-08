@@ -16,7 +16,7 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from 'react-query'
+} from '@tanstack/react-query'
 import { getTodos, postTodo } from '../my-api'
 
 // Create a client

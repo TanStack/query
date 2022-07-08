@@ -26,7 +26,7 @@ When using APIs like `invalidateQueries` and `removeQueries` (and others that su
 In this example, we can use the `todos` prefix to invalidate any queries that start with `todos` in their query key:
 
 ```js
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 // Get QueryClient from the context
 const queryClient = useQueryClient()

@@ -47,7 +47,7 @@ In the example below, you can see React Query in its most basic and simple form 
 [Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/master/examples/simple)
 
 ```js
-import { QueryClient, QueryClientProvider, useQuery } from 'react-query'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 

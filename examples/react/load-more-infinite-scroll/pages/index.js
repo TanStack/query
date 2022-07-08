@@ -2,7 +2,11 @@ import React from 'react'
 import Link from 'next/link'
 import axios from 'axios'
 import { useInView } from 'react-intersection-observer'
-import { useInfiniteQuery, QueryClient, QueryClientProvider } from 'react-query'
+import {
+  useInfiniteQuery,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 const queryClient = new QueryClient()
@@ -36,9 +40,9 @@ function Example() {
       return res.data
     },
     {
-      getPreviousPageParam: firstPage => firstPage.previousId ?? undefined,
-      getNextPageParam: lastPage => lastPage.nextId ?? undefined,
-    }
+      getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
+      getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+    },
   )
 
   React.useEffect(() => {
@@ -68,9 +72,9 @@ function Example() {
                 : 'Nothing more to load'}
             </button>
           </div>
-          {data.pages.map(page => (
+          {data.pages.map((page) => (
             <React.Fragment key={page.nextId}>
-              {page.data.map(project => (
+              {page.data.map((project) => (
                 <p
                   style={{
                     border: '1px solid gray',

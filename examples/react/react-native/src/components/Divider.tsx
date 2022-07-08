@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 import { StyleSheet } from 'react-native';
 import { Divider as PaperDivider } from 'react-native-paper';
 

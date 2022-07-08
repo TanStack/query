@@ -1,6 +1,0 @@
-{
-  "internal": true,
-  "main": "../lib/broadcastQueryClient-experimental/index.js",
-  "module": "../es/broadcastQueryClient-experimental/index.js",
-  "types": "../types/broadcastQueryClient-experimental/index.d.ts"
-}

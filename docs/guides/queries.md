@@ -15,7 +15,7 @@ To subscribe to a query in your components or custom hooks, call the `useQuery` 
   - Throws an error
 
 ```js
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 
 function App() {
   const info = useQuery(['todos'], fetchTodoList)

@@ -1,5 +1,6 @@
 {
-  "name": "new",
+  "name": "@tanstack/query-example-react-suspense",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "keywords": [],

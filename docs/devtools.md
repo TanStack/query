@@ -9,12 +9,18 @@ When you begin your React Query journey, you'll want these devtools by your side
 
 > Please note that for now, the devtools **do not support React Native**. If you would like to help us make the devtools platform agnostic, please let us know!
 
-## Import the Devtools
+## Install and Import the Devtools
 
-The devtools are bundle split into the `react-query/devtools` package. No need to install anything extra, just:
+The devtools are a separate package that you need to install:
+
+```bash
+$ npm i @tanstack/react-query-devtools
+```
+
+You can import the devtools like this:
 
 ```js
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 ```
 
 By default, React Query Devtools are only included in bundles when `process.env.NODE_ENV === 'development'`, so you don't need to worry about excluding them during a production build.
@@ -26,7 +32,7 @@ Floating Mode will mount the devtools as a fixed, floating element in your app a
 Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
 
 ```js
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 function App() {
   return (
@@ -59,7 +65,7 @@ function App() {
 Embedded Mode will embed the devtools as a regular component in your application. You can style it however you'd like after that!
 
 ```js
-import { ReactQueryDevtoolsPanel } from 'react-query/devtools'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 
 function App() {
   return (

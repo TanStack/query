@@ -1,5 +1,9 @@
 import React from 'react'
-import { Hydrate, QueryClient, QueryClientProvider } from 'react-query'
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 
 export default function MyApp({ Component, pageProps }) {

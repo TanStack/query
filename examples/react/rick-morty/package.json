@@ -1,5 +1,7 @@
 {
+  "name": "@tanstack/query-example-react-rick-morty",
   "private": true,
+  "version": "0.0.1",
   "scripts": {
     "start": "SKIP_PREFLIGHT_CHECK=true rescripts start",
     "build": "rescripts build",

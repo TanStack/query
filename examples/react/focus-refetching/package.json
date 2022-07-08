@@ -1,5 +1,6 @@
 {
-  "name": "focus-revalidate",
+  "name": "@tanstack/query-example-react-focus-revalidate",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

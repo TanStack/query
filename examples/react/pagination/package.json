@@ -1,5 +1,6 @@
 {
-  "name": "pagination",
+  "name": "@tanstack/query-example-react-pagination",
+  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",

@@ -16,7 +16,7 @@ To add this behavior in React Native you have to use React Query `onlineManager`
 
 ```ts
 import NetInfo from '@react-native-community/netinfo'
-import { onlineManager } from 'react-query'
+import { onlineManager } from '@tanstack/react-query'
 
 onlineManager.setEventListener(setOnline => {
   return NetInfo.addEventListener(state => {
@@ -30,7 +30,7 @@ onlineManager.setEventListener(setOnline => {
 In React Native you have to use React Query `focusManager` to refetch when the App is focused.
 
 ```ts
-import { focusManager } from 'react-query'
+import { focusManager } from '@tanstack/react-query'
 
 function onAppStateChange(status: AppStateStatus) {
   if (Platform.OS !== 'web') {
