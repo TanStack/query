@@ -6,5 +6,5 @@ In addition to fetching and mutating data, React-Query analyzes your queries and
 
 To run this example:
 
-- `npm install` or `yarn`
-- `npm run dev` or `yarn dev`
+- `npm install`
+- `npm run dev`
