@@ -17,26 +17,13 @@ If you are here to suggest a feature, first create an issue if it does not alrea
 If you have been assigned to fix an issue or develop a new feature, please follow these steps to get started:
 
 - Fork this repository
-- Install dependencies by running `$ yarn`
-- Link `react-query` locally by running `$ yarn link`
-- Auto-build files as you edit by running `$ yarn start`
+- Install dependencies by running `$ npm i`
+- Auto-build files as you edit by running `$ npm run dev`
 - Implement your changes and tests to files in the `src/` directory and corresponding test files
-- To run examples, follow their individual directions. Usually this is just `$ yarn && yarn start`.
-- To run examples using your local build, link to the local `react-query` by running `$ yarn link react-query` from the example's directory
+- To run examples, follow their individual directions. Usually this is just `$ npm i && npm run dev`.
 - Document your changes in the appropriate doc page
 - Git stage your required changes and commit (see below commit guidelines)
 - Submit PR for review
-
-## Online one-click setup
-
-You can use Gitpod (An Online Open Source VS Code like IDE which is free for Open Source) for developing online. With a single click it will start a workspace and automatically:
-
-- clone the `react-query` repo.
-- install all the dependencies in `/` and `/docs`.
-- run `yarn start` in the root(`/`) to Auto-build files.
-- run `yarn dev` in `/docs`.
-
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/tannerlinsley/react-query)
 
 ## Commit message conventions
 
