@@ -15,10 +15,10 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-      - run: yarn test:ci
+      - run: npm run test:ci
         env:
           REACTJS_VERSION: ${{ matrix.react }}
-      - run: yarn test:size
+      - run: npm run test:size
         if: matrix.node == '16' && matrix.react == '18'
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}

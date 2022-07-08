@@ -10,6 +10,13 @@ import {
   createQueryClient,
 } from './utils'
 
+// TODO: This should be removed with the types for react-error-boundary get updated.
+declare module 'react-error-boundary' {
+  interface ErrorBoundaryPropsWithFallback {
+    children: any
+  }
+}
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: jest.fn().mockImplementation((query: string) => ({

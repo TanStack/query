@@ -42,6 +42,7 @@
     "jscodeshift": "^0.13.1"
   },
   "dependencies": {
+    "@tanstack/query-core": "^4.0.0-beta.1",
     "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.1.0"
   },

@@ -6,6 +6,13 @@ import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
 import { renderWithClient } from './utils'
 import { useQuery, QueryCache, QueryErrorResetBoundary } from '..'
 
+// TODO: This should be removed with the types for react-error-boundary get updated.
+declare module 'react-error-boundary' {
+  interface ErrorBoundaryPropsWithFallback {
+    children: any
+  }
+}
+
 describe('QueryErrorResetBoundary', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })

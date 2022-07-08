@@ -2866,7 +2866,7 @@ describe('useQuery', () => {
         fallbackRender={({ error }) => (
           <div>
             <div>error boundary</div>
-            <div>{error.message}</div>
+            <div>{error?.message}</div>
           </div>
         )}
       >

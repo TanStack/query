@@ -3,16 +3,14 @@ id: installation
 title: Installation
 ---
 
-You can install React Query with [NPM](https://npmjs.com),
-[Yarn](https://yarnpkg.com), or a good ol' `<script>` via
+You can install React Query via [NPM](https://npmjs.com),
+or a good ol' `<script>` via
 [unpkg.com](https://unpkg.com).
 
 ### NPM
 
 ```bash
 $ npm i @tanstack/react-query
-# or
-$ yarn add @tanstack/react-query
 ```
 
 React Query is compatible with React v16.8+ and works with ReactDOM and React Native.
