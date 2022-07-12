@@ -21,7 +21,7 @@ const {
 
 **Options**
 
-The options for `useInfiniteQuery` are identical to the [`useQuery` hook](/reference/useQuery) with the addition of the following:
+The options for `useInfiniteQuery` are identical to the [`useQuery` hook](/query/v4/docs/reference/useQuery) with the addition of the following:
 
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** [`defaultQueryFn`](/guides/default-query-function)
