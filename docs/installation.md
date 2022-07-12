@@ -10,7 +10,13 @@ or a good ol' `<script>` via
 ### NPM
 
 ```bash
-$ npm i @tanstack/react-query
+$ npm i react-query@beta
+```
+
+### Yarn
+
+```bash
+$ yarn add react-query@beta
 ```
 
 React Query is compatible with React v16.8+ and works with ReactDOM and React Native.
