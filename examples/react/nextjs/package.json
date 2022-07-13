@@ -11,8 +11,8 @@
     "ky": "^0.23.0",
     "ky-universal": "^0.8.2",
     "next": "latest",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-query": "^4.0.0-beta.1",
     "resolve-from": "^5.0.0",
     "web-streams-polyfill": "^3.0.3"

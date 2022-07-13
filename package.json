@@ -1,5 +1,6 @@
 {
   "private": true,
+  "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
     "install:csb": "npm install --frozen-lockfile && node ./scripts/fix-package-json.js",
