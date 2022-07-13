@@ -5,8 +5,8 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from '@tanstack/react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+} from "@tanstack/react-query"
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 
 const getCharacters = async () => {
   await new Promise((r) => setTimeout(r, 500))

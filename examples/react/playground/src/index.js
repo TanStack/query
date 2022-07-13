@@ -7,9 +7,9 @@ import {
   useQuery,
   useQueryClient,
   useMutation,
-} from "react-query";
+} from "@tanstack/react-query";
 
-import { ReactQueryDevtools } from "react-query/devtools";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import "./styles.css";
 

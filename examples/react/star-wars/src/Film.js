@@ -2,7 +2,7 @@ import React from "react";
 import { Typography, Link } from "@material-ui/core";
 import { Link as RouterLink } from "react-router-dom";
 import { withRouter } from "react-router";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
 function Film(props) {

@@ -6,8 +6,8 @@ import {
   MutationCache,
   onlineManager,
   useIsRestoring,
-} from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import toast, { Toaster } from "react-hot-toast";
 
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";

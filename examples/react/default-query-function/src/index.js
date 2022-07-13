@@ -7,8 +7,8 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // Define a default query function that will receive the query key
 const defaultQueryFn = async ({ queryKey }) => {

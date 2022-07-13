@@ -1,14 +1,10 @@
 import {
-  MutationCache,
-  QueryClient,
   useMutation,
   useQuery,
   useQueryClient,
-} from "react-query";
-import toast from "react-hot-toast";
+} from "@tanstack/react-query";
 import * as api from "./api";
 import * as React from "react";
-import { useMatch } from "@tanstack/react-location";
 
 export const movieKeys = {
   all: () => ["movies"],
