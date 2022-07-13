@@ -21,7 +21,7 @@ jobs:
         env:
           REACTJS_VERSION: ${{ matrix.react }}
       - run: npm run test:size
-        if: matrix.node == '14' && matrix.react == '18'
+        if: matrix.react == '18'
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
       - name: Upload coverage to Codecov
