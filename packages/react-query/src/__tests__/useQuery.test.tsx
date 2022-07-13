@@ -2866,6 +2866,7 @@ describe('useQuery', () => {
         fallbackRender={({ error }) => (
           <div>
             <div>error boundary</div>
+            {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
             <div>{error?.message}</div>
           </div>
         )}
