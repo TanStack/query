@@ -5,7 +5,7 @@ import {
   QueryClient,
 } from '@tanstack/query-core'
 import { removeOldestQuery } from '@tanstack/react-query-persist-client'
-import { createWebStoragePersister } from '../index'
+import { createSyncStoragePersister } from '../index'
 import { sleep } from '../../../../tests/utils'
 
 function getMockStorage(limitSize?: number) {
@@ -39,14 +39,14 @@ function getMockStorage(limitSize?: number) {
   } as any as Storage
 }
 
-describe('createWebStoragePersister ', () => {
+describe('createpersister ', () => {
   test('basic store and recover', async () => {
     const queryCache = new QueryCache()
     const mutationCache = new MutationCache()
     const queryClient = new QueryClient({ queryCache, mutationCache })
 
     const storage = getMockStorage()
-    const webStoragePersister = createWebStoragePersister({
+    const persister = createSyncStoragePersister({
       throttleTime: 0,
       storage,
     })
@@ -64,9 +64,9 @@ describe('createWebStoragePersister ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersister.persistClient(persistClient)
+    persister.persistClient(persistClient)
     await sleep(1)
-    const restoredClient = await webStoragePersister.restoreClient()
+    const restoredClient = await persister.restoreClient()
     expect(restoredClient).toEqual(persistClient)
   })
 
@@ -77,7 +77,7 @@ describe('createWebStoragePersister ', () => {
 
     const N = 2000
     const storage = getMockStorage(N * 5) // can save 4 items;
-    const webStoragePersister = createWebStoragePersister({
+    const persister = createSyncStoragePersister({
       throttleTime: 0,
       storage,
       retry: removeOldestQuery,
@@ -99,9 +99,9 @@ describe('createWebStoragePersister ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersister.persistClient(persistClient)
+    persister.persistClient(persistClient)
     await sleep(10)
-    const restoredClient = await webStoragePersister.restoreClient()
+    const restoredClient = await persister.restoreClient()
     expect(restoredClient?.clientState.queries.length).toEqual(4)
     expect(
       restoredClient?.clientState.queries.find((q) => q.queryKey[0] === 'A'),
@@ -117,9 +117,9 @@ describe('createWebStoragePersister ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersister.persistClient(updatedPersistClient)
+    persister.persistClient(updatedPersistClient)
     await sleep(10)
-    const restoredClient2 = await webStoragePersister.restoreClient()
+    const restoredClient2 = await persister.restoreClient()
     expect(restoredClient2?.clientState.queries.length).toEqual(4)
     expect(
       restoredClient2?.clientState.queries.find((q) => q.queryKey[0] === 'A'),
@@ -135,7 +135,7 @@ describe('createWebStoragePersister ', () => {
 
     const N = 2000
     const storage = getMockStorage(0)
-    const webStoragePersister = createWebStoragePersister({
+    const persister = createSyncStoragePersister({
       throttleTime: 0,
       storage,
       retry: removeOldestQuery,
@@ -149,9 +149,9 @@ describe('createWebStoragePersister ', () => {
       timestamp: Date.now(),
       clientState: dehydrate(queryClient),
     }
-    webStoragePersister.persistClient(persistClient)
+    persister.persistClient(persistClient)
     await sleep(10)
-    const restoredClient = await webStoragePersister.restoreClient()
+    const restoredClient = await persister.restoreClient()
     expect(restoredClient).toEqual(undefined)
   })
 })

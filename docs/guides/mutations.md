@@ -286,7 +286,7 @@ If you persist offline mutations with the [persistQueryClient plugin](../plugins
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggeres the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
 ```js
-const persister = createWebStoragePersister({
+const persister = createSyncStoragePersister({
   storage: window.localStorage,
 })
 const queryClient = new QueryClient({
