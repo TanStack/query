@@ -1,5 +1,5 @@
 import * as React from 'react'
-import axios, { AxiosError } from 'axios'
+import axios  from 'axios'
 
 import {
   useQuery,
@@ -7,9 +7,8 @@ import {
   useMutation,
   QueryClient,
   QueryClientProvider,
-  UseQueryOptions,
 } from '@tanstack/react-query'
-import { ReactQueryDevtools } from 'react-query/devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const client = new QueryClient()
 
