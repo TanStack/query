@@ -53,7 +53,7 @@ Beyond those primary states, more information is available depending on the stat
 
 In the example above, you also saw that you can pass variables to your mutations function by calling the `mutate` function with a **single variable or object**.
 
-Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
+Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](https://tanstack.com/query/v4/docs/reference/QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](https://tanstack.com/query/v4/docs/reference/QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
 
 > IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback in **React 16 and earlier**. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/legacy-event-pooling.html).
 
@@ -115,7 +115,7 @@ const CreateTodo = () => {
 
 ## Mutation Side Effects
 
-`useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](./invalidations-from-mutations) and even [optimistic updates](./optimistic-updates)
+`useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](https://tanstack.com/query/v4/docs/guides/invalidations-from-mutations) and even [optimistic updates](https://tanstack.com/query/v4/docs/guides/optimistic-updates)
 
 ```js
 useMutation(addTodo, {
@@ -281,7 +281,7 @@ queryClient.resumePausedMutations()
 
 ### Persisting Offline mutations
 
-If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
+If you persist offline mutations with the [persistQueryClient plugin](https://tanstack.com/query/v4/docs/plugins/persistQueryClient), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
 
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggeres the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
@@ -320,9 +320,9 @@ export default function App() {
 }
 ```
 
-We also have an extensive [offline example](../examples/offline) that covers both queries and mutations.
+We also have an extensive [offline example](https://tanstack.com/query/v4/docs/examples/react/offline) that covers both queries and mutations.
 
 ## Further reading
 
-For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog#12-mastering-mutations-in-react-query) from
+For more information about mutations, have a look at [#12: Mastering Mutations in React Query](https://tanstack.com/query/v4/docs/community/tkdodos-blog#12-mastering-mutations-in-react-query) from
 the Community Resources.
