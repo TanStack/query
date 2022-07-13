@@ -11,7 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "module": "build/esm/index.js",
-  "main": "build/cjs/packages/query-core/src/index.js",
+  "main": "build/cjs/packages/react-query/src/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/index.d.ts",
   "sideEffects": [
@@ -44,7 +44,7 @@
   "dependencies": {
     "@tanstack/query-core": "^4.0.0-beta.1",
     "@types/use-sync-external-store": "^0.0.3",
-    "use-sync-external-store": "^1.1.0"
+    "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
