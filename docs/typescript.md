@@ -81,5 +81,5 @@ const { error } = useQuery<Group[], Error>(['groups'], fetchGroups)
 
 ## Further Reading
 
-For tips and tricks around type inference, have a look at [React Query and TypeScript](../community/tkdodos-blog#6-react-query-and-typescript) from
+For tips and tricks around type inference, have a look at [React Query and TypeScript](https://tanstack.com/query/v4/docs/community/tkdodos-blog#6-react-query-and-typescript) from
 the Community Resources.
