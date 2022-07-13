@@ -302,8 +302,8 @@
           "to": "plugins/persistQueryClient"
         },
         {
-          "label": "createWebStoragePersister",
-          "to": "plugins/createWebStoragePersister"
+          "label": "createSyncStoragePersister",
+          "to": "plugins/createSyncStoragePersister"
         },
         {
           "label": "createAsyncStoragePersister",

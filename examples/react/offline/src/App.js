@@ -10,8 +10,8 @@ import {
 import { ReactQueryDevtools } from "react-query/devtools";
 import toast, { Toaster } from "react-hot-toast";
 
-import { PersistQueryClientProvider } from "react-query/persistQueryClient";
-import { createWebStoragePersister } from "react-query/createWebStoragePersister";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import {
   Link,
   Outlet,
@@ -23,7 +23,7 @@ import {
 import * as api from "./api";
 import { movieKeys, useMovie } from "./movies";
 
-const persister = createWebStoragePersister({
+const persister = createSyncStoragePersister({
   storage: window.localStorage,
 });
 
