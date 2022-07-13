@@ -50,7 +50,7 @@ export type PersistRetryer = (props: {
 
 ### Predefined strategies
 
-Per default, no retry will occur. You can use one of the predefined strategies to handle retries. They can be imported `from 'react-query/persistQueryClient'`:
+Per default, no retry will occur. You can use one of the predefined strategies to handle retries. They can be imported `from '@tanstack/react-query-persist-client'`:
 
 - `removeOldestQuery`
   - will return a new `PersistedClient` with the oldest query removed.

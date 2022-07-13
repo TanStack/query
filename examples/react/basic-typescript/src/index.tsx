@@ -2,10 +2,10 @@
 import * as React from "react";
 import ReactDOM from "react-dom/client";
 import axios from "axios";
-import { useQuery, useQueryClient, QueryClient } from "react-query";
-import { PersistQueryClientProvider } from "react-query/persistQueryClient";
-import { createWebStoragePersister } from "react-query/createWebStoragePersister";
-import { ReactQueryDevtools } from "react-query/devtools";
+import { useQuery, useQueryClient, QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,7 +15,7 @@ const queryClient = new QueryClient({
   },
 });
 
-const persister = createWebStoragePersister({
+const persister = createSyncStoragePersister({
   storage: window.localStorage,
 });
 

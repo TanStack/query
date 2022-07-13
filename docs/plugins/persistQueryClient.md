@@ -247,7 +247,7 @@ export interface PersistedClient {
 
 You can import these (to build a persister):
 ```ts
-import { PersistedClient, Persister } from "react-query/persistQueryClient";
+import { PersistedClient, Persister } from "@tanstack/react-query-persist-client";
 ```
 
 ### Building A Persister
@@ -255,7 +255,7 @@ You can persist however you like.  Here is an example of how to build an [Indexe
 
 ```ts
 import { get, set, del } from "idb-keyval";
-import { PersistedClient, Persister } from "react-query/persistQueryClient";
+import { PersistedClient, Persister } from "@tanstack/react-query-persist-client";
 
 /**
  * Creates an Indexed DB persister

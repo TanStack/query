@@ -16,8 +16,8 @@ This utility comes packaged with `react-query` and is available under the `react
 
 ```ts
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { persistQueryClient } from 'react-query/persistQueryClient'
-import { createAsyncStoragePersister } from 'react-query/createAsyncStoragePersister'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
 const queryClient = new QueryClient({
   defaultOptions: {
