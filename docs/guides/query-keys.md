@@ -70,5 +70,5 @@ function Todos({ todoId }) {
 
 ## Further reading
 
-For tips on organizing Query Keys in larger applications, have a look at [Effective React Query Keys](../community/tkdodos-blog#8-effective-react-query-keys) from
+For tips on organizing Query Keys in larger applications, have a look at [Effective React Query Keys](https://tanstack.com/query/v4/docs/community/tkdodos-blog#8-effective-react-query-keys) from
 the Community Resources.
