@@ -16,7 +16,7 @@ jobs:
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
         with:
-          install-command: npm ci --legacy-peer-deps
+          install-command: npm ci --force
       - run: npm run test:ci
         env:
           REACTJS_VERSION: ${{ matrix.react }}
