@@ -5,8 +5,8 @@ import {
   QueryClient,
   QueryClientProvider,
   QueryErrorResetBoundary,
-} from "react-query";
-import { ReactQueryDevtools } from "react-query/devtools";
+} from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
 
 import "./styles.css";
