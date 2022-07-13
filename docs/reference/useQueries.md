@@ -8,8 +8,8 @@ The `useQueries` hook can be used to fetch a variable number of queries:
 ```js
 const results = useQueries({
   queries: [
-    { queryKey: ['post', 1], queryFn: fetchPost },
-    { queryKey: ['post', 2], queryFn: fetchPost }
+    { queryKey: ['post', 1], queryFn: fetchPost, staleTime: Infinity},
+    { queryKey: ['post', 2], queryFn: fetchPost, staleTime: Infinity}
   ]
 })
 ```
