@@ -1,21 +1,21 @@
 ---
-id: createWebStoragePersister
-title: createWebStoragePersister
+id: createSyncStoragePersister
+title: createSyncStoragePersister
 ---
 
 ## Installation
 
-This utility comes packaged with `react-query` and is available under the `react-query/createWebStoragePersister` import.
+This utility comes as a separate package and is available under the `'@tanstack/query-sync-storage-persister'` import.
 
 ## Usage
 
-- Import the `createWebStoragePersister` function
-- Create a new webStoragePersister
+- Import the `createSyncStoragePersister` function
+- Create a new syncStoragePersister
 - Pass it to the [`persistQueryClient`](./persistQueryClient) function
 
 ```ts
-import { persistQueryClient } from 'react-query/persistQueryClient'
-import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,8 +25,8 @@ const queryClient = new QueryClient({
   },
 })
 
-const localStoragePersister = createWebStoragePersister({ storage: window.localStorage })
-// const sessionStoragePersister = createWebStoragePersister({ storage: window.sessionStorage })
+const localStoragePersister = createSyncStoragePersister({ storage: window.localStorage })
+// const sessionStoragePersister = createSyncStoragePersister({ storage: window.sessionStorage })
 
 persistQueryClient({
   queryClient,
@@ -56,7 +56,7 @@ Per default, no retry will occur. You can use one of the predefined strategies t
   - will return a new `PersistedClient` with the oldest query removed.
 
 ```js
-const localStoragePersister = createWebStoragePersister({
+const localStoragePersister = createSyncStoragePersister({
   storage: window.localStorage,
   retry: removeOldestQuery
 })
@@ -64,18 +64,18 @@ const localStoragePersister = createWebStoragePersister({
 
 ## API
 
-### `createWebStoragePersister`
+### `createSyncStoragePersister`
 
-Call this function to create a webStoragePersister that you can use later with `persistQueryClient`.
+Call this function to create a syncStoragePersister that you can use later with `persistQueryClient`.
 
 ```js
-createWebStoragePersister(options: CreateWebStoragePersisterOptions)
+createSyncStoragePersister(options: CreateSyncStoragePersisterOptions)
 ```
 
 ### `Options`
 
 ```ts
-interface CreateWebStoragePersisterOptions {
+interface CreateSyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
   storage: Storage
   /** The key to use when storing the cache */
@@ -109,8 +109,8 @@ If you need to store more data in `localStorage`, you can override the `serializ
 
 ```js
 import { QueryClient } from '@tanstack/react-query';
-import { persistQueryClient } from 'react-query/persistQueryClient'
-import { createWebStoragePersister } from 'react-query/createWebStoragePersister'
+import { persistQueryClient } from '@tanstack/react-query-persist-client'
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
 import { compress, decompress } from 'lz-string';
 
@@ -118,7 +118,7 @@ const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: In
 
 persistQueryClient({
   queryClient: connectionsQueryClient,
-  persistor: createWebStoragePersister({
+  persistor: createSyncStoragePersister({
     storage: window.localStorage,
     serialize: data => compress(JSON.stringify(data)),
     deserialize: data => JSON.parse(decompress(data)),
