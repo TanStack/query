@@ -5,6 +5,8 @@ title: Migrating to React Query 4
 
 ## Breaking Changes
 
+v4 is a major version, so there are some breaking changes to be aware of:
+
 ### react-query is now @tanstack/react-query
 
 ```diff
@@ -14,6 +16,32 @@ title: Migrating to React Query 4
 + import { useQuery } from '@tanstack/react-query'
 + import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 ```
+
+#### Codemod
+
+To make this migration easier, v4 comes with a codemod.
+
+> The codemod is a best efforts attempt to help you migrate the breaking change. Please review the generated code thoroughly! Also, there are edge cases that cannot be found by the code mod, so please keep an eye on the log output.
+
+You can easily apply it by using one (or both) of the following commands:
+
+If you want to run it against `.js` or `.jsx` files, please use the command below:
+
+```
+npx jscodeshift --extensions=js,jsx --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js ./path/to/src/
+```
+
+If you want to run it against `.ts` or `.tsx` files, please use the command below:
+
+```
+npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js ./path/to/src/
+```
+
+Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
+
+**Note:** Applying the codemod might break your code formatting, so please don't forget to run `prettier` and/or `eslint` after you've applied the codemod!
+
+**Note:** The codemod will _only_ change the imports - you still have to install the separate devtools package manually.
 
 ### Query Keys (and Mutation Keys) need to be an Array
 
@@ -48,7 +76,7 @@ If you want to run it against `.ts` or `.tsx` files, please use the command belo
 npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
 ```
 
-Please note in the case of `TypeScript` you need to use `tsx` as the parser otherwise, the codemod won't be applied properly!
+Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
 
 **Note:** Applying the codemod might break your code formatting, so please don't forget to run `prettier` and/or `eslint` after you've applied the codemod!
 
@@ -211,7 +239,7 @@ React.useEffect(() => mySideEffectHere(data), [data])
 
 ### `persistQueryClient` and the corresponding persister plugins are no longer experimental and have been renamed
 
-The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createWebStoragePersister`](/plugins/createWebStoragePersister) and [`createAsyncStoragePersister`](/plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
+The plugins `createWebStoragePersistor` and `createAsyncStoragePersistor` have been renamed to [`createSyncStoragePersister`](/plugins/createSyncStoragePersister) and [`createAsyncStoragePersister`](/plugins/createAsyncStoragePersister) respectively. The interface `Persistor` in `persistQueryClient` has also been renamed to `Persister`. Checkout [this stackexchange](https://english.stackexchange.com/questions/206893/persister-or-persistor) for the motivation of this change.
 
 Since these plugins are no longer experimental, their import paths have also been updated:
 
@@ -221,7 +249,7 @@ Since these plugins are no longer experimental, their import paths have also bee
 - import { createAsyncStoragePersistor } from 'react-query/createAsyncStoragePersistor-experimental'
 
 + import { persistQueryClient } from '@tanstack/react-query-persist-client'
-+ import { createWebStoragePersister } from '@tanstack/query-sync-storage-persister'
++ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 + import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 ```
 
@@ -334,6 +362,12 @@ If you were importing anything from `'react-query/react'` directly in your proje
 ```
 
 ## New Features 🚀
+
+v4 comes with an awesome set of new features:
+
+### Support for React 18
+
+React 18 was released earlier this year, and v4 now has first class support for it and the new concurrent features it brings.
 
 ### Proper offline support
 

@@ -151,7 +151,7 @@ useMutation(addTodo, {
 })
 ```
 
-You might find that you want to **trigger additional callbacks** than the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`. Please keep in mind that those additional callbacks won't run if your component unmounts _before_ the mutation finishes.
+You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`. Please keep in mind that those additional callbacks won't run if your component unmounts _before_ the mutation finishes.
 
 ```js
 useMutation(addTodo, {
@@ -182,7 +182,7 @@ mutate(todo, {
 ### Consecutive mutations
 There is a slight difference in handling `onSuccess`, `onError` and `onSettled` callbacks when it comes to consecutive mutations. When passed to the `mutate` function, they will be fired up only _once_ and only if the component is still mounted.  This is due to the fact that mutation observer is removed and resubscribed every time when the `mutate` function is called. On the contrary, `useMutation` handlers execute for each `mutate` call.
 
-> Be aware that most likely, `mutationFn` passed to `useMutation` is ansynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
+> Be aware that most likely, `mutationFn` passed to `useMutation` is asynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
 
 ```js
 useMutation(addTodo, {
@@ -286,7 +286,7 @@ If you persist offline mutations with the [persistQueryClient plugin](../plugins
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggeres the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
 ```js
-const persister = createWebStoragePersister({
+const persister = createSyncStoragePersister({
   storage: window.localStorage,
 })
 const queryClient = new QueryClient({
