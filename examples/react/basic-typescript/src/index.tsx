@@ -3,8 +3,8 @@ import * as React from "react";
 import ReactDOM from "react-dom/client";
 import axios from "axios";
 import { useQuery, useQueryClient, QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient({
@@ -26,15 +26,12 @@ type Post = {
 };
 
 function usePosts() {
-  return useQuery(
-    ["posts"],
-    async (): Promise<Array<Post>> => {
-      const { data } = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      return data;
-    }
-  );
+  return useQuery(["posts"], async (): Promise<Array<Post>> => {
+    const { data } = await axios.get(
+      "https://jsonplaceholder.typicode.com/posts"
+    );
+    return data;
+  });
 }
 
 function Posts({
