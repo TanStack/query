@@ -8,8 +8,8 @@ There are many ways to supply initial data for a query to the cache before you n
 - Declaratively:
   - Provide `initialData` to a query to prepopulate its cache if empty
 - Imperatively:
-  - [Prefetch the data using `queryClient.prefetchQuery`](./prefetching)
-  - [Manually place the data into the cache using `queryClient.setQueryData`](./prefetching)
+  - [Prefetch the data using `queryClient.prefetchQuery`](https://tanstack.com/query/v4/docs/querys/prefetching)
+  - [Manually place the data into the cache using `queryClient.setQueryData`]([./prefetching](https://tanstack.com/query/v4/docs/querys/prefetching)
 
 ## Using `initialData` to prepopulate a query
 
@@ -137,4 +137,4 @@ function Todo({ todoId }) {
 
 ## Further reading
 
-For a comparison between `Initial Data` and `Placeholder Data`, have a look at the [Community Resources](../community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
+For a comparison between `Initial Data` and `Placeholder Data`, have a look at the [Community Resources](https://tanstack.com/query/v4/docs/community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
