@@ -36,7 +36,7 @@ jobs:
     name: 'Publish Module to NPM'
     needs: test
     # publish only when merged in main on original repo, not on PR
-    if: github.repository == 'tannerlinsley/react-query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/1.x' || github.ref == 'refs/heads/2.x')
+    if: github.repository == 'TanStack/query' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/next' || github.ref == 'refs/heads/beta' || github.ref == 'refs/heads/1.x' || github.ref == 'refs/heads/2.x')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
