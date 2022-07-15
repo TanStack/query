@@ -211,8 +211,10 @@ export class Query<
   }
 
   private clearGcTimeout() {
-    clearTimeout(this.gcTimeout)
-    this.gcTimeout = undefined
+    if (this.gcTimeout) {
+      clearTimeout(this.gcTimeout)
+      this.gcTimeout = undefined
+    }
   }
 
   private optionalRemove() {

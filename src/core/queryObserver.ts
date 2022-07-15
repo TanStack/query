@@ -433,13 +433,17 @@ export class QueryObserver<
   }
 
   private clearStaleTimeout(): void {
-    clearTimeout(this.staleTimeoutId)
-    this.staleTimeoutId = undefined
+    if (this.staleTimeoutId) {
+      clearTimeout(this.staleTimeoutId)
+      this.staleTimeoutId = undefined
+    }
   }
 
   private clearRefetchInterval(): void {
-    clearInterval(this.refetchIntervalId)
-    this.refetchIntervalId = undefined
+    if (this.refetchIntervalId) {
+      clearInterval(this.refetchIntervalId)
+      this.refetchIntervalId = undefined
+    }
   }
 
   protected createResult(
