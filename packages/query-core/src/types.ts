@@ -219,6 +219,13 @@ export interface QueryObserverOptions<
    */
   suspense?: boolean
   /**
+   * This callback will fire per render phase if suspense that set to true.
+   */
+  shouldSuspend?: (context: {
+    status: QueryObserverResult['status']
+    isRestoring: boolean
+  }) => boolean
+  /**
    * Set this to `true` to keep the previous `data` when fetching based on a new query key.
    * Defaults to `false`.
    */

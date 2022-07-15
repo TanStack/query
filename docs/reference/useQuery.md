@@ -158,6 +158,9 @@ const result = useQuery({
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
+- `shouldSuspend: (context: { status: QueryObserverResult['status'] isRestoring: boolean}) => boolean`
+  - Optional
+  - If set, this callback will fire per render phase if suspense that set to true.
 - `initialData: TData | () => TData`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)

@@ -100,13 +100,15 @@ export function useBaseQuery<
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
+  const shouldSuspend = () => {
+    if (typeof options.shouldSuspend === 'function') {
+      return options.shouldSuspend({ status: result.status, isRestoring })
+    }
+    return result.isLoading && result.isFetching && !isRestoring
+  }
+
   // Handle suspense
-  if (
-    defaultedOptions.suspense &&
-    result.isLoading &&
-    result.isFetching &&
-    !isRestoring
-  ) {
+  if (defaultedOptions.suspense && shouldSuspend()) {
     throw observer
       .fetchOptimistic(defaultedOptions)
       .then(({ data }) => {
