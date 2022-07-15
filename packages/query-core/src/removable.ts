@@ -27,8 +27,10 @@ export abstract class Removable {
   }
 
   protected clearGcTimeout() {
-    clearTimeout(this.gcTimeout!)
-    this.gcTimeout = undefined
+    if (this.gcTimeout) {
+      clearTimeout(this.gcTimeout)
+      this.gcTimeout = undefined
+    }
   }
 
   protected abstract optionalRemove(): void
