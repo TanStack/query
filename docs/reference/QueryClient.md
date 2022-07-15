@@ -96,7 +96,7 @@ try {
 
 **Options**
 
-The options for `fetchQuery` are exactly the same as those of [`useQuery`](./useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
+The options for `fetchQuery` are exactly the same as those of [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery), except the following: `enabled, refetchInterval, refetchIntervalInBackground, refetchOnWindowFocus, refetchOnReconnect, notifyOnChangeProps, onSuccess, onError, onSettled, useErrorBoundary, select, suspense, keepPreviousData, placeholderData`; which are strictly for useQuery and useInfiniteQuery. You can check the [source code](https://github.com/tannerlinsley/react-query/blob/361935a12cec6f36d0bd6ba12e84136c405047c5/src/core/types.ts#L83) for more clarity.
 
 **Returns**
 
@@ -173,8 +173,8 @@ const data = queryClient.getQueryData(queryKey)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs//guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs//guides/filters#query-filters)
 
 **Returns**
 
@@ -191,7 +191,7 @@ const data = queryClient.getQueriesData(queryKey | filters)
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../guides/query-keys) | `filters: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs//guides/query-keys) | `filters: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs//guides/filters#query-filters)
   - if a queryKey is passed as the argument, the data with queryKeys fuzzily matching this param will be returned
   - if a filter is passed, the data with queryKeys matching the filter will be returned
 
@@ -218,7 +218,7 @@ queryClient.setQueryData(queryKey, updater)
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
+- `queryKey: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs/guides/query-keys)
 - `updater: TData | (oldData: TData | undefined) => TData | undefined`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
@@ -252,8 +252,8 @@ console.log(state.dataUpdatedAt)
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs//guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs//guides/filters#query-filters)
 
 ## `queryClient.setQueriesData`
 
@@ -265,7 +265,7 @@ queryClient.setQueriesData(queryKey | filters, updater)
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../guides/query-keys) | `filters: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs//guides/query-keys) | `filters: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs//guides/filters#query-filters)
   - if a queryKey is passed as first argument, queryKeys partially matching this param will be updated
   - if a filter is passed, queryKeys matching the filter will be updated
 - `updater: TData | (oldData: TData | undefined) => TData`
@@ -287,8 +287,8 @@ await queryClient.invalidateQueries(['posts'], {
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs//guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs//guides/filters#query-filters)
   - `refetchType?: 'active' | 'inactive' | 'all' | 'none'`
     - Defaults to `'active'`
     - When set to `active`, only queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will be refetched in the background.
@@ -296,7 +296,7 @@ await queryClient.invalidateQueries(['posts'], {
     - When set to `all`, all queries that match the refetch predicate will be refetched in the background.
     - When set to `none`, no queries will be refetched, and those that match the refetch predicate will be marked as invalid only.
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
+    - Only for [Infinite Queries](https://tanstack.com/query/v4/docs//guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
 - `options?: InvalidateOptions`:
   - `throwOnError?: boolean`
@@ -329,9 +329,9 @@ await queryClient.refetchQueries(['posts', 1], { type: 'active', exact: true })
 **Options**
 
 - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs/guides/filters#query-filters)
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
+    - Only for [Infinite Queries](https://tanstack.com/query/v4/docs/guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
 - `options?: RefetchOptions`:
   - `throwOnError?: boolean`
@@ -357,8 +357,8 @@ await queryClient.cancelQueries(['posts'], { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs//guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs/guides/filters#query-filters)
 
 **Returns**
 
@@ -374,8 +374,8 @@ queryClient.removeQueries(queryKey, { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs/guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs/guides/filters#query-filters)
 
 **Returns**
 
@@ -398,10 +398,10 @@ queryClient.resetQueries(queryKey, { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs/guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs/guides/filters#query-filters)
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
-    - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
+    - Only for [Infinite Queries](https://tanstack.com/query/v4/docs/guides/infinite-queries#refetchpage)
     - Use this function to specify which pages should be refetched
 - `options?: ResetOptions`:
   - `throwOnError?: boolean`
@@ -425,12 +425,12 @@ if (queryClient.isFetching()) {
 }
 ```
 
-React Query also exports a handy [`useIsFetching`](./useIsFetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+React Query also exports a handy [`useIsFetching`](https://tanstack.com/query/v4/docs/reference/useIsFetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey?: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs/guides/query-keys)
+- `filters?: QueryFilters`: [Query Filters](https://tanstack.com/query/v4/docs/guides/filters#query-filters)
 
 **Returns**
 
@@ -446,11 +446,11 @@ if (queryClient.isMutating()) {
 }
 ```
 
-React Query also exports a handy [`useIsMutating`](./useIsMutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
+React Query also exports a handy [`useIsMutating`](https://tanstack.com/query/v4/docs/reference/useIsMutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
 
 **Options**
 
-- `filters: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
+- `filters: MutationFilters`: [Mutation Filters](https://tanstack.com/query/v4/docs/guides/filters#mutation-filters)
 
 **Returns**
 
@@ -508,7 +508,7 @@ function Component() {
 
 **Options**
 
-- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
+- `queryKey: QueryKey`: [Query Keys](https://tanstack.com/query/v4/docs/guides/query-keys)
 - `options: QueryOptions`
 
 > As stated in [`getQueryDefaults`](#queryclientgetquerydefaults), the order of registration of query defaults does matter.
