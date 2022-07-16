@@ -6,6 +6,7 @@ import {
   useQuery,
   UseQueryResult,
   useQueries,
+  DefinedUseQueryResult,
 } from '@tanstack/react-query'
 import {
   createQueryClient,
@@ -200,7 +201,7 @@ describe('PersistQueryClientProvider', () => {
 
   test('should show initialData while restoring', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: DefinedUseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
     await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
