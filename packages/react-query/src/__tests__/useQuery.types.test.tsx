@@ -25,7 +25,8 @@ describe('useQuery', () => {
           },
         })
 
-        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
       })
     })
 
@@ -42,7 +43,8 @@ describe('useQuery', () => {
           }),
         })
 
-        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
       })
     })
 
@@ -56,7 +58,9 @@ describe('useQuery', () => {
           },
         })
 
-        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
       })
     })
 
@@ -71,7 +75,9 @@ describe('useQuery', () => {
           initialData: () => undefined as { wow: boolean } | undefined,
         })
 
-        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
       })
     })
   })
@@ -90,7 +96,8 @@ describe('useQuery', () => {
           },
         })
 
-        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
       })
     })
 
@@ -104,7 +111,9 @@ describe('useQuery', () => {
           },
         })
 
-        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
       })
     })
   })
@@ -126,7 +135,8 @@ describe('useQuery', () => {
           },
         )
 
-        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
       })
     })
 
@@ -138,7 +148,9 @@ describe('useQuery', () => {
           }
         })
 
-        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
       })
     })
   })
