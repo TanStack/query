@@ -30,7 +30,7 @@ export function useQuery<
   options: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
-  > & { initialData: TData | (() => TData) },
+  > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
@@ -56,7 +56,7 @@ export function useQuery<
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'initialData'
-  > & { initialData: TData | (() => TData) },
+  > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
@@ -84,7 +84,7 @@ export function useQuery<
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData: TData | (() => TData) },
+  > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
