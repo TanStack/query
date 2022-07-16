@@ -1,12 +1,18 @@
 import { useQuery } from '../useQuery'
 
-const assert = <T,>(_type: T) => void 0
+export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
+  T,
+>() => T extends Y ? 1 : 2
+  ? true
+  : false
+
+export type Expect<T extends true> = T
 
 const doNotExecute = (_func: () => void) => {}
 
 describe('useQuery', () => {
   describe('Config object overload', () => {
-    it('TData should always be defined when initialData is provided', () => {
+    it('TData should always be defined when initialData is provided as an object', () => {
       doNotExecute(() => {
         const { data } = useQuery({
           queryFn: () => {
@@ -19,7 +25,24 @@ describe('useQuery', () => {
           },
         })
 
-        assert<{ wow: boolean }>(data)
+        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
+      })
+    })
+
+    it('TData should always be defined when initialData is provided as a function which ALWAYS returns the data', () => {
+      doNotExecute(() => {
+        const { data } = useQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => ({
+            wow: true,
+          }),
+        })
+
+        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
       })
     })
 
@@ -33,7 +56,22 @@ describe('useQuery', () => {
           },
         })
 
-        assert<{ wow: boolean } | undefined>(data)
+        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
+      })
+    })
+
+    it('TData should have undefined in the union when initialData is provided as a function which can return undefined', () => {
+      doNotExecute(() => {
+        const { data } = useQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          initialData: () => undefined as { wow: boolean } | undefined,
+        })
+
+        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
       })
     })
   })
@@ -52,7 +90,7 @@ describe('useQuery', () => {
           },
         })
 
-        assert<{ wow: boolean }>(data)
+        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
       })
     })
 
@@ -66,7 +104,7 @@ describe('useQuery', () => {
           },
         })
 
-        assert<{ wow: boolean } | undefined>(data)
+        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
       })
     })
   })
@@ -88,7 +126,7 @@ describe('useQuery', () => {
           },
         )
 
-        assert<{ wow: boolean }>(data)
+        type cases = [Expect<Equal<{ wow: boolean }, typeof data>>]
       })
     })
 
@@ -100,7 +138,7 @@ describe('useQuery', () => {
           }
         })
 
-        assert<{ wow: boolean } | undefined>(data)
+        type cases = [Expect<Equal<{ wow: boolean } | undefined, typeof data>>]
       })
     })
   })

@@ -1,9 +1,8 @@
 import {
-  QueryObserver,
+  parseQueryArgs,
   QueryFunction,
   QueryKey,
-  parseQueryArgs,
-  InitialDataFunction,
+  QueryObserver,
 } from '@tanstack/query-core'
 import { UseQueryOptions, UseQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
@@ -19,7 +18,7 @@ export function useQuery<
   options: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
-  > & { initialData?: never },
+  > & { initialData?: () => undefined },
 ): UseQueryResult<TData, TError>
 
 export function useQuery<
@@ -31,7 +30,7 @@ export function useQuery<
   options: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
-  > & { initialData: TData | InitialDataFunction<TData> },
+  > & { initialData: TData | (() => TData) },
 ): Omit<UseQueryResult<TData, TError>, 'data'> & { data: TData }
 
 export function useQuery<
@@ -44,7 +43,7 @@ export function useQuery<
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'initialData'
-  > & { initialData?: never },
+  > & { initialData?: () => undefined },
 ): UseQueryResult<TData, TError>
 
 export function useQuery<
@@ -57,7 +56,7 @@ export function useQuery<
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'initialData'
-  > & { initialData: TData | InitialDataFunction<TData> },
+  > & { initialData: TData | (() => TData) },
 ): Omit<UseQueryResult<TData, TError>, 'data'> & { data: TData }
 
 export function useQuery<
@@ -71,7 +70,7 @@ export function useQuery<
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData?: never },
+  > & { initialData?: () => undefined },
 ): UseQueryResult<TData, TError>
 
 export function useQuery<
@@ -85,7 +84,7 @@ export function useQuery<
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData?: TData | InitialDataFunction<TData> },
+  > & { initialData: TData | (() => TData) },
 ): Omit<UseQueryResult<TData, TError>, 'data'> & { data: TData }
 
 export function useQuery<
