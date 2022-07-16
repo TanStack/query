@@ -4,7 +4,7 @@ import {
   QueryKey,
   QueryObserver,
 } from '@tanstack/query-core'
-import { UseQueryOptions, UseQueryResult } from './types'
+import { DefinedUseQueryResult, UseQueryOptions, UseQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
 // HOOK
@@ -31,7 +31,7 @@ export function useQuery<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
   > & { initialData: TData | (() => TData) },
-): Omit<UseQueryResult<TData, TError>, 'data'> & { data: TData }
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -57,7 +57,7 @@ export function useQuery<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'initialData'
   > & { initialData: TData | (() => TData) },
-): Omit<UseQueryResult<TData, TError>, 'data'> & { data: TData }
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -85,7 +85,7 @@ export function useQuery<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData: TData | (() => TData) },
-): Omit<UseQueryResult<TData, TError>, 'data'> & { data: TData }
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData,

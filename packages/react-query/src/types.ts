@@ -65,6 +65,11 @@ export type UseQueryResult<
   TError = unknown,
 > = UseBaseQueryResult<TData, TError>
 
+export type DefinedUseQueryResult<TData = unknown, TError = unknown> = Omit<
+  UseQueryResult<TData, TError>,
+  'data'
+> & { data: TData }
+
 export type UseInfiniteQueryResult<
   TData = unknown,
   TError = unknown,
