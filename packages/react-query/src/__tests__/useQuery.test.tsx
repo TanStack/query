@@ -19,6 +19,7 @@ import {
   QueryFunction,
   QueryFunctionContext,
   UseQueryOptions,
+  DefinedUseQueryResult,
 } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -142,7 +143,7 @@ describe('useQuery', () => {
         ) => Promise<TQueryFnData>,
         options?: Omit<
           UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn'
+          'queryKey' | 'queryFn' | 'initialData'
         >,
       ) => useQuery(qk, () => fetcher(qk[1], 'token'), options)
       const test = useWrappedQuery([''], async () => '1')
@@ -159,7 +160,7 @@ describe('useQuery', () => {
         fetcher: () => Promise<TQueryFnData>,
         options?: Omit<
           UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-          'queryKey' | 'queryFn'
+          'queryKey' | 'queryFn' | 'initialData'
         >,
       ) => useQuery(qk, fetcher, options)
       const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
@@ -1295,7 +1296,7 @@ describe('useQuery', () => {
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
-    const results: UseQueryResult<string>[] = []
+    const results: DefinedUseQueryResult<string>[] = []
 
     queryClient.setQueryData(key, 'set')
 
@@ -1712,7 +1713,7 @@ describe('useQuery', () => {
 
   it('should not show initial data from next query if keepPreviousData is set', async () => {
     const key = queryKey()
-    const states: UseQueryResult<number>[] = []
+    const states: DefinedUseQueryResult<number>[] = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -3025,7 +3026,7 @@ describe('useQuery', () => {
 
   it('should fetch if initial data is set', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: DefinedUseQueryResult<string>[] = []
 
     function Page() {
       const state = useQuery(key, () => 'data', {
@@ -3055,7 +3056,7 @@ describe('useQuery', () => {
 
   it('should not fetch if initial data is set with a stale time', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: DefinedUseQueryResult<string>[] = []
 
     function Page() {
       const state = useQuery(key, () => 'data', {
@@ -3085,7 +3086,7 @@ describe('useQuery', () => {
 
   it('should fetch if initial data updated at is older than stale time', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: DefinedUseQueryResult<string>[] = []
 
     const oneSecondAgo = Date.now() - 1000
 
@@ -3123,7 +3124,7 @@ describe('useQuery', () => {
 
   it('should fetch if "initial data updated at" is exactly 0', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: DefinedUseQueryResult<string>[] = []
 
     function Page() {
       const state = useQuery(key, () => 'data', {
@@ -3154,7 +3155,7 @@ describe('useQuery', () => {
 
   it('should keep initial data when the query key changes', async () => {
     const key = queryKey()
-    const states: UseQueryResult<{ count: number }>[] = []
+    const states: DefinedUseQueryResult<{ count: number }>[] = []
 
     function Page() {
       const [count, setCount] = React.useState(0)
@@ -3629,7 +3630,7 @@ describe('useQuery', () => {
 
   it('should mark query as fetching, when using initialData', async () => {
     const key = queryKey()
-    const results: UseQueryResult<string>[] = []
+    const results: DefinedUseQueryResult<string>[] = []
 
     function Page() {
       const result = useQuery(key, () => 'serverData', { initialData: 'data' })
@@ -3648,7 +3649,7 @@ describe('useQuery', () => {
 
   it('should initialize state properly, when initialData is falsy', async () => {
     const key = queryKey()
-    const results: UseQueryResult<number>[] = []
+    const results: DefinedUseQueryResult<number>[] = []
 
     function Page() {
       const result = useQuery(key, () => 1, { initialData: 0 })
@@ -3668,7 +3669,7 @@ describe('useQuery', () => {
   // // See https://github.com/tannerlinsley/react-query/issues/214
   it('data should persist when enabled is changed to false', async () => {
     const key = queryKey()
-    const results: UseQueryResult<string>[] = []
+    const results: DefinedUseQueryResult<string>[] = []
 
     function Page() {
       const [shouldFetch, setShouldFetch] = React.useState(true)

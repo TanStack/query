@@ -8,9 +8,9 @@ export type Equal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <
 
 export type Expect<T extends true> = T
 
-const doNotExecute = (_func: () => void) => {}
+const doNotExecute = (_func: () => void) => true
 
-describe('useQuery', () => {
+describe('initialData', () => {
   describe('Config object overload', () => {
     it('TData should always be defined when initialData is provided as an object', () => {
       doNotExecute(() => {
