@@ -577,14 +577,12 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: true,
     })
 
-    const filterInput: HTMLInputElement = screen.getByLabelText(
-      /Filter by queryhash/i
-    )
+    const filterInput: HTMLInputElement =
+      screen.getByLabelText(/Filter by queryhash/i)
     expect(filterInput.value).toEqual('')
 
-    const sortCombobox: HTMLSelectElement = screen.getByLabelText(
-      /Sort queries/i
-    )
+    const sortCombobox: HTMLSelectElement =
+      screen.getByLabelText(/Sort queries/i)
     expect(sortCombobox.value).toEqual(Object.keys(sortFns)[0])
 
     expect(screen.getByRole('button', { name: /Asc/i })).toBeInTheDocument()
@@ -597,7 +595,7 @@ describe('ReactQueryDevtools', () => {
     localStorage.setItem('reactQueryDevtoolsSortDesc', 'true')
     localStorage.setItem(
       'reactQueryDevtoolsSortFn',
-      JSON.stringify(Object.keys(sortFns)[1])
+      JSON.stringify(Object.keys(sortFns)[1]),
     )
 
     const { queryClient } = createQueryClient()
@@ -619,9 +617,8 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: true,
     })
 
-    const sortCombobox: HTMLSelectElement = screen.getByLabelText(
-      /Sort queries/i
-    )
+    const sortCombobox: HTMLSelectElement =
+      screen.getByLabelText(/Sort queries/i)
     expect(sortCombobox.value).toEqual(Object.keys(sortFns)[1])
 
     expect(screen.getByRole('button', { name: /Desc/i })).toBeInTheDocument()
@@ -649,9 +646,8 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: true,
     })
 
-    const filterInput: HTMLInputElement = screen.getByLabelText(
-      /Filter by queryhash/i
-    )
+    const filterInput: HTMLInputElement =
+      screen.getByLabelText(/Filter by queryhash/i)
     expect(filterInput.value).toEqual('posts')
   })
 
