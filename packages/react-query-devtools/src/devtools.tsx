@@ -384,7 +384,7 @@ const getStatusRank = (q: Query) =>
     ? 2
     : 1
 
-const sortFns: Record<string, (a: Query, b: Query) => number> = {
+export const sortFns: Record<string, (a: Query, b: Query) => number> = {
   'Status > Last Updated': (a, b) =>
     getStatusRank(a) === getStatusRank(b)
       ? (sortFns['Last Updated']?.(a, b) as number)
@@ -440,12 +440,6 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   )
 
   const sortFn = React.useMemo(() => sortFns[sort as string], [sort])
-
-  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
-    if (!sortFn) {
-      setSort(Object.keys(sortFns)[0] as string)
-    }
-  }, [setSort, sortFn])
 
   const queriesCount = useSubscribeToQueryCache(
     queryCache,
