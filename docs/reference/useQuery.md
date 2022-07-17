@@ -175,6 +175,9 @@ const result = useQuery({
   - Optional
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
+- `isDataEqual: (oldData: TData | undefined, newData: TData) => boolean`
+  - Optional
+  - This function should return boolean indicating whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
 - `structuralSharing: boolean`
   - Optional
   - Defaults to `true`
