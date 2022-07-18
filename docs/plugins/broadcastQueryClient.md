@@ -9,14 +9,14 @@ title: broadcastQueryClient (Experimental)
 
 ## Installation
 
-This utility comes packaged with `react-query` and is available under the `react-query/broadcastQueryClient-experimental` import.
+This utility comes as a separate package and is available under the `'@tanstack/query-broadcast-client-experimental'` import.
 
 ## Usage
 
 Import the `broadcastQueryClient` function, and pass it your `QueryClient` instance, and optionally, set a `broadcastChannel`.
 
 ```ts
-import { broadcastQueryClient } from 'react-query/broadcastQueryClient-experimental'
+import { broadcastQueryClient } from '@tanstack/query-broadcast-client-experimental'
 
 const queryClient = new QueryClient()
 
