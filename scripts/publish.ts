@@ -231,7 +231,7 @@ async function run() {
     : await Promise.all(
         Object.entries(
           commitsSinceLatestTag.reduce((acc, next) => {
-            const type = next.parsed.type.toLowerCase() ?? 'other'
+            const type = next.parsed.type?.toLowerCase() ?? 'other'
 
             return {
               ...acc,
