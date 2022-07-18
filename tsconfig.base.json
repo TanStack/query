@@ -24,7 +24,7 @@
       "@tanstack/query-async-storage-persister": [
         "packages/query-async-storage-persister/src"
       ],
-      "@tanstack/query-broadcast-client": ["packages/query-broadcast-client/src"],
+      "@tanstack/query-broadcast-client-experimental": ["packages/query-broadcast-client-experimental/src"],
       "@tanstack/query-sync-storage-persister": [
         "packages/query-sync-storage-persister/src"
       ],

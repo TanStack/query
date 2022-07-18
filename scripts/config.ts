@@ -10,8 +10,8 @@ export const packages: Package[] = [
     srcDir: 'src',
   },
   {
-    name: '@tanstack/query-broadcast-client',
-    packageDir: 'query-broadcast-client',
+    name: '@tanstack/query-broadcast-client-experimental',
+    packageDir: 'query-broadcast-client-experimental',
     srcDir: 'src',
   },
   {

@@ -50,10 +50,10 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       globals: {},
     }),
     ...buildConfigs({
-      name: 'query-broadcast-client',
-      packageDir: 'packages/query-broadcast-client',
+      name: 'query-broadcast-client-experimental',
+      packageDir: 'packages/query-broadcast-client-experimental',
       jsName: 'QueryBroadcastClient',
-      outputFile: 'query-broadcast-client',
+      outputFile: 'query-broadcast-client-experimental',
       entryFile: 'src/index.ts',
       globals: {},
     }),

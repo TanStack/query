@@ -3,7 +3,7 @@
   "references": [
     { "path": "packages/query-core" },
     { "path": "packages/query-async-storage-persister" },
-    { "path": "packages/query-broadcast-client" },
+    { "path": "packages/query-broadcast-client-experimental" },
     { "path": "packages/query-sync-storage-persister" },
     { "path": "packages/react-query" },
     { "path": "packages/react-query-devtools" },

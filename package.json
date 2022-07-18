@@ -29,7 +29,7 @@
   "workspaces": [
     "./packages/query-core",
     "./packages/query-async-storage-persister",
-    "./packages/query-broadcast-client",
+    "./packages/query-broadcast-client-experimental",
     "./packages/query-sync-storage-persister",
     "./packages/react-query",
     "./packages/react-query-devtools",
