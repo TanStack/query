@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -13,7 +13,7 @@
   "module": "build/esm/index.js",
   "main": "build/cjs/packages/query-broadcast-client-experimental/src/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/index.d.ts",
+  "types": "build/types/query-broadcast-client-experimental/src/index.d.ts",
   "files": [
     "build",
     "src"
