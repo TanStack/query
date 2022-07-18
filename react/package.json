@@ -1,6 +1,0 @@
-{
-  "internal": true,
-  "main": "../lib/react/index.js",
-  "module": "../es/react/index.js",
-  "types": "../types/react/index.d.ts"
-}

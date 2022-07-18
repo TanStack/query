@@ -1,6 +1,6 @@
 <img src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
-![React Query Header](https://github.com/tannerlinsley/react-query/raw/main/media/repo-dark.png)
+![React Query Header](https://github.com/tannerlinsley/react-query/raw/beta/media/repo-header.png)
 
 Hooks for fetching, caching and updating asynchronous data in React
 
@@ -18,7 +18,7 @@ Hooks for fetching, caching and updating asynchronous data in React
     <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
   </a><a href="https://github.com/tannerlinsley/react-query/discussions">
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
-</a><a href="https://bestofjs.org/projects/react-query"><img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=tannerlinsley%2Freact-query%26since=daily" /></a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
+</a><a href="https://bestofjs.org/projects/react-query"><img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" /></a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
   <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
 </a><a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
@@ -28,7 +28,7 @@ Hooks for fetching, caching and updating asynchronous data in React
 
 Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [React Table](https://github.com/tannerlinsley/react-table), [React Form](https://github.com/tannerlinsley/react-form), [React Charts](https://github.com/tannerlinsley/react-charts)
 
-## Visit [react-query.tanstack.com](https://react-query.tanstack.com) for docs, guides, API and more!
+## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
 
 Still on **React Query v2**? No problem! Check out the v2 docs here: https://react-query-v2.tanstack.com/. <br />
 Would you like to try **React Query v4beta**? Check out the v4 beta docs here: https://react-query-beta.tanstack.com/.
@@ -95,4 +95,4 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
-<!-- Use the force, Luke! -->
+<!-- Use the force, Luke -->

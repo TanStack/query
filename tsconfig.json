@@ -1,23 +1,12 @@
 {
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "react",
-    "lib": ["ESNext", "dom"],
-    "target": "es5",
-    "noEmit": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": false,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noUncheckedIndexedAccess": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "types": ["jest"],
-    "paths": {
-      "react-query": ["./src/index.ts"]
-    }
-  },
-  "include": ["./src"]
+  "files": [],
+  "references": [
+    { "path": "packages/query-core" },
+    { "path": "packages/query-async-storage-persister" },
+    { "path": "packages/query-broadcast-client-experimental" },
+    { "path": "packages/query-sync-storage-persister" },
+    { "path": "packages/react-query" },
+    { "path": "packages/react-query-devtools" },
+    { "path": "packages/react-query-persist-client" }
+  ]
 }

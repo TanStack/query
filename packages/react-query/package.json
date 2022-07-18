@@ -1,0 +1,63 @@
+{
+  "name": "react-query",
+  "version": "4.0.0-beta.1",
+  "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "module": "build/esm/index.js",
+  "main": "build/cjs/packages/react-query/src/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/index.d.ts",
+  "sideEffects": [
+    "lib/index.js",
+    "lib/index.mjs",
+    "lib/reactjs/index.js",
+    "lib/reactjs/index.mjs",
+    "lib/reactjs/setBatchUpdatesFn.js",
+    "lib/reactjs/setBatchUpdatesFn.mjs"
+  ],
+  "scripts": {
+    "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "yarn test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
+    "test:jest:dev": "yarn test:jest --watch",
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "files": [
+    "build",
+    "src",
+    "codemods",
+    "!codemods/jest.config.js",
+    "!codemods/**/__testfixtures__",
+    "!codemods/**/__tests__"
+  ],
+  "devDependencies": {
+    "@types/jscodeshift": "^0.11.3",
+    "jscodeshift": "^0.13.1",
+    "react-error-boundary": "^3.1.4"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "^4.0.0-beta.1",
+    "@types/use-sync-external-store": "^0.0.3",
+    "use-sync-external-store": "^1.2.0"
+  },
+  "peerDependencies": {
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-native": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    }
+  }
+}

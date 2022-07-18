@@ -1,0 +1,23 @@
+{
+  "name": "@tanstack/query-example-react-optimistic-updates-typescript",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@types/react": "^17.0.0",
+    "@types/node": "14.14.14",
+    "axios": "^0.21.1",
+    "isomorphic-unfetch": "3.0.0",
+    "next": "9.2.2",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-query": "^4.0.0-beta.1",
+    "typescript": "^4.1.2"
+  },
+  "scripts": {
+    "dev": "next",
+    "start": "next start",
+    "build": "next build"
+  }
+}

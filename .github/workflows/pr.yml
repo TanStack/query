@@ -1,0 +1,28 @@
+name: pr
+on: [pull_request]
+jobs:
+  test:
+    name: 'Node ${{ matrix.node }}, React ${{ matrix.react }}'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [16.14.2]
+        react: [17, 18]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install dependencies
+        uses: bahmutov/npm-install@v1
+        with:
+          install-command: npm install
+      - run: npm run test:ci
+        env:
+          REACTJS_VERSION: ${{ matrix.react }}
+      - run: npm run test:size
+        if: matrix.react == '18'
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v2

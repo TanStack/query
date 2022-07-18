@@ -1,0 +1,22 @@
+{
+  "name": "@tanstack/query-example-react-nextjs",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "ky": "^0.23.0",
+    "ky-universal": "^0.8.2",
+    "next": "latest",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-query": "^4.0.0-beta.1",
+    "resolve-from": "^5.0.0",
+    "web-streams-polyfill": "^3.0.3"
+  },
+  "license": "MIT",
+  "devDependencies": {}
+}

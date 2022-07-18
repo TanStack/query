@@ -1,0 +1,30 @@
+{
+  "name": "@tanstack/react-query-devtools",
+  "version": "4.0.0-beta.1",
+  "description": "TODO",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "module": "build/esm/index.js",
+  "main": "build/cjs/packages/react-query-devtools/src/index.js",
+  "browser": "build/umd/index.production.js",
+  "types": "build/types/index.d.ts",
+  "files": [
+    "build",
+    "src"
+  ],
+  "scripts": {
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@tanstack/match-sorter-utils": "^8.0.0-alpha.82",
+    "@types/use-sync-external-store": "^0.0.3",
+    "use-sync-external-store": "^1.2.0"
+  }
+}

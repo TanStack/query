@@ -1,0 +1,20 @@
+{
+  "name": "@tanstack/query-example-react-refetch-interval",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "isomorphic-unfetch": "3.0.0",
+    "next": "9.3.2",
+    "react": "16.13.0",
+    "react-dom": "16.13.0",
+    "react-query": "^4.0.0-beta.1"
+  },
+  "scripts": {
+    "dev": "next",
+    "start": "next start",
+    "build": "next build"
+  }
+}

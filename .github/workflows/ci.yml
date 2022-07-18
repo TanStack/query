@@ -1,0 +1,30 @@
+name: ci
+concurrency:
+  group: publish-${{ github.github.base_ref }}
+  cancel-in-progress: true
+on: [push]
+jobs:
+  test-and-publish:
+    if: github.repository == 'TanStack/query' && github.event_name != 'pull_request'
+    name: 'Test & Publish'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.14.2
+          registry-url: https://registry.npmjs.org/
+          cache: 'npm'
+      - run: |
+          npm i
+          npm run test:ci
+          git config --global user.name 'Tanner Linsley'
+          git config --global user.email 'tannerlinsley@users.noreply.github.com'
+          npm run cipublish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
