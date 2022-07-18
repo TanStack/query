@@ -3,6 +3,7 @@
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
+    "clean": "npm exec --workspaces -c \"rm -rf build || true\"",
     "install:csb": "npm install --frozen-lockfile && node ./scripts/fix-package-json.js",
     "test": "(is-ci && npm run test:ci) || npm run test:dev",
     "test:ci": "npm run compile && npm run test:format && npm run test:eslint && npm run test:jest",

@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "module": "build/esm/index.js",
-  "main": "build/cjs/index.js",
+  "main": "build/cjs/react-query-persist-client/src/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/packages/react-query-persist-client/src/index.d.ts",
   "files": [

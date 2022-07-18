@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -11,7 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "module": "build/esm/index.js",
-  "main": "build/cjs/packages/react-query/src/index.js",
+  "main": "build/cjs/react-query/src/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/packages/query-core/src/index.d.ts",
   "sideEffects": [
