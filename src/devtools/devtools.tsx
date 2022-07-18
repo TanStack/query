@@ -7,7 +7,7 @@ import { Button } from './styledComponents'
 import { ThemeProvider, defaultTheme as theme } from './theme'
 import Logo from './Logo'
 
-import ReactQueryDevtoolsPanel from './panel'
+import ReactQueryDevtoolsPanel from './timeline'
 
 interface DevtoolsOptions {
   /**
