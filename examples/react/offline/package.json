@@ -15,7 +15,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-hot-toast": "^2.2.0",
-    "react-query": "^4.0.0-beta.1",
+    "@tanstack/react-query": "^4.0.0",
     "react-scripts": "3.0.1"
   },
   "devDependencies": {

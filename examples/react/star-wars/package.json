@@ -13,7 +13,7 @@
     "axios": "^0.26.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "react-query": "^4.0.0-beta.1",
+    "@tanstack/react-query": "^4.0.0",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",

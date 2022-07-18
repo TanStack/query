@@ -10,7 +10,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-error-boundary": "^2.2.3",
-    "react-query": "^4.0.0-beta.1",
+    "@tanstack/react-query": "^4.0.0",
     "react-scripts": "3.0.1"
   },
   "devDependencies": {
