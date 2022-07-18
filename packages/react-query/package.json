@@ -30,7 +30,7 @@
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "files": [
-    "build",
+    "build/*",
     "src",
     "codemods",
     "!codemods/jest.config.js",

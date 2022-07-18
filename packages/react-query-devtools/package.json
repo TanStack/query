@@ -15,7 +15,7 @@
   "browser": "build/umd/index.production.js",
   "types": "build/types/react-query-devtools/src/index.d.ts",
   "files": [
-    "build",
+    "build/*",
     "src"
   ],
   "scripts": {

@@ -15,7 +15,7 @@
   "browser": "build/umd/index.production.js",
   "types": "build/types/query-broadcast-client-experimental/src/index.d.ts",
   "files": [
-    "build",
+    "build/*",
     "src"
   ],
   "scripts": {
