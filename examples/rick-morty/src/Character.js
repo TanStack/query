@@ -8,7 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
 } from "@material-ui/core";
 import { Link as RouterLink } from "react-router-dom";
 import { useParams } from "react-router";
@@ -17,8 +17,12 @@ import fetch from "./fetch";
 
 function Character() {
   const { characterId } = useParams();
-  const { status, data } = useQuery(`character-${characterId}`, () =>
-    fetch(`https://rickandmortyapi.com/api/character/${characterId}`)
+  const { status, data } = useQuery(
+    `character-${characterId}`,
+    () => fetch(`https://rickandmortyapi.com/api/character/${characterId}`),
+    {
+      cacheTime: 3000,
+    }
   );
 
   if (status === "loading") return <p>Loading...</p>;
@@ -66,7 +70,7 @@ function Character() {
       </TableContainer>
       <br />
       <Typography variant="h4">Episodes</Typography>
-      {data.episode.map(episode => {
+      {data.episode.map((episode) => {
         const episodeUrlParts = episode.split("/").filter(Boolean);
         const episodeId = episodeUrlParts[episodeUrlParts.length - 1];
 
