@@ -5,7 +5,7 @@ title: createAsyncStoragePersister
 
 ## Installation
 
-This utility comes packaged with `react-query` and is available under the `react-query/createAsyncStoragePersister` import.
+This utility comes as a separate package and is available under the `'@tanstack/query-async-storage-persister'` import.
 
 ## Usage
 

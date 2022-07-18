@@ -13,8 +13,8 @@
     "next": "latest",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@tanstack/react-query-devtools": "^4.0.0",
     "@tanstack/react-query": "^4.0.0",
+    "@tanstack/react-query-devtools": "^4.0.0",
     "resolve-from": "^5.0.0",
     "web-streams-polyfill": "^3.0.3"
   },

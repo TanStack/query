@@ -10,8 +10,8 @@
     "next": "9.3.2",
     "react": "16.13.0",
     "react-dom": "16.13.0",
-    "@tanstack/react-query-devtools": "^4.0.0",
-    "@tanstack/react-query": "^4.0.0"
+    "@tanstack/react-query": "^4.0.0",
+    "@tanstack/react-query-devtools": "^4.0.0"
   },
   "scripts": {
     "dev": "next",
