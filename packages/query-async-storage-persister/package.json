@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-async-storage-persister",
-  "version": "4.0.0-beta.1",
+  "version": "4.0.0",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -11,9 +11,9 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "module": "build/esm/index.js",
-  "main": "build/cjs/packages/query-async-storage-persister/src/index.js",
+  "main": "build/cjs/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/index.d.ts",
+  "types": "build/types/packages/query-async-storage-persister/src/index.d.ts",
   "files": [
     "build",
     "src"

@@ -31,10 +31,7 @@ async function run() {
     // (process.env.PR_NUMBER ? `pr-${process.env.PR_NUMBER}` : currentGitBranch())
     currentGitBranch()
 
-  const branchConfig: BranchConfig = branchConfigs[branchName] || {
-    prerelease: true,
-    ghRelease: false,
-  }
+  const branchConfig: BranchConfig = branchConfigs[branchName]
 
   if (!branchConfig) {
     console.log(`No publish config found for branch: ${branchName}`)
@@ -91,7 +88,7 @@ async function run() {
 
       // Is it a major version?
       if (!semver.patch(process.env.TAG) && !semver.minor(process.env.TAG)) {
-        range = process.env.TAG
+        range = `beta..HEAD`
         latestTag = process.env.TAG
       }
     } else {
@@ -100,6 +97,8 @@ async function run() {
       )
     }
   }
+
+  console.info(`Git Range: ${range}`)
 
   // Get the commits since the latest tag
   const commitsSinceLatestTag = (
@@ -136,10 +135,10 @@ async function run() {
   // Pares the commit messsages, log them, and determine the type of release needed
   let recommendedReleaseLevel: number = commitsSinceLatestTag.reduce(
     (releaseLevel, commit) => {
-      if (['fix', 'refactor', 'perf'].includes(commit.parsed.type)) {
+      if (['fix', 'refactor', 'perf'].includes(commit.parsed.type!)) {
         releaseLevel = Math.max(releaseLevel, 0)
       }
-      if (['feat'].includes(commit.parsed.type)) {
+      if (['feat'].includes(commit.parsed.type!)) {
         releaseLevel = Math.max(releaseLevel, 1)
       }
       if (commit.body.includes('BREAKING CHANGE')) {
@@ -353,6 +352,8 @@ async function run() {
   // console.info('')
 
   console.info('Validating packages...')
+  const failedValidations: string[] = []
+
   await Promise.all(
     packages.map(async (pkg) => {
       const pkgJson = await readPackageJson(
@@ -370,15 +371,29 @@ async function run() {
               )
             }
 
-            await fsp.access(
-              path.resolve(rootDir, 'packages', pkg.packageDir, entry),
+            const filePath = path.resolve(
+              rootDir,
+              'packages',
+              pkg.packageDir,
+              entry,
             )
+
+            try {
+              await fsp.access(filePath)
+            } catch (err) {
+              failedValidations.push(`Missing build file: ${filePath}`)
+            }
           },
         ),
       )
     }),
   )
   console.info('')
+  if (failedValidations.length > 0) {
+    throw new Error(
+      'Some packages failed validation:\n\n' + failedValidations.join('\n'),
+    )
+  }
 
   console.info('Testing packages...')
   execSync(`npm run test:ci`, { encoding: 'utf8' })
@@ -612,7 +627,7 @@ async function getPackageVersion(pathName: string) {
   const json = await readPackageJson(pathName)
 
   if (!json.version) {
-    throw new Error(`No version found for package: ${name}`)
+    throw new Error(`No version found for package: ${pathName}`)
   }
 
   return json.version

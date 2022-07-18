@@ -20,7 +20,7 @@ export type AuthorOrCommitter = {
 }
 
 export type Parsed = {
-  type: string
+  type: string | null
   scope?: string | null
   subject: string
   merge?: null
