@@ -13,7 +13,7 @@
   "module": "build/esm/index.js",
   "main": "build/cjs/react-query/src/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/packages/query-core/src/index.d.ts",
+  "types": "build/types/packages/react-query/src/index.d.ts",
   "sideEffects": [
     "lib/index.js",
     "lib/index.mjs",
