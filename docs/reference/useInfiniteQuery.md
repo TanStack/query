@@ -3,7 +3,7 @@ id: useInfiniteQuery
 title: useInfiniteQuery
 ---
 
-```js
+```tsx
 const {
   fetchNextPage,
   fetchPreviousPage,

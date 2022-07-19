@@ -17,7 +17,7 @@ Its available methods are:
 
 `setEventListener` can be used to set a custom event listener:
 
-```js
+```tsx
 import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from '@tanstack/react-query'
 
@@ -32,7 +32,7 @@ onlineManager.setEventListener(setOnline => {
 
 `setOnline` can be used to manually set the online state. Set `undefined` to fallback to the default online check.
 
-```js
+```tsx
 import { onlineManager } from '@tanstack/react-query'
 
 // Set to online
@@ -53,6 +53,6 @@ onlineManager.setOnline(undefined)
 
 `isOnline` can be used to get the current online state.
 
-```js
+```tsx
 const isOnline = onlineManager.isOnline()
 ```

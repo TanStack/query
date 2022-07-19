@@ -18,7 +18,7 @@ For a vast majority of applications, the truly **globally accessible client stat
 
 Here we have some "global" state being managed by a global state library:
 
-```js
+```tsx
 const globalState = {
   projects,
   teams,
@@ -31,7 +31,7 @@ const globalState = {
 
 Currently, the global state manager is caching 4 types of server-state: `projects`, `teams`, `tasks`, and `users`. If we were to move these server-state assets to React Query, our remaining global state would look more like this:
 
-```js
+```tsx
 const globalState = {
   themeMode,
   sidebarStatus,

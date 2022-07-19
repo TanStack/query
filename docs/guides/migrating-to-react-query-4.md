@@ -109,7 +109,7 @@ In order to make bailing out of updates possible by returning `undefined`, we ha
 
 Further, it is an easy bug to produce `Promise<void>` by adding logging in the queryFn:
 
-```js
+```tsx
 useQuery(['key'], () => axios.get(url).then(result => console.log(result.data)))
 ```
 
@@ -121,7 +121,7 @@ Please read the [New Features announcement](#proper-offline-support) about onlin
 
 Even though React Query is an Async State Manager that can be used for anything that produces a Promise, it is most often used for data fetching in combination with data fetching libraries. That is why, per default, queries and mutations will be `paused` if there is no network connection. If you want to opt-in to the previous behavior, you can globally set `networkMode: offlineFirst` for both queries and mutations:
 
-```js
+```tsx
 new QueryClient({
   defaultOptions: {
     queries: {
@@ -388,7 +388,7 @@ React Query defaults to "tracking" query properties, which should give you a nic
 
 When using the [functional updater form of setQueryData](../reference/QueryClient#queryclientsetquerydata), you can now bail out of the update by returning `undefined`. This is helpful if `undefined` is given to you as `previousValue`, which means that currently, no cached entry exists and you don't want to / cannot create one, like in the example of toggling a todo:
 
-```js
+```tsx
 queryClient.setQueryData(['todo', id], previousTodo =>
   previousTodo ? { ...previousTodo, done: true } : undefined
 )

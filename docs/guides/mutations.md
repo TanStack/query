@@ -7,7 +7,7 @@ Unlike queries, mutations are typically used to create/update/delete data or per
 
 Here's an example of a mutation that adds a new todo to the server:
 
-```js
+```tsx
 function App() {
   const mutation = useMutation(newTodo => {
     return axios.post('/todos', newTodo)
@@ -57,7 +57,7 @@ Even with just variables, mutations aren't all that special, but when used with 
 
 > IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback in **React 16 and earlier**. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/legacy-event-pooling.html).
 
-```js
+```tsx
 // This will not work in React 16 and earlier
 const CreateTodo = () => {
   const mutation = useMutation(event => {
@@ -86,7 +86,7 @@ const CreateTodo = () => {
 
 It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function to handle this:
 
-```js
+```tsx
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
   const mutation = useMutation(createTodo)
@@ -117,7 +117,7 @@ const CreateTodo = () => {
 
 `useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](./invalidations-from-mutations) and even [optimistic updates](./optimistic-updates)
 
-```js
+```tsx
 useMutation(addTodo, {
   onMutate: variables => {
     // A mutation is about to happen!
@@ -140,7 +140,7 @@ useMutation(addTodo, {
 
 When returning a promise in any of the callback functions it will first be awaited before the next callback is called:
 
-```js
+```tsx
 useMutation(addTodo, {
   onSuccess: async () => {
     console.log("I'm first!")
@@ -153,7 +153,7 @@ useMutation(addTodo, {
 
 You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`. Please keep in mind that those additional callbacks won't run if your component unmounts _before_ the mutation finishes.
 
-```js
+```tsx
 useMutation(addTodo, {
   onSuccess: (data, variables, context) => {
     // I will fire first
@@ -184,7 +184,7 @@ There is a slight difference in handling `onSuccess`, `onError` and `onSettled` 
 
 > Be aware that most likely, `mutationFn` passed to `useMutation` is asynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
 
-```js
+```tsx
 useMutation(addTodo, {
   onSuccess: (data, error, variables, context) => {
     // Will be called 3 times
@@ -205,7 +205,7 @@ useMutation(addTodo, {
 
 Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
 
-```js
+```tsx
 const mutation = useMutation(addTodo)
 
 try {
@@ -222,7 +222,7 @@ try {
 
 By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
 
-```js
+```tsx
 const mutation = useMutation(addTodo, {
   retry: 3,
 })
@@ -234,7 +234,7 @@ If mutations fail because the device is offline, they will be retried in the sam
 
 Mutations can be persisted to storage if needed and resumed at a later point. This can be done with the hydration functions:
 
-```js
+```tsx
 const queryClient = new QueryClient()
 
 // Define the "addTodo" mutation
@@ -285,7 +285,7 @@ If you persist offline mutations with the [persistQueryClient plugin](../plugins
 
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggeres the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
-```js
+```tsx
 const persister = createSyncStoragePersister({
   storage: window.localStorage,
 })

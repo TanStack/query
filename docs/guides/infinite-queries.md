@@ -22,7 +22,7 @@ When using `useInfiniteQuery`, you'll notice a few things are different:
 
 Let's assume we have an API that returns pages of `projects` 3 at a time based on a `cursor` index along with a cursor that can be used to fetch the next group of projects:
 
-```js
+```tsx
 fetch('/api/projects?cursor=0')
 // { data: [...], nextCursor: 3}
 fetch('/api/projects?cursor=3')
@@ -41,7 +41,7 @@ With this information, we can create a "Load More" UI by:
 
 > Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. e.g. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
 
-```js
+```tsx
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 function Projects() {
@@ -99,7 +99,7 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 
 If you only want to actively refetch a subset of all pages, you can pass the `refetchPage` function to `refetch` returned from `useInfiniteQuery`.
 
-```js
+```tsx
 const { refetch } = useInfiniteQuery(['projects'], fetchProjects, {
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
 })
@@ -120,7 +120,7 @@ The function is executed for each page, and only pages where this function retur
 
 By default, the variable returned from `getNextPageParam` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchNextPage` function which will override the default variable like so:
 
-```js
+```tsx
 function Projects() {
   const fetchProjects = ({ pageParam = 0 }) =>
     fetch('/api/projects?cursor=' + pageParam)
@@ -145,7 +145,7 @@ function Projects() {
 
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
 
-```js
+```tsx
 useInfiniteQuery(['projects'], fetchProjects, {
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
@@ -156,7 +156,7 @@ useInfiniteQuery(['projects'], fetchProjects, {
 
 Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
 
-```js
+```tsx
 useInfiniteQuery(['projects'], fetchProjects, {
   select: data => ({
     pages: [...data.pages].reverse(),
@@ -169,7 +169,7 @@ useInfiniteQuery(['projects'], fetchProjects, {
 
 Manually removing first page:
 
-```js
+```tsx
 queryClient.setQueryData(['projects'], data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
@@ -178,7 +178,7 @@ queryClient.setQueryData(['projects'], data => ({
 
 Manually removing a single value from an individual page:
 
-```js
+```tsx
 const newPagesArray = oldPagesArray?.pages.map((page) =>
   page.filter((val) => val.id !== updatedId)
 ) ?? []

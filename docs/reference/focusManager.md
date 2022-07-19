@@ -17,7 +17,7 @@ Its available methods are:
 
 `setEventListener` can be used to set a custom event listener:
 
-```js
+```tsx
 import { focusManager } from '@tanstack/react-query'
 
 focusManager.setEventListener(handleFocus => {
@@ -39,7 +39,7 @@ focusManager.setEventListener(handleFocus => {
 
 `setFocused` can be used to manually set the focus state. Set `undefined` to fallback to the default focus check.
 
-```js
+```tsx
 import { focusManager } from '@tanstack/react-query'
 
 // Set focused
@@ -60,6 +60,6 @@ focusManager.setFocused(undefined)
 
 `isFocused` can be used to get the current focus state.
 
-```js
+```tsx
 const isFocused = focusManager.isFocused()
 ```

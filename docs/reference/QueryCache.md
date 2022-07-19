@@ -7,7 +7,7 @@ The `QueryCache` is the storage mechanism for React Query. It stores all the dat
 
 **Normally, you will not interact with the QueryCache directly and instead use the `QueryClient` for a specific cache.**
 
-```js
+```tsx
 import { QueryCache } from '@tanstack/react-query'
 
 const queryCache = new QueryCache({
@@ -50,7 +50,7 @@ The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle 
 
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.dataUpdatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
-```js
+```tsx
 const query = queryCache.find(queryKey)
 ```
 
@@ -70,7 +70,7 @@ const query = queryCache.find(queryKey)
 
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
-```js
+```tsx
 const queries = queryCache.findAll(queryKey)
 ```
 
@@ -88,7 +88,7 @@ const queries = queryCache.findAll(queryKey)
 
 The `subscribe` method can be used to subscribe to the query cache as a whole and be informed of safe/known updates to the cache like query states changing or queries being updated, added or removed
 
-```js
+```tsx
 const callback = event => {
   console.log(event.type, event.query)
 }
@@ -110,6 +110,6 @@ const unsubscribe = queryCache.subscribe(callback)
 
 The `clear` method can be used to clear the cache entirely and start fresh.
 
-```js
+```tsx
 queryCache.clear()
 ```

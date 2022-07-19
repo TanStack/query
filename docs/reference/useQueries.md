@@ -5,7 +5,7 @@ title: useQueries
 
 The `useQueries` hook can be used to fetch a variable number of queries:
 
-```js
+```tsx
 const results = useQueries({
   queries: [
     { queryKey: ['post', 1], queryFn: fetchPost, staleTime: Infinity},

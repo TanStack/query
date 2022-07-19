@@ -38,7 +38,7 @@ This has some benefits:
 
 When creating a `new QueryClient()`, a `QueryCache` and `MutationCache` are automatically created for you if you don't supply them.
 
-```js
+```tsx
 import { QueryClient } from 'react-query'
 
 const queryClient = new QueryClient()
@@ -50,7 +50,7 @@ Default options for queries and mutations can now be specified in `QueryClient`:
 
 **Notice that it's now defaultOptions instead of defaultConfig**
 
-```js
+```tsx
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -65,7 +65,7 @@ const queryClient = new QueryClient({
 
 The `QueryClientProvider` component is now used to connect a `QueryClient` to your application:
 
-```js
+```tsx
 import { QueryClient, QueryClientProvider } from 'react-query'
 
 const queryClient = new QueryClient()
@@ -87,7 +87,7 @@ It's been a long time coming, but it's finally gone :)
 
 The new `QueryClient.prefetchQuery()` function is async, but **does not return the data from the query**. If you require the data, use the new `QueryClient.fetchQuery()` function
 
-```js
+```tsx
 // Prefetch a query:
 await queryClient.prefetchQuery('posts', fetchPosts)
 
@@ -126,7 +126,7 @@ It returns the provided `queryClient` for its component tree and shouldn't need 
 
 Inline functions are now the suggested way of passing parameters to your query functions:
 
-```js
+```tsx
 // Old
 useQuery(['post', id], (_key, id) => fetchPost(id))
 
@@ -136,7 +136,7 @@ useQuery(['post', id], () => fetchPost(id))
 
 If you still insist on not using inline functions, you can use the newly passed `QueryFunctionContext`:
 
-```js
+```tsx
 useQuery(['post', id], context => fetchPost(context.queryKey[1]))
 ```
 
@@ -144,7 +144,7 @@ useQuery(['post', id], context => fetchPost(context.queryKey[1]))
 
 They were previously added as the last query key parameter in your query function, but this proved to be difficult for some patterns
 
-```js
+```tsx
 // Old
 useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
 
@@ -156,7 +156,7 @@ useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPosts(pageParam))
 
 The new `keepPreviousData` options is available for both `useQuery` and `useInfiniteQuery` and will have the same "lagging" effect on your data:
 
-```js
+```tsx
 import { useQuery } from 'react-query'
 
 function Page({ page }) {
@@ -182,7 +182,7 @@ The `useInfiniteQuery()` interface has changed to fully support bi-directional i
 
 One direction:
 
-```js
+```tsx
 const {
   data,
   fetchNextPage,
@@ -199,7 +199,7 @@ const {
 
 Both directions:
 
-```js
+```tsx
 const {
   data,
   fetchNextPage,
@@ -220,7 +220,7 @@ const {
 
 One direction reversed:
 
-```js
+```tsx
 const {
   data,
   fetchNextPage,
@@ -243,7 +243,7 @@ const {
 
 This allows for easier manipulation of the data and the page params, like, for example, removing the first page of data along with it's params:
 
-```js
+```tsx
 queryClient.setQueryData(['projects'], data => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
@@ -254,7 +254,7 @@ queryClient.setQueryData(['projects'], data => ({
 
 Though the old way gave us warm fuzzy feelings of when we first discovered `useState` for the first time, they didn't last long. Now the mutation return is a single object.
 
-```js
+```tsx
 // Old:
 const [mutate, { status, reset }] = useMutation()
 
@@ -273,7 +273,7 @@ Because of this the `mutate` function is now split into a `mutate` and `mutateAs
 
 The `mutate` function can be used when using callbacks:
 
-```js
+```tsx
 const { mutate } = useMutation(addTodo)
 
 mutate('todo', {
@@ -291,7 +291,7 @@ mutate('todo', {
 
 The `mutateAsync` function can be used when using async/await:
 
-```js
+```tsx
 const { mutateAsync } = useMutation(addTodo)
 
 try {
@@ -306,7 +306,7 @@ try {
 
 ### The object syntax for useQuery now uses a collapsed config:
 
-```js
+```tsx
 // Old:
 useQuery({
   queryKey: 'posts',
@@ -354,7 +354,7 @@ With these new options it is possible to configure when a component should re-re
 
 Only re-render when the `data` or `error` properties change:
 
-```js
+```tsx
 import { useQuery } from 'react-query'
 
 function User() {
@@ -367,7 +367,7 @@ function User() {
 
 Prevent re-render when the `isStale` property changes:
 
-```js
+```tsx
 import { useQuery } from 'react-query'
 
 function User() {
@@ -388,7 +388,7 @@ Because data and errors can be present at the same time, the `updatedAt` propert
 
 ### `setConsole()` has been replaced by the new `setLogger()` function
 
-```js
+```tsx
 import { setLogger } from 'react-query'
 
 // Log with Sentry
@@ -406,7 +406,7 @@ setLogger(winston.createLogger())
 
 To prevent showing error screens in React Native when a query fails it was necessary to manually change the Console:
 
-```js
+```tsx
 import { setConsole } from 'react-query'
 
 setConsole({
@@ -455,7 +455,7 @@ const { data, status } = useQuery(['post', id], () => fetchPost(id))
 
 The `useQuery` and `useInfiniteQuery` hooks now have a `select` option to select or transform parts of the query result.
 
-```js
+```tsx
 import { useQuery } from 'react-query'
 
 function User() {
@@ -472,7 +472,7 @@ Set the `notifyOnChangeProps` option to `['data', 'error']` to only re-render wh
 
 Wish you could run `useQuery` in a loop? The rules of hooks say no, but with the new `useQueries()` hook, you can!
 
-```js
+```tsx
 import { useQueries } from 'react-query'
 
 function Overview() {
@@ -492,7 +492,7 @@ function Overview() {
 
 By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
 
-```js
+```tsx
 const mutation = useMutation(addTodo, {
   retry: 3,
 })
@@ -508,7 +508,7 @@ Mutations can now be persisted to storage and resumed at a later point. More inf
 
 A `QueryObserver` can be used to create and/or watch a query:
 
-```js
+```tsx
 const observer = new QueryObserver(queryClient, { queryKey: 'posts' })
 
 const unsubscribe = observer.subscribe(result => {
@@ -521,7 +521,7 @@ const unsubscribe = observer.subscribe(result => {
 
 A `InfiniteQueryObserver` can be used to create and/or watch an infinite query:
 
-```js
+```tsx
 const observer = new InfiniteQueryObserver(queryClient, {
   queryKey: 'posts',
   queryFn: fetchPosts,
@@ -539,7 +539,7 @@ const unsubscribe = observer.subscribe(result => {
 
 A `QueriesObserver` can be used to create and/or watch multiple queries:
 
-```js
+```tsx
 const observer = new QueriesObserver(queryClient, [
   { queryKey: ['post', 1], queryFn: fetchPost },
   { queryKey: ['post', 2], queryFn: fetchPost },
@@ -555,7 +555,7 @@ const unsubscribe = observer.subscribe(result => {
 
 The `QueryClient.setQueryDefaults()` method can be used to set default options for specific queries:
 
-```js
+```tsx
 queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
 
 function Component() {
@@ -567,7 +567,7 @@ function Component() {
 
 The `QueryClient.setMutationDefaults()` method can be used to set default options for specific mutations:
 
-```js
+```tsx
 queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
@@ -579,7 +579,7 @@ function Component() {
 
 The `useIsFetching()` hook now accepts filters which can be used to for example only show a spinner for certain type of queries:
 
-```js
+```tsx
 const fetches = useIsFetching(['posts'])
 ```
 
@@ -587,7 +587,7 @@ const fetches = useIsFetching(['posts'])
 
 The core of React Query is now fully separated from React, which means it can also be used standalone or in other frameworks. Use the `react-query/core` entry point to only import the core functionality:
 
-```js
+```tsx
 import { QueryClient } from 'react-query/core'
 ```
 

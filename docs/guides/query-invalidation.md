@@ -5,7 +5,7 @@ title: Query Invalidation
 
 Waiting for queries to become stale before they are fetched again doesn't always work, especially when you know for a fact that a query's data is out of date because of something the user has done. For that purpose, the `QueryClient` has an `invalidateQueries` method that lets you intelligently mark queries as stale and potentially refetch them too!
 
-```js
+```tsx
 // Invalidate every query in the cache
 queryClient.invalidateQueries()
 // Invalidate every query with a key that starts with `todos`
@@ -25,7 +25,7 @@ When using APIs like `invalidateQueries` and `removeQueries` (and others that su
 
 In this example, we can use the `todos` prefix to invalidate any queries that start with `todos` in their query key:
 
-```js
+```tsx
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 // Get QueryClient from the context
@@ -40,7 +40,7 @@ const todoListQuery = useQuery(['todos', { page: 1 }], fetchTodoList)
 
 You can even invalidate queries with specific variables by passing a more specific query key to the `invalidateQueries` method:
 
-```js
+```tsx
 queryClient.invalidateQueries(['todos', { type: 'done' }])
 
 // The query below will be invalidated
@@ -52,7 +52,7 @@ const todoListQuery = useQuery(['todos'], fetchTodoList)
 
 The `invalidateQueries` API is very flexible, so even if you want to **only** invalidate `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `invalidateQueries` method:
 
-```js
+```tsx
 queryClient.invalidateQueries(['todos'], { exact: true })
 
 // The query below will be invalidated
@@ -64,7 +64,7 @@ const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
 
 If you find yourself wanting **even more** granularity, you can pass a predicate function to the `invalidateQueries` method. This function will receive each `Query` instance from the query cache and allow you to return `true` or `false` for whether you want to invalidate that query:
 
-```js
+```tsx
 queryClient.invalidateQueries({
   predicate: query =>
     query.queryKey[0] === 'todos' && query.queryKey[1]?.version >= 10,

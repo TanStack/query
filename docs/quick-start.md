@@ -9,7 +9,7 @@ This example very briefly illustrates the 3 core concepts of React Query:
 - [Mutations](./guides/mutations)
 - [Query Invalidation](./guides/query-invalidation)
 
-```js
+```tsx
 import {
   useQuery,
   useMutation,

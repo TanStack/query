@@ -5,7 +5,7 @@ title: Dependent Queries
 
 Dependent (or serial) queries depend on previous ones to finish before they can execute. To achieve this, it's as easy as using the `enabled` option to tell a query when it is ready to run:
 
-```js
+```tsx
 // Get the user
 const { data: user } = useQuery(['user', email], getUserByEmail)
 
@@ -24,21 +24,21 @@ const { status, fetchStatus, data: projects } = useQuery(
 
 The `projects` query will start in:
 
-```js
+```tsx
 status: 'loading'
 fetchStatus: 'idle'
 ```
 
 As soon as the `user` is available, the `projects` query will be `enabled` and will then transition to:
 
-```js
+```tsx
 status: 'loading'
 fetchStatus: 'fetching'
 ```
 
 Once we have the projects, it will go to:
 
-```js
+```tsx
 status: 'success'
 fetchStatus: 'idle'
 ```

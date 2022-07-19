@@ -47,7 +47,7 @@ Retries work the same as for a [SyncStoragePersister](./createSyncStoragePersist
 
 Call this function to create an asyncStoragePersister that you can use later with `persistQueryClient`.
 
-```js
+```tsx
 createAsyncStoragePersister(options: CreateAsyncStoragePersisterOptions)
 ```
 
@@ -79,7 +79,7 @@ interface AsyncStorage {
 
 The default options are:
 
-```js
+```tsx
 {
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,

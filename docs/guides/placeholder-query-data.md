@@ -18,7 +18,7 @@ There are a few ways to supply placeholder data for a query to the cache before 
 
 ## Placeholder Data as a Value
 
-```js
+```tsx
 function Todos() {
   const result = useQuery(['todos'], () => fetch('/todos'), {
     placeholderData: placeholderTodos,
@@ -30,7 +30,7 @@ function Todos() {
 
 If the process for accessing a query's placeholder data is intensive or just not something you want to perform on every render, you can memoize the value or pass a memoized function as the `placeholderData` value:
 
-```js
+```tsx
 function Todos() {
   const placeholderData = useMemo(() => generateFakeTodos(), [])
   const result = useQuery(['todos'], () => fetch('/todos'), { placeholderData })
@@ -41,7 +41,7 @@ function Todos() {
 
 In some circumstances, you may be able to provide the placeholder data for a query from the cached result of another. A good example of this would be searching the cached data from a blog post list query for a preview version of the post, then using that as the placeholder data for your individual post query:
 
-```js
+```tsx
 function Todo({ blogPostId }) {
   const result = useQuery(['blogPost', blogPostId], () => fetch(`/blogPosts/${blogPostId}`), {
     placeholderData: () => {

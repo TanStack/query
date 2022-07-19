@@ -7,7 +7,7 @@ title: InfiniteQueryObserver
 
 The `InfiniteQueryObserver` can be used to observe and switch between infinite queries.
 
-```js
+```tsx
 const observer = new InfiniteQueryObserver(queryClient, {
   queryKey: ['posts'],
   queryFn: fetchPosts,

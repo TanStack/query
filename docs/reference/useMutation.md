@@ -3,7 +3,7 @@ id: useMutation
 title: useMutation
 ---
 
-```js
+```tsx
 const {
   data,
   error,

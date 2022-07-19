@@ -7,7 +7,7 @@ The `MutationCache` is the storage for mutations.
 
 **Normally, you will not interact with the MutationCache directly and instead use the `QueryClient`.**
 
-```js
+```tsx
 import { MutationCache } from '@tanstack/react-query'
 
 const mutationCache = new MutationCache({
@@ -51,7 +51,7 @@ The `onError`, `onSuccess` and `onMutate` callbacks on the MutationCache can be 
 
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a mutation in rare scenarios
 
-```js
+```tsx
 const mutations = mutationCache.getAll()
 ```
 
@@ -64,7 +64,7 @@ const mutations = mutationCache.getAll()
 
 The `subscribe` method can be used to subscribe to the mutation cache as a whole and be informed of safe/known updates to the cache like mutation states changing or mutations being updated, added or removed.
 
-```js
+```tsx
 const callback = event => {
   console.log(event.type, event.mutation)
 }
@@ -86,6 +86,6 @@ const unsubscribe = mutationCache.subscribe(callback)
 
 The `clear` method can be used to clear the cache entirely and start fresh.
 
-```js
+```tsx
 mutationCache.clear()
 ```
