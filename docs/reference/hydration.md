@@ -95,7 +95,7 @@ If the queries included in dehydration already exist in the queryCache, `hydrate
 
 `useHydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
 
-```tsxx
+```tsx
 import { useHydrate } from '@tanstack/react-query'
 
 useHydrate(dehydratedState, options)

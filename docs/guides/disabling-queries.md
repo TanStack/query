@@ -16,7 +16,7 @@ When `enabled` is `false`:
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` returned from `useQuery` can be used to manually trigger the query to fetch.
 
-```tsxx
+```tsx
 function Todos() {
   const {
     isLoading,
