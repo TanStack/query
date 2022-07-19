@@ -369,6 +369,14 @@ export function ReactQueryDevtools({
           }}
         >
           <Logo aria-hidden />
+          <span style={{
+            position: "absolute",
+            width: "0.1px",
+            height: "0.1px", 
+            overflow: "hidden",
+          }} className="screenreader">
+            Open React Query Devtools
+          </span>
         </button>
       ) : null}
     </Container>
