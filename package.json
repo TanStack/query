@@ -15,7 +15,7 @@
     "test:jest:dev": "jest --config ./jest.config.ts --watch",
     "test:size": "npm run build && bundlewatch",
     "build": "rollup --config rollup.config.js && npm run typecheck",
-    "postbuild": "cp ./packages/react-query-devtools/src/devtools-empty.ts ./packages/react-query-devtools/build/esm/devtools-empty.js",
+    "postbuild": "cp ./packages/react-query-devtools/src/devtools-dev.ts ./packages/react-query-devtools/build/esm/devtools-dev.js && cp ./packages/react-query-devtools/src/devtools-prod.ts ./packages/react-query-devtools/build/esm/devtools-prod.js",
     "typecheck": "tsc -b",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"npm run typecheck -- --watch\" \"npm run test\"",
     "linkAll": "lerna exec 'npm run link' --parallel",

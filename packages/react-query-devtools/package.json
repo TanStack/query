@@ -20,9 +20,9 @@
   ],
   "exports": {
     "development": {
-      "default": "./build/esm/index.js"
+      "default": "./build/esm/devtool-dev.js"
     },
-    "default": "./build/esm/devtools-empty.js"
+    "default": "./build/esm/devtools-prod.js"
   },
   "scripts": {
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
