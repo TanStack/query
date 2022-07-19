@@ -76,9 +76,12 @@ export interface QueryOptions<
   behavior?: QueryBehavior<TQueryFnData, TError, TData>
   /**
    * Set this to `false` to disable structural sharing between query results.
+   * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
    * Defaults to `true`.
    */
-  structuralSharing?: boolean
+  structuralSharing?:
+    | boolean
+    | ((oldData: TData | undefined, newData: TData) => TData)
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
    * The result will also be used to determine the value of `hasPreviousPage`.
