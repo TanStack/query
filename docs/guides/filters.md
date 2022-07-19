@@ -9,7 +9,7 @@ Some methods within React Query accept a `QueryFilters` or `MutationFilters` obj
 
 A query filter is an object with certain conditions to match a query with:
 
-```js
+```tsx
 // Cancel all queries
 await queryClient.cancelQueries()
 
@@ -47,7 +47,7 @@ A query filter object supports the following properties:
 
 A mutation filter is an object with certain conditions to match a mutation with:
 
-```js
+```tsx
 // Get the number of all fetching mutations
 await queryClient.isMutating()
 

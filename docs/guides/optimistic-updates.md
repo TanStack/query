@@ -9,7 +9,7 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 
 ## Updating a list of todos when adding a new todo
 
-```js
+```tsx
 const queryClient = useQueryClient()
 
 useMutation(updateTodo, {
@@ -40,7 +40,7 @@ useMutation(updateTodo, {
 
 ## Updating a single todo
 
-```js
+```tsx
 useMutation(updateTodo, {
   // When mutate is called:
   onMutate: async newTodo => {
@@ -72,7 +72,7 @@ useMutation(updateTodo, {
 
 You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
 
-```js
+```tsx
 useMutation(updateTodo, {
   // ...
   onSettled: (newTodo, error, variables, context) => {

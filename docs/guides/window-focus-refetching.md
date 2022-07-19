@@ -7,7 +7,7 @@ If a user leaves your application and returns to stale data, **React Query autom
 
 #### Disabling Globally
 
-```js
+```tsx
 //
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -24,7 +24,7 @@ function App() {
 
 #### Disabling Per-Query
 
-```js
+```tsx
 useQuery(['todos'], fetchTodos, { refetchOnWindowFocus: false })
 ```
 
@@ -32,7 +32,7 @@ useQuery(['todos'], fetchTodos, { refetchOnWindowFocus: false })
 
 In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `focusManager.setEventListener` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setEventListener`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
-```js
+```tsx
 focusManager.setEventListener(handleFocus => {
   // Listen to visibilitychange and focus
   if (typeof window !== 'undefined' && window.addEventListener) {
@@ -52,7 +52,7 @@ focusManager.setEventListener(handleFocus => {
 
 A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
 
-```js
+```tsx
 import { focusManager } from '@tanstack/react-query'
 import onWindowFocus from './onWindowFocus' // The gist above
 
@@ -63,7 +63,7 @@ focusManager.setEventListener(onWindowFocus) // Boom!
 
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
-```js
+```tsx
 import { AppState } from 'react-native'
 import { focusManager } from '@tanstack/react-query'
 
@@ -80,7 +80,7 @@ focusManager.setEventListener(handleFocus => {
 
 ## Managing focus state
 
-```js
+```tsx
 import { focusManager } from '@tanstack/react-query'
 
 // Override the default focus state

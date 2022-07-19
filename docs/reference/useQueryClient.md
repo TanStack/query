@@ -5,7 +5,7 @@ title: useQueryClient
 
 The `useQueryClient` hook returns the current `QueryClient` instance.
 
-```js
+```tsx
 import { useQueryClient } from '@tanstack/react-query'
 
 const queryClient = useQueryClient()

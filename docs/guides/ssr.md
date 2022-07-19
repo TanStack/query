@@ -24,7 +24,7 @@ React Query supports both of these forms of pre-rendering regardless of what pla
 
 Together with Next.js's [`getStaticProps`](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) or [`getServerSideProps`](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering), you can pass the data you fetch in either method to `useQuery`'s' `initialData` option. From React Query's perspective, these integrate in the same way, `getStaticProps` is shown below:
 
-```js
+```tsx
 export async function getStaticProps() {
   const posts = await getPosts()
   return { props: { posts } }
@@ -53,7 +53,7 @@ To support caching queries on the server and set up hydration:
 - Wrap your app component with `<QueryClientProvider>` and pass it the client instance
 - Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
 
-```js
+```tsx
 // _app.jsx
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -76,7 +76,7 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 - Prefetch the data using the clients `prefetchQuery` method and wait for it to complete
 - Use `dehydrate` to dehydrate the query cache and pass it to the page via the `dehydratedState` prop. This is the same prop that the cache will be picked up from in your `_app.js`
 
-```js
+```tsx
 // pages/posts.jsx
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 
@@ -130,7 +130,7 @@ This guide is at-best, a high level overview of how SSR with React Query should 
 
 > SECURITY NOTE: Serializing data with `JSON.stringify` can put you at risk for XSS-vulnerabilities, [this blog post explains why and how to solve it](https://medium.com/node-security/the-most-common-xss-vulnerability-in-react-js-applications-2bdffbcc1fa0)
 
-```js
+```tsx
 import { dehydrate, Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 async function handleRequest (req, res) {
@@ -167,7 +167,7 @@ async function handleRequest (req, res) {
 - Create a new `QueryClient` instance
 - Render your app with the client provider and also **using the dehydrated state. This is extremely important! You must render both server and client using the same dehydrated state to ensure hydration on the client produces the exact same markup as the server.**
 
-```js
+```tsx
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 const dehydratedState = window.__REACT_QUERY_STATE__

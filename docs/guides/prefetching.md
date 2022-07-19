@@ -5,7 +5,7 @@ title: Prefetching
 
 If you're lucky enough, you may know enough about what your users will do to be able to prefetch the data they need before it's needed! If this is the case, you can use the `prefetchQuery` method to prefetch the results of a query to be placed into the cache:
 
-```js
+```tsx
 const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
   await queryClient.prefetchQuery(['todos'], fetchTodos)
@@ -20,6 +20,6 @@ const prefetchTodos = async () => {
 
 Alternatively, if you already have the data for your query synchronously available, you don't need to prefetch it. You can just use the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata) to directly add or update a query's cached result by key.
 
-```js
+```tsx
 queryClient.setQueryData(['todos'], todos)
 ```

@@ -5,7 +5,7 @@ title: Paginated / Lagged Queries
 
 Rendering paginated data is a very common UI pattern and in React Query, it "just works" by including the page information in the query key:
 
-```js
+```tsx
 const result = useQuery(['projects', page], fetchProjects)
 ```
 
@@ -23,7 +23,7 @@ Consider the following example where we would ideally want to increment a pageIn
 - When the new data arrives, the previous `data` is seamlessly swapped to show the new data.
 - `isPreviousData` is made available to know what data the query is currently providing you
 
-```js
+```tsx
 function Todos() {
   const [page, setPage] = React.useState(0)
 

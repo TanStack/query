@@ -9,7 +9,7 @@ React Query can also be used with React's new Suspense for Data Fetching API's. 
 
 Global configuration:
 
-```js
+```tsx
 // Configure for all queries
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -32,7 +32,7 @@ function Root() {
 
 Query configuration:
 
-```js
+```tsx
 import { useQuery } from '@tanstack/react-query'
 
 // Enable for an individual query
@@ -51,7 +51,7 @@ Query errors can be reset with the `QueryErrorResetBoundary` component or with t
 
 When using the component it will reset any query errors within the boundaries of the component:
 
-```js
+```tsx
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 
@@ -76,7 +76,7 @@ const App: React.FC = () => (
 
 When using the hook it will reset any query errors within the closest `QueryErrorResetBoundary`. If there is no boundary defined it will reset them globally:
 
-```js
+```tsx
 import { useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { ErrorBoundary } from 'react-error-boundary'
 

@@ -12,7 +12,7 @@ The simplest form of a key is an array with constants values. This format is use
 - Generic List/Index resources
 - Non-hierarchical resources
 
-```js
+```tsx
 // A list of todos
 useQuery(['todos'], ...)
 
@@ -29,7 +29,7 @@ When a query needs more information to uniquely describe its data, you can use a
 - Queries with additional parameters
   - It's common to pass an object of additional options
 
-```js
+```tsx
 // An individual todo
 useQuery(['todo', 5], ...)
 
@@ -44,7 +44,7 @@ useQuery(['todos', { type: 'done' }], ...)
 
 This means that no matter the order of keys in objects, all of the following queries are considered equal:
 
-```js
+```tsx
 useQuery(['todos', { status, page }], ...)
 useQuery(['todos', { page, status }], ...)
 useQuery(['todos', { page, status, other: undefined }], ...)
@@ -52,7 +52,7 @@ useQuery(['todos', { page, status, other: undefined }], ...)
 
 The following query keys, however, are not equal. Array item order matters!
 
-```js
+```tsx
 useQuery(['todos', status, page], ...)
 useQuery(['todos', page, status], ...)
 useQuery(['todos', undefined, page, status], ...)
@@ -62,7 +62,7 @@ useQuery(['todos', undefined, page, status], ...)
 
 Since query keys uniquely describe the data they are fetching, they should include any variables you use in your query function that **change**. For example:
 
-```js
+```tsx
 function Todos({ todoId }) {
   const result = useQuery(['todos', todoId], () => fetchTodoById(todoId))
 }

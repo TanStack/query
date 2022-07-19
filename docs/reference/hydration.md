@@ -7,7 +7,7 @@ title: hydration
 
 `dehydrate` creates a frozen representation of a `cache` that can later be hydrated with `Hydrate`, `useHydrate`, or `hydrate`. This is useful for passing prefetched queries from server to client or persisting queries to localStorage or other persistent locations. It only includes currently successful queries by default.
 
-```js
+```tsx
 import { dehydrate } from '@tanstack/react-query'
 
 const dehydratedState = dehydrate(queryClient, {
@@ -50,7 +50,7 @@ const dehydratedState = dehydrate(queryClient, {
 
 Some storage systems (such as browser [Web Storage API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API)) require values to be JSON serializable. If you need to dehydrate values that are not automatically serializable to JSON (like `Error` or `undefined`), you have to serialize them for yourself. Since only successful queries are included per default, to also include `Errors`, you have to provide `shouldDehydrateQuery`, e.g.:
 
-```js
+```tsx
 // server
 const state = dehydrate(client, { shouldDehydrateQuery: () => true }) // to also include Errors
 const serializedState = mySerialize(state) // transform Error instances to objects
@@ -64,7 +64,7 @@ hydrate(client, state)
 
 `hydrate` adds a previously dehydrated state into a `cache`.
 
-```js
+```tsx
 import { hydrate } from '@tanstack/react-query'
 
 hydrate(queryClient, dehydratedState, options)
@@ -95,7 +95,7 @@ If the queries included in dehydration already exist in the queryCache, `hydrate
 
 `useHydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
 
-```jsx
+```tsx
 import { useHydrate } from '@tanstack/react-query'
 
 useHydrate(dehydratedState, options)
@@ -117,7 +117,7 @@ useHydrate(dehydratedState, options)
 
 `Hydrate` wraps `useHydrate` into component. Can be useful when you need hydrate in class component or need hydrate on same level where `QueryClientProvider` rendered.
 
-```js
+```tsx
 import { Hydrate } from '@tanstack/react-query'
 
 function App() {

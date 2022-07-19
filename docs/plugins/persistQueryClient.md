@@ -164,7 +164,7 @@ However, restoring is asynchronous, because all persisters are async by nature, 
 
 Further, if you subscribe to changes outside of the React component lifecycle, you have no way of unsubscribing:
 
-```js
+```tsx
 // 🚨 never unsubscribes from syncing
 persistQueryClient({
   queryClient,
@@ -179,7 +179,7 @@ ReactDOM.createRoot(rootElement).render(<App />)
 
 For this use-case, you can use the `PersistQueryClientProvider`. It will make sure to subscribe / unsubscribe correctly according to the React component lifecycle, and it will also make sure that queries will not start fetching while we are still restoring. Queries will still render though, they will just be put into `fetchingState: 'idle'` until data has been restored. Then, they will refetch unless the restored data is _fresh_ enough, and _initialData_ will also be respected. It can be used _instead of_ the normal [QueryClientProvider](../reference/QueryClientProvider):
 
-```jsx
+```tsx
 
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'

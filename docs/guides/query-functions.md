@@ -7,7 +7,7 @@ A query function can be literally any function that **returns a promise**. The p
 
 All of the following are valid query function configurations:
 
-```js
+```tsx
 useQuery(['todos'], fetchAllTodos)
 useQuery(['todos', todoId], () => fetchTodoById(todoId))
 useQuery(['todos', todoId], async () => {
@@ -21,7 +21,7 @@ useQuery(['todos', todoId], ({ queryKey }) => fetchTodoById(queryKey[1]))
 
 For React Query to determine a query has errored, the query function **must throw**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
 
-```js
+```tsx
 const { error } = useQuery(['todos', todoId], async () => {
   if (somethingGoesWrong) {
     throw new Error('Oh no!')
@@ -35,7 +35,7 @@ const { error } = useQuery(['todos', todoId], async () => {
 
 While most utilities like `axios` or `graphql-request` automatically throw errors for unsuccessful HTTP calls, some utilities like `fetch` do not throw errors by default. If that's the case, you'll need to throw them on your own. Here is a simple way to do that with the popular `fetch` API:
 
-```js
+```tsx
 useQuery(['todos', todoId], async () => {
   const response = await fetch('/todos/' + todoId)
   if (!response.ok) {
@@ -49,7 +49,7 @@ useQuery(['todos', todoId], async () => {
 
 Query keys are not just for uniquely identifying the data you are fetching, but are also conveniently passed into your query function as part of the QueryFunctionContext. While not always necessary, this makes it possible to extract your query functions if needed:
 
-```js
+```tsx
 function Todos({ status, page }) {
   const result = useQuery(['todos', { status, page }], fetchTodoList)
 }
@@ -79,7 +79,7 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
 
 Anywhere the `[queryKey, queryFn, config]` signature is supported throughout React Query's API, you can also use an object to express the same configuration:
 
-```js
+```tsx
 import { useQuery } from '@tanstack/react-query'
 
 useQuery({

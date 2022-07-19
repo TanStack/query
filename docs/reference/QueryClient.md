@@ -7,7 +7,7 @@ title: QueryClient
 
 The `QueryClient` can be used to interact with a cache:
 
-```js
+```tsx
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
@@ -74,7 +74,7 @@ If the query exists and the data is not invalidated or older than the given `sta
 
 > The difference between using `fetchQuery` and `setQueryData` is that `fetchQuery` is async and will ensure that duplicate requests for this query are not created with `useQuery` instances for the same query are rendered while the data is fetching.
 
-```js
+```tsx
 try {
   const data = await queryClient.fetchQuery(queryKey, queryFn)
 } catch (error) {
@@ -84,7 +84,7 @@ try {
 
 Specify a `staleTime` to only fetch when the data is older than a certain amount of time:
 
-```js
+```tsx
 try {
   const data = await queryClient.fetchQuery(queryKey, queryFn, {
     staleTime: 10000,
@@ -106,7 +106,7 @@ The options for `fetchQuery` are exactly the same as those of [`useQuery`](./use
 
 `fetchInfiniteQuery` is similar to `fetchQuery` but can be used to fetch and cache an infinite query.
 
-```js
+```tsx
 try {
   const data = await queryClient.fetchInfiniteQuery(queryKey, queryFn)
   console.log(data.pages)
@@ -127,13 +127,13 @@ The options for `fetchInfiniteQuery` are exactly the same as those of [`fetchQue
 
 `prefetchQuery` is an asynchronous method that can be used to prefetch a query before it is needed or rendered with `useQuery` and friends. The method works the same as `fetchQuery` except that it will not throw or return any data.
 
-```js
+```tsx
 await queryClient.prefetchQuery(queryKey, queryFn)
 ```
 
 You can even use it with a default queryFn in your config!
 
-```js
+```tsx
 await queryClient.prefetchQuery(queryKey)
 ```
 
@@ -150,7 +150,7 @@ The options for `prefetchQuery` are exactly the same as those of [`fetchQuery`](
 
 `prefetchInfiniteQuery` is similar to `prefetchQuery` but can be used to prefetch and cache an infinite query.
 
-```js
+```tsx
 await queryClient.prefetchInfiniteQuery(queryKey, queryFn)
 ```
 
@@ -167,7 +167,7 @@ The options for `prefetchInfiniteQuery` are exactly the same as those of [`fetch
 
 `getQueryData` is a synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
 
-```js
+```tsx
 const data = queryClient.getQueryData(queryKey)
 ```
 
@@ -185,7 +185,7 @@ const data = queryClient.getQueryData(queryKey)
 
 `getQueriesData` is a synchronous function that can be used to get the cached data of multiple queries. Only queries that match the passed queryKey or queryFilter will be returned. If there are no matching queries, an empty array will be returned.
 
-```js
+```tsx
 const data = queryClient.getQueriesData(queryKey | filters)
 ```
 
@@ -212,7 +212,7 @@ This distinction is more a "convenience" for ts devs that know which structure w
 
 > The difference between using `setQueryData` and `fetchQuery` is that `setQueryData` is sync and assumes that you already synchronously have the data available. If you need to fetch the data asynchronously, it's suggested that you either refetch the query key or use `fetchQuery` to handle the asynchronous fetch.
 
-```js
+```tsx
 queryClient.setQueryData(queryKey, updater)
 ```
 
@@ -225,7 +225,7 @@ queryClient.setQueryData(queryKey, updater)
 
 **Using an updater value**
 
-```js
+```tsx
 setQueryData(queryKey, newData)
 ```
 
@@ -235,7 +235,7 @@ If the value is `undefined`, the query data is not updated.
 
 For convenience in syntax, you can also pass an updater function which receives the current data value and returns the new one:
 
-```js
+```tsx
 setQueryData(queryKey, oldData => newData)
 ```
 
@@ -245,7 +245,7 @@ If the updater function returns `undefined`, the query data will not be updated.
 
 `getQueryState` is a synchronous function that can be used to get an existing query's state. If the query does not exist, `undefined` will be returned.
 
-```js
+```tsx
 const state = queryClient.getQueryState(queryKey)
 console.log(state.dataUpdatedAt)
 ```
@@ -259,7 +259,7 @@ console.log(state.dataUpdatedAt)
 
 `setQueriesData` is a synchronous function that can be used to immediately update cached data of multiple queries by using filter function or partially matching the query key. Only queries that match the passed queryKey or queryFilter will be updated - no new cache entries will be created. Under the hood, [`setQueryData`](#queryclientsetquerydata) is called for each query.
 
-```js
+```tsx
 queryClient.setQueriesData(queryKey | filters, updater)
 ```
 
@@ -278,7 +278,7 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 - If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchType: 'none'` option.
 - If you **want inactive queries to refetch** as well, use the `refetchTye: 'all'` option
 
-```js
+```tsx
 await queryClient.invalidateQueries(['posts'], {
   exact,
   refetchType: 'active',
@@ -312,7 +312,7 @@ The `refetchQueries` method can be used to refetch queries based on certain cond
 
 Examples:
 
-```js
+```tsx
 // refetch all queries:
 await queryClient.refetchQueries()
 
@@ -351,7 +351,7 @@ The `cancelQueries` method can be used to cancel outgoing queries based on their
 
 This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
 
-```js
+```tsx
 await queryClient.cancelQueries(['posts'], { exact: true })
 ```
 
@@ -368,7 +368,7 @@ This method does not return anything
 
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
 
-```js
+```tsx
 queryClient.removeQueries(queryKey, { exact: true })
 ```
 
@@ -392,7 +392,7 @@ subscribers &mdash; and reset the query to its pre-loaded state &mdash; unlike
 `invalidateQueries`. If a query has `initialData`, the query's data will be
 reset to that. If a query is active, it will be refetched.
 
-```js
+```tsx
 queryClient.resetQueries(queryKey, { exact: true })
 ```
 
@@ -419,7 +419,7 @@ This method returns a promise that resolves when all active queries have been re
 
 This `isFetching` method returns an `integer` representing how many queries, if any, in the cache are currently fetching (including background-fetching, loading new pages, or loading more infinite query results)
 
-```js
+```tsx
 if (queryClient.isFetching()) {
   console.log('At least one query is fetching!')
 }
@@ -440,7 +440,7 @@ This method returns the number of fetching queries.
 
 This `isMutating` method returns an `integer` representing how many mutations, if any, in the cache are currently fetching.
 
-```js
+```tsx
 if (queryClient.isMutating()) {
   console.log('At least one mutation is fetching!')
 }
@@ -459,7 +459,7 @@ This method returns the number of fetching mutations.
 
 The `getLogger` method returns the logger which have been set when creating the client.
 
-```js
+```tsx
 const logger = queryClient.getLogger()
 ```
 
@@ -467,7 +467,7 @@ const logger = queryClient.getLogger()
 
 The `getDefaultOptions` method returns the default options which have been set when creating the client or with `setDefaultOptions`.
 
-```js
+```tsx
 const defaultOptions = queryClient.getDefaultOptions()
 ```
 
@@ -475,7 +475,7 @@ const defaultOptions = queryClient.getDefaultOptions()
 
 The `setDefaultOptions` method can be used to dynamically set the default options for this queryClient. Previously defined default options will be overwritten.
 
-```js
+```tsx
 queryClient.setDefaultOptions({
   queries: {
     staleTime: Infinity,
@@ -487,7 +487,7 @@ queryClient.setDefaultOptions({
 
 The `getQueryDefaults` method returns the default options which have been set for specific queries:
 
-```js
+```tsx
 const defaultOptions = queryClient.getQueryDefaults(['posts'])
 ```
 
@@ -498,7 +498,7 @@ const defaultOptions = queryClient.getQueryDefaults(['posts'])
 
 `setQueryDefaults` can be used to set default options for specific queries:
 
-```js
+```tsx
 queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
 
 function Component() {
@@ -518,7 +518,7 @@ function Component() {
 
 The `getMutationDefaults` method returns the default options which have been set for specific mutations:
 
-```js
+```tsx
 const defaultOptions = queryClient.getMutationDefaults(['addPost'])
 ```
 
@@ -526,7 +526,7 @@ const defaultOptions = queryClient.getMutationDefaults(['addPost'])
 
 `setMutationDefaults` can be used to set default options for specific mutations:
 
-```js
+```tsx
 queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
@@ -545,7 +545,7 @@ function Component() {
 
 The `getQueryCache` method returns the query cache this client is connected to.
 
-```js
+```tsx
 const queryCache = queryClient.getQueryCache()
 ```
 
@@ -553,7 +553,7 @@ const queryCache = queryClient.getQueryCache()
 
 The `getMutationCache` method returns the mutation cache this client is connected to.
 
-```js
+```tsx
 const mutationCache = queryClient.getMutationCache()
 ```
 
@@ -561,7 +561,7 @@ const mutationCache = queryClient.getMutationCache()
 
 The `clear` method clears all connected caches.
 
-```js
+```tsx
 queryClient.clear()
 ```
 
@@ -569,6 +569,6 @@ queryClient.clear()
 
 Can be used to resume mutations that have been paused because there was no network connection.
 
-```js
+```tsx
 queryClient.resumePausedMutations()
 ```

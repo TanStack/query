@@ -5,7 +5,7 @@ title: useIsFetching
 
 `useIsFetching` is an optional hook that returns the `number` of the queries that your application is loading or fetching in the background (useful for app-wide loading indicators).
 
-```js
+```tsx
 import { useIsFetching } from '@tanstack/react-query'
 // How many queries are fetching?
 const isFetching = useIsFetching()

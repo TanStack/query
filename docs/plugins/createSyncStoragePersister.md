@@ -55,7 +55,7 @@ Per default, no retry will occur. You can use one of the predefined strategies t
 - `removeOldestQuery`
   - will return a new `PersistedClient` with the oldest query removed.
 
-```js
+```tsx
 const localStoragePersister = createSyncStoragePersister({
   storage: window.localStorage,
   retry: removeOldestQuery
@@ -68,7 +68,7 @@ const localStoragePersister = createSyncStoragePersister({
 
 Call this function to create a syncStoragePersister that you can use later with `persistQueryClient`.
 
-```js
+```tsx
 createSyncStoragePersister(options: CreateSyncStoragePersisterOptions)
 ```
 
@@ -94,7 +94,7 @@ interface CreateSyncStoragePersisterOptions {
 
 The default options are:
 
-```js
+```tsx
 {
   key = `REACT_QUERY_OFFLINE_CACHE`,
   throttleTime = 1000,
@@ -107,7 +107,7 @@ The default options are:
 There is a limit to the amount of data which can be stored in `localStorage`.
 If you need to store more data in `localStorage`, you can override the `serialize` and `deserialize` functions to compress and decrompress the data using a library like [lz-string](https://github.com/pieroxy/lz-string/).
 
-```js
+```tsx
 import { QueryClient } from '@tanstack/react-query';
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'

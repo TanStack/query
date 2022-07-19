@@ -7,13 +7,13 @@ Invalidating queries is only half the battle. Knowing **when** to invalidate the
 
 For example, assume we have a mutation to post a new todo:
 
-```js
+```tsx
 const mutation = useMutation(postTodo)
 ```
 
 When a successful `postTodo` mutation happens, we likely want all `todos` queries to get invalidated and possibly refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `client`'s `invalidateQueries` function:
 
-```js
+```tsx
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 const queryClient = useQueryClient()

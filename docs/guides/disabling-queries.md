@@ -16,7 +16,7 @@ When `enabled` is `false`:
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` returned from `useQuery` can be used to manually trigger the query to fetch.
 
-```jsx
+```tsx
 function Todos() {
   const {
     isLoading,
@@ -65,7 +65,7 @@ Permanently disabling a query opts out of many great features that react-query h
 
 The enabled option can not only be used to permenantly disable a query, but also to enable / disable it at a later time. A good example would be a filter form where you only want to fire off the first request once the user has entered a filter value:
 
-```jsx
+```tsx
 function Todos() {
   const [filter, setFilter] = React.useState('')
 

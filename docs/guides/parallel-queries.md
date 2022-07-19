@@ -9,7 +9,7 @@ title: Parallel Queries
 
 When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Just use any number of React Query's `useQuery` and `useInfiniteQuery` hooks side-by-side!
 
-```js
+```tsx
 function App () {
   // The following queries will execute in parallel
   const usersQuery = useQuery(['users'], fetchUsers)
@@ -27,7 +27,7 @@ If the number of queries you need to execute is changing from render to render, 
 
 `useQueries` accepts an **options object** with a **queries key** whose value is an **array of query objects**. It returns an **array of query results**:
 
-```js
+```tsx
 function App({ users }) {
   const userQueries = useQueries({
     queries: users.map(user => {

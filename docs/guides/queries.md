@@ -14,7 +14,7 @@ To subscribe to a query in your components or custom hooks, call the `useQuery` 
   - Resolves the data, or
   - Throws an error
 
-```js
+```tsx
 import { useQuery } from '@tanstack/react-query'
 
 function App() {
@@ -26,7 +26,7 @@ The **unique key** you provide is used internally for refetching, caching, and s
 
 The query results returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
-```js
+```tsx
 const result = useQuery(['todos'], fetchTodoList)
 ```
 
@@ -43,7 +43,7 @@ Beyond those primary states, more information is available depending on the stat
 
 For **most** queries, it's usually sufficient to check for the `isLoading` state, then the `isError` state, then finally, assume that the data is available and render the successful state:
 
-```js
+```tsx
 function Todos() {
   const { isLoading, isError, data, error } = useQuery(['todos'], fetchTodoList)
 
@@ -68,7 +68,7 @@ function Todos() {
 
 If booleans aren't your thing, you can always use the `status` state as well:
 
-```js
+```tsx
 function Todos() {
   const { status, data, error } = useQuery(['todos'], fetchTodoList)
 

@@ -3,7 +3,7 @@ id: useQuery
 title: useQuery
 ---
 
-```js
+```tsx
 const {
   data,
   dataUpdatedAt,

@@ -21,7 +21,7 @@ $ yarn add @tanstack/react-query-devtools
 
 You can import the devtools like this:
 
-```js
+```tsx
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 ```
 
@@ -33,7 +33,7 @@ Floating Mode will mount the devtools as a fixed, floating element in your app a
 
 Place the following code as high in your React app as you can. The closer it is to the root of the page, the better it will work!
 
-```js
+```tsx
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 function App() {
@@ -66,7 +66,7 @@ function App() {
 
 Embedded Mode will embed the devtools as a regular component in your application. You can style it however you'd like after that!
 
-```js
+```tsx
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 
 function App() {
