@@ -17,12 +17,16 @@ jobs:
         uses: bahmutov/npm-install@v1
         with:
           install-command: npm install
-      - run: npm run test:ci
-        env:
-          REACTJS_VERSION: ${{ matrix.react }}
-      - run: npm run test:size
+      - run: |
+          npm run test:ci
+          npm run test:size
         if: matrix.react == '18'
         env:
+          REACTJS_VERSION: ${{ matrix.react }}
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+      - run: npm run test:jest
+        if: matrix.react == '17'
+        env:
+          REACTJS_VERSION: ${{ matrix.react }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
