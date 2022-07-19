@@ -94,6 +94,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        '@tanstack/react-query': 'ReactQuery',
       },
     }),
   ]
