@@ -29,7 +29,7 @@ import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
 
-interface DevtoolsOptions extends ContextOptions {
+export interface DevtoolsOptions extends ContextOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */
