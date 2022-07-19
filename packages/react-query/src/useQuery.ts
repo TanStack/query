@@ -71,7 +71,7 @@ export function useQuery<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn'
   >,
-): DefinedUseQueryResult<TData, TError>
+): UseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
