@@ -65,7 +65,7 @@ Permanently disabling a query opts out of many great features that react-query h
 
 The enabled option can not only be used to permenantly disable a query, but also to enable / disable it at a later time. A good example would be a filter form where you only want to fire off the first request once the user has entered a filter value:
 
-```tsxx
+```tsx
 function Todos() {
   const [filter, setFilter] = React.useState('')
 
