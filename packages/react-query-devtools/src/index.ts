@@ -10,7 +10,7 @@ export let ReactQueryDevtoolsPanel: typeof devtools['ReactQueryDevtoolsPanel'] =
     return null
   } as any
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV !== 'production') {
   ReactQueryDevtools = devtools.ReactQueryDevtools
   ReactQueryDevtoolsPanel = devtools.ReactQueryDevtoolsPanel
 }
