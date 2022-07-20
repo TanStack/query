@@ -124,3 +124,24 @@ export const displayValue = (value: unknown) => {
 
   return JSON.stringify(newValue, name)
 }
+
+const getStatusRank = (q: Query) =>
+  q.state.fetchStatus !== 'idle'
+    ? 0
+    : !q.getObserversCount()
+    ? 3
+    : q.isStale()
+    ? 2
+    : 1
+
+export const sortFns: Record<string, (a: Query, b: Query) => number> = {
+  'Status > Last Updated': (a, b) =>
+    getStatusRank(a) === getStatusRank(b)
+      ? (sortFns['Last Updated']?.(a, b) as number)
+      : getStatusRank(a) > getStatusRank(b)
+      ? 1
+      : -1,
+  'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
+  'Last Updated': (a, b) =>
+    a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
+}

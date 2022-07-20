@@ -18,6 +18,12 @@
     "build/*",
     "src"
   ],
+  "exports": {
+    "development": {
+      "default": "./build/esm/index.js"
+    },
+    "default": "./build/esm/noop.js"
+  },
   "scripts": {
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"

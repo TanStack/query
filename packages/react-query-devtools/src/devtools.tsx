@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { useSyncExternalStore } from 'use-sync-external-store/shim'
 import {
-  Query,
   useQueryClient,
   onlineManager,
   notifyManager,
@@ -12,7 +11,7 @@ import {
 } from '@tanstack/react-query'
 import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
-import { useIsMounted } from './utils'
+import { sortFns, useIsMounted } from './utils'
 
 import {
   Panel,
@@ -29,7 +28,7 @@ import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
 
-interface DevtoolsOptions extends ContextOptions {
+export interface DevtoolsOptions extends ContextOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */
@@ -373,27 +372,6 @@ export function ReactQueryDevtools({
       ) : null}
     </Container>
   )
-}
-
-const getStatusRank = (q: Query) =>
-  q.state.fetchStatus !== 'idle'
-    ? 0
-    : !q.getObserversCount()
-    ? 3
-    : q.isStale()
-    ? 2
-    : 1
-
-export const sortFns: Record<string, (a: Query, b: Query) => number> = {
-  'Status > Last Updated': (a, b) =>
-    getStatusRank(a) === getStatusRank(b)
-      ? (sortFns['Last Updated']?.(a, b) as number)
-      : getStatusRank(a) > getStatusRank(b)
-      ? 1
-      : -1,
-  'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
-  'Last Updated': (a, b) =>
-    a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
 
 const useSubscribeToQueryCache = <T,>(
