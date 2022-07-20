@@ -11,7 +11,7 @@
     "react-dom": "^18.0.0",
     "react-error-boundary": "^2.2.3",
     "@tanstack/react-query": "4.0.5",
-    "@tanstack/react-query-devtools": "4.0.5",
+    "@tanstack/react-query-devtools": "4.0.6",
     "react-scripts": "3.0.1"
   },
   "devDependencies": {

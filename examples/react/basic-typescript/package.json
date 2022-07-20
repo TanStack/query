@@ -14,7 +14,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@tanstack/react-query": "4.0.5",
-    "@tanstack/react-query-devtools": "4.0.5",
+    "@tanstack/react-query-devtools": "4.0.6",
     "@tanstack/react-query-persist-client": "4.0.5",
     "@tanstack/query-sync-storage-persister": "4.0.5",
     "react-scripts": "3.0.1",

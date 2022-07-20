@@ -14,7 +14,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@tanstack/react-query": "4.0.5",
-    "@tanstack/react-query-devtools": "4.0.5",
+    "@tanstack/react-query-devtools": "4.0.6",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.0.1",

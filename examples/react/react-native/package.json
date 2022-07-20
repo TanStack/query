@@ -28,7 +28,7 @@
     "react-native": "0.64.3",
     "react-native-web": "0.17.1",
     "@tanstack/react-query": "4.0.5",
-    "@tanstack/react-query-devtools": "4.0.5",
+    "@tanstack/react-query-devtools": "4.0.6",
     "expo-constants": "~12.1.3",
     "react-native-paper": "4.9.2",
     "react-native-screens": "~3.8.0",
