@@ -1,12 +1,16 @@
-if (process.env.NODE_ENV !== 'development') {
-  module.exports = {
-    ReactQueryDevtools: function () {
-      return null
-    },
-    ReactQueryDevtoolsPanel: function () {
-      return null
-    },
+import * as devtools from './devtools'
+
+export let ReactQueryDevtools: typeof devtools['ReactQueryDevtools'] =
+  function () {
+    return null
   }
-} else {
-  module.exports = require('./devtools')
+
+export let ReactQueryDevtoolsPanel: typeof devtools['ReactQueryDevtoolsPanel'] =
+  function () {
+    return null
+  } as any
+
+if (process.env.NODE_ENV === 'development') {
+  ReactQueryDevtools = devtools.ReactQueryDevtools
+  ReactQueryDevtoolsPanel = devtools.ReactQueryDevtoolsPanel
 }
