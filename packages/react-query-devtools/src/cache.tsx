@@ -24,7 +24,7 @@ import {
 import { defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
-import Logo from './Logo'
+import { PanelHead, PanelMain } from './panelComponents'
 
 interface CachePanelProps extends ContextOptions {
   /**
@@ -94,44 +94,8 @@ export function CachePanel(props: CachePanelProps) {
 
   return (
     <>
-      <div
-        style={{
-          flex: '1 1 500px',
-          minHeight: '40%',
-          maxHeight: '100%',
-          overflow: 'auto',
-          borderRight: `1px solid ${theme.grayAlt}`,
-          display: isOpen ? 'flex' : 'none',
-          flexDirection: 'column',
-        }}
-      >
-        <div
-          style={{
-            padding: '.5em',
-            background: theme.backgroundAlt,
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <button
-            type="button"
-            aria-label="Close React Query Devtools"
-            aria-controls="CachePanel"
-            aria-haspopup="true"
-            aria-expanded="true"
-            onClick={() => setIsOpen(false)}
-            style={{
-              display: 'inline-flex',
-              background: 'none',
-              border: 0,
-              padding: 0,
-              marginRight: '.5em',
-              cursor: 'pointer',
-            }}
-          >
-            <Logo aria-hidden />
-          </button>
+      <PanelMain isOpen={isOpen}>
+        <PanelHead setIsOpen={setIsOpen}>
           <div
             style={{
               display: 'flex',
@@ -246,7 +210,7 @@ export function CachePanel(props: CachePanelProps) {
               ) : null}
             </div>
           </div>
-        </div>
+        </PanelHead>
         <div
           style={{
             overflowY: 'auto',
@@ -265,7 +229,7 @@ export function CachePanel(props: CachePanelProps) {
             )
           })}
         </div>
-      </div>
+      </PanelMain>
 
       {activeQueryHash ? (
         <ActiveQuery
