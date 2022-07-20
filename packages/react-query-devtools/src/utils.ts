@@ -1,6 +1,7 @@
 import * as React from 'react'
 import type { Query } from '@tanstack/react-query'
-
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
+import { notifyManager, QueryCache } from '@tanstack/react-query'
 import { Theme, useTheme } from './theme'
 import useMediaQuery from './useMediaQuery'
 
@@ -144,4 +145,18 @@ export const sortFns: Record<string, (a: Query, b: Query) => number> = {
   'Query Hash': (a, b) => (a.queryHash > b.queryHash ? 1 : -1),
   'Last Updated': (a, b) =>
     a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
+}
+export const useSubscribeToQueryCache = <T>(
+  queryCache: QueryCache,
+  getSnapshot: () => T,
+): T => {
+  return useSyncExternalStore(
+    React.useCallback(
+      (onStoreChange) =>
+        queryCache.subscribe(notifyManager.batchCalls(onStoreChange)),
+      [queryCache],
+    ),
+    getSnapshot,
+    getSnapshot,
+  )
 }

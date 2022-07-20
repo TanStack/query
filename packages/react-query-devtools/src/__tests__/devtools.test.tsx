@@ -3,7 +3,7 @@ import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
 import { useQuery, QueryClient } from '@tanstack/react-query'
-import { sortFns } from '../devtools'
+import { sortFns } from '../utils'
 import {
   getByTextContent,
   renderWithClient,
