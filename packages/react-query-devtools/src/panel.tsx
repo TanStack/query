@@ -3,6 +3,7 @@ import { ContextOptions } from '@tanstack/react-query'
 import { Panel } from './styledComponents'
 import { ThemeProvider, defaultTheme as theme } from './theme'
 import CachePanel from './cache'
+import { TimelinePanel } from './timeline'
 
 interface DevtoolsPanelOptions extends ContextOptions {
   /**
@@ -45,7 +46,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   } = props
 
   // TODO: switch to cache by default
-  const [panel, setPanel] = React.useState<'cache' | 'timeline'>('cache')
+  const [panel, setPanel] = React.useState<'cache' | 'timeline'>('timeline')
   const panelHeadProps = { panel, setPanel, isOpen, setIsOpen, context }
   return (
     <ThemeProvider theme={theme}>
@@ -108,7 +109,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             width: '100%',
           }}
         >
-          Hello
+          <TimelinePanel {...panelHeadProps} />
         </div>
       </Panel>
     </ThemeProvider>
