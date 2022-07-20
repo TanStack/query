@@ -87,6 +87,17 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       },
     }),
     ...buildConfigs({
+      name: 'react-query-devtools-noop',
+      packageDir: 'packages/react-query-devtools',
+      jsName: 'ReactQueryDevtools',
+      outputFile: 'react-query-devtools',
+      entryFile: 'src/noop.ts',
+      globals: {
+        react: 'React',
+        '@tanstack/react-query': 'ReactQuery',
+      },
+    }),
+    ...buildConfigs({
       name: 'react-query-persist-client',
       packageDir: 'packages/react-query-persist-client',
       jsName: 'ReactQueryPersistClient',
