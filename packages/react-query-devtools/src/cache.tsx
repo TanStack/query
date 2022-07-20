@@ -25,6 +25,7 @@ import { defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import { PanelHead, PanelMain } from './panelComponents'
+import { DevtoolsPanel } from './types'
 
 interface CachePanelProps extends ContextOptions {
   /**
@@ -35,10 +36,18 @@ interface CachePanelProps extends ContextOptions {
    * A function that toggles the open and close state of the panel
    */
   setIsOpen: (isOpen: boolean) => void
+  /**
+   * Current active panel
+   */
+  panel: DevtoolsPanel
+  /**
+   * Function that update active panel
+   */
+  setPanel: (panel: DevtoolsPanel) => void
 }
 
 export function CachePanel(props: CachePanelProps) {
-  const { isOpen = true, setIsOpen, context } = props
+  const { isOpen = true, context, ...headProps } = props
 
   const queryClient = useQueryClient({ context })
   const queryCache = queryClient.getQueryCache()
@@ -95,7 +104,7 @@ export function CachePanel(props: CachePanelProps) {
   return (
     <>
       <PanelMain isOpen={isOpen}>
-        <PanelHead setIsOpen={setIsOpen}>
+        <PanelHead {...headProps}>
           <div
             style={{
               display: 'flex',

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { useTheme } from './theme'
 import Logo from './Logo'
+import { DevtoolsPanel } from './types'
 
 export const PanelMain = (props: {
   isOpen?: boolean
@@ -27,9 +28,11 @@ export const PanelMain = (props: {
 export const PanelHead = (props: {
   children?: React.ReactNode
   setIsOpen: (isOpen: boolean) => void
+  panel: DevtoolsPanel
+  setPanel: (panel: DevtoolsPanel) => void
 }) => {
   const theme = useTheme()
-  const { children, setIsOpen } = props
+  const { children, setIsOpen, panel, setPanel } = props
   return (
     <div
       style={{
@@ -59,8 +62,39 @@ export const PanelHead = (props: {
         >
           <Logo aria-hidden />
         </button>
-        <div>Cache</div>
-        <div>Timeline</div>
+        <button
+          type="button"
+          aria-label="Switch to Cache Panel"
+          onClick={() => setPanel('cache')}
+          style={{
+            marginLeft: '1rem',
+            marginRight: '1rem',
+            border: 'none',
+            background: 'none',
+            color: theme.foreground,
+            fontSize: '1.2em',
+            opacity: panel === 'cache' ? 1 : 0.7,
+            cursor: 'pointer',
+          }}
+        >
+          Cache
+        </button>
+        <button
+          type="button"
+          aria-label="Switch to Timeline Panel"
+          onClick={() => setPanel('timeline')}
+          style={{
+            marginRight: '1rem',
+            border: 'none',
+            background: 'none',
+            color: theme.foreground,
+            fontSize: '1.2em',
+            opacity: panel === 'timeline' ? 1 : 0.7,
+            cursor: 'pointer',
+          }}
+        >
+          Timeline
+        </button>
       </div>
       {children}
     </div>

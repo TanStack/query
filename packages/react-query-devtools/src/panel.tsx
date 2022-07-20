@@ -43,6 +43,10 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     context,
     ...panelProps
   } = props
+
+  // TODO: switch to cache by default
+  const [panel, setPanel] = React.useState<'cache' | 'timeline'>('cache')
+  const panelHeadProps = { panel, setPanel, isOpen, setIsOpen, context }
   return (
     <ThemeProvider theme={theme}>
       <Panel
@@ -90,7 +94,22 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
           }}
           onMouseDown={handleDragStart}
         ></div>
-        <CachePanel context={context} isOpen={isOpen} setIsOpen={setIsOpen} />
+        <div
+          style={{
+            display: panel === 'cache' ? 'flex' : 'none',
+            width: '100%',
+          }}
+        >
+          <CachePanel {...panelHeadProps} />
+        </div>
+        <div
+          style={{
+            display: panel === 'timeline' ? 'flex' : 'none',
+            width: '100%',
+          }}
+        >
+          Hello
+        </div>
       </Panel>
     </ThemeProvider>
   )
