@@ -120,7 +120,7 @@ export function CachePanel(props: CachePanelProps) {
             >
               <Input
                 placeholder="Filter"
-                aria-label="Filter by queryhash"
+                aria-label="Filter cache by queryhash"
                 value={filter ?? ''}
                 onChange={(e) => setFilter(e.target.value)}
                 onKeyDown={(e) => {

@@ -1,5 +1,10 @@
 import React from 'react'
-import { useQueryClient, QueryCache, Action } from '@tanstack/react-query'
+import {
+  useQueryClient,
+  QueryCache,
+  Action,
+  ContextOptions,
+} from '@tanstack/react-query'
 
 // TODO: Import from react-query
 type QueryCacheNotifyEvent = NonNullable<
@@ -67,8 +72,9 @@ export type ReactQueryDevtoolsQueryEventGroup = {
   observers: ReactQueryObserverEvent[]
 }
 
-export default function useReactDevtoolsTimelineEvents() {
-  const queryClient = useQueryClient()
+export default function useTimelineEvents(options: ContextOptions) {
+  const { context } = options
+  const queryClient = useQueryClient({ context })
   const queryCache = queryClient.getQueryCache()
   const [timeRange, setTimeRange] = React.useState<{
     start: Date | null

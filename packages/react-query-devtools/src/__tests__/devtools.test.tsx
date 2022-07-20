@@ -132,9 +132,9 @@ describe('ReactQueryDevtools', () => {
       initialIsOpen: false,
     })
 
-    const draggableElement = result.container
-      .querySelector('#ReactQueryDevtoolsPanel')
-      ?.querySelector('div')
+    const draggableElement = result.container.querySelector(
+      '[aria-label="Drag React Devtools Panel"]',
+    )
 
     if (!draggableElement) {
       throw new Error('Could not find the draggable element')
@@ -314,7 +314,7 @@ describe('ReactQueryDevtools', () => {
     screen.getByText(barQueryHash)
     screen.getByText(bazQueryHash)
 
-    const filterInput = screen.getByLabelText(/filter by queryhash/i)
+    const filterInput = screen.getByLabelText(/filter cache by queryhash/i)
     fireEvent.change(filterInput, { target: { value: 'fo' } })
 
     await screen.findByText(fooQueryHash)

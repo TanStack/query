@@ -45,8 +45,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     ...panelProps
   } = props
 
-  // TODO: switch to cache by default
-  const [panel, setPanel] = React.useState<'cache' | 'timeline'>('timeline')
+  const [panel, setPanel] = React.useState<'cache' | 'timeline'>('cache')
   const panelHeadProps = { panel, setPanel, isOpen, setIsOpen, context }
   return (
     <ThemeProvider theme={theme}>
@@ -83,6 +82,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
           }}
         />
         <div
+          aria-label="Drag React Devtools Panel"
           style={{
             position: 'absolute',
             left: 0,

@@ -32,7 +32,7 @@ export function TimelinePanel(props: TimelinePanelProps) {
   const { isOpen = true, context, ...headProps } = props
   const theme = useTheme()
 
-  const timelineEvents = useTimelineEvents()
+  const timelineEvents = useTimelineEvents({ context })
 
   const [filter, setFilter] = useLocalStorage('reactQueryDevtoolsFilter', '')
 
@@ -169,7 +169,7 @@ export function TimelinePanel(props: TimelinePanelProps) {
                 {`${query.queryHash}`}
               </Code>
               <div style={{ padding: '4px 8px', flex: 1, height: 30 }}>
-                {timeRange?.start ? (
+                {timeRange.start ? (
                   <SVGQueryTimeline
                     query={query}
                     timeRange={timeRange as { start: Date; end: Date | null }}
