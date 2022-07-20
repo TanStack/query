@@ -15,7 +15,6 @@
     "test:jest:dev": "jest --config ./jest.config.ts --watch",
     "test:size": "npm run build && bundlewatch",
     "build": "rollup --config rollup.config.js && npm run typecheck",
-    "postbuild": "cp ./packages/react-query-devtools/src/noop.ts ./packages/react-query-devtools/build/esm/noop.js",
     "typecheck": "tsc -b",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"npm run typecheck -- --watch\" \"npm run test\"",
     "linkAll": "lerna exec 'npm run link' --parallel",

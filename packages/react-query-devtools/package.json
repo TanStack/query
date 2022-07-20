@@ -20,9 +20,13 @@
   ],
   "exports": {
     "development": {
+      "require": "./build/cjs/packages/react-query-devtools/src/index.js",
       "default": "./build/esm/index.js"
     },
-    "default": "./build/esm/noop.js"
+    "default": {
+      "require": "./build/cjs/packages/react-query-devtools/src/noop.js",
+      "default": "./build/esm/noop.js"
+    }
   },
   "scripts": {
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
