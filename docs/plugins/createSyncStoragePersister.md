@@ -11,7 +11,7 @@ This utility comes as a separate package and is available under the `'@tanstack/
 
 - Import the `createSyncStoragePersister` function
 - Create a new syncStoragePersister
-- Pass it to the [`persistQueryClient`](./persistQueryClient) function
+- Pass it to the [`persistQueryClient`](../plugins/persistQueryClient) function
 
 ```ts
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
