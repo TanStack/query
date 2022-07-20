@@ -1,15 +1,12 @@
-import * as devtools from './devtools'
-
-export const ReactQueryDevtools: typeof devtools['ReactQueryDevtools'] =
-  process.env.NODE_ENV !== 'production'
-    ? devtools.ReactQueryDevtools
-    : function () {
-        return null
-      }
-
-export const ReactQueryDevtoolsPanel: typeof devtools['ReactQueryDevtoolsPanel'] =
-  process.env.NODE_ENV !== 'production'
-    ? devtools.ReactQueryDevtoolsPanel
-    : (function () {
-        return null
-      } as any)
+if (process.env.NODE_ENV !== 'development') {
+  module.exports = {
+    ReactQueryDevtools: function () {
+      return null
+    },
+    ReactQueryDevtoolsPanel: function () {
+      return null
+    },
+  }
+} else {
+  module.exports = require('./devtools')
+}
