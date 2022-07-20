@@ -65,7 +65,7 @@ function fetchTodoList({ queryKey }) {
 
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
 
-- `queryKey: QueryKey`: [Query Keys](query-keys)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 - `pageParam: unknown | undefined`
   - only for [Infinite Queries](./infinite-queries.md)
   - the page parameter used to fetch the current page
