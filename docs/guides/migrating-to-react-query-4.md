@@ -45,9 +45,9 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser; oth
 
 ### Query Keys (and Mutation Keys) need to be an Array
 
-In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./default-query-function) easier.
+In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](../guides/default-query-function) easier.
 
-However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](./filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
+However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](../guides/filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
 
 To streamline all apis, we've decided to make all keys Arrays only:
 
