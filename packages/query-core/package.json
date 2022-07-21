@@ -10,14 +10,14 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.mjs",
-  "main": "build/cjs/index.js",
+  "module": "build/lib/index.mjs",
+  "main": "build/lib/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/packages/query-core/src/index.d.ts",
   "exports": {
     ".": {
-      "import": "./build/esm/index.mjs",
-      "default": "./build/cjs/index.js"
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"
   },

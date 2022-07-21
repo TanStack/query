@@ -48,7 +48,9 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QueryAsyncStoragePersister',
       outputFile: 'query-async-storage-persister',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+      },
     }),
     ...buildConfigs({
       name: 'query-broadcast-client-experimental',
@@ -56,7 +58,10 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QueryBroadcastClient',
       outputFile: 'query-broadcast-client-experimental',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/query-core': 'QueryCore',
+        'broadcast-channel': 'BroadcastChannel',
+      },
     }),
     ...buildConfigs({
       name: 'query-sync-storage-persister',
@@ -64,7 +69,9 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QuerySyncStoragePersister',
       outputFile: 'query-sync-storage-persister',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+      },
     }),
     ...buildConfigs({
       name: 'react-query',
@@ -74,6 +81,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        '@tanstack/query-core': 'QueryCore',
       },
     }),
     ...buildConfigs({
@@ -146,9 +154,9 @@ function esm({ input, packageDir, external, banner }: Options): RollupOptions {
     input,
     output: {
       format: 'esm',
-      entryFileNames: "[name].mjs",
+      entryFileNames: '[name].mjs',
       sourcemap: true,
-      dir: `${packageDir}/build/esm`,
+      dir: `${packageDir}/build/lib`,
       banner,
     },
     plugins: [
@@ -168,8 +176,7 @@ function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
     output: {
       format: 'cjs',
       sourcemap: true,
-      dir: `${packageDir}/build/cjs`,
-      preserveModules: true,
+      dir: `${packageDir}/build/lib`,
       exports: 'named',
       banner,
     },

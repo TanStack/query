@@ -10,8 +10,8 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.mjs",
-  "main": "build/cjs/packages/react-query-devtools/src/index.js",
+  "module": "build/lib/index.mjs",
+  "main": "build/lib/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/react-query-devtools/src/index.d.ts",
   "files": [
@@ -21,17 +21,17 @@
   "exports": {
     ".": {
       "development": {
-        "require": "./build/cjs/packages/react-query-devtools/src/index.js",
-        "default": "./build/esm/index.mjs"
+        "require": "./build/lib/index.js",
+        "default": "./build/lib/index.mjs"
       },
       "default": {
-        "require": "./build/cjs/packages/react-query-devtools/src/noop.js",
-        "default": "./build/esm/noop.mjs"
+        "require": "./build/lib/noop.js",
+        "default": "./build/lib/noop.mjs"
       }
     },
     "./devtools": {
-      "import": "./build/esm/index.mjs",
-      "default": "./build/cjs/packages/react-query-devtools/src/index.js"
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"
   },
