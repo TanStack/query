@@ -14,6 +14,12 @@
   "main": "build/cjs/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/packages/query-sync-storage-persister/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/esm/index.js",
+      "default": "./build/cjs/index.js"
+    }
+  },
   "files": [
     "build/*",
     "src"

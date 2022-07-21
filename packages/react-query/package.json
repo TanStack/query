@@ -14,6 +14,12 @@
   "main": "build/cjs/react-query/src/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/packages/react-query/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/esm/index.js",
+      "default": "./build/cjs/react-query/src/index.js"
+    }
+  },
   "sideEffects": [
     "lib/index.js",
     "lib/index.mjs",

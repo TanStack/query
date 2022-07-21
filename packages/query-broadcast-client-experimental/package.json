@@ -14,6 +14,12 @@
   "main": "build/cjs/packages/query-broadcast-client-experimental/src/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/query-broadcast-client-experimental/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./build/esm/index.js",
+      "default": "./build/cjs/packages/query-broadcast-client-experimental/src/index.js"
+    }
+  },
   "files": [
     "build/*",
     "src"
