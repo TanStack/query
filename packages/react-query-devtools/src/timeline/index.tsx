@@ -9,6 +9,10 @@ import useTimelineEvents from './useTimelineEvents'
 import { SVGQueryTimeline } from './timelineComponents'
 import { useTheme } from '../theme'
 
+function clampValue(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max)
+}
+
 interface TimelinePanelProps extends ContextOptions {
   /**
    * A boolean variable indicating whether the panel is open or closed
@@ -28,9 +32,28 @@ interface TimelinePanelProps extends ContextOptions {
   setPanel: (panel: DevtoolsPanel) => void
 }
 
+function useElementWidth(elementRef: React.RefObject<HTMLElement>) {
+  const [width, setWidth] = React.useState(elementRef.current?.offsetWidth || 0)
+
+  React.useEffect(() => {
+    if (!elementRef.current) return
+    setWidth(elementRef.current.offsetWidth)
+
+    const resize = () => {
+      setWidth(elementRef.current?.offsetWidth || 0)
+    }
+    const observer = new ResizeObserver(resize)
+    observer.observe(elementRef.current)
+    return () => observer.disconnect()
+  }, [elementRef])
+
+  return width
+}
+
 export function TimelinePanel(props: TimelinePanelProps) {
   const { isOpen = true, context, ...headProps } = props
   const theme = useTheme()
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   const timelineEvents = useTimelineEvents({ context })
 
@@ -47,6 +70,34 @@ export function TimelinePanel(props: TimelinePanelProps) {
 
     return ranked.filter((d) => d[1].passed).map((x) => x[0])
   }, [filter, allQueries])
+
+  const width = useElementWidth(containerRef)
+
+  const [zoom, setZoom] = React.useState(200)
+  const [offset, setOffset] = React.useState(0)
+  const [isDragging, setIsDragging] = React.useState<{ start: number } | null>(
+    null,
+  )
+  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    setZoom((x) => clampValue(x + e.deltaY * 10, 10, 10000))
+  }
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isDragging) return
+    const { start, end } = timeRange
+    if (!start) return
+    setOffset(
+      clampValue(
+        -(e.clientX - isDragging.start) * zoom,
+        0,
+        ((end || new Date()).getTime() - start.getTime()) / zoom,
+      ),
+    )
+  }
+  const [tickPosition, setTickPosition] = React.useState(0)
+  const moveTick = (e: React.MouseEvent<HTMLDivElement>) => {
+    setTickPosition(e.clientX)
+  }
 
   return (
     <PanelMain isOpen={isOpen}>
@@ -142,8 +193,20 @@ export function TimelinePanel(props: TimelinePanelProps) {
         style={{
           overflowY: 'auto',
           flex: '1',
+          position: 'relative',
         }}
+        onMouseMove={moveTick}
       >
+        <div
+          style={{
+            position: 'absolute',
+            left: tickPosition - 1,
+            top: 0,
+            height: '100%',
+            width: '1px',
+            background: theme.grayAlt,
+          }}
+        ></div>
         {queries.map((query, i) => {
           return (
             <div
@@ -168,14 +231,23 @@ export function TimelinePanel(props: TimelinePanelProps) {
               >
                 {`${query.queryHash}`}
               </Code>
-              <div style={{ padding: '4px 8px', flex: 1, height: 30 }}>
-                {timeRange.start ? (
-                  <SVGQueryTimeline
-                    query={query}
-                    timeRange={timeRange as { start: Date; end: Date | null }}
-                  />
-                ) : null}
-              </div>
+              {timeRange.start ? (
+                <SVGQueryTimeline
+                  ref={i === 0 ? containerRef : undefined}
+                  query={query}
+                  timeRange={timeRange as { start: Date; end: Date | null }}
+                  onWheel={onWheel}
+                  onMouseDown={(e) =>
+                    setIsDragging({
+                      start: e.clientX,
+                    })
+                  }
+                  onMouseMove={onMouseMove}
+                  onMouseUp={() => setIsDragging(null)}
+                  zoom={zoom}
+                  offset={offset}
+                />
+              ) : null}
             </div>
           )
         })}

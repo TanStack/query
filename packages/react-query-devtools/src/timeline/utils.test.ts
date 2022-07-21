@@ -97,7 +97,6 @@ describe('computeQueryBoxes', () => {
 
 const box: Parameters<typeof computeObserverCountBoxes>[0] = {
   startAt: new Date('2022-07-20T13:59:55.656Z'),
-  initialObserversCount: 0,
   updates: [
     {
       at: new Date('2022-07-20T13:59:55.663Z'),

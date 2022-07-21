@@ -1,6 +1,7 @@
 import { act } from '@testing-library/react'
 
 import { notifyManager } from '@tanstack/query-core'
+import ResizeObserver from 'resize-observer-polyfill'
 
 // Wrap notifications with act to make sure React knows about React Query updates
 notifyManager.setNotifyFunction((fn) => {
@@ -36,3 +37,5 @@ jest.mock('@testing-library/react', () => {
 
   return jest.requireActual(packages[version])
 })
+
+window.ResizeObserver = ResizeObserver

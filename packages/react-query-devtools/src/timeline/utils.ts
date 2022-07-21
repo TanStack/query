@@ -10,11 +10,18 @@ export type Box = {
   startAt: Date
   endAt: Date
   updates: { at: Date; action: ActionType | null }[]
-  removed?: boolean
   cacheTime?: number
-  initialObserversCount?: number
-  observers?: ReactQueryObserverEvent[]
+  observers: ReactQueryObserverEvent[]
 }
+
+function createBox(box: Partial<Box>) {
+  return {
+    observers: [],
+    updates: [],
+    ...box,
+  }
+}
+
 export function computeQueryBoxes(
   query: ReactQueryDevtoolsQueryEventGroup,
   timeRange: {
@@ -31,13 +38,13 @@ export function computeQueryBoxes(
   sortedEvents.forEach((event) => {
     if (event.eventType === 'added') {
       partial.startAt = event.receivedAt
-      partial.initialObserversCount = event.observersCount
     } else if (event.eventType === 'removed') {
-      partial.endAt = event.receivedAt
-      partial.startAt ??= timeRange.start
-      partial.removed = true
-      partial.cacheTime = event.cacheTime
-      items.push(partial as Box)
+      items.push({
+        ...createBox(partial),
+        endAt: event.receivedAt,
+        startAt: partial.startAt ?? timeRange.start,
+        cacheTime: event.cacheTime,
+      })
       partial = {}
     } else {
       partial.startAt ??= timeRange.start
@@ -51,13 +58,19 @@ export function computeQueryBoxes(
     }
   })
   if (partial.startAt) {
-    partial.endAt = timeRange.end || new Date()
-    items.push(partial as Box)
+    items.push({
+      ...createBox(partial),
+      startAt: partial.startAt,
+      endAt: timeRange.end || new Date(),
+    })
     partial = {}
   }
   if (partial.endAt) {
-    partial.startAt = timeRange.start
-    items.push(partial as Box)
+    items.push({
+      ...createBox(partial),
+      startAt: timeRange.start,
+      endAt: partial.endAt,
+    })
   }
   return items.map((item) => ({
     ...item,
