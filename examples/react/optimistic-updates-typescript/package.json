@@ -5,13 +5,13 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
-    "@types/react": "^17.0.0",
+    "@types/react": "^18.0.15",
     "@types/node": "14.14.14",
     "axios": "^0.21.1",
     "isomorphic-unfetch": "3.0.0",
-    "next": "9.2.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "next": "12.2.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "@tanstack/react-query": "4.0.8",
     "@tanstack/react-query-devtools": "4.0.8",
     "typescript": "^4.1.2"
