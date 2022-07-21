@@ -28,13 +28,19 @@ You can easily apply it by using one (or both) of the following commands:
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=js,jsx --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=js,jsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js
+  
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=ts,tsx
+  --parser=tsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -67,13 +73,18 @@ You can easily apply it by using one (or both) of the following commands:
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=js,jsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=js,jsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=ts,tsx
+  --parser=tsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
