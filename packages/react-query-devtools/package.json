@@ -24,7 +24,7 @@
       "default": "./build/esm/index.js"
     },
     "default": {
-      "require": "./build/cjs/packages/react-query-devtools/src/noop.js",
+      "require": "./build/cjs/noop.js",
       "default": "./build/esm/noop.js"
     }
   },
