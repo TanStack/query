@@ -11,8 +11,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^8.33.1",
-    "@tanstack/react-query": "4.0.9",
-    "@tanstack/react-query-devtools": "4.0.8"
+    "@tanstack/react-query": "4.0.10",
+    "@tanstack/react-query-devtools": "4.0.10"
   },
   "scripts": {
     "dev": "next",
