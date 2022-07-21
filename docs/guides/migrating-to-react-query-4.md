@@ -208,10 +208,12 @@ The filter defaults to `all`, and you can choose to only match `active` or `inac
 ```
 refetchActive: Boolean
   - Defaults to true
-  - When set to false, queries that match the refetch predicate and are actively being rendered via useQuery and friends will NOT be refetched in the background, and only marked as invalid.
+  - When set to false, queries that match the refetch predicate and are actively being rendered
+    via useQuery and friends will NOT be refetched in the background, and only marked as invalid.
 refetchInactive: Boolean
   - Defaults to false
-  - When set to true, queries that match the refetch predicate and are not being rendered via useQuery and friends will be both marked as invalid and also refetched in the background
+  - When set to true, queries that match the refetch predicate and are not being rendered
+    via useQuery and friends will be both marked as invalid and also refetched in the background
 ```
 
 For the same reason, those have also been combined:
