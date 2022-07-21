@@ -5,6 +5,7 @@ import size from 'rollup-plugin-size'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
+import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
 import svelte from 'rollup-plugin-svelte'
 
@@ -153,6 +154,7 @@ function esm({ input, packageDir, external, banner }: Options): RollupOptions {
     plugins: [
       svelte(),
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
     ],
   }
@@ -174,6 +176,7 @@ function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
     plugins: [
       svelte(),
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
     ],
   }
@@ -204,6 +207,7 @@ function umdDev({
       svelte(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      commonJS(),
       umdDevPlugin('development'),
     ],
   }
@@ -233,6 +237,7 @@ function umdProd({
     plugins: [
       svelte(),
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
       umdDevPlugin('production'),
       terser({
