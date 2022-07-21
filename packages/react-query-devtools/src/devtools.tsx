@@ -8,7 +8,9 @@ import { ThemeProvider, defaultTheme as theme } from './theme'
 import Logo from './Logo'
 import ReactQueryDevtoolsPanel from './panel'
 
-interface DevtoolsOptions extends ContextOptions {
+export { default as ReactQueryDevtoolsPanel } from './panel'
+
+export interface DevtoolsOptions extends ContextOptions {
   /**
    * Set this true if you want the dev tools to default to being open
    */

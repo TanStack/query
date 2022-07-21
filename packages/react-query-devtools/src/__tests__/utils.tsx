@@ -1,7 +1,7 @@
 import { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import * as React from 'react'
-import { ReactQueryDevtools } from '..'
+import { ReactQueryDevtools } from '../devtools'
 
 import {
   QueryClient,

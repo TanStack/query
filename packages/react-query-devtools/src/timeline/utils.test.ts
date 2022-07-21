@@ -1,7 +1,3 @@
-import {
-  ReactQueryObserverEvent,
-  ReactQueryQueryEvent,
-} from './useTimelineEvents'
 import { computeObserverCountBoxes, computeQueryBoxes } from './utils'
 
 describe('computeQueryBoxes', () => {

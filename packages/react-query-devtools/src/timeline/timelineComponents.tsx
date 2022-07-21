@@ -31,7 +31,7 @@ export function SVGQueryTimeline({
   query: ReactQueryDevtoolsQueryEventGroup
   timeRange: { start: Date; end: Date | null }
 }) {
-  const { events, observers } = query
+  const { events } = query
   const boxes = React.useMemo(() => {
     return computeQueryBoxes(query, timeRange)
   }, [events, timeRange.start, timeRange.end])
@@ -50,7 +50,7 @@ export function SVGQueryTimeline({
       viewBox="-2 -2 100 10"
       preserveAspectRatio="xMinYMax meet"
     >
-      {boxes.map((item, i) => {
+      {boxes.map((item) => {
         const counts = computeObserverCountBoxes(item)
 
         return (
@@ -86,7 +86,7 @@ export function SVGQueryTimeline({
                 </text>
               </>
             ))}
-            {item.updates?.map((update, i) => (
+            {item.updates.map((update, i) => (
               <React.Fragment key={i}>
                 <circle
                   cx={scaleX(update.at)}

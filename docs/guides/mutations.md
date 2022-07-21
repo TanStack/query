@@ -115,7 +115,7 @@ const CreateTodo = () => {
 
 ## Mutation Side Effects
 
-`useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](./invalidations-from-mutations) and even [optimistic updates](./optimistic-updates)
+`useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](../guides/invalidations-from-mutations) and even [optimistic updates](../guides/optimistic-updates)
 
 ```tsx
 useMutation(addTodo, {

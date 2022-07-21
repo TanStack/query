@@ -28,13 +28,19 @@ You can easily apply it by using one (or both) of the following commands:
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=js,jsx --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=js,jsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js
+  
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=ts,tsx
+  --parser=tsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/replace-import-specifier.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -45,9 +51,9 @@ Please note in the case of `TypeScript` you need to use `tsx` as the parser; oth
 
 ### Query Keys (and Mutation Keys) need to be an Array
 
-In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](./default-query-function) easier.
+In v3, Query and Mutation Keys could be a String or an Array. Internally, React Query has always worked with Array Keys only, and we've sometimes exposed this to consumers. For example, in the `queryFn`, you would always get the key as an Array to make working with [Default Query Functions](../guides/default-query-function) easier.
 
-However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](./filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
+However, we have not followed this concept through to all apis. For example, when using the `predicate` function on [Query Filters](../guides/filters) you would get the raw Query Key. This makes it difficult to work with such functions if you use Query Keys that are mixed Arrays and Strings. The same was true when using global callbacks.
 
 To streamline all apis, we've decided to make all keys Arrays only:
 
@@ -67,13 +73,18 @@ You can easily apply it by using one (or both) of the following commands:
 If you want to run it against `.js` or `.jsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=js,jsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=js,jsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js
 ```
 
 If you want to run it against `.ts` or `.tsx` files, please use the command below:
 
 ```
-npx jscodeshift --extensions=ts,tsx --parser=tsx --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js ./path/to/src/
+npx jscodeshift ./path/to/src/
+  --extensions=ts,tsx
+  --parser=tsx
+  --transform=./node_modules/@tanstack/react-query/codemods/v4/key-transformation.js
 ```
 
 Please note in the case of `TypeScript` you need to use `tsx` as the parser; otherwise, the codemod won't be applied properly!
@@ -208,10 +219,12 @@ The filter defaults to `all`, and you can choose to only match `active` or `inac
 ```
 refetchActive: Boolean
   - Defaults to true
-  - When set to false, queries that match the refetch predicate and are actively being rendered via useQuery and friends will NOT be refetched in the background, and only marked as invalid.
+  - When set to false, queries that match the refetch predicate and are actively being rendered
+    via useQuery and friends will NOT be refetched in the background, and only marked as invalid.
 refetchInactive: Boolean
   - Defaults to false
-  - When set to true, queries that match the refetch predicate and are not being rendered via useQuery and friends will be both marked as invalid and also refetched in the background
+  - When set to true, queries that match the refetch predicate and are not being rendered
+    via useQuery and friends will be both marked as invalid and also refetched in the background
 ```
 
 For the same reason, those have also been combined:

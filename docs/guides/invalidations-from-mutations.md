@@ -27,4 +27,4 @@ const mutation = useMutation(addTodo, {
 })
 ```
 
-You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](./mutations)
+You can wire up your invalidations to happen using any of the callbacks available in the [`useMutation` hook](../guides/mutations)

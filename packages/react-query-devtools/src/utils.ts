@@ -146,6 +146,7 @@ export const sortFns: Record<string, (a: Query, b: Query) => number> = {
   'Last Updated': (a, b) =>
     a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1,
 }
+
 export const useSubscribeToQueryCache = <T>(
   queryCache: QueryCache,
   getSnapshot: () => T,

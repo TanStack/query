@@ -39,6 +39,15 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
+  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+): UseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
   queryKey: TQueryKey,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
@@ -58,6 +67,19 @@ export function useQuery<
     'queryKey' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey'
+  >,
+): UseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -86,6 +108,20 @@ export function useQuery<
     'queryKey' | 'queryFn' | 'initialData'
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
 ): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn'
+  >,
+): UseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData,
