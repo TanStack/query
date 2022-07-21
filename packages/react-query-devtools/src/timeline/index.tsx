@@ -71,7 +71,7 @@ export function TimelinePanel(props: TimelinePanelProps) {
     return ranked.filter((d) => d[1].passed).map((x) => x[0])
   }, [filter, allQueries])
 
-  const width = useElementWidth(containerRef)
+  // const width = useElementWidth(containerRef)
 
   const [zoom, setZoom] = React.useState(200)
   const [offset, setOffset] = React.useState(0)
