@@ -19,14 +19,21 @@
     "src"
   ],
   "exports": {
-    "development": {
-      "require": "./build/cjs/packages/react-query-devtools/src/index.js",
-      "default": "./build/esm/index.mjs"
+    ".": {
+      "development": {
+        "require": "./build/cjs/packages/react-query-devtools/src/index.js",
+        "default": "./build/esm/index.mjs"
+      },
+      "default": {
+        "require": "./build/cjs/packages/react-query-devtools/src/noop.js",
+        "default": "./build/esm/noop.mjs"
+      }
     },
-    "default": {
-      "require": "./build/cjs/packages/react-query-devtools/src/noop.js",
-      "default": "./build/esm/noop.mjs"
-    }
+    "./devtools": {
+      "import": "./build/esm/index.mjs",
+      "default": "./build/cjs/packages/react-query-devtools/src/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
