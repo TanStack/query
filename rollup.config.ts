@@ -145,6 +145,7 @@ function esm({ input, packageDir, external, banner }: Options): RollupOptions {
     input,
     output: {
       format: 'esm',
+      entryFileNames: "[name].mjs",
       sourcemap: true,
       dir: `${packageDir}/build/esm`,
       banner,
