@@ -18,7 +18,8 @@
     ".": {
       "import": "./build/esm/index.js",
       "default": "./build/cjs/react-query/src/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": [
     "lib/index.js",

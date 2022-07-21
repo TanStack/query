@@ -18,7 +18,8 @@
     ".": {
       "import": "./build/esm/index.js",
       "default": "./build/cjs/react-query-persist-client/src/index.js"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "build/*",
