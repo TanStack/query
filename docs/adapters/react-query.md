@@ -29,7 +29,7 @@ function Example() {
 
 function App () {
   return (
-    <QueryClientProvider value={queryClient}>
+    <QueryClientProvider client={queryClient}>
       <Example />
     </QueryClientProvider>
   )
