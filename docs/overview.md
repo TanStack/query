@@ -44,7 +44,7 @@ On a more technical note, React Query will likely:
 
 In the example below, you can see React Query in its most basic and simple form being used to fetch the GitHub stats for the React Query GitHub project itself:
 
-[Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/simple)
+[Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/react/simple)
 
 ```tsx
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
