@@ -6,6 +6,13 @@ title: createSyncStoragePersister
 ## Installation
 
 This utility comes as a separate package and is available under the `'@tanstack/query-sync-storage-persister'` import.
+```bash
+npm install @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
+```
+or
+```bash
+yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
+```
 
 ## Usage
 
