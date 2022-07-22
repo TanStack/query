@@ -1,7 +1,7 @@
 // List of projects/orgs using your project for the users page.
 export const siteConfig = {
   editUrl:
-    'https://github.com/tannerlinsley/react-query/edit/master/docs/src/pages',
+    'https://github.com/tannerlinsley/react-query/edit/v3/docs/src/pages',
   copyright: `Copyright © ${new Date().getFullYear()} Tanner Linsley. All Rights Reserved.`,
   repoUrl: 'https://github.com/tannerlinsley/react-query',
   algolia: {
