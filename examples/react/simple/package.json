@@ -17,7 +17,6 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",
-    "babel-eslint": "10.0.1",
     "vite": "^3.0.0"
   },
   "browserslist": {
