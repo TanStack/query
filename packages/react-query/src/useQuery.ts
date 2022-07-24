@@ -7,6 +7,17 @@ import {
 import { DefinedUseQueryResult, UseQueryOptions, UseQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
+export type UseQueryParamsOverloads<
+  Options extends { queryKey?: unknown; queryFn?: unknown }
+> =
+  | [options: Options]
+  | [queryKey: Options['queryKey'], options?: Omit<Options, 'queryKey'>]
+  | [
+      queryKey: Options['queryKey'],
+      queryFn: Options['queryFn'],
+      options?: Omit<Options, 'queryKey' | 'queryFn'>,
+    ]
+
 // HOOK
 
 export function useQuery<
@@ -15,10 +26,12 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData?: () => undefined },
+  ...args: UseQueryParamsOverloads<
+    Omit<
+      UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'initialData'
+    > & { initialData?: () => undefined }
+  >
 ): UseQueryResult<TData, TError>
 
 export function useQuery<
@@ -27,101 +40,13 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+  ...args: UseQueryParamsOverloads<
+    Omit<
+      UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'initialData'
+    > & { initialData: TQueryFnData | (() => TQueryFnData) }
+  >
 ): DefinedUseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'initialData'
-  > & { initialData?: () => undefined },
-): UseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): DefinedUseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey'
-  >,
-): UseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData?: () => undefined },
-): UseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): DefinedUseQueryResult<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn'
-  >,
-): UseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData,
