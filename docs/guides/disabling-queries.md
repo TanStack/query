@@ -59,7 +59,7 @@ function Todos() {
 }
 ```
 
-Permanently disabling a query opts out of many great features that react-query has to offer (like background refetches), and it's also not the idiomatic way. It takes you from the declartive approach (defining dependencies when your query should run) into an imperative mode (fetch whenever I click here). It is also not possible to pass parameters to `refetch`. Oftentimes, all you want is a lazy query that defers the initial fetch:
+Permanently disabling a query opts out of many great features that react-query has to offer (like background refetches), and it's also not the idiomatic way. It takes you from the declarative approach (defining dependencies when your query should run) into an imperative mode (fetch whenever I click here). It is also not possible to pass parameters to `refetch`. Oftentimes, all you want is a lazy query that defers the initial fetch:
 
 ## Lazy Queries
 
