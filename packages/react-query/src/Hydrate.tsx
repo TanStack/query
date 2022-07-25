@@ -30,7 +30,7 @@ export interface HydrateProps {
   children?: React.ReactNode
 }
 
-export const Hydrate = ({ children, options, state }: HydrateProps) => {
+export const Hydrate = React.memo(({ children, options, state }: HydrateProps) => {
   useHydrate(state, options)
   return children as React.ReactElement
-}
+})

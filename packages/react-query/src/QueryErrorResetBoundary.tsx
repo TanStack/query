@@ -34,11 +34,11 @@ export const useQueryErrorResetBoundary = () =>
 
 export interface QueryErrorResetBoundaryProps {
   children:
-    | ((value: QueryErrorResetBoundaryValue) => React.ReactNode)
-    | React.ReactNode
+  | ((value: QueryErrorResetBoundaryValue) => React.ReactNode)
+  | React.ReactNode
 }
 
-export const QueryErrorResetBoundary = ({
+export const QueryErrorResetBoundary = React.memo(({
   children,
 }: QueryErrorResetBoundaryProps) => {
   const [value] = React.useState(() => createValue())
@@ -49,4 +49,4 @@ export const QueryErrorResetBoundary = ({
         : children}
     </QueryErrorResetBoundaryContext.Provider>
   )
-}
+})

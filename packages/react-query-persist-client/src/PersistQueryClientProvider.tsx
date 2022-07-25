@@ -12,7 +12,7 @@ export type PersistQueryClientProviderProps = QueryClientProviderProps & {
   onSuccess?: () => void
 }
 
-export const PersistQueryClientProvider = ({
+export const PersistQueryClientProvider = React.memo(({
   client,
   children,
   persistOptions,
@@ -52,4 +52,4 @@ export const PersistQueryClientProvider = ({
       <IsRestoringProvider value={isRestoring}>{children}</IsRestoringProvider>
     </QueryClientProvider>
   )
-}
+})
