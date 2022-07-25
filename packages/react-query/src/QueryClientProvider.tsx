@@ -67,7 +67,7 @@ export type QueryClientProviderProps =
   | QueryClientProviderPropsWithContext
   | QueryClientProviderPropsWithContextSharing
 
-export const QueryClientProvider = ({
+export const QueryClientProvider = React.memo(({
   client,
   children,
   context,
@@ -87,4 +87,4 @@ export const QueryClientProvider = ({
       <Context.Provider value={client}>{children}</Context.Provider>
     </QueryClientSharingContext.Provider>
   )
-}
+})
