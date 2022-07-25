@@ -8,7 +8,7 @@ import { DefinedUseQueryResult, UseQueryOptions, UseQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
 export type UseQueryParamsOverloads<
-  Options extends { queryKey?: unknown; queryFn?: unknown }
+  Options extends { queryKey?: unknown; queryFn?: unknown },
 > =
   | [options: Options]
   | [queryKey: Options['queryKey'], options?: Omit<Options, 'queryKey'>]
