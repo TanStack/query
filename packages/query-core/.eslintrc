@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "project": "./tsconfig.json",
+    "project": "./tsconfig.lint.json",
     "sourceType": "module"
   }
 }
