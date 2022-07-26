@@ -22,12 +22,7 @@
     "./package.json": "./package.json"
   },
   "sideEffects": [
-    "lib/index.js",
-    "lib/index.mjs",
-    "lib/reactjs/index.js",
-    "lib/reactjs/index.mjs",
-    "lib/reactjs/setBatchUpdatesFn.js",
-    "lib/reactjs/setBatchUpdatesFn.mjs"
+    "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
@@ -37,7 +32,9 @@
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
+    "build/types/*",
     "src",
     "codemods",
     "!codemods/jest.config.js",

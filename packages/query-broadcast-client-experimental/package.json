@@ -22,7 +22,9 @@
     "./package.json": "./package.json"
   },
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
+    "build/types/*",
     "src"
   ],
   "scripts": {
