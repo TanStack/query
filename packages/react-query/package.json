@@ -13,9 +13,10 @@
   "module": "build/lib/index.mjs",
   "main": "build/lib/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/packages/react-query/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
   "exports": {
     ".": {
+      "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.mjs",
       "default": "./build/lib/index.js"
     },
@@ -34,7 +35,6 @@
   "files": [
     "build/lib/*",
     "build/umd/*",
-    "build/types/*",
     "src",
     "codemods",
     "!codemods/jest.config.js",

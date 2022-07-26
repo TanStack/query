@@ -13,25 +13,27 @@
   "module": "build/lib/index.mjs",
   "main": "build/lib/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/react-query-devtools/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
   "files": [
     "build/lib/*",
     "build/umd/*",
-    "build/types/*",
     "src"
   ],
   "exports": {
     ".": {
       "development": {
+        "types": "./build/lib/index.d.ts",
         "require": "./build/lib/index.js",
         "default": "./build/lib/index.mjs"
       },
       "default": {
+        "types": "./build/lib/index.d.ts",
         "require": "./build/lib/noop.js",
         "default": "./build/lib/noop.mjs"
       }
     },
     "./devtools": {
+      "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.mjs",
       "default": "./build/lib/index.js"
     },
