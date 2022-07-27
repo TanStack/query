@@ -26,11 +26,11 @@
     "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
+    "clean": "rm -rf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "test:jest": "yarn test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "yarn test:jest --watch",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "test:jest:dev": "yarn test:jest --watch"
   },
   "files": [
     "build/lib/*",

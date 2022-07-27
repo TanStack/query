@@ -3,11 +3,11 @@
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
-    "clean": "npm exec --workspaces -c \"rm -rf build || true\"",
+    "clean": "lerna run clean --stream --no-bail",
     "install:csb": "npm install --frozen-lockfile && node ./scripts/fix-package-json.js",
     "test": "(is-ci && npm run test:ci) || npm run test:dev",
-    "test:ci": "npm run compile && npm run test:format && npm run test:eslint && npm run test:jest",
-    "test:dev": "npm run compile && npm run test:format && npm run test:eslint && npm run test:jest:dev",
+    "test:ci": "npm run typecheck && npm run test:format && npm run test:eslint && npm run test:jest",
+    "test:dev": "npm run typecheck && npm run test:format && npm run test:eslint && npm run test:jest:dev",
     "test:dev:17": "REACTJS_VERSION=17 jest --watch",
     "test:eslint": "lerna run test:eslint --stream --no-bail",
     "test:format": "npm run prettier -- --check",
@@ -23,8 +23,7 @@
     "prettier": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json}\"",
     "prettier:write": "npm run prettier -- --write",
     "visualize": "lerna exec 'open build/stats-html.html'",
-    "cipublish": "ts-node scripts/publish.ts",
-    "compile": "lerna run compile --stream --no-bail"
+    "cipublish": "ts-node scripts/publish.ts"
   },
   "namespace": "@tanstack",
   "workspaces": [

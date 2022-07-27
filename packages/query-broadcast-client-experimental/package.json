@@ -28,8 +28,8 @@
     "src"
   ],
   "scripts": {
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
     "broadcast-channel": "^3.4.1"
