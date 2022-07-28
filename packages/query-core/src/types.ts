@@ -218,7 +218,7 @@ export interface QueryObserverOptions<
    * If set to a function, it will fire in every render to determine if it should throw the promise or not
    * Defaults to `false`.
    */
-   suspense?:
+  suspense?:
    | boolean
    | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean)
   /**
