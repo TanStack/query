@@ -102,10 +102,10 @@ export function useBaseQuery<
 
   // Handle suspense
   if (
-    defaultedOptions.suspense &&
-    result.isLoading &&
-    result.isFetching &&
-    !isRestoring
+    !isRestoring &&
+    (typeof defaultedOptions.suspense === 'function'
+      ? defaultedOptions.suspense(observer.getCurrentQuery())
+      : defaultedOptions.suspense && result.isLoading && result.isFetching)
   ) {
     throw observer
       .fetchOptimistic(defaultedOptions)

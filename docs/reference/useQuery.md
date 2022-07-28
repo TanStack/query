@@ -153,11 +153,12 @@ const result = useQuery({
 - `select: (data: TData) => unknown`
   - Optional
   - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
-- `suspense: boolean`
+- `suspense: boolean | ((query: Query) => boolean)`
   - Optional
   - Set this to `true` to enable suspense mode.
   - When `true`, `useQuery` will suspend when `status === 'loading'`
   - When `true`, `useQuery` will throw runtime errors when `status === 'error'`
+  - If set to a function, it will fire in every render to determine if it should throw the promise or not
 - `initialData: TData | () => TData`
   - Optional
   - If set, this value will be used as the initial data for the query cache (as long as the query hasn't been created or cached yet)

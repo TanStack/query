@@ -215,9 +215,12 @@ export interface QueryObserverOptions<
   /**
    * If set to `true`, the query will suspend when `status === 'loading'`
    * and throw errors when `status === 'error'`.
+   * If set to a function, it will fire in every render to determine if it should throw the promise or not
    * Defaults to `false`.
    */
-  suspense?: boolean
+   suspense?:
+   | boolean
+   | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean)
   /**
    * Set this to `true` to keep the previous `data` when fetching based on a new query key.
    * Defaults to `false`.
