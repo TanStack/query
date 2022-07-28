@@ -19,7 +19,7 @@ const queryCache = new QueryCache({
   }
 })
 
-const query = queryCache.find('posts')
+const query = queryCache.find(['posts'])
 ```
 
 Its available methods are:
@@ -71,7 +71,7 @@ const query = queryCache.find(queryKey)
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
 ```tsx
-const queries = queryCache.findAll(queryKey)
+const queries = queryCache.findAll([queryKey])
 ```
 
 **Options**
