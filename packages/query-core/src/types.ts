@@ -219,8 +219,8 @@ export interface QueryObserverOptions<
    * Defaults to `false`.
    */
   suspense?:
-   | boolean
-   | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean)
+    | boolean
+    | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean)
   /**
    * Set this to `true` to keep the previous `data` when fetching based on a new query key.
    * Defaults to `false`.
