@@ -32,7 +32,7 @@
         "default": "./build/lib/noop.mjs"
       }
     },
-    "./devtools": {
+    "./production": {
       "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.mjs",
       "default": "./build/lib/index.js"
