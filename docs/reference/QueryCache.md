@@ -19,7 +19,7 @@ const queryCache = new QueryCache({
   }
 })
 
-const query = queryCache.find('posts')
+const query = queryCache.find(['posts'])
 ```
 
 Its available methods are:
@@ -44,14 +44,15 @@ The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle 
 - `defaultOptions` can be overridden by each Query - the global callbacks will **always** be called.
 - `defaultOptions` callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
 
-## `queryCache.find`
+## `
+`
 
 `find` is a slightly more advanced synchronous method that can be used to get an existing query instance from the cache. This instance not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
 
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.dataUpdatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```tsx
-const query = queryCache.find(queryKey)
+const query = queryCache.find([queryKey])
 ```
 
 **Options**
@@ -71,7 +72,7 @@ const query = queryCache.find(queryKey)
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
 ```tsx
-const queries = queryCache.findAll(queryKey)
+const queries = queryCache.findAll([queryKey])
 ```
 
 **Options**
