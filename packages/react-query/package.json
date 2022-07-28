@@ -10,27 +10,31 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.js",
-  "main": "build/cjs/react-query/src/index.js",
+  "module": "build/lib/index.mjs",
+  "main": "build/lib/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/packages/react-query/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": [
-    "lib/index.js",
-    "lib/index.mjs",
-    "lib/reactjs/index.js",
-    "lib/reactjs/index.mjs",
-    "lib/reactjs/setBatchUpdatesFn.js",
-    "lib/reactjs/setBatchUpdatesFn.mjs"
+    "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
+    "clean": "rm -rf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "test:jest": "yarn test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "yarn test:jest --watch",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "test:jest:dev": "yarn test:jest --watch"
   },
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
     "src",
     "codemods",
     "!codemods/jest.config.js",

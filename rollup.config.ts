@@ -5,6 +5,7 @@ import size from 'rollup-plugin-size'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
+import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
 import svelte from 'rollup-plugin-svelte'
 
@@ -47,7 +48,9 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QueryAsyncStoragePersister',
       outputFile: 'query-async-storage-persister',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+      },
     }),
     ...buildConfigs({
       name: 'query-broadcast-client-experimental',
@@ -55,7 +58,10 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QueryBroadcastClient',
       outputFile: 'query-broadcast-client-experimental',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/query-core': 'QueryCore',
+        'broadcast-channel': 'BroadcastChannel',
+      },
     }),
     ...buildConfigs({
       name: 'query-sync-storage-persister',
@@ -63,7 +69,9 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QuerySyncStoragePersister',
       outputFile: 'query-sync-storage-persister',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+      },
     }),
     ...buildConfigs({
       name: 'react-query',
@@ -73,6 +81,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        '@tanstack/query-core': 'QueryCore',
       },
     }),
     ...buildConfigs({
@@ -145,13 +154,15 @@ function esm({ input, packageDir, external, banner }: Options): RollupOptions {
     input,
     output: {
       format: 'esm',
+      entryFileNames: '[name].mjs',
       sourcemap: true,
-      dir: `${packageDir}/build/esm`,
+      dir: `${packageDir}/build/lib`,
       banner,
     },
     plugins: [
       svelte(),
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
     ],
   }
@@ -165,14 +176,14 @@ function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
     output: {
       format: 'cjs',
       sourcemap: true,
-      dir: `${packageDir}/build/cjs`,
-      preserveModules: true,
+      dir: `${packageDir}/build/lib`,
       exports: 'named',
       banner,
     },
     plugins: [
       svelte(),
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
     ],
   }
@@ -203,6 +214,7 @@ function umdDev({
       svelte(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      commonJS(),
       umdDevPlugin('development'),
     ],
   }
@@ -232,6 +244,7 @@ function umdProd({
     plugins: [
       svelte(),
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
       umdDevPlugin('production'),
       terser({

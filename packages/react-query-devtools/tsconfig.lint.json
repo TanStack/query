@@ -7,9 +7,8 @@
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
   "include": ["src"],
-  "exclude": ["src/__tests__"],
   "references": [
     { "path": "../query-core" },
-    { "path": "../react-query" }
+    { "path": "../react-query-persist-client" }
   ]
 }
