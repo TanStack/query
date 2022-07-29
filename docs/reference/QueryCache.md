@@ -44,8 +44,7 @@ The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle 
 - `defaultOptions` can be overridden by each Query - the global callbacks will **always** be called.
 - `defaultOptions` callbacks will be called once for each Observer, while the global callbacks will only be called once per Query.
 
-## `
-`
+## `queryCache.find`
 
 `find` is a slightly more advanced synchronous method that can be used to get an existing query instance from the cache. This instance not only contains **all** the state for the query, but all of the instances, and underlying guts of the query as well. If the query does not exist, `undefined` will be returned.
 
