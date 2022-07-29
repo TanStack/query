@@ -1012,4 +1012,67 @@ describe("useQuery's in Suspense mode", () => {
     expect(renders).toBe(2)
     expect(rendered.queryByText('rendered')).not.toBeNull()
   })
+
+  it('should render the correct amount of times when a suspense function returns true', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+
+    let count = 0
+    let renders = 0
+
+    function Page() {
+      renders++
+
+      const state = useQuery(
+        key,
+        async () => {
+          count++
+          await sleep(10)
+          return count
+        },
+        {
+          suspense: (query) => Date.now() - query.state.dataUpdatedAt > 10,
+        },
+      )
+
+      states.push(state)
+
+      return <div>data: {String(state.data)}</div>
+    }
+
+    function App() {
+      const [show, setShow] = React.useState(true)
+
+      return (
+        <>
+          <React.Suspense fallback="loading">
+            {show ? <Page /> : 'unmounted'}
+          </React.Suspense>
+          <button
+            aria-label="toggle"
+            onClick={() => {
+              setTimeout(() => {
+                setShow((prev) => !prev)
+              }, 10)
+            }}
+          />
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <App />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+
+    fireEvent.click(rendered.getByLabelText('toggle'))
+    await waitFor(() => rendered.getByText('unmounted'))
+    fireEvent.click(rendered.getByLabelText('toggle'))
+
+    await waitFor(() => rendered.getByText('data: 2'))
+
+    expect(renders).toBe(4)
+    expect(states.length).toBe(2)
+    expect(states[0]).toMatchObject({ data: 1, status: 'success' })
+    expect(states[1]).toMatchObject({ data: 2, status: 'success' })
+  })
 })
