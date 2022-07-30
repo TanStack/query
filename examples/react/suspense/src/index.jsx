@@ -9,8 +9,6 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { ErrorBoundary } from "react-error-boundary";
 
-import "./styles.css";
-
 import { fetchProjects } from "./queries";
 
 import Button from "./components/Button";
