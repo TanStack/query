@@ -43,7 +43,6 @@
     "./examples/react/load-more-infinite-scroll",
     "./examples/react/nextjs",
     "./examples/react/offline",
-    "./examples/react/optimistic-updates",
     "./examples/react/optimistic-updates-typescript",
     "./examples/react/pagination",
     "./examples/react/playground",
