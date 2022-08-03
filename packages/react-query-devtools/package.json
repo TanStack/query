@@ -1,5 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
+  "type": "module",
   "version": "4.0.10",
   "description": "TODO",
   "author": "tannerlinsley",
