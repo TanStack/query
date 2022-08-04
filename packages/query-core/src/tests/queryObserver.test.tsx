@@ -799,4 +799,23 @@ describe('queryObserver', () => {
 
     unsubscribe()
   })
+
+  test('setOptions should notify cache listeners', async () => {
+    const key = queryKey()
+
+    const observer = new QueryObserver(queryClient, {
+      queryKey: key,
+    })
+
+    const spy = jest.fn()
+    const unsubscribe = queryClient.getQueryCache().subscribe(spy)
+    observer.setOptions({ enabled: false })
+
+    expect(spy).toHaveBeenCalledTimes(1)
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'observerOptionsUpdated' }),
+    )
+
+    unsubscribe()
+  })
 })
