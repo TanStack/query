@@ -67,8 +67,8 @@ export type UseQueryResult<
 
 export type DefinedUseQueryResult<TData = unknown, TError = unknown> = Omit<
   UseQueryResult<TData, TError>,
-  'data'
-> & { data: TData }
+  'data' | 'isLoading'
+> & { data: TData, isLoading: false }
 
 export type UseInfiniteQueryResult<
   TData = unknown,
