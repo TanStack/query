@@ -10,16 +10,25 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.js",
-  "main": "build/cjs/index.js",
+  "module": "build/lib/index.mjs",
+  "main": "build/lib/index.js",
   "browser": "build/umd/index.production.js",
-  "types": "build/types/packages/query-core/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
     "src"
   ],
   "scripts": {
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   }
 }

@@ -6,7 +6,7 @@ import {
   QueryFilters,
 } from '@tanstack/query-core'
 
-import { useSyncExternalStore } from 'use-sync-external-store/shim'
+import { useSyncExternalStore } from './useSyncExternalStore'
 import { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
 

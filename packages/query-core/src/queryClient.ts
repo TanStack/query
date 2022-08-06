@@ -570,13 +570,11 @@ export class QueryClient {
       )
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
       if (matchingDefaults.length > 1) {
-        if (process.env.NODE_ENV !== 'production') {
-          this.logger.error(
-            `[QueryClient] Several query defaults match with key '${JSON.stringify(
-              queryKey,
-            )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`,
-          )
-        }
+        this.logger.error(
+          `[QueryClient] Several query defaults match with key '${JSON.stringify(
+            queryKey,
+          )}'. The first matching query defaults are used. Please check how query defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetquerydefaults.`,
+        )
       }
     }
 
@@ -617,13 +615,11 @@ export class QueryClient {
       )
       // It is ok not having defaults, but it is error prone to have more than 1 default for a given key
       if (matchingDefaults.length > 1) {
-        if (process.env.NODE_ENV !== 'production') {
-          this.logger.error(
-            `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
-              mutationKey,
-            )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
-          )
-        }
+        this.logger.error(
+          `[QueryClient] Several mutation defaults match with key '${JSON.stringify(
+            mutationKey,
+          )}'. The first matching mutation defaults are used. Please check how mutation defaults are registered. Order does matter here. cf. https://react-query.tanstack.com/reference/QueryClient#queryclientsetmutationdefaults.`,
+        )
       }
     }
 

@@ -15,22 +15,33 @@
   "browser": "build/umd/noop.production.js",
   "types": "build/types/react-query-devtools/src/index.d.ts",
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
     "src"
   ],
   "exports": {
-    "development": {
-      "require": "./build/cjs/packages/react-query-devtools/src/index.js",
-      "default": "./build/esm/index.js"
+    ".": {
+      "development": {
+        "types": "./build/lib/index.d.ts",
+        "require": "./build/lib/index.js",
+        "default": "./build/lib/index.mjs"
+      },
+      "default": {
+        "types": "./build/lib/index.d.ts",
+        "require": "./build/lib/noop.js",
+        "default": "./build/lib/noop.mjs"
+      }
     },
-    "default": {
-      "require": "./build/cjs/noop.js",
-      "default": "./build/esm/noop.js"
-    }
+    "./production": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.0.0-alpha.82",
