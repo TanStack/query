@@ -32,6 +32,7 @@
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
+    "@tanstack/query-core": "^4.0.10",
     "broadcast-channel": "^3.4.1"
   }
 }
