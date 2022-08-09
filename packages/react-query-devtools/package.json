@@ -36,5 +36,8 @@
     "@tanstack/match-sorter-utils": "^8.0.0-alpha.82",
     "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.2.0"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "^4.0.0"
   }
 }
