@@ -2,7 +2,13 @@ name: ci
 concurrency:
   group: publish-${{ github.github.base_ref }}
   cancel-in-progress: true
-on: [push]
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: override release tag
+        required: false
+  push:
 jobs:
   test-and-publish:
     if: github.repository == 'TanStack/query' && github.event_name != 'pull_request'
@@ -28,3 +34,4 @@ jobs:
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          TAG: ${{ inputs.tag }}
