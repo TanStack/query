@@ -12,7 +12,7 @@
   },
   "module": "build/lib/index.mjs",
   "main": "build/lib/index.js",
-  "browser": "build/umd/index.production.js",
+  "browser": "build/lib/index.js",
   "types": "build/lib/index.d.ts",
   "files": [
     "build/lib/*",

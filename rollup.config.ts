@@ -38,7 +38,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'query-core',
       packageDir: 'packages/query-core',
       jsName: 'QueryCore',
-      outputFile: 'query-core',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {},
     }),
@@ -46,7 +46,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'query-async-storage-persister',
       packageDir: 'packages/query-async-storage-persister',
       jsName: 'QueryAsyncStoragePersister',
-      outputFile: 'query-async-storage-persister',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
@@ -56,7 +56,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'query-broadcast-client-experimental',
       packageDir: 'packages/query-broadcast-client-experimental',
       jsName: 'QueryBroadcastClient',
-      outputFile: 'query-broadcast-client-experimental',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         '@tanstack/query-core': 'QueryCore',
@@ -67,7 +67,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'query-sync-storage-persister',
       packageDir: 'packages/query-sync-storage-persister',
       jsName: 'QuerySyncStoragePersister',
-      outputFile: 'query-sync-storage-persister',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
@@ -77,7 +77,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'react-query',
       packageDir: 'packages/react-query',
       jsName: 'ReactQuery',
-      outputFile: 'react-query',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
@@ -88,7 +88,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'react-query-devtools',
       packageDir: 'packages/react-query-devtools',
       jsName: 'ReactQueryDevtools',
-      outputFile: 'react-query-devtools',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
@@ -99,7 +99,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'react-query-devtools-noop',
       packageDir: 'packages/react-query-devtools',
       jsName: 'ReactQueryDevtools',
-      outputFile: 'react-query-devtools',
+      outputFile: 'noop',
       entryFile: 'src/noop.ts',
       globals: {
         react: 'React',
@@ -110,7 +110,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'react-query-persist-client',
       packageDir: 'packages/react-query-persist-client',
       jsName: 'ReactQueryPersistClient',
-      outputFile: 'react-query-persist-client',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
@@ -206,7 +206,7 @@ function umdDev({
     output: {
       format: 'umd',
       sourcemap: true,
-      file: `${packageDir}/build/umd/index.development.js`,
+      file: `${packageDir}/build/umd/${outputFile}.development.js`,
       name: jsName,
       globals,
       banner,
@@ -237,7 +237,7 @@ function umdProd({
     output: {
       format: 'umd',
       sourcemap: true,
-      file: `${packageDir}/build/umd/index.production.js`,
+      file: `${packageDir}/build/umd/${outputFile}.production.js`,
       name: jsName,
       globals,
       banner,
