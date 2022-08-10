@@ -149,10 +149,10 @@ const result = useQuery({
   - This function will fire if the query encounters an error and will be passed the error.
 - `onSettled: (data?: TData, error?: TError) => void`
   - Optional
-  - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error
+  - This function will fire any time the query is either successfully fetched or errors and be passed either the data or error.
 - `select: (data: TData) => unknown`
   - Optional
-  - This option can be used to transform or select a part of the data returned by the query function.
+  - This option can be used to transform or select a part of the data returned by the query function. It affects the returned `data` value, but does not affect what gets stored in the query cache.
 - `suspense: boolean`
   - Optional
   - Set this to `true` to enable suspense mode.
