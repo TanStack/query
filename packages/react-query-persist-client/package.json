@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "4.0.10",
+  "version": "4.0.11-beta.0",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
