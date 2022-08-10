@@ -23,13 +23,13 @@
     ".": {
       "development": {
         "types": "./build/lib/index.d.ts",
-        "require": "./build/lib/index.js",
-        "default": "./build/lib/index.mjs"
+        "import": "./build/lib/index.mjs",
+        "default": "./build/lib/index.js"
       },
       "default": {
         "types": "./build/lib/index.d.ts",
-        "require": "./build/lib/noop.js",
-        "default": "./build/lib/noop.mjs"
+        "import": "./build/lib/noop.mjs",
+        "default": "./build/lib/noop.js"
       }
     },
     "./production": {
@@ -44,7 +44,8 @@
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.0.0-alpha.82",
+    "@tanstack/match-sorter-utils": "^8.1.1",
+    "@tanstack/react-query": "^4.0.10",
     "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.2.0"
   }

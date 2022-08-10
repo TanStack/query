@@ -30,5 +30,8 @@
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+  },
+  "dependencies": {
+    "@tanstack/react-query-persist-client": "^4.0.10"
   }
 }

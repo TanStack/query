@@ -47,7 +47,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/query-core": "^4.0.0-beta.1",
+    "@tanstack/query-core": "^4.0.10",
     "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.2.0"
   },
