@@ -4,27 +4,23 @@
   "version": "1.0.0",
   "description": "",
   "keywords": [],
-  "main": "src/index.js",
+  "main": "src/index.jsx",
   "dependencies": {
     "axios": "^0.21.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-error-boundary": "^2.2.3",
     "@tanstack/react-query": "4.0.10",
-    "@tanstack/react-query-devtools": "4.0.10",
-    "react-scripts": "3.0.1"
+    "@tanstack/react-query-devtools": "4.0.10"
   },
   "devDependencies": {
-    "@rescripts/cli": "^0.0.11",
-    "@rescripts/rescript-use-babel-config": "^0.0.8",
-    "@rescripts/rescript-use-eslint-config": "^0.0.9",
-    "babel-eslint": "10.0.1"
+    "@vitejs/plugin-react": "^2.0.0",
+    "vite": "^3.0.0"
   },
   "scripts": {
-    "start": "rescripts start",
-    "build": "rescripts build",
-    "test": "rescripts test",
-    "eject": "rescripts eject"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "browserslist": [
     ">0.2%",
