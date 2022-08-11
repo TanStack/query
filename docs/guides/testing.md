@@ -5,7 +5,7 @@ title: Testing
 
 React Query works by means of hooks - either the ones we offer or custom ones that wrap around them.
 
-Writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library.
+With React 17 or earlier, writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library. 
 
 Install this by running:
 
@@ -14,6 +14,8 @@ npm install @testing-library/react-hooks react-test-renderer --save-dev
 ```
 
 (The `react-test-renderer` library is needed as a peer dependency of `@testing-library/react-hooks`, and needs to correspond to the version of React that you are using.)
+
+*Note*: when using React 18 or later, `renderHook` is available directly through the `@testing-library/react` package, and `@testing-library/react-hooks` is no longer required.
 
 ## Our First Test
 
@@ -25,7 +27,7 @@ export function useCustomHook() {
 }
 ```
 
-We can write a test for this as follows:
+Using React 17 or earlier, we can write a test for this as follows:
 
 ```tsx
 const queryClient = new QueryClient();
@@ -40,6 +42,18 @@ const { result, waitFor } = renderHook(() => useCustomHook(), { wrapper });
 await waitFor(() => result.current.isSuccess);
 
 expect(result.current.data).toEqual("Hello");
+```
+
+Using React 18 or later, the semantics of `waitFor` have changed, and the above test needs to be modified as follows:
+
+```tsx
+import { renderHook, waitFor } from "@testing-library/react";
+
+...
+
+const { result } = renderHook(() => useCustomHook(), { wrapper });
+
+await waitFor(() => expect(result.current.isSuccess).toBe(true));
 ```
 
 Note that we provide a custom wrapper that builds the `QueryClient` and `QueryClientProvider`. This helps to ensure that our test is completely isolated from any other tests.
@@ -129,7 +143,7 @@ await waitFor(() => {
 expect(result.current.data).toEqual({answer: 42});
 ```
 
-Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data.
+Here we are making use of `waitFor` and waiting until the query status indicates that the request has succeeded. This way we know that our hook has finished and should have the correct data. *Note*: when using React 18, the semantics of `waitFor` have changed as noted above.
 
 ## Testing Load More / Infinite Scroll
 
@@ -182,6 +196,8 @@ expect(result.current.data.pages).toStrictEqual([
 
 expectation.done();
 ```
+
+*Note*: when using React 18, the semantics of `waitFor` have changed as noted above.
 
 ## Further reading
 
