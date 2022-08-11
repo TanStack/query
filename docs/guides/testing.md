@@ -19,7 +19,7 @@ npm install @testing-library/react-hooks react-test-renderer --save-dev
 
 Once installed, a simple test can be written. Given the following custom hook:
 
-```
+```ts
 export function useCustomHook() {
   return useQuery(['customHook'], () => 'Hello');
 }
@@ -27,7 +27,7 @@ export function useCustomHook() {
 
 We can write a test for this as follows:
 
-```
+```tsx
 const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
@@ -50,7 +50,7 @@ It is possible to write this wrapper only once, but if so we need to ensure that
 
 The library defaults to three retries with exponential backoff, which means that your tests are likely to timeout if you want to test an erroneous query. The easiest way to turn retries off is via the QueryClientProvider. Let's extend the above example:
 
-```
+```tsx
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -98,7 +98,7 @@ There are plenty of ways that these can be tested, but for this example we are g
 
 Given the following custom hook:
 
-```
+```ts
 function useFetchData() {
   return useQuery(['fetchData'], () => request('/api/data'));
 }
@@ -106,7 +106,7 @@ function useFetchData() {
 
 We can write a test for this as follows:
 
-```
+```tsx
 const queryClient = new QueryClient();
 const wrapper = ({ children }) => (
   <QueryClientProvider client={queryClient}>
@@ -135,7 +135,7 @@ Here we are making use of `waitFor` and waiting until the query status indicates
 
 First we need to mock our API response
 
-```
+```ts
 function generateMockedResponse(page) {
   return {
     page: page,
@@ -147,7 +147,7 @@ function generateMockedResponse(page) {
 Then, our `nock` configuration needs to differentiate responses based on the page, and we'll be using `uri` to do this.
 `uri`'s value here will be something like `"/?page=1` or `/?page=2`
 
-```
+```ts
 const expectation = nock('http://example.com')
   .persist()
   .query(true)
@@ -163,7 +163,7 @@ const expectation = nock('http://example.com')
 
 Now we can safely run our tests, the trick here is to await both `isFetching` and then `!isFetching` after calling `fetchNextPage()`:
 
-```
+```ts
 const { result, waitFor } = renderHook(() => useInfiniteQueryCustomHook(), { wrapper });
 
 await waitFor(() => result.current.isSuccess);
