@@ -8,6 +8,7 @@ import type {
   MutationObserverResult,
   MutationObserverOptions,
 } from './types'
+import { shallowEqualObjects } from './utils'
 
 // TYPES
 
@@ -63,7 +64,15 @@ export class MutationObserver<
   setOptions(
     options?: MutationObserverOptions<TData, TError, TVariables, TContext>,
   ) {
+    const prevOptions = this.options
     this.options = this.client.defaultMutationOptions(options)
+    if (!shallowEqualObjects(prevOptions, this.options)) {
+      this.client.getMutationCache().notify({
+        type: 'observerOptionsUpdated',
+        mutation: this.currentMutation,
+        observer: this,
+      })
+    }
   }
 
   protected onUnsubscribe(): void {

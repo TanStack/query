@@ -48,6 +48,12 @@ interface NotifyEventMutationObserverRemoved {
   observer: MutationObserver<any, any, any>
 }
 
+interface NotifyEventMutationObserverOptionsUpdated {
+  type: 'observerOptionsUpdated'
+  mutation?: Mutation<any, any, any, any>
+  observer: MutationObserver<any, any, any, any>
+}
+
 interface NotifyEventMutationUpdated {
   type: 'updated'
   mutation: Mutation<any, any, any, any>
@@ -59,6 +65,7 @@ type MutationCacheNotifyEvent =
   | NotifyEventMutationRemoved
   | NotifyEventMutationObserverAdded
   | NotifyEventMutationObserverRemoved
+  | NotifyEventMutationObserverOptionsUpdated
   | NotifyEventMutationUpdated
 
 type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
