@@ -2149,14 +2149,16 @@ describe('useQuery', () => {
     await sleep(20)
     unsubscribe()
 
-    // 1. Subscribe observer
-    // 2. Query loading
-    // 3. Observer loading
-    // 4. Query success
-    // 5. Observer success
-    // 6. Query stale
-    // 7. Unsubscribe observer
-    expect(fn).toHaveBeenCalledTimes(7)
+    // 1. Query added -> loading
+    // 2. Observer result updated -> loading
+    // 3. Observer added
+    // 4. Query updated -> success
+    // 5. Observer result updated -> success
+    // 6. Query updated -> stale
+    // 7. Observer options updated
+    // 8. Observer result updated -> stale
+    // 9. Observer options updated
+    expect(fn).toHaveBeenCalledTimes(9)
   })
 
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
