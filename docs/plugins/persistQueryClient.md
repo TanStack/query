@@ -7,8 +7,8 @@ This is set of utilities for interacting with "persisters" which save your query
 
 ## Build Persisters
 
-- [createSyncStoragePersister](/plugins/createSyncStoragePersister)
-- [createAsyncStoragePersister](/plugins/createAsyncStoragePersister)
+- [createSyncStoragePersister](../plugins/createSyncStoragePersister)
+- [createAsyncStoragePersister](../plugins/createAsyncStoragePersister)
 - [create a custom persister](#persisters)
 
 ## How It Works
