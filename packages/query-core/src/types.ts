@@ -425,11 +425,14 @@ export interface QueryObserverSuccessResult<TData = unknown, TError = unknown>
   status: 'success'
 }
 
-export type QueryObserverResult<TData = unknown, TError = unknown> =
-  | QueryObserverLoadingErrorResult<TData, TError>
-  | QueryObserverLoadingResult<TData, TError>
+export type DefinedQueryObserverResult<TData = unknown, TError = unknown> =
   | QueryObserverRefetchErrorResult<TData, TError>
   | QueryObserverSuccessResult<TData, TError>
+
+export type QueryObserverResult<TData = unknown, TError = unknown> =
+  | DefinedQueryObserverResult<TData, TError>
+  | QueryObserverLoadingErrorResult<TData, TError>
+  | QueryObserverLoadingResult<TData, TError>
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,

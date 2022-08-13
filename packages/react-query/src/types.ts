@@ -8,6 +8,7 @@ import {
   QueryKey,
   MutationObserverOptions,
   MutateFunction,
+  DefinedQueryObserverResult,
 } from '@tanstack/query-core'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -65,10 +66,15 @@ export type UseQueryResult<
   TError = unknown,
 > = UseBaseQueryResult<TData, TError>
 
+export type DefinedUseBaseQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = DefinedQueryObserverResult<TData, TError>
+
 export type DefinedUseQueryResult<
   TData = unknown,
   TError = unknown,
-> = UseQueryResult<TData, TError> & { data: TData; isLoading: false }
+> = DefinedUseBaseQueryResult<TData, TError>
 
 export type UseInfiniteQueryResult<
   TData = unknown,
