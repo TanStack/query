@@ -31,7 +31,7 @@ Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [React Tabl
 ## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
 
 Still on **React Query v2**? No problem! Check out the v2 docs here: https://react-query-v2.tanstack.com/. <br />
-Would you like to try **React Query v4beta**? Check out the v4 beta docs here: https://react-query-beta.tanstack.com/.
+Still on **React Query v3**? No problem! Check out the v3 docs here: https://react-query-v3.tanstack.com/.
 
 ## Quick Features
 
