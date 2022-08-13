@@ -13,7 +13,7 @@
     "broadcast-channel": "^3.4.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@tanstack/react-query": "4.1.0",
+    "@tanstack/react-query": "4.1.3",
     "@tanstack/react-query-devtools": "4.0.10",
     "react-scripts": "3.0.1",
     "stop-runaway-react-effects": "^1.2.0",
