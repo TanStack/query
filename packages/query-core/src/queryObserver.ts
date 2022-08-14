@@ -1,5 +1,6 @@
 import { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 import {
+  isEnabled,
   isServer,
   isValidTimeout,
   noop,
@@ -165,9 +166,10 @@ export class QueryObserver<
 
     if (
       typeof this.options.enabled !== 'undefined' &&
-      typeof this.options.enabled !== 'boolean'
+      typeof this.options.enabled !== 'boolean' &&
+      typeof this.options.enabled !== 'function'
     ) {
-      throw new Error('Expected enabled to be a boolean')
+      throw new Error('Expected enabled to be a boolean or a function')
     }
 
     // Keep previous query key if the user does not supply one
@@ -199,7 +201,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        isEnabled(this.options.enabled, [this.currentQuery]) !==
+          isEnabled(prevOptions.enabled, [prevQuery]) ||
         this.options.staleTime !== prevOptions.staleTime)
     ) {
       this.updateStaleTimeout()
@@ -211,7 +214,8 @@ export class QueryObserver<
     if (
       mounted &&
       (this.currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        isEnabled(this.options.enabled, [this.currentQuery]) !==
+          isEnabled(prevOptions.enabled, [prevQuery]) ||
         nextRefetchInterval !== this.currentRefetchInterval)
     ) {
       this.updateRefetchInterval(nextRefetchInterval)
@@ -365,7 +369,7 @@ export class QueryObserver<
 
     if (
       isServer ||
-      this.options.enabled === false ||
+      !isEnabled(this.options.enabled, [this.currentQuery]) ||
       !isValidTimeout(this.currentRefetchInterval) ||
       this.currentRefetchInterval === 0
     ) {
@@ -702,7 +706,7 @@ function shouldLoadOnMount(
   options: QueryObserverOptions<any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
+    isEnabled(options.enabled, [query]) &&
     !query.state.dataUpdatedAt &&
     !(query.state.status === 'error' && options.retryOnMount === false)
   )
@@ -726,7 +730,7 @@ function shouldFetchOn(
     typeof options['refetchOnWindowFocus'] &
     typeof options['refetchOnReconnect'],
 ) {
-  if (options.enabled !== false) {
+  if (isEnabled(options.enabled, [query])) {
     const value = typeof field === 'function' ? field(query) : field
 
     return value === 'always' || (value !== false && isStale(query, options))
@@ -741,8 +745,8 @@ function shouldFetchOptionally(
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
   return (
-    options.enabled !== false &&
-    (query !== prevQuery || prevOptions.enabled === false) &&
+    isEnabled(options.enabled, [query]) &&
+    (query !== prevQuery || !isEnabled(prevOptions.enabled, [prevQuery])) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)
   )

@@ -78,8 +78,9 @@ const result = useQuery({
   - The function that the query will use to request data.
   - Receives a [QueryFunctionContext](../guides/query-functions#queryfunctioncontext)
   - Must return a promise that will either resolve data or throw an error. The data cannot be `undefined`.
-- `enabled: boolean`
+- `enabled: boolean | ((query: Query) => boolean)`
   - Set this to `false` to disable this query from automatically running.
+  - If set to a function, the function will be executed with the query to compute the value
   - Can be used for [Dependent Queries](../guides/dependent-queries).
 - `networkMode: 'online' | 'always' | 'offlineFirst`
   - optional

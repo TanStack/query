@@ -433,3 +433,15 @@ export function replaceData<
   }
   return data
 }
+
+export function isEnabled<T extends (...args: any[]) => boolean>(
+  _enabled: boolean | T | undefined,
+  params: Parameters<T>,
+): boolean {
+  // Allow pass in a function that returns boolean to `enabled` option
+  if (typeof _enabled === 'function') {
+    return _enabled(...params)
+  }
+
+  return _enabled ?? true
+}

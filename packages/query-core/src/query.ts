@@ -1,4 +1,10 @@
-import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
+import {
+  getAbortController,
+  isEnabled,
+  noop,
+  replaceData,
+  timeUntilStale,
+} from './utils'
 import type {
   InitialDataFunction,
   QueryKey,
@@ -232,7 +238,9 @@ export class Query<
   }
 
   isActive(): boolean {
-    return this.observers.some((observer) => observer.options.enabled !== false)
+    return this.observers.some((observer) =>
+      isEnabled(observer.options.enabled, [observer.getCurrentQuery()]),
+    )
   }
 
   isDisabled(): boolean {
