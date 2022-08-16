@@ -137,7 +137,7 @@ export default function useTimelineEvents(options: ContextOptions) {
       if (!isRecording) return
       if (!result) return
       const event = createEvent(result)
-      setEvents((prevEvents) => [...prevEvents, event])
+      setTimeout(() => setEvents((prevEvents) => [...prevEvents, event]), 0)
     })
   }, [queryCache, isRecording])
   React.useEffect(() => {
@@ -150,6 +150,29 @@ export default function useTimelineEvents(options: ContextOptions) {
     startRecording: () => {
       setIsRecording(true)
       setTimeRange({ start: new Date(), end: null })
+
+      const currentQueries = queryCache.getAll()
+
+      const initialEvents = currentQueries.flatMap((query) => {
+        if (query.getObserversCount()) {
+          return [
+            createEvent({
+              type: 'added',
+              query,
+            }),
+            createEvent({
+              type: 'observerAdded',
+              query,
+            } as QueryCacheNotifyEvent),
+          ]
+        }
+        return createEvent({
+          type: 'added',
+          query,
+        })
+      })
+
+      setEvents(initialEvents)
     },
     stopRecording: () => {
       setIsRecording(false)

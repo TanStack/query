@@ -95,7 +95,6 @@ export function TimelinePanel(props: TimelinePanelProps) {
   )
   const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     e.stopPropagation()
-    e.preventDefault()
     setZoom((x) => clampValue(x + e.deltaY * 10, 10, 10000))
     return false
   }
