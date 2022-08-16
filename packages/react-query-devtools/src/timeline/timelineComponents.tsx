@@ -51,13 +51,7 @@ export const SVGQueryTimeline = React.forwardRef<
       {...divProps}
       style={{ height: 30, padding: '4px 8px', flex: 1, overflow: 'hidden' }}
     >
-      <svg
-        width="100%"
-        height="100%"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox={`${-2 + offset} -2 100 10`}
-        preserveAspectRatio="xMinYMid meet"
-      >
+      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         {boxes.map((item) => {
           const counts = computeObserverCountBoxes(item)
 
@@ -65,9 +59,9 @@ export const SVGQueryTimeline = React.forwardRef<
             <g key={item.startAt.getTime()}>
               <rect
                 x={scaleX(item.startAt)}
-                y="0"
+                y="4"
                 width={scaleX(item.endAt) - scaleX(item.startAt)}
-                height="7"
+                height="22"
                 fill="#8798bf42"
               >
                 Cache time: {item.cacheTime}ms
@@ -77,18 +71,18 @@ export const SVGQueryTimeline = React.forwardRef<
                   <rect
                     key={count.start.getTime()}
                     x={scaleX(count.start)}
-                    y="0"
+                    y="4"
                     width={scaleX(count.end) - scaleX(count.start)}
-                    height="7"
+                    height="22"
                     fill="#375c8d"
                   >
                     <title>{count.count} observer(s)</title>
                   </rect>
                   <text
                     x={(scaleX(count.start) + scaleX(count.end)) / 2}
-                    y="5"
+                    y="20"
                     fill="white"
-                    fontSize="4"
+                    fontSize="14"
                   >
                     {count.count}
                   </text>
@@ -98,7 +92,7 @@ export const SVGQueryTimeline = React.forwardRef<
                 <React.Fragment key={i}>
                   <circle
                     cx={scaleX(update.at)}
-                    cy="0"
+                    cy="2"
                     r="2"
                     fill={getActionColor(update.action)}
                   >
@@ -106,9 +100,9 @@ export const SVGQueryTimeline = React.forwardRef<
                   </circle>
                   <rect
                     x={scaleX(update.at) - 0.25}
-                    y="0"
-                    width="0.5"
-                    height="7"
+                    y="4"
+                    width="1"
+                    height="22"
                     fill={getActionColor(update.action)}
                   >
                     <title>{update.action}</title>
