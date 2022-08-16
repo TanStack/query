@@ -23,6 +23,6 @@
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "broadcast-channel": "^3.4.1"
+    "broadcast-channel": "^4.14.0"
   }
 }
