@@ -427,6 +427,8 @@ export function replaceData<
   // Use prev data if an isDataEqual function is defined and returns `true`
   if (options.isDataEqual?.(prevData, data)) {
     return prevData as TData
+  } else if (typeof options.structuralSharing === 'function') {
+    return options.structuralSharing(prevData, data)
   } else if (options.structuralSharing !== false) {
     // Structurally share data between prev and new data if needed
     return replaceEqualDeep(prevData, data)

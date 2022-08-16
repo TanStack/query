@@ -108,7 +108,7 @@ const { refetch } = useInfiniteQuery(['projects'], fetchProjects, {
 refetch({ refetchPage: (page, index) => index === 0 })
 ```
 
-You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](/reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](/reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](/reference/QueryClient#queryclientresetqueries).
+You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](../reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](../reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](../reference/QueryClient#queryclientresetqueries).
 
 **Signature**
 

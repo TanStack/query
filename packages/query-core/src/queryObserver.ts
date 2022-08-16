@@ -155,6 +155,14 @@ export class QueryObserver<
 
     this.options = this.client.defaultQueryOptions(options)
 
+    if (!shallowEqualObjects(prevOptions, this.options)) {
+      this.client.getQueryCache().notify({
+        type: 'observerOptionsUpdated',
+        query: this.currentQuery,
+        observer: this,
+      })
+    }
+
     if (
       typeof this.options.enabled !== 'undefined' &&
       typeof this.options.enabled !== 'boolean'

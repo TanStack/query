@@ -13,6 +13,7 @@ import {
   QueryClient,
   QueryFunction,
   QueryObserver,
+  QueryObserverOptions,
 } from '..'
 import { focusManager, onlineManager } from '..'
 
@@ -355,6 +356,38 @@ describe('queryClient', () => {
       queryClient.setQueryData(key, newData)
 
       expect(queryCache.find(key)!.state.data).toBe(newData)
+    })
+
+    test('should apply a custom structuralSharing function when provided', () => {
+      const key = queryKey()
+
+      const queryObserverOptions = {
+        structuralSharing: (
+          prevData: { value: Date } | undefined,
+          newData: { value: Date },
+        ) => {
+          if (!prevData) {
+            return newData
+          }
+          return newData.value.getTime() === prevData.value.getTime()
+            ? prevData
+            : newData
+        },
+      } as QueryObserverOptions
+
+      queryClient.setDefaultOptions({ queries: queryObserverOptions })
+
+      const oldData = { value: new Date(2022, 6, 19) }
+      const newData = { value: new Date(2022, 6, 19) }
+      queryClient.setQueryData(key, oldData)
+      queryClient.setQueryData(key, newData)
+
+      expect(queryCache.find(key)!.state.data).toBe(oldData)
+
+      const distinctData = { value: new Date(2021, 11, 25) }
+      queryClient.setQueryData(key, distinctData)
+
+      expect(queryCache.find(key)!.state.data).toBe(distinctData)
     })
 
     test('should not set isFetching to false', async () => {

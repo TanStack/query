@@ -76,9 +76,12 @@ export interface QueryOptions<
   behavior?: QueryBehavior<TQueryFnData, TError, TData>
   /**
    * Set this to `false` to disable structural sharing between query results.
+   * Set this to a function which accepts the old and new data and returns resolved data of the same type to implement custom structural sharing logic.
    * Defaults to `true`.
    */
-  structuralSharing?: boolean
+  structuralSharing?:
+    | boolean
+    | ((oldData: TData | undefined, newData: TData) => TData)
   /**
    * This function can be set to automatically get the previous cursor for infinite queries.
    * The result will also be used to determine the value of `hasPreviousPage`.
@@ -425,11 +428,14 @@ export interface QueryObserverSuccessResult<TData = unknown, TError = unknown>
   status: 'success'
 }
 
-export type QueryObserverResult<TData = unknown, TError = unknown> =
-  | QueryObserverLoadingErrorResult<TData, TError>
-  | QueryObserverLoadingResult<TData, TError>
+export type DefinedQueryObserverResult<TData = unknown, TError = unknown> =
   | QueryObserverRefetchErrorResult<TData, TError>
   | QueryObserverSuccessResult<TData, TError>
+
+export type QueryObserverResult<TData = unknown, TError = unknown> =
+  | DefinedQueryObserverResult<TData, TError>
+  | QueryObserverLoadingErrorResult<TData, TError>
+  | QueryObserverLoadingResult<TData, TError>
 
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
@@ -535,18 +541,18 @@ export interface MutationOptions<
     data: TData,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | void
+  ) => Promise<unknown> | unknown
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | void
+  ) => Promise<unknown> | unknown
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | void
+  ) => Promise<unknown> | unknown
   retry?: RetryValue<TError>
   retryDelay?: RetryDelayValue<TError>
   networkMode?: NetworkMode
@@ -574,18 +580,18 @@ export interface MutateOptions<
     data: TData,
     variables: TVariables,
     context: TContext,
-  ) => Promise<unknown> | void
+  ) => Promise<unknown> | unknown
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | void
+  ) => Promise<unknown> | unknown
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | void
+  ) => Promise<unknown> | unknown
 }
 
 export type MutateFunction<
