@@ -11,7 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "module": "build/esm/index.js",
-  "main": "build/cjs/packages/query-broadcast-client-experimental/src/index.js",
+  "main": "build/cjs/index.js",
   "browser": "build/umd/index.production.js",
   "types": "build/types/query-broadcast-client-experimental/src/index.d.ts",
   "files": [
