@@ -10,16 +10,10 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "types": "build/lib/index.d.ts",
   "module": "build/lib/index.mjs",
   "main": "build/lib/index.js",
   "browser": "build/lib/index.js",
-  "types": "build/lib/index.d.ts",
-  "files": [
-    "build/lib/*",
-    "build/umd/*",
-    "cjs.fallback.js",
-    "src"
-  ],
   "exports": {
     ".": {
       "development": {
@@ -40,6 +34,12 @@
     },
     "./package.json": "./package.json"
   },
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "cjs.fallback.js",
+    "src"
+  ],
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
