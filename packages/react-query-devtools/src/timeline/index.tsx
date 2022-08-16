@@ -32,24 +32,6 @@ interface TimelinePanelProps extends ContextOptions {
   setPanel: (panel: DevtoolsPanel) => void
 }
 
-function useElementWidth(elementRef: React.RefObject<HTMLElement>) {
-  const [width, setWidth] = React.useState(elementRef.current?.offsetWidth || 0)
-
-  React.useEffect(() => {
-    if (!elementRef.current) return
-    setWidth(elementRef.current.offsetWidth)
-
-    const resize = () => {
-      setWidth(elementRef.current?.offsetWidth || 0)
-    }
-    const observer = new ResizeObserver(resize)
-    observer.observe(elementRef.current)
-    return () => observer.disconnect()
-  }, [elementRef])
-
-  return width
-}
-
 export function TimelinePanel(props: TimelinePanelProps) {
   const { isOpen = true, context, ...headProps } = props
   const theme = useTheme()
