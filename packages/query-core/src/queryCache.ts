@@ -55,6 +55,12 @@ interface NotifyEventQueryObserverResultsUpdated {
   query: Query<any, any, any, any>
 }
 
+interface NotifyEventQueryObserverOptionsUpdated {
+  type: 'observerOptionsUpdated'
+  query: Query<any, any, any, any>
+  observer: QueryObserver<any, any, any, any, any>
+}
+
 type QueryCacheNotifyEvent =
   | NotifyEventQueryAdded
   | NotifyEventQueryRemoved
@@ -62,6 +68,7 @@ type QueryCacheNotifyEvent =
   | NotifyEventQueryObserverAdded
   | NotifyEventQueryObserverRemoved
   | NotifyEventQueryObserverResultsUpdated
+  | NotifyEventQueryObserverOptionsUpdated
 
 type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 

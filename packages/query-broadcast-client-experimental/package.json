@@ -29,10 +29,11 @@
   ],
   "scripts": {
     "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
     "@tanstack/query-core": "^4.0.10",
-    "broadcast-channel": "^3.4.1"
+    "broadcast-channel": "^4.14.0"
   }
 }

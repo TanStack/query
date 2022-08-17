@@ -3,11 +3,14 @@ id: quick-start
 title: Quick Start
 ---
 
-This example very briefly illustrates the 3 core concepts of React Query:
+This code snippet very briefly illustrates the 3 core concepts of React Query:
 
 - [Queries](./guides/queries)
 - [Mutations](./guides/mutations)
 - [Query Invalidation](./guides/query-invalidation)
+
+If you're looking for a fully functioning example, please have a look at our [simple codesandbox example](../examples/react/simple)
+
 
 ```tsx
 import {
@@ -49,7 +52,7 @@ function Todos() {
   return (
     <div>
       <ul>
-        {query.data.map(todo => (
+        {query.data?.map(todo => (
           <li key={todo.id}>{todo.title}</li>
         ))}
       </ul>

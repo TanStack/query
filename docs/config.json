@@ -229,20 +229,8 @@
           "to": "examples/react/basic-graphql-request"
         },
         {
-          "label": "Custom Hooks",
-          "to": "examples/react/custom-hooks"
-        },
-        {
           "label": "Auto Refetching / Polling / Realtime",
           "to": "examples/react/auto-refetching"
-        },
-        {
-          "label": "Window Refocus Refetching",
-          "to": "examples/react/focus-refetching"
-        },
-        {
-          "label": "Optimistic Updates",
-          "to": "examples/react/optimistic-updates"
         },
         {
           "label": "Optimistic Updates in TypeScript",

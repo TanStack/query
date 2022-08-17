@@ -178,10 +178,11 @@ const result = useQuery({
 - `isDataEqual: (oldData: TData | undefined, newData: TData) => boolean`
   - Optional
   - This function should return boolean indicating whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
-- `structuralSharing: boolean`
+- `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
   - Optional
   - Defaults to `true`
   - If set to `false`, structural sharing between query results will be disabled.
+  - If set to a function, the old and new data values will be passed through this function, which should combine them into resolved data for the query. This way, you can retain references from the old data to improve performance even when that data contains non-serializable values.
 - `useErrorBoundary: undefined | boolean | (error: TError, query: Query) => boolean`
   - Defaults to the global query config's `useErrorBoundary` value, which is `undefined`
   - Set this to `true` if you want errors to be thrown in the render phase and propagate to the nearest error boundary

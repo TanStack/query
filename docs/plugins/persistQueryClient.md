@@ -7,8 +7,8 @@ This is set of utilities for interacting with "persisters" which save your query
 
 ## Build Persisters
 
-- [createSyncStoragePersister](/plugins/createSyncStoragePersister)
-- [createAsyncStoragePersister](/plugins/createAsyncStoragePersister)
+- [createSyncStoragePersister](../plugins/createSyncStoragePersister)
+- [createAsyncStoragePersister](../plugins/createAsyncStoragePersister)
 - [create a custom persister](#persisters)
 
 ## How It Works
@@ -211,7 +211,7 @@ ReactDOM.createRoot(rootElement).render(
 `PersistQueryClientProvider` takes the same props as [QueryClientProvider](../reference/QueryClientProvider), and additionally:
 
 - `persistOptions: PersistQueryClientOptions`
-  - all [options](#options) you cann pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
+  - all [options](#options) you can pass to [persistQueryClient](#persistqueryclient) minus the QueryClient itself
 - `onSuccess?: () => void`
   - optional
   - will be called when the initial restore is finished
