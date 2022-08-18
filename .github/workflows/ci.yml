@@ -25,7 +25,6 @@ jobs:
           cache: 'npm'
       - run: |
           npm i
-          npm run test:ci
           git config --global user.name 'Tanner Linsley'
           git config --global user.email 'tannerlinsley@users.noreply.github.com'
           npm run cipublish

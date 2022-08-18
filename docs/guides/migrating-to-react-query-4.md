@@ -139,7 +139,7 @@ new QueryClient({
       networkMode: 'offlineFirst',
     },
     mutations: {
-      networkmode: 'offlineFirst',
+      networkMode: 'offlineFirst',
     },
   },
 })
