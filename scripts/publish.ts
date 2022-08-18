@@ -361,30 +361,28 @@ async function run() {
       )
 
       await Promise.all(
-        (['module', 'main', 'browser', 'types'] as const).map(
-          async (entryKey) => {
-            const entry = pkgJson[entryKey] as string
+        (['module', 'main', 'types'] as const).map(async (entryKey) => {
+          const entry = pkgJson[entryKey] as string
 
-            if (!entry) {
-              throw new Error(
-                `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
-              )
-            }
-
-            const filePath = path.resolve(
-              rootDir,
-              'packages',
-              pkg.packageDir,
-              entry,
+          if (!entry) {
+            throw new Error(
+              `Missing entry for "${entryKey}" in ${pkg.packageDir}/package.json!`,
             )
+          }
 
-            try {
-              await fsp.access(filePath)
-            } catch (err) {
-              failedValidations.push(`Missing build file: ${filePath}`)
-            }
-          },
-        ),
+          const filePath = path.resolve(
+            rootDir,
+            'packages',
+            pkg.packageDir,
+            entry,
+          )
+
+          try {
+            await fsp.access(filePath)
+          } catch (err) {
+            failedValidations.push(`Missing build file: ${filePath}`)
+          }
+        }),
       )
     }),
   )
