@@ -38,8 +38,6 @@ export type Package = {
   name: string
   packageDir: string
   srcDir: string
-  dependencies?: string[]
-  peerDependencies?: string[]
 }
 
 export type BranchConfig = {
