@@ -13,7 +13,6 @@
   "types": "build/lib/index.d.ts",
   "module": "build/lib/index.mjs",
   "main": "build/lib/index.js",
-  "browser": "build/lib/index.js",
   "exports": {
     ".": {
       "development": {
