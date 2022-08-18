@@ -17,6 +17,7 @@
   "files": [
     "build/lib/*",
     "build/umd/*",
+    "cjs.fallback.js",
     "src"
   ],
   "exports": {
@@ -29,7 +30,7 @@
       "default": {
         "types": "./build/lib/index.d.ts",
         "import": "./build/lib/noop.mjs",
-        "default": "./build/lib/noop.js"
+        "default": "./cjs.fallback.js"
       }
     },
     "./production": {
