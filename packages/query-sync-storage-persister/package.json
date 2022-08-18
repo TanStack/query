@@ -10,10 +10,9 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
+  "types": "build/lib/index.d.ts",
   "module": "build/lib/index.mjs",
   "main": "build/lib/index.js",
-  "browser": "build/umd/index.production.js",
-  "types": "build/lib/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",

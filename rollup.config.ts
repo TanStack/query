@@ -81,8 +81,10 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
       },
+      bundleUMDGlobals: ['@tanstack/query-core'],
     }),
     ...buildConfigs({
       name: 'react-query-devtools',
@@ -128,9 +130,16 @@ function buildConfigs(opts: {
   outputFile: string
   entryFile: string
   globals: Record<string, string>
+  // This option allows to bundle specified dependencies for umd build
+  bundleUMDGlobals?: string[]
 }): RollupOptions[] {
   const input = path.resolve(opts.packageDir, opts.entryFile)
   const externalDeps = Object.keys(opts.globals)
+
+  const bundleUMDGlobals = opts.bundleUMDGlobals || []
+  const umdExternal = externalDeps.filter(
+    (external) => !bundleUMDGlobals.includes(external),
+  )
 
   const external = (moduleName) => externalDeps.includes(moduleName)
   const banner = createBanner(opts.name)
@@ -145,7 +154,7 @@ function buildConfigs(opts: {
     globals: opts.globals,
   }
 
-  return [esm(options), cjs(options), umdDev(options), umdProd(options)]
+  return [esm(options), cjs(options), umdDev({...options, external: umdExternal}), umdProd({...options, external: umdExternal})]
 }
 
 function esm({ input, packageDir, external, banner }: Options): RollupOptions {
