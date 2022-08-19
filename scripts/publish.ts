@@ -445,9 +445,9 @@ async function run() {
                 config.dependencies[dep] !== depVersion
               ) {
                 console.info(
-                  `  Updating ${pkg.name}'s dependency on ${dep} to version ^${depVersion}.`,
+                  `  Updating ${pkg.name}'s dependency on ${dep} to version ${depVersion}.`,
                 )
-                config.dependencies[dep] = `^${depVersion}`
+                config.dependencies[dep] = depVersion
               }
             }
           }),
@@ -472,9 +472,9 @@ async function run() {
                 config.peerDependencies[peerDep] !== depVersion
               ) {
                 console.info(
-                  `  Updating ${pkg.name}'s peerDependency on ${peerDep} to version ^${depVersion}.`,
+                  `  Updating ${pkg.name}'s peerDependency on ${peerDep} to version ${depVersion}.`,
                 )
-                config.peerDependencies[peerDep] = `^${depVersion}`
+                config.peerDependencies[peerDep] = depVersion
               }
             }
           }),
