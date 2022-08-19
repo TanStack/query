@@ -58,3 +58,11 @@ React Query maintainer [TkDodo](https://twitter.com/tkdodo) has a series of blog
 ## [#13: Offline React Query](https://tkdodo.eu/blog/offline-react-query)
 
 > There are many ways to produce promises - which is everything React Query needs - but by far the biggest use-case is data fetching. Very often, that requires an active network connection. But sometimes, especially on mobile devices where, the network connection can be unreliable, you need your app to also work without it. In this article, you'll learn about the different offline strategies React Query offers. [Read more...](https://tkdodo.eu/blog/offline-react-query)
+
+## [#14: React Query and Forms](https://tkdodo.eu/blog/react-query-and-forms)
+
+> Forms tend to blur the line between what is server state and what is client state. In most applications, we would not only like to display state, but also let the user interact with it. This article shows two different approaches as well as some tips and tricks about using React Query with Forms. [Read more...](https://tkdodo.eu/blog/react-query-and-forms)
+
+## [#15: React Query FAQs](https://tkdodo.eu/blog/react-query-fa-qs)
+
+> This article tries to answer the most frequently asked questions about React Query. [Read more...](https://tkdodo.eu/blog/react-query-fa-qs)
