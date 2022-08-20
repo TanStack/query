@@ -198,7 +198,7 @@ const result = useQuery({
 
 - `status: String`
   - Will be:
-    - `loading` if the query is in a "hard" loading state. This means there is no cached data and the query is currently fetching, eg `isFetching === true`
+    - `loading` if there's no cached data and no query attempt was finished yet.
     - `error` if the query attempt resulted in an error. The corresponding `error` property has the error received from the attempted fetch
     - `success` if the query has received a response with no errors and is ready to display its data. The corresponding `data` property on the query is the data received from the successful fetch or if the query's `enabled` property is set to `false` and has not been fetched yet `data` is the first `initialData` supplied to the query on initialization.
 - `isLoading: boolean`
