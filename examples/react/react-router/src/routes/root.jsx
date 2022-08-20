@@ -10,20 +10,31 @@ import {
 import { useDebounce } from "rooks";
 
 import { createContact, getContacts } from "../contacts";
+import { useQuery } from "@tanstack/react-query";
 
-export async function loader({ request }) {
-  const url = new URL(request.url);
-  const q = url.searchParams.get("q");
-  const contacts = await getContacts(q);
-  return { contacts, q };
-}
+const contactListQuery = (q) => ({
+  queryKey: ["contacts", "list", q ?? "all"],
+  queryFn: () => getContacts(q),
+});
+
+export const loader =
+  (queryClient) =>
+  async ({ request }) => {
+    const url = new URL(request.url);
+    const q = url.searchParams.get("q");
+    if (!queryClient.getQueryData(contactListQuery(q).queryKey)) {
+      await queryClient.prefetchQuery(contactListQuery(q));
+    }
+    return { q };
+  };
 
 export async function action() {
   return await createContact();
 }
 
 export default function Root() {
-  const { contacts, q } = useLoaderData();
+  const { q } = useLoaderData();
+  const { data: contacts } = useQuery(contactListQuery(q));
   const navigation = useNavigation();
   const submit = useSubmit();
 

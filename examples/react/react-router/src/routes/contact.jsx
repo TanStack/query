@@ -1,17 +1,31 @@
 import * as React from "react";
-import { Form, useLoaderData, useFetcher } from "react-router-dom";
+import { Form, useFetcher, useParams } from "react-router-dom";
 import { getContact, updateContact } from "../contacts";
+import { useQuery } from "@tanstack/react-query";
 
-export async function loader({ params }) {
-  const contact = await getContact(params.contactId);
-  if (!contact) {
-    throw new Response("", {
-      status: 404,
-      statusText: "Not Found",
-    });
-  }
-  return contact;
-}
+const contactDetailQuery = (id) => ({
+  queryKey: ["contacts", "detail", id],
+  queryFn: async () => {
+    const contact = await getContact(id);
+    if (!contact) {
+      throw new Response("", {
+        status: 404,
+        statusText: "Not Found",
+      });
+    }
+    return contact;
+  },
+});
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    if (
+      !queryClient.getQueryData(contactDetailQuery(params.contactId).queryKey)
+    ) {
+      await queryClient.prefetchQuery(contactDetailQuery(params.contactId));
+    }
+  };
 
 export async function action({ request, params }) {
   let formData = await request.formData();
@@ -21,7 +35,8 @@ export async function action({ request, params }) {
 }
 
 export default function Contact() {
-  const contact = useLoaderData();
+  const params = useParams();
+  const { data: contact } = useQuery(contactDetailQuery(params.contactId));
 
   return (
     <div id="contact">

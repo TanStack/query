@@ -22,7 +22,7 @@ import Index from "./routes/index";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 20,
+      staleTime: 1000 * 5,
     },
   },
 });
@@ -36,20 +36,20 @@ ReactDOM.createRoot(rootElement).render(
           path="/"
           element={<Root />}
           errorElement={<ErrorPage />}
-          loader={rootLoader}
+          loader={rootLoader(queryClient)}
           action={rootAction}
         >
           <Route index element={<Index />} />
           <Route
             path="contacts/:contactId"
             element={<Contact />}
-            loader={contactLoader}
+            loader={contactLoader(queryClient)}
             action={contactAction}
           />
           <Route
             path="contacts/:contactId/edit"
             element={<EditContact />}
-            loader={contactLoader}
+            loader={contactLoader(queryClient)}
             action={editAction}
           />
           <Route
