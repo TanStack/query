@@ -22,8 +22,7 @@ export const loader =
   async ({ params }) => {
     const query = contactDetailQuery(params.contactId);
     return (
-      queryClient.getQueryData(query) ??
-      (await queryClient.prefetchQuery(query))
+      queryClient.getQueryData(query) ?? (await queryClient.fetchQuery(query))
     );
   };
 
