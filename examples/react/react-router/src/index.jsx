@@ -54,7 +54,7 @@ ReactDOM.createRoot(rootElement).render(
           />
           <Route
             path="contacts/:contactId/destroy"
-            action={destroyAction}
+            action={destroyAction(queryClient)}
             errorElement={<div>Oops! There was an error.</div>}
           />
         </Route>
