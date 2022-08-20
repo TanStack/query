@@ -20,19 +20,23 @@ const contactDetailQuery = (id) => ({
 export const loader =
   (queryClient) =>
   async ({ params }) => {
-    if (
-      !queryClient.getQueryData(contactDetailQuery(params.contactId).queryKey)
-    ) {
-      await queryClient.prefetchQuery(contactDetailQuery(params.contactId));
-    }
+    const query = contactDetailQuery(params.contactId);
+    return (
+      queryClient.getQueryData(query) ??
+      (await queryClient.prefetchQuery(query))
+    );
   };
 
-export async function action({ request, params }) {
-  let formData = await request.formData();
-  return updateContact(params.contactId, {
-    favorite: formData.get("favorite") === "true" ? true : false,
-  });
-}
+export const action =
+  (queryClient) =>
+  async ({ request, params }) => {
+    let formData = await request.formData();
+    const contact = await updateContact(params.contactId, {
+      favorite: formData.get("favorite") === "true",
+    });
+    await queryClient.invalidateQueries(["contacts"]);
+    return contact;
+  };
 
 export default function Contact() {
   const params = useParams();
