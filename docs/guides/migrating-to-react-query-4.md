@@ -371,7 +371,7 @@ If you were importing anything from `'react-query/react'` directly in your proje
 
 ```diff
 - import { QueryClientProvider } from 'react-query/react';
-+ import { QueryClientProvider } from 'react-query/reactjs';
++ import { QueryClientProvider } from '@tanstack/react-query/reactjs';
 ```
 
 ## New Features 🚀
