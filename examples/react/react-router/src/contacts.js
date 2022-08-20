@@ -2,6 +2,37 @@ import localforage from "localforage";
 import { matchSorter } from "match-sorter";
 import sortBy from "sort-by";
 
+const seed = async () => {
+  const initialData = [
+    {
+      avatar: "https://avatars.githubusercontent.com/u/5580297?v=4",
+      createdAt: 1660978713047,
+      favorite: false,
+      first: "Tanner",
+      id: "usupkc1",
+      last: "Linsley",
+      notes: "Created React Query",
+      twitter: "@tannerlinsley",
+    },
+    {
+      avatar: "https://avatars.githubusercontent.com/u/1021430",
+      createdAt: 1660979124264,
+      favorite: false,
+      first: "Dominik",
+      id: "kvvztl7",
+      last: "D",
+      notes: "Maintains React Query",
+      twitter: "@tkdodo",
+    },
+  ];
+  const contacts = await localforage.getItem("contacts");
+  if (!contacts) {
+    set(initialData);
+  }
+};
+
+seed();
+
 export async function getContacts(query) {
   await fakeNetwork(`getContacts:${query}`);
   let contacts = await localforage.getItem("contacts");
