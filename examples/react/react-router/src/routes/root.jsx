@@ -28,9 +28,11 @@ export const loader =
     return { q };
   };
 
-export async function action() {
-  return await createContact();
-}
+export const action = (queryClient) => async () => {
+  const contact = await createContact();
+  queryClient.invalidateQueries(["contacts", "list"]);
+  return contact;
+};
 
 export default function Root() {
   const { q } = useLoaderData();

@@ -37,7 +37,7 @@ ReactDOM.createRoot(rootElement).render(
           element={<Root />}
           errorElement={<ErrorPage />}
           loader={rootLoader(queryClient)}
-          action={rootAction}
+          action={rootAction(queryClient)}
         >
           <Route index element={<Index />} />
           <Route
