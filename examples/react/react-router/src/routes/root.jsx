@@ -10,7 +10,7 @@ import {
 import { useDebounce } from "rooks";
 
 import { createContact, getContacts } from "../contacts";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useIsFetching } from "@tanstack/react-query";
 
 const contactListQuery = (q) => ({
   queryKey: ["contacts", "list", q ?? "all"],
@@ -37,12 +37,9 @@ export const action = (queryClient) => async () => {
 export default function Root() {
   const { q } = useLoaderData();
   const { data: contacts } = useQuery(contactListQuery(q));
+  const searching = useIsFetching(["contacts", "list"]) > 0;
   const navigation = useNavigation();
   const submit = useSubmit();
-
-  const searching =
-    navigation.location &&
-    new URLSearchParams(navigation.location.search).has("q");
 
   const debouncedSubmit = useDebounce(submit, 500);
 
