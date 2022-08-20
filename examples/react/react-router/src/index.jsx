@@ -50,7 +50,7 @@ ReactDOM.createRoot(rootElement).render(
             path="contacts/:contactId/edit"
             element={<EditContact />}
             loader={contactLoader(queryClient)}
-            action={editAction}
+            action={editAction(queryClient)}
           />
           <Route
             path="contacts/:contactId/destroy"
