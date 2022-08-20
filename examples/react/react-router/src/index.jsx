@@ -1,47 +1,65 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import React from "react";
-import ReactDOM from "react-dom/client";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import * as React from "react";
+import * as ReactDOM from "react-dom/client";
+import { DataBrowserRouter, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import axios from "axios";
 
-const queryClient = new QueryClient();
+import "./index.css";
 
-export default function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <Example />
-    </QueryClientProvider>
-  );
-}
+import ErrorPage from "./error-page";
+import Root, {
+  loader as rootLoader,
+  action as rootAction,
+} from "./routes/root";
+import Contact, {
+  loader as contactLoader,
+  action as contactAction,
+} from "./routes/contact";
+import EditContact, { action as editAction } from "./routes/edit";
+import { action as destroyAction } from "./routes/destroy";
+import Index from "./routes/index";
 
-function Example() {
-  const { isLoading, error, data, isFetching } = useQuery(["repoData"], () =>
-    axios
-      .get("https://api.github.com/repos/tannerlinsley/react-query")
-      .then((res) => res.data)
-  );
-
-  if (isLoading) return "Loading...";
-
-  if (error) return "An error has occurred: " + error.message;
-
-  return (
-    <div>
-      <h1>{data.name}</h1>
-      <p>{data.description}</p>
-      <strong>👀 {data.subscribers_count}</strong>{" "}
-      <strong>✨ {data.stargazers_count}</strong>{" "}
-      <strong>🍴 {data.forks_count}</strong>
-      <div>{isFetching ? "Updating..." : ""}</div>
-      <ReactQueryDevtools initialIsOpen />
-    </div>
-  );
-}
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 20,
+    },
+  },
+});
 
 const rootElement = document.getElementById("root");
-ReactDOM.createRoot(rootElement).render(<App />);
+ReactDOM.createRoot(rootElement).render(
+  <React.StrictMode>
+    <QueryClientProvider client={queryClient}>
+      <DataBrowserRouter>
+        <Route
+          path="/"
+          element={<Root />}
+          errorElement={<ErrorPage />}
+          loader={rootLoader}
+          action={rootAction}
+        >
+          <Route index element={<Index />} />
+          <Route
+            path="contacts/:contactId"
+            element={<Contact />}
+            loader={contactLoader}
+            action={contactAction}
+          />
+          <Route
+            path="contacts/:contactId/edit"
+            element={<EditContact />}
+            loader={contactLoader}
+            action={editAction}
+          />
+          <Route
+            path="contacts/:contactId/destroy"
+            action={destroyAction}
+            errorElement={<div>Oops! There was an error.</div>}
+          />
+        </Route>
+      </DataBrowserRouter>
+      <ReactQueryDevtools position="bottom-right" />
+    </QueryClientProvider>
+  </React.StrictMode>
+);

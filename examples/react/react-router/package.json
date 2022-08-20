@@ -9,9 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "axios": "^0.26.1",
+    "localforage": "^1.10.0",
+    "match-sorter": "^6.3.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-router-dom": "^6.4.0-pre.13",
+    "sort-by": "^1.2.0",
     "@tanstack/react-query": "4.2.1",
     "@tanstack/react-query-devtools": "4.2.1"
   },
