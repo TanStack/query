@@ -87,6 +87,6 @@ function set(contacts) {
 
 async function fakeNetwork() {
   return new Promise((res) => {
-    setTimeout(res, 500 + Math.random() * 800);
+    setTimeout(res, Math.random() * 800);
   });
 }
