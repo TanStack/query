@@ -9,6 +9,7 @@ import useTimelineEvents from './useTimelineEvents'
 import { SVGQueryTimeline, TooltipOptions } from './timelineComponents'
 import { useTheme } from '../theme'
 import TimelineOptions from './timelineOptions'
+import ReactDOM from 'react-dom'
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
@@ -129,18 +130,24 @@ export function TimelinePanel(props: TimelinePanelProps) {
 
   return (
     <>
-      {tooltip && (
-        <div
-          style={{
-            position: 'absolute',
-            top: tooltip.y,
-            left: tooltip.x,
-            backgroundColor: theme.background,
-          }}
-        >
-          {tooltip.content}
-        </div>
-      )}
+      {tooltip &&
+        ReactDOM.createPortal(
+          <div
+            style={{
+              position: 'absolute',
+              top: tooltip.y + 10,
+              left: tooltip.x + 10,
+              backgroundColor: theme.gray,
+              fontFamily: 'sans-serif',
+              zIndex: 100000,
+              color: 'white',
+              padding: '.5em',
+            }}
+          >
+            {tooltip.content}
+          </div>,
+          document.body,
+        )}
       <PanelMain isOpen={isOpen}>
         <PanelHead {...headProps}>
           <TimelineOptions

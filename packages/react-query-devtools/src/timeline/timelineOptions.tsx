@@ -1,4 +1,4 @@
-import React from 'react'
+import * as React from 'react'
 import { Input } from '../styledComponents'
 import useTimelineEvents from './useTimelineEvents'
 
@@ -33,13 +33,9 @@ export default function TimelineOptions({
           alignSelf: 'flex-end',
         }}
       >
-        <button onClick={() => setZoom((zoom) => clampZoom(zoom * 1.5))}>
-          -
-        </button>
+        <button onClick={() => setZoom((z) => clampZoom(z * 1.5))}>-</button>
         {Math.floor((zoomBasis / zoom) * 100)}%
-        <button onClick={() => setZoom((zoom) => clampZoom(zoom / 1.5))}>
-          +
-        </button>
+        <button onClick={() => setZoom((z) => clampZoom(z / 1.5))}>+</button>
       </div>
       <div
         style={{

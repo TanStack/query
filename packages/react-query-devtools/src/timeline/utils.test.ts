@@ -28,6 +28,7 @@ describe('computeQueryBoxes', () => {
       expect.objectContaining({
         startAt: new Date('2022-07-20T13:19:15.000Z'),
         endAt: new Date('2022-07-20T13:19:59.999Z'),
+        cacheTime: 300000,
       }),
     )
   })

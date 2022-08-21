@@ -5,7 +5,11 @@ import {
   ReactQueryQueryEvent,
 } from './useTimelineEvents'
 
-import { computeObserverCountBoxes, computeQueryBoxes } from './utils'
+import {
+  computeObserverCountBoxes,
+  computeQueryBoxes,
+  formatMillisecondsDuration,
+} from './utils'
 
 export type TooltipOptions = {
   x: number
@@ -98,6 +102,7 @@ export const SVGQueryTimeline = React.forwardRef<
         {boxes.map((item) => {
           const counts = computeObserverCountBoxes(item)
 
+          const cacheTime = formatMillisecondsDuration(item.cacheTime)
           return (
             <g key={item.startAt.getTime()}>
               <rect
@@ -106,7 +111,7 @@ export const SVGQueryTimeline = React.forwardRef<
                 width={scaleX(item.endAt) - scaleX(item.startAt)}
                 height="22"
                 fill="#8798bf42"
-                {...getTooltipProps(`Cache time: ${item.cacheTime}ms`)}
+                {...getTooltipProps(`Cache time: ${cacheTime}`)}
               />
               {counts.map((count) => (
                 <React.Fragment key={count.start.getTime()}>

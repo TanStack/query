@@ -38,6 +38,7 @@ export function computeQueryBoxes(
   sortedEvents.forEach((event) => {
     if (event.eventType === 'added') {
       partial.startAt = event.receivedAt
+      partial.cacheTime = event.cacheTime
     } else if (event.eventType === 'removed') {
       items.push({
         ...createBox(partial),
@@ -101,4 +102,23 @@ export function computeObserverCountBoxes(query: Box) {
   }
 
   return counts.filter((c) => c.count !== 0)
+}
+
+export function formatMillisecondsDuration(ms: number | undefined) {
+  if (!ms) return null
+
+  const minutes = Math.floor(ms / 60000)
+  const seconds = Math.floor((ms % 60000) / 1000)
+  const milliseconds = Math.floor((ms % 60000) % 1000)
+
+  const zipped: [number, string][] = [
+    [minutes, 'min'],
+    [seconds, 's'],
+    [milliseconds, 'ms'],
+  ]
+
+  return zipped
+    .filter(([count, _]) => count > 0)
+    .map(([count, unit]) => `${count}${unit}`)
+    .join(' ')
 }
