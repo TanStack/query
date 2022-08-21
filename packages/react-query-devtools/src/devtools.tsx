@@ -540,7 +540,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               }}
             >
               <Logo aria-hidden />
-              <ScreenReader text="Open React Query Devtools" />
+              <ScreenReader text="Close React Query Devtools" />
             </button>
             <div
               style={{
