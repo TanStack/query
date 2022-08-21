@@ -6,8 +6,9 @@ import { Code, Input } from '../styledComponents'
 import { DevtoolsPanel } from '../types'
 import useLocalStorage from '../useLocalStorage'
 import useTimelineEvents from './useTimelineEvents'
-import { SVGQueryTimeline } from './timelineComponents'
+import { SVGQueryTimeline, TooltipOptions } from './timelineComponents'
 import { useTheme } from '../theme'
+import TimelineOptions from './timelineOptions'
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max)
@@ -33,6 +34,7 @@ interface TimelinePanelProps extends ContextOptions {
 }
 
 const TableQueryKeyWidth = 200
+const TableQueryRowHeight = 38
 
 function convertTickPositionToDate(
   tickPosition: number,
@@ -93,22 +95,21 @@ export function TimelinePanel(props: TimelinePanelProps) {
   const [isDragging, setIsDragging] = React.useState<{ start: number } | null>(
     null,
   )
-  const onWheel = (e: React.WheelEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-    setZoom((x) => clampValue(x + e.deltaY * 10, 10, 10000))
-    return false
-  }
   const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!isDragging) return
     const { start, end } = timeRange
     if (!start) return
-    setOffset(
-      clampValue(
-        -(e.clientX - isDragging.start) * zoom,
-        0,
-        ((end || new Date()).getTime() - start.getTime()) / zoom,
-      ),
+    const horizontalOffset = e.clientX - isDragging.start
+
+    const timelineEnd = end ? end.getTime() : new Date().getTime()
+    const totalWidth = timelineEnd - start.getTime()
+    const scaledTotalWidth = totalWidth / zoom
+    const clampedOffset = clampValue(
+      horizontalOffset,
+      -scaledTotalWidth,
+      scaledTotalWidth,
     )
+    setOffset(clampedOffset)
   }
   const [tickPosition, setTickPosition] = React.useState(0)
   const tickOffset = TableQueryKeyWidth + 8
@@ -124,209 +125,167 @@ export function TimelinePanel(props: TimelinePanelProps) {
       })
     : null
 
+  const [tooltip, setTooltip] = React.useState<TooltipOptions | null>(null)
+
   return (
-    <PanelMain isOpen={isOpen}>
-      <PanelHead {...headProps}>
+    <>
+      {tooltip && (
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
+            position: 'absolute',
+            top: tooltip.y,
+            left: tooltip.x,
+            backgroundColor: theme.background,
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              marginTop: 2,
-              marginBottom: 4,
-            }}
-          >
-            <button
-              type="button"
-              aria-label="Start recording"
-              style={{
-                background: 'none',
-                border: 0,
-                cursor: 'pointer',
-                marginLeft: -6,
-              }}
-              onClick={() => {
-                if (timelineEvents.isRecording) {
-                  timelineEvents.stopRecording()
-                } else {
-                  timelineEvents.startRecording()
-                }
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16">
-                <circle
-                  cx="8"
-                  cy="8"
-                  r="8"
-                  fill={timelineEvents.isRecording ? 'red' : 'white'}
-                />
-              </svg>
-            </button>
-            <button
-              type="button"
-              aria-label="Clear"
-              onClick={() => timelineEvents.clear()}
-              style={{
-                background: 'none',
-                border: 0,
-                cursor: 'pointer',
-                marginLeft: -6,
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16">
-                <circle
-                  cx="8"
-                  cy="8"
-                  r="7"
-                  stroke="white"
-                  strokeWidth="2"
-                  fill="none"
-                />
-                <path d="M13,3 L3,13" stroke="white" strokeWidth="2" />
-              </svg>
-            </button>
-          </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            <Input
-              placeholder="Filter"
-              aria-label="Filter by queryhash"
-              value={filter ?? ''}
-              onChange={(e) => setFilter(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') setFilter('')
-              }}
-              style={{
-                flex: '1',
-                marginRight: '.5em',
-                width: '100%',
-              }}
-            />
-          </div>
+          {tooltip.content}
         </div>
-      </PanelHead>
-      <div
-        style={{
-          overflowY: 'auto',
-          flex: '1',
-          position: 'relative',
-        }}
-        onMouseMove={moveTick}
-      >
-        {queries.length > 0 ? (
-          <>
-            {tickDate && (
+      )}
+      <PanelMain isOpen={isOpen}>
+        <PanelHead {...headProps}>
+          <TimelineOptions
+            timelineEvents={timelineEvents}
+            filter={filter}
+            setFilter={setFilter}
+            zoom={zoom}
+            setZoom={setZoom}
+            onStartRecording={() => {
+              setOffset(0)
+              setZoom(200)
+            }}
+          />
+        </PanelHead>
+        <div
+          style={{
+            overflowY: 'auto',
+            flex: '1',
+            position: 'relative',
+          }}
+          onMouseMove={moveTick}
+        >
+          {queries.length > 0 ? (
+            <>
+              {tickDate && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    backgroundColor: theme.grayAlt,
+                    padding: '0.5em',
+                  }}
+                >
+                  {printTime(tickDate)}
+                </div>
+              )}
               <div
                 style={{
                   position: 'absolute',
+                  left: tickPosition - 1,
                   top: 0,
-                  left: 0,
-                  backgroundColor: theme.grayAlt,
-                  padding: '0.5em',
+                  height: '100%',
+                  width: '1px',
+                  pointerEvents: 'none',
+                  background: theme.foreground,
+                  display: 'none',
                 }}
-              >
-                {printTime(tickDate)}
-              </div>
-            )}
-            <div
-              style={{
-                position: 'absolute',
-                left: tickPosition - 1,
-                top: 0,
-                height: '100%',
-                width: '1px',
-                pointerEvents: 'none',
-                background: theme.foreground,
-                display: 'none',
-              }}
-            ></div>
-            {queries.map((query, i) => {
-              return (
+              ></div>
+              <div style={{ display: 'flex', flexFlow: 'row' }}>
+                <div style={{ width: TableQueryKeyWidth }}>
+                  {queries.map((query, i) => {
+                    return (
+                      <div
+                        key={query.queryHash || i}
+                        style={{
+                          display: 'flex',
+                          borderBottom: `solid 1px ${theme.grayAlt}`,
+                          boxSizing: 'border-box',
+                          cursor: 'pointer',
+                          alignItems: 'center',
+                          height: TableQueryRowHeight,
+                        }}
+                      >
+                        <Code
+                          style={{
+                            padding: '.5em',
+                            boxSizing: 'border-box',
+                            width: TableQueryKeyWidth,
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden',
+                            borderRight: `solid 1px ${theme.grayAlt}`,
+                          }}
+                        >
+                          {`${query.queryHash}`}
+                        </Code>
+                      </div>
+                    )
+                  })}
+                </div>
                 <div
-                  key={query.queryHash || i}
-                  role="button"
-                  aria-label={`Open query details for ${query.queryHash}`}
-                  style={{
-                    display: 'flex',
-                    borderBottom: `solid 1px ${theme.grayAlt}`,
-                    cursor: 'pointer',
-                    alignItems: 'center',
+                  style={{ flex: 1, cursor: 'pointer', overflow: 'hidden' }}
+                  onMouseDown={(e) => {
+                    setIsDragging({
+                      start: e.clientX - offset,
+                    })
+                  }}
+                  onMouseMove={onMouseMove}
+                  onMouseUp={() => {
+                    setIsDragging(null)
                   }}
                 >
-                  <Code
-                    style={{
-                      padding: '.5em',
-                      boxSizing: 'border-box',
-                      width: TableQueryKeyWidth,
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      borderRight: `solid 1px ${theme.grayAlt}`,
-                    }}
-                  >
-                    {`${query.queryHash}`}
-                  </Code>
-                  {timeRange.start ? (
-                    <SVGQueryTimeline
-                      ref={i === 0 ? containerRef : undefined}
-                      query={query}
-                      timeRange={timeRange as { start: Date; end: Date | null }}
-                      onWheel={onWheel}
-                      onMouseDown={(e) =>
-                        setIsDragging({
-                          start: e.clientX,
-                        })
-                      }
-                      onMouseMove={onMouseMove}
-                      onMouseUp={() => setIsDragging(null)}
-                      zoom={zoom}
-                      offset={offset}
-                    />
-                  ) : null}
+                  {queries.map((query, i) => {
+                    if (!timeRange.start) return null
+
+                    return (
+                      <SVGQueryTimeline
+                        key={query.queryHash || i}
+                        ref={i === 0 ? containerRef : undefined}
+                        query={query}
+                        timeRange={
+                          timeRange as { start: Date; end: Date | null }
+                        }
+                        zoom={zoom}
+                        offset={offset}
+                        setTooltip={setTooltip}
+                      />
+                    )
+                  })}
                 </div>
-              )
-            })}
-          </>
-        ) : (
-          <div
-            style={{
-              padding: '1em',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '1.3em',
-              textAlign: 'center',
-              opacity: 0.4,
-              height: '100%',
-            }}
-          >
-            {timelineEvents.isRecording ? (
-              <p>
-                Recording...
-                <br />
-                <br />
-                Navigate to a component that use a query to display the
-                timeline.
-              </p>
-            ) : (
-              <p>
-                No queries recorded yet.
-                <br />
-                <br />
-                To start recording, click the circle in the top right.
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-    </PanelMain>
+              </div>
+            </>
+          ) : (
+            <div
+              style={{
+                padding: '1em',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                fontSize: '1.3em',
+                textAlign: 'center',
+                opacity: 0.4,
+                height: '100%',
+              }}
+            >
+              {timelineEvents.isRecording ? (
+                <p>
+                  Recording...
+                  <br />
+                  <br />
+                  Navigate to a component that use a query to display the
+                  timeline.
+                </p>
+              ) : (
+                <p>
+                  No queries recorded yet.
+                  <br />
+                  <br />
+                  To start recording, click the circle in the top right.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
+      </PanelMain>
+    </>
   )
 }

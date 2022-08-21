@@ -135,7 +135,6 @@ export default function useTimelineEvents(options: ContextOptions) {
   React.useEffect(() => {
     return queryCache.subscribe((result) => {
       if (!isRecording) return
-      if (!result) return
       const event = createEvent(result)
       setTimeout(() => setEvents((prevEvents) => [...prevEvents, event]), 0)
     })
