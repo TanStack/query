@@ -19,11 +19,11 @@ yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-c
 - Import the `createAsyncStoragePersister` function
 - Create a new asyncStoragePersister
   - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native
-- Pass it to the [`persistQueryClient`](../plugins/persistQueryClient) function
+- Wrap your app by using [`PersistQueryClientProvider`](../plugins/persistQueryClient.md#persistqueryclientprovider) component.
 
 ```ts
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { persistQueryClient } from '@tanstack/react-query-persist-client'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
 
 const queryClient = new QueryClient({
@@ -38,10 +38,16 @@ const asyncStoragePersister = createAsyncStoragePersister({
   storage: AsyncStorage
 })
 
-persistQueryClient({
-  queryClient,
-  persister: asyncStoragePersister,
-})
+const Root = () => (
+  <PersistQueryClientProvider
+    client={queryClient}
+    persistOptions={{ persister: asyncStoragePersister }}
+  >
+    <App />
+  </PersistQueryClientProvider>
+);
+
+export default Root;
 ```
 
 ## Retries
