@@ -36,7 +36,6 @@ export function computeQueryBoxes(
   const items: Box[] = []
   let partial: Partial<Box> = {}
   sortedEvents.forEach((event) => {
-    console.log(event.queryHash, event.cacheTime)
     if (event.eventType === 'added') {
       partial.startAt = event.receivedAt
     } else if (event.eventType === 'removed') {
