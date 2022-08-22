@@ -9,7 +9,6 @@ export default function ScreenReader({ text }: { text: string }) {
         height: '0.1px',
         overflow: 'hidden',
       }}
-      className="screenreader"
     >
       {text}
     </span>
