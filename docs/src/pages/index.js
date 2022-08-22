@@ -289,7 +289,7 @@ const Home = ({ sponsors }) => {
         <section className="bg-gray-900 body-font">
           <div className="container max-w-7xl px-4  mx-auto -mt-72 relative">
             <iframe
-              src="https://codesandbox.io/embed/github/tannerlinsley/react-query/tree/main/examples/basic?autoresize=1&fontsize=16&theme=dark"
+              src="https://codesandbox.io/embed/github/tannerlinsley/react-query/tree/v3/examples/basic?autoresize=1&fontsize=16&theme=dark"
               title="tannerlinsley/react-query: basic"
               sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
               className="shadow-2xl"
@@ -375,9 +375,12 @@ const Home = ({ sponsors }) => {
             </h2>
             <div className="mt-8 flex lg:flex-shrink-0 md:mt-0">
               <div className="inline-flex rounded-md shadow">
-                  <a href="https://ui.dev/react-query?from=tanstack" className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out">
-                    Take the course
-                  </a>
+                <a
+                  href="https://ui.dev/react-query?from=tanstack"
+                  className="inline-flex items-center justify-center text-center px-5 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-coral hover:bg-coral-light focus:outline-none focus:shadow-outline transition duration-150 ease-in-out"
+                >
+                  Take the course
+                </a>
               </div>
               <div className="ml-3 inline-flex rounded-md shadow">
                 <Link href="/overview">
