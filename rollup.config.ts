@@ -83,8 +83,12 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
+        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
       },
-      bundleUMDGlobals: ['@tanstack/query-core'],
+      bundleUMDGlobals: [
+        '@tanstack/query-core',
+        'use-sync-external-store/shim/index.js',
+      ],
     }),
     ...buildConfigs({
       name: 'react-query-devtools',
@@ -94,8 +98,15 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
+        '@tanstack/match-sorter-utils': 'MatchSorterUtils',
+        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
       },
+      bundleUMDGlobals: [
+        '@tanstack/match-sorter-utils',
+        'use-sync-external-store/shim/index.js',
+      ],
     }),
     ...buildConfigs({
       name: 'react-query-devtools-noop',
@@ -154,7 +165,12 @@ function buildConfigs(opts: {
     globals: opts.globals,
   }
 
-  return [esm(options), cjs(options), umdDev({...options, external: umdExternal}), umdProd({...options, external: umdExternal})]
+  return [
+    esm(options),
+    cjs(options),
+    umdDev({ ...options, external: umdExternal }),
+    umdProd({ ...options, external: umdExternal }),
+  ]
 }
 
 function esm({ input, packageDir, external, banner }: Options): RollupOptions {

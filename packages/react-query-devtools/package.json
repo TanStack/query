@@ -42,9 +42,11 @@
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
+  "devDependencies": {
+    "@types/use-sync-external-store": "^0.0.3"
+  },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.1.1",
-    "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {

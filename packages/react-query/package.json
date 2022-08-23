@@ -41,12 +41,12 @@
   ],
   "devDependencies": {
     "@types/jscodeshift": "^0.11.3",
+    "@types/use-sync-external-store": "^0.0.3",
     "jscodeshift": "^0.13.1",
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
     "@tanstack/query-core": "4.3.0-beta.3",
-    "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
