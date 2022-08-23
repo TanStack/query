@@ -369,7 +369,7 @@ async function run() {
       )
 
       await Promise.all(
-        (['module', 'main', 'types'] as const).map(async (entryKey) => {
+        (['main', 'types'] as const).map(async (entryKey) => {
           const entry = pkgJson[entryKey] as string
 
           if (!entry) {
