@@ -578,7 +578,7 @@ async function run() {
     execSync(
       `gh release create v${version} ${
         !isLatestBranch ? '--prerelease' : ''
-      } --notes '${changelogMd}'`,
+      } --notes '${changelogMd.replace(/'/g, '"')}'`,
     )
     console.info(`  Github release created.`)
 
