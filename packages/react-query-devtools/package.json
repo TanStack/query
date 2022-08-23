@@ -14,28 +14,21 @@
   "main": "build/lib/index.js",
   "exports": {
     ".": {
-      "development": {
-        "types": "./build/lib/index.d.ts",
-        "import": "./build/lib/index.mjs",
-        "default": "./build/lib/index.js"
-      },
-      "default": {
-        "types": "./build/lib/index.d.ts",
-        "import": "./build/lib/noop.mjs",
-        "default": "./cjs.fallback.js"
-      }
-    },
-    "./production": {
       "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.mjs",
       "default": "./build/lib/index.js"
     },
+    "./build/lib/index.prod.js": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.prod.mjs",
+      "default": "./build/lib/index.prod.js"
+    },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
     "build/lib/*",
     "build/umd/*",
-    "cjs.fallback.js",
     "src"
   ],
   "scripts": {

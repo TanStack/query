@@ -17,9 +17,10 @@ type Options = {
   jsName: string
   outputFile: string
   globals: Record<string, string>
+  forceDevEnv: boolean
 }
 
-const umdDevPlugin = (type: 'development' | 'production') =>
+const forceEnvPlugin = (type: 'development' | 'production') =>
   replace({
     'process.env.NODE_ENV': `"${type}"`,
     delimiters: ['', ''],
@@ -109,15 +110,20 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       ],
     }),
     ...buildConfigs({
-      name: 'react-query-devtools-noop',
+      name: 'react-query-devtools-prod',
       packageDir: 'packages/react-query-devtools',
       jsName: 'ReactQueryDevtools',
-      outputFile: 'noop',
-      entryFile: 'src/noop.ts',
+      outputFile: 'index.prod',
+      entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
+        '@tanstack/match-sorter-utils': 'MatchSorterUtils',
+        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
       },
+      forceDevEnv: true,
+      skipUmdBuild: true,
     }),
     ...buildConfigs({
       name: 'react-query-persist-client',
@@ -143,6 +149,9 @@ function buildConfigs(opts: {
   globals: Record<string, string>
   // This option allows to bundle specified dependencies for umd build
   bundleUMDGlobals?: string[]
+  // Force prod env build
+  forceDevEnv?: boolean
+  skipUmdBuild?: boolean
 }): RollupOptions[] {
   const input = path.resolve(opts.packageDir, opts.entryFile)
   const externalDeps = Object.keys(opts.globals)
@@ -163,26 +172,37 @@ function buildConfigs(opts: {
     external,
     banner,
     globals: opts.globals,
+    forceDevEnv: opts.forceDevEnv || false,
   }
 
-  return [
-    esm(options),
-    cjs(options),
-    umdDev({ ...options, external: umdExternal }),
-    umdProd({ ...options, external: umdExternal }),
-  ]
+  let builds = [esm(options), cjs(options)]
+
+  if (!opts.skipUmdBuild) {
+    builds = builds.concat([
+      umdDev({ ...options, external: umdExternal }),
+      umdProd({ ...options, external: umdExternal }),
+    ])
+  }
+
+  return builds
 }
 
-function esm({ input, packageDir, external, banner }: Options): RollupOptions {
+function esm({
+  input,
+  packageDir,
+  external,
+  banner,
+  outputFile,
+  forceDevEnv,
+}: Options): RollupOptions {
   return {
     // ESM
     external,
     input,
     output: {
       format: 'esm',
-      entryFileNames: '[name].mjs',
+      file: `${packageDir}/build/lib/${outputFile}.mjs`,
       sourcemap: true,
-      dir: `${packageDir}/build/lib`,
       banner,
     },
     plugins: [
@@ -190,19 +210,27 @@ function esm({ input, packageDir, external, banner }: Options): RollupOptions {
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
 }
 
-function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
+function cjs({
+  input,
+  external,
+  packageDir,
+  banner,
+  outputFile,
+  forceDevEnv,
+}: Options): RollupOptions {
   return {
     // CJS
     external,
     input,
     output: {
       format: 'cjs',
+      file: `${packageDir}/build/lib/${outputFile}.js`,
       sourcemap: true,
-      dir: `${packageDir}/build/lib`,
       exports: 'named',
       banner,
     },
@@ -211,6 +239,7 @@ function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
 }
@@ -241,7 +270,7 @@ function umdDev({
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
       commonJS(),
-      umdDevPlugin('development'),
+      forceEnvPlugin('development'),
     ],
   }
 }
@@ -272,7 +301,7 @@ function umdProd({
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx'] }),
-      umdDevPlugin('production'),
+      forceEnvPlugin('production'),
       terser({
         mangle: true,
         compress: true,
