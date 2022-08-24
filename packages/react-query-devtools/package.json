@@ -14,37 +14,32 @@
   "main": "build/lib/index.js",
   "exports": {
     ".": {
-      "development": {
-        "types": "./build/lib/index.d.ts",
-        "import": "./build/lib/index.mjs",
-        "default": "./build/lib/index.js"
-      },
-      "default": {
-        "types": "./build/lib/index.d.ts",
-        "import": "./build/lib/noop.mjs",
-        "default": "./cjs.fallback.js"
-      }
-    },
-    "./production": {
       "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.mjs",
       "default": "./build/lib/index.js"
     },
+    "./build/lib/index.prod.js": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.prod.mjs",
+      "default": "./build/lib/index.prod.js"
+    },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
     "build/lib/*",
     "build/umd/*",
-    "cjs.fallback.js",
     "src"
   ],
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
+  "devDependencies": {
+    "@types/use-sync-external-store": "^0.0.3"
+  },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.1.1",
-    "@types/use-sync-external-store": "^0.0.3",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {

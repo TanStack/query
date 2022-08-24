@@ -20,6 +20,7 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "files": [
     "build/lib/*",
     "build/umd/*",
