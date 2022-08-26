@@ -651,6 +651,13 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                           </>
                         )}
                       </svg>
+                      <ScreenReader
+                        text={
+                          isMockOffline
+                            ? 'Restore offline mock'
+                            : 'Mock offline behavior'
+                        }
+                      />
                     </Button>
                   </>
                 ) : null}
