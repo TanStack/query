@@ -12,6 +12,7 @@ import {
 import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
 import { sortFns, useIsMounted } from './utils'
+import ScreenReader from './screenreader'
 
 import {
   Panel,
@@ -368,6 +369,7 @@ export function ReactQueryDevtools({
           }}
         >
           <Logo aria-hidden />
+          <ScreenReader text="Open React Query Devtools" />
         </button>
       ) : null}
     </Container>
@@ -538,6 +540,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               }}
             >
               <Logo aria-hidden />
+              <ScreenReader text="Close React Query Devtools" />
             </button>
             <div
               style={{
