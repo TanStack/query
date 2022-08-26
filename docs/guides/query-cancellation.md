@@ -3,13 +3,9 @@ id: query-cancellation
 title: Query Cancellation
 ---
 
-[_Previous method requiring a `cancel` function_](#old-cancel-function)
-
 React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal), **if it's available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable, and you can respond to the cancellation inside your query function if desired. The best part about this is that it allows you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
 
 The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are [several available](https://www.npmjs.com/search?q=abortcontroller%20polyfill).
-
-**NOTE:** This feature was introduced at version `3.30.0`. If you are using an older version, you will need to either upgrade (recommended) or use the [old `cancel` function](#old-cancel-function).
 
 ## Default behavior
 
@@ -140,56 +136,4 @@ return (
     queryClient.cancelQueries(['todos'])
    }}>Cancel</button>
 )
-```
-
-## Old `cancel` function
-
-Don't worry! The previous cancellation functionality will continue to work. But we do recommend that you move away from [the withdrawn cancelable promise proposal](https://github.com/tc39/proposal-cancelable-promises) to the [new `AbortSignal` interface](#_top) which has been [standardized](https://dom.spec.whatwg.org/#interface-abortcontroller) as a general purpose construct for aborting ongoing activities in [most browsers](https://caniuse.com/abortcontroller) and in [Node](https://nodejs.org/api/globals.html#globals_class_abortsignal). The old cancel function might be removed in a future major version.
-
-To integrate with this feature, attach a `cancel` function to the promise returned by your query that implements your request cancellation. When a query becomes out-of-date or inactive, this `promise.cancel` function will be called (if available).
-
-## Using `axios` with `cancel` function
-
-```tsx
-import axios from 'axios'
-
-const query = useQuery(['todos'], () => {
-  // Create a new CancelToken source for this request
-  const CancelToken = axios.CancelToken
-  const source = CancelToken.source()
-
-  const promise = axios.get('/todos', {
-    // Pass the source token to your request
-    cancelToken: source.token,
-  })
-
-  // Cancel the request if React Query calls the `promise.cancel` method
-  promise.cancel = () => {
-    source.cancel('Query was cancelled by React Query')
-  }
-
-  return promise
-})
-```
-
-## Using `fetch` with `cancel` function
-
-```tsx
-const query = useQuery(['todos'], () => {
-  // Create a new AbortController instance for this request
-  const controller = new AbortController()
-  // Get the abortController's signal
-  const signal = controller.signal
-
-  const promise = fetch('/todos', {
-    method: 'get',
-    // Pass the signal to your request
-    signal,
-  })
-
-  // Cancel the request if React Query calls the `promise.cancel` method
-  promise.cancel = () => controller.abort()
-
-  return promise
-})
 ```
