@@ -167,7 +167,7 @@ async function run() {
     ? packages
     : changedFiles.reduce((changedPackages, file) => {
         const pkg = packages.find((p) =>
-          file.startsWith(path.join('packages', p.packageDir)),
+          file.startsWith(path.join('packages', p.packageDir, p.srcDir)),
         )
         if (pkg && !changedPackages.find((d) => d.name === pkg.name)) {
           changedPackages.push(pkg)
