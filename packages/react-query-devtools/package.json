@@ -18,6 +18,11 @@
       "import": "./build/lib/index.mjs",
       "default": "./build/lib/index.js"
     },
+    "./production": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.prod.mjs",
+      "default": "./build/lib/index.prod.js"
+    },
     "./build/lib/index.prod.js": {
       "types": "./build/lib/index.d.ts",
       "import": "./build/lib/index.prod.mjs",
