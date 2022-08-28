@@ -131,3 +131,17 @@ export default App
 ```
 
 With this, calling `window.toggleDevtools()` will download the devtools bundle and show them.
+
+### Modern bundlers
+
+If your bundler supports package exports, you can use the following import path:
+
+```tsx
+const ReactQueryDevtoolsProduction = React.lazy(() =>
+    import('@tanstack/react-query-devtools/production').then(d => ({
+          default: d.ReactQueryDevtools
+    }))
+)
+```
+
+For TypeScript, you would need to set `moduleResolution: 'NodeNext'` in your tsconfig, which requires at least TypeScript v4.5.
