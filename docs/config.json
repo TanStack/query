@@ -277,6 +277,10 @@
           "to": "examples/react/react-native"
         },
         {
+          "label": "React Router",
+          "to": "examples/react/react-router"
+        },
+        {
           "label": "Offline Queries and Mutations",
           "to": "examples/react/offline"
         }
