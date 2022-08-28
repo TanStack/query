@@ -18,6 +18,7 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 
 - Fork this repository
 - Install dependencies by running `$ npm install`
+  - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`.
 - Link `TanStack/query` locally - we recommend using [yalc](https://github.com/wclr/yalc)
 - Implement your changes and tests to files in the `src/` directory and corresponding test files
 - To run examples, follow their individual directions.
