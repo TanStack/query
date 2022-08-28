@@ -276,7 +276,7 @@ queryClient.setQueriesData(queryKey | filters, updater)
 The `invalidateQueries` method can be used to invalidate and refetch single or multiple queries in the cache based on their query keys or any other functionally accessible property/state of the query. By default, all matching queries are immediately marked as invalid and active queries are refetched in the background.
 
 - If you **do not want active queries to refetch**, and simply be marked as invalid, you can use the `refetchType: 'none'` option.
-- If you **want inactive queries to refetch** as well, use the `refetchTye: 'all'` option
+- If you **want inactive queries to refetch** as well, use the `refetchType: 'all'` option
 
 ```tsx
 await queryClient.invalidateQueries(['posts'], {
