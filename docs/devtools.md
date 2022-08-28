@@ -144,4 +144,4 @@ const ReactQueryDevtoolsProduction = React.lazy(() =>
 )
 ```
 
-For TypeScript, you would need to set `moduleResolution: 'NodeNext'` in your tsconfig, which requires at least TypeScript v4.5.
+For TypeScript, you would need to set `moduleResolution: 'nodenext'` in your tsconfig, which requires at least TypeScript v4.7.
