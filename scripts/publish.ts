@@ -31,7 +31,7 @@ async function run() {
     // (process.env.PR_NUMBER ? `pr-${process.env.PR_NUMBER}` : currentGitBranch())
     currentGitBranch()
 
-  const branchConfig: BranchConfig = branchConfigs[branchName]
+  const branchConfig: BranchConfig | undefined = branchConfigs[branchName]
 
   if (!branchConfig) {
     console.log(`No publish config found for branch: ${branchName}`)
@@ -354,6 +354,11 @@ async function run() {
   console.info()
   console.info(changelogMd)
   console.info()
+
+  if (changedPackages.length === 0) {
+    console.info('No packages have been affected.')
+    return
+  }
 
   console.info('Building packages...')
   execSync(`npm run build`, { encoding: 'utf8', stdio: 'inherit' })
