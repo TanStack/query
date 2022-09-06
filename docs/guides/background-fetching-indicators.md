@@ -8,7 +8,7 @@ A query's `status === 'loading'` state is sufficient enough to show the initial 
 ```tsx
 function Todos() {
   const { status, data: todos, error, isFetching } = useQuery(
-    'todos',
+    ['todos'],
     fetchTodos
   )
 
