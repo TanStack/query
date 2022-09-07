@@ -97,7 +97,7 @@ mutate(variables, {
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - Remaining options extend the same options described above in the `useMutation` hook.
+  - The remaining options extend the same options described above in the `useMutation` hook. The difference is that if the `onSuccess`, `onError` or `onSettled` callback returns a promise, it will not be awaited before the mutation is resolved.
   - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
 - `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
   - Similar to `mutate` but returns a promise which can be awaited.
