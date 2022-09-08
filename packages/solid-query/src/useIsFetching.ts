@@ -1,9 +1,4 @@
-import {
-  QueryKey,
-  notifyManager,
-  parseFilterArgs,
-  QueryFilters,
-} from '@tanstack/query-core'
+import { QueryKey, parseFilterArgs, QueryFilters } from '@tanstack/query-core'
 
 import { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
@@ -30,7 +25,7 @@ export function useIsFetching(
 
   const [fetches, setFetches] = createSignal(queryClient.isFetching(filters))
 
-  const unsubscribe = queryCache.subscribe((result) => {
+  const unsubscribe = queryCache.subscribe((_result) => {
     setFetches(queryClient.isFetching(filters))
   })
 
