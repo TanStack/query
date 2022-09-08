@@ -43,8 +43,6 @@ export function createBaseQuery<
     })
   });
 
-  observer.updateResult();
-
   const unsubscribe = observer.subscribe((result) => {
     const reconciledResult = result;
     // @ts-ignore
