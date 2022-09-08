@@ -1,12 +1,12 @@
-import type { Context, Accessor } from "solid-js";
-import type { 
-  QueryClient, 
-  QueryKey, 
-  QueryObserverOptions, 
-  QueryObserverResult, 
-  MutateFunction, 
+import type { Context, Accessor } from 'solid-js'
+import type {
+  QueryClient,
+  QueryKey,
+  QueryObserverOptions,
+  QueryObserverResult,
+  MutateFunction,
   MutationObserverOptions,
-  MutationObserverResult 
+  MutationObserverResult,
 } from '@tanstack/query-core'
 
 export interface ContextOptions {
@@ -16,14 +16,14 @@ export interface ContextOptions {
   context?: Context<QueryClient | undefined>
 }
 
-export type SolidQueryKey = () => readonly unknown[];
+export type SolidQueryKey = () => readonly unknown[]
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey
+  TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
 
@@ -31,26 +31,24 @@ export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey
+  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
 > extends CreateBaseQueryOptions<
-  TQueryFnData,
-  TError,
-  TData,
-  TQueryFnData,
-  ReturnType<TQueryKey>
-> {}
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryFnData,
+    ReturnType<TQueryKey>
+  > {}
 
 export type CreateBaseQueryResult<
   TData = unknown,
-  TError = unknown
+  TError = unknown,
 > = QueryObserverResult<TData, TError>
 
 export type CreateQueryResult<
   TData = unknown,
-  TError = unknown
+  TError = unknown,
 > = CreateBaseQueryResult<TData, TError>
-
-
 
 export interface CreateMutationOptions<
   TData = unknown,
@@ -58,10 +56,10 @@ export interface CreateMutationOptions<
   TVariables = void,
   TContext = unknown,
 > extends ContextOptions,
-  Omit<
-    MutationObserverOptions<TData, TError, TVariables, TContext>,
-    '_defaulted' | 'variables'
-  > {}
+    Omit<
+      MutationObserverOptions<TData, TError, TVariables, TContext>,
+      '_defaulted' | 'variables'
+    > {}
 
 export type CreateMutateFunction<
   TData = unknown,
@@ -72,7 +70,6 @@ export type CreateMutateFunction<
   ...args: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
 ) => void
 
-  
 export type CreateMutateAsyncFunction<
   TData = unknown,
   TError = unknown,
@@ -90,8 +87,10 @@ export type CreateBaseMutationResult<
 > = Override<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   { mutate: CreateMutateFunction<TData, TError, TVariables, TContext> }
-> & { mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext> }
-  
+> & {
+  mutateAsync: CreateMutateAsyncFunction<TData, TError, TVariables, TContext>
+}
+
 export type CreateMutationResult<
   TData = unknown,
   TError = unknown,

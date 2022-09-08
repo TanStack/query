@@ -2,7 +2,7 @@
 export * from '@tanstack/query-core'
 
 // Solid Query
-export * from "./types"
+export * from './types'
 // export { useQueries } from './useQueries'
 // export type { QueriesResults, QueriesOptions } from './useQueries'
 export { createQuery } from './createQuery'
