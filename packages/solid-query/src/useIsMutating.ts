@@ -25,11 +25,13 @@ export function useIsMutating(
   arg3?: Options,
 ): Accessor<number> {
   const [filters, options = {}] = parseMutationFilterArgs(arg1, arg2, arg3)
-  
+
   const queryClient = useQueryClient({ context: options.context })
   const mutationCache = queryClient.getMutationCache()
 
-  const [mutations, setMutations] = createSignal(queryClient.isMutating(filters))
+  const [mutations, setMutations] = createSignal(
+    queryClient.isMutating(filters),
+  )
 
   const unsubscribe = mutationCache.subscribe((result) => {
     setMutations(queryClient.isMutating(filters))

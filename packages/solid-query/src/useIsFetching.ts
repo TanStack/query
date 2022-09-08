@@ -10,7 +10,10 @@ import { useQueryClient } from './QueryClientProvider'
 import { Accessor, createSignal, onCleanup } from 'solid-js'
 interface Options extends ContextOptions {}
 
-export function useIsFetching(filters?: QueryFilters, options?: Options): Accessor<number>
+export function useIsFetching(
+  filters?: QueryFilters,
+  options?: Options,
+): Accessor<number>
 export function useIsFetching(
   queryKey?: QueryKey,
   filters?: QueryFilters,

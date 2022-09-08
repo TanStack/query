@@ -1,5 +1,4 @@
-
-import {  CreateQueryOptions, SolidQueryKey } from './types'
+import { CreateQueryOptions, SolidQueryKey } from './types'
 import { QueryFunction } from '@tanstack/query-core'
 
 export function isQueryKey(value: unknown): value is SolidQueryKey {
@@ -18,17 +17,17 @@ export function parseQueryArgs<
   arg2?:
     | QueryFunction<TQueryFnData, ReturnType<TQueryKey>>
     | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg3?: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>
+  arg3?: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> {
-  if(!isQueryKey(arg1)) {
+  if (!isQueryKey(arg1)) {
     const { queryKey: solidKey, ...opts } = arg1 as any
     if (solidKey) {
       return {
         ...opts,
         queryKey: solidKey(),
-      } 
-    } 
-    return arg1 
+      }
+    }
+    return arg1
   }
 
   if (typeof arg2 === 'function') {

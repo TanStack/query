@@ -1,6 +1,14 @@
-import type { QueryClient } from "@tanstack/query-core";
-import { Component, Context, createContext, useContext, JSX, onMount, onCleanup } from "solid-js";
-import { ContextOptions } from "./types";
+import type { QueryClient } from '@tanstack/query-core'
+import {
+  Component,
+  Context,
+  createContext,
+  useContext,
+  JSX,
+  onMount,
+  onCleanup,
+} from 'solid-js'
+import { ContextOptions } from './types'
 
 declare global {
   interface Window {
@@ -8,41 +16,41 @@ declare global {
   }
 }
 
-export const QueryClientContext = createContext<QueryClient>();
+export const QueryClientContext = createContext<QueryClient>()
 export const QueryClientSharingContext = createContext<boolean>(false)
 
 interface Props {
-  client: QueryClient;
-  children: JSX.Element;
+  client: QueryClient
+  children: JSX.Element
 }
 
 // Simple Query Client Context Provider
 export const QueryClientProvider: Component<Props> = (props) => {
   if (!props.client) {
-    throw new Error("No queryClient found.");
+    throw new Error('No queryClient found.')
   }
 
-  onMount(() => props.client.mount());
-  onCleanup(() => props.client.unmount());
+  onMount(() => props.client.mount())
+  onCleanup(() => props.client.unmount())
 
   return (
     <QueryClientContext.Provider value={props.client}>
       {props.children}
     </QueryClientContext.Provider>
-  );
-};
+  )
+}
 
 function getQueryClientContext(
   context: Context<QueryClient | undefined> | undefined,
-  contextSharing: boolean
+  contextSharing: boolean,
 ) {
   if (context) {
-    return context;
+    return context
   }
 
   if (contextSharing && typeof window !== 'undefined') {
     if (!window.SolidQueryClientContext) {
-      window.SolidQueryClientContext = QueryClientContext;
+      window.SolidQueryClientContext = QueryClientContext
     }
 
     return window.SolidQueryClientContext
@@ -53,12 +61,12 @@ function getQueryClientContext(
 
 export const useQueryClient = ({ context }: ContextOptions = {}) => {
   const queryClient = useContext(
-    getQueryClientContext(context, useContext(QueryClientSharingContext))
-  );
+    getQueryClientContext(context, useContext(QueryClientSharingContext)),
+  )
 
   if (!queryClient) {
-    throw new Error('No QueryClient set, use QueryClientProvider to set one');
+    throw new Error('No QueryClient set, use QueryClientProvider to set one')
   }
-  
-  return queryClient;
-};
+
+  return queryClient
+}
