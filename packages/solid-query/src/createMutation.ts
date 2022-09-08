@@ -11,7 +11,7 @@ import {
   CreateMutationResult,
 } from './types'
 import { createComputed, onCleanup } from 'solid-js'
-import { createStore } from 'solid-js/store';
+import { createStore } from 'solid-js/store'
 
 // HOOK
 export function createMutation<
@@ -82,17 +82,21 @@ export function createMutation<
     options,
   )
 
-  const mutate: CreateMutateFunction<TData, TError, TVariables, TContext> = 
-  (variables, mutateOptions) => {
+  const mutate: CreateMutateFunction<TData, TError, TVariables, TContext> = (
+    variables,
+    mutateOptions,
+  ) => {
     observer.mutate(variables, mutateOptions).catch(noop)
   }
-  
-  const [state, setState] = createStore<CreateMutationResult<TData, TError, TVariables, TContext>>({
+
+  const [state, setState] = createStore<
+    CreateMutationResult<TData, TError, TVariables, TContext>
+  >({
     ...observer.getCurrentResult(),
     mutate,
-    mutateAsync: observer.getCurrentResult().mutate
+    mutateAsync: observer.getCurrentResult().mutate,
   })
-    
+
   createComputed(() => {
     const newParsedOptions = parseMutationArgs(arg1, arg2, arg3)
     setOptions(newParsedOptions)
@@ -103,7 +107,7 @@ export function createMutation<
     setState({
       ...result,
       mutate,
-      mutateAsync: result.mutate
+      mutateAsync: result.mutate,
     })
   })
 
