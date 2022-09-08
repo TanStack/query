@@ -1,5 +1,4 @@
 import {
-  notifyManager,
   MutationKey,
   MutationFilters,
   parseMutationFilterArgs,
@@ -33,7 +32,7 @@ export function useIsMutating(
     queryClient.isMutating(filters),
   )
 
-  const unsubscribe = mutationCache.subscribe((result) => {
+  const unsubscribe = mutationCache.subscribe((_result) => {
     setMutations(queryClient.isMutating(filters))
   })
 

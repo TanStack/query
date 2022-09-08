@@ -2,14 +2,7 @@ import { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
 import { CreateBaseQueryOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
-import {
-  onMount,
-  onCleanup,
-  createComputed,
-  createResource,
-  createEffect,
-  batch,
-} from 'solid-js'
+import { onMount, onCleanup, createComputed, createResource } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 // Base Query Function that is used to create the query.
@@ -33,7 +26,7 @@ export function createBaseQuery<
 
   const defaultedOptions = queryClient.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'
-  const observer = new QueryObserver(queryClient, defaultedOptions)
+  const observer = new Observer(queryClient, defaultedOptions)
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     // @ts-ignore
@@ -41,7 +34,7 @@ export function createBaseQuery<
   )
 
   const [dataResource, { refetch }] = createResource(() => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (state.isSuccess) resolve(state.data)
       if (state.isError && !state.isFetching) {
         throw state.error
