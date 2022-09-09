@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./build/lib",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../query-core" }
+  ]
+}

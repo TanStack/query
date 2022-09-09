@@ -56,8 +56,8 @@ export function createBaseQuery<
   })
 
   createComputed(() => {
-    const defaultedOptions = queryClient.defaultQueryOptions(options)
-    observer.setOptions(defaultedOptions)
+    const newDefaultedOptions = queryClient.defaultQueryOptions(options)
+    observer.setOptions(newDefaultedOptions)
   })
 
   const handler = {
