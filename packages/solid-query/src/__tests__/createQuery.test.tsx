@@ -22,6 +22,7 @@ import {
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
+  // TODO(lukemurray): not sure why this is failing
   const queryClient = createQueryClient({ queryCache })
 
   it('should return the correct types', () => {
@@ -51,10 +52,14 @@ describe('useQuery', () => {
       expectType<Error | null>(withError.error)
 
       // it should provide the result type in the configuration
-      createQuery([key], async () => true, {
-        onSuccess: (data) => expectType<boolean>(data),
-        onSettled: (data) => expectType<boolean | undefined>(data),
-      })
+      createQuery(
+        () => [key()],
+        async () => true,
+        {
+          onSuccess: (data) => expectType<boolean>(data),
+          onSettled: (data) => expectType<boolean | undefined>(data),
+        },
+      )
 
       // it should be possible to specify a union type as result type
       const unionTypeSync = createQuery(
@@ -88,15 +93,18 @@ describe('useQuery', () => {
       expectType<unknown>(fromGenericQueryFn.error)
 
       const fromGenericOptionsQueryFn = createQuery({
-        queryKey: key,
+        // TODO(lukemurray): when passing the queryKey as options how do we make it reactive?
+        queryKey: key(),
         queryFn: () => queryFn(),
       })
       expectType<string | undefined>(fromGenericOptionsQueryFn.data)
       expectType<unknown>(fromGenericOptionsQueryFn.error)
 
       type MyData = number
+      // TODO(lukemurray): this should be a function to match SolidQueryKey.
       type MyQueryKey = readonly ['my-data', number]
 
+      // TODO(lukemurray): errors if MyQueryKey is a function.
       const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = async ({
         queryKey: [, n],
       }) => {
@@ -104,6 +112,7 @@ describe('useQuery', () => {
       }
 
       createQuery({
+        // TODO(lukemurray): fails because MyQueryKey is not a function and QueryFunction type doesn't support SolidQueryKey
         queryKey: ['my-data', 100],
         queryFn: getMyDataArrayKey,
       })
