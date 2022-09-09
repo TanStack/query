@@ -1,17 +1,20 @@
-import { QueryFunction, QueryObserver } from '@tanstack/query-core'
-import { createComputed } from 'solid-js'
-import { createStore } from 'solid-js/store'
-import { createBaseQuery } from './createBaseQuery'
+import { QueryObserver, QueryFunction } from '@tanstack/query-core'
 import {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
   SolidQueryKey,
 } from './types'
+import { createComputed } from 'solid-js'
+import { createStore } from 'solid-js/store'
 import { parseQueryArgs } from './utils'
+import { createBaseQuery } from './createBaseQuery'
 
-// HOOK
-
+// There are several ways to create a query.
+// 1. createQuery(options: CreateQueryOptions)
+// 2. createQuery(querykey: () => Serializable[], options: CreateQueryOptions)
+// 3. createQuery(querykey: () => Serializable[], queryFunc: Fetcher Function,  options: CreateQueryOptions)
+// 4. The fourth overload is a combination of all three function params
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
