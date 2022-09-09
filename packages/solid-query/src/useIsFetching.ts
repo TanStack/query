@@ -42,9 +42,13 @@ export function useIsFetching(
   )
 
   createComputed(() => {
-    const [filtersObj, optionsObj = {}] = parseFilterArgs(arg1, arg2, arg3)
-    setFilters(filtersObj)
-    setOptions(optionsObj)
+    const [newFiltersObj, newOptionsObj = {}] = parseFilterArgs(
+      arg1,
+      arg2,
+      arg3,
+    )
+    setFilters(newFiltersObj)
+    setOptions(newOptionsObj)
   })
 
   const unsubscribe = queryCache().subscribe(() => {

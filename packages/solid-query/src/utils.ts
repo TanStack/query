@@ -55,6 +55,6 @@ export function parseFilterArgs<
   return (
     isQueryKey(arg1)
       ? [{ ...arg2, queryKey: arg1() }, arg3]
-      : [{ ...arg1, queryKey: arg1?.queryKey?.() } || {}, arg2]
+      : [{ ...arg1, queryKey: arg1?.queryKey?.() }, arg2]
   ) as [ParseFilterArgs<TFilters>, TOptions]
 }

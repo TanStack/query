@@ -26,8 +26,9 @@ interface Props {
 
 // Simple Query Client Context Provider
 export const QueryClientProvider: Component<Props> = (props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime check.
   if (!props.client) {
-    throw new Error('No queryClient found.')
+    throw new Error('No QueryClient set, use QueryClientProvider to set one')
   }
 
   onMount(() => props.client.mount())

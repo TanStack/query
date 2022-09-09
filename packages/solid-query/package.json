@@ -22,9 +22,8 @@
   },
   "scripts": {
     "clean": "rm -rf ./build",
-    "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "yarn test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
+    "test:jest": "../../node_modules/.bin/jest --config jest.config.js",
     "test:jest:dev": "yarn test:jest --watch"
   },
   "files": [
