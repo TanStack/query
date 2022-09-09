@@ -39,7 +39,7 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptions),
   )
 
-  const [dataResource, { mutate }] = createResource<TData | undefined>(() => {
+  const [dataResource, { refetch }] = createResource<TData | undefined>(() => {
     return new Promise((resolve) => {
       if (state.isSuccess) resolve(state.data)
       if (state.isError && !state.isFetching) {
@@ -50,10 +50,8 @@ export function createBaseQuery<
 
   const unsubscribe = observer.subscribe((result) => {
     const reconciledResult = result
-    batch(() => {
-      setState(reconciledResult)
-      mutate(() => reconciledResult.data)
-    })
+    setState(reconciledResult)
+    refetch()
   })
 
   onCleanup(() => unsubscribe())
