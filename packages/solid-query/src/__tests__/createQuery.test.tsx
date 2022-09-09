@@ -317,7 +317,9 @@ describe('useQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       return (
         <div>
@@ -327,9 +329,14 @@ describe('useQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    // renderWithClient(queryClient, () => <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
-    await waitFor(() => rendered.getByText('Status: error'))
+    await waitFor(() => screen.getByText('Status: error'))
 
     expect(states[0]).toEqual({
       data: undefined,
