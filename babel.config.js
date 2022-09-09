@@ -17,7 +17,6 @@ module.exports = {
       },
     ],
     '@babel/preset-typescript',
-    '@babel/react',
   ],
   plugins: [
     cjs && ['@babel/transform-modules-commonjs', { loose }],
@@ -32,4 +31,14 @@ module.exports = {
       },
     ],
   ].filter(Boolean),
+  overrides: [
+    {
+      exclude: './packages/solid-query/**',
+      presets: ['@babel/react'],
+    },
+    {
+      include: './packages/solid-query/**',
+      presets: ['babel-preset-solid'],
+    },
+  ],
 }
