@@ -1,11 +1,16 @@
 {
-  "composite": true,
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./build/types",
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./build/lib",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
   },
-  "files": ["src/index.ts"],
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/__tests__"],
+  "references": [
+    { "path": "../query-core" }
+  ]
 }
