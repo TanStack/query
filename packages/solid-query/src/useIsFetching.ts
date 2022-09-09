@@ -1,32 +1,54 @@
-import { QueryKey, parseFilterArgs, QueryFilters } from '@tanstack/query-core'
+import { QueryFilters } from '@tanstack/query-core'
 
-import { ContextOptions } from './types'
+import { ContextOptions, SolidQueryKey } from './types'
 import { useQueryClient } from './QueryClientProvider'
-import { Accessor, createSignal, onCleanup } from 'solid-js'
+import {
+  Accessor,
+  createSignal,
+  onCleanup,
+  createComputed,
+  createMemo,
+} from 'solid-js'
+import { parseFilterArgs, SolidQueryFilters } from './utils'
+
 interface Options extends ContextOptions {}
 
 export function useIsFetching(
-  filters?: QueryFilters,
+  filters?: SolidQueryFilters,
   options?: Options,
 ): Accessor<number>
 export function useIsFetching(
-  queryKey?: QueryKey,
-  filters?: QueryFilters,
+  queryKey?: SolidQueryKey,
+  filters?: SolidQueryFilters,
   options?: Options,
 ): Accessor<number>
 export function useIsFetching(
-  arg1?: QueryKey | QueryFilters,
-  arg2?: QueryFilters | Options,
+  arg1?: SolidQueryKey | SolidQueryFilters,
+  arg2?: SolidQueryFilters | Options,
   arg3?: Options,
 ): Accessor<number> {
-  const [filters, options = {}] = parseFilterArgs(arg1, arg2, arg3)
-  const queryClient = useQueryClient({ context: options.context })
-  const queryCache = queryClient.getQueryCache()
+  const [filtersObj, optionsObj = {}] = parseFilterArgs(arg1, arg2, arg3)
 
-  const [fetches, setFetches] = createSignal(queryClient.isFetching(filters))
+  const [filters, setFilters] = createSignal(filtersObj)
+  const [options, setOptions] = createSignal(optionsObj)
 
-  const unsubscribe = queryCache.subscribe((_result) => {
-    setFetches(queryClient.isFetching(filters))
+  const queryClient = createMemo(() =>
+    useQueryClient({ context: options().context }),
+  )
+  const queryCache = createMemo(() => queryClient().getQueryCache())
+
+  const [fetches, setFetches] = createSignal(
+    queryClient().isFetching(filters as QueryFilters),
+  )
+
+  createComputed(() => {
+    const [filtersObj, optionsObj = {}] = parseFilterArgs(arg1, arg2, arg3)
+    setFilters(filtersObj)
+    setOptions(optionsObj)
+  })
+
+  const unsubscribe = queryCache().subscribe(() => {
+    setFetches(queryClient().isFetching(filters() as QueryFilters))
   })
 
   onCleanup(() => {
