@@ -741,7 +741,7 @@ describe('createQuery', () => {
     let fetchCount = 0
 
     function Page() {
-      const { refetch } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           fetchCount++
@@ -751,14 +751,14 @@ describe('createQuery', () => {
         { enabled: false, initialData: 'initialData' },
       )
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 5)
         setActTimeout(() => {
-          refetch({ cancelRefetch: false })
+          state.refetch({ cancelRefetch: false })
         }, 5)
-      }, [refetch])
+      })
 
       return null
     }
@@ -779,7 +779,7 @@ describe('createQuery', () => {
     let fetchCount = 0
 
     function Page() {
-      const { refetch } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           fetchCount++
@@ -789,14 +789,14 @@ describe('createQuery', () => {
         { enabled: false, initialData: 'initialData' },
       )
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 5)
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 5)
-      }, [refetch])
+      })
 
       return null
     }
@@ -817,7 +817,7 @@ describe('createQuery', () => {
     let fetchCount = 0
 
     function Page() {
-      const { refetch } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           fetchCount++
@@ -827,14 +827,14 @@ describe('createQuery', () => {
         { enabled: false },
       )
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 5)
         setActTimeout(() => {
-          refetch()
+          state.refetch()
         }, 5)
-      }, [refetch])
+      })
 
       return null
     }
@@ -854,7 +854,8 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
+    // TODO(lukemurray): do we want this to be reactive.
+    queryClient.setQueryDefaults(key(), { queryFn: () => 'data' })
 
     function Page() {
       const state = createQuery<string>(key)
@@ -882,16 +883,19 @@ describe('createQuery', () => {
     const states: CreateQueryResult<string>[] = []
 
     function Page() {
-      const [toggle, setToggle] = NotReact.useState(false)
+      const [toggle, setToggle] = createSignal(false)
 
       return (
         <div>
           <button onClick={() => setToggle(true)}>toggle</button>
-          {toggle ? (
-            <Component key="2" value="2" />
-          ) : (
-            <Component key="1" value="1" />
-          )}
+          <Switch>
+            <Match when={toggle()}>
+              <Component value="2" />
+            </Match>
+            <Match when={!toggle()}>
+              <Component value="1" />
+            </Match>
+          </Switch>
         </div>
       )
     }
