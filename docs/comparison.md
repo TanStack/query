@@ -65,7 +65,7 @@ Feature/Capability Key:
 
 > **<sup>1</sup> Lagged Query Data** - React Query provides a way to continue to see an existing query's data while the next query loads (similar to the same UX that suspense will soon provide natively). This is extremely important when writing pagination UIs or infinite loading UIs where you do not want to show a hard loading state whenever a new query is requested. Other libraries do not have this capability and render a hard loading state for the new query (unless it has been prefetched), while the new query loads.
 
-> **<sup>2</sup> Render Optimization** - React Query has excellent rendering performance. By default, it will automatically track which fields are accessed and only re-render if one of them changes. If you would like to opt-out of this optimization, setting `notifyOnChangeProps` to `'all'` will re-render your components whenever the query is updated. For example because it has new data, or to indicate it is fetching. React Query also batches updates together to make sure your application only re-renders once when multiple components are using the same query. If you are only interested in the `data` or `error` properties, you can reduce the number of renders even more by setting `notifyOnChangeProps` to `['data', 'error']`. 
+> **<sup>2</sup> Render Optimization** - React Query has excellent rendering performance. By default, it will automatically track which fields are accessed and only re-render if one of them changes. If you would like to opt-out of this optimization, setting `notifyOnChangeProps` to `'all'` will re-render your components whenever the query is updated. For example because it has new data, or to indicate it is fetching. React Query also batches updates together to make sure your application only re-renders once when multiple components are using the same query. If you are only interested in the `data` or `error` properties, you can reduce the number of renders even more by setting `notifyOnChangeProps` to `['data', 'error']`.
 
 > **<sup>3</sup> Partial query matching** - Because React Query uses deterministic query key serialization, this allows you to manipulate variable groups of queries without having to know each individual query-key that you want to match, eg. you can refetch every query that starts with `todos` in its key, regardless of variables, or you can target specific queries with (or without) variables or nested properties, and even use a filter function to only match queries that pass your specific conditions.
 
@@ -79,14 +79,10 @@ Feature/Capability Key:
 
 > **<sup>8</sup> React Router cache persistence** - React Router does not cache data beyond the currently matched routes. If a route is left, its data is lost.
 
-<!-- -->
-
 [bpl-react-query]: https://bundlephobia.com/result?p=react-query
 [bp-react-query]: https://badgen.net/bundlephobia/minzip/react-query?label=💾
 [gh-react-query]: https://github.com/tannerlinsley/react-query
 [stars-react-query]: https://img.shields.io/github/stars/tannerlinsley/react-query?label=%F0%9F%8C%9F
-
-<!-- -->
 
 [swr]: https://github.com/vercel/swr
 [bp-swr]: https://badgen.net/bundlephobia/minzip/swr?label=💾
@@ -94,15 +90,11 @@ Feature/Capability Key:
 [stars-swr]: https://img.shields.io/github/stars/vercel/swr?label=%F0%9F%8C%9F
 [bpl-swr]: https://bundlephobia.com/result?p=swr
 
-<!-- -->
-
 [apollo]: https://github.com/apollographql/apollo-client
 [bp-apollo]: https://badgen.net/bundlephobia/minzip/@apollo/client?label=💾
 [gh-apollo]: https://github.com/apollographql/apollo-client
 [stars-apollo]: https://img.shields.io/github/stars/apollographql/apollo-client?label=%F0%9F%8C%9F
 [bpl-apollo]: https://bundlephobia.com/result?p=@apollo/client
-
-<!-- -->
 
 [rtk-query]: https://redux-toolkit.js.org/rtk-query/overview
 [rtk-query-comparison]: https://redux-toolkit.js.org/rtk-query/comparison
@@ -113,8 +105,6 @@ Feature/Capability Key:
 [stars-rtk-query]: https://img.shields.io/github/stars/reduxjs/redux-toolkit?label=🌟
 [bpl-rtk]: https://bundlephobia.com/result?p=@reduxjs/toolkit
 [bpl-rtk-query]: https://bundlephobia.com/package/@reduxjs/toolkit
-
-<!-- -->
 
 [react-router]: https://github.com/remix-run/react-router
 [bp-react-router]: https://badgen.net/bundlephobia/minzip/react-router-dom?label=💾
