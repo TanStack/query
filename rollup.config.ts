@@ -165,7 +165,7 @@ function buildConfigs(opts: {
   )
 
   const external = (moduleName) => externalDeps.includes(moduleName)
-  const banner = createBanner(opts.name)
+  const banner = ''; //createBanner(opts.name)
 
   const options: Options = {
     input,
