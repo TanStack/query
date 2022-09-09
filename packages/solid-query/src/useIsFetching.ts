@@ -1,6 +1,6 @@
 import { QueryFilters } from '@tanstack/query-core'
 
-import { ContextOptions, SolidQueryKey } from './types'
+import { ContextOptions, SolidQueryKey, SolidQueryFilters } from './types'
 import { useQueryClient } from './QueryClientProvider'
 import {
   Accessor,
@@ -9,7 +9,7 @@ import {
   createComputed,
   createMemo,
 } from 'solid-js'
-import { parseFilterArgs, SolidQueryFilters } from './utils'
+import { parseFilterArgs } from './utils'
 
 interface Options extends ContextOptions {}
 
