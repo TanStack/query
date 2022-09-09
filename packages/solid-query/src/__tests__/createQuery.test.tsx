@@ -421,15 +421,23 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    await queryClient.prefetchQuery(key, () => 'prefetched')
+    // TODO(lukemurray): do we want reactivity on this key?
+    await queryClient.prefetchQuery(key(), () => 'prefetched')
 
     function Page() {
       const state = createQuery(key, () => 'data')
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    // renderWithClient(queryClient, () => <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(10)
     expect(states.length).toBe(2)
