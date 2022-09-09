@@ -2,7 +2,7 @@
 
 - auto-refetching 🚫 nextjs (react only)
 - basic 🚫 javascript (only converting typescript)
-- basic-graphql-request 🔴
+- basic-graphql-request 🟢
 - basic-typescript 🟢
 - custom-hooks 🚫 not implemented in react
 - default-query-function 🔴

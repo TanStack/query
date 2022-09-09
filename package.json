@@ -54,7 +54,8 @@
     "./examples/react/star-wars",
     "./examples/react/suspense",
     "./examples/solid/basic-typescript",
-    "./examples/solid/simple"
+    "./examples/solid/simple",
+    "./examples/solid/basic-graphql-request"
   ],
   "devDependencies": {
     "@babel/core": "^7.17.9",
