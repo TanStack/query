@@ -8,7 +8,7 @@ import {
   mockLogger,
   createQueryClient,
 } from '../../../../tests/utils'
-import { renderWithClient, Blink, queryKey, setActTimeout } from './utils'
+import { Blink, queryKey, setActTimeout } from './utils'
 import {
   createQuery,
   CreateQueryResult,
@@ -1871,7 +1871,11 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <Page count={0} />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page count={0} />
+      </QueryClientProvider>
+    ))
     await waitFor(() => screen.getByText('data: 0'))
     act(() => screen.rerender(<Page count={1} />))
     await waitFor(() => screen.getByText('data: 1'))
@@ -3146,12 +3150,13 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(
-      queryClient,
-      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <Page />
-      </ErrorBoundary>,
-    )
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('error boundary'))
   })
@@ -3205,12 +3210,13 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(
-      queryClient,
-      <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-        <Page />
-      </ErrorBoundary>,
-    )
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+          <Page />
+        </ErrorBoundary>
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('error'))
     await waitFor(() => screen.getByText('Local Error'))
@@ -3237,20 +3243,21 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(
-      queryClient,
-      <ErrorBoundary
-        fallbackRender={({ error }) => (
-          <div>
-            <div>error boundary</div>
-            {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
-            <div>{error?.message}</div>
-          </div>
-        )}
-      >
-        <Page />
-      </ErrorBoundary>,
-    )
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <ErrorBoundary
+          fallbackRender={({ error }) => (
+            <div>
+              <div>error boundary</div>
+              {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
+              <div>{error?.message}</div>
+            </div>
+          )}
+        >
+          <Page />
+        </ErrorBoundary>
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('error boundary'))
     await waitFor(() => screen.getByText('Remote Error'))
@@ -3293,7 +3300,11 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('failureCount: 1'))
     fireEvent.click(screen.getByRole('button', { name: /hide/i }))
@@ -3344,7 +3355,11 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('failureCount: 1'))
     fireEvent.click(screen.getByRole('button', { name: /hide/i }))
@@ -4895,12 +4910,13 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(
-      queryClient,
-      <Blink duration={5}>
-        <Page />
-      </Blink>,
-    )
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Blink duration={5}>
+          <Page />
+        </Blink>
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('off'))
 
@@ -4933,15 +4949,16 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(
-      queryClient,
-      <Blink duration={5}>
-        <Page limit={0} />
-        <Page limit={1} />
-        <Page limit={2} />
-        <Page limit={3} />
-      </Blink>,
-    )
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Blink duration={5}>
+          <Page limit={0} />
+          <Page limit={1} />
+          <Page limit={2} />
+          <Page limit={3} />
+        </Blink>
+      </QueryClientProvider>
+    ))
 
     await waitFor(() => screen.getByText('off'))
     await sleep(20)
@@ -5268,7 +5285,11 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ))
 
     // initial state check
     screen.getByText('status: loading')
@@ -5329,7 +5350,11 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ))
 
     // initial state check
     screen.getByText('status: loading')
@@ -5384,7 +5409,11 @@ describe('useQuery', () => {
       )
     }
 
-    renderWithClient(queryClient, <App />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    ))
 
     // initial state check
     screen.getByText('status: fetching')
