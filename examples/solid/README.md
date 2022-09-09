@@ -1,0 +1,22 @@
+# Examples to Add
+
+- auto-refetching 🚫 nextjs (react only)
+- basic 🚫 javascript (only converting typescript)
+- basic-graphql-request 🔴
+- basic-typescript 🟢
+- custom-hooks 🚫 not implemented in react
+- default-query-function 🔴
+- focus-refetching 🚫 not implemented in react
+- load-more-infinite-scroll 🚫 nextjs (react only)
+- nextjs 🚫 nextjs (react only)
+- offline 🔴
+- optimistic-updates 🚫 not implemented in react
+- optimistic-updates-typescript 🚫 nextjs (react only)
+- pagination 🚫 nextjs (react only)
+- playground 🔴
+- prefetching 🚫 nextjs (react only)
+- react-native 🚫 react native (react only)
+- rick-morty 🔴
+- simple 🟢
+- star-wars 🔴
+- suspense 🔴
