@@ -13,7 +13,7 @@ import type {
 
 export interface ContextOptions {
   /**
-   * Use this to pass your React Query context. Otherwise, `defaultContext` will be used.
+   * Use this to pass your Solid Query context. Otherwise, `defaultContext` will be used.
    */
   context?: Context<QueryClient | undefined>
 }
