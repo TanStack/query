@@ -52,7 +52,9 @@
     "./examples/react/rick-morty",
     "./examples/react/simple",
     "./examples/react/star-wars",
-    "./examples/react/suspense"
+    "./examples/react/suspense",
+    "./examples/solid/basic-typescript",
+    "./examples/solid/simple"
   ],
   "devDependencies": {
     "@babel/core": "^7.17.9",
