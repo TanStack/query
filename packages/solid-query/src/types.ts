@@ -1,13 +1,14 @@
-import type { Context } from 'solid-js'
 import type {
+  DefinedQueryObserverResult,
+  MutateFunction,
+  MutationObserverOptions,
+  MutationObserverResult,
   QueryClient,
   QueryKey,
   QueryObserverOptions,
   QueryObserverResult,
-  MutateFunction,
-  MutationObserverOptions,
-  MutationObserverResult,
 } from '@tanstack/query-core'
+import type { Context } from 'solid-js'
 
 export interface ContextOptions {
   /**
@@ -23,6 +24,7 @@ export interface CreateBaseQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
+  // TODO(lukemurray): maybe this should be a solid query key?
   TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
@@ -40,6 +42,21 @@ export interface CreateQueryOptions<
     ReturnType<TQueryKey>
   > {}
 
+// export interface UseInfiniteQueryOptions<
+//   TQueryFnData = unknown,
+//   TError = unknown,
+//   TData = TQueryFnData,
+//   TQueryData = TQueryFnData,
+//   TQueryKey extends QueryKey = QueryKey,
+// > extends ContextOptions,
+//     InfiniteQueryObserverOptions<
+//       TQueryFnData,
+//       TError,
+//       TData,
+//       TQueryData,
+//       TQueryKey
+//     > {}
+
 export type CreateBaseQueryResult<
   TData = unknown,
   TError = unknown,
@@ -49,6 +66,21 @@ export type CreateQueryResult<
   TData = unknown,
   TError = unknown,
 > = CreateBaseQueryResult<TData, TError>
+
+export type DefinedCreateBaseQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = DefinedQueryObserverResult<TData, TError>
+
+export type DefinedCreateQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = DefinedCreateBaseQueryResult<TData, TError>
+
+// export type UseInfiniteQueryResult<
+//   TData = unknown,
+//   TError = unknown,
+// > = InfiniteQueryObserverResult<TData, TError>
 
 export interface CreateMutationOptions<
   TData = unknown,
@@ -77,8 +109,6 @@ export type CreateMutateAsyncFunction<
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
-type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
-
 export type CreateBaseMutationResult<
   TData = unknown,
   TError = unknown,
@@ -97,3 +127,5 @@ export type CreateMutationResult<
   TVariables = unknown,
   TContext = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>
+
+type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

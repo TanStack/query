@@ -1,20 +1,44 @@
-import { QueryObserver, QueryFunction } from '@tanstack/query-core'
-import { CreateQueryOptions, CreateQueryResult, SolidQueryKey } from './types'
+import { QueryFunction, QueryObserver } from '@tanstack/query-core'
 import { createComputed } from 'solid-js'
 import { createStore } from 'solid-js/store'
-import { parseQueryArgs } from './utils'
 import { createBaseQuery } from './createBaseQuery'
+import {
+  CreateQueryOptions,
+  CreateQueryResult,
+  DefinedCreateQueryResult,
+  SolidQueryKey,
+} from './types'
+import { parseQueryArgs } from './utils'
 
-// There are several ways to create a query.
-// 1. createQuery(options: CreateQueryOptions)
-// 2. createQuery(querykey: () => Serializable[], options: CreateQueryOptions)
-// 3. createQuery(querykey: () => Serializable[], queryFunc: Fetcher Function,  options: CreateQueryOptions)
-// 4. The fourth overload is a combination of all three function params
+// HOOK
+
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'initialData'
+  > & { initialData?: () => undefined },
+): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'initialData'
+  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
   options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): CreateQueryResult<TData, TError>
@@ -22,9 +46,33 @@ export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
-  queryKey: SolidQueryKey,
+  queryKey: TQueryKey,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'initialData'
+  > & { initialData?: () => undefined },
+): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'initialData'
+  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
   options?: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey'
@@ -34,7 +82,34 @@ export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  // TODO(lukemurray): not sure if we want to use return type here
+  queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'initialData'
+  > & { initialData?: () => undefined },
+): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'initialData'
+  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
@@ -47,7 +122,7 @@ export function createQuery<
   TQueryFnData,
   TError,
   TData = TQueryFnData,
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
   arg1: TQueryKey | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   arg2?:
