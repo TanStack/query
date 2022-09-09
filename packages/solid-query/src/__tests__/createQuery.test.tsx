@@ -1,4 +1,4 @@
-import { screen, waitFor, fireEvent } from 'solid-testing-library'
+import { screen, waitFor, fireEvent, render } from 'solid-testing-library'
 import '@testing-library/jest-dom'
 import {
   expectType,
@@ -17,7 +17,9 @@ import {
   QueryFunctionContext,
   CreateQueryOptions,
   DefinedCreateQueryResult,
+  QueryClientProvider,
 } from '..'
+import { JSX, Match, Switch, createRenderEffect } from 'solid-js'
 
 describe('useQuery', () => {
   const queryCache = new QueryCache()
@@ -200,34 +202,50 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    function Page() {
+    function Page(): JSX.Element {
       const state = createQuery<string, Error>(key, async () => {
         await sleep(10)
         return 'test'
       })
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       if (state.isLoading) {
         expectType<undefined>(state.data)
         expectType<null>(state.error)
-        return <span>loading</span>
-      }
-
-      if (state.isLoadingError) {
+      } else if (state.isLoadingError) {
         expectType<undefined>(state.data)
         expectType<Error>(state.error)
-        return <span>{state.error.message}</span>
+      } else {
+        expectType<string>(state.data)
+        expectType<Error | null>(state.error)
       }
 
-      expectType<string>(state.data)
-      expectType<Error | null>(state.error)
-      return <span>{state.data}</span>
+      return (
+        <Switch>
+          <Match when={state.isLoading}>
+            <span>loading</span>
+          </Match>
+          <Match when={state.isLoadingError}>
+            <span>{state.error!.message}</span>
+          </Match>
+          <Match when={state.data !== undefined}>
+            <span>{state.data}</span>
+          </Match>
+        </Switch>
+      )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    // renderWithClient(queryClient, () => <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
-    await waitFor(() => rendered.getByText('test'))
+    await waitFor(() => screen.getByText('test'))
 
     expect(states.length).toEqual(2)
 
