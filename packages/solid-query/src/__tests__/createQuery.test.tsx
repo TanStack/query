@@ -29,7 +29,7 @@ import {
   Show,
 } from 'solid-js'
 
-describe('useQuery', () => {
+describe('createQuery', () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
@@ -163,7 +163,7 @@ describe('useQuery', () => {
       const test = useWrappedQuery([''], async () => '1')
       expectType<string | undefined>(test.data)
 
-      // handles wrapped queries with custom fetcher passed directly to useQuery
+      // handles wrapped queries with custom fetcher passed directly to createQuery
       const useWrappedFuncStyleQuery = <
         TQueryKey extends [string, Record<string, unknown>?],
         TQueryFnData,
@@ -2337,12 +2337,12 @@ describe('useQuery', () => {
         data: 'prefetch',
         isStale: false,
       },
-      // Second useQuery started fetching
+      // Second createQuery started fetching
       {
         data: 'prefetch',
         isStale: false,
       },
-      // Second useQuery data came in
+      // Second createQuery data came in
       {
         data: 'two',
         isStale: false,
@@ -2360,7 +2360,7 @@ describe('useQuery', () => {
         data: 'prefetch',
         isStale: true,
       },
-      // Second useQuery data came in
+      // Second createQuery data came in
       {
         data: 'two',
         isStale: false,
