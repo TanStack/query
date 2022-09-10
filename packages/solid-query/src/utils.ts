@@ -1,10 +1,10 @@
 import {
-  CreateQueryOptions,
   SolidQueryKey,
   SolidQueryFilters,
   ParseFilterArgs,
+  ParseQueryArgs,
 } from './types'
-import { QueryFunction } from '@tanstack/query-core'
+import { QueryFunction, QueryOptions } from '@tanstack/query-core'
 
 export function isQueryKey(value: unknown): value is SolidQueryKey {
   return typeof value === 'function'
@@ -13,17 +13,13 @@ export function isQueryKey(value: unknown): value is SolidQueryKey {
 // The parseQuery Args functions helps normalize the arguments into the correct form.
 // Whatever the parameters are, they are normalized into the correct form.
 export function parseQueryArgs<
-  TQueryFnData,
-  TError,
-  TData = TQueryFnData,
+  TOptions extends QueryOptions<any, any, any, ReturnType<TQueryKey>>,
   TQueryKey extends () => readonly unknown[] = SolidQueryKey,
 >(
-  arg1: TQueryKey | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg2?:
-    | QueryFunction<TQueryFnData, ReturnType<TQueryKey>>
-    | CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg3?: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey> {
+  arg1: TQueryKey | TOptions,
+  arg2?: QueryFunction<any, ReturnType<TQueryKey>> | TOptions,
+  arg3?: TOptions,
+): ParseQueryArgs<TOptions, TQueryKey> {
   if (!isQueryKey(arg1)) {
     const { queryKey: solidKey, ...opts } = arg1 as any
     if (solidKey) {
@@ -32,7 +28,7 @@ export function parseQueryArgs<
         queryKey: solidKey(),
       }
     }
-    return arg1
+    return arg1 as any
   }
 
   if (typeof arg2 === 'function') {
@@ -53,6 +49,6 @@ export function parseFilterArgs<
   return (
     isQueryKey(arg1)
       ? [{ ...arg2, queryKey: arg1() }, arg3]
-      : [{ ...arg1, queryKey: arg1?.queryKey?.() } || {}, arg2]
+      : [{ ...arg1, queryKey: arg1?.queryKey?.() }, arg2]
   ) as [ParseFilterArgs<TFilters>, TOptions]
 }
