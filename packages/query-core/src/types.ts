@@ -576,11 +576,7 @@ export interface MutateOptions<
   TVariables = void,
   TContext = unknown,
 > {
-  onSuccess?: (
-    data: TData,
-    variables: TVariables,
-    context: TContext,
-  ) => void
+  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
   onError?: (
     error: TError,
     variables: TVariables,
