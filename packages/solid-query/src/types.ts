@@ -1,4 +1,4 @@
-import type { Context, Accessor } from 'solid-js'
+import type { Context } from 'solid-js'
 import type {
   QueryClient,
   QueryKey,
@@ -8,7 +8,10 @@ import type {
   MutationObserverOptions,
   MutationObserverResult,
   DefinedQueryObserverResult,
+  InfiniteQueryObserverOptions,
+  InfiniteQueryObserverResult,
   QueryFilters,
+  QueryOptions,
 } from '@tanstack/query-core'
 
 export interface ContextOptions {
@@ -62,6 +65,34 @@ export type DefinedCreateQueryResult<
   TData = unknown,
   TError = unknown,
 > = DefinedCreateBaseQueryResult<TData, TError>
+
+export type ParseQueryArgs<
+  TOptions extends QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
+> = TOptions['queryKey'] extends () => infer R
+  ? TOptions & { queryKey: R }
+  : TOptions
+
+/* --- Create Infinite Queries Types --- */
+export interface CreateInfiniteQueryOptions<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
+> extends ContextOptions,
+    InfiniteQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryData,
+      ReturnType<TQueryKey>
+    > {}
+
+export type CreateInfiniteQueryResult<
+  TData = unknown,
+  TError = unknown,
+> = InfiniteQueryObserverResult<TData, TError>
 
 /* --- Create Mutation Types --- */
 export interface CreateMutationOptions<
