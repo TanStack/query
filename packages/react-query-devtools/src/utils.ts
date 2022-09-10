@@ -4,8 +4,6 @@ import type { Query } from '@tanstack/react-query'
 import { Theme, useTheme } from './theme'
 import useMediaQuery from './useMediaQuery'
 
-export const isServer = typeof window === 'undefined'
-
 type StyledComponent<T> = T extends 'button'
   ? React.DetailedHTMLProps<
       React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -104,7 +102,7 @@ export function useIsMounted() {
   const mountedRef = React.useRef(false)
   const isMounted = React.useCallback(() => mountedRef.current, [])
 
-  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
+  React.useEffect(() => {
     mountedRef.current = true
     return () => {
       mountedRef.current = false

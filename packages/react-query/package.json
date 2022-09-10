@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "4.2.3",
+  "version": "4.3.0-beta.4",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,27 +10,29 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.js",
-  "main": "build/cjs/react-query/src/index.js",
-  "browser": "build/umd/index.production.js",
-  "types": "build/types/packages/react-query/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "sideEffects": [
-    "lib/index.js",
-    "lib/index.mjs",
-    "lib/reactjs/index.js",
-    "lib/reactjs/index.mjs",
-    "lib/reactjs/setBatchUpdatesFn.js",
-    "lib/reactjs/setBatchUpdatesFn.mjs"
+    "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
+    "clean": "rm -rf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "test:jest": "yarn test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "yarn test:jest --watch",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "test:jest:dev": "yarn test:jest --watch"
   },
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
     "src",
     "codemods",
     "!codemods/jest.config.js",
@@ -39,12 +41,12 @@
   ],
   "devDependencies": {
     "@types/jscodeshift": "^0.11.3",
+    "@types/use-sync-external-store": "^0.0.3",
     "jscodeshift": "^0.13.1",
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.2.3",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@tanstack/query-core": "4.3.0-beta.4",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {

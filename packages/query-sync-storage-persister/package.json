@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-sync-storage-persister",
-  "version": "4.2.3",
+  "version": "4.3.0-beta.4",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,16 +10,27 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.js",
-  "main": "build/cjs/index.js",
-  "browser": "build/umd/index.production.js",
-  "types": "build/types/packages/query-sync-storage-persister/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
     "src"
   ],
   "scripts": {
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+  },
+  "dependencies": {
+    "@tanstack/react-query-persist-client": "4.3.0-beta.4"
   }
 }

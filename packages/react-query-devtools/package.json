@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "4.2.3",
+  "version": "4.3.0-beta.7",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -10,36 +10,46 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "module": "build/esm/index.js",
-  "main": "build/cjs/packages/react-query-devtools/src/index.js",
-  "browser": "build/umd/index.production.js",
-  "types": "build/types/react-query-devtools/src/index.d.ts",
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./production": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.prod.mjs",
+      "default": "./build/lib/index.prod.js"
+    },
+    "./build/lib/index.prod.js": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.prod.mjs",
+      "default": "./build/lib/index.prod.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
   "files": [
-    "build/*",
+    "build/lib/*",
+    "build/umd/*",
     "src"
   ],
-  "exports": {
-    "development": {
-      "require": "./build/cjs/packages/react-query-devtools/src/index.js",
-      "default": "./build/esm/index.js"
-    },
-    "default": {
-      "require": "./build/cjs/noop.js",
-      "default": "./build/esm/noop.js"
-    }
-  },
   "scripts": {
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+  },
+  "devDependencies": {
+    "@types/use-sync-external-store": "^0.0.3"
   },
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.0.0-alpha.82",
-    "@types/use-sync-external-store": "^0.0.3",
+    "@tanstack/match-sorter-utils": "^8.1.1",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "@tanstack/react-query": "4.2.3"
+    "@tanstack/react-query": "4.3.0-beta.4"
   }
 }

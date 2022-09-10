@@ -3,18 +3,19 @@
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
-    "clean": "npm exec --workspaces -c \"rm -rf build || true\"",
+    "clean": "lerna run clean --stream --no-bail",
     "install:csb": "npm install --frozen-lockfile && node ./scripts/fix-package-json.js",
     "test": "(is-ci && npm run test:ci) || npm run test:dev",
-    "test:ci": "npm run compile && npm run test:format && npm run test:eslint && npm run test:jest",
-    "test:dev": "npm run compile && npm run test:format && npm run test:eslint && npm run test:jest:dev",
+    "test:ci": "npm run typecheck && npm run test:format && npm run test:eslint && npm run test:jest",
+    "test:dev": "npm run typecheck && npm run test:format && npm run test:eslint && npm run test:jest:dev",
     "test:dev:17": "REACTJS_VERSION=17 jest --watch",
     "test:eslint": "lerna run test:eslint --stream --no-bail",
     "test:format": "npm run prettier -- --check",
     "test:jest": "lerna run test:codemods --stream --no-bail && jest --config ./jest.config.ts",
     "test:jest:dev": "jest --config ./jest.config.ts --watch",
     "test:size": "npm run build && bundlewatch",
-    "build": "rollup --config rollup.config.js && npm run typecheck",
+    "build": "rollup --config rollup.config.js && npm run typecheck && npm run build:copyTypes",
+    "build:copyTypes": "cp packages/react-query-devtools/build/lib/index.d.ts packages/react-query-devtools/build/lib/index.prod.d.ts",
     "typecheck": "tsc -b",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"npm run typecheck -- --watch\" \"npm run test\"",
     "linkAll": "lerna exec 'npm run link' --parallel",
@@ -23,8 +24,7 @@
     "prettier": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json}\"",
     "prettier:write": "npm run prettier -- --write",
     "visualize": "lerna exec 'open build/stats-html.html'",
-    "cipublish": "ts-node scripts/publish.ts",
-    "compile": "lerna run compile --stream --no-bail"
+    "cipublish": "ts-node scripts/publish.ts"
   },
   "namespace": "@tanstack",
   "workspaces": [
@@ -62,6 +62,7 @@
     "@commitlint/parse": "^16.2.1",
     "@faker-js/faker": "^6.3.1",
     "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "22.0.1",
     "@rollup/plugin-node-resolve": "^13.2.1",
     "@rollup/plugin-replace": "^4.0.0",
     "@testing-library/jest-dom": "^5.16.4",
@@ -115,7 +116,7 @@
     "stream-to-array": "^2.3.0",
     "svelte": "^3.48.0",
     "ts-node": "^10.7.0",
-    "typescript": "^4.7.0-beta",
+    "typescript": "^4.7.4",
     "vue": "^3.2.33"
   },
   "bundlewatch": {

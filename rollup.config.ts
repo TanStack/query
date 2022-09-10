@@ -5,20 +5,22 @@ import size from 'rollup-plugin-size'
 import visualizer from 'rollup-plugin-visualizer'
 import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
+import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
 import svelte from 'rollup-plugin-svelte'
 
 type Options = {
-  input: string
+  input: string | string[]
   packageDir: string
   external: RollupOptions['external']
   banner: string
   jsName: string
   outputFile: string
   globals: Record<string, string>
+  forceDevEnv: boolean
 }
 
-const umdDevPlugin = (type: 'development' | 'production') =>
+const forceEnvPlugin = (type: 'development' | 'production') =>
   replace({
     'process.env.NODE_ENV': `"${type}"`,
     delimiters: ['', ''],
@@ -28,7 +30,7 @@ const umdDevPlugin = (type: 'development' | 'production') =>
 const babelPlugin = babel({
   babelHelpers: 'bundled',
   exclude: /node_modules/,
-  extensions: ['.ts', '.tsx'],
+  extensions: ['.ts', '.tsx', '.native.ts'],
 })
 
 export default function rollup(options: RollupOptions): RollupOptions[] {
@@ -37,74 +39,102 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       name: 'query-core',
       packageDir: 'packages/query-core',
       jsName: 'QueryCore',
-      outputFile: 'query-core',
-      entryFile: 'src/index.ts',
+      outputFile: 'index',
+      entryFile: ['src/index.ts', 'src/logger.native.ts'],
       globals: {},
     }),
     ...buildConfigs({
       name: 'query-async-storage-persister',
       packageDir: 'packages/query-async-storage-persister',
       jsName: 'QueryAsyncStoragePersister',
-      outputFile: 'query-async-storage-persister',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+      },
     }),
     ...buildConfigs({
       name: 'query-broadcast-client-experimental',
       packageDir: 'packages/query-broadcast-client-experimental',
       jsName: 'QueryBroadcastClient',
-      outputFile: 'query-broadcast-client-experimental',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/query-core': 'QueryCore',
+        'broadcast-channel': 'BroadcastChannel',
+      },
     }),
     ...buildConfigs({
       name: 'query-sync-storage-persister',
       packageDir: 'packages/query-sync-storage-persister',
       jsName: 'QuerySyncStoragePersister',
-      outputFile: 'query-sync-storage-persister',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
-      globals: {},
+      globals: {
+        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+      },
     }),
     ...buildConfigs({
       name: 'react-query',
       packageDir: 'packages/react-query',
       jsName: 'ReactQuery',
-      outputFile: 'react-query',
-      entryFile: 'src/index.ts',
+      outputFile: 'index',
+      entryFile: ['src/index.ts', 'src/reactBatchedUpdates.native.ts'],
       globals: {
         react: 'React',
+        'react-dom': 'ReactDOM',
+        '@tanstack/query-core': 'QueryCore',
+        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
+        'react-native': 'ReactNative',
       },
+      bundleUMDGlobals: [
+        '@tanstack/query-core',
+        'use-sync-external-store/shim/index.js',
+      ],
     }),
     ...buildConfigs({
       name: 'react-query-devtools',
       packageDir: 'packages/react-query-devtools',
       jsName: 'ReactQueryDevtools',
-      outputFile: 'react-query-devtools',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
+        '@tanstack/match-sorter-utils': 'MatchSorterUtils',
+        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
       },
+      bundleUMDGlobals: [
+        '@tanstack/match-sorter-utils',
+        'use-sync-external-store/shim/index.js',
+      ],
     }),
     ...buildConfigs({
-      name: 'react-query-devtools-noop',
+      name: 'react-query-devtools-prod',
       packageDir: 'packages/react-query-devtools',
       jsName: 'ReactQueryDevtools',
-      outputFile: 'react-query-devtools',
-      entryFile: 'src/noop.ts',
+      outputFile: 'index.prod',
+      entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
+        '@tanstack/match-sorter-utils': 'MatchSorterUtils',
+        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
       },
+      forceDevEnv: true,
+      skipUmdBuild: true,
     }),
     ...buildConfigs({
       name: 'react-query-persist-client',
       packageDir: 'packages/react-query-persist-client',
       jsName: 'ReactQueryPersistClient',
-      outputFile: 'react-query-persist-client',
+      outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
+        '@tanstack/query-core': 'QueryCore',
         '@tanstack/react-query': 'ReactQuery',
       },
     }),
@@ -116,14 +146,26 @@ function buildConfigs(opts: {
   name: string
   jsName: string
   outputFile: string
-  entryFile: string
+  entryFile: string | string[]
   globals: Record<string, string>
+  // This option allows to bundle specified dependencies for umd build
+  bundleUMDGlobals?: string[]
+  // Force prod env build
+  forceDevEnv?: boolean
+  skipUmdBuild?: boolean
 }): RollupOptions[] {
-  const input = path.resolve(opts.packageDir, opts.entryFile)
+  const firstEntry = path.resolve(opts.packageDir, Array.isArray(opts.entryFile) ? opts.entryFile[0]: opts.entryFile)
+  const entries = Array.isArray(opts.entryFile) ? opts.entryFile: [opts.entryFile]
+  const input = entries.map((entry) => path.resolve(opts.packageDir, entry))
   const externalDeps = Object.keys(opts.globals)
 
+  const bundleUMDGlobals = opts.bundleUMDGlobals || []
+  const umdExternal = externalDeps.filter(
+    (external) => !bundleUMDGlobals.includes(external),
+  )
+
   const external = (moduleName) => externalDeps.includes(moduleName)
-  const banner = createBanner(opts.name)
+  const banner = ''; //createBanner(opts.name)
 
   const options: Options = {
     input,
@@ -133,47 +175,80 @@ function buildConfigs(opts: {
     external,
     banner,
     globals: opts.globals,
+    forceDevEnv: opts.forceDevEnv || false,
   }
 
-  return [esm(options), cjs(options), umdDev(options), umdProd(options)]
+  let builds = [esm(options), cjs(options)]
+
+  if (!opts.skipUmdBuild) {
+    builds = builds.concat([
+      umdDev({ ...options, external: umdExternal, input: firstEntry }),
+      umdProd({ ...options, external: umdExternal, input: firstEntry }),
+    ])
+  }
+
+  return builds
 }
 
-function esm({ input, packageDir, external, banner }: Options): RollupOptions {
+function esm({
+  input,
+  packageDir,
+  external,
+  banner,
+  outputFile,
+  forceDevEnv,
+}: Options): RollupOptions {
   return {
     // ESM
     external,
     input,
     output: {
       format: 'esm',
+      // file: `${packageDir}/build/lib/${outputFile}.mjs`,
+      dir: `${packageDir}/build/lib`,
       sourcemap: true,
-      dir: `${packageDir}/build/esm`,
       banner,
+      preserveModules: true,
+      entryFileNames: "[name].mjs",
     },
     plugins: [
       svelte(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      commonJS(),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
 }
 
-function cjs({ input, external, packageDir, banner }: Options): RollupOptions {
+function cjs({
+  input,
+  external,
+  packageDir,
+  banner,
+  outputFile,
+  forceDevEnv,
+}: Options): RollupOptions {
   return {
     // CJS
     external,
     input,
     output: {
       format: 'cjs',
+      // file: `${packageDir}/build/lib/${outputFile}.js`,
+      dir: `${packageDir}/build/lib`,
       sourcemap: true,
-      dir: `${packageDir}/build/cjs`,
-      preserveModules: true,
       exports: 'named',
       banner,
+      preserveModules: true,
+      entryFileNames: "[name].js",
     },
     plugins: [
       svelte(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      commonJS(),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
 }
@@ -194,7 +269,7 @@ function umdDev({
     output: {
       format: 'umd',
       sourcemap: true,
-      file: `${packageDir}/build/umd/index.development.js`,
+      file: `${packageDir}/build/umd/${outputFile}.development.js`,
       name: jsName,
       globals,
       banner,
@@ -202,8 +277,9 @@ function umdDev({
     plugins: [
       svelte(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
-      umdDevPlugin('development'),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      commonJS(),
+      forceEnvPlugin('development'),
     ],
   }
 }
@@ -224,7 +300,7 @@ function umdProd({
     output: {
       format: 'umd',
       sourcemap: true,
-      file: `${packageDir}/build/umd/index.production.js`,
+      file: `${packageDir}/build/umd/${outputFile}.production.js`,
       name: jsName,
       globals,
       banner,
@@ -232,8 +308,9 @@ function umdProd({
     plugins: [
       svelte(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
-      umdDevPlugin('production'),
+      commonJS(),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      forceEnvPlugin('production'),
       terser({
         mangle: true,
         compress: true,

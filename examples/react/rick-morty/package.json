@@ -12,8 +12,8 @@
     "@material-ui/core": "^4.9.7",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@tanstack/react-query": "4.2.3",
-    "@tanstack/react-query-devtools": "4.2.3",
+    "@tanstack/react-query": "4.3.0-beta.4",
+    "@tanstack/react-query-devtools": "4.3.0-beta.7",
     "react-router": "^5.1.2",
     "react-router-dom": "^5.1.2"
   },

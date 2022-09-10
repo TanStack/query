@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim'
+import { useSyncExternalStore } from './useSyncExternalStore'
 import {
   useQueryClient,
   onlineManager,
@@ -99,8 +99,6 @@ interface DevtoolsPanelOptions extends ContextOptions {
   handleDragStart: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void
 }
 
-const isServer = typeof window === 'undefined'
-
 export function ReactQueryDevtools({
   initialIsOpen,
   panelProps = {},
@@ -192,7 +190,7 @@ export function ReactQueryDevtools({
     }
   }, [isResolvedOpen])
 
-  React[isServer ? 'useEffect' : 'useLayoutEffect'](() => {
+  React.useEffect(() => {
     if (isResolvedOpen) {
       const previousValue = rootRef.current?.parentElement?.style.paddingBottom
 
