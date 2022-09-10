@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-persist-client",
-  "version": "4.3.0",
+  "version": "4.3.1",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -31,7 +31,7 @@
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.3.0",
-    "@tanstack/react-query": "4.3.0"
+    "@tanstack/query-core": "4.3.1",
+    "@tanstack/react-query": "4.3.1"
   }
 }
