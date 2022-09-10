@@ -10,7 +10,7 @@ import path from 'path'
 import svelte from 'rollup-plugin-svelte'
 
 type Options = {
-  input: string
+  input: string | string[]
   packageDir: string
   external: RollupOptions['external']
   banner: string
@@ -30,7 +30,7 @@ const forceEnvPlugin = (type: 'development' | 'production') =>
 const babelPlugin = babel({
   babelHelpers: 'bundled',
   exclude: /node_modules/,
-  extensions: ['.ts', '.tsx'],
+  extensions: ['.ts', '.tsx', '.native.ts'],
 })
 
 export default function rollup(options: RollupOptions): RollupOptions[] {
@@ -40,7 +40,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/query-core',
       jsName: 'QueryCore',
       outputFile: 'index',
-      entryFile: 'src/index.ts',
+      entryFile: ['src/index.ts', 'src/logger.native.ts'],
       globals: {},
     }),
     ...buildConfigs({
@@ -79,12 +79,13 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/react-query',
       jsName: 'ReactQuery',
       outputFile: 'index',
-      entryFile: 'src/index.ts',
+      entryFile: ['src/index.ts', 'src/reactBatchedUpdates.native.ts'],
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
+        'react-native': 'ReactNative',
       },
       bundleUMDGlobals: [
         '@tanstack/query-core',
@@ -145,7 +146,7 @@ function buildConfigs(opts: {
   name: string
   jsName: string
   outputFile: string
-  entryFile: string
+  entryFile: string | string[]
   globals: Record<string, string>
   // This option allows to bundle specified dependencies for umd build
   bundleUMDGlobals?: string[]
@@ -153,7 +154,9 @@ function buildConfigs(opts: {
   forceDevEnv?: boolean
   skipUmdBuild?: boolean
 }): RollupOptions[] {
-  const input = path.resolve(opts.packageDir, opts.entryFile)
+  const firstEntry = path.resolve(opts.packageDir, Array.isArray(opts.entryFile) ? opts.entryFile[0]: opts.entryFile)
+  const entries = Array.isArray(opts.entryFile) ? opts.entryFile: [opts.entryFile]
+  const input = entries.map((entry) => path.resolve(opts.packageDir, entry))
   const externalDeps = Object.keys(opts.globals)
 
   const bundleUMDGlobals = opts.bundleUMDGlobals || []
@@ -162,7 +165,7 @@ function buildConfigs(opts: {
   )
 
   const external = (moduleName) => externalDeps.includes(moduleName)
-  const banner = createBanner(opts.name)
+  const banner = ''; //createBanner(opts.name)
 
   const options: Options = {
     input,
@@ -179,8 +182,8 @@ function buildConfigs(opts: {
 
   if (!opts.skipUmdBuild) {
     builds = builds.concat([
-      umdDev({ ...options, external: umdExternal }),
-      umdProd({ ...options, external: umdExternal }),
+      umdDev({ ...options, external: umdExternal, input: firstEntry }),
+      umdProd({ ...options, external: umdExternal, input: firstEntry }),
     ])
   }
 
@@ -201,15 +204,18 @@ function esm({
     input,
     output: {
       format: 'esm',
-      file: `${packageDir}/build/lib/${outputFile}.mjs`,
+      // file: `${packageDir}/build/lib/${outputFile}.mjs`,
+      dir: `${packageDir}/build/lib`,
       sourcemap: true,
       banner,
+      preserveModules: true,
+      entryFileNames: "[name].mjs",
     },
     plugins: [
       svelte(),
       babelPlugin,
       commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
@@ -229,16 +235,19 @@ function cjs({
     input,
     output: {
       format: 'cjs',
-      file: `${packageDir}/build/lib/${outputFile}.js`,
+      // file: `${packageDir}/build/lib/${outputFile}.js`,
+      dir: `${packageDir}/build/lib`,
       sourcemap: true,
       exports: 'named',
       banner,
+      preserveModules: true,
+      entryFileNames: "[name].js",
     },
     plugins: [
       svelte(),
       babelPlugin,
       commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
@@ -268,7 +277,7 @@ function umdDev({
     plugins: [
       svelte(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       commonJS(),
       forceEnvPlugin('development'),
     ],
@@ -300,7 +309,7 @@ function umdProd({
       svelte(),
       babelPlugin,
       commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceEnvPlugin('production'),
       terser({
         mangle: true,
