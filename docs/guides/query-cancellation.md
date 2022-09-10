@@ -100,7 +100,7 @@ An `AbortSignal` can be set in the client `request` method.
 ```tsx
 const client = new GraphQLClient(endpoint)
 
-const query = useQuery('todos', ({ signal }) => {
+const query = useQuery(['todos'], ({ signal }) => {
   client.request({ document: query, signal })
 })
 ```

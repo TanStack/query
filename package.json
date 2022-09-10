@@ -48,6 +48,7 @@
     "./examples/react/playground",
     "./examples/react/prefetching",
     "./examples/react/react-native",
+    "./examples/react/react-router",
     "./examples/react/rick-morty",
     "./examples/react/simple",
     "./examples/react/star-wars",
