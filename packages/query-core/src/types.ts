@@ -579,7 +579,7 @@ export interface MutateOptions<
   onSuccess?: (
     data: TData,
     variables: TVariables,
-    context: TContext | undefined,
+    context: TContext,
   ) => void
   onError?: (
     error: TError,
