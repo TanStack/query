@@ -5,7 +5,7 @@
 - basic-graphql-request 🟢
 - basic-typescript 🟢
 - custom-hooks 🚫 not implemented in react
-- default-query-function 🔴
+- default-query-function 🟡 (green styling for cached post not working)
 - focus-refetching 🚫 not implemented in react
 - load-more-infinite-scroll 🚫 nextjs (react only)
 - nextjs 🚫 nextjs (react only)

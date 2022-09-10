@@ -55,7 +55,8 @@
     "./examples/react/suspense",
     "./examples/solid/basic-typescript",
     "./examples/solid/simple",
-    "./examples/solid/basic-graphql-request"
+    "./examples/solid/basic-graphql-request",
+    "./examples/solid/default-query-function"
   ],
   "devDependencies": {
     "@babel/core": "^7.17.9",
