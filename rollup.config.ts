@@ -1,4 +1,4 @@
-import { RollupOptions } from 'rollup'
+import { OutputOptions, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
@@ -18,6 +18,7 @@ type Options = {
   outputFile: string
   globals: Record<string, string>
   forceDevEnv: boolean
+  forceBundle: boolean
 }
 
 const forceEnvPlugin = (type: 'development' | 'production') =>
@@ -124,6 +125,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
       },
       forceDevEnv: true,
+      forceBundle: true,
       skipUmdBuild: true,
     }),
     ...buildConfigs({
@@ -152,6 +154,7 @@ function buildConfigs(opts: {
   bundleUMDGlobals?: string[]
   // Force prod env build
   forceDevEnv?: boolean
+  forceBundle?: boolean
   skipUmdBuild?: boolean
 }): RollupOptions[] {
   const firstEntry = path.resolve(
@@ -181,6 +184,7 @@ function buildConfigs(opts: {
     banner,
     globals: opts.globals,
     forceDevEnv: opts.forceDevEnv || false,
+    forceBundle: opts.forceBundle || false,
   }
 
   let builds = [esm(options), cjs(options)]
@@ -202,20 +206,29 @@ function esm({
   banner,
   outputFile,
   forceDevEnv,
+  forceBundle,
 }: Options): RollupOptions {
+  const bundleOutput: OutputOptions = {
+    format: 'esm',
+    file: `${packageDir}/build/lib/${outputFile}.mjs`,
+    sourcemap: true,
+    banner,
+  }
+
+  const normalOutput: OutputOptions = {
+    format: 'esm',
+    dir: `${packageDir}/build/lib`,
+    sourcemap: true,
+    banner,
+    preserveModules: true,
+    entryFileNames: '[name].mjs',
+  }
+
   return {
     // ESM
     external,
     input,
-    output: {
-      format: 'esm',
-      // file: `${packageDir}/build/lib/${outputFile}.mjs`,
-      dir: `${packageDir}/build/lib`,
-      sourcemap: true,
-      banner,
-      preserveModules: true,
-      entryFileNames: '[name].mjs',
-    },
+    output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
       svelte(),
       babelPlugin,
@@ -233,21 +246,31 @@ function cjs({
   banner,
   outputFile,
   forceDevEnv,
+  forceBundle,
 }: Options): RollupOptions {
+  const bundleOutput: OutputOptions = {
+    format: 'cjs',
+    file: `${packageDir}/build/lib/${outputFile}.js`,
+    sourcemap: true,
+    exports: 'named',
+    banner,
+  }
+
+  const normalOutput: OutputOptions = {
+    format: 'cjs',
+    dir: `${packageDir}/build/lib`,
+    sourcemap: true,
+    exports: 'named',
+    banner,
+    preserveModules: true,
+    entryFileNames: '[name].js',
+  }
+
   return {
     // CJS
     external,
     input,
-    output: {
-      format: 'cjs',
-      // file: `${packageDir}/build/lib/${outputFile}.js`,
-      dir: `${packageDir}/build/lib`,
-      sourcemap: true,
-      exports: 'named',
-      banner,
-      preserveModules: true,
-      entryFileNames: '[name].js',
-    },
+    output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
       svelte(),
       babelPlugin,
