@@ -210,6 +210,10 @@
         {
           "label": "TkDodo's Blog",
           "to": "community/tkdodos-blog"
+        },
+        {
+          "label": "Query Key Factory",
+          "to": "community/lukemorales-query-key-factory"
         }
       ]
     },
