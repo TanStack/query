@@ -27,7 +27,9 @@ import {
   createEffect,
   createSignal,
   Show,
+  ErrorBoundary,
 } from 'solid-js'
+import { untrack } from 'solid-js/web'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -1253,19 +1255,19 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch, data } = state
-
-      NotReact.useEffect(() => {
+      createEffect(() => {
+        const data = state.data
+        const refetch = state.refetch
         setActTimeout(() => {
           if (data) {
             refetch()
           }
         }, 20)
-      }, [refetch, data])
+      })
 
       return (
         <div>
-          <h1>{data ?? null}</h1>
+          <h1>{state.data ?? null}</h1>
         </div>
       )
     }
@@ -1295,9 +1297,10 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
+        const _trackState = { ...state }
         renderCount++
-      }, [state])
+      })
 
       return (
         <div>
@@ -1388,12 +1391,10 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      const { remove, refetch } = state
-
       return (
         <div>
-          <button onClick={() => remove()}>remove</button>
-          <button onClick={() => refetch()}>refetch</button>
+          <button onClick={() => state.remove()}>remove</button>
+          <button onClick={() => state.refetch()}>refetch</button>
           data: {state.data ?? 'null'}
         </div>
       )
@@ -1499,7 +1500,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const results: DefinedCreateQueryResult<string>[] = []
 
-    queryClient.setQueryData(key, 'set')
+    queryClient.setQueryData(key(), 'set')
 
     function Page() {
       const result = createQuery(
@@ -1519,7 +1520,7 @@ describe('createQuery', () => {
       return (
         <div>
           <div>isFetching: {result.isFetching}</div>
-          <button onClick={() => queryClient.refetchQueries(key)}>
+          <button onClick={() => queryClient.refetchQueries(key())}>
             refetch
           </button>
           data: {result.data}
@@ -1566,7 +1567,7 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <button onClick={() => queryClient.invalidateQueries(key)}>
+          <button onClick={() => queryClient.invalidateQueries(key())}>
             invalidate
           </button>
           data: {state.data}
@@ -1636,11 +1637,11 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
-          queryClient.refetchQueries({ queryKey: key })
+          queryClient.refetchQueries({ queryKey: key() })
         }, 20)
-      }, [])
+      })
 
       return null
     }
@@ -1682,11 +1683,11 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
-          queryClient.invalidateQueries(key)
+          queryClient.invalidateQueries(key())
         }, 20)
-      }, [])
+      })
 
       return null
     }
@@ -1713,26 +1714,26 @@ describe('createQuery', () => {
     const states: CreateQueryResult<number>[] = []
 
     function Page() {
-      const [count, setCount] = NotReact.useState(0)
+      const [count, setCount] = createSignal(0)
 
       const state = createQuery(
-        [key, count],
+        () => [key(), count()],
         async () => {
           await sleep(5)
-          return count
+          return count()
         },
-        { enabled: count === 0 },
+        { enabled: count() === 0 },
       )
 
       createRenderEffect(() => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
           setCount(1)
         }, 10)
-      }, [])
+      })
 
       return null
     }
@@ -1772,13 +1773,13 @@ describe('createQuery', () => {
     const states: CreateQueryResult<number>[] = []
 
     function Page() {
-      const [count, setCount] = NotReact.useState(0)
+      const [count, setCount] = createSignal(0)
 
       const state = createQuery(
-        [key, count],
+        () => [key(), count()],
         async () => {
           await sleep(10)
-          return count
+          return count()
         },
         { keepPreviousData: true },
       )
@@ -1787,11 +1788,11 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
           setCount(1)
         }, 20)
-      }, [])
+      })
 
       return null
     }
@@ -1845,15 +1846,15 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
 
-    function Page({ count }: { count: number }) {
+    function Page(props: { count: number }) {
       const state = createQuery<number, Error>(
-        [key, count],
+        () => [key(), props.count],
         async () => {
           await sleep(10)
-          if (count === 2) {
+          if (props.count === 2) {
             throw new Error('Error test')
           }
-          return Promise.resolve(count)
+          return Promise.resolve(props.count)
         },
         {
           retry: false,
@@ -1957,13 +1958,13 @@ describe('createQuery', () => {
     const states: DefinedCreateQueryResult<number>[] = []
 
     function Page() {
-      const [count, setCount] = NotReact.useState(0)
+      const [count, setCount] = createSignal(0)
 
       const state = createQuery(
-        [key, count],
+        () => [key(), count()],
         async () => {
           await sleep(10)
-          return count
+          return count()
         },
         { initialData: 99, keepPreviousData: true },
       )
@@ -1972,11 +1973,11 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
           setCount(1)
         }, 20)
-      }, [])
+      })
 
       return null
     }
@@ -2031,13 +2032,13 @@ describe('createQuery', () => {
     const states: CreateQueryResult<number>[] = []
 
     function Page() {
-      const [count, setCount] = NotReact.useState(0)
+      const [count, setCount] = createSignal(0)
 
       const state = createQuery(
-        [key, count],
+        () => [key(), count()],
         async () => {
           await sleep(10)
-          return count
+          return count()
         },
         { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' },
       )
@@ -2046,9 +2047,8 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch } = state
-
-      NotReact.useEffect(() => {
+      createEffect(() => {
+        const refetch = state.refetch
         refetch()
 
         setActTimeout(() => {
@@ -2058,7 +2058,7 @@ describe('createQuery', () => {
         setActTimeout(() => {
           refetch()
         }, 30)
-      }, [refetch])
+      })
 
       return null
     }
@@ -2126,13 +2126,13 @@ describe('createQuery', () => {
     await sleep(10)
 
     function Page() {
-      const [count, setCount] = NotReact.useState(10)
+      const [count, setCount] = createSignal(10)
 
       const state = createQuery(
-        [key, count],
+        () => [key(), count()],
         async () => {
           await sleep(10)
-          return count
+          return count()
         },
         { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' },
       )
@@ -2141,9 +2141,8 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch } = state
-
-      NotReact.useEffect(() => {
+      createEffect(() => {
+        const refetch = state.refetch
         setActTimeout(() => {
           setCount(11)
         }, 20)
@@ -2153,7 +2152,7 @@ describe('createQuery', () => {
         setActTimeout(() => {
           refetch()
         }, 40)
-      }, [refetch])
+      })
 
       return null
     }
@@ -2218,7 +2217,6 @@ describe('createQuery', () => {
         },
         { notifyOnChangeProps: 'all' },
       )
-      const refetch = state.refetch
 
       createRenderEffect(() => {
         states.push({ ...state })
@@ -2226,7 +2224,7 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
+          <button onClick={() => state.refetch()}>refetch</button>
           data: {state.data}
         </div>
       )
@@ -2277,7 +2275,7 @@ describe('createQuery', () => {
     const states1: CreateQueryResult<string>[] = []
     const states2: CreateQueryResult<string>[] = []
 
-    await queryClient.prefetchQuery(key, async () => {
+    await queryClient.prefetchQuery(key(), async () => {
       await sleep(10)
       return 'prefetch'
     })
@@ -2295,7 +2293,9 @@ describe('createQuery', () => {
           staleTime: 100,
         },
       )
-      states1.push(state)
+      createRenderEffect(() => {
+        states1.push({ ...state })
+      })
       return null
     }
 
@@ -2310,7 +2310,9 @@ describe('createQuery', () => {
           staleTime: 10,
         },
       )
-      states2.push(state)
+      createRenderEffect(() => {
+        states2.push({ ...state })
+      })
       return null
     }
 
@@ -2462,13 +2464,12 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch } = state
-
-      NotReact.useEffect(() => {
+      createEffect(() => {
+        const refetch = state.refetch
         setActTimeout(() => {
           refetch()
         }, 10)
-      }, [refetch])
+      })
       return null
     }
 
@@ -2556,10 +2557,11 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    expect(queryCache.find(key)!.options.queryFn).toBe(queryFn1)
+    expect(queryCache.find(key())!.options.queryFn).toBe(queryFn1)
   })
 
-  it('should render correct states even in case of useEffect triggering delays', async () => {
+  // TODO(lukemurray): this seems like a react implementation detail
+  it.skip('should render correct states even in case of useEffect triggering delays', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
@@ -2640,7 +2642,7 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const [count, setCount] = NotReact.useState(0)
+      const [count, setCount] = createSignal(0)
       createQuery(key, queryFn, {
         onSuccess: () => {
           setCount((x) => x + 1)
@@ -2652,12 +2654,12 @@ describe('createQuery', () => {
         },
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         renders++
-        callbackCount = count
+        callbackCount = count()
       })
 
-      return <div>count: {count}</div>
+      return <div>count: {count()}</div>
     }
 
     render(() => (
@@ -2679,15 +2681,15 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const [, setNewState] = NotReact.useState('state')
+      const [, setNewState] = createSignal('state')
       const state = createQuery(key, () => 'data')
-      NotReact.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
-          queryClient.setQueryData(key, 'new')
+          queryClient.setQueryData(key(), 'new')
           // Update with same state to make react discard the next render
           setNewState('state')
         }, 10)
-      }, [])
+      })
       return <div>{state.data}</div>
     }
 
@@ -2771,7 +2773,7 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const state = createQuery([key, variables], queryFn)
+      const state = createQuery(() => [key(), variables], queryFn)
       createRenderEffect(() => {
         states.push({ ...state })
       })
@@ -2813,9 +2815,7 @@ describe('createQuery', () => {
 
     await waitFor(() => screen.getByText('default'))
 
-    act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    window.dispatchEvent(new FocusEvent('focus'))
 
     expect(queryFn).not.toHaveBeenCalled()
   })
@@ -2844,9 +2844,7 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await sleep(10)
 
@@ -2879,9 +2877,7 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await sleep(10)
 
@@ -2914,9 +2910,7 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await sleep(10)
 
@@ -2956,9 +2950,7 @@ describe('createQuery', () => {
 
     await sleep(20)
 
-    act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await sleep(20)
 
@@ -3005,9 +2997,7 @@ describe('createQuery', () => {
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
-    act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await screen.findByText('data: 1')
 
@@ -3155,7 +3145,7 @@ describe('createQuery', () => {
 
     render(() => (
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <ErrorBoundary fallback={() => <div>error boundary</div>}>
           <Page />
         </ErrorBoundary>
       </QueryClientProvider>
@@ -3174,7 +3164,7 @@ describe('createQuery', () => {
         useErrorBoundary: true,
       })
 
-      NotReact.useEffect(() => {
+      createEffect(() => {
         result = query
       })
 
@@ -3215,7 +3205,7 @@ describe('createQuery', () => {
 
     render(() => (
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
+        <ErrorBoundary fallback={() => <div>error boundary</div>}>
           <Page />
         </ErrorBoundary>
       </QueryClientProvider>
@@ -3249,7 +3239,7 @@ describe('createQuery', () => {
     render(() => (
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary
-          fallbackRender={({ error }) => (
+          fallback={(error) => (
             <div>
               <div>error boundary</div>
               {/* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */}
