@@ -7,18 +7,18 @@ export * from './types'
 // export type { QueriesResults, QueriesOptions } from './useQueries'
 export { createQuery } from './createQuery'
 export {
-  QueryClientContext as defaultContext,
+  defaultContext,
   QueryClientProvider,
   useQueryClient,
 } from './QueryClientProvider'
-// export type { QueryClientProviderProps } from './QueryClientProvider'
-// export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
+export type { QueryClientProviderProps } from './QueryClientProvider'
+export type { QueryErrorResetBoundaryProps } from './QueryErrorResetBoundary'
 // export { useHydrate, Hydrate } from './Hydrate'
 // export type { HydrateProps } from './Hydrate'
-// export {
-//   QueryErrorResetBoundary,
-//   useQueryErrorResetBoundary,
-// } from './QueryErrorResetBoundary'
+export {
+  QueryErrorResetBoundary,
+  useQueryErrorResetBoundary,
+} from './QueryErrorResetBoundary'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
 export { createMutation } from './createMutation'
