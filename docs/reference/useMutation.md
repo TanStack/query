@@ -97,7 +97,18 @@ mutate(variables, {
   - `variables: TVariables`
     - Optional
     - The variables object to pass to the `mutationFn`.
-  - Remaining options extend the same options described above in the `useMutation` hook.
+  - `onSuccess: (data: TData, variables: TVariables, context: TContext) => void`
+    - Optional
+    - This function will fire when the mutation is successful and will be passed the mutation's result.
+    - Void function, the returned value will be ignored
+  - `onError: (err: TError, variables: TVariables, context: TContext | undefined) => void`
+    - Optional
+    - This function will fire if the mutation encounters an error and will be passed the error.
+    - Void function, the returned value will be ignored
+  - `onSettled: (data: TData | undefined, error: TError | null, variables: TVariables, context: TContext | undefined) => void`
+    - Optional
+    - This function will fire when the mutation is either successfully fetched or encounters an error and be passed either the data or error
+    - Void function, the returned value will be ignored
   - If you make multiple requests, `onSuccess` will fire only after the latest call you've made.
 - `mutateAsync: (variables: TVariables, { onSuccess, onSettled, onError }) => Promise<TData>`
   - Similar to `mutate` but returns a promise which can be awaited.

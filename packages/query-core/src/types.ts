@@ -576,22 +576,18 @@ export interface MutateOptions<
   TVariables = void,
   TContext = unknown,
 > {
-  onSuccess?: (
-    data: TData,
-    variables: TVariables,
-    context: TContext,
-  ) => Promise<unknown> | unknown
+  onSuccess?: (data: TData, variables: TVariables, context: TContext) => void
   onError?: (
     error: TError,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | unknown
+  ) => void
   onSettled?: (
     data: TData | undefined,
     error: TError | null,
     variables: TVariables,
     context: TContext | undefined,
-  ) => Promise<unknown> | unknown
+  ) => void
 }
 
 export type MutateFunction<
