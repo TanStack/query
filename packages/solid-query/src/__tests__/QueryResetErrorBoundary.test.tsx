@@ -20,7 +20,7 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -35,7 +35,7 @@ describe('QueryErrorResetBoundary', () => {
           useErrorBoundary: true,
         },
       )
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -78,7 +78,7 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data, status } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -96,8 +96,8 @@ describe('QueryErrorResetBoundary', () => {
       )
       return (
         <div>
-          <div>status: {status}</div>
-          <div>{data}</div>
+          <div>status: {state.status}</div>
+          <div>{state.data}</div>
         </div>
       )
     }
@@ -142,7 +142,7 @@ describe('QueryErrorResetBoundary', () => {
 
     function Page() {
       const [enabled, setEnabled] = createSignal(false)
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -163,7 +163,7 @@ describe('QueryErrorResetBoundary', () => {
         setEnabled(true)
       })
 
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -203,7 +203,7 @@ describe('QueryErrorResetBoundary', () => {
     const key = queryKey()
 
     function Page() {
-      const { data, refetch, status, fetchStatus } = createQuery<string>(
+      const state = createQuery<string>(
         key,
         async () => {
           throw new Error('Error')
@@ -217,11 +217,11 @@ describe('QueryErrorResetBoundary', () => {
 
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
+          <button onClick={() => state.refetch()}>refetch</button>
           <div>
-            status: {status}, fetchStatus: {fetchStatus}
+            status: {state.status}, fetchStatus: {state.fetchStatus}
           </div>
-          <div>{data}</div>
+          <div>{state.data}</div>
         </div>
       )
     }
@@ -263,7 +263,7 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -278,7 +278,7 @@ describe('QueryErrorResetBoundary', () => {
           useErrorBoundary: true,
         },
       )
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -319,7 +319,7 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -335,7 +335,7 @@ describe('QueryErrorResetBoundary', () => {
           initialData: 'initial',
         },
       )
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -378,7 +378,7 @@ describe('QueryErrorResetBoundary', () => {
     let shouldReset = true
 
     function Page() {
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -393,7 +393,7 @@ describe('QueryErrorResetBoundary', () => {
           useErrorBoundary: true,
         },
       )
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -440,7 +440,7 @@ describe('QueryErrorResetBoundary', () => {
     let fetchCount = 0
 
     function Page() {
-      const { data } = createQuery<string>(
+      const state = createQuery<string>(
         key,
         async () => {
           fetchCount++
@@ -452,7 +452,7 @@ describe('QueryErrorResetBoundary', () => {
           useErrorBoundary: true,
         },
       )
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -497,7 +497,7 @@ describe('QueryErrorResetBoundary', () => {
     let renders = 0
 
     function Page() {
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           fetchCount++
@@ -514,7 +514,7 @@ describe('QueryErrorResetBoundary', () => {
         },
       )
       renders++
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
@@ -582,7 +582,7 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -597,7 +597,7 @@ describe('QueryErrorResetBoundary', () => {
           useErrorBoundary: true,
         },
       )
-      return <div>{data}</div>
+      return <div>{state.data}</div>
     }
 
     render(() => (
