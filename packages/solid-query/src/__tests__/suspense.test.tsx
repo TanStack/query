@@ -12,7 +12,13 @@ import {
   createInfiniteQuery,
   QueryClientProvider,
 } from '..'
-import { createSignal, ErrorBoundary, Suspense } from 'solid-js'
+import {
+  createRenderEffect,
+  createSignal,
+  ErrorBoundary,
+  on,
+  Suspense,
+} from 'solid-js'
 
 describe("useQuery's in Suspense mode", () => {
   const queryCache = new QueryCache()
@@ -26,8 +32,6 @@ describe("useQuery's in Suspense mode", () => {
     let renders = 0
 
     function Page() {
-      renders++
-
       const [stateKey, setStateKey] = createSignal(key())
 
       const state = createQuery(
@@ -40,7 +44,15 @@ describe("useQuery's in Suspense mode", () => {
         { suspense: true },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
+
+      createRenderEffect(
+        on([() => ({ ...state }), key], () => {
+          renders++
+        }),
+      )
 
       return (
         <div>
@@ -64,9 +76,12 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('data: 2'))
 
     expect(renders).toBe(4)
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({ data: 1, status: 'success' })
-    expect(states[1]).toMatchObject({ data: 2, status: 'success' })
+    // TODO(lukemurray): verify that this expectation is valid. this is 2 in
+    // react, but 4 in solid, because in solid suspense is triggered on read and
+    // the component needs to render in order to trigger suspense.
+    expect(states.length).toBe(4)
+    expect(states[1]).toMatchObject({ data: 1, status: 'success' })
+    expect(states[3]).toMatchObject({ data: 2, status: 'success' })
   })
 
   it('should return the correct states for a successful infinite query', async () => {
@@ -86,7 +101,11 @@ describe("useQuery's in Suspense mode", () => {
           getNextPageParam: (lastPage) => lastPage + 1,
         },
       )
-      states.push(state)
+
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
+
       return (
         <div>
           <button onClick={() => setMultiplier(2)}>next</button>
