@@ -517,7 +517,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
               maxHeight: '100%',
               overflow: 'auto',
               borderRight: `1px solid ${theme.grayAlt}`,
-              display: isOpen ? 'flex' : 'none',
+              display: 'flex',
               flexDirection: 'column',
             }}
           >
@@ -641,7 +641,11 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                         >
                           {isMockOffline ? (
                             <>
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
                               <line x1="12" y1="18" x2="12.01" y2="18" />
                               <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
                               <path d="M6.343 12.343a7.963 7.963 0 0 1 3.864 -2.14m4.163 .155a7.965 7.965 0 0 1 3.287 2" />
@@ -650,7 +654,11 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                             </>
                           ) : (
                             <>
-                            <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                              <path
+                                stroke="none"
+                                d="M0 0h24v24H0z"
+                                fill="none"
+                              />
                               <line x1="12" y1="18" x2="12.01" y2="18" />
                               <path d="M9.172 15.172a4 4 0 0 1 5.656 0" />
                               <path d="M6.343 12.343a8 8 0 0 1 11.314 0" />
