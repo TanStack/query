@@ -1,12 +1,12 @@
 import type { QueryClient } from '@tanstack/query-core'
 import {
-  Component,
   Context,
   createContext,
   useContext,
   JSX,
   onMount,
   onCleanup,
+  mergeProps,
 } from 'solid-js'
 import { ContextOptions } from './types'
 
@@ -16,31 +16,16 @@ declare global {
   }
 }
 
-export const QueryClientContext = createContext<QueryClient>()
-export const QueryClientSharingContext = createContext<boolean>(false)
+export const defaultContext = createContext<QueryClient | undefined>(undefined)
+const QueryClientSharingContext = createContext<boolean>(false)
 
-interface Props {
-  client: QueryClient
-  children: JSX.Element
-}
-
-// Simple Query Client Context Provider
-export const QueryClientProvider: Component<Props> = (props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- runtime check.
-  if (!props.client) {
-    throw new Error('No QueryClient set, use QueryClientProvider to set one')
-  }
-
-  onMount(() => props.client.mount())
-  onCleanup(() => props.client.unmount())
-
-  return (
-    <QueryClientContext.Provider value={props.client}>
-      {props.children}
-    </QueryClientContext.Provider>
-  )
-}
-
+// If we are given a context, we will use it.
+// Otherwise, if contextSharing is on, we share the first and at least one
+// instance of the context across the window
+// to ensure that if React Query is used across
+// different bundles or microfrontends they will
+// all use the same **instance** of context, regardless
+// of module scoping.
 function getQueryClientContext(
   context: Context<QueryClient | undefined> | undefined,
   contextSharing: boolean,
@@ -48,16 +33,15 @@ function getQueryClientContext(
   if (context) {
     return context
   }
-
   if (contextSharing && typeof window !== 'undefined') {
     if (!window.SolidQueryClientContext) {
-      window.SolidQueryClientContext = QueryClientContext
+      window.SolidQueryClientContext = defaultContext
     }
 
     return window.SolidQueryClientContext
   }
 
-  return QueryClientContext
+  return defaultContext
 }
 
 export const useQueryClient = ({ context }: ContextOptions = {}) => {
@@ -70,4 +54,48 @@ export const useQueryClient = ({ context }: ContextOptions = {}) => {
   }
 
   return queryClient
+}
+
+type QueryClientProviderPropsBase = {
+  client: QueryClient
+  children?: JSX.Element
+}
+type QueryClientProviderPropsWithContext = ContextOptions & {
+  contextSharing?: never
+} & QueryClientProviderPropsBase
+type QueryClientProviderPropsWithContextSharing = {
+  context?: never
+  contextSharing?: boolean
+} & QueryClientProviderPropsBase
+
+export type QueryClientProviderProps =
+  | QueryClientProviderPropsWithContext
+  | QueryClientProviderPropsWithContextSharing
+
+export const QueryClientProvider = (
+  props: QueryClientProviderProps,
+): JSX.Element => {
+  const mergedProps = mergeProps(
+    {
+      contextSharing: false,
+    },
+    props,
+  )
+  onMount(() => mergedProps.client.mount())
+  onCleanup(() => mergedProps.client.unmount())
+
+  const QueryClientContext = getQueryClientContext(
+    mergedProps.context,
+    mergedProps.contextSharing,
+  )
+
+  return (
+    <QueryClientSharingContext.Provider
+      value={!mergedProps.context && mergedProps.contextSharing}
+    >
+      <QueryClientContext.Provider value={mergedProps.client}>
+        {mergedProps.children}
+      </QueryClientContext.Provider>
+    </QueryClientSharingContext.Provider>
+  )
 }
