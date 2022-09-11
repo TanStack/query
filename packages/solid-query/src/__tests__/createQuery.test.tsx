@@ -1142,13 +1142,12 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      const { refetch } = state
-
-      NotReact.useEffect(() => {
+      createEffect(() => {
+        const refetch = state.refetch
         setActTimeout(() => {
           refetch()
         }, 5)
-      }, [refetch])
+      })
 
       return null
     }
