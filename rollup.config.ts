@@ -154,8 +154,13 @@ function buildConfigs(opts: {
   forceDevEnv?: boolean
   skipUmdBuild?: boolean
 }): RollupOptions[] {
-  const firstEntry = path.resolve(opts.packageDir, Array.isArray(opts.entryFile) ? opts.entryFile[0]: opts.entryFile)
-  const entries = Array.isArray(opts.entryFile) ? opts.entryFile: [opts.entryFile]
+  const firstEntry = path.resolve(
+    opts.packageDir,
+    Array.isArray(opts.entryFile) ? opts.entryFile[0] : opts.entryFile,
+  )
+  const entries = Array.isArray(opts.entryFile)
+    ? opts.entryFile
+    : [opts.entryFile]
   const input = entries.map((entry) => path.resolve(opts.packageDir, entry))
   const externalDeps = Object.keys(opts.globals)
 
@@ -165,7 +170,7 @@ function buildConfigs(opts: {
   )
 
   const external = (moduleName) => externalDeps.includes(moduleName)
-  const banner = ''; //createBanner(opts.name)
+  const banner = '' //createBanner(opts.name)
 
   const options: Options = {
     input,
@@ -209,7 +214,7 @@ function esm({
       sourcemap: true,
       banner,
       preserveModules: true,
-      entryFileNames: "[name].mjs",
+      entryFileNames: '[name].mjs',
     },
     plugins: [
       svelte(),
@@ -241,7 +246,7 @@ function cjs({
       exports: 'named',
       banner,
       preserveModules: true,
-      entryFileNames: "[name].js",
+      entryFileNames: '[name].js',
     },
     plugins: [
       svelte(),
@@ -249,6 +254,13 @@ function cjs({
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
+      replace({
+        // TODO: figure out a better way to produce extensionless cjs imports
+        "require('./logger.js')": "require('./logger')",
+        "require('./reactBatchedUpdates.js')": "require('./reactBatchedUpdates')",
+        preventAssignment: true,
+        delimiters: ['', ''],
+      }),
     ],
   }
 }
@@ -276,9 +288,9 @@ function umdDev({
     },
     plugins: [
       svelte(),
+      commonJS(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
-      commonJS(),
       forceEnvPlugin('development'),
     ],
   }
@@ -307,8 +319,8 @@ function umdProd({
     },
     plugins: [
       svelte(),
-      babelPlugin,
       commonJS(),
+      babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
       forceEnvPlugin('production'),
       terser({
