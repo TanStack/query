@@ -1,9 +1,11 @@
 import { render, screen, waitFor } from 'solid-testing-library'
 import { queryKey } from './utils'
 
-import { QueryCache } from '@tanstack/query-core'
+import { QueryCache, QueryClient } from '@tanstack/query-core'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from '../../../../tests/utils'
+import { Context, createContext, useContext } from 'solid-js'
+import { renderToString } from 'solid-js/web'
 
 describe('QueryClientProvider', () => {
   test('sets a specific cache for all queries to use', async () => {
@@ -131,64 +133,63 @@ describe('QueryClientProvider', () => {
     expect(queryCache.find(key())?.options.cacheTime).toBe(Infinity)
   })
 
-  // TODO(lukemurray): add test when we implement context sharing.
-  // describe('with custom context', () => {
-  //   it('uses the correct context', async () => {
-  //     const key = queryKey()
+  describe('with custom context', () => {
+    it('uses the correct context', async () => {
+      const key = queryKey()
 
-  //     const contextOuter = createContext<QueryClient | undefined>(undefined)
-  //     const contextInner = createContext<QueryClient | undefined>(undefined)
+      const contextOuter = createContext<QueryClient | undefined>(undefined)
+      const contextInner = createContext<QueryClient | undefined>(undefined)
 
-  //     const queryCacheOuter = new QueryCache()
-  //     const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
+      const queryCacheOuter = new QueryCache()
+      const queryClientOuter = new QueryClient({ queryCache: queryCacheOuter })
 
-  //     const queryCacheInner = new QueryCache()
-  //     const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
+      const queryCacheInner = new QueryCache()
+      const queryClientInner = new QueryClient({ queryCache: queryCacheInner })
 
-  //     const queryCacheInnerInner = new QueryCache()
-  //     const queryClientInnerInner = new QueryClient({
-  //       queryCache: queryCacheInnerInner,
-  //     })
+      const queryCacheInnerInner = new QueryCache()
+      const queryClientInnerInner = new QueryClient({
+        queryCache: queryCacheInnerInner,
+      })
 
-  //     function Page() {
-  //       const queryOuter = createQuery(key, async () => 'testOuter', {
-  //         context: contextOuter,
-  //       })
-  //       const queryInner = createQuery(key, async () => 'testInner', {
-  //         context: contextInner,
-  //       })
-  //       const queryInnerInner = createQuery(key, async () => 'testInnerInner')
+      function Page() {
+        const queryOuter = createQuery(key, async () => 'testOuter', {
+          context: contextOuter,
+        })
+        const queryInner = createQuery(key, async () => 'testInner', {
+          context: contextInner,
+        })
+        const queryInnerInner = createQuery(key, async () => 'testInnerInner')
 
-  //       return (
-  //         <div>
-  //           <h1>
-  //             {queryOuter.data} {queryInner.data} {queryInnerInner.data}
-  //           </h1>
-  //         </div>
-  //       )
-  //     }
+        return (
+          <div>
+            <h1>
+              {queryOuter.data} {queryInner.data} {queryInnerInner.data}
+            </h1>
+          </div>
+        )
+      }
 
-  //     // contextSharing should be ignored when passing a custom context.
-  //     const contextSharing = true
+      // contextSharing should be ignored when passing a custom context.
+      const contextSharing = true
 
-  //     render(() => (
-  //       <QueryClientProvider client={queryClientOuter} context={contextOuter}>
-  //         <QueryClientProvider client={queryClientInner} context={contextInner}>
-  //           <QueryClientProvider
-  //             client={queryClientInnerInner}
-  //             contextSharing={contextSharing}
-  //           >
-  //             <Page />
-  //           </QueryClientProvider>
-  //         </QueryClientProvider>
-  //       </QueryClientProvider>
-  //     ))
+      render(() => (
+        <QueryClientProvider client={queryClientOuter} context={contextOuter}>
+          <QueryClientProvider client={queryClientInner} context={contextInner}>
+            <QueryClientProvider
+              client={queryClientInnerInner}
+              contextSharing={contextSharing}
+            >
+              <Page />
+            </QueryClientProvider>
+          </QueryClientProvider>
+        </QueryClientProvider>
+      ))
 
-  //     await waitFor(() =>
-  //       screen.getByText('testOuter testInner testInnerInner'),
-  //     )
-  //   })
-  // })
+      await waitFor(() =>
+        screen.getByText('testOuter testInner testInnerInner'),
+      )
+    })
+  })
 
   describe('useQueryClient', () => {
     test('should throw an error if no query client has been set', () => {
@@ -208,60 +209,58 @@ describe('QueryClientProvider', () => {
       consoleMock.mockRestore()
     })
 
-    // TODO(lukemurray): add test when we implement context sharing
-    // test('should use window to get the context when contextSharing is true', () => {
-    //   const queryCache = new QueryCache()
-    //   const queryClient = createQueryClient({ queryCache })
+    test('should use window to get the context when contextSharing is true', () => {
+      const queryCache = new QueryCache()
+      const queryClient = createQueryClient({ queryCache })
 
-    //   let queryClientFromHook: QueryClient | undefined
-    //   let queryClientFromWindow: QueryClient | undefined
+      let queryClientFromHook: QueryClient | undefined
+      let queryClientFromWindow: QueryClient | undefined
 
-    //   function Page() {
-    //     queryClientFromHook = useQueryClient()
-    //     queryClientFromWindow = useContext(
-    //       window.SolidQueryClientContext as Context<QueryClient | undefined>,
-    //     )
-    //     return null
-    //   }
+      function Page() {
+        queryClientFromHook = useQueryClient()
+        queryClientFromWindow = useContext(
+          window.SolidQueryClientContext as Context<QueryClient | undefined>,
+        )
+        return null
+      }
 
-    //   render(() => (
-    //     <QueryClientProvider client={queryClient} contextSharing={true}>
-    //       <Page />
-    //     </QueryClientProvider>
-    //   ))
+      render(() => (
+        <QueryClientProvider client={queryClient} contextSharing={true}>
+          <Page />
+        </QueryClientProvider>
+      ))
 
-    //   expect(queryClientFromHook).toEqual(queryClient)
-    //   expect(queryClientFromWindow).toEqual(queryClient)
-    // })
+      expect(queryClientFromHook).toEqual(queryClient)
+      expect(queryClientFromWindow).toEqual(queryClient)
+    })
 
-    // TODO(lukemurray): add test when we implement context sharing
-    // test('should not use window to get the context when contextSharing is true and window does not exist', () => {
-    //   const queryCache = new QueryCache()
-    //   const queryClient = createQueryClient({ queryCache })
+    test('should not use window to get the context when contextSharing is true and window does not exist', () => {
+      const queryCache = new QueryCache()
+      const queryClient = createQueryClient({ queryCache })
 
-    //   // Mock a non web browser environment
-    //   const windowSpy = jest
-    //     .spyOn(window, 'window', 'get')
-    //     .mockImplementation(undefined)
+      // Mock a non web browser environment
+      const windowSpy = jest
+        .spyOn(window, 'window', 'get')
+        .mockImplementation(undefined)
 
-    //   let queryClientFromHook: QueryClient | undefined
+      let queryClientFromHook: QueryClient | undefined
 
-    //   function Page() {
-    //     queryClientFromHook = useQueryClient()
-    //     return null
-    //   }
+      function Page() {
+        queryClientFromHook = useQueryClient()
+        return null
+      }
 
-    //   // TODO(lukemurray): this test doesn't pass because the page function is
-    //   // never called. I'm not sure why.
-    //   renderToString(() => (
-    //     <QueryClientProvider client={queryClient} contextSharing={true}>
-    //       <Page />
-    //     </QueryClientProvider>
-    //   ))
+      // TODO(lukemurray): this test doesn't pass because the page function is
+      // never called. I'm not sure why.
+      renderToString(() => (
+        <QueryClientProvider client={queryClient} contextSharing={true}>
+          <Page />
+        </QueryClientProvider>
+      ))
 
-    //   expect(queryClientFromHook).toEqual(queryClient)
+      expect(queryClientFromHook).toEqual(queryClient)
 
-    //   windowSpy.mockRestore()
-    // })
+      windowSpy.mockRestore()
+    })
   })
 })
