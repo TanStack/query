@@ -43,7 +43,7 @@ export const QueryErrorResetBoundary = (
   return (
     <QueryErrorResetBoundaryContext.Provider value={value()}>
       {typeof props.children === 'function'
-        ? (props.children as Function)(value)
+        ? (props.children as Function)(value())
         : props.children}
     </QueryErrorResetBoundaryContext.Provider>
   )

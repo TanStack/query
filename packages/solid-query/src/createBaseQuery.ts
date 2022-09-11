@@ -2,8 +2,17 @@ import { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
 import { CreateBaseQueryOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
-import { onMount, onCleanup, createComputed, createResource } from 'solid-js'
+import {
+  onMount,
+  onCleanup,
+  createComputed,
+  createResource,
+  createMemo,
+  createEffect,
+} from 'solid-js'
 import { createStore } from 'solid-js/store'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import { shouldThrowError } from './utils'
 
 // Base Query Function that is used to create the query.
 export function createBaseQuery<
@@ -23,14 +32,32 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient({ context: options.context })
+  const errorResetBoundary = useQueryErrorResetBoundary()
+  const defaultedOptions = createMemo(() => {
+    const computedOptions = queryClient.defaultQueryOptions(options)
+    computedOptions._optimisticResults = 'optimistic'
+    if (computedOptions.suspense) {
+      // Always set stale time when using suspense to prevent
+      // fetching again when directly mounting after suspending
+      if (typeof computedOptions.staleTime !== 'number') {
+        computedOptions.staleTime = 1000
+      }
+    }
 
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
-  defaultedOptions._optimisticResults = 'optimistic'
-  const observer = new Observer(queryClient, defaultedOptions)
+    if (computedOptions.suspense || computedOptions.useErrorBoundary) {
+      // Prevent retrying failed query if the error boundary has not been reset yet
+      if (!errorResetBoundary.isReset()) {
+        computedOptions.retryOnMount = false
+      }
+    }
+    return computedOptions
+  })
+
+  const observer = new Observer(queryClient, defaultedOptions())
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     // @ts-ignore
-    observer.getOptimisticResult(defaultedOptions),
+    observer.getOptimisticResult(defaultedOptions()),
   )
 
   const [dataResource, { refetch }] = createResource<TData | undefined>(() => {
@@ -50,12 +77,17 @@ export function createBaseQuery<
   onCleanup(() => unsubscribe())
 
   onMount(() => {
-    observer.setOptions(defaultedOptions, { listeners: false })
+    observer.setOptions(defaultedOptions(), { listeners: false })
   })
 
   createComputed(() => {
-    const newDefaultedOptions = queryClient.defaultQueryOptions(options)
-    observer.setOptions(newDefaultedOptions)
+    observer.setOptions(defaultedOptions())
+  })
+
+  createEffect(() => {
+    if (errorResetBoundary.isReset()) {
+      errorResetBoundary.clearReset()
+    }
   })
 
   const handler = {
@@ -64,7 +96,21 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        if (state.isLoading) {
+        // handle suspense
+        const isSuspense =
+          defaultedOptions().suspense && state.isLoading && state.isFetching
+
+        // handle error boundary
+        const isErrorBoundary =
+          state.isError &&
+          !errorResetBoundary.isReset() &&
+          !state.isFetching &&
+          shouldThrowError(defaultedOptions().useErrorBoundary, [
+            state.error,
+            observer.getCurrentQuery(),
+          ])
+
+        if (isSuspense || isErrorBoundary) {
           return dataResource()
         }
         return state.data
@@ -78,7 +124,7 @@ export function createBaseQuery<
     TError
   >
 
-  return !defaultedOptions.notifyOnChangeProps
+  return !defaultedOptions().notifyOnChangeProps
     ? observer.trackResult(proxyResult)
     : proxyResult
 }
