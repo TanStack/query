@@ -7,7 +7,6 @@ import {
   onCleanup,
   createComputed,
   createResource,
-  batch,
 } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
@@ -49,8 +48,7 @@ export function createBaseQuery<
   })
 
   const unsubscribe = observer.subscribe((result) => {
-    const reconciledResult = result
-    setState(reconciledResult)
+    setState(result)
     refetch()
   })
 
@@ -71,7 +69,10 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        return dataResource()
+        if (state.isLoading) {
+          return dataResource()
+        }
+        return state.data
       }
       return Reflect.get(target, prop)
     },
