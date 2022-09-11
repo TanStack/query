@@ -22,7 +22,7 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context: options.context })
 
   const defaultedOptions = queryClient.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'
