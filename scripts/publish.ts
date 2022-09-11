@@ -177,26 +177,34 @@ async function run() {
 
   // If a package has a dependency that has been updated, we need to update the
   // package that depends on it as well.
-  for (const pkg of packages) {
-    const packageJson = await readPackageJson(
-      path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
-    )
-    const allDependencies = Object.keys(
-      Object.assign(
-        {},
-        packageJson.dependencies ?? {},
-        packageJson.peerDependencies ?? {},
-      ),
-    )
+  // run this twice so that dependencies of dependencies are also included
+  // changes to query-core affect react-query-persist-client and then indirectly the sync/async persisters
+  for (let runs = 0; runs < 2; runs++) {
+    for (const pkg of packages) {
+      const packageJson = await readPackageJson(
+        path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+      )
+      const allDependencies = Object.keys(
+        Object.assign(
+          {},
+          packageJson.dependencies ?? {},
+          packageJson.peerDependencies ?? {},
+        ),
+      )
 
-    if (
-      allDependencies.find((dep) =>
-        changedPackages.find((d) => d.name === dep),
-      ) &&
-      !changedPackages.find((d) => d.name === pkg.name)
-    ) {
-      console.info('adding package dependency', pkg.name, 'to changed packages')
-      changedPackages.push(pkg)
+      if (
+        allDependencies.find((dep) =>
+          changedPackages.find((d) => d.name === dep),
+        ) &&
+        !changedPackages.find((d) => d.name === pkg.name)
+      ) {
+        console.info(
+          'adding package dependency',
+          pkg.name,
+          'to changed packages',
+        )
+        changedPackages.push(pkg)
+      }
     }
   }
 
