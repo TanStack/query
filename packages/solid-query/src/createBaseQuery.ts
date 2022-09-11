@@ -2,12 +2,7 @@ import { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
 import { CreateBaseQueryOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
-import {
-  onMount,
-  onCleanup,
-  createComputed,
-  createResource,
-} from 'solid-js'
+import { onMount, onCleanup, createComputed, createResource } from 'solid-js'
 import { createStore } from 'solid-js/store'
 
 // Base Query Function that is used to create the query.
@@ -78,5 +73,12 @@ export function createBaseQuery<
     },
   }
 
-  return new Proxy(state, handler) as QueryObserverResult<TData, TError>
+  const proxyResult = new Proxy(state, handler) as QueryObserverResult<
+    TData,
+    TError
+  >
+
+  return !defaultedOptions.notifyOnChangeProps
+    ? observer.trackResult(proxyResult)
+    : proxyResult
 }
