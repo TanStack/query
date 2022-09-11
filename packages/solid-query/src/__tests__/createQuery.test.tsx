@@ -1048,7 +1048,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    queryClient.setQueryData(key, 'prefetched')
+    queryClient.setQueryData(key(), 'prefetched')
 
     function Page() {
       const state = createQuery(key, () => 'test', {
