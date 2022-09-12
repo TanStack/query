@@ -6,8 +6,21 @@ import {
   sleep,
 } from '../../../../tests/utils'
 import { queryKey } from './utils'
-import { createQuery, useIsFetching, QueryCache, QueryClientProvider } from '..'
-import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
+import {
+  createQuery,
+  useIsFetching,
+  QueryCache,
+  QueryClientProvider,
+  QueryClient,
+} from '..'
+import {
+  createContext,
+  createEffect,
+  createRenderEffect,
+  createSignal,
+  ErrorBoundary,
+  Show,
+} from 'solid-js'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105
@@ -179,90 +192,85 @@ describe('useIsFetching', () => {
     expect(isFetchings).toEqual(expect.not.arrayContaining([2]))
   })
 
-  // TODO(lukemurray): add when we support custom contexts
-  // describe('with custom context', () => {
-  //   it('should update as queries start and stop fetching', async () => {
-  //     const context = createContext<QueryClient | undefined>(undefined)
+  describe('with custom context', () => {
+    it('should update as queries start and stop fetching', async () => {
+      const context = createContext<QueryClient | undefined>(undefined)
 
-  //     const queryCache = new QueryCache()
-  //     const queryClient = createQueryClient({ queryCache })
-  //     const key = queryKey()
+      const queryCache = new QueryCache()
+      const queryClient = createQueryClient({ queryCache })
+      const key = queryKey()
 
-  //     function Page() {
-  //       const [ready, setReady] = createSignal(false)
+      function Page() {
+        const [ready, setReady] = createSignal(false)
 
-  //       const isFetching = useIsFetching(undefined, { context: context })
+        const isFetching = useIsFetching(undefined, { context: context })
 
-  //       createQuery(
-  //         key,
-  //         async () => {
-  //           await sleep(50)
-  //           return 'test'
-  //         },
-  //         {
-  //           enabled: ready(),
-  //           context,
-  //         },
-  //       )
+        createQuery(
+          key,
+          async () => {
+            await sleep(50)
+            return 'test'
+          },
+          {
+            enabled: ready(),
+            context,
+          },
+        )
 
-  //       return (
-  //         <div>
-  //           <div>isFetching: {isFetching}</div>
-  //           <button onClick={() => setReady(true)}>setReady</button>
-  //         </div>
-  //       )
-  //     }
+        return (
+          <div>
+            <div>isFetching: {isFetching}</div>
+            <button onClick={() => setReady(true)}>setReady</button>
+          </div>
+        )
+      }
 
-  //     const { findByText, getByRole } = renderWithClient(
-  //       queryClient,
-  //       <Page />,
-  //       {
-  //         context,
-  //       },
-  //     )
+      render(() => (
+        <QueryClientProvider client={queryClient} context={context}>
+          <Page />
+        </QueryClientProvider>
+      ))
 
-  //     await findByText('isFetching: 0')
-  //     fireEvent.click(getByRole('button', { name: /setReady/i }))
-  //     await findByText('isFetching: 1')
-  //     await findByText('isFetching: 0')
-  //   })
+      await screen.findByText('isFetching: 0')
+      fireEvent.click(screen.getByRole('button', { name: /setReady/i }))
+      await screen.findByText('isFetching: 1')
+      await screen.findByText('isFetching: 0')
+    })
 
-  //   it('should throw if the context is not passed to useIsFetching', async () => {
-  //     const context = React.createContext<QueryClient | undefined>(undefined)
+    it('should throw if the context is not passed to useIsFetching', async () => {
+      const context = createContext<QueryClient | undefined>(undefined)
 
-  //     const queryCache = new QueryCache()
-  //     const queryClient = createQueryClient({ queryCache })
-  //     const key = queryKey()
+      const queryCache = new QueryCache()
+      const queryClient = createQueryClient({ queryCache })
+      const key = queryKey()
 
-  //     function Page() {
-  //       const isFetching = useIsFetching()
+      function Page() {
+        const isFetching = useIsFetching()
 
-  //       createQuery(key, async () => 'test', {
-  //         enabled: true,
-  //         context,
-  //         useErrorBoundary: true,
-  //       })
+        createQuery(key, async () => 'test', {
+          enabled: true,
+          context,
+          useErrorBoundary: true,
+        })
 
-  //       return (
-  //         <div>
-  //           <div>isFetching: {isFetching}</div>
-  //         </div>
-  //       )
-  //     }
+        return (
+          <div>
+            <div>isFetching: {isFetching}</div>
+          </div>
+        )
+      }
 
-  //     const rendered = renderWithClient(
-  //       queryClient,
-  //       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-  //         <Page />
-  //       </ErrorBoundary>,
-  //       {
-  //         context,
-  //       },
-  //     )
+      render(() => (
+        <QueryClientProvider client={queryClient} context={context}>
+          <ErrorBoundary fallback={() => <div>error boundary</div>}>
+            <Page />
+          </ErrorBoundary>
+        </QueryClientProvider>
+      ))
 
-  //     await waitFor(() => rendered.getByText('error boundary'))
-  //   })
-  // })
+      await waitFor(() => screen.getByText('error boundary'))
+    })
+  })
 
   it('should show the correct fetching state when mounted after a query', async () => {
     const queryClient = createQueryClient()

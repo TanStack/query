@@ -1,10 +1,22 @@
 import { waitFor, fireEvent, screen } from 'solid-testing-library'
-import { useIsMutating, createMutation, QueryClientProvider } from '..'
+import {
+  useIsMutating,
+  createMutation,
+  QueryClientProvider,
+  QueryClient,
+} from '..'
 import { createQueryClient, sleep } from '../../../../tests/utils'
 
 import { setActTimeout } from './utils'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
-import { createEffect, createRenderEffect, createSignal, Show } from 'solid-js'
+import {
+  createContext,
+  createEffect,
+  createRenderEffect,
+  createSignal,
+  ErrorBoundary,
+  Show,
+} from 'solid-js'
 import { render } from 'solid-testing-library'
 
 describe('useIsMutating', () => {
@@ -194,86 +206,89 @@ describe('useIsMutating', () => {
     MutationCacheSpy.mockRestore()
   })
 
-  // TODO(lukemurray): re-add when we support custom context.
-  // describe('with custom context', () => {
-  //   it('should return the number of fetching mutations', async () => {
-  //     const context = React.createContext<QueryClient | undefined>(undefined)
+  describe('with custom context', () => {
+    it('should return the number of fetching mutations', async () => {
+      const context = createContext<QueryClient | undefined>(undefined)
 
-  //     const isMutatings: number[] = []
-  //     const queryClient = new QueryClient()
+      const isMutatings: number[] = []
+      const queryClient = new QueryClient()
 
-  //     function IsMutating() {
-  //       const isMutating = useIsMutating(undefined, { context })
-  //       isMutatings.push(isMutating)
-  //       return null
-  //     }
+      function IsMutating() {
+        const isMutating = useIsMutating(undefined, { context })
+        isMutatings.push(isMutating())
+        return null
+      }
 
-  //     function Page() {
-  //       const { mutate: mutate1 } = useMutation(
-  //         ['mutation1'],
-  //         async () => {
-  //           await sleep(150)
-  //           return 'data'
-  //         },
-  //         { context },
-  //       )
-  //       const { mutate: mutate2 } = useMutation(
-  //         ['mutation2'],
-  //         async () => {
-  //           await sleep(50)
-  //           return 'data'
-  //         },
-  //         { context },
-  //       )
+      function Page() {
+        const { mutate: mutate1 } = createMutation(
+          ['mutation1'],
+          async () => {
+            await sleep(150)
+            return 'data'
+          },
+          { context },
+        )
+        const { mutate: mutate2 } = createMutation(
+          ['mutation2'],
+          async () => {
+            await sleep(50)
+            return 'data'
+          },
+          { context },
+        )
 
-  //       React.useEffect(() => {
-  //         mutate1()
-  //         setActTimeout(() => {
-  //           mutate2()
-  //         }, 50)
-  //       }, [mutate1, mutate2])
+        createEffect(() => {
+          mutate1()
+          setActTimeout(() => {
+            mutate2()
+          }, 50)
+        })
 
-  //       return <IsMutating />
-  //     }
+        return <IsMutating />
+      }
 
-  //     renderWithClient(queryClient, <Page />, { context })
-  //     await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
-  //   })
+      render(() => (
+        <QueryClientProvider client={queryClient} context={context}>
+          <Page />
+        </QueryClientProvider>
+      ))
+      await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
+    })
 
-  //   it('should throw if the context is not passed to useIsMutating', async () => {
-  //     const context = React.createContext<QueryClient | undefined>(undefined)
+    it('should throw if the context is not passed to useIsMutating', async () => {
+      const context = createContext<QueryClient | undefined>(undefined)
 
-  //     const isMutatings: number[] = []
-  //     const queryClient = new QueryClient()
+      const isMutatings: number[] = []
+      const queryClient = new QueryClient()
 
-  //     function IsMutating() {
-  //       const isMutating = useIsMutating(undefined)
-  //       isMutatings.push(isMutating)
-  //       return null
-  //     }
+      function IsMutating() {
+        const isMutating = useIsMutating(undefined)
+        isMutatings.push(isMutating())
+        return null
+      }
 
-  //     function Page() {
-  //       const { mutate } = useMutation(['mutation'], async () => 'data', {
-  //         useErrorBoundary: true,
-  //         context,
-  //       })
+      function Page() {
+        const { mutate } = createMutation(['mutation'], async () => 'data', {
+          useErrorBoundary: true,
+          context,
+        })
 
-  //       React.useEffect(() => {
-  //         mutate()
-  //       }, [mutate])
+        createEffect(() => {
+          mutate()
+        })
 
-  //       return <IsMutating />
-  //     }
+        return <IsMutating />
+      }
 
-  //     const rendered = renderWithClient(
-  //       queryClient,
-  //       <ErrorBoundary fallbackRender={() => <div>error boundary</div>}>
-  //         <Page />
-  //       </ErrorBoundary>,
-  //       { context },
-  //     )
+      render(() => (
+        <QueryClientProvider client={queryClient} context={context}>
+          <ErrorBoundary fallback={() => <div>error boundary</div>}>
+            <Page />
+          </ErrorBoundary>
+        </QueryClientProvider>
+      ))
 
-  //     await waitFor(() => rendered.getByText('error boundary'))
-  //   })
-  // })
+      await waitFor(() => screen.getByText('error boundary'))
+    })
+  })
 })
