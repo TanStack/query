@@ -91,7 +91,7 @@ describe("useQuery's in Suspense mode", () => {
     function Page() {
       const [multiplier, setMultiplier] = createSignal(1)
       const state = createInfiniteQuery(
-        () => [`${key}_${multiplier}`],
+        () => [`${key()}_${multiplier()}`],
         async ({ pageParam = 1 }) => {
           await sleep(10)
           return Number(pageParam * multiplier())
@@ -119,14 +119,15 @@ describe("useQuery's in Suspense mode", () => {
         <Suspense fallback="loading">
           <Page />
         </Suspense>
-        ,
       </QueryClientProvider>
     ))
 
     await waitFor(() => screen.getByText('data: 1'))
 
-    expect(states.length).toBe(1)
-    expect(states[0]).toMatchObject({
+    // TODO(lukemurray): in react this is 1 in solid this is 2 because suspense
+    // occurs on read.
+    expect(states.length).toBe(2)
+    expect(states[1]).toMatchObject({
       data: { pages: [1], pageParams: [undefined] },
       status: 'success',
     })
@@ -134,8 +135,9 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(screen.getByText('next'))
     await waitFor(() => screen.getByText('data: 2'))
 
-    expect(states.length).toBe(2)
-    expect(states[1]).toMatchObject({
+    // TODO(lukemurray): in react this is 2 and in solid it is 4
+    expect(states.length).toBe(4)
+    expect(states[3]).toMatchObject({
       data: { pages: [2], pageParams: [undefined] },
       status: 'success',
     })
@@ -161,7 +163,6 @@ describe("useQuery's in Suspense mode", () => {
         <Suspense fallback="loading">
           <Page />
         </Suspense>
-        ,
       </QueryClientProvider>
     ))
 
@@ -230,7 +231,7 @@ describe("useQuery's in Suspense mode", () => {
         () => [key()],
         async () => {
           await sleep(10)
-          return key
+          return key()
         },
         {
           suspense: true,
@@ -247,7 +248,6 @@ describe("useQuery's in Suspense mode", () => {
         <Suspense fallback="loading">
           <Page />
         </Suspense>
-        ,
       </QueryClientProvider>
     ))
 
@@ -318,7 +318,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -334,6 +334,12 @@ describe("useQuery's in Suspense mode", () => {
           suspense: true,
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
 
       return <div>rendered</div>
     }
@@ -384,7 +390,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -399,6 +405,13 @@ describe("useQuery's in Suspense mode", () => {
           suspense: true,
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
+
       return <div>rendered</div>
     }
 
