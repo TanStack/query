@@ -558,13 +558,13 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText(`data: ${key1}`))
+    await waitFor(() => screen.getByText(`data: ${key1()}`))
     fireEvent.click(screen.getByText('switch'))
     await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText(`data: ${key2}`))
+    await waitFor(() => screen.getByText(`data: ${key2()}`))
     expect(
       // @ts-expect-error
-      queryClient.getQueryCache().find(key2)!.observers[0].listeners.length,
+      queryClient.getQueryCache().find(key2())!.observers[0].listeners.length,
     ).toBe(1)
   })
 
@@ -574,7 +574,7 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = false
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async () => {
           await sleep(10)
@@ -589,6 +589,13 @@ describe("useQuery's in Suspense mode", () => {
           suspense: true,
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
+
       return <div>rendered</div>
     }
 
@@ -638,7 +645,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async (): Promise<unknown> => {
           await sleep(10)
@@ -649,6 +656,13 @@ describe("useQuery's in Suspense mode", () => {
           suspense: true,
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
+
       return <div>rendered</div>
     }
 
@@ -682,7 +696,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async (): Promise<unknown> => {
           await sleep(10)
@@ -694,6 +708,13 @@ describe("useQuery's in Suspense mode", () => {
           useErrorBoundary: false,
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
+
       return <div>rendered</div>
     }
 
@@ -727,7 +748,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async (): Promise<unknown> => {
           await sleep(10)
@@ -739,6 +760,13 @@ describe("useQuery's in Suspense mode", () => {
           useErrorBoundary: (err) => err !== 'Local Error',
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
+
       return <div>rendered</div>
     }
 
@@ -772,7 +800,7 @@ describe("useQuery's in Suspense mode", () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(
+      const state = createQuery(
         key,
         async (): Promise<unknown> => {
           await sleep(10)
@@ -784,6 +812,13 @@ describe("useQuery's in Suspense mode", () => {
           useErrorBoundary: (err) => err !== 'Local Error',
         },
       )
+
+      // read state.data to trigger suspense.
+      createRenderEffect(() => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
+        state.data
+      })
+
       return <div>rendered</div>
     }
 
