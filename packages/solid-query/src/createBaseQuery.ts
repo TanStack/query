@@ -9,6 +9,7 @@ import {
   createResource,
   createMemo,
   createEffect,
+  on,
 } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
@@ -77,12 +78,21 @@ export function createBaseQuery<
   onCleanup(() => unsubscribe())
 
   onMount(() => {
+    // Do not notify on updates because of changes in the options because
+    // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions(), { listeners: false })
   })
 
-  createComputed(() => {
-    observer.setOptions(defaultedOptions())
-  })
+  // Do not update observer options on mount because it is already set.
+  createComputed(
+    on(
+      defaultedOptions,
+      () => {
+        observer.setOptions(defaultedOptions())
+      },
+      { defer: true },
+    ),
+  )
 
   createEffect(() => {
     if (errorResetBoundary.isReset()) {
