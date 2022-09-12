@@ -11,7 +11,7 @@
     "react-dom": "^18.0.0",
     "react-error-boundary": "^2.2.3",
     "@tanstack/react-query": "4.3.4",
-    "@tanstack/react-query-devtools": "4.3.4"
+    "@tanstack/react-query-devtools": "4.3.5"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",

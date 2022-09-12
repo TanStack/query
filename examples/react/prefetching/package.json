@@ -11,7 +11,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "@tanstack/react-query": "4.3.4",
-    "@tanstack/react-query-devtools": "4.3.4"
+    "@tanstack/react-query-devtools": "4.3.5"
   },
   "scripts": {
     "dev": "next",

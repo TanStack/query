@@ -17,7 +17,7 @@
     "rooks": "^6.4.3",
     "sort-by": "^1.2.0",
     "@tanstack/react-query": "4.3.4",
-    "@tanstack/react-query-devtools": "4.3.4"
+    "@tanstack/react-query-devtools": "4.3.5"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",
