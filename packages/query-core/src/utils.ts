@@ -272,10 +272,11 @@ export function hashQueryKey(queryKey: QueryKey): string {
       ? Object.keys(val)
           .sort()
           .reduce((result, key) => {
-            result[key] = val[key]
+            result[key] =
+              typeof val[key] === 'bigint' ? val[key].toString() : val[key]
             return result
           }, {} as any)
-      : val,
+      : typeof val === 'bigint' ? val.toString() : val,
   )
 }
 

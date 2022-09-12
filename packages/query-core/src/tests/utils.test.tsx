@@ -7,6 +7,7 @@ import {
   scheduleMicrotask,
   sleep,
   isPlainArray,
+  hashQueryKey
 } from '../utils'
 import { Mutation } from '../mutation'
 import { createQueryClient } from '../../../../tests/utils'
@@ -355,6 +356,14 @@ describe('core/utils', () => {
       expect(callback).not.toHaveBeenCalled()
       await sleep(0)
       expect(callback).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('hashQueryKey', () => {
+    it('should handle bigints gracefully', () => {
+      const keys = [123, 123n, BigInt("505")];
+      const hash = hashQueryKey(keys);
+      expect(hash).toBe("[123,\"123\",\"505\"]")
     })
   })
 })
