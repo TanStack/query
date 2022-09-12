@@ -1091,8 +1091,6 @@ describe("useQuery's in Suspense mode", () => {
     let renders = 0
 
     function Page() {
-      renders++
-
       state = createQuery(
         key,
         async () => {
@@ -1101,6 +1099,12 @@ describe("useQuery's in Suspense mode", () => {
           return count
         },
         { suspense: true, cacheTime: 0 },
+      )
+
+      createRenderEffect(
+        on([() => ({ ...state })], () => {
+          renders++
+        }),
       )
 
       return (
