@@ -17,7 +17,7 @@ import fetch from "./fetch";
 
 function Character(props) {
   const characterId = props.match.params.characterId;
-  const { status, error, data } = useQuery([`character-${characterId}`], () =>
+  const { status, error, data } = useQuery(["character", characterId], () =>
     fetch(`https://swapi.dev/api/people/${characterId}/`)
   );
 
@@ -85,7 +85,7 @@ function Character(props) {
 
 function Film(props) {
   const { id } = props;
-  const { data, status, error } = useQuery([`film-${id}`], () =>
+  const { data, status } = useQuery(["film", id], () =>
     fetch(`https://swapi.dev/api/films/${id}/`)
   );
 
@@ -105,7 +105,7 @@ function Film(props) {
 
 function Homeworld(props) {
   const { id } = props;
-  const { data, status } = useQuery([`homeworld-${id}`], () =>
+  const { data, status } = useQuery(["homeworld", id], () =>
     fetch(`https://swapi.dev/api/planets/${id}/`)
   );
 

@@ -7,7 +7,7 @@ import fetch from "./fetch";
 
 function Episode() {
   const { episodeId } = useParams();
-  const { data, status } = useQuery([`episode-${episodeId}`], () =>
+  const { data, status } = useQuery(["episode", episodeId], () =>
     fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`)
   );
 
@@ -30,7 +30,7 @@ function Episode() {
 }
 
 function Character({ id }) {
-  const { data, status } = useQuery([`character-${id}`], () =>
+  const { data, status } = useQuery(["character", id], () =>
     fetch(`https://rickandmortyapi.com/api/character/${id}`)
   );
 

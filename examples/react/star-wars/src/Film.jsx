@@ -7,7 +7,7 @@ import fetch from "./fetch";
 
 function Film(props) {
   const filmId = props.match.params.filmId;
-  const { data, status, error } = useQuery([`film-${filmId}`], () =>
+  const { data, status, error } = useQuery(["film", filmId], () =>
     fetch(`https://swapi.dev/api/films/${filmId}/`)
   );
 
@@ -35,7 +35,7 @@ function Film(props) {
 
 function Character(props) {
   const { id } = props;
-  const { data, status, error } = useQuery([`character-${id}`], () =>
+  const { data, status, error } = useQuery(["character", id], () =>
     fetch(`https://swapi.dev/api/people/${props.id}/`)
   );
 
