@@ -511,9 +511,14 @@ describe('createQuery', () => {
         { onSuccess },
       )
 
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
+      createRenderEffect(
+        on(
+          () => [state.data, state.refetch],
+          () => {
+            states.push(state)
+          },
+        ),
+      )
 
       return (
         <div>
