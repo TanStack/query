@@ -5946,11 +5946,11 @@ describe('createQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = NotReact.useState(true)
+        const [show, setShow] = createSignal(true)
 
         return (
           <div>
-            {show && <Component />}
+            {show() && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
           </div>
         )
@@ -5975,7 +5975,7 @@ describe('createQuery', () => {
 
       await sleep(15)
 
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
