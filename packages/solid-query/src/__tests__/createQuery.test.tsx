@@ -5946,11 +5946,11 @@ describe('createQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = createSignal(true)
+        const [show, setShow] = NotReact.useState(true)
 
         return (
           <div>
-            {show() && <Component />}
+            {show && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
           </div>
         )
@@ -6074,14 +6074,14 @@ describe('createQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = NotReact.useState(true)
+        const [show, setShow] = createSignal(true)
 
         return (
           <div>
-            {show && <Component />}
+            {show() && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -6116,7 +6116,7 @@ describe('createQuery', () => {
 
       await sleep(15)
 
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
