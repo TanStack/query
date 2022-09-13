@@ -6300,7 +6300,7 @@ describe('createQuery', () => {
       return <></>
     }
 
-    await queryClient.prefetchQuery(key, queryFn)
+    await queryClient.prefetchQuery(key(), queryFn)
     render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
