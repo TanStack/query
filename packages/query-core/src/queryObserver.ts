@@ -165,9 +165,10 @@ export class QueryObserver<
 
     if (
       typeof this.options.enabled !== 'undefined' &&
-      typeof this.options.enabled !== 'boolean'
+      typeof this.options.enabled !== 'boolean' &&
+      typeof this.options.enabled !== 'function'
     ) {
-      throw new Error('Expected enabled to be a boolean')
+      throw new Error('Expected enabled to be a boolean, or a function which returns a boolean')
     }
 
     // Keep previous query key if the user does not supply one
@@ -195,11 +196,13 @@ export class QueryObserver<
     // Update result
     this.updateResult(notifyOptions)
 
+    const enabledChanged = this.options.enabled !== prevOptions.enabled;
+    const enabled = typeof this.options.enabled === 'function' ? this.options.enabled(this.currentQuery) : enabledChanged;
     // Update stale interval if needed
     if (
       mounted &&
       (this.currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        enabled ||
         this.options.staleTime !== prevOptions.staleTime)
     ) {
       this.updateStaleTimeout()
@@ -211,7 +214,7 @@ export class QueryObserver<
     if (
       mounted &&
       (this.currentQuery !== prevQuery ||
-        this.options.enabled !== prevOptions.enabled ||
+        enabled ||
         nextRefetchInterval !== this.currentRefetchInterval)
     ) {
       this.updateRefetchInterval(nextRefetchInterval)
@@ -740,8 +743,9 @@ function shouldFetchOptionally(
   options: QueryObserverOptions<any, any, any, any, any>,
   prevOptions: QueryObserverOptions<any, any, any, any, any>,
 ): boolean {
+  const enabled = typeof options.enabled === 'function' ? options.enabled(query) : options.enabled;
   return (
-    options.enabled !== false &&
+    enabled !== false &&
     (query !== prevQuery || prevOptions.enabled === false) &&
     (!options.suspense || query.state.status !== 'error') &&
     isStale(query, options)

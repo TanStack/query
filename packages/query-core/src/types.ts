@@ -112,7 +112,7 @@ export interface QueryObserverOptions<
    * To refetch the query, use the `refetch` method returned from the `useQuery` instance.
    * Defaults to `true`.
    */
-  enabled?: boolean
+  enabled?: boolean | ((query: Query<TQueryFnData, TError, TQueryData, TQueryKey>) => boolean)
   /**
    * The time in milliseconds after data is considered stale.
    * If set to `Infinity`, the data will never be considered stale.
