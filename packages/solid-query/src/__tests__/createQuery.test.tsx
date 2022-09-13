@@ -28,6 +28,7 @@ import {
   createSignal,
   Show,
   ErrorBoundary,
+  createMemo,
 } from 'solid-js'
 
 describe('createQuery', () => {
@@ -4771,11 +4772,16 @@ describe('createQuery', () => {
     const key1 = queryKey()
 
     function Page() {
-      const [count, inc] = NotReact.useReducer((prev) => prev + 1, 2)
-      const [forceValue, forceUpdate] = NotReact.useReducer(
-        (prev) => prev + 1,
-        1,
-      )
+      const [count, setCount] = createSignal(2)
+      const [forceValue, setForceValue] = createSignal(1)
+
+      const inc = () => {
+        setCount((prev) => prev + 1)
+      }
+
+      const forceUpdate = () => {
+        setForceValue((prev) => prev + 1)
+      }
 
       const state = createQuery(
         key1,
@@ -4784,12 +4790,10 @@ describe('createQuery', () => {
           return 0
         },
         {
-          select: NotReact.useCallback(
-            (data: number) => {
-              return `selected ${data + count}`
-            },
-            [count],
-          ),
+          get select() {
+            const currentCount = count()
+            return (data: number) => `selected ${data + currentCount}`
+          },
           placeholderData: 99,
         },
       )
@@ -4797,8 +4801,8 @@ describe('createQuery', () => {
       return (
         <div>
           <h2>Data: {state.data}</h2>
-          <h2>forceValue: {forceValue}</h2>
-          <button onClick={inc}>inc: {count}</button>
+          <h2>forceValue: {forceValue()}</h2>
+          <button onClick={inc}>inc: {count()}</button>
           <button onClick={forceUpdate}>forceUpdate</button>
         </div>
       )
