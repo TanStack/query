@@ -6322,7 +6322,7 @@ describe('createQuery', () => {
       return (
         <div>
           <div>data: {state.data}</div>
-          <button onClick={() => queryClient.setQueryData(key, 'newData')}>
+          <button onClick={() => queryClient.setQueryData(key(), 'newData')}>
             setQueryData
           </button>
         </div>
