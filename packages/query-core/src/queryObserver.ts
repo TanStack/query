@@ -364,7 +364,8 @@ export class QueryObserver<
     this.currentRefetchInterval = nextInterval
 
     if (
-      isServer ||
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      !globalThis.setInterval ||
       this.options.enabled === false ||
       !isValidTimeout(this.currentRefetchInterval) ||
       this.currentRefetchInterval === 0
@@ -372,7 +373,7 @@ export class QueryObserver<
       return
     }
 
-    this.refetchIntervalId = setInterval(() => {
+    this.refetchIntervalId = globalThis.setInterval(() => {
       if (
         this.options.refetchIntervalInBackground ||
         focusManager.isFocused()
