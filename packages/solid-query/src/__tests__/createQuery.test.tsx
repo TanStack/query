@@ -5812,7 +5812,7 @@ describe('createQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -5845,14 +5845,10 @@ describe('createQuery', () => {
       )
 
       // triggers a second pause
-      act(() => {
-        window.dispatchEvent(new FocusEvent('focus'))
-      })
+      window.dispatchEvent(new FocusEvent('focus'))
 
       onlineMock.mockReturnValue(true)
-      act(() => {
-        window.dispatchEvent(new Event('online'))
-      })
+      window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
         screen.getByText('status: success, fetchStatus: idle'),
