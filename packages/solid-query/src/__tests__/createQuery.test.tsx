@@ -28,7 +28,7 @@ import {
   createSignal,
   Show,
   ErrorBoundary,
-  createMemo,
+  on,
 } from 'solid-js'
 
 describe('createQuery', () => {
@@ -5010,19 +5010,21 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const [id, setId] = NotReact.useState(1)
-      const [hasChanged, setHasChanged] = NotReact.useState(false)
+      const [id, setId] = createSignal(1)
+      const [hasChanged, setHasChanged] = createSignal(false)
 
-      const state = createQuery([key, id], queryFn)
+      const state = createQuery(() => [key(), id()], queryFn)
 
       createRenderEffect(() => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
-        setId((prevId) => (prevId === 1 ? 2 : 1))
-        setHasChanged(true)
-      }, [hasChanged])
+      createEffect(
+        on(hasChanged, () => {
+          setId((prevId) => (prevId === 1 ? 2 : 1))
+          setHasChanged(true)
+        }),
+      )
 
       return null
     }
