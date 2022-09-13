@@ -29,7 +29,6 @@ import {
   Show,
   ErrorBoundary,
 } from 'solid-js'
-import { untrack } from 'solid-js/web'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -3838,7 +3837,7 @@ describe('createQuery', () => {
     const visibilityMock = mockVisibilityState('hidden')
 
     // set data in cache to check if the hook query fn is actually called
-    queryClient.setQueryData(key, 'prefetched')
+    queryClient.setQueryData(key(), 'prefetched')
 
     function Page() {
       const state = createQuery(key, async () => {
@@ -3863,11 +3862,9 @@ describe('createQuery', () => {
 
     await waitFor(() => expect(states.length).toBe(2))
 
-    act(() => {
-      // reset visibilityState to original value
-      visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    // reset visibilityState to original value
+    visibilityMock.mockRestore()
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await waitFor(() => expect(states.length).toBe(4))
 
