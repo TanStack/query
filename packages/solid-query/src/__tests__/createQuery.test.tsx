@@ -5081,7 +5081,7 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <button onClick={() => queryClient.resetQueries(key)}>reset</button>
+          <button onClick={() => queryClient.resetQueries(key())}>reset</button>
           <div>data: {state.data ?? 'null'}</div>
           <div>isFetching: {state.isFetching}</div>
         </div>
@@ -5158,7 +5158,7 @@ describe('createQuery', () => {
       return (
         <div>
           <button onClick={() => refetch()}>refetch</button>
-          <button onClick={() => queryClient.resetQueries(key)}>reset</button>
+          <button onClick={() => queryClient.resetQueries(key())}>reset</button>
           <div>data: {state.data ?? 'null'}</div>
         </div>
       )
@@ -5250,32 +5250,38 @@ describe('createQuery', () => {
       return Promise.reject(new Error('Suspense Error Bingo'))
     })
 
-    function Page({ enabled }: { enabled: boolean }) {
-      const { error, isLoading } = createQuery(['key'], queryFn, {
-        enabled,
+    function Page(props: { enabled: boolean }) {
+      const state = createQuery(() => ['key'], queryFn, {
+        get enabled() {
+          return props.enabled
+        },
         retry: false,
         retryOnMount: false,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
       })
 
-      if (isLoading) {
-        return <div>status: loading</div>
-      }
-      if (error instanceof Error) {
-        return <div>error</div>
-      }
-      return <div>rendered</div>
+      return (
+        <Switch fallback={<div>rendered</div>}>
+          <Match when={state.isLoading}>
+            <div>status: loading</div>
+          </Match>
+          <Match when={state.error instanceof Error}>
+            <div>error</div>
+          </Match>
+        </Switch>
+      )
     }
 
     function App() {
-      const [enabled, toggle] = NotReact.useReducer((x) => !x, true)
+      const [enabled, setEnabled] = createSignal(true)
+      const toggle = () => setEnabled((prev) => !prev)
 
       return (
         <div>
-          <Page enabled={enabled} />
+          <Page enabled={enabled()} />
           <button aria-label="retry" onClick={toggle}>
-            retry {enabled}
+            retry {enabled()}
           </button>
         </div>
       )
@@ -5305,12 +5311,12 @@ describe('createQuery', () => {
   })
 
   it('should refetch when query key changed when previous status is error', async () => {
-    function Page({ id }: { id: number }) {
-      const { error, isLoading } = createQuery(
-        [id],
+    function Page(props: { id: number }) {
+      const state = createQuery(
+        () => [props.id],
         async () => {
           await sleep(10)
-          if (id % 2 === 1) {
+          if (props.id % 2 === 1) {
             return Promise.reject(new Error('Error'))
           } else {
             return 'data'
@@ -5324,23 +5330,27 @@ describe('createQuery', () => {
         },
       )
 
-      if (isLoading) {
-        return <div>status: loading</div>
-      }
-      if (error instanceof Error) {
-        return <div>error</div>
-      }
-      return <div>rendered</div>
+      return (
+        <Switch fallback={<div>rendered</div>}>
+          <Match when={state.isLoading}>
+            <div>status: loading</div>
+          </Match>
+          <Match when={state.error instanceof Error}>
+            <div>error</div>
+          </Match>
+        </Switch>
+      )
     }
 
     function App() {
-      const [id, changeId] = NotReact.useReducer((x) => x + 1, 1)
+      const [id, setId] = createSignal(1)
+      const changeId = () => setId((x) => x + 1)
 
       return (
         <div>
-          <Page id={id} />
+          <Page id={id()} />
           <button aria-label="change" onClick={changeId}>
-            change {id}
+            change {id()}
           </button>
         </div>
       )
@@ -5368,9 +5378,9 @@ describe('createQuery', () => {
   })
 
   it('should refetch when query key changed when switching between erroneous queries', async () => {
-    function Page({ id }: { id: boolean }) {
-      const { error, isFetching } = createQuery(
-        [id],
+    function Page(props: { id: boolean }) {
+      const state = createQuery(
+        () => [props.id],
         async () => {
           await sleep(10)
           return Promise.reject<unknown>(new Error('Error'))
@@ -5382,24 +5392,27 @@ describe('createQuery', () => {
           refetchOnWindowFocus: false,
         },
       )
-
-      if (isFetching) {
-        return <div>status: fetching</div>
-      }
-      if (error instanceof Error) {
-        return <div>error</div>
-      }
-      return <div>rendered</div>
+      return (
+        <Switch fallback={<div>rendered</div>}>
+          <Match when={state.isFetching}>
+            <div>status: fetching</div>
+          </Match>
+          <Match when={state.error instanceof Error}>
+            <div>error</div>
+          </Match>
+        </Switch>
+      )
     }
 
     function App() {
-      const [value, toggle] = NotReact.useReducer((x) => !x, true)
+      const [value, setValue] = createSignal(true)
+      const toggle = () => setValue((x) => !x)
 
       return (
         <div>
-          <Page id={value} />
+          <Page id={value()} />
           <button aria-label="change" onClick={toggle}>
-            change {value}
+            change {value()}
           </button>
         </div>
       )
@@ -5455,18 +5468,22 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      if (state.isLoading) {
-        return <div>status: loading</div>
-      }
-      if (state.error instanceof Error) {
-        return (
-          <div>
-            <div>error</div>
-            <button onClick={() => state.refetch()}>refetch</button>
-          </div>
-        )
-      }
-      return <div>data: {state.data}</div>
+      return (
+        <Switch>
+          <Match when={state.isLoading}>
+            <div>status: loading</div>
+          </Match>
+          <Match when={state.error instanceof Error}>
+            <div>
+              <div>error</div>
+              <button onClick={() => state.refetch()}>refetch</button>
+            </div>
+          </Match>
+          <Match when={state.data !== undefined}>
+            <div>data: {state.data}</div>
+          </Match>
+        </Switch>
+      )
     }
 
     render(() => (
