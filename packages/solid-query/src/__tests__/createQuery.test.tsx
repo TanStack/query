@@ -5523,7 +5523,7 @@ describe('createQuery', () => {
           },
         })
 
-        NotReact.useEffect(() => {
+        createEffect(() => {
           states.push(state.fetchStatus)
         })
 
@@ -5580,7 +5580,7 @@ describe('createQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -5645,7 +5645,7 @@ describe('createQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -5948,11 +5948,13 @@ describe('createQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = NotReact.useState(true)
+        const [show, setShow] = createSignal(true)
 
         return (
           <div>
-            {show && <Component />}
+            <Show when={show()}>
+              <Component />
+            </Show>
             <button onClick={() => setShow(false)}>hide</button>
           </div>
         )
@@ -6300,7 +6302,7 @@ describe('createQuery', () => {
       return <></>
     }
 
-    await queryClient.prefetchQuery(key, queryFn)
+    await queryClient.prefetchQuery(key(), queryFn)
     render(() => (
       <QueryClientProvider client={queryClient}>
         <Page />
@@ -6384,7 +6386,7 @@ describe('createQuery', () => {
     const error = new Error('oops')
 
     function Page() {
-      const { refetch, errorUpdateCount } = createQuery(
+      const state = createQuery(
         key,
         async (): Promise<unknown> => {
           throw error
@@ -6395,8 +6397,8 @@ describe('createQuery', () => {
       )
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
-          <span>data: {errorUpdateCount}</span>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <span>data: {state.errorUpdateCount}</span>
         </div>
       )
     }
