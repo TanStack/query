@@ -23,17 +23,12 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey
-  >,
+  options: CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
-  const queryClient = useQueryClient({ context: options.context })
+  const queryClient = useQueryClient({ context: options.context });
   const errorResetBoundary = useQueryErrorResetBoundary()
+
   const defaultedOptions = createMemo(() => {
     const computedOptions = queryClient.defaultQueryOptions(options)
     computedOptions._optimisticResults = 'optimistic'
@@ -54,32 +49,36 @@ export function createBaseQuery<
     return computedOptions
   })
 
-  const observer = new Observer(queryClient, defaultedOptions())
+  const observer = new Observer(queryClient, defaultedOptions());
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     // @ts-ignore
     observer.getOptimisticResult(defaultedOptions()),
-  )
+  );
+
 
   const [dataResource, { refetch }] = createResource<TData | undefined>((_, info) => {
+    const { refetching = state } = info as { refetching: false | QueryObserverResult<TData, TError> };
+
+    if (!refetching && state.data) return state.data;
+
     return new Promise((resolve) => {
-      // ?? What is happening here?? I have NO IDEA WHY INFO PUTS
-      // THE DATA IN the refetching property instead of the value property
-      const { refetching } = info as { refetching: false | QueryObserverResult<TData, TError>}
       if (refetching) {
-        if (refetching.isSuccess) resolve(refetching.data)
-        if (refetching.isError && !refetching.isFetching) {
-          throw refetching.error
+        if (!(refetching.isFetching && refetching.isLoading)) { 
+          resolve(refetching.data);
         }
       }
-    })
-  })
+    });
+  });
 
-  const unsubscribe = observer.subscribe((result) => {  
-    refetch(result)
-  })
+  const unsubscribe = observer.subscribe((result) => {
+    if(result.isLoading && result.isFetching) {
+      setState(result);
+    }
+    refetch(result);
+  });
 
-  onCleanup(() => unsubscribe())
+  onCleanup(() => unsubscribe());
 
   onMount(() => {
     // Do not notify on updates because of changes in the options because
@@ -104,12 +103,31 @@ export function createBaseQuery<
     }
   })
 
-  createComputed(on(() => dataResource.state, () => {
-    const trackStates = ['pending', 'ready', 'errored'];
-    if(trackStates.includes(dataResource.state)) {
-      setState(observer.getCurrentResult())
-    }
-  }))
+  createComputed(
+    on(
+      () => dataResource.state,
+      () => {
+        const trackStates = ["pending", "ready", "errored"];
+        if (trackStates.includes(dataResource.state)) {
+          const currentState = observer.getCurrentResult();
+          setState(currentState);
+          if ( 
+            currentState.isError && 
+            !currentState.isFetching &&
+            shouldThrowError(
+              observer.options.useErrorBoundary,
+              [
+                currentState.error,
+                observer.getCurrentQuery(),
+              ]
+            ) 
+          ) {
+            throw currentState.error;
+          }
+        }
+      },
+    ),
+  );
 
   const handler = {
     get(
@@ -136,9 +154,9 @@ export function createBaseQuery<
         }
         return state.data
       }
-      return Reflect.get(target, prop)
+      return Reflect.get(target, prop);
     },
-  }
+  };
 
   const proxyResult = new Proxy(state, handler) as QueryObserverResult<
     TData,

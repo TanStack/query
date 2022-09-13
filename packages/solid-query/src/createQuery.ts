@@ -1,14 +1,14 @@
-import { QueryObserver, QueryFunction } from '@tanstack/query-core'
+import { QueryObserver, QueryFunction, QueryOptions } from "@tanstack/query-core";
 import {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
   SolidQueryKey,
-} from './types'
-import { createComputed } from 'solid-js'
-import { createStore } from 'solid-js/store'
-import { parseQueryArgs } from './utils'
-import { createBaseQuery } from './createBaseQuery'
+} from "./types";
+import { createComputed } from "solid-js";
+import { createStore } from "solid-js/store";
+import { parseQueryArgs } from "./utils";
+import { createBaseQuery } from "./createBaseQuery";
 
 // There are several ways to create a query.
 // 1. createQuery(options: CreateQueryOptions)
@@ -21,22 +21,20 @@ export function createQuery<
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
-  options: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData?: () => undefined },
-): CreateQueryResult<TData, TError>
+  options: Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "initialData"> & {
+    initialData?: () => undefined;
+  },
+): CreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
-  options: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): DefinedCreateQueryResult<TData, TError>
+  options: Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "initialData"> & {
+    initialData: TQueryFnData | (() => TQueryFnData);
+  },
+): DefinedCreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -44,7 +42,7 @@ export function createQuery<
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
   options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): CreateQueryResult<TData, TError>
+): CreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -54,9 +52,9 @@ export function createQuery<
   queryKey: TQueryKey,
   options?: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'initialData'
+    "queryKey" | "initialData"
   > & { initialData?: () => undefined },
-): CreateQueryResult<TData, TError>
+): CreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -66,9 +64,9 @@ export function createQuery<
   queryKey: TQueryKey,
   options?: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'initialData'
+    "queryKey" | "initialData"
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): DefinedCreateQueryResult<TData, TError>
+): DefinedCreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -76,11 +74,8 @@ export function createQuery<
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
   queryKey: TQueryKey,
-  options?: Omit<
-    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey'
-  >,
-): CreateQueryResult<TData, TError>
+  options?: Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, "queryKey">,
+): CreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -92,9 +87,9 @@ export function createQuery<
   queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
   options?: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn' | 'initialData'
+    "queryKey" | "queryFn" | "initialData"
   > & { initialData?: () => undefined },
-): CreateQueryResult<TData, TError>
+): CreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -105,9 +100,9 @@ export function createQuery<
   queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
   options?: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn' | 'initialData'
+    "queryKey" | "queryFn" | "initialData"
   > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): DefinedCreateQueryResult<TData, TError>
+): DefinedCreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -118,9 +113,9 @@ export function createQuery<
   queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
   options?: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn'
+    "queryKey" | "queryFn"
   >,
-): CreateQueryResult<TData, TError>
+): CreateQueryResult<TData, TError>;
 export function createQuery<
   TQueryFnData,
   TError,
@@ -135,15 +130,16 @@ export function createQuery<
 ): CreateQueryResult<TData, TError> {
   // The parseQuery Args functions helps normalize the arguments into the correct form.
   // Whatever the parameters are, they are normalized into the correct form.
-  const [parsedOptions, setParsedOptions] = createStore(
-    parseQueryArgs(arg1, arg2, arg3),
-  )
+  const [parsedOptions, setParsedOptions] = createStore(parseQueryArgs(arg1, arg2, arg3));
 
   // Watch for changes in the options and update the parsed options.
   createComputed(() => {
-    const newParsedOptions = parseQueryArgs(arg1, arg2, arg3)
-    setParsedOptions(newParsedOptions)
-  })
+    const newParsedOptions = parseQueryArgs(arg1, arg2, arg3);
+    setParsedOptions(newParsedOptions);
+  });
 
-  return createBaseQuery(parsedOptions, QueryObserver)
+  return createBaseQuery(
+    parsedOptions as QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+    QueryObserver,
+  );
 }

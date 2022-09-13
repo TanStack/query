@@ -7,6 +7,7 @@ import {
   mockNavigatorOnLine,
   mockLogger,
   createQueryClient,
+  // @ts-ignore
 } from '../../../../tests/utils'
 import { Blink, queryKey, setActTimeout } from './utils'
 import {
@@ -62,14 +63,10 @@ describe('createQuery', () => {
       expectType<Error | null>(withError.error)
 
       // it should provide the result type in the configuration
-      createQuery(
-        () => [key()],
-        async () => true,
-        {
-          onSuccess: (data) => expectType<boolean>(data),
-          onSettled: (data) => expectType<boolean | undefined>(data),
-        },
-      )
+      createQuery(key, async () => true, {
+        onSuccess: (data) => expectType<boolean>(data),
+        onSettled: (data) => expectType<boolean | undefined>(data),
+      })
 
       // it should be possible to specify a union type as result type
       const unionTypeSync = createQuery(
@@ -80,6 +77,7 @@ describe('createQuery', () => {
         },
       )
       expectType<'a' | 'b' | undefined>(unionTypeSync.data)
+
       const unionTypeAsync = createQuery<'a' | 'b'>(
         key,
         () => Promise.resolve(Math.random() > 0.5 ? 'a' : 'b'),
@@ -103,18 +101,15 @@ describe('createQuery', () => {
       expectType<unknown>(fromGenericQueryFn.error)
 
       const fromGenericOptionsQueryFn = createQuery({
-        // TODO(lukemurray): when passing the queryKey as options how do we make it reactive?
-        queryKey: key(),
+        queryKey: key,
         queryFn: () => queryFn(),
       })
       expectType<string | undefined>(fromGenericOptionsQueryFn.data)
       expectType<unknown>(fromGenericOptionsQueryFn.error)
 
       type MyData = number
-      // TODO(lukemurray): this should be a function to match SolidQueryKey.
       type MyQueryKey = readonly ['my-data', number]
 
-      // TODO(lukemurray): errors if MyQueryKey is a function.
       const getMyDataArrayKey: QueryFunction<MyData, MyQueryKey> = async ({
         queryKey: [, n],
       }) => {
@@ -122,20 +117,19 @@ describe('createQuery', () => {
       }
 
       createQuery({
-        // TODO(lukemurray): fails because MyQueryKey is not a function and QueryFunction type doesn't support SolidQueryKey
-        queryKey: ['my-data', 100],
+        queryKey: () => ['my-data', 100] as const,
         queryFn: getMyDataArrayKey,
       })
 
-      const getMyDataStringKey: QueryFunction<MyData, ['1']> = async (
+      const getMyDataStringKey: QueryFunction<MyData, readonly ['1']> = async (
         context,
       ) => {
-        expectType<['1']>(context.queryKey)
+        expectType<readonly ['1']>(context.queryKey)
         return Number(context.queryKey[0]) + 42
       }
 
       createQuery({
-        queryKey: ['1'],
+        queryKey: () => ['1'] as const,
         queryFn: getMyDataStringKey,
       })
 
@@ -146,14 +140,14 @@ describe('createQuery', () => {
 
       // handles wrapped queries with custom fetcher passed as inline queryFn
       const useWrappedQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
+        TQueryKey extends () => [string, Record<string, unknown>?],
         TQueryFnData,
         TError,
         TData = TQueryFnData,
       >(
         qk: TQueryKey,
         fetcher: (
-          obj: TQueryKey[1],
+          obj: ReturnType<TQueryKey>[1],
           token: string,
           // return type must be wrapped with TQueryFnReturn
         ) => Promise<TQueryFnData>,
@@ -161,13 +155,16 @@ describe('createQuery', () => {
           CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
           'queryKey' | 'queryFn' | 'initialData'
         >,
-      ) => createQuery(qk, () => fetcher(qk[1], 'token'), options)
-      const test = useWrappedQuery([''], async () => '1')
+      ) => createQuery(qk, () => fetcher(qk()[1], 'token'), options)
+      const test = useWrappedQuery(
+        () => [''],
+        async () => '1',
+      )
       expectType<string | undefined>(test.data)
 
       // handles wrapped queries with custom fetcher passed directly to createQuery
       const useWrappedFuncStyleQuery = <
-        TQueryKey extends [string, Record<string, unknown>?],
+        TQueryKey extends () => [string, Record<string, unknown>?],
         TQueryFnData,
         TError,
         TData = TQueryFnData,
@@ -179,12 +176,14 @@ describe('createQuery', () => {
           'queryKey' | 'queryFn' | 'initialData'
         >,
       ) => createQuery(qk, fetcher, options)
-      const testFuncStyle = useWrappedFuncStyleQuery([''], async () => true)
+      const testFuncStyle = useWrappedFuncStyleQuery(
+        () => [''],
+        async () => true,
+      )
       expectType<boolean | undefined>(testFuncStyle.data)
     }
   })
 
-  // See https://github.com/tannerlinsley/react-query/issues/105
   it('should allow to set default data value', async () => {
     const key = queryKey()
 
@@ -538,7 +537,7 @@ describe('createQuery', () => {
     fireEvent.click(screen.getByRole('button', { name: /refetch/i }))
     await screen.findByText('data: data2')
 
-    expect(states.length).toBe(3) //loading, success, success after refetch
+    expect(states.length).toBe(4) //loading, success, success, success after refetch
     expect(count).toBe(2)
     expect(onSuccess).toHaveBeenCalledTimes(2)
   })
@@ -1376,14 +1375,10 @@ describe('createQuery', () => {
     let count = 0
 
     function Page() {
-      const state = createQuery(
-        key,
-        async () => {
-          await sleep(10)
-          return ++count
-        },
-        { notifyOnChangeProps: 'all' },
-      )
+      const state = createQuery(key, async () => {
+        await sleep(10)
+        return ++count
+      })
 
       createRenderEffect(() => {
         states.push({ ...state })
