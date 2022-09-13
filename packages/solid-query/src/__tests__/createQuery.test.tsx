@@ -28,8 +28,8 @@ import {
   createSignal,
   Show,
   ErrorBoundary,
+  on,
 } from 'solid-js'
-import { untrack } from 'solid-js/web'
 
 describe('createQuery', () => {
   const queryCache = new QueryCache()
@@ -3797,7 +3797,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    queryClient.setQueryData(key, 'prefetched')
+    queryClient.setQueryData(key(), 'prefetched')
 
     function Page() {
       const state = createQuery(key, () => 'data')
@@ -3838,7 +3838,7 @@ describe('createQuery', () => {
     const visibilityMock = mockVisibilityState('hidden')
 
     // set data in cache to check if the hook query fn is actually called
-    queryClient.setQueryData(key, 'prefetched')
+    queryClient.setQueryData(key(), 'prefetched')
 
     function Page() {
       const state = createQuery(key, async () => {
@@ -3863,11 +3863,9 @@ describe('createQuery', () => {
 
     await waitFor(() => expect(states.length).toBe(2))
 
-    act(() => {
-      // reset visibilityState to original value
-      visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
-    })
+    // reset visibilityState to original value
+    visibilityMock.mockRestore()
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -4774,11 +4772,16 @@ describe('createQuery', () => {
     const key1 = queryKey()
 
     function Page() {
-      const [count, inc] = NotReact.useReducer((prev) => prev + 1, 2)
-      const [forceValue, forceUpdate] = NotReact.useReducer(
-        (prev) => prev + 1,
-        1,
-      )
+      const [count, setCount] = createSignal(2)
+      const [forceValue, setForceValue] = createSignal(1)
+
+      const inc = () => {
+        setCount((prev) => prev + 1)
+      }
+
+      const forceUpdate = () => {
+        setForceValue((prev) => prev + 1)
+      }
 
       const state = createQuery(
         key1,
@@ -4787,12 +4790,10 @@ describe('createQuery', () => {
           return 0
         },
         {
-          select: NotReact.useCallback(
-            (data: number) => {
-              return `selected ${data + count}`
-            },
-            [count],
-          ),
+          get select() {
+            const currentCount = count()
+            return (data: number) => `selected ${data + currentCount}`
+          },
           placeholderData: 99,
         },
       )
@@ -4800,8 +4801,8 @@ describe('createQuery', () => {
       return (
         <div>
           <h2>Data: {state.data}</h2>
-          <h2>forceValue: {forceValue}</h2>
-          <button onClick={inc}>inc: {count}</button>
+          <h2>forceValue: {forceValue()}</h2>
+          <button onClick={inc}>inc: {count()}</button>
           <button onClick={forceUpdate}>forceUpdate</button>
         </div>
       )
@@ -5009,19 +5010,21 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const [id, setId] = NotReact.useState(1)
-      const [hasChanged, setHasChanged] = NotReact.useState(false)
+      const [id, setId] = createSignal(1)
+      const [hasChanged, setHasChanged] = createSignal(false)
 
-      const state = createQuery([key, id], queryFn)
+      const state = createQuery(() => [key(), id()], queryFn)
 
       createRenderEffect(() => {
         states.push({ ...state })
       })
 
-      NotReact.useEffect(() => {
-        setId((prevId) => (prevId === 1 ? 2 : 1))
-        setHasChanged(true)
-      }, [hasChanged])
+      createEffect(
+        on(hasChanged, () => {
+          setId((prevId) => (prevId === 1 ? 2 : 1))
+          setHasChanged(true)
+        }),
+      )
 
       return null
     }
@@ -5809,7 +5812,7 @@ describe('createQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -5842,14 +5845,10 @@ describe('createQuery', () => {
       )
 
       // triggers a second pause
-      act(() => {
-        window.dispatchEvent(new FocusEvent('focus'))
-      })
+      window.dispatchEvent(new FocusEvent('focus'))
 
       onlineMock.mockReturnValue(true)
-      act(() => {
-        window.dispatchEvent(new Event('online'))
-      })
+      window.dispatchEvent(new Event('online'))
 
       await waitFor(() =>
         screen.getByText('status: success, fetchStatus: idle'),
@@ -5978,7 +5977,7 @@ describe('createQuery', () => {
 
       await sleep(15)
 
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
@@ -6077,14 +6076,14 @@ describe('createQuery', () => {
       }
 
       function Page() {
-        const [show, setShow] = NotReact.useState(true)
+        const [show, setShow] = createSignal(true)
 
         return (
           <div>
-            {show && <Component />}
+            {show() && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -6119,7 +6118,7 @@ describe('createQuery', () => {
 
       await sleep(15)
 
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
@@ -6325,7 +6324,7 @@ describe('createQuery', () => {
       return (
         <div>
           <div>data: {state.data}</div>
-          <button onClick={() => queryClient.setQueryData(key, 'newData')}>
+          <button onClick={() => queryClient.setQueryData(key(), 'newData')}>
             setQueryData
           </button>
         </div>
@@ -6357,7 +6356,7 @@ describe('createQuery', () => {
           <div>dataUpdatedAt: {state.dataUpdatedAt}</div>
           <button
             onClick={() =>
-              queryClient.setQueryData(key, 'newData', { updatedAt: 100 })
+              queryClient.setQueryData(key(), 'newData', { updatedAt: 100 })
             }
           >
             setQueryData
