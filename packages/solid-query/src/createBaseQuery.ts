@@ -10,8 +10,9 @@ import {
   createMemo,
   createEffect,
   on,
+  batch,
 } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { createStore, unwrap } from 'solid-js/store'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { shouldThrowError } from './utils'
 
@@ -56,26 +57,25 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptions()),
   );
 
-
-  const [dataResource, { refetch }] = createResource<TData | undefined>((_, info) => {
-    const { refetching = state } = info as { refetching: false | QueryObserverResult<TData, TError> };
-
-    if (!refetching && state.data) return state.data;
-
+  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(() => {
     return new Promise((resolve) => {
-      if (refetching) {
-        if (!(refetching.isFetching && refetching.isLoading)) { 
-          resolve(refetching.data);
+        if (!(state.isFetching && state.isLoading)) { 
+          resolve(unwrap(state.data));
         }
-      }
     });
   });
 
+  batch(() => {
+    mutate(() => unwrap(state.data));
+    refetch();  
+  })
+
   const unsubscribe = observer.subscribe((result) => {
-    if(result.isLoading && result.isFetching) {
-      setState(result);
-    }
-    refetch(result);
+    batch(() => {
+      setState(unwrap(result));
+      mutate(() => unwrap(result.data));
+      refetch();  
+    })
   });
 
   onCleanup(() => unsubscribe());
@@ -103,31 +103,31 @@ export function createBaseQuery<
     }
   })
 
-  createComputed(
-    on(
-      () => dataResource.state,
-      () => {
-        const trackStates = ["pending", "ready", "errored"];
-        if (trackStates.includes(dataResource.state)) {
-          const currentState = observer.getCurrentResult();
-          setState(currentState);
-          if ( 
-            currentState.isError && 
-            !currentState.isFetching &&
-            shouldThrowError(
-              observer.options.useErrorBoundary,
-              [
-                currentState.error,
-                observer.getCurrentQuery(),
-              ]
-            ) 
-          ) {
-            throw currentState.error;
-          }
-        }
-      },
-    ),
-  );
+  // createComputed(
+  //   on(
+  //     () => dataResource.state,
+  //     () => {
+  //       const trackStates = ["pending", "ready", "errored"];
+  //       if (trackStates.includes(dataResource.state)) {
+  //         const currentState = observer.getCurrentResult();
+  //         setState(currentState);
+  //         if ( 
+  //           currentState.isError && 
+  //           !currentState.isFetching &&
+  //           shouldThrowError(
+  //             observer.options.useErrorBoundary,
+  //             [
+  //               currentState.error,
+  //               observer.getCurrentQuery(),
+  //             ]
+  //           ) 
+  //         ) {
+  //           throw currentState.error;
+  //         }
+  //       }
+  //     },
+  //   ),
+  // );
 
   const handler = {
     get(
