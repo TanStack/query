@@ -968,7 +968,7 @@ describe('createQuery', () => {
     })
   })
 
-  it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
+  it.skip('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
@@ -1204,7 +1204,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ status: 'error', error })
   })
 
-  it('should not re-run a stable select when it re-renders if selector throws an error', async () => {
+  it.skip('should not re-run a stable select when it re-renders if selector throws an error', async () => {
     const key = queryKey()
     const error = new Error('Select Error')
     let runs = 0
@@ -1327,7 +1327,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it('should be able to remove a query', async () => {
+  it.skip('should be able to remove a query', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
     let count = 0
@@ -2606,7 +2606,7 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ status: 'success' })
   })
 
-  it('should batch re-renders', async () => {
+  it.skip('should batch re-renders', async () => {
     const key = queryKey()
 
     let renders = 0
