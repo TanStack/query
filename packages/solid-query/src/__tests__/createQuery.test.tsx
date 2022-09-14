@@ -238,15 +238,12 @@ describe('createQuery', () => {
       }
 
       return (
-        <Switch>
+        <Switch fallback={<span>{state.data}</span>}>
           <Match when={state.isLoading}>
             <span>loading</span>
           </Match>
           <Match when={state.isLoadingError}>
             <span>{state.error!.message}</span>
-          </Match>
-          <Match when={state.data !== undefined}>
-            <span>{state.data}</span>
           </Match>
         </Switch>
       )
@@ -5469,7 +5466,7 @@ describe('createQuery', () => {
       })
 
       return (
-        <Switch>
+        <Switch fallback={<div>data: {state.data}</div>}>
           <Match when={state.isLoading}>
             <div>status: loading</div>
           </Match>
@@ -5478,9 +5475,6 @@ describe('createQuery', () => {
               <div>error</div>
               <button onClick={() => state.refetch()}>refetch</button>
             </div>
-          </Match>
-          <Match when={state.data !== undefined}>
-            <div>data: {state.data}</div>
           </Match>
         </Switch>
       )
