@@ -24,7 +24,13 @@ export function createBaseQuery<
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: CreateBaseQueryOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+  options: CreateBaseQueryOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient({ context: options.context });
@@ -57,28 +63,30 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptions()),
   );
 
-  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(() => {
-    return new Promise((resolve) => {
-        if (!(state.isFetching && state.isLoading)) { 
-          resolve(unwrap(state.data));
+  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
+    () => {
+      return new Promise((resolve) => {
+        if (!(state.isFetching && state.isLoading)) {
+          resolve(unwrap(state.data))
         }
-    });
-  });
+      })
+    },
+  )
 
   batch(() => {
-    mutate(() => unwrap(state.data));
-    refetch();  
+    mutate(() => unwrap(state.data))
+    refetch()
   })
 
   const unsubscribe = observer.subscribe((result) => {
     batch(() => {
-      setState(unwrap(result));
-      mutate(() => unwrap(result.data));
-      refetch();  
+      setState(unwrap(result))
+      mutate(() => unwrap(result.data))
+      refetch()
     })
-  });
+  })
 
-  onCleanup(() => unsubscribe());
+  onCleanup(() => unsubscribe())
 
   onMount(() => {
     // Do not notify on updates because of changes in the options because
@@ -107,22 +115,19 @@ export function createBaseQuery<
     on(
       () => state.status,
       () => {
-        if ( 
-          state.isError && 
+        if (
+          state.isError &&
           !state.isFetching &&
-          shouldThrowError(
-            observer.options.useErrorBoundary,
-            [
-              state.error,
-              observer.getCurrentQuery(),
-            ]
-          ) 
+          shouldThrowError(observer.options.useErrorBoundary, [
+            state.error,
+            observer.getCurrentQuery(),
+          ])
         ) {
-          throw state.error;
+          throw state.error
         }
-      }
-    )
-  );
+      },
+    ),
+  )
 
   const handler = {
     get(
@@ -149,9 +154,9 @@ export function createBaseQuery<
         }
         return state.data
       }
-      return Reflect.get(target, prop);
+      return Reflect.get(target, prop)
     },
-  };
+  }
 
   const proxyResult = new Proxy(state, handler) as QueryObserverResult<
     TData,
