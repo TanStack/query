@@ -28,6 +28,7 @@ import {
   createSignal,
   ErrorBoundary,
   on,
+  Show,
 } from 'solid-js'
 
 describe('createQuery', () => {
@@ -2978,7 +2979,7 @@ describe('createQuery', () => {
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
   })
 
-  it('should calculate focus behaviour for `refetchOnWindowFocus` depending on function', async () => {
+  it('should calculate focus behaviour for refetchOnWindowFocus depending on function', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
     let count = 0
@@ -2993,12 +2994,13 @@ describe('createQuery', () => {
         {
           staleTime: 0,
           retry: 0,
+          refetchOnWindowFocus: (query) => (query.state.data || 0) < 1,
         },
       )
       createRenderEffect(() => {
         states.push({ ...state })
       })
-      return <div>data: {String(state.data)}</div>
+      return <div>data: {state.data}</div>
     }
 
     render(() => (
@@ -3013,7 +3015,7 @@ describe('createQuery', () => {
     expect(states[0]).toMatchObject({ data: undefined, isFetching: true })
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
-    // window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new FocusEvent('focus'))
 
     await screen.findByText('data: 1')
 
@@ -3022,10 +3024,6 @@ describe('createQuery', () => {
 
     expect(states[2]).toMatchObject({ data: 0, isFetching: true })
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
-
-    // act(() => {
-    //   window.dispatchEvent(new FocusEvent('focus'))
-    // })
 
     await sleep(20)
 
@@ -3037,7 +3035,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    await queryClient.prefetchQuery(key, () => 'prefetched')
+    await queryClient.prefetchQuery(key(), () => 'prefetched')
 
     function Page() {
       const state = createQuery(key, () => 'data', {
@@ -3075,7 +3073,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    await queryClient.prefetchQuery(key, () => 'prefetched')
+    await queryClient.prefetchQuery(key(), () => 'prefetched')
 
     await sleep(10)
 
@@ -3115,7 +3113,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = createQuery<unknown, string>(
+      const state = createQuery<unknown, string>(
         key,
         () => {
           return Promise.reject('Error test jaylen')
@@ -3125,8 +3123,8 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h1>{state.status}</h1>
+          <h2>{state.error}</h2>
         </div>
       )
     }
@@ -3145,7 +3143,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = createQuery<unknown, string>(
+      const state = createQuery<unknown, string>(
         key,
         () => Promise.reject('Error test jaylen'),
         { retry: false, useErrorBoundary: true },
@@ -3153,8 +3151,8 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h1>{state.status}</h1>
+          <h2>{state.error}</h2>
         </div>
       )
     }
@@ -3202,7 +3200,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = createQuery<unknown, string>(
+      const state = createQuery<unknown, string>(
         key,
         () => Promise.reject('Local Error'),
         {
@@ -3213,8 +3211,8 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h1>{state.status}</h1>
+          <h2>{state.error}</h2>
         </div>
       )
     }
@@ -3235,7 +3233,7 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = createQuery<unknown, Error>(
+      const state = createQuery<unknown, Error>(
         key,
         () => Promise.reject(new Error('Remote Error')),
         {
@@ -3246,8 +3244,8 @@ describe('createQuery', () => {
 
       return (
         <div>
-          <h1>{status}</h1>
-          <h2>{error?.message ?? ''}</h2>
+          <h1>{state.status}</h1>
+          <h2>{state.error?.message ?? ''}</h2>
         </div>
       )
     }
@@ -3299,12 +3297,16 @@ describe('createQuery', () => {
     }
 
     function App() {
-      const [show, toggle] = NotReact.useReducer((x) => !x, true)
+      const [showPage, setShowPage] = createSignal(true)
+
+      const toggle = () => setShowPage((s) => !s)
 
       return (
         <div>
-          <button onClick={toggle}>{show ? 'hide' : 'show'}</button>
-          {show && <Page />}
+          <button onClick={toggle}>{showPage() ? 'hide' : 'show'}</button>
+          <Show when={showPage()}>
+            <Page />
+          </Show>
         </div>
       )
     }
@@ -3351,15 +3353,22 @@ describe('createQuery', () => {
     }
 
     function App() {
-      const [show, toggle] = NotReact.useReducer((x) => !x, true)
+      const [showPage, setShowPage] = createSignal(true)
+
+      const toggle = () => setShowPage((s) => !s)
 
       return (
         <div>
-          <button onClick={toggle}>{show ? 'hide' : 'show'}</button>
-          <button onClick={() => queryClient.cancelQueries({ queryKey: key })}>
+          <button onClick={toggle}>{showPage() ? 'hide' : 'show'}</button>
+          <button
+            onClick={() => queryClient.cancelQueries({ queryKey: key() })}
+          >
             cancel
           </button>
-          {show && <Page />}
+
+          <Show when={showPage()}>
+            <Page />
+          </Show>
         </div>
       )
     }
@@ -3385,7 +3394,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    await queryClient.prefetchQuery(key, () => 'prefetched')
+    await queryClient.prefetchQuery(key(), () => 'prefetched')
 
     function Page() {
       const state = createQuery(key, () => 'data', {

@@ -103,31 +103,26 @@ export function createBaseQuery<
     }
   })
 
-  // createComputed(
-  //   on(
-  //     () => dataResource.state,
-  //     () => {
-  //       const trackStates = ["pending", "ready", "errored"];
-  //       if (trackStates.includes(dataResource.state)) {
-  //         const currentState = observer.getCurrentResult();
-  //         setState(currentState);
-  //         if ( 
-  //           currentState.isError && 
-  //           !currentState.isFetching &&
-  //           shouldThrowError(
-  //             observer.options.useErrorBoundary,
-  //             [
-  //               currentState.error,
-  //               observer.getCurrentQuery(),
-  //             ]
-  //           ) 
-  //         ) {
-  //           throw currentState.error;
-  //         }
-  //       }
-  //     },
-  //   ),
-  // );
+  createComputed(
+    on(
+      () => state.status,
+      () => {
+        if ( 
+          state.isError && 
+          !state.isFetching &&
+          shouldThrowError(
+            observer.options.useErrorBoundary,
+            [
+              state.error,
+              observer.getCurrentQuery(),
+            ]
+          ) 
+        ) {
+          throw state.error;
+        }
+      }
+    )
+  );
 
   const handler = {
     get(
