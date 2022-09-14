@@ -585,11 +585,7 @@ describe('createQuery', () => {
       createEffect(() => {
         setShow(false)
       })
-      return (
-        <Show when={show()}>
-          <Component />
-        </Show>
-      )
+      return <>{show() && <Component />}</>
     }
 
     function Component() {
@@ -5963,9 +5959,7 @@ describe('createQuery', () => {
 
         return (
           <div>
-            <Show when={show()}>
-              <Component />
-            </Show>
+            {show() && <Component />}
             <button onClick={() => setShow(false)}>hide</button>
           </div>
         )
