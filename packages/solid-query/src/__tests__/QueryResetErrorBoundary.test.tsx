@@ -491,7 +491,9 @@ describe('QueryErrorResetBoundary', () => {
     expect(fetchCount).toBe(3)
   })
 
-  it('should never render the component while the query is in error state', async () => {
+  // TODO(lukemurray): semantically doens't make sense since solid resets when
+  // the resource that has an error is read
+  it.skip('should never render the component while the query is in error state', async () => {
     const key = queryKey()
     let fetchCount = 0
     let renders = 0
