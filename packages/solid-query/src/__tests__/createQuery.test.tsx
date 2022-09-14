@@ -6389,7 +6389,7 @@ describe('createQuery', () => {
     const error = new Error('oops')
 
     function Page() {
-      const { refetch, errorUpdateCount } = createQuery(
+      const state = createQuery(
         key,
         async (): Promise<unknown> => {
           throw error
@@ -6400,8 +6400,8 @@ describe('createQuery', () => {
       )
       return (
         <div>
-          <button onClick={() => refetch()}>refetch</button>
-          <span>data: {errorUpdateCount}</span>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <span>data: {state.errorUpdateCount}</span>
         </div>
       )
     }
