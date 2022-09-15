@@ -2,14 +2,16 @@ import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
 import {
-  QueryKey,
-  QueryFunction,
   notifyManager,
   QueriesObserver,
+  QueryFunction,
+  QueryKey,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
+import { shouldThrowError } from './utils'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -187,6 +189,36 @@ export function useQueries<T extends any[]>({
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
+
+  const errorResetBoundary = useQueryErrorResetBoundary()
+
+  defaultedQueries.forEach((query) => {
+    if (query.suspense || query.useErrorBoundary) {
+      // Prevent retrying failed query if the error boundary has not been reset yet
+      if (!errorResetBoundary.isReset()) {
+        query.retryOnMount = false
+      }
+    }
+  })
+
+  React.useEffect(() => {
+    errorResetBoundary.clearReset()
+  }, [errorResetBoundary])
+
+  const firstSingleResultWhichShouldThrow = result.find(
+    (singleResult, index) =>
+      singleResult.isError &&
+      !errorResetBoundary.isReset() &&
+      !singleResult.isFetching &&
+      shouldThrowError(defaultedQueries[index]?.useErrorBoundary ?? false, [
+        singleResult.error,
+        observer.getQueries()[index]!,
+      ]),
+  )
+
+  if (firstSingleResultWhichShouldThrow?.error) {
+    throw firstSingleResultWhichShouldThrow.error
+  }
 
   return result as QueriesResults<T>
 }

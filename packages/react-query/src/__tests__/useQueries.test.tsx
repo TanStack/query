@@ -1104,4 +1104,53 @@ describe('useQueries', () => {
       await waitFor(() => rendered.getByText('error boundary'))
     })
   })
+
+  it("should throw error if in one of queries' queryFn throws and useErrorBoundary is in use", async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+
+    function Page() {
+      useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              Promise.reject(
+                'this should not throw because useErrorBoundary is not set',
+              ),
+          },
+          {
+            queryKey: key2,
+            queryFn: () => Promise.reject('single query error'),
+            useErrorBoundary: true,
+            retry: false,
+          },
+          {
+            queryKey: key3,
+            queryFn: async () => 2,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('single query error'))
+  })
 })
