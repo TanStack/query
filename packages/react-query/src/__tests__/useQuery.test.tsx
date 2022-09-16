@@ -2808,6 +2808,8 @@ describe('useQuery', () => {
 
     await sleep(10)
 
+    await waitFor(() => expect(queryClient.isFetching()).toBe(0))
+
     expect(result?.data).toBe('data')
   })
 
