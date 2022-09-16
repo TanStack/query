@@ -163,6 +163,7 @@ export function createBaseQuery<
     TError
   >
 
+  // TODO(lukemurray): is it possible to make this reactive based on defaulted options?
   return !defaultedOptions().notifyOnChangeProps
     ? observer.trackResult(proxyResult)
     : proxyResult
