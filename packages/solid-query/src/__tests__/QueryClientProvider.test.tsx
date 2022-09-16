@@ -250,8 +250,8 @@ describe('QueryClientProvider', () => {
         return null
       }
 
-      // TODO(lukemurray): this test doesn't pass because the page function is
-      // never called. I'm not sure why.
+      // TODO(lukemurray): fails because renderToString never calls Page
+      // probably an SSR-testing issue we need to fix.
       renderToString(() => (
         <QueryClientProvider client={queryClient} contextSharing={true}>
           <Page />
