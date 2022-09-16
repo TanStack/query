@@ -33,7 +33,7 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
-  const queryClient = useQueryClient({ context: options.context });
+  const queryClient = useQueryClient({ context: options.context })
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   const defaultedOptions = createMemo(() => {
@@ -56,12 +56,12 @@ export function createBaseQuery<
     return computedOptions
   })
 
-  const observer = new Observer(queryClient, defaultedOptions());
+  const observer = new Observer(queryClient, defaultedOptions())
 
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     // @ts-ignore
     observer.getOptimisticResult(defaultedOptions()),
-  );
+  )
 
   const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
     () => {
