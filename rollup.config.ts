@@ -187,7 +187,7 @@ function buildConfigs(opts: {
     forceBundle: opts.forceBundle || false,
   }
 
-  let builds = [esm(options), cjs(options)]
+  let builds = [mjs(options), esm(options), cjs(options)]
 
   if (!opts.skipUmdBuild) {
     builds = builds.concat([
@@ -199,7 +199,7 @@ function buildConfigs(opts: {
   return builds
 }
 
-function esm({
+function mjs({
   input,
   packageDir,
   external,
@@ -222,6 +222,46 @@ function esm({
     banner,
     preserveModules: true,
     entryFileNames: '[name].mjs',
+  }
+
+  return {
+    // ESM
+    external,
+    input,
+    output: forceBundle ? bundleOutput : normalOutput,
+    plugins: [
+      svelte(),
+      babelPlugin,
+      commonJS(),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      forceDevEnv ? forceEnvPlugin('development') : undefined,
+    ],
+  }
+}
+
+function esm({
+  input,
+  packageDir,
+  external,
+  banner,
+  outputFile,
+  forceDevEnv,
+  forceBundle,
+}: Options): RollupOptions {
+  const bundleOutput: OutputOptions = {
+    format: 'esm',
+    file: `${packageDir}/build/lib/${outputFile}.esm.js`,
+    sourcemap: true,
+    banner,
+  }
+
+  const normalOutput: OutputOptions = {
+    format: 'esm',
+    dir: `${packageDir}/build/lib`,
+    sourcemap: true,
+    banner,
+    preserveModules: true,
+    entryFileNames: '[name].esm.js',
   }
 
   return {
