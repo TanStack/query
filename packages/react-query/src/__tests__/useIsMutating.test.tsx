@@ -2,11 +2,7 @@ import { waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 import { useIsMutating } from '../useIsMutating'
 import { useMutation } from '../useMutation'
-import {
-  createQueryClient,
-  setActTimeout,
-  sleep,
-} from './utils'
+import { createQueryClient, setActTimeout, sleep } from './utils'
 
 import { renderWithClient } from './utils.test'
 import { ErrorBoundary } from 'react-error-boundary'

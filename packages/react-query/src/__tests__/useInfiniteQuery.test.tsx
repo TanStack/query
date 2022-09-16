@@ -1,12 +1,7 @@
 import { waitFor, fireEvent } from '@testing-library/react'
 import * as React from 'react'
 
-import {
-  queryKey,
-  sleep,
-  setActTimeout,
-  createQueryClient,
-} from './utils'
+import { queryKey, sleep, setActTimeout, createQueryClient } from './utils'
 
 import { renderWithClient, Blink } from './utils.test'
 import {
