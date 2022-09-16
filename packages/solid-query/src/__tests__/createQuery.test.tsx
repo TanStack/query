@@ -967,6 +967,7 @@ describe('createQuery', () => {
     const states: CreateQueryResult<string>[] = []
 
     function Page() {
+      //@ts-expect-error -- skip this test
       const [, rerender] = NotReact.useState({})
 
       const state = createQuery(
@@ -987,6 +988,7 @@ describe('createQuery', () => {
 
       const { remove } = state
 
+      //@ts-expect-error skip this test
       NotReact.useEffect(() => {
         setActTimeout(() => {
           remove()
@@ -4790,6 +4792,7 @@ describe('createQuery', () => {
     let selectRun = 0
 
     function Page() {
+      //@ts-expect-error skip this test
       const [count, inc] = NotReact.useReducer((prev) => prev + 1, 2)
 
       const state = createQuery(
@@ -4799,6 +4802,7 @@ describe('createQuery', () => {
           return 0
         },
         {
+          //@ts-expect-error skip this test
           select: NotReact.useCallback(
             (data: number) => {
               selectRun++
