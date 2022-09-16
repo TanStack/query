@@ -22,7 +22,7 @@ const QueryClientSharingContext = createContext<boolean>(false)
 // If we are given a context, we will use it.
 // Otherwise, if contextSharing is on, we share the first and at least one
 // instance of the context across the window
-// to ensure that if React Query is used across
+// to ensure that if Solid Query is used across
 // different bundles or microfrontends they will
 // all use the same **instance** of context, regardless
 // of module scoping.
