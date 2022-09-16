@@ -4262,7 +4262,7 @@ describe('createQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/360
-  test('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
+  it('should init to status:loading, fetchStatus:idle when enabled is false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -4288,7 +4288,7 @@ describe('createQuery', () => {
     await waitFor(() => screen.getByText('status: loading, idle'))
   })
 
-  test('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
+  it('should not schedule garbage collection, if cacheTimeout is set to `Infinity`', async () => {
     const key = queryKey()
 
     function Page() {

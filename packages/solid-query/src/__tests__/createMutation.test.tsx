@@ -981,7 +981,7 @@ describe('useMutation', () => {
     )
   })
 
-  test('should go to error state if onSuccess callback errors', async () => {
+  it('should go to error state if onSuccess callback errors', async () => {
     const error = new Error('error from onSuccess')
     const onError = jest.fn()
 
@@ -1016,7 +1016,7 @@ describe('useMutation', () => {
     expect(onError).toHaveBeenCalledWith(error, 'todo', undefined)
   })
 
-  test('should go to error state if onError callback errors', async () => {
+  it('should go to error state if onError callback errors', async () => {
     const error = new Error('error from onError')
     const mutateFnError = new Error('mutateFnError')
 
@@ -1052,7 +1052,7 @@ describe('useMutation', () => {
     await rendered.findByText('error: mutateFnError, status: error')
   })
 
-  test('should go to error state if onSettled callback errors', async () => {
+  it('should go to error state if onSettled callback errors', async () => {
     const error = new Error('error from onSettled')
     const mutateFnError = new Error('mutateFnError')
     const onError = jest.fn()
