@@ -1,15 +1,20 @@
-import { waitFor, fireEvent } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
-import { queryKey, sleep, setActTimeout, createQueryClient } from './utils'
-
-import { renderWithClient, Blink } from './utils.test'
 import {
-  useInfiniteQuery,
-  UseInfiniteQueryResult,
+  Blink,
+  createQueryClient,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
+} from './utils'
+import {
+  InfiniteData,
   QueryCache,
   QueryFunctionContext,
-  InfiniteData,
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
 } from '..'
 
 interface Result {

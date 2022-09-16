@@ -1,11 +1,54 @@
-import { act } from '@testing-library/react'
-
+import * as React from 'react'
+import { act, render } from '@testing-library/react'
 import {
-  MutationOptions,
   QueryClient,
+  ContextOptions,
+  QueryClientProvider,
   QueryClientConfig,
-} from '@tanstack/query-core'
-import * as utils from '@tanstack/query-core/src/utils'
+  MutationOptions,
+} from '..'
+import * as utils from '@tanstack/query-core'
+
+export function renderWithClient(
+  client: QueryClient,
+  ui: React.ReactElement,
+  options: ContextOptions = {},
+): ReturnType<typeof render> {
+  const { rerender, ...result } = render(
+    <QueryClientProvider client={client} context={options.context}>
+      {ui}
+    </QueryClientProvider>,
+  )
+  return {
+    ...result,
+    rerender: (rerenderUi: React.ReactElement) =>
+      rerender(
+        <QueryClientProvider client={client} context={options.context}>
+          {rerenderUi}
+        </QueryClientProvider>,
+      ),
+  } as any
+}
+
+export const Blink = ({
+  duration,
+  children,
+}: {
+  duration: number
+  children: React.ReactNode
+}) => {
+  const [shouldShow, setShouldShow] = React.useState<boolean>(true)
+
+  React.useEffect(() => {
+    setShouldShow(true)
+    const timeout = setActTimeout(() => setShouldShow(false), duration)
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [duration, children])
+
+  return shouldShow ? <>{children}</> : <>off</>
+}
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -49,18 +92,21 @@ export function setActTimeout(fn: () => void, ms?: number) {
 /**
  * Assert the parameter is of a specific type.
  */
-export const expectType = <T>(_: T): void => undefined
+export function expectType<T>(_: T): void {
+  return undefined
+}
 
 /**
  * Assert the parameter is not typed as `any`
  */
-export const expectTypeNotAny = <T>(_: 0 extends 1 & T ? never : T): void =>
-  undefined
+export function expectTypeNotAny<T>(_: 0 extends 1 & T ? never : T): void {
+  return undefined
+}
 
-export const executeMutation = (
+export function executeMutation(
   queryClient: QueryClient,
   options: MutationOptions<any, any, any, any>,
-): Promise<unknown> => {
+): Promise<unknown> {
   return queryClient.getMutationCache().build(queryClient, options).execute()
 }
 

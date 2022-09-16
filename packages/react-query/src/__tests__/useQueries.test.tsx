@@ -9,19 +9,19 @@ import {
   expectType,
   expectTypeNotAny,
   queryKey,
+  renderWithClient,
   sleep,
 } from './utils'
-import { renderWithClient } from './utils.test'
 import {
-  QueryClient,
-  useQueries,
-  UseQueryResult,
-  QueryCache,
-  QueryObserverResult,
   QueriesObserver,
+  QueryCache,
+  QueryClient,
   QueryFunction,
-  UseQueryOptions,
   QueryKey,
+  QueryObserverResult,
+  useQueries,
+  UseQueryOptions,
+  UseQueryResult,
 } from '..'
 import { QueryFunctionContext } from '@tanstack/query-core'
 

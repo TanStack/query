@@ -1,25 +1,26 @@
-import { act, waitFor, fireEvent } from '@testing-library/react'
+import { act, fireEvent, waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import * as React from 'react'
 import {
-  expectType,
-  queryKey,
-  mockVisibilityState,
-  sleep,
-  setActTimeout,
-  mockNavigatorOnLine,
-  mockLogger,
+  Blink,
   createQueryClient,
+  expectType,
+  mockLogger,
+  mockNavigatorOnLine,
+  mockVisibilityState,
+  queryKey,
+  renderWithClient,
+  setActTimeout,
+  sleep,
 } from './utils'
-import { renderWithClient, Blink } from './utils.test'
 import {
-  useQuery,
-  UseQueryResult,
+  DefinedUseQueryResult,
   QueryCache,
   QueryFunction,
   QueryFunctionContext,
+  useQuery,
   UseQueryOptions,
-  DefinedUseQueryResult,
+  UseQueryResult,
 } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 

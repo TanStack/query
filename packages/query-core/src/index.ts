@@ -12,6 +12,7 @@ export { onlineManager } from './onlineManager'
 export {
   hashQueryKey,
   isError,
+  isServer,
   parseQueryArgs,
   parseFilterArgs,
   parseMutationFilterArgs,
