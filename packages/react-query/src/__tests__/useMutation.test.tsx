@@ -11,8 +11,8 @@ import {
   queryKey,
   setActTimeout,
   sleep,
-} from '../../../../tests/utils'
-import { renderWithClient } from './utils'
+} from './utils'
+import { renderWithClient } from './utils.test'
 
 describe('useMutation', () => {
   const queryCache = new QueryCache()

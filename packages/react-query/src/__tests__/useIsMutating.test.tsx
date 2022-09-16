@@ -6,9 +6,9 @@ import {
   createQueryClient,
   setActTimeout,
   sleep,
-} from '../../../../tests/utils'
+} from './utils'
 
-import { renderWithClient } from './utils'
+import { renderWithClient } from './utils.test'
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient } from '@tanstack/query-core'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'

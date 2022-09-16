@@ -17,7 +17,7 @@ import {
   mockLogger,
   setIsServer,
   sleep,
-} from '../../../../tests/utils'
+} from './utils'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { render } from '@testing-library/react'
-import { setActTimeout } from '../../../../tests/utils'
+import { setActTimeout } from './utils'
 import { QueryClient, ContextOptions, QueryClientProvider } from '..'
 
 export function renderWithClient(

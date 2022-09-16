@@ -6,9 +6,9 @@ import {
   sleep,
   setActTimeout,
   createQueryClient,
-} from '../../../../tests/utils'
+} from './utils'
 
-import { renderWithClient, Blink } from './utils'
+import { renderWithClient, Blink } from './utils.test'
 import {
   useInfiniteQuery,
   UseInfiniteQueryResult,

@@ -4,7 +4,7 @@ import {
   expectType,
   mockLogger,
   createQueryClient,
-} from '../../../../tests/utils'
+} from './utils'
 import {
   QueryClient,
   QueryObserver,

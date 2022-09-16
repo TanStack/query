@@ -6,7 +6,7 @@ import * as React from 'react'
 // @ts-ignore
 import { renderToString } from 'react-dom/server'
 
-import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import { useQuery, QueryClientProvider, QueryCache, useInfiniteQuery } from '..'
 
 describe('Server Side Rendering', () => {

@@ -1,10 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import {
-  queryKey,
-  sleep,
-  executeMutation,
-  createQueryClient,
-} from '../../../../tests/utils'
+import { queryKey, sleep, executeMutation, createQueryClient } from './utils'
 import { MutationCache, MutationObserver } from '..'
 
 describe('mutationCache', () => {

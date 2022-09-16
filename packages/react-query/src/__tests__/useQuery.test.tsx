@@ -10,8 +10,8 @@ import {
   mockNavigatorOnLine,
   mockLogger,
   createQueryClient,
-} from '../../../../tests/utils'
-import { renderWithClient, Blink } from './utils'
+} from './utils'
+import { renderWithClient, Blink } from './utils.test'
 import {
   useQuery,
   UseQueryResult,

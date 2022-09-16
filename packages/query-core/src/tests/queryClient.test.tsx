@@ -6,7 +6,7 @@ import {
   queryKey,
   mockLogger,
   createQueryClient,
-} from '../../../../tests/utils'
+} from './utils'
 import {
   InfiniteQueryObserver,
   QueryCache,

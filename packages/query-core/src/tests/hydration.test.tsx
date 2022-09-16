@@ -3,7 +3,7 @@ import {
   executeMutation,
   mockNavigatorOnLine,
   sleep,
-} from '../../../../tests/utils'
+} from './utils'
 import { QueryCache } from '../queryCache'
 import { dehydrate, hydrate } from '../hydration'
 

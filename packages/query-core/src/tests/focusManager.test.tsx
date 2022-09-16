@@ -1,6 +1,6 @@
 import { sleep } from '../utils'
 import { FocusManager } from '../focusManager'
-import { setIsServer } from '../../../../tests/utils'
+import { setIsServer } from './utils'
 
 describe('focusManager', () => {
   let focusManager: FocusManager

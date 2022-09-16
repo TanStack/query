@@ -2,13 +2,8 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import {
-  createQueryClient,
-  queryKey,
-  setActTimeout,
-  sleep,
-} from '../../../../tests/utils'
-import { renderWithClient } from './utils'
+import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
+import { renderWithClient } from './utils.test'
 import { QueryClient, useQuery, useIsFetching, QueryCache } from '..'
 
 describe('useIsFetching', () => {

@@ -1,5 +1,5 @@
 import { asyncThrottle } from '../asyncThrottle'
-import { sleep as delay } from '../../../../tests/utils'
+import { sleep as delay } from './utils'
 
 describe('asyncThrottle', () => {
   test('basic', async () => {

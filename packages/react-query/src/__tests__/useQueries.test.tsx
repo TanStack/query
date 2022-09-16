@@ -10,8 +10,8 @@ import {
   expectTypeNotAny,
   queryKey,
   sleep,
-} from '../../../../tests/utils'
-import { renderWithClient } from './utils'
+} from './utils'
+import { renderWithClient } from './utils.test'
 import {
   QueryClient,
   useQueries,

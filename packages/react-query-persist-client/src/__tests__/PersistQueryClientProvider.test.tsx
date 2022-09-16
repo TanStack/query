@@ -13,7 +13,7 @@ import {
   mockLogger,
   queryKey,
   sleep,
-} from '../../../../tests/utils'
+} from './utils'
 import { PersistedClient, Persister, persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 

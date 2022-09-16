@@ -4,7 +4,7 @@ import {
   executeMutation,
   queryKey,
   sleep,
-} from '../../../../tests/utils'
+} from './utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 

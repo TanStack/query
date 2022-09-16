@@ -1,5 +1,5 @@
 import { createNotifyManager } from '../notifyManager'
-import { sleep } from '../../../../tests/utils'
+import { sleep } from './utils'
 
 describe('notifyManager', () => {
   it('should use default notifyFn', async () => {

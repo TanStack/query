@@ -4,7 +4,7 @@ import {
   mockVisibilityState,
   mockLogger,
   createQueryClient,
-} from '../../../../tests/utils'
+} from './utils'
 import {
   QueryCache,
   QueryClient,

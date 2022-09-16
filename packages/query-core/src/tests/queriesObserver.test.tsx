@@ -4,7 +4,7 @@ import {
   queryKey,
   createQueryClient,
   mockLogger,
-} from '../../../../tests/utils'
+} from './utils'
 import {
   QueryClient,
   QueriesObserver,
