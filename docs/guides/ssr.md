@@ -184,6 +184,56 @@ ReactDOM.hydrate(
 )
 ```
 
+## Custom SSR with suspense
+
+If you do not want to provide `prefetchQuery()` for all your queries in the SSR you can use suspense.
+
+### Server
+
+```tsx
+import { dehydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ssrPrepass from 'react-ssr-prepass'
+
+async function handleRequest (req, res) {
+  const queryClient = new QueryClient()
+
+  // React SSR does not support ErrorBoundary
+  try {
+    // Traverse the tree and fetch all Suspense data (thrown promises)
+    await ssrPrepass(<App />);
+  } catch (e) {
+    console.error(e);
+    // Send the index.html (without SSR) on error, so user can try to recover and see something
+    return res.sendFile('path/to/dist/index.html');
+  }
+  
+  const html = ReactDOM.renderToString(
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  )
+
+  const dehydratedState = dehydrate(queryClient);
+  
+  res.send(`
+    <html>
+      <body>
+        <div id="root">${html}</div>
+        <script>
+          window.__REACT_QUERY_STATE__ = ${JSON.stringify(dehydratedState)};
+        </script>
+      </body>
+    </html>
+  `)
+
+  queryClient.clear()
+}
+```
+
+### Client
+
+Make sure to [use suspense in your queries](./suspense.md).
+
 ## Tips, Tricks and Caveats
 
 ### Only successful queries are included in dehydration
