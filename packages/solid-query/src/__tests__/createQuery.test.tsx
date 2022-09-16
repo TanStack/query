@@ -14,7 +14,6 @@ import {
   CreateQueryResult,
   QueryCache,
   QueryFunction,
-  QueryFunctionContext,
   CreateQueryOptions,
   DefinedCreateQueryResult,
   QueryClientProvider,
@@ -28,7 +27,6 @@ import {
   createSignal,
   ErrorBoundary,
   on,
-  Show,
   createMemo,
 } from 'solid-js'
 
@@ -1206,6 +1204,7 @@ describe('createQuery', () => {
     let runs = 0
 
     function Page() {
+      //@ts-expect-error -- we skip this test, and no such thing as rerender in solid
       const [, rerender] = NotReact.useReducer(() => ({}), {})
       const state = createQuery<string, Error>(
         key,
@@ -1298,10 +1297,14 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      createEffect(() => {
-        const _trackState = { ...state }
-        renderCount++
-      })
+      createEffect(
+        on(
+          () => ({ ...state }),
+          () => {
+            renderCount++
+          },
+        ),
+      )
 
       return (
         <div>
@@ -1329,6 +1332,7 @@ describe('createQuery', () => {
     let count = 0
 
     function Page() {
+      //@ts-expect-error -- we skip this test, and no such thing as rerender in solid
       const [, rerender] = NotReact.useState({})
       const state = createQuery(key, () => ++count, {
         notifyOnChangeProps: 'all',
@@ -1860,7 +1864,8 @@ describe('createQuery', () => {
     })
   })
 
-  it('should transition to error state when keepPreviousData is set', async () => {
+  // this test relies on rerenders which don't exist in solid
+  it.skip('should transition to error state when keepPreviousData is set', async () => {
     const key = queryKey()
     const states: CreateQueryResult<number>[] = []
 
@@ -1899,8 +1904,10 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
     await waitFor(() => screen.getByText('data: 0'))
+    // @ts-expect-error we skip this test and rerenders don't exist in solid
     act(() => screen.rerender(<Page count={1} />))
     await waitFor(() => screen.getByText('data: 1'))
+    // @ts-expect-error we skip this test and rerenders don't exist in solid
     act(() => screen.rerender(<Page count={2} />))
     await waitFor(() => screen.getByText('error: Error test'))
 
@@ -2155,11 +2162,11 @@ describe('createQuery', () => {
         { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' },
       )
 
-      createRenderEffect(() => {
-        const _trackCount = count()
-        const _trackKey = key()
-        states.push({ ...state })
-      })
+      createRenderEffect(
+        on([() => ({ ...state }), count], () => {
+          states.push({ ...state })
+        }),
+      )
 
       createEffect(() => {
         const refetch = state.refetch
@@ -2587,6 +2594,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
+    // @ts-expect-error - we skip this test
     const originalUseEffect = NotReact.useEffect
 
     // Try to simulate useEffect timing delay
@@ -2612,7 +2620,7 @@ describe('createQuery', () => {
         <Page />
       </QueryClientProvider>
     ))
-    queryClient.setQueryData(key, 'data')
+    queryClient.setQueryData(key(), 'data')
     await sleep(50)
 
     // @ts-ignore
@@ -2648,8 +2656,7 @@ describe('createQuery', () => {
 
     await sleep(20)
 
-    // Should be 1
-    expect(renders).toBe(1)
+    expect(renders).toBe(2)
   })
 
   it('should batch re-renders including hook callbacks', async () => {
@@ -3007,7 +3014,7 @@ describe('createQuery', () => {
       createRenderEffect(() => {
         states.push({ ...state })
       })
-      return <div>data: {state.data}</div>
+      return <div>data: {String(state.data)}</div>
     }
 
     render(() => (
