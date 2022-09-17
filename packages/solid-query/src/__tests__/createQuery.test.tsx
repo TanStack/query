@@ -1571,13 +1571,6 @@ describe('createQuery', () => {
       )
 
       createEffect(() => {
-        console.log('My Log', {
-          data: state.data,
-          isFetching: state.isFetching,
-          isRefetching: state.isRefetching,
-          isSuccess: state.isSuccess,
-          isStale: state.isStale,
-        })
         states.push({ ...state })
       })
 
@@ -1818,12 +1811,6 @@ describe('createQuery', () => {
 
       createRenderEffect(() => {
         const { data, isFetching, isSuccess, isPreviousData } = state
-        console.log('LOG', {
-          data,
-          isFetching,
-          isSuccess,
-          isPreviousData,
-        })
         states.push({
           data,
           isFetching,
@@ -4999,9 +4986,10 @@ describe('createQuery', () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
 
-    const queryFn: QueryFunction<string, readonly [ReturnType<typeof key>, number]> = async (
-      ctx,
-    ) => {
+    const queryFn: QueryFunction<
+      string,
+      readonly [ReturnType<typeof key>, number]
+    > = async (ctx) => {
       const [, limit] = ctx.queryKey
       const value = limit % 2 && ctx.signal ? 'abort' : `data ${limit}`
       await sleep(25)
@@ -5009,7 +4997,7 @@ describe('createQuery', () => {
     }
 
     function Page(props: { limit: number }) {
-      const state = createQuery(() => ([key(), props.limit] as const), queryFn)
+      const state = createQuery(() => [key(), props.limit] as const, queryFn)
       states[props.limit] = state
       return (
         <div>
@@ -5143,7 +5131,6 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        console.log('LOG', state.data, state.isLoading, state.isFetching, state.isStale)
         states.push({ ...state })
       })
 
@@ -5219,8 +5206,7 @@ describe('createQuery', () => {
 
       createRenderEffect(() => {
         const { data, isLoading, isFetching, isSuccess, isStale } = state
-        console.log('LOG', state.data, state.isLoading, state.isFetching, state.isSuccess, state.isStale)
-        states.push({ 
+        states.push({
           data,
           isLoading,
           isFetching,
@@ -5299,10 +5285,15 @@ describe('createQuery', () => {
     }
 
     function Page() {
-      const state =createQuery(key, () => 'test', { queryKeyHashFn })
-      createEffect(on( () => state.status, () => {
-        renders++
-      }))
+      const state = createQuery(key, () => 'test', { queryKeyHashFn })
+      createEffect(
+        on(
+          () => state.status,
+          () => {
+            renders++
+          },
+        ),
+      )
       return null
     }
 
