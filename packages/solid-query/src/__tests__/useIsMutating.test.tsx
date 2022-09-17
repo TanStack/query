@@ -104,7 +104,8 @@ describe('useIsMutating', () => {
         <Page />
       </QueryClientProvider>
     ))
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
+    // Unlike React, IsMutating Wont re-render twice with mutation2
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -145,7 +146,9 @@ describe('useIsMutating', () => {
         <Page />
       </QueryClientProvider>
     ))
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
+
+    // Again, No unnecessary re-renders like React
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
   it('should not change state if unmounted', async () => {
@@ -215,7 +218,11 @@ describe('useIsMutating', () => {
 
       function IsMutating() {
         const isMutating = useIsMutating(undefined, { context })
-        isMutatings.push(isMutating())
+
+        createRenderEffect(() => {
+          isMutatings.push(isMutating())
+        })
+
         return null
       }
 
@@ -252,7 +259,7 @@ describe('useIsMutating', () => {
           <Page />
         </QueryClientProvider>
       ))
-      await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
+      await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
     })
 
     it('should throw if the context is not passed to useIsMutating', async () => {

@@ -5,9 +5,6 @@ import { queryKey } from './utils'
 import {
   createQuery,
   QueryCache,
-  QueryErrorResetBoundary,
-  useQueryErrorResetBoundary,
-  CreateQueryResult,
   CreateInfiniteQueryResult,
   createInfiniteQuery,
   QueryClientProvider,
@@ -17,6 +14,7 @@ import {
   createSignal,
   ErrorBoundary,
   on,
+  Show,
   Suspense,
 } from 'solid-js'
 
@@ -335,41 +333,35 @@ describe("useQuery's in Suspense mode", () => {
         },
       )
 
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
-        state.data
-      })
-
-      return <div>rendered</div>
+      // Suspense only triggers if used in JSX
+      return (
+        <Show when={state.data}>
+          <div>rendered</div>
+        </Show>
+      )
     }
 
     render(() => (
       <QueryClientProvider client={queryClient}>
-        <QueryErrorResetBoundary>
-          {({ reset: resetQuery }) => (
-            <ErrorBoundary
-              fallback={(_err, resetSolid) => (
-                <div>
-                  <div>error boundary</div>
-                  <button
-                    onClick={() => {
-                      succeed = true
-                      resetQuery()
-                      resetSolid()
-                    }}
-                  >
-                    retry
-                  </button>
-                </div>
-              )}
-            >
-              <Suspense fallback={'Loading...'}>
-                <Page />
-              </Suspense>
-            </ErrorBoundary>
+        <ErrorBoundary
+          fallback={(_err, resetSolid) => (
+            <div>
+              <div>error boundary</div>
+              <button
+                onClick={() => {
+                  succeed = true
+                  resetSolid()
+                }}
+              >
+                retry
+              </button>
+            </div>
           )}
-        </QueryErrorResetBoundary>
+        >
+          <Suspense fallback={'Loading...'}>
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
       </QueryClientProvider>
     ))
 
@@ -406,40 +398,34 @@ describe("useQuery's in Suspense mode", () => {
         },
       )
 
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
-        state.data
-      })
-
-      return <div>rendered</div>
+      // Suspense only triggers if used in JSX
+      return (
+        <Show when={state.data}>
+          <div>rendered</div>
+        </Show>
+      )
     }
 
     render(() => (
       <QueryClientProvider client={queryClient}>
-        <QueryErrorResetBoundary>
-          {({ reset: resetQuery }) => (
-            <ErrorBoundary
-              fallback={(_err, resetSolid) => (
-                <div>
-                  <div>error boundary</div>
-                  <button
-                    onClick={() => {
-                      resetQuery()
-                      resetSolid()
-                    }}
-                  >
-                    retry
-                  </button>
-                </div>
-              )}
-            >
-              <Suspense fallback="Loading...">
-                <Page />
-              </Suspense>
-            </ErrorBoundary>
+        <ErrorBoundary
+          fallback={(_err, resetSolid) => (
+            <div>
+              <div>error boundary</div>
+              <button
+                onClick={() => {
+                  resetSolid()
+                }}
+              >
+                retry
+              </button>
+            </div>
           )}
-        </QueryErrorResetBoundary>
+        >
+          <Suspense fallback="Loading...">
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
       </QueryClientProvider>
     ))
 
@@ -566,79 +552,6 @@ describe("useQuery's in Suspense mode", () => {
       // @ts-expect-error
       queryClient.getQueryCache().find(key2())!.observers[0].listeners.length,
     ).toBe(1)
-  })
-
-  it('should retry fetch if the reset error boundary has been reset with global hook', async () => {
-    const key = queryKey()
-
-    let succeed = false
-
-    function Page() {
-      const state = createQuery(
-        key,
-        async () => {
-          await sleep(10)
-          if (!succeed) {
-            throw new Error('Suspense Error Bingo')
-          } else {
-            return 'data'
-          }
-        },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
-
-      // read state.data to trigger suspense.
-      createRenderEffect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions -- trigger suspense
-        state.data
-      })
-
-      return <div>rendered</div>
-    }
-
-    function App() {
-      const { reset: resetQuery } = useQueryErrorResetBoundary()
-      return (
-        <ErrorBoundary
-          fallback={(_err, resetSolid) => (
-            <div>
-              <div>error boundary</div>
-              <button
-                onClick={() => {
-                  resetQuery()
-                  resetSolid()
-                }}
-              >
-                retry
-              </button>
-            </div>
-          )}
-        >
-          <Suspense fallback="Loading...">
-            <Page />
-          </Suspense>
-        </ErrorBoundary>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('Loading...'))
-    await waitFor(() => screen.getByText('error boundary'))
-    await waitFor(() => screen.getByText('retry'))
-    fireEvent.click(screen.getByText('retry'))
-    await waitFor(() => screen.getByText('error boundary'))
-    await waitFor(() => screen.getByText('retry'))
-    succeed = true
-    fireEvent.click(screen.getByText('retry'))
-    await waitFor(() => screen.getByText('rendered'))
   })
 
   it('should throw errors to the error boundary by default', async () => {
@@ -861,7 +774,9 @@ describe("useQuery's in Suspense mode", () => {
       const [enabled, setEnabled] = createSignal(false)
       const result = createQuery(() => [key()], queryFn, {
         suspense: true,
-        enabled: enabled(),
+        get enabled() {
+          return enabled()
+        },
       })
 
       return (
@@ -881,7 +796,7 @@ describe("useQuery's in Suspense mode", () => {
     ))
 
     expect(queryFn).toHaveBeenCalledTimes(0)
-
+    await sleep(5)
     fireEvent.click(screen.getByRole('button', { name: /fire/i }))
 
     await waitFor(() => {
@@ -906,7 +821,7 @@ describe("useQuery's in Suspense mode", () => {
           if (!succeed) {
             throw new Error('Suspense Error Bingo')
           } else {
-            return nonce
+            return nonce()
           }
         },
         {
@@ -930,7 +845,6 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     function App() {
-      const { reset } = useQueryErrorResetBoundary()
       return (
         <ErrorBoundary fallback={() => <div>error boundary</div>}>
           <Suspense fallback="Loading...">
@@ -963,11 +877,10 @@ describe("useQuery's in Suspense mode", () => {
     let succeed = true
 
     function Page() {
-      const [key, rerender] = React.useReducer((x) => x + 1, 0)
-      const queryKeys = [key, succeed]
+      const [key, setKey] = createSignal(0)
 
       const result = createQuery(
-        queryKeys,
+        () => [`${key()}-${succeed}`],
         async () => {
           await sleep(10)
           if (!succeed) {
@@ -984,7 +897,7 @@ describe("useQuery's in Suspense mode", () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
-          <button aria-label="fail" onClick={rerender}>
+          <button aria-label="fail" onClick={() => setKey((k) => k + 1)}>
             fail
           </button>
         </div>
@@ -992,7 +905,6 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     function App() {
-      const { reset } = useQueryErrorResetBoundary()
       return (
         <ErrorBoundary fallback={() => <div>error boundary</div>}>
           <Suspense fallback="Loading...">
@@ -1035,7 +947,9 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          enabled: enabled(),
+          get enabled() {
+            return enabled()
+          },
         },
       )
       return (
@@ -1054,7 +968,6 @@ describe("useQuery's in Suspense mode", () => {
     }
 
     function App() {
-      const { reset } = useQueryErrorResetBoundary()
       return (
         <ErrorBoundary fallback={() => <div>error boundary</div>}>
           <Suspense fallback="Loading...">
