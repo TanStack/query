@@ -46,7 +46,7 @@ describe('useIsFetching', () => {
         {
           get enabled() {
             return ready()
-          } ,
+          },
         },
       )
 
@@ -132,7 +132,7 @@ describe('useIsFetching', () => {
         <Page />
       </QueryClientProvider>
     ))
-    // unlike react, Updating renderSecond wont cause a rerender for FirstQuery 
+    // unlike react, Updating renderSecond wont cause a rerender for FirstQuery
     await waitFor(() => expect(isFetchings).toEqual([0, 1, 2, 1, 0]))
   })
 
@@ -216,7 +216,7 @@ describe('useIsFetching', () => {
           },
           {
             get enabled() {
-             return ready()
+              return ready()
             },
             context,
           },

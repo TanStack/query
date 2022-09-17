@@ -336,34 +336,32 @@ describe("useQuery's in Suspense mode", () => {
       // Suspense only triggers if used in JSX
       return (
         <Show when={state.data}>
-          <div>
-            rendered
-          </div>
+          <div>rendered</div>
         </Show>
       )
     }
 
     render(() => (
       <QueryClientProvider client={queryClient}>
-            <ErrorBoundary
-              fallback={(_err, resetSolid) => (
-                <div>
-                  <div>error boundary</div>
-                  <button
-                    onClick={() => {
-                      succeed = true
-                      resetSolid()
-                    }}
-                  >
-                    retry
-                  </button>
-                </div>
-              )}
-            >
-              <Suspense fallback={'Loading...'}>
-                <Page />
-              </Suspense>
-            </ErrorBoundary>
+        <ErrorBoundary
+          fallback={(_err, resetSolid) => (
+            <div>
+              <div>error boundary</div>
+              <button
+                onClick={() => {
+                  succeed = true
+                  resetSolid()
+                }}
+              >
+                retry
+              </button>
+            </div>
+          )}
+        >
+          <Suspense fallback={'Loading...'}>
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
       </QueryClientProvider>
     ))
 
@@ -400,37 +398,34 @@ describe("useQuery's in Suspense mode", () => {
         },
       )
 
-
       // Suspense only triggers if used in JSX
       return (
         <Show when={state.data}>
-          <div>
-            rendered
-          </div>
+          <div>rendered</div>
         </Show>
       )
     }
 
     render(() => (
       <QueryClientProvider client={queryClient}>
-            <ErrorBoundary
-              fallback={(_err, resetSolid) => (
-                <div>
-                  <div>error boundary</div>
-                  <button
-                    onClick={() => {
-                      resetSolid()
-                    }}
-                  >
-                    retry
-                  </button>
-                </div>
-              )}
-            >
-              <Suspense fallback="Loading...">
-                <Page />
-              </Suspense>
-            </ErrorBoundary>
+        <ErrorBoundary
+          fallback={(_err, resetSolid) => (
+            <div>
+              <div>error boundary</div>
+              <button
+                onClick={() => {
+                  resetSolid()
+                }}
+              >
+                retry
+              </button>
+            </div>
+          )}
+        >
+          <Suspense fallback="Loading...">
+            <Page />
+          </Suspense>
+        </ErrorBoundary>
       </QueryClientProvider>
     ))
 
@@ -781,7 +776,7 @@ describe("useQuery's in Suspense mode", () => {
         suspense: true,
         get enabled() {
           return enabled()
-        } 
+        },
       })
 
       return (
@@ -902,7 +897,7 @@ describe("useQuery's in Suspense mode", () => {
       return (
         <div>
           <span>rendered</span> <span>{result.data}</span>
-          <button aria-label="fail" onClick={() => setKey(k => k + 1)}>
+          <button aria-label="fail" onClick={() => setKey((k) => k + 1)}>
             fail
           </button>
         </div>
@@ -954,7 +949,7 @@ describe("useQuery's in Suspense mode", () => {
           suspense: true,
           get enabled() {
             return enabled()
-          }
+          },
         },
       )
       return (

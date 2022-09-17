@@ -222,7 +222,7 @@ describe('useIsMutating', () => {
         createRenderEffect(() => {
           isMutatings.push(isMutating())
         })
-        
+
         return null
       }
 
