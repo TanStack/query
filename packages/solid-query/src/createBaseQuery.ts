@@ -7,9 +7,11 @@ import {
   onCleanup,
   createComputed,
   createResource,
+  on,
   batch,
 } from 'solid-js'
-import { createStore } from 'solid-js/store'
+import { createStore, unwrap } from 'solid-js/store'
+import { shouldThrowError } from './utils'
 
 // Base Query Function that is used to create the query.
 export function createBaseQuery<
@@ -28,7 +30,7 @@ export function createBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient({ context: options.context })
 
   const defaultedOptions = queryClient.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'
@@ -39,19 +41,27 @@ export function createBaseQuery<
     observer.getOptimisticResult(defaultedOptions),
   )
 
-  const [dataResource, { refetch }] = createResource<TData | undefined>(() => {
-    return new Promise((resolve) => {
-      if (state.isSuccess) resolve(state.data)
-      if (state.isError && !state.isFetching) {
-        throw state.error
-      }
-    })
+  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
+    () => {
+      return new Promise((resolve) => {
+        if (!(state.isFetching && state.isLoading)) {
+          resolve(unwrap(state.data))
+        }
+      })
+    },
+  )
+
+  batch(() => {
+    mutate(() => unwrap(state.data))
+    refetch()
   })
 
   const unsubscribe = observer.subscribe((result) => {
-    const reconciledResult = result
-    setState(reconciledResult)
-    refetch()
+    batch(() => {
+      setState(unwrap(result))
+      mutate(() => unwrap(result.data))
+      refetch()
+    })
   })
 
   onCleanup(() => unsubscribe())
@@ -64,6 +74,24 @@ export function createBaseQuery<
     const newDefaultedOptions = queryClient.defaultQueryOptions(options)
     observer.setOptions(newDefaultedOptions)
   })
+
+  createComputed(
+    on(
+      () => state.status,
+      () => {
+        if (
+          state.isError &&
+          !state.isFetching &&
+          shouldThrowError(observer.options.useErrorBoundary, [
+            state.error,
+            observer.getCurrentQuery(),
+          ])
+        ) {
+          throw state.error
+        }
+      },
+    ),
+  )
 
   const handler = {
     get(

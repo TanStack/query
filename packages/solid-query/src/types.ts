@@ -38,13 +38,18 @@ export interface CreateQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends () => readonly unknown[] = SolidQueryKey,
-> extends CreateBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    ReturnType<TQueryKey>
-  > {}
+> extends Omit<
+    CreateBaseQueryOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      ReturnType<TQueryKey>
+    >,
+    'queryKey'
+  > {
+  queryKey?: TQueryKey
+}
 
 export type CreateBaseQueryResult<
   TData = unknown,
@@ -67,10 +72,15 @@ export type DefinedCreateQueryResult<
 > = DefinedCreateBaseQueryResult<TData, TError>
 
 export type ParseQueryArgs<
-  TOptions extends QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+  TOptions extends Omit<
+    QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+    'queryKey'
+  > & {
+    queryKey?: TQueryKey
+  },
   TQueryKey extends () => readonly unknown[] = SolidQueryKey,
 > = TOptions['queryKey'] extends () => infer R
-  ? TOptions & { queryKey: R }
+  ? Omit<TOptions, 'queryKey'> & { queryKey?: R }
   : TOptions
 
 /* --- Create Infinite Queries Types --- */
@@ -81,13 +91,18 @@ export interface CreateInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends () => readonly unknown[] = SolidQueryKey,
 > extends ContextOptions,
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      ReturnType<TQueryKey>
-    > {}
+    Omit<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        ReturnType<TQueryKey>
+      >,
+      'queryKey'
+    > {
+  queryKey?: TQueryKey
+}
 
 export type CreateInfiniteQueryResult<
   TData = unknown,

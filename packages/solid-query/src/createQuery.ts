@@ -1,4 +1,8 @@
-import { QueryObserver, QueryFunction } from '@tanstack/query-core'
+import {
+  QueryObserver,
+  QueryFunction,
+  QueryOptions,
+} from '@tanstack/query-core'
 import {
   CreateQueryOptions,
   CreateQueryResult,
@@ -24,7 +28,9 @@ export function createQuery<
   options: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
-  > & { initialData?: () => undefined },
+  > & {
+    initialData?: () => undefined
+  },
 ): CreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
@@ -35,7 +41,9 @@ export function createQuery<
   options: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+  > & {
+    initialData: TQueryFnData | (() => TQueryFnData)
+  },
 ): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
@@ -145,5 +153,8 @@ export function createQuery<
     setParsedOptions(newParsedOptions)
   })
 
-  return createBaseQuery(parsedOptions, QueryObserver)
+  return createBaseQuery(
+    parsedOptions as QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+    QueryObserver,
+  )
 }

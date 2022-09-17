@@ -1,7 +1,16 @@
-export * from './createQuery'
-export * from './createInfiniteQuery'
-export * from './QueryClientProvider'
-export * from './createMutation'
-export * from './useIsMutating'
-export * from './useIsFetching'
-export { QueryClient } from '@tanstack/query-core'
+// Re-export core
+export * from '@tanstack/query-core'
+
+// Solid Query
+export * from './types'
+export { createQuery } from './createQuery'
+export {
+  defaultContext,
+  QueryClientProvider,
+  useQueryClient,
+} from './QueryClientProvider'
+export type { QueryClientProviderProps } from './QueryClientProvider'
+export { useIsFetching } from './useIsFetching'
+export { useIsMutating } from './useIsMutating'
+export { createMutation } from './createMutation'
+export { createInfiniteQuery } from './createInfiniteQuery'
