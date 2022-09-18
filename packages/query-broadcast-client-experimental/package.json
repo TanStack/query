@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
-  "version": "4.3.6",
+  "version": "4.3.7",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -33,7 +33,7 @@
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.3.6",
+    "@tanstack/query-core": "4.3.7",
     "broadcast-channel": "^4.14.0"
   }
 }

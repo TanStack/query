@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query",
-  "version": "4.3.6",
+  "version": "4.3.7",
   "description": "Hooks for managing, caching and syncing asynchronous and remote data in React",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -47,7 +47,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.3.6",
+    "@tanstack/query-core": "4.3.7",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
