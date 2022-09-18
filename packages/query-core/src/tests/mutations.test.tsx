@@ -1,10 +1,5 @@
 import { QueryClient } from '..'
-import {
-  createQueryClient,
-  executeMutation,
-  queryKey,
-  sleep,
-} from '../../../../tests/utils'
+import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 import { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 

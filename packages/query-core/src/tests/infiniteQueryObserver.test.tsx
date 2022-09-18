@@ -1,4 +1,4 @@
-import { createQueryClient, queryKey, sleep } from '../../../../tests/utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 import { QueryClient, InfiniteQueryObserver } from '..'
 
 describe('InfiniteQueryObserver', () => {

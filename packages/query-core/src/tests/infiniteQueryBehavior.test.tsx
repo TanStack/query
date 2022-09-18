@@ -4,7 +4,7 @@ import {
   InfiniteQueryObserver,
   InfiniteQueryObserverResult,
 } from '@tanstack/query-core'
-import { createQueryClient, queryKey } from '../../../../tests/utils'
+import { createQueryClient, queryKey } from './utils'
 
 describe('InfiniteQueryBehavior', () => {
   let queryClient: QueryClient

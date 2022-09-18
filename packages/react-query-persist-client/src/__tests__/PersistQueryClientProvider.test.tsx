@@ -8,12 +8,7 @@ import {
   useQueries,
   DefinedUseQueryResult,
 } from '@tanstack/react-query'
-import {
-  createQueryClient,
-  mockLogger,
-  queryKey,
-  sleep,
-} from '../../../../tests/utils'
+import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
 import { PersistedClient, Persister, persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 

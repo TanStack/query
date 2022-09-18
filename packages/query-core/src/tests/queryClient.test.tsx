@@ -1,12 +1,7 @@
 import { waitFor } from '@testing-library/react'
 import '@testing-library/jest-dom'
 
-import {
-  sleep,
-  queryKey,
-  mockLogger,
-  createQueryClient,
-} from '../../../../tests/utils'
+import { sleep, queryKey, mockLogger, createQueryClient } from './utils'
 import {
   InfiniteQueryObserver,
   QueryCache,

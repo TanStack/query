@@ -1,10 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import {
-  sleep,
-  queryKey,
-  createQueryClient,
-  mockLogger,
-} from '../../../../tests/utils'
+import { sleep, queryKey, createQueryClient, mockLogger } from './utils'
 import {
   QueryClient,
   QueriesObserver,

@@ -1,17 +1,16 @@
-import { waitFor, fireEvent } from '@testing-library/react'
+import { fireEvent, waitFor } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
-import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
-import { renderWithClient } from './utils'
+import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
 import {
-  useQuery,
   QueryCache,
   QueryErrorResetBoundary,
+  useInfiniteQuery,
+  UseInfiniteQueryResult,
+  useQuery,
   useQueryErrorResetBoundary,
   UseQueryResult,
-  UseInfiniteQueryResult,
-  useInfiniteQuery,
 } from '..'
 
 describe("useQuery's in Suspense mode", () => {

@@ -1,4 +1,4 @@
-import { sleep, queryKey, createQueryClient } from '../../../../tests/utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import { QueryCache, QueryClient } from '..'
 import { Query } from '.././query'
 

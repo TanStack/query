@@ -5,7 +5,7 @@ import {
   QueryClient,
   QueryClientConfig,
 } from '@tanstack/query-core'
-import * as utils from '../packages/query-core/src/utils'
+import * as utils from '../utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)

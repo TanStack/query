@@ -1,5 +1,5 @@
 import { OnlineManager } from '../onlineManager'
-import { setIsServer, sleep } from '../../../../tests/utils'
+import { setIsServer, sleep } from './utils'
 
 describe('onlineManager', () => {
   let onlineManager: OnlineManager

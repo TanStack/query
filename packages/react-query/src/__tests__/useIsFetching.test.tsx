@@ -5,11 +5,11 @@ import { ErrorBoundary } from 'react-error-boundary'
 import {
   createQueryClient,
   queryKey,
+  renderWithClient,
   setActTimeout,
   sleep,
-} from '../../../../tests/utils'
-import { renderWithClient } from './utils'
-import { QueryClient, useQuery, useIsFetching, QueryCache } from '..'
+} from './utils'
+import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

@@ -10,7 +10,7 @@ import {
   useHydrate,
   Hydrate,
 } from '@tanstack/react-query'
-import { createQueryClient, sleep } from '../../../../tests/utils'
+import { createQueryClient, sleep } from './utils'
 import * as coreModule from '@tanstack/query-core'
 
 describe('React hydration', () => {

@@ -9,7 +9,7 @@ import {
   isPlainArray,
 } from '../utils'
 import { Mutation } from '../mutation'
-import { createQueryClient } from '../../../../tests/utils'
+import { createQueryClient } from './utils'
 
 describe('core/utils', () => {
   describe('isPlainObject', () => {
