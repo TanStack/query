@@ -10,8 +10,12 @@ import {
 import { useQueryClient } from './QueryClientProvider'
 import { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
-import { shouldThrowError } from './utils'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import {
+  ensurePreventErrorBoundaryRetry,
+  getHasError,
+  useClearResetErrorBoundary,
+} from './errorBoundaryUtils'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -193,27 +197,19 @@ export function useQueries<T extends any[]>({
   const errorResetBoundary = useQueryErrorResetBoundary()
 
   defaultedQueries.forEach((options) => {
-    if (options.suspense || options.useErrorBoundary) {
-      // Prevent retrying failed query if the error boundary has not been reset yet
-      if (!errorResetBoundary.isReset()) {
-        options.retryOnMount = false
-      }
-    }
+    ensurePreventErrorBoundaryRetry(options, errorResetBoundary)
   })
 
-  React.useEffect(() => {
-    errorResetBoundary.clearReset()
-  }, [errorResetBoundary])
+  useClearResetErrorBoundary(errorResetBoundary)
 
   const firstSingleResultWhichShouldThrow = result.find(
     (singleResult, index) =>
-      singleResult.isError &&
-      !errorResetBoundary.isReset() &&
-      !singleResult.isFetching &&
-      shouldThrowError(defaultedQueries[index]?.useErrorBoundary ?? false, [
-        singleResult.error,
-        observer.getQueries()[index]!,
-      ]),
+      getHasError({
+        result: singleResult,
+        errorResetBoundary,
+        useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+        query: observer.getQueries()[index]!,
+      }),
   )
 
   if (firstSingleResultWhichShouldThrow?.error) {

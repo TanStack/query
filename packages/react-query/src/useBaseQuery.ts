@@ -1,12 +1,16 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import { QueryKey, notifyManager, QueryObserver } from '@tanstack/query-core'
+import { notifyManager, QueryKey, QueryObserver } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
 import { UseBaseQueryOptions } from './types'
-import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
+import {
+  ensurePreventErrorBoundaryRetry,
+  getHasError,
+  useClearResetErrorBoundary,
+} from './errorBoundaryUtils'
 
 export function useBaseQuery<
   TQueryFnData,
@@ -61,12 +65,9 @@ export function useBaseQuery<
     }
   }
 
-  if (defaultedOptions.suspense || defaultedOptions.useErrorBoundary) {
-    // Prevent retrying failed query if the error boundary has not been reset yet
-    if (!errorResetBoundary.isReset()) {
-      defaultedOptions.retryOnMount = false
-    }
-  }
+  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
+
+  useClearResetErrorBoundary(errorResetBoundary)
 
   const [observer] = React.useState(
     () =>
@@ -89,10 +90,6 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
     () => observer.getCurrentResult(),
   )
-
-  React.useEffect(() => {
-    errorResetBoundary.clearReset()
-  }, [errorResetBoundary])
 
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
@@ -122,13 +119,12 @@ export function useBaseQuery<
 
   // Handle error boundary
   if (
-    result.isError &&
-    !errorResetBoundary.isReset() &&
-    !result.isFetching &&
-    shouldThrowError(defaultedOptions.useErrorBoundary, [
-      result.error,
-      observer.getCurrentQuery(),
-    ])
+    getHasError({
+      result,
+      errorResetBoundary,
+      useErrorBoundary: defaultedOptions.useErrorBoundary,
+      query: observer.getCurrentQuery(),
+    })
   ) {
     throw result.error
   }

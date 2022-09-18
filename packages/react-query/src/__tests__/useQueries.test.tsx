@@ -1142,6 +1142,7 @@ describe('useQueries', () => {
         fallbackRender={({ error }) => (
           <div>
             <div>error boundary</div>
+            {/* @ts-expect-error `error` here is actually of type `string` and not `Error` */}
             <div>{error}</div>
           </div>
         )}
