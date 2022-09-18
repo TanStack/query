@@ -202,14 +202,13 @@ export function useQueries<T extends any[]>({
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const firstSingleResultWhichShouldThrow = result.find(
-    (singleResult, index) =>
-      getHasError({
-        result: singleResult,
-        errorResetBoundary,
-        useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
-        query: observer.getQueries()[index]!,
-      }),
+  const firstSingleResultWhichShouldThrow = result.find((singleResult, index) =>
+    getHasError({
+      result: singleResult,
+      errorResetBoundary,
+      useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+      query: observer.getQueries()[index]!,
+    }),
   )
 
   if (firstSingleResultWhichShouldThrow?.error) {

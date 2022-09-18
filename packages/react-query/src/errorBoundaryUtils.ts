@@ -62,6 +62,9 @@ export const getHasError = <
     result.isError &&
     !errorResetBoundary.isReset() &&
     !result.isFetching &&
-    shouldThrowError(useErrorBoundary, [result.error, query] as Parameters<TUseErrorBoundaryFn>)
+    shouldThrowError(useErrorBoundary, [
+      result.error,
+      query,
+    ] as Parameters<TUseErrorBoundaryFn>)
   )
 }
