@@ -2,7 +2,7 @@ import { waitFor, fireEvent, render, screen } from 'solid-testing-library'
 
 import { sleep, createQueryClient } from '../../../../tests/utils'
 
-import { renderWithClient, Blink, queryKey, setActTimeout } from './utils'
+import { Blink, queryKey, setActTimeout } from './utils'
 import {
   createInfiniteQuery,
   CreateInfiniteQueryResult,
