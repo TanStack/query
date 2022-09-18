@@ -192,11 +192,11 @@ export function useQueries<T extends any[]>({
 
   const errorResetBoundary = useQueryErrorResetBoundary()
 
-  defaultedQueries.forEach((query) => {
-    if (query.suspense || query.useErrorBoundary) {
+  defaultedQueries.forEach((options) => {
+    if (options.suspense || options.useErrorBoundary) {
       // Prevent retrying failed query if the error boundary has not been reset yet
       if (!errorResetBoundary.isReset()) {
-        query.retryOnMount = false
+        options.retryOnMount = false
       }
     }
   })
