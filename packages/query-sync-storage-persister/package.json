@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/query-sync-storage-persister",
-  "version": "4.3.4",
+  "version": "4.3.6",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -31,6 +31,6 @@
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
-    "@tanstack/react-query-persist-client": "4.3.4"
+    "@tanstack/react-query-persist-client": "4.3.6"
   }
 }
