@@ -12,6 +12,7 @@
   },
   "types": "build/lib/index.d.ts",
   "main": "build/lib/index.js",
+  "module": "build/lib/index.esm.js",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
