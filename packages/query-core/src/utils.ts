@@ -39,6 +39,14 @@ export interface QueryFilters {
   fetchStatus?: FetchStatus
 }
 
+export interface ExtendedQueryFilters<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> extends Omit<QueryFilters, 'queryKey'>,
+    QueryOptions<TQueryFnData, TError, TData, TQueryKey> {}
+
 export interface MutationFilters {
   /**
    * Match mutation key exactly

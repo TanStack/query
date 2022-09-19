@@ -454,17 +454,55 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
       expect(queryClient.getQueryData([key, 'id'])).toBe('bar')
+      expect(queryClient.getQueryData({ queryKey: [key, 'id'] })).toBe('bar')
+    })
+
+    test('should return the query data with inactive filter', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(queryClient.getQueryData([key, 'id'], { type: 'inactive' })).toBe(
+        'bar',
+      )
+      expect(
+        queryClient.getQueryData({ queryKey: [key, 'id'], type: 'inactive' }),
+      ).toBe('bar')
+    })
+
+    test('should return the query data with stale filter', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(queryClient.getQueryData([key, 'id'], { stale: false })).toBe(
+        'bar',
+      )
+      expect(
+        queryClient.getQueryData({ queryKey: [key, 'id'], stale: false }),
+      ).toBe('bar')
+    })
+
+    test('should return the query data even with query options', () => {
+      const key = queryKey()
+      queryClient.setQueryData([key, 'id'], 'bar')
+      expect(
+        queryClient.getQueryData({
+          queryKey: [key, 'id'],
+          queryFn: async () => 1,
+          cacheTime: 1000,
+          retry: false,
+        }),
+      ).toBe('bar')
     })
 
     test('should return undefined if the query is not found', () => {
       const key = queryKey()
       expect(queryClient.getQueryData(key)).toBeUndefined()
+      expect(queryClient.getQueryData({ queryKey: key })).toBeUndefined()
     })
 
     test('should match exact by default', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
       expect(queryClient.getQueryData([key])).toBeUndefined()
+      expect(queryClient.getQueryData({ queryKey: [key] })).toBeUndefined()
     })
   })
 
