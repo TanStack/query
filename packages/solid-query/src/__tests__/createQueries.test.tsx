@@ -295,14 +295,17 @@ describe('useQueries', () => {
         states.push([...result])
       })
 
+      const text = createMemo(() => {
+        return result
+          .map((r, idx) => `data${idx + 1}: ${r.data ?? 'null'}`)
+          .join(' ')
+      })
+
       const isFetching = createMemo(() => result.some((r) => r.isFetching))
 
       return (
         <div>
-          <div>
-            data1: {String(result[0]?.data ?? 'null')}, data2:{' '}
-            {String(result[1]?.data ?? 'null')}
-          </div>
+          <div>{text()}</div>
           <div>isFetching: {String(isFetching())}</div>
           <button onClick={() => setEnableId1(false)}>set1Disabled</button>
           <button onClick={() => setEnableId1(true)}>set2Enabled</button>
@@ -316,17 +319,17 @@ describe('useQueries', () => {
       </QueryClientProvider>
     ))
 
-    await waitFor(() => screen.getByText('data1: 5, data2: 10'))
+    await waitFor(() => screen.getByText('data1: 5 data2: 10'))
     fireEvent.click(screen.getByRole('button', { name: /set1Disabled/i }))
 
-    await waitFor(() => screen.getByText('data1: 10, data2: null'))
+    await waitFor(() => screen.getByText('data1: 10'))
     await waitFor(() => screen.getByText('isFetching: false'))
     fireEvent.click(screen.getByRole('button', { name: /set2Enabled/i }))
 
-    await waitFor(() => screen.getByText('data1: 5, data2: 10'))
+    await waitFor(() => screen.getByText('data1: 5 data2: 10'))
     await waitFor(() => screen.getByText('isFetching: false'))
 
-    await waitFor(() => expect(states.length).toBe(6))
+    await waitFor(() => expect(states.length).toBe(5))
 
     expect(states[0]).toMatchObject([
       {
@@ -354,10 +357,6 @@ describe('useQueries', () => {
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
     expect(states[4]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-    ])
-    expect(states[5]).toMatchObject([
       { status: 'success', data: 5, isPreviousData: false, isFetching: false },
       { status: 'success', data: 10, isPreviousData: false, isFetching: false },
     ])
