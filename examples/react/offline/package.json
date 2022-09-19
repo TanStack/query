@@ -15,10 +15,10 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-hot-toast": "^2.2.0",
-    "@tanstack/react-query": "4.3.8",
-    "@tanstack/react-query-devtools": "4.3.8",
-    "@tanstack/react-query-persist-client": "4.3.8",
-    "@tanstack/query-sync-storage-persister": "4.3.8"
+    "@tanstack/react-query": "4.3.9",
+    "@tanstack/react-query-devtools": "4.3.9",
+    "@tanstack/react-query-persist-client": "4.3.9",
+    "@tanstack/query-sync-storage-persister": "4.3.9"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",

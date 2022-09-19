@@ -16,8 +16,8 @@
     "react-router-dom": "^6.4.0",
     "rooks": "^6.4.3",
     "sort-by": "^1.2.0",
-    "@tanstack/react-query": "4.3.8",
-    "@tanstack/react-query-devtools": "4.3.8"
+    "@tanstack/react-query": "4.3.9",
+    "@tanstack/react-query-devtools": "4.3.9"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",
