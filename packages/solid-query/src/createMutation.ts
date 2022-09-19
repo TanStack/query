@@ -10,8 +10,9 @@ import {
   CreateMutationOptions,
   CreateMutationResult,
 } from './types'
-import { createComputed, onCleanup } from 'solid-js'
+import { createComputed, onCleanup, on } from 'solid-js'
 import { createStore } from 'solid-js/store'
+import { shouldThrowError } from './utils'
 
 // HOOK
 export function createMutation<
@@ -102,6 +103,20 @@ export function createMutation<
     setOptions(newParsedOptions)
     observer.setOptions(newParsedOptions)
   })
+
+  createComputed(
+    on(
+      () => state.status,
+      () => {
+        if (
+          state.isError &&
+          shouldThrowError(observer.options.useErrorBoundary, [state.error])
+        ) {
+          throw state.error
+        }
+      },
+    ),
+  )
 
   const unsubscribe = observer.subscribe((result) => {
     setState({
