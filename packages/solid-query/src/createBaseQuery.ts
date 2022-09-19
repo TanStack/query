@@ -98,7 +98,7 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      if (prop === 'data') {
+      if (prop === 'data' && target.isLoading && target.isFetching) {
         return dataResource()
       }
       return Reflect.get(target, prop)
