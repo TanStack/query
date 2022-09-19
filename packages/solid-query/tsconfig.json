@@ -9,6 +9,7 @@
     "jsxImportSource": "solid-js",
   },
   "include": ["src"],
+  // comment this out to fix errors in tests during development
   "exclude": ["src/__tests__"],
   "references": [
     { "path": "../query-core" }

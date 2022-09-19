@@ -1750,7 +1750,7 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data!.pages ?? []}>
+                <For each={state.data!.pages}>
                   {(page, i) => (
                     <div>
                       <div>
