@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@tanstack/solid-query": "^4.2.3",
+    "@tanstack/solid-query": "^4.3.0-beta.4",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "solid-js": "^1.5.1"
