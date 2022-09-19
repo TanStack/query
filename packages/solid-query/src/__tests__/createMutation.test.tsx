@@ -104,7 +104,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
-    let [count, setCount] = createSignal(0)
+    const [count, setCount] = createSignal(0)
     const onSuccessMock = jest.fn()
     const onSettledMock = jest.fn()
 
@@ -172,7 +172,7 @@ describe('useMutation', () => {
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
     const onErrorMock = jest.fn()
     const onSettledMock = jest.fn()
-    let [count, setCount] = createSignal(0)
+    const [count, setCount] = createSignal(0)
 
     function Page() {
       const mutation = createMutation(

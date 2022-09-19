@@ -28,7 +28,6 @@ import {
   createRenderEffect,
   createSignal,
   ErrorBoundary,
-  For,
 } from 'solid-js'
 
 describe('useQueries', () => {
