@@ -2,7 +2,7 @@ import { waitFor, fireEvent, render, screen } from 'solid-testing-library'
 
 import { sleep, createQueryClient } from '../../../../tests/utils'
 
-import { renderWithClient, Blink, queryKey, setActTimeout } from './utils'
+import { Blink, queryKey, setActTimeout } from './utils'
 import {
   createInfiniteQuery,
   CreateInfiniteQueryResult,
@@ -11,7 +11,16 @@ import {
   InfiniteData,
   QueryClientProvider,
 } from '..'
-import { createEffect, createRenderEffect, createSignal } from 'solid-js'
+import {
+  createEffect,
+  createRenderEffect,
+  createSignal,
+  For,
+  Index,
+  Match,
+  on,
+  Switch,
+} from 'solid-js'
 
 interface Result {
   items: number[]
@@ -197,9 +206,11 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
+      createRenderEffect(
+        on([() => ({ ...state }), order], () => {
+          states.push({ ...state })
+        }),
+      )
 
       return (
         <div>
@@ -225,7 +236,7 @@ describe('useInfiniteQuery', () => {
 
     await waitFor(() => screen.getByText('data: 0-asc'))
     await waitFor(() => screen.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(7))
+    await waitFor(() => expect(states.length).toBe(6))
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -263,15 +274,7 @@ describe('useInfiniteQuery', () => {
       isSuccess: true,
       isPreviousData: true,
     })
-    // Hook state update
     expect(states[5]).toMatchObject({
-      data: { pages: ['0-desc', '1-desc'] },
-      isFetching: true,
-      isFetchingNextPage: false,
-      isSuccess: true,
-      isPreviousData: true,
-    })
-    expect(states[6]).toMatchObject({
       data: { pages: ['0-asc'] },
       isFetching: false,
       isFetchingNextPage: false,
@@ -713,12 +716,12 @@ describe('useInfiniteQuery', () => {
     const states: CreateInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const multiplier = React.useRef(1)
+      let multiplier = 1
       const state = createInfiniteQuery(
         key,
         async ({ pageParam = 10 }) => {
           await sleep(10)
-          return Number(pageParam) * multiplier.current
+          return Number(pageParam) * multiplier
         },
         {
           getNextPageParam: (lastPage) => lastPage + 1,
@@ -726,14 +729,16 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       return (
         <div>
           <button onClick={() => state.fetchNextPage()}>fetchNextPage</button>
           <button
             onClick={() => {
-              multiplier.current = 2
+              multiplier = 2
               state.refetch({
                 refetchPage: (_, index) => index === 0,
               })
@@ -747,16 +752,20 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
-    await waitFor(() => rendered.getByText('data: 10'))
-    fireEvent.click(rendered.getByRole('button', { name: /fetchNextPage/i }))
+    await waitFor(() => screen.getByText('data: 10'))
+    fireEvent.click(screen.getByRole('button', { name: /fetchNextPage/i }))
 
-    await waitFor(() => rendered.getByText('data: 10,11'))
-    fireEvent.click(rendered.getByRole('button', { name: /refetchPage/i }))
+    await waitFor(() => screen.getByText('data: 10,11'))
+    fireEvent.click(screen.getByRole('button', { name: /refetchPage/i }))
 
-    await waitFor(() => rendered.getByText('data: 20,11'))
-    await waitFor(() => rendered.getByText('isFetching: false'))
+    await waitFor(() => screen.getByText('data: 20,11'))
+    await waitFor(() => screen.getByText('isFetching: false'))
     await waitFor(() => expect(states.length).toBe(6))
 
     // Initial fetch
@@ -815,23 +824,28 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
-      const { refetch, fetchNextPage } = state
-
-      React.useEffect(() => {
+      createEffect(() => {
+        const { refetch, fetchNextPage } = state
         setActTimeout(() => {
           refetch()
         }, 100)
         setActTimeout(() => {
           fetchNextPage()
         }, 110)
-      }, [fetchNextPage, refetch])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(300)
 
@@ -880,7 +894,7 @@ describe('useInfiniteQuery', () => {
     const abortListeners: jest.Mock<any, any>[] = []
     const fetchPage = jest.fn<
       Promise<number>,
-      [QueryFunctionContext<typeof key, number>]
+      [QueryFunctionContext<ReturnType<typeof key>, number>]
     >(async ({ pageParam = start, signal }) => {
       if (signal) {
         const onAbort = jest.fn()
@@ -895,23 +909,28 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const { fetchNextPage } = createInfiniteQuery(key, fetchPage, {
+      const state = createInfiniteQuery(key, fetchPage, {
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
-      React.useEffect(() => {
+      createEffect(() => {
+        const { fetchNextPage } = state
         setActTimeout(() => {
           fetchNextPage()
         }, 100)
         setActTimeout(() => {
           fetchNextPage()
         }, 110)
-      }, [fetchNextPage])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(300)
 
@@ -923,7 +942,7 @@ describe('useInfiniteQuery', () => {
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
     expect(firstCtx.pageParam).toBeUndefined()
-    expect(firstCtx.queryKey).toEqual(key)
+    expect(firstCtx.queryKey).toEqual(key())
     if (typeof AbortSignal === 'function') {
       expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
       expect(firstCtx.signal?.aborted).toBe(false)
@@ -934,7 +953,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual(key)
+    expect(secondCtx.queryKey).toEqual(key())
     if (typeof AbortSignal === 'function') {
       expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
       expect(secondCtx.signal?.aborted).toBe(true)
@@ -945,7 +964,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 2
     const thirdCtx = fetchPage.mock.calls[callIndex]![0]
     expect(thirdCtx.pageParam).toBe(11)
-    expect(thirdCtx.queryKey).toEqual(key)
+    expect(thirdCtx.queryKey).toEqual(key())
     if (typeof AbortSignal === 'function') {
       expect(thirdCtx.signal).toBeInstanceOf(AbortSignal)
       expect(thirdCtx.signal?.aborted).toBe(false)
@@ -961,7 +980,7 @@ describe('useInfiniteQuery', () => {
     const abortListeners: jest.Mock<any, any>[] = []
     const fetchPage = jest.fn<
       Promise<number>,
-      [QueryFunctionContext<typeof key, number>]
+      [QueryFunctionContext<ReturnType<typeof key>, number>]
     >(async ({ pageParam = start, signal }) => {
       if (signal) {
         const onAbort = jest.fn()
@@ -976,23 +995,28 @@ describe('useInfiniteQuery', () => {
     })
 
     function Page() {
-      const { fetchNextPage } = createInfiniteQuery(key, fetchPage, {
+      const state = createInfiniteQuery(key, fetchPage, {
         getNextPageParam: (lastPage) => lastPage + 1,
       })
 
-      React.useEffect(() => {
+      createEffect(() => {
+        const { fetchNextPage } = state
         setActTimeout(() => {
           fetchNextPage()
         }, 100)
         setActTimeout(() => {
           fetchNextPage({ cancelRefetch: false })
         }, 110)
-      }, [fetchNextPage])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(300)
 
@@ -1004,7 +1028,7 @@ describe('useInfiniteQuery', () => {
     let callIndex = 0
     const firstCtx = fetchPage.mock.calls[callIndex]![0]
     expect(firstCtx.pageParam).toBeUndefined()
-    expect(firstCtx.queryKey).toEqual(key)
+    expect(firstCtx.queryKey).toEqual(key())
     if (typeof AbortSignal === 'function') {
       expect(firstCtx.signal).toBeInstanceOf(AbortSignal)
       expect(firstCtx.signal?.aborted).toBe(false)
@@ -1015,7 +1039,7 @@ describe('useInfiniteQuery', () => {
     callIndex = 1
     const secondCtx = fetchPage.mock.calls[callIndex]![0]
     expect(secondCtx.pageParam).toBe(11)
-    expect(secondCtx.queryKey).toEqual(key)
+    expect(secondCtx.queryKey).toEqual(key())
     if (typeof AbortSignal === 'function') {
       expect(secondCtx.signal).toBeInstanceOf(AbortSignal)
       expect(secondCtx.signal?.aborted).toBe(false)
@@ -1042,20 +1066,25 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
+      createEffect(() => {
+        const { fetchNextPage } = state
         setActTimeout(() => {
           fetchNextPage()
         }, 10)
-      }, [fetchNextPage])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(100)
 
@@ -1102,24 +1131,28 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const [show, setShow] = React.useState(true)
+      const [show, setShow] = createSignal(true)
 
-      React.useEffect(() => {
+      createEffect(() => {
         setActTimeout(() => {
           setShow(false)
         }, 75)
-      }, [])
+      })
 
-      return show ? <List /> : null
+      return <>{show() ? <List /> : null}</>
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(300)
 
     if (typeof AbortSignal === 'function') {
       expect(fetches).toBe(2)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         data: initialData,
         status: 'success',
         error: null,
@@ -1127,7 +1160,7 @@ describe('useInfiniteQuery', () => {
     } else {
       // if AbortSignal is not consumed, fetches should not abort
       expect(fetches).toBe(4)
-      expect(queryClient.getQueryState(key)).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         data: { pages: [0, 10, 20, 30], pageParams: [0, 1, 2, 3] },
         status: 'success',
         error: null,
@@ -1152,20 +1185,25 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
+      createEffect(() => {
+        const { fetchNextPage } = state
         setActTimeout(() => {
           fetchNextPage({ pageParam: 5 })
         }, 20)
-      }, [fetchNextPage])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(100)
 
@@ -1205,11 +1243,11 @@ describe('useInfiniteQuery', () => {
     const states: CreateInfiniteQueryResult<number>[] = []
 
     function Page() {
-      const [firstPage, setFirstPage] = React.useState(0)
+      const [firstPage, setFirstPage] = createSignal(0)
 
       const state = createInfiniteQuery(
         key,
-        async ({ pageParam = firstPage }) => {
+        async ({ pageParam = firstPage() }) => {
           await sleep(10)
           return Number(pageParam)
         },
@@ -1219,25 +1257,30 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
-      const { refetch } = state
-
-      React.useEffect(() => {
+      createEffect(() => {
+        const { refetch } = state
         setActTimeout(() => {
-          queryClient.setQueryData(key, { pages: [7, 8], pageParams: [7, 8] })
+          queryClient.setQueryData(key(), { pages: [7, 8], pageParams: [7, 8] })
           setFirstPage(7)
         }, 20)
 
         setActTimeout(() => {
           refetch()
         }, 50)
-      }, [refetch])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(100)
 
@@ -1301,20 +1344,25 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
+      createEffect(() => {
+        const { fetchNextPage } = state
         setActTimeout(() => {
           fetchNextPage()
         }, 20)
-      }, [fetchNextPage])
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(100)
 
@@ -1362,12 +1410,18 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(100)
 
@@ -1402,13 +1456,18 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
-
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
     await sleep(100)
 
     expect(states.length).toBe(2)
@@ -1442,13 +1501,18 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
-
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
     await sleep(100)
 
     expect(states.length).toBe(2)
@@ -1485,12 +1549,18 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      states.push(state)
+      createRenderEffect(() => {
+        states.push({ ...state })
+      })
 
       return null
     }
 
-    renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
     await sleep(100)
 
@@ -1529,19 +1599,10 @@ describe('useInfiniteQuery', () => {
     }
 
     function Page() {
-      const fetchCountRef = React.useRef(0)
-      const {
-        status,
-        data,
-        error,
-        isFetchingNextPage,
-        fetchNextPage,
-        hasNextPage,
-        refetch,
-      } = createInfiniteQuery<Result, Error>(
+      let fetchCountRef = 0
+      const state = createInfiniteQuery<Result, Error>(
         key,
-        ({ pageParam = 0 }) =>
-          fetchItemsWithLimit(pageParam, fetchCountRef.current++),
+        ({ pageParam = 0 }) => fetchItemsWithLimit(pageParam, fetchCountRef++),
         {
           getNextPageParam: (lastPage) => lastPage.nextId,
         },
@@ -1550,101 +1611,115 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          {status === 'loading' ? (
-            'Loading...'
-          ) : status === 'error' ? (
-            <span>Error: {error.message}</span>
-          ) : (
-            <>
-              <div>Data:</div>
-              {data.pages.map((page, i) => (
-                <div key={i}>
-                  <div>
-                    Page {i}: {page.ts}
-                  </div>
-                  <div key={i}>
-                    {page.items.map((item) => (
-                      <p key={item}>Item: {item}</p>
-                    ))}
-                  </div>
+          <Switch
+            fallback={
+              <>
+                <div>Data:</div>
+                <For each={state.data?.pages ?? []}>
+                  {(page, i) => (
+                    <div>
+                      <div>
+                        Page {i()}: {page.ts}
+                      </div>
+                      <div>
+                        <Index each={page.items}>
+                          {(item) => <p>Item: {item()}</p>}
+                        </Index>
+                      </div>
+                    </div>
+                  )}
+                </For>
+                <div>
+                  <button
+                    onClick={() => state.fetchNextPage()}
+                    disabled={
+                      !state.hasNextPage || Boolean(state.isFetchingNextPage)
+                    }
+                  >
+                    <Switch fallback={<>Nothing more to load</>}>
+                      <Match when={state.isFetchingNextPage}>
+                        Loading more...
+                      </Match>
+                      <Match when={state.hasNextPage}>Load More</Match>
+                    </Switch>
+                  </button>
+                  <button onClick={() => state.refetch()}>Refetch</button>
+                  <button
+                    onClick={() => {
+                      // Imagine that this mutation happens somewhere else
+                      // makes an actual network request
+                      // and calls invalidateQueries in an onSuccess
+                      items.splice(4, 1)
+                      queryClient.invalidateQueries(key())
+                    }}
+                  >
+                    Remove item
+                  </button>
                 </div>
-              ))}
-              <div>
-                <button
-                  onClick={() => fetchNextPage()}
-                  disabled={!hasNextPage || Boolean(isFetchingNextPage)}
-                >
-                  {isFetchingNextPage
-                    ? 'Loading more...'
-                    : hasNextPage
-                    ? 'Load More'
-                    : 'Nothing more to load'}
-                </button>
-                <button onClick={() => refetch()}>Refetch</button>
-                <button
-                  onClick={() => {
-                    // Imagine that this mutation happens somewhere else
-                    // makes an actual network request
-                    // and calls invalidateQueries in an onSuccess
-                    items.splice(4, 1)
-                    queryClient.invalidateQueries(key)
-                  }}
-                >
-                  Remove item
-                </button>
-              </div>
-              <div>{!isFetchingNextPage ? 'Background Updating...' : null}</div>
-            </>
-          )}
+                <div>
+                  {!state.isFetchingNextPage ? 'Background Updating...' : null}
+                </div>
+              </>
+            }
+          >
+            <Match when={state.status === 'loading'}>Loading...</Match>
+            <Match when={state.status === 'error'}>
+              <span>Error: {state.error!.message}</span>
+            </Match>
+          </Switch>
         </div>
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
-    rendered.getByText('Loading...')
+    screen.getByText('Loading...')
 
-    await waitFor(() => rendered.getByText('Item: 2'))
-    await waitFor(() => rendered.getByText('Page 0: 0'))
+    await waitFor(() => screen.getByText('Item: 2'))
+    await waitFor(() => screen.getByText('Page 0: 0'))
 
-    fireEvent.click(rendered.getByText('Load More'))
+    fireEvent.click(screen.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
-    await waitFor(() => rendered.getByText('Item: 5'))
-    await waitFor(() => rendered.getByText('Page 0: 0'))
-    await waitFor(() => rendered.getByText('Page 1: 1'))
+    await waitFor(() => screen.getByText('Loading more...'))
+    await waitFor(() => screen.getByText('Item: 5'))
+    await waitFor(() => screen.getByText('Page 0: 0'))
+    await waitFor(() => screen.getByText('Page 1: 1'))
 
-    fireEvent.click(rendered.getByText('Load More'))
+    fireEvent.click(screen.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
-    await waitFor(() => rendered.getByText('Item: 8'))
-    await waitFor(() => rendered.getByText('Page 0: 0'))
-    await waitFor(() => rendered.getByText('Page 1: 1'))
-    await waitFor(() => rendered.getByText('Page 2: 2'))
+    await waitFor(() => screen.getByText('Loading more...'))
+    await waitFor(() => screen.getByText('Item: 8'))
+    await waitFor(() => screen.getByText('Page 0: 0'))
+    await waitFor(() => screen.getByText('Page 1: 1'))
+    await waitFor(() => screen.getByText('Page 2: 2'))
 
-    fireEvent.click(rendered.getByText('Refetch'))
+    fireEvent.click(screen.getByText('Refetch'))
 
-    await waitFor(() => rendered.getByText('Background Updating...'))
-    await waitFor(() => rendered.getByText('Item: 8'))
-    await waitFor(() => rendered.getByText('Page 0: 3'))
-    await waitFor(() => rendered.getByText('Page 1: 4'))
-    await waitFor(() => rendered.getByText('Page 2: 5'))
+    await waitFor(() => screen.getByText('Background Updating...'))
+    await waitFor(() => screen.getByText('Item: 8'))
+    await waitFor(() => screen.getByText('Page 0: 3'))
+    await waitFor(() => screen.getByText('Page 1: 4'))
+    await waitFor(() => screen.getByText('Page 2: 5'))
 
     // ensure that Item: 4 is rendered before removing it
-    expect(rendered.queryAllByText('Item: 4')).toHaveLength(1)
+    expect(screen.queryAllByText('Item: 4')).toHaveLength(1)
 
     // remove Item: 4
-    fireEvent.click(rendered.getByText('Remove item'))
+    fireEvent.click(screen.getByText('Remove item'))
 
-    await waitFor(() => rendered.getByText('Background Updating...'))
+    await waitFor(() => screen.getByText('Background Updating...'))
     // ensure that an additional item is rendered (it means that cursors were properly rebuilt)
-    await waitFor(() => rendered.getByText('Item: 9'))
-    await waitFor(() => rendered.getByText('Page 0: 6'))
-    await waitFor(() => rendered.getByText('Page 1: 7'))
-    await waitFor(() => rendered.getByText('Page 2: 8'))
+    await waitFor(() => screen.getByText('Item: 9'))
+    await waitFor(() => screen.getByText('Page 0: 6'))
+    await waitFor(() => screen.getByText('Page 1: 7'))
+    await waitFor(() => screen.getByText('Page 2: 8'))
 
     // ensure that Item: 4 is no longer rendered
-    expect(rendered.queryAllByText('Item: 4')).toHaveLength(0)
+    expect(screen.queryAllByText('Item: 4')).toHaveLength(0)
   })
 
   it('should compute hasNextPage correctly for falsy getFetchMore return value on refetching', async () => {
@@ -1652,25 +1727,16 @@ describe('useInfiniteQuery', () => {
     const MAX = 2
 
     function Page() {
-      const fetchCountRef = React.useRef(0)
+      let fetchCountRef = 0
       const [isRemovedLastPage, setIsRemovedLastPage] =
-        React.useState<boolean>(false)
-      const {
-        status,
-        data,
-        error,
-        isFetching,
-        isFetchingNextPage,
-        fetchNextPage,
-        hasNextPage,
-        refetch,
-      } = createInfiniteQuery<Result, Error>(
+        createSignal<boolean>(false)
+      const state = createInfiniteQuery<Result, Error>(
         key,
         ({ pageParam = 0 }) =>
           fetchItems(
             pageParam,
-            fetchCountRef.current++,
-            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage),
+            fetchCountRef++,
+            pageParam === MAX || (pageParam === MAX - 1 && isRemovedLastPage()),
           ),
         {
           getNextPageParam: (lastPage) => lastPage.nextId,
@@ -1680,101 +1746,112 @@ describe('useInfiniteQuery', () => {
       return (
         <div>
           <h1>Pagination</h1>
-          {status === 'loading' ? (
-            'Loading...'
-          ) : status === 'error' ? (
-            <span>Error: {error.message}</span>
-          ) : (
-            <>
-              <div>Data:</div>
-              {data.pages.map((page, i) => (
-                <div key={i}>
-                  <div>
-                    Page {i}: {page.ts}
-                  </div>
-                  <div key={i}>
-                    {page.items.map((item) => (
-                      <p key={item}>Item: {item}</p>
-                    ))}
-                  </div>
+          <Switch
+            fallback={
+              <>
+                <div>Data:</div>
+                <For each={state.data!.pages ?? []}>
+                  {(page, i) => (
+                    <div>
+                      <div>
+                        Page {i()}: {page.ts}
+                      </div>
+                      <div>
+                        <Index each={page.items}>
+                          {(item) => <p>Item: {item()}</p>}
+                        </Index>
+                      </div>
+                    </div>
+                  )}
+                </For>
+                <div>
+                  <button
+                    onClick={() => state.fetchNextPage()}
+                    disabled={
+                      !state.hasNextPage || Boolean(state.isFetchingNextPage)
+                    }
+                  >
+                    {state.isFetchingNextPage
+                      ? 'Loading more...'
+                      : state.hasNextPage
+                      ? 'Load More'
+                      : 'Nothing more to load'}
+                  </button>
+                  <button onClick={() => state.refetch()}>Refetch</button>
+                  <button onClick={() => setIsRemovedLastPage(true)}>
+                    Remove Last Page
+                  </button>
                 </div>
-              ))}
-              <div>
-                <button
-                  onClick={() => fetchNextPage()}
-                  disabled={!hasNextPage || Boolean(isFetchingNextPage)}
-                >
-                  {isFetchingNextPage
-                    ? 'Loading more...'
-                    : hasNextPage
-                    ? 'Load More'
-                    : 'Nothing more to load'}
-                </button>
-                <button onClick={() => refetch()}>Refetch</button>
-                <button onClick={() => setIsRemovedLastPage(true)}>
-                  Remove Last Page
-                </button>
-              </div>
-              <div>
-                {isFetching && !isFetchingNextPage
-                  ? 'Background Updating...'
-                  : null}
-              </div>
-            </>
-          )}
+                <div>
+                  {state.isFetching && !state.isFetchingNextPage
+                    ? 'Background Updating...'
+                    : null}
+                </div>
+              </>
+            }
+          >
+            <Match when={state.status === 'loading'}>Loading...</Match>
+            <Match when={state.status === 'error'}>
+              <span>Error: {state.error!.message}</span>
+            </Match>
+          </Switch>
         </div>
       )
     }
 
-    const rendered = renderWithClient(queryClient, <Page />)
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
 
-    rendered.getByText('Loading...')
-
-    await waitFor(() => {
-      rendered.getByText('Item: 9')
-      rendered.getByText('Page 0: 0')
-    })
-
-    fireEvent.click(rendered.getByText('Load More'))
-
-    await waitFor(() => rendered.getByText('Loading more...'))
+    screen.getByText('Loading...')
 
     await waitFor(() => {
-      rendered.getByText('Item: 19')
-      rendered.getByText('Page 0: 0')
-      rendered.getByText('Page 1: 1')
+      screen.getByText('Item: 9')
+      screen.getByText('Page 0: 0')
     })
 
-    fireEvent.click(rendered.getByText('Load More'))
+    fireEvent.click(screen.getByText('Load More'))
 
-    await waitFor(() => rendered.getByText('Loading more...'))
+    await waitFor(() => screen.getByText('Loading more...'))
 
     await waitFor(() => {
-      rendered.getByText('Item: 29')
-      rendered.getByText('Page 0: 0')
-      rendered.getByText('Page 1: 1')
-      rendered.getByText('Page 2: 2')
+      screen.getByText('Item: 19')
+      screen.getByText('Page 0: 0')
+      screen.getByText('Page 1: 1')
     })
 
-    rendered.getByText('Nothing more to load')
+    fireEvent.click(screen.getByText('Load More'))
 
-    fireEvent.click(rendered.getByText('Remove Last Page'))
+    await waitFor(() => screen.getByText('Loading more...'))
+
+    await waitFor(() => {
+      screen.getByText('Item: 29')
+      screen.getByText('Page 0: 0')
+      screen.getByText('Page 1: 1')
+      screen.getByText('Page 2: 2')
+    })
+
+    screen.getByText('Nothing more to load')
+
+    fireEvent.click(screen.getByText('Remove Last Page'))
 
     await sleep(10)
 
-    fireEvent.click(rendered.getByText('Refetch'))
+    fireEvent.click(screen.getByText('Refetch'))
 
-    await waitFor(() => rendered.getByText('Background Updating...'))
+    await waitFor(() => screen.getByText('Background Updating...'))
 
     await waitFor(() => {
-      rendered.getByText('Page 0: 3')
-      rendered.getByText('Page 1: 4')
+      screen.getByText('Page 0: 3')
+      screen.getByText('Page 1: 4')
     })
 
-    expect(rendered.queryByText('Item: 29')).toBeNull()
-    expect(rendered.queryByText('Page 2: 5')).toBeNull()
+    expect(screen.queryByText('Item: 29')).toBeNull()
+    expect(screen.queryByText('Page 2: 5')).toBeNull()
 
-    rendered.getByText('Nothing more to load')
+    screen.getByText('Nothing more to load')
   })
 
   it('should cancel the query function when there are no more subscriptions', async () => {
@@ -1800,14 +1877,15 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <Blink duration={5}>
-        <Page />
-      </Blink>,
-    )
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Blink duration={5}>
+          <Page />
+        </Blink>
+      </QueryClientProvider>
+    ))
 
-    await waitFor(() => rendered.getByText('off'))
+    await waitFor(() => screen.getByText('off'))
 
     if (typeof AbortSignal === 'function') {
       expect(cancelFn).toHaveBeenCalled()
