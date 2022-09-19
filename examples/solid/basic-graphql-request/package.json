@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-solid-basic-typescript",
+  "name": "@tanstack/query-example-solid-basic-graphql-request",
   "private": true,
   "version": "0.0.0",
   "description": "",
@@ -12,6 +12,8 @@
   "license": "MIT",
   "dependencies": {
     "@tanstack/solid-query": "^4.3.0-beta.4",
+    "graphql": "^16.6.0",
+    "graphql-request": "^5.0.0",
     "solid-js": "^1.5.1"
   },
   "devDependencies": {
