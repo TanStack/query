@@ -1117,12 +1117,14 @@ describe('useQueries', () => {
             queryKey: key1,
             queryFn: () =>
               Promise.reject(
-                'this should not throw because useErrorBoundary is not set',
+                new Error(
+                  'this should not throw because useErrorBoundary is not set',
+                ),
               ),
           },
           {
             queryKey: key2,
-            queryFn: () => Promise.reject('single query error'),
+            queryFn: () => Promise.reject(new Error('single query error')),
             useErrorBoundary: true,
             retry: false,
           },
@@ -1142,8 +1144,7 @@ describe('useQueries', () => {
         fallbackRender={({ error }) => (
           <div>
             <div>error boundary</div>
-            {/* @ts-expect-error `error` here is actually of type `string` and not `Error` */}
-            <div>{error}</div>
+            <div>{error.message}</div>
           </div>
         )}
       >
