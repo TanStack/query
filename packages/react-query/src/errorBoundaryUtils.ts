@@ -55,16 +55,18 @@ export const getHasError = <
 }: {
   result: QueryObserverResult<TData, TError>
   errorResetBoundary: QueryErrorResetBoundaryValue
-  useErrorBoundary: UseErrorBoundary<TQueryFnData, TError, TQueryData, TQueryKey>
+  useErrorBoundary: UseErrorBoundary<
+    TQueryFnData,
+    TError,
+    TQueryData,
+    TQueryKey
+  >
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
 }) => {
   return (
     result.isError &&
     !errorResetBoundary.isReset() &&
     !result.isFetching &&
-    shouldThrowError(useErrorBoundary, [
-      result.error,
-      query,
-    ] )
+    shouldThrowError(useErrorBoundary, [result.error, query])
   )
 }
