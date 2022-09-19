@@ -3,6 +3,7 @@ import {
   Query,
   QueryKey,
   QueryObserverResult,
+  UseErrorBoundary,
 } from '@tanstack/query-core'
 import { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 import * as React from 'react'
@@ -46,7 +47,6 @@ export const getHasError = <
   TQueryFnData,
   TQueryData,
   TQueryKey extends QueryKey,
-  TUseErrorBoundaryFn extends (...args: any[]) => boolean,
 >({
   result,
   errorResetBoundary,
@@ -55,7 +55,7 @@ export const getHasError = <
 }: {
   result: QueryObserverResult<TData, TError>
   errorResetBoundary: QueryErrorResetBoundaryValue
-  useErrorBoundary: boolean | TUseErrorBoundaryFn | undefined
+  useErrorBoundary: UseErrorBoundary<TQueryFnData, TError, TQueryData, TQueryKey>
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
 }) => {
   return (
@@ -65,6 +65,6 @@ export const getHasError = <
     shouldThrowError(useErrorBoundary, [
       result.error,
       query,
-    ] as Parameters<TUseErrorBoundaryFn>)
+    ] )
   )
 }
