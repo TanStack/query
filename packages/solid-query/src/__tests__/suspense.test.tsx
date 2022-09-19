@@ -8,6 +8,7 @@ import {
   CreateInfiniteQueryResult,
   createInfiniteQuery,
   QueryClientProvider,
+  CreateQueryResult,
 } from '..'
 import {
   createRenderEffect,
