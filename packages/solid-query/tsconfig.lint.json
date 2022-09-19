@@ -6,7 +6,7 @@
     "outDir": "./build/lib",
     "tsBuildInfoFile": "./build/.tsbuildinfo",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "solid-js"
   },
   "include": ["src"],
   "references": [

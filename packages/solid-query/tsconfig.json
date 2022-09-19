@@ -9,13 +9,7 @@
     "jsxImportSource": "solid-js",
   },
   "include": ["src"],
-  // TODO(lukemurray): if we exclude tests, we get errors about missing react import
-  // the errors occur because the vscode typescript server only looks at tsconfig.json
-  // files for type check settings.
-  // eventually we should remove `jsx: react` from tsconfig.base.json
-  // but that will require adding `jsx: react` to all package level tsconfig.json
-  // so lets wait.
-  // "exclude": ["src/__tests__"],
+  "exclude": ["src/__tests__"],
   "references": [
     { "path": "../query-core" }
   ]
