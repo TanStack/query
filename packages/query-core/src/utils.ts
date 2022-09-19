@@ -45,7 +45,9 @@ export interface ExtendedQueryFilters<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Omit<QueryFilters, 'queryKey'>,
-    QueryOptions<TQueryFnData, TError, TData, TQueryKey> {}
+    Omit<QueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'queryKey'> {
+  queryKey: TQueryKey
+}
 
 export interface MutationFilters {
   /**

@@ -10,7 +10,6 @@ import {
   MutationFilters,
   functionalUpdate,
   ExtendedQueryFilters,
-  isQueryKey,
 } from './utils'
 import type {
   QueryClientConfig,
@@ -119,11 +118,7 @@ export class QueryClient {
     arg1: QueryKey | ExtendedQueryFilters<TData, any, TData, QueryKey>,
     arg2?: QueryFilters,
   ): TData | undefined {
-    if (isQueryKey(arg1))
-      return this.queryCache.find<TData>(arg1, arg2)?.state.data
-    if (arg1.queryKey)
-      return this.queryCache.find<TData>(arg1.queryKey, arg1)?.state.data
-    return undefined
+    return this.queryCache.find<TData>(arg1, arg2)?.state.data
   }
 
   getQueriesData<TData = unknown>(queryKey: QueryKey): [QueryKey, TData][]

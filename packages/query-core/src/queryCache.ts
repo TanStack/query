@@ -165,7 +165,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
-    arg1: QueryKey,
+    arg1: QueryKey | QueryFilters,
     arg2?: QueryFilters,
   ): Query<TQueryFnData, TError, TData> | undefined {
     const [filters] = parseFilterArgs(arg1, arg2)

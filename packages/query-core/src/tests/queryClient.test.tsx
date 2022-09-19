@@ -471,11 +471,14 @@ describe('queryClient', () => {
     test('should return the query data with stale filter', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
-      expect(queryClient.getQueryData([key, 'id'], { stale: false })).toBe(
-        'bar',
-      )
       expect(
-        queryClient.getQueryData({ queryKey: [key, 'id'], stale: false }),
+        queryClient.getQueryData<string>([key, 'id'], { stale: false }),
+      ).toBe('bar')
+      expect(
+        queryClient.getQueryData<string>({
+          queryKey: [key, 'id'],
+          stale: false,
+        }),
       ).toBe('bar')
     })
 
@@ -485,7 +488,7 @@ describe('queryClient', () => {
       expect(
         queryClient.getQueryData({
           queryKey: [key, 'id'],
-          queryFn: async () => 1,
+          queryFn: async () => 'foo',
           cacheTime: 1000,
           retry: false,
         }),
