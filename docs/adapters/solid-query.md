@@ -42,6 +42,8 @@ function App() {
 
 In general solid query follows the same API as React Query, but there are some important differences to be aware of. Keep these in mind as you read the tanstack query documentation.
 
+- Solid Query does not support server side rendering yet! Please reach out in the solid query channel on the tanstack query discord if you would like to help contribute to solid query's SSR support.
+
 - Exports follow the solid naming convention `createX` instead of `useX` *unless* the export is used to access `context`. For example, `useQuery` becomes `createQuery`, `useMutation` becomes `createMutation`, but `useQueryClient` is `useQueryClient` because it accesses the `client` from the `QueryClientProvider` context.
 
 - Query keys passed to `createQuery` and `createQueries` are Accessor functions which return arrays. This change makes it easy to implement reactive query keys.
