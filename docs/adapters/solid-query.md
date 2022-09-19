@@ -40,6 +40,8 @@ function App() {
 
 ## Important Differences with React Query
 
+In general solid query follows the same API as React Query, but there are some important differences to be aware of. Keep these in mind as you read the tanstack query documentation.
+
 - Exports follow the solid naming convention `createX` instead of `useX` *unless* the export is used to access `context`. For example, `useQuery` becomes `createQuery`, `useMutation` becomes `createMutation`, but `useQueryClient` is `useQueryClient` because it accesses the `client` from the `QueryClientProvider` context.
 
 - Query keys passed to `createQuery` and `createQueries` are Accessor functions which return arrays. This change makes it easy to implement reactive query keys.
@@ -53,9 +55,10 @@ createQuery(() => ["todos"], fetchTodos)
 ```
 
 > Mutation keys are not accessors. Why? Because it is impossible to differentiate the `createMutation` overloads `createMutation(mutationFn, options)` and `createMutation(mutationKey, options)` if the mutation key is an accessor function.
-> If you need reactivity in a mutaton key you can pass the mutation key in options using an object getter.
+> If you need reactivity in a mutation key you can pass the mutation key as an option with an object getter.
 > ```tsx
 > createMutation(updateTodos, {
+>   // ✅ reactive mutation key passed as an object getter
 >   get mutationKey() {
 >     return ["todos"]
 >   }
@@ -116,7 +119,7 @@ function Example() {
 }
 ```
 
-- If you want options to be reactive you need to pass them using object getter syntax.
+- If you want options to be reactive you need to pass them using object getter syntax. This may look strange at first but it leads to more idiomatic solid code.
 
 ```tsx
 import {
@@ -162,3 +165,26 @@ function App() {
   )
 }
 ```
+
+- You do not need to provide `suspense: true` to query options. Suspense works for queries out of the box if you access the query data in a `<Suspense>` context.
+
+
+```tsx
+import { For, Suspense } from 'solid-js'
+
+function Example() {
+  const query = createQuery(() => ['todos'], fetchTodos)
+  return (
+    <div>
+      {/* ✅ Will trigger loading fallback, data accessed in a suspense context. */}
+      <Suspense fallback={"Loading..."}>
+        <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
+      </Suspense>
+      {/* ❌ Will not trigger loading fallback, data not accessed in a suspense context. */}
+      <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
+    </div>
+  )
+}
+```
+
+- Property tracking is handled through solid's fine grained reactivity, so `notifyOnChange` options are not used.
