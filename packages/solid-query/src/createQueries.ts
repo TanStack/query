@@ -3,6 +3,7 @@ import { QueryFunction, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import { CreateQueryOptions, CreateQueryResult, SolidQueryKey } from './types'
 import { createStore, unwrap } from 'solid-js/store'
+import { scheduleMicrotask } from './utils'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -139,23 +140,24 @@ export type QueriesResults<
 
 type ArrType<T> = T extends (infer U)[] ? U : never
 
-export function createQueries<T extends any[]>({
-  queries,
-  context,
-}: {
+export function createQueries<T extends any[]>(queriesOptions: {
   queries: readonly [...QueriesOptions<T>]
   context?: CreateQueryOptions['context']
 }): QueriesResults<T> {
-  const queryClient = useQueryClient({ context })
+  const queryClient = useQueryClient({ context: queriesOptions.context })
 
-  const normalizeOptions = (options: ArrType<typeof queries>) => {
+  const normalizeOptions = (
+    options: ArrType<typeof queriesOptions.queries>,
+  ) => {
     const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
     const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
   }
 
-  const defaultedQueries = queries.map((options) => normalizeOptions(options))
+  const defaultedQueries = queriesOptions.queries.map((options) =>
+    normalizeOptions(options),
+  )
 
   const observer = new QueriesObserver(queryClient, defaultedQueries)
 
@@ -163,8 +165,20 @@ export function createQueries<T extends any[]>({
     observer.getOptimisticResult(defaultedQueries),
   )
 
+  const taskQueue: Array<() => void> = []
+
   const unsubscribe = observer.subscribe((result) => {
-    setState(unwrap(result))
+    taskQueue.push(() => {
+      setState(unwrap(result))
+    })
+
+    scheduleMicrotask(() => {
+      const taskToRun = taskQueue.pop()
+      if (taskToRun) {
+        taskToRun()
+        taskQueue.splice(0, taskQueue.length)
+      }
+    })
   })
 
   onCleanup(unsubscribe)
@@ -174,7 +188,7 @@ export function createQueries<T extends any[]>({
   })
 
   createComputed(() => {
-    const updateDefaultedQueries = queries.map((options) =>
+    const updateDefaultedQueries = queriesOptions.queries.map((options) =>
       normalizeOptions(options),
     )
     observer.setQueries(updateDefaultedQueries)
