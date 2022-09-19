@@ -1109,6 +1109,7 @@ describe('useQueries', () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
+    const key4 = queryKey()
 
     function Page() {
       useQueries({
@@ -1131,6 +1132,78 @@ describe('useQueries', () => {
           {
             queryKey: key3,
             queryFn: async () => 2,
+          },
+          {
+            queryKey: key4,
+            queryFn: async () =>
+              Promise.reject(
+                new Error('this should not throw because query#2 already did'),
+              ),
+            useErrorBoundary: true,
+            retry: false,
+          },
+        ],
+      })
+
+      return null
+    }
+
+    const rendered = renderWithClient(
+      queryClient,
+      <ErrorBoundary
+        fallbackRender={({ error }) => (
+          <div>
+            <div>error boundary</div>
+            <div>{error.message}</div>
+          </div>
+        )}
+      >
+        <Page />
+      </ErrorBoundary>,
+    )
+
+    await waitFor(() => rendered.getByText('error boundary'))
+    await waitFor(() => rendered.getByText('single query error'))
+  })
+
+  it("should throw error if in one of queries' queryFn throws and useErrorBoundary function resolves to true", async () => {
+    const key1 = queryKey()
+    const key2 = queryKey()
+    const key3 = queryKey()
+    const key4 = queryKey()
+
+    function Page() {
+      useQueries({
+        queries: [
+          {
+            queryKey: key1,
+            queryFn: () =>
+              Promise.reject(
+                new Error(
+                  'this should not throw because useErrorBoundary function resolves to false',
+                ),
+              ),
+            useErrorBoundary: () => false,
+            retry: false,
+          },
+          {
+            queryKey: key2,
+            queryFn: async () => 2,
+          },
+          {
+            queryKey: key3,
+            queryFn: () => Promise.reject(new Error('single query error')),
+            useErrorBoundary: () => true,
+            retry: false,
+          },
+          {
+            queryKey: key4,
+            queryFn: async () =>
+              Promise.reject(
+                new Error('this should not throw because query#3 already did'),
+              ),
+            useErrorBoundary: true,
+            retry: false,
           },
         ],
       })
