@@ -80,12 +80,13 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/react-query',
       jsName: 'ReactQuery',
       outputFile: 'index',
-      entryFile: ['src/index.ts', 'src/reactBatchedUpdates.native.ts'],
+      entryFile: ['src/index.ts', 'src/reactBatchedUpdates.native.ts', 'src/useSyncExternalStore.native.ts'],
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
+        'use-sync-external-store/shim/index.native.js': 'UseSyncExternalStoreNative',
         'react-native': 'ReactNative',
       },
       bundleUMDGlobals: [
@@ -321,6 +322,7 @@ function cjs({
         // TODO: figure out a better way to produce extensionless cjs imports
         "require('./logger.js')": "require('./logger')",
         "require('./reactBatchedUpdates.js')": "require('./reactBatchedUpdates')",
+        "require('./useSyncExternalStore.js')": "require('./useSyncExternalStore')",
         preventAssignment: true,
         delimiters: ['', ''],
       }),
