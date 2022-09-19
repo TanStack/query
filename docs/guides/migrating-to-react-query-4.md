@@ -14,6 +14,7 @@ You will need to un-/install dependencies and change the imports:
 ```
 npm uninstall react-query
 npm install @tanstack/react-query
+npm install @tanstack/react-query-devtools
 ```
 
 ```diff
