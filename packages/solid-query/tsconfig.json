@@ -3,10 +3,12 @@
   "compilerOptions": {
     "composite": true,
     "rootDir": "./src",
-    "outDir": "./build/lib",
+    "outDir": "./build/solid",
+    "declarationDir": "./build/lib",
     "tsBuildInfoFile": "./build/.tsbuildinfo",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "emitDeclarationOnly": false
   },
   "include": ["src"],
   // comment this out to fix errors in tests during development
