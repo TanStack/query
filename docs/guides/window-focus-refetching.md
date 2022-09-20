@@ -67,15 +67,17 @@ Instead of event listeners on `window`, React Native provides focus information 
 import { AppState } from 'react-native'
 import { focusManager } from '@tanstack/react-query'
 
-focusManager.setEventListener(handleFocus => {
-  const subscription = AppState.addEventListener('change', state => {
-    handleFocus(state === 'active')
-  })
-
-  return () => {
-    subscription.remove()
+function onAppStateChange(status: AppStateStatus) {
+  if (Platform.OS !== 'web') {
+    focusManager.setFocused(status === 'active')
   }
-})
+}
+
+useEffect(() => {
+  const subscription = AppState.addEventListener('change', onAppStateChange)
+
+  return () => subscription.remove()
+}, [])
 ```
 
 ## Managing focus state
