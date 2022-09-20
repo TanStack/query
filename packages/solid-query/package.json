@@ -20,6 +20,7 @@
     },
     "./package.json": "./package.json"
   },
+  "sideEffects": false,
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",

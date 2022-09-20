@@ -145,6 +145,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
+        'solid-js/store': 'SolidStore',
         'solid-js': 'Solid',
         '@tanstack/query-core': 'QueryCore',
       },
