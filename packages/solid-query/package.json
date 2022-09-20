@@ -14,16 +14,13 @@
   "main": "build/lib/index.js",
   "exports": {
     ".": {
-      "solid": "./build/lib/solid/index.js",
       "types": "./build/lib/index.d.ts",
+      "solid": "./build/solid/index.js",
       "import": "./build/lib/index.mjs",
-      "default": "./build/lib/index.js",
-      "browser": {
-        "import": "./build/lib/index.mjs",
-        "require": "./build/lib/index.js"
-      },
+      "browser": "./build/lib/index.mjs",
       "require": "./build/lib/index.js",
-      "node": "./build/lib/index.js"
+      "node": "./build/lib/index.js",
+      "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"
   },
@@ -37,6 +34,7 @@
   "files": [
     "build/lib/*",
     "build/umd/*",
+    "build/solid/*",
     "src",
     "codemods",
     "!codemods/jest.config.js",
