@@ -369,7 +369,7 @@ async function run() {
   }
 
   console.info('Building packages...')
-  execSync(`npm run build`, { encoding: 'utf8', stdio: 'inherit' })
+  execSync(`npx turbo run build`, { encoding: 'utf8', stdio: 'inherit' })
   console.info('')
 
   console.info('Validating packages...')
@@ -415,7 +415,7 @@ async function run() {
   }
 
   console.info('Testing packages...')
-  execSync(`npm run test:ci`, { encoding: 'utf8' })
+  execSync(`npx turbo run test:ci`, { encoding: 'utf8' })
   console.info('')
 
   console.info(`Updating all changed packages to version ${version}...`)

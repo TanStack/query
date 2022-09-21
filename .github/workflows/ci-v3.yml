@@ -21,10 +21,10 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-      - run: yarn test:ci
+      - run: npx turbo run test:ci test:eslint test:codemods
         env:
           REACTJS_VERSION: ${{ matrix.react }}
-      - run: yarn test:size
+      - run: npx turbo run test:size
         if: matrix.node == '16' && matrix.react == '18'
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
@@ -45,7 +45,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
         uses: bahmutov/npm-install@v1
-      - run: yarn build
+      - run: npx turbo run build
       - run: npx semantic-release@17
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
