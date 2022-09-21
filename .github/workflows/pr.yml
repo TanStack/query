@@ -18,12 +18,12 @@ jobs:
         with:
           install-command: npm install
       - run: |
-          npx turbo run test:size test:ci test:eslint test:codemods --concurrency=50%
+          npx turbo run test:size test:ci test:eslint test:codemods --concurrency=1
         if: matrix.react == '18'
         env:
           REACTJS_VERSION: ${{ matrix.react }}
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
-      - run: npx turbo run test:ci test:eslint test:codemods --concurrency=50%
+      - run: npx turbo run test:ci test:eslint test:codemods --concurrency=1
         if: matrix.react == '17'
         env:
           REACTJS_VERSION: ${{ matrix.react }}
