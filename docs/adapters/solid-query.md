@@ -1,14 +1,14 @@
 ---
-title: Solid Query (Coming Soon)
+title: Solid Query 
 ---
 
-The `@tanstack/solid-query` package offers a 1st-class API for using TanStack Query via Solid. However, all of the primitives you receive from this API are core APIs that are shared across all of the TanStack Adapters including the Query Client, query results, query subscriptions, etc.
+The `@tanstack/solid-query` package provides a 1st-class API for using TanStack Query with SolidJS. 
 
 ## Example
 
 ```tsx
 import { QueryClient, QueryClientProvider, createQuery } from '@tanstack/solid-query'
-import { For } from 'solid-js'
+import { Switch, Match, For } from 'solid-js'
 
 const queryClient = new QueryClient()
 
@@ -17,13 +17,19 @@ function Example() {
 
   return (
     <div>
-      {query.isLoading ? (
-        'Loading...'
-      ) : query.isError ? (
-        'Error!'
-      ) : query.data ? (
-        <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
-      ) : null}
+      <Switch>
+        <Match when={query.isLoading}>
+          <p>Loading...</p>
+        </Match>
+        <Match when={query.isError}>
+          <p>Error: {query.error.message}</p>
+        </Match>
+        <Match when={query.isSuccess}>
+          <For each={query.data}>
+            {(todo) => <p>{todo.title}</p>}
+          </For>
+        </Match>
+      </Switch>
     </div>
   )
 }
@@ -38,38 +44,58 @@ function App() {
 
 ```
 
-## Important Differences with React Query
+## Available Functions
 
-In general solid query follows the same API as React Query, but there are some important differences to be aware of. Keep these in mind as you read the tanstack query documentation.
+Solid Query offers useful primitives and functions that will make managing server state in SolidJS apps easier.
 
-- Solid Query does not support server side rendering yet! Please reach out in the solid query channel on the tanstack query discord if you would like to help contribute to solid query's SSR support.
+- `createQuery`
+- `createQueries`
+- `createInfiniteQueries`
+- `createMutation`
+- `useIsFetching`
+- `useIsMutating`
+- `useQueryClient`
+- `QueryClient`
+- `QueryClientProvider`
 
-- Exports follow the solid naming convention `createX` instead of `useX` *unless* the export is used to access `context`. For example, `useQuery` becomes `createQuery`, `useMutation` becomes `createMutation`, but `useQueryClient` is `useQueryClient` because it accesses the `client` from the `QueryClientProvider` context.
 
-- Query keys passed to `createQuery` and `createQueries` are Accessor functions which return arrays. This change makes it easy to implement reactive query keys.
+
+
+## Important Differences between Solid Query & React Query
+
+Solid Query offers an API similar to  React Query, but there are some key differences to be mindful of.
+
+- To maintain their reactivity, Query keys need to be wrapped inside a function while using `createQuery`, `createQueries`, `createInfiniteQuery` and `useIsFetching`.
 
 ```tsx
 // ❌ react version
-useQuery(["todos"], fetchTodos)
+useQuery(["todos", todo], fetchTodos)
 
 // ✅ solid version
-createQuery(() => ["todos"], fetchTodos)
+createQuery(() => ["todos", todo()], fetchTodos)
 ```
 
-> Mutation keys are not accessors. Why? Because it is impossible to differentiate the `createMutation` overloads `createMutation(mutationFn, options)` and `createMutation(mutationKey, options)` if the mutation key is an accessor function.
-> If you need reactivity in a mutation key you can pass the mutation key as an option with an object getter.
-> ```tsx
-> createMutation(updateTodos, {
->   // ✅ reactive mutation key passed as an object getter
->   get mutationKey() {
->     return ["todos"]
->   }
-> })
-> ```
+- Suspense works for queries out of the box if you access the query data inside a `<Suspense>` boundary.
 
-- Solid Query does not export a `QueryErrorResetBoundary`. Instead wrap your components in a solid `<ErrorBoundary>`.
+```tsx
+import { For, Suspense } from 'solid-js'
 
-- `createQuery` does not support destructuring outside of a reactive context. The return value of `createQuery` is a store, and accessing values in the store is only reactive in a reactive context.
+function Example() {
+  const query = createQuery(() => ['todos'], fetchTodos)
+  return (
+    <div>
+      {/* ✅ Will trigger loading fallback, data accessed in a suspense context. */}
+      <Suspense fallback={"Loading..."}>
+        <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
+      </Suspense>
+      {/* ❌ Will not trigger loading fallback, data not accessed in a suspense context. */}
+      <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
+    </div>
+  )
+}
+```
+
+- Solid Query primitives (`createX`) do not support destructuring. The return value from these functions is a store, and their properties are only tracked in a reactive context.
 
 ```tsx
 import { QueryClient, QueryClientProvider, createQuery } from '@tanstack/solid-query'
@@ -147,13 +173,19 @@ function Example() {
 
   return (
     <div>
-      {query.isLoading ? (
-        'Loading...'
-      ) : query.isError ? (
-        'Error!'
-      ) : query.data ? (
-        <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
-      ) : null}
+      <Switch>
+        <Match when={query.isLoading}>
+          <p>Loading...</p>
+        </Match>
+        <Match when={query.isError}>
+          <p>Error: {query.error.message}</p>
+        </Match>
+        <Match when={query.isSuccess}>
+          <For each={query.data}>
+            {(todo) => <p>{todo.title}</p>}
+          </For>
+        </Match>
+      </Switch>
       <button onClick={() => setEnabled(!enabled())}>Toggle enabled</button>
     </div>
   )
@@ -168,25 +200,6 @@ function App() {
 }
 ```
 
-- You do not need to provide `suspense: true` to query options. Suspense works for queries out of the box if you access the query data in a `<Suspense>` context.
+- Errors can be caught and reset using SolidJS' native `ErrorBoundary` component. `QueryErrorResetBoundary` is not needed with Solid Query
 
-
-```tsx
-import { For, Suspense } from 'solid-js'
-
-function Example() {
-  const query = createQuery(() => ['todos'], fetchTodos)
-  return (
-    <div>
-      {/* ✅ Will trigger loading fallback, data accessed in a suspense context. */}
-      <Suspense fallback={"Loading..."}>
-        <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
-      </Suspense>
-      {/* ❌ Will not trigger loading fallback, data not accessed in a suspense context. */}
-      <For each={query.data}>{(todo) => <div>{todo.title}</div>}</For>
-    </div>
-  )
-}
-```
-
-- Property tracking is handled through solid's fine grained reactivity, so `notifyOnChange` options are not used.
+- Since Property tracking is handled through Solid's fine grained reactivity, options like `notifyOnChangeProps` are not needed
