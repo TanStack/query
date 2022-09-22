@@ -49,6 +49,7 @@
     "import/no-cycle": "error",
     "import/no-unresolved": ["error",  { "ignore": ["^@tanstack\/"] }],
     "import/no-unused-modules": ["off", { "unusedExports": true }],
-    "no-redeclare": "off"
+    "no-redeclare": "off",
+    "react-hooks/exhaustive-deps": "error"
   }
 }
