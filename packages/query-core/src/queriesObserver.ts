@@ -6,7 +6,8 @@ import type {
   DefaultedQueryObserverOptions,
 } from './types'
 import type { QueryClient } from './queryClient'
-import { NotifyOptions, QueryObserver } from './queryObserver'
+import type { NotifyOptions } from './queryObserver'
+import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void

@@ -5,15 +5,16 @@ import {
   mockLogger,
   createQueryClient,
 } from './utils'
-import {
+import type {
   QueryCache,
   QueryClient,
+  QueryFunctionContext,
+  QueryObserverResult} from '..';
+import {
   QueryObserver,
   isCancelledError,
   isError,
-  onlineManager,
-  QueryFunctionContext,
-  QueryObserverResult,
+  onlineManager
 } from '..'
 import { waitFor } from '@testing-library/react'
 

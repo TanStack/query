@@ -5,10 +5,11 @@ import {
   mockLogger,
   createQueryClient,
 } from './utils'
-import {
+import type {
   QueryClient,
+  QueryObserverResult} from '..';
+import {
   QueryObserver,
-  QueryObserverResult,
   focusManager,
 } from '..'
 

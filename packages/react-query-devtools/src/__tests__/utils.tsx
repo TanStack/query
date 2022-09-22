@@ -1,4 +1,4 @@
-import { MatcherFunction } from '@testing-library/dom/types/matches'
+import type { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import * as React from 'react'
 import { ReactQueryDevtools } from '../devtools'

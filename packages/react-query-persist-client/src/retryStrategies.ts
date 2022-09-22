@@ -1,4 +1,4 @@
-import { PersistedClient } from './persist'
+import type { PersistedClient } from './persist'
 
 export type PersistRetryer = (props: {
   persistedClient: PersistedClient

@@ -1,11 +1,12 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
+import type {
+  ContextOptions,
+  QueryClientConfig,
+  MutationOptions} from '..';
 import {
   QueryClient,
-  ContextOptions,
-  QueryClientProvider,
-  QueryClientConfig,
-  MutationOptions,
+  QueryClientProvider
 } from '..'
 import * as utils from '@tanstack/query-core'
 

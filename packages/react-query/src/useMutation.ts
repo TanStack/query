@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
+import type { MutationFunction, MutationKey } from '@tanstack/query-core'
 import {
   notifyManager,
   parseMutationArgs,
   MutationObserver,
-  MutationFunction,
-  MutationKey,
 } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import {
+import type {
   UseMutateFunction,
   UseMutationOptions,
   UseMutationResult,

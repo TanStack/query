@@ -1,12 +1,13 @@
 import { waitFor } from '@testing-library/react'
 import { sleep, queryKey, createQueryClient, mockLogger } from './utils'
-import {
+import type {
   QueryClient,
+  QueryObserverResult} from '..';
+import {
   QueriesObserver,
-  QueryObserverResult,
   QueryObserver,
 } from '..'
-import { QueryKey } from '..'
+import type { QueryKey } from '..'
 
 describe('queriesObserver', () => {
   let queryClient: QueryClient

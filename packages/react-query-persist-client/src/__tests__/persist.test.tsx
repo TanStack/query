@@ -1,7 +1,8 @@
 import { createQueryClient, sleep } from './utils'
-import {
+import type {
   PersistedClient,
-  Persister,
+  Persister} from '../persist';
+import {
   persistQueryClientSubscribe,
 } from '../persist'
 

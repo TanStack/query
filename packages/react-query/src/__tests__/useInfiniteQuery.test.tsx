@@ -9,12 +9,13 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import {
+import type {
   InfiniteData,
-  QueryCache,
   QueryFunctionContext,
-  useInfiniteQuery,
-  UseInfiniteQueryResult,
+  UseInfiniteQueryResult} from '..';
+import {
+  QueryCache,
+  useInfiniteQuery
 } from '..'
 
 interface Result {

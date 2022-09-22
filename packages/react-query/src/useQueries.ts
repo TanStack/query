@@ -1,14 +1,10 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import {
-  QueryKey,
-  QueryFunction,
-  notifyManager,
-  QueriesObserver,
-} from '@tanstack/query-core'
+import type { QueryKey, QueryFunction } from '@tanstack/query-core'
+import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { UseQueryOptions, UseQueryResult } from './types'
+import type { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.

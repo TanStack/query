@@ -8,17 +8,14 @@ import type {
   QueryKey,
 } from './types'
 import type { QueryClient } from './queryClient'
-import {
-  NotifyOptions,
-  ObserverFetchOptions,
-  QueryObserver,
-} from './queryObserver'
+import type { NotifyOptions, ObserverFetchOptions } from './queryObserver'
+import { QueryObserver } from './queryObserver'
 import {
   hasNextPage,
   hasPreviousPage,
   infiniteQueryBehavior,
 } from './infiniteQueryBehavior'
-import { Query } from './query'
+import type { Query } from './query'
 
 type InfiniteQueryObserverListener<TData, TError> = (
   result: InfiniteQueryObserverResult<TData, TError>,

@@ -3,14 +3,15 @@ import { ErrorBoundary } from 'react-error-boundary'
 import * as React from 'react'
 
 import { createQueryClient, queryKey, renderWithClient, sleep } from './utils'
+import type {
+  UseInfiniteQueryResult,
+  UseQueryResult} from '..';
 import {
   QueryCache,
   QueryErrorResetBoundary,
   useInfiniteQuery,
-  UseInfiniteQueryResult,
   useQuery,
-  useQueryErrorResetBoundary,
-  UseQueryResult,
+  useQueryErrorResetBoundary
 } from '..'
 
 describe("useQuery's in Suspense mode", () => {

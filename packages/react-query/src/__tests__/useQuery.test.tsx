@@ -13,14 +13,15 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import {
+import type {
   DefinedUseQueryResult,
-  QueryCache,
   QueryFunction,
   QueryFunctionContext,
-  useQuery,
   UseQueryOptions,
-  UseQueryResult,
+  UseQueryResult} from '..';
+import {
+  QueryCache,
+  useQuery
 } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 

@@ -12,18 +12,19 @@ import {
   renderWithClient,
   sleep,
 } from './utils'
-import {
-  QueriesObserver,
-  QueryCache,
+import type {
   QueryClient,
   QueryFunction,
   QueryKey,
   QueryObserverResult,
-  useQueries,
   UseQueryOptions,
-  UseQueryResult,
+  UseQueryResult} from '..';
+import {
+  QueriesObserver,
+  QueryCache,
+  useQueries
 } from '..'
-import { QueryFunctionContext } from '@tanstack/query-core'
+import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {
   const queryCache = new QueryCache()
