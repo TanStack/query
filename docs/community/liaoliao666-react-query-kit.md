@@ -9,8 +9,8 @@ title: React Query Kit
 
 - Make `queryKey` strongly related with `queryFn`
 - Manage `queryKey` in a type-safe way
-- Generate quickly a custom ReactQuery hook
-- Make `queryClient`'s operations more clearly associated with which custom ReactQuery hook
+- Generate a custom ReactQuery hook quickly
+- Make `queryClient`'s operations clearly associated with custom ReactQuery hooks
 - Set defaultOptions for custom ReactQuery hooks easier and clearer
 
 ## Installation
