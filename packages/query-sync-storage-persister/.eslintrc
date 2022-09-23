@@ -1,6 +1,6 @@
 {
   "parserOptions": {
-    "project": "packages/query-sync-storage-persister/tsconfig.lint.json",
+    "project": "./tsconfig.lint.json",
     "sourceType": "module"
   }
 }
