@@ -1,5 +1,5 @@
 import { createQueryClient, queryKey, sleep } from './utils'
-import type { QueryClient} from '..';
+import type { QueryClient } from '..'
 import { InfiniteQueryObserver } from '..'
 
 describe('InfiniteQueryObserver', () => {

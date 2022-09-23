@@ -18,12 +18,9 @@ import type {
   QueryKey,
   QueryObserverResult,
   UseQueryOptions,
-  UseQueryResult} from '..';
-import {
-  QueriesObserver,
-  QueryCache,
-  useQueries
+  UseQueryResult,
 } from '..'
+import { QueriesObserver, QueryCache, useQueries } from '..'
 import type { QueryFunctionContext } from '@tanstack/query-core'
 
 describe('useQueries', () => {

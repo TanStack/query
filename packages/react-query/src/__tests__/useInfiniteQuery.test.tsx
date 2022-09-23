@@ -12,11 +12,9 @@ import {
 import type {
   InfiniteData,
   QueryFunctionContext,
-  UseInfiniteQueryResult} from '..';
-import {
-  QueryCache,
-  useInfiniteQuery
+  UseInfiniteQueryResult,
 } from '..'
+import { QueryCache, useInfiniteQuery } from '..'
 
 interface Result {
   items: number[]

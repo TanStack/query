@@ -9,7 +9,7 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import type { QueryClient} from '..';
+import type { QueryClient } from '..'
 import { QueryCache, useIsFetching, useQuery } from '..'
 
 describe('useIsFetching', () => {

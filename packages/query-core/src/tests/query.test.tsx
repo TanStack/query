@@ -9,13 +9,9 @@ import type {
   QueryCache,
   QueryClient,
   QueryFunctionContext,
-  QueryObserverResult} from '..';
-import {
-  QueryObserver,
-  isCancelledError,
-  isError,
-  onlineManager
+  QueryObserverResult,
 } from '..'
+import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
 
 describe('query', () => {

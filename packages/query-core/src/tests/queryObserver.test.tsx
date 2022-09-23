@@ -5,13 +5,8 @@ import {
   mockLogger,
   createQueryClient,
 } from './utils'
-import type {
-  QueryClient,
-  QueryObserverResult} from '..';
-import {
-  QueryObserver,
-  focusManager,
-} from '..'
+import type { QueryClient, QueryObserverResult } from '..'
+import { QueryObserver, focusManager } from '..'
 
 describe('queryObserver', () => {
   let queryClient: QueryClient

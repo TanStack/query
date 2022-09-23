@@ -18,11 +18,9 @@ import type {
   QueryFunction,
   QueryFunctionContext,
   UseQueryOptions,
-  UseQueryResult} from '..';
-import {
-  QueryCache,
-  useQuery
+  UseQueryResult,
 } from '..'
+import { QueryCache, useQuery } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {

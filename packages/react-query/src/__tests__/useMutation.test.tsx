@@ -3,7 +3,7 @@ import '@testing-library/jest-dom'
 import * as React from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 
-import type { QueryClient} from '..';
+import type { QueryClient } from '..'
 import { MutationCache, QueryCache, useMutation } from '..'
 import type { UseMutationResult } from '../types'
 import {

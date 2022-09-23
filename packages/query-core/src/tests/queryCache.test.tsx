@@ -1,5 +1,5 @@
 import { sleep, queryKey, createQueryClient } from './utils'
-import type { QueryClient } from '..';
+import type { QueryClient } from '..'
 import { QueryCache } from '..'
 import type { Query } from '.././query'
 

@@ -6,11 +6,9 @@ import type {
   QueryCache,
   QueryClient,
   QueryFunction,
-  QueryObserverOptions} from '..';
-import {
-  InfiniteQueryObserver,
-  QueryObserver
+  QueryObserverOptions,
 } from '..'
+import { InfiniteQueryObserver, QueryObserver } from '..'
 import { focusManager, onlineManager } from '..'
 
 describe('queryClient', () => {
