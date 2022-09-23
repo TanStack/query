@@ -7,6 +7,7 @@
     { "path": "packages/query-sync-storage-persister" },
     { "path": "packages/react-query" },
     { "path": "packages/react-query-devtools" },
-    { "path": "packages/react-query-persist-client" }
+    { "path": "packages/react-query-persist-client" },
+    { "path": "packages/solid-query" },
   ]
 }

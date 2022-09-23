@@ -1,0 +1,10 @@
+{
+  "parserOptions": {
+    "project": "./packages/solid-query/tsconfig.lint.json",
+    "sourceType": "module"
+  },
+  "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react-hooks/rules-of-hooks": "off"
+  }
+}

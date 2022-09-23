@@ -1,0 +1,19 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "./build/solid",
+    "declarationDir": "./build/lib",
+    "tsBuildInfoFile": "./build/.tsbuildinfo",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
+    "emitDeclarationOnly": false
+  },
+  "include": ["src"],
+  // comment this out to fix errors in tests during development
+  "exclude": ["src/__tests__"],
+  "references": [
+    { "path": "../query-core" }
+  ]
+}
