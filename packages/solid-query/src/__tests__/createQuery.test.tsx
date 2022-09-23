@@ -2681,9 +2681,6 @@ describe('createQuery', () => {
 
     await waitFor(() => screen.getByText('count: 2'))
 
-    // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
-
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
   })
