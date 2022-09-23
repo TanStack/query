@@ -5,16 +5,13 @@ import {
   mockLogger,
   createQueryClient,
 } from './utils'
-import {
+import type {
   QueryCache,
   QueryClient,
-  QueryObserver,
-  isCancelledError,
-  isError,
-  onlineManager,
   QueryFunctionContext,
   QueryObserverResult,
 } from '..'
+import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
 
 describe('query', () => {

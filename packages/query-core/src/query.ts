@@ -12,9 +12,11 @@ import type {
 } from './types'
 import type { QueryCache } from './queryCache'
 import type { QueryObserver } from './queryObserver'
-import { defaultLogger, Logger } from './logger'
+import type { Logger } from './logger'
+import { defaultLogger } from './logger'
 import { notifyManager } from './notifyManager'
-import { Retryer, isCancelledError, canFetch, createRetryer } from './retryer'
+import type { Retryer } from './retryer'
+import { isCancelledError, canFetch, createRetryer } from './retryer'
 import { Removable } from './removable'
 
 // TYPES

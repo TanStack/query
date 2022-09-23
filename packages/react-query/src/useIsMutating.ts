@@ -1,13 +1,9 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import {
-  notifyManager,
-  MutationKey,
-  MutationFilters,
-  parseMutationFilterArgs,
-} from '@tanstack/query-core'
-import { ContextOptions } from './types'
+import type { MutationKey, MutationFilters } from '@tanstack/query-core'
+import { notifyManager, parseMutationFilterArgs } from '@tanstack/query-core'
+import type { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
 
 interface Options extends ContextOptions {}

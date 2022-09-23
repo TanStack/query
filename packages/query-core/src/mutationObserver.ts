@@ -1,4 +1,5 @@
-import { Action, getDefaultState, Mutation } from './mutation'
+import type { Action, Mutation } from './mutation'
+import { getDefaultState } from './mutation'
 import { notifyManager } from './notifyManager'
 import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'

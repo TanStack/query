@@ -2,7 +2,8 @@ import * as React from 'react'
 import { fireEvent, screen, waitFor, act } from '@testing-library/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
-import { useQuery, QueryClient } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { sortFns } from '../utils'
 import {
   getByTextContent,

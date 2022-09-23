@@ -1,12 +1,7 @@
 import * as React from 'react'
 import { act, render } from '@testing-library/react'
-import {
-  QueryClient,
-  ContextOptions,
-  QueryClientProvider,
-  QueryClientConfig,
-  MutationOptions,
-} from '..'
+import type { ContextOptions, QueryClientConfig, MutationOptions } from '..'
+import { QueryClient, QueryClientProvider } from '..'
 import * as utils from '@tanstack/query-core'
 
 export function renderWithClient(

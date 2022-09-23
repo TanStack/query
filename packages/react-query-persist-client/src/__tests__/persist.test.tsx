@@ -1,9 +1,6 @@
 import { createQueryClient, sleep } from './utils'
-import {
-  PersistedClient,
-  Persister,
-  persistQueryClientSubscribe,
-} from '../persist'
+import type { PersistedClient, Persister } from '../persist'
+import { persistQueryClientSubscribe } from '../persist'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined

@@ -1,15 +1,14 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
 
-import {
-  QueryClient,
-  useQuery,
+import type {
   UseQueryResult,
-  useQueries,
   DefinedUseQueryResult,
 } from '@tanstack/react-query'
+import { QueryClient, useQuery, useQueries } from '@tanstack/react-query'
 import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
-import { PersistedClient, Persister, persistQueryClientSave } from '../persist'
+import type { PersistedClient, Persister } from '../persist'
+import { persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 
 const createMockPersister = (): Persister => {

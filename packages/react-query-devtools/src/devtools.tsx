@@ -1,13 +1,15 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
-import {
-  useQueryClient,
-  onlineManager,
-  notifyManager,
+import type {
   QueryCache,
   QueryClient,
   QueryKey as QueryKeyType,
   ContextOptions,
+} from '@tanstack/react-query'
+import {
+  useQueryClient,
+  onlineManager,
+  notifyManager,
 } from '@tanstack/react-query'
 import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'

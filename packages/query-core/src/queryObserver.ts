@@ -1,4 +1,4 @@
-import { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
+import type { DefaultedQueryObserverOptions, RefetchPageFilters } from './types'
 import {
   isServer,
   isValidTimeout,

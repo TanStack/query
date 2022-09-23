@@ -1,13 +1,9 @@
 import * as React from 'react'
-import {
-  QueryKey,
-  notifyManager,
-  parseFilterArgs,
-  QueryFilters,
-} from '@tanstack/query-core'
+import type { QueryKey, QueryFilters } from '@tanstack/query-core'
+import { notifyManager, parseFilterArgs } from '@tanstack/query-core'
 
 import { useSyncExternalStore } from './useSyncExternalStore'
-import { ContextOptions } from './types'
+import type { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
 
 interface Options extends ContextOptions {}

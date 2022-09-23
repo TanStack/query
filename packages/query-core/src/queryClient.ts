@@ -1,13 +1,11 @@
+import type { QueryFilters, Updater, MutationFilters } from './utils'
 import {
-  QueryFilters,
-  Updater,
   hashQueryKey,
   noop,
   parseFilterArgs,
   parseQueryArgs,
   partialMatchKey,
   hashQueryKeyByOptions,
-  MutationFilters,
   functionalUpdate,
 } from './utils'
 import type {
@@ -38,8 +36,9 @@ import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { notifyManager } from './notifyManager'
 import { infiniteQueryBehavior } from './infiniteQueryBehavior'
-import { CancelOptions, DefaultedQueryObserverOptions } from './types'
-import { defaultLogger, Logger } from './logger'
+import type { CancelOptions, DefaultedQueryObserverOptions } from './types'
+import type { Logger } from './logger'
+import { defaultLogger } from './logger'
 
 // TYPES
 

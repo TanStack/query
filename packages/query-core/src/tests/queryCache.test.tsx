@@ -1,6 +1,7 @@
 import { sleep, queryKey, createQueryClient } from './utils'
-import { QueryCache, QueryClient } from '..'
-import { Query } from '.././query'
+import type { QueryClient } from '..'
+import { QueryCache } from '..'
+import type { Query } from '.././query'
 
 describe('queryCache', () => {
   let queryClient: QueryClient

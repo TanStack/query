@@ -1,8 +1,9 @@
 import * as React from 'react'
 
-import { hydrate, HydrateOptions } from '@tanstack/query-core'
+import type { HydrateOptions } from '@tanstack/query-core'
+import { hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { ContextOptions } from './types'
+import type { ContextOptions } from './types'
 
 export function useHydrate(
   state: unknown,

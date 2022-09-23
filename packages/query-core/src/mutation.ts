@@ -1,10 +1,12 @@
 import type { MutationOptions, MutationStatus, MutationMeta } from './types'
 import type { MutationCache } from './mutationCache'
 import type { MutationObserver } from './mutationObserver'
-import { defaultLogger, Logger } from './logger'
+import type { Logger } from './logger'
+import { defaultLogger } from './logger'
 import { notifyManager } from './notifyManager'
 import { Removable } from './removable'
-import { canFetch, Retryer, createRetryer } from './retryer'
+import type { Retryer } from './retryer'
+import { canFetch, createRetryer } from './retryer'
 
 // TYPES
 

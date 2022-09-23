@@ -1,6 +1,6 @@
-import { QueryClient } from '..'
+import type { QueryClient } from '..'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
-import { MutationState } from '../mutation'
+import type { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
 
 describe('mutations', () => {

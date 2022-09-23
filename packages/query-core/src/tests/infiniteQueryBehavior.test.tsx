@@ -1,9 +1,9 @@
 import { waitFor } from '@testing-library/react'
-import {
+import type {
   QueryClient,
-  InfiniteQueryObserver,
   InfiniteQueryObserverResult,
 } from '@tanstack/query-core'
+import { InfiniteQueryObserver } from '@tanstack/query-core'
 import { createQueryClient, queryKey } from './utils'
 
 describe('InfiniteQueryBehavior', () => {

@@ -1,7 +1,8 @@
 import * as React from 'react'
 import type { Query } from '@tanstack/react-query'
 
-import { Theme, useTheme } from './theme'
+import type { Theme } from './theme'
+import { useTheme } from './theme'
 import useMediaQuery from './useMediaQuery'
 
 type StyledComponent<T> = T extends 'button'

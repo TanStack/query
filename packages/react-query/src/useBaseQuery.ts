@@ -1,10 +1,11 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import { QueryKey, notifyManager, QueryObserver } from '@tanstack/query-core'
+import type { QueryKey, QueryObserver } from '@tanstack/query-core'
+import { notifyManager } from '@tanstack/query-core'
 import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
 import { useQueryClient } from './QueryClientProvider'
-import { UseBaseQueryOptions } from './types'
+import type { UseBaseQueryOptions } from './types'
 import { shouldThrowError } from './utils'
 import { useIsRestoring } from './isRestoring'
 

@@ -1,10 +1,10 @@
-import {
-  parseQueryArgs,
-  QueryFunction,
-  QueryKey,
-  QueryObserver,
-} from '@tanstack/query-core'
-import { DefinedUseQueryResult, UseQueryOptions, UseQueryResult } from './types'
+import type { QueryFunction, QueryKey } from '@tanstack/query-core'
+import { parseQueryArgs, QueryObserver } from '@tanstack/query-core'
+import type {
+  DefinedUseQueryResult,
+  UseQueryOptions,
+  UseQueryResult,
+} from './types'
 import { useBaseQuery } from './useBaseQuery'
 
 // HOOK

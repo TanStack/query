@@ -9,7 +9,8 @@ import {
   setActTimeout,
   sleep,
 } from './utils'
-import { QueryCache, QueryClient, useIsFetching, useQuery } from '..'
+import type { QueryClient } from '..'
+import { QueryCache, useIsFetching, useQuery } from '..'
 
 describe('useIsFetching', () => {
   // See https://github.com/tannerlinsley/react-query/issues/105

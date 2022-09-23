@@ -1,10 +1,7 @@
 import { act } from '@testing-library/react'
 
-import {
-  MutationOptions,
-  QueryClient,
-  QueryClientConfig,
-} from '@tanstack/query-core'
+import type { MutationOptions, QueryClientConfig } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/query-core'
 import * as utils from '../utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
