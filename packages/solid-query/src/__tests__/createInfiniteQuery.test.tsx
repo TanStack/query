@@ -9,17 +9,14 @@ import {
   For,
   Index,
   Match,
-  on,
   Switch,
 } from 'solid-js'
-import {
-  createInfiniteQuery,
+import type {
   CreateInfiniteQueryResult,
   InfiniteData,
-  QueryCache,
-  QueryClientProvider,
   QueryFunctionContext,
 } from '..'
+import { createInfiniteQuery, QueryCache, QueryClientProvider } from '..'
 import { Blink, queryKey, setActTimeout } from './utils'
 
 interface Result {
@@ -1748,7 +1745,7 @@ describe('useInfiniteQuery', () => {
             fallback={
               <>
                 <div>Data:</div>
-                <For each={state.data!.pages ?? []}>
+                <For each={state.data!.pages}>
                   {(page, i) => (
                     <div>
                       <div>

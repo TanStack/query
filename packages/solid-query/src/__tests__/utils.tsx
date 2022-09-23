@@ -1,11 +1,7 @@
-import { QueryClient, QueryClientConfig } from '@tanstack/query-core'
-import {
-  createEffect,
-  createSignal,
-  onCleanup,
-  ParentProps,
-  Show,
-} from 'solid-js'
+import type { QueryClientConfig } from '@tanstack/query-core'
+import { QueryClient } from '@tanstack/query-core'
+import type { ParentProps } from 'solid-js'
+import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
 
 let queryKeyCount = 0
 export function queryKey(): () => Array<string> {

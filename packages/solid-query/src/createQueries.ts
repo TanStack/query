@@ -1,7 +1,12 @@
 import { createComputed, onCleanup, onMount } from 'solid-js'
-import { QueryFunction, QueriesObserver } from '@tanstack/query-core'
+import type { QueryFunction } from '@tanstack/query-core'
+import { QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import { CreateQueryOptions, CreateQueryResult, SolidQueryKey } from './types'
+import type {
+  CreateQueryOptions,
+  CreateQueryResult,
+  SolidQueryKey,
+} from './types'
 import { createStore, unwrap } from 'solid-js/store'
 import { scheduleMicrotask } from './utils'
 

@@ -1,9 +1,6 @@
-import {
-  QueryObserver,
-  QueryFunction,
-  QueryOptions,
-} from '@tanstack/query-core'
-import {
+import type { QueryFunction, QueryOptions } from '@tanstack/query-core'
+import { QueryObserver } from '@tanstack/query-core'
+import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,

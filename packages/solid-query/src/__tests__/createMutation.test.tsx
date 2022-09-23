@@ -7,14 +7,14 @@ import {
   ErrorBoundary,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
+import type { QueryClient } from '..'
 import {
   createMutation,
   MutationCache,
   QueryCache,
-  QueryClient,
   QueryClientProvider,
 } from '..'
-import { CreateMutationResult } from '../types'
+import type { CreateMutationResult } from '../types'
 import {
   createQueryClient,
   mockNavigatorOnLine,
@@ -105,7 +105,7 @@ describe('useMutation', () => {
   })
 
   it('should be able to call `onSuccess` and `onSettled` after each successful mutate', async () => {
-    let [count, setCount] = createSignal(0)
+    const [count, setCount] = createSignal(0)
     const onSuccessMock = jest.fn()
     const onSettledMock = jest.fn()
 
@@ -173,7 +173,7 @@ describe('useMutation', () => {
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
     const onErrorMock = jest.fn()
     const onSettledMock = jest.fn()
-    let [count, setCount] = createSignal(0)
+    const [count, setCount] = createSignal(0)
 
     function Page() {
       const mutation = createMutation(

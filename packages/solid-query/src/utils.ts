@@ -1,10 +1,10 @@
-import {
+import type {
   SolidQueryKey,
   SolidQueryFilters,
   ParseFilterArgs,
   ParseQueryArgs,
 } from './types'
-import { QueryFunction, QueryOptions } from '@tanstack/query-core'
+import type { QueryFunction, QueryOptions } from '@tanstack/query-core'
 
 export function isQueryKey(value: unknown): value is SolidQueryKey {
   return typeof value === 'function'

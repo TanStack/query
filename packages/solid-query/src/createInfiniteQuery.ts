@@ -1,10 +1,10 @@
-import {
+import type {
   QueryObserver,
-  InfiniteQueryObserver,
   QueryFunction,
   QueryOptions,
 } from '@tanstack/query-core'
-import {
+import { InfiniteQueryObserver } from '@tanstack/query-core'
+import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
   SolidQueryKey,

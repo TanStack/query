@@ -8,11 +8,10 @@ import {
   Show,
   Suspense,
 } from 'solid-js'
+import type { CreateInfiniteQueryResult, CreateQueryResult } from '..'
 import {
   createInfiniteQuery,
-  CreateInfiniteQueryResult,
   createQuery,
-  CreateQueryResult,
   QueryCache,
   QueryClientProvider,
 } from '..'

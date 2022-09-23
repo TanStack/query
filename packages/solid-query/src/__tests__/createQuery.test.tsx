@@ -1,25 +1,23 @@
 import '@testing-library/jest-dom'
+import type { JSX } from 'solid-js'
 import {
   createEffect,
   createMemo,
   createRenderEffect,
   createSignal,
   ErrorBoundary,
-  JSX,
   Match,
   on,
   Switch,
 } from 'solid-js'
 import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
-import {
-  createQuery,
+import type {
   CreateQueryOptions,
   CreateQueryResult,
   DefinedCreateQueryResult,
-  QueryCache,
-  QueryClientProvider,
   QueryFunction,
 } from '..'
+import { createQuery, QueryCache, QueryClientProvider } from '..'
 import {
   Blink,
   createQueryClient,
@@ -2134,7 +2132,7 @@ describe('createQuery', () => {
 
   it('should keep the previous data on disabled query when keepPreviousData is set and switching query key multiple times', async () => {
     const key = queryKey()
-    const states: CreateQueryResult<number>[] = []
+    const states: Partial<CreateQueryResult<number>>[] = []
 
     queryClient.setQueryData([key(), 10], 10)
 
@@ -2777,8 +2775,8 @@ describe('createQuery', () => {
   it('should not pass stringified variables to query function', async () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
-    type CustomQueryKey = [ReturnType<typeof key>, typeof variables]
-    const states: CreateQueryResult<CustomQueryKey>[] = []
+    type CustomQueryKey = readonly [ReturnType<typeof key>, typeof variables]
+    const states: Partial<CreateQueryResult<CustomQueryKey>>[] = []
 
     // TODO(lukemurray): extract the query function to a variable queryFn
 
@@ -4235,7 +4233,7 @@ describe('createQuery', () => {
     ))
 
     expect(queryFn).not.toHaveBeenCalled()
-    expect(queryCache.find(key)).not.toBeUndefined()
+    expect(queryCache.find(key())).not.toBeUndefined()
     screen.getByText('fetchStatus: idle')
   })
 
@@ -5103,7 +5101,7 @@ describe('createQuery', () => {
 
   it('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
-    const states: CreateQueryResult<number>[] = []
+    const states: Optional<Partial<CreateQueryResult<number>>>[] = []
     let count = 0
 
     function Page() {
@@ -5774,7 +5772,7 @@ describe('createQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>
@@ -5829,7 +5827,7 @@ describe('createQuery', () => {
             </div>
             <div>data: {state.data}</div>
             <button
-              onClick={() => queryClient.invalidateQueries({ queryKey: key })}
+              onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
             >
               invalidate
             </button>

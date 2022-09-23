@@ -8,13 +8,8 @@ import {
   ErrorBoundary,
   Show,
 } from 'solid-js'
-import {
-  createQuery,
-  QueryCache,
-  QueryClient,
-  QueryClientProvider,
-  useIsFetching,
-} from '..'
+import type { QueryClient } from '..'
+import { createQuery, QueryCache, QueryClientProvider, useIsFetching } from '..'
 import { createQueryClient, queryKey, setActTimeout, sleep } from './utils'
 
 describe('useIsFetching', () => {

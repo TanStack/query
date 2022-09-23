@@ -1,11 +1,7 @@
-import {
-  parseMutationArgs,
-  MutationObserver,
-  MutationFunction,
-  MutationKey,
-} from '@tanstack/query-core'
+import type { MutationFunction, MutationKey } from '@tanstack/query-core'
+import { parseMutationArgs, MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import {
+import type {
   CreateMutateFunction,
   CreateMutationOptions,
   CreateMutationResult,

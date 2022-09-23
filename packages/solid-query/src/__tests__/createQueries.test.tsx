@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from 'solid-testing-library'
 
 import * as QueriesObserverModule from '../../../query-core/src/queriesObserver'
 
-import { QueryFunctionContext } from '@tanstack/query-core'
+import type { QueryFunctionContext } from '@tanstack/query-core'
 import {
   createContext,
   createMemo,
@@ -10,17 +10,19 @@ import {
   createSignal,
   ErrorBoundary,
 } from 'solid-js'
-import {
-  createQueries,
+import type {
   CreateQueryOptions,
   CreateQueryResult,
-  QueriesObserver,
-  QueryCache,
   QueryClient,
-  QueryClientProvider,
   QueryFunction,
   QueryObserverResult,
   SolidQueryKey,
+} from '..'
+import {
+  createQueries,
+  QueriesObserver,
+  QueryCache,
+  QueryClientProvider,
 } from '..'
 import {
   createQueryClient,

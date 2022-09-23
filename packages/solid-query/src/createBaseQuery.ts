@@ -1,6 +1,6 @@
-import { QueryObserver } from '@tanstack/query-core'
+import type { QueryObserver } from '@tanstack/query-core'
 import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
-import { CreateBaseQueryOptions } from './types'
+import type { CreateBaseQueryOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
 import {
   onMount,
