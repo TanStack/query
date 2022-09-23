@@ -207,9 +207,8 @@ describe('useInfiniteQuery', () => {
       )
 
       createRenderEffect(() => {
-          states.push({ ...state })
-        }
-      )
+        states.push({ ...state })
+      })
 
       return (
         <div>

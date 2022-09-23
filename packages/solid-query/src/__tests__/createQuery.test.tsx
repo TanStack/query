@@ -2211,7 +2211,6 @@ describe('createQuery', () => {
       isSuccess: true,
       isPreviousData: false,
     })
-
   })
 
   it('should use the correct query function when components use different configurations', async () => {
@@ -5121,12 +5120,12 @@ describe('createQuery', () => {
       createRenderEffect(() => {
         const { data, isLoading, isFetching, isSuccess, isStale } = state
 
-        states.push({ 
+        states.push({
           data,
           isLoading,
           isFetching,
           isSuccess,
-          isStale
+          isStale,
         })
       })
 

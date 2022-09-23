@@ -56,10 +56,9 @@ export function createBaseQuery<
     refetch()
   })
 
-  let taskQueue: Array<() => void> = [] 
+  let taskQueue: Array<() => void> = []
 
   const unsubscribe = observer.subscribe((result) => {
-
     taskQueue.push(() => {
       batch(() => {
         setState(unwrap(result))
