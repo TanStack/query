@@ -234,7 +234,7 @@ describe('QueryClientProvider', () => {
       expect(queryClientFromWindow).toEqual(queryClient)
     })
 
-    it('should not use window to get the context when contextSharing is true and window does not exist', () => {
+    it.skip('should not use window to get the context when contextSharing is true and window does not exist', () => {
       const queryCache = new QueryCache()
       const queryClient = createQueryClient({ queryCache })
 

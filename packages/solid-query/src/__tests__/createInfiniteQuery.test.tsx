@@ -206,10 +206,9 @@ describe('useInfiniteQuery', () => {
         },
       )
 
-      createRenderEffect(
-        on([() => ({ ...state }), order], () => {
+      createRenderEffect(() => {
           states.push({ ...state })
-        }),
+        }
       )
 
       return (

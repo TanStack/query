@@ -1596,7 +1596,7 @@ describe('createQuery', () => {
     fireEvent.click(screen.getByRole('button', { name: /invalidate/i }))
     await waitFor(() => screen.getByText('data: 2'))
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await waitFor(() => expect(states.length).toBe(4))
 
     expect(states[0]).toMatchObject({
       data: undefined,
@@ -1614,19 +1614,12 @@ describe('createQuery', () => {
     })
     expect(states[2]).toMatchObject({
       data: 1,
-      isFetching: false,
-      isRefetching: false,
-      isSuccess: true,
-      isStale: true,
-    })
-    expect(states[3]).toMatchObject({
-      data: 1,
       isFetching: true,
       isRefetching: true,
       isSuccess: true,
       isStale: true,
     })
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 2,
       isFetching: false,
       isRefetching: false,
@@ -2159,11 +2152,10 @@ describe('createQuery', () => {
         { enabled: false, keepPreviousData: true, notifyOnChangeProps: 'all' },
       )
 
-      createRenderEffect(
-        on([() => ({ ...state }), count], () => {
-          states.push({ ...state })
-        }),
-      )
+      createRenderEffect(() => {
+        const { data, isFetching, isSuccess, isPreviousData } = state
+        states.push({ data, isFetching, isSuccess, isPreviousData })
+      })
 
       createEffect(() => {
         const refetch = state.refetch
@@ -2189,7 +2181,7 @@ describe('createQuery', () => {
 
     await sleep(100)
 
-    expect(states.length).toBe(5)
+    expect(states.length).toBe(4)
 
     // Disabled query
     expect(states[0]).toMatchObject({
@@ -2205,27 +2197,21 @@ describe('createQuery', () => {
       isSuccess: true,
       isPreviousData: true,
     })
-    // State update
-    expect(states[2]).toMatchObject({
-      data: 10,
-      isFetching: false,
-      isSuccess: true,
-      isPreviousData: true,
-    })
     // Refetch
-    expect(states[3]).toMatchObject({
+    expect(states[2]).toMatchObject({
       data: 10,
       isFetching: true,
       isSuccess: true,
       isPreviousData: true,
     })
     // Refetch done
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 12,
       isFetching: false,
       isSuccess: true,
       isPreviousData: false,
     })
+
   })
 
   it('should use the correct query function when components use different configurations', async () => {
@@ -5133,7 +5119,15 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        states.push({ ...state })
+        const { data, isLoading, isFetching, isSuccess, isStale } = state
+
+        states.push({ 
+          data,
+          isLoading,
+          isFetching,
+          isSuccess,
+          isStale
+        })
       })
 
       return (

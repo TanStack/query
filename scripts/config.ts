@@ -30,6 +30,11 @@ export const packages: Package[] = [
     packageDir: 'react-query-persist-client',
     srcDir: 'src',
   },
+  {
+    name: '@tanstack/solid-query',
+    packageDir: 'solid-query',
+    srcDir: 'src',
+  }
 ]
 
 export const latestBranch = 'main'

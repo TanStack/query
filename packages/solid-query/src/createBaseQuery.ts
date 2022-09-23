@@ -56,11 +56,24 @@ export function createBaseQuery<
     refetch()
   })
 
+  let taskQueue: Array<() => void> = [] 
+
   const unsubscribe = observer.subscribe((result) => {
-    batch(() => {
-      setState(unwrap(result))
-      mutate(() => unwrap(result.data))
-      refetch()
+
+    taskQueue.push(() => {
+      batch(() => {
+        setState(unwrap(result))
+        mutate(() => unwrap(result.data))
+        refetch()
+      })
+    })
+
+    queueMicrotask(() => {
+      const taskToRun = taskQueue.pop()
+      if (taskToRun) {
+        taskToRun()
+      }
+      taskQueue = []
     })
   })
 

@@ -36,18 +36,14 @@
     "build/lib/*",
     "build/umd/*",
     "build/solid/*",
-    "src",
-    "codemods",
-    "!codemods/jest.config.js",
-    "!codemods/**/__testfixtures__",
-    "!codemods/**/__tests__"
+    "src"
   ],
   "devDependencies": {
     "@types/jscodeshift": "^0.11.3",
     "jscodeshift": "^0.13.1"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.3.9"
+    "@tanstack/query-core": "4.3.8"
   },
   "peerDependencies": {
     "solid-js": "^1.5.4"
