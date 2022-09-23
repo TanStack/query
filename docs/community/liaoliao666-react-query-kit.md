@@ -3,7 +3,7 @@ id: liaoliao666-react-query-kit
 title: React Query Kit
 ---
 
-🕊️ A toolkit for ReactQuery that make ReactQuery hooks reusable and typesafe
+🕊️ A toolkit for ReactQuery that makes ReactQuery hooks reusable and typesafe
 
 ## what do you benefit from it
 
