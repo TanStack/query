@@ -1,0 +1,52 @@
+{
+  "name": "@tanstack/solid-query",
+  "version": "4.3.9",
+  "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "module": "build/lib/index.esm.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "solid": "./build/solid/index.js",
+      "import": "./build/lib/index.mjs",
+      "browser": "./build/lib/index.mjs",
+      "require": "./build/lib/index.js",
+      "node": "./build/lib/index.js",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "../../node_modules/.bin/jest --config jest.config.js",
+    "test:jest:dev": "yarn test:jest --watch"
+  },
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "build/solid/*",
+    "src"
+  ],
+  "devDependencies": {
+    "@types/jscodeshift": "^0.11.3",
+    "jscodeshift": "^0.13.1"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "4.3.8"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.5.4"
+  },
+  "peerDependenciesMeta": {}
+}

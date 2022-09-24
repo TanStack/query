@@ -141,6 +141,21 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/react-query': 'ReactQuery',
       },
     }),
+    ...buildConfigs({
+      name: 'solid-query',
+      packageDir: 'packages/solid-query',
+      jsName: 'SolidQuery',
+      outputFile: 'index',
+      entryFile: 'src/index.ts',
+      globals: {
+        'solid-js/store': 'SolidStore',
+        'solid-js': 'Solid',
+        '@tanstack/query-core': 'QueryCore',
+      },
+      bundleUMDGlobals: [
+        '@tanstack/query-core',
+      ],
+    }),
   ]
 }
 

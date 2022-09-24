@@ -32,7 +32,8 @@
       "@tanstack/react-query-devtools": ["packages/react-query-devtools/src"],
       "@tanstack/react-query-persist-client": [
         "packages/react-query-persist-client/src"
-      ]
+      ],
+      "@tanstack/solid-query": ["packages/solid-query/src"],
     }
   }
 }
