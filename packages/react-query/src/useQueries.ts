@@ -6,6 +6,12 @@ import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseQueryOptions, UseQueryResult } from './types'
 import { useIsRestoring } from './isRestoring'
+import { useQueryErrorResetBoundary } from './QueryErrorResetBoundary'
+import {
+  ensurePreventErrorBoundaryRetry,
+  getHasError,
+  useClearResetErrorBoundary,
+} from './errorBoundaryUtils'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -183,6 +189,27 @@ export function useQueries<T extends any[]>({
     // these changes should already be reflected in the optimistic result.
     observer.setQueries(defaultedQueries, { listeners: false })
   }, [defaultedQueries, observer])
+
+  const errorResetBoundary = useQueryErrorResetBoundary()
+
+  defaultedQueries.forEach((query) => {
+    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+  })
+
+  useClearResetErrorBoundary(errorResetBoundary)
+
+  const firstSingleResultWhichShouldThrow = result.find((singleResult, index) =>
+    getHasError({
+      result: singleResult,
+      errorResetBoundary,
+      useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+      query: observer.getQueries()[index]!,
+    }),
+  )
+
+  if (firstSingleResultWhichShouldThrow?.error) {
+    throw firstSingleResultWhichShouldThrow.error
+  }
 
   return result as QueriesResults<T>
 }

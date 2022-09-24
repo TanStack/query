@@ -100,6 +100,18 @@ export interface QueryOptions<
   meta?: QueryMeta
 }
 
+export type UseErrorBoundary<
+  TQueryFnData,
+  TError,
+  TQueryData,
+  TQueryKey extends QueryKey,
+> =
+  | boolean
+  | ((
+      error: TError,
+      query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
+    ) => boolean)
+
 export interface QueryObserverOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -205,12 +217,12 @@ export interface QueryObserverOptions<
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?:
-    | boolean
-    | ((
-        error: TError,
-        query: Query<TQueryFnData, TError, TQueryData, TQueryKey>,
-      ) => boolean)
+  useErrorBoundary?: UseErrorBoundary<
+    TQueryFnData,
+    TError,
+    TQueryData,
+    TQueryKey
+  >
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */

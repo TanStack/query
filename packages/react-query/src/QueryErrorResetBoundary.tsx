@@ -2,7 +2,7 @@ import * as React from 'react'
 
 // CONTEXT
 
-interface QueryErrorResetBoundaryValue {
+export interface QueryErrorResetBoundaryValue {
   clearReset: () => void
   isReset: () => boolean
   reset: () => void
