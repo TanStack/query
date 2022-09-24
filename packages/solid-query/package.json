@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/solid-query",
-  "version": "4.3.9",
+  "version": "4.4.0",
   "description": "Primitives for managing, caching and syncing asynchronous and remote data in Solid",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -43,7 +43,7 @@
     "jscodeshift": "^0.13.1"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.3.8"
+    "@tanstack/query-core": "4.4.0"
   },
   "peerDependencies": {
     "solid-js": "^1.5.4"

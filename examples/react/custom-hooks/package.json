@@ -12,8 +12,8 @@
     "axios": "^0.26.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@tanstack/react-query": "4.3.9",
-    "@tanstack/react-query-devtools": "4.3.9",
+    "@tanstack/react-query": "4.4.0",
+    "@tanstack/react-query-devtools": "4.4.0",
     "react-scripts": "3.0.1",
     "stop-runaway-react-effects": "^1.2.0",
     "styled-components": "^4.3.2"
