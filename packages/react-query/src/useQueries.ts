@@ -192,8 +192,8 @@ export function useQueries<T extends any[]>({
 
   const errorResetBoundary = useQueryErrorResetBoundary()
 
-  defaultedQueries.forEach((options) => {
-    ensurePreventErrorBoundaryRetry(options, errorResetBoundary)
+  defaultedQueries.forEach((query) => {
+    ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
