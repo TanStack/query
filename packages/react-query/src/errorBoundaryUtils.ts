@@ -1,11 +1,11 @@
-import {
+import type {
   DefaultedQueryObserverOptions,
   Query,
   QueryKey,
   QueryObserverResult,
   UseErrorBoundary,
 } from '@tanstack/query-core'
-import { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
+import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 import * as React from 'react'
 import { shouldThrowError } from './utils'
 
