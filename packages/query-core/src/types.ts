@@ -4,7 +4,7 @@ import type { RetryValue, RetryDelayValue } from './retryer'
 import type { QueryFilters, QueryTypeFilter } from './utils'
 import type { QueryCache } from './queryCache'
 import type { MutationCache } from './mutationCache'
-import { Logger } from './logger'
+import type { Logger } from './logger'
 
 export type QueryKey = readonly unknown[]
 

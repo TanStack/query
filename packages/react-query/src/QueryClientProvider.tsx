@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import { QueryClient } from '@tanstack/query-core'
-import { ContextOptions } from './types'
+import type { QueryClient } from '@tanstack/query-core'
+import type { ContextOptions } from './types'
 
 declare global {
   interface Window {

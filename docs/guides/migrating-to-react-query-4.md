@@ -9,6 +9,14 @@ v4 is a major version, so there are some breaking changes to be aware of:
 
 ### react-query is now @tanstack/react-query
 
+You will need to un-/install dependencies and change the imports:
+
+```
+npm uninstall react-query
+npm install @tanstack/react-query
+npm install @tanstack/react-query-devtools
+```
+
 ```diff
 - import { useQuery } from 'react-query'
 - import { ReactQueryDevtools } from 'react-query/devtools'
@@ -19,7 +27,7 @@ v4 is a major version, so there are some breaking changes to be aware of:
 
 #### Codemod
 
-To make this migration easier, v4 comes with a codemod.
+To make the import migration easier, v4 comes with a codemod.
 
 > The codemod is a best efforts attempt to help you migrate the breaking change. Please review the generated code thoroughly! Also, there are edge cases that cannot be found by the code mod, so please keep an eye on the log output.
 

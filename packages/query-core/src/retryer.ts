@@ -1,7 +1,7 @@
 import { focusManager } from './focusManager'
 import { onlineManager } from './onlineManager'
 import { sleep } from './utils'
-import { CancelOptions, NetworkMode } from './types'
+import type { CancelOptions, NetworkMode } from './types'
 
 // TYPES
 

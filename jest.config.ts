@@ -24,7 +24,7 @@ const moduleNameMapper = {
 module.exports = {
   collectCoverage: true,
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
-  projects: packages.map((d) => ({
+  projects: packages.map((d: string) => ({
     displayName: d,
     clearMocks: true,
     testEnvironment: 'jsdom',
@@ -34,5 +34,6 @@ module.exports = {
       printBasicPrototype: false,
     },
     moduleNameMapper,
+    preset: d.includes("solid") ? 'solid-jest/preset/browser' : undefined,
   })),
 }

@@ -5,16 +5,13 @@ import {
   mockLogger,
   createQueryClient,
 } from './utils'
-import {
+import type {
   QueryCache,
   QueryClient,
-  QueryObserver,
-  isCancelledError,
-  isError,
-  onlineManager,
   QueryFunctionContext,
   QueryObserverResult,
 } from '..'
+import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
 
 describe('query', () => {
@@ -819,7 +816,11 @@ describe('query', () => {
 
     await sleep(10)
 
-    const error = new Error('Query data cannot be undefined')
+    const error = new Error(
+      `Query data cannot be undefined - affected query key: ${
+        observer.getCurrentQuery().queryHash
+      }`,
+    )
 
     expect(observerResult).toMatchObject({
       isError: true,

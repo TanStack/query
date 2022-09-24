@@ -1,11 +1,10 @@
-import {
+import type {
   QueryObserver,
-  InfiniteQueryObserver,
   QueryFunction,
   QueryKey,
-  parseQueryArgs,
 } from '@tanstack/query-core'
-import { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
+import { InfiniteQueryObserver, parseQueryArgs } from '@tanstack/query-core'
+import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'
 
 // HOOK

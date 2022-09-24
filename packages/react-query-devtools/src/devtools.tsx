@@ -1,13 +1,15 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
-import {
-  useQueryClient,
-  onlineManager,
-  notifyManager,
+import type {
   QueryCache,
   QueryClient,
   QueryKey as QueryKeyType,
   ContextOptions,
+} from '@tanstack/react-query'
+import {
+  useQueryClient,
+  onlineManager,
+  notifyManager,
 } from '@tanstack/react-query'
 import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
@@ -192,12 +194,13 @@ export function ReactQueryDevtools({
 
   React.useEffect(() => {
     if (isResolvedOpen) {
-      const previousValue = rootRef.current?.parentElement?.style.paddingBottom
+      const root = rootRef.current
+      const previousValue = root?.parentElement?.style.paddingBottom
 
       const run = () => {
         const containerHeight = panelRef.current?.getBoundingClientRect().height
-        if (rootRef.current?.parentElement) {
-          rootRef.current.parentElement.style.paddingBottom = `${containerHeight}px`
+        if (root?.parentElement) {
+          root.parentElement.style.paddingBottom = `${containerHeight}px`
         }
       }
 
@@ -208,11 +211,8 @@ export function ReactQueryDevtools({
 
         return () => {
           window.removeEventListener('resize', run)
-          if (
-            rootRef.current?.parentElement &&
-            typeof previousValue === 'string'
-          ) {
-            rootRef.current.parentElement.style.paddingBottom = previousValue
+          if (root?.parentElement && typeof previousValue === 'string') {
+            root.parentElement.style.paddingBottom = previousValue
           }
         }
       }

@@ -54,8 +54,8 @@
           "to": "adapters/react-query"
         },
         {
-          "label": "Solid Query (Coming Soon)",
-          "to": "#"
+          "label": "Solid Query",
+          "to": "adapters/solid-query"
         },
         {
           "label": "Vue Query (Coming Soon)",
