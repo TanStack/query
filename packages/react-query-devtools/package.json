@@ -1,6 +1,6 @@
 {
   "name": "@tanstack/react-query-devtools",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "description": "TODO",
   "author": "tannerlinsley",
   "license": "MIT",
@@ -51,6 +51,6 @@
   "peerDependencies": {
     "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0",
-    "@tanstack/react-query": "4.5.0"
+    "@tanstack/react-query": "4.6.0"
   }
 }
