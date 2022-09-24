@@ -454,9 +454,7 @@ export class Query<
         if (typeof data === 'undefined') {
           onError(
             new Error(
-              `Query data cannot be undefined - affected query key: ${JSON.stringify(
-                this.queryKey,
-              )}`,
+              `Query data cannot be undefined - query key in question: ${this.queryHash}`,
             ) as any,
           )
           return
