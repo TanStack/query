@@ -452,11 +452,12 @@ export class Query<
       abort: abortController?.abort.bind(abortController),
       onSuccess: (data) => {
         if (typeof data === 'undefined') {
-          onError(
-            new Error(
-              `Query data cannot be undefined - affected query key: ${this.queryHash}`,
-            ) as any,
-          )
+          if (process.env.NODE_ENV !== 'production') {
+            this.logger.error(
+              `Query data cannot be undefined. Please make sure to return a value other than undefined from your query function. Affected query key: ${this.queryHash}`,
+            )
+          }
+          onError(new Error('undefined') as any)
           return
         }
 
