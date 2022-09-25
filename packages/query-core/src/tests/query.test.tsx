@@ -816,11 +816,7 @@ describe('query', () => {
 
     await sleep(10)
 
-    const error = new Error(
-      `Query data cannot be undefined - affected query key: ${
-        observer.getCurrentQuery().queryHash
-      }`,
-    )
+    const error = new Error('undefined')
 
     expect(observerResult).toMatchObject({
       isError: true,
