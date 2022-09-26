@@ -7,11 +7,8 @@ import type {
 } from '@tanstack/react-query'
 import { QueryClient, useQuery, useQueries } from '@tanstack/react-query'
 import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
-import type {
-  PersistedClient,
-  Persister,
-} from '../../../query-persist-client-core/src'
-import { persistQueryClientSave } from '../../../query-persist-client-core/src'
+import type { PersistedClient, Persister } from '../persist'
+import { persistQueryClientSave } from '../persist'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 
 const createMockPersister = (): Persister => {
