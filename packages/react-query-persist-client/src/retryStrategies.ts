@@ -1,4 +1,4 @@
-import type { PersistedClient } from './persist'
+import type { PersistedClient } from '@tanstack/query-persist-client-core'
 
 export type PersistRetryer = (props: {
   persistedClient: PersistedClient
