@@ -1,4 +1,4 @@
-import { OutputOptions, RollupOptions } from 'rollup'
+import type { OutputOptions, RollupOptions } from 'rollup'
 import babel from '@rollup/plugin-babel'
 import { terser } from 'rollup-plugin-terser'
 import size from 'rollup-plugin-size'
@@ -45,6 +45,16 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       globals: {},
     }),
     ...buildConfigs({
+      name: 'query-persist-client-core',
+      packageDir: 'packages/query-persist-client-core',
+      jsName: 'QueryPersistClientCore',
+      outputFile: 'index',
+      entryFile: ['src/index.ts'],
+      globals: {
+        '@tanstack/query-core': 'QueryCore',
+      },
+    }),
+    ...buildConfigs({
       name: 'query-async-storage-persister',
       packageDir: 'packages/query-async-storage-persister',
       jsName: 'QueryAsyncStoragePersister',
@@ -80,13 +90,18 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/react-query',
       jsName: 'ReactQuery',
       outputFile: 'index',
-      entryFile: ['src/index.ts', 'src/reactBatchedUpdates.native.ts', 'src/useSyncExternalStore.native.ts'],
+      entryFile: [
+        'src/index.ts',
+        'src/reactBatchedUpdates.native.ts',
+        'src/useSyncExternalStore.native.ts',
+      ],
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
-        'use-sync-external-store/shim/index.native.js': 'UseSyncExternalStoreNative',
+        'use-sync-external-store/shim/index.native.js':
+          'UseSyncExternalStoreNative',
         'react-native': 'ReactNative',
       },
       bundleUMDGlobals: [
@@ -152,9 +167,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         'solid-js': 'Solid',
         '@tanstack/query-core': 'QueryCore',
       },
-      bundleUMDGlobals: [
-        '@tanstack/query-core',
-      ],
+      bundleUMDGlobals: ['@tanstack/query-core'],
     }),
   ]
 }
@@ -336,8 +349,10 @@ function cjs({
       replace({
         // TODO: figure out a better way to produce extensionless cjs imports
         "require('./logger.js')": "require('./logger')",
-        "require('./reactBatchedUpdates.js')": "require('./reactBatchedUpdates')",
-        "require('./useSyncExternalStore.js')": "require('./useSyncExternalStore')",
+        "require('./reactBatchedUpdates.js')":
+          "require('./reactBatchedUpdates')",
+        "require('./useSyncExternalStore.js')":
+          "require('./useSyncExternalStore')",
         preventAssignment: true,
         delimiters: ['', ''],
       }),
