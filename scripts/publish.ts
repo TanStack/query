@@ -5,7 +5,7 @@ import {
   packages,
   rootDir,
 } from './config'
-import { BranchConfig, Commit, Package } from './types'
+import type { BranchConfig, Commit, Package } from './types'
 
 // Originally ported to TS from https://github.com/remix-run/react-router/tree/main/scripts/{version,publish}.js
 import path from 'path'
@@ -21,7 +21,7 @@ import streamToArray from 'stream-to-array'
 import axios from 'axios'
 import { DateTime } from 'luxon'
 
-import { PackageJson } from 'type-fest'
+import type { PackageJson } from 'type-fest'
 
 const releaseCommitMsg = (version: string) => `release: v${version}`
 
@@ -177,9 +177,9 @@ async function run() {
 
   // If a package has a dependency that has been updated, we need to update the
   // package that depends on it as well.
-  // run this twice so that dependencies of dependencies are also included
-  // changes to query-core affect react-query-persist-client and then indirectly the sync/async persisters
-  for (let runs = 0; runs < 2; runs++) {
+  // run this multiple times so that dependencies of dependencies are also included
+  // changes to query-core affect query-persist-client-core, which affects react-query-persist-client and then indirectly the sync/async persisters
+  for (let runs = 0; runs < 3; runs++) {
     for (const pkg of packages) {
       const packageJson = await readPackageJson(
         path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),

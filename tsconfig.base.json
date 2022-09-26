@@ -21,6 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "@tanstack/query-core": ["packages/query-core/src"],
+      "@tanstack/query-persist-client-core": ["packages/query-persist-client-core/src"],
       "@tanstack/query-async-storage-persister": [
         "packages/query-async-storage-persister/src"
       ],
