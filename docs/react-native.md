@@ -30,7 +30,9 @@ onlineManager.setEventListener(setOnline => {
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
 ```ts
-import { AppState } from 'react-native'
+import { useEffect } from "react"
+import { AppState, Platform } from 'react-native'
+import type { AppStateStatus } from "react-native"
 import { focusManager } from '@tanstack/react-query'
 
 function onAppStateChange(status: AppStateStatus) {
