@@ -29,6 +29,7 @@
   "namespace": "@tanstack",
   "workspaces": [
     "./packages/query-core",
+    "./packages/query-persist-client-core",
     "./packages/query-async-storage-persister",
     "./packages/query-broadcast-client-experimental",
     "./packages/query-sync-storage-persister",

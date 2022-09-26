@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "packages/query-core" },
+    { "path": "packages/query-persist-client-core" },
     { "path": "packages/query-async-storage-persister" },
     { "path": "packages/query-broadcast-client-experimental" },
     { "path": "packages/query-sync-storage-persister" },

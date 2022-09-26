@@ -6,5 +6,8 @@
     "outDir": "./build/lib",
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../query-core" }
+  ]
 }
