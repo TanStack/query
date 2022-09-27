@@ -124,7 +124,7 @@ export class QueryClient {
     return this.getQueryCache()
       .findAll(queryKeyOrFilters)
       .map(({ queryKey, state }) => {
-        const data = state.data as TQueryFnData
+        const data = state.data as TQueryFnData | undefined
         return [queryKey, data]
       })
   }
