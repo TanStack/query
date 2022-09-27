@@ -112,15 +112,19 @@ export class QueryClient {
     return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
   }
 
-  getQueriesData<TQueryFnData = unknown>(queryKey: QueryKey): [QueryKey, TQueryFnData | undefined][]
-  getQueriesData<TQueryFnData = unknown>(filters: QueryFilters): [QueryKey, TQueryFnData | undefined][]
+  getQueriesData<TQueryFnData = unknown>(
+    queryKey: QueryKey,
+  ): [QueryKey, TQueryFnData | undefined][]
+  getQueriesData<TQueryFnData = unknown>(
+    filters: QueryFilters,
+  ): [QueryKey, TQueryFnData | undefined][]
   getQueriesData<TQueryFnData = unknown>(
     queryKeyOrFilters: QueryKey | QueryFilters,
   ): [QueryKey, TQueryFnData | undefined][] {
     return this.getQueryCache()
       .findAll(queryKeyOrFilters)
       .map(({ queryKey, state }) => {
-        const data = state.data as TQueryFnData 
+        const data = state.data as TQueryFnData
         return [queryKey, data]
       })
   }
