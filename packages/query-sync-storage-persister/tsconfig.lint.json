@@ -8,6 +8,6 @@
   },
   "include": ["src"],
   "references": [
-    { "path": "../react-query-persist-client" }
+    { "path": "../query-persist-client-core" }
   ]
 }
