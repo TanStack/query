@@ -2,7 +2,7 @@ import type {
   PersistedClient,
   Persister,
   PersistRetryer,
-} from '@tanstack/react-query-persist-client'
+} from '@tanstack/query-persist-client-core'
 
 interface Storage {
   getItem: (key: string) => string | null

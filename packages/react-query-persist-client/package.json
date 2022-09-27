@@ -31,8 +31,10 @@
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
+  "dependencies": {
+    "@tanstack/query-persist-client-core": "4.7.0"
+  },
   "peerDependencies": {
-    "@tanstack/query-core": "4.6.1",
     "@tanstack/react-query": "4.6.1"
   }
 }

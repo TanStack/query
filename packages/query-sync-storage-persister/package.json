@@ -32,6 +32,6 @@
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
-    "@tanstack/react-query-persist-client": "4.6.1"
+    "@tanstack/query-persist-client-core": "4.7.0"
   }
 }

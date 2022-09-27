@@ -61,7 +61,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
-        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+        '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
       },
     }),
     ...buildConfigs({
@@ -82,7 +82,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       outputFile: 'index',
       entryFile: 'src/index.ts',
       globals: {
-        '@tanstack/react-query-persist-client': 'ReactQueryPersistClient',
+        '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
       },
     }),
     ...buildConfigs({
@@ -152,9 +152,10 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: 'src/index.ts',
       globals: {
         react: 'React',
-        '@tanstack/query-core': 'QueryCore',
+        '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
         '@tanstack/react-query': 'ReactQuery',
       },
+      bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
     }),
     ...buildConfigs({
       name: 'solid-query',
