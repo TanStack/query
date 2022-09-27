@@ -4328,7 +4328,7 @@ describe('useQuery', () => {
       const promise = new Promise<string>((resolve, reject) => {
         cancelFn = jest.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
-        sleep(10).then(() => resolve('OK'))
+        sleep(20).then(() => resolve('OK'))
       })
 
       return promise
