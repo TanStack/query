@@ -25,7 +25,6 @@ jobs:
         with:
           node-version: 16.14.2
           registry-url: https://registry.npmjs.org/
-          cache: 'pnpm'
       - run: |
           pnpm install
           git config --global user.name 'Tanner Linsley'
