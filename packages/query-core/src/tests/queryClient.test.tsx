@@ -1176,9 +1176,7 @@ describe('queryClient', () => {
 
       await queryClient.refetchQueries()
       observer.destroy()
-      if (typeof AbortSignal === 'function') {
-        expect(abortFn).toHaveBeenCalledTimes(1)
-      }
+      expect(abortFn).toHaveBeenCalledTimes(1)
       expect(fetchCount).toBe(2)
     })
 
@@ -1203,9 +1201,7 @@ describe('queryClient', () => {
 
       await queryClient.refetchQueries(undefined, { cancelRefetch: false })
       observer.destroy()
-      if (typeof AbortSignal === 'function') {
-        expect(abortFn).toHaveBeenCalledTimes(0)
-      }
+      expect(abortFn).toHaveBeenCalledTimes(0)
       expect(fetchCount).toBe(1)
     })
   })

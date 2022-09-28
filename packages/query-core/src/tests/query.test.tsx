@@ -201,11 +201,7 @@ describe('query', () => {
     expect(args).toBeDefined()
     expect(args.pageParam).toBeUndefined()
     expect(args.queryKey).toEqual(key)
-    if (typeof AbortSignal === 'function') {
-      expect(args.signal).toBeInstanceOf(AbortSignal)
-    } else {
-      expect(args.signal).toBeUndefined()
-    }
+    expect(args.signal).toBeInstanceOf(AbortSignal)
   })
 
   test('should continue if cancellation is not supported and signal is not consumed', async () => {
@@ -259,20 +255,11 @@ describe('query', () => {
 
     const query = queryCache.find(key)!
 
-    if (typeof AbortSignal === 'function') {
-      expect(query.state).toMatchObject({
-        data: undefined,
-        status: 'loading',
-        fetchStatus: 'idle',
-      })
-    } else {
-      expect(query.state).toMatchObject({
-        data: 'data',
-        status: 'success',
-        fetchStatus: 'idle',
-        dataUpdateCount: 1,
-      })
-    }
+    expect(query.state).toMatchObject({
+      data: undefined,
+      status: 'loading',
+      fetchStatus: 'idle',
+    })
   })
 
   test('should provide an AbortSignal to the queryFn that provides info about the cancellation state', async () => {
@@ -312,12 +299,8 @@ describe('query', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
-    let signal = queryFn.mock.calls[0]![0].signal
-
-    if (typeof AbortSignal === 'function') {
-      signal = queryFn.mock.calls[0]![0].signal
-      expect(signal?.aborted).toBe(false)
-    }
+    const signal = queryFn.mock.calls[0]![0].signal
+    expect(signal?.aborted).toBe(false)
     expect(onAbort).not.toHaveBeenCalled()
     expect(abortListener).not.toHaveBeenCalled()
 
@@ -325,11 +308,9 @@ describe('query', () => {
 
     await sleep(100)
 
-    if (typeof AbortSignal === 'function') {
-      expect(signal?.aborted).toBe(true)
-      expect(onAbort).toHaveBeenCalledTimes(1)
-      expect(abortListener).toHaveBeenCalledTimes(1)
-    }
+    expect(signal?.aborted).toBe(true)
+    expect(onAbort).toHaveBeenCalledTimes(1)
+    expect(abortListener).toHaveBeenCalledTimes(1)
     expect(isCancelledError(error)).toBe(true)
   })
 
