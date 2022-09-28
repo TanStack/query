@@ -17,6 +17,46 @@ export function useQuery<
 >(
   options: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'suspense' | 'enabled' | 'initialData'
+  > & { suspense: true; enabled: boolean; initialData?: () => undefined },
+): UseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'suspense' | 'enabled' | 'initialData'
+  > & {
+    suspense: true
+    enabled: boolean
+    initialData?: TQueryFnData | (() => TQueryFnData)
+  },
+): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'suspense'
+  > & { suspense: true },
+): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
   > & { initialData?: () => undefined },
 ): UseQueryResult<TData, TError>
@@ -41,6 +81,49 @@ export function useQuery<
 >(
   options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'suspense' | 'enabled' | 'initialData'
+  > & { suspense: true; enabled: boolean; initialData?: () => undefined },
+): UseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'suspense' | 'enabled' | 'initialData'
+  > & {
+    suspense: true
+    enabled: boolean
+    initialData: TQueryFnData | (() => TQueryFnData)
+  },
+): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'suspense'
+  > & { suspense: true },
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
@@ -80,6 +163,52 @@ export function useQuery<
     'queryKey'
   >,
 ): UseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'suspense' | 'enabled' | 'initialData'
+  > & { suspense: true; enabled: boolean; initialData?: () => undefined },
+): UseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'suspense' | 'enabled' | 'initialData'
+  > & {
+    suspense: true
+    enabled: boolean
+    initialData: TQueryFnData | (() => TQueryFnData)
+  },
+): DefinedUseQueryResult<TData, TError>
+
+export function useQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  options: Omit<
+    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'suspense'
+  > & { suspense: true },
+): DefinedUseQueryResult<TData, TError>
 
 export function useQuery<
   TQueryFnData = unknown,
