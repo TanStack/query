@@ -1,11 +1,10 @@
 {
-  "private": true,
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
     "preinstall": "if [ \"$CI\" = \"true\" ]; then echo \"Skipping preinstall...\"; else npx -y only-allow pnpm; fi",
     "clean": "lerna run clean --stream --no-bail",
-    "install:csb": "npm install --frozen-lockfile && node ./scripts/fix-package-json.js",
+    "install:csb": "pnpm install --frozen-lockfile",
     "test": "(is-ci && npm run test:ci) || npm run test:dev",
     "test:ci": "npm run typecheck && npm run test:format && npm run test:eslint && npm run test:jest",
     "test:dev": "npm run typecheck && npm run test:format && npm run test:eslint && npm run test:jest:dev",

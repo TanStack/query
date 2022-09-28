@@ -1,6 +1,5 @@
 {
   "name": "@tanstack/query-example-react-default-query-function",
-  "private": true,
   "version": "0.0.1",
   "main": "src/index.jsx",
   "scripts": {
