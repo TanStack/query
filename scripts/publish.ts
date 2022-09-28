@@ -418,6 +418,19 @@ async function run() {
   execSync(`pnpm run test:ci`, { encoding: 'utf8' })
   console.info('')
 
+  console.info(`Updating all changed packages to version ${version}...`)
+  // Update each package to the new version
+  for (const pkg of changedPackages) {
+    console.info(`  Updating ${pkg.name} version to ${version}...`)
+
+    await updatePackageJson(
+      path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
+      (config) => {
+        config.version = version
+      },
+    )
+  }
+
   if (!process.env.CI) {
     console.warn(
       `This is a dry run for version ${version}. Push to CI to publish for real or set CI=true to override!`,
@@ -495,6 +508,17 @@ function capitalize(str: string) {
 
 async function readPackageJson(pathName: string) {
   return (await jsonfile.readFile(pathName)) as PackageJson
+}
+
+async function updatePackageJson(
+  pathName: string,
+  transform: (json: PackageJson) => Promise<void> | void,
+) {
+  const json = await readPackageJson(pathName)
+  await transform(json)
+  await jsonfile.writeFile(pathName, json, {
+    spaces: 2,
+  })
 }
 
 function getTaggedVersion() {
