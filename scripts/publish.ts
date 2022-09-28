@@ -455,7 +455,7 @@ async function run() {
   // Publish each package
   changedPackages.map((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
-    const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --non-interactive`
+    const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --no-git-checks`
     console.info(
       `  Publishing ${pkg.name}@${version} to npm with tag "${npmTag}"...`,
     )

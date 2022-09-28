@@ -664,7 +664,10 @@ importers:
     specifiers: {}
 
   packages/query-persist-client-core:
-    specifiers: {}
+    specifiers:
+      '@tanstack/query-core': workspace:*
+    devDependencies:
+      '@tanstack/query-core': link:../query-core
 
   packages/query-sync-storage-persister:
     specifiers:
@@ -692,6 +695,7 @@ importers:
   packages/react-query-devtools:
     specifiers:
       '@tanstack/match-sorter-utils': ^8.1.1
+      '@tanstack/react-query': workspace:*
       '@types/use-sync-external-store': ^0.0.3
       react-error-boundary: ^3.1.4
       use-sync-external-store: ^1.2.0
@@ -699,14 +703,18 @@ importers:
       '@tanstack/match-sorter-utils': 8.1.1
       use-sync-external-store: 1.2.0
     devDependencies:
+      '@tanstack/react-query': link:../react-query
       '@types/use-sync-external-store': 0.0.3
       react-error-boundary: 3.1.4
 
   packages/react-query-persist-client:
     specifiers:
       '@tanstack/query-persist-client-core': workspace:*
+      '@tanstack/react-query': workspace:*
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
+    devDependencies:
+      '@tanstack/react-query': link:../react-query
 
   packages/solid-query:
     specifiers:

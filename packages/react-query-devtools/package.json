@@ -43,7 +43,8 @@
   },
   "devDependencies": {
     "@types/use-sync-external-store": "^0.0.3",
-    "react-error-boundary": "^3.1.4"
+    "react-error-boundary": "^3.1.4",
+    "@tanstack/react-query": "workspace:*"
   },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.1.1",

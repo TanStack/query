@@ -31,6 +31,9 @@
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
+  "devDependencies": {
+    "@tanstack/query-core": "workspace:*"
+  },
   "peerDependencies": {
     "@tanstack/query-core": "workspace:*"
   }
