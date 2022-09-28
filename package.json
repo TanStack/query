@@ -3,7 +3,7 @@
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
     "preinstall": "if [ \"$CI\" = \"true\" ]; then echo \"Skipping preinstall...\"; else npx -y only-allow pnpm; fi",
-    "install:csb": "pnpm install --filter \"./packages/**\" --frozen-lockfile",
+    "install:csb": "pnpm install --frozen-lockfile",
     "test": "(is-ci && pnpm run test:ci) || pnpm run test:dev",
     "test:ci": "pnpm run typecheck && pnpm run test:format && pnpm run test:eslint && pnpm run test:jest",
     "test:dev": "pnpm run typecheck && pnpm run test:format && pnpm run test:eslint && pnpm run test:jest:dev",
