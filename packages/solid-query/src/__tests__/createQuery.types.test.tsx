@@ -158,3 +158,405 @@ describe('initialData', () => {
     })
   })
 })
+
+describe('suspense', () => {
+  describe('Config object overload', () => {
+    it('TData should always be defined when suspense is true', () => {
+      doNotExecute(() => {
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+        })
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is false', () => {
+      doNotExecute(() => {
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: false,
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is NOT provided', () => {
+      doNotExecute(() => {
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is true and enabled is provided', () => {
+      doNotExecute(() => {
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: false,
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+  })
+
+  describe('Query key overload', () => {
+    it('TData should always be defined when suspense is true', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(() => ['key'], {
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+        })
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is false', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(() => ['key'], {
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: false,
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is NOT defined', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(() => ['key'], {
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is true and enabled is provided', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(() => ['key'], {
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: false,
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+  })
+
+  describe('Query key and func', () => {
+    it('TData should always be defined when suspense is true', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(
+          () => ['key'],
+          () => {
+            return {
+              wow: true,
+            }
+          },
+          {
+            suspense: true,
+          },
+        )
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is false', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(
+          () => ['key'],
+          () => {
+            return {
+              wow: true,
+            }
+          },
+          {
+            suspense: false,
+          },
+        )
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is NOT defined', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(
+          () => ['key'],
+          () => {
+            return {
+              wow: true,
+            }
+          },
+        )
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is true and enabled is provided', () => {
+      doNotExecute(() => {
+        const { data } = createQuery(
+          () => ['key'],
+          () => {
+            return {
+              wow: true,
+            }
+          },
+          {
+            suspense: true,
+            enabled: false,
+          },
+        )
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+  })
+})
+
+describe('suspense with initialData', () => {
+  describe('Config object overload', () => {
+    it('TData should always be defined when suspense is enabled conditionally initialData is provided as an object', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: getEnabled(),
+          initialData: {
+            wow: true,
+          },
+        })
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should always be defined when suspense is enabled conditionally initialData is provided as a function which ALWAYS returns the data', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: getEnabled(),
+          initialData: () => ({
+            wow: true,
+          }),
+        })
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is enabled conditionally initialData is NOT provided', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: getEnabled(),
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is enabled conditionally initialData is provided as a function which can return undefined', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery({
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: getEnabled(),
+          initialData: () => undefined as { wow: boolean } | undefined,
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+  })
+
+  describe('Query key overload', () => {
+    it('TData should always be defined when suspense is enabled conditionally initialData is provided', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery(() => ['key'], {
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: getEnabled(),
+          initialData: {
+            wow: true,
+          },
+        })
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is enabled conditionally initialData is NOT provided', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery(() => ['key'], {
+          queryFn: () => {
+            return {
+              wow: true,
+            }
+          },
+          suspense: true,
+          enabled: getEnabled(),
+        })
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+  })
+
+  describe('Query key and func', () => {
+    it('TData should always be defined when suspense is enabled conditionally initialData is provided', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery(
+          () => ['key'],
+          () => {
+            return {
+              wow: true,
+            }
+          },
+          {
+            suspense: true,
+            enabled: getEnabled(),
+            initialData: {
+              wow: true,
+            },
+          },
+        )
+
+        const result: Expect<Equal<{ wow: boolean }, typeof data>> = true
+        return result
+      })
+    })
+
+    it('TData should have undefined in the union when suspense is enabled conditionally initialData is NOT provided', () => {
+      doNotExecute(() => {
+        const getEnabled = () => true
+
+        const { data } = createQuery(
+          () => ['key'],
+          () => {
+            return {
+              wow: true,
+            }
+          },
+          {
+            suspense: true,
+            enabled: getEnabled(),
+          },
+        )
+
+        const result: Expect<Equal<{ wow: boolean } | undefined, typeof data>> =
+          true
+        return result
+      })
+    })
+  })
+})

@@ -24,6 +24,43 @@ export function createQuery<
 >(
   options: Omit<
     CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'suspense' | 'enabled' | 'initialData'
+  > & { suspense: true; enabled: boolean; initialData?: () => undefined },
+): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'suspense' | 'enabled' | 'initialData'
+  > & {
+    suspense: true
+    enabled: boolean
+    initialData?: TQueryFnData | (() => TQueryFnData)
+  },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'suspense'
+  > & { suspense: true },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'initialData'
   > & {
     initialData?: () => undefined
@@ -50,6 +87,46 @@ export function createQuery<
 >(
   options: CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'suspense' | 'enabled' | 'initialData'
+  > & { suspense: true; enabled: boolean; initialData?: () => undefined },
+): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'suspense' | 'enabled' | 'initialData'
+  > & {
+    suspense: true
+    enabled: boolean
+    initialData?: TQueryFnData | (() => TQueryFnData)
+  },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  options?: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'suspense'
+  > & { suspense: true },
+): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
@@ -86,6 +163,49 @@ export function createQuery<
     'queryKey'
   >,
 ): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'suspense' | 'enabled' | 'initialData'
+  > & { suspense: true; enabled: boolean; initialData?: () => undefined },
+): CreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'suspense' | 'enabled' | 'initialData'
+  > & {
+    suspense: true
+    enabled: boolean
+    initialData?: TQueryFnData | (() => TQueryFnData)
+  },
+): DefinedCreateQueryResult<TData, TError>
+export function createQuery<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryKey extends SolidQueryKey = SolidQueryKey,
+>(
+  queryKey: TQueryKey,
+  queryFn: QueryFunction<TQueryFnData, ReturnType<TQueryKey>>,
+  options: Omit<
+    CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey' | 'queryFn' | 'suspense'
+  > & { suspense: true },
+): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
   TError = unknown,
