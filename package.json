@@ -71,6 +71,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "eslint-plugin-standard": "^4.0.1",
     "git-log-parser": "^1.2.0",
+    "jsonfile": "^6.1.0",
     "jest": "^27.5.1",
     "luxon": "^2.3.2",
     "prettier": "^2.6.2",
