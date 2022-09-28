@@ -19,7 +19,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Test
       - run: |
           pnpm run test:ci
           pnpm run test:size
