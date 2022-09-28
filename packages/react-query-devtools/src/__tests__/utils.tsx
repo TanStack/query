@@ -1,4 +1,3 @@
-import type { MatcherFunction } from '@testing-library/dom/types/matches'
 import { render } from '@testing-library/react'
 import * as React from 'react'
 import { ReactQueryDevtools } from '../devtools'
@@ -46,6 +45,9 @@ export function sleep(timeout: number): Promise<void> {
  * @param textToMatch The string that needs to be matched
  * @reference https://stackoverflow.com/a/56859650/8252081
  */
+
+type MatcherFunction = (content: string, element: Element | null) => boolean
+
 export const getByTextContent =
   (textToMatch: string): MatcherFunction =>
   (_content, node) => {
