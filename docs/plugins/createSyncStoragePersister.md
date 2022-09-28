@@ -11,6 +11,10 @@ npm install @tanstack/query-sync-storage-persister @tanstack/react-query-persist
 ```
 or
 ```bash
+pnpm add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
+```
+or
+```bash
 yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-client
 ```
 

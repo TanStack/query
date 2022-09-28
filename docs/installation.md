@@ -12,6 +12,8 @@ or a good ol' `<script>` via
 ```bash
 $ npm i @tanstack/react-query
 # or
+$ pnpm add @tanstack/react-query
+# or
 $ yarn add @tanstack/react-query
 ```
 

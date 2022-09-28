@@ -16,6 +16,8 @@ The devtools are a separate package that you need to install:
 ```bash
 $ npm i @tanstack/react-query-devtools
 # or
+$ pnpm add @tanstack/react-query-devtools
+# or
 $ yarn add @tanstack/react-query-devtools
 ```
 

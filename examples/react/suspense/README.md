@@ -2,5 +2,5 @@
 
 To run this example:
 
-- `npm install` or `yarn`
-- `npm run dev` or `yarn run dev`
+- `pnpm install`
+- `pnpm dev`
