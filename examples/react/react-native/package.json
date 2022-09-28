@@ -9,12 +9,12 @@
     "web": "expo start --web",
     "eject": "expo eject",
     "lint:check": "eslint --ext '.js,.ts,.tsx' .",
-    "lint:fix": "yarn lint --fix",
+    "lint:fix": "pnpm lint --fix",
     "type:check": "tsc --noEmit",
     "prettier": "prettier \"{.,src,src/**}/*.{md,js,jsx,ts,tsx,json}\"",
-    "prettier:check": "yarn prettier -c",
-    "prettier:fix": "yarn prettier -w",
-    "dev:check": "yarn prettier:check & yarn lint:check & yarn type:check"
+    "prettier:check": "pnpm prettier -c",
+    "prettier:fix": "pnpm prettier -w",
+    "dev:check": "pnpm prettier:check & pnpm lint:check & pnpm type:check"
   },
   "dependencies": {
     "@react-navigation/stack": "^6.0.2",

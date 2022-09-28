@@ -26,7 +26,7 @@ jobs:
           node-version: 16.14.2
           registry-url: https://registry.npmjs.org/
       - run: |
-          pnpm install
+          pnpm --filter ./packages/** --filter query install
           git config --global user.name 'Tanner Linsley'
           git config --global user.email 'tannerlinsley@users.noreply.github.com'
           pnpm run cipublish
