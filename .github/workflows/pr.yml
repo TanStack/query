@@ -18,9 +18,8 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
       - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-        with:
-          install-command: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
+      - name: Test
       - run: |
           pnpm run test:ci
           pnpm run test:size
