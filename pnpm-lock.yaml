@@ -688,6 +688,7 @@ importers:
   packages/react-query-devtools:
     specifiers:
       '@tanstack/match-sorter-utils': ^8.1.1
+      '@testing-library/jest-dom': ^5.16.4
       '@types/use-sync-external-store': ^0.0.3
       react-error-boundary: ^3.1.4
       use-sync-external-store: ^1.2.0
@@ -695,6 +696,7 @@ importers:
       '@tanstack/match-sorter-utils': 8.1.1
       use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
+      '@testing-library/jest-dom': 5.16.4
       '@types/use-sync-external-store': 0.0.3
       react-error-boundary: 3.1.4_react@18.2.0
 

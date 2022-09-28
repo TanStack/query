@@ -43,6 +43,7 @@
   },
   "devDependencies": {
     "@types/use-sync-external-store": "^0.0.3",
+    "@testing-library/jest-dom": "^5.16.4",
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
