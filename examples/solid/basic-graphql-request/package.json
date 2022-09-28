@@ -1,6 +1,5 @@
 {
   "name": "@tanstack/query-example-solid-basic-graphql-request",
-  "private": true,
   "version": "0.0.0",
   "description": "",
   "scripts": {

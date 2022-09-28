@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-async-storage-persister",
+  "name": "@tanstack/query-persist-client-core",
   "version": "4.7.1",
   "description": "TODO",
   "author": "tannerlinsley",
@@ -31,7 +31,7 @@
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
-  "dependencies": {
-    "@tanstack/query-persist-client-core": "workspace:*"
+  "peerDependencies": {
+    "@tanstack/query-core": "workspace:*"
   }
 }

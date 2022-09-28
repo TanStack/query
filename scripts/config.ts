@@ -1,9 +1,14 @@
 import path from 'path'
-import { BranchConfig, Package } from './types'
+import type { BranchConfig, Package } from './types'
 
 // TODO: List your npm packages here. The first package will be used as the versioner.
 export const packages: Package[] = [
   { name: '@tanstack/query-core', packageDir: 'query-core', srcDir: 'src' },
+  {
+    name: '@tanstack/query-persist-client-core',
+    packageDir: 'query-persist-client-core',
+    srcDir: 'src',
+  },
   {
     name: '@tanstack/query-async-storage-persister',
     packageDir: 'query-async-storage-persister',
@@ -34,7 +39,7 @@ export const packages: Package[] = [
     name: '@tanstack/solid-query',
     packageDir: 'solid-query',
     srcDir: 'src',
-  }
+  },
 ]
 
 export const latestBranch = 'main'

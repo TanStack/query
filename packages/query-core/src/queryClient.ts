@@ -105,32 +105,36 @@ export class QueryClient {
     return this.mutationCache.findAll({ ...filters, fetching: true }).length
   }
 
-  getQueryData<TData = unknown>(
+  getQueryData<TQueryFnData = unknown>(
     queryKey: QueryKey,
     filters?: QueryFilters,
-  ): TData | undefined {
-    return this.queryCache.find<TData>(queryKey, filters)?.state.data
+  ): TQueryFnData | undefined {
+    return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
   }
 
-  getQueriesData<TData = unknown>(queryKey: QueryKey): [QueryKey, TData][]
-  getQueriesData<TData = unknown>(filters: QueryFilters): [QueryKey, TData][]
-  getQueriesData<TData = unknown>(
+  getQueriesData<TQueryFnData = unknown>(
+    queryKey: QueryKey,
+  ): [QueryKey, TQueryFnData | undefined][]
+  getQueriesData<TQueryFnData = unknown>(
+    filters: QueryFilters,
+  ): [QueryKey, TQueryFnData | undefined][]
+  getQueriesData<TQueryFnData = unknown>(
     queryKeyOrFilters: QueryKey | QueryFilters,
-  ): [QueryKey, TData][] {
+  ): [QueryKey, TQueryFnData | undefined][] {
     return this.getQueryCache()
       .findAll(queryKeyOrFilters)
       .map(({ queryKey, state }) => {
-        const data = state.data as TData
+        const data = state.data as TQueryFnData | undefined
         return [queryKey, data]
       })
   }
 
-  setQueryData<TData>(
+  setQueryData<TQueryFnData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData | undefined>,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): TData | undefined {
-    const query = this.queryCache.find<TData>(queryKey)
+  ): TQueryFnData | undefined {
+    const query = this.queryCache.find<TQueryFnData>(queryKey)
     const prevData = query?.state.data
     const data = functionalUpdate(updater, prevData)
 
@@ -145,38 +149,38 @@ export class QueryClient {
       .setData(data, { ...options, manual: true })
   }
 
-  setQueriesData<TData>(
+  setQueriesData<TQueryFnData>(
     queryKey: QueryKey,
-    updater: Updater<TData | undefined, TData | undefined>,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TData | undefined][]
+  ): [QueryKey, TQueryFnData | undefined][]
 
-  setQueriesData<TData>(
+  setQueriesData<TQueryFnData>(
     filters: QueryFilters,
-    updater: Updater<TData | undefined, TData | undefined>,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TData | undefined][]
+  ): [QueryKey, TQueryFnData | undefined][]
 
-  setQueriesData<TData>(
+  setQueriesData<TQueryFnData>(
     queryKeyOrFilters: QueryKey | QueryFilters,
-    updater: Updater<TData | undefined, TData | undefined>,
+    updater: Updater<TQueryFnData | undefined, TQueryFnData | undefined>,
     options?: SetDataOptions,
-  ): [QueryKey, TData | undefined][] {
+  ): [QueryKey, TQueryFnData | undefined][] {
     return notifyManager.batch(() =>
       this.getQueryCache()
         .findAll(queryKeyOrFilters)
         .map(({ queryKey }) => [
           queryKey,
-          this.setQueryData<TData>(queryKey, updater, options),
+          this.setQueryData<TQueryFnData>(queryKey, updater, options),
         ]),
     )
   }
 
-  getQueryState<TData = unknown, TError = undefined>(
+  getQueryState<TQueryFnData = unknown, TError = undefined>(
     queryKey: QueryKey,
     filters?: QueryFilters,
-  ): QueryState<TData, TError> | undefined {
-    return this.queryCache.find<TData, TError>(queryKey, filters)?.state
+  ): QueryState<TQueryFnData, TError> | undefined {
+    return this.queryCache.find<TQueryFnData, TError>(queryKey, filters)?.state
   }
 
   removeQueries(filters?: QueryFilters): void

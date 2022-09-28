@@ -2,7 +2,7 @@ import type {
   PersistedClient,
   Persister,
   Promisable,
-} from '@tanstack/react-query-persist-client'
+} from '@tanstack/query-persist-client-core'
 import { asyncThrottle } from './asyncThrottle'
 
 interface AsyncStorage {

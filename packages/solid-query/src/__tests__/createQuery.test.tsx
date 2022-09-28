@@ -4936,7 +4936,7 @@ describe('createQuery', () => {
       const promise = new Promise<string>((resolve, reject) => {
         cancelFn = jest.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
-        sleep(10).then(() => resolve('OK'))
+        sleep(20).then(() => resolve('OK'))
       })
 
       return promise
@@ -4961,9 +4961,7 @@ describe('createQuery', () => {
 
     await waitFor(() => screen.getByText('off'))
 
-    if (typeof AbortSignal === 'function') {
-      expect(cancelFn).toHaveBeenCalled()
-    }
+    expect(cancelFn).toHaveBeenCalled()
   })
 
   it('should cancel the query if the signal was consumed and there are no more subscriptions', async () => {
@@ -5013,19 +5011,11 @@ describe('createQuery', () => {
       dataUpdateCount: 1,
     })
 
-    if (typeof AbortSignal === 'function') {
-      expect(queryCache.find([key(), 1])?.state).toMatchObject({
-        data: undefined,
-        status: 'loading',
-        fetchStatus: 'idle',
-      })
-    } else {
-      expect(queryCache.find([key(), 1])?.state).toMatchObject({
-        data: 'data 1',
-        status: 'success',
-        dataUpdateCount: 1,
-      })
-    }
+    expect(queryCache.find([key(), 1])?.state).toMatchObject({
+      data: undefined,
+      status: 'loading',
+      fetchStatus: 'idle',
+    })
 
     expect(queryCache.find([key(), 2])?.state).toMatchObject({
       data: 'data 2',
@@ -5033,19 +5023,11 @@ describe('createQuery', () => {
       dataUpdateCount: 1,
     })
 
-    if (typeof AbortSignal === 'function') {
-      expect(queryCache.find([key(), 3])?.state).toMatchObject({
-        data: undefined,
-        status: 'loading',
-        fetchStatus: 'idle',
-      })
-    } else {
-      expect(queryCache.find([key(), 3])?.state).toMatchObject({
-        data: 'data 3',
-        status: 'success',
-        dataUpdateCount: 1,
-      })
-    }
+    expect(queryCache.find([key(), 3])?.state).toMatchObject({
+      data: undefined,
+      status: 'loading',
+      fetchStatus: 'idle',
+    })
   })
 
   it('should refetch when quickly switching to a failed query', async () => {
@@ -6195,7 +6177,7 @@ describe('createQuery', () => {
         status: 'success',
       })
 
-      expect(count).toBe(typeof AbortSignal === 'function' ? 1 : 2)
+      expect(count).toBe(1)
 
       onlineMock.mockRestore()
     })

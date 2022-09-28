@@ -178,7 +178,7 @@ const data = queryClient.getQueryData(queryKey)
 
 **Returns**
 
-- `data: TData | undefined`
+- `data: TQueryFnData | undefined`
   - The data for the cached query, or `undefined` if the query does not exist.
 
 ## `queryClient.getQueriesData`
@@ -197,7 +197,7 @@ const data = queryClient.getQueriesData(queryKey | filters)
 
 **Returns**
 
-- `[queryKey:QueryKey, data:TData | unknown][]`
+- `[queryKey: QueryKey, data: TQueryFnData | undefined][]`
   - An array of tuples for the matched query keys, or `[]` if there are no matches. The tuples are the query key and its associated data.
 
 **Caveats**
@@ -219,7 +219,7 @@ queryClient.setQueryData(queryKey, updater)
 **Options**
 
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
-- `updater: TData | (oldData: TData | undefined) => TData | undefined`
+- `updater: TQueryFnData | (oldData: TQueryFnData | undefined) => TQueryFnData | undefined`
   - If non-function is passed, the data will be updated to this value
   - If a function is passed, it will receive the old data value and be expected to return a new one.
 
@@ -268,7 +268,7 @@ queryClient.setQueriesData(queryKey | filters, updater)
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys) | `filters: QueryFilters`: [Query Filters](../guides/filters#query-filters)
   - if a queryKey is passed as first argument, queryKeys partially matching this param will be updated
   - if a filter is passed, queryKeys matching the filter will be updated
-- `updater: TData | (oldData: TData | undefined) => TData`
+- `updater: TQueryFnData | (oldData: TQueryFnData | undefined) => TQueryFnData`
   - the [setQueryData](#queryclientsetquerydata) updater function or new data, will be called for each matching queryKey
 
 ## `queryClient.invalidateQueries`
