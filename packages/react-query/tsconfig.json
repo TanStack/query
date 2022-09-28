@@ -4,8 +4,7 @@
     "composite": true,
     "rootDir": "./src",
     "outDir": "./build/lib",
-    "tsBuildInfoFile": "./build/.tsbuildinfo",
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
   "include": ["src"],
   "references": [
