@@ -24,6 +24,7 @@ importers:
       '@types/node': ^17.0.25
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
+      '@types/testing-library__jest-dom': ^5.14.5
       '@typescript-eslint/eslint-plugin': ^5.6.0
       '@typescript-eslint/parser': ^5.6.0
       axios: ^0.26.1
@@ -91,6 +92,7 @@ importers:
       '@types/node': 17.0.45
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
+      '@types/testing-library__jest-dom': 5.14.5
       '@typescript-eslint/eslint-plugin': 5.30.5_f210567de60e9ec22622a5aba5373fd9
       '@typescript-eslint/parser': 5.30.5_eslint@7.32.0+typescript@4.8.3
       axios: 0.26.1
