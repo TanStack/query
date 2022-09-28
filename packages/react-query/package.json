@@ -47,7 +47,7 @@
     "react-error-boundary": "^3.1.4"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.7.1",
+    "@tanstack/query-core": "workspace:*",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {

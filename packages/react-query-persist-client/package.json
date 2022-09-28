@@ -32,9 +32,9 @@
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
   },
   "dependencies": {
-    "@tanstack/query-persist-client-core": "4.7.1"
+    "@tanstack/query-persist-client-core": "workspace:*"
   },
   "peerDependencies": {
-    "@tanstack/react-query": "4.7.1"
+    "@tanstack/react-query": "workspace:*"
   }
 }

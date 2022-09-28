@@ -711,13 +711,13 @@ importers:
 
   packages/query-async-storage-persister:
     specifiers:
-      '@tanstack/query-persist-client-core': 4.7.1
+      '@tanstack/query-persist-client-core': workspace:*
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
 
   packages/query-broadcast-client-experimental:
     specifiers:
-      '@tanstack/query-core': 4.7.1
+      '@tanstack/query-core': workspace:*
       broadcast-channel: ^4.14.0
     dependencies:
       '@tanstack/query-core': link:../query-core
@@ -731,13 +731,13 @@ importers:
 
   packages/query-sync-storage-persister:
     specifiers:
-      '@tanstack/query-persist-client-core': 4.7.1
+      '@tanstack/query-persist-client-core': workspace:*
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
 
   packages/react-query:
     specifiers:
-      '@tanstack/query-core': 4.7.1
+      '@tanstack/query-core': workspace:*
       '@types/jscodeshift': ^0.11.3
       '@types/use-sync-external-store': ^0.0.3
       jscodeshift: ^0.13.1
@@ -765,13 +765,13 @@ importers:
 
   packages/react-query-persist-client:
     specifiers:
-      '@tanstack/query-persist-client-core': 4.7.1
+      '@tanstack/query-persist-client-core': workspace:*
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
 
   packages/solid-query:
     specifiers:
-      '@tanstack/query-core': 4.7.1
+      '@tanstack/query-core': workspace:*
       '@types/jscodeshift': ^0.11.3
       jscodeshift: ^0.13.1
     dependencies:
