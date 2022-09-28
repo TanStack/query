@@ -1,6 +1,5 @@
 {
   "name": "@tanstack/query-example-react-refetch-interval",
-  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -10,8 +9,8 @@
     "next": "12.2.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@tanstack/react-query": "4.7.1",
-    "@tanstack/react-query-devtools": "4.7.1"
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1"
   },
   "scripts": {
     "dev": "next",

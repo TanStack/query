@@ -33,7 +33,7 @@
     "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.7.1",
+    "@tanstack/query-core": "workspace:*",
     "broadcast-channel": "^4.14.0"
   }
 }

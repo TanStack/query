@@ -1,6 +1,5 @@
 {
   "name": "@tanstack/query-example-react-simple",
-  "private": true,
   "version": "0.0.1",
   "main": "src/index.jsx",
   "scripts": {
@@ -12,8 +11,8 @@
     "axios": "^0.26.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "@tanstack/react-query": "4.7.1",
-    "@tanstack/react-query-devtools": "4.7.1"
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^2.0.0",

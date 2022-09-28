@@ -1,6 +1,5 @@
 {
   "name": "@tanstack/query-example-react-load-more-infinite-scroll",
-  "private": true,
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -11,8 +10,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-intersection-observer": "^8.33.1",
-    "@tanstack/react-query": "4.7.1",
-    "@tanstack/react-query-devtools": "4.7.1"
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1"
   },
   "scripts": {
     "dev": "next",

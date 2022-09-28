@@ -369,7 +369,7 @@ async function run() {
   }
 
   console.info('Building packages...')
-  execSync(`npm run build`, { encoding: 'utf8', stdio: 'inherit' })
+  execSync(`pnpm run build`, { encoding: 'utf8', stdio: 'inherit' })
   console.info('')
 
   console.info('Validating packages...')
@@ -415,7 +415,7 @@ async function run() {
   }
 
   console.info('Testing packages...')
-  execSync(`npm run test:ci`, { encoding: 'utf8' })
+  execSync(`pnpm run test:ci`, { encoding: 'utf8' })
   console.info('')
 
   console.info(`Updating all changed packages to version ${version}...`)
@@ -430,110 +430,6 @@ async function run() {
       },
     )
   }
-
-  console.info(`Updating all package dependencies to latest versions...`)
-  // Update all changed package dependencies to their correct versions
-  for (const pkg of packages) {
-    await updatePackageJson(
-      path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
-      async (config) => {
-        await Promise.all(
-          Object.keys(config.dependencies ?? {}).map(async (dep) => {
-            const depPackage = packages.find((d) => d.name === dep)
-
-            if (depPackage) {
-              const depVersion = await getPackageVersion(
-                path.resolve(
-                  rootDir,
-                  'packages',
-                  depPackage.packageDir,
-                  'package.json',
-                ),
-              )
-
-              if (
-                config.dependencies?.[dep] &&
-                config.dependencies[dep] !== depVersion
-              ) {
-                console.info(
-                  `  Updating ${pkg.name}'s dependency on ${dep} to version ${depVersion}.`,
-                )
-                config.dependencies[dep] = depVersion
-              }
-            }
-          }),
-        )
-
-        await Promise.all(
-          Object.keys(config.peerDependencies ?? {}).map(async (peerDep) => {
-            const peerDepPackage = packages.find((d) => d.name === peerDep)
-
-            if (peerDepPackage) {
-              const depVersion = await getPackageVersion(
-                path.resolve(
-                  rootDir,
-                  'packages',
-                  peerDepPackage.packageDir,
-                  'package.json',
-                ),
-              )
-
-              if (
-                config.peerDependencies?.[peerDep] &&
-                config.peerDependencies[peerDep] !== depVersion
-              ) {
-                console.info(
-                  `  Updating ${pkg.name}'s peerDependency on ${peerDep} to version ${depVersion}.`,
-                )
-                config.peerDependencies[peerDep] = depVersion
-              }
-            }
-          }),
-        )
-      },
-    )
-  }
-
-  console.info(`Updating all example dependencies...`)
-  await Promise.all(
-    examplesDirs.map(async (examplesDir) => {
-      examplesDir = path.resolve(rootDir, examplesDir)
-      const exampleDirs = await fsp.readdir(examplesDir)
-      for (const exampleName of exampleDirs) {
-        const exampleDir = path.resolve(examplesDir, exampleName)
-        const stat = await fsp.stat(exampleDir)
-        if (!stat.isDirectory()) continue
-
-        await updatePackageJson(
-          path.resolve(exampleDir, 'package.json'),
-          async (config) => {
-            await Promise.all(
-              changedPackages.map(async (pkg) => {
-                const depVersion = await getPackageVersion(
-                  path.resolve(
-                    rootDir,
-                    'packages',
-                    pkg.packageDir,
-                    'package.json',
-                  ),
-                )
-
-                if (
-                  config.dependencies?.[pkg.name] &&
-                  config.dependencies[pkg.name] !== depVersion
-                ) {
-                  console.info(
-                    `  Updating ${exampleName}'s dependency on ${pkg.name} to version ${depVersion}.`,
-                  )
-                  config.dependencies[pkg.name] = depVersion
-                }
-              }),
-            )
-          },
-        )
-      }
-    }),
-  )
 
   if (!process.env.CI) {
     console.warn(
@@ -559,25 +455,12 @@ async function run() {
   // Publish each package
   changedPackages.map((pkg) => {
     const packageDir = path.join(rootDir, 'packages', pkg.packageDir)
-    const cmd = `cd ${packageDir} && npm publish --tag ${npmTag} --access=public --non-interactive`
+    const cmd = `cd ${packageDir} && pnpm publish --tag ${npmTag} --access=public --non-interactive`
     console.info(
       `  Publishing ${pkg.name}@${version} to npm with tag "${npmTag}"...`,
     )
     execSync(`${cmd} --token ${process.env.NPM_TOKEN}`)
   })
-
-  // TODO: currently, the package registry isn't fast enough for us to do
-  // this immediately after publishing. So not sure what to do here...
-
-  // Update example lock files to use new dependencies
-  // for (const example of examples) {
-  //   let stat = await fsp.stat(path.join(examplesDir, example))
-  //   if (!stat.isDirectory()) continue
-
-  //   console.info(`  Updating example ${example} dependencies/lockfile...`)
-
-  //   updateExampleLockfile(example)
-  // }
 
   console.info()
 
@@ -636,29 +519,6 @@ async function updatePackageJson(
   await jsonfile.writeFile(pathName, json, {
     spaces: 2,
   })
-}
-
-async function getPackageVersion(pathName: string) {
-  const json = await readPackageJson(pathName)
-
-  if (!json.version) {
-    throw new Error(`No version found for package: ${pathName}`)
-  }
-
-  return json.version
-}
-
-function updateExampleLockfile(example: string) {
-  // execute npm to update lockfile, ignoring any stdout or stderr
-  const exampleDir = path.join(rootDir, 'examples', example)
-  execSync(`cd ${exampleDir} && npm install`, { stdio: 'ignore' })
-}
-
-function getPackageNameDirectory(pathName: string) {
-  return pathName
-    .split('/')
-    .filter((d) => !d.startsWith('@'))
-    .join('/')
 }
 
 function getTaggedVersion() {

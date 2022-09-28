@@ -43,7 +43,7 @@
     "jscodeshift": "^0.13.1"
   },
   "dependencies": {
-    "@tanstack/query-core": "4.7.1"
+    "@tanstack/query-core": "workspace:*"
   },
   "peerDependencies": {
     "solid-js": "^1.5.4"
