@@ -18,7 +18,7 @@ jobs:
           node-version: ${{ matrix.node }}
           cache: 'pnpm'
       - name: Install dependencies
-        run: pnpm --filter "./packages/**" --filter query install
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - run: |
           pnpm run test:ci
           pnpm run test:size
