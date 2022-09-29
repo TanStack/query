@@ -21,10 +21,11 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
           registry-url: https://registry.npmjs.org/
+          cache: 'pnpm'
       - run: |
           pnpm --filter "./packages/**" --filter query install
           git config --global user.name 'Tanner Linsley'
