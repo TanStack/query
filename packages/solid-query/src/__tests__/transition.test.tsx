@@ -4,7 +4,7 @@ import { createSignal, Show, startTransition, Suspense } from 'solid-js'
 import { createQuery, QueryCache, QueryClientProvider } from '..'
 import { createQueryClient, queryKey, sleep } from './utils'
 
-describe.skip("useQuery's in Suspense mode with transitions", () => {
+describe("useQuery's in Suspense mode with transitions", () => {
   const queryCache = new QueryCache()
   const queryClient = createQueryClient({ queryCache })
 
