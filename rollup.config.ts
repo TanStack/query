@@ -7,7 +7,6 @@ import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
-import svelte from 'rollup-plugin-svelte'
 
 type Options = {
   input: string | string[]
@@ -170,6 +169,26 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       },
       bundleUMDGlobals: ['@tanstack/query-core'],
     }),
+    ...buildConfigs({
+      name: 'vue-query',
+      packageDir: 'packages/vue-query',
+      jsName: 'VueQuery',
+      outputFile: 'index',
+      entryFile: 'src/index.ts',
+      globals: {
+        '@tanstack/query-core': 'QueryCore',
+        vue: 'Vue',
+        'vue-demi': 'VueDemi',
+        'match-sorter': 'MatchSorter',
+        '@vue/devtools-api': 'DevtoolsApi',
+      },
+      bundleUMDGlobals: [
+        '@tanstack/query-core',
+        'vue-demi',
+        'match-sorter',
+        '@vue/devtools-api',
+      ],
+    }),
   ]
 }
 
@@ -260,7 +279,6 @@ function mjs({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte(),
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -300,7 +318,6 @@ function esm({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte(),
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -342,7 +359,6 @@ function cjs({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte(),
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -383,7 +399,6 @@ function umdDev({
       banner,
     },
     plugins: [
-      svelte(),
       commonJS(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -414,7 +429,6 @@ function umdProd({
       banner,
     },
     plugins: [
-      svelte(),
       commonJS(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),

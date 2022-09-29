@@ -40,6 +40,11 @@ export const packages: Package[] = [
     packageDir: 'solid-query',
     srcDir: 'src',
   },
+  {
+    name: '@tanstack/vue-query',
+    packageDir: 'vue-query',
+    srcDir: 'src',
+  },
 ]
 
 export const latestBranch = 'main'
