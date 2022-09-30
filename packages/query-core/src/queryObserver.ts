@@ -547,13 +547,16 @@ export class QueryObserver<
     }
 
     const isFetching = fetchStatus === 'fetching'
+    const isLoading = status === 'loading'
+    const isError = status === 'error'
 
     const result: QueryObserverBaseResult<TData, TError> = {
       status,
       fetchStatus,
-      isLoading: status === 'loading',
+      isLoading,
       isSuccess: status === 'success',
-      isError: status === 'error',
+      isError,
+      isInitialLoading: isLoading && isFetching,
       data,
       dataUpdatedAt,
       error,
@@ -564,13 +567,13 @@ export class QueryObserver<
       isFetchedAfterMount:
         state.dataUpdateCount > queryInitialState.dataUpdateCount ||
         state.errorUpdateCount > queryInitialState.errorUpdateCount,
-      isFetching: isFetching,
-      isRefetching: isFetching && status !== 'loading',
-      isLoadingError: status === 'error' && state.dataUpdatedAt === 0,
+      isFetching,
+      isRefetching: isFetching && !isLoading,
+      isLoadingError: isError && state.dataUpdatedAt === 0,
       isPaused: fetchStatus === 'paused',
       isPlaceholderData,
       isPreviousData,
-      isRefetchError: status === 'error' && state.dataUpdatedAt !== 0,
+      isRefetchError: isError && state.dataUpdatedAt !== 0,
       isStale: isStale(query, options),
       refetch: this.refetch,
       remove: this.remove,

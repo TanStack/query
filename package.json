@@ -96,7 +96,7 @@
   "bundlewatch": {
     "files": [
       {
-        "path": "packages/**/build/umd/*.production.js"
+        "path": "packages/*/build/umd/*.production.js"
       }
     ]
   }

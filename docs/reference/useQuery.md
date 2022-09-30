@@ -244,6 +244,9 @@ const result = useQuery({
 - `isRefetching: boolean`
   - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading`
   - Is the same as `isFetching && !isLoading`
+- `isInitialLoading: boolean`
+  - Is `true` whenever the first fetch for a query is in-flight
+  - Is the same as `isFetching && isLoading`
 - `failureCount: number`
   - The failure count for the query.
   - Incremented every time the query fails.
