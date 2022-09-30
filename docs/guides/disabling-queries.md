@@ -19,7 +19,7 @@ When `enabled` is `false`:
 ```tsx
 function Todos() {
   const {
-    isLoading,
+    isInitialLoading,
     isError,
     data,
     error,
@@ -45,10 +45,10 @@ function Todos() {
         isError ? (
           <span>Error: {error.message}</span>
         ) : (
-          (isLoading && !isFetching) ? (
-           <span>Not ready ...</span>
+          isInitialLoading ? (
+            <span>Loading...</span>
          ) : (
-           <span>Loading...</span>
+            <span>Not ready ...</span>
          )
         )
       )}
@@ -87,3 +87,13 @@ function Todos() {
   )
 }
 ```
+
+### isInitialLoading
+
+Lazy queries will be in `status: 'loading'` right from the start because `loading` means that there is no data yet. This is technically true, however, since we are not currently fetching any data (as the query is not _enabled_), it also means you likely cannot use this flag to show a loading spinner.
+
+If you are using disabled or lazy queries, you can use the `isInitialLoading` flag instead. It's a derived flag that is computed from:
+
+`isLoading && isFetching`
+
+so it will only be true if the query is currently fetching for the first time.

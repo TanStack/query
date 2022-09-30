@@ -21,14 +21,16 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v3
         with:
           node-version: 16.14.2
           registry-url: https://registry.npmjs.org/
+          cache: 'pnpm'
       - run: |
-          pnpm --filter "./packages/**" --filter query install
+          pnpm --filter "./packages/**" --filter query --prefer-offline install
           git config --global user.name 'Tanner Linsley'
           git config --global user.email 'tannerlinsley@users.noreply.github.com'
+          npm config set '//registry.npmjs.org/:_authToken' "${NPM_TOKEN}"
           pnpm run cipublish
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}

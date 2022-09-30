@@ -112,6 +112,17 @@ This will mostly affect `disabled` queries that don't have any `data` yet, as th
 
 Also, have a look at [the guide on dependent queries](../guides/dependent-queries)
 
+#### disabled queries
+
+Due to this change, disabled queries (even temporarily disabled ones) will start in `loading` state. To make migration easier, especially for having a good flag to know when to display a loading spinner, you can check for `isInitialLoading` instead of `isLoading`:
+
+```diff
+- isLoading
++ isInitialLoading
+```
+
+See also the guide on [disabling queries](../guides/disabling-queries#isInitialLoading)
+
 ### new API for `useQueries`
 
 The `useQueries` hook now accepts an object with a `queries` prop as its input. The value of the `queries` prop is an array of queries (this array is identical to what was passed into `useQueries` in v3).
