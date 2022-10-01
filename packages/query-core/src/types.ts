@@ -46,7 +46,9 @@ export interface InfiniteData<TData> {
   pageParams: unknown[]
 }
 
-export type QueryMeta = Record<string, unknown>
+export interface QueryMeta {
+  [x: string]: unknown
+}
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
 
@@ -532,7 +534,9 @@ export type MutationKey = readonly unknown[]
 
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
-export type MutationMeta = Record<string, unknown>
+export interface MutationMeta {
+  [x: string]: unknown
+}
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
   variables: TVariables,
