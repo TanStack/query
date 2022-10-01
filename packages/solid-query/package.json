@@ -16,7 +16,7 @@
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "solid": "./build/solid/index.js",
+      "solid": "./build/solid/index.jsx",
       "import": "./build/lib/index.mjs",
       "browser": "./build/lib/index.mjs",
       "require": "./build/lib/index.js",
