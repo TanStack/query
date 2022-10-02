@@ -64,6 +64,10 @@
         {
           "label": "Svelte Query (Coming Soon)",
           "to": "#"
+        },
+        {
+          "label": "Angular Query (Coming Soon)",
+          "to": "#"
         }
       ]
     },
