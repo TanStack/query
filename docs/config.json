@@ -58,8 +58,8 @@
           "to": "adapters/solid-query"
         },
         {
-          "label": "Vue Query (Coming Soon)",
-          "to": "#"
+          "label": "Vue Query",
+          "to": "adapters/vue-query"
         },
         {
           "label": "Svelte Query (Coming Soon)",
