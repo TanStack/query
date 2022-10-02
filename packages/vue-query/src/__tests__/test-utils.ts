@@ -32,7 +32,7 @@ export function infiniteFetcher({
 }
 
 export function rejectFetcher(): Promise<Error> {
-  return new Promise((resolve, reject) => {
+  return new Promise((_, reject) => {
     setTimeout(() => {
       return reject(new Error('Some error'))
     }, 0)
@@ -47,7 +47,6 @@ export function successMutator<T>(param: T): Promise<T> {
   })
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function errorMutator<T>(param: T): Promise<Error> {
+export function errorMutator<T>(_: T): Promise<Error> {
   return rejectFetcher()
 }
