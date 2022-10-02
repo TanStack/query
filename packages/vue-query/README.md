@@ -1,9 +1,9 @@
-[![Vue Query logo](./media/vue-query.png)](https://damianosipiuk.github.io/vue-query/)
+[![Vue Query logo](./media/vue-query.png)](https://github.com/TanStack/query/tree/main/packages/vue-query)
 
-[![npm version](https://img.shields.io/npm/v/vue-query)](https://www.npmjs.com/package/vue-query)
-[![npm license](https://img.shields.io/npm/l/vue-query)](https://github.com/DamianOsipiuk/vue-query/blob/main/LICENSE)
-[![bundle size](https://img.shields.io/bundlephobia/minzip/vue-query)](https://bundlephobia.com/result?p=vue-query)
-[![npm](https://img.shields.io/npm/dm/vue-query)](https://www.npmjs.com/package/vue-query)
+[![npm version](https://img.shields.io/npm/v/@tanstack/vue-query)](https://www.npmjs.com/package/@tanstack/vue-query)
+[![npm license](https://img.shields.io/npm/l/@tanstack/vue-query)](https://github.com/TanStack/query/blob/main/LICENSE)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@tanstack/vue-query)](https://bundlephobia.com/package/@tanstack/vue-query)
+[![npm](https://img.shields.io/npm/dm/@tanstack/vue-query)](https://www.npmjs.com/package/@tanstack/vue-query)
 
 # Vue Query
 
@@ -35,12 +35,14 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 1. Install `vue-query`
 
    ```bash
-   npm install vue-query
+   $ npm i @tanstack/vue-query
    # or
-   yarn add vue-query
+   $ pnpm add @tanstack/vue-query
+   # or
+   $ yarn add @tanstack/vue-query
    ```
 
-   > If you are using Vue 2.x, make sure to also setup [@vue/composition-api](https://github.com/vuejs/composition-api)
+   > If you are using Vue 2.6, make sure to also setup [@vue/composition-api](https://github.com/vuejs/composition-api)
 
 2. Initialize **Vue Query** via **VueQueryPlugin**
 
@@ -62,7 +64,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
    export default defineComponent({
      name: "MyComponent",
      setup() {
-       const query = useQuery("todos", getTodos);
+       const query = useQuery(["todos"], getTodos);
 
        return {
          query,
