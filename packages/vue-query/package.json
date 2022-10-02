@@ -1,0 +1,55 @@
+{
+  "name": "@tanstack/vue-query",
+  "version": "4.8.0",
+  "description": "Hooks for managing, caching and syncing asynchronous and remote data in Vue",
+  "author": "Damian Osipiuk",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "module": "build/lib/index.esm.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts ./src",
+    "test:jest": "../../node_modules/.bin/jest --config jest.config.js",
+    "test:jest:dev": "pnpm test:jest --watch"
+  },
+  "files": [
+    "build/lib/*",
+    "build/umd/*"
+  ],
+  "devDependencies": {
+    "@vue/composition-api": "1.7.1",
+    "vue": "^3.2.40",
+    "vue2": "npm:vue@2"
+  },
+  "dependencies": {
+    "@tanstack/query-core": "workspace:*",
+    "@vue/devtools-api": "^6.4.2",
+    "match-sorter": "^6.3.1",
+    "vue-demi": "^0.13.11"
+  },
+  "peerDependencies": {
+    "@vue/composition-api": "^1.1.2",
+    "vue": "^2.5.0 || ^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@vue/composition-api": {
+      "optional": true
+    }
+  }
+}
