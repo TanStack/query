@@ -28,7 +28,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 - (experimental) [Suspense](https://v3.vuejs.org/guide/migration/suspense.html#introduction) + Fetch-As-You-Render Query Prefetching
 - (experimental) SSR support
 - Dedicated Devtools
-- [![npm bundle size](https://img.shields.io/bundlephobia/minzip/vue-query)](https://bundlephobia.com/result?p=vue-query) (depending on features imported)
+- [![npm bundle size](https://img.shields.io/bundlephobia/minzip/@tanstack/vue-query)](https://bundlephobia.com/package/@tanstack/vue-query) (depending on features imported)
 
 # Quick Start
 
