@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import type * as React from 'react'
 import type {
   InfiniteQueryObserverOptions,
