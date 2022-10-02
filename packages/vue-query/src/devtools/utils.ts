@@ -78,8 +78,7 @@ export function getQueryStatusBg(query: Query): number {
   return 0x008327
 }
 
-const queryHashSort: SortFn = (a, b) =>
-  String(a.queryHash).localeCompare(b.queryHash)
+const queryHashSort: SortFn = (a, b) => a.queryHash.localeCompare(b.queryHash)
 
 const dateSort: SortFn = (a, b) =>
   a.state.dataUpdatedAt < b.state.dataUpdatedAt ? 1 : -1

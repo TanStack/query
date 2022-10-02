@@ -5,7 +5,6 @@ import vue from "@vitejs/plugin-vue";
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
-    include: ["remove-accents"],
     exclude: ["vue-query", "vue-demi"],
   },
 });

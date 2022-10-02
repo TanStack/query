@@ -2,4 +2,4 @@ packages:
   - 'packages/**'
   - 'examples/react/**'
   - 'examples/solid/**'
-  # - 'examples/vue/**'
+  - 'examples/vue/**'
