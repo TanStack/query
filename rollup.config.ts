@@ -178,13 +178,12 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       globals: {
         '@tanstack/query-core': 'QueryCore',
         vue: 'Vue',
-        'vue-demi': 'VueDemi',
+        'vue-demi': 'Vue',
         'match-sorter': 'MatchSorter',
         '@vue/devtools-api': 'DevtoolsApi',
       },
       bundleUMDGlobals: [
         '@tanstack/query-core',
-        'vue-demi',
         'match-sorter',
         '@vue/devtools-api',
       ],
