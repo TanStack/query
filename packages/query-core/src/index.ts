@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 export { CancelledError } from './retryer'
 export { QueryCache } from './queryCache'
 export { QueryClient } from './queryClient'
