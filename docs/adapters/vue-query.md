@@ -14,7 +14,7 @@ This example very briefly illustrates the 3 core concepts of Vue Query:
 
 ```vue
 <script setup>
-import { useQueryClient, useQuery, useMutation } from "vue-query";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/vue-query";
 
 // Access QueryClient instance
 const queryClient = useQueryClient();
