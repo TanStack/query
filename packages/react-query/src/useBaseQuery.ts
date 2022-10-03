@@ -29,6 +29,9 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
+  // Duc - we need to call create a queryClient and reuse it
+
+  // { context: options.context }
   // Duc - why do we need context here?
   // Duc - how to implement this behavior in angular
   // Duc - FROM the document: Required, but only if no default query function has been defined See Default Query Function for more information.
@@ -38,7 +41,7 @@ export function useBaseQuery<
   // Duc - skip this in MVP
   const isRestoring = useIsRestoring()
   // Duc - SKIP: since angular does not have ErrorBoundary
-  const errorResetBoundary = useQueryErrorResetBoundary()
+  // const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryOptions(options)
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
@@ -78,10 +81,10 @@ export function useBaseQuery<
   }
 
   // Duc - SKIP: since angular does not have ErrorBoundary
-  ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
+  // ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
 
   // Duc - SKIP: since angular does not have ErrorBoundary
-  useClearResetErrorBoundary(errorResetBoundary)
+  // useClearResetErrorBoundary(errorResetBoundary)
 
   // Duc - create an observer for this query one time
   // and reuse it
@@ -103,7 +106,8 @@ export function useBaseQuery<
       (onStoreChange) =>
         isRestoring
           ? () => undefined
-          : observer.subscribe(notifyManager.batchCalls(onStoreChange)),
+          : // Duc - call unsubcribe on destroy
+            observer.subscribe(notifyManager.batchCalls(onStoreChange)),
       [observer, isRestoring],
     ),
     () => observer.getCurrentResult(),
@@ -120,38 +124,38 @@ export function useBaseQuery<
   // Duc - is this react specific suspense logic?
   // Duc - I guess we don't need this for Angular
   // Handle suspense
-  if (
-    defaultedOptions.suspense &&
-    result.isLoading &&
-    result.isFetching &&
-    !isRestoring
-  ) {
-    throw observer
-      .fetchOptimistic(defaultedOptions)
-      .then(({ data }) => {
-        defaultedOptions.onSuccess?.(data as TData)
-        defaultedOptions.onSettled?.(data, null)
-      })
-      .catch((error) => {
-        errorResetBoundary.clearReset()
-        defaultedOptions.onError?.(error)
-        defaultedOptions.onSettled?.(undefined, error)
-      })
-  }
+  // if (
+  //   defaultedOptions.suspense &&
+  //   result.isLoading &&
+  //   result.isFetching &&
+  //   !isRestoring
+  // ) {
+  //   throw observer
+  //     .fetchOptimistic(defaultedOptions)
+  //     .then(({ data }) => {
+  //       defaultedOptions.onSuccess?.(data as TData)
+  //       defaultedOptions.onSettled?.(data, null)
+  //     })
+  //     .catch((error) => {
+  //       errorResetBoundary.clearReset()
+  //       defaultedOptions.onError?.(error)
+  //       defaultedOptions.onSettled?.(undefined, error)
+  //     })
+  // }
 
   // Duc - is this react specific suspense logic?
   // Duc - I guess we don't need this for Angular
   // Handle error boundary
-  if (
-    getHasError({
-      result,
-      errorResetBoundary,
-      useErrorBoundary: defaultedOptions.useErrorBoundary,
-      query: observer.getCurrentQuery(),
-    })
-  ) {
-    throw result.error
-  }
+  // if (
+  //   getHasError({
+  //     result,
+  //     errorResetBoundary,
+  //     useErrorBoundary: defaultedOptions.useErrorBoundary,
+  //     query: observer.getCurrentQuery(),
+  //   })
+  // ) {
+  //   throw result.error
+  // }
 
   // Handle result property usage tracking
   return !defaultedOptions.notifyOnChangeProps
