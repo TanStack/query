@@ -29,7 +29,7 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
-  // Duc - we need to call create a queryClient and reuse it
+  // Duc - we need to create a queryClient and reuse it per query
 
   // { context: options.context }
   // Duc - why do we need context here?
@@ -115,6 +115,10 @@ export function useBaseQuery<
   )
 
   // Duc - update observer option if consumer options are changed
+  // Duc - need to find a good API to for angular life cycle
+  // Duc - a good canidate is provide options as BehaviorSubject
+  // Duc - consumer will subject this subject whenever options are update
+  // Duc - angular bindings should listen for changes and update observer options
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
