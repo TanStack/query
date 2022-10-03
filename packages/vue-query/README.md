@@ -48,7 +48,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 
    ```ts
    import { createApp } from "vue";
-   import { VueQueryPlugin } from "vue-query";
+   import { VueQueryPlugin } from "@tanstack/vue-query";
 
    import App from "./App.vue";
 
@@ -59,7 +59,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 
    ```ts
    import { defineComponent } from "vue";
-   import { useQuery } from "vue-query";
+   import { useQuery } from "@tanstack/vue-query";
 
    export default defineComponent({
      name: "MyComponent",
