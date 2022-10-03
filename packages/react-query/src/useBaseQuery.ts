@@ -29,16 +29,25 @@ export function useBaseQuery<
   >,
   Observer: typeof QueryObserver,
 ) {
+  // Duc - why do we need context here?
+  // Duc - how to implement this behavior in angular
+  // Duc - FROM the document: Required, but only if no default query function has been defined See Default Query Function for more information.
+  // https://tanstack.com/query/v4/docs/reference/useQuery?from=reactQueryV3&original=https://react-query-v3.tanstack.com/reference/useQuery
+  // maybe we can skip this for angular e.g. the default query function is required
   const queryClient = useQueryClient({ context: options.context })
+  // Duc - skip this in MVP
   const isRestoring = useIsRestoring()
+  // Duc - SKIP: since angular does not have ErrorBoundary
   const errorResetBoundary = useQueryErrorResetBoundary()
   const defaultedOptions = queryClient.defaultQueryOptions(options)
 
   // Make sure results are optimistically set in fetching state before subscribing or updating options
+  // Duc - skip this in MVP
   defaultedOptions._optimisticResults = isRestoring
     ? 'isRestoring'
     : 'optimistic'
 
+  // Duc - skip this in MVP
   // Include callbacks in batch renders
   if (defaultedOptions.onError) {
     defaultedOptions.onError = notifyManager.batchCalls(
@@ -46,12 +55,14 @@ export function useBaseQuery<
     )
   }
 
+  // Duc - skip this in MVP
   if (defaultedOptions.onSuccess) {
     defaultedOptions.onSuccess = notifyManager.batchCalls(
       defaultedOptions.onSuccess,
     )
   }
 
+  // Duc - skip this in MVP
   if (defaultedOptions.onSettled) {
     defaultedOptions.onSettled = notifyManager.batchCalls(
       defaultedOptions.onSettled,
@@ -66,10 +77,14 @@ export function useBaseQuery<
     }
   }
 
+  // Duc - SKIP: since angular does not have ErrorBoundary
   ensurePreventErrorBoundaryRetry(defaultedOptions, errorResetBoundary)
 
+  // Duc - SKIP: since angular does not have ErrorBoundary
   useClearResetErrorBoundary(errorResetBoundary)
 
+  // Duc - create an observer for this query one time
+  // and reuse it
   const [observer] = React.useState(
     () =>
       new Observer<TQueryFnData, TError, TData, TQueryData, TQueryKey>(
@@ -78,8 +93,11 @@ export function useBaseQuery<
       ),
   )
 
+  // Duc - skip this in MVP
   const result = observer.getOptimisticResult(defaultedOptions)
 
+  // Duc - why do we need useSyncExternalStore
+  // need to check React document to find out
   useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
@@ -92,12 +110,15 @@ export function useBaseQuery<
     () => observer.getCurrentResult(),
   )
 
+  // Duc - update observer option if consumer options are changed
   React.useEffect(() => {
     // Do not notify on updates because of changes in the options because
     // these changes should already be reflected in the optimistic result.
     observer.setOptions(defaultedOptions, { listeners: false })
   }, [defaultedOptions, observer])
 
+  // Duc - is this react specific suspense logic?
+  // Duc - I guess we don't need this for Angular
   // Handle suspense
   if (
     defaultedOptions.suspense &&
@@ -118,6 +139,8 @@ export function useBaseQuery<
       })
   }
 
+  // Duc - is this react specific suspense logic?
+  // Duc - I guess we don't need this for Angular
   // Handle error boundary
   if (
     getHasError({
