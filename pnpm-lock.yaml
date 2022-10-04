@@ -702,12 +702,12 @@ importers:
       use-sync-external-store: ^1.2.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.1.1
+      superjson: 1.10.0
       use-sync-external-store: 1.2.0
     devDependencies:
       '@tanstack/react-query': link:../react-query
       '@types/use-sync-external-store': 0.0.3
       react-error-boundary: 3.1.4
-      superjson: 1.10.0
 
   packages/react-query-persist-client:
     specifiers:
@@ -8097,7 +8097,7 @@ packages:
     engines: {node: '>=12.13'}
     dependencies:
       is-what: 4.1.7
-    dev: true
+    dev: false
 
   /copy-concurrently/1.0.5:
     resolution: {integrity: sha512-f2domd9fsVDFtaFcbaRZuYXwtdmnzqbADSwhSWYxYB/Q8zsdUUFMXVRwXGDMWmbEzAn1kdRrtI1T/KTFOL4X2A==}
@@ -12185,7 +12185,6 @@ packages:
   /is-what/4.1.7:
     resolution: {integrity: sha512-DBVOQNiPKnGMxRMLIYSwERAS5MVY1B7xYiGnpgctsOFvVDz9f9PFXXxMcTOHuoqYp4NK9qFYQaIC1NRRxLMpBQ==}
     engines: {node: '>=12.13'}
-    dev: true
 
   /is-windows/1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
@@ -18727,7 +18726,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       copy-anything: 3.0.2
-    dev: true
+    dev: false
 
   /supports-color/2.0.0:
     resolution: {integrity: sha512-KKNVtd6pCYgPIKU4cp2733HWYCpplQhddZLBUryaAHou723x+FRzQ5Df824Fj+IyyuiQTRoub4SnIFfIcrp70g==}

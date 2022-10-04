@@ -44,11 +44,11 @@
   "devDependencies": {
     "@types/use-sync-external-store": "^0.0.3",
     "react-error-boundary": "^3.1.4",
-    "@tanstack/react-query": "workspace:*",
-    "superjson": "^1.10.0"
+    "@tanstack/react-query": "workspace:*"
   },
   "dependencies": {
     "@tanstack/match-sorter-utils": "^8.1.1",
+    "superjson": "^1.10.0",
     "use-sync-external-store": "^1.2.0"
   },
   "peerDependencies": {
