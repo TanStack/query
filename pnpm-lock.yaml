@@ -663,35 +663,51 @@ importers:
     specifiers:
       '@tanstack/query-core': workspace:*
       '@types/jscodeshift': ^0.11.3
+      '@types/react': ^18.0.14
+      '@types/react-dom': ^18.0.5
       '@types/use-sync-external-store': ^0.0.3
       jscodeshift: ^0.13.1
+      react: ^18.2.0
+      react-dom: ^18.2.0
       react-error-boundary: ^3.1.4
       use-sync-external-store: ^1.2.0
     dependencies:
       '@tanstack/query-core': link:../query-core
-      use-sync-external-store: 1.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
       '@types/jscodeshift': 0.11.5
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
       '@types/use-sync-external-store': 0.0.3
       jscodeshift: 0.13.1
-      react-error-boundary: 3.1.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-error-boundary: 3.1.4_react@18.2.0
 
   packages/react-query-devtools:
     specifiers:
       '@tanstack/match-sorter-utils': ^8.1.1
       '@tanstack/react-query': workspace:*
+      '@types/react': ^18.0.14
+      '@types/react-dom': ^18.0.5
       '@types/use-sync-external-store': ^0.0.3
+      react: ^18.2.0
+      react-dom: ^18.2.0
       react-error-boundary: ^3.1.4
       superjson: ^1.10.0
       use-sync-external-store: ^1.2.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.1.1
       superjson: 1.10.0
-      use-sync-external-store: 1.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
       '@tanstack/react-query': link:../react-query
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
       '@types/use-sync-external-store': 0.0.3
-      react-error-boundary: 3.1.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      react-error-boundary: 3.1.4_react@18.2.0
 
   packages/react-query-persist-client:
     specifiers:
@@ -11989,15 +12005,6 @@ packages:
       react: 18.2.0
     dev: false
 
-  /react-error-boundary/3.1.4:
-    resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
-    engines: {node: '>=10', npm: '>=6'}
-    peerDependencies:
-      react: '>=16.13.1'
-    dependencies:
-      '@babel/runtime': 7.18.9
-    dev: true
-
   /react-error-boundary/3.1.4_react@18.2.0:
     resolution: {integrity: sha512-uM9uPzZJTF6wRQORmSrvOIgt4lJ9MC1sNgEOj2XGsDTRE4kmpWxg7ENK9EWNKJRMAOY9z0MuF4yIfl6gp4sotA==}
     engines: {node: '>=10', npm: '>=6'}
@@ -13854,10 +13861,12 @@ packages:
       react: 18.2.0
     dev: false
 
-  /use-sync-external-store/1.2.0:
+  /use-sync-external-store/1.2.0_react@18.2.0:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /use/3.1.1:
