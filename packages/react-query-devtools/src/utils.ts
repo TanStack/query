@@ -1,5 +1,6 @@
 import * as React from 'react'
 import type { Query } from '@tanstack/react-query'
+import SuperJSON from 'superjson'
 
 import type { Theme } from './theme'
 import { useTheme } from './theme'
@@ -118,10 +119,9 @@ export function useIsMounted() {
  * @param {unknown} value Value to be stringified
  */
 export const displayValue = (value: unknown) => {
-  const name = Object.getOwnPropertyNames(Object(value))
-  const newValue = typeof value === 'bigint' ? `${value.toString()}n` : value
+  const { json } = SuperJSON.serialize(value)
 
-  return JSON.stringify(newValue, name)
+  return JSON.stringify(json)
 }
 
 const getStatusRank = (q: Query) =>

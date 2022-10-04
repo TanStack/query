@@ -1,5 +1,5 @@
-import * as React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
+import * as React from 'react'
 
 import { chunkArray, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
@@ -62,7 +62,19 @@ describe('Explorer', () => {
     })
 
     it('when the value is a BigInt', () => {
-      expect(displayValue(BigInt(1))).toBe('"1n"')
+      expect(displayValue(BigInt(1))).toBe('"1"')
+    })
+
+    it('when the value is an Error', () => {
+      expect(displayValue(new Error('err'))).toBe(
+        '{"name":"Error","message":"err"}',
+      )
+    })
+
+    it('when the value is an object', () => {
+      expect(displayValue({ error: new Error('err'), bigint: 1n })).toBe(
+        '{"error":{"name":"Error","message":"err"},"bigint":"1"}',
+      )
     })
   })
 })
