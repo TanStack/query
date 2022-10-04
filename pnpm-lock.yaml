@@ -705,13 +705,8 @@ importers:
   packages/solid-query:
     specifiers:
       '@tanstack/query-core': workspace:*
-      '@types/jscodeshift': ^0.11.3
-      jscodeshift: ^0.13.1
     dependencies:
       '@tanstack/query-core': link:../query-core
-    devDependencies:
-      '@types/jscodeshift': 0.11.5
-      jscodeshift: 0.13.1
 
   packages/vue-query:
     specifiers:

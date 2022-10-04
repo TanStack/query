@@ -39,8 +39,6 @@
     "src"
   ],
   "devDependencies": {
-    "@types/jscodeshift": "^0.11.3",
-    "jscodeshift": "^0.13.1"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
