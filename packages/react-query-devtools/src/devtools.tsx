@@ -419,7 +419,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
   const [filter, setFilter] = useLocalStorage('reactQueryDevtoolsFilter', '')
 
   const [baseSort, setBaseSort] = useLocalStorage(
-    'reactQueryDevtoolsSortDesc',
+    'reactQueryDevtoolsBaseSort',
     1,
   )
 
