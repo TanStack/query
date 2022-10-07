@@ -1,4 +1,4 @@
-[![Vue Query logo](./media/vue-query.png)](https://github.com/TanStack/query/tree/main/packages/vue-query)
+[![Vue Query logo](https://raw.githubusercontent.com/TanStack/query/main/packages/vue-query/media/vue-query.png)](https://github.com/TanStack/query/tree/main/packages/vue-query)
 
 [![npm version](https://img.shields.io/npm/v/@tanstack/vue-query)](https://www.npmjs.com/package/@tanstack/vue-query)
 [![npm license](https://img.shields.io/npm/l/@tanstack/vue-query)](https://github.com/TanStack/query/blob/main/LICENSE)

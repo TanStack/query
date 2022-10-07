@@ -2,7 +2,7 @@
 
 import { setupDevtoolsPlugin } from '@vue/devtools-api'
 import type { CustomInspectorNode } from '@vue/devtools-api'
-import { matchSorter } from 'match-sorter'
+import { rankItem } from '@tanstack/match-sorter-utils'
 import type { Query } from '@tanstack/query-core'
 import type { QueryClient } from '../queryClient'
 import {
@@ -125,15 +125,20 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
 
       api.on.getInspectorTree((payload) => {
         if (payload.inspectorId === pluginId) {
-          const queries: Query[] = queryCache.getAll()
+          const queries = queryCache.getAll()
           const settings = api.getSettings()
-          const filtered = matchSorter(queries, payload.filter, {
-            keys: ['queryHash'],
-            baseSort: (a, b) =>
-              sortFns[settings.sortFn]!(a.item, b.item) * settings.baseSort,
-          })
 
-          const nodes: CustomInspectorNode[] = filtered.map((query) => {
+          const filtered = payload.filter
+            ? queries.filter(
+                (item) => rankItem(item.queryHash, payload.filter).passed,
+              )
+            : [...queries]
+
+          const sorted = filtered.sort(
+            (a, b) => sortFns[settings.sortFn]!(a, b) * settings.baseSort,
+          )
+
+          const nodes: CustomInspectorNode[] = sorted.map((query) => {
             const stateLabel = getQueryStateLabel(query)
 
             return {
