@@ -47,7 +47,7 @@ export interface InfiniteData<TData> {
 }
 
 export interface QueryMeta {
-  [x: string]: unknown
+  [index: string]: unknown
 }
 
 export type NetworkMode = 'online' | 'always' | 'offlineFirst'
@@ -535,7 +535,7 @@ export type MutationKey = readonly unknown[]
 export type MutationStatus = 'idle' | 'loading' | 'success' | 'error'
 
 export interface MutationMeta {
-  [x: string]: unknown
+  [index: string]: unknown
 }
 
 export type MutationFunction<TData = unknown, TVariables = unknown> = (
