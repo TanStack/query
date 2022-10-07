@@ -300,7 +300,7 @@ const queryClient = new QueryClient({
 // we need a default mutation function so that paused mutations can resume after a page reload
 queryClient.setMutationDefaults(['todos'], {
   mutationFn: ({ id, data }) => {
-    return api.upateTodo(id, data)
+    return api.updateTodo(id, data)
   },
 })
 
