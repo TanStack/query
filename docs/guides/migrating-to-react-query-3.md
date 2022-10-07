@@ -152,7 +152,7 @@ useInfiniteQuery(['posts'], (_key, pageParam = 0) => fetchPosts(pageParam))
 useInfiniteQuery(['posts'], ({ pageParam = 0 }) => fetchPosts(pageParam))
 ```
 
-### usePaginatedQuery() has been deprecated in favor of the `keepPreviousData` option
+### usePaginatedQuery() has been removed in favor of the `keepPreviousData` option
 
 The new `keepPreviousData` options is available for both `useQuery` and `useInfiniteQuery` and will have the same "lagging" effect on your data:
 
