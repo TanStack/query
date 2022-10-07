@@ -7,7 +7,6 @@ import replace from '@rollup/plugin-replace'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import commonJS from '@rollup/plugin-commonjs'
 import path from 'path'
-import svelte from 'rollup-plugin-svelte'
 
 type Options = {
   input: string | string[]
@@ -121,10 +120,12 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/react-query': 'ReactQuery',
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
+        "superjson": 'SuperJson',
       },
       bundleUMDGlobals: [
         '@tanstack/match-sorter-utils',
         'use-sync-external-store/shim/index.js',
+        "superjson",
       ],
     }),
     ...buildConfigs({
@@ -139,6 +140,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/react-query': 'ReactQuery',
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
+        "superjson": 'SuperJson',
       },
       forceDevEnv: true,
       forceBundle: true,
@@ -169,6 +171,25 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/query-core': 'QueryCore',
       },
       bundleUMDGlobals: ['@tanstack/query-core'],
+    }),
+    ...buildConfigs({
+      name: 'vue-query',
+      packageDir: 'packages/vue-query',
+      jsName: 'VueQuery',
+      outputFile: 'index',
+      entryFile: 'src/index.ts',
+      globals: {
+        '@tanstack/query-core': 'QueryCore',
+        vue: 'Vue',
+        'vue-demi': 'Vue',
+        '@tanstack/match-sorter-utils': 'MatchSorter',
+        '@vue/devtools-api': 'DevtoolsApi',
+      },
+      bundleUMDGlobals: [
+        '@tanstack/query-core',
+        '@tanstack/match-sorter-utils',
+        '@vue/devtools-api',
+      ],
     }),
   ]
 }
@@ -260,7 +281,6 @@ function mjs({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte(),
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -300,7 +320,6 @@ function esm({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte(),
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -342,7 +361,6 @@ function cjs({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte(),
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -383,7 +401,6 @@ function umdDev({
       banner,
     },
     plugins: [
-      svelte(),
       commonJS(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
@@ -414,7 +431,6 @@ function umdProd({
       banner,
     },
     plugins: [
-      svelte(),
       commonJS(),
       babelPlugin,
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),

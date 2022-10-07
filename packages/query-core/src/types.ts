@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import type { MutationState } from './mutation'
 import type { QueryBehavior, Query } from './query'
 import type { RetryValue, RetryDelayValue } from './retryer'

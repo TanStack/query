@@ -11,7 +11,7 @@ import {
   onlineManager,
   notifyManager,
 } from '@tanstack/react-query'
-import { rankItem, compareItems } from '@tanstack/match-sorter-utils'
+import { rankItem } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
 import { sortFns, useIsMounted } from './utils'
 import ScreenReader from './screenreader'
@@ -418,9 +418,9 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const [filter, setFilter] = useLocalStorage('reactQueryDevtoolsFilter', '')
 
-  const [sortDesc, setSortDesc] = useLocalStorage(
-    'reactQueryDevtoolsSortDesc',
-    false,
+  const [baseSort, setBaseSort] = useLocalStorage(
+    'reactQueryDevtoolsBaseSort',
+    1,
   )
 
   const sortFn = React.useMemo(() => sortFns[sort as string], [sort])
@@ -438,26 +438,23 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
 
   const queries = React.useMemo(() => {
     const unsortedQueries = queryCache.getAll()
-    const sorted = queriesCount > 0 ? [...unsortedQueries].sort(sortFn) : []
 
-    if (sortDesc) {
-      sorted.reverse()
+    if (queriesCount === 0) {
+      return []
     }
 
-    if (!filter) {
-      return sorted
-    }
+    const filtered = filter
+      ? unsortedQueries.filter(
+          (item) => rankItem(item.queryHash, filter).passed,
+        )
+      : [...unsortedQueries]
 
-    let ranked = sorted.map(
-      (item) => [item, rankItem(item.queryHash, filter)] as const,
-    )
+    const sorted = sortFn
+      ? filtered.sort((a, b) => sortFn(a, b) * (baseSort as number))
+      : filtered
 
-    ranked = ranked.filter((d) => d[1].passed)
-
-    ranked = ranked.sort((a, b) => compareItems(a[1], b[1]))
-
-    return ranked.map((d) => d[0])
-  }, [sortDesc, sortFn, filter, queriesCount, queryCache])
+    return sorted
+  }, [baseSort, sortFn, filter, queriesCount, queryCache])
 
   const [isMockOffline, setMockOffline] = React.useState(false)
 
@@ -596,13 +593,13 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
                       </Select>
                       <Button
                         type="button"
-                        onClick={() => setSortDesc((old) => !old)}
+                        onClick={() => setBaseSort((old) => old * -1)}
                         style={{
                           padding: '.3em .4em',
                           marginRight: '.5em',
                         }}
                       >
-                        {sortDesc ? '⬇ Desc' : '⬆ Asc'}
+                        {baseSort === 1 ? '⬆ Asc' : '⬇ Desc'}
                       </Button>
                       <Button
                         type="button"

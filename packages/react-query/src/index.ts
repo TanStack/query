@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 // Side effects
 import './setBatchUpdatesFn'
 

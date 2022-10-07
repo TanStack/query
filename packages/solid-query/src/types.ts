@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import type { Context } from 'solid-js'
 import type {
   QueryClient,
