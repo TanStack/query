@@ -249,7 +249,7 @@ export function ReactQueryDevtools({
           styleNonce={styleNonce}
           {...otherPanelProps}
           style={{
-            direction:'ltr',
+            direction: 'ltr',
             position: 'fixed',
             bottom: '0',
             right: '0',
