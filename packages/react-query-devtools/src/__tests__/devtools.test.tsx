@@ -555,7 +555,7 @@ describe('ReactQueryDevtools', () => {
   })
 
   it('should initialize filtering and sorting values with defaults when they are not stored in localstorage', () => {
-    localStorage.removeItem('reactQueryDevtoolsSortDesc')
+    localStorage.removeItem('reactQueryDevtoolsBaseSort')
     localStorage.removeItem('reactQueryDevtoolsSortFn')
     localStorage.removeItem('reactQueryDevtoolsFilter')
 
@@ -593,7 +593,7 @@ describe('ReactQueryDevtools', () => {
   })
 
   it('should initialize sorting values with ones stored in localstorage', async () => {
-    localStorage.setItem('reactQueryDevtoolsSortDesc', 'true')
+    localStorage.setItem('reactQueryDevtoolsBaseSort', 'true')
     localStorage.setItem(
       'reactQueryDevtoolsSortFn',
       JSON.stringify(Object.keys(sortFns)[1]),

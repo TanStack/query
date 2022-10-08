@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 // Re-export core
 export * from '@tanstack/query-core'
 

@@ -45,8 +45,10 @@ With this information, we can create a "Load More" UI by:
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 function Projects() {
-  const fetchProjects = ({ pageParam = 0 }) =>
-    fetch('/api/projects?cursor=' + pageParam)
+  const fetchProjects = async ({ pageParam = 0 }) => {
+    const res = await fetch('/api/projects?cursor=' + pageParam);
+    return res.json();
+  }
 
   const {
     data,

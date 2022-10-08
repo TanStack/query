@@ -30,7 +30,7 @@ export const queryKeys = createQueryKeyStore({
   todos: {
     completed: null,
     search: (query: string, limit = 15) => [query, limit],
-    byId: (productId: string) => ({ productId }),
+    byId: (todoId: string) => ({ todoId }),
   },
 })
 ```
@@ -46,7 +46,7 @@ export const usersKeys = createQueryKeys('users')
 export const todosKeys = createQueryKeys('todos', {
   completed: null,
   search: (query: string, limit = 15) => [query, limit],
-  byId: (productId: string) => ({ productId }),
+  byId: (todoId: string) => ({ todoId }),
 })
 
 // my-api/index.ts
