@@ -46,7 +46,7 @@
     "@tanstack/query-core": "workspace:*"
   },
   "peerDependencies": {
-    "solid-js": "^1.5.4"
+    "solid-js": "^1.5.7"
   },
   "peerDependenciesMeta": {}
 }
