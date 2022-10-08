@@ -668,7 +668,9 @@ importers:
       '@types/use-sync-external-store': ^0.0.3
       jscodeshift: ^0.13.1
       react: ^18.2.0
+      react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
+      react-dom-17: npm:react-dom@^17.0.2
       react-error-boundary: ^3.1.4
       use-sync-external-store: ^1.2.0
     dependencies:
@@ -681,7 +683,9 @@ importers:
       '@types/use-sync-external-store': 0.0.3
       jscodeshift: 0.13.1
       react: 18.2.0
+      react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
+      react-dom-17: /react-dom/17.0.2_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
 
   packages/react-query-devtools:
@@ -692,7 +696,9 @@ importers:
       '@types/react-dom': ^18.0.5
       '@types/use-sync-external-store': ^0.0.3
       react: ^18.2.0
+      react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
+      react-dom-17: npm:react-dom@^17.0.2
       react-error-boundary: ^3.1.4
       superjson: ^1.10.0
       use-sync-external-store: ^1.2.0
@@ -706,17 +712,31 @@ importers:
       '@types/react-dom': 18.0.6
       '@types/use-sync-external-store': 0.0.3
       react: 18.2.0
+      react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
+      react-dom-17: /react-dom/17.0.2_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
 
   packages/react-query-persist-client:
     specifiers:
       '@tanstack/query-persist-client-core': workspace:*
       '@tanstack/react-query': workspace:*
+      '@types/react': ^18.0.14
+      '@types/react-dom': ^18.0.5
+      react: ^18.2.0
+      react-17: npm:react@^17.0.2
+      react-dom: ^18.2.0
+      react-dom-17: npm:react-dom@^17.0.2
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
     devDependencies:
       '@tanstack/react-query': link:../react-query
+      '@types/react': 18.0.15
+      '@types/react-dom': 18.0.6
+      react: 18.2.0
+      react-17: /react/17.0.2
+      react-dom: 18.2.0_react@18.2.0
+      react-dom-17: /react-dom/17.0.2_react@18.2.0
 
   packages/solid-query:
     specifiers:
