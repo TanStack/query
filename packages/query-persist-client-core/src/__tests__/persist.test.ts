@@ -1,9 +1,6 @@
 import { createQueryClient, sleep } from './utils'
-import type {
-  PersistedClient,
-  Persister,
-} from '@tanstack/query-persist-client-core'
-import { persistQueryClientSubscribe } from '@tanstack/query-persist-client-core'
+import type { PersistedClient, Persister } from '../persist'
+import { persistQueryClientSubscribe } from '../persist'
 
 const createMockPersister = (): Persister => {
   let storedState: PersistedClient | undefined

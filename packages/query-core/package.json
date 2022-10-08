@@ -29,6 +29,7 @@
   ],
   "scripts": {
     "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts"
   }
 }

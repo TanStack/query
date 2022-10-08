@@ -6,7 +6,7 @@
     "outDir": "./build/lib",
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
-  "include": ["src"],
+  "include": ["src", "jest.config.ts"],
   "references": [
     { "path": "../query-persist-client-core" },
     { "path": "../react-query" }

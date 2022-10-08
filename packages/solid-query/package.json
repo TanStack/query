@@ -29,8 +29,7 @@
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "pnpm test:jest --watch"
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts"
   },
   "files": [
     "build/lib/*",
@@ -39,6 +38,7 @@
     "src"
   ],
   "devDependencies": {
+    "solid-jest": "^0.2.0"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*"
