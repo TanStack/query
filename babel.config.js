@@ -33,7 +33,7 @@ module.exports = {
   ].filter(Boolean),
   overrides: [
     {
-      exclude: './packages/solid-query/**',
+      exclude: ['./packages/solid-query/**', './packages/vue-query/**'],
       presets: ['@babel/react'],
     },
     {
