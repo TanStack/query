@@ -11,7 +11,6 @@
     "test:eslint": "pnpm --filter \"./packages/**\" --parallel --no-bail run test:eslint",
     "test:format": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json}\" --check",
     "test:jest": "pnpm --filter \"./packages/**\" --parallel --no-bail run test:jest",
-    "test:jest:dev": "jest --config ./jest.config.ts --watch",
     "test:size": "pnpm run build && bundlewatch",
     "build": "rollup --config rollup.config.js && pnpm run typecheck && pnpm run build:copyTypes",
     "build:copyTypes": "cp packages/react-query-devtools/build/lib/index.d.ts packages/react-query-devtools/build/lib/index.prod.d.ts",
