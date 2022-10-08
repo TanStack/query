@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
   "version": "4.10.3",
-  "description": "TODO",
+  "description": "An experimental plugin to for broadcasting the state of your queryClient between browser tabs/windows",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",

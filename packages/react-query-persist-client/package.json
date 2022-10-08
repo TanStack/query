@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/react-query-persist-client",
   "version": "4.10.3",
-  "description": "TODO",
+  "description": "React bindings to work with persisters in TanStack/react-query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",

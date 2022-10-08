@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/react-query-devtools",
   "version": "4.10.4",
-  "description": "TODO",
+  "description": "Developer tools to interact with and visualize the TanStack/react-query cache",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",
