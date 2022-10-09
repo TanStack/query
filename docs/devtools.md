@@ -61,6 +61,9 @@ function App() {
 - `position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
   - The position of the React Query logo to open and close the devtools panel
+- `panelPosition?: "top" | "bottom" | "left" | "right"`
+  - Defaults to `bottom`
+  - The position of the React Query devtools panel
 - `context?: React.Context<QueryClient | undefined>`
   - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
@@ -89,6 +92,10 @@ Use these options to style the dev tools.
   - The standard React style object used to style a component with inline styles
 - `className: string`
   - The standard React className property used to style a component with classes
+- `showCloseButton?: boolean`
+  - Show a close button inside the devtools panel
+- `closeButtonProps: PropsObject`
+  - Use this to add props to the close button. For example, you can add `className`, `style` (merge and override default style), `onClick` (extend default handler), etc.
 
 ## Devtools in production
 
@@ -103,30 +110,32 @@ import { Example } from './Example'
 const queryClient = new QueryClient()
 
 const ReactQueryDevtoolsProduction = React.lazy(() =>
-    import('@tanstack/react-query-devtools/build/lib/index.prod.js').then(d => ({
-          default: d.ReactQueryDevtools
-    }))
+  import('@tanstack/react-query-devtools/build/lib/index.prod.js').then(
+    (d) => ({
+      default: d.ReactQueryDevtools,
+    }),
+  ),
 )
 
 function App() {
-    const [showDevtools, setShowDevtools] = React.useState(false)
+  const [showDevtools, setShowDevtools] = React.useState(false)
 
-    React.useEffect(() => {
-        // @ts-ignore
-        window.toggleDevtools = () => setShowDevtools(old => !old)
-    }, [])
+  React.useEffect(() => {
+    // @ts-ignore
+    window.toggleDevtools = () => setShowDevtools((old) => !old)
+  }, [])
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <Example />
-            <ReactQueryDevtools initialIsOpen />
-            { showDevtools && (
-                <React.Suspense fallback={null}>
-                    <ReactQueryDevtoolsProduction />
-                </React.Suspense>
-            )}
-        </QueryClientProvider>
-    );
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Example />
+      <ReactQueryDevtools initialIsOpen />
+      {showDevtools && (
+        <React.Suspense fallback={null}>
+          <ReactQueryDevtoolsProduction />
+        </React.Suspense>
+      )}
+    </QueryClientProvider>
+  )
 }
 
 export default App
@@ -140,9 +149,9 @@ If your bundler supports package exports, you can use the following import path:
 
 ```tsx
 const ReactQueryDevtoolsProduction = React.lazy(() =>
-    import('@tanstack/react-query-devtools/production').then(d => ({
-          default: d.ReactQueryDevtools
-    }))
+  import('@tanstack/react-query-devtools/production').then((d) => ({
+    default: d.ReactQueryDevtools,
+  })),
 )
 ```
 
