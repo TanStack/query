@@ -10,7 +10,7 @@
     "jsxImportSource": "solid-js",
     "emitDeclarationOnly": false
   },
-  "include": ["src", "jest.config.ts"],
+  "include": ["src"],
   "references": [
     { "path": "../query-core" }
   ]

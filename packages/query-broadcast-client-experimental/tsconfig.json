@@ -6,6 +6,6 @@
     "outDir": "./build/lib",
     "tsBuildInfoFile": "./build/.tsbuildinfo"
   },
-  "include": ["src", "jest.config.ts"],
+  "include": ["src"],
   "references": [{ "path": "../query-core" }]
 }
