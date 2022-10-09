@@ -40,16 +40,4 @@ module.exports = {
     },
   },
   moduleNameMapper,
-  // projects: packages.map((d) => ({
-  //   displayName: d,
-  //   clearMocks: true,
-  //   testEnvironment: 'jsdom',
-  //   //testMatch: [`packages/${d}/**/*.test.[jt]s?(x)`],
-  //   // setupFilesAfterEnv: [`<rootDir>/jest.setup.js`],
-  //   snapshotFormat: {
-  //     printBasicPrototype: false,
-  //   },
-  //   moduleNameMapper,
-  //   preset: d.includes('solid') ? 'solid-jest/preset/browser' : undefined,
-  // })),
 }
