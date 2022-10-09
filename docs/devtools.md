@@ -61,7 +61,7 @@ function App() {
 - `position?: "top-left" | "top-right" | "bottom-left" | "bottom-right"`
   - Defaults to `bottom-left`
   - The position of the React Query logo to open and close the devtools panel
-- `origi?: "top" | "bottom" | "left" | "right"`
+- `panelPosition?: "top" | "bottom" | "left" | "right"`
   - Defaults to `bottom`
   - The position of the React Query devtools panel
 - `context?: React.Context<QueryClient | undefined>`
