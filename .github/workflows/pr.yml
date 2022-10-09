@@ -30,7 +30,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: test:eslint
+      - run: pnpm run test:eslint
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
   typecheck:
@@ -49,7 +49,7 @@ jobs:
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
       - run: pnpm run typecheck
   format:
-    name: 'Static'
+    name: 'Format'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
