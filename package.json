@@ -2,6 +2,7 @@
   "name": "query",
   "repository": "https://github.com/tanstack/query.git",
   "scripts": {
+    "clean": "pnpm --filter \"./packages/**\" --parallel --no-bail run clean",
     "preinstall": "if [ \"$CI\" = \"true\" ]; then echo \"Skipping preinstall...\"; else npx -y only-allow pnpm; fi",
     "install:csb": "pnpm install --frozen-lockfile",
     "test": "(is-ci && pnpm run test:ci) || pnpm run test:dev",
