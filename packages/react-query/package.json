@@ -28,7 +28,7 @@
     "clean": "rm -rf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "pnpm run test:codemods && ../../node_modules/.bin/jest --config ./jest.config.ts --runInBand"
+    "test:jest": "pnpm run test:codemods && ../../node_modules/.bin/jest --config ./jest.config.ts"
   },
   "files": [
     "build/lib/*",
