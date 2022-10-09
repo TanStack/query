@@ -30,8 +30,7 @@
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
-    "typecheck": "tsc -p ./tsconfig.json --noEmit --emitDeclarationOnly false"
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts"
   },
   "devDependencies": {
     "@tanstack/query-core": "workspace:*"
