@@ -14,9 +14,7 @@ import {
 import { rankItem } from '@tanstack/match-sorter-utils'
 import useLocalStorage from './useLocalStorage'
 import {
-  Corner,
   isVerticalSide,
-  Side,
   sortFns,
   useIsMounted,
   getSidePanelStyle,
@@ -25,7 +23,7 @@ import {
   getSidedProp,
   defaultPanelSize,
 } from './utils'
-
+import type { Corner, Side } from './utils'
 import {
   Panel,
   QueryKeys,
