@@ -5045,7 +5045,7 @@ describe('createQuery', () => {
 
   it('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
-    const states: Optional<Partial<CreateQueryResult<number>>>[] = []
+    const states: Partial<CreateQueryResult<number>>[] = []
     let count = 0
 
     function Page() {
@@ -5068,7 +5068,7 @@ describe('createQuery', () => {
           isFetching,
           isSuccess,
           isStale,
-        })
+        } as any)
       })
 
       return (
@@ -5149,7 +5149,7 @@ describe('createQuery', () => {
           isFetching,
           isSuccess,
           isStale,
-        })
+        } as any)
       })
 
       const { refetch } = state
