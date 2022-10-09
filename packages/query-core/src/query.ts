@@ -49,6 +49,7 @@ export interface QueryState<TData = unknown, TError = unknown> {
   isInvalidated: boolean
   status: QueryStatus
   fetchStatus: FetchStatus
+  meta?: any
 }
 
 export interface FetchContext<
@@ -64,6 +65,7 @@ export interface FetchContext<
   queryKey: TQueryKey
   state: QueryState<TData, TError>
   meta: QueryMeta | undefined
+  dispatch: (action: Action<TData, TError>) => void
 }
 
 export interface QueryBehavior<
@@ -121,6 +123,11 @@ interface SetStateAction<TData, TError> {
   setStateOptions?: SetStateOptions
 }
 
+interface MetaAction {
+  type: 'meta'
+  meta?: any
+}
+
 export type Action<TData, TError> =
   | ContinueAction
   | ErrorAction<TError>
@@ -130,6 +137,7 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
+  | MetaAction
 
 export interface SetStateOptions {
   meta?: any
@@ -404,6 +412,7 @@ export class Query<
       state: this.state,
       fetchFn,
       meta: this.meta,
+      dispatch: this.dispatch.bind(this),
     }
 
     addSignalProperty(context)
@@ -559,6 +568,11 @@ export class Query<
           return {
             ...state,
             isInvalidated: true,
+          }
+        case 'meta':
+          return {
+            ...state,
+            meta: action.meta,
           }
         case 'setState':
           return {

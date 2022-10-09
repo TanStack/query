@@ -134,6 +134,11 @@ export function infiniteQueryBehavior<
           // Fetch remaining pages
           for (let i = 1; i < oldPages.length; i++) {
             promise = promise.then((pages) => {
+              context.dispatch({
+                type: 'meta',
+                meta: { fetchedPages: i },
+              })
+
               const shouldFetchNextPage =
                 refetchPage && oldPages[i]
                   ? refetchPage(oldPages[i], i, oldPages)
@@ -152,10 +157,16 @@ export function infiniteQueryBehavior<
           }
         }
 
-        const finalPromise = promise.then((pages) => ({
-          pages,
-          pageParams: newPageParams,
-        }))
+        const finalPromise = promise.then((pages) => {
+          context.dispatch({
+            type: 'meta',
+            meta: { fetchedPages: pages.length },
+          })
+          return {
+            pages,
+            pageParams: newPageParams,
+          }
+        })
 
         return finalPromise
       }
