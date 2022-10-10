@@ -131,7 +131,7 @@ export function useBaseQuery<
   }
 
   // Handle result property usage tracking
-  return !defaultedOptions.notifyOnChangeProps
+  return React.useMemo(() => !defaultedOptions.notifyOnChangeProps
     ? observer.trackResult(result)
-    : result
+    : result, [defaultedOptions.notifyOnChangeProps, observer.trackResult, result])
 }
