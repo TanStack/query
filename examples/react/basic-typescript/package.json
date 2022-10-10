@@ -1,34 +1,29 @@
 {
   "name": "@tanstack/query-example-react-basic-typescript",
   "version": "0.0.1",
+  "main": "src/index.tsx",
   "scripts": {
-    "start": "rescripts start",
-    "build": "rescripts build",
-    "test": "rescripts test",
-    "eject": "rescripts eject"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "axios": "^0.26.1",
-    "broadcast-channel": "^3.4.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "@tanstack/react-query": "^4.7.1",
     "@tanstack/react-query-devtools": "^4.7.1",
     "@tanstack/react-query-persist-client": "^4.7.1",
-    "@tanstack/query-sync-storage-persister": "^4.7.1",
-    "react-scripts": "3.0.1",
-    "stop-runaway-react-effects": "^1.2.0",
-    "styled-components": "^4.3.2",
-    "typescript": "^4.2.3"
+    "@tanstack/query-sync-storage-persister": "^4.7.1"
   },
   "devDependencies": {
-    "@rescripts/cli": "^0.0.11",
-    "@rescripts/rescript-use-babel-config": "^0.0.8",
-    "@rescripts/rescript-use-eslint-config": "^0.0.9",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
-    "babel-eslint": "10.0.1",
-    "eslint-config-prettier": "^8.3.0"
+    "@vitejs/plugin-react": "^2.0.0",
+    "eslint": "7.x",
+    "eslint-config-prettier": "^8.3.0",
+    "typescript": "^4.2.3",
+    "vite": "^3.0.0"
   },
   "browserslist": {
     "production": [
