@@ -96,6 +96,7 @@ describe('useInfiniteQuery', () => {
       remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
+      fetchedPages: 0,
     })
 
     expect(states[1]).toEqual({
@@ -610,7 +611,7 @@ describe('useInfiniteQuery', () => {
     fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
 
     await waitFor(() => rendered.getByText('isFetching: false'))
-    await waitFor(() => expect(states.length).toBe(8))
+    await waitFor(() => expect(states.length).toBe(10))
 
     // Initial fetch
     expect(states[0]).toMatchObject({
