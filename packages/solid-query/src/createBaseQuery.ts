@@ -31,7 +31,7 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient({ context: options.context })
-
+  const emptyData = Symbol('empty')
   const defaultedOptions = queryClient.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'
   const observer = new Observer(queryClient, defaultedOptions)
@@ -45,6 +45,9 @@ export function createBaseQuery<
     () => {
       return new Promise((resolve) => {
         if (!(state.isFetching && state.isLoading)) {
+          if (unwrap(state.data) === emptyData) {
+            resolve(undefined)
+          }
           resolve(unwrap(state.data))
         }
       })
@@ -61,7 +64,15 @@ export function createBaseQuery<
   const unsubscribe = observer.subscribe((result) => {
     taskQueue.push(() => {
       batch(() => {
-        setState(unwrap(result))
+        let unwrappedResult = { ...unwrap(result) }
+        if (unwrappedResult.data === undefined) {
+          // This is a hack to prevent Solid 
+          // from deleting the data property when it is `undefined`
+          // ref: https://www.solidjs.com/docs/latest/api#updating-stores
+          // @ts-ignore
+          unwrappedResult.data = emptyData
+        }
+        setState(unwrap(unwrappedResult))
         mutate(() => unwrap(result.data))
         refetch()
       })
@@ -110,8 +121,8 @@ export function createBaseQuery<
       target: QueryObserverResult<TData, TError>,
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
-      if (prop === 'data' && target.isLoading && target.isFetching) {
-        return dataResource()
+      if (prop === 'data') {
+        return dataResource();
       }
       return Reflect.get(target, prop)
     },
