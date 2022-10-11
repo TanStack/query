@@ -206,9 +206,12 @@ importers:
       '@tanstack/react-query': ^4.7.1
       '@tanstack/react-query-devtools': ^4.7.1
       '@tanstack/react-query-persist-client': ^4.7.1
+      '@types/react': ^17.0.3
+      '@types/react-dom': ^17.0.3
       '@vitejs/plugin-react': ^2.0.0
       axios: ^0.26.1
-      broadcast-channel: ^3.4.1
+      eslint: 7.x
+      eslint-config-prettier: ^8.3.0
       react: ^18.0.0
       react-dom: ^18.0.0
       typescript: ^4.2.3
@@ -219,13 +222,16 @@ importers:
       '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
       '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
       axios: 0.26.1
-      broadcast-channel: 3.7.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-      typescript: 4.8.3
     devDependencies:
-      '@vitejs/plugin-react': 2.1.0_vite@3.1.3
-      vite: 3.1.3
+      '@types/react': 17.0.50
+      '@types/react-dom': 17.0.17
+      '@vitejs/plugin-react': 2.1.0_vite@3.1.4
+      eslint: 7.32.0
+      eslint-config-prettier: 8.5.0_eslint@7.32.0
+      typescript: 4.8.3
+      vite: 3.1.4
 
   examples/react/default-query-function:
     specifiers:
@@ -4402,7 +4408,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
       bmp-js: 0.1.0
@@ -4411,7 +4417,7 @@ packages:
   /@jimp/core/0.12.1:
     resolution: {integrity: sha512-mWfjExYEjHxBal+1gPesGChOQBSpxO7WUQkrO9KM7orboitOdQ15G5UA75ce7XVZ+5t+FQPOLmVkVZzzTQSEJA==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/utils': 0.12.1
       any-base: 1.1.0
       buffer: 5.7.1
@@ -4427,7 +4433,7 @@ packages:
   /@jimp/custom/0.12.1:
     resolution: {integrity: sha512-bVClp8FEJ/11GFTKeRTrfH7NgUWvVO5/tQzO/68aOwMIhbz9BOYQGh533K9+mSy29VjZJo8jxZ0C9ZwYHuFwfA==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/core': 0.12.1
     dev: true
 
@@ -4436,7 +4442,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
       omggif: 1.0.10
@@ -4447,7 +4453,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
       jpeg-js: 0.4.4
@@ -4458,7 +4464,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4468,7 +4474,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4478,7 +4484,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4488,7 +4494,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
       tinycolor2: 1.4.2
@@ -4502,7 +4508,7 @@ packages:
       '@jimp/plugin-resize': '>=0.3.5'
       '@jimp/plugin-scale': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-blit': 0.12.1_@jimp+custom@0.12.1
       '@jimp/plugin-resize': 0.12.1_@jimp+custom@0.12.1
@@ -4518,7 +4524,7 @@ packages:
       '@jimp/plugin-resize': '>=0.3.5'
       '@jimp/plugin-scale': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-crop': 0.12.1_@jimp+custom@0.12.1
       '@jimp/plugin-resize': 0.12.1_@jimp+custom@0.12.1
@@ -4531,7 +4537,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4541,7 +4547,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4551,7 +4557,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4561,7 +4567,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4572,7 +4578,7 @@ packages:
       '@jimp/custom': '>=0.3.5'
       '@jimp/plugin-rotate': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-rotate': 0.12.1_2vxv4jfqmcrxwuizrichwewf2u
       '@jimp/utils': 0.12.1
@@ -4583,7 +4589,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4593,7 +4599,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4603,7 +4609,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4613,7 +4619,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4624,7 +4630,7 @@ packages:
       '@jimp/custom': '>=0.3.5'
       '@jimp/plugin-blit': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-blit': 0.12.1_@jimp+custom@0.12.1
       '@jimp/utils': 0.12.1
@@ -4636,7 +4642,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
     dev: true
@@ -4649,7 +4655,7 @@ packages:
       '@jimp/plugin-crop': '>=0.3.5'
       '@jimp/plugin-resize': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-blit': 0.12.1_@jimp+custom@0.12.1
       '@jimp/plugin-crop': 0.12.1_@jimp+custom@0.12.1
@@ -4663,7 +4669,7 @@ packages:
       '@jimp/custom': '>=0.3.5'
       '@jimp/plugin-resize': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-resize': 0.12.1_@jimp+custom@0.12.1
       '@jimp/utils': 0.12.1
@@ -4676,7 +4682,7 @@ packages:
       '@jimp/plugin-blur': '>=0.3.5'
       '@jimp/plugin-resize': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-blur': 0.12.1_@jimp+custom@0.12.1
       '@jimp/plugin-resize': 0.12.1_@jimp+custom@0.12.1
@@ -4690,7 +4696,7 @@ packages:
       '@jimp/plugin-color': '>=0.8.0'
       '@jimp/plugin-resize': '>=0.8.0'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-color': 0.12.1_@jimp+custom@0.12.1
       '@jimp/plugin-resize': 0.12.1_@jimp+custom@0.12.1
@@ -4702,7 +4708,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugin-blit': 0.12.1_@jimp+custom@0.12.1
       '@jimp/plugin-blur': 0.12.1_@jimp+custom@0.12.1
@@ -4733,7 +4739,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/utils': 0.12.1
       pngjs: 3.4.0
@@ -4744,7 +4750,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       utif: 2.0.1
     dev: true
@@ -4754,7 +4760,7 @@ packages:
     peerDependencies:
       '@jimp/custom': '>=0.3.5'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/bmp': 0.12.1_@jimp+custom@0.12.1
       '@jimp/custom': 0.12.1
       '@jimp/gif': 0.12.1_@jimp+custom@0.12.1
@@ -4767,7 +4773,7 @@ packages:
   /@jimp/utils/0.12.1:
     resolution: {integrity: sha512-EjPkDQOzV/oZfbolEUgFT6SE++PtCccVBvjuACkttyCfl0P2jnpR49SwstyVLc2u8AwBAZEHHAw9lPYaMjtbXQ==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       regenerator-runtime: 0.13.9
     dev: true
 
@@ -5690,6 +5696,12 @@ packages:
   /@types/prop-types/15.7.5:
     resolution: {integrity: sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==}
 
+  /@types/react-dom/17.0.17:
+    resolution: {integrity: sha512-VjnqEmqGnasQKV0CWLevqMTXBYG9GbwuE6x3VetERLh0cq2LTptFE73MrQi2S7GkKXCf2GgwItB/melLnxfnsg==}
+    dependencies:
+      '@types/react': 17.0.50
+    dev: true
+
   /@types/react-dom/18.0.6:
     resolution: {integrity: sha512-/5OFZgfIPSwy+YuIBP/FgJnQnsxhZhjjrnxudMddeblOouIodEQ75X14Rr4wGSG/bknL+Omy9iWlLo1u/9GzAA==}
     dependencies:
@@ -5713,6 +5725,14 @@ packages:
     dependencies:
       '@types/react': 18.0.15
     dev: false
+
+  /@types/react/17.0.50:
+    resolution: {integrity: sha512-ZCBHzpDb5skMnc1zFXAXnL3l1FAdi+xZvwxK+PkglMmBrwjpp9nKaWuEvrGnSifCJmBFGxZOOFuwC6KH/s0NuA==}
+    dependencies:
+      '@types/prop-types': 15.7.5
+      '@types/scheduler': 0.16.2
+      csstype: 3.1.0
+    dev: true
 
   /@types/react/18.0.15:
     resolution: {integrity: sha512-iz3BtLuIYH1uWdsv6wXYdhozhqj20oD4/Hk2DNXIn1kFsmp9x8d9QB6FnPhfkbhd2PgEONt9Q1x/ebkwjfFLow==}
@@ -6047,6 +6067,24 @@ packages:
       magic-string: 0.26.4
       react-refresh: 0.14.0
       vite: 3.1.3
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@vitejs/plugin-react/2.1.0_vite@3.1.4:
+    resolution: {integrity: sha512-am6rPyyU3LzUYne3Gd9oj9c4Rzbq5hQnuGXSMT6Gujq45Il/+bunwq3lrB7wghLkiF45ygMwft37vgJ/NE8IAA==}
+    engines: {node: ^14.18.0 || >=16.0.0}
+    peerDependencies:
+      vite: ^3.0.0
+    dependencies:
+      '@babel/core': 7.19.1
+      '@babel/plugin-transform-react-jsx': 7.19.0_@babel+core@7.19.1
+      '@babel/plugin-transform-react-jsx-development': 7.18.6_@babel+core@7.19.1
+      '@babel/plugin-transform-react-jsx-self': 7.18.6_@babel+core@7.19.1
+      '@babel/plugin-transform-react-jsx-source': 7.18.6_@babel+core@7.19.1
+      magic-string: 0.26.4
+      react-refresh: 0.14.0
+      vite: 3.1.4
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -7090,19 +7128,6 @@ packages:
     dependencies:
       fill-range: 7.0.1
 
-  /broadcast-channel/3.7.0:
-    resolution: {integrity: sha512-cIAKJXAxGJceNZGTZSBzMxzyOn72cVgPnKx4dc6LRjQgbaJUQqhy5rzL3zbMxkMWsGKkv2hSFkPRMEXfoMZ2Mg==}
-    dependencies:
-      '@babel/runtime': 7.18.9
-      detect-node: 2.1.0
-      js-sha3: 0.8.0
-      microseconds: 0.2.0
-      nano-time: 1.0.0
-      oblivious-set: 1.0.0
-      rimraf: 3.0.2
-      unload: 2.2.0
-    dev: false
-
   /broadcast-channel/4.14.0:
     resolution: {integrity: sha512-uNzxOgBQ+boWCRDESLNg3zZWQ3iz/X7j/uD8pAfr4/S7wQerXVvJI/SBKd9J6ckaPt2jil0gq+7l+3b+kuxJYw==}
     dependencies:
@@ -7719,7 +7744,7 @@ packages:
   /css-vendor/2.0.8:
     resolution: {integrity: sha512-x9Aq0XTInxrkuFeHKbYC7zWY8ai7qJ04Kxd9MnvbC1uO5DagxoHQjm4JvG+vCdXOoFtCjbL2XSZfxmoYa9uQVQ==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       is-in-browser: 1.1.3
     dev: false
 
@@ -7979,7 +8004,7 @@ packages:
   /dom-helpers/5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       csstype: 3.1.0
     dev: false
 
@@ -8406,6 +8431,15 @@ packages:
     dependencies:
       eslint: 7.32.0
       get-stdin: 6.0.0
+    dev: true
+
+  /eslint-config-prettier/8.5.0_eslint@7.32.0:
+    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
+    dependencies:
+      eslint: 7.32.0
     dev: true
 
   /eslint-config-react-app/5.2.1_c3hysayjpc7bjl5sczl2h5kjf4:
@@ -10940,7 +10974,7 @@ packages:
   /jimp/0.12.1:
     resolution: {integrity: sha512-0soPJif+yjmzmOF+4cF2hyhxUWWpXpQntsm2joJXFFoRcQiPzsG4dbLKYqYPT3Fc6PjZ8MaLtCkDqqckVSfmRw==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       '@jimp/custom': 0.12.1
       '@jimp/plugins': 0.12.1_@jimp+custom@0.12.1
       '@jimp/types': 0.12.1_@jimp+custom@0.12.1
@@ -10964,10 +10998,6 @@ packages:
   /js-levenshtein/1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
     engines: {node: '>=0.10.0'}
-    dev: false
-
-  /js-sha3/0.8.0:
-    resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
     dev: false
 
   /js-tokens/4.0.0:
@@ -11162,7 +11192,7 @@ packages:
   /jss-plugin-camel-case/10.9.0:
     resolution: {integrity: sha512-UH6uPpnDk413/r/2Olmw4+y54yEF2lRIV8XIZyuYpgPYTITLlPOsq6XB9qeqv+75SQSg3KLocq5jUBXW8qWWww==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       hyphenate-style-name: 1.0.4
       jss: 10.9.0
     dev: false
@@ -11170,21 +11200,21 @@ packages:
   /jss-plugin-default-unit/10.9.0:
     resolution: {integrity: sha512-7Ju4Q9wJ/MZPsxfu4T84mzdn7pLHWeqoGd/D8O3eDNNJ93Xc8PxnLmV8s8ZPNRYkLdxZqKtm1nPQ0BM4JRlq2w==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       jss: 10.9.0
     dev: false
 
   /jss-plugin-global/10.9.0:
     resolution: {integrity: sha512-4G8PHNJ0x6nwAFsEzcuVDiBlyMsj2y3VjmFAx/uHk/R/gzJV+yRHICjT4MKGGu1cJq2hfowFWCyrr/Gg37FbgQ==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       jss: 10.9.0
     dev: false
 
   /jss-plugin-nested/10.9.0:
     resolution: {integrity: sha512-2UJnDrfCZpMYcpPYR16oZB7VAC6b/1QLsRiAutOt7wJaaqwCBvNsosLEu/fUyKNQNGdvg2PPJFDO5AX7dwxtoA==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       jss: 10.9.0
       tiny-warning: 1.0.3
     dev: false
@@ -11192,14 +11222,14 @@ packages:
   /jss-plugin-props-sort/10.9.0:
     resolution: {integrity: sha512-7A76HI8bzwqrsMOJTWKx/uD5v+U8piLnp5bvru7g/3ZEQOu1+PjHvv7bFdNO3DwNPC9oM0a//KwIJsIcDCjDzw==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       jss: 10.9.0
     dev: false
 
   /jss-plugin-rule-value-function/10.9.0:
     resolution: {integrity: sha512-IHJv6YrEf8pRzkY207cPmdbBstBaE+z8pazhPShfz0tZSDtRdQua5jjg6NMz3IbTasVx9FdnmptxPqSWL5tyJg==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       jss: 10.9.0
       tiny-warning: 1.0.3
     dev: false
@@ -11207,7 +11237,7 @@ packages:
   /jss-plugin-vendor-prefixer/10.9.0:
     resolution: {integrity: sha512-MbvsaXP7iiVdYVSEoi+blrW+AYnTDvHTW6I6zqi7JcwXdc6I9Kbm234nEblayhF38EftoenbM+5218pidmC5gA==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       css-vendor: 2.0.8
       jss: 10.9.0
     dev: false
@@ -11215,7 +11245,7 @@ packages:
   /jss/10.9.0:
     resolution: {integrity: sha512-YpzpreB6kUunQBbrlArlsMpXYyndt9JATbt95tajx0t4MTJJcCJdd4hdNpHmOIDiUJrF/oX5wtVFrS3uofWfGw==}
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       csstype: 3.1.0
       is-in-browser: 1.1.3
       tiny-warning: 1.0.3
@@ -12017,10 +12047,6 @@ packages:
       braces: 3.0.2
       picomatch: 2.3.1
 
-  /microseconds/0.2.0:
-    resolution: {integrity: sha512-n7DHHMjR1avBbSpsTBj6fmMGh2AGrifVV4e+WYc3Q9lO+xnSZ3NyhcBND3vzzatt05LFhoKFRxrIyklmLlUtyA==}
-    dev: false
-
   /microtime/3.1.0:
     resolution: {integrity: sha512-GcjhfC2y/DF2znac8IRwri7+YUIy34QRHz/iZK3bHrh74qrNNOpAJQwiOMnIG+v1J0K4eiqd+RiGzN3F1eofTQ==}
     engines: {node: '>= 14.13.0'}
@@ -12165,12 +12191,6 @@ packages:
       any-promise: 1.3.0
       object-assign: 4.1.1
       thenify-all: 1.6.0
-    dev: false
-
-  /nano-time/1.0.0:
-    resolution: {integrity: sha512-flnngywOoQ0lLQOTRNexn2gGSNuM9bKj9RZAWSzhQ+UJYaAFG9bac4DW9VHjUAzrOaIcajHybCTHe/bkvozQqA==}
-    dependencies:
-      big-integer: 1.6.51
     dev: false
 
   /nanoid/3.3.4:
@@ -12460,10 +12480,6 @@ packages:
       define-properties: 1.1.4
       es-abstract: 1.20.1
     dev: true
-
-  /oblivious-set/1.0.0:
-    resolution: {integrity: sha512-z+pI07qxo4c2CulUHCDf9lcqDlMSo72N/4rLUpRXf6fu+q8vjt8y0xS+Tlf8NTJDdTXHbdeO1n3MlbctwEoXZw==}
-    dev: false
 
   /oblivious-set/1.1.1:
     resolution: {integrity: sha512-Oh+8fK09mgGmAshFdH6hSVco6KZmd1tTwNFWj35OvzdmJTMZtAkbn05zar2iG3v6sDs1JLEtOiBGNb6BHwkb2w==}
@@ -14902,13 +14918,6 @@ packages:
   /universalify/2.0.0:
     resolution: {integrity: sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==}
     engines: {node: '>= 10.0.0'}
-
-  /unload/2.2.0:
-    resolution: {integrity: sha512-B60uB5TNBLtN6/LsgAf3udH9saB5p7gqJwcFfbOEZ8BcBHnGwCf6G/TGiEqkRAxX7zAFIUtzdrXQSdL3Q/wqNA==}
-    dependencies:
-      '@babel/runtime': 7.18.9
-      detect-node: 2.1.0
-    dev: false
 
   /unload/2.3.1:
     resolution: {integrity: sha512-MUZEiDqvAN9AIDRbbBnVYVvfcR6DrjCqeU2YQMmliFZl9uaBUjTkhuDQkBiyAy8ad5bx1TXVbqZ3gg7namsWjA==}

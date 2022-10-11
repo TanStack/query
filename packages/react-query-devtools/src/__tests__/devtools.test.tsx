@@ -764,4 +764,103 @@ describe('ReactQueryDevtools', () => {
       consoleErrorMock.mockRestore()
     })
   })
+
+  it('should render a menu to select panel position', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => 'test')
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: true,
+    })
+
+    const positionSelect = (await screen.findByLabelText(
+      'Panel position',
+    )) as HTMLSelectElement
+
+    expect(positionSelect.value).toBe('bottom')
+  })
+
+  it(`should render the panel to the left if panelPosition is set to 'left'`, async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => 'test')
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: true,
+      panelPosition: 'left',
+    })
+
+    const positionSelect = (await screen.findByLabelText(
+      'Panel position',
+    )) as HTMLSelectElement
+
+    expect(positionSelect.value).toBe('left')
+
+    const panel = (await screen.getByLabelText(
+      'React Query Devtools Panel',
+    )) as HTMLDivElement
+
+    expect(panel.style.left).toBe('0px')
+    expect(panel.style.width).toBe('500px')
+    expect(panel.style.height).toBe('100vh')
+  })
+
+  it('should change the panel position if user select different option from the menu', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => 'test')
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    renderWithClient(queryClient, <Page />, {
+      initialIsOpen: true,
+    })
+
+    const positionSelect = (await screen.findByLabelText(
+      'Panel position',
+    )) as HTMLSelectElement
+
+    expect(positionSelect.value).toBe('bottom')
+
+    const panel = (await screen.getByLabelText(
+      'React Query Devtools Panel',
+    )) as HTMLDivElement
+
+    expect(panel.style.bottom).toBe('0px')
+    expect(panel.style.height).toBe('500px')
+    expect(panel.style.width).toBe('100%')
+
+    await act(async () => {
+      fireEvent.change(positionSelect, { target: { value: 'right' } })
+    })
+
+    expect(positionSelect.value).toBe('right')
+
+    expect(panel.style.right).toBe('0px')
+    expect(panel.style.width).toBe('500px')
+    expect(panel.style.height).toBe('100vh')
+  })
 })
