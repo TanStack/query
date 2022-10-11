@@ -64,7 +64,7 @@ export function createBaseQuery<
   const unsubscribe = observer.subscribe((result) => {
     taskQueue.push(() => {
       batch(() => {
-        let unwrappedResult = { ...unwrap(result) }
+        const unwrappedResult = { ...unwrap(result) }
         if (unwrappedResult.data === undefined) {
           // This is a hack to prevent Solid
           // from deleting the data property when it is `undefined`
