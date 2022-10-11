@@ -120,12 +120,10 @@ interface ContinueAction {
 interface SetStateAction<TData, TError> {
   type: 'setState'
   state: QueryState<TData, TError>
-  setStateOptions?: SetStateOptions
 }
 
-interface MetaAction {
-  type: 'meta'
-  meta?: any
+interface PageFetchedaAction {
+  type: 'pageFetched'
 }
 
 export type Action<TData, TError> =
@@ -137,11 +135,7 @@ export type Action<TData, TError> =
   | PauseAction
   | SetStateAction<TData, TError>
   | SuccessAction<TData>
-  | MetaAction
-
-export interface SetStateOptions {
-  meta?: any
-}
+  | PageFetchedaAction
 
 // CLASS
 
@@ -217,11 +211,8 @@ export class Query<
     return data
   }
 
-  setState(
-    state: QueryState<TData, TError>,
-    setStateOptions?: SetStateOptions,
-  ): void {
-    this.dispatch({ type: 'setState', state, setStateOptions })
+  setState(state: QueryState<TData, TError>): void {
+    this.dispatch({ type: 'setState', state })
   }
 
   cancel(options?: CancelOptions): Promise<void> {
@@ -533,6 +524,12 @@ export class Query<
               error: null,
               status: 'loading',
             }),
+            meta: {
+              ...state.meta,
+              fetchedPages: action.meta?.fetchMore
+                ? state.meta?.fetchedPages
+                : 0,
+            },
           }
         case 'success':
           return {
@@ -569,10 +566,13 @@ export class Query<
             ...state,
             isInvalidated: true,
           }
-        case 'meta':
+        case 'pageFetched':
           return {
             ...state,
-            meta: action.meta,
+            meta: {
+              ...state.meta,
+              fetchedPages: state.meta.fetchedPages + 1,
+            },
           }
         case 'setState':
           return {

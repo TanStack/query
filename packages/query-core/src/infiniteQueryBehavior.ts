@@ -135,8 +135,7 @@ export function infiniteQueryBehavior<
           for (let i = 1; i < oldPages.length; i++) {
             promise = promise.then((pages) => {
               context.dispatch({
-                type: 'meta',
-                meta: { fetchedPages: i },
+                type: 'pageFetched',
               })
 
               const shouldFetchNextPage =
@@ -159,8 +158,7 @@ export function infiniteQueryBehavior<
 
         const finalPromise = promise.then((pages) => {
           context.dispatch({
-            type: 'meta',
-            meta: { fetchedPages: pages.length },
+            type: 'pageFetched',
           })
           return {
             pages,
