@@ -66,7 +66,7 @@ export function createBaseQuery<
       batch(() => {
         let unwrappedResult = { ...unwrap(result) }
         if (unwrappedResult.data === undefined) {
-          // This is a hack to prevent Solid 
+          // This is a hack to prevent Solid
           // from deleting the data property when it is `undefined`
           // ref: https://www.solidjs.com/docs/latest/api#updating-stores
           // @ts-ignore
@@ -122,7 +122,7 @@ export function createBaseQuery<
       prop: keyof QueryObserverResult<TData, TError>,
     ): any {
       if (prop === 'data') {
-        return dataResource();
+        return dataResource()
       }
       return Reflect.get(target, prop)
     },

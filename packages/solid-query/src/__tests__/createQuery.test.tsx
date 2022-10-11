@@ -1803,7 +1803,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        states.push({...state})
+        states.push({ ...state })
       })
 
       createEffect(() => {
@@ -5090,7 +5090,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        states.push({...state})
+        states.push({ ...state })
       })
 
       return (
@@ -5164,7 +5164,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        states.push({...state})
+        states.push({ ...state })
       })
 
       const { refetch } = state
