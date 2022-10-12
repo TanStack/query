@@ -49,7 +49,6 @@ export interface QueryState<TData = unknown, TError = unknown> {
   isInvalidated: boolean
   status: QueryStatus
   fetchStatus: FetchStatus
-  meta?: any
 }
 
 export interface FetchContext<
@@ -516,7 +515,12 @@ export class Query<
           return {
             ...state,
             fetchFailureCount: 0,
-            fetchMeta: action.meta ?? null,
+            fetchMeta: {
+              ...action.meta,
+              fetchedPages: action.meta?.fetchMore
+                ? state.fetchMeta?.fetchedPages
+                : 0,
+            },
             fetchStatus: canFetch(this.options.networkMode)
               ? 'fetching'
               : 'paused',
@@ -524,12 +528,6 @@ export class Query<
               error: null,
               status: 'loading',
             }),
-            meta: {
-              ...state.meta,
-              fetchedPages: action.meta?.fetchMore
-                ? state.meta?.fetchedPages
-                : 0,
-            },
           }
         case 'success':
           return {
@@ -569,9 +567,9 @@ export class Query<
         case 'pageFetched':
           return {
             ...state,
-            meta: {
-              ...state.meta,
-              fetchedPages: state.meta.fetchedPages + 1,
+            fetchMeta: {
+              ...state.fetchMeta,
+              fetchedPages: state.fetchMeta.fetchedPages + 1,
             },
           }
         case 'setState':

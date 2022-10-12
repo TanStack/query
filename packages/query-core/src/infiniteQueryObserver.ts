@@ -151,7 +151,7 @@ export class InfiniteQueryObserver<
       isFetchingPreviousPage:
         state.fetchStatus === 'fetching' &&
         state.fetchMeta?.fetchMore?.direction === 'backward',
-      fetchedPages: state.meta?.fetchedPages || 0,
+      fetchedPages: state.fetchMeta?.fetchedPages || 0,
     }
   }
 }
