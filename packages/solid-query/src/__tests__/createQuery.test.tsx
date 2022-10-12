@@ -1386,7 +1386,7 @@ describe('createQuery', () => {
 
   it('should create a new query when refetching a removed query', async () => {
     const key = queryKey()
-    const states: Partial<CreateQueryResult<number>>[] = []
+    const states: CreateQueryResult<number>[] = []
     let count = 0
 
     function Page() {
@@ -1400,7 +1400,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        states.push({ data: state.data, dataUpdatedAt: state.dataUpdatedAt })
+        states.push({ ...state })
       })
 
       return (
@@ -1510,7 +1510,7 @@ describe('createQuery', () => {
 
   it('should use query function from hook when the existing query does not have a query function', async () => {
     const key = queryKey()
-    const results: Partial<CreateQueryResult<string>>[] = []
+    const results: CreateQueryResult<string>[] = []
 
     queryClient.setQueryData(key(), 'set')
 
@@ -1528,7 +1528,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        results.push({ data: result.data, isFetching: result.isFetching })
+        results.push({ ...result })
       })
 
       return (
@@ -1725,7 +1725,7 @@ describe('createQuery', () => {
 
   it('should not fetch when switching to a disabled query', async () => {
     const key = queryKey()
-    const states: Partial<CreateQueryResult<number>>[] = []
+    const states: CreateQueryResult<number>[] = []
 
     function Page() {
       const [count, setCount] = createSignal(0)
@@ -1744,12 +1744,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        const { data, isSuccess, isFetching } = state
-        states.push({
-          data,
-          isFetching,
-          isSuccess,
-        })
+        states.push({ ...state })
       })
 
       createEffect(() => {
@@ -1793,7 +1788,7 @@ describe('createQuery', () => {
 
   it('should keep the previous data when keepPreviousData is set', async () => {
     const key = queryKey()
-    const states: Partial<CreateQueryResult<number>>[] = []
+    const states: CreateQueryResult<number>[] = []
 
     function Page() {
       const [count, setCount] = createSignal(0)
@@ -1808,13 +1803,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        const { data, isFetching, isSuccess, isPreviousData } = state
-        states.push({
-          data,
-          isFetching,
-          isSuccess,
-          isPreviousData,
-        })
+        states.push({ ...state })
       })
 
       createEffect(() => {
@@ -2137,7 +2126,7 @@ describe('createQuery', () => {
 
   it('should keep the previous data on disabled query when keepPreviousData is set and switching query key multiple times', async () => {
     const key = queryKey()
-    const states: Partial<CreateQueryResult<number>>[] = []
+    const states: CreateQueryResult<number>[] = []
 
     queryClient.setQueryData([key(), 10], 10)
 
@@ -2156,8 +2145,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        const { data, isFetching, isSuccess, isPreviousData } = state
-        states.push({ data, isFetching, isSuccess, isPreviousData })
+        states.push({ ...state })
       })
 
       createEffect(() => {
@@ -2738,7 +2726,7 @@ describe('createQuery', () => {
     const key = queryKey()
     const variables = { number: 5, boolean: false, object: {}, array: [] }
     type CustomQueryKey = readonly [ReturnType<typeof key>, typeof variables]
-    const states: Partial<CreateQueryResult<CustomQueryKey>>[] = []
+    const states: CreateQueryResult<CustomQueryKey>[] = []
 
     // TODO(lukemurray): extract the query function to a variable queryFn
 
@@ -5045,7 +5033,7 @@ describe('createQuery', () => {
 
   it('should update query state and refetch when reset with resetQueries', async () => {
     const key = queryKey()
-    const states: Partial<CreateQueryResult<number>>[] = []
+    const states: CreateQueryResult<number>[] = []
     let count = 0
 
     function Page() {
@@ -5060,15 +5048,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        const { data, isLoading, isFetching, isSuccess, isStale } = state
-
-        states.push({
-          data,
-          isLoading,
-          isFetching,
-          isSuccess,
-          isStale,
-        } as any)
+        states.push({ ...state })
       })
 
       return (
@@ -5127,7 +5107,7 @@ describe('createQuery', () => {
 
   it('should update query state and not refetch when resetting a disabled query with resetQueries', async () => {
     const key = queryKey()
-    const states: Partial<CreateQueryResult<number>>[] = []
+    const states: CreateQueryResult<number>[] = []
     let count = 0
 
     function Page() {
@@ -5142,14 +5122,7 @@ describe('createQuery', () => {
       )
 
       createRenderEffect(() => {
-        const { data, isLoading, isFetching, isSuccess, isStale } = state
-        states.push({
-          data,
-          isLoading,
-          isFetching,
-          isSuccess,
-          isStale,
-        } as any)
+        states.push({ ...state })
       })
 
       const { refetch } = state
