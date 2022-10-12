@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/react-query-persist-client",
   "version": "4.10.3",
-  "description": "TODO",
+  "description": "React bindings to work with persisters in TanStack/react-query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",
@@ -29,9 +29,17 @@
   ],
   "scripts": {
     "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:dev": "pnpm run test:jest --watch"
   },
   "devDependencies": {
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
+    "react": "^18.2.0",
+    "react-17": "npm:react@^17.0.2",
+    "react-dom": "^18.2.0",
+    "react-dom-17": "npm:react-dom@^17.0.2",
     "@tanstack/react-query": "workspace:*"
   },
   "dependencies": {

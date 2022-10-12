@@ -29,8 +29,8 @@
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "pnpm test:jest --watch"
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:dev": "pnpm run test:jest --watch"
   },
   "files": [
     "build/lib/*",
@@ -39,8 +39,7 @@
     "src"
   ],
   "devDependencies": {
-    "@types/jscodeshift": "^0.11.3",
-    "jscodeshift": "^0.13.1"
+    "solid-jest": "^0.2.0"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*"

@@ -52,6 +52,7 @@ export function parseMutationFilterArgs(
   if (isQueryKey(arg1)) {
     options = { ...arg2, mutationKey: arg1 }
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     options = arg1 || {}
   }
 

@@ -25,8 +25,8 @@
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts ./src",
-    "test:jest": "../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "pnpm test:jest --watch"
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:dev": "pnpm run test:jest --watch"
   },
   "files": [
     "build/lib/*",

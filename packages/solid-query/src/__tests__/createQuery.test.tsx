@@ -2562,48 +2562,6 @@ describe('createQuery', () => {
     expect(queryCache.find(key())!.options.queryFn).toBe(queryFn1)
   })
 
-  // TODO(lukemurray): this seems like a react implementation detail
-  it.skip('should render correct states even in case of useEffect triggering delays', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-
-    // @ts-expect-error - we skip this test
-    const originalUseEffect = NotReact.useEffect
-
-    // Try to simulate useEffect timing delay
-    // @ts-ignore
-    NotReact.useEffect = (...args: any[]) => {
-      originalUseEffect(() => {
-        setTimeout(() => {
-          args[0]()
-        }, 10)
-      }, args[1])
-    }
-
-    function Page() {
-      const state = createQuery(key, () => 'data', { staleTime: Infinity })
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-    queryClient.setQueryData(key(), 'data')
-    await sleep(50)
-
-    // @ts-ignore
-    NotReact.useEffect = originalUseEffect
-
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({ status: 'loading' })
-    expect(states[1]).toMatchObject({ status: 'success' })
-  })
-
   it('should batch re-renders', async () => {
     const key = queryKey()
 

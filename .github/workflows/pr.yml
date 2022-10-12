@@ -2,33 +2,98 @@ name: pr
 on: [pull_request]
 jobs:
   test:
-    name: 'Node ${{ matrix.node }}, React ${{ matrix.react }}'
+    name: 'Test'
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [16.14.2]
-        react: [17, 18]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 16.14.2
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: |
-          pnpm run test:ci
-          pnpm run test:size
-        if: matrix.react == '18'
-        env:
-          REACTJS_VERSION: ${{ matrix.react }}
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
       - run: pnpm run test:jest
-        if: matrix.react == '17'
-        env:
-          REACTJS_VERSION: ${{ matrix.react }}
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
+  lint:
+    name: 'Lint'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - run: pnpm run test:eslint
+  typecheck:
+    name: 'Typecheck'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - run: pnpm run typecheck
+  format:
+    name: 'Format'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - run: pnpm run test:format
+  test-react-17:
+    name: 'Test React 17'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - run: pnpm run test:react:17
+        env:
+          REACTJS_VERSION: 17
+  test-size:
+    name: 'Size'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.14.2
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm --filter "./packages/**" --filter query --prefer-offline install
+      - run: pnpm run test:size
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}

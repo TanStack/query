@@ -109,11 +109,13 @@ export function executeMutation(
 // so that we can pretend to be in a server environment
 export function setIsServer(isServer: boolean) {
   const original = utils.isServer
-  // @ts-ignore
-  utils.isServer = isServer
+  Object.defineProperty(utils, 'isServer', {
+    get: () => isServer,
+  })
 
   return () => {
-    // @ts-ignore
-    utils.isServer = original
+    Object.defineProperty(utils, 'isServer', {
+      get: () => original,
+    })
   }
 }
