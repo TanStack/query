@@ -1,6 +1,6 @@
 {
-  "projectName": "react-query",
-  "projectOwner": "tannerlinsley",
+  "projectName": "query",
+  "projectOwner": "TanStack",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -213,6 +213,16 @@
       "profile": "https://github.com/zrwsk",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "ardeora",
+      "name": "Aryan Deora",
+      "avatar_url": "https://avatars.githubusercontent.com/u/45807386?v=4",
+      "profile": "http://www.aryandeora.com",
+      "contributions": [
+        "code",
+        "maintenance"
       ]
     }
   ],
