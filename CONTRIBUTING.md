@@ -16,17 +16,17 @@ If you are here to suggest a feature, first create an issue if it does not alrea
 
 If you have been assigned to fix an issue or develop a new feature, please follow these steps to get started:
 
-- Fork this repository
-- Install dependencies by running `$ pnpm install`
-  - We use [pnpm](https://pnpm.io/) v7 for package management
+- Fork this repository.
+- Install dependencies by running `$ pnpm install`.
+  - We use [pnpm](https://pnpm.io/) v7 for package management.
   - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`.
-- Link `TanStack/query` locally - we recommend using [yalc](https://github.com/wclr/yalc)
-- Implement your changes and tests to files in the `src/` directory and corresponding test files
+- Run development server using `pmpm run watch`.
+- Implement your changes and tests to files in the `src/` directory and corresponding test files.
 - To run examples, follow their individual directions.
-- To run examples using your local build, link to the local `TanStack/query`.
+- To run examples using your local build, be sure to have development server (`pmpm run watch`) running.
 - Document your changes in the appropriate doc page.
-- Git stage your required changes and commit (see below commit guidelines)
-- Submit PR for review
+- Git stage your required changes and commit (see below commit guidelines).
+- Submit PR for review.
 
 ## Online one-click setup
 
