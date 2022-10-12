@@ -16,7 +16,7 @@
     "build": "rollup --config rollup.config.js && pnpm run typecheck && pnpm run build:copyTypes",
     "build:copyTypes": "cp packages/react-query-devtools/build/lib/index.d.ts packages/react-query-devtools/build/lib/index.prod.d.ts",
     "typecheck": "tsc -b",
-    "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run typecheck -- --watch\" \"pnpm run test\"",
+    "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run typecheck --watch\" \"pnpm run test\"",
     "dev": "pnpm run watch",
     "prettier": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json}\"",
     "prettier:write": "pnpm run prettier -- --write",
