@@ -73,7 +73,7 @@ jobs:
           version: 7
       - uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 16.14.2
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
