@@ -233,6 +233,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -260,6 +261,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       isError: false,
       isFetched: true,
@@ -303,6 +305,7 @@ describe('useQuery', () => {
         <div>
           <h1>Status: {state.status}</h1>
           <div>Failure Count: {state.failureCount}</div>
+          <div>Failure Reason: {state.failureReason}</div>
         </div>
       )
     }
@@ -317,6 +320,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -344,6 +348,7 @@ describe('useQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
+      failureReason: 'rejected',
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -371,6 +376,7 @@ describe('useQuery', () => {
       error: 'rejected',
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
+      failureReason: 'rejected',
       errorUpdateCount: 1,
       isError: true,
       isFetched: true,
@@ -2877,6 +2883,7 @@ describe('useQuery', () => {
         <div>
           <div>error: {result.error ?? 'null'}</div>
           <div>failureCount: {result.failureCount}</div>
+          <div>failureReason: {result.failureReason}</div>
         </div>
       )
     }
@@ -2895,6 +2902,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <App />)
 
     await waitFor(() => rendered.getByText('failureCount: 1'))
+    await waitFor(() => rendered.getByText('failureReason: some error'))
     fireEvent.click(rendered.getByRole('button', { name: /hide/i }))
     await waitFor(() => rendered.getByRole('button', { name: /show/i }))
     fireEvent.click(rendered.getByRole('button', { name: /show/i }))
