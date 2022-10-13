@@ -20,10 +20,10 @@ If you have been assigned to fix an issue or develop a new feature, please follo
 - Install dependencies by running `$ pnpm install`.
   - We use [pnpm](https://pnpm.io/) v7 for package management.
   - We use [nvm](https://github.com/nvm-sh/nvm) to manage node versions - please make sure to use the version mentioned in `.nvmrc`.
-- Run development server using `pmpm run watch`.
+- Run development server using `pnpm run watch`.
 - Implement your changes and tests to files in the `src/` directory and corresponding test files.
 - To run examples, follow their individual directions.
-- To run examples using your local build, be sure to have development server (`pmpm run watch`) running.
+- To run examples using your local build, be sure to have development server (`pnpm run watch`) running.
 - Document your changes in the appropriate doc page.
 - Git stage your required changes and commit (see below commit guidelines).
 - Submit PR for review.
