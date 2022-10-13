@@ -22,6 +22,33 @@ describe('mutationCache', () => {
       const mutation = testCache.getAll()[0]
       expect(onError).toHaveBeenCalledWith('error', 'vars', 'context', mutation)
     })
+
+    test('should be awaited', async () => {
+      const key = queryKey()
+      const states: Array<number> = []
+      const onError = async () => {
+        states.push(1)
+        await sleep(1)
+        states.push(2)
+      }
+      const testCache = new MutationCache({ onError })
+      const testClient = createQueryClient({ mutationCache: testCache })
+
+      try {
+        await executeMutation(testClient, {
+          mutationKey: key,
+          variables: 'vars',
+          mutationFn: () => Promise.reject('error'),
+          onError: async () => {
+            states.push(3)
+            await sleep(1)
+            states.push(4)
+          },
+        })
+      } catch {}
+
+      expect(states).toEqual([1, 2, 3, 4])
+    })
   })
   describe('MutationCacheConfig.onSuccess', () => {
     test('should be called when a mutation is successful', async () => {
@@ -47,6 +74,30 @@ describe('mutationCache', () => {
         mutation,
       )
     })
+    test('should be awaited', async () => {
+      const key = queryKey()
+      const states: Array<number> = []
+      const onSuccess = async () => {
+        states.push(1)
+        await sleep(1)
+        states.push(2)
+      }
+      const testCache = new MutationCache({ onSuccess })
+      const testClient = createQueryClient({ mutationCache: testCache })
+
+      await executeMutation(testClient, {
+        mutationKey: key,
+        variables: 'vars',
+        mutationFn: () => Promise.resolve({ data: 5 }),
+        onSuccess: async () => {
+          states.push(3)
+          await sleep(1)
+          states.push(4)
+        },
+      })
+
+      expect(states).toEqual([1, 2, 3, 4])
+    })
   })
   describe('MutationCacheConfig.onMutate', () => {
     test('should be called before a mutation executes', async () => {
@@ -66,6 +117,31 @@ describe('mutationCache', () => {
 
       const mutation = testCache.getAll()[0]
       expect(onMutate).toHaveBeenCalledWith('vars', mutation)
+    })
+
+    test('should be awaited', async () => {
+      const key = queryKey()
+      const states: Array<number> = []
+      const onMutate = async () => {
+        states.push(1)
+        await sleep(1)
+        states.push(2)
+      }
+      const testCache = new MutationCache({ onMutate })
+      const testClient = createQueryClient({ mutationCache: testCache })
+
+      await executeMutation(testClient, {
+        mutationKey: key,
+        variables: 'vars',
+        mutationFn: () => Promise.resolve({ data: 5 }),
+        onMutate: async () => {
+          states.push(3)
+          await sleep(1)
+          states.push(4)
+        },
+      })
+
+      expect(states).toEqual([1, 2, 3, 4])
     })
   })
 

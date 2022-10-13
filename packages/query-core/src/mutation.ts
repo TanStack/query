@@ -193,7 +193,7 @@ export class Mutation<
       if (!restored) {
         this.dispatch({ type: 'loading', variables: this.options.variables! })
         // Notify cache callback
-        this.mutationCache.config.onMutate?.(
+        await this.mutationCache.config.onMutate?.(
           this.state.variables,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
@@ -209,7 +209,7 @@ export class Mutation<
       const data = await executeMutation()
 
       // Notify cache callback
-      this.mutationCache.config.onSuccess?.(
+      await this.mutationCache.config.onSuccess?.(
         data,
         this.state.variables,
         this.state.context,
@@ -234,7 +234,7 @@ export class Mutation<
     } catch (error) {
       try {
         // Notify cache callback
-        this.mutationCache.config.onError?.(
+        await this.mutationCache.config.onError?.(
           error,
           this.state.variables,
           this.state.context,
