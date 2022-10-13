@@ -38,6 +38,7 @@ export interface MutationState<
 
 interface FailedAction<TError> {
   type: 'failed'
+  failureCount: number
   error: TError | null
 }
 
@@ -173,8 +174,8 @@ export class Mutation<
           }
           return this.options.mutationFn(this.state.variables!)
         },
-        onFail: (_failureCount, error) => {
-          this.dispatch({ type: 'failed', error })
+        onFail: (failureCount, error) => {
+          this.dispatch({ type: 'failed', failureCount, error })
         },
         onPause: () => {
           this.dispatch({ type: 'pause' })
@@ -274,7 +275,7 @@ export class Mutation<
         case 'failed':
           return {
             ...state,
-            failureCount: state.failureCount + 1,
+            failureCount: action.failureCount,
             failureReason: action.error,
           }
         case 'pause':
@@ -301,6 +302,8 @@ export class Mutation<
           return {
             ...state,
             data: action.data,
+            failureCount: 0,
+            failureReason: null,
             error: null,
             status: 'success',
             isPaused: false,

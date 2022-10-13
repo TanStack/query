@@ -692,8 +692,8 @@ describe('useMutation', () => {
     expect(states[5]).toMatchObject({
       isLoading: false,
       isPaused: false,
-      failureCount: 1,
-      failureReason: 'oops',
+      failureCount: 0,
+      failureReason: null,
       data: 'data',
     })
 

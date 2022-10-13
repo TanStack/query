@@ -132,8 +132,10 @@ mutate(variables, {
 - `reset: () => void`
   - A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
 - `failureCount: number`
-  - The failure count for the query.
-  - Incremented every time the query fails.
+  - The failure count for the mutation.
+  - Incremented every time the mutation fails.
+  - Reset to `0` when the mutation succeeds.
 - `failureReason: null | TError`
-  - The failure reason for the query retry.
+  - The failure reason for the mutation retry.
+  - Reset to `null` when the mutation succeeds.
 
