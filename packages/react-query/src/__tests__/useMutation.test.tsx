@@ -581,21 +581,25 @@ describe('useMutation', () => {
       isLoading: false,
       isPaused: false,
       failureCount: 0,
+      failureReason: null,
     })
     expect(states[1]).toMatchObject({
       isLoading: true,
       isPaused: false,
       failureCount: 0,
+      failureReason: null,
     })
     expect(states[2]).toMatchObject({
       isLoading: true,
       isPaused: false,
       failureCount: 1,
+      failureReason: 'oops',
     })
     expect(states[3]).toMatchObject({
       isLoading: true,
       isPaused: true,
       failureCount: 1,
+      failureReason: 'oops',
     })
 
     onlineMock.mockReturnValue(true)
@@ -608,11 +612,13 @@ describe('useMutation', () => {
       isLoading: true,
       isPaused: false,
       failureCount: 1,
+      failureReason: 'oops',
     })
     expect(states[5]).toMatchObject({
       isLoading: false,
       isPaused: false,
       failureCount: 1,
+      failureReason: 'oops',
       data: 'data',
     })
 

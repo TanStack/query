@@ -12,6 +12,8 @@ const {
   isLoading,
   isPaused,
   isSuccess,
+  failureCount,
+  failureReason,
   mutate,
   mutateAsync,
   reset,
@@ -129,3 +131,9 @@ mutate(variables, {
   - The error object for the query, if an error was encountered.
 - `reset: () => void`
   - A function to clean the mutation internal state (i.e., it resets the mutation to its initial state).
+- `failureCount: number`
+  - The failure count for the query.
+  - Incremented every time the query fails.
+- `failureReason: null | TError`
+  - The failure reason for the query retry.
+

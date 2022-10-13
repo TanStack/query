@@ -85,6 +85,7 @@ export interface FetchOptions {
 
 interface FailedAction<TError> {
   type: 'failed'
+  failureCount: number
   error: TError
 }
 
@@ -475,8 +476,8 @@ export class Query<
         this.isFetchingOptimistic = false
       },
       onError,
-      onFail: (_, error) => {
-        this.dispatch({ type: 'failed', error })
+      onFail: (failureCount, error) => {
+        this.dispatch({ type: 'failed', failureCount, error })
       },
       onPause: () => {
         this.dispatch({ type: 'pause' })
@@ -502,7 +503,7 @@ export class Query<
         case 'failed':
           return {
             ...state,
-            fetchFailureCount: state.fetchFailureCount + 1,
+            fetchFailureCount: action.failureCount,
             fetchFailureReason: action.error,
           }
         case 'pause':
