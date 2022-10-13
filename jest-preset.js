@@ -15,7 +15,7 @@ const moduleNameMapper = {
   ...packages.reduce(
     (acc, name) => ({
       ...acc,
-      [`${namespace}/${name}(.*)$`]: `<rootDir>/packages/./${name}/src/$1`,
+      [`${namespace}/${name}(.*)$`]: `<rootDir>/../../packages/./${name}/src/$1`,
     }),
     {},
   ),
@@ -24,16 +24,20 @@ const moduleNameMapper = {
 module.exports = {
   collectCoverage: true,
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
-  projects: packages.map((d: string) => ({
-    displayName: d,
-    clearMocks: true,
-    testEnvironment: 'jsdom',
-    testMatch: [`<rootDir>/packages/${d}/**/*.test.[jt]s?(x)`],
-    setupFilesAfterEnv: [`<rootDir>/jest.setup.js`],
-    snapshotFormat: {
-      printBasicPrototype: false,
+  testMatch: ['<rootDir>/**/*.test.[jt]s?(x)'],
+  transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
+  clearMocks: true,
+  testEnvironment: 'jsdom',
+  snapshotFormat: {
+    printBasicPrototype: false,
+  },
+  globals: {
+    'ts-jest': {
+      isolatedModules: true,
+      diagnostics: {
+        exclude: ['**'],
+      },
     },
-    moduleNameMapper,
-    preset: d.includes("solid") ? 'solid-jest/preset/browser' : undefined,
-  })),
+  },
+  moduleNameMapper,
 }

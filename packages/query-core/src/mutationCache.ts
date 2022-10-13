@@ -16,17 +16,17 @@ interface MutationCacheConfig {
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => void
+  ) => Promise<unknown> | unknown
   onSuccess?: (
     data: unknown,
     variables: unknown,
     context: unknown,
     mutation: Mutation<unknown, unknown, unknown>,
-  ) => void
+  ) => Promise<unknown> | unknown
   onMutate?: (
     variables: unknown,
     mutation: Mutation<unknown, unknown, unknown, unknown>,
-  ) => void
+  ) => Promise<unknown> | unknown
 }
 
 interface NotifyEventMutationAdded {

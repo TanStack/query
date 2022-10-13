@@ -28,8 +28,8 @@
     "clean": "rm -rf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "pnpm test:codemods && ../../node_modules/.bin/jest --config jest.config.js",
-    "test:jest:dev": "pnpm test:jest --watch"
+    "test:jest": "pnpm run test:codemods && ../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:dev": "pnpm run test:jest --watch"
   },
   "files": [
     "build/lib/*",
@@ -42,7 +42,13 @@
   ],
   "devDependencies": {
     "@types/jscodeshift": "^0.11.3",
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
     "@types/use-sync-external-store": "^0.0.3",
+    "react": "^18.2.0",
+    "react-17": "npm:react@^17.0.2",
+    "react-dom": "^18.2.0",
+    "react-dom-17": "npm:react-dom@^17.0.2",
     "jscodeshift": "^0.13.1",
     "react-error-boundary": "^3.1.4"
   },

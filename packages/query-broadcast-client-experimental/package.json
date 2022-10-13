@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-broadcast-client-experimental",
   "version": "4.10.3",
-  "description": "TODO",
+  "description": "An experimental plugin to for broadcasting the state of your queryClient between browser tabs/windows",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",
@@ -30,7 +30,8 @@
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "compile": "../../node_modules/.bin/tsc -p tsconfig.json --noEmit --emitDeclarationOnly false"
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts --passWithNoTests",
+    "test:dev": "pnpm run test:jest --watch"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",

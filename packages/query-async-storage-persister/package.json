@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-async-storage-persister",
   "version": "4.10.3",
-  "description": "TODO",
+  "description": "A persister for asynchronous storages, to be used with TanStack/Query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",
@@ -29,7 +29,9 @@
   ],
   "scripts": {
     "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src"
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:dev": "pnpm run test:jest --watch"
   },
   "dependencies": {
     "@tanstack/query-persist-client-core": "workspace:*"

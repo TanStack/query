@@ -21,6 +21,8 @@ The `useQueries` hook accepts an options object with a **queries** key whose val
 - `context?: React.Context<QueryClient | undefined>`
   - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
 
+> Having the same query key more than once in the array of query objects may cause some data to be shared between queries, e.g. when using `placeholderData` and `select`. To avoid this, consider de-duplicating the queries and map the results back to the desired structure.
+
 **Returns**
 
 The `useQueries` hook returns an array with all the query results.

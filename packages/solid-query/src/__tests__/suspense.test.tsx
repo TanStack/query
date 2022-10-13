@@ -805,52 +805,6 @@ describe("useQuery's in Suspense mode", () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
   })
 
-  it('should not render suspense fallback when not enabled', async () => {
-    const key = queryKey()
-
-    function Page() {
-      const [enabled, setEnabled] = createSignal(false)
-      const result = createQuery(
-        key,
-        () => {
-          sleep(10)
-          return 'data'
-        },
-        {
-          suspense: true,
-          get enabled() {
-            return enabled()
-          },
-        },
-      )
-
-      return (
-        <div>
-          <button onClick={() => setEnabled(true)}>fire</button>
-          <h1>{result.data ?? 'default'}</h1>
-        </div>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Suspense fallback="Loading...">
-          <Page />
-        </Suspense>
-      </QueryClientProvider>
-    ))
-
-    expect(screen.queryByText('Loading...')).toBeNull()
-    expect(screen.getByRole('heading').textContent).toBe('default')
-    await sleep(5)
-    fireEvent.click(screen.getByRole('button', { name: /fire/i }))
-    await waitFor(() => screen.getByText('Loading...'))
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading').textContent).toBe('data')
-    })
-  })
-
   it('should error catched in error boundary without infinite loop', async () => {
     const key = queryKey()
 

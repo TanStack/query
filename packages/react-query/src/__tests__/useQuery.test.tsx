@@ -2269,40 +2269,6 @@ describe('useQuery', () => {
     expect(queryCache.find(key)!.options.queryFn).toBe(queryFn1)
   })
 
-  it('should render correct states even in case of useEffect triggering delays', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-
-    const originalUseEffect = React.useEffect
-
-    // Try to simulate useEffect timing delay
-    // @ts-ignore
-    React.useEffect = (...args: any[]) => {
-      originalUseEffect(() => {
-        setTimeout(() => {
-          args[0]()
-        }, 10)
-      }, args[1])
-    }
-
-    function Page() {
-      const state = useQuery(key, () => 'data', { staleTime: Infinity })
-      states.push(state)
-      return null
-    }
-
-    renderWithClient(queryClient, <Page />)
-    queryClient.setQueryData(key, 'data')
-    await sleep(50)
-
-    // @ts-ignore
-    React.useEffect = originalUseEffect
-
-    expect(states.length).toBe(2)
-    expect(states[0]).toMatchObject({ status: 'loading' })
-    expect(states[1]).toMatchObject({ status: 'success' })
-  })
-
   it('should batch re-renders', async () => {
     const key = queryKey()
 
