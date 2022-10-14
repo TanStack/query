@@ -251,6 +251,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "DamianOsipiuk",
+      "name": "Damian Osipiuk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/28151934?v=4",
+      "profile": "https://github.com/DamianOsipiuk",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
