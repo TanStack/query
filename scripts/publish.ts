@@ -368,6 +368,10 @@ async function run() {
     return
   }
 
+  console.info('Testing packages...')
+  execSync(`pnpm run test:ci`, { encoding: 'utf8' })
+  console.info('')
+
   console.info('Building packages...')
   execSync(`pnpm run build`, { encoding: 'utf8', stdio: 'inherit' })
   console.info('')
@@ -413,10 +417,6 @@ async function run() {
       'Some packages failed validation:\n\n' + failedValidations.join('\n'),
     )
   }
-
-  console.info('Testing packages...')
-  execSync(`pnpm run test:ci`, { encoding: 'utf8' })
-  console.info('')
 
   console.info(`Updating all changed packages to version ${version}...`)
   // Update each package to the new version
