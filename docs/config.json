@@ -218,6 +218,10 @@
         {
           "label": "Query Key Factory",
           "to": "community/lukemorales-query-key-factory"
+        },
+        {
+          "label": "React Query Kit",
+          "to": "community/liaoliao666-react-query-kit"
         }
       ]
     },
