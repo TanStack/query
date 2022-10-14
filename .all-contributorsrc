@@ -242,6 +242,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "oscartbeaumont",
+      "name": "Oscar Beaumont",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21004798?v=4",
+      "profile": "https://otbeaumont.me",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
