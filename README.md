@@ -92,6 +92,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://github.com/jennyckaplan"><img src="https://avatars.githubusercontent.com/u/25395806?v=4?s=100" width="100px;" alt="Jen Kaplan"/><br /><sub><b>Jen Kaplan</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=jennyckaplan" title="Code">💻</a></td>
       <td align="center"><a href="https://lukesmurray.com/"><img src="https://avatars.githubusercontent.com/u/34020210?v=4?s=100" width="100px;" alt="Luke Murray"/><br /><sub><b>Luke Murray</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=lukesmurray" title="Code">💻</a></td>
       <td align="center"><a href="https://otbeaumont.me"><img src="https://avatars.githubusercontent.com/u/21004798?v=4?s=100" width="100px;" alt="Oscar Beaumont"/><br /><sub><b>Oscar Beaumont</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=oscartbeaumont" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/DamianOsipiuk"><img src="https://avatars.githubusercontent.com/u/28151934?v=4?s=100" width="100px;" alt="Damian Osipiuk"/><br /><sub><b>Damian Osipiuk</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=DamianOsipiuk" title="Code">💻</a> <a href="#maintenance-DamianOsipiuk" title="Maintenance">🚧</a></td>
     </tr>
   </tbody>
 </table>
