@@ -224,6 +224,15 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "lukesmurray",
+      "name": "Luke Murray",
+      "avatar_url": "https://avatars.githubusercontent.com/u/34020210?v=4",
+      "profile": "https://lukesmurray.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
