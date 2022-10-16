@@ -1,0 +1,19 @@
+{
+  "name": "@tanstack/query-example-vue-dependent-queries",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:dev": "vite build -m development",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "vue": "3.2.39",
+    "@tanstack/vue-query": "^4.9.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "3.1.0",
+    "typescript": "4.8.4",
+    "vite": "3.1.4"
+  }
+}
