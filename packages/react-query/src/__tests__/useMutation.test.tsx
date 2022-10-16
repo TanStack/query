@@ -149,30 +149,33 @@ describe('useMutation', () => {
 
   it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
     let count = 0
-    const mutateFn = jest.fn<Promise<number>, [count: number]>()
+    type Value = { count: number }
+
+    const mutateFn = jest.fn<Promise<Value>, [value: Value]>()
 
     mutateFn.mockImplementationOnce(() => {
       return Promise.reject('Error test Jonas')
     })
 
-    mutateFn.mockImplementation((count) => {
-      return Promise.resolve(count)
+    mutateFn.mockImplementation(async (value) => {
+      await sleep(10)
+      return Promise.resolve(value)
     })
 
     function Page() {
       const { mutate, failureCount, failureReason, data, status } = useMutation<
-        number,
+        Value,
         string,
-        number
+        Value
       >(mutateFn)
 
       return (
         <div>
-          <h1>Data {data}</h1>
+          <h1>Data {data?.count}</h1>
           <h2>Status {status}</h2>
           <h2>Failed {failureCount} times</h2>
           <h2>Failed because {failureReason ?? 'null'}</h2>
-          <button onClick={() => mutate(++count)}>mutate</button>
+          <button onClick={() => mutate({ count: ++count })}>mutate</button>
         </div>
       )
     }
