@@ -170,6 +170,61 @@ describe('useMutation', () => {
     expect(onSettledMock).toHaveBeenCalledWith(3)
   })
 
+  it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
+    const [count, setCount] = createSignal(0)
+    const mutateFn = jest.fn<Promise<number>, [count: number]>()
+
+    mutateFn.mockImplementationOnce(() => {
+      return Promise.reject('Error test Jonas')
+    })
+
+    mutateFn.mockImplementation((count) => {
+      return Promise.resolve(count)
+    })
+
+    function Page() {
+      const mutation = createMutation<number, string, number>(mutateFn)
+
+      return (
+        <div>
+          <h1>Data {mutation.data}</h1>
+          <h2>Status {mutation.status}</h2>
+          <h2>Failed {mutation.failureCount} times</h2>
+          <h2>Failed because {mutation.failureReason ?? 'null'}</h2>
+          <button
+            onClick={() => {
+              setCount((c) => c + 1)
+              return mutation.mutate(count())
+            }}
+          >
+            mutate
+          </button>
+        </div>
+      )
+    }
+
+    render(() => (
+      <QueryClientProvider client={queryClient}>
+        <Page />
+      </QueryClientProvider>
+    ))
+
+    await waitFor(() => screen.getByText('Data'))
+
+    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => screen.getByText('Data'))
+    await waitFor(() => screen.getByText('Status error'))
+    await waitFor(() => screen.getByText('Failed 1 times'))
+    await waitFor(() => screen.getByText('Failed because Error test Jonas'))
+
+    fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => screen.getByText('Status loading'))
+    await waitFor(() => screen.getByText('Status success'))
+    await waitFor(() => screen.getByText('Data 2'))
+    await waitFor(() => screen.getByText('Failed 0 times'))
+    await waitFor(() => screen.getByText('Failed because null'))
+  })
+
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
     const onErrorMock = jest.fn()
     const onSettledMock = jest.fn()

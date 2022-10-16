@@ -147,6 +147,54 @@ describe('useMutation', () => {
     expect(onSettledMock).toHaveBeenCalledWith(3)
   })
 
+  it('should set correct values for `failureReason` and `failureCount` on multiple mutate calls', async () => {
+    let count = 0
+    const mutateFn = jest.fn<Promise<number>, [count: number]>()
+
+    mutateFn.mockImplementationOnce(() => {
+      return Promise.reject('Error test Jonas')
+    })
+
+    mutateFn.mockImplementation((count) => {
+      return Promise.resolve(count)
+    })
+
+    function Page() {
+      const { mutate, failureCount, failureReason, data, status } = useMutation<
+        number,
+        string,
+        number
+      >(mutateFn)
+
+      return (
+        <div>
+          <h1>Data {data}</h1>
+          <h2>Status {status}</h2>
+          <h2>Failed {failureCount} times</h2>
+          <h2>Failed because {failureReason ?? 'null'}</h2>
+          <button onClick={() => mutate(++count)}>mutate</button>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Data'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => rendered.getByText('Data'))
+    await waitFor(() => rendered.getByText('Status error'))
+    await waitFor(() => rendered.getByText('Failed 1 times'))
+    await waitFor(() => rendered.getByText('Failed because Error test Jonas'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    await waitFor(() => rendered.getByText('Status loading'))
+    await waitFor(() => rendered.getByText('Status success'))
+    await waitFor(() => rendered.getByText('Data 2'))
+    await waitFor(() => rendered.getByText('Failed 0 times'))
+    await waitFor(() => rendered.getByText('Failed because null'))
+  })
+
   it('should be able to call `onError` and `onSettled` after each failed mutate', async () => {
     const onErrorMock = jest.fn()
     const onSettledMock = jest.fn()

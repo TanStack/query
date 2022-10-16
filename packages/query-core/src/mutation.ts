@@ -293,6 +293,8 @@ export class Mutation<
             ...state,
             context: action.context,
             data: undefined,
+            failureCount: 0,
+            failureReason: null,
             error: null,
             isPaused: !canFetch(this.options.networkMode),
             status: 'loading',
