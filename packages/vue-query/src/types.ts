@@ -7,7 +7,7 @@ import type { Ref, UnwrapRef, ComputedRef } from 'vue-demi'
 import type { QueryClient } from '@tanstack/vue-query'
 
 export type MaybeRef<T> = Ref<T> | T | ComputedRef<T>
-export type MaybeRefArgs<T> = T extends Function
+export type MaybeRefKeys<T> = T extends Function
   ? T
   : 
     T extends object
