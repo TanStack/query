@@ -3,10 +3,10 @@ import type {
   QueryObserverOptions,
   InfiniteQueryObserverOptions,
 } from '@tanstack/query-core'
-import type { Ref, UnwrapRef, ComputedRef } from 'vue-demi'
+import type { Ref, UnwrapRef } from 'vue-demi'
 import type { QueryClient } from '@tanstack/vue-query'
 
-export type MaybeRef<T> = Ref<T> | T | ComputedRef<T>
+export type MaybeRef<T> = Ref<T> | T
 export type MaybeRefKeys<T> = T extends Function
   ? T
   : 
