@@ -97,4 +97,3 @@ export type VueInfiniteQueryObserverOptions<
           TQueryKey
         >[Property]
       >
-}
