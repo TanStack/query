@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive, readonly, toRefs, watch, computed } from 'vue-demi'
+import { onScopeDispose, reactive, readonly, toRefs, watch, computed, unref, ref } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
 import { MutationObserver } from '@tanstack/query-core'
 import type {
@@ -168,17 +168,17 @@ export function parseMutationArgs<
     | MaybeRefArgs<UseMutationOptions<TData, TError, TVariables, TContext>>,
   arg3?: MaybeRefArgs<UseMutationOptions<TData, TError, TVariables, TContext>>,
 ): UseMutationOptions<TData, TError, TVariables, TContext> {
-  let options = arg1
+  let options = { ...arg1 }
 
-  if (isQueryKey(arg1)) {
-    if (typeof arg2 === 'function') {
+  if (isQueryKey(unref(arg1))) {
+    if ((typeof unref(arg2)) === 'function') {
       options = { ...arg3, mutationKey: arg1, mutationFn: arg2 }
     } else {
       options = { ...arg2, mutationKey: arg1 }
     }
   }
 
-  if (typeof arg1 === 'function') {
+  if (typeof unref(arg1) === 'function') {
     options = { ...arg2, mutationFn: arg1 }
   }
 

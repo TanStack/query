@@ -11,7 +11,7 @@ export function getClientKey(key?: string) {
   return `${VUE_QUERY_CLIENT}${suffix}`
 }
 
-export function isQueryKey(value: unknown): value is MaybeRef<QueryKey> {
+export function isQueryKey(value: unknown): value is QueryKey {
   return Array.isArray(value)
 }
 
