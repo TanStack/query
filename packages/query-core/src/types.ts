@@ -614,7 +614,7 @@ export type MutateFunction<
   TVariables = void,
   TContext = unknown,
 > = (
-  variables?: TVariables,
+  variables: TVariables,
   options?: MutateOptions<TData, TError, TVariables, TContext>,
 ) => Promise<TData>
 
