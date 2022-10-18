@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { QueryKey } from '@tanstack/query-core'
+import { MaybeRef } from './types'
 import { isRef, unref } from 'vue-demi'
 import type { UnwrapRef } from 'vue-demi'
 
@@ -10,7 +11,7 @@ export function getClientKey(key?: string) {
   return `${VUE_QUERY_CLIENT}${suffix}`
 }
 
-export function isQueryKey(value: unknown): value is QueryKey {
+export function isQueryKey(value: unknown): value is MaybeRef<QueryKey> {
   return Array.isArray(value)
 }
 
