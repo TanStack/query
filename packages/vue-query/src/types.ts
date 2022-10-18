@@ -19,7 +19,7 @@ export type MaybeRefKeys<T> = T extends Function
 export type MaybeRefDeep<T> = T extends Function
   ? T
   : MaybeRef<
-      T extends Array<unknown> | Record<string, unknown> | Map<string, unknown> | Set<unknown>
+      T extends object
         ? {
             [Property in keyof T]: MaybeRefDeep<T[Property]>
           }
