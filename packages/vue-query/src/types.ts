@@ -1,18 +1,25 @@
-/* istanbul ignore file */
-
 import type {
   QueryKey,
   QueryObserverOptions,
   InfiniteQueryObserverOptions,
 } from '@tanstack/query-core'
-import type { Ref, UnwrapRef } from 'vue-demi'
-import type { QueryClient } from './queryClient'
+import type { Ref, UnwrapRef, ComputedRef } from 'vue-demi'
+import type { QueryClient } from '@tanstack/vue-query'
 
-export type MaybeRef<T> = Ref<T> | T
+export type MaybeRef<T> = Ref<T> | T | ComputedRef<T>
+export type MaybeRefArgs<T> = T extends Function
+  ? T
+  : 
+    T extends object
+      ? {
+          [Property in keyof T]: MaybeRef<T[Property]>
+        }
+      : T
+
 export type MaybeRefDeep<T> = T extends Function
   ? T
   : MaybeRef<
-      T extends object
+      T extends Array<unknown> | Record<string, unknown> | Map<string, unknown> | Set<unknown>
         ? {
             [Property in keyof T]: MaybeRefDeep<T[Property]>
           }
