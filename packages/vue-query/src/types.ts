@@ -10,7 +10,7 @@ export type MaybeRef<T> = Ref<T> | T | ComputedRef<T>
 export type MaybeRefArgs<T> = T extends Function
   ? T
   : 
-    T extends object
+  T extends Array<unknown> | Record<string, unknown> | Map<string, unknown> | Set<unknown>
       ? {
           [Property in keyof T]: MaybeRef<T[Property]>
         }
