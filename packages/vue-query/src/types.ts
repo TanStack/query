@@ -2,19 +2,12 @@ import type {
   QueryKey,
   QueryObserverOptions,
   InfiniteQueryObserverOptions,
+  MutationObserverOptions
 } from '@tanstack/query-core'
 import type { Ref, UnwrapRef } from 'vue-demi'
 import type { QueryClient } from '@tanstack/vue-query'
 
 export type MaybeRef<T> = Ref<T> | T
-export type MaybeRefKeys<T> = T extends Function
-  ? T
-  : 
-    T extends object
-      ? {
-          [Property in keyof T]: MaybeRef<T[Property]>
-        }
-      : T
 
 export type MaybeRefDeep<T> = T extends Function
   ? T
@@ -29,6 +22,22 @@ export type MaybeRefDeep<T> = T extends Function
 export type WithQueryClientKey<T> = T & {
   queryClientKey?: string
   queryClient?: QueryClient
+}
+
+export type VueMutationObserverOptions<
+  TData = unknown,
+  TError = unknown,
+  TVariables = void,
+  TContext = unknown,
+> = {
+  [Property in keyof MutationObserverOptions<
+    TData,
+    TError,
+    TVariables,
+    TContext
+  >]: MaybeRefDeep<
+    MutationObserverOptions<TData, TError, TVariables, TContext>[Property]
+  >
 }
 
 // A Vue version of QueriesObserverOptions from "@tanstack/query-core"

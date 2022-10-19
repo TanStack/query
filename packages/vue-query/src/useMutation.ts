@@ -5,13 +5,12 @@ import type {
   MutateOptions,
   MutationFunction,
   MutationKey,
-  MutationObserverOptions,
   MutateFunction,
   MutationObserverResult,
 } from '@tanstack/query-core'
 import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
-import type { MaybeRefKeys, WithQueryClientKey, MaybeRef } from './types'
+import type { VueMutationObserverOptions, WithQueryClientKey, MaybeRef, MaybeRefDeep } from './types'
 
 export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
   return Array.isArray(isRef(value) ? value.value : value)
@@ -24,7 +23,7 @@ type MutationResult<TData, TError, TVariables, TContext> = Omit<
 
 export type UseMutationOptions<TData, TError, TVariables, TContext> =
   WithQueryClientKey<
-    MutationObserverOptions<TData, TError, TVariables, TContext>
+    VueMutationObserverOptions<TData, TError, TVariables, TContext>
   >
 
 type MutateSyncFunction<
@@ -33,7 +32,7 @@ type MutateSyncFunction<
   TVariables = void,
   TContext = unknown,
 > = (
-  ...options: Parameters<MaybeRefKeys<MutateFunction<TData, TError, TVariables, TContext>>>
+  ...options: Parameters<MutateFunction<TData, TError, TVariables, TContext>>
 ) => void
 
 export type UseMutationReturnType<
@@ -54,7 +53,7 @@ export function useMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
+  options: UseMutationOptions<TData, TError, TVariables, TContext>,
 ): UseMutationReturnType<TData, TError, TVariables, TContext>
 export function useMutation<
   TData = unknown,
@@ -63,10 +62,10 @@ export function useMutation<
   TContext = unknown,
 >(
   mutationFn: MaybeRef<MutationFunction<TData, TVariables>>,
-  options?: MaybeRefKeys<Omit<
+  options?: Omit<
     UseMutationOptions<TData, TError, TVariables, TContext>,
     'mutationFn'
-  >>,
+  >,
 ): UseMutationReturnType<TData, TError, TVariables, TContext>
 export function useMutation<
   TData = unknown,
@@ -75,10 +74,10 @@ export function useMutation<
   TContext = unknown,
 >(
   mutationKey: MaybeRef<MutationKey>,
-  options?: MaybeRefKeys<Omit<
+  options?: Omit<
     UseMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey'
-  >>,
+  >,
 ): UseMutationReturnType<TData, TError, TVariables, TContext>
 export function useMutation<
   TData = unknown,
@@ -88,10 +87,10 @@ export function useMutation<
 >(
   mutationKey: MaybeRef<MutationKey>,
   mutationFn?: MaybeRef<MutationFunction<TData, TVariables>>,
-  options?: MaybeRefKeys<Omit<
+  options?: Omit<
     UseMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey' | 'mutationFn'
-  >>,
+  >,
 ): UseMutationReturnType<TData, TError, TVariables, TContext>
 export function useMutation<
   TData = unknown,
@@ -102,11 +101,11 @@ export function useMutation<
   arg1:
     | MaybeRef<MutationKey>
     | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
+    | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg2?:
     | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
-  arg3?: MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
+    | UseMutationOptions<TData, TError, TVariables, TContext>,
+  arg3?: UseMutationOptions<TData, TError, TVariables, TContext>,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
   
   const options = computed(() => {
@@ -166,11 +165,11 @@ export function parseMutationArgs<
   arg1:
     | MaybeRef<MutationKey>
     | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
+    | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg2?:
     | MaybeRef<MutationFunction<TData, TVariables>>
-    | MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
-  arg3?: MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
+    | UseMutationOptions<TData, TError, TVariables, TContext>,
+  arg3?: UseMutationOptions<TData, TError, TVariables, TContext>,
 ): UseMutationOptions<TData, TError, TVariables, TContext> {
   let options = arg1
   if (isMutationKey(arg1)) {
