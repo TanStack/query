@@ -1,9 +1,14 @@
+/* istanbul ignore file */
+
+// Re-export core
+export * from '@tanstack/query-core'
+
+// Svelte Query
 export * from './types'
-export * from './useQueryClient'
-export * from './useBaseQuery'
-export * from './useQuery'
-export * from './useQueries'
-export * from './useMutation'
-export * from './useHydrate'
-export * from './useIsFetching'
-export * from './useIsMutating'
+export { useQueryClient } from './useQueryClient'
+export { useQuery } from './useQuery'
+export { useQueries } from './useQueries'
+export { useMutation } from './useMutation'
+export { useHydrate } from './useHydrate'
+export { useIsFetching } from './useIsFetching'
+export { useIsMutating } from './useIsMutating'
