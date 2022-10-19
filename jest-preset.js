@@ -25,7 +25,7 @@ module.exports = {
   collectCoverage: true,
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
   testMatch: ['<rootDir>/**/*.test.[jt]s?(x)'],
-  transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
+  transform: { '^.+\\.(ts|tsx)$': 'ts-jest', '^.+\\.svelte$': ['svelte-jester', { 'preprocess': true }] },
   clearMocks: true,
   testEnvironment: 'jsdom',
   snapshotFormat: {
