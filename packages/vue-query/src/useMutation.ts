@@ -168,8 +168,7 @@ export function parseMutationArgs<
     | MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
   arg3?: MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
 ): UseMutationOptions<TData, TError, TVariables, TContext> {
-  let options = { ...arg1 }
-
+  let options
   if (isQueryKey(unref(arg1))) {
     if ((typeof unref(arg2)) === 'function') {
       options = { ...arg3, mutationKey: arg1, mutationFn: arg2 }
