@@ -5,7 +5,7 @@ import type {
   MutationObserverOptions
 } from '@tanstack/query-core'
 import type { Ref, UnwrapRef } from 'vue-demi'
-import type { QueryClient } from '@tanstack/vue-query'
+import type { QueryClient } from './queryClient'
 
 export type MaybeRef<T> = Ref<T> | T
 
