@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive, readonly, toRefs, watch, computed, unref } from 'vue-demi'
+import { onScopeDispose, reactive, readonly, toRefs, watch, computed, unref, isRef } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
 import { MutationObserver } from '@tanstack/query-core'
 import type {
@@ -9,9 +9,13 @@ import type {
   MutateFunction,
   MutationObserverResult,
 } from '@tanstack/query-core'
-import { cloneDeepUnref, isQueryKey, updateState } from './utils'
+import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from './useQueryClient'
 import type { MaybeRefKeys, WithQueryClientKey, MaybeRef } from './types'
+
+export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
+  return Array.isArray(value)
+}
 
 type MutationResult<TData, TError, TVariables, TContext> = Omit<
   MutationObserverResult<TData, TError, TVariables, TContext>,
@@ -168,17 +172,19 @@ export function parseMutationArgs<
     | MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
   arg3?: MaybeRefKeys<UseMutationOptions<TData, TError, TVariables, TContext>>,
 ): UseMutationOptions<TData, TError, TVariables, TContext> {
-  let options
-  if (isQueryKey(unref(arg1))) {
-    if ((typeof unref(arg2)) === 'function') {
-      options = { ...arg3, mutationKey: arg1, mutationFn: arg2 }
+  let options = arg1
+  if (isMutationKey(arg1)) {
+    const a = isRef(arg2) ? arg2.value : arg2
+    if ((typeof (a) === 'function')) {
+      options = { ...arg3, mutationKey: arg1, mutationFn: a }
     } else {
       options = { ...arg2, mutationKey: arg1 }
     }
   }
 
-  if (typeof unref(arg1) === 'function') {
-    options = { ...arg2, mutationFn: arg1 }
+  const b = isRef(arg1) ? arg1.value : arg1
+  if (typeof b === 'function') {
+    options = { ...arg2, mutationFn: b }
   }
 
   return cloneDeepUnref(options) as UseMutationOptions<
