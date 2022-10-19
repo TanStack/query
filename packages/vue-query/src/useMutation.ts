@@ -1,4 +1,12 @@
-import { onScopeDispose, reactive, readonly, toRefs, watch, computed, isRef } from 'vue-demi'
+import {
+  onScopeDispose,
+  reactive,
+  readonly,
+  toRefs,
+  watch,
+  computed,
+  isRef
+} from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
 import { MutationObserver } from '@tanstack/query-core'
 import type {
@@ -11,7 +19,11 @@ import type {
 } from '@tanstack/query-core'
 import { cloneDeepUnref, updateState } from './utils'
 import { useQueryClient } from '@tanstack/vue-query'
-import type { VueMutationObserverOptions, WithQueryClientKey, MaybeRef, MaybeRefDeep } from './types'
+import type {
+  VueMutationObserverOptions,
+  WithQueryClientKey,
+  MaybeRef
+} from './types'
 
 export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
   return Array.isArray(isRef(value) ? value.value : value)
