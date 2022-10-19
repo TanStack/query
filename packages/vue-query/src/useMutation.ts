@@ -7,9 +7,10 @@ import type {
   MutationKey,
   MutateFunction,
   MutationObserverResult,
+  MutationObserverOptions
 } from '@tanstack/query-core'
 import { cloneDeepUnref, updateState } from './utils'
-import { useQueryClient } from './useQueryClient'
+import { useQueryClient } from '@tanstack/vue-query'
 import type { VueMutationObserverOptions, WithQueryClientKey, MaybeRef, MaybeRefDeep } from './types'
 
 export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
@@ -170,7 +171,7 @@ export function parseMutationArgs<
     | MaybeRef<MutationFunction<TData, TVariables>>
     | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>,
-): UseMutationOptions<TData, TError, TVariables, TContext> {
+): WithQueryClientKey<MutationObserverOptions<TData, TError, TVariables, TContext>> {
   let options = arg1
   if (isMutationKey(arg1)) {
     const a = isRef(arg2) ? arg2.value : arg2
@@ -186,10 +187,10 @@ export function parseMutationArgs<
     options = { ...arg2, mutationFn: b }
   }
 
-  return cloneDeepUnref(options) as UseMutationOptions<
+  return cloneDeepUnref(options) as WithQueryClientKey<MutationObserverOptions<
     TData,
     TError,
     TVariables,
     TContext
-  >
+  >>
 }
