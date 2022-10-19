@@ -14,7 +14,7 @@ import { useQueryClient } from './useQueryClient'
 import type { MaybeRefKeys, WithQueryClientKey, MaybeRef } from './types'
 
 export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
-  return Array.isArray(value)
+  return Array.isArray(isRef(value) ? value.value : value)
 }
 
 type MutationResult<TData, TError, TVariables, TContext> = Omit<
