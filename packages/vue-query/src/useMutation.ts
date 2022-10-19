@@ -8,7 +8,6 @@ import {
   isRef
 } from 'vue-demi'
 import type { ToRefs } from 'vue-demi'
-import { MutationObserver } from '@tanstack/query-core'
 import type {
   MutateOptions,
   MutationFunction,
@@ -17,13 +16,14 @@ import type {
   MutationObserverResult,
   MutationObserverOptions
 } from '@tanstack/query-core'
-import { cloneDeepUnref, updateState } from './utils'
-import { useQueryClient } from '@tanstack/vue-query'
 import type {
   VueMutationObserverOptions,
   WithQueryClientKey,
   MaybeRef
 } from './types'
+import { MutationObserver } from '@tanstack/query-core'
+import { cloneDeepUnref, updateState } from './utils'
+import { useQueryClient } from './useQueryClient'
 
 export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
   return Array.isArray(isRef(value) ? value.value : value)
