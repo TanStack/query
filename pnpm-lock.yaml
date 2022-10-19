@@ -18,6 +18,7 @@ importers:
       '@testing-library/react': ^13.0.0
       '@testing-library/react-17': npm:@testing-library/react@12.1.4
       '@testing-library/react-hooks': ^7.0.2
+      '@testing-library/svelte': ^3.2.2
       '@tsconfig/svelte': ^3.0.0
       '@types/jest': ^26.0.4
       '@types/luxon': ^2.3.1
@@ -68,6 +69,7 @@ importers:
       solid-testing-library: ^0.3.0
       stream-to-array: ^2.3.0
       svelte: ^3.48.0
+      svelte-jester: ^2.3.2
       svelte-preprocess: ^4.10.7
       ts-jest: ^27.1.1
       ts-node: ^10.7.0
@@ -88,6 +90,7 @@ importers:
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-17': /@testing-library/react/12.1.4_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 7.0.2_biqbaboplfbrettd7655fr4n2y
+      '@testing-library/svelte': 3.2.2_svelte@3.49.0
       '@tsconfig/svelte': 3.0.0
       '@types/jest': 26.0.24
       '@types/luxon': 2.3.2
@@ -138,6 +141,7 @@ importers:
       solid-testing-library: 0.3.0_solid-js@1.5.7
       stream-to-array: 2.3.0
       svelte: 3.49.0
+      svelte-jester: 2.3.2_jest@27.5.1+svelte@3.49.0
       svelte-preprocess: 4.10.7_zduuzbyvckih7ijiq4uuecfic4
       ts-jest: 27.1.5_kv3z5ukkp6hjlassekz7vtidta
       ts-node: 10.8.2_rb7lfb2dlgdf5f7m6mcvvespxa
@@ -661,7 +665,7 @@ importers:
     devDependencies:
       '@playwright/test': 1.27.1
       '@sveltejs/adapter-auto': 1.0.0-next.83
-      '@sveltejs/kit': 1.0.0-next.516_svelte@3.52.0+vite@3.1.8
+      '@sveltejs/kit': 1.0.0-next.517_svelte@3.52.0+vite@3.1.8
       '@tanstack/query-core': link:../../../packages/query-core
       '@tanstack/svelte-query': link:../../../packages/svelte-query
       '@typescript-eslint/eslint-plugin': 5.30.5_bswk4y5m2ah4mhu5r4p5atlk7e
@@ -724,7 +728,7 @@ importers:
     devDependencies:
       '@playwright/test': 1.27.1
       '@sveltejs/adapter-auto': 1.0.0-next.83
-      '@sveltejs/kit': 1.0.0-next.516_svelte@3.52.0+vite@3.1.8
+      '@sveltejs/kit': 1.0.0-next.517_svelte@3.52.0+vite@3.1.8
       '@tanstack/query-core': link:../../../packages/query-core
       '@tanstack/svelte-query': link:../../../packages/svelte-query
       '@typescript-eslint/eslint-plugin': 5.30.5_bswk4y5m2ah4mhu5r4p5atlk7e
@@ -786,7 +790,7 @@ importers:
     devDependencies:
       '@playwright/test': 1.27.1
       '@sveltejs/adapter-auto': 1.0.0-next.83
-      '@sveltejs/kit': 1.0.0-next.516_svelte@3.52.0+vite@3.1.8
+      '@sveltejs/kit': 1.0.0-next.517_svelte@3.52.0+vite@3.1.8
       '@tanstack/svelte-query': link:../../../packages/svelte-query
       '@typescript-eslint/eslint-plugin': 5.30.5_bswk4y5m2ah4mhu5r4p5atlk7e
       '@typescript-eslint/parser': 5.30.5_z4bbprzjrhnsfa24uvmcbu7f5q
@@ -5738,8 +5742,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.516_svelte@3.52.0+vite@3.1.8:
-    resolution: {integrity: sha512-n0oGcv7xpgJ81ld1oER5HVREP4TdeDUJ8S64XNDcl3Y2xfQLKk8C4SLYQw2D6V+DxUm8V3aRrj7N7/tm4CQm6A==}
+  /@sveltejs/kit/1.0.0-next.517_svelte@3.52.0+vite@3.1.8:
+    resolution: {integrity: sha512-DG6RB0akR9StVWulhNo4YXRBlmPWIPXHEfrmhzUi5QgwbDaGEL9wkb43oe/FBlAJCGjB+xDUJgRWKf3oGJIbpA==}
     engines: {node: '>=16.14'}
     hasBin: true
     requiresBuild: true
@@ -5920,6 +5924,16 @@ packages:
       '@types/react-dom': 18.0.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: true
+
+  /@testing-library/svelte/3.2.2_svelte@3.49.0:
+    resolution: {integrity: sha512-IKwZgqbekC3LpoRhSwhd0JswRGxKdAGkf39UiDXTywK61YyLXbCYoR831e/UUC6EeNW4hiHPY+2WuovxOgI5sw==}
+    engines: {node: '>= 10'}
+    peerDependencies:
+      svelte: 3.x
+    dependencies:
+      '@testing-library/dom': 8.18.1
+      svelte: 3.49.0
     dev: true
 
   /@tootallnate/once/1.1.2:
@@ -13917,7 +13931,7 @@ packages:
     peerDependencies:
       react: '>=16.13.1'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       react: 18.2.0
     dev: true
 
@@ -15329,6 +15343,17 @@ packages:
       svelte: '>=3.19.0'
     dependencies:
       svelte: 3.52.0
+    dev: true
+
+  /svelte-jester/2.3.2_jest@27.5.1+svelte@3.49.0:
+    resolution: {integrity: sha512-JtxSz4FWAaCRBXbPsh4LcDs4Ua7zdXgLC0TZvT1R56hRV0dymmNP+abw67DTPF7sQPyNxWsOKd0Sl7Q8SnP8kg==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      jest: '>= 27'
+      svelte: '>= 3'
+    dependencies:
+      jest: 27.5.1_ts-node@10.8.2
+      svelte: 3.49.0
     dev: true
 
   /svelte-preprocess/4.10.7_besnmoibwkhwtentvwuriss7pa:
