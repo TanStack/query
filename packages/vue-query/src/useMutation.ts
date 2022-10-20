@@ -22,12 +22,8 @@ import type {
   MaybeRef
 } from './types'
 import { MutationObserver } from '@tanstack/query-core'
-import { cloneDeepUnref, updateState } from './utils'
+import { cloneDeepUnref, updateState, isMutationKey } from './utils'
 import { useQueryClient } from './useQueryClient'
-
-export function isMutationKey (value: unknown): value is MaybeRef<MutationKey> {
-  return Array.isArray(isRef(value) ? value.value : value)
-}
 
 type MutationResult<TData, TError, TVariables, TContext> = Omit<
   MutationObserverResult<TData, TError, TVariables, TContext>,
