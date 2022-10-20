@@ -187,7 +187,7 @@ export function parseMutationArgs<
   let options = arg1
   if (isMutationKey(arg1)) {
     const a = isRef(arg2) ? arg2.value : arg2
-    if ((typeof (a) === 'function')) {
+    if (typeof a === 'function') {
       options = { ...arg3, mutationKey: arg1, mutationFn: a }
     } else {
       options = { ...arg2, mutationKey: arg1 }
