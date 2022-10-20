@@ -127,7 +127,7 @@ export function useMutation<
 
   const state = reactive(observer.getCurrentResult())
 
-  let unsubscribe = observer.subscribe((result) => {
+  const unsubscribe = observer.subscribe((result) => {
     updateState(state, result)
   })
 
