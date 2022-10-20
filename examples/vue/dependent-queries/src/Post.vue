@@ -32,10 +32,10 @@ export default defineComponent({
     const authorId = computed(() => post.value?.userId);
 
     const { data: author } = useQuery(
-      ["author", authorId.value],
+      ["author", authorId],
       () => fetchAuthor(authorId.value),
       {
-        enabled: computed(() => authorId.value !== undefined)
+        enabled: computed(() => !!post.value?.userId)
       }
     )
 
