@@ -116,15 +116,12 @@ export function useMutation<
     | UseMutationOptions<TData, TError, TVariables, TContext>,
   arg3?: UseMutationOptions<TData, TError, TVariables, TContext>,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
-  
   const options = computed(() => {
     return parseMutationArgs(arg1, arg2, arg3)
   })
-
+  
   const queryClient = options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
-
   const observer = new MutationObserver(queryClient, queryClient.defaultMutationOptions(options.value))
-
   const state = reactive(observer.getCurrentResult())
 
   const unsubscribe = observer.subscribe((result) => {
