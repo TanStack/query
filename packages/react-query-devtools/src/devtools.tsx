@@ -5,6 +5,7 @@ import type {
   QueryClient,
   QueryKey as QueryKeyType,
   ContextOptions,
+  Query,
 } from '@tanstack/react-query'
 import {
   useQueryClient,
@@ -39,6 +40,19 @@ import { ThemeProvider, defaultTheme as theme } from './theme'
 import { getQueryStatusLabel, getQueryStatusColor } from './utils'
 import Explorer from './Explorer'
 import Logo from './Logo'
+import { useMemo } from 'react'
+
+export interface DevToolsErrorType {
+  /**
+   * The name of the error.
+   */
+  name: string
+  /**
+   * How the error is initialized. Whatever it returns MUST implement toString() so
+   * we can check against the current error.
+   */
+  initializer: (query: Query) => { toString(): string }
+}
 
 export interface DevtoolsOptions extends ContextOptions {
   /**
@@ -77,6 +91,10 @@ export interface DevtoolsOptions extends ContextOptions {
    * nonce for style element for CSP
    */
   styleNonce?: string
+  /**
+   * Use this so you can define custom errors that can be shown in the devtools.
+   */
+  errorTypes?: DevToolsErrorType[]
 }
 
 interface DevtoolsPanelOptions extends ContextOptions {
@@ -121,6 +139,10 @@ interface DevtoolsPanelOptions extends ContextOptions {
    * Use this to add props to the close button. For example, you can add className, style (merge and override default style), onClick (extend default handler), etc.
    */
   closeButtonProps?: React.ComponentPropsWithoutRef<'button'>
+  /**
+   * Use this so you can define custom errors that can be shown in the devtools.
+   */
+  errorTypes?: DevToolsErrorType[]
 }
 
 export function ReactQueryDevtools({
@@ -133,6 +155,7 @@ export function ReactQueryDevtools({
   context,
   styleNonce,
   panelPosition: initialPanelPosition = 'bottom',
+  errorTypes = [],
 }: DevtoolsOptions): React.ReactElement | null {
   const rootRef = React.useRef<HTMLDivElement>(null)
   const panelRef = React.useRef<HTMLDivElement>(null)
@@ -325,6 +348,7 @@ export function ReactQueryDevtools({
           isOpen={isResolvedOpen}
           setIsOpen={setIsOpen}
           onDragStart={(e) => handleDragStart(panelRef.current, e)}
+          errorTypes={errorTypes}
         />
       </ThemeProvider>
       {!isResolvedOpen ? (
@@ -415,6 +439,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
     showCloseButton,
     position,
     closeButtonProps = {},
+    errorTypes = [],
     ...panelProps
   } = props
 
@@ -732,6 +757,7 @@ export const ReactQueryDevtoolsPanel = React.forwardRef<
             activeQueryHash={activeQueryHash}
             queryCache={queryCache}
             queryClient={queryClient}
+            errorTypes={errorTypes}
           />
         ) : null}
 
@@ -767,10 +793,12 @@ const ActiveQuery = ({
   queryCache,
   activeQueryHash,
   queryClient,
+  errorTypes,
 }: {
   queryCache: QueryCache
   activeQueryHash: string
   queryClient: QueryClient
+  errorTypes: DevToolsErrorType[]
 }) => {
   const activeQuery = useSubscribeToQueryCache(queryCache, () =>
     queryCache.getAll().find((query) => query.queryHash === activeQueryHash),
@@ -803,6 +831,33 @@ const ActiveQuery = ({
     const promise = activeQuery?.fetch()
     promise?.catch(noop)
   }
+
+  const triggerError = (errorType?: DevToolsErrorType) => {
+    if (!activeQuery) {
+      return
+    }
+    const qCache = queryClient.getQueryCache()
+    const q = qCache.find(activeQuery.queryKey, { exact: true })
+    q?.setState({
+      ...q.state,
+      status: 'error',
+      error:
+        errorType?.initializer(activeQuery) ??
+        new Error('Unknown error from devtools'),
+    })
+  }
+
+  const currentErrorTypeName = useMemo(() => {
+    if (activeQuery && activeQueryState?.error) {
+      const errorType = errorTypes.find(
+        (type) =>
+          type.initializer(activeQuery)?.toString() ===
+          activeQueryState.error?.toString(),
+      )
+      return errorType?.name
+    }
+    return undefined
+  }, [activeQueryState?.error])
 
   if (!activeQuery || !activeQueryState) {
     return null
@@ -943,7 +998,65 @@ const ActiveQuery = ({
           }}
         >
           Remove
-        </Button>
+        </Button>{' '}
+        <Button
+          type="button"
+          onClick={() => {
+            const qCache = queryClient.getQueryCache()
+            const q = qCache.find(activeQuery.queryKey, { exact: true })
+
+            q?.setState({
+              ...q.state,
+              data: undefined,
+              status: 'loading',
+            })
+          }}
+          style={{
+            background: theme.paused,
+          }}
+        >
+          Trigger loading
+        </Button>{' '}
+        {errorTypes.length === 0 ? (
+          <Button
+            type="button"
+            onClick={() => {
+              triggerError()
+            }}
+            style={{
+              background: theme.danger,
+            }}
+          >
+            Toggle error
+          </Button>
+        ) : (
+          <label>
+            Trigger error:
+            <Select
+              value={currentErrorTypeName}
+              style={{ marginInlineStart: '.5em' }}
+              onChange={(e) => {
+                const errorType = errorTypes.find(
+                  (t) => t.name === e.target.value,
+                )
+                if (errorType) {
+                  triggerError(errorType)
+                }
+                else {
+                  // Reset query when selecting no error
+                  queryClient.resetQueries(activeQuery)
+                }
+              }}
+            >
+              <option key="" value=""/>
+              {errorTypes.map((errorType) => (
+                <option key={errorType.name} value={errorType.name}>
+                  {errorType.name}
+                </option>
+              ))}
+            </Select>
+          </label>
+        )}
       </div>
       <div
         style={{
