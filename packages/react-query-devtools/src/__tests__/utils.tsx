@@ -15,10 +15,7 @@ export function renderWithClient(
 ): ReturnType<typeof render> {
   const { rerender, ...result } = render(
     <QueryClientProvider client={client} context={devtoolsOptions.context}>
-      <ReactQueryDevtools {...devtoolsOptions} errorTypes={[{
-        name: "testError",
-        initializer: () => new Error("testError"),
-      }]} />
+      <ReactQueryDevtools {...devtoolsOptions} />
       {ui}
     </QueryClientProvider>,
   )

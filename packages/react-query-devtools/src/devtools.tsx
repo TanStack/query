@@ -1027,7 +1027,7 @@ const ActiveQuery = ({
               background: theme.danger,
             }}
           >
-            Toggle error
+            Trigger error
           </Button>
         ) : (
           <label>
