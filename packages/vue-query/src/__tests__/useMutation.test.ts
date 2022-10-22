@@ -101,7 +101,7 @@ describe('useMutation', () => {
     ])
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const options = { mutationKey: mutationKey }
+    const options = reactive({ mutationKey })
     const mutation = useMutation(
       (params: string) => successMutator(params),
       options,
@@ -114,9 +114,17 @@ describe('useMutation', () => {
     await flushPromises()
 
     const mutations = mutationCache.getAll()
-    const m = mutations[0]?.options.mutationKey as MutationKeyTest[]
+    const relevantMutation = mutations.find((mutation) => {
+      return (
+        Array.isArray(mutation.options.mutationKey) &&
+        !!mutation.options.mutationKey[0].otherObject
+      )
+    })
 
-    expect(m[0]?.otherObject.name === 'someOtherObjectName')
+    expect(
+      (relevantMutation?.options.mutationKey as MutationKeyTest[])[0]
+        ?.otherObject.name === 'someOtherObjectName',
+    )
   })
 
   test('should reset state after invoking mutation.reset', async () => {
