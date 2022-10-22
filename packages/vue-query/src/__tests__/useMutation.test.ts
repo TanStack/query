@@ -114,10 +114,10 @@ describe('useMutation', () => {
     await flushPromises()
 
     const mutations = mutationCache.getAll()
-    const relevantMutation = mutations.find((mutation) => {
+    const relevantMutation = mutations.find((m) => {
       return (
-        Array.isArray(mutation.options.mutationKey) &&
-        !!mutation.options.mutationKey[0].otherObject
+        Array.isArray(m.options.mutationKey) &&
+        !!m.options.mutationKey[0].otherObject
       )
     })
 
