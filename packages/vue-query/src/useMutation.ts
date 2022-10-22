@@ -140,7 +140,7 @@ export function useMutation<
   watch(options,
     () => {
       observer.setOptions(
-        queryClient.defaultMutationOptions(queryClient.defaultMutationOptions(options.value)),
+        queryClient.defaultMutationOptions(options.value),
       )
     },
     { deep: true },

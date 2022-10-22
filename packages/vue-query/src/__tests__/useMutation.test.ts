@@ -35,7 +35,7 @@ describe('useMutation', () => {
 
   test('should return error when request fails', async () => {
     const mutation = useMutation(errorMutator)
-    mutation.mutate({})
+    mutation.mutate()
     await flushPromises(10)
     expect(mutation).toMatchObject({
       isIdle: { value: false },
@@ -234,7 +234,7 @@ describe('useMutation', () => {
     test('should throw on error', async () => {
       const mutation = useMutation(errorMutator)
 
-      await expect(mutation.mutateAsync({})).rejects.toThrowError('Some error')
+      await expect(mutation.mutateAsync()).rejects.toThrowError('Some error')
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
