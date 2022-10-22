@@ -562,6 +562,7 @@ export class QueryObserver<
       error,
       errorUpdatedAt,
       failureCount: state.fetchFailureCount,
+      failureReason: state.fetchFailureReason,
       errorUpdateCount: state.errorUpdateCount,
       isFetched: state.dataUpdateCount > 0 || state.errorUpdateCount > 0,
       isFetchedAfterMount:

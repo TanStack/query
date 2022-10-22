@@ -266,6 +266,7 @@ describe('createQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -293,6 +294,7 @@ describe('createQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       isError: false,
       isFetched: true,
@@ -338,6 +340,7 @@ describe('createQuery', () => {
         <div>
           <h1>Status: {state.status}</h1>
           <div>Failure Count: {state.failureCount}</div>
+          <div>Failure Reason: {state.failureReason}</div>
         </div>
       )
     }
@@ -356,6 +359,7 @@ describe('createQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -383,6 +387,7 @@ describe('createQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 1,
+      failureReason: 'rejected',
       errorUpdateCount: 0,
       isError: false,
       isFetched: false,
@@ -410,6 +415,7 @@ describe('createQuery', () => {
       error: 'rejected',
       errorUpdatedAt: expect.any(Number),
       failureCount: 2,
+      failureReason: 'rejected',
       errorUpdateCount: 1,
       isError: true,
       isFetched: true,
@@ -3238,6 +3244,7 @@ describe('createQuery', () => {
         <div>
           <div>error: {result.error ?? 'null'}</div>
           <div>failureCount: {result.failureCount}</div>
+          <div>failureReason: {result.failureReason}</div>
         </div>
       )
     }
@@ -3262,6 +3269,7 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => screen.getByText('failureCount: 1'))
+    await waitFor(() => screen.getByText('failureReason: some error'))
     fireEvent.click(screen.getByRole('button', { name: /hide/i }))
     await waitFor(() => screen.getByRole('button', { name: /show/i }))
     fireEvent.click(screen.getByRole('button', { name: /show/i }))
@@ -3292,6 +3300,7 @@ describe('createQuery', () => {
         <div>
           <div>error: {result.error ?? 'null'}</div>
           <div>failureCount: {result.failureCount}</div>
+          <div>failureReason: {result.failureReason}</div>
         </div>
       )
     }
@@ -3321,6 +3330,7 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => screen.getByText('failureCount: 1'))
+    await waitFor(() => screen.getByText('failureReason: some error'))
     fireEvent.click(screen.getByRole('button', { name: /hide/i }))
     fireEvent.click(screen.getByRole('button', { name: /cancel/i }))
     await waitFor(() => screen.getByRole('button', { name: /show/i }))
@@ -3584,7 +3594,7 @@ describe('createQuery', () => {
     })
 
     function Page() {
-      const state = createQuery(key, queryFn, {
+      const state = createQuery<unknown, string>(key, queryFn, {
         retry: 1,
         retryDelay: 1,
       })
@@ -3593,6 +3603,7 @@ describe('createQuery', () => {
         <div>
           <h1>{state.status}</h1>
           <h2>Failed {state.failureCount} times</h2>
+          <h2>Failed because {state.failureReason}</h2>
         </div>
       )
     }
@@ -3608,6 +3619,7 @@ describe('createQuery', () => {
 
     // query should fail `retry + 1` times, since first time isn't a "retry"
     await waitFor(() => screen.getByText('Failed 2 times'))
+    await waitFor(() => screen.getByText('Failed because Error test Barrett'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
   })
@@ -3635,6 +3647,7 @@ describe('createQuery', () => {
         <div>
           <h1>{state.status}</h1>
           <h2>Failed {state.failureCount} times</h2>
+          <h2>Failed because {state.failureReason}</h2>
           <h2>{state.error}</h2>
         </div>
       )
@@ -3648,8 +3661,8 @@ describe('createQuery', () => {
 
     await waitFor(() => screen.getByText('loading'))
     await waitFor(() => screen.getByText('error'))
-
     await waitFor(() => screen.getByText('Failed 2 times'))
+    await waitFor(() => screen.getByText('Failed because NoRetry'))
     await waitFor(() => screen.getByText('NoRetry'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
@@ -3666,7 +3679,7 @@ describe('createQuery', () => {
     })
 
     function Page() {
-      const state = createQuery(key, queryFn, {
+      const state = createQuery<unknown, DelayError>(key, queryFn, {
         retry: 1,
         retryDelay: (_, error: DelayError) => error.delay,
       })
@@ -3675,6 +3688,7 @@ describe('createQuery', () => {
         <div>
           <h1>{state.status}</h1>
           <h2>Failed {state.failureCount} times</h2>
+          <h2>Failed because DelayError: {state.failureReason?.delay}ms</h2>
         </div>
       )
     }
@@ -3689,6 +3703,7 @@ describe('createQuery', () => {
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
+    await waitFor(() => screen.getByText('Failed because DelayError: 50ms'))
     await waitFor(() => screen.getByText('Failed 2 times'))
 
     expect(queryFn).toHaveBeenCalledTimes(2)
@@ -3704,7 +3719,7 @@ describe('createQuery', () => {
     let count = 0
 
     function Page() {
-      const query = createQuery(
+      const query = createQuery<unknown, string>(
         key,
         () => {
           count++
@@ -3721,6 +3736,7 @@ describe('createQuery', () => {
           <div>error {String(query.error)}</div>
           <div>status {query.status}</div>
           <div>failureCount {query.failureCount}</div>
+          <div>failureReason {query.failureReason}</div>
         </div>
       )
     }
@@ -3733,24 +3749,28 @@ describe('createQuery', () => {
 
     // The query should display the first error result
     await waitFor(() => screen.getByText('failureCount 1'))
+    await waitFor(() => screen.getByText('failureReason fetching error 1'))
     await waitFor(() => screen.getByText('status loading'))
     await waitFor(() => screen.getByText('error null'))
 
     // Check if the query really paused
     await sleep(10)
     await waitFor(() => screen.getByText('failureCount 1'))
+    await waitFor(() => screen.getByText('failureReason fetching error 1'))
 
     visibilityMock.mockRestore()
     window.dispatchEvent(new FocusEvent('focus'))
 
     // Wait for the final result
     await waitFor(() => screen.getByText('failureCount 4'))
+    await waitFor(() => screen.getByText('failureReason fetching error 4'))
     await waitFor(() => screen.getByText('status error'))
     await waitFor(() => screen.getByText('error fetching error 4'))
 
     // Check if the query really stopped
     await sleep(10)
     await waitFor(() => screen.getByText('failureCount 4'))
+    await waitFor(() => screen.getByText('failureReason fetching error 4'))
 
     // Check if the error has been logged in the console
     expect(mockLogger.error).toHaveBeenCalledWith('fetching error 4')
@@ -3931,13 +3951,13 @@ describe('createQuery', () => {
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/190
-  it('should reset failureCount on successful fetch', async () => {
+  it('should reset failureCount and failureReason on successful fetch', async () => {
     const key = queryKey()
 
     function Page() {
       let counter = 0
 
-      const query = createQuery(
+      const query = createQuery<unknown, Error>(
         key,
         async () => {
           if (counter < 2) {
@@ -3953,6 +3973,7 @@ describe('createQuery', () => {
       return (
         <div>
           <div>failureCount {query.failureCount}</div>
+          <div>failureReason {query.failureReason?.message ?? 'null'}</div>
         </div>
       )
     }
@@ -3964,7 +3985,9 @@ describe('createQuery', () => {
     ))
 
     await waitFor(() => screen.getByText('failureCount 2'))
+    await waitFor(() => screen.getByText('failureReason error'))
     await waitFor(() => screen.getByText('failureCount 0'))
+    await waitFor(() => screen.getByText('failureReason null'))
   })
 
   // See https://github.com/tannerlinsley/react-query/issues/199
@@ -5553,7 +5576,7 @@ describe('createQuery', () => {
       let count = 0
 
       function Page() {
-        const state = createQuery({
+        const state = createQuery<unknown, string, string>({
           queryKey: key,
           queryFn: async () => {
             count++
@@ -5568,6 +5591,7 @@ describe('createQuery', () => {
               status: {state.status}, fetchStatus: {state.fetchStatus},
               failureCount: {state.failureCount}
             </div>
+            <div>failureReason: {state.failureReason ?? 'null'}</div>
             <div>data: {state.data}</div>
             <button
               onClick={() => queryClient.invalidateQueries({ queryKey: key() })}
@@ -5594,6 +5618,7 @@ describe('createQuery', () => {
           'status: success, fetchStatus: paused, failureCount: 0',
         ),
       )
+      await waitFor(() => screen.getByText('failureReason: null'))
 
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
@@ -5603,9 +5628,11 @@ describe('createQuery', () => {
           'status: success, fetchStatus: fetching, failureCount: 0',
         ),
       )
+      await waitFor(() => screen.getByText('failureReason: null'))
       await waitFor(() =>
         screen.getByText('status: success, fetchStatus: idle, failureCount: 0'),
       )
+      await waitFor(() => screen.getByText('failureReason: null'))
 
       await waitFor(() => {
         expect(screen.getByText('data: data2')).toBeInTheDocument()
@@ -5856,7 +5883,7 @@ describe('createQuery', () => {
       let count = 0
 
       function Page() {
-        const state = createQuery({
+        const state = createQuery<unknown, Error>({
           queryKey: key,
           queryFn: async (): Promise<unknown> => {
             count++
@@ -5873,6 +5900,7 @@ describe('createQuery', () => {
               status: {state.status}, fetchStatus: {state.fetchStatus},
               failureCount: {state.failureCount}
             </div>
+            <div>failureReason: {state.failureReason?.message ?? 'null'}</div>
           </div>
         )
       }
@@ -5888,6 +5916,7 @@ describe('createQuery', () => {
           'status: loading, fetchStatus: fetching, failureCount: 1',
         ),
       )
+      await waitFor(() => screen.getByText('failureReason: failed1'))
 
       const onlineMock = mockNavigatorOnLine(false)
 
@@ -5898,6 +5927,7 @@ describe('createQuery', () => {
           'status: loading, fetchStatus: paused, failureCount: 1',
         ),
       )
+      await waitFor(() => screen.getByText('failureReason: failed1'))
 
       expect(count).toBe(1)
 
@@ -5907,6 +5937,7 @@ describe('createQuery', () => {
       await waitFor(() =>
         screen.getByText('status: error, fetchStatus: idle, failureCount: 3'),
       )
+      await waitFor(() => screen.getByText('failureReason: failed3'))
 
       expect(count).toBe(3)
 
@@ -6219,7 +6250,7 @@ describe('createQuery', () => {
       let count = 0
 
       function Page() {
-        const state = createQuery({
+        const state = createQuery<unknown, Error>({
           queryKey: key,
           queryFn: async (): Promise<unknown> => {
             count++
@@ -6237,6 +6268,7 @@ describe('createQuery', () => {
               status: {state.status}, fetchStatus: {state.fetchStatus},
               failureCount: {state.failureCount}
             </div>
+            <div>failureReason: {state.failureReason?.message ?? 'null'}</div>
           </div>
         )
       }
@@ -6252,6 +6284,7 @@ describe('createQuery', () => {
           'status: loading, fetchStatus: paused, failureCount: 1',
         ),
       )
+      await waitFor(() => screen.getByText('failureReason: failed1'))
 
       expect(count).toBe(1)
 
@@ -6261,6 +6294,7 @@ describe('createQuery', () => {
       await waitFor(() =>
         screen.getByText('status: error, fetchStatus: idle, failureCount: 3'),
       )
+      await waitFor(() => screen.getByText('failureReason: failed3'))
 
       expect(count).toBe(3)
 

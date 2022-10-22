@@ -30,13 +30,16 @@ export interface MutationState<
   data: TData | undefined
   error: TError | null
   failureCount: number
+  failureReason: TError | null
   isPaused: boolean
   status: MutationStatus
   variables: TVariables | undefined
 }
 
-interface FailedAction {
+interface FailedAction<TError> {
   type: 'failed'
+  failureCount: number
+  error: TError | null
 }
 
 interface LoadingAction<TVariables, TContext> {
@@ -71,7 +74,7 @@ interface SetStateAction<TData, TError, TVariables, TContext> {
 export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
   | ErrorAction<TError>
-  | FailedAction
+  | FailedAction<TError>
   | LoadingAction<TVariables, TContext>
   | PauseAction
   | SetStateAction<TData, TError, TVariables, TContext>
@@ -171,8 +174,8 @@ export class Mutation<
           }
           return this.options.mutationFn(this.state.variables!)
         },
-        onFail: () => {
-          this.dispatch({ type: 'failed' })
+        onFail: (failureCount, error) => {
+          this.dispatch({ type: 'failed', failureCount, error })
         },
         onPause: () => {
           this.dispatch({ type: 'pause' })
@@ -272,7 +275,8 @@ export class Mutation<
         case 'failed':
           return {
             ...state,
-            failureCount: state.failureCount + 1,
+            failureCount: action.failureCount,
+            failureReason: action.error,
           }
         case 'pause':
           return {
@@ -289,6 +293,8 @@ export class Mutation<
             ...state,
             context: action.context,
             data: undefined,
+            failureCount: 0,
+            failureReason: null,
             error: null,
             isPaused: !canFetch(this.options.networkMode),
             status: 'loading',
@@ -298,6 +304,8 @@ export class Mutation<
           return {
             ...state,
             data: action.data,
+            failureCount: 0,
+            failureReason: null,
             error: null,
             status: 'success',
             isPaused: false,
@@ -308,6 +316,7 @@ export class Mutation<
             data: undefined,
             error: action.error,
             failureCount: state.failureCount + 1,
+            failureReason: action.error,
             isPaused: false,
             status: 'error',
           }
@@ -344,6 +353,7 @@ export function getDefaultState<
     data: undefined,
     error: null,
     failureCount: 0,
+    failureReason: null,
     isPaused: false,
     status: 'idle',
     variables: undefined,
