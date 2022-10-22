@@ -101,9 +101,11 @@ describe('useMutation', () => {
       (params: string) => successMutator(params),
       options,
     )
+
     mutationKey.value[0]!.otherObject.name = 'someOtherObjectName'
     await flushPromises()
     mutation.mutate('xyz')
+    
     await flushPromises()
     const mutations = mutationCache.getAll()
     const m = mutations[0]?.options.mutationKey as MutationKeyTest[]
