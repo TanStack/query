@@ -87,13 +87,18 @@ describe('useMutation', () => {
 
   test('should update reactive options deeply', async () => {
     type MutationKeyTest = {
-      entity: string,
+      entity: string
       otherObject: {
-        name: string,
+        name: string
         someFn: Function
       }
     }
-    const mutationKey = ref<MutationKeyTest[]>([{ entity: 'test', otherObject: { name: 'objectName', someFn: () => null } }])
+    const mutationKey = ref<MutationKeyTest[]>([
+      {
+        entity: 'test',
+        otherObject: { name: 'objectName', someFn: () => null },
+      },
+    ])
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
     const options = { mutationKey: mutationKey }
@@ -107,7 +112,7 @@ describe('useMutation', () => {
     mutation.mutate('xyz')
 
     await flushPromises()
-    
+
     const mutations = mutationCache.getAll()
     const m = mutations[0]?.options.mutationKey as MutationKeyTest[]
 
