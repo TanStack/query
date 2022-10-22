@@ -1,4 +1,4 @@
-import { reactive } from 'vue-demi'
+import { reactive, ref } from 'vue-demi'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
 import { parseMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
@@ -35,11 +35,8 @@ describe('useMutation', () => {
 
   test('should return error when request fails', async () => {
     const mutation = useMutation(errorMutator)
-
-    mutation.mutate()
-
+    mutation.mutate({})
     await flushPromises(10)
-
     expect(mutation).toMatchObject({
       isIdle: { value: false },
       isLoading: { value: false },
@@ -86,6 +83,48 @@ describe('useMutation', () => {
     const mutations = mutationCache.find({ mutationKey: ['bar'] })
 
     expect(mutations?.options.mutationKey).toEqual(['bar'])
+  })
+
+  test('should update reactive options deeply', async () => {
+    type MutationKeyTest = {
+      entity: string
+      otherObject: {
+        name: string
+        someFn: Function
+      }
+    }
+    const mutationKey = ref<MutationKeyTest[]>([
+      {
+        entity: 'test',
+        otherObject: { name: 'objectName', someFn: () => null },
+      },
+    ])
+    const queryClient = useQueryClient()
+    const mutationCache = queryClient.getMutationCache()
+    const options = reactive({ mutationKey })
+    const mutation = useMutation(
+      (params: string) => successMutator(params),
+      options,
+    )
+
+    mutationKey.value[0]!.otherObject.name = 'someOtherObjectName'
+    await flushPromises()
+    mutation.mutate('xyz')
+
+    await flushPromises()
+
+    const mutations = mutationCache.getAll()
+    const relevantMutation = mutations.find((m) => {
+      return (
+        Array.isArray(m.options.mutationKey) &&
+        !!m.options.mutationKey[0].otherObject
+      )
+    })
+
+    expect(
+      (relevantMutation?.options.mutationKey as MutationKeyTest[])[0]
+        ?.otherObject.name === 'someOtherObjectName',
+    )
   })
 
   test('should reset state after invoking mutation.reset', async () => {
@@ -237,7 +276,7 @@ describe('useMutation', () => {
     test('should throw on error', async () => {
       const mutation = useMutation(errorMutator)
 
-      await expect(mutation.mutateAsync()).rejects.toThrowError('Some error')
+      await expect(mutation.mutateAsync({})).rejects.toThrowError('Some error')
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
