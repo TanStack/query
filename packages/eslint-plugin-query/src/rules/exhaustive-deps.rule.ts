@@ -103,9 +103,14 @@ function runCheck(params: {
     ExtraUtils.getIdentifiersFromArrayExpression(queryKeyValue)
   const refs = getExternalRefs({ scopeManager, node: queryFn.value })
   const missingRefs = refs
+    .filter((reference) => {
+      return (
+        !ExtraUtils.isAncestorIsCallee(reference.identifier) &&
+        !ruleOptions.whitelist.includes(reference.identifier.name) &&
+        !queryKeyDeps.some((y) => y.name === reference.identifier.name)
+      )
+    })
     .map((ref) => ref.identifier)
-    .filter((ref) => !ruleOptions.whitelist.includes(ref.name))
-    .filter((ref) => !queryKeyDeps.some((y) => y.name === ref.name))
 
   if (missingRefs.length > 0) {
     context.report({

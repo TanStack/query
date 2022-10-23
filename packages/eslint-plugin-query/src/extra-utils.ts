@@ -53,4 +53,26 @@ export const ExtraUtils = {
 
     return identifiers
   },
+  isAncestorIsCallee(identifier: TSESTree.Node) {
+    let previousNode = identifier
+    let currentNode = identifier.parent
+
+    while (currentNode !== undefined) {
+      if (
+        currentNode.type === AST_NODE_TYPES.CallExpression &&
+        currentNode.callee === previousNode
+      ) {
+        return true
+      }
+
+      if (currentNode.type !== AST_NODE_TYPES.MemberExpression) {
+        return false
+      }
+
+      previousNode = currentNode
+      currentNode = currentNode.parent
+    }
+
+    return false
+  },
 }
