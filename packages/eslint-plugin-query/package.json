@@ -17,7 +17,7 @@
     "dev": "tsup --watch --sourcemap",
     "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
     "test:dev": "pnpm run test:jest --watch",
-    "lint:eslint": "eslint --ext .js,.jsx,.ts,.tsx src"
+    "test:eslint": "eslint --ext .js,.jsx,.ts,.tsx src"
   },
   "files": [
     "build"
