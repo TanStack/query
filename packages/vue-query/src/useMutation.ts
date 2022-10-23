@@ -205,21 +205,20 @@ export function parseMutationArgs<
 ): WithQueryClientKey<
   MutationObserverOptions<TData, TError, TVariables, TContext>
 > {
-  let options = arg1
-  if (isMutationKey(arg1)) {
-    const plainFn = isRef(arg2) ? arg2.value : arg2
-    const plainOptions = isRef(arg3) ? arg3.value : arg3
-    if (typeof plainFn === 'function') {
-      options = { ...plainOptions, mutationKey: arg1, mutationFn: plainFn }
+  const plainArg1 = isRef(arg1) ? arg1.value : arg1
+  const plainArg2 = isRef(arg2) ? arg2.value : arg2
+  let options = plainArg1
+  if (isMutationKey(plainArg1)) {
+    if (typeof plainArg2 === 'function') {
+      const plainArg3 = isRef(arg3) ? arg3.value : arg3
+      options = { ...plainArg3, mutationKey: plainArg1, mutationFn: plainArg2 }
     } else {
-      options = { ...arg2, mutationKey: arg1 }
+      options = { ...plainArg2, mutationKey: plainArg1 }
     }
   }
 
-  const plainFn = isRef(arg1) ? arg1.value : arg1
-  const plainOptions = isRef(arg2) ? arg2.value : arg2
-  if (typeof plainFn === 'function') {
-    options = { ...plainOptions, mutationFn: plainFn }
+  if (typeof plainArg1 === 'function') {
+    options = { ...plainArg2, mutationFn: plainArg1 }
   }
 
   return cloneDeepUnref(options) as UseMutationOptions<

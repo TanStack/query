@@ -90,13 +90,12 @@ describe('useMutation', () => {
       entity: string
       otherObject: {
         name: string
-        someFn: Function
       }
     }
     const mutationKey = ref<MutationKeyTest[]>([
       {
         entity: 'test',
-        otherObject: { name: 'objectName', someFn: () => null },
+        otherObject: { name: 'objectName' },
       },
     ])
     const queryClient = useQueryClient()
@@ -125,6 +124,29 @@ describe('useMutation', () => {
       (relevantMutation?.options.mutationKey as MutationKeyTest[])[0]
         ?.otherObject.name === 'someOtherObjectName',
     )
+  })
+
+  test('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
+    const mutationKey = ref<string[]>(['foo2'])
+    const mutationFn = ref((params: string) => successMutator(params))
+    const queryClient = useQueryClient()
+    const mutationCache = queryClient.getMutationCache()
+    const mutation = useMutation(mutationKey, mutationFn)
+
+    mutationKey.value = ['bar2']
+    let proof = false
+    mutationFn.value = (params: string) => {
+      proof = true
+      return successMutator(params)
+    }
+    await flushPromises()
+
+    mutation.mutate('xyz')
+    await flushPromises()
+
+    const mutations = mutationCache.find({ mutationKey: ['bar2'] })
+    expect(mutations?.options.mutationKey).toEqual(['bar2'])
+    expect(proof).toEqual(true)
   })
 
   test('should reset state after invoking mutation.reset', async () => {
