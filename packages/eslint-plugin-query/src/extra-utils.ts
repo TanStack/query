@@ -1,9 +1,15 @@
-import type { TSESTree } from '@typescript-eslint/types'
-import { AST_NODE_TYPES } from '@typescript-eslint/types'
+import type { TSESTree } from '@typescript-eslint/utils'
+import { AST_NODE_TYPES } from '@typescript-eslint/utils'
 
 export const ExtraUtils = {
   isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
     return node.type === AST_NODE_TYPES.Identifier
+  },
+  isIdentifierWithName(
+    node: TSESTree.Node,
+    name: string,
+  ): node is TSESTree.Identifier {
+    return ExtraUtils.isIdentifier(node) && node.name === name
   },
   isLiteral(node: TSESTree.Node): node is TSESTree.Literal {
     return node.type === AST_NODE_TYPES.Literal
@@ -14,14 +20,16 @@ export const ExtraUtils = {
   isProperty(node: TSESTree.Node): node is TSESTree.Property {
     return node.type === AST_NODE_TYPES.Property
   },
+  isObjectExpression(node: TSESTree.Node): node is TSESTree.ObjectExpression {
+    return node.type === AST_NODE_TYPES.ObjectExpression
+  },
   isPropertyWithIdentifierKey(
     node: TSESTree.Node,
     key: string,
   ): node is TSESTree.Property {
     return (
       ExtraUtils.isProperty(node) &&
-      ExtraUtils.isIdentifier(node.key) &&
-      node.key.name === key
+      ExtraUtils.isIdentifierWithName(node.key, key)
     )
   },
   findPropertyWithIdentifierKey(

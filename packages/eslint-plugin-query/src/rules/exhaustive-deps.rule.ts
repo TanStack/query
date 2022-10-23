@@ -24,7 +24,7 @@ const ruleSchema: JSONSchema.JSONSchema4 = {
   },
 }
 
-const defaultRuleOptions = { whitelist: ['api', 'fetch', 'axios'] }
+const defaultRuleOptions = { whitelist: [] }
 
 type RuleMessage = keyof typeof messages
 type RuleOptions = { whitelist?: string[] }
@@ -50,11 +50,8 @@ export const exhaustiveDepsRule = createRule<[RuleOptions], RuleMessage>({
   defaultOptions: [defaultRuleOptions],
   create(context) {
     return {
-      CallExpression(node) {
-        if (
-          ExtraUtils.isIdentifier(node.callee) &&
-          node.callee.name === 'useQuery'
-        ) {
+      Property(node) {
+        if (ExtraUtils.isIdentifierWithName(node.key, 'queryKey')) {
           runCheck({ node, context })
         }
       },
@@ -62,25 +59,24 @@ export const exhaustiveDepsRule = createRule<[RuleOptions], RuleMessage>({
   },
 })
 
-function runCheck(params: {
-  node: TSESTree.CallExpression
-  context: RuleContext
-}) {
+function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
   const { node, context } = params
-  const queryOptions = node.arguments[0]
   const ruleOptions = { ...defaultRuleOptions, ...context.options[0] }
 
-  if (queryOptions?.type !== AST_NODE_TYPES.ObjectExpression) {
+  if (
+    node.parent === undefined ||
+    !ExtraUtils.isObjectExpression(node.parent)
+  ) {
     return
   }
 
   const scopeManager = context.getSourceCode().scopeManager
   const queryKey = ExtraUtils.findPropertyWithIdentifierKey(
-    queryOptions.properties,
+    node.parent.properties,
     'queryKey',
   )
   const queryFn = ExtraUtils.findPropertyWithIdentifierKey(
-    queryOptions.properties,
+    node.parent.properties,
     'queryFn',
   )
 
@@ -114,7 +110,7 @@ function runCheck(params: {
 
   if (missingRefs.length > 0) {
     context.report({
-      node: node.callee,
+      node: node,
       messageId: 'missingDeps',
       data: {
         deps: missingRefs.map(nodeToText).join(', '),
@@ -165,7 +161,9 @@ function getExternalRefs(params: {
   }
 
   const readOnlyRefs = scope.references.filter((x) => x.isRead())
-  const localRefIds = new Set([...scope.set.values()].map((x) => x.identifiers[0]))
+  const localRefIds = new Set(
+    [...scope.set.values()].map((x) => x.identifiers[0]),
+  )
   const externalRefs = readOnlyRefs.filter(
     (x) => x.resolved === null || !localRefIds.has(x.resolved.identifiers[0]),
   )
