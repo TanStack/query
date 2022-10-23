@@ -127,13 +127,13 @@ describe('useMutation', () => {
   })
 
   test('should allow for options object passed as arg1 & arg2 to trigger reactive updates', async () => {
-    const mutationKey = ref<string[]>(['foo'])
+    const mutationKey = ref<string[]>(['foo2'])
     const mutationFn = ref((params: string) => successMutator(params))
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
     const mutation = useMutation(mutationKey, mutationFn)
 
-    mutationKey.value = ['bar']
+    mutationKey.value = ['bar2']
     let proof = false
     mutationFn.value = (params: string) => {
       proof = true
@@ -144,8 +144,8 @@ describe('useMutation', () => {
     mutation.mutate('xyz')
     await flushPromises()
 
-    const mutations = mutationCache.find({ mutationKey: ['bar'] })
-    expect(mutations?.options.mutationKey).toEqual(['bar'])
+    const mutations = mutationCache.find({ mutationKey: ['bar2'] })
+    expect(mutations?.options.mutationKey).toEqual(['bar2'])
     expect(proof).toEqual(true)
   })
 
