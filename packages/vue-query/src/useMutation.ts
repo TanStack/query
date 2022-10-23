@@ -209,8 +209,8 @@ export function parseMutationArgs<
   const plainArg2 = isRef(arg2) ? arg2.value : arg2
   let options = plainArg1
   if (isMutationKey(plainArg1)) {
-    const plainArg3 = isRef(arg3) ? arg3.value : arg3
     if (typeof plainArg2 === 'function') {
+      const plainArg3 = isRef(arg3) ? arg3.value : arg3
       options = { ...plainArg3, mutationKey: plainArg1, mutationFn: plainArg2 }
     } else {
       options = { ...plainArg2, mutationKey: plainArg1 }
