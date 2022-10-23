@@ -1,4 +1,4 @@
 export default {
-  displayName: 'query-core',
+  displayName: 'eslint-plugin-query',
   preset: '../../jest-preset.js',
 }
