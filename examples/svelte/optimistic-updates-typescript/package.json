@@ -16,7 +16,7 @@
 		"@playwright/test": "^1.25.0",
 		"@sveltejs/adapter-auto": "next",
 		"@sveltejs/kit": "next",
-		"@tanstack/svelte-query": "^4.12.0",
+		"@tanstack/query-core": "^4.12.0",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"eslint": "^8.16.0",
