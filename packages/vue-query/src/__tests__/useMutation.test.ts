@@ -131,10 +131,7 @@ describe('useMutation', () => {
     const mutationFn = ref((params: string) => successMutator(params))
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const mutation = useMutation(
-      mutationKey,
-      mutationFn
-    )
+    const mutation = useMutation(mutationKey, mutationFn)
 
     mutationKey.value = ['bar']
     let proof = false
