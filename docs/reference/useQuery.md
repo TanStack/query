@@ -10,6 +10,7 @@ const {
   error,
   errorUpdatedAt,
   failureCount,
+  failureReason,
   isError,
   isFetched,
   isFetchedAfterMount,
@@ -251,6 +252,9 @@ const result = useQuery({
   - The failure count for the query.
   - Incremented every time the query fails.
   - Reset to `0` when the query succeeds.
+- `failureReason: null | TError`
+  - The failure reason for the query retry.
+  - Reset to `null` when the query succeeds.
 - `errorUpdateCount: number`
   - The sum of all errors.
 - `refetch: (options: { throwOnError: boolean, cancelRefetch: boolean }) => Promise<UseQueryResult>`

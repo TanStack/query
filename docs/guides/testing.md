@@ -175,7 +175,7 @@ const expectation = nock('http://example.com')
 
 (Notice the `.persist()`, because we'll be calling from this endpoint multiple times)
 
-Now we can safely run our tests, the trick here is to await both `isFetching` and then `!isFetching` after calling `fetchNextPage()`:
+Now we can safely run our tests, the trick here is to await for the data assertion to pass:
 
 ```ts
 const { result, waitFor } = renderHook(() => useInfiniteQueryCustomHook(), { wrapper });
@@ -186,13 +186,12 @@ expect(result.current.data.pages).toStrictEqual(generateMockedResponse(1));
 
 result.current.fetchNextPage();
 
-await waitFor(() => result.current.isFetching);
-await waitFor(() => !result.current.isFetching);
-
-expect(result.current.data.pages).toStrictEqual([
-  ...generateMockedResponse(1),
-  ...generateMockedResponse(2),
-]);
+await waitFor(() =>
+  expect(result.current.data.pages).toStrictEqual([
+    ...generateMockedResponse(1),
+    ...generateMockedResponse(2),
+  ]),
+);
 
 expectation.done();
 ```

@@ -45,6 +45,7 @@ export interface QueryState<TData = unknown, TError = unknown> {
   errorUpdateCount: number
   errorUpdatedAt: number
   fetchFailureCount: number
+  fetchFailureReason: TError | null
   fetchMeta: any
   isInvalidated: boolean
   status: QueryStatus
@@ -82,8 +83,10 @@ export interface FetchOptions {
   meta?: any
 }
 
-interface FailedAction {
+interface FailedAction<TError> {
   type: 'failed'
+  failureCount: number
+  error: TError
 }
 
 interface FetchAction {
@@ -124,7 +127,7 @@ interface SetStateAction<TData, TError> {
 export type Action<TData, TError> =
   | ContinueAction
   | ErrorAction<TError>
-  | FailedAction
+  | FailedAction<TError>
   | FetchAction
   | InvalidateAction
   | PauseAction
@@ -473,8 +476,8 @@ export class Query<
         this.isFetchingOptimistic = false
       },
       onError,
-      onFail: () => {
-        this.dispatch({ type: 'failed' })
+      onFail: (failureCount, error) => {
+        this.dispatch({ type: 'failed', failureCount, error })
       },
       onPause: () => {
         this.dispatch({ type: 'pause' })
@@ -500,7 +503,8 @@ export class Query<
         case 'failed':
           return {
             ...state,
-            fetchFailureCount: state.fetchFailureCount + 1,
+            fetchFailureCount: action.failureCount,
+            fetchFailureReason: action.error,
           }
         case 'pause':
           return {
@@ -516,6 +520,7 @@ export class Query<
           return {
             ...state,
             fetchFailureCount: 0,
+            fetchFailureReason: null,
             fetchMeta: action.meta ?? null,
             fetchStatus: canFetch(this.options.networkMode)
               ? 'fetching'
@@ -537,6 +542,7 @@ export class Query<
             ...(!action.manual && {
               fetchStatus: 'idle',
               fetchFailureCount: 0,
+              fetchFailureReason: null,
             }),
           }
         case 'error':
@@ -552,6 +558,7 @@ export class Query<
             errorUpdateCount: state.errorUpdateCount + 1,
             errorUpdatedAt: Date.now(),
             fetchFailureCount: state.fetchFailureCount + 1,
+            fetchFailureReason: error as TError,
             fetchStatus: 'idle',
             status: 'error',
           }
@@ -611,6 +618,7 @@ function getDefaultState<
     errorUpdateCount: 0,
     errorUpdatedAt: 0,
     fetchFailureCount: 0,
+    fetchFailureReason: null,
     fetchMeta: null,
     isInvalidated: false,
     status: hasData ? 'success' : 'loading',
