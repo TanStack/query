@@ -15,8 +15,8 @@ export function isQueryKey(value: unknown): value is QueryKey {
   return Array.isArray(value)
 }
 
-export function isMutationKey(value: unknown): value is MaybeRef<MutationKey> {
-  return Array.isArray(isRef(value) ? value.value : value)
+export function isMutationKey(value: unknown): value is MutationKey {
+  return Array.isArray(value)
 }
 
 export function updateState(
