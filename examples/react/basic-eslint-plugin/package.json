@@ -1,0 +1,35 @@
+{
+  "name": "@tanstack/query-example-react-basic",
+  "version": "0.0.1",
+  "main": "src/index.jsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@tanstack/react-query": "^4.7.1",
+    "@tanstack/react-query-devtools": "^4.7.1"
+  },
+  "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^1.0.0",
+    "@vitejs/plugin-react": "^2.0.0",
+    "eslint": "^8.26.0",
+    "vite": "^3.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
