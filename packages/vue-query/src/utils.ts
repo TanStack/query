@@ -2,7 +2,6 @@
 import type { QueryKey, MutationKey } from '@tanstack/query-core'
 import { isRef, unref } from 'vue-demi'
 import type { UnwrapRef } from 'vue-demi'
-import type { MaybeRef } from './types'
 
 export const VUE_QUERY_CLIENT = 'VUE_QUERY_CLIENT'
 
