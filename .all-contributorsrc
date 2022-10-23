@@ -261,6 +261,15 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "matthewhausman",
+      "name": "Matthew Hausman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25216513?v=4",
+      "profile": "https://www.linkedin.com/in/matthew-hausman/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
