@@ -647,7 +647,7 @@ importers:
       '@playwright/test': ^1.25.0
       '@sveltejs/adapter-auto': next
       '@sveltejs/kit': next
-      '@tanstack/query-core': 4.12.0
+      '@tanstack/query-core': ^4.12.0
       '@tanstack/svelte-query': ^4.12.0
       '@typescript-eslint/eslint-plugin': ^5.27.0
       '@typescript-eslint/parser': ^5.27.0
@@ -664,8 +664,8 @@ importers:
       vite: ^3.1.0
     devDependencies:
       '@playwright/test': 1.27.1
-      '@sveltejs/adapter-auto': 1.0.0-next.83
-      '@sveltejs/kit': 1.0.0-next.517_svelte@3.52.0+vite@3.1.8
+      '@sveltejs/adapter-auto': 1.0.0-next.84
+      '@sveltejs/kit': 1.0.0-next.522_svelte@3.52.0+vite@3.1.8
       '@tanstack/query-core': link:../../../packages/query-core
       '@tanstack/svelte-query': link:../../../packages/svelte-query
       '@typescript-eslint/eslint-plugin': 5.30.5_bswk4y5m2ah4mhu5r4p5atlk7e
@@ -682,7 +682,7 @@ importers:
       typescript: 4.8.4
       vite: 3.1.8
 
-  examples/svelte/basic-typescript:
+  examples/svelte/basic:
     specifiers:
       '@sveltejs/vite-plugin-svelte': ^1.0.2
       '@tanstack/svelte-query': ^4.12.0
@@ -710,7 +710,7 @@ importers:
       '@playwright/test': ^1.25.0
       '@sveltejs/adapter-auto': next
       '@sveltejs/kit': next
-      '@tanstack/query-core': 4.12.0
+      '@tanstack/query-core': ^4.12.0
       '@tanstack/svelte-query': ^4.12.0
       '@typescript-eslint/eslint-plugin': ^5.27.0
       '@typescript-eslint/parser': ^5.27.0
@@ -727,8 +727,8 @@ importers:
       vite: ^3.1.0
     devDependencies:
       '@playwright/test': 1.27.1
-      '@sveltejs/adapter-auto': 1.0.0-next.83
-      '@sveltejs/kit': 1.0.0-next.517_svelte@3.52.0+vite@3.1.8
+      '@sveltejs/adapter-auto': 1.0.0-next.84
+      '@sveltejs/kit': 1.0.0-next.522_svelte@3.52.0+vite@3.1.8
       '@tanstack/query-core': link:../../../packages/query-core
       '@tanstack/svelte-query': link:../../../packages/svelte-query
       '@typescript-eslint/eslint-plugin': 5.30.5_bswk4y5m2ah4mhu5r4p5atlk7e
@@ -773,7 +773,7 @@ importers:
       '@playwright/test': ^1.25.0
       '@sveltejs/adapter-auto': next
       '@sveltejs/kit': next
-      '@tanstack/svelte-query': ^4.12.0
+      '@tanstack/query-core': ^4.12.0
       '@typescript-eslint/eslint-plugin': ^5.27.0
       '@typescript-eslint/parser': ^5.27.0
       eslint: ^8.16.0
@@ -789,9 +789,9 @@ importers:
       vite: ^3.1.0
     devDependencies:
       '@playwright/test': 1.27.1
-      '@sveltejs/adapter-auto': 1.0.0-next.83
-      '@sveltejs/kit': 1.0.0-next.517_svelte@3.52.0+vite@3.1.8
-      '@tanstack/svelte-query': link:../../../packages/svelte-query
+      '@sveltejs/adapter-auto': 1.0.0-next.84
+      '@sveltejs/kit': 1.0.0-next.522_svelte@3.52.0+vite@3.1.8
+      '@tanstack/query-core': link:../../../packages/query-core
       '@typescript-eslint/eslint-plugin': 5.30.5_bswk4y5m2ah4mhu5r4p5atlk7e
       '@typescript-eslint/parser': 5.30.5_z4bbprzjrhnsfa24uvmcbu7f5q
       eslint: 8.25.0
@@ -5705,12 +5705,12 @@ packages:
       '@sinonjs/commons': 1.8.3
     dev: true
 
-  /@sveltejs/adapter-auto/1.0.0-next.83:
-    resolution: {integrity: sha512-6Km4x792PjHaN0H0odsy7JOj3jdDZqN1tA58B1b96xWUUUj87tw6XYC7VWRBjwo2wZqWkRat94IegrtAAhYVaA==}
+  /@sveltejs/adapter-auto/1.0.0-next.84:
+    resolution: {integrity: sha512-95NI5dZ3ZNd4vs1/N5knTcArBlWL9pBw2IANCBAcGzwVMoGPjKyyMKZt1gEX74LVwCN6RSRPZ36+6Z6HEb/ojQ==}
     dependencies:
       '@sveltejs/adapter-cloudflare': 1.0.0-next.39
       '@sveltejs/adapter-netlify': 1.0.0-next.81
-      '@sveltejs/adapter-vercel': 1.0.0-next.79
+      '@sveltejs/adapter-vercel': 1.0.0-next.80
     transitivePeerDependencies:
       - encoding
       - supports-color
@@ -5732,8 +5732,8 @@ packages:
       set-cookie-parser: 2.5.0
     dev: true
 
-  /@sveltejs/adapter-vercel/1.0.0-next.79:
-    resolution: {integrity: sha512-Mitw34vS+wR/qxZm6qOUltf910N8gcekYZHaEVxO6HaE/9LyEZ/O03e9rRKwo4LAWrHXOkHMdUxvv1VcS9BqmQ==}
+  /@sveltejs/adapter-vercel/1.0.0-next.80:
+    resolution: {integrity: sha512-a1ibKgN5RsNw6HPzhNKrPuEndgYRXCYlGIioVzfKpt/tEr4RuV5o/bST2FBgjCIWCqajKhWg1QLZmN2DZfPy6Q==}
     dependencies:
       '@vercel/nft': 0.22.1
       esbuild: 0.15.9
@@ -5742,8 +5742,8 @@ packages:
       - supports-color
     dev: true
 
-  /@sveltejs/kit/1.0.0-next.517_svelte@3.52.0+vite@3.1.8:
-    resolution: {integrity: sha512-DG6RB0akR9StVWulhNo4YXRBlmPWIPXHEfrmhzUi5QgwbDaGEL9wkb43oe/FBlAJCGjB+xDUJgRWKf3oGJIbpA==}
+  /@sveltejs/kit/1.0.0-next.522_svelte@3.52.0+vite@3.1.8:
+    resolution: {integrity: sha512-dVVrRPbXlAut4vg8kbCeZOjUZnYB7ZvDKp/yAx8InpDF0P1bvUDlc++DXFeMBdXX8bakTA3NGonWnDjqslCsZw==}
     engines: {node: '>=16.14'}
     hasBin: true
     requiresBuild: true

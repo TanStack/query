@@ -11,16 +11,16 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "types": "build/svelte/index.d.ts",
-  "main": "build/lib/packages/svelte-query/src/index.js",
-  "module": "build/lib/packages/svelte-query/src/index.esm.js",
+  "main": "build/lib/index.js",
+  "module": "build/lib/index.esm.js",
   "exports": {
     ".": {
       "types": "./build/svelte/index.d.ts",
-      "import": "./build/lib/packages/svelte-query/src/index.mjs",
-      "browser": "./build/lib/packages/svelte-query/src/index.mjs",
-      "require": "./build/lib/packages/svelte-query/src/index.js",
-      "node": "./build/lib/packages/svelte-query/src/index.js",
-      "default": "./build/lib/packages/svelte-query/src/index.js"
+      "import": "./build/lib/index.mjs",
+      "browser": "./build/lib/index.mjs",
+      "require": "./build/lib/index.js",
+      "node": "./build/lib/index.js",
+      "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"
   },
