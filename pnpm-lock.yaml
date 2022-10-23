@@ -162,31 +162,11 @@ importers:
 
   examples/react/basic:
     specifiers:
-      '@tanstack/react-query': ^4.7.1
-      '@tanstack/react-query-devtools': ^4.7.1
-      '@vitejs/plugin-react': ^2.0.0
-      axios: ^0.21.1
-      react: ^18.0.0
-      react-dom: ^18.0.0
-      vite: ^3.0.0
-    dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      axios: 0.21.4
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-    devDependencies:
-      '@vitejs/plugin-react': 2.1.0_vite@3.1.3
-      vite: 3.1.3
-
-  examples/react/basic-eslint-plugin:
-    specifiers:
       '@tanstack/eslint-plugin-query': ^1.0.0
       '@tanstack/react-query': ^4.7.1
       '@tanstack/react-query-devtools': ^4.7.1
       '@vitejs/plugin-react': ^2.0.0
       axios: ^0.21.1
-      eslint: ^8.26.0
       react: ^18.0.0
       react-dom: ^18.0.0
       vite: ^3.0.0
@@ -198,9 +178,8 @@ importers:
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
       '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
-      '@vitejs/plugin-react': 2.1.0_vite@3.1.8
-      eslint: 8.26.0
-      vite: 3.1.8
+      '@vitejs/plugin-react': 2.1.0_vite@3.1.3
+      vite: 3.1.3
 
   examples/react/basic-graphql-request:
     specifiers:
@@ -667,7 +646,7 @@ importers:
       vite: 3.1.4
       vue: 3.2.39
     dependencies:
-      '@tanstack/vue-query': link:../../../packages/vue-query
+      '@tanstack/vue-query': 4.13.2_vue@3.2.39
       vue: 3.2.39
     devDependencies:
       '@vitejs/plugin-vue': 3.1.0_vite@3.1.4+vue@3.2.39
@@ -5510,6 +5489,10 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
+  /@tanstack/query-core/4.13.0:
+    resolution: {integrity: sha512-PzmLQcEgC4rl2OzkiPHYPC9O79DFcMGaKsOzDEP+U4PJ+tbkcEP+Z+FQDlfvX8mCwYC7UNH7hXrQ5EdkGlJjVg==}
+    dev: false
+
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -5521,6 +5504,22 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/vue-query/4.13.2_vue@3.2.39:
+    resolution: {integrity: sha512-VwEwoiuUzLfeM+wQ9wgz+SHH24RvAy0AZ+C1MXBE6U6RswkcDI73OgXGtrWxP1EuTv+kac6aErfDMLWZyvuomg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.5.0 || ^3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.1.1
+      '@tanstack/query-core': 4.13.0
+      '@vue/devtools-api': 6.4.2
+      vue: 3.2.39
+      vue-demi: 0.13.11_vue@3.2.39
     dev: false
 
   /@testing-library/dom/7.31.2:
@@ -6291,24 +6290,6 @@ packages:
       magic-string: 0.26.4
       react-refresh: 0.14.0
       vite: 3.1.4
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
-
-  /@vitejs/plugin-react/2.1.0_vite@3.1.8:
-    resolution: {integrity: sha512-am6rPyyU3LzUYne3Gd9oj9c4Rzbq5hQnuGXSMT6Gujq45Il/+bunwq3lrB7wghLkiF45ygMwft37vgJ/NE8IAA==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    peerDependencies:
-      vite: ^3.0.0
-    dependencies:
-      '@babel/core': 7.19.1
-      '@babel/plugin-transform-react-jsx': 7.19.0_@babel+core@7.19.1
-      '@babel/plugin-transform-react-jsx-development': 7.18.6_@babel+core@7.19.1
-      '@babel/plugin-transform-react-jsx-self': 7.18.6_@babel+core@7.19.1
-      '@babel/plugin-transform-react-jsx-source': 7.18.6_@babel+core@7.19.1
-      magic-string: 0.26.4
-      react-refresh: 0.14.0
-      vite: 3.1.8
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -15565,35 +15546,23 @@ packages:
       fsevents: 2.3.2
     dev: true
 
-  /vite/3.1.8:
-    resolution: {integrity: sha512-m7jJe3nufUbuOfotkntGFupinL/fmuTNuQmiVE7cH2IZMuf4UbfbGYMUT3jVWgGYuRVLY9j8NnrRqgw5rr5QTg==}
-    engines: {node: ^14.18.0 || >=16.0.0}
-    hasBin: true
-    peerDependencies:
-      less: '*'
-      sass: '*'
-      stylus: '*'
-      terser: ^5.4.0
-    peerDependenciesMeta:
-      less:
-        optional: true
-      sass:
-        optional: true
-      stylus:
-        optional: true
-      terser:
-        optional: true
-    dependencies:
-      esbuild: 0.15.9
-      postcss: 8.4.16
-      resolve: 1.22.1
-      rollup: 2.78.1
-    optionalDependencies:
-      fsevents: 2.3.2
-    dev: true
-
   /vlq/1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
+    dev: false
+
+  /vue-demi/0.13.11_vue@3.2.39:
+    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.39
     dev: false
 
   /vue-demi/0.13.11_zv57lmwz3lpne326jxcwg2uc6q:
