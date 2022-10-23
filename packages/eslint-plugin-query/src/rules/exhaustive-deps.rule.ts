@@ -160,9 +160,9 @@ function getExternalRefs(params: {
   }
 
   const readOnlyRefs = scope.references.filter((x) => x.isRead())
-  const localRefIds = new Set([...scope.set.values()].map((x) => x.$id))
+  const localRefIds = new Set([...scope.set.values()].map((x) => x.identifiers[0]))
   const externalRefs = readOnlyRefs.filter(
-    (x) => x.resolved === null || !localRefIds.has(x.resolved.$id),
+    (x) => x.resolved === null || !localRefIds.has(x.resolved.identifiers[0]),
   )
 
   return uniqueBy(externalRefs, (x) => x.resolved)
