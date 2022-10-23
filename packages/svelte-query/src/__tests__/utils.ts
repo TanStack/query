@@ -1,5 +1,5 @@
 import { act } from '@testing-library/svelte'
-import { MutationOptions, QueryClient, QueryClientConfig } from '..'
+import { QueryClient, type QueryClientConfig, type MutationOptions } from '..'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
@@ -24,12 +24,6 @@ let queryKeyCount = 0
 export function queryKey(): Array<string> {
   queryKeyCount++
   return [`query_${queryKeyCount}`]
-}
-
-let returnDataCount = 0
-export function queryReturnData(): string {
-  queryKeyCount++
-  return `test ${returnDataCount}`
 }
 
 export function sleep(timeout: number): Promise<void> {

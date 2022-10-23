@@ -1,5 +1,8 @@
-import { QueryObserver, notifyManager } from '@tanstack/query-core'
-import type { QueryKey } from '@tanstack/query-core'
+import {
+  notifyManager,
+  type QueryKey,
+  type QueryObserver,
+} from '@tanstack/query-core'
 import type { UseBaseQueryOptions } from './types'
 import { useQueryClient } from './useQueryClient'
 import { derived, readable } from 'svelte/store'
@@ -21,7 +24,7 @@ export function useBaseQuery<
   Observer: typeof QueryObserver,
 ) {
   const queryClient = useQueryClient()
-  let defaultedOptions = queryClient.defaultQueryOptions(options)
+  const defaultedOptions = queryClient.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'
 
   let observer = new Observer<

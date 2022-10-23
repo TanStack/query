@@ -1,9 +1,9 @@
 import {
-  type QueryFunction,
-  type QueryKey,
   InfiniteQueryObserver,
   parseQueryArgs,
-  QueryObserver,
+  type QueryObserver,
+  type QueryFunction,
+  type QueryKey,
 } from '@tanstack/query-core'
 import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
 import { useBaseQuery } from './useBaseQuery'

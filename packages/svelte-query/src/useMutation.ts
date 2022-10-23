@@ -93,8 +93,8 @@ export function useMutation<
     observer.setOptions(options)
   })
 
-  let result = readable(observer.getCurrentResult(), (set) => {
-    return observer.subscribe(notifyManager.batchCalls((result) => set(result)))
+  const result = readable(observer.getCurrentResult(), (set) => {
+    return observer.subscribe(notifyManager.batchCalls((val) => set(val)))
   })
 
   const { subscribe } = derived(result, ($result) => ({
