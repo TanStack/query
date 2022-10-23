@@ -126,7 +126,7 @@ describe('useMutation', () => {
     )
   })
 
-  test('should allow for non-objects passed as arg1 & arg2 to trigger reactive updates', async () => {
+  test('should allow for options object passed as arg1 & arg2 to trigger reactive updates', async () => {
     const mutationKey = ref<string[]>(['foo'])
     const mutationFn = ref((params: string) => successMutator(params))
     const queryClient = useQueryClient()
