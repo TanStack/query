@@ -1,8 +1,7 @@
 {
   "extends": ["react-app", "prettier"],
-  "parser": "@typescript-eslint/parser",
   "plugins": ["@tanstack/eslint-plugin-query"],
   "rules": {
-    "@tanstack/exhaustive-deps": "error"
+    "@tanstack/query/exhaustive-deps": "error"
   }
 }
