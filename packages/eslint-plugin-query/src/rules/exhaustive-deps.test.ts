@@ -133,5 +133,25 @@ ruleTester.run('exhaustive-deps', exhaustiveDepsRule, {
       `,
       errors: [{ messageId: 'missingDeps', data: { deps: 'd, e' } }],
     },
+    {
+      name: 'should fail when dep does not exist while having a complex queryKey #2',
+      code: `
+        const todoQueries = {
+          key: (dep1, dep2, dep3, dep4, dep5, dep6, dep7, dep8) => ({
+            queryKey: ['foo', {dep1, dep2: dep2, bar: dep3, baz: [dep4, dep5]}, [dep6, dep7]],
+            queryFn: () => api.getEntity(dep1, dep2, dep3, dep4, dep5, dep6, dep7, dep8),
+          }),
+        };
+      `,
+      output: `
+        const todoQueries = {
+          key: (dep1, dep2, dep3, dep4, dep5, dep6, dep7, dep8) => ({
+            queryKey: ['foo', { dep1, dep2: dep2, bar: dep3, baz: [dep4, dep5] }, [dep6, dep7], dep8],
+            queryFn: () => api.getEntity(dep1, dep2, dep3, dep4, dep5, dep6, dep7, dep8),
+          }),
+        };
+      `,
+      errors: [{ messageId: 'missingDeps', data: { deps: 'dep8' } }],
+    },
   ],
 })

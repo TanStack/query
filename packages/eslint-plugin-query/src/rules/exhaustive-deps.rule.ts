@@ -121,9 +121,10 @@ function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
           ...missingRefs.map((ref) => ExtraUtils.builder.identifier(ref.name)),
         ]
           .map((x) =>
-            recast
-              .print(x, { quote: ExtraUtils.getNodeLiteralQuote(x) })
-              .code.replace(/\n\s{4}([^\s]*)\n/gm, ' $1 '),
+            inlineCode(
+              recast.print(x, { quote: ExtraUtils.getNodeLiteralQuote(x) })
+                .code,
+            ),
           )
           .join(', ')
 
@@ -131,6 +132,13 @@ function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
       },
     })
   }
+}
+
+function inlineCode(code: string) {
+  return code
+    .replace(/[\n\s]/gm, '')
+    .replace(/([,:])/gm, '$1 ')
+    .replace(/^(?:){(.*)}/gm, '{ $1 }')
 }
 
 function getExternalRefs(params: {
