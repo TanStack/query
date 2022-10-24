@@ -36,7 +36,7 @@ const createRule = ESLintUtils.RuleCreator(
 )
 
 export const exhaustiveDepsRule = createRule<[RuleOptions], RuleMessage>({
-  name: 'exhausitive-deps',
+  name: 'exhaustive-deps',
   meta: {
     docs: {
       description:
