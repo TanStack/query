@@ -40,6 +40,37 @@ export const ExtraUtils = {
       ExtraUtils.isPropertyWithIdentifierKey(x, key),
     ) as TSESTree.Property | undefined
   },
+  getIdentifiersRecursive(node: TSESTree.Node): TSESTree.Identifier[] {
+    const identifiers: TSESTree.Identifier[] = []
+
+    if (ExtraUtils.isIdentifier(node)) {
+      identifiers.push(node)
+    }
+
+    if (node.type === AST_NODE_TYPES.ArrayExpression) {
+      node.elements.forEach((x) => {
+        identifiers.push(...ExtraUtils.getIdentifiersRecursive(x))
+      })
+    }
+
+    if (node.type === AST_NODE_TYPES.ObjectExpression) {
+      node.properties.forEach((x) => {
+        identifiers.push(...ExtraUtils.getIdentifiersRecursive(x))
+      })
+    }
+
+    if (node.type === AST_NODE_TYPES.Property) {
+      identifiers.push(...ExtraUtils.getIdentifiersRecursive(node.value))
+    }
+
+    if (node.type === AST_NODE_TYPES.TemplateLiteral) {
+      node.expressions.forEach((x) => {
+        identifiers.push(...ExtraUtils.getIdentifiersRecursive(x))
+      })
+    }
+
+    return identifiers
+  },
   getIdentifiersFromArrayExpression(
     node: TSESTree.ArrayExpression,
   ): TSESTree.Identifier[] {
@@ -82,5 +113,20 @@ export const ExtraUtils = {
     }
 
     return false
+  },
+  getNodeLiteralQuote(node: TSESTree.Node): 'single' | 'double' | 'auto' {
+    if (node.type === AST_NODE_TYPES.Literal) {
+      return node.raw.startsWith("'") ? 'single' : 'double'
+    }
+
+    return 'auto'
+  },
+  builder: {
+    identifier: (name: string): TSESTree.Identifier => ({
+      type: AST_NODE_TYPES.Identifier,
+      loc: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
+      range: [0, name.length],
+      name,
+    }),
   },
 }

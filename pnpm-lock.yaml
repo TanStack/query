@@ -646,7 +646,7 @@ importers:
       vite: 3.1.4
       vue: 3.2.39
     dependencies:
-      '@tanstack/vue-query': 4.13.2_vue@3.2.39
+      '@tanstack/vue-query': link:../../../packages/vue-query
       vue: 3.2.39
     devDependencies:
       '@vitejs/plugin-vue': 3.1.0_vite@3.1.4+vue@3.2.39
@@ -659,12 +659,14 @@ importers:
       '@typescript-eslint/parser': ^5.40.1
       '@typescript-eslint/utils': ^5.40.1
       eslint: ^8.26.0
+      recast: ^0.21.5
       tsup: ^6.3.0
     devDependencies:
       '@typescript-eslint/eslint-plugin': 5.40.1_yxvyo6v5zwzggfecalzmx54lre
       '@typescript-eslint/parser': 5.40.1_eslint@8.26.0
       '@typescript-eslint/utils': 5.40.1_eslint@8.26.0
       eslint: 8.26.0
+      recast: 0.21.5
       tsup: 6.3.0
 
   packages/query-async-storage-persister:
@@ -5485,10 +5487,6 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core/4.13.0:
-    resolution: {integrity: sha512-PzmLQcEgC4rl2OzkiPHYPC9O79DFcMGaKsOzDEP+U4PJ+tbkcEP+Z+FQDlfvX8mCwYC7UNH7hXrQ5EdkGlJjVg==}
-    dev: false
-
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -5500,22 +5498,6 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@tanstack/vue-query/4.13.2_vue@3.2.39:
-    resolution: {integrity: sha512-VwEwoiuUzLfeM+wQ9wgz+SHH24RvAy0AZ+C1MXBE6U6RswkcDI73OgXGtrWxP1EuTv+kac6aErfDMLWZyvuomg==}
-    peerDependencies:
-      '@vue/composition-api': ^1.1.2
-      vue: ^2.5.0 || ^3.0.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.1.1
-      '@tanstack/query-core': 4.13.0
-      '@vue/devtools-api': 6.4.2
-      vue: 3.2.39
-      vue-demi: 0.13.11_vue@3.2.39
     dev: false
 
   /@testing-library/dom/7.31.2:
@@ -6866,6 +6848,13 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       tslib: 2.4.0
+
+  /ast-types/0.15.2:
+    resolution: {integrity: sha512-c27loCv9QkZinsa5ProX751khO9DJl/AcB5c2KNtA6NRvHKS0PgLfcftz72KVq504vB0Gku5s2kUZzDBvQWvHg==}
+    engines: {node: '>=4'}
+    dependencies:
+      tslib: 2.4.0
+    dev: true
 
   /astral-regex/1.0.0:
     resolution: {integrity: sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==}
@@ -13787,6 +13776,16 @@ packages:
       source-map: 0.6.1
       tslib: 2.4.0
 
+  /recast/0.21.5:
+    resolution: {integrity: sha512-hjMmLaUXAm1hIuTqOdeYObMslq/q+Xff6QE3Y2P+uoHAg2nmVlLBps2hzh1UJDdMtDTMXOFewK6ky51JQIeECg==}
+    engines: {node: '>= 4'}
+    dependencies:
+      ast-types: 0.15.2
+      esprima: 4.0.1
+      source-map: 0.6.1
+      tslib: 2.4.0
+    dev: true
+
   /rechoir/0.6.2:
     resolution: {integrity: sha512-HFM8rkZ+i3zrV+4LQjwQ0W+ez98pApMGM3HUrN04j3CqzPOzl9nmP15Y8YXNm8QHGv/eacOVEjqhmWpkRV0NAw==}
     engines: {node: '>= 0.10'}
@@ -15538,21 +15537,6 @@ packages:
 
   /vlq/1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
-    dev: false
-
-  /vue-demi/0.13.11_vue@3.2.39:
-    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      vue: 3.2.39
     dev: false
 
   /vue-demi/0.13.11_zv57lmwz3lpne326jxcwg2uc6q:

@@ -1,5 +1,6 @@
 import type { JSONSchema, TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
+import * as recast from 'recast'
 import { ExtraUtils } from '../extra-utils'
 
 const messages = {
@@ -95,8 +96,7 @@ function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
   }
 
   const queryKeyValue = queryKey.value
-  const queryKeyDeps =
-    ExtraUtils.getIdentifiersFromArrayExpression(queryKeyValue)
+  const queryKeyDeps = ExtraUtils.getIdentifiersRecursive(queryKeyValue)
   const refs = getExternalRefs({ scopeManager, node: queryFn.value })
   const missingRefs = refs
     .filter((reference) => {
@@ -113,40 +113,24 @@ function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
       node: node,
       messageId: 'missingDeps',
       data: {
-        deps: missingRefs.map(nodeToText).join(', '),
+        deps: missingRefs.map((ref) => ref.name).join(', '),
       },
       fix(fixer) {
-        const relevantQueryKeyDeps = queryKeyValue.elements.filter(
-          (element) =>
-            ExtraUtils.isIdentifier(element) || ExtraUtils.isLiteral(element),
-        )
-        const newQueryKeyDeps = [...relevantQueryKeyDeps, ...missingRefs]
+        const newQueryKeyText = [
+          ...queryKeyValue.elements,
+          ...missingRefs.map((ref) => ExtraUtils.builder.identifier(ref.name)),
+        ]
+          .map((x) =>
+            recast
+              .print(x, { quote: ExtraUtils.getNodeLiteralQuote(x) })
+              .code.replace(/\n\s{4}([^\s]*)\n/gm, ' $1 '),
+          )
+          .join(', ')
 
-        return fixer.replaceText(
-          queryKeyValue,
-          `[${newQueryKeyDeps.map((x) => nodeToText(x)).join(', ')}]`,
-        )
+        return fixer.replaceText(queryKeyValue, `[${newQueryKeyText}]`)
       },
     })
   }
-}
-
-function nodeToText(node: TSESTree.Node): string | null {
-  if (node.type === AST_NODE_TYPES.Identifier) {
-    return node.name
-  }
-
-  if (node.type === AST_NODE_TYPES.Literal) {
-    return node.raw
-  }
-
-  if (node.type === AST_NODE_TYPES.TemplateLiteral) {
-    const expressions = node.expressions.map((x) => nodeToText(x))
-    const quasis = node.quasis.map((x) => x.value.raw)
-    return quasis.reduce((acc, x, i) => acc + x + (expressions[i] ?? ''), '')
-  }
-
-  return null
 }
 
 function getExternalRefs(params: {
