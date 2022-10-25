@@ -35,9 +35,9 @@
     "outDir": "build/lib"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
-    "@typescript-eslint/parser": "^5.40.1",
-    "@typescript-eslint/utils": "^5.40.1",
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "@typescript-eslint/utils": "^5.41.0",
     "eslint": "^8.26.0",
     "recast": "^0.21.5",
     "tsup": "^6.3.0"
