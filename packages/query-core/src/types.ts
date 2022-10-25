@@ -455,6 +455,10 @@ export type QueryObserverResult<TData = unknown, TError = unknown> =
   | QueryObserverLoadingErrorResult<TData, TError>
   | QueryObserverLoadingResult<TData, TError>
 
+export type QueryObserverListener<TData = unknown, TError = unknown> = (
+  result: QueryObserverResult<TData, TError>,
+) => void
+
 export interface InfiniteQueryObserverBaseResult<
   TData = unknown,
   TError = unknown,

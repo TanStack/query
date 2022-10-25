@@ -14,6 +14,7 @@ import type {
   QueryObserverBaseResult,
   QueryObserverOptions,
   QueryObserverResult,
+  QueryObserverListener,
   QueryOptions,
   RefetchOptions,
 } from './types'
@@ -22,10 +23,6 @@ import type { QueryClient } from './queryClient'
 import { focusManager } from './focusManager'
 import { Subscribable } from './subscribable'
 import { canFetch, isCancelledError } from './retryer'
-
-type QueryObserverListener<TData, TError> = (
-  result: QueryObserverResult<TData, TError>,
-) => void
 
 export interface NotifyOptions {
   cache?: boolean
