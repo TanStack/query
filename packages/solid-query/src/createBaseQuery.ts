@@ -1,7 +1,12 @@
 import type { QueryObserver } from '@tanstack/query-core'
-import type { QueryKey, QueryObserverResult } from '@tanstack/query-core'
+import type {
+  QueryKey,
+  QueryObserverResult,
+  QueryObserverListener,
+} from '@tanstack/query-core'
 import type { CreateBaseQueryOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
+import { useIsRestoring } from './isRestoring'
 import {
   onMount,
   onCleanup,
@@ -31,11 +36,15 @@ export function createBaseQuery<
   Observer: typeof QueryObserver,
 ): QueryObserverResult<TData, TError> {
   const queryClient = useQueryClient({ context: options.context })
+  const isRestoring = useIsRestoring()
   const emptyData = Symbol('empty')
   const defaultedOptions = queryClient.defaultQueryOptions(options)
-  defaultedOptions._optimisticResults = 'optimistic'
+  defaultedOptions._optimisticResults = isRestoring()
+    ? 'isRestoring'
+    : 'optimistic' // Include callbacks in batch renders
   const observer = new Observer(queryClient, defaultedOptions)
 
+  // get the initial result
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     // @ts-ignore
     observer.getOptimisticResult(defaultedOptions),
@@ -61,7 +70,7 @@ export function createBaseQuery<
 
   let taskQueue: Array<() => void> = []
 
-  const unsubscribe = observer.subscribe((result) => {
+  const handleResult: QueryObserverListener<TData, TError> = (result) => {
     taskQueue.push(() => {
       batch(() => {
         const unwrappedResult = { ...unwrap(result) }
@@ -85,7 +94,24 @@ export function createBaseQuery<
       }
       taskQueue = []
     })
-  })
+  }
+
+  let unsubscribe: () => void = () => undefined
+
+  if (!isRestoring()) {
+    unsubscribe = observer.subscribe(handleResult)
+  } else {
+    createComputed(
+      on(isRestoring, () => {
+        if (isRestoring()) {
+          return
+        }
+        // result was restored from cache
+        handleResult(observer.getCurrentResult())
+        unsubscribe = observer.subscribe(handleResult)
+      }),
+    )
+  }
 
   onCleanup(() => unsubscribe())
 

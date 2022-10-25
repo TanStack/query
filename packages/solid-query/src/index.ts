@@ -17,3 +17,8 @@ export { useIsMutating } from './useIsMutating'
 export { createMutation } from './createMutation'
 export { createInfiniteQuery } from './createInfiniteQuery'
 export { createQueries } from './createQueries'
+export {
+  IsRestoringContext,
+  IsRestoringProvider,
+  useIsRestoring,
+} from './isRestoring'
