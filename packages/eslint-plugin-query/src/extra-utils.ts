@@ -64,7 +64,7 @@ export const ExtraUtils = {
     }
 
     if (node.type === AST_NODE_TYPES.MemberExpression) {
-        identifiers.push(...ExtraUtils.getNestedIdentifiers(node.object))
+      identifiers.push(...ExtraUtils.getNestedIdentifiers(node.object))
     }
 
     return identifiers
