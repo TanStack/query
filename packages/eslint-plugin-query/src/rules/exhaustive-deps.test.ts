@@ -161,5 +161,19 @@ ruleTester.run('exhaustive-deps', exhaustiveDepsRule, {
       `,
       errors: [{ messageId: 'missingDeps', data: { deps: 'dep8' } }],
     },
+    {
+        name: 'should fail when two deps that depend on each other are missing',
+        code: `
+          function Component({ map, key }) {
+            useQuery({ queryKey: ["key"], queryFn: () => api.get(map[key]) });
+          }
+        `,
+        output: `
+          function Component({ map, key }) {
+            useQuery({ queryKey: ["key", map[key]], queryFn: () => api.get(map[key]) });
+          }
+        `,
+        errors: [{ messageId: 'missingDeps', data: { deps: 'map[key]' } }],
+      },
   ],
 })

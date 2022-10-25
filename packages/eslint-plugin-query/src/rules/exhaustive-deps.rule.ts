@@ -116,15 +116,17 @@ function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
     })
     .map(({ ref, text }) => ({ identifier: ref.identifier, text: text }))
 
-  if (missingRefs.length > 0) {
+  const uniqueMissingRefs = uniqueBy(missingRefs, (x) => x.text)
+
+  if (uniqueMissingRefs.length > 0) {
     context.report({
       node: node,
       messageId: 'missingDeps',
       data: {
-        deps: missingRefs.map((ref) => ref.text).join(', '),
+        deps: uniqueMissingRefs.map((ref) => ref.text).join(', '),
       },
       fix(fixer) {
-        const missingAsText = missingRefs
+        const missingAsText = uniqueMissingRefs
           .map((ref) => mapKeyNodeToText(ref.identifier, sourceCode))
           .join(', ')
 
