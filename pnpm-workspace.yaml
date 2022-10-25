@@ -3,3 +3,5 @@ packages:
   - 'examples/react/**'
   - 'examples/solid/**'
   - 'examples/vue/**'
+  - '!examples/vue/2*'
+  - '!examples/vue/nuxt*'
