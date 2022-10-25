@@ -11,12 +11,6 @@ export const ExtraUtils = {
   ): node is TSESTree.Identifier {
     return ExtraUtils.isIdentifier(node) && node.name === name
   },
-  isLiteral(node: TSESTree.Node): node is TSESTree.Literal {
-    return node.type === AST_NODE_TYPES.Literal
-  },
-  isTemplateLiteral(node: TSESTree.Node): node is TSESTree.TemplateLiteral {
-    return node.type === AST_NODE_TYPES.TemplateLiteral
-  },
   isProperty(node: TSESTree.Node): node is TSESTree.Property {
     return node.type === AST_NODE_TYPES.Property
   },
@@ -40,7 +34,7 @@ export const ExtraUtils = {
       ExtraUtils.isPropertyWithIdentifierKey(x, key),
     ) as TSESTree.Property | undefined
   },
-  getIdentifiersRecursive(node: TSESTree.Node): TSESTree.Identifier[] {
+  getNestedIdentifiers(node: TSESTree.Node): TSESTree.Identifier[] {
     const identifiers: TSESTree.Identifier[] = []
 
     if (ExtraUtils.isIdentifier(node)) {
@@ -49,45 +43,28 @@ export const ExtraUtils = {
 
     if (node.type === AST_NODE_TYPES.ArrayExpression) {
       node.elements.forEach((x) => {
-        identifiers.push(...ExtraUtils.getIdentifiersRecursive(x))
+        identifiers.push(...ExtraUtils.getNestedIdentifiers(x))
       })
     }
 
     if (node.type === AST_NODE_TYPES.ObjectExpression) {
       node.properties.forEach((x) => {
-        identifiers.push(...ExtraUtils.getIdentifiersRecursive(x))
+        identifiers.push(...ExtraUtils.getNestedIdentifiers(x))
       })
     }
 
     if (node.type === AST_NODE_TYPES.Property) {
-      identifiers.push(...ExtraUtils.getIdentifiersRecursive(node.value))
+      identifiers.push(...ExtraUtils.getNestedIdentifiers(node.value))
     }
 
     if (node.type === AST_NODE_TYPES.TemplateLiteral) {
       node.expressions.forEach((x) => {
-        identifiers.push(...ExtraUtils.getIdentifiersRecursive(x))
+        identifiers.push(...ExtraUtils.getNestedIdentifiers(x))
       })
     }
 
-    return identifiers
-  },
-  getIdentifiersFromArrayExpression(
-    node: TSESTree.ArrayExpression,
-  ): TSESTree.Identifier[] {
-    const identifiers: TSESTree.Identifier[] = []
-
-    for (const element of node.elements) {
-      if (ExtraUtils.isIdentifier(element)) {
-        identifiers.push(element)
-      }
-
-      if (ExtraUtils.isTemplateLiteral(element)) {
-        element.expressions.forEach((expression) => {
-          if (ExtraUtils.isIdentifier(expression)) {
-            identifiers.push(expression)
-          }
-        })
-      }
+    if (node.type === AST_NODE_TYPES.MemberExpression) {
+        identifiers.push(...ExtraUtils.getNestedIdentifiers(node.object))
     }
 
     return identifiers
@@ -114,19 +91,16 @@ export const ExtraUtils = {
 
     return false
   },
-  getNodeLiteralQuote(node: TSESTree.Node): 'single' | 'double' | 'auto' {
-    if (node.type === AST_NODE_TYPES.Literal) {
-      return node.raw.startsWith("'") ? 'single' : 'double'
+  traverseUpOnly(
+    identifier: TSESTree.Node,
+    allowedNodeTypes: AST_NODE_TYPES[],
+  ): TSESTree.Node {
+    const parent = identifier.parent
+
+    if (parent !== undefined && allowedNodeTypes.includes(parent.type)) {
+      return ExtraUtils.traverseUpOnly(parent, allowedNodeTypes)
     }
 
-    return 'auto'
-  },
-  builder: {
-    identifier: (name: string): TSESTree.Identifier => ({
-      type: AST_NODE_TYPES.Identifier,
-      loc: { start: { line: 0, column: 0 }, end: { line: 0, column: 0 } },
-      range: [0, name.length],
-      name,
-    }),
+    return identifier
   },
 }

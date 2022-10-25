@@ -33,6 +33,14 @@ ruleTester.run('exhaustive-deps', exhaustiveDepsRule, {
       name: 'should not pass api.entity.get',
       code: 'useQuery({ queryKey: ["entity", id], queryFn: () => api.entity.get(id) });',
     },
+    {
+      name: 'should pass props.src',
+      code: `
+        function MyComponent(props) {
+            useQuery({ queryKey: ["entity", props.src], queryFn: () => api.entity.get(props.src) });
+        }
+      `,
+    },
   ],
   invalid: [
     {
@@ -146,7 +154,7 @@ ruleTester.run('exhaustive-deps', exhaustiveDepsRule, {
       output: `
         const todoQueries = {
           key: (dep1, dep2, dep3, dep4, dep5, dep6, dep7, dep8) => ({
-            queryKey: ['foo', { dep1, dep2: dep2, bar: dep3, baz: [dep4, dep5] }, [dep6, dep7], dep8],
+            queryKey: ['foo', {dep1, dep2: dep2, bar: dep3, baz: [dep4, dep5]}, [dep6, dep7], dep8],
             queryFn: () => api.getEntity(dep1, dep2, dep3, dep4, dep5, dep6, dep7, dep8),
           }),
         };

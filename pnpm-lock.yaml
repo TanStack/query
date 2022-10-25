@@ -659,14 +659,12 @@ importers:
       '@typescript-eslint/parser': ^5.41.0
       '@typescript-eslint/utils': ^5.41.0
       eslint: ^8.26.0
-      recast: ^0.21.5
       tsup: ^6.3.0
     devDependencies:
       '@typescript-eslint/eslint-plugin': 5.41.0_c2flhriocdzler6lrwbyxxyoca
       '@typescript-eslint/parser': 5.41.0_eslint@8.26.0
       '@typescript-eslint/utils': 5.41.0_eslint@8.26.0
       eslint: 8.26.0
-      recast: 0.21.5
       tsup: 6.3.0
 
   packages/query-async-storage-persister:
@@ -6829,13 +6827,6 @@ packages:
     engines: {node: '>=4'}
     dependencies:
       tslib: 2.4.0
-
-  /ast-types/0.15.2:
-    resolution: {integrity: sha512-c27loCv9QkZinsa5ProX751khO9DJl/AcB5c2KNtA6NRvHKS0PgLfcftz72KVq504vB0Gku5s2kUZzDBvQWvHg==}
-    engines: {node: '>=4'}
-    dependencies:
-      tslib: 2.4.0
-    dev: true
 
   /astral-regex/1.0.0:
     resolution: {integrity: sha512-+Ryf6g3BKoRc7jfp7ad8tM4TtMiaWvbF/1/sQcZPkkS7ag3D5nMBCe2UfOTONtAkaG0tO0ij3C5Lwmf1EiyjHg==}
@@ -13756,16 +13747,6 @@ packages:
       esprima: 4.0.1
       source-map: 0.6.1
       tslib: 2.4.0
-
-  /recast/0.21.5:
-    resolution: {integrity: sha512-hjMmLaUXAm1hIuTqOdeYObMslq/q+Xff6QE3Y2P+uoHAg2nmVlLBps2hzh1UJDdMtDTMXOFewK6ky51JQIeECg==}
-    engines: {node: '>= 4'}
-    dependencies:
-      ast-types: 0.15.2
-      esprima: 4.0.1
-      source-map: 0.6.1
-      tslib: 2.4.0
-    dev: true
 
   /rechoir/0.6.2:
     resolution: {integrity: sha512-HFM8rkZ+i3zrV+4LQjwQ0W+ez98pApMGM3HUrN04j3CqzPOzl9nmP15Y8YXNm8QHGv/eacOVEjqhmWpkRV0NAw==}

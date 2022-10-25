@@ -1,6 +1,5 @@
 import type { JSONSchema, TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES, ESLintUtils } from '@typescript-eslint/utils'
-import * as recast from 'recast'
 import { ExtraUtils } from '../extra-utils'
 
 const messages = {
@@ -95,50 +94,48 @@ function runCheck(params: { node: TSESTree.Property; context: RuleContext }) {
     return
   }
 
+  const sourceCode = context.getSourceCode()
   const queryKeyValue = queryKey.value
-  const queryKeyDeps = ExtraUtils.getIdentifiersRecursive(queryKeyValue)
   const refs = getExternalRefs({ scopeManager, node: queryFn.value })
+
+  const existingKeys = ExtraUtils.getNestedIdentifiers(queryKeyValue).map(
+    (identifier) => mapKeyNodeToText(identifier, sourceCode),
+  )
+
   const missingRefs = refs
-    .filter((reference) => {
+    .map((ref) => ({
+      ref: ref,
+      text: mapKeyNodeToText(ref.identifier, sourceCode),
+    }))
+    .filter(({ ref, text }) => {
       return (
-        !ExtraUtils.isAncestorIsCallee(reference.identifier) &&
-        !ruleOptions.whitelist.includes(reference.identifier.name) &&
-        !queryKeyDeps.some((y) => y.name === reference.identifier.name)
+        !ExtraUtils.isAncestorIsCallee(ref.identifier) &&
+        !ruleOptions.whitelist.includes(ref.identifier.name) &&
+        !existingKeys.some((existingKey) => existingKey === text)
       )
     })
-    .map((ref) => ref.identifier)
+    .map(({ ref, text }) => ({ identifier: ref.identifier, text: text }))
 
   if (missingRefs.length > 0) {
     context.report({
       node: node,
       messageId: 'missingDeps',
       data: {
-        deps: missingRefs.map((ref) => ref.name).join(', '),
+        deps: missingRefs.map((ref) => ref.text).join(', '),
       },
       fix(fixer) {
-        const newQueryKeyText = [
-          ...queryKeyValue.elements,
-          ...missingRefs.map((ref) => ExtraUtils.builder.identifier(ref.name)),
-        ]
-          .map((x) =>
-            inlineCode(
-              recast.print(x, { quote: ExtraUtils.getNodeLiteralQuote(x) })
-                .code,
-            ),
-          )
+        const missingAsText = missingRefs
+          .map((ref) => mapKeyNodeToText(ref.identifier, sourceCode))
           .join(', ')
 
-        return fixer.replaceText(queryKeyValue, `[${newQueryKeyText}]`)
+        const existingWithMissing = sourceCode
+          .getText(queryKeyValue)
+          .replace(/\]$/, `, ${missingAsText}]`)
+
+        return fixer.replaceText(queryKeyValue, existingWithMissing)
       },
     })
   }
-}
-
-function inlineCode(code: string) {
-  return code
-    .replace(/[\n\s]/gm, '')
-    .replace(/([,:])/gm, '$1 ')
-    .replace(/^(?:){(.*)}/gm, '{ $1 }')
 }
 
 function getExternalRefs(params: {
@@ -161,6 +158,18 @@ function getExternalRefs(params: {
   )
 
   return uniqueBy(externalRefs, (x) => x.resolved)
+}
+
+function mapKeyNodeToText(
+  node: TSESTree.Node,
+  sourceCode: Readonly<TSESLint.SourceCode>,
+) {
+  return sourceCode.getText(
+    ExtraUtils.traverseUpOnly(node, [
+      AST_NODE_TYPES.MemberExpression,
+      AST_NODE_TYPES.Identifier,
+    ]),
+  )
 }
 
 function uniqueBy<T>(arr: T[], fn: (x: T) => unknown): T[] {
