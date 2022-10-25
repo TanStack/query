@@ -768,6 +768,17 @@ importers:
     devDependencies:
       solid-jest: 0.2.0
 
+  packages/solid-query-persist-client:
+    specifiers:
+      '@tanstack/query-persist-client-core': workspace:*
+      '@tanstack/solid-query': workspace:*
+      solid-jest: ^0.2.0
+    dependencies:
+      '@tanstack/query-persist-client-core': link:../query-persist-client-core
+    devDependencies:
+      '@tanstack/solid-query': link:../solid-query
+      solid-jest: 0.2.0
+
   packages/vue-query:
     specifiers:
       '@tanstack/match-sorter-utils': ^8.1.1

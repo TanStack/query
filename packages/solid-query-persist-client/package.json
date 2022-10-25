@@ -1,0 +1,52 @@
+{
+  "name": "@tanstack/solid-query-persist-client",
+  "version": "4.13.0",
+  "description": "Solid bindings to work with persisters in TanStack/react-query",
+  "author": "tannerlinsley",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "types": "build/lib/index.d.ts",
+  "main": "build/lib/index.js",
+  "module": "build/lib/index.esm.js",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "solid": "./build/solid/index.js",
+      "import": "./build/lib/index.mjs",
+      "browser": "./build/lib/index.mjs",
+      "require": "./build/lib/index.js",
+      "node": "./build/lib/index.js",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "scripts": {
+    "clean": "rm -rf ./build",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:dev": "pnpm run test:jest --watch"
+  },
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "build/solid/*",
+    "src"
+  ],
+  "devDependencies": {
+    "@tanstack/solid-query": "workspace:*",
+    "solid-jest": "^0.2.0"
+  },
+  "dependencies": {
+    "@tanstack/query-persist-client-core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@tanstack/solid-query": "workspace:*",
+    "solid-js": "^1.5.7"
+  }
+}
