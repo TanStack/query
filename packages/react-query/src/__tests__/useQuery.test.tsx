@@ -1533,18 +1533,33 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(1)
-        }, 10)
-      }, [])
+      return (
+        <div>
+          <button
+            onClick={() => {
+              setCount(1)
+            }}
+          >
+            increase
+          </button>
 
-      return null
+          <div>data: {state.data}</div>
+          <div>count: {count}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => {
+      rendered.getByText('data: 0')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'increase' }))
+
+    await waitFor(() => {
+      rendered.getByText('count: 1')
+    })
 
     expect(states.length).toBe(3)
 
