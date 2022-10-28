@@ -121,7 +121,8 @@ function Movies() {
           component={Detail}
           // TODO
           //errorComponent={MovieError}
-          data={({ params: { movieId } }: { params: { movieId: string } }) =>
+          //data={({ params: { movieId } }: { params: { movieId: string } }) =>
+          data={({ params: { movieId } }: { params: any }) =>
               queryClient.getQueryData(movieKeys.detail(movieId)) ??
               // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
               // we just let the Detail component handle it
@@ -166,7 +167,10 @@ function List() {
         <ul>
           {moviesQuery.data.movies.map((movie) => (
             <li id={movie.id}>
-              <Link href={`./${movie.id}`} preload>
+              {
+                //<Link href={`./${movie.id}`} preload>
+              }
+              <Link href={`./${movie.id}`}>
                 {movie.title}
               </Link>
             </li>
@@ -233,7 +237,7 @@ function Detail(props: any) {
             Comment: <br />
             <textarea
               name="comment"
-              value={comment}
+              value={comment as any}
               onChange={(event: any) => setComment(event.target.value)}
             />
           </label>
