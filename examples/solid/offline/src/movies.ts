@@ -11,7 +11,7 @@ type QueryData = {
 }
 
 import * as api from "./api";
-import * as React from "react";
+import { createSignal } from "solid-js";
 
 // query key factory
 export const movieKeys = {
@@ -29,7 +29,7 @@ export const useMovie = (movieId: string) => {
     () => api.fetchMovie(movieId)
   );
 
-  const [comment, setComment] = React.useState();
+  const [comment, setComment] = createSignal<string | undefined>("");
 
   const updateMovie = createMutation({
     mutationKey: movieKeys.detail(movieId),
