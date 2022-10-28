@@ -10,6 +10,8 @@ export default defineConfig({
     target: 'esnext',
   },
   resolve: {
-    preserveSymlinks: true,
+    // NOTE(milahu): this would break deps
+    // vite error: Could not resolve "@mswjs/cookies"
+    //preserveSymlinks: true,
   },
 })
