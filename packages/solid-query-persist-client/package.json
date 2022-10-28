@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/solid-query-persist-client",
   "version": "4.13.0",
-  "description": "Solid bindings to work with persisters in TanStack/react-query",
+  "description": "Solid bindings to work with persisters in TanStack Query",
   "author": "tannerlinsley",
   "license": "MIT",
   "repository": "tanstack/query",
