@@ -869,21 +869,33 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { remove } = state
+      return (
+        <>
+          <div>{state.data}</div>
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          remove()
-          rerender({})
-        }, 20)
-      }, [remove])
-
-      return null
+          <button
+            onClick={() => {
+              state.remove()
+              rerender({})
+            }}
+          >
+            remove
+          </button>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText('data')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'remove' }))
+
+    await waitFor(() => {
+      rendered.getByText('data')
+    })
 
     expect(states.length).toBe(5)
     // First load
