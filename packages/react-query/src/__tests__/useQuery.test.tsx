@@ -897,6 +897,9 @@ describe('useQuery', () => {
       rendered.getByText('data')
     })
 
+    // required to make sure no additional renders are happening after data is successfully fetched for the second time
+    await sleep(100)
+
     expect(states.length).toBe(5)
     // First load
     expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
