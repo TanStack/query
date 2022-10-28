@@ -2190,19 +2190,31 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
+      return (
+        <>
+          <button
+            onClick={async () => {
+              await state.refetch()
+            }}
+          >
+            refetch
+          </button>
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      }, [refetch])
-      return null
+          <div>{state.data}</div>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(30)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    // sleep is required to make sure no additional renders happen after click
+    await sleep(20)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
