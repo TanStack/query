@@ -34,6 +34,18 @@ export const updateMovie = (id: string, comment: string) => (
   // should return void (command query separation)
 );
 
+interface MoviesBody {
+  comment: string
+}
+
+/*
+interface MoviesResponse {
+  id: string
+  message: string
+}
+*/
+
+// https://mswjs.io/
 export const worker = setupWorker(
   ...[
     rest.get("/movies", (req, res, ctx) => {
@@ -61,9 +73,15 @@ export const worker = setupWorker(
         })
       );
     }),
+    /*
+    FIXME
+    Type 'MoviesResponse' does not satisfy the constraint 'PathParams'.
+    Index signature for type 'string' is missing in type 'MoviesResponse'. ts(2344)
+    */
+    //rest.post<MoviesBody, MoviesResponse>("/movies/:id", (req, res, ctx) => {
     rest.post("/movies/:id", (req, res, ctx) => {
       const { id } = req.params;
-      const { comment } = req.body as { comment: string };
+      const { comment } = req.body as MoviesBody;
 
       movies.forEach((movie) => {
         if (movie.id === id) {
