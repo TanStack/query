@@ -11,7 +11,9 @@ import type { QueryClient } from './queryClient'
 export type MaybeRef<T> = Ref<T> | T
 
 export type MaybeRefDeep<T> = MaybeRef<
-  T extends object
+  T extends Function
+    ? T
+    : T extends object
     ? {
         [Property in keyof T]: MaybeRefDeep<T[Property]>
       }
