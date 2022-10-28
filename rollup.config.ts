@@ -173,6 +173,20 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       bundleUMDGlobals: ['@tanstack/query-core'],
     }),
     ...buildConfigs({
+      name: 'solid-query-persist-client',
+      packageDir: 'packages/solid-query-persist-client',
+      jsName: 'SolidQueryPersistClient',
+      outputFile: 'index',
+      entryFile: 'src/index.ts',
+      globals: {
+        'solid-js/store': 'SolidStore',
+        'solid-js': 'Solid',
+        '@tanstack/query-persist-client-core': 'QueryPersistClientCore',
+        '@tanstack/solid-query': 'SolidQuery',
+      },
+      bundleUMDGlobals: ['@tanstack/query-persist-client-core'],
+    }),
+    ...buildConfigs({
       name: 'vue-query',
       packageDir: 'packages/vue-query',
       jsName: 'VueQuery',
