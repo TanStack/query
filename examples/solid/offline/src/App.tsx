@@ -40,7 +40,7 @@ import {
 // but it will *immediately* navigate to the provided path
 // as soon as the component is rendered
 
-import { Routes, Route, A as Link } from "@solidjs/router";
+import { Routes, Route, A as Link, useParams } from "@solidjs/router";
 
 import * as api from "./api";
 import { movieKeys, useMovie } from "./movies";
@@ -111,7 +111,8 @@ export function App() {
 function Movies() {
   const isRestoring = useIsRestoring();
   return (
-    <>
+    <div>
+      <h1>Movies</h1>
       <Routes>
         <Route
           path="/"
@@ -123,15 +124,7 @@ function Movies() {
           // TODO
           //errorComponent={MovieError}
           //data={({ params: { movieId } }: { params: { movieId: string } }) =>
-          data={({ params: { movieId } }: { params: any }) =>
-              queryClient.getQueryData(movieKeys.detail(movieId)) ??
-              // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
-              // we just let the Detail component handle it
-              (onlineManager.isOnline() && !isRestoring
-                ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
-                    api.fetchMovie(movieId)
-                  )
-                : undefined)}
+          //data={fetchMovie}
         />
         <Route
           path="/about"
@@ -142,7 +135,7 @@ function Movies() {
         //<Outlet />
       }
       <Toaster />
-    </>
+    </div>
   );
 }
 
@@ -185,8 +178,13 @@ function List() {
     );
   }
 
+  else if (moviesQuery.isPaused) {
+    return "We're offline and have no data to show :(";
+  }
+
   // query will be in 'idle' fetchStatus while restoring from localStorage
-  return null;
+  //return null;
+  return "No data"
 }
 
 /* TODO
@@ -203,8 +201,25 @@ function MovieError() {
 }
 */
 
-function Detail(props: any) {
-  const { comment, setComment, updateMovie, movieQuery } = useMovie(props.movieId);
+function Detail() {
+
+  const params = useParams();
+
+  /*
+  const fetchMovie = ({ params: { movieId } }: { params: any }) => {
+    console.log(`fetchMovie: arguments`, arguments)
+    return queryClient.getQueryData(movieKeys.detail(movieId)) ??
+    // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
+    // we just let the Detail component handle it
+    (onlineManager.isOnline() && !isRestoring
+      ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
+          api.fetchMovie(movieId)
+        )
+      : undefined)
+  }
+  */
+
+  const { comment, setComment, updateMovie, movieQuery } = useMovie(params.movieId);
 
   if (movieQuery.isLoading && movieQuery.isFetching) {
     return "Loading...";
@@ -214,7 +229,7 @@ function Detail(props: any) {
     event.preventDefault();
 
     updateMovie.mutate({
-      id: props.movieId,
+      id: params.movieId,
       comment,
     } as any);
   }
@@ -257,9 +272,9 @@ function Detail(props: any) {
     );
   }
 
-  if (movieQuery.isPaused) {
+  else if (movieQuery.isPaused) {
     return "We're offline and have no data to show :(";
   }
 
-  return null;
+  return "No data"
 }
