@@ -601,7 +601,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(5)
+    rendered.getByText('status: loading, fetchStatus: fetching')
+
     await queryClient.cancelQueries(key)
     // query cancellation will reset the query to it's initial state
     await waitFor(() =>
