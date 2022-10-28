@@ -401,30 +401,33 @@ describe('useQuery', () => {
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
 
     await queryClient.prefetchQuery(key, () => 'prefetched')
 
     function Page() {
-      const state = useQuery(key, () => 'data')
-      states.push(state)
-      return null
+      const result = useQuery(key, () => 'new data')
+
+      return (
+        <>
+          <div>data: {result.data}</div>
+          <div>isFetched: {result.isFetched ? 'true' : 'false'}</div>
+          <div>
+            isFetchedAfterMount: {result.isFetchedAfterMount ? 'true' : 'false'}
+          </div>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    rendered.getByText('data: prefetched')
+    rendered.getByText('isFetched: true')
+    rendered.getByText('isFetchedAfterMount: false')
 
-    expect(states[0]).toMatchObject({
-      data: 'prefetched',
-      isFetched: true,
-      isFetchedAfterMount: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: 'data',
-      isFetched: true,
-      isFetchedAfterMount: true,
+    await waitFor(() => {
+      rendered.getByText('data: new data')
+      rendered.getByText('isFetched: true')
+      rendered.getByText('isFetchedAfterMount: true')
     })
   })
 
@@ -601,7 +604,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(5)
+    rendered.getByText('status: loading, fetchStatus: fetching')
+
     await queryClient.cancelQueries(key)
     // query cancellation will reset the query to it's initial state
     await waitFor(() =>
@@ -2310,15 +2314,22 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      useQuery(key, queryFn)
-      useQuery(key, queryFn)
+      const query1 = useQuery(key, queryFn)
+      const query2 = useQuery(key, queryFn)
       renders++
-      return null
+
+      return (
+        <div>
+          {query1.data} {query2.data}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => {
+      rendered.getByText('data data')
+    })
 
     // Should be 2 instead of 3
     expect(renders).toBe(2)
