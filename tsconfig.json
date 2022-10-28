@@ -10,6 +10,7 @@
     { "path": "packages/react-query-devtools" },
     { "path": "packages/react-query-persist-client" },
     { "path": "packages/solid-query" },
+    { "path": "packages/solid-query-persist-client" },
     { "path": "packages/vue-query" },
   ]
 }
