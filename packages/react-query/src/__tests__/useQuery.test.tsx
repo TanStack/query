@@ -601,7 +601,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(5)
+    rendered.getByText('status: loading, fetchStatus: fetching')
+
     await queryClient.cancelQueries(key)
     // query cancellation will reset the query to it's initial state
     await waitFor(() =>
@@ -2286,15 +2287,22 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      useQuery(key, queryFn)
-      useQuery(key, queryFn)
+      const query1 = useQuery(key, queryFn)
+      const query2 = useQuery(key, queryFn)
       renders++
-      return null
+
+      return (
+        <div>
+          {query1.data} {query2.data}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => {
+      rendered.getByText('data data')
+    })
 
     // Should be 2 instead of 3
     expect(renders).toBe(2)
