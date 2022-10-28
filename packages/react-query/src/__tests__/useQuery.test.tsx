@@ -401,30 +401,33 @@ describe('useQuery', () => {
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
 
     await queryClient.prefetchQuery(key, () => 'prefetched')
 
     function Page() {
-      const state = useQuery(key, () => 'data')
-      states.push(state)
-      return null
+      const result = useQuery(key, () => 'new data')
+
+      return (
+        <>
+          <div>data: {result.data}</div>
+          <div>isFetched: {result.isFetched ? 'true' : 'false'}</div>
+          <div>
+            isFetchedAfterMount: {result.isFetchedAfterMount ? 'true' : 'false'}
+          </div>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    rendered.getByText('data: prefetched')
+    rendered.getByText('isFetched: true')
+    rendered.getByText('isFetchedAfterMount: false')
 
-    expect(states[0]).toMatchObject({
-      data: 'prefetched',
-      isFetched: true,
-      isFetchedAfterMount: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: 'data',
-      isFetched: true,
-      isFetchedAfterMount: true,
+    await waitFor(() => {
+      rendered.getByText('data: new data')
+      rendered.getByText('isFetched: true')
+      rendered.getByText('isFetchedAfterMount: true')
     })
   })
 
