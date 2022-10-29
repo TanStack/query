@@ -38,16 +38,23 @@ export const useMovie = (movieId: string) => {
       await queryClient.cancelQueries(movieKeys.detail(movieId));
       const previousData: QueryData = queryClient.getQueryData(movieKeys.detail(movieId))!;
 
-      // remove local state so that server state is taken instead
-      setCommentLocal(undefined);
-
-      queryClient.setQueryData(movieKeys.detail(movieId), {
+      const queryData = {
         ...previousData,
-        movie: {
+      };
+
+      // check if comment was changed
+      // fix the "noop" case: submit form with no change
+      // -> comment should be old value, not "undefined"
+      const commentLocalValue = commentLocal();
+      if (commentLocalValue !== undefined) {
+        // comment was changed
+        queryData.movie = {
           ...previousData.movie,
-          comment: commentLocal(),
-        },
-      });
+          comment: commentLocalValue,
+        };
+      }
+
+      queryClient.setQueryData(movieKeys.detail(movieId), queryData);
 
       return { previousData };
     },
