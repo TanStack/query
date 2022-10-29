@@ -107,6 +107,10 @@ export function createBaseQuery<
           return
         }
         // result was restored from cache
+        const newDefaultedOptions = queryClient.defaultQueryOptions(options)
+        newDefaultedOptions._optimisticResults = 'optimistic'
+        observer.setOptions(newDefaultedOptions)
+
         handleResult(observer.getCurrentResult())
         unsubscribe = observer.subscribe(handleResult)
       }),
