@@ -66,6 +66,9 @@ const queryClient = new QueryClient({
       staleTime: 2000,
       retry: 0,
       refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      //retryOnMount: false,
     },
   },
   // configure global cache callbacks to show toast notifications
