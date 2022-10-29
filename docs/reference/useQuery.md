@@ -34,7 +34,6 @@ const {
   networkMode,
   initialData,
   initialDataUpdatedAt,
-  isDataEqual,
   keepPreviousData,
   meta,
   notifyOnChangeProps,
@@ -177,6 +176,8 @@ const result = useQuery({
   - Defaults to `false`
   - If set, any previous `data` will be kept when fetching new data because the query key changed.
 - `isDataEqual: (oldData: TData | undefined, newData: TData) => boolean`
+  - **Deprecated**. You can achieve the same functionality by passing a function to `structuralSharing` instead:
+    - structuralSharing: (oldData, newData) => isDataEqual(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
   - Optional
   - This function should return boolean indicating whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
 - `structuralSharing: boolean | ((oldData: TData | undefined, newData: TData) => TData)`
