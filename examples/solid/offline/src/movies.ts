@@ -30,7 +30,7 @@ export const useMovie = (movieId: string) => {
   );
 
   // local value in <form>
-  const [commentLocal, setCommentLocal] = createSignal<string | undefined>("");
+  const [commentLocal, setCommentLocal] = createSignal<string | undefined>(undefined);
 
   const updateMovie = createMutation({
     mutationKey: movieKeys.detail(movieId),
