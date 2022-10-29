@@ -10,7 +10,7 @@ import type { NotifyOptions } from './queryObserver'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
 
-type QueriesObserverListener = (result: QueryObserverResult[]) => void
+export type QueriesObserverListener = (result: QueryObserverResult[]) => void
 
 export class QueriesObserver extends Subscribable<QueriesObserverListener> {
   private client: QueryClient

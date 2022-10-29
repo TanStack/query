@@ -27,6 +27,7 @@ export { dehydrate, hydrate } from './hydration'
 // Types
 export * from './types'
 export type { Query, QueryState } from './query'
+export type { QueriesObserverListener } from './queriesObserver'
 export type { Mutation } from './mutation'
 export type { Logger } from './logger'
 export type {
