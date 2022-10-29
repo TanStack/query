@@ -29,7 +29,8 @@ export const useMovie = (movieId: string) => {
     () => api.fetchMovie(movieId)
   );
 
-  const [comment, setComment] = createSignal<string | undefined>("");
+  // local value in <form>
+  const [commentLocal, setCommentLocal] = createSignal<string | undefined>("");
 
   const updateMovie = createMutation({
     mutationKey: movieKeys.detail(movieId),
@@ -38,13 +39,13 @@ export const useMovie = (movieId: string) => {
       const previousData: QueryData = queryClient.getQueryData(movieKeys.detail(movieId))!;
 
       // remove local state so that server state is taken instead
-      setComment(undefined);
+      setCommentLocal(undefined);
 
       queryClient.setQueryData(movieKeys.detail(movieId), {
         ...previousData,
         movie: {
           ...previousData.movie,
-          comment: comment(),
+          comment: commentLocal(),
         },
       });
 
@@ -54,13 +55,21 @@ export const useMovie = (movieId: string) => {
       queryClient.setQueryData(movieKeys.detail(movieId), context?.previousData);
     },
     onSettled: () => {
+      // refetch -> update movieQuery.data.movie.comment
       queryClient.invalidateQueries(movieKeys.detail(movieId));
+
+      // remove local state so that server state is taken instead
+      // TODO do this after a successful refetch
+      setCommentLocal(undefined);
+    },
+    onSuccess(data: any, _variables, _context) {
+      console.log('updateMovie onSuccess: data.message', data.message)
     },
   });
 
   return {
-    comment: () => comment() ?? movieQuery.data?.movie.comment,
-    setComment,
+    comment: () => commentLocal() ?? movieQuery.data?.movie.comment,
+    setComment: setCommentLocal,
     updateMovie,
     movieQuery,
   };
