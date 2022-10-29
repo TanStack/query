@@ -1837,26 +1837,41 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        refetch()
-
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-
-        setActTimeout(() => {
-          refetch()
-        }, 30)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <button onClick={() => setCount(1)}>setCount</button>
+          <div>data: {state.data ?? "undefined"}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText("data: undefined")
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: "refetch" }))
+
+    await waitFor(() => {
+      rendered.getByText("data: 0")
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: "setCount" }))
+
+    await waitFor(() => {
+      rendered.getByText("data: 0")
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: "refetch" }))
+
+    await waitFor(() => {
+      rendered.getByText("data: 1")
+    })
+
+    // making sure no additional renders are triggered
+    await sleep(20)
 
     expect(states.length).toBe(6)
 
