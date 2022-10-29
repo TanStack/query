@@ -1535,15 +1535,8 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <button
-            onClick={() => {
-              setCount(1)
-            }}
-          >
-            increase
-          </button>
-
-          <div>data: {state.data}</div>
+          <button onClick={() => setCount(1)}>increment</button>
+          <div>data: {state.data ?? 'undefined'}</div>
           <div>count: {count}</div>
         </div>
       )
@@ -1551,15 +1544,17 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => {
-      rendered.getByText('data: 0')
-    })
+    await waitFor(() => rendered.getByText('data: 0'))
 
-    fireEvent.click(rendered.getByRole('button', { name: 'increase' }))
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
 
     await waitFor(() => {
       rendered.getByText('count: 1')
+      rendered.getByText('data: undefined')
     })
+
+    // making sure no additional fetches are triggered
+    await sleep(50)
 
     expect(states.length).toBe(3)
 
