@@ -14,9 +14,9 @@
   },
   "devDependencies": {
     "@solidjs/router": "^0.5.0",
+    "@tanstack/query-async-storage-persister": "workspace:*",
     "@tanstack/solid-query": "workspace:*",
     "@tanstack/solid-query-persist-client": "workspace:*",
-    "@tanstack/query-async-storage-persister": "workspace:*",
     "idb-keyval": "^6.2.0",
     "ky": "^0.30.0",
     "msw": "^0.39.2",
