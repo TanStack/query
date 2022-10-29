@@ -1841,7 +1841,7 @@ describe('useQuery', () => {
         <div>
           <button onClick={() => state.refetch()}>refetch</button>
           <button onClick={() => setCount(1)}>setCount</button>
-          <div>data: {state.data ?? "undefined"}</div>
+          <div>data: {state.data ?? 'undefined'}</div>
         </div>
       )
     }
@@ -1849,25 +1849,25 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => {
-      rendered.getByText("data: undefined")
+      rendered.getByText('data: undefined')
     })
 
-    fireEvent.click(rendered.getByRole('button', { name: "refetch" }))
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
 
     await waitFor(() => {
-      rendered.getByText("data: 0")
+      rendered.getByText('data: 0')
     })
 
-    fireEvent.click(rendered.getByRole('button', { name: "setCount" }))
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
 
     await waitFor(() => {
-      rendered.getByText("data: 0")
+      rendered.getByText('data: 0')
     })
 
-    fireEvent.click(rendered.getByRole('button', { name: "refetch" }))
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
 
     await waitFor(() => {
-      rendered.getByText("data: 1")
+      rendered.getByText('data: 1')
     })
 
     // making sure no additional renders are triggered
