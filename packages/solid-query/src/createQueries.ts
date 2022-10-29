@@ -1,7 +1,9 @@
-import { createComputed, onCleanup, onMount } from 'solid-js'
+import { createComputed, onCleanup, onMount, on } from 'solid-js'
 import type { QueryFunction } from '@tanstack/query-core'
 import { QueriesObserver } from '@tanstack/query-core'
+import type { QueriesObserverListener } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
+import { useIsRestoring } from './isRestoring'
 import type {
   CreateQueryOptions,
   CreateQueryResult,
@@ -150,13 +152,16 @@ export function createQueries<T extends any[]>(queriesOptions: {
   context?: CreateQueryOptions['context']
 }): QueriesResults<T> {
   const queryClient = useQueryClient({ context: queriesOptions.context })
+  const isRestoring = useIsRestoring()
 
   const normalizeOptions = (
     options: ArrType<typeof queriesOptions.queries>,
   ) => {
     const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
     const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
-    defaultedOptions._optimisticResults = 'optimistic'
+    defaultedOptions._optimisticResults = isRestoring()
+      ? 'isRestoring'
+      : 'optimistic'
     return defaultedOptions
   }
 
@@ -172,7 +177,7 @@ export function createQueries<T extends any[]>(queriesOptions: {
 
   const taskQueue: Array<() => void> = []
 
-  const unsubscribe = observer.subscribe((result) => {
+  const handleResult: QueriesObserverListener = (result) => {
     taskQueue.push(() => {
       setState(unwrap(result))
     })
@@ -184,7 +189,30 @@ export function createQueries<T extends any[]>(queriesOptions: {
         taskQueue.splice(0, taskQueue.length)
       }
     })
-  })
+  }
+
+  let unsubscribe: () => void = () => undefined
+
+  if (!isRestoring()) {
+    unsubscribe = observer.subscribe(handleResult)
+  } else {
+    createComputed(
+      on(isRestoring, () => {
+        if (isRestoring()) {
+          return
+        }
+        // result was restored from cache
+        // query.options._optimisticResults = 'optimistic'
+        const updateDefaultedQueries = queriesOptions.queries.map((options) =>
+          normalizeOptions(options),
+        )
+        observer.setQueries(updateDefaultedQueries)
+
+        handleResult(observer.getCurrentResult())
+        unsubscribe = observer.subscribe(handleResult)
+      }),
+    )
+  }
 
   onCleanup(unsubscribe)
 
