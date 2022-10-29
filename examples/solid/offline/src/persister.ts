@@ -2,8 +2,8 @@ import { unwrap } from "solid-js/store"
 import type { PersistedClient, Persister } from "@tanstack/solid-query-persist-client";
 import { get, set, del } from "idb-keyval";
 
-import _lodashModule from 'lodash-es';
-import _deepdashModule from 'deepdash-es';
+import _lodashModule from 'lodash';
+import _deepdashModule from 'deepdash';
 const lodash = _deepdashModule(_lodashModule);
 
 /**
