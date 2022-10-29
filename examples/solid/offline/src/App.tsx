@@ -96,11 +96,11 @@ export function App() {
     <PersistQueryClientProvider
       client={queryClient}
       persistOptions={{ persister }}
-      onSuccess={() => {
+      onSuccess={async () => {
         // resume mutations after initial restore from localStorage was successful
-        queryClient.resumePausedMutations().then(() => {
-          queryClient.invalidateQueries();
-        });
+        await queryClient.resumePausedMutations();
+        // no. this would refetch queries
+        //await queryClient.invalidateQueries();
       }}
     >
       <Movies />
