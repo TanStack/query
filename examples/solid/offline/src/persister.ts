@@ -22,16 +22,19 @@ export function createIndexedDBPersister(idbValidKey: IDBValidKey = "tanstack-qu
       // remove Proxy objects from solid-js
       // fix: DOMException: Failed to execute 'put' on 'IDBObjectStore': [object Array] could not be cloned.
       client = unwrap(client)
-      // FIXME client contains a function: clientState.queries[0].state.data.movie.comment
+      /*
+      client = lodash.cloneDeep(client)
+      // FIXME client contains a function: client.clientState.queries[0].state.data.movie.comment
       // workaround: comment -> comment()
       for (let i = 0; i < client.clientState.queries.length; i++) {
         const query = client.clientState.queries[i]
         //query.state.data = unwrap(query.state.data) // no effect
         if (typeof query.state.data?.movie?.comment == "function") {
-          // FIXME this way, we lose reactivity
+          // FIXME reactivity is lost
           query.state.data.movie.comment = query.state.data.movie.comment()
         }
       }
+      */
       // FIXME caching mutations: DOMException: Failed to execute 'put' on 'IDBObjectStore': function () { [native code] } could not be cloned.
       // fix: comment -> comment()
       // https://github.com/localForage/localForage/issues/610
