@@ -287,6 +287,8 @@ function Detail() {
               <label>
                 Comment:<br/>
                 <textarea
+                  cols="50"
+                  rows="5"
                   name="comment"
                   value={comment()} // FIXME undefined after mutate, because reactivity is lost in persister
                   //value={comment() || ''}
