@@ -44,7 +44,7 @@ export const useMovie = (movieId: string) => {
         ...previousData,
         movie: {
           ...previousData.movie,
-          comment,
+          comment: comment(),
         },
       });
 
@@ -59,7 +59,7 @@ export const useMovie = (movieId: string) => {
   });
 
   return {
-    comment: comment ?? movieQuery.data?.movie.comment,
+    comment: () => comment() ?? movieQuery.data?.movie.comment,
     setComment,
     updateMovie,
     movieQuery,
