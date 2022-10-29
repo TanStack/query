@@ -39,6 +39,7 @@ import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { CancelOptions, DefaultedQueryObserverOptions } from './types'
 import type { Logger } from './logger'
 import { defaultLogger } from './logger'
+import * as process from 'process'
 
 // TYPES
 
@@ -71,6 +72,12 @@ export class QueryClient {
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
+
+    if (process.env.NODE_ENV !== 'production' && config.logger) {
+      this.logger.error(
+        `Passing a custom logger has been deprecated and will be removed in the next major version.`,
+      )
+    }
   }
 
   mount(): void {

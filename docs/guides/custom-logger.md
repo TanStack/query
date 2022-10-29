@@ -20,3 +20,8 @@ const queryClient = new QueryClient({
   },
 })
 ```
+
+**Deprecated**
+
+Custom loggers have been deprecated and will be removed in the next major version.
+Logging only has an effect in development mode, where passing a custom logger is not necessary.
