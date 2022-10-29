@@ -83,11 +83,12 @@ export const worker = setupWorker(
       const { id } = req.params;
       const { comment } = req.body as MoviesBody;
 
-      movies.forEach((movie) => {
-        if (movie.id === id) {
-          movie.comment = comment.toUpperCase();
-        }
-      });
+      const movie = movies.find((movie) => movie.id === id);
+      if (!movie) {
+        return res(ctx.status(404, `Movie with id ${id} not found`));
+      }
+
+      movie.comment = `${comment}\n(updated via API /movies/:id)`;
 
       return res(
         ctx.delay(1000),
