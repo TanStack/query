@@ -517,11 +517,6 @@ export class QueryObserver<
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
             placeholderData = options.select(placeholderData)
-            placeholderData = replaceData(
-              prevResult?.data,
-              placeholderData,
-              options,
-            )
             this.selectError = null
           } catch (selectError) {
             if (process.env.NODE_ENV !== 'production') {
@@ -534,7 +529,7 @@ export class QueryObserver<
 
       if (typeof placeholderData !== 'undefined') {
         status = 'success'
-        data = placeholderData as TData
+        data = replaceData(prevResult?.data, placeholderData, options) as TData
         isPlaceholderData = true
       }
     }
