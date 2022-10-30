@@ -1,4 +1,4 @@
-# Prefer object syntax for useQuery (`@tanstack/query/exhaustive-deps`)
+# Exhaustive dependencies for `queryKey` (`@tanstack/query/exhaustive-deps`)
 
 TODO @TkDodo a description of this rule
 
