@@ -627,8 +627,11 @@ importers:
       '@tanstack/query-async-storage-persister': workspace:*
       '@tanstack/solid-query': workspace:*
       '@tanstack/solid-query-persist-client': workspace:*
+      '@types/lodash': ^4.14.186
+      deepdash: ^5.3.9
       idb-keyval: ^6.2.0
       ky: ^0.30.0
+      lodash: ^4.17.21
       msw: ^0.39.2
       solid-js: 1.5.4
       solid-toast: ^0.3.5
@@ -642,8 +645,11 @@ importers:
       '@tanstack/query-async-storage-persister': link:../../../packages/query-async-storage-persister
       '@tanstack/solid-query': link:../../../packages/solid-query
       '@tanstack/solid-query-persist-client': link:../../../packages/solid-query-persist-client
+      '@types/lodash': 4.14.186
+      deepdash: 5.3.9
       idb-keyval: 6.2.0
       ky: 0.30.0
+      lodash: 4.17.21
       msw: 0.39.2
       solid-toast: 0.3.5_solid-js@1.5.4
       typescript: 4.8.4
@@ -5713,6 +5719,10 @@ packages:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
     dev: true
 
+  /@types/lodash/4.14.186:
+    resolution: {integrity: sha512-eHcVlLXP0c2FlMPm56ITode2AgLMSa6aJ05JTTbYbI+7EMkCEE5qk2E41d5g2lCVTqRe0GnnRFurmlCsDODrPw==}
+    dev: true
+
   /@types/luxon/2.3.2:
     resolution: {integrity: sha512-WOehptuhKIXukSUUkRgGbj2c997Uv/iUgYgII8U7XLJqq9W2oF0kQ6frEznRQbdurioz+L/cdaIm4GutTQfgmA==}
     dev: true
@@ -7916,6 +7926,13 @@ packages:
 
   /deep-is/0.1.4:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
+    dev: true
+
+  /deepdash/5.3.9:
+    resolution: {integrity: sha512-GRzJ0q9PDj2T+J2fX+b+TlUa2NlZ11l6vJ8LHNKVGeZ8CfxCuJaCychTq07iDRTvlfO8435jlvVS1QXBrW9kMg==}
+    dependencies:
+      lodash: 4.17.21
+      lodash-es: 4.17.21
     dev: true
 
   /deepmerge/3.3.0:
@@ -11433,6 +11450,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       p-locate: 5.0.0
+
+  /lodash-es/4.17.21:
+    resolution: {integrity: sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==}
+    dev: true
 
   /lodash._reinterpolate/3.0.0:
     resolution: {integrity: sha512-xYHt68QRoYGjeeM/XOE1uJtvXQAgvszfBhjV4yvsQH0u2i9I6cI6c6/eG4Hh3UAOVn0y/xAXwmTzEay49Q//HA==}
