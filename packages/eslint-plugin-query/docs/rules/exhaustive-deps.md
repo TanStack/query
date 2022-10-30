@@ -1,0 +1,41 @@
+# Prefer object syntax for useQuery (`@tanstack/query/exhaustive-deps`)
+
+TODO @TkDodo a description of this rule
+
+## Rule Details
+
+Examples of **incorrect** code for this rule:
+
+```ts
+useQuery({
+    queryKey: ["todo"],
+    queryFn: () => api.getTodo(todoId)
+})
+
+const todoQueries = {
+    detail: (id) => ({ queryKey: ["todo"], queryFn: () => api.getTodo(id) })
+}
+```
+
+
+Examples of **correct** code for this rule:
+
+```ts
+useQuery({
+    queryKey: ["todo", todoId],
+    queryFn: () => api.getTodo(todoId)
+})
+
+const todoQueries = {
+    detail: (id) => ({ queryKey: ["todo", id], queryFn: () => api.getTodo(id) })
+}
+```
+
+## When Not To Use It
+
+If you don't care about the rules of the query keys, then you will not need this rule.
+
+## Attributes
+
+- [x] ✅ Recommended
+- [x] 🔧 Fixable

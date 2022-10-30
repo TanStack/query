@@ -1,12 +1,12 @@
 import { ESLintUtils } from '@typescript-eslint/utils'
-import { exhaustiveDepsRule } from './exhaustive-deps.rule'
+import { rule } from './exhaustive-deps.rule'
 
 const ruleTester = new ESLintUtils.RuleTester({
   parser: '@typescript-eslint/parser',
   settings: {},
 })
 
-ruleTester.run('exhaustive-deps', exhaustiveDepsRule, {
+ruleTester.run('exhaustive-deps', rule, {
   valid: [
     {
       name: 'should pass when deps are passed in array',

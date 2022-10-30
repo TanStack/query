@@ -1,5 +1,2 @@
-import { exhaustiveDepsRule } from './rules/exhaustive-deps.rule'
-
-export const rules = {
-  'exhaustive-deps': exhaustiveDepsRule,
-}
+export { configs } from './configs'
+export { rules } from './rules'
