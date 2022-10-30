@@ -16,7 +16,7 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: async newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries(['todos'])
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
 
     // Snapshot the previous value
     const previousTodos = queryClient.getQueryData(['todos'])
@@ -33,7 +33,7 @@ useMutation(updateTodo, {
   },
   // Always refetch after error or success:
   onSettled: () => {
-    queryClient.invalidateQueries(['todos'])
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
 ```
@@ -45,7 +45,7 @@ useMutation(updateTodo, {
   // When mutate is called:
   onMutate: async newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries(['todos', newTodo.id])
+    await queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
 
     // Snapshot the previous value
     const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
@@ -65,7 +65,7 @@ useMutation(updateTodo, {
   },
   // Always refetch after error or success:
   onSettled: newTodo => {
-    queryClient.invalidateQueries(['todos', newTodo.id])
+    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
   },
 })
 ```

@@ -242,7 +242,7 @@ queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
   onMutate: async (variables) => {
     // Cancel current queries for the todos list
-    await queryClient.cancelQueries(['todos'])
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
 
     // Create optimistic todo
     const optimisticTodo = { id: uuid(), title: variables.title }

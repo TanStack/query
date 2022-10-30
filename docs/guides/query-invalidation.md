@@ -9,7 +9,7 @@ Waiting for queries to become stale before they are fetched again doesn't always
 // Invalidate every query in the cache
 queryClient.invalidateQueries()
 // Invalidate every query with a key that starts with `todos`
-queryClient.invalidateQueries(['todos'])
+queryClient.invalidateQueries({ queryKey: ['todos'] })
 ```
 
 > Note: Where other libraries that use normalized caches would attempt to update local queries with the new data either imperatively or via schema inference, React Query gives you the tools to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **targeted invalidation, background-refetching and ultimately atomic updates**.

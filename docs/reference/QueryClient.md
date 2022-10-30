@@ -279,7 +279,8 @@ The `invalidateQueries` method can be used to invalidate and refetch single or m
 - If you **want inactive queries to refetch** as well, use the `refetchType: 'all'` option
 
 ```tsx
-await queryClient.invalidateQueries(['posts'], {
+await queryClient.invalidateQueries({
+  queryKey: ['posts'],
   exact,
   refetchType: 'active',
 }, { throwOnError, cancelRefetch })
@@ -287,8 +288,8 @@ await queryClient.invalidateQueries(['posts'], {
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+  - `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
   - `refetchType?: 'active' | 'inactive' | 'all' | 'none'`
     - Defaults to `'active'`
     - When set to `active`, only queries that match the refetch predicate and are actively being rendered via `useQuery` and friends will be refetched in the background.
@@ -320,15 +321,14 @@ await queryClient.refetchQueries()
 await queryClient.refetchQueries({ stale: true })
 
 // refetch all active queries partially matching a query key:
-await queryClient.refetchQueries(['posts'], { type: 'active' })
+await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
 
 // refetch all active queries exactly matching a query key:
-await queryClient.refetchQueries(['posts', 1], { type: 'active', exact: true })
+await queryClient.refetchQueries({ queryKey: ['posts', 1], type: 'active', exact: true })
 ```
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)
@@ -352,12 +352,11 @@ The `cancelQueries` method can be used to cancel outgoing queries based on their
 This is most useful when performing optimistic updates since you will likely need to cancel any outgoing query refetches so they don't clobber your optimistic update when they resolve.
 
 ```tsx
-await queryClient.cancelQueries(['posts'], { exact: true })
+await queryClient.cancelQueries({ queryKey: ['posts'], exact: true })
 ```
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
@@ -369,12 +368,11 @@ This method does not return anything
 The `removeQueries` method can be used to remove queries from the cache based on their query keys or any other functionally accessible property/state of the query.
 
 ```tsx
-queryClient.removeQueries(queryKey, { exact: true })
+queryClient.removeQueries({ queryKey, exact: true })
 ```
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
@@ -398,7 +396,6 @@ queryClient.resetQueries(queryKey, { exact: true })
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
   - `refetchPage: (page: TData, index: number, allPages: TData[]) => boolean`
     - Only for [Infinite Queries](../guides/infinite-queries#refetchpage)

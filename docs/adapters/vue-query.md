@@ -26,7 +26,7 @@ const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], quer
 const mutation = useMutation(postTodo, {
   onSuccess: () => {
     // Invalidate and refetch
-    queryClient.invalidateQueries(["todos"]);
+    queryClient.invalidateQueries({ queryKey: ["todos"] });
   },
 });
 
