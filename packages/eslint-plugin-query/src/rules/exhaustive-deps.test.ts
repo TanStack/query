@@ -41,6 +41,17 @@ ruleTester.run('exhaustive-deps', exhaustiveDepsRule, {
         }
       `,
     },
+    {
+      name: 'should ignore keys from callback',
+      code: `
+        function MyComponent(props) {
+            useQuery({
+              queryKey: ["foo", dep1],
+              queryFn: ({ queryKey: [, dep] }) => fetch(dep),
+            });
+        }
+      `,
+    },
   ],
   invalid: [
     {
