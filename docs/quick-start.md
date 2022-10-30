@@ -39,13 +39,13 @@ function Todos() {
   const queryClient = useQueryClient()
 
   // Queries
-  const query = useQuery(['todos'], getTodos)
+  const query = useQuery({ queryKey: ['todos'], queryFn: getTodos })
 
   // Mutations
   const mutation = useMutation(postTodo, {
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries(['todos'])
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
     },
   })
 

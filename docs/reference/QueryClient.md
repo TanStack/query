@@ -502,7 +502,7 @@ const defaultOptions = queryClient.getQueryDefaults(['posts'])
 queryClient.setQueryDefaults(['posts'], { queryFn: fetchPosts })
 
 function Component() {
-  const { data } = useQuery(['posts'])
+  const { data } = useQuery({ queryKey: ['posts'] })
 }
 ```
 

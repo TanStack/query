@@ -31,14 +31,15 @@ function App() {
 
 // All you have to do now is pass a key!
 function Posts() {
-  const { status, data, error, isFetching } = useQuery(['/posts'])
+  const { status, data, error, isFetching } = useQuery({ queryKey: ['/posts'] })
 
   // ...
 }
 
 // You can even leave out the queryFn and just go straight into options
 function Post({ postId }) {
-  const { status, data, error, isFetching } = useQuery([`/posts/${postId}`], {
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: [`/posts/${postId}`],
     enabled: !!postId,
   })
 

@@ -36,7 +36,7 @@ Query configuration:
 import { useQuery } from '@tanstack/react-query'
 
 // Enable for an individual query
-useQuery(queryKey, queryFn, { suspense: true })
+useQuery({ queryKey, queryFn, suspense: true })
 ```
 
 When using suspense mode, `status` states and `error` objects are not needed and are then replaced by usage of the `React.Suspense` component (including the use of the `fallback` prop and React error boundaries for catching errors). Please read the [Resetting Error Boundaries](#resetting-error-boundaries) and look at the [Suspense Example](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/react/suspense) for more information on how to set up suspense mode.

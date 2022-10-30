@@ -5,7 +5,7 @@ title: Testing
 
 React Query works by means of hooks - either the ones we offer or custom ones that wrap around them.
 
-With React 17 or earlier, writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library. 
+With React 17 or earlier, writing unit tests for these custom hooks can be done by means of the [React Hooks Testing Library](https://react-hooks-testing-library.com/) library.
 
 Install this by running:
 
@@ -23,7 +23,7 @@ Once installed, a simple test can be written. Given the following custom hook:
 
 ```ts
 export function useCustomHook() {
-  return useQuery(['customHook'], () => 'Hello');
+  return useQuery({ queryKey: ['customHook'], queryFn: () => 'Hello' });
 }
 ```
 
@@ -114,7 +114,7 @@ Given the following custom hook:
 
 ```ts
 function useFetchData() {
-  return useQuery(['fetchData'], () => request('/api/data'));
+  return useQuery({ queryKey: ['fetchData'], queryFn: () => request('/api/data') });
 }
 ```
 

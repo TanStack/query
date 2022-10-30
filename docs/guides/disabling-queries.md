@@ -25,7 +25,9 @@ function Todos() {
     error,
     refetch,
     isFetching
-  } = useQuery(['todos'], fetchTodoList, {
+  } = useQuery({
+    queryKey: ['todos'],
+    queyFn: fetchTodoList,
     enabled: false,
   })
 
@@ -69,14 +71,12 @@ The enabled option can not only be used to permanently disable a query, but also
 function Todos() {
   const [filter, setFilter] = React.useState('')
 
-  const { data } = useQuery(
-    ['todos', filter],
-    () => fetchTodos(filter),
-    {
+  const { data } = useQuery({
+      queryKey: ['todos', filter],
+      queryFn: () => fetchTodos(filter),
       // ⬇️ disabled as long as the filter is empty
       enabled: !!filter
-    }
-  )
+  })
 
   return (
       <div>

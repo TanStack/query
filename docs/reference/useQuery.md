@@ -28,7 +28,9 @@ const {
   remove,
   status,
   fetchStatus,
-} = useQuery(queryKey, queryFn?, {
+} = useQuery(
+  queryKey,
+  queryFn,
   cacheTime,
   enabled,
   networkMode,
@@ -56,14 +58,6 @@ const {
   structuralSharing,
   suspense,
   useErrorBoundary,
-})
-
-// or using the object syntax
-
-const result = useQuery({
-  queryKey,
-  queryFn,
-  enabled,
 })
 ```
 

@@ -33,15 +33,16 @@ const allFilmsWithVariablesQueryDocument = graphql(/* GraphQL */ `
 
 function App() {
   // `data` is fully typed!
-  const { data } = useQuery(['films'], async () =>
-    request(
-      'https://swapi-graphql.netlify.app/.netlify/functions/index',
-      allFilmsWithVariablesQueryDocument,
-      // variables are type-checked too!
-      { first: 10 }
-    )
-  );
-
+  const { data } = useQuery({
+    queryKey: ['films'],
+    queryFn: async () =>
+      request(
+        'https://swapi-graphql.netlify.app/.netlify/functions/index',
+        allFilmsWithVariablesQueryDocument,
+        // variables are type-checked too!
+        {first: 10}
+      ),
+  })
   // ...
 }
 ```

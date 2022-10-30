@@ -20,7 +20,7 @@ import { useQueryClient, useQuery, useMutation } from "@tanstack/vue-query";
 const queryClient = useQueryClient();
 
 // Query
-const { isLoading, isError, data, error } = useQuery(["todos"], getTodos);
+const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: getTodos });
 
 // Mutation
 const mutation = useMutation(postTodo, {
