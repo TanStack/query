@@ -80,15 +80,13 @@ export const QueryClientProvider = ({
     }
   }, [client])
 
-  React.useEffect(() => {
-    if (process.env.NODE_ENV !== 'production' && contextSharing) {
-      client
-        .getLogger()
-        .error(
-          `The contextSharing option has been deprecated and will be removed in the next major version`,
-        )
-    }
-  }, [client, contextSharing])
+  if (process.env.NODE_ENV !== 'production' && contextSharing) {
+    client
+      .getLogger()
+      .error(
+        `The contextSharing option has been deprecated and will be removed in the next major version`,
+      )
+  }
 
   const Context = getQueryClientContext(context, contextSharing)
 
