@@ -416,8 +416,8 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
-    expect(mockLogger.error).toHaveBeenCalledTimes(1)
-    expect(mockLogger.error).toHaveBeenCalledWith(error)
+    expect(mockLogger.error).toHaveBeenCalledTimes(2)
+    expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
   })
 
   test('should be able to persist into multiple clients', async () => {

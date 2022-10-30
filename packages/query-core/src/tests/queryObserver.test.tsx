@@ -690,7 +690,7 @@ describe('queryObserver', () => {
       },
     })
 
-    expect(mockLogger.error).toHaveBeenNthCalledWith(1, new Error('error'))
+    expect(mockLogger.error).toHaveBeenNthCalledWith(2, new Error('error'))
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {
