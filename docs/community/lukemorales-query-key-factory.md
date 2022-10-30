@@ -62,7 +62,8 @@ export function Todo({ todoId }) {
 
   const query = useQuery({ queryKey: queryKeys.todos.byId(todoId), queryFn: fetchSingleTodo })
 
-  const mutation = useMutation(completeTodo, {
+  const mutation = useMutation({
+    mutationFn: () => completeTodo,
     onSuccess: () => {
       // Invalidate and refetch
       queryClient.invalidateQueries({ queryKey: queryKeys.todos.completed })

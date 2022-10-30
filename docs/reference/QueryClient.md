@@ -527,7 +527,7 @@ const defaultOptions = queryClient.getMutationDefaults(['addPost'])
 queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
-  const { data } = useMutation(['addPost'])
+  const { data } = useMutation({ mutationKey: ['addPost'] })
 }
 ```
 

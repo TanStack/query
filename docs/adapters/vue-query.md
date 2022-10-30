@@ -23,7 +23,8 @@ const queryClient = useQueryClient();
 const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: getTodos });
 
 // Mutation
-const mutation = useMutation(postTodo, {
+const mutation = useMutation({
+  mutationFn: postTodo,
   onSuccess: () => {
     // Invalidate and refetch
     queryClient.invalidateQueries({ queryKey: ["todos"] });

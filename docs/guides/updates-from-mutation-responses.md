@@ -8,7 +8,8 @@ When dealing with mutations that **update** objects on the server, it's common f
 ```tsx
 const queryClient = useQueryClient()
 
-const mutation = useMutation(editTodo, {
+const mutation = useMutation({
+  mutationFn: editTodo,
   onSuccess: data => {
     queryClient.setQueryData(['todo', { id: 5 }], data)
   }
@@ -31,7 +32,8 @@ create a custom hook like this:
 const useMutateTodo = () => {
   const queryClient = useQueryClient()
 
-  return useMutation(editTodo, {
+  return useMutation({
+    mutationFn: editTodo,
     // Notice the second argument is the variables object that the `mutate` function receives
     onSuccess: (data, variables) => {
       queryClient.setQueryData(['todo', { id: variables.id }], data)
