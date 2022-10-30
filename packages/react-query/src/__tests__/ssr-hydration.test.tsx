@@ -45,8 +45,6 @@ function PrintStateComponent({ componentName, result }: any): any {
 
 describe('Server side rendering with de/rehydration', () => {
   let previousIsReactActEnvironment: unknown
-  const consoleMock = jest.spyOn(console, 'error')
-  consoleMock.mockImplementation(() => undefined)
   beforeAll(() => {
     // @ts-expect-error we expect IS_REACT_ACT_ENVIRONMENT to exist
     previousIsReactActEnvironment = globalThis.IS_REACT_ACT_ENVIRONMENT = true
@@ -57,6 +55,9 @@ describe('Server side rendering with de/rehydration', () => {
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
   })
   it('should not mismatch on success', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
     if (!isReact18()) {
       return
     }
