@@ -25,6 +25,8 @@ await queryClient.refetchQueries({ queryKey: ['posts'], type: 'active' })
 
 A query filter object supports the following properties:
 
+- `queryKey?: QueryKey`
+  - Set this property to define a query key to match on.
 - `exact?: boolean`
   - If you don't want to search queries inclusively by query key, you can pass the `exact: true` option to return only the query with the exact query key you have passed.
 - `type?: 'active' | 'inactive' | 'all'`
@@ -40,8 +42,6 @@ A query filter object supports the following properties:
   - When set to `idle` it will match queries that are not fetching.
 - `predicate?: (query: Query) => boolean`
   - This predicate function will be called for every single query in the cache and be expected to return truthy for queries that are `found`.
-- `queryKey?: QueryKey`
-  - Set this property to define a query key to match on.
 
 ## `Mutation Filters`
 
