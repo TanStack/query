@@ -115,7 +115,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
@@ -129,7 +129,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn' | 'initialData'
@@ -143,7 +143,7 @@ export function useQuery<
   TQueryKey extends QueryKey = QueryKey,
 >(
   queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
   options?: Omit<
     UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     'queryKey' | 'queryFn'

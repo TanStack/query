@@ -9,8 +9,43 @@ Because React Query's fetching mechanisms are agnostically built on Promises, yo
 
 ## Type-Safety and Code Generation
 
-You can use [GraphQL-Codegen](https://graphql-code-generator.com/) to generate ready-to-use React Hooks, based on your GraphQL operations. [You can find more details and examples here](https://www.graphql-code-generator.com/docs/plugins/typescript-react-query).
 
-## Examples
+React Query, used in combination with `graphql-request^5` and [GraphQL Code Generator](https://graphql-code-generator.com/) provides full-typed GraphQL operations:
 
-- [basic-graphql-request](../examples/react/basic-graphql-request) (The "basic" example, but implemented with [`graphql-request`](https://github.com/prisma-labs/graphql-request))
+```tsx
+import request from 'graphql-request';
+import { useQuery } from '@tanstack/react-query';
+
+import { graphql } from './gql/gql';
+
+const allFilmsWithVariablesQueryDocument = graphql(/* GraphQL */ `
+  query allFilmsWithVariablesQuery($first: Int!) {
+    allFilms(first: $first) {
+      edges {
+        node {
+          id
+          title
+        }
+      }
+    }
+  }
+`);
+
+function App() {
+  // `data` is fully typed!
+  const { data } = useQuery(['films'], async () =>
+    request(
+      'https://swapi-graphql.netlify.app/.netlify/functions/index',
+      allFilmsWithVariablesQueryDocument,
+      // variables are type-checked too!
+      { first: 10 }
+    )
+  );
+
+  // ...
+}
+```
+_You can find a [complete example in the repo](https://github.com/dotansimha/graphql-code-generator/tree/7c25c4eeb77f88677fd79da557b7b5326e3f3950/examples/front-end/react/tanstack-react-query)_
+
+
+Get started with the [dedicated guide on GraphQL Code Generator documentation](https://www.the-guild.dev/graphql/codegen/docs/guides/react-vue).
