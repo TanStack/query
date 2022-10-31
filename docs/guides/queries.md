@@ -24,7 +24,7 @@ function App() {
 
 The **unique key** you provide is used internally for refetching, caching, and sharing your queries throughout your application.
 
-The query results returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
+The query result returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
 ```tsx
 const result = useQuery(['todos'], fetchTodoList)
