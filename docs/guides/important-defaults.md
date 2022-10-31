@@ -12,8 +12,8 @@ Out of the box, React Query is configured with **aggressive but sane** defaults.
 - Stale queries are refetched automatically in the background when:
   - New instances of the query mount
   - The window is refocused
-  - The network is reconnected.
-  - The query is optionally configured with a refetch interval.
+  - The network is reconnected
+  - The query is optionally configured with a refetch interval
 
 If you see a refetch that you are not expecting, it is likely because you just focused the window and React Query is doing a `refetchOnWindowFocus`. During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
 
