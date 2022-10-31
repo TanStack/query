@@ -30,7 +30,7 @@ function Todos() {
 }
 ```
 
-# Displaying Global Background Fetching Loading State
+## Displaying Global Background Fetching Loading State
 
 In addition to individual query loading states, if you would like to show a global loading indicator when **any** queries are fetching (including in the background), you can use the `useIsFetching` hook:
 
