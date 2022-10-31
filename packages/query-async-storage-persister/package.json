@@ -29,8 +29,8 @@
   ],
   "scripts": {
     "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:eslint": "pnpm eslint --ext .ts,.tsx ./src",
+    "test:jest": "pnpm jest --config ./jest.config.ts",
     "test:dev": "pnpm run test:jest --watch"
   },
   "dependencies": {
