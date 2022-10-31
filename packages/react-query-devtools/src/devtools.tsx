@@ -1081,103 +1081,105 @@ interface QueryRowProps {
   queryCache: QueryCache
 }
 
-const QueryRow = ({
-  queryKey,
-  setActiveQueryHash,
-  activeQueryHash,
-  queryCache,
-}: QueryRowProps) => {
-  const queryHash =
-    useSubscribeToQueryCache(
-      queryCache,
-      () => queryCache.find(queryKey)?.queryHash,
-    ) ?? ''
-
-  const queryState = useSubscribeToQueryCache(
+const QueryRow = React.memo(
+  ({
+    queryKey,
+    setActiveQueryHash,
+    activeQueryHash,
     queryCache,
-    () => queryCache.find(queryKey)?.state,
-  )
+  }: QueryRowProps) => {
+    const queryHash =
+      useSubscribeToQueryCache(
+        queryCache,
+        () => queryCache.find(queryKey)?.queryHash,
+      ) ?? ''
 
-  const isStale =
-    useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.isStale(),
-    ) ?? false
+    const queryState = useSubscribeToQueryCache(
+      queryCache,
+      () => queryCache.find(queryKey)?.state,
+    )
 
-  const isDisabled =
-    useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.isDisabled(),
-    ) ?? false
+    const isStale =
+      useSubscribeToQueryCache(queryCache, () =>
+        queryCache.find(queryKey)?.isStale(),
+      ) ?? false
 
-  const observerCount =
-    useSubscribeToQueryCache(queryCache, () =>
-      queryCache.find(queryKey)?.getObserversCount(),
-    ) ?? 0
+    const isDisabled =
+      useSubscribeToQueryCache(queryCache, () =>
+        queryCache.find(queryKey)?.isDisabled(),
+      ) ?? false
 
-  if (!queryState) {
-    return null
-  }
+    const observerCount =
+      useSubscribeToQueryCache(queryCache, () =>
+        queryCache.find(queryKey)?.getObserversCount(),
+      ) ?? 0
 
-  return (
-    <div
-      role="button"
-      aria-label={`Open query details for ${queryHash}`}
-      onClick={() =>
-        setActiveQueryHash(activeQueryHash === queryHash ? '' : queryHash)
-      }
-      style={{
-        display: 'flex',
-        borderBottom: `solid 1px ${theme.grayAlt}`,
-        cursor: 'pointer',
-        background:
-          queryHash === activeQueryHash ? 'rgba(255,255,255,.1)' : undefined,
-      }}
-    >
+    if (!queryState) {
+      return null
+    }
+
+    return (
       <div
+        role="button"
+        aria-label={`Open query details for ${queryHash}`}
+        onClick={() =>
+          setActiveQueryHash(activeQueryHash === queryHash ? '' : queryHash)
+        }
         style={{
-          flex: '0 0 auto',
-          width: '2em',
-          height: '2em',
-          background: getQueryStatusColor({
-            queryState,
-            isStale,
-            observerCount,
-            theme,
-          }),
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 'bold',
-          textShadow: isStale ? '0' : '0 0 10px black',
-          color: isStale ? 'black' : 'white',
+          borderBottom: `solid 1px ${theme.grayAlt}`,
+          cursor: 'pointer',
+          background:
+            queryHash === activeQueryHash ? 'rgba(255,255,255,.1)' : undefined,
         }}
       >
-        {observerCount}
-      </div>
-      {isDisabled ? (
         <div
           style={{
             flex: '0 0 auto',
+            width: '2em',
             height: '2em',
-            background: theme.gray,
+            background: getQueryStatusColor({
+              queryState,
+              isStale,
+              observerCount,
+              theme,
+            }),
             display: 'flex',
             alignItems: 'center',
+            justifyContent: 'center',
             fontWeight: 'bold',
-            padding: '0 0.5em',
+            textShadow: isStale ? '0' : '0 0 10px black',
+            color: isStale ? 'black' : 'white',
           }}
         >
-          disabled
+          {observerCount}
         </div>
-      ) : null}
-      <Code
-        style={{
-          padding: '.5em',
-        }}
-      >
-        {`${queryHash}`}
-      </Code>
-    </div>
-  )
-}
+        {isDisabled ? (
+          <div
+            style={{
+              flex: '0 0 auto',
+              height: '2em',
+              background: theme.gray,
+              display: 'flex',
+              alignItems: 'center',
+              fontWeight: 'bold',
+              padding: '0 0.5em',
+            }}
+          >
+            disabled
+          </div>
+        ) : null}
+        <Code
+          style={{
+            padding: '.5em',
+          }}
+        >
+          {`${queryHash}`}
+        </Code>
+      </div>
+    )
+  },
+)
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 function noop() {}
