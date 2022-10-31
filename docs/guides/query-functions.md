@@ -69,7 +69,7 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
 - `pageParam: unknown | undefined`
   - only for [Infinite Queries](../guides/infinite-queries)
   - the page parameter used to fetch the current page
-- signal?: AbortSignal
+- `signal?: AbortSignal`
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by react-query
   - Can be used for [Query Cancellation](../guides/query-cancellation)
 - `meta?: Record<string, unknown>`
