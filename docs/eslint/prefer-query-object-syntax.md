@@ -56,3 +56,7 @@ If you don't care about useQuery consistency, then you will not need this rule.
 
 - [x] ✅ Recommended
 - [x] 🔧 Fixable
+
+## Credits
+
+This rule was initially developed by [KubaJastrz](https://github.com/KubaJastrz) in [eslint-plugin-react-query](https://github.com/KubaJastrz/eslint-plugin-react-query).
