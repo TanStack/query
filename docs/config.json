@@ -299,10 +299,10 @@
       ]
     },
     {
-      "label": "Eslint",
+      "label": "ESLint",
       "children": [
         {
-          "label": "Eslint Plugin Query",
+          "label": "ESLint Plugin Query",
           "to": "eslint/eslint-plugin-query"
         },
         {

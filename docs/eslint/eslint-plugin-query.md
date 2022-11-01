@@ -1,9 +1,9 @@
 ---
 id: eslint-plugin-query
-title: Eslint Plugin Query
+title: ESLint Plugin Query
 ---
 
-TanStack Query comes with its own EsLint plugin. This plugin is used to enforce best practices and to help you avoid common mistakes.
+TanStack Query comes with its own ESLint plugin. This plugin is used to enforce best practices and to help you avoid common mistakes.
 
 ## Installation
 
