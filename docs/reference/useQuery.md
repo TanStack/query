@@ -168,7 +168,6 @@ const result = useQuery({
   - Optional
   - If set, this value will be used as the time (in milliseconds) of when the `initialData` itself was last updated.
 - `placeholderData: TData | () => TData`
-  - Passing a function for `placeholderData` has been **deprecated** and will be removed in the next major version.
   - Optional
   - If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
   - `placeholderData` is **not persisted** to the cache
