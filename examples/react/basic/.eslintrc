@@ -1,8 +1,3 @@
 {
-  "extends": ["react-app", "prettier"],
-  "plugins": ["@tanstack/eslint-plugin-query"],
-  "rules": {
-    "@tanstack/query/exhaustive-deps": "error",
-    "@tanstack/query/prefer-query-object-syntax": "error"
-  }
+  "extends": ["react-app", "prettier", "plugin:@tanstack/eslint-plugin-query/recommended"]
 }

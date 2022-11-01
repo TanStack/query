@@ -152,8 +152,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -171,8 +171,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.21.4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -192,8 +192,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       graphql: 15.8.0
       graphql-request: 3.7.0_graphql@15.8.0
       react: 18.2.0
@@ -220,9 +220,9 @@ importers:
       vite: ^3.0.0
     dependencies:
       '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
+      '@tanstack/react-query-persist-client': 4.13.5_qmjxo3qgezvgk2bxg5ctecxjii
       axios: 0.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -245,8 +245,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -265,8 +265,8 @@ importers:
       react-dom: ^18.2.0
       react-intersection-observer: ^8.33.1
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -286,8 +286,8 @@ importers:
       resolve-from: ^5.0.0
       web-streams-polyfill: ^3.0.3
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       ky: 0.23.0
       ky-universal: 0.8.2_53xdiffegfcxt6522645rot5ue
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -313,9 +313,9 @@ importers:
     dependencies:
       '@tanstack/query-sync-storage-persister': link:../../../packages/query-sync-storage-persister
       '@tanstack/react-location': 3.7.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
-      '@tanstack/react-query-persist-client': link:../../../packages/react-query-persist-client
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
+      '@tanstack/react-query-persist-client': 4.13.5_qmjxo3qgezvgk2bxg5ctecxjii
       ky: 0.30.0
       msw: 0.39.2
       react: 18.2.0
@@ -338,8 +338,8 @@ importers:
       react-dom: ^18.2.0
       typescript: ^4.1.2
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       '@types/node': 14.14.14
       '@types/react': 18.0.15
       axios: 0.21.4
@@ -359,8 +359,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -376,8 +376,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
     devDependencies:
@@ -394,8 +394,8 @@ importers:
       react: ^18.2.0
       react-dom: ^18.2.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.21.4
       isomorphic-unfetch: 3.0.0
       next: 12.2.2_biqbaboplfbrettd7655fr4n2y
@@ -435,8 +435,8 @@ importers:
       '@react-native-community/netinfo': 6.0.2_react-native@0.64.3
       '@react-navigation/native': 6.0.11_sbjh7r6wrxe2pvsvaqturwwxna
       '@react-navigation/stack': 6.2.2_dpltcvsy22isyfoj2zvicex7ry
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_6xi2cjj4jkvnn2q2msxp65enam
+      '@tanstack/react-query-devtools': 4.13.7_5bzeruihn7or2pfyocm35lfvcy
       expo: 43.0.5_@babel+core@7.19.1
       expo-constants: 12.1.3
       expo-status-bar: 1.1.0
@@ -475,8 +475,8 @@ importers:
       sort-by: ^1.2.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       localforage: 1.10.0
       match-sorter: 6.3.1
       react: 18.2.0
@@ -501,8 +501,8 @@ importers:
       vite: ^3.0.0
     dependencies:
       '@material-ui/core': 4.12.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 5.3.3_react@18.2.0
@@ -521,8 +521,8 @@ importers:
       react-dom: ^18.0.0
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.26.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -543,8 +543,8 @@ importers:
       vite: ^3.0.0
     dependencies:
       '@material-ui/core': 4.12.4_biqbaboplfbrettd7655fr4n2y
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-router: 5.3.3_react@18.2.0
@@ -564,8 +564,8 @@ importers:
       react-error-boundary: ^2.2.3
       vite: ^3.0.0
     dependencies:
-      '@tanstack/react-query': link:../../../packages/react-query
-      '@tanstack/react-query-devtools': link:../../../packages/react-query-devtools
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      '@tanstack/react-query-devtools': 4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu
       axios: 0.21.4
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -625,6 +625,7 @@ importers:
 
   examples/solid/simple:
     specifiers:
+      '@tanstack/eslint-plugin-query': ^4.13.0
       '@tanstack/solid-query': ^4.3.9
       solid-js: ^1.5.1
       typescript: ^4.8.2
@@ -634,6 +635,7 @@ importers:
       '@tanstack/solid-query': link:../../../packages/solid-query
       solid-js: 1.5.4
     devDependencies:
+      '@tanstack/eslint-plugin-query': link:../../../packages/eslint-plugin-query
       typescript: 4.8.3
       vite: 3.1.3
       vite-plugin-solid: 2.3.9_solid-js@1.5.4+vite@3.1.3
@@ -646,7 +648,7 @@ importers:
       vite: 3.1.4
       vue: 3.2.39
     dependencies:
-      '@tanstack/vue-query': link:../../../packages/vue-query
+      '@tanstack/vue-query': 4.13.5_vue@3.2.39
       vue: 3.2.39
     devDependencies:
       '@vitejs/plugin-vue': 3.1.0_vite@3.1.4+vue@3.2.39
@@ -5485,6 +5487,16 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
+  /@tanstack/query-core/4.13.4:
+    resolution: {integrity: sha512-DMIy6tgGehYoRUFyoR186+pQspOicyZNSGvBWxPc2CinHjWOQ7DPnGr9zmn/kE9xK4Zd3GXd25Nj3X20+TF6Lw==}
+    dev: false
+
+  /@tanstack/query-persist-client-core/4.13.4:
+    resolution: {integrity: sha512-K6QQXyf37Xy3sG33IkPipaQknPAK7/44rveZIYj75yrN2TJPFQxDFE6eO51Nz1/AQdupZyq+G4ggcuL3z1hRzQ==}
+    peerDependencies:
+      '@tanstack/query-core': 4.13.4
+    dev: false
+
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -5496,6 +5508,100 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-query-devtools/4.13.7_5bzeruihn7or2pfyocm35lfvcy:
+    resolution: {integrity: sha512-F3wIpnkEphrMGZLibYded5AzNtP1TbgSPu7D4Px7qhBTv71pPHJg/kU9N29jPG6S5drX3FrmkMPhsZs0qyGIpg==}
+    peerDependencies:
+      '@tanstack/react-query': 4.13.5
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.1.1
+      '@tanstack/react-query': 4.13.5_6xi2cjj4jkvnn2q2msxp65enam
+      react: 17.0.1
+      react-dom: 17.0.1_react@17.0.1
+      superjson: 1.10.0
+      use-sync-external-store: 1.2.0_react@17.0.1
+    dev: false
+
+  /@tanstack/react-query-devtools/4.13.7_i7kuhmcsnmccyzigx3mxdtc2mu:
+    resolution: {integrity: sha512-F3wIpnkEphrMGZLibYded5AzNtP1TbgSPu7D4Px7qhBTv71pPHJg/kU9N29jPG6S5drX3FrmkMPhsZs0qyGIpg==}
+    peerDependencies:
+      '@tanstack/react-query': 4.13.5
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.1.1
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      superjson: 1.10.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/react-query-persist-client/4.13.5_qmjxo3qgezvgk2bxg5ctecxjii:
+    resolution: {integrity: sha512-XlUGx3nmEANi588ooCmimo9kBviAsqF7bo4C1mUxlSl3EzGfT+3m4RcH4+Ph7UvyLg/Hy1CzqzNrtdCnAZDDwg==}
+    peerDependencies:
+      '@tanstack/react-query': 4.13.5
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.13.4
+      '@tanstack/react-query': 4.13.5_biqbaboplfbrettd7655fr4n2y
+    transitivePeerDependencies:
+      - '@tanstack/query-core'
+    dev: false
+
+  /@tanstack/react-query/4.13.5_6xi2cjj4jkvnn2q2msxp65enam:
+    resolution: {integrity: sha512-p2HcWGuqfvG7Pz04un4phWZeXzlITD7Ue0gMXjD56g8y3rP1r5qEYC/BckffrZLf4dZtQeVPCWOa8RYAqx036g==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.13.4
+      react: 17.0.1
+      react-dom: 17.0.1_react@17.0.1
+      react-native: 0.64.3_gpe6tsd6gj6gjuc7hywxyjd2qm
+      use-sync-external-store: 1.2.0_react@17.0.1
+    dev: false
+
+  /@tanstack/react-query/4.13.5_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-p2HcWGuqfvG7Pz04un4phWZeXzlITD7Ue0gMXjD56g8y3rP1r5qEYC/BckffrZLf4dZtQeVPCWOa8RYAqx036g==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
+    dependencies:
+      '@tanstack/query-core': 4.13.4
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+      use-sync-external-store: 1.2.0_react@18.2.0
+    dev: false
+
+  /@tanstack/vue-query/4.13.5_vue@3.2.39:
+    resolution: {integrity: sha512-ev7ATkyWG3UTkBif2m92BDe8N6Jv6nBifCTUfJlnkstPjRtEALBZ52YI3vxEhVYY5+emrN+UdXy2cCg9lAfqMQ==}
+    peerDependencies:
+      '@vue/composition-api': ^1.1.2
+      vue: ^2.5.0 || ^3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      '@tanstack/match-sorter-utils': 8.1.1
+      '@tanstack/query-core': 4.13.4
+      '@vue/devtools-api': 6.4.2
+      vue: 3.2.39
+      vue-demi: 0.13.11_vue@3.2.39
     dev: false
 
   /@testing-library/dom/7.31.2:
@@ -15350,6 +15456,14 @@ packages:
       react: 18.2.0
     dev: false
 
+  /use-sync-external-store/1.2.0_react@17.0.1:
+    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 17.0.1
+    dev: false
+
   /use-sync-external-store/1.2.0_react@18.2.0:
     resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
@@ -15499,6 +15613,21 @@ packages:
 
   /vlq/1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
+    dev: false
+
+  /vue-demi/0.13.11_vue@3.2.39:
+    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
+    engines: {node: '>=12'}
+    hasBin: true
+    requiresBuild: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+    dependencies:
+      vue: 3.2.39
     dev: false
 
   /vue-demi/0.13.11_zv57lmwz3lpne326jxcwg2uc6q:

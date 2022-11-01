@@ -9,8 +9,12 @@ const ruleTester = new ESLintUtils.RuleTester({
 ruleTester.run('exhaustive-deps', rule, {
   valid: [
     {
-      name: 'should pass when deps are passed in array',
+      name: 'should pass when deps are passed in array (react)',
       code: 'useQuery({ queryKey: ["todos"], queryFn: fetchTodos });',
+    },
+    {
+      name: 'should pass when deps are passed in array (solid)',
+      code: 'createQuery({ queryKey: ["todos"], queryFn: fetchTodos });',
     },
     {
       name: 'should pass when deps are passed in array',
@@ -71,7 +75,7 @@ ruleTester.run('exhaustive-deps', rule, {
       errors: [{ messageId: 'missingDeps', data: { deps: 'id' } }],
     },
     {
-      name: 'should fail when no deps are passed',
+      name: 'should fail when no deps are passed (react)',
       code: `
         const id = 1;
         useQuery({ queryKey: ["entity"], queryFn: () => api.getEntity(id) });
@@ -79,6 +83,18 @@ ruleTester.run('exhaustive-deps', rule, {
       output: `
         const id = 1;
         useQuery({ queryKey: ["entity", id], queryFn: () => api.getEntity(id) });
+      `,
+      errors: [{ messageId: 'missingDeps', data: { deps: 'id' } }],
+    },
+    {
+      name: 'should fail when no deps are passed (solid)',
+      code: `
+        const id = 1;
+        createQuery({ queryKey: ["entity"], queryFn: () => api.getEntity(id) });
+      `,
+      output: `
+        const id = 1;
+        createQuery({ queryKey: ["entity", id], queryFn: () => api.getEntity(id) });
       `,
       errors: [{ messageId: 'missingDeps', data: { deps: 'id' } }],
     },

@@ -30,6 +30,12 @@ ruleTester.run(name, rule, {
     },
     {
       code: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        const result = useQuery({ queryKey, queryFn, enabled });
+      `,
+    },
+    {
+      code: normalizeIndent`
         import { useQuery } from "somewhere-else";
         useQuery(queryKey, queryFn, { enabled });
       `,
@@ -40,12 +46,12 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery('data');
+        useQuery(['data']);
       `,
       errors: [{ messageId: 'preferObjectSyntax' }],
       output: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery({ queryKey: 'data' });
+        useQuery({ queryKey: ['data'] });
       `,
     },
     {
@@ -70,12 +76,12 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery('data', () => fetchData());
+        useQuery(['data'], () => fetchData());
       `,
       errors: [{ messageId: 'preferObjectSyntax' }],
       output: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery({ queryKey: 'data', queryFn: () => fetchData() });
+        useQuery({ queryKey: ['data'], queryFn: () => fetchData() });
       `,
     },
     {
@@ -92,12 +98,12 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery('data', () => fetchData(), { enabled: false });
+        useQuery(['data'], () => fetchData(), { enabled: false });
       `,
       errors: [{ messageId: 'preferObjectSyntax' }],
       output: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery({ queryKey: 'data', queryFn: () => fetchData(), enabled: false });
+        useQuery({ queryKey: ['data'], queryFn: () => fetchData(), enabled: false });
       `,
     },
     {
@@ -114,12 +120,23 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery('data', { queryFn: () => fetchData(), enabled: false });
+        useQuery(['data'], { queryFn: () => fetchData(), enabled: false });
       `,
       errors: [{ messageId: 'preferObjectSyntax' }],
       output: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
-        useQuery({ queryKey: 'data', queryFn: () => fetchData(), enabled: false });
+        useQuery({ queryKey: ['data'], queryFn: () => fetchData(), enabled: false });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        createQuery(['data'], { queryFn: () => fetchData(), enabled: false });
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        createQuery({ queryKey: ['data'], queryFn: () => fetchData(), enabled: false });
       `,
     },
   ],

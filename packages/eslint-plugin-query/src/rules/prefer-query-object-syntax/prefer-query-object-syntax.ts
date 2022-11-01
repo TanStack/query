@@ -2,7 +2,7 @@ import { TSESLint } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
 
-const USE_QUERY = 'useQuery'
+const QUERY_CALLS = ['useQuery', 'createQuery'];
 
 export const name = 'prefer-query-object-syntax'
 
@@ -28,7 +28,7 @@ export const rule = createRule({
       CallExpression(node) {
         const isUseQuery =
           node.callee.type === 'Identifier' &&
-          node.callee.name === USE_QUERY &&
+          QUERY_CALLS.includes(node.callee.name) &&
           helpers.isReactQueryImport(node.callee)
         if (!isUseQuery) {
           return
