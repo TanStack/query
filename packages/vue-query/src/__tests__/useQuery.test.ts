@@ -110,6 +110,7 @@ describe('useQuery', () => {
       isFetched: { value: true },
       isError: { value: true },
       failureCount: { value: 1 },
+      failureReason: { value: { message: 'Some error' } },
     })
   })
 
