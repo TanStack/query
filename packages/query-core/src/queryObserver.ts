@@ -514,17 +514,6 @@ export class QueryObserver<
     ) {
       let placeholderData
 
-      if (
-        process.env.NODE_ENV !== 'production' &&
-        typeof placeholderData === 'function'
-      ) {
-        this.client
-          .getLogger()
-          .error(
-            `Passing a function for placeholderData has been deprecated and will be removed in the next major version.`,
-          )
-      }
-
       // Memoize placeholder data
       if (
         prevResult?.isPlaceholderData &&
