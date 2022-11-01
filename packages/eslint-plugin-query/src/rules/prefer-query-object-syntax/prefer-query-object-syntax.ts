@@ -1,4 +1,4 @@
-import { TSESLint } from '@typescript-eslint/utils'
+import type { TSESLint } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
 

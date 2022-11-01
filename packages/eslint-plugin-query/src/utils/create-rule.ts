@@ -1,8 +1,6 @@
 import { ESLintUtils } from '@typescript-eslint/utils'
-import {
-  detectReactQueryImports,
-  EnhancedCreate,
-} from './detect-react-query-imports'
+import type { EnhancedCreate } from './detect-react-query-imports'
+import { detectReactQueryImports } from './detect-react-query-imports'
 
 const getDocsUrl = (ruleName: string): string =>
   `https://github.com/tanstack/query/tree/master/packages/eslint-plugin-query/docs/rules/${ruleName}.md`
