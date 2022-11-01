@@ -45,6 +45,11 @@ export const packages: Package[] = [
     packageDir: 'vue-query',
     srcDir: 'src',
   },
+  {
+    name: '@tanstack/eslint-plugin-query',
+    packageDir: 'eslint-plugin-query',
+    srcDir: 'src',
+  },
 ]
 
 export const latestBranch = 'main'

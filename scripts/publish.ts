@@ -385,8 +385,13 @@ async function run() {
         path.resolve(rootDir, 'packages', pkg.packageDir, 'package.json'),
       )
 
+      const entries =
+        pkg.name === '@tanstack/eslint-plugin-query'
+          ? (['main'] as const)
+          : (['main', 'types', 'module'] as const)
+
       await Promise.all(
-        (['main', 'types', 'module'] as const).map(async (entryKey) => {
+        entries.map(async (entryKey) => {
           const entry = pkgJson[entryKey] as string
 
           if (!entry) {
