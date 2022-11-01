@@ -12,7 +12,7 @@ import {
   dehydrate,
   hydrate,
 } from '..'
-import { createQueryClient, mockLogger, setIsServer, sleep } from './utils'
+import { createQueryClient, setIsServer, sleep } from './utils'
 
 const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
 
@@ -55,6 +55,9 @@ describe('Server side rendering with de/rehydration', () => {
     globalThis.IS_REACT_ACT_ENVIRONMENT = previousIsReactActEnvironment
   })
   it('should not mismatch on success', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
     if (!isReact18()) {
       return
     }
@@ -118,15 +121,23 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    expect(mockLogger.error).not.toHaveBeenCalled()
+    // this should be zero calls and can be changed once we drop react17 support
+    expect(consoleMock).toHaveBeenNthCalledWith(
+      1,
+      'Warning: You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".',
+    )
     expect(fetchDataSuccess).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
 
     unmount()
     queryClient.clear()
+    consoleMock.mockRestore()
   })
 
   it('should not mismatch on error', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
     if (!isReact18()) {
       return
     }
@@ -187,7 +198,7 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // We expect exactly one console.error here, which is from the
-    expect(mockLogger.error).toHaveBeenCalledTimes(1)
+    expect(consoleMock).toHaveBeenCalledTimes(1)
     expect(fetchDataError).toHaveBeenCalledTimes(2)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
@@ -198,9 +209,13 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
+    consoleMock.mockRestore()
   })
 
   it('should not mismatch on queries that were not prefetched', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
+
     if (!isReact18()) {
       return
     }
@@ -254,7 +269,11 @@ describe('Server side rendering with de/rehydration', () => {
     )
 
     // Check that we have no React hydration mismatches
-    expect(mockLogger.error).not.toHaveBeenCalled()
+    // this should be zero calls and can be changed once we drop react17 support
+    expect(consoleMock).toHaveBeenNthCalledWith(
+      1,
+      'Warning: You are importing hydrateRoot from "react-dom" which is not supported. You should instead import it from "react-dom/client".',
+    )
     expect(fetchDataSuccess).toHaveBeenCalledTimes(1)
     expect(el.innerHTML).toBe(expectedMarkup)
     await sleep(50)
@@ -265,5 +284,6 @@ describe('Server side rendering with de/rehydration', () => {
 
     unmount()
     queryClient.clear()
+    consoleMock.mockRestore()
   })
 })

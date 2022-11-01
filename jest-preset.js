@@ -24,7 +24,7 @@ const moduleNameMapper = {
 module.exports = {
   collectCoverage: true,
   coverageReporters: ['json', 'lcov', 'text', 'clover', 'text-summary'],
-  testMatch: ['<rootDir>/**/*.test.[jt]s?(x)'],
+  testMatch: ['<rootDir>/**/src/**/*.test.[jt]s?(x)'],
   transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
   clearMocks: true,
   testEnvironment: 'jsdom',

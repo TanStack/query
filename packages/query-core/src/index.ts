@@ -13,6 +13,7 @@ export { focusManager } from './focusManager'
 export { onlineManager } from './onlineManager'
 export {
   hashQueryKey,
+  replaceEqualDeep,
   isError,
   isServer,
   parseQueryArgs,
