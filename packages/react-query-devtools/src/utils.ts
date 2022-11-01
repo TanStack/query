@@ -117,11 +117,12 @@ export function useIsMounted() {
 /**
  * Displays a string regardless the type of the data
  * @param {unknown} value Value to be stringified
+ * @param {boolean} beautify Formats json to multiline
  */
-export const displayValue = (value: unknown) => {
+export const displayValue = (value: unknown, beautify: boolean = false) => {
   const { json } = SuperJSON.serialize(value)
 
-  return JSON.stringify(json)
+  return JSON.stringify(json, null, beautify ? 2 : undefined)
 }
 
 // Sorting functions
