@@ -1,4 +1,7 @@
-# Prefer object syntax for useQuery (`@tanstack/query/prefer-query-object-syntax`)
+---
+id: prefer-query-object-syntax
+title: Prefer object syntax for useQuery
+---
 
 You can use [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery) in two different ways.
 
