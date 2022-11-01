@@ -66,13 +66,13 @@ function fetchTodoList({ queryKey }) {
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
 
 - `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
-- `pageParam: unknown | undefined`
+- `pageParam?: unknown`
   - only for [Infinite Queries](../guides/infinite-queries)
   - the page parameter used to fetch the current page
-- signal?: AbortSignal
+- `signal?: AbortSignal`
   - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by react-query
   - Can be used for [Query Cancellation](../guides/query-cancellation)
-- `meta?: Record<string, unknown>`
+- `meta: Record<string, unknown> | undefined`
   - an optional field you can fill with additional information about your query
 
 ## Using a Query Object instead of parameters
