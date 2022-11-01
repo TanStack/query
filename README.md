@@ -96,6 +96,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://www.linkedin.com/in/matthew-hausman/"><img src="https://avatars.githubusercontent.com/u/25216513?v=4?s=100" width="100px;" alt="Matthew Hausman"/><br /><sub><b>Matthew Hausman</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=matthewhausman" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/Newbie012"><img src="https://avatars.githubusercontent.com/u/10504365?v=4?s=100" width="100px;" alt="Eliya Cohen"/><br /><sub><b>Eliya Cohen</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=Newbie012" title="Code">💻</a></td>
     </tr>
+    <tr>
+      <td align="center"><a href="https://kubajastrz.com"><img src="https://avatars.githubusercontent.com/u/6443113?v=4?s=100" width="100px;" alt="Jakub Jastrzębski"/><br /><sub><b>Jakub Jastrzębski</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=KubaJastrz" title="Code">💻</a></td>
+    </tr>
   </tbody>
 </table>
 
