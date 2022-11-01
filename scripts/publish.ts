@@ -369,7 +369,7 @@ async function run() {
   }
 
   console.info('Testing packages...')
-  execSync(`pnpm run test:ci`, { encoding: 'utf8' })
+  execSync(`pnpm run test:ci`, { encoding: 'utf8', stdio: 'inherit' })
   console.info('')
 
   console.info('Building packages...')

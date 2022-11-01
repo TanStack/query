@@ -12,7 +12,7 @@ useQuery(queryKey, queryFn?, options?)
 useQuery(options)
 ```
 
-This rule prefers the second option, as it is more consistent with other React Query hooks, like `useQueries` or `useMutation`.
+This rule prefers the second option, as it is more consistent with other React Query hooks, like `useQueries`. It will also be the only available option in a future major version.
 
 ## Rule Details
 
