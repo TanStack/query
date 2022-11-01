@@ -18,7 +18,9 @@ export const rule = createRule({
     },
     messages: {
       missingDeps: `The following dependencies are missing in your queryKey: {{deps}}`,
+      fixTo: 'Fix to {{result}}',
     },
+    hasSuggestions: true,
     fixable: 'code',
     schema: [],
   },
@@ -89,25 +91,29 @@ export const rule = createRule({
         const uniqueMissingRefs = uniqueBy(missingRefs, (x) => x.text)
 
         if (uniqueMissingRefs.length > 0) {
+          const missingAsText = uniqueMissingRefs
+            .map((ref) => ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode))
+            .join(', ')
+
+          const existingWithMissing = sourceCode
+            .getText(queryKeyValue)
+            .replace(/\]$/, `, ${missingAsText}]`)
+
           context.report({
             node: node,
             messageId: 'missingDeps',
             data: {
               deps: uniqueMissingRefs.map((ref) => ref.text).join(', '),
             },
-            fix(fixer) {
-              const missingAsText = uniqueMissingRefs
-                .map((ref) =>
-                  ASTUtils.mapKeyNodeToText(ref.identifier, sourceCode),
-                )
-                .join(', ')
-
-              const existingWithMissing = sourceCode
-                .getText(queryKeyValue)
-                .replace(/\]$/, `, ${missingAsText}]`)
-
-              return fixer.replaceText(queryKeyValue, existingWithMissing)
-            },
+            suggest: [
+              {
+                messageId: 'fixTo',
+                data: { result: existingWithMissing },
+                fix(fixer) {
+                  return fixer.replaceText(queryKeyValue, existingWithMissing)
+                },
+              },
+            ],
           })
         }
       },
