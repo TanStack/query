@@ -1,6 +1,7 @@
 # Exhaustive dependencies for `queryKey` (`@tanstack/query/exhaustive-deps`)
 
-TODO @TkDodo a description of this rule
+Query keys should be seen like a dependency array to your query function: Every variable that is used inside the queryFn should be added to the query key.
+This makes sure that queries are cached independently and that queries are refetched automatically when the variables changes.
 
 ## Rule Details
 
