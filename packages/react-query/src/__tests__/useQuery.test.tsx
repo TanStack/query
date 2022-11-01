@@ -1769,18 +1769,30 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <h1>
+            data: {state.data}, count: {count}, isFetching:{' '}
+            {String(state.isFetching)}
+          </h1>
+          <button onClick={() => setCount(1)}>inc</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await waitFor(() =>
+      rendered.getByText('data: 0, count: 0, isFetching: false'),
+    )
+
+    fireEvent.click(rendered.getByRole('button', { name: 'inc' }))
+
+    await waitFor(() =>
+      rendered.getByText('data: 1, count: 1, isFetching: false'),
+    )
+
+    expect(states.length).toBe(5)
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1798,17 +1810,17 @@ describe('useQuery', () => {
     })
     // Set state
     expect(states[2]).toMatchObject({
-      data: 0,
+      data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPreviousData: false,
     })
     // Hook state update
     expect(states[3]).toMatchObject({
-      data: 0,
+      data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPreviousData: false,
     })
     // New data
     expect(states[4]).toMatchObject({
@@ -3731,6 +3743,61 @@ describe('useQuery', () => {
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject({ data: 0, isFetching: true })
     expect(results[1]).toMatchObject({ data: 1, isFetching: false })
+  })
+
+  it('should show the correct data when switching keys with initialData, keepPreviousData & staleTime', async () => {
+    const key = queryKey()
+
+    const ALL_TODOS = [
+      { name: 'todo A', priority: 'high' },
+      { name: 'todo B', priority: 'medium' },
+    ]
+
+    const initialTodos = ALL_TODOS
+
+    function Page() {
+      const [filter, setFilter] = React.useState('')
+      const { data: todos } = useQuery(
+        [...key, filter],
+        async () => {
+          return ALL_TODOS.filter((todo) =>
+            filter ? todo.priority === filter : true,
+          )
+        },
+        {
+          initialData() {
+            return filter === '' ? initialTodos : undefined
+          },
+          keepPreviousData: true,
+          staleTime: 5000,
+        },
+      )
+
+      return (
+        <div>
+          Current Todos, filter: {filter || 'all'}
+          <hr />
+          <button onClick={() => setFilter('')}>All</button>
+          <button onClick={() => setFilter('high')}>High</button>
+          <ul>
+            {(todos ?? []).map((todo) => (
+              <li key={todo.name}>
+                {todo.name} - {todo.priority}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Current Todos, filter: all'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /high/i }))
+    await waitFor(() => rendered.getByText('Current Todos, filter: high'))
+    fireEvent.click(rendered.getByRole('button', { name: /all/i }))
+    await waitFor(() => rendered.getByText('todo B - medium'))
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/214
