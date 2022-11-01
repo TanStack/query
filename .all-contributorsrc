@@ -270,6 +270,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "KubaJastrz",
+      "name": "Jakub Jastrzębski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6443113?v=4",
+      "profile": "https://kubajastrz.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
