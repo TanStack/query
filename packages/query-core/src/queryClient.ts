@@ -39,7 +39,6 @@ import { infiniteQueryBehavior } from './infiniteQueryBehavior'
 import type { CancelOptions, DefaultedQueryObserverOptions } from './types'
 import type { Logger } from './logger'
 import { defaultLogger } from './logger'
-import * as process from 'process'
 
 // TYPES
 
