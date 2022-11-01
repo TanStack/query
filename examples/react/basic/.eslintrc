@@ -1,7 +1,3 @@
 {
-  "extends": ["react-app", "prettier"],
-  "rules": {
-    // "eqeqeq": 0,
-    // "jsx-a11y/anchor-is-valid": 0
-  }
+  "extends": ["react-app", "prettier", "plugin:@tanstack/eslint-plugin-query/recommended"]
 }

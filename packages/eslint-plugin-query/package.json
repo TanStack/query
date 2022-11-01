@@ -1,0 +1,44 @@
+{
+  "name": "@tanstack/eslint-plugin-query",
+  "version": "4.13.0",
+  "description": "ESLint plugin for TanStack Query",
+  "author": "Eliya Cohen",
+  "license": "MIT",
+  "repository": "tanstack/query",
+  "homepage": "https://tanstack.com/query",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/tannerlinsley"
+  },
+  "main": "build/lib/index.js",
+  "scripts": {
+    "typecheck": "tsc",
+    "build": "tsup --minify",
+    "dev": "tsup --watch --sourcemap",
+    "clean": "rm -rf ./build",
+    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
+    "test:dev": "pnpm run test:jest --watch"
+  },
+  "files": [
+    "build"
+  ],
+  "tsup": {
+    "entry": [
+      "src/index.ts"
+    ],
+    "external": [
+      "eslint"
+    ],
+    "clean": true,
+    "bundle": true,
+    "outDir": "build/lib"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.41.0",
+    "@typescript-eslint/parser": "^5.41.0",
+    "@typescript-eslint/utils": "^5.41.0",
+    "eslint": "^8.26.0",
+    "tsup": "^6.3.0"
+  }
+}

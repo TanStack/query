@@ -299,6 +299,23 @@
       ]
     },
     {
+      "label": "ESLint",
+      "children": [
+        {
+          "label": "ESLint Plugin Query",
+          "to": "eslint/eslint-plugin-query"
+        },
+        {
+          "label": "Exhaustive Deps",
+          "to": "eslint/exhaustive-deps"
+        },
+        {
+          "label": "prefer-query-object-syntax",
+          "to": "eslint/prefer-query-object-syntax"
+        }
+      ]
+    },
+    {
       "label": "Plugins",
       "children": [
         {
