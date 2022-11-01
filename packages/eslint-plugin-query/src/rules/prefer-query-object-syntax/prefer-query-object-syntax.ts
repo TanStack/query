@@ -2,7 +2,7 @@ import type { TSESLint } from '@typescript-eslint/utils'
 import { createRule } from '../../utils/create-rule'
 import { ASTUtils } from '../../utils/ast-utils'
 
-const QUERY_CALLS = ['useQuery', 'createQuery'];
+const QUERY_CALLS = ['useQuery', 'createQuery']
 
 export const name = 'prefer-query-object-syntax'
 

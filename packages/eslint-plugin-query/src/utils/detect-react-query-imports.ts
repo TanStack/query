@@ -35,8 +35,8 @@ export function detectReactQueryImports(create: EnhancedCreate): Create {
         if (
           node.specifiers.length > 0 &&
           node.importKind === 'value' &&
-          node.source.value.startsWith("@tanstack/") &&
-          node.source.value.endsWith("-query")
+          node.source.value.startsWith('@tanstack/') &&
+          node.source.value.endsWith('-query')
         ) {
           reactQueryImportSpecifiers.push(...node.specifiers)
         }
