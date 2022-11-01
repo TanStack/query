@@ -22,6 +22,7 @@ import {
   getResizeHandleStyle,
   getSidedProp,
   defaultPanelSize,
+  displayValue,
 } from './utils'
 import type { Corner, Side } from './utils'
 import {
@@ -846,7 +847,7 @@ const ActiveQuery = ({
                 overflow: 'auto',
               }}
             >
-              {JSON.stringify(activeQuery.queryKey, null, 2)}
+              {displayValue(activeQuery.queryKey, true)}
             </pre>
           </Code>
           <span
