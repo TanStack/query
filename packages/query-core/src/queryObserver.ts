@@ -468,7 +468,7 @@ export class QueryObserver<
     // Keep previous data if needed
     if (
       options.keepPreviousData &&
-      !state.dataUpdateCount &&
+      !state.dataUpdatedAt &&
       prevQueryResult?.isSuccess &&
       status !== 'error'
     ) {
