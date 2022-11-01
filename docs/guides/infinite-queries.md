@@ -58,7 +58,9 @@ function Projects() {
     isFetching,
     isFetchingNextPage,
     status,
-  } = useInfiniteQuery(['projects'], fetchProjects, {
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -102,7 +104,9 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 If you only want to actively refetch a subset of all pages, you can pass the `refetchPage` function to `refetch` returned from `useInfiniteQuery`.
 
 ```tsx
-const { refetch } = useInfiniteQuery(['projects'], fetchProjects, {
+const { refetch } = useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
 })
 
@@ -134,7 +138,9 @@ function Projects() {
     isFetchingNextPage,
     fetchNextPage,
     hasNextPage,
-  } = useInfiniteQuery(['projects'], fetchProjects, {
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: fetchProjects,
     getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   })
 
@@ -148,7 +154,9 @@ function Projects() {
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
 
 ```tsx
-useInfiniteQuery(['projects'], fetchProjects, {
+useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
   getNextPageParam: (lastPage, pages) => lastPage.nextCursor,
   getPreviousPageParam: (firstPage, pages) => firstPage.prevCursor,
 })
@@ -159,7 +167,9 @@ useInfiniteQuery(['projects'], fetchProjects, {
 Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
 
 ```tsx
-useInfiniteQuery(['projects'], fetchProjects, {
+useInfiniteQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
   select: data => ({
     pages: [...data.pages].reverse(),
     pageParams: [...data.pageParams].reverse(),

@@ -64,7 +64,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
    export default defineComponent({
      name: "MyComponent",
      setup() {
-       const query = useQuery(["todos"], getTodos);
+       const query = useQuery({ queryKey: ["todos"], queryFn: getTodos });
 
        return {
          query,
@@ -79,5 +79,5 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
    const id = ref(1);
    const enabled = ref(false);
 
-   const query = useQuery(["todos", id], () => getTodos(id), { enabled });
+   const query = useQuery({ queyKey: ["todos", id], queryFn: () => getTodos(id), enabled });
    ```

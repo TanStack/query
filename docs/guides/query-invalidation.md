@@ -9,7 +9,7 @@ Waiting for queries to become stale before they are fetched again doesn't always
 // Invalidate every query in the cache
 queryClient.invalidateQueries()
 // Invalidate every query with a key that starts with `todos`
-queryClient.invalidateQueries(['todos'])
+queryClient.invalidateQueries({ queryKey: ['todos'] })
 ```
 
 > Note: Where other libraries that use normalized caches would attempt to update local queries with the new data either imperatively or via schema inference, React Query gives you the tools to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **targeted invalidation, background-refetching and ultimately atomic updates**.
@@ -31,35 +31,35 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 // Get QueryClient from the context
 const queryClient = useQueryClient()
 
-queryClient.invalidateQueries(['todos'])
+queryClient.invalidateQueries({ queryKey: ['todos'] })
 
 // Both queries below will be invalidated
-const todoListQuery = useQuery(['todos'], fetchTodoList)
-const todoListQuery = useQuery(['todos', { page: 1 }], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+const todoListQuery = useQuery({ queryKey: ['todos', { page: 1 }], queryFn: fetchTodoList })
 ```
 
 You can even invalidate queries with specific variables by passing a more specific query key to the `invalidateQueries` method:
 
 ```tsx
-queryClient.invalidateQueries(['todos', { type: 'done' }])
+queryClient.invalidateQueries({ queryKey: ['todos', { type: 'done' }]})
 
 // The query below will be invalidated
-const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos', { type: 'done' }], queryFn: fetchTodoList })
 
 // However, the following query below will NOT be invalidated
-const todoListQuery = useQuery(['todos'], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 ```
 
 The `invalidateQueries` API is very flexible, so even if you want to **only** invalidate `todos` queries that don't have any more variables or subkeys, you can pass an `exact: true` option to the `invalidateQueries` method:
 
 ```tsx
-queryClient.invalidateQueries(['todos'], { exact: true })
+queryClient.invalidateQueries({ queryKey: ['todos'], exact: true })
 
 // The query below will be invalidated
-const todoListQuery = useQuery(['todos'], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 
 // However, the following query below will NOT be invalidated
-const todoListQuery = useQuery(['todos', { type: 'done' }], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos', { type: 'done' }], queryFn: fetchTodoList })
 ```
 
 If you find yourself wanting **even more** granularity, you can pass a predicate function to the `invalidateQueries` method. This function will receive each `Query` instance from the query cache and allow you to return `true` or `false` for whether you want to invalidate that query:
@@ -71,11 +71,11 @@ queryClient.invalidateQueries({
 })
 
 // The query below will be invalidated
-const todoListQuery = useQuery(['todos', { version: 20 }], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos', { version: 20 }], queryFn: fetchTodoList })
 
 // The query below will be invalidated
-const todoListQuery = useQuery(['todos', { version: 10 }], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos', { version: 10 }], queryFn: fetchTodoList })
 
 // However, the following query below will NOT be invalidated
-const todoListQuery = useQuery(['todos', { version: 5 }], fetchTodoList)
+const todoListQuery = useQuery({ queryKey: ['todos', { version: 5 }], queryFn: fetchTodoList })
 ```

@@ -31,7 +31,7 @@ export async function getStaticProps() {
 }
 
 function Posts(props) {
-  const { data } = useQuery(['posts'], getPosts, { initialData: props.posts })
+  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts, initialData: props.posts })
 
   // ...
 }
@@ -95,11 +95,11 @@ export async function getStaticProps() {
 function Posts() {
   // This useQuery could just as well happen in some deeper child to
   // the "Posts"-page, data will be available immediately either way
-  const { data } = useQuery(['posts'], getPosts)
+  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
 
   // This query was not prefetched on the server and will not start
   // fetching until on the client, both patterns are fine to mix
-  const { data: otherData } = useQuery(['posts-2'], getPosts)
+  const { data: otherData } = useQuery({ queryKey: ['posts-2'], queryFn: getPosts })
 
   // ...
 }
@@ -206,7 +206,7 @@ async function handleRequest (req, res) {
     // Send the index.html (without SSR) on error, so user can try to recover and see something
     return res.sendFile('path/to/dist/index.html');
   }
-  
+
   const html = ReactDOM.renderToString(
     <QueryClientProvider client={queryClient}>
       <App />
@@ -214,7 +214,7 @@ async function handleRequest (req, res) {
   )
 
   const dehydratedState = dehydrate(queryClient);
-  
+
   res.send(`
     <html>
       <body>

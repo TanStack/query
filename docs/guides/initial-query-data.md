@@ -19,7 +19,9 @@ There may be times when you already have the initial data for a query available 
 
 ```tsx
 function Todos() {
-  const result = useQuery(['todos'], () => fetch('/todos'), {
+  const result = useQuery({
+    queryKey: ['todos'],
+    queryFn: () => fetch('/todos'),
     initialData: initialTodos,
   })
 }
@@ -34,7 +36,9 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   ```tsx
   function Todos() {
     // Will show initialTodos immediately, but also immediately refetch todos after mount
-    const result = useQuery(['todos'], () => fetch('/todos'), {
+    const result = useQuery({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
       initialData: initialTodos,
     })
   }
@@ -45,7 +49,9 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   ```tsx
   function Todos() {
     // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
-    const result = useQuery(['todos'], () => fetch('/todos'), {
+    const result = useQuery({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
       initialData: initialTodos,
       staleTime: 1000,
     })
@@ -53,17 +59,19 @@ By default, `initialData` is treated as totally fresh, as if it were just fetche
   ```
 
 - So what if your `initialData` isn't totally fresh? That leaves us with the last configuration that is actually the most accurate and uses an option called `initialDataUpdatedAt`. This option allows you to pass a numeric JS timestamp in milliseconds of when the initialData itself was last updated, e.g. what `Date.now()` provides. Take note that if you have a unix timestamp, you'll need to convert it to a JS timestamp by multiplying it by `1000`.
-  ```tsx
+```tsx
   function Todos() {
     // Show initialTodos immediately, but won't refetch until another interaction event is encountered after 1000 ms
-    const result = useQuery(['todos'], () => fetch('/todos'), {
+    const result = useQuery({
+      queryKey: ['todos'],
+      queryFn: () => fetch('/todos'),
       initialData: initialTodos,
-      staleTime: 60 * 1000 // 1 minute
+      staleTime: 60 * 1000, // 1 minute
       // This could be 10 seconds ago or 10 minutes ago
       initialDataUpdatedAt: initialTodosUpdatedTimestamp // eg. 1608412420052
     })
   }
-  ```
+```
   This option allows the staleTime to be used for its original purpose, determining how fresh the data needs to be, while also allowing the data to be refetched on mount if the `initialData` is older than the `staleTime`. In the example above, our data needs to be fresh within 1 minute, and we can hint to the query when the initialData was last updated so the query can decide for itself whether the data needs to be refetched again or not.
 
 > If you would rather treat your data as **prefetched data**, we recommend that you use the `prefetchQuery` or `fetchQuery` APIs to populate the cache beforehand, thus letting you configure your `staleTime` independently from your initialData
@@ -74,7 +82,9 @@ If the process for accessing a query's initial data is intensive or just not som
 
 ```tsx
 function Todos() {
-  const result = useQuery(['todos'], () => fetch('/todos'), {
+  const result = useQuery({
+    queryKey: ['todos'],
+    queryFn: () => fetch('/todos'),
     initialData: () => {
       return getExpensiveTodos()
     },
@@ -103,7 +113,9 @@ Getting initial data from the cache means the source query you're using to look 
 
 ```tsx
 function Todo({ todoId }) {
-  const result = useQuery(['todo', todoId], () => fetch(`/todos/${todoId}`), {
+  const result = useQuery({
+    queryKey: ['todos', todoId],
+    queryFn: () => fetch(`/todos/${todoId}`),
     initialData: () =>
       queryClient.getQueryData(['todos'])?.find(d => d.id === todoId),
     initialDataUpdatedAt: () =>
@@ -118,7 +130,9 @@ If the source query you're using to look up the initial data from is old, you ma
 
 ```tsx
 function Todo({ todoId }) {
-  const result = useQuery(['todo', todoId], () => fetch(`/todos/${todoId}`), {
+  const result = useQuery({
+    queryKey: ['todo', todoId],
+    queryFn: () => fetch(`/todos/${todoId}`),
     initialData: () => {
       // Get the query state
       const state = queryClient.getQueryState(['todos'])

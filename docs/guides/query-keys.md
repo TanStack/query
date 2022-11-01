@@ -14,10 +14,10 @@ The simplest form of a key is an array with constants values. This format is use
 
 ```tsx
 // A list of todos
-useQuery(['todos'], ...)
+useQuery({ queryKey: ['todos'], ... })
 
 // Something else, whatever!
-useQuery(['something', 'special'], ...)
+useQuery({ queryKey: ['something', 'special'], ... })
 ```
 
 ## Array Keys with variables
@@ -31,13 +31,13 @@ When a query needs more information to uniquely describe its data, you can use a
 
 ```tsx
 // An individual todo
-useQuery(['todo', 5], ...)
+useQuery({ queryKey: ['todo', 5], ... })
 
 // An individual todo in a "preview" format
-useQuery(['todo', 5, { preview: true }], ...)
+useQuery({ queryKey: ['todo', 5, { preview: true }], ...})
 
 // A list of todos that are "done"
-useQuery(['todos', { type: 'done' }], ...)
+useQuery({ queryKey: ['todos', { type: 'done' }], ... })
 ```
 
 ## Query Keys are hashed deterministically!
@@ -45,17 +45,17 @@ useQuery(['todos', { type: 'done' }], ...)
 This means that no matter the order of keys in objects, all of the following queries are considered equal:
 
 ```tsx
-useQuery(['todos', { status, page }], ...)
-useQuery(['todos', { page, status }], ...)
-useQuery(['todos', { page, status, other: undefined }], ...)
+useQuery({ queryKey: ['todos', { status, page }], ... })
+useQuery({ queryKey: ['todos', { page, status }], ...})
+useQuery({ queryKey: ['todos', { page, status, other: undefined }], ... })
 ```
 
 The following query keys, however, are not equal. Array item order matters!
 
 ```tsx
-useQuery(['todos', status, page], ...)
-useQuery(['todos', page, status], ...)
-useQuery(['todos', undefined, page, status], ...)
+useQuery({ queryKey: ['todos', status, page], ... })
+useQuery({ queryKey: ['todos', page, status], ...})
+useQuery({ queryKey: ['todos', undefined, page, status], ...})
 ```
 
 ## If your query function depends on a variable, include it in your query key
@@ -64,7 +64,7 @@ Since query keys uniquely describe the data they are fetching, they should inclu
 
 ```tsx
 function Todos({ todoId }) {
-  const result = useQuery(['todos', todoId], () => fetchTodoById(todoId))
+  const result = useQuery({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
 }
 ```
 

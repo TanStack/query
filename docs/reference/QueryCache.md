@@ -19,7 +19,7 @@ const queryCache = new QueryCache({
   }
 })
 
-const query = queryCache.find(['posts'])
+const query = queryCache.find({ queryKey: ['posts'] })
 ```
 
 Its available methods are:
@@ -51,12 +51,11 @@ The `onError` and `onSuccess` callbacks on the QueryCache can be used to handle 
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios (eg. Looking at the query.state.dataUpdatedAt timestamp to decide whether a query is fresh enough to be used as an initial value)
 
 ```tsx
-const query = queryCache.find(queryKey)
+const query = queryCache.find({ queryKey })
 ```
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**
@@ -71,12 +70,11 @@ const query = queryCache.find(queryKey)
 > Note: This is not typically needed for most applications, but can come in handy when needing more information about a query in rare scenarios
 
 ```tsx
-const queries = queryCache.findAll(queryKey)
+const queries = queryCache.findAll({ queryKey })
 ```
 
 **Options**
 
-- `queryKey?: QueryKey`: [Query Keys](../guides/query-keys)
 - `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
 
 **Returns**

@@ -7,18 +7,16 @@ Dependent (or serial) queries depend on previous ones to finish before they can 
 
 ```tsx
 // Get the user
-const { data: user } = useQuery(['user', email], getUserByEmail)
+const { data: user } = useQuery({ queryKey: ['user', email], queryFn: getUserByEmail })
 
 const userId = user?.id
 
 // Then get the user's projects
-const { status, fetchStatus, data: projects } = useQuery(
-  ['projects', userId],
-  getProjectsByUser,
-  {
-    // The query will not execute until the userId exists
-    enabled: !!userId,
-  }
+const { status, fetchStatus, data: projects } = useQuery({
+  queryKey: ['projects', userId],
+  queryFn: getProjectsByUser,
+  // The query will not execute until the userId exists
+  enabled: !!userId,
 )
 ```
 
