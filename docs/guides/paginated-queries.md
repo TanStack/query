@@ -6,7 +6,7 @@ title: Paginated / Lagged Queries
 Rendering paginated data is a very common UI pattern and in React Query, it "just works" by including the page information in the query key:
 
 ```tsx
-const result = useQuery(['projects', page], fetchProjects)
+const result = useQuery({ queryKey: ['projects', page], queryFn: fetchProjects })
 ```
 
 However, if you run this simple example, you might notice something strange:
@@ -36,7 +36,11 @@ function Todos() {
     data,
     isFetching,
     isPreviousData,
-  } = useQuery(['projects', page], () => fetchProjects(page), { keepPreviousData : true })
+  } = useQuery({
+    queryKey: ['projects', page],
+    queryFn: () => fetchProjects(page),
+    keepPreviousData : true
+  })
 
   return (
     <div>

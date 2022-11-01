@@ -59,6 +59,14 @@ export const VueQueryPlugin = {
 
     client.mount()
 
+    if (process.env.NODE_ENV !== 'production' && options.contextSharing) {
+      client
+        .getLogger()
+        .error(
+          `The contextSharing option has been deprecated and will be removed in the next major version`,
+        )
+    }
+
     const cleanup = () => {
       client.unmount()
     }

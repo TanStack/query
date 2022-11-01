@@ -50,7 +50,13 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(mockLogger.error).toHaveBeenCalledTimes(1)
+    expect(mockLogger.error).toHaveBeenCalledTimes(2)
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      'Passing a custom logger has been deprecated and will be removed in the next major version.',
+    )
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      'Passing a custom logger has been deprecated and will be removed in the next major version.',
+    )
   })
 
   test('should update when a query updates', async () => {

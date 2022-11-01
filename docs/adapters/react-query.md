@@ -12,7 +12,7 @@ import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-quer
 const queryClient = new QueryClient()
 
 function Example() {
-  const query = useQuery(['todos'], fetchTodos)
+  const query = useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
 
   return (
     <div>

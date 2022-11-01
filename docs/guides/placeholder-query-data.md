@@ -20,20 +20,22 @@ There are a few ways to supply placeholder data for a query to the cache before 
 
 ```tsx
 function Todos() {
-  const result = useQuery(['todos'], () => fetch('/todos'), {
+  const result = useQuery({
+    queryKey: ['todos'],
+    queryFn: () => fetch('/todos'),
     placeholderData: placeholderTodos,
   })
 }
 ```
 
-### Placeholder Data as a Function
+### Placeholder Data Memoization
 
-If the process for accessing a query's placeholder data is intensive or just not something you want to perform on every render, you can memoize the value or pass a memoized function as the `placeholderData` value:
+If the process for accessing a query's placeholder data is intensive or just not something you want to perform on every render, you can memoize the value:
 
 ```tsx
 function Todos() {
   const placeholderData = useMemo(() => generateFakeTodos(), [])
-  const result = useQuery(['todos'], () => fetch('/todos'), { placeholderData })
+  const result = useQuery({ queyKey: ['todos'], queryFn: () => fetch('/todos'), placeholderData })
 }
 ```
 
@@ -43,7 +45,9 @@ In some circumstances, you may be able to provide the placeholder data for a que
 
 ```tsx
 function Todo({ blogPostId }) {
-  const result = useQuery(['blogPost', blogPostId], () => fetch(`/blogPosts/${blogPostId}`), {
+  const result = useQuery({
+    queryKey: ['blogPost', blogPostId],
+    queryFn: () => fetch(`/blogPosts/${blogPostId}`),
     placeholderData: () => {
       // Use the smaller/preview version of the blogPost from the 'blogPosts' query as the placeholder data for this blogPost query
       return queryClient

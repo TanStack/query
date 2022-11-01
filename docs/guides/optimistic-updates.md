@@ -12,11 +12,12 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 ```tsx
 const queryClient = useQueryClient()
 
-useMutation(updateTodo, {
+useMutation({
+  mutationFn: updateTodo,
   // When mutate is called:
   onMutate: async newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries(['todos'])
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
 
     // Snapshot the previous value
     const previousTodos = queryClient.getQueryData(['todos'])
@@ -33,7 +34,7 @@ useMutation(updateTodo, {
   },
   // Always refetch after error or success:
   onSettled: () => {
-    queryClient.invalidateQueries(['todos'])
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
 })
 ```
@@ -41,11 +42,12 @@ useMutation(updateTodo, {
 ## Updating a single todo
 
 ```tsx
-useMutation(updateTodo, {
+useMutation({
+  mutationFn: updateTodo,
   // When mutate is called:
   onMutate: async newTodo => {
     // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-    await queryClient.cancelQueries(['todos', newTodo.id])
+    await queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
 
     // Snapshot the previous value
     const previousTodo = queryClient.getQueryData(['todos', newTodo.id])
@@ -65,7 +67,7 @@ useMutation(updateTodo, {
   },
   // Always refetch after error or success:
   onSettled: newTodo => {
-    queryClient.invalidateQueries(['todos', newTodo.id])
+    queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
   },
 })
 ```
@@ -73,7 +75,8 @@ useMutation(updateTodo, {
 You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
 
 ```tsx
-useMutation(updateTodo, {
+useMutation({
+  mutationFn: updateTodo,
   // ...
   onSettled: (newTodo, error, variables, context) => {
     if (error) {

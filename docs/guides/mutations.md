@@ -9,8 +9,10 @@ Here's an example of a mutation that adds a new todo to the server:
 
 ```tsx
 function App() {
-  const mutation = useMutation(newTodo => {
-    return axios.post('/todos', newTodo)
+  const mutation = useMutation({
+    mutationFn: newTodo => {
+      return axios.post('/todos', newTodo)
+    }
   })
 
   return (
@@ -60,19 +62,19 @@ Even with just variables, mutations aren't all that special, but when used with 
 ```tsx
 // This will not work in React 16 and earlier
 const CreateTodo = () => {
-  const mutation = useMutation(event => {
+  const mutation = useMutation({ mutationFn: event => {
     event.preventDefault()
     return fetch('/api', new FormData(event.target))
-  })
+  }})
 
   return <form onSubmit={mutation.mutate}>...</form>
 }
 
 // This will work
 const CreateTodo = () => {
-  const mutation = useMutation(formData => {
+  const mutation = useMutation({ mutationFn: formData => {
     return fetch('/api', formData)
-  })
+  }})
   const onSubmit = event => {
     event.preventDefault()
     mutation.mutate(new FormData(event.target))
@@ -89,7 +91,7 @@ It's sometimes the case that you need to clear the `error` or `data` of a mutati
 ```tsx
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
-  const mutation = useMutation(createTodo)
+  const mutation = useMutation({ mutationFn: createTodo })
 
   const onCreateTodo = e => {
     e.preventDefault()
@@ -118,7 +120,8 @@ const CreateTodo = () => {
 `useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](../guides/invalidations-from-mutations) and even [optimistic updates](../guides/optimistic-updates)
 
 ```tsx
-useMutation(addTodo, {
+useMutation({
+  mutationFn: addTodo,
   onMutate: variables => {
     // A mutation is about to happen!
 
@@ -141,7 +144,8 @@ useMutation(addTodo, {
 When returning a promise in any of the callback functions it will first be awaited before the next callback is called:
 
 ```tsx
-useMutation(addTodo, {
+useMutation({
+  mutationFn: addTodo,
   onSuccess: async () => {
     console.log("I'm first!")
   },
@@ -154,7 +158,8 @@ useMutation(addTodo, {
 You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`. Please keep in mind that those additional callbacks won't run if your component unmounts _before_ the mutation finishes.
 
 ```tsx
-useMutation(addTodo, {
+useMutation({
+  mutationFn: addTodo,
   onSuccess: (data, variables, context) => {
     // I will fire first
   },
@@ -185,7 +190,8 @@ There is a slight difference in handling `onSuccess`, `onError` and `onSettled` 
 > Be aware that most likely, `mutationFn` passed to `useMutation` is asynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
 
 ```tsx
-useMutation(addTodo, {
+useMutation({
+  mutationFn: addTodo,
   onSuccess: (data, error, variables, context) => {
     // Will be called 3 times
   },
@@ -206,7 +212,7 @@ useMutation(addTodo, {
 Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
 
 ```tsx
-const mutation = useMutation(addTodo)
+const mutation = useMutation({ mutationFn: addTodo })
 
 try {
   const todo = await mutation.mutateAsync(todo)
@@ -223,7 +229,8 @@ try {
 By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
 
 ```tsx
-const mutation = useMutation(addTodo, {
+const mutation = useMutation({
+  mutationFn: addTodo,
   retry: 3,
 })
 ```
@@ -242,7 +249,7 @@ queryClient.setMutationDefaults(['addTodo'], {
   mutationFn: addTodo,
   onMutate: async (variables) => {
     // Cancel current queries for the todos list
-    await queryClient.cancelQueries(['todos'])
+    await queryClient.cancelQueries({ queryKey: ['todos'] })
 
     // Create optimistic todo
     const optimisticTodo = { id: uuid(), title: variables.title }
@@ -265,7 +272,7 @@ queryClient.setMutationDefaults(['addTodo'], {
 })
 
 // Start mutation in some component:
-const mutation = useMutation(['addTodo'])
+const mutation = useMutation({ mutationKey: ['addTodo'] })
 mutation.mutate({ title: 'title' })
 
 // If the mutation has been paused because the device is for example offline,

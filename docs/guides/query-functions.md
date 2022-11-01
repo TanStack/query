@@ -8,26 +8,32 @@ A query function can be literally any function that **returns a promise**. The p
 All of the following are valid query function configurations:
 
 ```tsx
-useQuery(['todos'], fetchAllTodos)
-useQuery(['todos', todoId], () => fetchTodoById(todoId))
-useQuery(['todos', todoId], async () => {
+useQuery({ queryKey: ['todos'], queryFn: fetchAllTodos })
+useQuery({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
+useQuery({ queryKey: ['todos', todoId], queryFn: async () => {
   const data = await fetchTodoById(todoId)
   return data
-})
-useQuery(['todos', todoId], ({ queryKey }) => fetchTodoById(queryKey[1]))
+}})
+useQuery({ queryKey: ['todos', todoId], queryFn: ({ queryKey }) => fetchTodoById(queryKey[1])})
 ```
 
 ## Handling and Throwing Errors
 
-For React Query to determine a query has errored, the query function **must throw**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
+For React Query to determine a query has errored, the query function **must throw** or return a **rejected Promise**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
 
 ```tsx
-const { error } = useQuery(['todos', todoId], async () => {
-  if (somethingGoesWrong) {
-    throw new Error('Oh no!')
-  }
+const { error } = useQuery({
+  queryKey: ['todos', todoId],
+  queryFn: async () => {
+    if (somethingGoesWrong) {
+      throw new Error('Oh no!')
+    }
+    if (somethingElseGoesWrong) {
+      return Promise.reject(new Error('Oh no!'))
+    }
 
-  return data
+    return data
+  }
 })
 ```
 
@@ -36,12 +42,15 @@ const { error } = useQuery(['todos', todoId], async () => {
 While most utilities like `axios` or `graphql-request` automatically throw errors for unsuccessful HTTP calls, some utilities like `fetch` do not throw errors by default. If that's the case, you'll need to throw them on your own. Here is a simple way to do that with the popular `fetch` API:
 
 ```tsx
-useQuery(['todos', todoId], async () => {
-  const response = await fetch('/todos/' + todoId)
-  if (!response.ok) {
-    throw new Error('Network response was not ok')
+useQuery({
+  queryKey: ['todos', todoId],
+  queryFn: async () => {
+    const response = await fetch('/todos/' + todoId)
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    return response.json()
   }
-  return response.json()
 })
 ```
 
@@ -51,7 +60,7 @@ Query keys are not just for uniquely identifying the data you are fetching, but 
 
 ```tsx
 function Todos({ status, page }) {
-  const result = useQuery(['todos', { status, page }], fetchTodoList)
+  const result = useQuery({ queryKey: ['todos', { status, page }], queryFn: fetchTodoList })
 }
 
 // Access the key, status and page variables in your query function!
@@ -74,17 +83,3 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
   - Can be used for [Query Cancellation](../guides/query-cancellation)
 - `meta: Record<string, unknown> | undefined`
   - an optional field you can fill with additional information about your query
-
-## Using a Query Object instead of parameters
-
-Anywhere the `[queryKey, queryFn, config]` signature is supported throughout React Query's API, you can also use an object to express the same configuration:
-
-```tsx
-import { useQuery } from '@tanstack/react-query'
-
-useQuery({
-  queryKey: ['todo', 7],
-  queryFn: fetchTodo,
-  ...config,
-})
-```

@@ -16,8 +16,10 @@ You can configure retries both on a global level and an individual query level.
 import { useQuery } from '@tanstack/react-query'
 
 // Make a specific query retry a certain number of times
-const result = useQuery(['todos', 1], fetchTodoListPage, {
-  retry: 10, // Will retry failed requests 10 times before displaying an error
+const result = useQuery({
+    queryKey: ['todos', 1],
+    queryFn: fetchTodoListPage,
+    retry: 10, // Will retry failed requests 10 times before displaying an error
 })
 ```
 
@@ -47,7 +49,9 @@ function App() {
 Though it is not recommended, you can obviously override the `retryDelay` function/integer in both the Provider and individual query options. If set to an integer instead of a function the delay will always be the same amount of time:
 
 ```tsx
-const result = useQuery(['todos'], fetchTodoList, {
+const result = useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodoList,
   retryDelay: 1000, // Will always wait 1000ms to retry, regardless of how many retries
 })
 ```

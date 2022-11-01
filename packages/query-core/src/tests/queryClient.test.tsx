@@ -160,7 +160,7 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(mockLogger.error).not.toHaveBeenCalled()
+      expect(mockLogger.error).toHaveBeenCalledTimes(1)
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
@@ -169,7 +169,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(mockLogger.error).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledTimes(2)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
@@ -180,7 +180,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(mockLogger.error).toHaveBeenCalledTimes(2)
+      expect(mockLogger.error).toHaveBeenCalledTimes(4)
     })
 
     test('should warn in dev if several mutation defaults match a given key', () => {
@@ -216,7 +216,10 @@ describe('queryClient', () => {
       // No defaults, no warning
       const noDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(noDefaults).toBeUndefined()
-      expect(mockLogger.error).not.toHaveBeenCalled()
+      expect(mockLogger.error).toHaveBeenNthCalledWith(
+        1,
+        'Passing a custom logger has been deprecated and will be removed in the next major version.',
+      )
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
       queryClient.setMutationDefaults(keyABCD, defaultsOfABCD)
@@ -225,7 +228,7 @@ describe('queryClient', () => {
       const goodDefaults = queryClient.getMutationDefaults(keyABCD)
       expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
-      expect(mockLogger.error).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledTimes(2)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
@@ -236,7 +239,7 @@ describe('queryClient', () => {
       const badDefaults = newQueryClient.getMutationDefaults(keyABCD)
       expect(badDefaults).not.toBe(defaultsOfABCD)
       expect(badDefaults).toBe(defaultsOfABC)
-      expect(mockLogger.error).toHaveBeenCalledTimes(2)
+      expect(mockLogger.error).toHaveBeenCalledTimes(4)
     })
   })
 

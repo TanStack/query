@@ -18,7 +18,7 @@ To subscribe to a query in your components or custom hooks, call the `useQuery` 
 import { useQuery } from '@tanstack/react-query'
 
 function App() {
-  const info = useQuery(['todos'], fetchTodoList)
+  const info = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 }
 ```
 
@@ -27,7 +27,7 @@ The **unique key** you provide is used internally for refetching, caching, and s
 The query result returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
 ```tsx
-const result = useQuery(['todos'], fetchTodoList)
+const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 ```
 
 The `result` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
@@ -45,7 +45,7 @@ For **most** queries, it's usually sufficient to check for the `isLoading` state
 
 ```tsx
 function Todos() {
-  const { isLoading, isError, data, error } = useQuery(['todos'], fetchTodoList)
+  const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 
   if (isLoading) {
     return <span>Loading...</span>
@@ -70,7 +70,7 @@ If booleans aren't your thing, you can always use the `status` state as well:
 
 ```tsx
 function Todos() {
-  const { status, data, error } = useQuery(['todos'], fetchTodoList)
+  const { status, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 
   if (status === 'loading') {
     return <span>Loading...</span>

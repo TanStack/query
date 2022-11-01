@@ -16,22 +16,25 @@ However, if you consume the `AbortSignal` or attach a `cancel` function to your 
 ## Using `fetch`
 
 ```tsx
-const query = useQuery(['todos'], async ({ signal }) => {
-  const todosResponse = await fetch('/todos', {
-    // Pass the signal to one fetch
-    signal,
-  })
-  const todos = await todosResponse.json()
-
-  const todoDetails = todos.map(async ({ details } => {
-    const response = await fetch(details, {
-      // Or pass it to several
+const query = useQuery({
+  queryKey: ['todos'],
+  queryFn: async ({ signal }) => {
+    const todosResponse = await fetch('/todos', {
+      // Pass the signal to one fetch
       signal,
     })
-    return response.json()
-  })
+    const todos = await todosResponse.json()
 
-  return Promise.all(todoDetails)
+    const todoDetails = todos.map(async ({ details }) => {
+      const response = await fetch(details, {
+        // Or pass it to several
+        signal,
+      })
+      return response.json()
+    })
+
+    return Promise.all(todoDetails)
+  }
 })
 ```
 
@@ -42,12 +45,14 @@ const query = useQuery(['todos'], async ({ signal }) => {
 ```tsx
 import axios from 'axios'
 
-const query = useQuery(['todos'], ({ signal }) =>
-  axios.get('/todos', {
-    // Pass the signal to `axios`
-    signal,
-  })
-)
+const query = useQuery({
+  queryKey: ['todos'],
+  queryFn: ({ signal }) =>
+    axios.get('/todos', {
+      // Pass the signal to `axios`
+      signal,
+    }),
+})
 ```
 
 ### Using an `axios` version less than v0.22.0
@@ -55,41 +60,47 @@ const query = useQuery(['todos'], ({ signal }) =>
 ```tsx
 import axios from 'axios'
 
-const query = useQuery(['todos'], ({ signal }) => {
-  // Create a new CancelToken source for this request
-  const CancelToken = axios.CancelToken
-  const source = CancelToken.source()
+const query = useQuery({
+  queryKey: ['todos'],
+  queryFn: ({ signal }) => {
+    // Create a new CancelToken source for this request
+    const CancelToken = axios.CancelToken
+    const source = CancelToken.source()
 
-  const promise = axios.get('/todos', {
-    // Pass the source token to your request
-    cancelToken: source.token,
-  })
+    const promise = axios.get('/todos', {
+      // Pass the source token to your request
+      cancelToken: source.token,
+    })
 
-  // Cancel the request if React Query signals to abort
-  signal?.addEventListener('abort', () => {
-    source.cancel('Query was cancelled by React Query')
-  })
+    // Cancel the request if React Query signals to abort
+    signal?.addEventListener('abort', () => {
+      source.cancel('Query was cancelled by React Query')
+    })
 
-  return promise
+    return promise
+  }
 })
 ```
 
 ## Using `XMLHttpRequest`
 
 ```tsx
-const query = useQuery(['todos'], ({ signal }) => {
-  return new Promise((resolve, reject) => {
-    var oReq = new XMLHttpRequest()
-    oReq.addEventListener('load', () => {
-      resolve(JSON.parse(oReq.responseText))
+const query = useQuery({
+  queryKey: ['todos'],
+  queryFn: ({ signal }) => {
+    return new Promise((resolve, reject) => {
+      var oReq = new XMLHttpRequest()
+      oReq.addEventListener('load', () => {
+        resolve(JSON.parse(oReq.responseText))
+      })
+      signal?.addEventListener('abort', () => {
+        oReq.abort()
+        reject()
+      })
+      oReq.open('GET', '/todos')
+      oReq.send()
     })
-    signal?.addEventListener('abort', () => {
-      oReq.abort()
-      reject()
-    })
-    oReq.open('GET', '/todos')
-    oReq.send()
-  })
+  }
 })
 ```
 
@@ -100,9 +111,9 @@ An `AbortSignal` can be set in the client `request` method.
 ```tsx
 const client = new GraphQLClient(endpoint)
 
-const query = useQuery(['todos'], ({ signal }) => {
+const query = useQuery({ queryKey: ['todos'], queryFn: ({ signal }) => {
   client.request({ document: query, signal })
-})
+}})
 ```
 
 ## Using `graphql-request`  version less than v4.0.0
@@ -110,30 +121,33 @@ const query = useQuery(['todos'], ({ signal }) => {
 An `AbortSignal` can be set in the `GraphQLClient` constructor.
 
 ```tsx
-const query = useQuery(['todos'], ({ signal }) => {
-  const client = new GraphQLClient(endpoint, {
-    signal,
-  });
-  return client.request(query, variables)
+const query = useQuery({
+  queryKey: ['todos'],
+  queryFn: ({ signal }) => {
+    const client = new GraphQLClient(endpoint, {
+        signal,
+    });
+    return client.request(query, variables)
+  }
 })
 ```
 
 ## Manual Cancellation
 
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries(key)`, which will cancel the query and revert it back to its previous state. If `promise.cancel` is available, or you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If `promise.cancel` is available, or you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
 
 ```tsx
-const query = useQuery(['todos'], async ({ signal }) => {
+const query = useQuery({ queryKey: ['todos'], queryFn: async ({ signal }) => {
   const resp = await fetch('/todos', { signal })
   return resp.json()
-})
+}})
 
 const queryClient = useQueryClient()
 
 return (
   <button onClick={(e) => {
     e.preventDefault()
-    queryClient.cancelQueries(['todos'])
+    queryClient.cancelQueries({ queryKey: ['todos'] })
    }}>Cancel</button>
 )
 ```

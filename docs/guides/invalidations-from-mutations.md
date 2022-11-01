@@ -8,7 +8,7 @@ Invalidating queries is only half the battle. Knowing **when** to invalidate the
 For example, assume we have a mutation to post a new todo:
 
 ```tsx
-const mutation = useMutation(postTodo)
+const mutation = useMutation({ mutationFn: postTodo })
 ```
 
 When a successful `postTodo` mutation happens, we likely want all `todos` queries to get invalidated and possibly refetched to show the new todo item. To do this, you can use `useMutation`'s `onSuccess` options and the `client`'s `invalidateQueries` function:
@@ -19,10 +19,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 const queryClient = useQueryClient()
 
 // When this mutation succeeds, invalidate any queries with the `todos` or `reminders` query key
-const mutation = useMutation(addTodo, {
+const mutation = useMutation({
+  mutationFn: addTodo,
   onSuccess: () => {
-    queryClient.invalidateQueries(['todos'])
-    queryClient.invalidateQueries(['reminders'])
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
+    queryClient.invalidateQueries({ queryKey: ['reminders'] })
   },
 })
 ```
