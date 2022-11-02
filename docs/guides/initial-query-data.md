@@ -85,9 +85,7 @@ function Todos() {
   const result = useQuery({
     queryKey: ['todos'],
     queryFn: () => fetch('/todos'),
-    initialData: () => {
-      return getExpensiveTodos()
-    },
+    initialData: () => getExpensiveTodos(),
   })
 }
 ```
