@@ -976,7 +976,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => {
-      rendered.getByText("test")
+      rendered.getByText('test')
     })
 
     expect(states.length).toBe(2)
@@ -1002,7 +1002,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => {
-      rendered.getByText("test")
+      rendered.getByText('test')
     })
 
     expect(states.length).toBe(2)
