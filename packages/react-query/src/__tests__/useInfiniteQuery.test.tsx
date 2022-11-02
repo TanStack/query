@@ -2,7 +2,6 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import {
-  Blink,
   createQueryClient,
   queryKey,
   renderWithClient,
@@ -1725,13 +1724,13 @@ describe('useInfiniteQuery', () => {
       const promise = new Promise<string>((resolve, reject) => {
         cancelFn = jest.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
-        sleep(20).then(() => resolve('OK'))
+        sleep(1000).then(() => resolve('OK'))
       })
 
       return promise
     }
 
-    function Page() {
+    function Inner() {
       const state = useInfiniteQuery(key, queryFn)
       return (
         <div>
@@ -1740,14 +1739,25 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <Blink duration={5}>
-        <Page />
-      </Blink>,
-    )
+    function Page() {
+      const [isVisible, setIsVisible] = React.useState(true)
 
-    await waitFor(() => rendered.getByText('off'))
+      return (
+        <>
+          <button onClick={() => setIsVisible(false)}>hide</button>
+          {isVisible && <Inner />}
+          <div>{isVisible ? 'visible' : 'hidden'}</div>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('visible'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'hide' }))
+
+    await waitFor(() => rendered.getByText('hidden'))
 
     expect(cancelFn).toHaveBeenCalled()
   })
