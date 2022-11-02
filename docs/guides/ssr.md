@@ -31,7 +31,11 @@ export async function getStaticProps() {
 }
 
 function Posts(props) {
-  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts, initialData: props.posts })
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
+    initialData: props.posts,
+  })
 
   // ...
 }

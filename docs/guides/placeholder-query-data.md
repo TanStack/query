@@ -53,7 +53,8 @@ function Todo({ blogPostId }) {
     queryKey: ['blogPost', blogPostId],
     queryFn: () => fetch(`/blogPosts/${blogPostId}`),
     placeholderData: () => {
-      // Use the smaller/preview version of the blogPost from the 'blogPosts' query as the placeholder data for this blogPost query
+      // Use the smaller/preview version of the blogPost from the 'blogPosts'
+      // query as the placeholder data for this blogPost query
       return queryClient
         .getQueryData(['blogPosts'])
         ?.find(d => d.id === blogPostId)
