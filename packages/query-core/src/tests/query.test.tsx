@@ -174,12 +174,15 @@ describe('query', () => {
     query.cancel()
 
     // Check if the error is set to the cancelled error
-    await sleep(0)
-    expect(isCancelledError(result)).toBe(true)
-
-    // Reset visibilityState to original value
-    visibilityMock.mockRestore()
-    window.dispatchEvent(new FocusEvent('focus'))
+    try {
+      await promise
+    } catch {
+      expect(isCancelledError(result)).toBe(true)
+    } finally {
+      // Reset visibilityState to original value
+      visibilityMock.mockRestore()
+      window.dispatchEvent(new FocusEvent('focus'))
+    }
   })
 
   test('should provide context to queryFn', async () => {
