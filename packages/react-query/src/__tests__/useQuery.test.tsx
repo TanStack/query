@@ -969,12 +969,15 @@ describe('useQuery', () => {
         select: (data) => data.name,
       })
       states.push(state)
-      return null
+
+      return <div>{state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -992,12 +995,15 @@ describe('useQuery', () => {
         select: (data) => data.name,
       })
       states.push(state)
-      return null
+
+      return <div>{state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
