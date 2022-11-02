@@ -127,12 +127,12 @@
           "to": "guides/infinite-queries"
         },
         {
-          "label": "Placeholder Query Data",
-          "to": "guides/placeholder-query-data"
-        },
-        {
           "label": "Initial Query Data",
           "to": "guides/initial-query-data"
+        },
+        {
+          "label": "Placeholder Query Data",
+          "to": "guides/placeholder-query-data"
         },
         {
           "label": "Prefetching",
