@@ -134,8 +134,8 @@ describe('query', () => {
     // There should not be a result yet
     expect(result).toBeUndefined()
 
-    // By now we should have a value
-    await sleep(50)
+    // Promise should eventually be resolved
+    await promise
     expect(result).toBe('data3')
   })
 
