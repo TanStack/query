@@ -290,7 +290,7 @@ queryClient.resumePausedMutations()
 
 If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
 
-This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggeres the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
+This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggers the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
 
 ```tsx
 const persister = createSyncStoragePersister({
