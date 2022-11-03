@@ -68,15 +68,15 @@ export const ASTUtils = {
     }
 
     if (node.type === AST_NODE_TYPES.UnaryExpression) {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
     }
 
     if (node.type === AST_NODE_TYPES.ChainExpression) {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
     }
 
     if (node.type === AST_NODE_TYPES.TSNonNullExpression) {
-        identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
+      identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
     }
 
     return identifiers
