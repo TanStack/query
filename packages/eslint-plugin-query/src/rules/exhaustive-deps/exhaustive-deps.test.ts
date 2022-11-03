@@ -63,6 +63,15 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      only: true,
+      name: 'identify props!.id (ts non null expression)',
+      code: `
+        function MyComponent(props) {
+            useQuery({ queryKey: ["entity", props!.id], queryFn: () => api.entity.get(props!.id) });
+        }
+      `,
+    },
+    {
       name: 'should ignore keys from callback',
       code: `
         function MyComponent(props) {
