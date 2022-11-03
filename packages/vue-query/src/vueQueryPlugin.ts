@@ -12,21 +12,20 @@ declare global {
   }
 }
 
-export interface AdditionalClient {
-  queryClient: QueryClient
-  queryClientKey: string
+type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
+
+interface CommonOptions {
+  queryClientKey?: string
+  contextSharing?: boolean
+  clientPersister?: ClientPersister
 }
 
-interface ConfigOptions {
+interface ConfigOptions extends CommonOptions {
   queryClientConfig?: MaybeRefDeep<QueryClientConfig>
-  queryClientKey?: string
-  contextSharing?: boolean
 }
 
-interface ClientOptions {
+interface ClientOptions extends CommonOptions {
   queryClient?: QueryClient
-  queryClientKey?: string
-  contextSharing?: boolean
 }
 
 export type VueQueryPluginOptions = ConfigOptions | ClientOptions
@@ -58,6 +57,13 @@ export const VueQueryPlugin = {
     }
 
     client.mount()
+    let persisterUnmount = () => {
+      // noop
+    };
+
+    if (options.clientPersister) {
+      [persisterUnmount] = options.clientPersister(client);
+    }
 
     if (process.env.NODE_ENV !== 'production' && options.contextSharing) {
       client
@@ -69,6 +75,7 @@ export const VueQueryPlugin = {
 
     const cleanup = () => {
       client.unmount()
+      persisterUnmount();
     }
 
     if (app.onUnmount) {
