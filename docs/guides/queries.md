@@ -45,7 +45,10 @@ For **most** queries, it's usually sufficient to check for the `isLoading` state
 
 ```tsx
 function Todos() {
-  const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+  const { isLoading, isError, data, error } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  })
 
   if (isLoading) {
     return <span>Loading...</span>
@@ -70,7 +73,10 @@ If booleans aren't your thing, you can always use the `status` state as well:
 
 ```tsx
 function Todos() {
-  const { status, data, error } = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
+  const { status, data, error } = useQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodoList,
+  })
 
   if (status === 'loading') {
     return <span>Loading...</span>

@@ -114,7 +114,10 @@ Given the following custom hook:
 
 ```ts
 function useFetchData() {
-  return useQuery({ queryKey: ['fetchData'], queryFn: () => request('/api/data') });
+  return useQuery({
+    queryKey: ['fetchData'],
+    queryFn: () => request('/api/data'),
+  });
 }
 ```
 
@@ -178,7 +181,10 @@ const expectation = nock('http://example.com')
 Now we can safely run our tests, the trick here is to await for the data assertion to pass:
 
 ```ts
-const { result, waitFor } = renderHook(() => useInfiniteQueryCustomHook(), { wrapper });
+const { result, waitFor } = renderHook(
+  () => useInfiniteQueryCustomHook(),
+  { wrapper },
+);
 
 await waitFor(() => result.current.isSuccess);
 

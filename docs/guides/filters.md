@@ -55,7 +55,9 @@ await queryClient.isMutating()
 await queryClient.isMutating({ mutationKey: ["post"] })
 
 // Filter mutations using a predicate function
-await queryClient.isMutating({ predicate: (mutation) => mutation.options.variables?.id === 1 })
+await queryClient.isMutating({
+  predicate: (mutation) => mutation.options.variables?.id === 1,
+})
 ```
 
 A mutation filter object supports the following properties:

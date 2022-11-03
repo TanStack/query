@@ -7,7 +7,10 @@ Dependent (or serial) queries depend on previous ones to finish before they can 
 
 ```tsx
 // Get the user
-const { data: user } = useQuery({ queryKey: ['user', email], queryFn: getUserByEmail })
+const { data: user } = useQuery({
+  queryKey: ['user', email],
+  queryFn: getUserByEmail,
+})
 
 const userId = user?.id
 
