@@ -28,7 +28,7 @@ const {
   remove,
   status,
   fetchStatus,
-} = useQuery(
+} = useQuery({
   queryKey,
   queryFn,
   cacheTime,
