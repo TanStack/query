@@ -47,6 +47,14 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
+      name: 'identify !!props.id (unary expression)',
+      code: `
+        function MyComponent(props) {
+            useQuery({ queryKey: ["entity", !!props.id], queryFn: () => api.entity.get(props.id) });
+        }
+      `,
+    },
+    {
       name: 'should ignore keys from callback',
       code: `
         function MyComponent(props) {
