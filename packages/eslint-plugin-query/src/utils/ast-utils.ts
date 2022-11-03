@@ -71,6 +71,10 @@ export const ASTUtils = {
         identifiers.push(...ASTUtils.getNestedIdentifiers(node.argument))
     }
 
+    if (node.type === AST_NODE_TYPES.ChainExpression) {
+        identifiers.push(...ASTUtils.getNestedIdentifiers(node.expression))
+    }
+
     return identifiers
   },
   isAncestorIsCallee(identifier: TSESTree.Node) {
