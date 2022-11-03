@@ -14,7 +14,10 @@ useQuery({ queryKey: ['todos', todoId], queryFn: async () => {
   const data = await fetchTodoById(todoId)
   return data
 }})
-useQuery({ queryKey: ['todos', todoId], queryFn: ({ queryKey }) => fetchTodoById(queryKey[1])})
+useQuery({
+  queryKey: ['todos', todoId],
+  queryFn: ({ queryKey }) => fetchTodoById(queryKey[1]),
+})
 ```
 
 ## Handling and Throwing Errors
@@ -60,7 +63,10 @@ Query keys are not just for uniquely identifying the data you are fetching, but 
 
 ```tsx
 function Todos({ status, page }) {
-  const result = useQuery({ queryKey: ['todos', { status, page }], queryFn: fetchTodoList })
+  const result = useQuery({
+    queryKey: ['todos', { status, page }],
+    queryFn: fetchTodoList,
+  })
 }
 
 // Access the key, status and page variables in your query function!

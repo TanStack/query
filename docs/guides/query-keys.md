@@ -64,7 +64,10 @@ Since query keys uniquely describe the data they are fetching, they should inclu
 
 ```tsx
 function Todos({ todoId }) {
-  const result = useQuery({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
+  const result = useQuery({
+    queryKey: ['todos', todoId],
+    queryFn: () => fetchTodoById(todoId),
+  })
 }
 ```
 

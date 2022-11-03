@@ -35,7 +35,11 @@ If the process for accessing a query's placeholder data is intensive or just not
 ```tsx
 function Todos() {
   const placeholderData = useMemo(() => generateFakeTodos(), [])
-  const result = useQuery({ queyKey: ['todos'], queryFn: () => fetch('/todos'), placeholderData })
+  const result = useQuery({
+    queyKey: ['todos'],
+    queryFn: () => fetch('/todos'),
+    placeholderData
+  })
 }
 ```
 
