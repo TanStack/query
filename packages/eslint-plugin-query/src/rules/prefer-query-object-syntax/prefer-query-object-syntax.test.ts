@@ -40,6 +40,14 @@ ruleTester.run(name, rule, {
         useQuery(queryKey, queryFn, { enabled });
       `,
     },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        const getPosts = async () => Promise.resolve([]);
+        const postsQuery = { queryKey: ["posts"], queryFn: () => getPosts() };
+        const usePosts = () => useQuery(postsQuery);
+      `,
+    },
   ],
 
   invalid: [

@@ -34,9 +34,20 @@ export const rule = createRule({
           return
         }
 
-        const firstArgument = node.arguments[0]
+        let firstArgument = node.arguments[0]
         if (!firstArgument) {
           return
+        }
+
+        const reference = context
+          .getScope()
+          .references.find((ref) => ref.identifier === firstArgument)
+
+        if (
+          reference?.resolved?.defs[0]?.node.type === 'VariableDeclarator' &&
+          reference.resolved.defs[0].node.init?.type === 'ObjectExpression'
+        ) {
+          firstArgument = reference.resolved.defs[0].node.init
         }
 
         const hasFirstObjectArgument = firstArgument.type === 'ObjectExpression'
