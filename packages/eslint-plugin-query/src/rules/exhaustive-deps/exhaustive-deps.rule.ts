@@ -79,6 +79,7 @@ export const rule = createRule({
           }))
           .filter(({ ref, text }) => {
             return (
+              !ref.isTypeReference &&
               !ASTUtils.isAncestorIsCallee(ref.identifier) &&
               !existingKeys.some((existingKey) => existingKey === text)
             )

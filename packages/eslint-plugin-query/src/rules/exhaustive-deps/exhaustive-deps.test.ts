@@ -81,6 +81,18 @@ ruleTester.run('exhaustive-deps', rule, {
         }
       `,
     },
+    {
+      name: 'should ignore type identifiers',
+      code: `
+        type Result = {};
+        function MyComponent(props) {
+            useQuery({
+              queryKey: ["foo", dep1],
+              queryFn: () => api.get<Result>(dep),
+            });
+        }
+      `,
+    },
   ],
   invalid: [
     {
