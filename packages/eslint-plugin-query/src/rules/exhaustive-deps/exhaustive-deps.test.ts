@@ -63,7 +63,6 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      only: true,
       name: 'identify props!.id (ts non null expression)',
       code: `
         function MyComponent(props) {
@@ -78,6 +77,18 @@ ruleTester.run('exhaustive-deps', rule, {
             useQuery({
               queryKey: ["foo", dep1],
               queryFn: ({ queryKey: [, dep] }) => fetch(dep),
+            });
+        }
+      `,
+    },
+    {
+      name: 'should ignore type identifiers',
+      code: `
+        type Result = {};
+        function MyComponent(props) {
+            useQuery({
+              queryKey: ["foo", dep1],
+              queryFn: () => api.get<Result>(dep),
             });
         }
       `,
