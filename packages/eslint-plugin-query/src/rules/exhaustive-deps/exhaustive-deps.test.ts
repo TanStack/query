@@ -63,7 +63,6 @@ ruleTester.run('exhaustive-deps', rule, {
       `,
     },
     {
-      only: true,
       name: 'identify props!.id (ts non null expression)',
       code: `
         function MyComponent(props) {
