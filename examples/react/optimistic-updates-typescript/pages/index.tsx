@@ -40,7 +40,8 @@ function Example() {
       // When mutate is called:
       onMutate: async (newTodo: string) => {
         setText('')
-        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+        // Cancel any outgoing refetches
+        // (so they don't overwrite our optimistic update)
         await queryClient.cancelQueries(['todos'])
 
         // Snapshot the previous value
@@ -59,7 +60,8 @@ function Example() {
 
         return { previousTodos }
       },
-      // If the mutation fails, use the context returned from onMutate to roll back
+      // If the mutation fails,
+      // use the context returned from onMutate to roll back
       onError: (err, variables, context) => {
         if (context?.previousTodos) {
           queryClient.setQueryData<Todos>(['todos'], context.previousTodos)

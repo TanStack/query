@@ -155,6 +155,17 @@ export class QueryObserver<
 
     this.options = this.client.defaultQueryOptions(options)
 
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      typeof options?.isDataEqual !== 'undefined'
+    ) {
+      this.client
+        .getLogger()
+        .error(
+          `The isDataEqual option has been deprecated and will be removed in the next major version. You can achieve the same functionality by passing a function as the structuralSharing option`,
+        )
+    }
+
     if (!shallowEqualObjects(prevOptions, this.options)) {
       this.client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
@@ -457,7 +468,7 @@ export class QueryObserver<
     // Keep previous data if needed
     if (
       options.keepPreviousData &&
-      !state.dataUpdateCount &&
+      !state.dataUpdatedAt &&
       prevQueryResult?.isSuccess &&
       status !== 'error'
     ) {
@@ -517,11 +528,6 @@ export class QueryObserver<
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
             placeholderData = options.select(placeholderData)
-            placeholderData = replaceData(
-              prevResult?.data,
-              placeholderData,
-              options,
-            )
             this.selectError = null
           } catch (selectError) {
             if (process.env.NODE_ENV !== 'production') {
@@ -534,7 +540,7 @@ export class QueryObserver<
 
       if (typeof placeholderData !== 'undefined') {
         status = 'success'
-        data = placeholderData as TData
+        data = replaceData(prevResult?.data, placeholderData, options) as TData
         isPlaceholderData = true
       }
     }

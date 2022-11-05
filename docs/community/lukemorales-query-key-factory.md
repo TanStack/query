@@ -12,7 +12,7 @@ You can install Query Key Factory via [NPM](https://www.npmjs.com/package/@lukem
 ```bash
 $ npm i @lukemorales/query-key-factory
 # or
-$ pnpm add @lukemorales/query-key-factory
+$ pnpm add @lukemorales/query-key-factory
 # or
 $ yarn add @lukemorales/query-key-factory
 ```
@@ -60,12 +60,13 @@ import { queryKeys, completeTodo, fetchSingleTodo } from '../my-api'
 export function Todo({ todoId }) {
   const queryClient = useQueryClient()
 
-  const query = useQuery(queryKeys.todos.byId(todoId), fetchSingleTodo)
+  const query = useQuery({ queryKey: queryKeys.todos.byId(todoId), queryFn: fetchSingleTodo })
 
-  const mutation = useMutation(completeTodo, {
+  const mutation = useMutation({
+    mutationFn: () => completeTodo,
     onSuccess: () => {
       // Invalidate and refetch
-      queryClient.invalidateQueries(queryKeys.todos.completed)
+      queryClient.invalidateQueries({ queryKey: queryKeys.todos.completed })
     },
   })
 

@@ -600,15 +600,13 @@ function getDefaultState<
       ? (options.initialData as InitialDataFunction<TData>)()
       : options.initialData
 
-  const hasInitialData = typeof options.initialData !== 'undefined'
+  const hasData = typeof data !== 'undefined'
 
-  const initialDataUpdatedAt = hasInitialData
+  const initialDataUpdatedAt = hasData
     ? typeof options.initialDataUpdatedAt === 'function'
       ? (options.initialDataUpdatedAt as () => number | undefined)()
       : options.initialDataUpdatedAt
     : 0
-
-  const hasData = typeof data !== 'undefined'
 
   return {
     data,

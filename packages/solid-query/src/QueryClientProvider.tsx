@@ -80,7 +80,17 @@ export const QueryClientProvider = (
     },
     props,
   )
-  onMount(() => mergedProps.client.mount())
+  onMount(() => {
+    mergedProps.client.mount()
+
+    if (process.env.NODE_ENV !== 'production' && mergedProps.contextSharing) {
+      mergedProps.client
+        .getLogger()
+        .error(
+          `The contextSharing option has been deprecated and will be removed in the next major version`,
+        )
+    }
+  })
   onCleanup(() => mergedProps.client.unmount())
 
   const QueryClientContext = getQueryClientContext(

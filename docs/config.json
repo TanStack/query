@@ -64,10 +64,6 @@
         {
           "label": "Svelte Query (Coming Soon)",
           "to": "#"
-        },
-        {
-          "label": "Angular Query (Coming Soon)",
-          "to": "#"
         }
       ]
     },
@@ -127,12 +123,12 @@
           "to": "guides/infinite-queries"
         },
         {
-          "label": "Placeholder Query Data",
-          "to": "guides/placeholder-query-data"
-        },
-        {
           "label": "Initial Query Data",
           "to": "guides/initial-query-data"
+        },
+        {
+          "label": "Placeholder Query Data",
+          "to": "guides/placeholder-query-data"
         },
         {
           "label": "Prefetching",
@@ -222,6 +218,10 @@
         {
           "label": "React Query Kit",
           "to": "community/liaoliao666-react-query-kit"
+        },
+        {
+          "label": "Angular Query",
+          "to": "community/angular-query"
         }
       ]
     },
@@ -295,6 +295,23 @@
         {
           "label": "Offline Queries and Mutations",
           "to": "examples/react/offline"
+        }
+      ]
+    },
+    {
+      "label": "ESLint",
+      "children": [
+        {
+          "label": "ESLint Plugin Query",
+          "to": "eslint/eslint-plugin-query"
+        },
+        {
+          "label": "Exhaustive Deps",
+          "to": "eslint/exhaustive-deps"
+        },
+        {
+          "label": "Prefer object syntax",
+          "to": "eslint/prefer-query-object-syntax"
         }
       ]
     },

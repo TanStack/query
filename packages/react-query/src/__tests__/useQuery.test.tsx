@@ -401,30 +401,33 @@ describe('useQuery', () => {
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
 
     await queryClient.prefetchQuery(key, () => 'prefetched')
 
     function Page() {
-      const state = useQuery(key, () => 'data')
-      states.push(state)
-      return null
+      const result = useQuery(key, () => 'new data')
+
+      return (
+        <>
+          <div>data: {result.data}</div>
+          <div>isFetched: {result.isFetched ? 'true' : 'false'}</div>
+          <div>
+            isFetchedAfterMount: {result.isFetchedAfterMount ? 'true' : 'false'}
+          </div>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    rendered.getByText('data: prefetched')
+    rendered.getByText('isFetched: true')
+    rendered.getByText('isFetchedAfterMount: false')
 
-    expect(states[0]).toMatchObject({
-      data: 'prefetched',
-      isFetched: true,
-      isFetchedAfterMount: false,
-    })
-    expect(states[1]).toMatchObject({
-      data: 'data',
-      isFetched: true,
-      isFetchedAfterMount: true,
+    await waitFor(() => {
+      rendered.getByText('data: new data')
+      rendered.getByText('isFetched: true')
+      rendered.getByText('isFetchedAfterMount: true')
     })
   })
 
@@ -601,7 +604,8 @@ describe('useQuery', () => {
 
     const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(5)
+    rendered.getByText('status: loading, fetchStatus: fetching')
+
     await queryClient.cancelQueries(key)
     // query cancellation will reset the query to it's initial state
     await waitFor(() =>
@@ -869,20 +873,35 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { remove } = state
+      return (
+        <>
+          <div>{state.data}</div>
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          remove()
-          rerender({})
-        }, 20)
-      }, [remove])
-
-      return null
+          <button
+            onClick={() => {
+              state.remove()
+              rerender({})
+            }}
+          >
+            remove
+          </button>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
+    await waitFor(() => {
+      rendered.getByText('data')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'remove' }))
+
+    await waitFor(() => {
+      rendered.getByText('data')
+    })
+
+    // required to make sure no additional renders are happening after data is successfully fetched for the second time
     await sleep(100)
 
     expect(states.length).toBe(5)
@@ -950,12 +969,15 @@ describe('useQuery', () => {
         select: (data) => data.name,
       })
       states.push(state)
-      return null
+
+      return <div>{state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -973,12 +995,15 @@ describe('useQuery', () => {
         select: (data) => data.name,
       })
       states.push(state)
-      return null
+
+      return <div>{state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -1514,17 +1539,27 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(1)
-        }, 10)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => setCount(1)}>increment</button>
+          <div>data: {state.data ?? 'undefined'}</div>
+          <div>count: {count}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /increment/i }))
+
+    await waitFor(() => {
+      rendered.getByText('count: 1')
+      rendered.getByText('data: undefined')
+    })
+
+    // making sure no additional fetches are triggered
     await sleep(50)
 
     expect(states.length).toBe(3)
@@ -1740,18 +1775,30 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <h1>
+            data: {state.data}, count: {count}, isFetching:{' '}
+            {String(state.isFetching)}
+          </h1>
+          <button onClick={() => setCount(1)}>inc</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await waitFor(() =>
+      rendered.getByText('data: 0, count: 0, isFetching: false'),
+    )
+
+    fireEvent.click(rendered.getByRole('button', { name: 'inc' }))
+
+    await waitFor(() =>
+      rendered.getByText('data: 1, count: 1, isFetching: false'),
+    )
+
+    expect(states.length).toBe(5)
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1769,17 +1816,17 @@ describe('useQuery', () => {
     })
     // Set state
     expect(states[2]).toMatchObject({
-      data: 0,
+      data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPreviousData: false,
     })
     // Hook state update
     expect(states[3]).toMatchObject({
-      data: 0,
+      data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPreviousData: false,
     })
     // New data
     expect(states[4]).toMatchObject({
@@ -1808,26 +1855,41 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        refetch()
-
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-
-        setActTimeout(() => {
-          refetch()
-        }, 30)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <button onClick={() => state.refetch()}>refetch</button>
+          <button onClick={() => setCount(1)}>setCount</button>
+          <div>data: {state.data ?? 'undefined'}</div>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText('data: undefined')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => {
+      rendered.getByText('data: 0')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => {
+      rendered.getByText('data: 0')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => {
+      rendered.getByText('data: 1')
+    })
+
+    // making sure no additional renders are triggered
+    await sleep(20)
 
     expect(states.length).toBe(6)
 
@@ -2190,19 +2252,31 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
+      return (
+        <>
+          <button
+            onClick={async () => {
+              await state.refetch()
+            }}
+          >
+            refetch
+          </button>
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      }, [refetch])
-      return null
+          <div>{state.data}</div>
+        </>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(30)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    // sleep is required to make sure no additional renders happen after click
+    await sleep(20)
 
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({
@@ -2286,15 +2360,22 @@ describe('useQuery', () => {
     }
 
     function Page() {
-      useQuery(key, queryFn)
-      useQuery(key, queryFn)
+      const query1 = useQuery(key, queryFn)
+      const query2 = useQuery(key, queryFn)
       renders++
-      return null
+
+      return (
+        <div>
+          {query1.data} {query2.data}
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => {
+      rendered.getByText('data data')
+    })
 
     // Should be 2 instead of 3
     expect(renders).toBe(2)
@@ -3668,6 +3749,61 @@ describe('useQuery', () => {
     expect(results.length).toBe(2)
     expect(results[0]).toMatchObject({ data: 0, isFetching: true })
     expect(results[1]).toMatchObject({ data: 1, isFetching: false })
+  })
+
+  it('should show the correct data when switching keys with initialData, keepPreviousData & staleTime', async () => {
+    const key = queryKey()
+
+    const ALL_TODOS = [
+      { name: 'todo A', priority: 'high' },
+      { name: 'todo B', priority: 'medium' },
+    ]
+
+    const initialTodos = ALL_TODOS
+
+    function Page() {
+      const [filter, setFilter] = React.useState('')
+      const { data: todos } = useQuery(
+        [...key, filter],
+        async () => {
+          return ALL_TODOS.filter((todo) =>
+            filter ? todo.priority === filter : true,
+          )
+        },
+        {
+          initialData() {
+            return filter === '' ? initialTodos : undefined
+          },
+          keepPreviousData: true,
+          staleTime: 5000,
+        },
+      )
+
+      return (
+        <div>
+          Current Todos, filter: {filter || 'all'}
+          <hr />
+          <button onClick={() => setFilter('')}>All</button>
+          <button onClick={() => setFilter('high')}>High</button>
+          <ul>
+            {(todos ?? []).map((todo) => (
+              <li key={todo.name}>
+                {todo.name} - {todo.priority}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('Current Todos, filter: all'))
+
+    fireEvent.click(rendered.getByRole('button', { name: /high/i }))
+    await waitFor(() => rendered.getByText('Current Todos, filter: high'))
+    fireEvent.click(rendered.getByRole('button', { name: /all/i }))
+    await waitFor(() => rendered.getByText('todo B - medium'))
   })
 
   // // See https://github.com/tannerlinsley/react-query/issues/214

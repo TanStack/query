@@ -1993,13 +1993,15 @@ describe('createQuery', () => {
         states.push({ ...state })
       })
 
-      createEffect(() => {
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-      })
-
-      return null
+      return (
+        <div>
+          <h1>
+            data: {state.data}, count: {count}, isFetching:{' '}
+            {String(state.isFetching)}
+          </h1>
+          <button onClick={() => setCount(1)}>inc</button>
+        </div>
+      )
     }
 
     render(() => (
@@ -2007,6 +2009,16 @@ describe('createQuery', () => {
         <Page />
       </QueryClientProvider>
     ))
+
+    await waitFor(() =>
+      screen.getByText('data: 0, count: 0, isFetching: false'),
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'inc' }))
+
+    await waitFor(() =>
+      screen.getByText('data: 1, count: 1, isFetching: false'),
+    )
 
     await waitFor(() => expect(states.length).toBe(4))
 
@@ -2026,10 +2038,10 @@ describe('createQuery', () => {
     })
     // Set state
     expect(states[2]).toMatchObject({
-      data: 0,
+      data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPreviousData: false,
     })
     // New data
     expect(states[3]).toMatchObject({

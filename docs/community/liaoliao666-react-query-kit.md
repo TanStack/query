@@ -21,7 +21,7 @@ should be installed as one of your project's `dependencies`:
 ```bash
 $ npm i react-query-kit
 # or
-$ pnpm add react-query-kit
+$ pnpm add react-query-kit
 # or
 $ yarn add react-query-kit
 ```

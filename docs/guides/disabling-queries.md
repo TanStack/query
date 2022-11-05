@@ -7,12 +7,10 @@ If you ever want to disable a query from automatically running, you can use the 
 
 When `enabled` is `false`:
 
-- If the query has cached data
-  - The query will be initialized in the `status === 'success'` or `isSuccess` state.
-- If the query does not have cached data
-  - The query will start in the `status === 'loading'` and `fetchStatus === 'idle'`
+- If the query has cached data, then the query will be initialized in the `status === 'success'` or `isSuccess` state.
+- If the query does not have cached data, then the query will start in the `status === 'loading'` and `fetchStatus === 'idle'` state.
 - The query will not automatically fetch on mount.
-- The query will not automatically refetch in the background
+- The query will not automatically refetch in the background.
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` returned from `useQuery` can be used to manually trigger the query to fetch.
 
@@ -25,7 +23,9 @@ function Todos() {
     error,
     refetch,
     isFetching
-  } = useQuery(['todos'], fetchTodoList, {
+  } = useQuery({
+    queryKey: ['todos'],
+    queyFn: fetchTodoList,
     enabled: false,
   })
 
@@ -69,14 +69,12 @@ The enabled option can not only be used to permanently disable a query, but also
 function Todos() {
   const [filter, setFilter] = React.useState('')
 
-  const { data } = useQuery(
-    ['todos', filter],
-    () => fetchTodos(filter),
-    {
+  const { data } = useQuery({
+      queryKey: ['todos', filter],
+      queryFn: () => fetchTodos(filter),
       // ⬇️ disabled as long as the filter is empty
       enabled: !!filter
-    }
-  )
+  })
 
   return (
       <div>

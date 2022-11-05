@@ -17,15 +17,22 @@ Things to keep in mind:
 Types in React Query generally flow through very well so that you don't have to provide type annotations for yourself
 
 ```ts
-const { data } = useQuery(['test'], () => Promise.resolve(5))
+const { data } = useQuery({
 //      ^? const data: number | undefined
+  queryKey: ['test'],
+  queryFn: () => Promise.resolve(5)
+})
 ```
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSqDkIAEa4qAXQA0cFQEo5APjgAFciGAYAdLVQQANgDd0KgKxmzXgB6ILgw8IA9AH5eIA)
 
 ```ts
-const { data } = useQuery(['test'], () => Promise.resolve(5), { select: data => data.toString()})
+const { data } = useQuery({
 //      ^? const data: string | undefined
+  queryKey: ['test'],
+  queryFn: () => Promise.resolve(5),
+  select: data => data.toString(),
+})
 ```
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSox0IqgF0ANHBUBKOQD44ABXIhgGAHS1UEADYA3dCoCsxw0gwu6EwAXHASUuZhknT2MBAAyjBQwIIA5iaExrwA9Nlw+QUAegD8vEA)
@@ -35,7 +42,7 @@ This works best if your `queryFn` has a well-defined returned type. Keep in mind
 ```ts
 const fetchGroups = (): Promise<Group[]> => axios.get('/groups').then(response => response.data)
 
-const { data } = useQuery(['groups'], fetchGroups)
+const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 //      ^? const data: Group[] | undefined
  ```
 
@@ -46,7 +53,10 @@ const { data } = useQuery(['groups'], fetchGroups)
 React Query uses a [discriminated union type](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) for the query result, discriminated by the `status` field and the derived status boolean flags. This will allow you to check for e.g. `success` status to make `data` defined:
 
 ```ts
-const { data, isSuccess } = useQuery(['test'], () => Promise.resolve(5))
+const { data, isSuccess } = useQuery({
+  queryKey: ['test'],
+  queryFn: () => Promise.resolve(5),
+})
 
 if (isSuccess) {
     data
@@ -61,7 +71,7 @@ if (isSuccess) {
 The type for error defaults to `unknown`. This is in line with what TypeScript gives you per default in a catch clauses (see [useUnknownInCatchVariables](https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/#use-unknown-catch-variables)). The safest way to work with `error` would be to perform a runtime check; another way would be to explicitly define types for `data` and `error`:
 
 ```ts
-const { error } = useQuery(['groups'], fetchGroups)
+const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 //      ^? const error: unknown
 
 if (error instanceof Error) {

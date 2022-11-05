@@ -10,12 +10,11 @@ import { useIsMutating } from '@tanstack/react-query'
 // How many mutations are fetching?
 const isMutating = useIsMutating()
 // How many mutations matching the posts prefix are fetching?
-const isMutatingPosts = useIsMutating(['posts'])
+const isMutatingPosts = useIsMutating({ mutationKey: ['posts'] })
 ```
 
 **Options**
 
-- `mutationKey?: string | unknown[]`
 - `filters?: MutationFilters`: [Mutation Filters](../guides/filters#mutation-filters)
 - `context?: React.Context<QueryClient | undefined>`
   - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.

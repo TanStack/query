@@ -7,10 +7,10 @@ A query's `status === 'loading'` state is sufficient enough to show the initial 
 
 ```tsx
 function Todos() {
-  const { status, data: todos, error, isFetching } = useQuery(
-    ['todos'],
-    fetchTodos
-  )
+  const { status, data: todos, error, isFetching } = useQuery({
+      queryKey: ['todos'],
+      queryFn: fetchTodos,
+  })
 
   return status === 'loading' ? (
     <span>Loading...</span>
@@ -30,7 +30,7 @@ function Todos() {
 }
 ```
 
-# Displaying Global Background Fetching Loading State
+## Displaying Global Background Fetching Loading State
 
 In addition to individual query loading states, if you would like to show a global loading indicator when **any** queries are fetching (including in the background), you can use the `useIsFetching` hook:
 

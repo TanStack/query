@@ -274,7 +274,7 @@ Because of this the `mutate` function is now split into a `mutate` and `mutateAs
 The `mutate` function can be used when using callbacks:
 
 ```tsx
-const { mutate } = useMutation(addTodo)
+const { mutate } = useMutation({ mutationFn: addTodo })
 
 mutate('todo', {
   onSuccess: data => {
@@ -292,7 +292,7 @@ mutate('todo', {
 The `mutateAsync` function can be used when using async/await:
 
 ```tsx
-const { mutateAsync } = useMutation(addTodo)
+const { mutateAsync } = useMutation({ mutationFn: addTodo })
 
 try {
   const data = await mutateAsync('todo')
@@ -493,7 +493,8 @@ function Overview() {
 By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
 
 ```tsx
-const mutation = useMutation(addTodo, {
+const mutation = useMutation({
+  mutationFn: addTodo,
   retry: 3,
 })
 ```
@@ -571,7 +572,7 @@ The `QueryClient.setMutationDefaults()` method can be used to set default option
 queryClient.setMutationDefaults(['addPost'], { mutationFn: addPost })
 
 function Component() {
-  const { mutate } = useMutation(['addPost'])
+  const { mutate } = useMutation({ mutationKey: ['addPost'] })
 }
 ```
 
@@ -580,7 +581,7 @@ function Component() {
 The `useIsFetching()` hook now accepts filters which can be used to for example only show a spinner for certain type of queries:
 
 ```tsx
-const fetches = useIsFetching(['posts'])
+const fetches = useIsFetching({ queryKey: ['posts'] })
 ```
 
 #### Core separation

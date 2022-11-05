@@ -18,7 +18,8 @@ const {
   mutateAsync,
   reset,
   status,
-} = useMutation(mutationFn, {
+} = useMutation({
+  mutationFn,
   cacheTime,
   mutationKey,
   networkMode,

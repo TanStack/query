@@ -25,7 +25,11 @@ function App() {
 #### Disabling Per-Query
 
 ```tsx
-useQuery(['todos'], fetchTodos, { refetchOnWindowFocus: false })
+useQuery({
+  queryKey: ['todos'],
+  queryFn: fetchTodos,
+  refetchOnWindowFocus: false,
+})
 ```
 
 ## Custom Window Focus Event
