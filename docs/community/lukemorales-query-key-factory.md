@@ -12,7 +12,7 @@ You can install Query Key Factory via [NPM](https://www.npmjs.com/package/@lukem
 ```bash
 $ npm i @lukemorales/query-key-factory
 # or
-$ pnpm add @lukemorales/query-key-factory
+$ pnpm add @lukemorales/query-key-factory
 # or
 $ yarn add @lukemorales/query-key-factory
 ```

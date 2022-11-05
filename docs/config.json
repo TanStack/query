@@ -64,10 +64,6 @@
         {
           "label": "Svelte Query (Coming Soon)",
           "to": "#"
-        },
-        {
-          "label": "Angular Query (Coming Soon)",
-          "to": "#"
         }
       ]
     },
@@ -222,6 +218,10 @@
         {
           "label": "React Query Kit",
           "to": "community/liaoliao666-react-query-kit"
+        },
+        {
+          "label": "Angular Query",
+          "to": "community/angular-query"
         }
       ]
     },
@@ -310,7 +310,7 @@
           "to": "eslint/exhaustive-deps"
         },
         {
-          "label": "prefer-query-object-syntax",
+          "label": "Prefer object syntax",
           "to": "eslint/prefer-query-object-syntax"
         }
       ]
