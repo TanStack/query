@@ -60,7 +60,6 @@ type ExpanderProps = {
 }
 
 type CopierProps = {
-  onClick: () => {}
   style?: React.CSSProperties
 }
 
@@ -77,17 +76,14 @@ export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
   </span>
 )
 
-export const Copier = ({ onClick, style = {} }: CopierProps) => (
-  <span onClick={onClick} style={{
-    display: 'span',
+export const Copier = ({ style = {} }: CopierProps) => (
+  <span aria-label="Copy object to clipboard" title="Copy object to clipboard" style={{
     paddingLeft: '1em',
     ...style,
-  }}>
-    <span>
+  }} >
     <svg aria-hidden="true" height="12" viewBox="0 0 16 16" width="12">
       <path fill="currentColor" d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"></path><path fill="currentColor" d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0114.25 11h-7.5A1.75 1.75 0 015 9.25v-7.5zm1.75-.25a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-7.5a.25.25 0 00-.25-.25h-7.5z"></path>
     </svg>
-    </span>
   </span>
 )
 
@@ -103,7 +99,7 @@ type RendererProps = {
   subEntryPages: Entry[][]
   type: string
   expanded: boolean
-  copiable: boolean
+  copyable: boolean
   toggleExpanded: () => void
   pageSize: number
 }
@@ -138,7 +134,7 @@ export const DefaultRenderer: Renderer = ({
   subEntryPages = [],
   type,
   expanded = false,
-  copiable = false,
+  copyable = false,
   toggleExpanded,
   pageSize,
 }) => {
@@ -155,8 +151,8 @@ export const DefaultRenderer: Renderer = ({
               {subEntries.length} {subEntries.length > 1 ? `items` : `item`}
             </Info>
           </ExpandButton>
-          {copiable ? (<CopyButton>
-            <Copier onClick={() => navigator.clipboard.writeText(displayValue(value))} />
+          {copyable ? (<CopyButton onClick={() => navigator.clipboard.writeText(JSON.stringify(value))} >
+            <Copier />
           </CopyButton>) : null}
           {expanded ? (
             subEntryPages.length === 1 ? (
@@ -200,7 +196,7 @@ export const DefaultRenderer: Renderer = ({
 type ExplorerProps = Partial<RendererProps> & {
   renderer?: Renderer
   defaultExpanded?: true | Record<string, boolean>
-  copiable?: boolean,
+  copyable?: boolean,
 }
 
 type Property = {
@@ -218,7 +214,7 @@ export default function Explorer({
   defaultExpanded,
   renderer = DefaultRenderer,
   pageSize = 100,
-  copiable = false,
+  copyable = false,
   ...rest
 }: ExplorerProps) {
   const [expanded, setExpanded] = React.useState(Boolean(defaultExpanded))
@@ -277,7 +273,7 @@ export default function Explorer({
         key={entry.label}
         value={value}
         renderer={renderer}
-        copiable={copiable}
+        copyable={copyable}
         {...rest}
         {...entry}
       />
@@ -287,7 +283,7 @@ export default function Explorer({
     subEntryPages,
     value,
     expanded,
-    copiable,
+    copyable,
     toggleExpanded,
     pageSize,
     ...rest,

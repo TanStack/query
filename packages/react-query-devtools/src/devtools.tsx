@@ -966,7 +966,7 @@ const ActiveQuery = ({
           label="Data"
           value={activeQueryState.data}
           defaultExpanded={{}}
-          copiable
+          copyable
         />
       </div>
       <div
