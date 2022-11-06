@@ -34,7 +34,6 @@ interface QueryConfig<
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
-  meta: QueryMeta | undefined
 }
 
 export interface QueryState<TData = unknown, TError = unknown> {
@@ -64,7 +63,6 @@ export interface FetchContext<
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: TQueryKey
   state: QueryState<TData, TError>
-  meta: QueryMeta | undefined
 }
 
 export interface QueryBehavior<
@@ -152,7 +150,6 @@ export class Query<
   initialState: QueryState<TData, TError>
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
-  meta: QueryMeta | undefined
   isFetchingOptimistic?: boolean
 
   private cache: QueryCache
@@ -176,15 +173,16 @@ export class Query<
     this.queryHash = config.queryHash
     this.initialState = config.state || getDefaultState(this.options)
     this.state = this.initialState
-    this.meta = config.meta
+  }
+
+  get meta(): QueryMeta | undefined {
+    return this.options.meta
   }
 
   private setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.defaultOptions, ...options }
-
-    this.meta = options?.meta
 
     this.updateCacheTime(this.options.cacheTime)
   }
@@ -406,7 +404,6 @@ export class Query<
       queryKey: this.queryKey,
       state: this.state,
       fetchFn,
-      meta: this.meta,
     }
 
     addSignalProperty(context)
