@@ -29,15 +29,39 @@ export const ExpandButton = styled('button', {
   padding: 0,
 })
 
-export const CopyButton = styled('button', {
-  cursor: 'pointer',
-  color: 'inherit',
-  font: 'inherit',
-  outline: 'inherit',
-  background: 'transparent',
-  border: 'none',
-  padding: 0,
-})
+export const CopyButton = ({ value }: { value: unknown}) => {
+  const [copied, setCopied] = React.useState<boolean>(false);
+
+  return (
+    <button
+      onClick={() =>
+        navigator.clipboard.writeText(JSON.stringify(value)).then(
+          // Adding logging on console to temporarily get data on why it's not working on the iframe
+          () => {
+            setCopied(true)
+            setTimeout(() => {
+              setCopied(false);
+            }, 2000)
+          },
+          (err) => {
+            console.error('failed to copy:', err)
+          },
+        )
+      }
+      style={{
+        cursor: 'pointer',
+        color: 'inherit',
+        font: 'inherit',
+        outline: 'inherit',
+        background: 'transparent',
+        border: 'none',
+        padding: 0,
+      }}
+    >
+      {copied ? <Copied /> : <Copier />}
+    </button>
+  )
+}
 
 export const Value = styled('span', (_props, theme) => ({
   color: theme.danger,
@@ -107,18 +131,18 @@ export const Copied = ({ style = {} }: CopierProps) => (
       ...style,
     }}
   >
-  <svg
-    aria-hidden="true"
-    height="16"
-    viewBox="0 0 16 16"
-    width="16"
-    color="green"
-  >
-    <path
-      fill="green"
-      d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
-    ></path>
-  </svg>
+    <svg
+      aria-hidden="true"
+      height="16"
+      viewBox="0 0 16 16"
+      width="16"
+      color="green"
+    >
+      <path
+        fill="green"
+        d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
+      ></path>
+    </svg>
   </span>
 )
 
@@ -174,8 +198,6 @@ export const DefaultRenderer: Renderer = ({
   pageSize,
 }) => {
   const [expandedPages, setExpandedPages] = React.useState<number[]>([])
-  // TODO: shouldn't be here
-  const [copied, setCopied] = React.useState<boolean>(false)
 
   return (
     <Entry key={label}>
@@ -189,22 +211,7 @@ export const DefaultRenderer: Renderer = ({
             </Info>
           </ExpandButton>
           {copyable ? (
-            <CopyButton
-              onClick={() =>
-                navigator.clipboard.writeText(JSON.stringify(value)).then(
-                  // Adding logging on console to temporarily get data on why it's not working on the iframe
-                  () => {
-                    console.log('successfully copied')
-                    setCopied(true)
-                  },
-                  (err) => {
-                    console.log('failed to copy', err)
-                  },
-                )
-              }
-            >
-              {copied ? <Copied /> : <Copier />}
-            </CopyButton>
+            <CopyButton value={value}/>
           ) : null}
           {expanded ? (
             subEntryPages.length === 1 ? (
