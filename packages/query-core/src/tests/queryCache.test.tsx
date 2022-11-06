@@ -1,7 +1,8 @@
 import { sleep, queryKey, createQueryClient } from './utils'
 import type { QueryClient } from '..'
-import { QueryCache } from '..'
+import { QueryCache, QueryObserver } from '..'
 import type { Query } from '.././query'
+import { waitFor } from '@testing-library/react'
 
 describe('queryCache', () => {
   let queryClient: QueryClient
@@ -35,6 +36,40 @@ describe('queryCache', () => {
       queryClient.prefetchQuery(key, () => 'data')
       await sleep(100)
       expect(callback).toHaveBeenCalled()
+    })
+
+    test('should notify query cache when a query becomes stale', async () => {
+      const key = queryKey()
+      const events: Array<string> = []
+      const unsubscribe = queryCache.subscribe((event) => {
+        events.push(event.type)
+      })
+
+      const observer = new QueryObserver(queryClient, {
+        queryKey: key,
+        queryFn: () => 'data',
+        staleTime: 10,
+      })
+
+      const unsubScribeObserver = observer.subscribe(jest.fn)
+
+      await waitFor(() => {
+        expect(events.length).toBe(8)
+      })
+
+      expect(events).toEqual([
+        'added', // 1. Query added -> loading
+        'observerResultsUpdated', // 2. Observer result updated -> loading
+        'observerAdded', // 3. Observer added
+        'observerResultsUpdated', // 4. Observer result updated -> fetching
+        'updated', // 5. Query updated -> fetching
+        'observerResultsUpdated', // 6. Observer result updated -> success
+        'updated', // 7. Query updated -> success
+        'observerResultsUpdated', // 8. Observer result updated -> stale
+      ])
+
+      unsubscribe()
+      unsubScribeObserver()
     })
 
     test('should include the queryCache and query when notifying listeners', async () => {

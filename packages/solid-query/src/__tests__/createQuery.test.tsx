@@ -2424,46 +2424,6 @@ describe('createQuery', () => {
     expect(states[2]).toMatchObject({ isStale: true })
   })
 
-  it('should notify query cache when a query becomes stale', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-    const fn = jest.fn()
-
-    const unsubscribe = queryCache.subscribe(fn)
-
-    function Page() {
-      const state = createQuery(key, () => 'test', {
-        staleTime: 10,
-      })
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(20)
-    unsubscribe()
-
-    // 1. Query added -> loading
-    // 2. Observer result updated -> loading
-    // 3. Observer added
-    // 4. Query updated -> success
-    // 5. Observer result updated -> success
-    // 6. Query updated -> stale
-    // 7. Observer options updated
-    // 8. Observer result updated -> stale
-    // 9. Observer options updated
-    // Number 9 wont run in Solid JS
-    // Number 9 runs in react because the component re-renders after 8
-    expect(fn).toHaveBeenCalledTimes(8)
-  })
-
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
