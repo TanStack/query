@@ -157,9 +157,7 @@ export class InfiniteQueryObserver<
       isFetchingNextPage,
       isFetchingPreviousPage,
       isRefetching:
-        isRefetching &&
-        !isFetchingNextPage &&
-        !isFetchingPreviousPage,
+        isRefetching && !isFetchingNextPage && !isFetchingPreviousPage,
     }
   }
 }
