@@ -3839,18 +3839,35 @@ describe('useQuery', () => {
 
       results.push(result)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setShouldFetch(false)
-        }, 5)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <div>{result.data}</div>
+          <div>{shouldFetch ? 'enabled' : 'disabled'}</div>
+          <button
+            onClick={() => {
+              setShouldFetch(false)
+            }}
+          >
+            enable
+          </button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => {
+      rendered.getByText('fetched data')
+      rendered.getByText('enabled')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: /enable/i }))
+
+    await waitFor(() => {
+      rendered.getByText('fetched data')
+      rendered.getByText('disabled')
+    })
+
     expect(results.length).toBe(3)
     expect(results[0]).toMatchObject({ data: 'initial', isStale: true })
     expect(results[1]).toMatchObject({ data: 'fetched data', isStale: true })
