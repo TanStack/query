@@ -65,7 +65,6 @@ export function useBaseQuery<
     ? 'isRestoring'
     : 'optimistic'
     
-    console.log('defaulted options recalculate', options.value, queryClient.isRestoring.value, defaulted)
     return defaulted
   })
 

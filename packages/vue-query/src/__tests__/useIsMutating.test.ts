@@ -99,7 +99,7 @@ describe('useIsMutating', () => {
       const filters = ref({ fetching: ref(true) })
 
       const result = parseFilterArgs(key, filters)
-      const expected = { queryKey: ['key'], fetching: true }
+      const expected = { mutationKey: ['key'], fetching: true }
 
       expect(result).toEqual(expected)
     })

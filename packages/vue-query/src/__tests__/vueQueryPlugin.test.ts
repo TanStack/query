@@ -1,10 +1,11 @@
 import type { App, ComponentOptions } from 'vue'
-import { isVue2, isVue3 } from 'vue-demi'
+import { isVue2, isVue3, ref } from 'vue-demi'
 
 import type { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
 import { setupDevtools } from '../devtools/devtools'
+import { flushPromises } from './test-utils'
 
 jest.mock('../devtools/devtools')
 
@@ -256,6 +257,33 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, { contextSharing: true })
 
       expect(customClient.mount).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('when persister is provided', () => {
+    test('should properly modify isRestoring flag on queryClient', async () => {
+      const appMock = getAppMock()
+      const customClient = {
+        mount: jest.fn(),
+        isRestoring: ref(false),
+      } as unknown as QueryClient
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: () => [
+          jest.fn(),
+          new Promise((resolve) => {
+            resolve()
+          }),
+        ],
+      })
+
+      expect(customClient.isRestoring.value).toBeTruthy()
+
+      await flushPromises();
+
+      expect(customClient.isRestoring.value).toBeFalsy()
+
     })
   })
 })
