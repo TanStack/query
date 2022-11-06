@@ -76,7 +76,7 @@ export function infiniteQueryBehavior<
           const queryFnContext: QueryFunctionContext = {
             queryKey: context.queryKey,
             pageParam: param,
-            meta: context.meta,
+            meta: context.options.meta,
           }
 
           addSignalProperty(queryFnContext)
