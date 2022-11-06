@@ -1610,18 +1610,21 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      React.useEffect(() => {
-        setActTimeout(() => {
-          setCount(1)
-        }, 20)
-      }, [])
-
-      return null
+      return (
+        <div>
+          <div>data: {state.data}</div>
+          <button onClick={() => setCount(1)}>setCount</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await waitFor(() => expect(states.length).toBe(5))
+    await waitFor(() => rendered.getByText('data: 0'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'setCount' }))
+
+    await waitFor(() => rendered.getByText('data: 1'))
 
     // Initial
     expect(states[0]).toMatchObject({
@@ -1644,15 +1647,8 @@ describe('useQuery', () => {
       isSuccess: true,
       isPreviousData: true,
     })
-    // Hook state update
-    expect(states[3]).toMatchObject({
-      data: 0,
-      isFetching: true,
-      isSuccess: true,
-      isPreviousData: true,
-    })
     // New data
-    expect(states[4]).toMatchObject({
+    expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
