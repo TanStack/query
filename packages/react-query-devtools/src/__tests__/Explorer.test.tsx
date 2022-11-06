@@ -38,6 +38,7 @@ describe('Explorer', () => {
           toggleExpanded={toggleExpanded}
           pageSize={10}
           expanded={false}
+          copiable={false}
           subEntryPages={[[{ label: 'A lovely label' }]]}
           handleEntry={() => <></>}
           value={undefined}
