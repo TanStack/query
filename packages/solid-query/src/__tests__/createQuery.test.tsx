@@ -2447,21 +2447,69 @@ describe('createQuery', () => {
       </QueryClientProvider>
     ))
 
-    await sleep(20)
-    unsubscribe()
-
     // 1. Query added -> loading
     // 2. Observer result updated -> loading
     // 3. Observer added
     // 4. Query updated -> success
-    // 5. Observer result updated -> success
-    // 6. Query updated -> stale
-    // 7. Observer options updated
+    // 5. Observer options updated
+    // 6. Observer result updated -> success
+    // 7. Query updated -> stale
     // 8. Observer result updated -> stale
-    // 9. Observer options updated
-    // Number 9 wont run in Solid JS
+    // ~9. Observer options updated (won't run in Solid JS)
+
     // Number 9 runs in react because the component re-renders after 8
-    expect(fn).toHaveBeenCalledTimes(8)
+    // Order of actions 5-7 is different from React
+
+    await waitFor(() => {
+      expect(fn).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ type: 'added' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ type: 'observerResultsUpdated' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        3,
+        expect.objectContaining({ type: 'observerAdded' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        4,
+        expect.objectContaining({
+          type: 'updated',
+          action: expect.objectContaining({ type: 'fetch' }),
+        }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        5,
+        expect.objectContaining({ type: 'observerOptionsUpdated' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        6,
+        expect.objectContaining({ type: 'observerResultsUpdated' }),
+      )
+
+      // here query goes stale
+      expect(fn).toHaveBeenNthCalledWith(
+        7,
+        expect.objectContaining({
+          type: 'updated',
+          action: expect.objectContaining({ type: 'success' }),
+        }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        8,
+        expect.objectContaining({ type: 'observerResultsUpdated' }),
+      )
+    })
+
+    unsubscribe()
   })
 
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {

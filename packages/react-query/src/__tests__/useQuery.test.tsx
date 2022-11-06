@@ -2219,9 +2219,6 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
-    unsubscribe()
-
     // 1. Query added -> loading
     // 2. Observer result updated -> loading
     // 3. Observer added
@@ -2231,7 +2228,62 @@ describe('useQuery', () => {
     // 7. Observer options updated
     // 8. Observer result updated -> stale
     // 9. Observer options updated
-    expect(fn).toHaveBeenCalledTimes(9)
+
+    await waitFor(() => {
+      expect(fn).toHaveBeenNthCalledWith(
+        1,
+        expect.objectContaining({ type: 'added' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        2,
+        expect.objectContaining({ type: 'observerResultsUpdated' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        3,
+        expect.objectContaining({ type: 'observerAdded' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        4,
+        expect.objectContaining({
+          type: 'updated',
+          action: expect.objectContaining({ type: 'fetch' }),
+        }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        5,
+        expect.objectContaining({ type: 'observerResultsUpdated' }),
+      )
+
+      // here query goes stale
+      expect(fn).toHaveBeenNthCalledWith(
+        6,
+        expect.objectContaining({
+          type: 'updated',
+          action: expect.objectContaining({ type: 'success' }),
+        }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        7,
+        expect.objectContaining({ type: 'observerOptionsUpdated' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        8,
+        expect.objectContaining({ type: 'observerResultsUpdated' }),
+      )
+
+      expect(fn).toHaveBeenNthCalledWith(
+        9,
+        expect.objectContaining({ type: 'observerOptionsUpdated' }),
+      )
+    })
+
+    unsubscribe()
   })
 
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
