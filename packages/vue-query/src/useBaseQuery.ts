@@ -1,4 +1,13 @@
-import { onScopeDispose, toRefs, readonly, reactive, watch } from 'vue-demi'
+import {
+  onScopeDispose,
+  toRefs,
+  readonly,
+  reactive,
+  watch,
+  ref,
+  computed,
+  isRef,
+} from 'vue-demi'
 import type { ToRefs, UnwrapRef } from 'vue-demi'
 import type {
   QueryObserver,
@@ -9,7 +18,7 @@ import type {
 } from '@tanstack/query-core'
 import { useQueryClient } from './useQueryClient'
 import { updateState, isQueryKey, cloneDeepUnref } from './utils'
-import type { WithQueryClientKey } from './types'
+import type { MaybeRef, WithQueryClientKey } from './types'
 import type { UseQueryOptions } from './useQuery'
 import type { UseInfiniteQueryOptions } from './useInfiniteQuery'
 
@@ -34,7 +43,6 @@ export function useBaseQuery<
   TQueryFnData,
   TError,
   TData,
-  TQueryData,
   TQueryKey extends QueryKey,
 >(
   Observer: typeof QueryObserver,
@@ -46,40 +54,65 @@ export function useBaseQuery<
     | UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
   arg3: UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey> = {},
 ): UseQueryReturnType<TData, TError> {
-  const options = getQueryUnreffedOptions()
+  const options = computed(() => parseQueryArgs(arg1, arg2, arg3))
+
   const queryClient =
-    options.queryClient ?? useQueryClient(options.queryClientKey)
-  const defaultedOptions = queryClient.defaultQueryOptions(options)
-  const observer = new Observer(queryClient, defaultedOptions)
+    options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
+
+  const defaultedOptions = computed(() => {
+    const defaulted = queryClient.defaultQueryOptions(options.value)
+    defaulted._optimisticResults = queryClient.isRestoring.value
+    ? 'isRestoring'
+    : 'optimistic'
+    
+    console.log('defaulted options recalculate', options.value, queryClient.isRestoring.value, defaulted)
+    return defaulted
+  })
+
+  const observer = new Observer(queryClient, defaultedOptions.value)
   const state = reactive(observer.getCurrentResult())
-  const unsubscribe = observer.subscribe((result) => {
-    updateState(state, result)
+
+  const unsubscribe = ref(() => {
+    // noop
   })
 
   watch(
-    [() => arg1, () => arg2, () => arg3],
+    queryClient.isRestoring,
+    (isRestoring) => {
+      // isRestoring.value = val
+
+      if (!isRestoring) {
+        unsubscribe.value();
+        unsubscribe.value = observer.subscribe((result) => {
+          updateState(state, result)
+        })
+      }
+    },
+    { immediate: true },
+  )
+
+  watch(
+    defaultedOptions,
     () => {
-      observer.setOptions(
-        queryClient.defaultQueryOptions(getQueryUnreffedOptions()),
-      )
+      observer.setOptions(defaultedOptions.value)
+      updateState(state, observer.getCurrentResult())
     },
     { deep: true },
   )
 
   onScopeDispose(() => {
-    unsubscribe()
+    unsubscribe.value()
   })
 
   const suspense = () => {
     return new Promise<QueryObserverResult<TData, TError>>((resolve) => {
       const run = () => {
-        const newOptions = queryClient.defaultQueryOptions(
-          getQueryUnreffedOptions(),
-        )
-        if (newOptions.enabled !== false) {
-          const optimisticResult = observer.getOptimisticResult(newOptions)
+        if (defaultedOptions.value.enabled !== false) {
+          const optimisticResult = observer.getOptimisticResult(
+            defaultedOptions.value,
+          )
           if (optimisticResult.isStale) {
-            resolve(observer.fetchOptimistic(defaultedOptions))
+            resolve(observer.fetchOptimistic(defaultedOptions.value))
           } else {
             resolve(optimisticResult)
           }
@@ -88,7 +121,7 @@ export function useBaseQuery<
 
       run()
 
-      watch([() => arg1, () => arg2, () => arg3], run, { deep: true })
+      watch(defaultedOptions, run, { deep: true })
     })
   }
 
@@ -96,27 +129,44 @@ export function useBaseQuery<
     ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
     suspense,
   }
+}
 
-  /**
-   * Get Query Options object
-   * All inner refs unwrapped. No Reactivity
-   */
-  function getQueryUnreffedOptions() {
-    let mergedOptions
+export function parseQueryArgs<
+  TQueryFnData = unknown,
+  TError = unknown,
+  TData = TQueryFnData,
+  TQueryData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+>(
+  arg1:
+    | MaybeRef<TQueryKey>
+    | MaybeRef<UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>>,
+  arg2:
+    | MaybeRef<QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>>
+    | MaybeRef<
+        UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
+      > = {},
+  arg3: MaybeRef<
+    UseQueryOptionsGeneric<TQueryFnData, TError, TData, TQueryKey>
+  > = {},
+): WithQueryClientKey<
+  QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+> {
+  const plainArg1 = isRef(arg1) ? arg1.value : arg1
+  const plainArg2 = isRef(arg2) ? arg2.value : arg2
+  const plainArg3 = isRef(arg3) ? arg3.value : arg3
 
-    if (!isQueryKey(arg1)) {
-      // `useQuery(optionsObj)`
-      mergedOptions = arg1
-    } else if (typeof arg2 === 'function') {
-      // `useQuery(queryKey, queryFn, optionsObj?)`
-      mergedOptions = { ...arg3, queryKey: arg1, queryFn: arg2 }
-    } else {
-      // `useQuery(queryKey, optionsObj?)`
-      mergedOptions = { ...arg2, queryKey: arg1 }
-    }
+  let options = plainArg1
 
-    return cloneDeepUnref(mergedOptions) as WithQueryClientKey<
-      QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
-    >
+  if (!isQueryKey(plainArg1)) {
+    options = plainArg1
+  } else if (typeof plainArg2 === 'function') {
+    options = { ...plainArg3, queryKey: plainArg1, queryFn: plainArg2 }
+  } else {
+    options = { ...plainArg2, queryKey: plainArg1 }
   }
+
+  return cloneDeepUnref(options) as WithQueryClientKey<
+    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
+  >
 }

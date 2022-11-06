@@ -59,10 +59,15 @@ export const VueQueryPlugin = {
     client.mount()
     let persisterUnmount = () => {
       // noop
-    };
+    }
 
     if (options.clientPersister) {
-      [persisterUnmount] = options.clientPersister(client);
+      client.isRestoring.value = true
+      const [unmount, promise] = options.clientPersister(client)
+      persisterUnmount = unmount
+      promise.then(() => {
+        client.isRestoring.value = false
+      })
     }
 
     if (process.env.NODE_ENV !== 'production' && options.contextSharing) {
@@ -75,7 +80,7 @@ export const VueQueryPlugin = {
 
     const cleanup = () => {
       client.unmount()
-      persisterUnmount();
+      persisterUnmount()
     }
 
     if (app.onUnmount) {
