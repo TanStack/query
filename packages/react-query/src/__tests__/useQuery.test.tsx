@@ -1022,24 +1022,32 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 5)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <div>{state?.data}</div>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
 
-    expect(states.length).toBe(2)
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => {
+      rendered.getByText('test')
+    })
+
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+
+    // make sure no additional renders happen
+    await sleep(50)
+    expect(states.length).toBe(2)
   })
 
   it('should throw an error when a selector throws', async () => {
@@ -2230,7 +2238,7 @@ describe('useQuery', () => {
     // 9. Observer options updated
 
     await waitFor(() => {
-      //here query succeeds
+      // here query succeeds
       expect(fn).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'updated',

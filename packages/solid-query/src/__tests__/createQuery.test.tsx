@@ -2460,7 +2460,7 @@ describe('createQuery', () => {
     // Number 9 runs in react because the component re-renders after 8
 
     await waitFor(() => {
-      //here query succeeds
+      // here query succeeds
       expect(fn).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'updated',
