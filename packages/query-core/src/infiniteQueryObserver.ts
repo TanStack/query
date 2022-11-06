@@ -139,18 +139,25 @@ export class InfiniteQueryObserver<
   ): InfiniteQueryObserverResult<TData, TError> {
     const { state } = query
     const result = super.createResult(query, options)
+
+    const { isFetching, isRefetching } = result
+
+    const isFetchingNextPage =
+      isFetching && state.fetchMeta?.fetchMore?.direction === 'forward'
+
+    const isFetchingPreviousPage =
+      isFetching && state.fetchMeta?.fetchMore?.direction === 'backward'
+
     return {
       ...result,
       fetchNextPage: this.fetchNextPage,
       fetchPreviousPage: this.fetchPreviousPage,
       hasNextPage: hasNextPage(options, state.data?.pages),
       hasPreviousPage: hasPreviousPage(options, state.data?.pages),
-      isFetchingNextPage:
-        state.fetchStatus === 'fetching' &&
-        state.fetchMeta?.fetchMore?.direction === 'forward',
-      isFetchingPreviousPage:
-        state.fetchStatus === 'fetching' &&
-        state.fetchMeta?.fetchMore?.direction === 'backward',
+      isFetchingNextPage,
+      isFetchingPreviousPage,
+      isRefetching:
+        isRefetching && !isFetchingNextPage && !isFetchingPreviousPage,
     }
   }
 }

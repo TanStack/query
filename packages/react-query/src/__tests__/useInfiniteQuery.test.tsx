@@ -516,24 +516,28 @@ describe('useInfiniteQuery', () => {
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Initial fetch done
     expect(states[1]).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch next page
     expect(states[2]).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: true,
+      isRefetching: false,
     })
     // Fetch next page done
     expect(states[3]).toMatchObject({
       data: { pages: [10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch previous page
     expect(states[4]).toMatchObject({
@@ -541,6 +545,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: true,
+      isRefetching: false,
     })
     // Fetch previous page done
     expect(states[5]).toMatchObject({
@@ -548,6 +553,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
     // Refetch
     expect(states[6]).toMatchObject({
@@ -555,6 +561,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: true,
     })
     // Refetch done
     expect(states[7]).toMatchObject({
@@ -562,6 +569,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
   })
 
@@ -618,24 +626,28 @@ describe('useInfiniteQuery', () => {
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Initial fetch done
     expect(states[1]).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch next page
     expect(states[2]).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: true,
+      isRefetching: false,
     })
     // Fetch next page done
     expect(states[3]).toMatchObject({
       data: { pages: [10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch previous page
     expect(states[4]).toMatchObject({
@@ -643,6 +655,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: true,
+      isRefetching: false,
     })
     // Fetch previous page done
     expect(states[5]).toMatchObject({
@@ -650,6 +663,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
     // Refetch
     expect(states[6]).toMatchObject({
@@ -657,6 +671,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: true,
     })
     // Refetch done
     expect(states[7]).toMatchObject({
@@ -664,6 +679,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
   })
 
