@@ -2451,61 +2451,31 @@ describe('createQuery', () => {
     // 2. Observer result updated -> loading
     // 3. Observer added
     // 4. Query updated -> success
-    // 5. Observer options updated
-    // 6. Observer result updated -> success
-    // 7. Query updated -> stale
+    // 5. Observer result updated -> success
+    // 6. Query updated -> stale
+    // 7. Observer options updated
     // 8. Observer result updated -> stale
-    // ~9. Observer options updated (won't run in Solid JS)
-
+    // 9. Observer options updated
+    // Number 9 won't run in Solid JS
     // Number 9 runs in react because the component re-renders after 8
-    // Order of actions 5-7 is different from React
 
     await waitFor(() => {
-      expect(fn).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({ type: 'added' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({ type: 'observerResultsUpdated' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        3,
-        expect.objectContaining({ type: 'observerAdded' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        4,
+      //here query succeeds
+      expect(fn).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'updated',
           action: expect.objectContaining({ type: 'fetch' }),
         }),
       )
+    })
 
-      expect(fn).toHaveBeenNthCalledWith(
-        5,
-        expect.objectContaining({ type: 'observerOptionsUpdated' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        6,
-        expect.objectContaining({ type: 'observerResultsUpdated' }),
-      )
-
+    await waitFor(() => {
       // here query goes stale
-      expect(fn).toHaveBeenNthCalledWith(
-        7,
+      expect(fn).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'updated',
           action: expect.objectContaining({ type: 'success' }),
         }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        8,
-        expect.objectContaining({ type: 'observerResultsUpdated' }),
       )
     })
 

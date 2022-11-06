@@ -2230,56 +2230,22 @@ describe('useQuery', () => {
     // 9. Observer options updated
 
     await waitFor(() => {
-      expect(fn).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({ type: 'added' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({ type: 'observerResultsUpdated' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        3,
-        expect.objectContaining({ type: 'observerAdded' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        4,
+      //here query succeeds
+      expect(fn).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'updated',
           action: expect.objectContaining({ type: 'fetch' }),
         }),
       )
+    })
 
-      expect(fn).toHaveBeenNthCalledWith(
-        5,
-        expect.objectContaining({ type: 'observerResultsUpdated' }),
-      )
-
+    await waitFor(() => {
       // here query goes stale
-      expect(fn).toHaveBeenNthCalledWith(
-        6,
+      expect(fn).toHaveBeenCalledWith(
         expect.objectContaining({
           type: 'updated',
           action: expect.objectContaining({ type: 'success' }),
         }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        7,
-        expect.objectContaining({ type: 'observerOptionsUpdated' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        8,
-        expect.objectContaining({ type: 'observerResultsUpdated' }),
-      )
-
-      expect(fn).toHaveBeenNthCalledWith(
-        9,
-        expect.objectContaining({ type: 'observerOptionsUpdated' }),
       )
     })
 
