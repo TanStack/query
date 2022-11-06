@@ -140,7 +140,7 @@ export class InfiniteQueryObserver<
     const { state } = query
     const result = super.createResult(query, options)
 
-    const { isFetching, isLoading } = result
+    const { isFetching, isRefetching } = result
 
     const isFetchingNextPage =
       isFetching && state.fetchMeta?.fetchMore?.direction === 'forward'
@@ -157,7 +157,7 @@ export class InfiniteQueryObserver<
       isFetchingNextPage,
       isFetchingPreviousPage,
       isRefetching:
-       result.isRefetching &&
+        isRefetching &&
         !isFetchingNextPage &&
         !isFetchingPreviousPage,
     }
