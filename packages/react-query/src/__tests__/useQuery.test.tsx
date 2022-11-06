@@ -2210,56 +2210,6 @@ describe('useQuery', () => {
     expect(states[2]).toMatchObject({ isStale: true })
   })
 
-  it('should notify query cache when a query becomes stale', async () => {
-    const key = queryKey()
-    const states: UseQueryResult<string>[] = []
-    const fn = jest.fn()
-
-    const unsubscribe = queryCache.subscribe(fn)
-
-    function Page() {
-      const state = useQuery(key, () => 'test', {
-        staleTime: 10,
-      })
-      states.push(state)
-      return null
-    }
-
-    renderWithClient(queryClient, <Page />)
-
-    // 1. Query added -> loading
-    // 2. Observer result updated -> loading
-    // 3. Observer added
-    // 4. Query updated -> success
-    // 5. Observer result updated -> success
-    // 6. Query updated -> stale
-    // 7. Observer options updated
-    // 8. Observer result updated -> stale
-    // 9. Observer options updated
-
-    await waitFor(() => {
-      // here query succeeds
-      expect(fn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'updated',
-          action: expect.objectContaining({ type: 'fetch' }),
-        }),
-      )
-    })
-
-    await waitFor(() => {
-      // here query goes stale
-      expect(fn).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: 'updated',
-          action: expect.objectContaining({ type: 'success' }),
-        }),
-      )
-    })
-
-    unsubscribe()
-  })
-
   it('should not re-render when it should only re-render on data changes and the data did not change', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
