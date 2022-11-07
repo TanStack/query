@@ -277,6 +277,8 @@ export function ReactQueryDevtools({
         return () => {
           window.removeEventListener('resize', run)
           if (root?.parentElement && typeof previousValue === 'string') {
+            // unset padding for resetting
+            root.parentElement.style.padding = ''
             root.parentElement.style[styleProp] = previousValue
           }
         }
