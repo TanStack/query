@@ -29,22 +29,31 @@ export const ExpandButton = styled('button', {
   padding: 0,
 })
 
-export const CopyButton = ({ value }: { value: unknown}) => {
-  const [copied, setCopied] = React.useState<boolean>(false);
+enum CopyState {
+  NoCopy,
+  SuccessCopy,
+  ErrorCopy,
+}
+
+export const CopyButton = ({ value }: { value: unknown }) => {
+  const [copyState, setCopyState] = React.useState<CopyState>(CopyState.NoCopy)
 
   return (
     <button
       onClick={() =>
         navigator.clipboard.writeText(JSON.stringify(value)).then(
-          // Adding logging on console to temporarily get data on why it's not working on the iframe
           () => {
-            setCopied(true)
+            setCopyState(CopyState.SuccessCopy)
             setTimeout(() => {
-              setCopied(false);
-            }, 2000)
+              setCopyState(CopyState.NoCopy)
+            }, 1500)
           },
           (err) => {
-            console.error('failed to copy:', err)
+            console.error('Failed to copy: ', err)
+            setCopyState(CopyState.ErrorCopy)
+            setTimeout(() => {
+              setCopyState(CopyState.NoCopy)
+            }, 1500)
           },
         )
       }
@@ -58,7 +67,13 @@ export const CopyButton = ({ value }: { value: unknown}) => {
         padding: 0,
       }}
     >
-      {copied ? <Copied /> : <Copier />}
+      {copyState === CopyState.NoCopy ? (
+        <Copier />
+      ) : copyState === CopyState.SuccessCopy ? (
+        <Copied />
+      ) : copyState === CopyState.ErrorCopy ? (
+        <Error />
+      ) : null}
     </button>
   )
 }
@@ -109,7 +124,7 @@ export const Copier = ({ style = {} }: CopierProps) => (
       ...style,
     }}
   >
-    <svg aria-hidden="true" height="12" viewBox="0 0 16 16" width="12">
+    <svg aria-hidden="true" height="12" viewBox="0 0 16 12" width="10">
       <path
         fill="currentColor"
         d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"
@@ -122,6 +137,27 @@ export const Copier = ({ style = {} }: CopierProps) => (
   </span>
 )
 
+export const Error = ({ style = {} }: CopierProps) => (
+  <span
+    aria-label="Failed copying to clipboard"
+    title="Failed copying to clipboard"
+    style={{
+      paddingLeft: '1em',
+      ...style,
+    }}
+  >
+    <svg aria-hidden="true" height="12" viewBox="0 0 16 12" width="10">
+      <path
+        fill="red"
+        d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"
+      ></path>
+    </svg>
+    <span style={{ color: 'red', fontSize: '12px', paddingLeft: '4px' }}>
+      See console
+    </span>
+  </span>
+)
+
 export const Copied = ({ style = {} }: CopierProps) => (
   <span
     aria-label="Object copied to clipboard"
@@ -131,13 +167,7 @@ export const Copied = ({ style = {} }: CopierProps) => (
       ...style,
     }}
   >
-    <svg
-      aria-hidden="true"
-      height="16"
-      viewBox="0 0 16 16"
-      width="16"
-      color="green"
-    >
+    <svg aria-hidden="true" height="12" viewBox="0 0 16 12" width="10">
       <path
         fill="green"
         d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
@@ -210,9 +240,7 @@ export const DefaultRenderer: Renderer = ({
               {subEntries.length} {subEntries.length > 1 ? `items` : `item`}
             </Info>
           </ExpandButton>
-          {copyable ? (
-            <CopyButton value={value}/>
-          ) : null}
+          {copyable ? <CopyButton value={value} /> : null}
           {expanded ? (
             subEntryPages.length === 1 ? (
               <SubEntries>{subEntries.map(handleEntry)}</SubEntries>
