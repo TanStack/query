@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
+import type { QueryClient } from '@tanstack/query-core'
 import { onScopeDispose, reactive, readonly, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 
@@ -125,15 +126,45 @@ export type UseQueriesResults<
 
 type UseQueriesOptionsArg<T extends any[]> = readonly [...UseQueriesOptions<T>]
 
+export type UseQueriesItem<T extends any[]> = Omit<
+  UseQueriesOptionsArg<T>,
+  'queryClient' | 'queryClientKey'
+>
+
+type DefaultUseQueriesOptions<T extends any[]> = {
+  queries: Ref<UseQueriesItem<T>> | UseQueriesItem<T>
+}
+
+interface UseQueriesOptionsWithQueryClient<T extends any[]>
+  extends DefaultUseQueriesOptions<T> {
+  queryClient?: QueryClient
+}
+interface UseQueriesOptionsWithQueryClientKey<T extends any[]>
+  extends DefaultUseQueriesOptions<T> {
+  queryClientKey?: string
+}
+
+export function useQueries<T extends any[]>(
+  options: UseQueriesOptionsWithQueryClient<T>,
+): Readonly<UseQueriesResults<T>>
+export function useQueries<T extends any[]>(
+  options: UseQueriesOptionsWithQueryClientKey<T>,
+): Readonly<UseQueriesResults<T>>
 export function useQueries<T extends any[]>({
   queries,
-}: {
-  queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
-}): Readonly<UseQueriesResults<T>> {
+  ...queriesOptions
+}:
+  | UseQueriesOptionsWithQueryClientKey<T>
+  | UseQueriesOptionsWithQueryClient<T>): Readonly<UseQueriesResults<T>> {
   const unreffedQueries = cloneDeepUnref(queries) as UseQueriesOptionsArg<T>
 
-  const queryClientKey = unreffedQueries[0].queryClientKey
-  const optionsQueryClient = unreffedQueries[0].queryClient
+  const optionsQueryClient =
+    'queryClient' in queriesOptions ? queriesOptions.queryClient : undefined
+  const queryClientKey =
+    'queryClientKey' in queriesOptions
+      ? queriesOptions.queryClientKey
+      : undefined
+
   const queryClient = optionsQueryClient ?? useQueryClient(queryClientKey)
   const defaultedQueries = unreffedQueries.map((options) => {
     return queryClient.defaultQueryOptions(options)
