@@ -1,6 +1,6 @@
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
-import { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
+import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 import { uniqueBy } from './unique-by'
 
 export const ASTUtils = {
@@ -162,10 +162,6 @@ export const ASTUtils = {
     context: Readonly<RuleContext<string, readonly unknown[]>>
   }) {
     const { node, context } = params
-
-    if (node === null) {
-      return null
-    }
 
     const resolvedNode = context
       .getScope()

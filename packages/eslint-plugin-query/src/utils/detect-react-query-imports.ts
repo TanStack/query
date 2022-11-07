@@ -26,6 +26,8 @@ export function detectReactQueryImports(create: EnhancedCreate): Create {
           if (specifier.type === 'ImportSpecifier') {
             return node.name === specifier.local.name
           }
+
+          return false
         })
       },
     }
