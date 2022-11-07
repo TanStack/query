@@ -1,5 +1,6 @@
 import type { TSESLint, TSESTree } from '@typescript-eslint/utils'
 import { AST_NODE_TYPES } from '@typescript-eslint/utils'
+import { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 import { uniqueBy } from './unique-by'
 
 export const ASTUtils = {
@@ -155,5 +156,26 @@ export const ASTUtils = {
         AST_NODE_TYPES.Identifier,
       ]),
     )
+  },
+  getReferencedExpressionByIdentifier(params: {
+    node: TSESTree.Node
+    context: Readonly<RuleContext<string, readonly unknown[]>>
+  }) {
+    const { node, context } = params
+
+    if (node === null) {
+      return null
+    }
+
+    const resolvedNode = context
+      .getScope()
+      .references.find((ref) => ref.identifier === node)?.resolved
+      ?.defs[0]?.node
+
+    if (resolvedNode?.type !== AST_NODE_TYPES.VariableDeclarator) {
+      return null
+    }
+
+    return resolvedNode.init
   },
 }
