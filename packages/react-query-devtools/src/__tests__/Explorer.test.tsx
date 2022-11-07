@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import * as React from 'react'
+import { act } from 'react-dom/test-utils'
 
-import { chunkArray, DefaultRenderer } from '../Explorer'
+import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
 
 describe('Explorer', () => {
@@ -54,6 +55,67 @@ describe('Explorer', () => {
       fireEvent.click(expandButton)
 
       expect(toggleExpanded).toHaveBeenCalledTimes(1)
+    })
+
+    it('when the entry label is clicked, toggle expanded', async () => {
+      // Mock clipboard
+      let clipBoardContent = null
+      const value = 'someValue'
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: async () => {
+            return new Promise(() => (clipBoardContent = value))
+          },
+        },
+        configurable: true
+      })
+
+      act(() => {
+        render(<CopyButton value={value} />)
+      })
+
+      // After rendering the clipboard content should be null
+      expect(clipBoardContent).toBe(null)
+
+      const copyButton = screen.getByRole('button')
+
+      await screen.findByLabelText('Copy object to clipboard')
+
+      // After clicking the content should be added to the clipboard
+      act(() => {
+        fireEvent.click(copyButton)
+      })
+
+      expect(clipBoardContent).toBe(value)
+    })
+
+    it('when the entry label is clicked, toggle expanded', async () => {
+      // Mock clipboard
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: async () => {
+            return new Promise(() => {throw Error})
+          },
+        },
+        configurable: true
+      })
+
+      act(() => {
+        render(<CopyButton value={'someValue'} />)
+      })
+
+      const copyButton = screen.getByRole('button')
+
+      await screen.findByLabelText('Copy object to clipboard')
+
+      // After clicking the content should be added to the clipboard
+      await act(async () => {
+        fireEvent.click(copyButton)
+        await new Promise(process.nextTick)
+      })
+
+      // Check that it has failed
+      await screen.findByLabelText('Failed copying to clipboard')
     })
   })
 
