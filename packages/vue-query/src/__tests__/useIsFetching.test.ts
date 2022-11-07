@@ -89,7 +89,7 @@ describe('useIsFetching', () => {
     })
 
     test('should unwrap refs arguments', () => {
-      const key = ref(['key']);
+      const key = ref(['key'])
       const filters = ref({ stale: ref(true) })
 
       const result = parseFilterArgs(key, filters)

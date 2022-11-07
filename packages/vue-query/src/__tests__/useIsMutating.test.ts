@@ -95,7 +95,7 @@ describe('useIsMutating', () => {
     })
 
     test('should unwrap refs arguments', () => {
-      const key = ref(['key']);
+      const key = ref(['key'])
       const filters = ref({ fetching: ref(true) })
 
       const result = parseFilterArgs(key, filters)

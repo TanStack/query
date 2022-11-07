@@ -11,7 +11,7 @@ export type QueryFilters = MaybeRefDeep<WithQueryClientKey<QF>>
 export function useIsFetching(filters?: QueryFilters): Ref<number>
 export function useIsFetching(
   queryKey?: MaybeRef<QueryKey>,
-  filters?:  Omit<QueryFilters, 'queryKey'>,
+  filters?: Omit<QueryFilters, 'queryKey'>,
 ): Ref<number>
 export function useIsFetching(
   arg1?: MaybeRef<QueryKey> | QueryFilters,

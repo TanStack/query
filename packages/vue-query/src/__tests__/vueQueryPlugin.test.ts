@@ -280,10 +280,9 @@ describe('VueQueryPlugin', () => {
 
       expect(customClient.isRestoring.value).toBeTruthy()
 
-      await flushPromises();
+      await flushPromises()
 
       expect(customClient.isRestoring.value).toBeFalsy()
-
     })
   })
 })

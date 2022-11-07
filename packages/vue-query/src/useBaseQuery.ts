@@ -62,9 +62,9 @@ export function useBaseQuery<
   const defaultedOptions = computed(() => {
     const defaulted = queryClient.defaultQueryOptions(options.value)
     defaulted._optimisticResults = queryClient.isRestoring.value
-    ? 'isRestoring'
-    : 'optimistic'
-    
+      ? 'isRestoring'
+      : 'optimistic'
+
     return defaulted
   })
 
@@ -78,10 +78,8 @@ export function useBaseQuery<
   watch(
     queryClient.isRestoring,
     (isRestoring) => {
-      // isRestoring.value = val
-
       if (!isRestoring) {
-        unsubscribe.value();
+        unsubscribe.value()
         unsubscribe.value = observer.subscribe((result) => {
           updateState(state, result)
         })
