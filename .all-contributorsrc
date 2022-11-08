@@ -275,7 +275,10 @@
       "login": "Newbie012",
       "name": "Eliya Cohen",
       "avatar_url": "https://avatars.githubusercontent.com/u/10504365?v=4",
-      "profile": "https://github.com/Newbie012"
+      "profile": "https://github.com/Newbie012",
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "KubaJastrz",
