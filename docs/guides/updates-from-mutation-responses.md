@@ -47,7 +47,7 @@ const useMutateTodo = () => {
 
 ## Immutability
 
-Updates via `setQueryData` must be performed in an _immuatable_ way. **DO NOT** attempt to write directly to the cache by mutating data (that you retrieved via from the cache) in place. It might work at first but can lead to subtle bugs along the way.
+Updates via `setQueryData` must be performed in an _immutable_ way. **DO NOT** attempt to write directly to the cache by mutating data (that you retrieved via from the cache) in place. It might work at first but can lead to subtle bugs along the way.
 
 ```tsx
 queryClient.setQueryData(
