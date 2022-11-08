@@ -48,7 +48,7 @@ You can even invalidate queries with specific variables by passing a more specif
 
 ```tsx
 queryClient.invalidateQueries({
-  queryKey: ['todos', { type: 'done' },
+  queryKey: ['todos', { type: 'done' }],
 })
 
 // The query below will be invalidated
