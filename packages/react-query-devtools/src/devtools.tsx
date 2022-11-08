@@ -390,18 +390,7 @@ export function ReactQueryDevtools({
           <Logo aria-hidden />
           <ScreenReader text="Open React Query Devtools" />
         </button>
-      ) : (
-        <style
-          nonce={styleNonce}
-          dangerouslySetInnerHTML={{
-            __html: `
-          .ReactQueryDevtoolsParent.ReactQueryDevtoolsParent {
-            padding-bottom: 100px;
-          }
-        `,
-          }}
-        />
-      )}
+      ) : null}
     </Container>
   )
 }
