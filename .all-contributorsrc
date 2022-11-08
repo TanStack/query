@@ -288,6 +288,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "balazsmatepetro",
+      "name": "Balázs Máté Petró",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1608725?v=4",
+      "profile": "https://github.com/balazsmatepetro",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
