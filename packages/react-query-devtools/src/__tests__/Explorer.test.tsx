@@ -90,7 +90,7 @@ describe('Explorer', () => {
     })
 
     it('when the entry label is clicked, toggle expanded', async () => {
-      // Mock clipboard
+      // Mock clipboard with error state
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: async () => {
@@ -108,7 +108,7 @@ describe('Explorer', () => {
 
       await screen.findByLabelText('Copy object to clipboard')
 
-      // After clicking the content should be added to the clipboard
+      // After clicking the content should NOT be added to the clipboard
       await act(async () => {
         fireEvent.click(copyButton)
         await new Promise(process.nextTick)
