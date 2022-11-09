@@ -1,6 +1,7 @@
 import * as React from 'react'
 
 import { displayValue, styled } from './utils'
+import superjson from 'superjson';
 
 export const Entry = styled('div', {
   fontFamily: 'Menlo, monospace',
@@ -40,8 +41,8 @@ export const CopyButton = ({ value }: { value: unknown }) => {
 
   return (
     <button
-      onClick={() =>
-        navigator.clipboard.writeText(JSON.stringify(value)).then(
+      onClick={() => {
+        navigator.clipboard.writeText(superjson.stringify(value)).then(
           () => {
             setCopyState(CopyState.SuccessCopy)
             setTimeout(() => {
@@ -55,7 +56,7 @@ export const CopyButton = ({ value }: { value: unknown }) => {
               setCopyState(CopyState.NoCopy)
             }, 1500)
           },
-        )
+        )}
       }
       style={{
         cursor: 'pointer',
@@ -70,9 +71,9 @@ export const CopyButton = ({ value }: { value: unknown }) => {
       {copyState === CopyState.NoCopy ? (
         <Copier />
       ) : copyState === CopyState.SuccessCopy ? (
-        <Copied />
+        <CopiedCopier />
       ) : copyState === CopyState.ErrorCopy ? (
-        <Error />
+        <ErrorCopier />
       ) : null}
     </button>
   )
@@ -98,10 +99,6 @@ type ExpanderProps = {
   style?: React.CSSProperties
 }
 
-type CopierProps = {
-  style?: React.CSSProperties
-}
-
 export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
   <span
     style={{
@@ -115,16 +112,15 @@ export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
   </span>
 )
 
-export const Copier = ({ style = {} }: CopierProps) => (
+export const Copier = () => (
   <span
     aria-label="Copy object to clipboard"
     title="Copy object to clipboard"
     style={{
       paddingLeft: '1em',
-      ...style,
     }}
   >
-    <svg aria-hidden="true" height="12" viewBox="0 0 16 12" width="10">
+    <svg height="12" viewBox="0 0 16 12" width="10">
       <path
         fill="currentColor"
         d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 010 1.5h-1.5a.25.25 0 00-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 00.25-.25v-1.5a.75.75 0 011.5 0v1.5A1.75 1.75 0 019.25 16h-7.5A1.75 1.75 0 010 14.25v-7.5z"
@@ -137,37 +133,41 @@ export const Copier = ({ style = {} }: CopierProps) => (
   </span>
 )
 
-export const Error = ({ style = {} }: CopierProps) => (
-  <span
+export const ErrorCopier = () => (
+<span
     aria-label="Failed copying to clipboard"
     title="Failed copying to clipboard"
     style={{
       paddingLeft: '1em',
-      ...style,
+      display: 'flex',
+      alignItems: 'center',
     }}
   >
-    <svg aria-hidden="true" height="12" viewBox="0 0 16 12" width="10">
+    <svg height="12" viewBox="0 0 16 12" width="10" display="block">
       <path
         fill="red"
         d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"
       ></path>
     </svg>
-    <span style={{ color: 'red', fontSize: '12px', paddingLeft: '4px' }}>
+    <span style={{ color: 'red', fontSize: '12px', paddingLeft: '4px', position: 'relative', top: '2px' }}>
       See console
     </span>
   </span>
+
+
 )
 
-export const Copied = ({ style = {} }: CopierProps) => (
+export const CopiedCopier = () => (
   <span
     aria-label="Object copied to clipboard"
     title="Object copied to clipboard"
     style={{
       paddingLeft: '1em',
-      ...style,
+      display: 'inline-block',
+      verticalAlign: 'middle',
     }}
   >
-    <svg aria-hidden="true" height="12" viewBox="0 0 16 12" width="10">
+    <svg height="16" viewBox="0 0 16 16" width="16" display="block">
       <path
         fill="green"
         d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
