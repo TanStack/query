@@ -59,9 +59,6 @@ Its available methods are:
 - `mutationCache?: MutationCache`
   - Optional
   - The mutation cache this client is connected to.
-- `logger?: Logger`
-  - Optional
-  - The logger this client uses to log debugging information, warnings and errors. If not set, `console` is the default logger.
 - `defaultOptions?: DefaultOptions`
   - Optional
   - Define defaults for all queries and mutations using this queryClient.
