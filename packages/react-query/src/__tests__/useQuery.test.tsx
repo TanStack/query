@@ -1024,7 +1024,7 @@ describe('useQuery', () => {
 
       return (
         <div>
-          <div>{state?.data}</div>
+          <div>{state.data}</div>
           <button onClick={() => state.refetch()}>refetch</button>
         </div>
       )
