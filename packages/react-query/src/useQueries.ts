@@ -12,6 +12,12 @@ import {
   getHasError,
   useClearResetErrorBoundary,
 } from './errorBoundaryUtils'
+import {
+  ensureStaleTime,
+  shouldSuspend,
+  fetchOptimistic,
+  willFetch,
+} from './suspense'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -170,7 +176,7 @@ export function useQueries<T extends any[]>({
     () => new QueriesObserver(queryClient, defaultedQueries),
   )
 
-  const result = observer.getOptimisticResult(defaultedQueries)
+  const optimisticResult = observer.getOptimisticResult(defaultedQueries)
 
   useSyncExternalStore(
     React.useCallback(
@@ -194,22 +200,48 @@ export function useQueries<T extends any[]>({
 
   defaultedQueries.forEach((query) => {
     ensurePreventErrorBoundaryRetry(query, errorResetBoundary)
+    ensureStaleTime(query)
   })
 
   useClearResetErrorBoundary(errorResetBoundary)
 
-  const firstSingleResultWhichShouldThrow = result.find((singleResult, index) =>
-    getHasError({
-      result: singleResult,
-      errorResetBoundary,
-      useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
-      query: observer.getQueries()[index]!,
-    }),
+  const shouldAtLeastOneSuspend = optimisticResult.some((result, index) =>
+    shouldSuspend(defaultedQueries[index], result, isRestoring),
+  )
+
+  const suspensePromises = shouldAtLeastOneSuspend
+    ? optimisticResult.flatMap((result, index) => {
+        const options = defaultedQueries[index]
+        const queryObserver = observer.getObservers()[index]
+
+        if (options && queryObserver) {
+          if (shouldSuspend(options, result, isRestoring)) {
+            return fetchOptimistic(options, queryObserver, errorResetBoundary)
+          } else if (willFetch(result, isRestoring)) {
+            void fetchOptimistic(options, queryObserver, errorResetBoundary)
+          }
+        }
+        return []
+      })
+    : []
+
+  if (suspensePromises.length > 0) {
+    throw Promise.all(suspensePromises)
+  }
+
+  const firstSingleResultWhichShouldThrow = optimisticResult.find(
+    (result, index) =>
+      getHasError({
+        result,
+        errorResetBoundary,
+        useErrorBoundary: defaultedQueries[index]?.useErrorBoundary ?? false,
+        query: observer.getQueries()[index]!,
+      }),
   )
 
   if (firstSingleResultWhichShouldThrow?.error) {
     throw firstSingleResultWhichShouldThrow.error
   }
 
-  return result as QueriesResults<T>
+  return optimisticResult as QueriesResults<T>
 }
