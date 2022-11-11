@@ -4,3 +4,5 @@ packages:
   - 'examples/solid/**'
   - 'examples/svelte/**'
   - 'examples/vue/**'
+  - '!examples/vue/2*'
+  - '!examples/vue/nuxt*'

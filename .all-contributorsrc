@@ -275,13 +275,25 @@
       "login": "Newbie012",
       "name": "Eliya Cohen",
       "avatar_url": "https://avatars.githubusercontent.com/u/10504365?v=4",
-      "profile": "https://github.com/Newbie012"
+      "profile": "https://github.com/Newbie012",
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "KubaJastrz",
       "name": "Jakub Jastrzębski",
       "avatar_url": "https://avatars.githubusercontent.com/u/6443113?v=4",
       "profile": "https://kubajastrz.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "balazsmatepetro",
+      "name": "Balázs Máté Petró",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1608725?v=4",
+      "profile": "https://github.com/balazsmatepetro",
       "contributions": [
         "code"
       ]

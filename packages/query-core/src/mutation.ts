@@ -91,7 +91,6 @@ export class Mutation<
   state: MutationState<TData, TError, TVariables, TContext>
   options: MutationOptions<TData, TError, TVariables, TContext>
   mutationId: number
-  meta: MutationMeta | undefined
 
   private observers: MutationObserver<TData, TError, TVariables, TContext>[]
   private mutationCache: MutationCache
@@ -110,10 +109,13 @@ export class Mutation<
     this.logger = config.logger || defaultLogger
     this.observers = []
     this.state = config.state || getDefaultState()
-    this.meta = config.meta
 
     this.updateCacheTime(this.options.cacheTime)
     this.scheduleGc()
+  }
+
+  get meta(): MutationMeta | undefined {
+    return this.options.meta
   }
 
   setState(state: MutationState<TData, TError, TVariables, TContext>): void {

@@ -596,6 +596,23 @@ describe('query', () => {
     expect(query.options.meta).toBeUndefined()
   })
 
+  test('can use default meta', async () => {
+    const meta = {
+      it: 'works',
+    }
+
+    const key = queryKey()
+    const queryFn = () => 'data'
+
+    queryClient.setQueryDefaults(key, { meta })
+
+    await queryClient.prefetchQuery(key, queryFn)
+
+    const query = queryCache.find(key)!
+
+    expect(query.meta).toBe(meta)
+  })
+
   test('provides meta object inside query function', async () => {
     const meta = {
       it: 'works',
