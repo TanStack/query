@@ -203,11 +203,7 @@ export const ASTUtils = {
           )
     }
 
-    if (
-      'consequent' in node &&
-      node.consequent !== undefined &&
-      node.consequent !== null
-    ) {
+    if ('consequent' in node) {
       Array.isArray(node.consequent)
         ? node.consequent.forEach((x) => {
             returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
@@ -217,11 +213,7 @@ export const ASTUtils = {
           )
     }
 
-    if (
-      'alternate' in node &&
-      node.alternate !== undefined &&
-      node.alternate !== null
-    ) {
+    if ('alternate' in node && node.alternate !== null) {
       Array.isArray(node.alternate)
         ? node.alternate.forEach((x) => {
             returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
@@ -231,7 +223,7 @@ export const ASTUtils = {
           )
     }
 
-    if ('cases' in node && node.cases !== undefined && node.cases !== null) {
+    if ('cases' in node) {
       node.cases.forEach((x) => {
         returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
       })
@@ -253,7 +245,6 @@ export const ASTUtils = {
 
     if (
       'expression' in node &&
-      node.expression !== null &&
       node.expression !== true &&
       node.expression !== false
     ) {
