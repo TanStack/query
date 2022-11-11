@@ -68,6 +68,19 @@ ruleTester.run(name, rule, {
       code: normalizeIndent`
         import { useQuery } from "@tanstack/react-query";
         const getQuery = () => {
+          const queryKey = () => ['foo'];
+          const queryFn = () => {
+            return Promise.resolve(5);
+          }
+          return { queryKey, queryFn };
+        }
+        useQuery(getQuery())
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { useQuery } from "@tanstack/react-query";
+        const getQuery = () => {
           try {
             return { queryKey: ['foo'], queryFn: () => Promise.resolve(5) };  
           } finally {
