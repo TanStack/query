@@ -8,7 +8,10 @@ If you're lucky enough, you may know enough about what your users will do to be 
 ```tsx
 const prefetchTodos = async () => {
   // The results of this query will be cached like a normal query
-  await queryClient.prefetchQuery(['todos'], fetchTodos)
+  await queryClient.prefetchQuery({
+    queryKey: ['todos'],
+    queryFn: fetchTodos,
+  })
 }
 ```
 

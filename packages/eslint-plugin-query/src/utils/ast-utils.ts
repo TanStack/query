@@ -4,6 +4,12 @@ import type { RuleContext } from '@typescript-eslint/utils/dist/ts-eslint'
 import { uniqueBy } from './unique-by'
 
 export const ASTUtils = {
+  isNodeOfOneOf<T extends AST_NODE_TYPES>(
+    node: TSESTree.Node,
+    types: readonly T[],
+  ): node is TSESTree.Node & { type: T } {
+    return types.includes(node.type as T)
+  },
   isIdentifier(node: TSESTree.Node): node is TSESTree.Identifier {
     return node.type === AST_NODE_TYPES.Identifier
   },
@@ -12,6 +18,12 @@ export const ASTUtils = {
     name: string,
   ): node is TSESTree.Identifier {
     return ASTUtils.isIdentifier(node) && node.name === name
+  },
+  isIdentifierWithOneOfNames(
+    node: TSESTree.Node,
+    name: string[],
+  ): node is TSESTree.Identifier {
+    return ASTUtils.isIdentifier(node) && name.includes(node.name)
   },
   isProperty(node: TSESTree.Node): node is TSESTree.Property {
     return node.type === AST_NODE_TYPES.Property
@@ -173,5 +185,78 @@ export const ASTUtils = {
     }
 
     return resolvedNode.init
+  },
+  getNestedReturnStatements(node: TSESTree.Node): TSESTree.ReturnStatement[] {
+    const returnStatements: TSESTree.ReturnStatement[] = []
+
+    if (node.type === AST_NODE_TYPES.ReturnStatement) {
+      returnStatements.push(node)
+    }
+
+    if ('body' in node && node.body !== undefined && node.body !== null) {
+      Array.isArray(node.body)
+        ? node.body.forEach((x) => {
+            returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
+          })
+        : returnStatements.push(
+            ...ASTUtils.getNestedReturnStatements(node.body),
+          )
+    }
+
+    if ('consequent' in node) {
+      Array.isArray(node.consequent)
+        ? node.consequent.forEach((x) => {
+            returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
+          })
+        : returnStatements.push(
+            ...ASTUtils.getNestedReturnStatements(node.consequent),
+          )
+    }
+
+    if ('alternate' in node && node.alternate !== null) {
+      Array.isArray(node.alternate)
+        ? node.alternate.forEach((x) => {
+            returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
+          })
+        : returnStatements.push(
+            ...ASTUtils.getNestedReturnStatements(node.alternate),
+          )
+    }
+
+    if ('cases' in node) {
+      node.cases.forEach((x) => {
+        returnStatements.push(...ASTUtils.getNestedReturnStatements(x))
+      })
+    }
+
+    if ('block' in node) {
+      returnStatements.push(...ASTUtils.getNestedReturnStatements(node.block))
+    }
+
+    if ('handler' in node && node.handler !== null) {
+      returnStatements.push(...ASTUtils.getNestedReturnStatements(node.handler))
+    }
+
+    if ('finalizer' in node && node.finalizer !== null) {
+      returnStatements.push(
+        ...ASTUtils.getNestedReturnStatements(node.finalizer),
+      )
+    }
+
+    if (
+      'expression' in node &&
+      node.expression !== true &&
+      node.expression !== false
+    ) {
+      returnStatements.push(
+        ...ASTUtils.getNestedReturnStatements(node.expression),
+      )
+    }
+
+    if ('test' in node && node.test !== null) {
+      returnStatements.push(...ASTUtils.getNestedReturnStatements(node.test))
+    }
+
+    return returnStatements
   },
 }

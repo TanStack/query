@@ -237,6 +237,10 @@ setQueryData(queryKey, oldData => newData)
 
 If the updater function returns `undefined`, the query data will not be updated. If the updater function receives `undefined` as input, you can return `undefined` to bail out of the update and thus _not_ create a new cache entry.
 
+**Immutability**
+
+Updates via `setQueryData` must be performed in an _immuatable_ way. **DO NOT** attempt to write directly to the cache by mutating `oldData` or data that you retrieved via `getQueryData` in place.
+
 ## `queryClient.getQueryState`
 
 `getQueryState` is a synchronous function that can be used to get an existing query's state. If the query does not exist, `undefined` will be returned.
