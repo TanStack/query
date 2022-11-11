@@ -1,13 +1,10 @@
 import type { QueryClient } from '@tanstack/query-core'
-import { onDestroy, onMount } from 'svelte'
-import { client } from './store'
+import { onMount } from 'svelte'
+import { getQueryClientContext } from './context'
+// import { client } from './store'
 
 export function useQueryClient(): QueryClient {
-  let queryClient!: QueryClient
-  let unsubscribe = client.subscribe((val) => {
-    queryClient = val
-    queryClient.mount()
-  })
+  const queryClient = getQueryClientContext()
 
   onMount(() => {
     queryClient.mount()
@@ -16,8 +13,5 @@ export function useQueryClient(): QueryClient {
     }
   })
 
-  onDestroy(() => {
-    unsubscribe
-  })
   return queryClient
 }
