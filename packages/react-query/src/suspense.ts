@@ -2,6 +2,7 @@ import type { DefaultedQueryObserverOptions } from '@tanstack/query-core'
 import type { QueryObserver } from '@tanstack/query-core'
 import type { QueryErrorResetBoundaryValue } from './QueryErrorResetBoundary'
 import type { QueryObserverResult } from '@tanstack/query-core'
+import type { QueryKey } from '@tanstack/query-core'
 
 export const ensureStaleTime = (
   defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
@@ -28,9 +29,21 @@ export const shouldSuspend = (
   isRestoring: boolean,
 ) => defaultedOptions?.suspense && willFetch(result, isRestoring)
 
-export const fetchOptimistic = <TData>(
-  defaultedOptions: DefaultedQueryObserverOptions<any, any, any, any, any>,
-  observer: QueryObserver<any, any, any, any, any>,
+export const fetchOptimistic = <
+  TQueryFnData,
+  TError,
+  TData,
+  TQueryData,
+  TQueryKey extends QueryKey,
+>(
+  defaultedOptions: DefaultedQueryObserverOptions<
+    TQueryFnData,
+    TError,
+    TData,
+    TQueryData,
+    TQueryKey
+  >,
+  observer: QueryObserver<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
   errorResetBoundary: QueryErrorResetBoundaryValue,
 ) =>
   observer
