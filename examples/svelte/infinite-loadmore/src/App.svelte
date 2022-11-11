@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { setQueryClient } from '@tanstack/svelte-query'
   import LoadMore from './lib/LoadMore.svelte'
+  setQueryClient()
 </script>
 
 <main>

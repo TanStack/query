@@ -1,11 +1,8 @@
 <script lang="ts">
-	import type { DehydratedState } from '@tanstack/query-core';
-	import { useQueryClient } from '@tanstack/svelte-query';
+	import type { DehydratedState } from '@tanstack/svelte-query';
 	import Post from '$lib/Post.svelte';
 	import Posts from '$lib/Posts.svelte';
 	import { dehydratedState } from '$lib/store';
-	import { onMount } from 'svelte';
-	import { getPosts } from '$lib/data';
 
 	type Data = {
 		dehydratedState: DehydratedState;

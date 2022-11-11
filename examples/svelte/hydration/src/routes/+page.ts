@@ -1,4 +1,4 @@
-import { dehydrate, QueryClient } from '@tanstack/query-core'
+import { dehydrate, QueryClient } from '@tanstack/svelte-query'
 import { getPosts, limit } from '$lib/data.js'
 
 /** @type {import('./$types').PageLoad} */

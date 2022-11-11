@@ -1,7 +1,9 @@
 <script lang="ts">
-  import '../app.css'
+	import { setQueryClient } from '@tanstack/svelte-query';
+	import '../app.css';
+	setQueryClient();
 </script>
 
 <main>
-  <slot />
+	<slot />
 </main>
