@@ -7,7 +7,7 @@ type Create = Parameters<
 type Context = Parameters<Create>[0]
 type Options = Parameters<Create>[1]
 type Helpers = {
-  isReactQueryImport: (node: TSESTree.Identifier) => boolean
+  isTanstackQueryImport: (node: TSESTree.Identifier) => boolean
 }
 
 export type EnhancedCreate = (
@@ -16,13 +16,13 @@ export type EnhancedCreate = (
   helpers: Helpers,
 ) => ReturnType<Create>
 
-export function detectReactQueryImports(create: EnhancedCreate): Create {
+export function detectTanstackQueryImports(create: EnhancedCreate): Create {
   return (context, optionsWithDefault) => {
-    const reactQueryImportSpecifiers: TSESTree.ImportClause[] = []
+    const tanstackQueryImportSpecifiers: TSESTree.ImportClause[] = []
 
     const helpers: Helpers = {
-      isReactQueryImport(node) {
-        return !!reactQueryImportSpecifiers.find((specifier) => {
+      isTanstackQueryImport(node) {
+        return !!tanstackQueryImportSpecifiers.find((specifier) => {
           if (specifier.type === 'ImportSpecifier') {
             return node.name === specifier.local.name
           }
@@ -38,7 +38,7 @@ export function detectReactQueryImports(create: EnhancedCreate): Create {
           node.source.value.startsWith('@tanstack/') &&
           node.source.value.endsWith('-query')
         ) {
-          reactQueryImportSpecifiers.push(...node.specifiers)
+          tanstackQueryImportSpecifiers.push(...node.specifiers)
         }
       },
     }
