@@ -56,7 +56,7 @@ describe('Explorer', () => {
       expect(toggleExpanded).toHaveBeenCalledTimes(1)
     })
 
-    it('when the entry label is clicked, toggle expanded', async () => {
+    it('when the copy button is clicked, update the clipboard value', async () => {
       // Mock clipboard
       let clipBoardContent = null
       const value = 'someValue'
@@ -81,14 +81,15 @@ describe('Explorer', () => {
       await screen.findByLabelText('Copy object to clipboard')
 
       // After clicking the content should be added to the clipboard
-      act(() => {
+      await act(async () => {
         fireEvent.click(copyButton)
       })
 
       expect(clipBoardContent).toBe(value)
+      screen.findByLabelText('Object copied to clipboard')
     })
 
-    it('when the entry label is clicked, toggle expanded', async () => {
+    it('when the copy button is clicked but there is an error, show error state', async () => {
       // Mock clipboard with error state
       Object.defineProperty(navigator, 'clipboard', {
         value: {
@@ -112,7 +113,6 @@ describe('Explorer', () => {
       // After clicking the content should NOT be added to the clipboard
       await act(async () => {
         fireEvent.click(copyButton)
-        await new Promise(process.nextTick)
       })
 
       // Check that it has failed
