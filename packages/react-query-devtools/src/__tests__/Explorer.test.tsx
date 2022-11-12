@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, act } from '@testing-library/react'
 import * as React from 'react'
 
-
 import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
 
@@ -67,7 +66,7 @@ describe('Explorer', () => {
             return new Promise(() => (clipBoardContent = value))
           },
         },
-        configurable: true
+        configurable: true,
       })
 
       act(() => {
@@ -94,10 +93,12 @@ describe('Explorer', () => {
       Object.defineProperty(navigator, 'clipboard', {
         value: {
           writeText: async () => {
-            return new Promise(() => {throw Error})
+            return new Promise(() => {
+              throw Error
+            })
           },
         },
-        configurable: true
+        configurable: true,
       })
 
       act(() => {
