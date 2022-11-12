@@ -30,33 +30,29 @@ export const ExpandButton = styled('button', {
   padding: 0,
 })
 
-enum CopyState {
-  NoCopy,
-  SuccessCopy,
-  ErrorCopy,
-}
+type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
 
 export const CopyButton = ({ value }: { value: unknown }) => {
-  const [copyState, setCopyState] = React.useState<CopyState>(CopyState.NoCopy)
+  const [copyState, setCopyState] = React.useState<CopyState>("NoCopy")
 
   return (
     <button
-      onClick={() => {
+      onClick={copyState === "NoCopy" ? () => {
         navigator.clipboard.writeText(superjson.stringify(value)).then(
           () => {
-            setCopyState(CopyState.SuccessCopy)
+            setCopyState("SuccessCopy" )
             setTimeout(() => {
-              setCopyState(CopyState.NoCopy)
+              setCopyState("NoCopy")
             }, 1500)
           },
           (err) => {
             console.error('Failed to copy: ', err)
-            setCopyState(CopyState.ErrorCopy)
+            setCopyState("ErrorCopy")
             setTimeout(() => {
-              setCopyState(CopyState.NoCopy)
+              setCopyState("NoCopy")
             }, 1500)
           },
-        )}
+        )} : undefined
       }
       style={{
         cursor: 'pointer',
@@ -68,13 +64,13 @@ export const CopyButton = ({ value }: { value: unknown }) => {
         padding: 0,
       }}
     >
-      {copyState === CopyState.NoCopy ? (
+      {copyState === "NoCopy" ? (
         <Copier />
-      ) : copyState === CopyState.SuccessCopy ? (
+      ) : copyState === "SuccessCopy"  ? (
         <CopiedCopier />
-      ) : copyState === CopyState.ErrorCopy ? (
+      ) : (
         <ErrorCopier />
-      ) : null}
+      )}
     </button>
   )
 }
@@ -112,7 +108,7 @@ export const Expander = ({ expanded, style = {} }: ExpanderProps) => (
   </span>
 )
 
-export const Copier = () => (
+const Copier = () => (
   <span
     aria-label="Copy object to clipboard"
     title="Copy object to clipboard"
@@ -133,8 +129,8 @@ export const Copier = () => (
   </span>
 )
 
-export const ErrorCopier = () => (
-<span
+const ErrorCopier = () => (
+  <span
     aria-label="Failed copying to clipboard"
     title="Failed copying to clipboard"
     style={{
@@ -153,11 +149,9 @@ export const ErrorCopier = () => (
       See console
     </span>
   </span>
-
-
 )
 
-export const CopiedCopier = () => (
+const CopiedCopier = () => (
   <span
     aria-label="Object copied to clipboard"
     title="Object copied to clipboard"
