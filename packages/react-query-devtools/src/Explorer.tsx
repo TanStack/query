@@ -1,7 +1,7 @@
 import * as React from 'react'
 
 import { displayValue, styled } from './utils'
-import superjson from 'superjson';
+import superjson from 'superjson'
 
 export const Entry = styled('div', {
   fontFamily: 'Menlo, monospace',
@@ -30,29 +30,33 @@ export const ExpandButton = styled('button', {
   padding: 0,
 })
 
-type CopyState = "NoCopy" | "SuccessCopy" | "ErrorCopy";
+type CopyState = 'NoCopy' | 'SuccessCopy' | 'ErrorCopy'
 
 export const CopyButton = ({ value }: { value: unknown }) => {
-  const [copyState, setCopyState] = React.useState<CopyState>("NoCopy")
+  const [copyState, setCopyState] = React.useState<CopyState>('NoCopy')
 
   return (
     <button
-      onClick={copyState === "NoCopy" ? () => {
-        navigator.clipboard.writeText(superjson.stringify(value)).then(
-          () => {
-            setCopyState("SuccessCopy" )
-            setTimeout(() => {
-              setCopyState("NoCopy")
-            }, 1500)
-          },
-          (err) => {
-            console.error('Failed to copy: ', err)
-            setCopyState("ErrorCopy")
-            setTimeout(() => {
-              setCopyState("NoCopy")
-            }, 1500)
-          },
-        )} : undefined
+      onClick={
+        copyState === 'NoCopy'
+          ? () => {
+              navigator.clipboard.writeText(superjson.stringify(value)).then(
+                () => {
+                  setCopyState('SuccessCopy')
+                  setTimeout(() => {
+                    setCopyState('NoCopy')
+                  }, 1500)
+                },
+                (err) => {
+                  console.error('Failed to copy: ', err)
+                  setCopyState('ErrorCopy')
+                  setTimeout(() => {
+                    setCopyState('NoCopy')
+                  }, 1500)
+                },
+              )
+            }
+          : undefined
       }
       style={{
         cursor: 'pointer',
@@ -64,9 +68,9 @@ export const CopyButton = ({ value }: { value: unknown }) => {
         padding: 0,
       }}
     >
-      {copyState === "NoCopy" ? (
+      {copyState === 'NoCopy' ? (
         <Copier />
-      ) : copyState === "SuccessCopy"  ? (
+      ) : copyState === 'SuccessCopy' ? (
         <CopiedCopier />
       ) : (
         <ErrorCopier />
@@ -145,7 +149,15 @@ const ErrorCopier = () => (
         d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"
       ></path>
     </svg>
-    <span style={{ color: 'red', fontSize: '12px', paddingLeft: '4px', position: 'relative', top: '2px' }}>
+    <span
+      style={{
+        color: 'red',
+        fontSize: '12px',
+        paddingLeft: '4px',
+        position: 'relative',
+        top: '2px',
+      }}
+    >
       See console
     </span>
   </span>
