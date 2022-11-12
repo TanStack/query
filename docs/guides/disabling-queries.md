@@ -25,7 +25,7 @@ function Todos() {
     isFetching
   } = useQuery({
     queryKey: ['todos'],
-    queyFn: fetchTodoList,
+    queryFn: fetchTodoList,
     enabled: false,
   })
 

@@ -236,7 +236,7 @@ async function handleRequest (req, res) {
 
 ### Client
 
-Make sure to [use suspense in your queries](./suspense.md).
+Make sure to [use suspense in your queries](../guides/suspense).
 
 ## Tips, Tricks and Caveats
 

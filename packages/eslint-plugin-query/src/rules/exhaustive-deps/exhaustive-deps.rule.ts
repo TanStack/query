@@ -56,13 +56,26 @@ export const rule = createRule({
           return
         }
 
-        if (queryKey.value.type !== AST_NODE_TYPES.ArrayExpression) {
+        let queryKeyNode = queryKey.value
+
+        if (queryKeyNode.type === AST_NODE_TYPES.Identifier) {
+          const expression = ASTUtils.getReferencedExpressionByIdentifier({
+            context,
+            node: queryKeyNode,
+          })
+
+          if (expression?.type === AST_NODE_TYPES.ArrayExpression) {
+            queryKeyNode = expression
+          }
+        }
+
+        if (queryKeyNode.type !== AST_NODE_TYPES.ArrayExpression) {
           // TODO support query key factory
           return
         }
 
         const sourceCode = context.getSourceCode()
-        const queryKeyValue = queryKey.value
+        const queryKeyValue = queryKeyNode
         const refs = ASTUtils.getExternalRefs({
           scopeManager,
           node: queryFn.value,
