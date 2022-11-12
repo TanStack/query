@@ -1,6 +1,6 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, act } from '@testing-library/react'
 import * as React from 'react'
-import { act } from 'react-dom/test-utils'
+
 
 import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
