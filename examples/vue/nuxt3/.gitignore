@@ -1,8 +1,9 @@
 node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
+*.log
+.nuxt
+nuxt.d.ts
+.output
+.env
 
 package-lock.json
 yarn.lock

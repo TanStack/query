@@ -247,26 +247,37 @@ export function ReactQueryDevtools({
   }, [isResolvedOpen])
 
   React.useEffect(() => {
-    if (isResolvedOpen) {
-      const root = rootRef.current
+    if (isResolvedOpen && rootRef.current?.parentElement) {
+      const { parentElement } = rootRef.current
       const styleProp = getSidedProp('padding', panelPosition)
       const isVertical = isVerticalSide(panelPosition)
-      const previousValue = root?.parentElement?.style[styleProp]
+
+      const previousPaddings = (({
+        padding,
+        paddingTop,
+        paddingBottom,
+        paddingLeft,
+        paddingRight,
+      }) => ({
+        padding,
+        paddingTop,
+        paddingBottom,
+        paddingLeft,
+        paddingRight,
+      }))(parentElement.style)
 
       const run = () => {
-        if (root?.parentElement) {
-          // reset the padding
-          root.parentElement.style.padding = '0px'
-          root.parentElement.style.paddingTop = '0px'
-          root.parentElement.style.paddingBottom = '0px'
-          root.parentElement.style.paddingLeft = '0px'
-          root.parentElement.style.paddingRight = '0px'
-          // set the new padding based on the new panel position
+        // reset the padding
+        parentElement.style.padding = '0px'
+        parentElement.style.paddingTop = '0px'
+        parentElement.style.paddingBottom = '0px'
+        parentElement.style.paddingLeft = '0px'
+        parentElement.style.paddingRight = '0px'
+        // set the new padding based on the new panel position
 
-          root.parentElement.style[styleProp] = `${
-            isVertical ? devtoolsWidth : devtoolsHeight
-          }px`
-        }
+        parentElement.style[styleProp] = `${
+          isVertical ? devtoolsWidth : devtoolsHeight
+        }px`
       }
 
       run()
@@ -276,9 +287,12 @@ export function ReactQueryDevtools({
 
         return () => {
           window.removeEventListener('resize', run)
-          if (root?.parentElement && typeof previousValue === 'string') {
-            root.parentElement.style[styleProp] = previousValue
-          }
+          Object.entries(previousPaddings).forEach(
+            ([property, previousValue]) => {
+              parentElement.style[property as keyof typeof previousPaddings] =
+                previousValue
+            },
+          )
         }
       }
     }
