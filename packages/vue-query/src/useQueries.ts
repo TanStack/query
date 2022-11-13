@@ -132,8 +132,8 @@ export function useQueries<T extends any[]>({
 }): Readonly<UseQueriesResults<T>> {
   const unreffedQueries = cloneDeepUnref(queries) as UseQueriesOptionsArg<T>
 
-  const queryClientKey = unreffedQueries[0].queryClientKey
-  const optionsQueryClient = unreffedQueries[0].queryClient
+  const queryClientKey = unreffedQueries[0]?.queryClientKey
+  const optionsQueryClient = unreffedQueries[0]?.queryClient
   const queryClient = optionsQueryClient ?? useQueryClient(queryClientKey)
   const defaultedQueries = unreffedQueries.map((options) => {
     return queryClient.defaultQueryOptions(options)
