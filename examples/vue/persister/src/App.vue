@@ -1,29 +1,29 @@
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref } from 'vue'
 
-import Posts from "./Posts.vue";
-import Post from "./Post.vue";
+import Posts from './Posts.vue'
+import Post from './Post.vue'
 
 export default defineComponent({
-  name: "App",
+  name: 'App',
   components: { Posts, Post },
   setup() {
-    const visitedPosts = ref(new Set());
-    const isVisited = (id: number) => visitedPosts.value.has(id);
+    const visitedPosts = ref(new Set())
+    const isVisited = (id: number) => visitedPosts.value.has(id)
 
-    const postId = ref(-1);
+    const postId = ref(-1)
     const setPostId = (id: number) => {
-      visitedPosts.value.add(id);
-      postId.value = id;
-    };
+      visitedPosts.value.add(id)
+      postId.value = id
+    }
 
     return {
       isVisited,
       postId,
       setPostId,
-    };
+    }
   },
-});
+})
 </script>
 
 <template>
