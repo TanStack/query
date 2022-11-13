@@ -181,6 +181,7 @@ ruleTester.run('exhaustive-deps', rule, {
           suggestions: [
             {
               messageId: 'fixTo',
+              // eslint-disable-next-line no-template-curly-in-string
               data: { result: '["entity/${id}", id]' },
               output: normalizeIndent`
                 const id = 1;
@@ -205,6 +206,7 @@ ruleTester.run('exhaustive-deps', rule, {
           suggestions: [
             {
               messageId: 'fixTo',
+              // eslint-disable-next-line no-template-curly-in-string
               data: { result: '[`entity/${a}`, b]' },
               output: normalizeIndent`
                 const a = 1;
@@ -337,6 +339,33 @@ ruleTester.run('exhaustive-deps', rule, {
                 function Component({ map, key }) {
                   useQuery({ queryKey: ["key", map[key]], queryFn: () => api.get(map[key]) });
                 }
+              `,
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'should fail when a queryKey is a reference of an array expression with a missing dep',
+      code: normalizeIndent`
+        const x = 5;
+        const queryKey = ['foo']
+        useQuery({ queryKey, queryFn: () => x })
+      `,
+      errors: [
+        {
+          messageId: 'missingDeps',
+          data: { deps: 'x' },
+          suggestions: [
+            {
+              messageId: 'fixTo',
+              data: {
+                result: "['foo', x]",
+              },
+              output: normalizeIndent`
+                const x = 5;
+                const queryKey = ['foo', x]
+                useQuery({ queryKey, queryFn: () => x })
               `,
             },
           ],

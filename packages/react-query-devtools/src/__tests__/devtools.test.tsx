@@ -4,7 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary'
 import '@testing-library/jest-dom'
 import type { QueryClient } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
-import { sortFns } from '../utils'
+import { defaultPanelSize, sortFns } from '../utils'
 import {
   getByTextContent,
   renderWithClient,
@@ -36,6 +36,7 @@ Object.defineProperty(window, 'matchMedia', {
 describe('ReactQueryDevtools', () => {
   beforeEach(() => {
     localStorage.removeItem('reactQueryDevtoolsOpen')
+    localStorage.removeItem('reactQueryDevtoolsPanelPosition')
   })
   it('should be able to open and close devtools', async () => {
     const { queryClient } = createQueryClient()
@@ -862,5 +863,56 @@ describe('ReactQueryDevtools', () => {
     expect(panel.style.right).toBe('0px')
     expect(panel.style.width).toBe('500px')
     expect(panel.style.height).toBe('100vh')
+  })
+
+  it('should restore parent element padding after closing', async () => {
+    const { queryClient } = createQueryClient()
+
+    function Page() {
+      const { data = 'default' } = useQuery(['check'], async () => 'test')
+
+      return (
+        <div>
+          <h1>{data}</h1>
+        </div>
+      )
+    }
+
+    const parentElementTestid = 'parentElement'
+    const parentPaddings = {
+      paddingTop: '428px',
+      paddingBottom: '39px',
+      paddingLeft: '-373px',
+      paddingRight: '20%',
+    }
+
+    function Parent({ children }: { children: React.ReactElement }) {
+      return (
+        <div data-testid={parentElementTestid} style={parentPaddings}>
+          {children}
+        </div>
+      )
+    }
+
+    renderWithClient(
+      queryClient,
+      <Page />,
+      {
+        initialIsOpen: true,
+        panelPosition: 'bottom',
+      },
+      { wrapper: Parent },
+    )
+
+    const parentElement = screen.getByTestId(parentElementTestid)
+    expect(parentElement).toHaveStyle({
+      paddingTop: '0px',
+      paddingLeft: '0px',
+      paddingRight: '0px',
+      paddingBottom: defaultPanelSize,
+    })
+
+    fireEvent.click(screen.getByRole('button', { name: /^close$/i }))
+    expect(parentElement).toHaveStyle(parentPaddings)
   })
 })

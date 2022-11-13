@@ -650,7 +650,7 @@ importers:
       vite: ^3.1.8
       vue: ^3.2.41
     dependencies:
-      '@tanstack/vue-query': 4.13.3_vue@3.2.41
+      '@tanstack/vue-query': link:../../../packages/vue-query
       vue: 3.2.41
     devDependencies:
       '@vitejs/plugin-vue': 3.1.2_vite@3.1.8+vue@3.2.41
@@ -731,7 +731,7 @@ importers:
 
   packages/react-query-devtools:
     specifiers:
-      '@tanstack/match-sorter-utils': ^8.1.1
+      '@tanstack/match-sorter-utils': 8.1.1
       '@tanstack/react-query': workspace:*
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
@@ -5541,10 +5541,6 @@ packages:
       remove-accents: 0.4.2
     dev: false
 
-  /@tanstack/query-core/4.13.0:
-    resolution: {integrity: sha512-PzmLQcEgC4rl2OzkiPHYPC9O79DFcMGaKsOzDEP+U4PJ+tbkcEP+Z+FQDlfvX8mCwYC7UNH7hXrQ5EdkGlJjVg==}
-    dev: false
-
   /@tanstack/react-location/3.7.4_biqbaboplfbrettd7655fr4n2y:
     resolution: {integrity: sha512-6rH2vNHGr0uyeUz5ZHvWMYjeYKGgIKFzvs5749QtnS9f+FU7t7fQE0hKZAzltBZk82LT7iYbcHBRyUg2lW13VA==}
     engines: {node: '>=12'}
@@ -5556,22 +5552,6 @@ packages:
       history: 5.3.0
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
-    dev: false
-
-  /@tanstack/vue-query/4.13.3_vue@3.2.41:
-    resolution: {integrity: sha512-+AMt5pG0UYGfJbdKuGtR0NzTExqT8rS3BkVPRKHpBcrvedVwf7RVnNOlC9jXPiKg0jvTiaK7ON7N+eh4ktHdLw==}
-    peerDependencies:
-      '@vue/composition-api': ^1.1.2
-      vue: ^2.5.0 || ^3.0.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      '@tanstack/match-sorter-utils': 8.1.1
-      '@tanstack/query-core': 4.13.0
-      '@vue/devtools-api': 6.4.2
-      vue: 3.2.41
-      vue-demi: 0.13.11_vue@3.2.41
     dev: false
 
   /@testing-library/dom/7.31.2:
@@ -15619,21 +15599,6 @@ packages:
 
   /vlq/1.0.1:
     resolution: {integrity: sha512-gQpnTgkubC6hQgdIcRdYGDSDc+SaujOdyesZQMv6JlfQee/9Mp0Qhnys6WxDWvQnL5WZdT7o2Ul187aSt0Rq+w==}
-    dev: false
-
-  /vue-demi/0.13.11_vue@3.2.41:
-    resolution: {integrity: sha512-IR8HoEEGM65YY3ZJYAjMlKygDQn25D5ajNFNoKh9RSDMQtlzCxtfQjdQgv9jjK+m3377SsJXY8ysq8kLCZL25A==}
-    engines: {node: '>=12'}
-    hasBin: true
-    requiresBuild: true
-    peerDependencies:
-      '@vue/composition-api': ^1.0.0-rc.1
-      vue: ^3.0.0-0 || ^2.6.0
-    peerDependenciesMeta:
-      '@vue/composition-api':
-        optional: true
-    dependencies:
-      vue: 3.2.41
     dev: false
 
   /vue-demi/0.13.11_zv57lmwz3lpne326jxcwg2uc6q:
