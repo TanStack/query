@@ -55,7 +55,7 @@
     "@tanstack/react-query": "workspace:*"
   },
   "dependencies": {
-    "@tanstack/match-sorter-utils": "^8.1.1",
+    "@tanstack/match-sorter-utils": "8.1.1",
     "superjson": "^1.10.0",
     "use-sync-external-store": "^1.2.0"
   },
