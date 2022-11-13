@@ -1205,7 +1205,6 @@ describe('useQueries with suspense', () => {
               await sleep(10)
               return '1'
             },
-            suspense: true,
           },
           {
             queryKey: key2,
@@ -1214,7 +1213,6 @@ describe('useQueries with suspense', () => {
               await sleep(20)
               return '2'
             },
-            suspense: false,
           },
         ],
       })
