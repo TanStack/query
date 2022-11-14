@@ -301,11 +301,11 @@ describe('VueQueryPlugin', () => {
 
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
-        clientPersister: (customClient) => [
+        clientPersister: (client) => [
           jest.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
-              customClient.setQueryData(['persist'], () => ({
+              client.setQueryData(['persist'], () => ({
                 foo: 'bar',
               }))
               resolve()
@@ -344,11 +344,11 @@ describe('VueQueryPlugin', () => {
 
       VueQueryPlugin.install(appMock, {
         queryClient: customClient,
-        clientPersister: (customClient) => [
+        clientPersister: (client) => [
           jest.fn(),
           new Promise((resolve) => {
             setTimeout(() => {
-              customClient.setQueryData(['persist'], () => ({
+              client.setQueryData(['persist'], () => ({
                 foo: 'bar',
               }))
               resolve()

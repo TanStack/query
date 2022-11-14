@@ -138,17 +138,17 @@ export function useQueries<T extends any[]>({
 }: {
   queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
 }): Readonly<UseQueriesResults<T>> {
-  const options = computed(
+  const unreffedQueries = computed(
     () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
   )
 
-  const queryClientKey = options.value[0]?.queryClientKey
-  const optionsQueryClient = options.value[0]?.queryClient as
+  const queryClientKey = unreffedQueries.value[0]?.queryClientKey
+  const optionsQueryClient = unreffedQueries.value[0]?.queryClient as
     | QueryClient
     | undefined
   const queryClient = optionsQueryClient ?? useQueryClient(queryClientKey)
   const defaultedQueries = computed(() =>
-    options.value.map((options) => {
+    unreffedQueries.value.map((options) => {
       const defaulted = queryClient.defaultQueryOptions(options)
       defaulted._optimisticResults = queryClient.isRestoring.value
         ? 'isRestoring'
@@ -185,7 +185,7 @@ export function useQueries<T extends any[]>({
   )
 
   watch(
-    options,
+    unreffedQueries,
     () => {
       observer.setQueries(defaultedQueries.value)
       state.splice(0, state.length, ...observer.getCurrentResult())
