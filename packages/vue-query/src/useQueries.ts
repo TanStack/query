@@ -1,13 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { QueriesObserver } from '@tanstack/query-core'
-import { onScopeDispose, reactive, readonly, watch } from 'vue-demi'
+import {
+  computed,
+  onScopeDispose,
+  reactive,
+  readonly,
+  ref,
+  watch,
+} from 'vue-demi'
 import type { Ref } from 'vue-demi'
 
 import type { QueryFunction, QueryObserverResult } from '@tanstack/query-core'
 
 import { useQueryClient } from './useQueryClient'
-import type { UseQueryOptions } from './useQuery'
 import { cloneDeepUnref } from './utils'
+import type { UseQueryOptions } from './useQuery'
+import type { QueryClient } from './queryClient'
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -130,37 +138,63 @@ export function useQueries<T extends any[]>({
 }: {
   queries: Ref<UseQueriesOptionsArg<T>> | UseQueriesOptionsArg<T>
 }): Readonly<UseQueriesResults<T>> {
-  const unreffedQueries = cloneDeepUnref(queries) as UseQueriesOptionsArg<T>
+  const unreffedQueries = computed(
+    () => cloneDeepUnref(queries) as UseQueriesOptionsArg<T>,
+  )
 
-  const queryClientKey = unreffedQueries[0]?.queryClientKey
-  const optionsQueryClient = unreffedQueries[0]?.queryClient
+  const queryClientKey = unreffedQueries.value[0]?.queryClientKey
+  const optionsQueryClient = unreffedQueries.value[0]?.queryClient as
+    | QueryClient
+    | undefined
   const queryClient = optionsQueryClient ?? useQueryClient(queryClientKey)
-  const defaultedQueries = unreffedQueries.map((options) => {
-    return queryClient.defaultQueryOptions(options)
-  })
+  const defaultedQueries = computed(() =>
+    unreffedQueries.value.map((options) => {
+      const defaulted = queryClient.defaultQueryOptions(options)
+      defaulted._optimisticResults = queryClient.isRestoring.value
+        ? 'isRestoring'
+        : 'optimistic'
 
-  const observer = new QueriesObserver(queryClient, defaultedQueries)
+      return defaulted
+    }),
+  )
+
+  const observer = new QueriesObserver(queryClient, defaultedQueries.value)
   const state = reactive(observer.getCurrentResult())
 
-  const unsubscribe = observer.subscribe((result) => {
-    state.splice(0, state.length, ...result)
+  const unsubscribe = ref(() => {
+    // noop
   })
 
   watch(
-    () => queries,
+    queryClient.isRestoring,
+    (isRestoring) => {
+      if (!isRestoring) {
+        unsubscribe.value()
+        unsubscribe.value = observer.subscribe((result) => {
+          state.splice(0, result.length, ...result)
+        })
+        // Subscription would not fire for persisted results
+        state.splice(
+          0,
+          state.length,
+          ...observer.getOptimisticResult(defaultedQueries.value),
+        )
+      }
+    },
+    { immediate: true },
+  )
+
+  watch(
+    unreffedQueries,
     () => {
-      const defaulted = (
-        cloneDeepUnref(queries) as UseQueriesOptionsArg<T>
-      ).map((options) => {
-        return queryClient.defaultQueryOptions(options)
-      })
-      observer.setQueries(defaulted)
+      observer.setQueries(defaultedQueries.value)
+      state.splice(0, state.length, ...observer.getCurrentResult())
     },
     { deep: true },
   )
 
   onScopeDispose(() => {
-    unsubscribe()
+    unsubscribe.value()
   })
 
   return readonly(state) as UseQueriesResults<T>

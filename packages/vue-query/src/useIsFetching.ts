@@ -1,23 +1,23 @@
-import { onScopeDispose, ref, watch } from 'vue-demi'
+import { computed, isRef, onScopeDispose, ref, watch } from 'vue-demi'
 import type { Ref } from 'vue-demi'
 import type { QueryKey, QueryFilters as QF } from '@tanstack/query-core'
 
 import { useQueryClient } from './useQueryClient'
 import { cloneDeepUnref, isQueryKey } from './utils'
-import type { MaybeRefDeep, WithQueryClientKey } from './types'
+import type { MaybeRef, MaybeRefDeep, WithQueryClientKey } from './types'
 
 export type QueryFilters = MaybeRefDeep<WithQueryClientKey<QF>>
 
 export function useIsFetching(filters?: QueryFilters): Ref<number>
 export function useIsFetching(
-  queryKey?: QueryKey,
-  filters?: QueryFilters,
+  queryKey?: MaybeRef<QueryKey>,
+  filters?: Omit<QueryFilters, 'queryKey'>,
 ): Ref<number>
 export function useIsFetching(
-  arg1?: QueryKey | QueryFilters,
-  arg2?: QueryFilters,
+  arg1?: MaybeRef<QueryKey> | QueryFilters,
+  arg2?: Omit<QueryFilters, 'queryKey'>,
 ): Ref<number> {
-  const filters = ref(parseFilterArgs(arg1, arg2))
+  const filters = computed(() => parseFilterArgs(arg1, arg2))
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
@@ -28,9 +28,8 @@ export function useIsFetching(
   })
 
   watch(
-    [() => arg1, () => arg2],
+    filters,
     () => {
-      filters.value = parseFilterArgs(arg1, arg2)
       isFetching.value = queryClient.isFetching(filters)
     },
     { deep: true },
@@ -44,16 +43,19 @@ export function useIsFetching(
 }
 
 export function parseFilterArgs(
-  arg1?: QueryKey | QueryFilters,
+  arg1?: MaybeRef<QueryKey> | QueryFilters,
   arg2: QueryFilters = {},
 ) {
-  let options: QueryFilters
+  const plainArg1 = isRef(arg1) ? arg1.value : arg1
+  const plainArg2 = isRef(arg2) ? arg2.value : arg2
 
-  if (isQueryKey(arg1)) {
-    options = { ...arg2, queryKey: arg1 }
+  let options = plainArg1
+
+  if (isQueryKey(plainArg1)) {
+    options = { ...plainArg2, queryKey: plainArg1 }
   } else {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    options = arg1 || {}
+    options = plainArg1 || {}
   }
 
   return cloneDeepUnref(options) as WithQueryClientKey<QF>

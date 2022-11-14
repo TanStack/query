@@ -1,4 +1,4 @@
-import { onScopeDispose, reactive } from 'vue-demi'
+import { onScopeDispose, reactive, ref } from 'vue-demi'
 
 import { flushPromises, simpleFetcher } from './test-utils'
 import { useQuery } from '../useQuery'
@@ -84,6 +84,16 @@ describe('useIsFetching', () => {
 
       const result = parseFilterArgs(['key'], filters)
       const expected = { ...filters, queryKey: ['key'] }
+
+      expect(result).toEqual(expected)
+    })
+
+    test('should unwrap refs arguments', () => {
+      const key = ref(['key'])
+      const filters = ref({ stale: ref(true) })
+
+      const result = parseFilterArgs(key, filters)
+      const expected = { queryKey: ['key'], stale: true }
 
       expect(result).toEqual(expected)
     })

@@ -17,7 +17,7 @@
     "typecheck": "tsc -b",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run typecheck --watch\"",
     "dev": "pnpm run watch",
-    "prettier": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json}\"",
+    "prettier": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json,vue}\"",
     "prettier:write": "pnpm run prettier --write",
     "cipublish": "ts-node scripts/publish.ts"
   },
