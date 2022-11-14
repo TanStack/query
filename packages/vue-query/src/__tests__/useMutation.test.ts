@@ -346,5 +346,20 @@ describe('useMutation', () => {
 
       expect(result).toEqual(expected)
     })
+
+    test('should unwrap refs arguments', () => {
+      const key = ref(['key'])
+      const mutationFn = ref(successMutator)
+      const options = ref({ retry: ref(12) })
+
+      const result = parseMutationArgs(key, mutationFn, options)
+      const expected = {
+        mutationKey: ['key'],
+        mutationFn: successMutator,
+        retry: 12,
+      }
+
+      expect(result).toEqual(expected)
+    })
   })
 })
