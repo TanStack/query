@@ -20,7 +20,7 @@ const { status, fetchStatus, data: projects } = useQuery({
   queryFn: getProjectsByUser,
   // The query will not execute until the userId exists
   enabled: !!userId,
-)
+})
 ```
 
 The `projects` query will start in:
