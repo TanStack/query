@@ -1,4 +1,4 @@
-import { setContext, getContext } from 'svelte'
+import { onMount, setContext, getContext } from 'svelte'
 import { QueryClient, type QueryClientConfig } from '@tanstack/query-core'
 
 const _contextKey = '$$_queryClient'
@@ -24,5 +24,11 @@ export const setQueryClientContext = (client: QueryClient): void => {
 export const setQueryClient = (config?: QueryClientConfig): QueryClient => {
   const client = new QueryClient(config)
   setQueryClientContext(client)
+  onMount(() => {
+    client.mount()
+    return () => {
+      client.unmount()
+    }
+  })
   return client
 }
