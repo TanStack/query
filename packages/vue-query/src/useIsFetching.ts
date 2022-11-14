@@ -54,6 +54,7 @@ export function parseFilterArgs(
   if (isQueryKey(plainArg1)) {
     options = { ...plainArg2, queryKey: plainArg1 }
   } else {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     options = plainArg1 || {}
   }
 
