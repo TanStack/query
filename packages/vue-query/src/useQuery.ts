@@ -10,7 +10,7 @@ import { useBaseQuery } from './useBaseQuery'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
 import type { WithQueryClientKey, VueQueryObserverOptions } from './types'
 
-type UseQueryReturnType<TData, TError> = Omit<
+export type UseQueryReturnType<TData, TError> = Omit<
   UQRT<TData, TError>,
   'refetch' | 'remove'
 > & {
@@ -18,7 +18,7 @@ type UseQueryReturnType<TData, TError> = Omit<
   remove: QueryObserverResult<TData, TError>['remove']
 }
 
-type UseQueryDefinedReturnType<TData, TError> = Omit<
+export type UseQueryDefinedReturnType<TData, TError> = Omit<
   ToRefs<Readonly<DefinedQueryObserverResult<TData, TError>>>,
   'refetch' | 'remove'
 > & {
