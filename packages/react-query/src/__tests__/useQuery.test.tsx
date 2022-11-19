@@ -505,20 +505,26 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <div>isSuccess: {state.isSuccess ? 'true' : 'false'}</div>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => {
+      rendered.getByText('isSuccess: false')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => {
+      rendered.getByText('isSuccess: true')
+    })
+
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
