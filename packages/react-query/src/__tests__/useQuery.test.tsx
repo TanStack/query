@@ -505,20 +505,26 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { refetch } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          refetch()
-        }, 10)
-      }, [refetch])
-
-      return null
+      return (
+        <div>
+          <div>isSuccess: {state.isSuccess ? 'true' : 'false'}</div>
+          <button onClick={() => state.refetch()}>refetch</button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(50)
+    await waitFor(() => {
+      rendered.getByText('isSuccess: false')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'refetch' }))
+
+    await waitFor(() => {
+      rendered.getByText('isSuccess: true')
+    })
+
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
   })
@@ -622,12 +628,16 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(key, () => 'data', { onSettled })
       states.push(state)
-      return null
+
+      return <div>data: {state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('data: data')
+    })
+
     expect(states.length).toBe(2)
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSettled).toHaveBeenCalledWith('data', null)
@@ -1175,7 +1185,13 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      expect(renderCount).toBe(2)
+    })
+
+    // give it a bit more time to make sure no additional renders are triggered
+    await sleep(20)
+
     expect(renderCount).toBe(2)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
@@ -5461,13 +5477,15 @@ describe('useQuery', () => {
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
 
-      await sleep(15)
-
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        fetchStatus: 'idle',
-        status: 'success',
+      await waitFor(() => {
+        expect(queryClient.getQueryState(key)).toMatchObject({
+          fetchStatus: 'idle',
+          status: 'success',
+        })
       })
 
+      // give it a bit more time to make sure queryFn is not called again
+      await sleep(15)
       expect(count).toBe(1)
 
       onlineMock.mockRestore()
