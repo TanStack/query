@@ -1179,7 +1179,13 @@ describe('useQuery', () => {
 
     renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      expect(renderCount).toBe(2)
+    })
+
+    // give it a bit more time to make sure no additional renders are triggered
+    await sleep(20)
+
     expect(renderCount).toBe(2)
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
