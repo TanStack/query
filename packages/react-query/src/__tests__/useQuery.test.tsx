@@ -5477,13 +5477,15 @@ describe('useQuery', () => {
       onlineMock.mockReturnValue(true)
       window.dispatchEvent(new Event('online'))
 
-      await sleep(15)
-
-      expect(queryClient.getQueryState(key)).toMatchObject({
-        fetchStatus: 'idle',
-        status: 'success',
+      await waitFor(() => {
+        expect(queryClient.getQueryState(key)).toMatchObject({
+          fetchStatus: 'idle',
+          status: 'success',
+        })
       })
 
+      // give it a bit more time to make sure queryFn is not called again
+      await sleep(15)
       expect(count).toBe(1)
 
       onlineMock.mockRestore()
