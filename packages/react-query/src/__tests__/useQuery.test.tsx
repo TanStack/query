@@ -622,12 +622,16 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery(key, () => 'data', { onSettled })
       states.push(state)
-      return null
+
+      return <div>data: {state.data}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
+    await waitFor(() => {
+      rendered.getByText('data: data')
+    })
+
     expect(states.length).toBe(2)
     expect(onSettled).toHaveBeenCalledTimes(1)
     expect(onSettled).toHaveBeenCalledWith('data', null)
