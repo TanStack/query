@@ -2485,12 +2485,14 @@ describe('useQuery', () => {
     function Page() {
       const state = useQuery([key, variables], queryFn)
       states.push(state)
-      return null
+      return <div>{state.status}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(20)
+    await waitFor(() => {
+      rendered.getByText('success')
+    })
 
     expect(states[1]?.data).toEqual([key, variables])
   })
