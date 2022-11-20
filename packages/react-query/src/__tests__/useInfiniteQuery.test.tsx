@@ -1109,20 +1109,31 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage({ pageParam: 5 })
-        }, 20)
-      }, [fetchNextPage])
-
-      return null
+      return (
+        <div>
+          <div>page0: {state.data?.pages[0]}</div>
+          <div>page1: {state.data?.pages[1]}</div>
+          <button onClick={() => state.fetchNextPage({ pageParam: 5 })}>
+            Fetch next page
+          </button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText('page0: 0')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'Fetch next page' }))
+
+    await waitFor(() => {
+      rendered.getByText('page1: 5')
+    })
+
+    // make sure no additional renders are happening after fetching next page
+    await sleep(20)
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
