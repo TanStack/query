@@ -1069,7 +1069,7 @@ describe('useQuery', () => {
     const rendered = renderWithClient(queryClient, <Page />)
 
     await waitFor(() => {
-      rendered.getByText("error")
+      rendered.getByText('error')
     })
 
     expect(mockLogger.error).toHaveBeenCalledWith(error)
