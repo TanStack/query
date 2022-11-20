@@ -118,7 +118,10 @@ export function useMutation<
     throw result.error
   }
 
-  return { ...result, mutate, mutateAsync: result.mutate }
+  return React.useMemo(
+    () => ({ ...result, mutate, mutateAsync: result.mutate }),
+    [mutate, result],
+  )
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
