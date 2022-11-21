@@ -9,7 +9,7 @@
     "test:ci": "pnpm run test:format && pnpm run test:eslint && pnpm run test:jest --collectCoverage false && pnpm run typecheck",
     "test:react:17": "pnpm --filter \"./packages/react-*\" --parallel --no-bail run test:jest --collectCoverage false",
     "test:eslint": "pnpm --filter \"./packages/**\" --parallel --no-bail run test:eslint",
-    "test:format": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json}\" --check",
+    "test:format": "pnpm run prettier --check",
     "test:jest": "pnpm --filter \"./packages/**\" --parallel --no-bail run test:jest",
     "test:size": "pnpm run build && bundlewatch",
     "build": "rollup --config rollup.config.js && pnpm run typecheck && pnpm pnpm --filter \"eslint-plugin-query\" run build && pnpm run build:copyTypes",
@@ -17,7 +17,7 @@
     "typecheck": "tsc -b",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run typecheck --watch\"",
     "dev": "pnpm run watch",
-    "prettier": "prettier \"packages/*/{src/**,examples/**/src/**}.{md,js,jsx,ts,tsx,json,vue}\"",
+    "prettier": "prettier \"{packages,examples}/**/src/**/*.{md,js,jsx,ts,tsx,json,vue}\"",
     "prettier:write": "pnpm run prettier --write",
     "cipublish": "ts-node scripts/publish.ts"
   },
