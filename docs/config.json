@@ -220,6 +220,10 @@
           "to": "community/liaoliao666-react-query-kit"
         },
         {
+          "label": "React Query Suspense",
+          "to": "community/kappys-react-query-suspense"
+        },
+        {
           "label": "Angular Query",
           "to": "community/angular-query"
         }
