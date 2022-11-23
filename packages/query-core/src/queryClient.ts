@@ -118,6 +118,19 @@ export class QueryClient {
     return this.queryCache.find<TQueryFnData>(queryKey, filters)?.state.data
   }
 
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    queryKey: TQueryKey,
+    queryFn: QueryFunction<TQueryFnData, TQueryKey>,
+    filters?: QueryFilters,
+  ): Promise<TQueryFnData> {
+    const cachedData = this.getQueryData<TQueryFnData>(queryKey, filters)
+
+    return cachedData ? Promise.resolve(cachedData) : this.fetchQuery(queryKey, queryFn)
+  }
+
   getQueriesData<TQueryFnData = unknown>(
     queryKey: QueryKey,
   ): [QueryKey, TQueryFnData | undefined][]
