@@ -12,7 +12,7 @@ When the number of parallel queries does not change, there is **no extra effort*
 ```tsx
 function App () {
   // The following queries will execute in parallel
-  const usersQuery = useQuery({ queryKey: ['users'], queyFn: fetchUsers })
+  const usersQuery = useQuery({ queryKey: ['users'], queryFn: fetchUsers })
   const teamsQuery = useQuery({ queryKey: ['teams'], queryFn: fetchTeams })
   const projectsQuery = useQuery({ queryKey: ['projects'], queryFn: fetchProjects })
   ...
