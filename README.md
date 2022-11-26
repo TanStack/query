@@ -1,32 +1,32 @@
 <img src="https://static.scarf.sh/a.png?x-pxid=be2d8a11-9712-4c1d-9963-580b2d4fb133" />
 
-![React Query Header](https://github.com/tannerlinsley/react-query/raw/beta/media/repo-header.png)
+![TanStack Query Header](https://github.com/TanStack/query/raw/beta/media/repo-header.png)
 
-Hooks for fetching, caching and updating asynchronous data in React
+Hooks for fetching, caching and updating asynchronous data in React, Solid, Svelte and Vue
 
 <a href="https://twitter.com/intent/tweet?button_hashtag=TanStack" target="\_parent">
   <img alt="#TanStack" src="https://img.shields.io/twitter/url?color=%2308a0e9&label=%23TanStack&style=social&url=https%3A%2F%2Ftwitter.com%2Fintent%2Ftweet%3Fbutton_hashtag%3DTanStack">
 </a><a href="https://discord.com/invite/WrRKjPJ" target="\_parent">
   <img alt="" src="https://img.shields.io/badge/Discord-TanStack-%235865F2" />
-</a><a href="https://github.com/tannerlinsley/react-query/actions?query=workflow%3A%22react-query+tests%22">
-<img src="https://github.com/tannerlinsley/react-query/workflows/react-query%20tests/badge.svg" />
-</a><a href="https://npmjs.com/package/react-query" target="\_parent">
-  <img alt="" src="https://img.shields.io/npm/dm/react-query.svg" />
+</a><a href="https://github.com/TanStack/query/actions?query=workflow%3A%22react-query+tests%22">
+<img src="https://github.com/TanStack/query/workflows/react-query%20tests/badge.svg" />
+</a><a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
+  <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" />
 </a><a href="https://bundlephobia.com/package/@tanstack/react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/@tanstack/react-query" />
 </a><a href="#badge">
     <img alt="semantic-release" src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg">
-  </a><a href="https://github.com/tannerlinsley/react-query/discussions">
+  </a><a href="https://github.com/TanStack/query/discussions">
   <img alt="Join the discussion on Github" src="https://img.shields.io/badge/Github%20Discussions%20%26%20Support-Chat%20now!-blue" />
-</a><a href="https://bestofjs.org/projects/tanstack-query"><img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" /></a><a href="https://github.com/tannerlinsley/react-query" target="\_parent">
-  <img alt="" src="https://img.shields.io/github/stars/tannerlinsley/react-query.svg?style=social&label=Star" />
+</a><a href="https://bestofjs.org/projects/tanstack-query"><img alt="Best of JS" src="https://img.shields.io/endpoint?url=https://bestofjs-serverless.now.sh/api/project-badge?fullName=TanStack%2Fquery%26since=daily" /></a><a href="https://github.com/TanStack/query/" target="\_parent">
+  <img alt="" src="https://img.shields.io/github/stars/TanStack/query.svg?style=social&label=Star" />
 </a><a href="https://twitter.com/tannerlinsley" target="\_parent">
   <img alt="" src="https://img.shields.io/twitter/follow/tannerlinsley.svg?style=social&label=Follow" />
 </a> <a href="https://gitpod.io/from-referrer/">
   <img src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod" alt="Gitpod Ready-to-Code"/>
 </a>
 
-Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [React Table](https://github.com/tannerlinsley/react-table), [React Form](https://github.com/tannerlinsley/react-form), [React Charts](https://github.com/tannerlinsley/react-charts)
+Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack Table](https://github.com/TanStack/table), [TanStack Router](https://github.com/tanstack/router), [TanStack Virtual](https://github.com/tanstack/virtual), [React Charts](https://github.com/TanStack/react-charts), [React Ranger](https://github.com/TanStack/ranger)
 
 ## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
 
