@@ -28,6 +28,7 @@ Its available methods are:
 - [`queryClient.prefetchQuery`](#queryclientprefetchquery)
 - [`queryClient.prefetchInfiniteQuery`](#queryclientprefetchinfinitequery)
 - [`queryClient.getQueryData`](#queryclientgetquerydata)
+- [`queryClient.ensureQueryData`](#queryclientensurequerydata)
 - [`queryClient.getQueriesData`](#queryclientgetqueriesdata)
 - [`queryClient.setQueryData`](#queryclientsetquerydata)
 - [`queryClient.getQueryState`](#queryclientgetquerystate)
@@ -177,6 +178,22 @@ const data = queryClient.getQueryData(queryKey)
 
 - `data: TQueryFnData | undefined`
   - The data for the cached query, or `undefined` if the query does not exist.
+
+## `queryClient.ensureQueryData`
+
+`ensureQueryData` is an asynchronous function that can be used to get an existing query's cached data. If the query does not exist, `queryClient.fetchQuery` will be called and its results returned.
+
+```tsx
+const data = queryClient.ensureQueryData({ queryKey, queryFn })
+```
+
+**Options**
+
+- The options for `ensureQueryData` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery) except that `queryKey` is required.
+
+**Returns**
+
+- `Promise<TData>`
 
 ## `queryClient.getQueriesData`
 
