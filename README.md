@@ -26,7 +26,7 @@ Hooks for fetching, caching and updating asynchronous data in React, Solid, Svel
   <img src="https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod" alt="Gitpod Ready-to-Code"/>
 </a>
 
-Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack Table](https://github.com/TanStack/table), [React Form](https://github.com/tannerlinsley/react-form), [React Charts](https://github.com/tannerlinsley/react-charts)
+Enjoy this library? Try the entire [TanStack](https://tanstack.com)! [TanStack Table](https://github.com/TanStack/table), [TanStack Router](https://github.com/tanstack/router), [TanStack Virtual](https://github.com/tanstack/virtual), [React Charts](https://github.com/TanStack/react-charts), [React Ranger](https://github.com/TanStack/ranger)
 
 ## Visit [tanstack.com/query](https://tanstack.com/query) for docs, guides, API and more!
 
