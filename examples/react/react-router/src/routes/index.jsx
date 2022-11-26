@@ -11,7 +11,8 @@ export default function Index() {
       </a> and{" "}
       <a href="https://tanstack.com/query/v4/docs/overview">
         the docs at tanstack.com
-      </a>.
+      </a>
+      .
     </p>
   );
 }

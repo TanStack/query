@@ -47,11 +47,11 @@ export default function Home(props) {
   );
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     margin: "44px 0",
     "& p": {
-      margin: "12px 0 24px"
-    }
-  }
+      margin: "12px 0 24px",
+    },
+  },
 }));
