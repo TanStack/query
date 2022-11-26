@@ -10,8 +10,8 @@ Hooks for fetching, caching and updating asynchronous data in React, Solid, Svel
   <img alt="" src="https://img.shields.io/badge/Discord-TanStack-%235865F2" />
 </a><a href="https://github.com/TanStack/query/actions?query=workflow%3A%22react-query+tests%22">
 <img src="https://github.com/TanStack/query/workflows/react-query%20tests/badge.svg" />
-</a><a href="https://www.npmjs.com/package/@tanstack/react-query" target="\_parent">
-  <img alt="" src="https://img.shields.io/npm/dm/@tanstack/react-query.svg" />
+</a><a href="https://www.npmjs.com/package/@tanstack/query-core" target="\_parent">
+  <img alt="" src="https://img.shields.io/npm/dm/@tanstack/query-core.svg" />
 </a><a href="https://bundlephobia.com/package/@tanstack/react-query@latest" target="\_parent">
   <img alt="" src="https://badgen.net/bundlephobia/minzip/@tanstack/react-query" />
 </a><a href="#badge">
