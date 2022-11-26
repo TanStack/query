@@ -189,7 +189,7 @@ const data = queryClient.ensureQueryData({ queryKey, queryFn })
 
 **Options**
 
-- The options for `ensureQueryData` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
+- The options for `ensureQueryData` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery) except that `queryKey` is required.
 
 **Returns**
 
