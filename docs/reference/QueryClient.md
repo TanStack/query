@@ -184,12 +184,12 @@ const data = queryClient.getQueryData({ queryKey })
 `ensureQueryData` is an asynchronous function that can be used to get an existing query's cached data. If the query does not exist, `queryClient.fetchQuery` will be called and its results returned.
 
 ```tsx
-const data = queryClient.ensureQueryData(queryKey, queryFn, filters)
+const data = queryClient.ensureQueryData({ queryKey, queryFn })
 ```
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- The options for `ensureQueryData` are exactly the same as those of [`fetchQuery`](#queryclientfetchquery).
 
 **Returns**
 
