@@ -166,7 +166,7 @@ The options for `prefetchInfiniteQuery` are exactly the same as those of [`fetch
 `getQueryData` is a synchronous function that can be used to get an existing query's cached data. If the query does not exist, `undefined` will be returned.
 
 ```tsx
-const data = queryClient.getQueryData({ queryKey })
+const data = queryClient.getQueryData(queryKey)
 ```
 
 **Options**
