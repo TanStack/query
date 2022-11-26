@@ -28,39 +28,38 @@ const queryClient = new QueryClient({
 });
 
 const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <Root />,
-      errorElement: <ErrorPage />,
-      loader: rootLoader(queryClient),
-      action: rootAction(queryClient),
-      children: [
-        {
-          index: true,
-          element: <Index />
-        },
-        {
-          path: "contacts/:contactId",
-          element: <Contact />,
-          loader: contactLoader(queryClient),
-          action: contactAction(queryClient),
-        },
-        {
-          path: "contacts/:contactId/edit",
-          element: <EditContact />,
-          loader: contactLoader(queryClient),
-          action: editAction(queryClient),
-        },
-        {
-          path: "contacts/:contactId/destroy",
-          element: <EditContact />,
-          action: destroyAction(queryClient),
-          errorElement: <div>Oops! There was an error.</div>
-        },
-      ],
-    },
-  ],
-);
+  {
+    path: "/",
+    element: <Root />,
+    errorElement: <ErrorPage />,
+    loader: rootLoader(queryClient),
+    action: rootAction(queryClient),
+    children: [
+      {
+        index: true,
+        element: <Index />,
+      },
+      {
+        path: "contacts/:contactId",
+        element: <Contact />,
+        loader: contactLoader(queryClient),
+        action: contactAction(queryClient),
+      },
+      {
+        path: "contacts/:contactId/edit",
+        element: <EditContact />,
+        loader: contactLoader(queryClient),
+        action: editAction(queryClient),
+      },
+      {
+        path: "contacts/:contactId/destroy",
+        element: <EditContact />,
+        action: destroyAction(queryClient),
+        errorElement: <div>Oops! There was an error.</div>,
+      },
+    ],
+  },
+]);
 
 const rootElement = document.getElementById("root");
 ReactDOM.createRoot(rootElement).render(

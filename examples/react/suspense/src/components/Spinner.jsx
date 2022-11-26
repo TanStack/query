@@ -6,7 +6,7 @@ export default function Spinner() {
       className="fa fa-circle-o-notch fa-spin"
       style={{
         marginLeft: 4,
-        fontSize: "small"
+        fontSize: "small",
       }}
     />
   );

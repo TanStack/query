@@ -7,7 +7,7 @@ export default function Button({ children, timeoutMs = 3000, onClick }) {
     timeoutMs: timeoutMs,
   });
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     startTransition(() => {
       onClick(e);
     });

@@ -33,12 +33,10 @@ function Root() {
   const [staleTime, setStaleTime] = React.useState(1000);
   const [cacheTime, setCacheTime] = React.useState(3000);
   const [localErrorRate, setErrorRate] = React.useState(errorRate);
-  const [localFetchTimeMin, setLocalFetchTimeMin] = React.useState(
-    queryTimeMin
-  );
-  const [localFetchTimeMax, setLocalFetchTimeMax] = React.useState(
-    queryTimeMax
-  );
+  const [localFetchTimeMin, setLocalFetchTimeMin] =
+    React.useState(queryTimeMin);
+  const [localFetchTimeMax, setLocalFetchTimeMax] =
+    React.useState(queryTimeMax);
 
   React.useEffect(() => {
     errorRate = localErrorRate;

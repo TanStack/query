@@ -8,7 +8,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper
+  Paper,
 } from "@material-ui/core";
 import { Link as RouterLink } from "react-router-dom";
 import { useParams } from "react-router";
@@ -66,7 +66,7 @@ function Character() {
       </TableContainer>
       <br />
       <Typography variant="h4">Episodes</Typography>
-      {data.episode.map(episode => {
+      {data.episode.map((episode) => {
         const episodeUrlParts = episode.split("/").filter(Boolean);
         const episodeId = episodeUrlParts[episodeUrlParts.length - 1];
 

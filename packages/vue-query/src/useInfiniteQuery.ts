@@ -35,7 +35,7 @@ type InfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
   TError,
   InfiniteQueryObserverResult<TData, TError>
 >
-type UseInfiniteQueryReturnType<TData, TError> = Omit<
+export type UseInfiniteQueryReturnType<TData, TError> = Omit<
   InfiniteQueryReturnType<TData, TError>,
   'fetchNextPage' | 'fetchPreviousPage' | 'refetch' | 'remove'
 > & {

@@ -20,7 +20,7 @@ function Episode() {
       <Typography variant="body1">{data.air_date}</Typography>
       <br />
       <Typography variant="h4">Characters</Typography>
-      {data.characters.map(character => {
+      {data.characters.map((character) => {
         const characterUrlParts = character.split("/").filter(Boolean);
         const characterId = characterUrlParts[characterUrlParts.length - 1];
         return <Character id={characterId} key={characterId} />;

@@ -16,9 +16,15 @@ export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
 export { VUE_QUERY_CLIENT } from './utils'
 
-export type { UseQueryReturnType } from './useBaseQuery'
-export type { UseQueryOptions } from './useQuery'
-export type { UseInfiniteQueryOptions } from './useInfiniteQuery'
+export type {
+  UseQueryOptions,
+  UseQueryReturnType,
+  UseQueryDefinedReturnType,
+} from './useQuery'
+export type {
+  UseInfiniteQueryOptions,
+  UseInfiniteQueryReturnType,
+} from './useInfiniteQuery'
 export type { UseMutationOptions, UseMutationReturnType } from './useMutation'
 export type { UseQueriesOptions, UseQueriesResults } from './useQueries'
 export type { MutationFilters } from './useIsMutating'

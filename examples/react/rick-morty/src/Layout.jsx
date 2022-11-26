@@ -47,10 +47,10 @@ export default function Layout() {
   );
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   main: {
     margin: "0 auto",
-    padding: "16px"
+    padding: "16px",
   },
   menu: {
     margin: "0 auto",
@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: "center",
     backgroundColor: "#CCC",
     "& button": {
-      margin: theme.spacing(1)
-    }
-  }
+      margin: theme.spacing(1),
+    },
+  },
 }));
