@@ -152,7 +152,7 @@ export class QueryClient {
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
     options?: Omit<
       FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-      'queryKey'
+      'queryKey' | 'queryFn'
     >,
   ): Promise<TData>
   ensureQueryData<
