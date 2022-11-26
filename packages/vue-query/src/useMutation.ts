@@ -16,12 +16,17 @@ import type {
   MutationObserverResult,
   MutationObserverOptions,
 } from '@tanstack/query-core'
-import type { WithQueryClientKey, MaybeRef, MaybeRefDeep } from './types'
+import type {
+  WithQueryClientKey,
+  MaybeRef,
+  MaybeRefDeep,
+  DistributiveOmit,
+} from './types'
 import { MutationObserver } from '@tanstack/query-core'
 import { cloneDeepUnref, updateState, isMutationKey } from './utils'
 import { useQueryClient } from './useQueryClient'
 
-type MutationResult<TData, TError, TVariables, TContext> = Omit<
+type MutationResult<TData, TError, TVariables, TContext> = DistributiveOmit<
   MutationObserverResult<TData, TError, TVariables, TContext>,
   'mutate' | 'reset'
 >
