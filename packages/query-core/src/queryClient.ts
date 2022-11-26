@@ -28,6 +28,7 @@ import type {
   ResetOptions,
   ResetQueryFilters,
   SetDataOptions,
+  WithRequired,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -120,17 +121,57 @@ export class QueryClient {
 
   ensureQueryData<
     TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    options: WithRequired<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    queryKey: TQueryKey,
+    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData = unknown,
+    TError = unknown,
+    TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    filters?: QueryFilters,
-  ): Promise<TQueryFnData> {
-    const cachedData = this.getQueryData<TQueryFnData>(queryKey, filters)
+    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<TData>
+  ensureQueryData<
+    TQueryFnData,
+    TError,
+    TData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
+  >(
+    arg1:
+      | TQueryKey
+      | WithRequired<
+          FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+          'queryKey'
+        >,
+    arg2?:
+      | QueryFunction<TQueryFnData, TQueryKey>
+      | FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  ): Promise<TData> {
+    const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
+    const cachedData = this.getQueryData<TData>(parsedOptions.queryKey!)
 
     return cachedData
       ? Promise.resolve(cachedData)
-      : this.fetchQuery(queryKey, queryFn)
+      : this.fetchQuery(parsedOptions)
   }
 
   getQueriesData<TQueryFnData = unknown>(

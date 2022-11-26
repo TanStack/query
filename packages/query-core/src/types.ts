@@ -250,7 +250,7 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
-type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+export type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
   TError = unknown,

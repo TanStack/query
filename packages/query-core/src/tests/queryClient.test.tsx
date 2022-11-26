@@ -478,7 +478,7 @@ describe('queryClient', () => {
       queryClient.setQueryData([key, 'id'], 'bar')
 
       await expect(
-        queryClient.ensureQueryData([key, 'id'], queryFn),
+        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
       ).resolves.toEqual('bar')
     })
 
@@ -487,7 +487,7 @@ describe('queryClient', () => {
       const queryFn = () => Promise.resolve('data')
 
       await expect(
-        queryClient.ensureQueryData([key], queryFn),
+        queryClient.ensureQueryData({ queryKey: [key], queryFn }),
       ).resolves.toEqual('data')
     })
   })
