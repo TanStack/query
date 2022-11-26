@@ -137,7 +137,10 @@ export class QueryClient {
     TQueryKey extends QueryKey = QueryKey,
   >(
     queryKey: TQueryKey,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: Omit<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
   ): Promise<TData>
   ensureQueryData<
     TQueryFnData = unknown,
@@ -147,7 +150,10 @@ export class QueryClient {
   >(
     queryKey: TQueryKey,
     queryFn: QueryFunction<TQueryFnData, TQueryKey>,
-    options?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    options?: Omit<
+      FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+      'queryKey'
+    >,
   ): Promise<TData>
   ensureQueryData<
     TQueryFnData,
