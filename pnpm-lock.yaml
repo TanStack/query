@@ -750,7 +750,7 @@ importers:
 
   packages/react-query-devtools:
     specifiers:
-      '@tanstack/match-sorter-utils': 8.1.1
+      '@tanstack/match-sorter-utils': ^8.7.0
       '@tanstack/react-query': workspace:*
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
@@ -763,7 +763,7 @@ importers:
       superjson: ^1.10.0
       use-sync-external-store: ^1.2.0
     dependencies:
-      '@tanstack/match-sorter-utils': 8.1.1
+      '@tanstack/match-sorter-utils': 8.7.0
       superjson: 1.10.0
       use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
@@ -5555,6 +5555,13 @@ packages:
 
   /@tanstack/match-sorter-utils/8.1.1:
     resolution: {integrity: sha512-IdmEekEYxQsoLOR0XQyw3jD1GujBpRRYaGJYQUw1eOT1eUugWxdc7jomh1VQ1EKHcdwDLpLaCz/8y4KraU4T9A==}
+    engines: {node: '>=12'}
+    dependencies:
+      remove-accents: 0.4.2
+    dev: false
+
+  /@tanstack/match-sorter-utils/8.7.0:
+    resolution: {integrity: sha512-OgfIPMHTfuw9JGcXCCoEHWFP/eSP2eyhCYwkrFnWBM3NbUPAgOlFP11DbM7cozDRVB0XbPr1tD4pLAtWKlVUVg==}
     engines: {node: '>=12'}
     dependencies:
       remove-accents: 0.4.2
