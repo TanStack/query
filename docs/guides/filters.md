@@ -41,7 +41,7 @@ A query filter object supports the following properties:
   - When set to `paused` it will match queries that wanted to fetch, but have been `paused`.
   - When set to `idle` it will match queries that are not fetching.
 - `predicate?: (query: Query) => boolean`
-  - This predicate function will be used a final filter on all matched queries. If no other criteria are specified, this function will be evaluated on every query in the cache.
+  - This predicate function will be used as a final filter on all matching queries. If no other filters are specified, this function will be evaluated against every query in the cache.
 
 ## `Mutation Filters`
 
