@@ -70,4 +70,4 @@ A mutation filter object supports the following properties:
   - When set to `true` it will match mutations that are currently fetching.
   - When set to `false` it will match mutations that are not fetching.
 - `predicate?: (mutation: Mutation) => boolean`
-  - This predicate function will be used a final filter on all matched queries. If no other criteria are specified, this function will be evaluated on every mutation in the cache.
+  - This predicate function will be used as a final filter on all matching mutations. If no other filters are specified, this function will be evaluated against every mutation in the cache.
