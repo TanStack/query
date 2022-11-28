@@ -13,6 +13,7 @@ import type { UseQueryReturnType } from './useBaseQuery'
 import type {
   WithQueryClientKey,
   VueInfiniteQueryObserverOptions,
+  DistributiveOmit,
 } from './types'
 
 export type UseInfiniteQueryOptions<
@@ -35,7 +36,7 @@ type InfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
   TError,
   InfiniteQueryObserverResult<TData, TError>
 >
-export type UseInfiniteQueryReturnType<TData, TError> = Omit<
+export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
   InfiniteQueryReturnType<TData, TError>,
   'fetchNextPage' | 'fetchPreviousPage' | 'refetch' | 'remove'
 > & {
