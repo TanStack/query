@@ -23,7 +23,7 @@ const {
 
 **Options**
 
-The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery) with the addition of the following and a small difference in `isRefetching`:
+The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery) with the addition of the following:
 
 - `queryFn: (context: QueryFunctionContext) => Promise<TData>`
   - **Required, but only if no default query function has been defined** [`defaultQueryFn`](../guides/default-query-function)
@@ -39,13 +39,10 @@ The options for `useInfiniteQuery` are identical to the [`useQuery` hook](../ref
   - When new data is received for this query, this function receives both the first page of the infinite list of data and the full array of all pages.
   - It should return a **single variable** that will be passed as the last optional parameter to your query function.
   - Return `undefined` to indicate there is no previous page available.
-- `isRefetching: boolean`
-  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading` or fetching of next or previous page
-  - Is the same as `isFetching && !isLoading && !isFetchingNextPage && !isFetchingPreviousPage`
 
 **Returns**
 
-The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery), with the addition of the following:
+The returned properties for `useInfiniteQuery` are identical to the [`useQuery` hook](../reference/useQuery), with the addition of the following and a small difference in `isRefetching`:
 
 - `data.pages: TData[]`
   - Array containing all pages.
@@ -69,3 +66,6 @@ The returned properties for `useInfiniteQuery` are identical to the [`useQuery` 
   - This will be `true` if there is a next page to be fetched (known via the `getNextPageParam` option).
 - `hasPreviousPage: boolean`
   - This will be `true` if there is a previous page to be fetched (known via the `getPreviousPageParam` option).
+- `isRefetching: boolean`
+  - Is `true` whenever a background refetch is in-flight, which _does not_ include initial `loading` or fetching of next or previous page
+  - Is the same as `isFetching && !isLoading && !isFetchingNextPage && !isFetchingPreviousPage`
