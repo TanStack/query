@@ -55,7 +55,7 @@ Fetch your initial data in a Server Component higher up in the component tree, a
 
 ```tsx
 // app/page.jsx
-export default async function RootPage() {
+export default async function Home() {
   const initialData = await getPosts()
   
   return <Posts posts={initialData} />
@@ -63,7 +63,7 @@ export default async function RootPage() {
 ```
 
 ```tsx
-// app/Posts.jsx
+// app/posts.jsx
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
@@ -82,26 +82,25 @@ export function Posts(props) {
 The hooks provided by the `react-query` package need to retrieve a `QueryClient` from their context. Wrap your component tree with `<QueryClientProvider>` and pass it an instance of `QueryClient`.
 
 ```tsx
-// app/Providers.jsx
+// app/providers.jsx
 'use client'
 
-import { useState } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export function Providers({children}) {
-  const [queryClient] = useState(new QueryClient())
+export default function Providers({children}) {
+  const [queryClient] = React.useState(() => new QueryClient())
   
   return (
     <QueryClientProvider client={queryClient}>
       {children}
     </QueryClientProvider>
-  );
+  )
 }
 ```
 
 ```tsx
 // app/layout.jsx
-import { Providers } from './Providers'
+import Providers from './providers'
 
 export default function RootLayout({children}) {
   return (
@@ -111,7 +110,7 @@ export default function RootLayout({children}) {
         <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }
 ```
 
