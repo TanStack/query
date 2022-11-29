@@ -117,6 +117,110 @@ There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/d
 
 The result is missing referential equality for all the hydration data, which for example triggers wherever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.
 
+## Using Remix
+
+Remix supports Server-side Rendering (SSR) only.
+
+### Using `initialData`
+
+Together with Remix's [`loader`](https://remix.run/docs/en/v1/api/conventions#loader), you can pass the data you fetch to `useQuery`'s' `initialData` option.
+
+```tsx
+export async function loader() {
+  const posts = await getPosts()
+  return json({ posts })
+}
+
+function Posts() {
+  const { posts } = useLoaderData()
+
+  const { data } = useQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
+    initialData: posts,
+  })
+
+  // ...
+}
+```
+
+The setup is minimal and this can be a quick solution for some cases, but there are a **few tradeoffs to consider** when compared to the full approach:
+
+- If you are calling `useQuery` with the same query in multiple locations, you need to pass `initialData` to all of them
+- There is no way to know at what time the query was fetched on the server, so `dataUpdatedAt` and determining if the query needs refetching is based on when the page loaded instead
+
+### Using Hydration
+
+React Query supports prefetching multiple queries on the server in Remix and then _dehydrating_ those queries to the queryClient. This means the server can prerender markup that is immediately available on page load and as soon as JS is available, React Query can upgrade or _hydrate_ those queries with the full functionality of the library. This includes refetching those queries on the client if they have become stale since the time they were rendered on the server.
+
+To support caching queries on the server and set up hydration:
+
+- Create a new `QueryClient` instance **inside of your app, and on an instance ref (or in React state). This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per component lifecycle.**
+- Wrap your app component with `<QueryClientProvider>` and pass it the client instance
+- Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `useDehydratedState()`
+
+```bash
+npm i use-dehydrated-state
+# or
+pnpm add use-dehydrated-state
+# or
+yarn add use-dehydrated-state
+```
+
+```tsx
+// root.tsx
+import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+import { useDehydratedState } from 'use-dehydrated-state'
+
+export default function MyApp() {
+  const [queryClient] = React.useState(() => new QueryClient())
+
+  const dehydratedState = useDehydratedState()
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Hydrate state={dehydratedState}>
+        <Outlet />
+      </Hydrate>
+    </QueryClientProvider>
+  )
+}
+```
+
+Now you are ready to prefetch some data in your [`loader`](https://remix.run/docs/en/v1/api/conventions#loader).
+
+- Create a new `QueryClient` instance **for each page request. This ensures that data is not shared between users and requests.**
+- Prefetch the data using the clients `prefetchQuery` method and wait for it to complete
+- Use `dehydrate` to dehydrate the query cache and pass it to the page via the `dehydratedState` prop. This is the same prop that `useDehydratedState()` will pick up for caching in your `root.tsx`
+
+```tsx
+// pages/posts.tsx
+import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
+
+export async function loader() {
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery(['posts'], getPosts)
+
+  return json({ dehydratedState: dehydrate(queryClient) })
+}
+
+function Posts() {
+  // This useQuery could just as well happen in some deeper child to
+  // the "Posts"-page, data will be available immediately either way
+  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // This query was not prefetched on the server and will not start
+  // fetching until on the client, both patterns are fine to mix
+  const { data: otherData } = useQuery({ queryKey: ['posts-2'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+As demonstrated, it's fine to prefetch some queries and let others fetch on the queryClient. This means you can control what content server renders or not by adding or removing `prefetchQuery` for a specific query.
+
 ## Using Other Frameworks or Custom SSR Frameworks
 
 This guide is at-best, a high level overview of how SSR with React Query should work. Your mileage may vary since there are many different possible setups for SSR.
