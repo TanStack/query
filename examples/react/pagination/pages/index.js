@@ -35,12 +35,12 @@ function Example() {
 
   // Prefetch the next page!
   React.useEffect(() => {
-    if (data?.hasMore) {
+    if (!isPreviousData && data?.hasMore) {
       queryClient.prefetchQuery(['projects', page + 1], () =>
         fetchProjects(page + 1),
       )
     }
-  }, [data, page, queryClient])
+  }, [data, isPreviousData, page, queryClient])
 
   return (
     <div>
