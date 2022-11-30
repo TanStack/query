@@ -40,7 +40,7 @@ function Example() {
         fetchProjects(page + 1),
       )
     }
-  }, [data, page, queryClient])
+  }, [data, isPreviousData, page, queryClient])
 
   return (
     <div>
