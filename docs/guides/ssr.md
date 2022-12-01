@@ -58,10 +58,10 @@ To support caching queries on the server and set up hydration:
 - Wrap your app component with `<Hydrate>` and pass it the `dehydratedState` prop from `pageProps`
 
 ```tsx
-// _app.jsx
+// _app.tsx
 import { Hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-export default function MyApp({ Component, pageProps }) {
+export default function MyApp({ Component, pageProps }: AppProps<any>) {
   const [queryClient] = React.useState(() => new QueryClient())
 
   return (
@@ -81,7 +81,7 @@ Now you are ready to prefetch some data in your pages with either [`getStaticPro
 - Use `dehydrate` to dehydrate the query cache and pass it to the page via the `dehydratedState` prop. This is the same prop that the cache will be picked up from in your `_app.js`
 
 ```tsx
-// pages/posts.jsx
+// pages/posts.tsx
 import { dehydrate, QueryClient, useQuery } from '@tanstack/react-query';
 
 export async function getStaticProps() {
