@@ -246,6 +246,11 @@ describe('QueryClientProvider', () => {
     })
 
     test('should not use window to get the context when contextSharing is true and window does not exist', () => {
+      const { document } = globalThis
+
+      // @ts-expect-error
+      delete globalThis.document
+
       const queryCache = new QueryCache()
       const queryClient = createQueryClient({ queryCache })
 
@@ -269,6 +274,7 @@ describe('QueryClientProvider', () => {
 
       expect(queryClientFromHook).toEqual(queryClient)
 
+      globalThis.document = document
       windowSpy.mockRestore()
     })
   })
