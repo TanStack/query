@@ -203,7 +203,7 @@ export interface QueryObserverOptions<
    */
   notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
   /**
-   * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
+   * This callback will fire any time the query successfully fetches new data.
    */
   onSuccess?: (data: TData) => void
   /**
