@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query'
 
 export default () => {
   const id =
-    typeof window !== 'undefined' ? window.location.pathname.slice(1) : ''
+    typeof document !== 'undefined' ? window.location.pathname.slice(1) : ''
 
   const { status, data, error, isFetching } = useQuery(['team', id], () =>
     fetch('/api/data?id=' + id),

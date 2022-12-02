@@ -39,7 +39,7 @@ In rare circumstances, you may want to manage your own window focus events that 
 ```tsx
 focusManager.setEventListener(handleFocus => {
   // Listen to visibilitychange and focus
-  if (typeof window !== 'undefined' && window.addEventListener) {
+  if (typeof document !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
     window.addEventListener('focus', handleFocus, false)
   }
