@@ -6,6 +6,7 @@
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:import/typescript",
+    "plugin:no-typeof-window-undefined/recommended",
     "react-app",
     "prettier"
   ],

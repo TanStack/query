@@ -32,7 +32,7 @@ function getQueryClientContext(
   if (context) {
     return context
   }
-  if (contextSharing && typeof window !== 'undefined') {
+  if (contextSharing && typeof document !== 'undefined') {
     if (!window.SolidQueryClientContext) {
       window.SolidQueryClientContext = defaultContext
     }

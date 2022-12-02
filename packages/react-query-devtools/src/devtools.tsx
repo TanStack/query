@@ -282,7 +282,7 @@ export function ReactQueryDevtools({
 
       run()
 
-      if (typeof window !== 'undefined') {
+      if (typeof document !== 'undefined') {
         window.addEventListener('resize', run)
 
         return () => {

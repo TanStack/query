@@ -38,7 +38,7 @@ export const VueQueryPlugin = {
     if ('queryClient' in options && options.queryClient) {
       client = options.queryClient
     } else {
-      if (options.contextSharing && typeof window !== 'undefined') {
+      if (options.contextSharing && typeof document !== 'undefined') {
         if (!window.__VUE_QUERY_CONTEXT__) {
           const clientConfig =
             'queryClientConfig' in options
