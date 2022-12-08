@@ -442,20 +442,6 @@
           ]
         }
       ]
-    },
-    {
-      "framework": "angular",
-      "menuItems": [
-        {
-          "label": "Getting Started",
-          "children": [
-            {
-              "label": "Overview",
-              "to": "angular/overview"
-            }
-          ]
-        }
-      ]
     }
   ],
   "users": [
