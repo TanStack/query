@@ -203,6 +203,12 @@ describe('queryCache', () => {
       await queryClient.prefetchQuery(key2, () => 'data2')
       expect(queryCache.findAll().length).toBe(2)
     })
+
+    test('should return all the queries when key contains object with an undefined property', async () => {
+      const baseKey = queryKey()
+      await queryClient.prefetchQuery([...baseKey, { a: 1 }], () => 'data1')
+      expect(queryCache.findAll([...baseKey, { a: undefined }])).toHaveLength(1)
+    })
   })
 
   describe('QueryCacheConfig.onError', () => {
