@@ -206,8 +206,13 @@ describe('queryCache', () => {
 
     test('should return all the queries when key contains object with an undefined property', async () => {
       const baseKey = queryKey()
-      await queryClient.prefetchQuery([...baseKey, { a: 1 }], () => 'data1')
-      expect(queryCache.findAll([...baseKey, { a: undefined }])).toHaveLength(1)
+      const createKey = (filter?: string) => [{ ...baseKey, filter }]
+      await queryClient.prefetchQuery(
+        createKey('filter1'),
+        () => 'filtered-data',
+      )
+      await queryClient.prefetchQuery(createKey(), () => 'all-data')
+      expect(queryCache.findAll(createKey())).toHaveLength(2)
     })
   })
 
