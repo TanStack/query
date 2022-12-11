@@ -37,11 +37,13 @@ function Example() {
     refetchInterval: intervalMs,
   })
 
-  const addMutation = useMutation((add) => fetch(`/api/data?add=${add}`), {
+  const addMutation = useMutation({
+    mutationFn: (add) => fetch(`/api/data?add=${add}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
-  const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
+  const clearMutation = useMutation({
+    mutationFn: () => fetch(`/api/data?clear=1`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
