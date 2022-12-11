@@ -5,6 +5,6 @@ export const action =
   (queryClient) =>
   async ({ params }) => {
     await deleteContact(params.contactId);
-    queryClient.invalidateQueries(["contacts"]);
+    queryClient.invalidateQueries({ queryKey: ["contacts"] });
     return redirect("/");
   };

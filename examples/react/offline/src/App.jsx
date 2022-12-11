@@ -52,7 +52,7 @@ const queryClient = new QueryClient({
 queryClient.setMutationDefaults(movieKeys.all(), {
   mutationFn: async ({ id, comment }) => {
     // to avoid clashes with our optimistic update when an offline mutation continues
-    await queryClient.cancelQueries(movieKeys.detail(id));
+    await queryClient.cancelQueries({ queryKey: movieKeys.detail(id) });
     return api.updateMovie(id, comment);
   },
 });
@@ -94,9 +94,10 @@ function Movies() {
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring
-              ? queryClient.fetchQuery(movieKeys.detail(movieId), () =>
-                  api.fetchMovie(movieId)
-                )
+              ? queryClient.fetchQuery({
+                  queryKey: movieKeys.detail(movieId),
+                  queryFn: () => api.fetchMovie(movieId),
+                })
               : undefined),
         },
       ]}
@@ -108,7 +109,10 @@ function Movies() {
 }
 
 function List() {
-  const moviesQuery = useQuery(movieKeys.list(), api.fetchMovies);
+  const moviesQuery = useQuery({
+    queryKey: movieKeys.list(),
+    queryFn: api.fetchMovies,
+  });
 
   if (moviesQuery.isLoading && moviesQuery.isFetching) {
     return "Loading...";

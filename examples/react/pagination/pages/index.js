@@ -5,8 +5,8 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 
@@ -27,18 +27,20 @@ function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
-  const { status, data, error, isFetching, isPreviousData } = useQuery(
-    ['projects', page],
-    () => fetchProjects(page),
-    { keepPreviousData: true, staleTime: 5000 },
-  )
+  const { status, data, error, isFetching, isPreviousData } = useQuery({
+    queryKey: ['projects', page],
+    queryFn: () => fetchProjects(page),
+    keepPreviousData: true,
+    staleTime: 5000,
+  })
 
   // Prefetch the next page!
   React.useEffect(() => {
     if (!isPreviousData && data?.hasMore) {
-      queryClient.prefetchQuery(['projects', page + 1], () =>
-        fetchProjects(page + 1),
-      )
+      queryClient.prefetchQuery({
+        queryKey: ['projects', page + 1],
+        queryFn: () => fetchProjects(page + 1),
+      })
     }
   }, [data, isPreviousData, page, queryClient])
 

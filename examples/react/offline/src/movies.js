@@ -12,16 +12,17 @@ export const movieKeys = {
 export const useMovie = (movieId) => {
   const queryClient = useQueryClient();
 
-  const movieQuery = useQuery(movieKeys.detail(movieId), () =>
-    api.fetchMovie(movieId)
-  );
+  const movieQuery = useQuery({
+    queryKey: movieKeys.detail(movieId),
+    queryFn: () => api.fetchMovie(movieId),
+  });
 
   const [comment, setComment] = React.useState();
 
   const updateMovie = useMutation({
     mutationKey: movieKeys.detail(movieId),
     onMutate: async () => {
-      await queryClient.cancelQueries(movieKeys.detail(movieId));
+      await queryClient.cancelQueries({ queryKey: movieKeys.detail(movieId) });
       const previousData = queryClient.getQueryData(movieKeys.detail(movieId));
 
       // remove local state so that server state is taken instead
@@ -41,7 +42,7 @@ export const useMovie = (movieId) => {
       queryClient.setQueryData(movieKeys.detail(movieId), context.previousData);
     },
     onSettled: () => {
-      queryClient.invalidateQueries(movieKeys.detail(movieId));
+      queryClient.invalidateQueries({ queryKey: movieKeys.detail(movieId) });
     },
   });
 
