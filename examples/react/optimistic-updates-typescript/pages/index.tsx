@@ -42,7 +42,7 @@ function Example() {
         setText('')
         // Cancel any outgoing refetches
         // (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries(['todos'])
+        await queryClient.cancelQueries({ queryKey: ['todos'] })
 
         // Snapshot the previous value
         const previousTodos = queryClient.getQueryData<Todos>(['todos'])
@@ -69,7 +69,7 @@ function Example() {
       },
       // Always refetch after error or success:
       onSettled: () => {
-        queryClient.invalidateQueries(['todos'])
+        queryClient.invalidateQueries({ queryKey: ['todos'] })
       },
     },
   )

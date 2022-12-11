@@ -67,13 +67,11 @@ function Example() {
                   setSelectedChar(char.id)
                 }}
                 onMouseEnter={async () => {
-                  await queryClient.prefetchQuery(
-                    ['character', char.id],
-                    () => getCharacter(char.id),
-                    {
-                      staleTime: 10 * 1000, // only prefetch if older than 10 seconds
-                    },
-                  )
+                  await queryClient.prefetchQuery({
+                    queryKey: ['character', char.id],
+                    queryFn: () => getCharacter(char.id),
+                    staleTime: 10 * 1000, // only prefetch if older than 10 seconds
+                  })
 
                   setTimeout(() => {
                     rerender({})

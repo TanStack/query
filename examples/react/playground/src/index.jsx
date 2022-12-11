@@ -250,7 +250,7 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const saveMutation = useMutation(patchTodo, {
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
-      queryClient.invalidateQueries(["todos"]);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
       queryClient.setQueryData(["todo", { id: editingIndex }], data);
     },
   });
@@ -336,7 +336,7 @@ function AddTodo() {
 
   const addMutation = useMutation(postTodo, {
     onSuccess: () => {
-      queryClient.invalidateQueries(["todos"]);
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
     },
   });
 

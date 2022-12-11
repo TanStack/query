@@ -38,11 +38,11 @@ function Example() {
   })
 
   const addMutation = useMutation((add) => fetch(`/api/data?add=${add}`), {
-    onSuccess: () => queryClient.invalidateQueries(['todos']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryClient.invalidateQueries(['todos']),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>

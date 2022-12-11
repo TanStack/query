@@ -21,9 +21,10 @@ export default function Projects({ setActiveProject }) {
           <Button
             onClick={() => {
               // Prefetch the project query
-              queryClient.prefetchQuery(["project", project.name], () =>
-                fetchProject(project.name)
-              );
+              queryClient.prefetchQuery({
+                queryKey: ["project", project.name],
+                queryFn: () => fetchProject(project.name),
+              });
               setActiveProject(project.name);
             }}
           >
