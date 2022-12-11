@@ -5,9 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import fetch from "./fetch";
 
 export default function Characters(props) {
-  const { status, error, data } = useQuery(["characters"], () =>
-    fetch(`https://swapi.dev/api/people/`)
-  );
+  const { status, error, data } = useQuery({
+    queryKey: ["characters"],
+    queryFn: () => fetch(`https://swapi.dev/api/people/`),
+  });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;

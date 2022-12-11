@@ -177,10 +177,10 @@ function App() {
 function Todos({ initialFilter = "", setEditingIndex }) {
   const [filter, setFilter] = React.useState(initialFilter);
 
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-    ["todos", { filter }],
-    fetchTodos
-  );
+  const { status, data, isFetching, error, failureCount, refetch } = useQuery({
+    queryKey: ["todos", { filter }],
+    queryFn: fetchTodos,
+  });
 
   return (
     <div>
@@ -231,13 +231,11 @@ function EditTodo({ editingIndex, setEditingIndex }) {
   const queryClient = useQueryClient();
 
   // Don't attempt to query until editingIndex is truthy
-  const { status, data, isFetching, error, failureCount, refetch } = useQuery(
-    ["todo", { id: editingIndex }],
-    () => fetchTodoById({ id: editingIndex }),
-    {
-      enabled: editingIndex !== null,
-    }
-  );
+  const { status, data, isFetching, error, failureCount, refetch } = useQuery({
+    queryKey: ["todo", { id: editingIndex }],
+    queryFn: () => fetchTodoById({ id: editingIndex }),
+    enabled: editingIndex !== null,
+  });
 
   const [todo, setTodo] = React.useState(data || {});
 

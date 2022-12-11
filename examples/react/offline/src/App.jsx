@@ -108,7 +108,10 @@ function Movies() {
 }
 
 function List() {
-  const moviesQuery = useQuery(movieKeys.list(), api.fetchMovies);
+  const moviesQuery = useQuery({
+    queryKey: movieKeys.list(),
+    queryFn: api.fetchMovies,
+  });
 
   if (moviesQuery.isLoading && moviesQuery.isFetching) {
     return "Loading...";

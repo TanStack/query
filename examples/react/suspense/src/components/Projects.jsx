@@ -8,7 +8,10 @@ import { fetchProjects, fetchProject } from "../queries";
 
 export default function Projects({ setActiveProject }) {
   const queryClient = useQueryClient();
-  const { data, isFetching } = useQuery(["projects"], fetchProjects);
+  const { data, isFetching } = useQuery({
+    queryKey: ["projects"],
+    queryFn: fetchProjects,
+  });
 
   return (
     <div>

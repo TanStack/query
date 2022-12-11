@@ -5,8 +5,8 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const getCharacters = async () => {
   await new Promise((r) => setTimeout(r, 500))
@@ -37,11 +37,15 @@ function Example() {
   const rerender = React.useState(0)[1]
   const [selectedChar, setSelectedChar] = React.useState(1)
 
-  const charactersQuery = useQuery(['characters'], getCharacters)
+  const charactersQuery = useQuery({
+    queryKey: ['characters'],
+    queryFn: getCharacters,
+  })
 
-  const characterQuery = useQuery(['character', selectedChar], () =>
-    getCharacter(selectedChar),
-  )
+  const characterQuery = useQuery({
+    queryKey: ['character', selectedChar],
+    queryFn: () => getCharacter(selectedChar),
+  })
 
   return (
     <div className="App">

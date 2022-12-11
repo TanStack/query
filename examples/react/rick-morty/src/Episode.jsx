@@ -7,9 +7,11 @@ import fetch from "./fetch";
 
 function Episode() {
   const { episodeId } = useParams();
-  const { data, status } = useQuery(["episode", episodeId], () =>
-    fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`)
-  );
+  const { data, status } = useQuery({
+    queryKey: ["episode", episodeId],
+    queryFn: () =>
+      fetch(`https://rickandmortyapi.com/api/episode/${episodeId}`),
+  });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;
@@ -30,9 +32,10 @@ function Episode() {
 }
 
 function Character({ id }) {
-  const { data, status } = useQuery(["character", id], () =>
-    fetch(`https://rickandmortyapi.com/api/character/${id}`)
-  );
+  const { data, status } = useQuery({
+    queryKey: ["character", id],
+    queryFn: () => fetch(`https://rickandmortyapi.com/api/character/${id}`),
+  });
 
   if (status === "loading") return <p>Loading...</p>;
   if (status === "error") return <p>Error :(</p>;

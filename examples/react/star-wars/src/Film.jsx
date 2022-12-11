@@ -7,9 +7,10 @@ import fetch from "./fetch";
 
 function Film(props) {
   const filmId = props.match.params.filmId;
-  const { data, status, error } = useQuery(["film", filmId], () =>
-    fetch(`https://swapi.dev/api/films/${filmId}/`)
-  );
+  const { data, status, error } = useQuery({
+    queryKey: ["film", filmId],
+    queryFn: () => fetch(`https://swapi.dev/api/films/${filmId}/`),
+  });
 
   if (status === "loading") return <p>Loading...</p>;
   // this will not be necessary when v1 is released.
@@ -35,9 +36,10 @@ function Film(props) {
 
 function Character(props) {
   const { id } = props;
-  const { data, status, error } = useQuery(["character", id], () =>
-    fetch(`https://swapi.dev/api/people/${props.id}/`)
-  );
+  const { data, status, error } = useQuery({
+    queryKey: ["character", id],
+    queryFn: () => fetch(`https://swapi.dev/api/people/${props.id}/`),
+  });
 
   if (status !== "success") {
     return null;

@@ -12,9 +12,10 @@ export const movieKeys = {
 export const useMovie = (movieId) => {
   const queryClient = useQueryClient();
 
-  const movieQuery = useQuery(movieKeys.detail(movieId), () =>
-    api.fetchMovie(movieId)
-  );
+  const movieQuery = useQuery({
+    queryKey: movieKeys.detail(movieId),
+    queryFn: () => api.fetchMovie(movieId),
+  });
 
   const [comment, setComment] = React.useState();
 

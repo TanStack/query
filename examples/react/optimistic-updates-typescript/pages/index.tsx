@@ -26,7 +26,7 @@ async function fetchTodos(): Promise<Todos> {
 }
 
 function useTodos() {
-  return useQuery(['todos'], fetchTodos)
+  return useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
 }
 
 function Example() {

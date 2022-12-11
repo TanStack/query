@@ -9,8 +9,8 @@ import {
   useMutation,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 
@@ -27,19 +27,17 @@ function Example() {
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
-  const { status, data, error, isFetching } = useQuery(
-    ['todos'],
-    async () => {
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => {
       const res = await axios.get('/api/data')
       return res.data
     },
-    {
-      // Refetch the data every second
-      refetchInterval: intervalMs,
-    },
-  )
+    // Refetch the data every second
+    refetchInterval: intervalMs,
+  })
 
-  const addMutation = useMutation((value) => fetch(`/api/data?add=${value}`), {
+  const addMutation = useMutation((add) => fetch(`/api/data?add=${add}`), {
     onSuccess: () => queryClient.invalidateQueries(['todos']),
   })
 
