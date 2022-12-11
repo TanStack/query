@@ -18,9 +18,9 @@ export default function App() {
 }
 
 function Example() {
-  const state = createQuery(
-    () => ['repoData'],
-    async () => {
+  const state = createQuery({
+    queryKey: () => ['repoData'],
+    queryFn: async () => {
       const response = await fetch(
         'https://api.github.com/repos/tannerlinsley/react-query',
         {
@@ -29,7 +29,7 @@ function Example() {
       )
       return response.json()
     },
-  )
+  })
 
   return (
     <Switch>
