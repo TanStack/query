@@ -117,6 +117,175 @@ There's a catch if you're using [Next.js' rewrites feature](https://nextjs.org/d
 
 The result is missing referential equality for all the hydration data, which for example triggers wherever your data is used as props of components or in the dependency array of `useEffect`s/`useMemo`s.
 
+## Using Experimental `app` Directory in Next.js 13
+
+> **WARNING:** The `app` directory introduced in Next.js 13 is currently in beta, and it is not recommended for use in production. The API is not stable, and the guidelines provided here may become obsolete in a future update. This guide is provided as is to supply a quick start for early exploration of Next.js 13's experimental features.
+
+Both prefetching approaches, using `initialData` or `<Hydrate>`, are available within the `app` directory.
+
+- Prefetch the data in a Server Component and prop drill `initialData` to Client Components
+  - Quick to set up for simple cases
+  - May need to prop drill through multiple layers of Client Components
+  - May need to prop drill to multiple Client Components using the same query
+  - Query refetching is based on when the page loads instead of when the data was prefetched on the server
+- Prefetch the query on the server, dehydrate the cache and rehydrate it on the client with `<Hydrate>`
+  - Requires slightly more setup up front
+  - No need to prop drill
+  - Query refetching is based on when the query was prefetched on the server
+
+
+### `<QueryClientProvider>` is required by both the `initialData` and `<Hydrate>` prefetching approaches
+
+The hooks provided by the `react-query` package need to retrieve a `QueryClient` from their context. Wrap your component tree with `<QueryClientProvider>` and pass it an instance of `QueryClient`.
+
+```tsx
+// app/providers.jsx
+'use client'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+export default function Providers({children}) {
+  const [queryClient] = React.useState(() => new QueryClient())
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  )
+}
+```
+
+```tsx
+// app/layout.jsx
+import Providers from './providers'
+
+export default function RootLayout({children}) {
+  return (
+    <html>
+      <head></head>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
+    </html>
+  )
+}
+```
+
+### Using `initialData`
+
+Fetch your initial data in a Server Component higher up in the component tree, and pass it to your Client Component as a prop.
+
+```tsx
+// app/page.jsx
+export default async function Home() {
+  const initialData = await getPosts()
+  
+  return <Posts posts={initialData} />
+}
+```
+
+```tsx
+// app/posts.jsx
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+
+export function Posts(props) {
+  const {data} = useQuery({
+    queryKey: ['posts'],
+    queryFn: getPosts,
+    initialData: props.posts,
+  })
+  
+  // ...
+}
+```
+
+
+### Using `<Hydrate>`
+
+Create a request-scoped singleton instance of `QueryClient`. **This ensures that data is not shared between different users and requests, while still only creating the QueryClient once per request.**
+
+```tsx
+// app/getQueryClient.jsx
+import { QueryClient } from '@tanstack/query-core'
+import { cache } from 'react'
+
+const getQueryClient = cache(() => new QueryClient())
+export default getQueryClient
+```
+
+Re-export the `<Hydrate>` component as a Client Component. This allows `<Hydrate>` to execute on the client and make use of client-only features. **TODO: Plans to add 'use client' to react-query modules?**
+
+```tsx
+// app/hydrateOnClient.jsx
+'use client'
+
+import { Hydrate as HydrateOnClient } from '@tanstack/react-query'
+export default HydrateOnClient
+```
+
+Fetch your data in a Server Component higher up in the component tree than the Client Components that use the prefetched queries. Your prefetched queries will be available to all components deeper down the component tree.
+
+  - Retrieve the `QueryClient` singleton instance
+  - Prefetch the data using the client's prefetchQuery method and wait for it to complete
+  - Use `dehydrate` to obtain the dehydrated state of the prefetched queries from the query cache
+  - Wrap the component tree that needs the prefetched queries inside your `<Hydrate>` Client Component, and provide it with the dehydrated state
+
+> NOTE: TypeScript currently complains of a type error when using async Server Components. As a temporary workaround, use `{/* @ts-expect-error Server Component */}` when calling this component inside another. For more information, see [End-to-End Type Safety](https://beta.nextjs.org/docs/configuring/typescript#end-to-end-type-safety) in the Next.js 13 beta docs.
+
+```tsx
+// app/hydratedPosts.jsx
+import { dehydrate } from '@tanstack/query-core'
+import getQueryClient from './getQueryClient'
+import HydrateOnClient from './hydrateOnClient'
+
+export default async function HydratedPosts() {
+  const queryClient = getQueryClient()
+  await queryClient.prefetchQuery(['posts'], getPosts)
+  const dehydratedState = dehydrate(queryClient, {
+    dehydrateMutations: false,
+    shouldDehydrateQuery: query => true // TODO: matchQuery or extend dehydrate
+  })
+
+  return (
+    <HydrateOnClient state={dehydratedState}>
+      <Posts />
+    </HydrateOnClient>
+  )
+}
+```
+
+During server rendering, calls to `useQuery` nested within the `<Hydrate>` Client Component will have access to prefetched data provided in the state property.
+
+```tsx
+// app/posts.jsx
+'use client'
+
+import { useQuery } from '@tanstack/react-query'
+
+export default function Posts() {
+  // This useQuery could just as well happen in some deeper child to
+  // the "HydratedPosts"-component, data will be available immediately either way
+  const { data } = useQuery({ queryKey: ['posts'], queryFn: getPosts })
+
+  // This query was not prefetched on the server and will not start
+  // fetching until on the client, both patterns are fine to mix
+  const { data: otherData } = useQuery({ queryKey: ['posts-2'], queryFn: getPosts })
+
+  // ...
+}
+```
+
+As demonstrated, it's fine to prefetch some queries and let others fetch on the client. This means you can control what content server renders or not by adding or removing prefetchQuery for a specific query.
+
+### Suspense and server-side fetching
+
+Suspense for components that rely on data prefetched on the server is best addressed by adding suspense boundaries around the Server Components that fetch your data. This instructs the server not to wait on prefetching, instead returning an initial response rendered with a fallback and streaming your rendered component to be substituted for the fallback once prefetching completes. For more information, see [Streaming and Suspense](https://beta.nextjs.org/docs/data-fetching/streaming-and-suspense) in the Next.js 13 beta docs.
+
+In this case, the `suspense` option in the `QueryClient` and `useQuery` hook is unnecessary as the Client Component will not render until the the data has already been fetched.
+
+
 ## Using Other Frameworks or Custom SSR Frameworks
 
 This guide is at-best, a high level overview of how SSR with React Query should work. Your mileage may vary since there are many different possible setups for SSR.
