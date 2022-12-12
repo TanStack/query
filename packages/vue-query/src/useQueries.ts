@@ -148,12 +148,13 @@ export function useQueries<T extends any[]>({
   const optionsQueryClient = unreffedQueries.value[0]?.queryClient as
     | QueryClient
     | undefined
-  const queryClient = queryClientInjected ?? optionsQueryClient ?? useQueryClient(queryClientKey)
+  const queryClient =
+    queryClientInjected ?? optionsQueryClient ?? useQueryClient(queryClientKey)
   if (queryClientKey || optionsQueryClient) {
     queryClient
       .getLogger()
       .error(
-        `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an options directly to useQueries hook.`,
+        `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an option directly to useQueries hook.`,
       )
   }
 

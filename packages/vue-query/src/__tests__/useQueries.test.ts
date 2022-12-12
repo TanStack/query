@@ -194,7 +194,7 @@ describe('useQueries', () => {
   })
 
   test('should use queryClient provided via options', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient()
     const queries = [
       {
         queryKey: ['key41'],
@@ -213,12 +213,12 @@ describe('useQueries', () => {
   })
 
   test('should use queryClient provided via query options', async () => {
-    const queryClient = new QueryClient();
+    const queryClient = new QueryClient()
     const queries = [
       {
         queryKey: ['key41'],
         queryFn: simpleFetcher,
-        queryClient
+        queryClient,
       },
       {
         queryKey: ['key42'],
