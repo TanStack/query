@@ -11,7 +11,7 @@ The `AbortController` API is available in [most runtime environments](https://de
 
 By default, queries that unmount or become unused before their promises are resolved are _not_ cancelled. This means that after the promise has resolved, the resulting data will be available in the cache. This is helpful if you've started receiving a query, but then unmount the component before it finishes. If you mount the component again and the query has not been garbage collected yet, data will be available.
 
-However, if you consume the `AbortSignal` or attach a `cancel` function to your Promise, the Promise will be cancelled (e.g. aborting the fetch) and therefore, also the Query must be cancelled. Cancelling the query will result in its state being _reverted_ to its previous state.
+However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. aborting the fetch) and therefore, also the Query must be cancelled. Cancelling the query will result in its state being _reverted_ to its previous state.
 
 ## Using `fetch`
 
@@ -137,7 +137,7 @@ const query = useQuery({
 
 ## Manual Cancellation
 
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If `promise.cancel` is available, or you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
 
 ```tsx
 const query = useQuery({
