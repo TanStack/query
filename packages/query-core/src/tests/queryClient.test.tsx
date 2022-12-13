@@ -23,6 +23,7 @@ describe('queryClient', () => {
 
   afterEach(() => {
     queryClient.clear()
+    queryClient.unmount()
   })
 
   describe('defaultOptions', () => {
@@ -1464,6 +1465,41 @@ describe('queryClient', () => {
       queryCacheOnFocusSpy.mockRestore()
       queryCacheOnOnlineSpy.mockRestore()
       mutationCacheResumePausedMutationsSpy.mockRestore()
+      onlineManager.setOnline(undefined)
+    })
+
+    test('should not notify queryCache and mutationCache after multiple mounts/unmounts', async () => {
+      const testClient = createQueryClient()
+      testClient.mount()
+      testClient.mount()
+      testClient.unmount()
+      testClient.unmount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus',
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline',
+      )
+      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'resumePausedMutations',
+      )
+
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).not.toHaveBeenCalled()
+      expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
+
+      focusManager.setFocused(true)
+      expect(queryCacheOnFocusSpy).not.toHaveBeenCalled()
+      expect(mutationCacheResumePausedMutationsSpy).not.toHaveBeenCalled()
+
+      queryCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheResumePausedMutationsSpy.mockRestore()
+      focusManager.setFocused(undefined)
       onlineManager.setOnline(undefined)
     })
   })
