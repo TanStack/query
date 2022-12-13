@@ -150,7 +150,10 @@ export function useQueries<T extends any[]>({
     | undefined
   const queryClient =
     queryClientInjected ?? optionsQueryClient ?? useQueryClient(queryClientKey)
-  if (queryClientKey || optionsQueryClient) {
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    (queryClientKey || optionsQueryClient)
+  ) {
     queryClient
       .getLogger()
       .error(
