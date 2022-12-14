@@ -185,7 +185,6 @@ function runCheckOnNode(params: {
     node: callNode,
     messageId: 'preferObjectSyntax',
     fix(fixer) {
-      const ruleFixes: TSESLint.RuleFix[] = []
       const optionsObjectProperties: string[] = []
 
       // queryKey
@@ -216,15 +215,13 @@ function runCheckOnNode(params: {
         optionsObjectProperties.push(...existingObjectProperties)
       }
 
-      if (callNode.callee.type === AST_NODE_TYPES.Identifier) {
-        const argsText = `{ ${optionsObjectProperties.join(', ')} }`
-
-        ruleFixes.push(
-          fixer.replaceText(callNode, `${callNode.callee.name}(${argsText})`),
-        )
+      if (callNode.callee.type !== AST_NODE_TYPES.Identifier) {
+        return null
       }
 
-      return ruleFixes
+      const argsText = `{ ${optionsObjectProperties.join(', ')} }`
+
+      return fixer.replaceText(callNode, `${callNode.callee.name}(${argsText})`)
     },
   })
 }
