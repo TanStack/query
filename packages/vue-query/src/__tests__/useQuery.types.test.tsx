@@ -28,6 +28,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<string, typeof query.data>> = true
         return result
       }
+      return
     })
   })
 
@@ -43,6 +44,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<null, typeof query.error>> = true
         return result
       }
+      return
     })
   })
 
@@ -58,6 +60,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<undefined, typeof query.data>> = true
         return result
       }
+      return
     })
   })
 
@@ -73,6 +76,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<unknown, typeof query.error>> = true
         return result
       }
+      return
     })
   })
 })
