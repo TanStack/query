@@ -55,6 +55,7 @@ export const createAsyncStoragePersister = ({
     ): Promise<Error | undefined> => {
       try {
         await storage.setItem(key, serialize(persistedClient))
+        return
       } catch (error) {
         return error as Error
       }
