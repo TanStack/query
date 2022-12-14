@@ -216,18 +216,13 @@ function runCheckOnNode(params: {
         optionsObjectProperties.push(...existingObjectProperties)
       }
 
-      const argumentsRange = ASTUtils.getRangeOfArguments(callNode)
+      if (callNode.callee.type === AST_NODE_TYPES.Identifier) {
+        const argsText = `{ ${optionsObjectProperties.join(', ')} }`
 
-      if (argumentsRange) {
-        ruleFixes.push(fixer.removeRange(argumentsRange))
+        ruleFixes.push(
+          fixer.replaceText(callNode, `${callNode.callee.name}(${argsText})`),
+        )
       }
-
-      ruleFixes.push(
-        fixer.insertTextAfterRange(
-          [callNode.range[0], callNode.range[1] - 1],
-          `{ ${optionsObjectProperties.join(', ')} }`,
-        ),
-      )
 
       return ruleFixes
     },

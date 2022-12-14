@@ -287,5 +287,32 @@ ruleTester.run(name, rule, {
         createQuery({ queryKey: ['data'], queryFn: () => fetchData(), enabled: false });
       `,
     },
+    {
+      code: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        createQuery(
+          ['key'],
+          () => Promise.resolve('data')
+        );
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        createQuery({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+      `,
+    },
+    {
+      code: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        createQuery(
+          ['key'], () => Promise.resolve('data')
+        );
+      `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+        import { createQuery } from "@tanstack/solid-query";
+        createQuery({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+      `,
+    },
   ],
 })

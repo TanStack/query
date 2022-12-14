@@ -128,15 +128,6 @@ export const ASTUtils = {
 
     return identifier
   },
-  getRangeOfArguments(
-    node: TSESTree.CallExpression,
-  ): TSESTree.Range | undefined {
-    const firstArgument = node.arguments[0]
-    const lastArgument = node.arguments[node.arguments.length - 1]
-    return firstArgument && lastArgument
-      ? [firstArgument.range[0], lastArgument.range[1]]
-      : undefined
-  },
   getExternalRefs(params: {
     scopeManager: TSESLint.Scope.ScopeManager
     node: TSESTree.Node
