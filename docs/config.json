@@ -424,6 +424,10 @@
             {
               "label": "Overview",
               "to": "vue/overview"
+            },
+            {
+              "label": "Quick Start",
+              "to": "vue/quick-start"
             }
           ]
         }
