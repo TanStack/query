@@ -418,6 +418,7 @@ export function getAbortController(): AbortController | undefined {
   if (typeof AbortController === 'function') {
     return new AbortController()
   }
+  return
 }
 
 export function replaceData<

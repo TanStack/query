@@ -46,6 +46,7 @@ export function createSyncStoragePersister({
     const trySave = (persistedClient: PersistedClient): Error | undefined => {
       try {
         storage.setItem(key, serialize(persistedClient))
+        return
       } catch (error) {
         return error as Error
       }
