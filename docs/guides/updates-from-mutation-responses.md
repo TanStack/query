@@ -69,4 +69,5 @@ queryClient.setQueryData(
     ...oldData,
     title: 'my new post title'
   } : oldData
+)
 ```
