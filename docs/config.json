@@ -426,6 +426,10 @@
               "to": "vue/overview"
             },
             {
+              "label": "Installation",
+              "to": "vue/installation"
+            },
+            {
               "label": "Quick Start",
               "to": "vue/quick-start"
             }

@@ -9,6 +9,7 @@ This code snippet very briefly illustrates the 3 core concepts of React Query:
 - [Mutations](./guides/mutations)
 - [Query Invalidation](./guides/query-invalidation)
 
+[//]: # (Example)
 If you're looking for a fully functioning example, please have a look at our [simple codesandbox example](../examples/react/simple)
 
 
@@ -74,5 +75,6 @@ function Todos() {
 
 render(<App />, document.getElementById('root'))
 ```
+[//]: # (Example)
 
 These three concepts make up most of the core functionality of React Query. The next sections of the documentation will go over each of these core concepts in great detail.
