@@ -25,6 +25,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<string, typeof mutation.data>> = true
         return result
       }
+      return
     })
   })
 
@@ -38,6 +39,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<null, typeof mutation.error>> = true
         return result
       }
+      return
     })
   })
 
@@ -51,6 +53,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<undefined, typeof mutation.data>> = true
         return result
       }
+      return
     })
   })
 
@@ -64,6 +67,7 @@ describe('Discriminated union return type', () => {
         const result: Expect<Equal<unknown, typeof mutation.error>> = true
         return result
       }
+      return
     })
   })
 })
