@@ -1,0 +1,35 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "tree": {
+      "dependsOn": ["^tree"]
+    },
+   "test:jest": {
+     "dependsOn": ["^tree"],
+     "outputs": []
+   },
+   "test:eslint": {
+     "dependsOn": [],
+     "outputs": []
+   },
+    "//#typecheck": {
+      "outputs": []
+    },
+   "//#test:format": {
+     "dependsOn": [],
+     "outputs": []
+   },
+   "//#test:react:17": {
+     "dependsOn": [],
+     "outputs": []
+   },
+    "//#build": {
+      "dependsOn": ["typecheck"],
+      "outputs": ["packages/*/build/**"]
+    },
+    "//#test:size": {
+      "dependsOn": ["build"],
+      "outputs": []
+    }
+  }
+}

@@ -90,6 +90,7 @@
     "stream-to-array": "^2.3.0",
     "ts-jest": "^27.1.1",
     "ts-node": "^10.7.0",
+    "turbo": "^1.6.3",
     "typescript": "^4.7.4",
     "vue": "^3.2.33"
   },

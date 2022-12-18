@@ -4,6 +4,8 @@ jobs:
   test:
     name: 'Test'
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.2
@@ -15,7 +17,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:lib
+      - run: npx turbo run test:lib
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
   lint:
@@ -32,7 +34,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:eslint
+      - run: npx turbo run test:eslint
   typecheck:
     name: 'Typecheck'
     runs-on: ubuntu-latest
@@ -47,7 +49,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:types
+      - run: npx turbo run test:types
   format:
     name: 'Format'
     runs-on: ubuntu-latest
@@ -62,7 +64,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:format
+      - run: npx turbo run test:format
   test-react-17:
     name: 'Test React 17'
     runs-on: ubuntu-latest
@@ -77,7 +79,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:react:17
+      - run: npx turbo run test:react:17
         env:
           REACTJS_VERSION: 17
   test-size:
@@ -94,6 +96,6 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run test:size
+      - run: npx turbo run test:size
         env:
           BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
