@@ -40,6 +40,7 @@ On a more technical note, React Query will likely:
 - Have a direct impact on your end-users by making your application feel faster and more responsive than ever before.
 - Potentially help you save on bandwidth and increase memory performance
 
+[//]: # (Example)
 ## Enough talk, show me some code already!
 
 In the example below, you can see React Query in its most basic and simple form being used to fetch the GitHub stats for the React Query GitHub project itself:
@@ -83,8 +84,11 @@ function Example() {
   )
 }
 ```
+[//]: # (Example)
 
 ## You talked me into it, so what now?
 
+[//]: # (Course)
 - Consider taking the official [React Query Course](https://ui.dev/react-query?from=tanstack) (or buying it for your whole team!)
+[//]: # (Course)
 - Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
