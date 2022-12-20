@@ -1468,6 +1468,40 @@ describe('queryClient', () => {
       onlineManager.setOnline(undefined)
     })
 
+    test('should notify queryCache and mutationCache after multiple mounts and single unmount', async () => {
+      const testClient = createQueryClient()
+      testClient.mount()
+      testClient.mount()
+      testClient.unmount()
+
+      const queryCacheOnFocusSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onFocus',
+      )
+      const queryCacheOnOnlineSpy = jest.spyOn(
+        testClient.getQueryCache(),
+        'onOnline',
+      )
+      const mutationCacheResumePausedMutationsSpy = jest.spyOn(
+        testClient.getMutationCache(),
+        'resumePausedMutations',
+      )
+
+      onlineManager.setOnline(true)
+      expect(queryCacheOnOnlineSpy).toHaveBeenCalledTimes(1)
+      expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(1)
+
+      focusManager.setFocused(true)
+      expect(queryCacheOnFocusSpy).toHaveBeenCalledTimes(1)
+      expect(mutationCacheResumePausedMutationsSpy).toHaveBeenCalledTimes(2)
+
+      queryCacheOnFocusSpy.mockRestore()
+      queryCacheOnOnlineSpy.mockRestore()
+      mutationCacheResumePausedMutationsSpy.mockRestore()
+      focusManager.setFocused(undefined)
+      onlineManager.setOnline(undefined)
+    })
+
     test('should not notify queryCache and mutationCache after multiple mounts/unmounts', async () => {
       const testClient = createQueryClient()
       testClient.mount()
