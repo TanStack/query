@@ -42,7 +42,7 @@ If you are not a fan of `<script setup>` syntax, you can easily translate all th
 ```vue
 <script>
 import { defineComponent } from "vue";
-import { useQuery } from "vue-query";
+import { useQuery } from "@tanstack/vue-query";
 
 export default defineComponent({
   name: "Todos",
