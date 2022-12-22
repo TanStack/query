@@ -261,6 +261,42 @@
         "code",
         "maintenance"
       ]
+    },
+    {
+      "login": "matthewhausman",
+      "name": "Matthew Hausman",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25216513?v=4",
+      "profile": "https://www.linkedin.com/in/matthew-hausman/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Newbie012",
+      "name": "Eliya Cohen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/10504365?v=4",
+      "profile": "https://github.com/Newbie012",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "KubaJastrz",
+      "name": "Jakub Jastrzębski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6443113?v=4",
+      "profile": "https://kubajastrz.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "balazsmatepetro",
+      "name": "Balázs Máté Petró",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1608725?v=4",
+      "profile": "https://github.com/balazsmatepetro",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

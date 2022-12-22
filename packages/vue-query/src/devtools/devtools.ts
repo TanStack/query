@@ -21,7 +21,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
       id: pluginId,
       label: pluginName,
       packageName: 'vue-query',
-      homepage: 'https://github.com/DamianOsipiuk/vue-query',
+      homepage: 'https://tanstack.com/query/v4',
       logo: 'https://vue-query.vercel.app/vue-query.svg',
       app,
       settings: {

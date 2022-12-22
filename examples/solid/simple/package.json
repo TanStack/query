@@ -14,6 +14,7 @@
     "solid-js": "^1.5.1"
   },
   "devDependencies": {
+    "@tanstack/eslint-plugin-query": "^4.13.0",
     "typescript": "^4.8.2",
     "vite": "^3.0.9",
     "vite-plugin-solid": "^2.3.9"

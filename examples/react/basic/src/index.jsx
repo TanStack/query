@@ -38,11 +38,14 @@ function App() {
 }
 
 function usePosts() {
-  return useQuery(["posts"], async () => {
-    const { data } = await axios.get(
-      "https://jsonplaceholder.typicode.com/posts"
-    );
-    return data;
+  return useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      const { data } = await axios.get(
+        "https://jsonplaceholder.typicode.com/posts"
+      );
+      return data;
+    },
   });
 }
 
@@ -98,7 +101,9 @@ const getPostById = async (id) => {
 };
 
 function usePost(postId) {
-  return useQuery(["post", postId], () => getPostById(postId), {
+  return useQuery({
+    queryKey: ["post", postId],
+    queryFn: () => getPostById(postId),
     enabled: !!postId,
   });
 }

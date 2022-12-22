@@ -1,4 +1,4 @@
-import { reactive } from 'vue-demi'
+import { reactive, ref } from 'vue-demi'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
 import { parseMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
@@ -35,11 +35,8 @@ describe('useMutation', () => {
 
   test('should return error when request fails', async () => {
     const mutation = useMutation(errorMutator)
-
-    mutation.mutate()
-
+    mutation.mutate({})
     await flushPromises(10)
-
     expect(mutation).toMatchObject({
       isIdle: { value: false },
       isLoading: { value: false },
@@ -86,6 +83,70 @@ describe('useMutation', () => {
     const mutations = mutationCache.find({ mutationKey: ['bar'] })
 
     expect(mutations?.options.mutationKey).toEqual(['bar'])
+  })
+
+  test('should update reactive options deeply', async () => {
+    type MutationKeyTest = {
+      entity: string
+      otherObject: {
+        name: string
+      }
+    }
+    const mutationKey = ref<MutationKeyTest[]>([
+      {
+        entity: 'test',
+        otherObject: { name: 'objectName' },
+      },
+    ])
+    const queryClient = useQueryClient()
+    const mutationCache = queryClient.getMutationCache()
+    const options = reactive({ mutationKey })
+    const mutation = useMutation(
+      (params: string) => successMutator(params),
+      options,
+    )
+
+    mutationKey.value[0]!.otherObject.name = 'someOtherObjectName'
+    await flushPromises()
+    mutation.mutate('xyz')
+
+    await flushPromises()
+
+    const mutations = mutationCache.getAll()
+    const relevantMutation = mutations.find((m) => {
+      return (
+        Array.isArray(m.options.mutationKey) &&
+        !!m.options.mutationKey[0].otherObject
+      )
+    })
+
+    expect(
+      (relevantMutation?.options.mutationKey as MutationKeyTest[])[0]
+        ?.otherObject.name === 'someOtherObjectName',
+    )
+  })
+
+  test('should allow for non-options object (mutationFn or mutationKey) passed as arg1 & arg2 to trigger reactive updates', async () => {
+    const mutationKey = ref<string[]>(['foo2'])
+    const mutationFn = ref((params: string) => successMutator(params))
+    const queryClient = useQueryClient()
+    const mutationCache = queryClient.getMutationCache()
+    const mutation = useMutation(mutationKey, mutationFn)
+
+    mutationKey.value = ['bar2']
+    let proof = false
+    mutationFn.value = (params: string) => {
+      proof = true
+      return successMutator(params)
+    }
+    await flushPromises()
+
+    mutation.mutate('xyz')
+    await flushPromises()
+
+    const mutations = mutationCache.find({ mutationKey: ['bar2'] })
+    expect(mutations?.options.mutationKey).toEqual(['bar2'])
+    expect(proof).toEqual(true)
   })
 
   test('should reset state after invoking mutation.reset', async () => {
@@ -237,7 +298,7 @@ describe('useMutation', () => {
     test('should throw on error', async () => {
       const mutation = useMutation(errorMutator)
 
-      await expect(mutation.mutateAsync()).rejects.toThrowError('Some error')
+      await expect(mutation.mutateAsync({})).rejects.toThrowError('Some error')
 
       expect(mutation).toMatchObject({
         isIdle: { value: false },
@@ -281,6 +342,21 @@ describe('useMutation', () => {
         ...options,
         mutationKey: ['key'],
         mutationFn: successMutator,
+      }
+
+      expect(result).toEqual(expected)
+    })
+
+    test('should unwrap refs arguments', () => {
+      const key = ref(['key'])
+      const mutationFn = ref(successMutator)
+      const options = ref({ retry: ref(12) })
+
+      const result = parseMutationArgs(key, mutationFn, options)
+      const expected = {
+        mutationKey: ['key'],
+        mutationFn: successMutator,
+        retry: 12,
       }
 
       expect(result).toEqual(expected)

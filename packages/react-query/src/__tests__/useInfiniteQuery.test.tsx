@@ -2,7 +2,6 @@ import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
 
 import {
-  Blink,
   createQueryClient,
   queryKey,
   renderWithClient,
@@ -71,6 +70,7 @@ describe('useInfiniteQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
@@ -104,6 +104,7 @@ describe('useInfiniteQuery', () => {
       error: null,
       errorUpdatedAt: 0,
       failureCount: 0,
+      failureReason: null,
       errorUpdateCount: 0,
       fetchNextPage: expect.any(Function),
       fetchPreviousPage: expect.any(Function),
@@ -515,24 +516,28 @@ describe('useInfiniteQuery', () => {
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Initial fetch done
     expect(states[1]).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch next page
     expect(states[2]).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: true,
+      isRefetching: false,
     })
     // Fetch next page done
     expect(states[3]).toMatchObject({
       data: { pages: [10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch previous page
     expect(states[4]).toMatchObject({
@@ -540,6 +545,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: true,
+      isRefetching: false,
     })
     // Fetch previous page done
     expect(states[5]).toMatchObject({
@@ -547,6 +553,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
     // Refetch
     expect(states[6]).toMatchObject({
@@ -554,6 +561,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: true,
     })
     // Refetch done
     expect(states[7]).toMatchObject({
@@ -561,6 +569,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
   })
 
@@ -617,24 +626,28 @@ describe('useInfiniteQuery', () => {
       data: undefined,
       isFetching: true,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Initial fetch done
     expect(states[1]).toMatchObject({
       data: { pages: [10] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch next page
     expect(states[2]).toMatchObject({
       data: { pages: [10] },
       isFetching: true,
       isFetchingNextPage: true,
+      isRefetching: false,
     })
     // Fetch next page done
     expect(states[3]).toMatchObject({
       data: { pages: [10, 11] },
       isFetching: false,
       isFetchingNextPage: false,
+      isRefetching: false,
     })
     // Fetch previous page
     expect(states[4]).toMatchObject({
@@ -642,6 +655,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: true,
+      isRefetching: false,
     })
     // Fetch previous page done
     expect(states[5]).toMatchObject({
@@ -649,6 +663,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
     // Refetch
     expect(states[6]).toMatchObject({
@@ -656,6 +671,7 @@ describe('useInfiniteQuery', () => {
       isFetching: true,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: true,
     })
     // Refetch done
     expect(states[7]).toMatchObject({
@@ -663,6 +679,7 @@ describe('useInfiniteQuery', () => {
       isFetching: false,
       isFetchingNextPage: false,
       isFetchingPreviousPage: false,
+      isRefetching: false,
     })
   })
 
@@ -1092,20 +1109,31 @@ describe('useInfiniteQuery', () => {
 
       states.push(state)
 
-      const { fetchNextPage } = state
-
-      React.useEffect(() => {
-        setActTimeout(() => {
-          fetchNextPage({ pageParam: 5 })
-        }, 20)
-      }, [fetchNextPage])
-
-      return null
+      return (
+        <div>
+          <div>page0: {state.data?.pages[0]}</div>
+          <div>page1: {state.data?.pages[1]}</div>
+          <button onClick={() => state.fetchNextPage({ pageParam: 5 })}>
+            Fetch next page
+          </button>
+        </div>
+      )
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(100)
+    await waitFor(() => {
+      rendered.getByText('page0: 0')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'Fetch next page' }))
+
+    await waitFor(() => {
+      rendered.getByText('page1: 5')
+    })
+
+    // make sure no additional renders are happening after fetching next page
+    await sleep(20)
 
     expect(states.length).toBe(4)
     expect(states[0]).toMatchObject({
@@ -1723,13 +1751,13 @@ describe('useInfiniteQuery', () => {
       const promise = new Promise<string>((resolve, reject) => {
         cancelFn = jest.fn(() => reject('Cancelled'))
         signal?.addEventListener('abort', cancelFn)
-        sleep(20).then(() => resolve('OK'))
+        sleep(1000).then(() => resolve('OK'))
       })
 
       return promise
     }
 
-    function Page() {
+    function Inner() {
       const state = useInfiniteQuery(key, queryFn)
       return (
         <div>
@@ -1738,14 +1766,25 @@ describe('useInfiniteQuery', () => {
       )
     }
 
-    const rendered = renderWithClient(
-      queryClient,
-      <Blink duration={5}>
-        <Page />
-      </Blink>,
-    )
+    function Page() {
+      const [isVisible, setIsVisible] = React.useState(true)
 
-    await waitFor(() => rendered.getByText('off'))
+      return (
+        <>
+          <button onClick={() => setIsVisible(false)}>hide</button>
+          {isVisible && <Inner />}
+          <div>{isVisible ? 'visible' : 'hidden'}</div>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('visible'))
+
+    fireEvent.click(rendered.getByRole('button', { name: 'hide' }))
+
+    await waitFor(() => rendered.getByText('hidden'))
 
     expect(cancelFn).toHaveBeenCalled()
   })

@@ -1,0 +1,10 @@
+node_modules
+*.log
+.nuxt
+nuxt.d.ts
+.output
+.env
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

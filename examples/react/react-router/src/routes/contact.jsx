@@ -33,7 +33,7 @@ export const action =
     const contact = await updateContact(params.contactId, {
       favorite: formData.get("favorite") === "true",
     });
-    await queryClient.invalidateQueries(["contacts"]);
+    await queryClient.invalidateQueries({ queryKey: ["contacts"] });
     return contact;
   };
 

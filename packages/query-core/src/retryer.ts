@@ -185,6 +185,7 @@ export function createRetryer<TData = unknown, TError = unknown>(
             if (shouldPause()) {
               return pause()
             }
+            return
           })
           .then(() => {
             if (isRetryCancelled) {

@@ -5,7 +5,8 @@ import {
   QueryClientProvider,
   useQueryClient,
 } from '@tanstack/solid-query'
-import { Accessor, createSignal, For, Match, Setter, Switch } from 'solid-js'
+import type { Accessor, Setter } from 'solid-js'
+import { createSignal, For, Match, Switch } from 'solid-js'
 import { render } from 'solid-js/web'
 import { request, gql } from 'graphql-request'
 
@@ -38,9 +39,9 @@ function App() {
 }
 
 function createPosts() {
-  return createQuery(
-    () => ['posts'],
-    async () => {
+  return createQuery({
+    queryKey: () => ['posts'],
+    queryFn: async () => {
       const {
         posts: { data },
       } = await request(
@@ -58,7 +59,7 @@ function createPosts() {
       )
       return data
     },
-  )
+  })
 }
 
 function Posts(props: { setPostId: Setter<number> }) {
@@ -110,9 +111,9 @@ function Posts(props: { setPostId: Setter<number> }) {
 }
 
 function createPost(postId: Accessor<number>) {
-  return createQuery(
-    () => ['post', postId()],
-    async (context) => {
+  return createQuery({
+    queryKey: () => ['post', postId()],
+    queryFn: async (context) => {
       const { post } = await request(
         endpoint,
         gql`
@@ -128,10 +129,8 @@ function createPost(postId: Accessor<number>) {
 
       return post
     },
-    {
-      enabled: !!postId,
-    },
-  )
+    enabled: !!postId,
+  })
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {

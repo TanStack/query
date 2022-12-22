@@ -34,7 +34,6 @@ interface QueryConfig<
   options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   state?: QueryState<TData, TError>
-  meta: QueryMeta | undefined
 }
 
 export interface QueryState<TData = unknown, TError = unknown> {
@@ -45,6 +44,7 @@ export interface QueryState<TData = unknown, TError = unknown> {
   errorUpdateCount: number
   errorUpdatedAt: number
   fetchFailureCount: number
+  fetchFailureReason: TError | null
   fetchMeta: any
   isInvalidated: boolean
   status: QueryStatus
@@ -63,7 +63,6 @@ export interface FetchContext<
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: TQueryKey
   state: QueryState<TData, TError>
-  meta: QueryMeta | undefined
 }
 
 export interface QueryBehavior<
@@ -82,8 +81,10 @@ export interface FetchOptions {
   meta?: any
 }
 
-interface FailedAction {
+interface FailedAction<TError> {
   type: 'failed'
+  failureCount: number
+  error: TError
 }
 
 interface FetchAction {
@@ -124,7 +125,7 @@ interface SetStateAction<TData, TError> {
 export type Action<TData, TError> =
   | ContinueAction
   | ErrorAction<TError>
-  | FailedAction
+  | FailedAction<TError>
   | FetchAction
   | InvalidateAction
   | PauseAction
@@ -149,7 +150,6 @@ export class Query<
   initialState: QueryState<TData, TError>
   revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
-  meta: QueryMeta | undefined
   isFetchingOptimistic?: boolean
 
   private cache: QueryCache
@@ -173,15 +173,16 @@ export class Query<
     this.queryHash = config.queryHash
     this.initialState = config.state || getDefaultState(this.options)
     this.state = this.initialState
-    this.meta = config.meta
+  }
+
+  get meta(): QueryMeta | undefined {
+    return this.options.meta
   }
 
   private setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.defaultOptions, ...options }
-
-    this.meta = options?.meta
 
     this.updateCacheTime(this.options.cacheTime)
   }
@@ -403,7 +404,6 @@ export class Query<
       queryKey: this.queryKey,
       state: this.state,
       fetchFn,
-      meta: this.meta,
     }
 
     addSignalProperty(context)
@@ -473,8 +473,8 @@ export class Query<
         this.isFetchingOptimistic = false
       },
       onError,
-      onFail: () => {
-        this.dispatch({ type: 'failed' })
+      onFail: (failureCount, error) => {
+        this.dispatch({ type: 'failed', failureCount, error })
       },
       onPause: () => {
         this.dispatch({ type: 'pause' })
@@ -500,7 +500,8 @@ export class Query<
         case 'failed':
           return {
             ...state,
-            fetchFailureCount: state.fetchFailureCount + 1,
+            fetchFailureCount: action.failureCount,
+            fetchFailureReason: action.error,
           }
         case 'pause':
           return {
@@ -516,6 +517,7 @@ export class Query<
           return {
             ...state,
             fetchFailureCount: 0,
+            fetchFailureReason: null,
             fetchMeta: action.meta ?? null,
             fetchStatus: canFetch(this.options.networkMode)
               ? 'fetching'
@@ -537,6 +539,7 @@ export class Query<
             ...(!action.manual && {
               fetchStatus: 'idle',
               fetchFailureCount: 0,
+              fetchFailureReason: null,
             }),
           }
         case 'error':
@@ -552,6 +555,7 @@ export class Query<
             errorUpdateCount: state.errorUpdateCount + 1,
             errorUpdatedAt: Date.now(),
             fetchFailureCount: state.fetchFailureCount + 1,
+            fetchFailureReason: error as TError,
             fetchStatus: 'idle',
             status: 'error',
           }
@@ -593,15 +597,13 @@ function getDefaultState<
       ? (options.initialData as InitialDataFunction<TData>)()
       : options.initialData
 
-  const hasInitialData = typeof options.initialData !== 'undefined'
+  const hasData = typeof data !== 'undefined'
 
-  const initialDataUpdatedAt = hasInitialData
+  const initialDataUpdatedAt = hasData
     ? typeof options.initialDataUpdatedAt === 'function'
       ? (options.initialDataUpdatedAt as () => number | undefined)()
       : options.initialDataUpdatedAt
     : 0
-
-  const hasData = typeof data !== 'undefined'
 
   return {
     data,
@@ -611,6 +613,7 @@ function getDefaultState<
     errorUpdateCount: 0,
     errorUpdatedAt: 0,
     fetchFailureCount: 0,
+    fetchFailureReason: null,
     fetchMeta: null,
     isInvalidated: false,
     status: hasData ? 'success' : 'loading',
