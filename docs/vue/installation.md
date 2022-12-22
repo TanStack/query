@@ -25,7 +25,7 @@ Vue Query is compatible with Vue 2.x and 3.x
 
 Before using Vue Query, you need to initialize it using `VueQueryPlugin`
 
-```ts
+```tsx
 import { VueQueryPlugin } from "@tanstack/vue-query";
 
 app.use(VueQueryPlugin)

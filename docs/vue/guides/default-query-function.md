@@ -2,7 +2,6 @@
 id: default-query-function
 title: Default Query Function
 ref: docs/react/guides/default-query-function.md
-replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 
 [//]: # 'Example'

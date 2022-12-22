@@ -527,7 +527,7 @@
               "to": "vue/guides/invalidations-from-mutations"
             },
             {
-              "label": "Updates from Mutation Responses",
+              "label": "Updates from Mutation",
               "to": "vue/guides/updates-from-mutation-responses"
             },
             {
@@ -571,7 +571,7 @@
               "to": "vue/guides/testing"
             },
             {
-              "label": "Does this replace [Redux, MobX, etc]?",
+              "label": "Does this replace [Vuex, Pinia]?",
               "to": "vue/guides/does-this-replace-client-state"
             }
           ]

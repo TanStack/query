@@ -1,3 +1,8 @@
+---
+id: custom-client
+title: Custom Client
+---
+
 ### Custom client
 
 Vue Query allows providing custom `QueryClient` for Vue context.
@@ -8,7 +13,7 @@ For this reason, `VueQueryPlugin` accepts either `QueryClientConfig` or `QueryCl
 
 If You provide `QueryClientConfig`, `QueryClient` instance will be created internally and provided to Vue context.
 
-```ts
+```tsx
 const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClientConfig: {
     defaultOptions: { queries: { staleTime: 3600 } },
@@ -17,7 +22,7 @@ const vueQueryPluginOptions: VueQueryPluginOptions = {
 app.use(VueQueryPlugin, vueQueryPluginOptions)
 ```
 
-```ts
+```tsx
 const myClient = new QueryClient(queryClientConfig)
 const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClient: myClient,
@@ -31,14 +36,14 @@ You can also customize the key under which `QueryClient` will be accessible in V
 
 It works both with default, and custom `QueryClient`
 
-```ts
+```tsx
 const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClientKey: 'Foo',
 }
 app.use(VueQueryPlugin, vueQueryPluginOptions)
 ```
 
-```ts
+```tsx
 const myClient = new QueryClient(queryClientConfig)
 const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClient: myClient,
@@ -55,7 +60,7 @@ useQuery('query1', fetcher, { queryClientKey: 'foo' })
 
 Internally custom key will be combined with default query key as a suffix. But user do not have to worry about it.
 
-```ts
+```tsx
 const vueQueryPluginOptions: VueQueryPluginOptions = {
   queryClientKey: 'Foo',
 }

@@ -16,7 +16,7 @@ Things to keep in mind:
 
 Types in React Query generally flow through very well so that you don't have to provide type annotations for yourself
 
-```ts
+```tsx
 const { data } = useQuery({
   //    ^? const data: number | undefined
   queryKey: ['test'],
@@ -30,7 +30,7 @@ const { data } = useQuery({
 
 [//]: # 'Playground1'
 
-```ts
+```tsx
 const { data } = useQuery({
   //      ^? const data: string | undefined
   queryKey: ['test'],
@@ -47,7 +47,7 @@ const { data } = useQuery({
 
 This works best if your `queryFn` has a well-defined returned type. Keep in mind that most data fetching libraries return `any` per default, so make sure to extract it to a properly typed function:
 
-```ts
+```tsx
 const fetchGroups = (): Promise<Group[]> =>
   axios.get('/groups').then((response) => response.data)
 
@@ -65,7 +65,7 @@ const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 React Query uses a [discriminated union type](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes-func.html#discriminated-unions) for the query result, discriminated by the `status` field and the derived status boolean flags. This will allow you to check for e.g. `success` status to make `data` defined:
 
-```ts
+```tsx
 const { data, isSuccess } = useQuery({
   queryKey: ['test'],
   queryFn: () => Promise.resolve(5),
@@ -87,7 +87,7 @@ if (isSuccess) {
 
 The type for error defaults to `unknown`. This is in line with what TypeScript gives you per default in a catch clauses (see [useUnknownInCatchVariables](https://devblogs.microsoft.com/typescript/announcing-typescript-4-4/#use-unknown-catch-variables)). The safest way to work with `error` would be to perform a runtime check; another way would be to explicitly define types for `data` and `error`:
 
-```ts
+```tsx
 const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 //      ^? const error: unknown
 
@@ -103,7 +103,7 @@ if (error instanceof Error) {
 
 [//]: # 'Playground5'
 
-```ts
+```tsx
 const { error } = useQuery<Group[], Error>(['groups'], fetchGroups)
 //      ^? const error: Error | null
 ```

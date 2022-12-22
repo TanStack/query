@@ -2,7 +2,6 @@
 id: dependent-queries
 title: Dependent Queries
 ref: docs/react/guides/dependent-queries.md
-replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 
 [//]: # 'Example'

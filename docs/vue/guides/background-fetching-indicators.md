@@ -2,7 +2,6 @@
 id: background-fetching-indicators
 title: Background Fetching Indicators
 ref: docs/react/guides/background-fetching-indicators.md
-replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 
 [//]: # 'Example'
