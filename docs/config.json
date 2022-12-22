@@ -432,6 +432,147 @@
             {
               "label": "Quick Start",
               "to": "vue/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "vue/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "vue/typescript"
+            },
+            {
+              "label": "GraphQL",
+              "to": "vue/graphql"
+            }
+          ]
+        },
+        {
+          "label": "Guides & Concepts",
+          "children": [
+            {
+              "label": "Important Defaults",
+              "to": "vue/guides/important-defaults"
+            },
+            {
+              "label": "Queries",
+              "to": "vue/guides/queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "vue/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "vue/guides/query-functions"
+            },
+            {
+              "label": "Network Mode",
+              "to": "vue/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "vue/guides/parallel-queries"
+            },
+            {
+              "label": "Dependent Queries",
+              "to": "vue/guides/dependent-queries"
+            },
+            {
+              "label": "Background Fetching Indicators",
+              "to": "vue/guides/background-fetching-indicators"
+            },
+            {
+              "label": "Window Focus Refetching",
+              "to": "vue/guides/window-focus-refetching"
+            },
+            {
+              "label": "Disabling/Pausing Queries",
+              "to": "vue/guides/disabling-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "vue/guides/query-retries"
+            },
+            {
+              "label": "Paginated Queries",
+              "to": "vue/guides/paginated-queries"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "vue/guides/infinite-queries"
+            },
+            {
+              "label": "Initial Query Data",
+              "to": "vue/guides/initial-query-data"
+            },
+            {
+              "label": "Placeholder Query Data",
+              "to": "vue/guides/placeholder-query-data"
+            },
+            {
+              "label": "Prefetching",
+              "to": "vue/guides/prefetching"
+            },
+            {
+              "label": "Mutations",
+              "to": "vue/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "vue/guides/query-invalidation"
+            },
+            {
+              "label": "Invalidation from Mutations",
+              "to": "vue/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Updates from Mutation Responses",
+              "to": "vue/guides/updates-from-mutation-responses"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "vue/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "vue/guides/query-cancellation"
+            },
+            {
+              "label": "Scroll Restoration",
+              "to": "vue/guides/scroll-restoration"
+            },
+            {
+              "label": "Filters",
+              "to": "vue/guides/filters"
+            },
+            {
+              "label": "SSR & Next.js",
+              "to": "vue/guides/ssr"
+            },
+            {
+              "label": "Caching",
+              "to": "vue/guides/caching"
+            },
+            {
+              "label": "Default Query Fn",
+              "to": "vue/guides/default-query-function"
+            },
+            {
+              "label": "Suspense",
+              "to": "vue/guides/suspense"
+            },
+            {
+              "label": "Custom Logger",
+              "to": "vue/guides/custom-logger"
+            },
+            {
+              "label": "Testing",
+              "to": "vue/guides/testing"
+            },
+            {
+              "label": "Does this replace [Redux, MobX, etc]?",
+              "to": "vue/guides/does-this-replace-client-state"
             }
           ]
         }

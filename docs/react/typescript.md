@@ -18,35 +18,48 @@ Types in React Query generally flow through very well so that you don't have to 
 
 ```ts
 const { data } = useQuery({
-//      ^? const data: number | undefined
+  //    ^? const data: number | undefined
   queryKey: ['test'],
-  queryFn: () => Promise.resolve(5)
+  queryFn: () => Promise.resolve(5),
 })
 ```
+
+[//]: # 'Playground1'
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSqDkIAEa4qAXQA0cFQEo5APjgAFciGAYAdLVQQANgDd0KgKxmzXgB6ILgw8IA9AH5eIA)
 
+[//]: # 'Playground1'
+
 ```ts
 const { data } = useQuery({
-//      ^? const data: string | undefined
+  //      ^? const data: string | undefined
   queryKey: ['test'],
   queryFn: () => Promise.resolve(5),
-  select: data => data.toString(),
+  select: (data) => data.toString(),
 })
 ```
 
+[//]: # 'Playground2'
+
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0icALwoM2XHgAUAbSox0IqgF0ANHBUBKOQD44ABXIhgGAHS1UEADYA3dCoCsxw0gwu6EwAXHASUuZhknT2MBAAyjBQwIIA5iaExrwA9Nlw+QUAegD8vEA)
+
+[//]: # 'Playground2'
 
 This works best if your `queryFn` has a well-defined returned type. Keep in mind that most data fetching libraries return `any` per default, so make sure to extract it to a properly typed function:
 
 ```ts
-const fetchGroups = (): Promise<Group[]> => axios.get('/groups').then(response => response.data)
+const fetchGroups = (): Promise<Group[]> =>
+  axios.get('/groups').then((response) => response.data)
 
 const { data } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 //      ^? const data: Group[] | undefined
- ```
+```
+
+[//]: # 'Playground3'
 
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBInd1EeigY2Lh4gfFUxX6lVIkANKQe3nGlvTwFBXAHhwB6APxwA65wI3RmW0lwAD4o5kboJMDm6Ea8QA)
+
+[//]: # 'Playground3'
 
 ## Type Narrowing
 
@@ -59,12 +72,16 @@ const { data, isSuccess } = useQuery({
 })
 
 if (isSuccess) {
-    data
-//  ^? const data: number
+  data
+  //  ^? const data: number
 }
 ```
 
+[//]: # 'Playground4'
+
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFC8MQAdqnhIAJnRh0ANHGCoAysgYN0qVETgBeFBmy48ACgDaVGGphUAurMMBKbQD44ABXIh56AHS1UEADYAbuiGAKx2dry8wCRwhvJKKmqoDgi8cBlwElK8APS5GQB6APy8hLxAA)
+
+[//]: # 'Playground4'
 
 ## Typing the error field
 
@@ -76,18 +93,26 @@ const { error } = useQuery({ queryKey: ['groups'], queryFn: fetchGroups })
 
 if (error instanceof Error) {
   error
-// ^? const error: Error
+  // ^? const error: Error
 }
 ```
 
+[//]: # 'Playground5'
+
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBIuORQRHooGNi4eIHxVMV+pVSJADSkHt5xpb08BQVwh0cAegD8fcAkcIEj0IaDdOYM6BBXAKJQo8GIvIe3ULx9nAzrxCEA)
+
+[//]: # 'Playground5'
 
 ```ts
 const { error } = useQuery<Group[], Error>(['groups'], fetchGroups)
 //      ^? const error: Error | null
 ```
 
+[//]: # 'Playground6'
+
 [typescript playground](https://www.typescriptlang.org/play?#code/JYWwDg9gTgLgBAbzgVwM4FMCKz1QJ5wC+cAZlBCHAORToCGAxjALQCOO+VAsAFCiSw4dAB7AIqUuUpURY1Nx68YeMOjgBxcsjBwAvIjjAAJgC44AO2QgARriK9eDCOdTwS6GAwAWmiNon6ABQAlGYAClLAGAA8vtoA2gC6AHx6qbLiAHQA5h6BVAD02Vpg8sGZMF7o5oG0qJAuarqpdQ0YmUZ0MHTBDjxOLvBIuORQRHooGNi4eLElSQA0cACiUKPJgfFUxX6lVIlL7p4+Jai9PAUFcNc3AHoA-LxAA)
+
+[//]: # 'Playground6'
 
 ## Further Reading
 
