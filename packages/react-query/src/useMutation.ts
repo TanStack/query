@@ -113,7 +113,7 @@ export function useMutation<
 
   if (
     result.error &&
-    shouldThrowError(observer.options.useErrorBoundary, [result.error])
+    shouldThrowError(observer.options.throwError, [result.error])
   ) {
     throw result.error
   }
