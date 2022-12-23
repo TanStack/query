@@ -102,7 +102,7 @@ export function useBaseQuery<
     getHasError({
       result,
       errorResetBoundary,
-      useErrorBoundary: defaultedOptions.useErrorBoundary,
+      throwError: defaultedOptions.throwError,
       query: observer.getCurrentQuery(),
     })
   ) {
