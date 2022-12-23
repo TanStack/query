@@ -749,8 +749,8 @@ export class QueryClient {
       defaultedOptions.refetchOnReconnect =
         defaultedOptions.networkMode !== 'always'
     }
-    if (typeof defaultedOptions.useErrorBoundary === 'undefined') {
-      defaultedOptions.useErrorBoundary = !!defaultedOptions.suspense
+    if (typeof defaultedOptions.throwError === 'undefined') {
+      defaultedOptions.throwError = !!defaultedOptions.suspense
     }
 
     return defaultedOptions as DefaultedQueryObserverOptions<
