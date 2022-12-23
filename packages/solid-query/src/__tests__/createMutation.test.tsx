@@ -782,7 +782,7 @@ describe('useMutation', () => {
     fireEvent.click(screen.getByText('unmount'))
   })
 
-  it('should be able to throw an error when useErrorBoundary is set to true', async () => {
+  it('should be able to throw an error when throwError is set to true', async () => {
     function Page() {
       const mutation = createMutation<string, Error>(
         () => {
@@ -790,7 +790,7 @@ describe('useMutation', () => {
           err.stack = ''
           return Promise.reject(err)
         },
-        { useErrorBoundary: true },
+        { throwError: true },
       )
 
       return (
@@ -821,7 +821,7 @@ describe('useMutation', () => {
     })
   })
 
-  it('should be able to throw an error when useErrorBoundary is a function that returns true', async () => {
+  it('should be able to throw an error when throwError is a function that returns true', async () => {
     let boundary = false
     function Page() {
       const mutation = createMutation<string, Error>(
@@ -831,7 +831,7 @@ describe('useMutation', () => {
           return Promise.reject(err)
         },
         {
-          useErrorBoundary: () => {
+          throwError: () => {
             boundary = !boundary
             return !boundary
           },
