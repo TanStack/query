@@ -105,7 +105,7 @@ export function createBaseQuery<
         if (
           state.isError &&
           !state.isFetching &&
-          shouldThrowError(observer.options.useErrorBoundary, [
+          shouldThrowError(observer.options.throwError, [
             state.error,
             observer.getCurrentQuery(),
           ])
