@@ -106,7 +106,7 @@ export function createMutation<
       () => {
         if (
           state.isError &&
-          shouldThrowError(observer.options.useErrorBoundary, [state.error])
+          shouldThrowError(observer.options.throwError, [state.error])
         ) {
           throw state.error
         }
