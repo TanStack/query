@@ -91,7 +91,6 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       outputFile: 'index',
       entryFile: [
         'src/index.ts',
-        'src/reactBatchedUpdates.native.ts',
         'src/useSyncExternalStore.native.ts',
       ],
       globals: {
@@ -368,8 +367,6 @@ function cjs({
       replace({
         // TODO: figure out a better way to produce extensionless cjs imports
         "require('./logger.js')": "require('./logger')",
-        "require('./reactBatchedUpdates.js')":
-          "require('./reactBatchedUpdates')",
         "require('./useSyncExternalStore.js')":
           "require('./useSyncExternalStore')",
         preventAssignment: true,
