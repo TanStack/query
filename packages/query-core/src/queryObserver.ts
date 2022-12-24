@@ -583,7 +583,6 @@ export class QueryObserver<
       isRefetchError: isError && state.dataUpdatedAt !== 0,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      remove: this.remove,
     }
 
     return result as QueryObserverResult<TData, TError>
