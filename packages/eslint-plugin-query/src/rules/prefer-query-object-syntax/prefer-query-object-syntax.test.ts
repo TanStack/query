@@ -346,5 +346,18 @@ ruleTester.run(name, rule, {
           >({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
         `,
     },
+    {
+      code: normalizeIndent`
+            import { createQuery } from "@tanstack/solid-query";
+            const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
+            createQuery(queryKeys.userById(userId), async () => await fetchUserById(userId));
+          `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+            import { createQuery } from "@tanstack/solid-query";
+            const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
+            createQuery({ queryKey: queryKeys.userById(userId), queryFn: async () => await fetchUserById(userId) });
+          `,
+    },
   ],
 })
