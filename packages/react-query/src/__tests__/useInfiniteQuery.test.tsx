@@ -93,7 +93,6 @@ describe('useInfiniteQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -127,7 +126,6 @@ describe('useInfiniteQuery', () => {
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
     })
