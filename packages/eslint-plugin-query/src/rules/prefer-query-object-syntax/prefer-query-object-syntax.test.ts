@@ -321,15 +321,11 @@ ruleTester.run(name, rule, {
     {
       code: normalizeIndent`
           import { createQuery } from "@tanstack/solid-query";
-          const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
-          createQuery(queryKeys.userById(userId), async () => await fetchUserById(userId));
           createQuery<string>(['key'], () => Promise.resolve('data'));
         `,
       errors: [{ messageId: 'preferObjectSyntax' }],
       output: normalizeIndent`
           import { createQuery } from "@tanstack/solid-query";
-          const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
-          createQuery({ queryKey: queryKeys.userById(userId), queryFn: async () => await fetchUserById(userId) });
           createQuery<string>({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
         `,
     },
@@ -349,6 +345,19 @@ ruleTester.run(name, rule, {
             B
           >({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
         `,
+    },
+    {
+      code: normalizeIndent`
+            import { createQuery } from "@tanstack/solid-query";
+            const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
+            createQuery(queryKeys.userById(userId), async () => await fetchUserById(userId));
+          `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+            import { createQuery } from "@tanstack/solid-query";
+            const queryKeys = {  userById: (userId: string) => ["users", {userId}] }
+            createQuery({ queryKey: queryKeys.userById(userId), queryFn: async () => await fetchUserById(userId) });
+          `,
     },
   ],
 })
