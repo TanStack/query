@@ -22,7 +22,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
 
 export interface MutationState<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > {
@@ -84,7 +84,7 @@ export type Action<TData, TError, TVariables, TContext> =
 
 export class Mutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > extends Removable {

@@ -23,7 +23,7 @@ import {
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
 type UseQueryOptionsForUseQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = Omit<UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>

@@ -23,7 +23,7 @@ export interface ContextOptions {
 
 export interface UseBaseQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -32,7 +32,7 @@ export interface UseBaseQueryOptions<
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends UseBaseQueryOptions<
@@ -45,7 +45,7 @@ export interface UseQueryOptions<
 
 export interface UseInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -60,32 +60,32 @@ export interface UseInfiniteQueryOptions<
 
 export type UseBaseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = QueryObserverResult<TData, TError>
 
 export type UseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = UseBaseQueryResult<TData, TError>
 
 export type DefinedUseBaseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = DefinedQueryObserverResult<TData, TError>
 
 export type DefinedUseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = DefinedUseBaseQueryResult<TData, TError>
 
 export type UseInfiniteQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = InfiniteQueryObserverResult<TData, TError>
 
 export interface UseMutationOptions<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > extends ContextOptions,
@@ -96,7 +96,7 @@ export interface UseMutationOptions<
 
 export type UseMutateFunction<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -105,14 +105,14 @@ export type UseMutateFunction<
 
 export type UseMutateAsyncFunction<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
 export type UseBaseMutationResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
@@ -122,7 +122,7 @@ export type UseBaseMutationResult<
 
 export type UseMutationResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = unknown,
   TContext = unknown,
 > = UseBaseMutationResult<TData, TError, TVariables, TContext>

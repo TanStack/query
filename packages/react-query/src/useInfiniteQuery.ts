@@ -11,7 +11,7 @@ import { useBaseQuery } from './useBaseQuery'
 
 export function useInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -25,7 +25,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -43,7 +43,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -62,7 +62,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData,
-  TError,
+  TError extends Error = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

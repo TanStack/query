@@ -171,7 +171,7 @@ describe('useQueries', () => {
             },
           }))
         },
-      })
+      }) as QueryObserverResult<unknown, Error>[]
 
       createRenderEffect(() => {
         states.push([...result])
@@ -227,7 +227,7 @@ describe('useQueries', () => {
             keepPreviousData: true,
           }
         }),
-      })
+      }) as QueryObserverResult<unknown, Error>[]
 
       createRenderEffect(() => {
         states.push([...result])
@@ -291,7 +291,7 @@ describe('useQueries', () => {
             }
           })
         },
-      })
+      }) as QueryObserverResult<unknown, Error>[]
 
       createRenderEffect(() => {
         states.push([...result])

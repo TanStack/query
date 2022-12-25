@@ -18,7 +18,7 @@ import type {
 
 export type UseInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = WithQueryClientKey<
@@ -51,7 +51,7 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
 
 export function useInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -60,7 +60,7 @@ export function useInfiniteQuery<
 
 export function useInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -73,7 +73,7 @@ export function useInfiniteQuery<
 
 export function useInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -87,7 +87,7 @@ export function useInfiniteQuery<
 
 export function useInfiniteQuery<
   TQueryFnData,
-  TError,
+  TError extends Error = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

@@ -16,7 +16,7 @@ import { parseQueryArgs } from './utils'
 
 export function createInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -30,7 +30,7 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError>
 export function createInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -48,7 +48,7 @@ export function createInfiniteQuery<
 ): CreateInfiniteQueryResult<TData, TError>
 export function createInfiniteQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(

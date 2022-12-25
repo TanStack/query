@@ -33,7 +33,7 @@ export type UseQueryDefinedReturnType<TData, TError> = DistributiveOmit<
 
 export type UseQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = WithQueryClientKey<
@@ -42,7 +42,7 @@ export type UseQueryOptions<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -54,7 +54,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -66,7 +66,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -75,7 +75,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -88,7 +88,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -101,7 +101,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -114,7 +114,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -128,7 +128,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -142,7 +142,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
@@ -156,7 +156,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData,
-  TError,
+  TError extends Error = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

@@ -28,7 +28,7 @@ export type SolidQueryKey = () => readonly unknown[]
 
 export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -37,7 +37,7 @@ export interface CreateBaseQueryOptions<
 
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends () => readonly unknown[] = SolidQueryKey,
 > extends Omit<
@@ -55,22 +55,22 @@ export interface CreateQueryOptions<
 
 export type CreateBaseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = QueryObserverResult<TData, TError>
 
 export type CreateQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = CreateBaseQueryResult<TData, TError>
 
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = DefinedQueryObserverResult<TData, TError>
 
 export type DefinedCreateQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = DefinedCreateBaseQueryResult<TData, TError>
 
 export type ParseQueryArgs<
@@ -88,7 +88,7 @@ export type ParseQueryArgs<
 /* --- Create Infinite Queries Types --- */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends () => readonly unknown[] = SolidQueryKey,
@@ -108,13 +108,13 @@ export interface CreateInfiniteQueryOptions<
 
 export type CreateInfiniteQueryResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
 > = InfiniteQueryObserverResult<TData, TError>
 
 /* --- Create Mutation Types --- */
 export interface CreateMutationOptions<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > extends ContextOptions,
@@ -125,7 +125,7 @@ export interface CreateMutationOptions<
 
 export type CreateMutateFunction<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -134,14 +134,14 @@ export type CreateMutateFunction<
 
 export type CreateMutateAsyncFunction<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = MutateFunction<TData, TError, TVariables, TContext>
 
 export type CreateBaseMutationResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = unknown,
   TContext = unknown,
 > = Override<
@@ -153,7 +153,7 @@ export type CreateBaseMutationResult<
 
 export type CreateMutationResult<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = unknown,
   TContext = unknown,
 > = CreateBaseMutationResult<TData, TError, TVariables, TContext>

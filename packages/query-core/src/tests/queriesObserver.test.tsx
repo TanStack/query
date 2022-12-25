@@ -303,7 +303,7 @@ describe('queriesObserver', () => {
 
     const newQueryObserver = new QueryObserver<
       unknown,
-      unknown,
+      Error,
       unknown,
       unknown,
       QueryKey

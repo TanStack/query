@@ -84,7 +84,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     this.queriesMap = {}
   }
 
-  build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
+  build<TQueryFnData, TError extends Error, TData, TQueryKey extends QueryKey>(
     client: QueryClient,
     options: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
     state?: QueryState<TData, TError>,
@@ -147,7 +147,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   get<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueyKey extends QueryKey = QueryKey,
   >(
@@ -160,7 +160,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return this.queries
   }
 
-  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = Error, TData = TQueryFnData>(
     arg1: QueryKey,
     arg2?: QueryFilters,
   ): Query<TQueryFnData, TError, TData> | undefined {

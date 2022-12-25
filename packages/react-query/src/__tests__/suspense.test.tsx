@@ -669,7 +669,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          useErrorBoundary: (err) => err !== 'Local Error',
+          useErrorBoundary: (err) => err.message !== 'Local Error',
         },
       )
       return <div>rendered</div>
@@ -710,7 +710,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          useErrorBoundary: (err) => err !== 'Local Error',
+          useErrorBoundary: (err) => err.message !== 'Local Error',
         },
       )
       return <div>rendered</div>

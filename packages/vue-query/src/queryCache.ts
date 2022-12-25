@@ -4,7 +4,7 @@ import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref, isQueryKey } from './utils'
 
 export class QueryCache extends QC {
-  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = Error, TData = TQueryFnData>(
     arg1: MaybeRefDeep<QueryKey>,
     arg2?: MaybeRefDeep<QueryFilters>,
   ): Query<TQueryFnData, TError, TData> | undefined {

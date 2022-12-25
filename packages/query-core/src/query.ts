@@ -36,7 +36,7 @@ interface QueryConfig<
   state?: QueryState<TData, TError>
 }
 
-export interface QueryState<TData = unknown, TError = unknown> {
+export interface QueryState<TData = unknown, TError = Error> {
   data: TData | undefined
   dataUpdateCount: number
   dataUpdatedAt: number
@@ -67,7 +67,7 @@ export interface FetchContext<
 
 export interface QueryBehavior<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > {
@@ -140,7 +140,7 @@ export interface SetStateOptions {
 
 export class Query<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends Removable {

@@ -14,7 +14,7 @@ import { scheduleMicrotask } from './utils'
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
 type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 > = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>

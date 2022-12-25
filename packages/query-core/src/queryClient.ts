@@ -121,7 +121,7 @@ export class QueryClient {
 
   ensureQueryData<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -132,7 +132,7 @@ export class QueryClient {
   ): Promise<TData>
   ensureQueryData<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -144,7 +144,7 @@ export class QueryClient {
   ): Promise<TData>
   ensureQueryData<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -391,7 +391,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -399,7 +399,7 @@ export class QueryClient {
   ): Promise<TData>
   fetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -408,7 +408,7 @@ export class QueryClient {
   ): Promise<TData>
   fetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -418,7 +418,7 @@ export class QueryClient {
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
-    TError,
+    TError extends Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -445,7 +445,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -453,7 +453,7 @@ export class QueryClient {
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -462,7 +462,7 @@ export class QueryClient {
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -472,7 +472,7 @@ export class QueryClient {
   ): Promise<void>
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -489,7 +489,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -497,7 +497,7 @@ export class QueryClient {
   ): Promise<InfiniteData<TData>>
   fetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -506,7 +506,7 @@ export class QueryClient {
   ): Promise<InfiniteData<TData>>
   fetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -539,7 +539,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -547,7 +547,7 @@ export class QueryClient {
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -556,7 +556,7 @@ export class QueryClient {
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -566,7 +566,7 @@ export class QueryClient {
   ): Promise<void>
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -699,7 +699,7 @@ export class QueryClient {
 
   defaultQueryOptions<
     TQueryFnData,
-    TError,
+    TError extends Error,
     TData,
     TQueryData,
     TQueryKey extends QueryKey,

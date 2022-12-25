@@ -13,7 +13,7 @@ import { shouldThrowError } from './utils'
 // HOOK
 export function createMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(
@@ -21,7 +21,7 @@ export function createMutation<
 ): CreateMutationResult<TData, TError, TVariables, TContext>
 export function createMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(
@@ -33,7 +33,7 @@ export function createMutation<
 ): CreateMutationResult<TData, TError, TVariables, TContext>
 export function createMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(
@@ -45,7 +45,7 @@ export function createMutation<
 ): CreateMutationResult<TData, TError, TVariables, TContext>
 export function createMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(
@@ -58,7 +58,7 @@ export function createMutation<
 ): CreateMutationResult<TData, TError, TVariables, TContext>
 export function createMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(

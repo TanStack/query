@@ -18,7 +18,7 @@ import { createBaseQuery } from './createBaseQuery'
 // 4. The fourth overload is a combination of all three function params
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -31,7 +31,7 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -44,7 +44,7 @@ export function createQuery<
 ): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -52,7 +52,7 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -64,7 +64,7 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -76,7 +76,7 @@ export function createQuery<
 ): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -88,7 +88,7 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -102,7 +102,7 @@ export function createQuery<
 ): CreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(
@@ -115,7 +115,7 @@ export function createQuery<
 ): DefinedCreateQueryResult<TData, TError>
 export function createQuery<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends SolidQueryKey = SolidQueryKey,
 >(

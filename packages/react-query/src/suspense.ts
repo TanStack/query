@@ -31,7 +31,7 @@ export const shouldSuspend = (
 
 export const fetchOptimistic = <
   TQueryFnData,
-  TError,
+  TError extends Error,
   TData,
   TQueryData,
   TQueryKey extends QueryKey,

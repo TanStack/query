@@ -145,7 +145,7 @@ describe('useQueries', () => {
             return (i + 1) * count * 2
           },
         })),
-      })
+      }) as QueryObserverResult<unknown, Error>[]
 
       states.push(result)
 
@@ -195,7 +195,7 @@ describe('useQueries', () => {
             keepPreviousData: true,
           }
         }),
-      })
+      }) as QueryObserverResult<unknown, Error>[]
 
       states.push(result)
 
@@ -250,7 +250,7 @@ describe('useQueries', () => {
             keepPreviousData: true,
           }
         }),
-      })
+      }) as QueryObserverResult<unknown, Error>[]
 
       states.push(result)
 

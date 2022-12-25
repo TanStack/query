@@ -41,7 +41,7 @@ type UseQueryOptionsGeneric<
 
 export function useBaseQuery<
   TQueryFnData,
-  TError,
+  TError extends Error,
   TData,
   TQueryKey extends QueryKey,
 >(
@@ -129,14 +129,17 @@ export function useBaseQuery<
   }
 
   return {
-    ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
+    ...(toRefs(readonly(state)) as unknown as UseQueryReturnType<
+      TData,
+      TError
+    >),
     suspense,
   }
 }
 
 export function parseQueryArgs<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
