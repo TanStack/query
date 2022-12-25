@@ -857,6 +857,71 @@ describe('useQuery', () => {
     })
   })
 
+  it('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<string>[] = []
+
+    function Page() {
+      const [, rerender] = React.useState({})
+
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(5)
+          return 'data'
+        },
+        {
+          cacheTime: 0,
+          notifyOnChangeProps: 'all',
+        },
+      )
+
+      states.push(state)
+
+      return (
+        <>
+          <div>{state.data}</div>
+
+          <button
+            onClick={() => {
+              queryClient.removeQueries({ queryKey: key })
+              rerender({})
+            }}
+          >
+            remove
+          </button>
+        </>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => {
+      rendered.getByText('data')
+    })
+
+    fireEvent.click(rendered.getByRole('button', { name: 'remove' }))
+
+    await waitFor(() => {
+      rendered.getByText('data')
+    })
+
+    // required to make sure no additional renders are happening after data is successfully fetched for the second time
+    await sleep(100)
+
+    expect(states.length).toBe(5)
+    // First load
+    expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
+    // First success
+    expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
+    // Remove
+    expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
+    // Hook state update
+    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
+    // Second success
+    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
+  })
+
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
@@ -1129,6 +1194,98 @@ describe('useQuery', () => {
     expect(states.length).toBe(2)
     expect(states[0]).toMatchObject({ data: undefined })
     expect(states[1]).toMatchObject({ data: 'test' })
+  })
+
+  it('should be able to remove a query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const [, rerender] = React.useState({})
+      const state = useQuery(key, () => ++count, { notifyOnChangeProps: 'all' })
+
+      states.push(state)
+
+      return (
+        <div>
+          <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
+            remove
+          </button>
+          <button onClick={() => rerender({})}>rerender</button>
+          data: {state.data ?? 'null'}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(rendered.getByRole('button', { name: /remove/i }))
+
+    await sleep(20)
+    fireEvent.click(rendered.getByRole('button', { name: /rerender/i }))
+    await waitFor(() => rendered.getByText('data: 2'))
+
+    expect(states.length).toBe(4)
+    // Initial
+    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
+    // Fetched
+    expect(states[1]).toMatchObject({ status: 'success', data: 1 })
+    // Remove + Hook state update, batched
+    expect(states[2]).toMatchObject({ status: 'loading', data: undefined })
+    // Fetched
+    expect(states[3]).toMatchObject({ status: 'success', data: 2 })
+  })
+
+  it('should create a new query when refetching a removed query', async () => {
+    const key = queryKey()
+    const states: UseQueryResult<number>[] = []
+    let count = 0
+
+    function Page() {
+      const state = useQuery(
+        key,
+        async () => {
+          await sleep(10)
+          return ++count
+        },
+        { notifyOnChangeProps: 'all' },
+      )
+
+      states.push(state)
+
+      const { refetch } = state
+
+      return (
+        <div>
+          <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
+            remove
+          </button>
+          <button onClick={() => refetch()}>refetch</button>
+          data: {state.data ?? 'null'}
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await waitFor(() => rendered.getByText('data: 1'))
+    fireEvent.click(rendered.getByRole('button', { name: /remove/i }))
+
+    await sleep(50)
+    fireEvent.click(rendered.getByRole('button', { name: /refetch/i }))
+    await waitFor(() => rendered.getByText('data: 2'))
+
+    expect(states.length).toBe(4)
+    // Initial
+    expect(states[0]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+    // Fetched
+    expect(states[1]).toMatchObject({ data: 1 })
+    // Switch
+    expect(states[2]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
+    // Fetched
+    expect(states[3]).toMatchObject({ data: 2 })
   })
 
   it('should share equal data structures between query results', async () => {
