@@ -183,6 +183,10 @@
             {
               "label": "Migrating to React Query 4",
               "to": "react/guides/migrating-to-react-query-4"
+            },
+            {
+              "label": "Migrating to React Query 5",
+              "to": "react/guides/migrating-to-react-query-5"
             }
           ]
         },
