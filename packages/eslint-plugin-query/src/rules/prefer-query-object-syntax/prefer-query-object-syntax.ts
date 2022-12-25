@@ -215,13 +215,10 @@ function runCheckOnNode(params: {
         optionsObjectProperties.push(...existingObjectProperties)
       }
 
-      if (callNode.callee.type !== AST_NODE_TYPES.Identifier) {
-        return null
-      }
-
+      const calleeText = sourceCode.getText(callNode).split('(')[0]
       const argsText = `{ ${optionsObjectProperties.join(', ')} }`
 
-      return fixer.replaceText(callNode, `${callNode.callee.name}(${argsText})`)
+      return fixer.replaceText(callNode, `${calleeText}(${argsText})`)
     },
   })
 }
