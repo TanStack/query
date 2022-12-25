@@ -1,7 +1,11 @@
 import { rule, name } from './prefer-query-object-syntax'
-import { createRuleTester, normalizeIndent } from '../../utils/test-utils'
+import { normalizeIndent } from '../../utils/test-utils'
+import { ESLintUtils } from '@typescript-eslint/utils'
 
-const ruleTester = createRuleTester()
+const ruleTester = new ESLintUtils.RuleTester({
+  parser: '@typescript-eslint/parser',
+  settings: {},
+})
 
 ruleTester.run(name, rule, {
   valid: [
@@ -313,6 +317,34 @@ ruleTester.run(name, rule, {
         import { createQuery } from "@tanstack/solid-query";
         createQuery({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
       `,
+    },
+    {
+      code: normalizeIndent`
+          import { createQuery } from "@tanstack/solid-query";
+          createQuery<string>(['key'], () => Promise.resolve('data'));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { createQuery } from "@tanstack/solid-query";
+          createQuery<string>({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+        `,
+    },
+    {
+      code: normalizeIndent`
+          import { createQuery } from "@tanstack/solid-query";
+          createQuery<
+            A,
+            B
+          >(['key'], () => Promise.resolve('data'));
+        `,
+      errors: [{ messageId: 'preferObjectSyntax' }],
+      output: normalizeIndent`
+          import { createQuery } from "@tanstack/solid-query";
+          createQuery<
+            A,
+            B
+          >({ queryKey: ['key'], queryFn: () => Promise.resolve('data') });
+        `,
     },
   ],
 })
