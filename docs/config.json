@@ -590,6 +590,27 @@
           ]
         },
         {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Basic",
+              "to": "vue/examples/vue/basic"
+            },
+            {
+              "label": "Vue 2.6",
+              "to": "vue/examples/vue/2.6-basic"
+            },
+            {
+              "label": "Nuxt 3",
+              "to": "vue/examples/vue/nuxt3"
+            },
+            {
+              "label": "Persister",
+              "to": "vue/examples/vue/persister"
+            }
+          ]
+        },
+        {
           "label": "API Reference",
           "children": [
             {
