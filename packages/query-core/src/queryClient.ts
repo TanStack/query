@@ -418,7 +418,7 @@ export class QueryClient {
   ): Promise<TData>
   fetchQuery<
     TQueryFnData,
-    TError extends Error,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -429,7 +429,9 @@ export class QueryClient {
     arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-    const defaultedOptions = this.defaultQueryOptions(parsedOptions)
+    const defaultedOptions = this.defaultQueryOptions(
+      parsedOptions as QueryOptions<any, Error, any, TQueryKey>,
+    )
 
     // https://github.com/tannerlinsley/react-query/issues/652
     if (typeof defaultedOptions.retry === 'undefined') {
@@ -699,7 +701,7 @@ export class QueryClient {
 
   defaultQueryOptions<
     TQueryFnData,
-    TError extends Error,
+    TError,
     TData,
     TQueryData,
     TQueryKey extends QueryKey,

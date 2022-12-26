@@ -62,7 +62,7 @@ export function useInfiniteQuery<
 ): UseInfiniteQueryResult<TData, TError>
 export function useInfiniteQuery<
   TQueryFnData,
-  TError extends Error = Error,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

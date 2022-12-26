@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { QueriesObserver } from '@tanstack/query-core'
+import {
+  DefaultedQueryObserverOptions,
+  QueriesObserver,
+  QueryKey,
+} from '@tanstack/query-core'
 import {
   computed,
   onScopeDispose,
@@ -168,7 +172,13 @@ export function useQueries<T extends any[]>({
         ? 'isRestoring'
         : 'optimistic'
 
-      return defaulted
+      return defaulted as DefaultedQueryObserverOptions<
+        unknown,
+        Error,
+        unknown,
+        unknown,
+        QueryKey
+      >
     }),
   )
 

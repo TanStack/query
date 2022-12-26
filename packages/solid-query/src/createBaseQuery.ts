@@ -16,7 +16,7 @@ import { shouldThrowError } from './utils'
 // Base Query Function that is used to create the query.
 export function createBaseQuery<
   TQueryFnData,
-  TError extends Error,
+  TError,
   TData,
   TQueryData,
   TQueryKey extends QueryKey,

@@ -41,7 +41,7 @@ type UseQueryOptionsGeneric<
 
 export function useBaseQuery<
   TQueryFnData,
-  TError extends Error,
+  TError,
   TData,
   TQueryKey extends QueryKey,
 >(

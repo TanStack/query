@@ -156,7 +156,7 @@ export function useQuery<
 
 export function useQuery<
   TQueryFnData,
-  TError extends Error = Error,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(

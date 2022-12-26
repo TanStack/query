@@ -16,7 +16,7 @@ import { ensureStaleTime, shouldSuspend, fetchOptimistic } from './suspense'
 
 export function useBaseQuery<
   TQueryFnData,
-  TError extends Error,
+  TError,
   TData,
   TQueryData,
   TQueryKey extends QueryKey,
