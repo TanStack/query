@@ -129,7 +129,7 @@ export class QueryClient extends QC {
     )
   }
 
-  getQueryState<TData = unknown, TError = undefined>(
+  getQueryState<TData = unknown, TError = Error>(
     queryKey: MaybeRefDeep<QueryKey>,
     filters?: MaybeRefDeep<QueryFilters>,
   ): QueryState<TData, TError> | undefined {

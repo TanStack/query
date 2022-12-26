@@ -129,10 +129,7 @@ export function useBaseQuery<
   }
 
   return {
-    ...(toRefs(readonly(state)) as unknown as UseQueryReturnType<
-      TData,
-      TError
-    >),
+    ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
     suspense,
   }
 }

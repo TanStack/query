@@ -244,7 +244,7 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = undefined>(
+  getQueryState<TQueryFnData = unknown, TError = Error>(
     queryKey: QueryKey,
     filters?: QueryFilters,
   ): QueryState<TQueryFnData, TError> | undefined {
@@ -429,9 +429,7 @@ export class QueryClient {
     arg3?: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData> {
     const parsedOptions = parseQueryArgs(arg1, arg2, arg3)
-    const defaultedOptions = this.defaultQueryOptions(
-      parsedOptions as QueryOptions<any, Error, any, TQueryKey>,
-    )
+    const defaultedOptions = this.defaultQueryOptions(parsedOptions)
 
     // https://github.com/tannerlinsley/react-query/issues/652
     if (typeof defaultedOptions.retry === 'undefined') {

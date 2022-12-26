@@ -1,11 +1,7 @@
 import * as React from 'react'
 import { useSyncExternalStore } from './useSyncExternalStore'
 
-import type {
-  QueryKey,
-  QueryFunction,
-  DefaultedQueryObserverOptions,
-} from '@tanstack/query-core'
+import type { QueryKey, QueryFunction } from '@tanstack/query-core'
 import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { UseQueryOptions, UseQueryResult } from './types'
@@ -59,14 +55,9 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptionsForUseQueries<TQueryFnData, unknown, TData, TQueryKey>
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptionsForUseQueries<
-        TQueryFnData,
-        unknown,
-        TQueryFnData,
-        TQueryKey
-      >
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptionsForUseQueries
 
@@ -174,13 +165,7 @@ export function useQueries<T extends any[]>({
         return defaultedOptions
       }),
     [queries, queryClient, isRestoring],
-  ) as DefaultedQueryObserverOptions<
-    unknown,
-    Error,
-    unknown,
-    unknown,
-    QueryKey
-  >[]
+  )
 
   const [observer] = React.useState(
     () => new QueriesObserver(queryClient, defaultedQueries),

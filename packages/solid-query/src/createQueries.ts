@@ -1,9 +1,5 @@
 import { createComputed, onCleanup, onMount } from 'solid-js'
-import type {
-  DefaultedQueryObserverOptions,
-  QueryFunction,
-  QueryKey,
-} from '@tanstack/query-core'
+import type { QueryFunction } from '@tanstack/query-core'
 import { QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -52,14 +48,14 @@ type GetOptions<T> =
       }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,
-        unknown,
+        Error,
         TData,
         () => TQueryKey
       >
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,
-        unknown,
+        Error,
         TQueryFnData,
         () => TQueryKey
       >
@@ -166,13 +162,7 @@ export function createQueries<T extends any[]>(queriesOptions: {
 
   const defaultedQueries = queriesOptions.queries.map((options) =>
     normalizeOptions(options),
-  ) as DefaultedQueryObserverOptions<
-    unknown,
-    Error,
-    unknown,
-    unknown,
-    QueryKey
-  >[]
+  )
 
   const observer = new QueriesObserver(queryClient, defaultedQueries)
 
@@ -205,13 +195,7 @@ export function createQueries<T extends any[]>(queriesOptions: {
   createComputed(() => {
     const updateDefaultedQueries = queriesOptions.queries.map((options) =>
       normalizeOptions(options),
-    ) as DefaultedQueryObserverOptions<
-      unknown,
-      Error,
-      unknown,
-      unknown,
-      QueryKey
-    >[]
+    )
     observer.setQueries(updateDefaultedQueries)
   })
 
