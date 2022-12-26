@@ -547,7 +547,7 @@
               "to": "vue/guides/filters"
             },
             {
-              "label": "SSR & Next.js",
+              "label": "SSR & Nuxt",
               "to": "vue/guides/ssr"
             },
             {
