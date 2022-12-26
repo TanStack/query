@@ -664,7 +664,7 @@ describe("useQuery's in Suspense mode", () => {
         key,
         async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Remote Error')
+          return Promise.reject(new Error('Remote Error'))
         },
         {
           retry: false,
@@ -705,7 +705,7 @@ describe("useQuery's in Suspense mode", () => {
         key,
         async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Local Error')
+          return Promise.reject(new Error('Local Error'))
         },
         {
           retry: false,
