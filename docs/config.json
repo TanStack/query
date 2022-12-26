@@ -575,6 +575,88 @@
               "to": "vue/guides/does-this-replace-client-state"
             }
           ]
+        },
+        {
+          "label": "Community Resources",
+          "children": [
+            {
+              "label": "TkDodo's Blog",
+              "to": "vue/community/tkdodos-blog"
+            },
+            {
+              "label": "Query Key Factory",
+              "to": "vue/community/lukemorales-query-key-factory"
+            }
+          ]
+        },
+        {
+          "label": "API Reference",
+          "children": [
+            {
+              "label": "useQuery",
+              "to": "vue/reference/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "vue/reference/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "vue/reference/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "vue/reference/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "vue/reference/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "vue/reference/useIsMutating"
+            },
+            {
+              "label": "useQueryClient",
+              "to": "vue/reference/useQueryClient"
+            },
+            {
+              "label": "QueryClient",
+              "to": "vue/reference/QueryClient"
+            },
+            {
+              "label": "QueryCache",
+              "to": "vue/reference/QueryCache"
+            },
+            {
+              "label": "MutationCache",
+              "to": "vue/reference/MutationCache"
+            },
+            {
+              "label": "QueryObserver",
+              "to": "vue/reference/QueryObserver"
+            },
+            {
+              "label": "InfiniteQueryObserver",
+              "to": "vue/reference/InfiniteQueryObserver"
+            },
+            {
+              "label": "QueriesObserver",
+              "to": "vue/reference/QueriesObserver"
+            },
+            {
+              "label": "focusManager",
+              "to": "vue/reference/focusManager"
+            },
+            {
+              "label": "onlineManager",
+              "to": "vue/reference/onlineManager"
+            },
+            {
+              "label": "hydration",
+              "to": "vue/reference/hydration"
+            }
+          ]
         }
       ]
     },
