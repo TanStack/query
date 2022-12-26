@@ -62,9 +62,10 @@ In the example above, you also saw that you can pass variables to your mutations
 Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
 
 [//]: # 'Info1'
-> IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback in **React 16 and earlier**. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/legacy-event-pooling.html).
-[//]: # 'Info1'
 
+> IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback in **React 16 and earlier**. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/legacy-event-pooling.html).
+
+[//]: # 'Info1'
 [//]: # 'Example2'
 
 ```tsx
@@ -228,7 +229,9 @@ useMutation({
   onSuccess: (data, error, variables, context) => {
     // Will be called 3 times
   },
-})[('Todo 1', 'Todo 2', 'Todo 3')].forEach((todo) => {
+})
+
+[('Todo 1', 'Todo 2', 'Todo 3')].forEach((todo) => {
   mutate(todo, {
     onSuccess: (data, error, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),

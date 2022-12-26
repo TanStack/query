@@ -55,7 +55,11 @@ app.use(VueQueryPlugin, vueQueryPluginOptions)
 To use the custom client key, You have to provide it as a query options
 
 ```js
-useQuery('query1', fetcher, { queryClientKey: 'foo' })
+useQuery({
+  queryKey: ['query1'],
+  queryFn: fetcher,
+  queryClientKey: 'foo',
+})
 ```
 
 Internally custom key will be combined with default query key as a suffix. But user do not have to worry about it.
