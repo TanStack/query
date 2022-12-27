@@ -11,7 +11,7 @@ v5 is a major version, so there are some breaking changes to be aware of:
 
 Previously, remove method used to remove the query from the queryCache without informing observers about it. It was best used to remove data imperatively that is no longer needed, e.g. when logging a user out.
 
-But It doesn't make much sense to do this while a query is still active, because it will just trigger a hard loading state with the next re-render. 
+But It doesn't make much sense to do this while a query is still active, because it will just trigger a hard loading state with the next re-render.
 
 if you still need to remove a query, you can use `queryClient.removeQueries({queryKey: key})`
 
@@ -22,3 +22,7 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 - query.remove()
 + queryClient.removeQueries({ queryKey })
 ```
+
+### The minimum required TypeScript version is now 4.7
+
+Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
