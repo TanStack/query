@@ -27,22 +27,22 @@ function Example() {
   const queryClient = useQueryClient()
   const [page, setPage] = React.useState(0)
 
-  const { status, data, error, isFetching, isPreviousData } = useQuery({
+  const { status, data, error, isFetching, isPlaceholderData } = useQuery({
     queryKey: ['projects', page],
     queryFn: () => fetchProjects(page),
-    keepPreviousData: true,
+    placeholderData: (previousData) => previousData,
     staleTime: 5000,
   })
 
   // Prefetch the next page!
   React.useEffect(() => {
-    if (!isPreviousData && data?.hasMore) {
+    if (!isPlaceholderData && data?.hasMore) {
       queryClient.prefetchQuery({
         queryKey: ['projects', page + 1],
         queryFn: () => fetchProjects(page + 1),
       })
     }
-  }, [data, isPreviousData, page, queryClient])
+  }, [data, isPlaceholderData, page, queryClient])
 
   return (
     <div>
@@ -78,7 +78,7 @@ function Example() {
         onClick={() => {
           setPage((old) => (data?.hasMore ? old + 1 : old))
         }}
-        disabled={isPreviousData || !data?.hasMore}
+        disabled={isPlaceholderData || !data?.hasMore}
       >
         Next Page
       </button>

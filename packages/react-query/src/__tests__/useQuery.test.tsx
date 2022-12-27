@@ -265,7 +265,6 @@ describe('useQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -292,7 +291,6 @@ describe('useQuery', () => {
       isInitialLoading: false,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -349,7 +347,6 @@ describe('useQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -376,7 +373,6 @@ describe('useQuery', () => {
       isInitialLoading: true,
       isLoadingError: false,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -403,7 +399,6 @@ describe('useQuery', () => {
       isInitialLoading: false,
       isLoadingError: true,
       isPlaceholderData: false,
-      isPreviousData: false,
       isRefetchError: false,
       isRefetching: false,
       isStale: true,
@@ -1661,7 +1656,7 @@ describe('useQuery', () => {
     })
   })
 
-  it('should keep the previous data when keepPreviousData is set', async () => {
+  it('should keep the previous data when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -1674,7 +1669,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
       })
 
       states.push(state)
@@ -1700,32 +1695,32 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: true,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[2]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // New data
     expect(states[3]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should transition to error state when keepPreviousData is set', async () => {
+  it('should transition to error state when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -1739,9 +1734,8 @@ describe('useQuery', () => {
           }
           return Promise.resolve(count)
         },
-
         retry: false,
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
       })
 
       states.push(state)
@@ -1750,7 +1744,7 @@ describe('useQuery', () => {
         <div>
           <h1>data: {state.data}</h1>
           <h2>error: {state.error?.message}</h2>
-          <p>previous data: {state.isPreviousData}</p>
+          <p>placeholder data: {state.isPlaceholderData}</p>
         </div>
       )
     }
@@ -1769,7 +1763,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'loading',
       error: null,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
@@ -1777,7 +1771,7 @@ describe('useQuery', () => {
       isFetching: false,
       status: 'success',
       error: null,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // rerender Page 1
     expect(states[2]).toMatchObject({
@@ -1785,7 +1779,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Hook state update
     expect(states[3]).toMatchObject({
@@ -1793,7 +1787,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // New data
     expect(states[4]).toMatchObject({
@@ -1801,7 +1795,7 @@ describe('useQuery', () => {
       isFetching: false,
       status: 'success',
       error: null,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // rerender Page 2
     expect(states[5]).toMatchObject({
@@ -1809,7 +1803,7 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Hook state update again
     expect(states[6]).toMatchObject({
@@ -1817,19 +1811,19 @@ describe('useQuery', () => {
       isFetching: true,
       status: 'success',
       error: null,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Error
     expect(states[7]).toMatchObject({
       data: undefined,
       isFetching: false,
       status: 'error',
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     expect(states[7]?.error).toHaveProperty('message', 'Error test')
   })
 
-  it('should not show initial data from next query if keepPreviousData is set', async () => {
+  it('should not show initial data from next query if placeholderData is set', async () => {
     const key = queryKey()
     const states: DefinedUseQueryResult<number>[] = []
 
@@ -1843,7 +1837,7 @@ describe('useQuery', () => {
           return count
         },
         initialData: 99,
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
       })
 
       states.push(state)
@@ -1878,39 +1872,39 @@ describe('useQuery', () => {
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched
     expect(states[1]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[2]).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Hook state update
     expect(states[3]).toMatchObject({
       data: 99,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // New data
     expect(states[4]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should keep the previous data on disabled query when keepPreviousData is set', async () => {
+  it('should keep the previous data on disabled query when placeholderData is set', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -1924,7 +1918,7 @@ describe('useQuery', () => {
           return count
         },
         enabled: false,
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -1973,46 +1967,46 @@ describe('useQuery', () => {
       data: undefined,
       isFetching: false,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetching query
     expect(states[1]).toMatchObject({
       data: undefined,
       isFetching: true,
       isSuccess: false,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Fetched query
     expect(states[2]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[3]).toMatchObject({
       data: 0,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Fetching new query
     expect(states[4]).toMatchObject({
       data: 0,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Fetched new query
     expect(states[5]).toMatchObject({
       data: 1,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
-  it('should keep the previous data on disabled query when keepPreviousData is set and switching query key multiple times', async () => {
+  it('should keep the previous data on disabled query when placeholderData is set and switching query key multiple times', async () => {
     const key = queryKey()
     const states: UseQueryResult<number>[] = []
 
@@ -2030,7 +2024,7 @@ describe('useQuery', () => {
           return count
         },
         enabled: false,
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -2064,35 +2058,35 @@ describe('useQuery', () => {
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
     // Set state
     expect(states[1]).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // State update
     expect(states[2]).toMatchObject({
       data: 10,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Refetch
     expect(states[3]).toMatchObject({
       data: 10,
       isFetching: true,
       isSuccess: true,
-      isPreviousData: true,
+      isPlaceholderData: true,
     })
     // Refetch done
     expect(states[4]).toMatchObject({
       data: 12,
       isFetching: false,
       isSuccess: true,
-      isPreviousData: false,
+      isPlaceholderData: false,
     })
   })
 
@@ -3861,7 +3855,7 @@ describe('useQuery', () => {
     expect(results[1]).toMatchObject({ data: 1, isFetching: false })
   })
 
-  it('should show the correct data when switching keys with initialData, keepPreviousData & staleTime', async () => {
+  it('should show the correct data when switching keys with initialData, placeholderData & staleTime', async () => {
     const key = queryKey()
 
     const ALL_TODOS = [
@@ -3883,7 +3877,7 @@ describe('useQuery', () => {
         initialData() {
           return filter === '' ? initialTodos : undefined
         },
-        keepPreviousData: true,
+        placeholderData: (previousData) => previousData,
         staleTime: 5000,
       })
 

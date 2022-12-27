@@ -84,7 +84,7 @@ describe('useQueries', () => {
         queries: [
           {
             queryKey: [key1, count],
-            keepPreviousData: true,
+            placeholderData: (previousData?: number) => previousData,
             queryFn: async () => {
               await sleep(10)
               return count * 2
@@ -92,7 +92,7 @@ describe('useQueries', () => {
           },
           {
             queryKey: [key2, count],
-            keepPreviousData: true,
+            placeholderData: (previousData?: number) => previousData,
             queryFn: async () => {
               await sleep(35)
               return count * 5
@@ -125,8 +125,18 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('isFetching: false'))
 
     expect(states[states.length - 1]).toMatchObject([
-      { status: 'success', data: 4, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 4,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
   })
 
@@ -139,7 +149,7 @@ describe('useQueries', () => {
       const result = useQueries({
         queries: Array.from({ length: count }, (_, i) => ({
           queryKey: [key, count, i + 1],
-          keepPreviousData: true,
+          placeholderData: (previousData?: number) => previousData,
           queryFn: async () => {
             await sleep(35 * (i + 1))
             return (i + 1) * count * 2
@@ -169,9 +179,24 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('isFetching: false'))
 
     expect(states[states.length - 1]).toMatchObject([
-      { status: 'success', data: 6, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 12, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 18, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 6,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
+      {
+        status: 'success',
+        data: 12,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
+      {
+        status: 'success',
+        data: 18,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
   })
 
@@ -192,7 +217,7 @@ describe('useQueries', () => {
               await sleep(5)
               return id * 5
             },
-            keepPreviousData: true,
+            placeholderData: (previousData?: number) => previousData,
           }
         }),
       })
@@ -226,8 +251,18 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('isFetching: false'))
 
     expect(states[states.length - 1]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 15, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
+      {
+        status: 'success',
+        data: 15,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
   })
 
@@ -247,7 +282,7 @@ describe('useQueries', () => {
               await sleep(10)
               return id * 5
             },
-            keepPreviousData: true,
+            placeholderData: (previousData?: number) => previousData,
           }
         }),
       })
@@ -287,34 +322,79 @@ describe('useQueries', () => {
       {
         status: 'loading',
         data: undefined,
-        isPreviousData: false,
+        isPlaceholderData: false,
         isFetching: true,
       },
       {
         status: 'loading',
         data: undefined,
-        isPreviousData: false,
+        isPlaceholderData: false,
         isFetching: true,
       },
     ])
     expect(states[1]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 5,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
     expect(states[2]).toMatchObject([
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
     expect(states[3]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 5,
+        isPlaceholderData: false,
+        isFetching: true,
+      },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
     expect(states[4]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: true },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 5,
+        isPlaceholderData: false,
+        isFetching: true,
+      },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
     expect(states[5]).toMatchObject([
-      { status: 'success', data: 5, isPreviousData: false, isFetching: false },
-      { status: 'success', data: 10, isPreviousData: false, isFetching: false },
+      {
+        status: 'success',
+        data: 5,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
+      {
+        status: 'success',
+        data: 10,
+        isPlaceholderData: false,
+        isFetching: false,
+      },
     ])
   })
 
