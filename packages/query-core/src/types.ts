@@ -299,7 +299,10 @@ export interface FetchQueryOptions<
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends QueryOptions<TQueryFnData, TError, TData, TQueryKey> {
+> extends WithRequired<
+    QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+    'queryKey'
+  > {
   /**
    * The time in milliseconds after data is considered stale.
    * If the data is fresh it will be returned from the cache.
