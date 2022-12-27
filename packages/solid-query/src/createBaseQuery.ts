@@ -45,7 +45,7 @@ export function createBaseQuery<
     () => {
       return new Promise((resolve) => {
         if (!(state.isFetching && state.isLoading)) {
-          if (unwrap(state.data) === emptyData) {
+          if ((unwrap(state.data) as TData | typeof emptyData) === emptyData) {
             resolve(undefined)
           }
           resolve(unwrap(state.data))

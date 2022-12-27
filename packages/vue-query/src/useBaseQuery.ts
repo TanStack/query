@@ -127,7 +127,9 @@ export function useBaseQuery<
   }
 
   return {
-    ...(toRefs(readonly(state)) as UseQueryReturnType<TData, TError>),
+    ...(toRefs(readonly(state)) as ToRefs<
+      Readonly<QueryObserverResult<TData, TError>>
+    >),
     suspense,
   }
 }
