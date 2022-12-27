@@ -86,7 +86,7 @@ function Posts({ setPostId }) {
                     style={
                       // We can find the existing query data here to show bold links for
                       // ones that are cached
-                      queryClient.getQueryData(["post", post.id])
+                      queryClient.getQueryData({queryKey: ["post", post.id]})
                         ? {
                             fontWeight: "bold",
                             color: "green",

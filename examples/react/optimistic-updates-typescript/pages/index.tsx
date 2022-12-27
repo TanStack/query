@@ -44,7 +44,9 @@ function Example() {
       await queryClient.cancelQueries({ queryKey: ['todos'] })
 
       // Snapshot the previous value
-      const previousTodos = queryClient.getQueryData<Todos>(['todos'])
+      const previousTodos = queryClient.getQueryData<Todos>({
+        queryKey: ['todos'],
+      })
 
       // Optimistically update to the new value
       if (previousTodos) {

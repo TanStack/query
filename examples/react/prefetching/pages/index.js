@@ -80,7 +80,7 @@ function Example() {
               >
                 <div
                   style={
-                    queryClient.getQueryData(['character', char.id])
+                    queryClient.getQueryData({queryKey: ['character', char.id]})
                       ? {
                           fontWeight: 'bold',
                         }
