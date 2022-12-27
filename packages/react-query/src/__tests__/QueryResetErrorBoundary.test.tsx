@@ -22,9 +22,9 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -32,11 +32,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+
+        retry: false,
+        useErrorBoundary: true,
+      })
       return <div>{data}</div>
     }
 
@@ -78,9 +77,9 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data, status } = useQuery(
-        key,
-        async () => {
+      const { data, status } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -88,12 +87,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          enabled: !succeed,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        enabled: !succeed,
+        useErrorBoundary: true,
+      })
       return (
         <div>
           <div>status: {status}</div>
@@ -141,9 +138,9 @@ describe('QueryErrorResetBoundary', () => {
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -151,12 +148,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          enabled,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        enabled,
+        useErrorBoundary: true,
+      })
 
       React.useEffect(() => {
         setEnabled(true)
@@ -201,17 +196,15 @@ describe('QueryErrorResetBoundary', () => {
     const key = queryKey()
 
     function Page() {
-      const { data, refetch, status, fetchStatus } = useQuery<string>(
-        key,
-        async () => {
+      const { data, refetch, status, fetchStatus } = useQuery<string>({
+        queryKey: key,
+        queryFn: async () => {
           throw new Error('Error')
         },
-        {
-          retry: false,
-          enabled: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        enabled: false,
+        useErrorBoundary: true,
+      })
 
       return (
         <div>
@@ -262,9 +255,9 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -272,11 +265,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+
+        retry: false,
+        useErrorBoundary: true,
+      })
       return <div>{data}</div>
     }
 
@@ -317,9 +309,9 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -327,12 +319,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-          initialData: 'initial',
-        },
-      )
+        retry: false,
+        useErrorBoundary: true,
+        initialData: 'initial',
+      })
       return <div>{data}</div>
     }
 
@@ -375,9 +365,9 @@ describe('QueryErrorResetBoundary', () => {
     let shouldReset = true
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -385,11 +375,10 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+
+        retry: false,
+        useErrorBoundary: true,
+      })
       return <div>{data}</div>
     }
 
@@ -438,18 +427,16 @@ describe('QueryErrorResetBoundary', () => {
     let fetchCount = 0
 
     function Page() {
-      const { data } = useQuery<string>(
-        key,
-        async () => {
+      const { data } = useQuery<string>({
+        queryKey: key,
+        queryFn: async () => {
           fetchCount++
           await sleep(10)
           throw new Error('Error')
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        useErrorBoundary: true,
+      })
       return <div>{data}</div>
     }
 
@@ -494,9 +481,9 @@ describe('QueryErrorResetBoundary', () => {
     let renders = 0
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           fetchCount++
           await sleep(10)
           if (fetchCount > 2) {
@@ -505,11 +492,9 @@ describe('QueryErrorResetBoundary', () => {
             throw new Error('Error')
           }
         },
-        {
-          retry: false,
-          suspense: true,
-        },
-      )
+        retry: false,
+        suspense: true,
+      })
       renders++
       return <div>{data}</div>
     }
@@ -577,9 +562,9 @@ describe('QueryErrorResetBoundary', () => {
     let succeed = false
 
     function Page() {
-      const { data } = useQuery(
-        key,
-        async () => {
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           if (!succeed) {
             throw new Error('Error')
@@ -587,11 +572,9 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-        {
-          retry: false,
-          useErrorBoundary: true,
-        },
-      )
+        retry: false,
+        useErrorBoundary: true,
+      })
       return <div>{data}</div>
     }
 

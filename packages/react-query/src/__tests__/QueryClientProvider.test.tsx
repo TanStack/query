@@ -19,9 +19,12 @@ describe('QueryClientProvider', () => {
     const queryClient = createQueryClient({ queryCache })
 
     function Page() {
-      const { data } = useQuery(key, async () => {
-        await sleep(10)
-        return 'test'
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -39,7 +42,7 @@ describe('QueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
 
   test('allows multiple caches to be partitioned', async () => {
@@ -53,9 +56,12 @@ describe('QueryClientProvider', () => {
     const queryClient2 = createQueryClient({ queryCache: queryCache2 })
 
     function Page1() {
-      const { data } = useQuery(key1, async () => {
-        await sleep(10)
-        return 'test1'
+      const { data } = useQuery({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test1'
+        },
       })
 
       return (
@@ -65,9 +71,12 @@ describe('QueryClientProvider', () => {
       )
     }
     function Page2() {
-      const { data } = useQuery(key2, async () => {
-        await sleep(10)
-        return 'test2'
+      const { data } = useQuery({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test2'
+        },
       })
 
       return (
@@ -91,10 +100,10 @@ describe('QueryClientProvider', () => {
     await waitFor(() => rendered.getByText('test1'))
     await waitFor(() => rendered.getByText('test2'))
 
-    expect(queryCache1.find(key1)).toBeDefined()
-    expect(queryCache1.find(key2)).not.toBeDefined()
-    expect(queryCache2.find(key1)).not.toBeDefined()
-    expect(queryCache2.find(key2)).toBeDefined()
+    expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
+    expect(queryCache2.find({ queryKey: key1 })).not.toBeDefined()
+    expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
   })
 
   test("uses defaultOptions for queries when they don't provide their own config", async () => {
@@ -111,9 +120,12 @@ describe('QueryClientProvider', () => {
     })
 
     function Page() {
-      const { data } = useQuery(key, async () => {
-        await sleep(10)
-        return 'test'
+      const { data } = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -131,8 +143,8 @@ describe('QueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('test'))
 
-    expect(queryCache.find(key)).toBeDefined()
-    expect(queryCache.find(key)?.options.cacheTime).toBe(Infinity)
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.options.cacheTime).toBe(Infinity)
   })
 
   describe('with custom context', () => {
@@ -158,16 +170,20 @@ describe('QueryClientProvider', () => {
       })
 
       function Page() {
-        const { data: testOuter } = useQuery(key, async () => 'testOuter', {
+        const { data: testOuter } = useQuery({
+          queryKey: key,
+          queryFn: async () => 'testOuter',
           context: contextOuter,
         })
-        const { data: testInner } = useQuery(key, async () => 'testInner', {
+        const { data: testInner } = useQuery({
+          queryKey: key,
+          queryFn: async () => 'testInner',
           context: contextInner,
         })
-        const { data: testInnerInner } = useQuery(
-          key,
-          async () => 'testInnerInner',
-        )
+        const { data: testInnerInner } = useQuery({
+          queryKey: key,
+          queryFn: async () => 'testInnerInner',
+        })
 
         return (
           <div>
