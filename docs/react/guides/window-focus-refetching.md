@@ -3,7 +3,7 @@ id: window-focus-refetching
 title: Window Focus Refetching
 ---
 
-If a user leaves your application and returns to stale data, **Tanstack Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
+If a user leaves your application and returns to stale data, **TanStack Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
 
 #### Disabling Globally
 
@@ -42,7 +42,7 @@ useQuery({
 
 ## Custom Window Focus Event
 
-In rare circumstances, you may want to manage your own window focus events that trigger Tanstack Query to revalidate. To do this, Tanstack Query provides a `focusManager.setEventListener` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setEventListener`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
+In rare circumstances, you may want to manage your own window focus events that trigger TanStack Query to revalidate. To do this, TanStack Query provides a `focusManager.setEventListener` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setEventListener`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
 
 [//]: # 'Example3'
 

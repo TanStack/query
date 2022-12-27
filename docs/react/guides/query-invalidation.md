@@ -16,7 +16,7 @@ queryClient.invalidateQueries({ queryKey: ['todos'] })
 
 [//]: # 'Example'
 
-> Note: Where other libraries that use normalized caches would attempt to update local queries with the new data either imperatively or via schema inference, Tanstack Query gives you the tools to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **targeted invalidation, background-refetching and ultimately atomic updates**.
+> Note: Where other libraries that use normalized caches would attempt to update local queries with the new data either imperatively or via schema inference, TanStack Query gives you the tools to avoid the manual labor that comes with maintaining normalized caches and instead prescribes **targeted invalidation, background-refetching and ultimately atomic updates**.
 
 When a query is invalidated with `invalidateQueries`, two things happen:
 

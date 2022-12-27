@@ -3,7 +3,7 @@ id: important-defaults
 title: Important Defaults
 ---
 
-Out of the box, Tanstack Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use Tanstack Query:
+Out of the box, TanStack Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use TanStack Query:
 
 - Query instances via `useQuery` or `useInfiniteQuery` by default **consider cached data as stale**.
 
@@ -15,7 +15,7 @@ Out of the box, Tanstack Query is configured with **aggressive but sane** defaul
   - The network is reconnected
   - The query is optionally configured with a refetch interval
 
-If you see a refetch that you are not expecting, it is likely because you just focused the window and Tanstack Query is doing a [`refetchOnWindowFocus`](../guides/window-focus-refetching). During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
+If you see a refetch that you are not expecting, it is likely because you just focused the window and TanStack Query is doing a [`refetchOnWindowFocus`](../guides/window-focus-refetching). During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
 
 > To change this functionality, you can use options like `refetchOnMount`, `refetchOnWindowFocus`, `refetchOnReconnect` and `refetchInterval`.
 

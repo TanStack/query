@@ -3,7 +3,7 @@ id: mutations
 title: Mutations
 ---
 
-Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, Tanstack Query exports a `useMutation` hook.
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, TanStack Query exports a `useMutation` hook.
 
 Here's an example of a mutation that adds a new todo to the server:
 
@@ -266,7 +266,7 @@ try {
 
 ## Retry
 
-By default Tanstack Query will not retry a mutation on error, but it is possible with the `retry` option:
+By default TanStack Query will not retry a mutation on error, but it is possible with the `retry` option:
 
 [//]: # 'Example9'
 

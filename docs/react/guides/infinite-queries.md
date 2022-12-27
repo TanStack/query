@@ -3,7 +3,7 @@ id: infinite-queries
 title: Infinite Queries
 ---
 
-Rendering lists that can additively "load more" data onto an existing set of data or "infinite scroll" is also a very common UI pattern. Tanstack Query supports a useful version of `useQuery` called `useInfiniteQuery` for querying these types of lists.
+Rendering lists that can additively "load more" data onto an existing set of data or "infinite scroll" is also a very common UI pattern. TanStack Query supports a useful version of `useQuery` called `useInfiniteQuery` for querying these types of lists.
 
 When using `useInfiniteQuery`, you'll notice a few things are different:
 

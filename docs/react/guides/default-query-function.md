@@ -3,7 +3,7 @@ id: default-query-function
 title: Default Query Function
 ---
 
-If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to identify what it should fetch, you can do that by providing a **default query function** to Tanstack Query:
+If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to identify what it should fetch, you can do that by providing a **default query function** to TanStack Query:
 
 [//]: # 'Example'
 

@@ -29,7 +29,7 @@ useQuery({
 
 ## Handling and Throwing Errors
 
-For Tanstack Query to determine a query has errored, the query function **must throw** or return a **rejected Promise**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
+For TanStack Query to determine a query has errored, the query function **must throw** or return a **rejected Promise**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
 
 [//]: # 'Example2'
 
@@ -104,7 +104,7 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
   - only for [Infinite Queries](../guides/infinite-queries)
   - the page parameter used to fetch the current page
 - `signal?: AbortSignal`
-  - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by Tanstack Query
+  - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query
   - Can be used for [Query Cancellation](../guides/query-cancellation)
 - `meta: Record<string, unknown> | undefined`
   - an optional field you can fill with additional information about your query

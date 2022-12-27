@@ -3,7 +3,7 @@ id: query-retries
 title: Query Retries
 ---
 
-When a `useQuery` query fails (the query function throws an error), Tanstack Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`) or a function is provided to determine if a retry is allowed.
+When a `useQuery` query fails (the query function throws an error), TanStack Query will automatically retry the query if that query's request has not reached the max number of consecutive retries (defaults to `3`) or a function is provided to determine if a retry is allowed.
 
 You can configure retries both on a global level and an individual query level.
 
@@ -29,7 +29,7 @@ const result = useQuery({
 
 ## Retry Delay
 
-By default, retries in Tanstack Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.
+By default, retries in TanStack Query do not happen immediately after a request fails. As is standard, a back-off delay is gradually applied to each retry attempt.
 
 The default `retryDelay` is set to double (starting at `1000`ms) with each attempt, but not exceed 30 seconds:
 

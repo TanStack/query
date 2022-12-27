@@ -3,7 +3,7 @@ id: paginated-queries
 title: Paginated / Lagged Queries
 ---
 
-Rendering paginated data is a very common UI pattern and in Tanstack Query, it "just works" by including the page information in the query key:
+Rendering paginated data is a very common UI pattern and in TanStack Query, it "just works" by including the page information in the query key:
 
 [//]: # 'Example'
 ```tsx
@@ -18,7 +18,7 @@ However, if you run this simple example, you might notice something strange:
 
 **The UI jumps in and out of the `success` and `loading` states because each new page is treated like a brand new query.**
 
-This experience is not optimal and unfortunately is how many tools today insist on working. But not Tanstack Query! As you may have guessed, Tanstack Query comes with an awesome feature called `keepPreviousData` that allows us to get around this.
+This experience is not optimal and unfortunately is how many tools today insist on working. But not TanStack Query! As you may have guessed, TanStack Query comes with an awesome feature called `keepPreviousData` that allows us to get around this.
 
 ## Better Paginated Queries with `keepPreviousData`
 

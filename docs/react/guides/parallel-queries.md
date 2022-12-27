@@ -7,7 +7,7 @@ title: Parallel Queries
 
 ## Manual Parallel Queries
 
-When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Just use any number of Tanstack Query's `useQuery` and `useInfiniteQuery` hooks side-by-side!
+When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Just use any number of TanStack Query's `useQuery` and `useInfiniteQuery` hooks side-by-side!
 
 [//]: # 'Example'
 
@@ -30,7 +30,7 @@ function App () {
 
 ## Dynamic Parallel Queries with `useQueries`
 
-If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, Tanstack Query provides a `useQueries` hook, which you can use to dynamically execute as many queries in parallel as you'd like.
+If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, TanStack Query provides a `useQueries` hook, which you can use to dynamically execute as many queries in parallel as you'd like.
 
 `useQueries` accepts an **options object** with a **queries key** whose value is an **array of query objects**. It returns an **array of query results**:
 
