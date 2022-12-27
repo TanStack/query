@@ -316,7 +316,9 @@ describe('VueQueryPlugin', () => {
 
       const fnSpy = jest.fn()
 
-      const query = useQuery(['persist'], fnSpy, {
+      const query = useQuery({
+        queryKey: ['persist'],
+        queryFn: fnSpy,
         queryClient: customClient,
       })
 

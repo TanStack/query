@@ -8,11 +8,11 @@ jest.mock('../useQueryClient')
 
 describe('useIsFetching', () => {
   test('should properly return isFetching state', async () => {
-    const { isFetching: isFetchingQuery } = useQuery(
-      ['isFetching1'],
-      simpleFetcher,
-    )
-    useQuery(['isFetching2'], simpleFetcher)
+    const { isFetching: isFetchingQuery } = useQuery({
+      queryKey: ['isFetching1'],
+      queryFn: simpleFetcher,
+    })
+    useQuery({ queryKey: ['isFetching2'], queryFn: simpleFetcher })
     const isFetching = useIsFetching()
 
     expect(isFetchingQuery.value).toStrictEqual(true)
@@ -30,7 +30,10 @@ describe('useIsFetching', () => {
     >
     onScopeDisposeMock.mockImplementation((fn) => fn())
 
-    const { status } = useQuery(['onScopeDispose'], simpleFetcher)
+    const { status } = useQuery({
+      queryKey: ['onScopeDispose'],
+      queryFn: simpleFetcher,
+    })
     const isFetching = useIsFetching()
 
     expect(status.value).toStrictEqual('loading')
@@ -51,15 +54,15 @@ describe('useIsFetching', () => {
 
   test('should properly update filters', async () => {
     const filter = reactive({ stale: false })
-    useQuery(
-      ['isFetching'],
-      () =>
+    useQuery({
+      queryKey: ['isFetching'],
+      queryFn: () =>
         new Promise((resolve) => {
           setTimeout(() => {
             return resolve('Some data')
           }, 100)
         }),
-    )
+    })
     const isFetching = useIsFetching(filter)
 
     expect(isFetching.value).toStrictEqual(0)
@@ -80,9 +83,9 @@ describe('useIsFetching', () => {
     })
 
     test('should merge query key with filters', () => {
-      const filters = { stale: true }
+      const filters = { queryKey: ['key'], stale: true }
 
-      const result = parseFilterArgs(['key'], filters)
+      const result = parseFilterArgs(filters)
       const expected = { ...filters, queryKey: ['key'] }
 
       expect(result).toEqual(expected)
@@ -90,9 +93,9 @@ describe('useIsFetching', () => {
 
     test('should unwrap refs arguments', () => {
       const key = ref(['key'])
-      const filters = ref({ stale: ref(true) })
+      const filters = ref({ queryKey: key, stale: ref(true) })
 
-      const result = parseFilterArgs(key, filters)
+      const result = parseFilterArgs(filters)
       const expected = { queryKey: ['key'], stale: true }
 
       expect(result).toEqual(expected)

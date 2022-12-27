@@ -7,7 +7,9 @@ jest.mock('../useQueryClient')
 
 describe('useMutation', () => {
   test('should be in idle state initially', () => {
-    const mutation = useMutation((params) => successMutator(params))
+    const mutation = useMutation({
+      mutationFn: (params) => successMutator(params),
+    })
 
     expect(mutation).toMatchObject({
       isIdle: { value: true },
@@ -19,7 +21,9 @@ describe('useMutation', () => {
 
   test('should change state after invoking mutate', () => {
     const result = 'Mock data'
-    const mutation = useMutation((params: string) => successMutator(params))
+    const mutation = useMutation({
+      mutationFn: (params: string) => successMutator(params),
+    })
 
     mutation.mutate(result)
 
@@ -34,7 +38,7 @@ describe('useMutation', () => {
   })
 
   test('should return error when request fails', async () => {
-    const mutation = useMutation(errorMutator)
+    const mutation = useMutation({ mutationFn: errorMutator })
     mutation.mutate({})
     await flushPromises(10)
     expect(mutation).toMatchObject({
@@ -49,7 +53,9 @@ describe('useMutation', () => {
 
   test('should return data when request succeeds', async () => {
     const result = 'Mock data'
-    const mutation = useMutation((params: string) => successMutator(params))
+    const mutation = useMutation({
+      mutationFn: (params: string) => successMutator(params),
+    })
 
     mutation.mutate(result)
 
@@ -68,11 +74,11 @@ describe('useMutation', () => {
   test('should update reactive options', async () => {
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const options = reactive({ mutationKey: ['foo'] })
-    const mutation = useMutation(
-      (params: string) => successMutator(params),
-      options,
-    )
+    const options = reactive({
+      mutationKey: ['foo'],
+      mutationFn: (params: string) => successMutator(params),
+    })
+    const mutation = useMutation(options)
 
     options.mutationKey = ['bar']
     await flushPromises()
@@ -100,11 +106,11 @@ describe('useMutation', () => {
     ])
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const options = reactive({ mutationKey })
-    const mutation = useMutation(
-      (params: string) => successMutator(params),
-      options,
-    )
+    const options = reactive({
+      mutationKey,
+      mutationFn: (params: string) => successMutator(params),
+    })
+    const mutation = useMutation(options)
 
     mutationKey.value[0]!.otherObject.name = 'someOtherObjectName'
     await flushPromises()
@@ -131,7 +137,7 @@ describe('useMutation', () => {
     const mutationFn = ref((params: string) => successMutator(params))
     const queryClient = useQueryClient()
     const mutationCache = queryClient.getMutationCache()
-    const mutation = useMutation(mutationKey, mutationFn)
+    const mutation = useMutation({ mutationKey, mutationFn })
 
     mutationKey.value = ['bar2']
     let proof = false
@@ -150,7 +156,9 @@ describe('useMutation', () => {
   })
 
   test('should reset state after invoking mutation.reset', async () => {
-    const mutation = useMutation((params: string) => errorMutator(params))
+    const mutation = useMutation({
+      mutationFn: (params: string) => errorMutator(params),
+    })
 
     mutation.mutate('')
 
@@ -175,7 +183,8 @@ describe('useMutation', () => {
 
     test('should call onMutate when passed as an option', async () => {
       const onMutate = jest.fn()
-      const mutation = useMutation((params: string) => successMutator(params), {
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
         onMutate,
       })
 
@@ -188,7 +197,8 @@ describe('useMutation', () => {
 
     test('should call onError when passed as an option', async () => {
       const onError = jest.fn()
-      const mutation = useMutation((params: string) => errorMutator(params), {
+      const mutation = useMutation({
+        mutationFn: (params: string) => errorMutator(params),
         onError,
       })
 
@@ -201,7 +211,8 @@ describe('useMutation', () => {
 
     test('should call onSuccess when passed as an option', async () => {
       const onSuccess = jest.fn()
-      const mutation = useMutation((params: string) => successMutator(params), {
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
         onSuccess,
       })
 
@@ -214,7 +225,8 @@ describe('useMutation', () => {
 
     test('should call onSettled when passed as an option', async () => {
       const onSettled = jest.fn()
-      const mutation = useMutation((params: string) => successMutator(params), {
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
         onSettled,
       })
 
@@ -227,7 +239,9 @@ describe('useMutation', () => {
 
     test('should call onError when passed as an argument of mutate function', async () => {
       const onError = jest.fn()
-      const mutation = useMutation((params: string) => errorMutator(params))
+      const mutation = useMutation({
+        mutationFn: (params: string) => errorMutator(params),
+      })
 
       mutation.mutate('', { onError })
 
@@ -238,7 +252,9 @@ describe('useMutation', () => {
 
     test('should call onSuccess when passed as an argument of mutate function', async () => {
       const onSuccess = jest.fn()
-      const mutation = useMutation((params: string) => successMutator(params))
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
+      })
 
       mutation.mutate('', { onSuccess })
 
@@ -249,7 +265,9 @@ describe('useMutation', () => {
 
     test('should call onSettled when passed as an argument of mutate function', async () => {
       const onSettled = jest.fn()
-      const mutation = useMutation((params: string) => successMutator(params))
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
+      })
 
       mutation.mutate('', { onSettled })
 
@@ -261,7 +279,8 @@ describe('useMutation', () => {
     test('should fire both onSettled functions', async () => {
       const onSettled = jest.fn()
       const onSettledOnFunction = jest.fn()
-      const mutation = useMutation((params: string) => successMutator(params), {
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
         onSettled,
       })
 
@@ -281,7 +300,9 @@ describe('useMutation', () => {
 
     test('should resolve properly', async () => {
       const result = 'Mock data'
-      const mutation = useMutation((params: string) => successMutator(params))
+      const mutation = useMutation({
+        mutationFn: (params: string) => successMutator(params),
+      })
 
       await expect(mutation.mutateAsync(result)).resolves.toBe(result)
 
@@ -296,7 +317,7 @@ describe('useMutation', () => {
     })
 
     test('should throw on error', async () => {
-      const mutation = useMutation(errorMutator)
+      const mutation = useMutation({ mutationFn: errorMutator })
 
       await expect(mutation.mutateAsync({})).rejects.toThrowError('Some error')
 
@@ -320,24 +341,28 @@ describe('useMutation', () => {
     })
 
     test('should merge query key with options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(['key'], options)
+      const options = { mutationKey: ['key'], retry: false }
+      const result = parseMutationArgs(options)
       const expected = { ...options, mutationKey: ['key'] }
 
       expect(result).toEqual(expected)
     })
 
     test('should merge query fn with options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(successMutator, options)
+      const options = { mutationFn: successMutator, retry: false }
+      const result = parseMutationArgs(options)
       const expected = { ...options, mutationFn: successMutator }
 
       expect(result).toEqual(expected)
     })
 
     test('should merge query key and fn with options', () => {
-      const options = { retry: false }
-      const result = parseMutationArgs(['key'], successMutator, options)
+      const options = {
+        mutationKey: ['key'],
+        mutationFn: successMutator,
+        retry: false,
+      }
+      const result = parseMutationArgs(options)
       const expected = {
         ...options,
         mutationKey: ['key'],
@@ -350,9 +375,9 @@ describe('useMutation', () => {
     test('should unwrap refs arguments', () => {
       const key = ref(['key'])
       const mutationFn = ref(successMutator)
-      const options = ref({ retry: ref(12) })
+      const options = ref({ mutationKey: key, mutationFn, retry: ref(12) })
 
-      const result = parseMutationArgs(key, mutationFn, options)
+      const result = parseMutationArgs(options)
       const expected = {
         mutationKey: ['key'],
         mutationFn: successMutator,

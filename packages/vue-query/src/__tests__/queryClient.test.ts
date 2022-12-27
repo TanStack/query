@@ -28,21 +28,6 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
       })
     })
-
-    test('should properly unwrap 2 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.isFetching(queryKeyRef, {
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.isFetching).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
-    })
   })
 
   describe('isMutating', () => {
@@ -60,19 +45,16 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryData', () => {
-    test('should properly unwrap 2 parameter', async () => {
+    test('should properly unwrap 1 parameter', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueryData(queryKeyRef, {
+      queryClient.getQueryData({
         queryKey: queryKeyRef,
       })
 
-      expect(QueryClientOrigin.prototype.getQueryData).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
+      expect(QueryClientOrigin.prototype.getQueryData).toBeCalledWith({
+        queryKey: queryKeyUnref,
+      })
     })
   })
 
@@ -80,11 +62,11 @@ describe('QueryCache', () => {
     test('should properly unwrap queryKey param', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueriesData(queryKeyRef)
+      queryClient.getQueriesData({ queryKey: queryKeyRef })
 
-      expect(QueryClientOrigin.prototype.getQueriesData).toBeCalledWith(
-        queryKeyUnref,
-      )
+      expect(QueryClientOrigin.prototype.getQueriesData).toBeCalledWith({
+        queryKey: queryKeyUnref,
+      })
     })
 
     test('should properly unwrap filters param', async () => {
@@ -102,7 +84,9 @@ describe('QueryCache', () => {
     test('should properly unwrap 3 parameter', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryData(queryKeyRef, fn, { updatedAt: ref(3) })
+      queryClient.setQueryData(queryKeyRef, fn, {
+        updatedAt: ref(3),
+      })
 
       expect(QueryClientOrigin.prototype.setQueryData).toBeCalledWith(
         queryKeyUnref,
@@ -116,10 +100,12 @@ describe('QueryCache', () => {
     test('should properly unwrap params with queryKey', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueriesData(queryKeyRef, fn, { updatedAt: ref(3) })
+      queryClient.setQueriesData({ queryKey: queryKeyRef }, fn, {
+        updatedAt: ref(3),
+      })
 
       expect(QueryClientOrigin.prototype.setQueriesData).toBeCalledWith(
-        queryKeyUnref,
+        { queryKey: queryKeyUnref },
         fn,
         { updatedAt: 3 },
       )
@@ -141,15 +127,14 @@ describe('QueryCache', () => {
   })
 
   describe('getQueryState', () => {
-    test('should properly unwrap 2 parameter', async () => {
+    test('should properly unwrap 1 parameter', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueryState(queryKeyRef, { queryKey: queryKeyRef })
+      queryClient.getQueryState({ queryKey: queryKeyRef })
 
-      expect(QueryClientOrigin.prototype.getQueryState).toBeCalledWith(
-        queryKeyUnref,
-        { queryKey: queryKeyUnref },
-      )
+      expect(QueryClientOrigin.prototype.getQueryState).toBeCalledWith({
+        queryKey: queryKeyUnref,
+      })
     })
   })
 
@@ -165,21 +150,6 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
       })
     })
-
-    test('should properly unwrap 2 parameter', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.removeQueries(queryKeyRef, {
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.removeQueries).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
-    })
   })
 
   describe('resetQueries', () => {
@@ -194,26 +164,6 @@ describe('QueryCache', () => {
       )
 
       expect(QueryClientOrigin.prototype.resetQueries).toBeCalledWith(
-        {
-          queryKey: queryKeyUnref,
-        },
-        { cancelRefetch: false },
-      )
-    })
-
-    test('should properly unwrap 3 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.resetQueries(
-        queryKeyRef,
-        {
-          queryKey: queryKeyRef,
-        },
-        { cancelRefetch: ref(false) },
-      )
-
-      expect(QueryClientOrigin.prototype.resetQueries).toBeCalledWith(
-        queryKeyUnref,
         {
           queryKey: queryKeyUnref,
         },
@@ -240,26 +190,6 @@ describe('QueryCache', () => {
         { revert: false },
       )
     })
-
-    test('should properly unwrap 3 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.cancelQueries(
-        queryKeyRef,
-        {
-          queryKey: queryKeyRef,
-        },
-        { revert: ref(false) },
-      )
-
-      expect(QueryClientOrigin.prototype.cancelQueries).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-        { revert: false },
-      )
-    })
   })
 
   describe('invalidateQueries', () => {
@@ -274,26 +204,6 @@ describe('QueryCache', () => {
       )
 
       expect(QueryClientOrigin.prototype.invalidateQueries).toBeCalledWith(
-        {
-          queryKey: queryKeyUnref,
-        },
-        { cancelRefetch: false },
-      )
-    })
-
-    test('should properly unwrap 3 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.invalidateQueries(
-        queryKeyRef,
-        {
-          queryKey: queryKeyRef,
-        },
-        { cancelRefetch: ref(false) },
-      )
-
-      expect(QueryClientOrigin.prototype.invalidateQueries).toBeCalledWith(
-        queryKeyUnref,
         {
           queryKey: queryKeyUnref,
         },
@@ -320,30 +230,10 @@ describe('QueryCache', () => {
         { cancelRefetch: false },
       )
     })
-
-    test('should properly unwrap 3 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.refetchQueries(
-        queryKeyRef,
-        {
-          queryKey: queryKeyRef,
-        },
-        { cancelRefetch: ref(false) },
-      )
-
-      expect(QueryClientOrigin.prototype.refetchQueries).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-        { cancelRefetch: false },
-      )
-    })
   })
 
   describe('fetchQuery', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap parameter', async () => {
       const queryClient = new QueryClient()
 
       queryClient.fetchQuery({
@@ -354,58 +244,23 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
       })
     })
-
-    test('should properly unwrap 2 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.fetchQuery(queryKeyRef, {
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.fetchQuery).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-        undefined,
-      )
-    })
-
-    test('should properly unwrap 3 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.fetchQuery(queryKeyRef, fn, {
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.fetchQuery).toBeCalledWith(
-        queryKeyUnref,
-        fn,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
-    })
   })
 
   describe('prefetchQuery', () => {
     test('should properly unwrap parameters', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.prefetchQuery(queryKeyRef, fn, { queryKey: queryKeyRef })
+      queryClient.prefetchQuery({ queryKey: queryKeyRef, queryFn: fn })
 
-      expect(QueryClientOrigin.prototype.prefetchQuery).toBeCalledWith(
-        queryKeyUnref,
-        fn,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
+      expect(QueryClientOrigin.prototype.prefetchQuery).toBeCalledWith({
+        queryKey: queryKeyUnref,
+        queryFn: fn,
+      })
     })
   })
 
   describe('fetchInfiniteQuery', () => {
-    test('should properly unwrap 1 parameter', async () => {
+    test('should properly unwrap parameter', async () => {
       const queryClient = new QueryClient()
 
       queryClient.fetchInfiniteQuery({
@@ -416,55 +271,21 @@ describe('QueryCache', () => {
         queryKey: queryKeyUnref,
       })
     })
-
-    test('should properly unwrap 2 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.fetchInfiniteQuery(queryKeyRef, {
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith(
-        queryKeyUnref,
-        {
-          queryKey: queryKeyUnref,
-        },
-        undefined,
-      )
-    })
-
-    test('should properly unwrap 3 parameters', async () => {
-      const queryClient = new QueryClient()
-
-      queryClient.fetchInfiniteQuery(queryKeyRef, fn, {
-        queryKey: queryKeyRef,
-      })
-
-      expect(QueryClientOrigin.prototype.fetchInfiniteQuery).toBeCalledWith(
-        queryKeyUnref,
-        fn,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
-    })
   })
 
   describe('prefetchInfiniteQuery', () => {
     test('should properly unwrap parameters', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.prefetchInfiniteQuery(queryKeyRef, fn, {
+      queryClient.prefetchInfiniteQuery({
         queryKey: queryKeyRef,
+        queryFn: fn,
       })
 
-      expect(QueryClientOrigin.prototype.prefetchInfiniteQuery).toBeCalledWith(
-        queryKeyUnref,
-        fn,
-        {
-          queryKey: queryKeyUnref,
-        },
-      )
+      expect(QueryClientOrigin.prototype.prefetchInfiniteQuery).toBeCalledWith({
+        queryKey: queryKeyUnref,
+        queryFn: fn,
+      })
     })
   })
 
@@ -490,16 +311,15 @@ describe('QueryCache', () => {
     test('should properly unwrap parameters', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryDefaults(queryKeyRef, {
+      queryClient.setQueryDefaults({
+        queryKey: queryKeyRef,
         enabled: ref(false),
       })
 
-      expect(QueryClientOrigin.prototype.setQueryDefaults).toBeCalledWith(
-        queryKeyUnref,
-        {
-          enabled: false,
-        },
-      )
+      expect(QueryClientOrigin.prototype.setQueryDefaults).toBeCalledWith({
+        queryKey: queryKeyUnref,
+        enabled: false,
+      })
     })
   })
 
