@@ -30,7 +30,10 @@ export default defineComponent({
       isFetching,
       data: post,
       error,
-    } = useQuery({queryKey: ['post', props.postId], queryFn: () => fetchPost(props.postId)})
+    } = useQuery({
+      queryKey: ['post', props.postId],
+      queryFn: () => fetchPost(props.postId),
+    })
 
     const authorId = computed(() => post.value?.userId)
 

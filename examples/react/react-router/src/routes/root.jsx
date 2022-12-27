@@ -22,7 +22,7 @@ export const loader =
   async ({ request }) => {
     const url = new URL(request.url);
     const q = url.searchParams.get("q");
-    if (!queryClient.getQueryData({ queryKey: contactListQuery(q).queryKey})) {
+    if (!queryClient.getQueryData({ queryKey: contactListQuery(q).queryKey })) {
       await queryClient.fetchQuery(contactListQuery(q));
     }
     return { q };
@@ -37,7 +37,7 @@ export const action = (queryClient) => async () => {
 export default function Root() {
   const { q } = useLoaderData();
   const { data: contacts } = useQuery(contactListQuery(q));
-  const searching = useIsFetching({queryKey: ["contacts", "list"]}) > 0;
+  const searching = useIsFetching({ queryKey: ["contacts", "list"] }) > 0;
   const navigation = useNavigation();
   const submit = useSubmit();
 
