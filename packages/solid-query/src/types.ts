@@ -13,7 +13,6 @@ import type {
   InfiniteQueryObserverOptions,
   InfiniteQueryObserverResult,
   QueryFilters,
-  QueryOptions,
 } from '@tanstack/query-core'
 
 export interface ContextOptions {
@@ -50,7 +49,7 @@ export interface CreateQueryOptions<
     >,
     'queryKey'
   > {
-  queryKey?: TQueryKey
+  queryKey: TQueryKey
 }
 
 export type CreateBaseQueryResult<
@@ -73,18 +72,6 @@ export type DefinedCreateQueryResult<
   TError = unknown,
 > = DefinedCreateBaseQueryResult<TData, TError>
 
-export type ParseQueryArgs<
-  TOptions extends Omit<
-    QueryOptions<any, any, any, ReturnType<TQueryKey>>,
-    'queryKey'
-  > & {
-    queryKey?: TQueryKey
-  },
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
-> = TOptions['queryKey'] extends () => infer R
-  ? Omit<TOptions, 'queryKey'> & { queryKey?: R }
-  : TOptions
-
 /* --- Create Infinite Queries Types --- */
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -103,7 +90,7 @@ export interface CreateInfiniteQueryOptions<
       >,
       'queryKey'
     > {
-  queryKey?: TQueryKey
+  queryKey: TQueryKey
 }
 
 export type CreateInfiniteQueryResult<
