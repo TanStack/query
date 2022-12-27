@@ -63,7 +63,7 @@ function Posts(props: { setPostId: Setter<number> }) {
                         style={
                           // We can access the query data here to show bold links for
                           // ones that are cached
-                          queryClient.getQueryData(['post', post.id])
+                          queryClient.getQueryData({queryKey: ['post', post.id]})
                             ? {
                                 'font-weight': 'bold',
                                 color: 'green',
@@ -97,13 +97,11 @@ const getPostById = async (id: number): Promise<Post> => {
 }
 
 function createPost(postId: number) {
-  return createQuery(
-    () => ['post', postId],
-    () => getPostById(postId),
-    {
-      enabled: !!postId,
-    },
-  )
+  return createQuery({
+    queryKey: () => ['post', postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
+  })
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
