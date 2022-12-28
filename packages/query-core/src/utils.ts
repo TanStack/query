@@ -425,7 +425,6 @@ export function replaceData<
   TData,
   TOptions extends QueryOptions<any, any, any, any>,
 >(prevData: TData | undefined, data: TData, options: TOptions): TData {
-  // Use prev data if an isDataEqual function is defined and returns `true`
   if (typeof options.structuralSharing === 'function') {
     return options.structuralSharing(prevData, data)
   } else if (options.structuralSharing !== false) {

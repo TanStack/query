@@ -26,3 +26,14 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 ### The minimum required TypeScript version is now 4.7
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
+
+### The `isDataEqual` options has been removed from useQuery
+
+Previously, This function was used to indicate whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
+
+You can achieve the same functionality by passing a function to `structuralSharing` instead:
+
+```diff
+- isDataEqual: () => true
++ structuralSharing: false
+```
