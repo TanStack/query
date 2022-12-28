@@ -30,19 +30,21 @@ export type QueryClientProviderProps = {
   children?: JSX.Element
 } & ContextOptions
 
-export const QueryClientProvider = (
-  props: QueryClientProviderProps,
-): JSX.Element => {
+export const QueryClientProvider = ({
+  client,
+  children,
+  context,
+}: QueryClientProviderProps): JSX.Element => {
   onMount(() => {
-    props.client.mount()
+    client.mount()
   })
-  onCleanup(() => props.client.unmount())
+  onCleanup(() => client.unmount())
 
-  const QueryClientContext = getQueryClientContext(props.context)
+  const QueryClientContext = getQueryClientContext(context)
 
   return (
-    <QueryClientContext.Provider value={props.client}>
-      {props.children}
+    <QueryClientContext.Provider value={client}>
+      {children}
     </QueryClientContext.Provider>
   )
 }
