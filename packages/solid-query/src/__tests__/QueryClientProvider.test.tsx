@@ -2,9 +2,7 @@ import { render, screen, waitFor } from 'solid-testing-library'
 import { queryKey } from './utils'
 
 import { QueryCache, QueryClient } from '@tanstack/query-core'
-import type { Context } from 'solid-js'
-import { createContext, useContext } from 'solid-js'
-import { renderToString } from 'solid-js/web'
+import { createContext } from 'solid-js'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
 
@@ -170,16 +168,10 @@ describe('QueryClientProvider', () => {
         )
       }
 
-      // contextSharing should be ignored when passing a custom context.
-      const contextSharing = true
-
       render(() => (
         <QueryClientProvider client={queryClientOuter} context={contextOuter}>
           <QueryClientProvider client={queryClientInner} context={contextInner}>
-            <QueryClientProvider
-              client={queryClientInnerInner}
-              contextSharing={contextSharing}
-            >
+            <QueryClientProvider client={queryClientInnerInner}>
               <Page />
             </QueryClientProvider>
           </QueryClientProvider>
@@ -208,60 +200,6 @@ describe('QueryClientProvider', () => {
       )
 
       consoleMock.mockRestore()
-    })
-
-    it('should use window to get the context when contextSharing is true', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      let queryClientFromHook: QueryClient | undefined
-      let queryClientFromWindow: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        queryClientFromWindow = useContext(
-          window.SolidQueryClientContext as Context<QueryClient | undefined>,
-        )
-        return null
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      expect(queryClientFromHook).toEqual(queryClient)
-      expect(queryClientFromWindow).toEqual(queryClient)
-    })
-
-    it.skip('should not use window to get the context when contextSharing is true and window does not exist', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      // Mock a non web browser environment
-      const windowSpy = jest
-        .spyOn(window, 'window', 'get')
-        .mockImplementation(undefined)
-
-      let queryClientFromHook: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        return null
-      }
-
-      // TODO(lukemurray): fails because renderToString never calls Page
-      // probably an SSR-testing issue we need to fix.
-      renderToString(() => (
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      expect(queryClientFromHook).toEqual(queryClient)
-
-      windowSpy.mockRestore()
     })
   })
 })
