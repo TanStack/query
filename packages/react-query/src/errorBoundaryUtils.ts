@@ -55,12 +55,7 @@ export const getHasError = <
 }: {
   result: QueryObserverResult<TData, TError>
   errorResetBoundary: QueryErrorResetBoundaryValue
-  throwError: ThrowError<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    TQueryKey
-  >
+  throwError: ThrowError<TQueryFnData, TError, TQueryData, TQueryKey>
   query: Query<TQueryFnData, TError, TQueryData, TQueryKey>
 }) => {
   return (

@@ -221,12 +221,7 @@ export interface QueryObserverOptions<
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  throwError?: ThrowError<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    TQueryKey
-  >
+  throwError?: ThrowError<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
