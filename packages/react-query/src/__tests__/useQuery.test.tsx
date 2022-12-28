@@ -803,7 +803,7 @@ describe('useQuery', () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
 
-    queryClient.setQueryDefaults({ queryKey: key, queryFn: () => 'data' })
+    queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
 
     function Page() {
       const state = useQuery<string>({ queryKey: key })

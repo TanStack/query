@@ -311,15 +311,16 @@ describe('QueryCache', () => {
     test('should properly unwrap parameters', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.setQueryDefaults({
-        queryKey: queryKeyRef,
+      queryClient.setQueryDefaults(queryKeyRef, {
         enabled: ref(false),
       })
 
-      expect(QueryClientOrigin.prototype.setQueryDefaults).toBeCalledWith({
-        queryKey: queryKeyUnref,
-        enabled: false,
-      })
+      expect(QueryClientOrigin.prototype.setQueryDefaults).toBeCalledWith(
+        queryKeyUnref,
+        {
+          enabled: false,
+        },
+      )
     })
   })
 

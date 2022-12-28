@@ -888,7 +888,7 @@ describe('createQuery', () => {
     const states: CreateQueryResult<string>[] = []
 
     // TODO(lukemurray): do we want this to be reactive.
-    queryClient.setQueryDefaults({ queryKey: key(), queryFn: () => 'data' })
+    queryClient.setQueryDefaults(key(), { queryFn: () => 'data' })
 
     function Page() {
       const state = createQuery<string>({ queryKey: key })

@@ -621,7 +621,7 @@ describe('query', () => {
     const key = queryKey()
     const queryFn = () => 'data'
 
-    queryClient.setQueryDefaults({ queryKey: key, meta })
+    queryClient.setQueryDefaults(key, { meta })
 
     await queryClient.prefetchQuery({ queryKey: key, queryFn })
 

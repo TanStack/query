@@ -348,21 +348,16 @@ export class QueryClient {
   }
 
   setQueryDefaults(
-    options: WithRequired<
-      QueryObserverOptions<unknown, any, any, any>,
-      'queryKey'
-    >,
+    queryKey: QueryKey,
+    options: Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>,
   ): void {
     const result = this.queryDefaults.find(
-      (x) => hashQueryKey(options.queryKey) === hashQueryKey(x.queryKey),
+      (x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey),
     )
     if (result) {
       result.defaultOptions = options
     } else {
-      this.queryDefaults.push({
-        queryKey: options.queryKey,
-        defaultOptions: options,
-      })
+      this.queryDefaults.push({ queryKey, defaultOptions: options })
     }
   }
 

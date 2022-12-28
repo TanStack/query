@@ -255,15 +255,17 @@ export class QueryClient extends QC {
   }
 
   setQueryDefaults(
+    queryKey: MaybeRefDeep<QueryKey>,
     options: MaybeRefDeep<
-      WithRequired<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
+      Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>
     >,
   ): void {
-    const optionsUnreffed = cloneDeepUnref(options) as WithRequired<
+    const queryKeyUnreffed = cloneDeepUnref(queryKey) as QueryKey
+    const optionsUnreffed = cloneDeepUnref(options) as Omit<
       QueryObserverOptions<unknown, any, any, any>,
       'queryKey'
     >
-    super.setQueryDefaults(optionsUnreffed)
+    super.setQueryDefaults(queryKeyUnreffed, optionsUnreffed)
   }
 
   getQueryDefaults(

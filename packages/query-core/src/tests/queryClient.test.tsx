@@ -65,7 +65,7 @@ describe('queryClient', () => {
   describe('setQueryDefaults', () => {
     test('should not trigger a fetch', async () => {
       const key = queryKey()
-      queryClient.setQueryDefaults({ queryKey: key, queryFn: () => 'data' })
+      queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
       await sleep(1)
       const data = queryClient.getQueryData({ queryKey: key })
       expect(data).toBeUndefined()
@@ -73,7 +73,7 @@ describe('queryClient', () => {
 
     test('should be able to override defaults', async () => {
       const key = queryKey()
-      queryClient.setQueryDefaults({ queryKey: key, queryFn: () => 'data' })
+      queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
       const observer = new QueryObserver(queryClient, { queryKey: key })
       const { data } = await observer.refetch()
       expect(data).toBe('data')
@@ -81,7 +81,7 @@ describe('queryClient', () => {
 
     test('should match the query key partially', async () => {
       const key = queryKey()
-      queryClient.setQueryDefaults({ queryKey: [key], queryFn: () => 'data' })
+      queryClient.setQueryDefaults([key], { queryFn: () => 'data' })
       const observer = new QueryObserver(queryClient, {
         queryKey: [key, 'a'],
       })
@@ -91,8 +91,7 @@ describe('queryClient', () => {
 
     test('should not match if the query key is a subset', async () => {
       const key = queryKey()
-      queryClient.setQueryDefaults({
-        queryKey: [key, 'a'],
+      queryClient.setQueryDefaults([key, 'a'], {
         queryFn: () => 'data',
       })
       const observer = new QueryObserver(queryClient, {
@@ -106,8 +105,7 @@ describe('queryClient', () => {
 
     test('should also set defaults for observers', async () => {
       const key = queryKey()
-      queryClient.setQueryDefaults({
-        queryKey: key,
+      queryClient.setQueryDefaults(key, {
         queryFn: () => 'data',
         enabled: false,
       })
@@ -122,8 +120,8 @@ describe('queryClient', () => {
       const key = queryKey()
       const queryOptions1 = { queryFn: () => 'data' }
       const queryOptions2 = { retry: false }
-      queryClient.setQueryDefaults({ queryKey: key, ...queryOptions1 })
-      queryClient.setQueryDefaults({ queryKey: key, ...queryOptions2 })
+      queryClient.setQueryDefaults(key, { ...queryOptions1 })
+      queryClient.setQueryDefaults(key, { ...queryOptions2 })
       expect(queryClient.getQueryDefaults(key)).toMatchObject(queryOptions2)
     })
 
@@ -167,23 +165,23 @@ describe('queryClient', () => {
       expect(mockLogger.error).toHaveBeenCalledTimes(1)
 
       // If defaults for key ABCD are registered **before** the ones of key ABC (more generic)…
-      queryClient.setQueryDefaults({ queryKey: keyABCD, ...defaultsOfABCD })
-      queryClient.setQueryDefaults({ queryKey: keyABC, ...defaultsOfABC })
+      queryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
+      queryClient.setQueryDefaults(keyABC, defaultsOfABC)
       // … then the "good" defaults are retrieved: we get the ones for key "ABCD"
       const goodDefaults = queryClient.getQueryDefaults(keyABCD)
-      expect(goodDefaults?.queryFn).toBe(defaultsOfABCD.queryFn)
+      expect(goodDefaults).toBe(defaultsOfABCD)
       // The warning is still raised since several defaults are matching
       expect(mockLogger.error).toHaveBeenCalledTimes(2)
 
       // Let's create another queryClient and change the order of registration
       const newQueryClient = createQueryClient()
       // The defaults for key ABC (more generic) are registered **before** the ones of key ABCD…
-      newQueryClient.setQueryDefaults({ queryKey: keyABC, ...defaultsOfABC })
-      newQueryClient.setQueryDefaults({ queryKey: keyABCD, ...defaultsOfABCD })
+      newQueryClient.setQueryDefaults(keyABC, defaultsOfABC)
+      newQueryClient.setQueryDefaults(keyABCD, defaultsOfABCD)
       // … then the "wrong" defaults are retrieved: we get the ones for key "ABC"
       const badDefaults = newQueryClient.getQueryDefaults(keyABCD)
-      expect(badDefaults?.queryFn).not.toBe(defaultsOfABCD.queryFn)
-      expect(badDefaults?.queryFn).toBe(defaultsOfABC.queryFn)
+      expect(badDefaults).not.toBe(defaultsOfABCD)
+      expect(badDefaults).toBe(defaultsOfABC)
       expect(mockLogger.error).toHaveBeenCalledTimes(4)
     })
 
