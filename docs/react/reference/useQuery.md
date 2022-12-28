@@ -25,7 +25,6 @@ const {
   isStale,
   isSuccess,
   refetch,
-  remove,
   status,
   fetchStatus,
 } = useQuery({
@@ -259,5 +258,3 @@ const {
     - Defaults to `true`
       - Per default, a currently running request will be cancelled before a new request is made
     - When set to `false`, no refetch will be made if there is already a request running.
-- `remove: () => void`
-  - A function to remove the query from the cache.

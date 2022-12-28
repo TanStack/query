@@ -95,7 +95,6 @@ export class QueryObserver<
   }
 
   protected bindMethods(): void {
-    this.remove = this.remove.bind(this)
     this.refetch = this.refetch.bind(this)
   }
 
@@ -257,10 +256,6 @@ export class QueryObserver<
 
   getCurrentQuery(): Query<TQueryFnData, TError, TQueryData, TQueryKey> {
     return this.currentQuery
-  }
-
-  remove(): void {
-    this.client.getQueryCache().remove(this.currentQuery)
   }
 
   refetch<TPageData>({
@@ -572,7 +567,6 @@ export class QueryObserver<
       isRefetchError: isError && state.dataUpdatedAt !== 0,
       isStale: isStale(query, options),
       refetch: this.refetch,
-      remove: this.remove,
     }
 
     return result as QueryObserverResult<TData, TError>
