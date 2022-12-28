@@ -8,8 +8,10 @@ import type { MaybeRefDeep, WithQueryClientKey } from './types'
 
 export type MutationFilters = MaybeRefDeep<WithQueryClientKey<MF>>
 
-export function useIsMutating(mutationFilters?: MutationFilters): Ref<number> {
-  const filters = computed(() => parseFilterArgs(mutationFilters))
+export function useIsMutating(
+  mutationFilters: MutationFilters = {},
+): Ref<number> {
+  const filters = computed(() => unrefFilterArgs(mutationFilters))
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
@@ -34,8 +36,7 @@ export function useIsMutating(mutationFilters?: MutationFilters): Ref<number> {
   return isMutating
 }
 
-export function parseFilterArgs(arg: MutationFilters = {}) {
+export function unrefFilterArgs(arg: MutationFilters) {
   const options = unref(arg)
-
   return cloneDeepUnref(options) as WithQueryClientKey<MF>
 }

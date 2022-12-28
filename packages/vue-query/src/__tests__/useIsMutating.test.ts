@@ -2,7 +2,7 @@ import { onScopeDispose, reactive, ref } from 'vue-demi'
 
 import { flushPromises, successMutator } from './test-utils'
 import { useMutation } from '../useMutation'
-import { parseFilterArgs, useIsMutating } from '../useIsMutating'
+import { unrefFilterArgs, useIsMutating } from '../useIsMutating'
 import { useQueryClient } from '../useQueryClient'
 
 jest.mock('../useQueryClient')
@@ -88,16 +88,10 @@ describe('useIsMutating', () => {
   })
 
   describe('parseMutationFilterArgs', () => {
-    test('should default to empty filters', () => {
-      const result = parseFilterArgs(undefined)
-
-      expect(result).toEqual({})
-    })
-
     test('should merge mutation key with filters', () => {
       const filters = { mutationKey: ['key'], fetching: true }
 
-      const result = parseFilterArgs(filters)
+      const result = unrefFilterArgs(filters)
       const expected = { ...filters, mutationKey: ['key'] }
 
       expect(result).toEqual(expected)
@@ -107,7 +101,7 @@ describe('useIsMutating', () => {
       const key = ref(['key'])
       const filters = ref({ mutationKey: key, fetching: ref(true) })
 
-      const result = parseFilterArgs(filters)
+      const result = unrefFilterArgs(filters)
       const expected = { mutationKey: ['key'], fetching: true }
 
       expect(result).toEqual(expected)

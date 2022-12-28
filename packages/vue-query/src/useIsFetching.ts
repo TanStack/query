@@ -7,8 +7,8 @@ import type { MaybeRefDeep, WithQueryClientKey } from './types'
 
 export type QueryFilters = MaybeRefDeep<WithQueryClientKey<QF>>
 
-export function useIsFetching(fetchingFilters?: QueryFilters): Ref<number> {
-  const filters = computed(() => parseFilterArgs(fetchingFilters))
+export function useIsFetching(fetchingFilters: QueryFilters = {}): Ref<number> {
+  const filters = computed(() => unrefFilterArgs(fetchingFilters))
   const queryClient =
     filters.value.queryClient ?? useQueryClient(filters.value.queryClientKey)
 
@@ -33,7 +33,7 @@ export function useIsFetching(fetchingFilters?: QueryFilters): Ref<number> {
   return isFetching
 }
 
-export function parseFilterArgs(arg: QueryFilters = {}) {
+export function unrefFilterArgs(arg: QueryFilters) {
   const options = unref(arg)
   return cloneDeepUnref(options) as WithQueryClientKey<QF>
 }

@@ -14,7 +14,7 @@ import {
   getSimpleFetcherWithReturnData,
 } from './test-utils'
 import { useQuery } from '../useQuery'
-import { parseQueryArgs, useBaseQuery } from '../useBaseQuery'
+import { unrefQueryArgs, useBaseQuery } from '../useBaseQuery'
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')
@@ -256,7 +256,7 @@ describe('useQuery', () => {
       const fn = ref(simpleFetcher)
       const options = ref({ queryKey: key, queryFn: fn, enabled: ref(true) })
 
-      const result = parseQueryArgs(options)
+      const result = unrefQueryArgs(options)
       const expected = {
         queryKey: ['key'],
         queryFn: simpleFetcher,

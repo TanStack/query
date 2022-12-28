@@ -1,6 +1,6 @@
 import { reactive, ref } from 'vue-demi'
 import { errorMutator, flushPromises, successMutator } from './test-utils'
-import { parseMutationArgs, useMutation } from '../useMutation'
+import { unrefMutationArgs, useMutation } from '../useMutation'
 import { useQueryClient } from '../useQueryClient'
 
 jest.mock('../useQueryClient')
@@ -335,14 +335,14 @@ describe('useMutation', () => {
   describe('parseMutationArgs', () => {
     test('should return the same instance of options', () => {
       const options = { retry: false }
-      const result = parseMutationArgs(options)
+      const result = unrefMutationArgs(options)
 
       expect(result).toEqual(options)
     })
 
     test('should merge query key with options', () => {
       const options = { mutationKey: ['key'], retry: false }
-      const result = parseMutationArgs(options)
+      const result = unrefMutationArgs(options)
       const expected = { ...options, mutationKey: ['key'] }
 
       expect(result).toEqual(expected)
@@ -350,7 +350,7 @@ describe('useMutation', () => {
 
     test('should merge query fn with options', () => {
       const options = { mutationFn: successMutator, retry: false }
-      const result = parseMutationArgs(options)
+      const result = unrefMutationArgs(options)
       const expected = { ...options, mutationFn: successMutator }
 
       expect(result).toEqual(expected)
@@ -362,7 +362,7 @@ describe('useMutation', () => {
         mutationFn: successMutator,
         retry: false,
       }
-      const result = parseMutationArgs(options)
+      const result = unrefMutationArgs(options)
       const expected = {
         ...options,
         mutationKey: ['key'],
@@ -377,7 +377,7 @@ describe('useMutation', () => {
       const mutationFn = ref(successMutator)
       const options = ref({ mutationKey: key, mutationFn, retry: ref(12) })
 
-      const result = parseMutationArgs(options)
+      const result = unrefMutationArgs(options)
       const expected = {
         mutationKey: ['key'],
         mutationFn: successMutator,

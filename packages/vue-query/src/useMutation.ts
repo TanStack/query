@@ -82,7 +82,7 @@ export function useMutation<
   >,
 ): UseMutationReturnType<TData, TError, TVariables, TContext> {
   const options = computed(() => {
-    return parseMutationArgs(mutationOptions)
+    return unrefMutationArgs(mutationOptions)
   })
   const queryClient =
     options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
@@ -129,7 +129,7 @@ export function useMutation<
   }
 }
 
-export function parseMutationArgs<
+export function unrefMutationArgs<
   TData = unknown,
   TError = unknown,
   TVariables = void,

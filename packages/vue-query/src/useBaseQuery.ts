@@ -52,7 +52,7 @@ export function useBaseQuery<
     TQueryKey
   >,
 ): UseQueryReturnType<TData, TError> {
-  const options = computed(() => parseQueryArgs(genericOptions))
+  const options = computed(() => unrefQueryArgs(genericOptions))
 
   const queryClient =
     options.value.queryClient ?? useQueryClient(options.value.queryClientKey)
@@ -134,7 +134,7 @@ export function useBaseQuery<
   }
 }
 
-export function parseQueryArgs<
+export function unrefQueryArgs<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -148,7 +148,6 @@ export function parseQueryArgs<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
 > {
   const options = unref(arg1)
-
   return cloneDeepUnref(options) as WithQueryClientKey<
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
   >
