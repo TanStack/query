@@ -170,7 +170,11 @@ To achieve the same functionality as `keepPreviousData`, we have added previous 
 Therefore you just need to provide an identity function to `placeholderData`
 
 ```diff
-useQuery({
+const {
+   data,
+-  isPreviousData,
++  isPlaceholderData,
+} = useQuery({
   queryKey,
   queryFn,
 - keepPreviousData: true,
