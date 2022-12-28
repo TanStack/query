@@ -149,10 +149,17 @@ export class QueryClient {
       return undefined
     }
 
-    const defaultedOptions = this.defaultQueryOptions({ queryKey })
+    const defaultedOptions = this.defaultQueryOptions<
+      any,
+      any,
+      unknown,
+      any,
+      QueryKey
+    >({ queryKey })
+
     return this.queryCache
       .build(this, defaultedOptions)
-      .setData(data, { ...options, manual: true }) as TQueryFnData
+      .setData(data, { ...options, manual: true })
   }
 
   setQueriesData<TQueryFnData>(
