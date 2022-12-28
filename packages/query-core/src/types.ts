@@ -27,9 +27,9 @@ export interface QueryFunctionContext<
 
 export type InitialDataFunction<T> = () => T | undefined
 
-export type PlaceholderDataFunction<TQueryFnData> = (
-  previousData: TQueryFnData | undefined,
-) => TQueryFnData | undefined
+export type PlaceholderDataFunction<TQueryData> = (
+  previousData: TQueryData | undefined,
+) => TQueryData | undefined
 
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
