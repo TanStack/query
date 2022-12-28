@@ -42,9 +42,8 @@ export function createMutation<
   })
 
   createComputed(() => {
-    const newParsedOptions = { ...mutationOptions }
     setOptions(mutationOptions)
-    observer.setOptions(newParsedOptions)
+    observer.setOptions(mutationOptions)
   })
 
   createComputed(
