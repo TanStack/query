@@ -1,10 +1,4 @@
-import {
-  sleep,
-  queryKey,
-  expectType,
-  mockLogger,
-  createQueryClient,
-} from './utils'
+import { sleep, queryKey, expectType, createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 import { QueryObserver, focusManager } from '..'
 
@@ -550,7 +544,7 @@ describe('queryObserver', () => {
     // Should not log an error
     queryClient.clear()
     await sleep(40)
-    expect(mockLogger.error).not.toHaveBeenNthCalledWith(1, 'reject 1')
+    expect(console.error).not.toHaveBeenNthCalledWith(1, 'reject 1')
   })
 
   test('should throw an error if enabled option type is not valid', async () => {
@@ -690,7 +684,7 @@ describe('queryObserver', () => {
       },
     })
 
-    expect(mockLogger.error).toHaveBeenNthCalledWith(2, new Error('error'))
+    expect(console.error).toHaveBeenNthCalledWith(2, new Error('error'))
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {

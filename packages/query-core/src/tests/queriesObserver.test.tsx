@@ -1,5 +1,5 @@
 import { waitFor } from '@testing-library/react'
-import { sleep, queryKey, createQueryClient, mockLogger } from './utils'
+import { sleep, queryKey, createQueryClient } from './utils'
 import type { QueryClient, QueryObserverResult } from '..'
 import { QueriesObserver, QueryObserver } from '..'
 import type { QueryKey } from '..'
@@ -50,11 +50,11 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(console.error).toHaveBeenCalledTimes(2)
+    expect(console.error).toHaveBeenCalledWith(
       'Passing a custom logger has been deprecated and will be removed in the next major version.',
     )
-    expect(mockLogger.error).toHaveBeenCalledWith(
+    expect(console.error).toHaveBeenCalledWith(
       'Passing a custom logger has been deprecated and will be removed in the next major version.',
     )
   })

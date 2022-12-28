@@ -31,7 +31,7 @@ export const Blink = (
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ logger: mockLogger, ...config })
+  return new QueryClient({ ...config })
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
@@ -40,12 +40,6 @@ export function mockVisibilityState(value: DocumentVisibilityState) {
 
 export function mockNavigatorOnLine(value: boolean) {
   return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
-}
-
-export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
 }
 
 export function sleep(timeout: number): Promise<void> {

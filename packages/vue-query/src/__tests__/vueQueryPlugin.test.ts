@@ -252,9 +252,6 @@ describe('VueQueryPlugin', () => {
     test('should use existing context', () => {
       const customClient = {
         mount: jest.fn(),
-        getLogger: () => ({
-          error: jest.fn(),
-        }),
       } as unknown as QueryClient
       window.__VUE_QUERY_CONTEXT__ = customClient
       const appMock = getAppMock()

@@ -2,7 +2,6 @@ import {
   sleep,
   queryKey,
   mockVisibilityState,
-  mockLogger,
   createQueryClient,
 } from './utils'
 import type {
@@ -795,7 +794,7 @@ describe('query', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(10)
-    expect(mockLogger.error).toHaveBeenCalledWith('Missing queryFn')
+    expect(console.error).toHaveBeenCalledWith('Missing queryFn')
 
     unsubscribe()
   })
@@ -824,7 +823,7 @@ describe('query', () => {
       error,
     })
 
-    expect(mockLogger.error).toHaveBeenCalledWith(error)
+    expect(console.error).toHaveBeenCalledWith(error)
     unsubscribe()
   })
 

@@ -154,11 +154,9 @@ export function useQueries<T extends any[]>({
     process.env.NODE_ENV !== 'production' &&
     (queryClientKey || optionsQueryClient)
   ) {
-    queryClient
-      .getLogger()
-      .error(
-        `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an option directly to useQueries hook.`,
-      )
+    console.error(
+      `Providing queryClient to individual queries in useQueries has been deprecated and will be removed in the next major version. You can still pass queryClient as an option directly to useQueries hook.`,
+    )
   }
 
   const defaultedQueries = computed(() =>

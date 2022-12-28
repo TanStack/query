@@ -159,11 +159,9 @@ export class QueryObserver<
       process.env.NODE_ENV !== 'production' &&
       typeof options?.isDataEqual !== 'undefined'
     ) {
-      this.client
-        .getLogger()
-        .error(
-          `The isDataEqual option has been deprecated and will be removed in the next major version. You can achieve the same functionality by passing a function as the structuralSharing option`,
-        )
+      console.error(
+        `The isDataEqual option has been deprecated and will be removed in the next major version. You can achieve the same functionality by passing a function as the structuralSharing option`,
+      )
     }
 
     if (!shallowEqualObjects(prevOptions, this.options)) {
@@ -495,7 +493,7 @@ export class QueryObserver<
           this.selectError = null
         } catch (selectError) {
           if (process.env.NODE_ENV !== 'production') {
-            this.client.getLogger().error(selectError)
+            console.error(selectError)
           }
           this.selectError = selectError as TError
         }
@@ -531,7 +529,7 @@ export class QueryObserver<
             this.selectError = null
           } catch (selectError) {
             if (process.env.NODE_ENV !== 'production') {
-              this.client.getLogger().error(selectError)
+              console.error(selectError)
             }
             this.selectError = selectError as TError
           }

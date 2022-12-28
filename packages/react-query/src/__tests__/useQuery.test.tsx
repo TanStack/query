@@ -5,7 +5,6 @@ import {
   Blink,
   createQueryClient,
   expectType,
-  mockLogger,
   mockNavigatorOnLine,
   mockVisibilityState,
   queryKey,
@@ -1082,7 +1081,7 @@ describe('useQuery', () => {
       rendered.getByText('error')
     })
 
-    expect(mockLogger.error).toHaveBeenCalledWith(error)
+    expect(console.error).toHaveBeenCalledWith(error)
     expect(states.length).toBe(2)
 
     expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
@@ -3429,7 +3428,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('failureReason fetching error 4'))
 
     // Check if the error has been logged in the console
-    expect(mockLogger.error).toHaveBeenCalledWith('fetching error 4')
+    expect(console.error).toHaveBeenCalledWith('fetching error 4')
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {

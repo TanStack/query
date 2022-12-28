@@ -12,7 +12,7 @@ import type {
 } from '@tanstack/query-persist-client-core'
 import { persistQueryClientSave } from '@tanstack/query-persist-client-core'
 
-import { createQueryClient, mockLogger, queryKey, sleep } from './utils'
+import { createQueryClient, queryKey, sleep } from './utils'
 import { PersistQueryClientProvider } from '../PersistQueryClientProvider'
 
 const createMockPersister = (): Persister => {
@@ -416,8 +416,8 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
-    expect(mockLogger.error).toHaveBeenCalledTimes(2)
-    expect(mockLogger.error).toHaveBeenNthCalledWith(2, error)
+    expect(console.error).toHaveBeenCalledTimes(2)
+    expect(console.error).toHaveBeenNthCalledWith(2, error)
   })
 
   test('should be able to persist into multiple clients', async () => {

@@ -81,11 +81,9 @@ export const QueryClientProvider = ({
   }, [client])
 
   if (process.env.NODE_ENV !== 'production' && contextSharing) {
-    client
-      .getLogger()
-      .error(
-        `The contextSharing option has been deprecated and will be removed in the next major version`,
-      )
+    console.error(
+      `The contextSharing option has been deprecated and will be removed in the next major version`,
+    )
   }
 
   const Context = getQueryClientContext(context, contextSharing)

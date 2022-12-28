@@ -84,11 +84,9 @@ export const QueryClientProvider = (
     mergedProps.client.mount()
 
     if (process.env.NODE_ENV !== 'production' && mergedProps.contextSharing) {
-      mergedProps.client
-        .getLogger()
-        .error(
-          `The contextSharing option has been deprecated and will be removed in the next major version`,
-        )
+      console.error(
+        `The contextSharing option has been deprecated and will be removed in the next major version`,
+      )
     }
   })
   onCleanup(() => mergedProps.client.unmount())
