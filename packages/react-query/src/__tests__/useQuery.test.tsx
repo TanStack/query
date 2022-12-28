@@ -250,7 +250,6 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -278,7 +277,6 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
     })
@@ -337,7 +335,6 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -365,7 +362,6 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -393,7 +389,6 @@ describe('useQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
     })
@@ -889,7 +884,7 @@ describe('useQuery', () => {
 
           <button
             onClick={() => {
-              state.remove()
+              queryClient.removeQueries({ queryKey: key })
               rerender({})
             }}
           >
@@ -1212,11 +1207,11 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { remove } = state
-
       return (
         <div>
-          <button onClick={() => remove()}>remove</button>
+          <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
+            remove
+          </button>
           <button onClick={() => rerender({})}>rerender</button>
           data: {state.data ?? 'null'}
         </div>
@@ -1260,11 +1255,13 @@ describe('useQuery', () => {
 
       states.push(state)
 
-      const { remove, refetch } = state
+      const { refetch } = state
 
       return (
         <div>
-          <button onClick={() => remove()}>remove</button>
+          <button onClick={() => queryClient.removeQueries({ queryKey: key })}>
+            remove
+          </button>
           <button onClick={() => refetch()}>refetch</button>
           data: {state.data ?? 'null'}
         </div>
