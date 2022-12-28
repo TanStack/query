@@ -13,7 +13,10 @@ import { Switch, Match, For } from 'solid-js'
 const queryClient = new QueryClient()
 
 function Example() {
-  const query = createQuery({queryKey: () => ['todos'], queryFn: fetchTodos})
+  const query = createQuery({
+    queryKey: () => ['todos'], 
+    queryFn: fetchTodos
+  })
 
   return (
     <div>
@@ -69,10 +72,16 @@ Solid Query offers an API similar to  React Query, but there are some key differ
 
 ```tsx
 // ❌ react version
-useQuery({queryKey: ["todos", todo], queryFn: fetchTodos})
+useQuery({
+  queryKey: ["todos", todo], 
+  queryFn: fetchTodos
+})
 
 // ✅ solid version
-createQuery({queryKey: () => ["todos", todo()], queryFn: fetchTodos})
+createQuery({
+  queryKey: () => ["todos", todo()], 
+  queryFn: fetchTodos
+})
 ```
 
 - Suspense works for queries out of the box if you access the query data inside a `<Suspense>` boundary.
@@ -81,7 +90,11 @@ createQuery({queryKey: () => ["todos", todo()], queryFn: fetchTodos})
 import { For, Suspense } from 'solid-js'
 
 function Example() {
-  const query = createQuery({queryKey: () => ['todos'], queryFn: fetchTodos})
+  const query = createQuery({
+    queryKey: () => ['todos'], 
+    queryFn: fetchTodos
+  })
+
   return (
     <div>
       {/* ✅ Will trigger loading fallback, data accessed in a suspense context. */}
@@ -113,11 +126,12 @@ export default function App() {
 
 function Example() {
   // ❌ react version -- supports destructing outside reactive context
-  // const { isLoading, error, data } = useQuery(['repoData'], () =>
-  //   fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
+  // const { isLoading, error, data } = useQuery({
+  //   queryKey: ['repoData'], () =>
+  //   queryFn: fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
   //     res.json()
   //   )
-  // )
+  // })
 
   // ✅ solid version -- does not support destructuring outside reactive context
   const query = createQuery({

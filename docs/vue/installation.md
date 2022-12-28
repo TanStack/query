@@ -47,7 +47,10 @@ import { useQuery } from "@tanstack/vue-query";
 export default defineComponent({
   name: "Todos",
   setup(props) {
-    const { isLoading, isError, data, error, isFetching } = useQuery({queryKey: ["todos"], queryFn: fetchTodoList});
+    const { isLoading, isError, data, error, isFetching } = useQuery({ 
+      queryKey: ["todos"], 
+      queryFn: fetchTodoList
+    });
 
     return { isLoading, isError, data, error, isFetching };
   },
