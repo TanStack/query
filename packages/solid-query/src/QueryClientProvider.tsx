@@ -25,14 +25,10 @@ export const useQueryClient = ({ context }: ContextOptions = {}) => {
   return queryClient
 }
 
-type QueryClientProviderPropsBase = {
+export type QueryClientProviderProps = {
   client: QueryClient
   children?: JSX.Element
-}
-type QueryClientProviderPropsWithContext = ContextOptions &
-  QueryClientProviderPropsBase
-
-export type QueryClientProviderProps = QueryClientProviderPropsWithContext
+} & ContextOptions
 
 export const QueryClientProvider = (
   props: QueryClientProviderProps,
