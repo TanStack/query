@@ -1,6 +1,5 @@
 import * as React from 'react'
 import { render, waitFor } from '@testing-library/react'
-import { renderToString } from 'react-dom/server'
 
 import { sleep, queryKey, createQueryClient } from './utils'
 import {
@@ -178,16 +177,10 @@ describe('QueryClientProvider', () => {
         )
       }
 
-      // contextSharing should be ignored when passing a custom context.
-      const contextSharing = true
-
       const rendered = render(
         <QueryClientProvider client={queryClientOuter} context={contextOuter}>
           <QueryClientProvider client={queryClientInner} context={contextInner}>
-            <QueryClientProvider
-              client={queryClientInnerInner}
-              contextSharing={contextSharing}
-            >
+            <QueryClientProvider client={queryClientInnerInner}>
               <Page />
             </QueryClientProvider>
           </QueryClientProvider>
@@ -216,60 +209,6 @@ describe('QueryClientProvider', () => {
       )
 
       consoleMock.mockRestore()
-    })
-
-    test('should use window to get the context when contextSharing is true', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      let queryClientFromHook: QueryClient | undefined
-      let queryClientFromWindow: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        queryClientFromWindow = React.useContext(
-          window.ReactQueryClientContext as React.Context<
-            QueryClient | undefined
-          >,
-        )
-        return null
-      }
-
-      render(
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>,
-      )
-
-      expect(queryClientFromHook).toEqual(queryClient)
-      expect(queryClientFromWindow).toEqual(queryClient)
-    })
-
-    test('should not use window to get the context when contextSharing is true and window does not exist', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      // Mock a non web browser environment
-      const windowSpy = jest
-        .spyOn(window, 'window', 'get')
-        .mockImplementation(undefined)
-
-      let queryClientFromHook: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        return null
-      }
-
-      renderToString(
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>,
-      )
-
-      expect(queryClientFromHook).toEqual(queryClient)
-
-      windowSpy.mockRestore()
     })
   })
 })
