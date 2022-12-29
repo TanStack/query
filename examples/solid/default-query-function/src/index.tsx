@@ -79,9 +79,7 @@ function Posts(props: { setPostId: Setter<number> }) {
                         style={
                           // We can use the queryCache here to show bold links for
                           // ones that are cached
-                          queryClient.getQueryData({
-                            queryKey: ['post', post.id],
-                          })
+                          queryClient.getQueryData(['post', post.id])
                             ? {
                                 'font-weight': 'bold',
                                 color: 'green',

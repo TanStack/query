@@ -22,7 +22,7 @@ export const loader =
   async ({ request }) => {
     const url = new URL(request.url);
     const q = url.searchParams.get("q");
-    if (!queryClient.getQueryData({ queryKey: contactListQuery(q).queryKey })) {
+    if (!queryClient.getQueryData(contactListQuery(q).queryKey)) {
       await queryClient.fetchQuery(contactListQuery(q));
     }
     return { q };

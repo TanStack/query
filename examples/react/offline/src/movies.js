@@ -23,9 +23,7 @@ export const useMovie = (movieId) => {
     mutationKey: movieKeys.detail(movieId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: movieKeys.detail(movieId) });
-      const previousData = queryClient.getQueryData({
-        queryKey: movieKeys.detail(movieId),
-      });
+      const previousData = queryClient.getQueryData(movieKeys.detail(movieId));
 
       // remove local state so that server state is taken instead
       setComment(undefined);

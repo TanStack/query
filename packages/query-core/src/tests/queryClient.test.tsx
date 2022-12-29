@@ -67,7 +67,7 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryDefaults(key, { queryFn: () => 'data' })
       await sleep(1)
-      const data = queryClient.getQueryData({ queryKey: key })
+      const data = queryClient.getQueryData(key)
       expect(data).toBeUndefined()
     })
 
@@ -272,20 +272,20 @@ describe('queryClient', () => {
       })
       const testCache = testClient.getQueryCache()
       testClient.setQueryData(key, 'data')
-      expect(testClient.getQueryData({ queryKey: key })).toBe('data')
+      expect(testClient.getQueryData(key)).toBe('data')
       expect(testCache.find({ queryKey: key })).toBe(testCache.get('someKey'))
     })
 
     test('should create a new query if query was not found', () => {
       const key = queryKey()
       queryClient.setQueryData(key, 'bar')
-      expect(queryClient.getQueryData({ queryKey: key })).toBe('bar')
+      expect(queryClient.getQueryData(key)).toBe('bar')
     })
 
     test('should create a new query if query was not found', () => {
       const key = queryKey()
       queryClient.setQueryData(key, 'qux')
-      expect(queryClient.getQueryData({ queryKey: key })).toBe('qux')
+      expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
     test('should not create a new query if query was not found and data is undefined', () => {
@@ -314,14 +314,14 @@ describe('queryClient', () => {
       const key = queryKey()
       queryClient.setQueryData(key, 'qux')
       queryClient.setQueryData(key, undefined)
-      expect(queryClient.getQueryData({ queryKey: key })).toBe('qux')
+      expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
     test('should not update query data if updater returns undefined', () => {
       const key = queryKey()
       queryClient.setQueryData<string>(key, 'qux')
       queryClient.setQueryData<string>(key, () => undefined)
-      expect(queryClient.getQueryData({ queryKey: key })).toBe('qux')
+      expect(queryClient.getQueryData(key)).toBe('qux')
     })
 
     test('should accept an update function', () => {
@@ -442,8 +442,8 @@ describe('queryClient', () => {
         [['key', 1], 6],
         [['key', 2], 7],
       ])
-      expect(queryClient.getQueryData({ queryKey: ['key', 1] })).toBe(6)
-      expect(queryClient.getQueryData({ queryKey: ['key', 2] })).toBe(7)
+      expect(queryClient.getQueryData(['key', 1])).toBe(6)
+      expect(queryClient.getQueryData(['key', 2])).toBe(7)
     })
 
     test('should accept queryFilters', () => {
@@ -457,8 +457,8 @@ describe('queryClient', () => {
       )
 
       expect(result).toEqual([[['key', 1], 6]])
-      expect(queryClient.getQueryData({ queryKey: ['key', 1] })).toBe(6)
-      expect(queryClient.getQueryData({ queryKey: ['key', 2] })).toBe(2)
+      expect(queryClient.getQueryData(['key', 1])).toBe(6)
+      expect(queryClient.getQueryData(['key', 2])).toBe(2)
     })
 
     test('should not update non existing queries', () => {
@@ -468,7 +468,7 @@ describe('queryClient', () => {
       )
 
       expect(result).toEqual([])
-      expect(queryClient.getQueryData({ queryKey: ['key'] })).toBe(undefined)
+      expect(queryClient.getQueryData(['key'])).toBe(undefined)
     })
   })
 
@@ -476,18 +476,18 @@ describe('queryClient', () => {
     test('should return the query data if the query is found', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
-      expect(queryClient.getQueryData({ queryKey: [key, 'id'] })).toBe('bar')
+      expect(queryClient.getQueryData([key, 'id'])).toBe('bar')
     })
 
     test('should return undefined if the query is not found', () => {
       const key = queryKey()
-      expect(queryClient.getQueryData({ queryKey: key })).toBeUndefined()
+      expect(queryClient.getQueryData(key)).toBeUndefined()
     })
 
     test('should match exact by default', () => {
       const key = queryKey()
       queryClient.setQueryData([key, 'id'], 'bar')
-      expect(queryClient.getQueryData({ queryKey: [key] })).toBeUndefined()
+      expect(queryClient.getQueryData([key])).toBeUndefined()
     })
   })
 
@@ -603,7 +603,7 @@ describe('queryClient', () => {
       })
       expect(result).toEqual(1)
       await waitFor(() =>
-        expect(queryClient.getQueryData({ queryKey: key1 })).toEqual(undefined),
+        expect(queryClient.getQueryData(key1)).toEqual(undefined),
       )
     })
 
@@ -617,7 +617,7 @@ describe('queryClient', () => {
         },
         cacheTime: Infinity,
       })
-      const result2 = queryClient.getQueryData({ queryKey: key1 })
+      const result2 = queryClient.getQueryData(key1)
       expect(result).toEqual(1)
       expect(result2).toEqual(1)
     })
@@ -702,7 +702,7 @@ describe('queryClient', () => {
         queryKey: key,
         queryFn: ({ pageParam = 10 }) => Number(pageParam),
       })
-      const result2 = queryClient.getQueryData({ queryKey: key })
+      const result2 = queryClient.getQueryData(key)
 
       const expected = {
         pages: [10],
@@ -730,7 +730,7 @@ describe('queryClient', () => {
         StrictQueryKey
       >({ queryKey: key, queryFn: fetchFn })
 
-      const result = queryClient.getQueryData({ queryKey: key })
+      const result = queryClient.getQueryData(key)
 
       expect(result).toEqual({
         pages: ['data'],
@@ -746,7 +746,7 @@ describe('queryClient', () => {
         queryFn: ({ pageParam = 10 }) => Number(pageParam),
       })
 
-      const result = queryClient.getQueryData({ queryKey: key })
+      const result = queryClient.getQueryData(key)
 
       expect(result).toEqual({
         pages: [10],
@@ -771,7 +771,7 @@ describe('queryClient', () => {
         StrictQueryKey
       >({ queryKey: key, queryFn: fetchFn })
 
-      const result = queryClient.getQueryData({ queryKey: key })
+      const result = queryClient.getQueryData(key)
 
       expect(result).toEqual('data')
     })
@@ -1385,7 +1385,7 @@ describe('queryClient', () => {
       await observer.fetchNextPage()
       await observer.fetchNextPage()
 
-      expect(queryClient.getQueryData({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [10, 11],
       })
 
@@ -1396,7 +1396,7 @@ describe('queryClient', () => {
         refetchPage: (_, index) => index === 0,
       })
 
-      expect(queryClient.getQueryData({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
       })
     })
@@ -1412,7 +1412,7 @@ describe('queryClient', () => {
       await observer.fetchNextPage()
       await observer.fetchNextPage()
 
-      expect(queryClient.getQueryData({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [10, 11],
       })
 
@@ -1426,7 +1426,7 @@ describe('queryClient', () => {
         },
       })
 
-      expect(queryClient.getQueryData({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
       })
     })
@@ -1444,7 +1444,7 @@ describe('queryClient', () => {
         }),
       })
 
-      expect(queryClient.getQueryData({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [10, 11],
       })
 
@@ -1458,7 +1458,7 @@ describe('queryClient', () => {
         },
       })
 
-      expect(queryClient.getQueryData({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryData(key)).toMatchObject({
         pages: [20, 11],
       })
     })

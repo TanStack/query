@@ -79,6 +79,15 @@ now we only support the object format.
 + queryCache.findAll({ queryKey, ...filters })
 ```
 
+### `getQueryData` now accepts queryKey only as an Argument
+
+`getQueryData` argument is changed to accept only a `queryKey`
+
+```diff
+- queryClient.getQueryData({...filters})
++ queryClient.getQueryData(queryKey)
+```
+
 ### The `remove` method has been removed from useQuery
 
 Previously, remove method used to remove the query from the queryCache without informing observers about it. It was best used to remove data imperatively that is no longer needed, e.g. when logging a user out.

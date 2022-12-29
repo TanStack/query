@@ -53,11 +53,9 @@ export class QueryClient extends QC {
   }
 
   getQueryData<TData = unknown>(
-    filters?: MaybeRefDeep<WithRequired<QueryFilters, 'queryKey'>>,
+    queryKey: MaybeRefDeep<QueryKey>,
   ): TData | undefined {
-    return super.getQueryData(
-      cloneDeepUnref(filters) as WithRequired<QueryFilters, 'queryKey'>,
-    )
+    return super.getQueryData(cloneDeepUnref(queryKey) as QueryKey)
   }
 
   getQueriesData<TData = unknown>(

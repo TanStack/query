@@ -90,7 +90,7 @@ function Movies() {
           element: <Detail />,
           errorElement: <MovieError />,
           loader: ({ params: { movieId } }) =>
-            queryClient.getQueryData({ queryKey: movieKeys.detail(movieId) }) ??
+            queryClient.getQueryData(movieKeys.detail(movieId)) ??
             // do not load if we are offline or hydrating because it returns a promise that is pending until we go online again
             // we just let the Detail component handle it
             (onlineManager.isOnline() && !isRestoring

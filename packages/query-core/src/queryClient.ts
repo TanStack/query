@@ -107,9 +107,9 @@ export class QueryClient {
   }
 
   getQueryData<TQueryFnData = unknown>(
-    filters: WithRequired<QueryFilters, 'queryKey'>,
+    queryKey: QueryKey,
   ): TQueryFnData | undefined {
-    return this.queryCache.find<TQueryFnData>(filters)?.state.data
+    return this.queryCache.find<TQueryFnData>({ queryKey })?.state.data
   }
 
   ensureQueryData<
@@ -120,7 +120,7 @@ export class QueryClient {
   >(
     options: FetchQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): Promise<TData> {
-    const cachedData = this.getQueryData<TData>(options)
+    const cachedData = this.getQueryData<TData>(options.queryKey)
 
     return cachedData ? Promise.resolve(cachedData) : this.fetchQuery(options)
   }

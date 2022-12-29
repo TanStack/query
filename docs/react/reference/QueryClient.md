@@ -172,7 +172,7 @@ const data = queryClient.getQueryData(queryKey)
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 
 **Returns**
 
