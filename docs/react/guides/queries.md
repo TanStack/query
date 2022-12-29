@@ -14,6 +14,8 @@ To subscribe to a query in your components or custom hooks, call the `useQuery` 
   - Resolves the data, or
   - Throws an error
 
+[//]: # 'Example'
+
 ```tsx
 import { useQuery } from '@tanstack/react-query'
 
@@ -22,13 +24,19 @@ function App() {
 }
 ```
 
+[//]: # 'Example'
+
 The **unique key** you provide is used internally for refetching, caching, and sharing your queries throughout your application.
 
 The query result returned by `useQuery` contains all of the information about the query that you'll need for templating and any other usage of the data:
 
+[//]: # 'Example2'
+
 ```tsx
 const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 ```
+
+[//]: # 'Example2'
 
 The `result` object contains a few very important states you'll need to be aware of to be productive. A query can only be in one of the following states at any given moment:
 
@@ -42,6 +50,8 @@ Beyond those primary states, more information is available depending on the stat
 - `data` - If the query is in a `success` state, the data is available via the `data` property.
 
 For **most** queries, it's usually sufficient to check for the `isLoading` state, then the `isError` state, then finally, assume that the data is available and render the successful state:
+
+[//]: # 'Example3'
 
 ```tsx
 function Todos() {
@@ -61,7 +71,7 @@ function Todos() {
   // We can assume by this point that `isSuccess === true`
   return (
     <ul>
-      {data.map(todo => (
+      {data.map((todo) => (
         <li key={todo.id}>{todo.title}</li>
       ))}
     </ul>
@@ -69,7 +79,11 @@ function Todos() {
 }
 ```
 
+[//]: # 'Example3'
+
 If booleans aren't your thing, you can always use the `status` state as well:
+
+[//]: # 'Example4'
 
 ```tsx
 function Todos() {
@@ -89,13 +103,15 @@ function Todos() {
   // also status === 'success', but "else" logic works, too
   return (
     <ul>
-      {data.map(todo => (
+      {data.map((todo) => (
         <li key={todo.id}>{todo.title}</li>
       ))}
     </ul>
   )
 }
 ```
+
+[//]: # 'Example4'
 
 TypeScript will also narrow the type of `data` correctly if you've checked for `loading` and `error` before accessing it.
 
@@ -110,6 +126,7 @@ In addition to the `status` field, the `result` object, you will also get an add
 ### Why two different states?
 
 Background refetches and stale-while-revalidate logic make all combinations for `status` and `fetchStatus` possible. For example:
+
 - a query in `success` status will usually be in `idle` fetchStatus, but it could also be in `fetching` if a background refetch is happening.
 - a query that mounts and has no data will usually be in `loading` status and `fetching` fetchStatus, but it could also be `paused` if there is no network connection.
 
@@ -118,6 +135,10 @@ So keep in mind that a query can be in `loading` state without actually fetching
 - The `status` gives information about the `data`: Do we have any or not?
 - The `fetchStatus` gives information about the `queryFn`: Is it running or not?
 
+[//]: # 'Materials'
+
 ## Further Reading
 
 For an alternative way of performing status checks, have a look at the [Community Resources](../community/tkdodos-blog#4-status-checks-in-react-query).
+
+[//]: # 'Materials'

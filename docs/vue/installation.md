@@ -25,10 +25,10 @@ Vue Query is compatible with Vue 2.x and 3.x
 
 Before using Vue Query, you need to initialize it using `VueQueryPlugin`
 
-```ts
+```tsx
 import { VueQueryPlugin } from "@tanstack/vue-query";
 
-app.use(VueQueryPlugin);
+app.use(VueQueryPlugin)
 ```
 
 ### Use of Composition API with `<script setup>`
@@ -40,18 +40,13 @@ Vue 2 users can also use that syntax using [this plugin](https://github.com/antf
 If you are not a fan of `<script setup>` syntax, you can easily translate all the examples into normal Composition API syntax by moving the code under `setup()` function and returning the values used in the template.
 
 ```vue
-<script>
-import { defineComponent } from "vue";
+<script setup>
 import { useQuery } from "@tanstack/vue-query";
 
-export default defineComponent({
-  name: "Todos",
-  setup(props) {
-    const { isLoading, isError, data, error, isFetching } = useQuery(["todos"], fetchTodoList);
-
-    return { isLoading, isError, data, error, isFetching };
-  },
-});
+const { isLoading, isFetching, isError, data, error } = useQuery({
+  queryKey: ['todos'],
+  queryFn: getTodos,
+})
 </script>
 
 <template>...</template>

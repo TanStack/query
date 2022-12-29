@@ -432,6 +432,250 @@
             {
               "label": "Quick Start",
               "to": "vue/quick-start"
+            },
+            {
+              "label": "Devtools",
+              "to": "vue/devtools"
+            },
+            {
+              "label": "TypeScript",
+              "to": "vue/typescript"
+            },
+            {
+              "label": "GraphQL",
+              "to": "vue/graphql"
+            }
+          ]
+        },
+        {
+          "label": "Guides & Concepts",
+          "children": [
+            {
+              "label": "Important Defaults",
+              "to": "vue/guides/important-defaults"
+            },
+            {
+              "label": "Queries",
+              "to": "vue/guides/queries"
+            },
+            {
+              "label": "Query Keys",
+              "to": "vue/guides/query-keys"
+            },
+            {
+              "label": "Query Functions",
+              "to": "vue/guides/query-functions"
+            },
+            {
+              "label": "Network Mode",
+              "to": "vue/guides/network-mode"
+            },
+            {
+              "label": "Parallel Queries",
+              "to": "vue/guides/parallel-queries"
+            },
+            {
+              "label": "Dependent Queries",
+              "to": "vue/guides/dependent-queries"
+            },
+            {
+              "label": "Background Fetching Indicators",
+              "to": "vue/guides/background-fetching-indicators"
+            },
+            {
+              "label": "Window Focus Refetching",
+              "to": "vue/guides/window-focus-refetching"
+            },
+            {
+              "label": "Disabling/Pausing Queries",
+              "to": "vue/guides/disabling-queries"
+            },
+            {
+              "label": "Query Retries",
+              "to": "vue/guides/query-retries"
+            },
+            {
+              "label": "Paginated Queries",
+              "to": "vue/guides/paginated-queries"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "vue/guides/infinite-queries"
+            },
+            {
+              "label": "Initial Query Data",
+              "to": "vue/guides/initial-query-data"
+            },
+            {
+              "label": "Placeholder Query Data",
+              "to": "vue/guides/placeholder-query-data"
+            },
+            {
+              "label": "Prefetching",
+              "to": "vue/guides/prefetching"
+            },
+            {
+              "label": "Mutations",
+              "to": "vue/guides/mutations"
+            },
+            {
+              "label": "Query Invalidation",
+              "to": "vue/guides/query-invalidation"
+            },
+            {
+              "label": "Invalidation from Mutations",
+              "to": "vue/guides/invalidations-from-mutations"
+            },
+            {
+              "label": "Updates from Mutation",
+              "to": "vue/guides/updates-from-mutation-responses"
+            },
+            {
+              "label": "Optimistic Updates",
+              "to": "vue/guides/optimistic-updates"
+            },
+            {
+              "label": "Query Cancellation",
+              "to": "vue/guides/query-cancellation"
+            },
+            {
+              "label": "Scroll Restoration",
+              "to": "vue/guides/scroll-restoration"
+            },
+            {
+              "label": "Filters",
+              "to": "vue/guides/filters"
+            },
+            {
+              "label": "SSR & Nuxt",
+              "to": "vue/guides/ssr"
+            },
+            {
+              "label": "Caching",
+              "to": "vue/guides/caching"
+            },
+            {
+              "label": "Default Query Fn",
+              "to": "vue/guides/default-query-function"
+            },
+            {
+              "label": "Suspense",
+              "to": "vue/guides/suspense"
+            },
+            {
+              "label": "Custom Logger",
+              "to": "vue/guides/custom-logger"
+            },
+            {
+              "label": "Testing",
+              "to": "vue/guides/testing"
+            },
+            {
+              "label": "Does this replace [Vuex, Pinia]?",
+              "to": "vue/guides/does-this-replace-client-state"
+            }
+          ]
+        },
+        {
+          "label": "Community Resources",
+          "children": [
+            {
+              "label": "TkDodo's Blog",
+              "to": "vue/community/tkdodos-blog"
+            },
+            {
+              "label": "Query Key Factory",
+              "to": "vue/community/lukemorales-query-key-factory"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Basic",
+              "to": "vue/examples/vue/basic"
+            },
+            {
+              "label": "Vue 2.6",
+              "to": "vue/examples/vue/2.6-basic"
+            },
+            {
+              "label": "Nuxt 3",
+              "to": "vue/examples/vue/nuxt3"
+            },
+            {
+              "label": "Persister",
+              "to": "vue/examples/vue/persister"
+            }
+          ]
+        },
+        {
+          "label": "API Reference",
+          "children": [
+            {
+              "label": "useQuery",
+              "to": "vue/reference/useQuery"
+            },
+            {
+              "label": "useQueries",
+              "to": "vue/reference/useQueries"
+            },
+            {
+              "label": "useInfiniteQuery",
+              "to": "vue/reference/useInfiniteQuery"
+            },
+            {
+              "label": "useMutation",
+              "to": "vue/reference/useMutation"
+            },
+            {
+              "label": "useIsFetching",
+              "to": "vue/reference/useIsFetching"
+            },
+            {
+              "label": "useIsMutating",
+              "to": "vue/reference/useIsMutating"
+            },
+            {
+              "label": "useQueryClient",
+              "to": "vue/reference/useQueryClient"
+            },
+            {
+              "label": "QueryClient",
+              "to": "vue/reference/QueryClient"
+            },
+            {
+              "label": "QueryCache",
+              "to": "vue/reference/QueryCache"
+            },
+            {
+              "label": "MutationCache",
+              "to": "vue/reference/MutationCache"
+            },
+            {
+              "label": "QueryObserver",
+              "to": "vue/reference/QueryObserver"
+            },
+            {
+              "label": "InfiniteQueryObserver",
+              "to": "vue/reference/InfiniteQueryObserver"
+            },
+            {
+              "label": "QueriesObserver",
+              "to": "vue/reference/QueriesObserver"
+            },
+            {
+              "label": "focusManager",
+              "to": "vue/reference/focusManager"
+            },
+            {
+              "label": "onlineManager",
+              "to": "vue/reference/onlineManager"
+            },
+            {
+              "label": "hydration",
+              "to": "vue/reference/hydration"
             }
           ]
         }
