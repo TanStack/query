@@ -240,15 +240,15 @@ describe('queryCache', () => {
 
       // Directly add the query from the cache
       // to simulate a race condition
-      const query = queryCache['queriesMap'][hash] as Query
+      const query = queryCache['queriesMap'].get(hash) as Query
       const queryClone = Object.assign({}, query)
 
       // No error should be thrown when trying to add the query
       queryCache.add(queryClone)
-      expect(queryCache['queries'].length).toEqual(1)
+      expect(queryCache.getAll().length).toEqual(1)
 
       // Clean-up to avoid an error when queryClient.clear()
-      delete queryCache['queriesMap'][hash]
+      queryCache['queriesMap'].delete(hash)
     })
 
     describe('QueryCache.remove', () => {
@@ -260,9 +260,9 @@ describe('queryCache', () => {
 
         // Directly remove the query from the cache
         // to simulate a race condition
-        const query = queryCache['queriesMap'][hash] as Query
+        const query = queryCache['queriesMap'].get(hash) as Query
         const queryClone = Object.assign({}, query)
-        delete queryCache['queriesMap'][hash]
+        queryCache['queriesMap'].delete(hash)
 
         // No error should be thrown when trying to remove the query
         expect(() => queryCache.remove(queryClone)).not.toThrow()
