@@ -38,7 +38,7 @@ type InfiniteQueryReturnType<TData, TError> = UseQueryReturnType<
 >
 export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
   InfiniteQueryReturnType<TData, TError>,
-  'fetchNextPage' | 'fetchPreviousPage' | 'refetch' | 'remove'
+  'fetchNextPage' | 'fetchPreviousPage' | 'refetch'
 > & {
   fetchNextPage: InfiniteQueryObserverResult<TData, TError>['fetchNextPage']
   fetchPreviousPage: InfiniteQueryObserverResult<
@@ -46,7 +46,6 @@ export type UseInfiniteQueryReturnType<TData, TError> = DistributiveOmit<
     TError
   >['fetchPreviousPage']
   refetch: InfiniteQueryObserverResult<TData, TError>['refetch']
-  remove: InfiniteQueryObserverResult<TData, TError>['remove']
 }
 
 export function useInfiniteQuery<
@@ -110,6 +109,5 @@ export function useInfiniteQuery<
     fetchNextPage: result.fetchNextPage.value,
     fetchPreviousPage: result.fetchPreviousPage.value,
     refetch: result.refetch.value,
-    remove: result.remove.value,
   }
 }

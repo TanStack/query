@@ -282,7 +282,6 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -310,7 +309,6 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: true,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'success',
       fetchStatus: 'idle',
     })
@@ -375,7 +373,6 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -403,7 +400,6 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'loading',
       fetchStatus: 'fetching',
     })
@@ -431,7 +427,6 @@ describe('createQuery', () => {
       isStale: true,
       isSuccess: false,
       refetch: expect.any(Function),
-      remove: expect.any(Function),
       status: 'error',
       fetchStatus: 'idle',
     })
@@ -972,64 +967,6 @@ describe('createQuery', () => {
     })
   })
 
-  it.skip('should not get into an infinite loop when removing a query with cacheTime 0 and rerendering', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<string>[] = []
-
-    function Page() {
-      //@ts-expect-error -- skip this test
-      const [, rerender] = NotReact.useState({})
-
-      const state = createQuery(
-        key,
-        async () => {
-          await sleep(5)
-          return 'data'
-        },
-        {
-          cacheTime: 0,
-          notifyOnChangeProps: 'all',
-        },
-      )
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      const { remove } = state
-
-      //@ts-expect-error skip this test
-      NotReact.useEffect(() => {
-        setActTimeout(() => {
-          remove()
-          rerender({})
-        }, 20)
-      }, [remove])
-
-      return null
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await sleep(100)
-
-    expect(states.length).toBe(5)
-    // First load
-    expect(states[0]).toMatchObject({ isLoading: true, isSuccess: false })
-    // First success
-    expect(states[1]).toMatchObject({ isLoading: false, isSuccess: true })
-    // Remove
-    expect(states[2]).toMatchObject({ isLoading: true, isSuccess: false })
-    // Hook state update
-    expect(states[3]).toMatchObject({ isLoading: true, isSuccess: false })
-    // Second success
-    expect(states[4]).toMatchObject({ isLoading: false, isSuccess: true })
-  })
-
   it('should fetch when refetchOnMount is false and nothing has been fetched yet', async () => {
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
@@ -1341,112 +1278,8 @@ describe('createQuery', () => {
     expect(states[1]).toMatchObject({ data: 'test' })
   })
 
-  it.skip('should be able to remove a query', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<number>[] = []
-    let count = 0
-
-    function Page() {
-      //@ts-expect-error -- we skip this test, and no such thing as rerender in solid
-      const [, rerender] = NotReact.useState({})
-      const state = createQuery(key, () => ++count, {
-        notifyOnChangeProps: 'all',
-      })
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      const { remove } = state
-
-      return (
-        <div>
-          <button onClick={() => remove()}>remove</button>
-          <button onClick={() => rerender({})}>rerender</button>
-          data: {state.data ?? 'null'}
-        </div>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('data: 1'))
-    fireEvent.click(screen.getByRole('button', { name: /remove/i }))
-
-    await sleep(20)
-    fireEvent.click(screen.getByRole('button', { name: /rerender/i }))
-    await waitFor(() => screen.getByText('data: 2'))
-
-    expect(states.length).toBe(4)
-    // Initial
-    expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
-    // Fetched
-    expect(states[1]).toMatchObject({ status: 'success', data: 1 })
-    // Remove + Hook state update, batched
-    expect(states[2]).toMatchObject({ status: 'loading', data: undefined })
-    // Fetched
-    expect(states[3]).toMatchObject({ status: 'success', data: 2 })
-  })
-
-  it('should create a new query when refetching a removed query', async () => {
-    const key = queryKey()
-    const states: CreateQueryResult<number>[] = []
-    let count = 0
-
-    function Page() {
-      const state = createQuery(
-        key,
-        async () => {
-          await sleep(10)
-          return ++count
-        },
-        { notifyOnChangeProps: 'all' },
-      )
-
-      createRenderEffect(() => {
-        states.push({ ...state })
-      })
-
-      return (
-        <div>
-          <button onClick={() => state.remove()}>remove</button>
-          <button onClick={() => state.refetch()}>refetch</button>
-          data: {state.data ?? 'null'}
-        </div>
-      )
-    }
-
-    render(() => (
-      <QueryClientProvider client={queryClient}>
-        <Page />
-      </QueryClientProvider>
-    ))
-
-    await waitFor(() => screen.getByText('data: 1'))
-    fireEvent.click(screen.getByRole('button', { name: /remove/i }))
-
-    await sleep(50)
-    fireEvent.click(screen.getByRole('button', { name: /refetch/i }))
-    await waitFor(() => screen.getByText('data: 2'))
-
-    expect(states.length).toBe(4)
-    // Initial
-    expect(states[0]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
-    // Fetched
-    expect(states[1]).toMatchObject({ data: 1 })
-    // Switch
-    expect(states[2]).toMatchObject({ data: undefined, dataUpdatedAt: 0 })
-    // Fetched
-    expect(states[3]).toMatchObject({ data: 2 })
-  })
-
   it('should share equal data structures between query results', async () => {
     const key = queryKey()
-
     const result1 = [
       { id: '1', done: false },
       { id: '2', done: false },
