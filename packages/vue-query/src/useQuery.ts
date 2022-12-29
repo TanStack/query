@@ -16,19 +16,17 @@ import type {
 
 export type UseQueryReturnType<TData, TError> = DistributiveOmit<
   UQRT<TData, TError>,
-  'refetch' | 'remove'
+  'refetch'
 > & {
   refetch: QueryObserverResult<TData, TError>['refetch']
-  remove: QueryObserverResult<TData, TError>['remove']
 }
 
 export type UseQueryDefinedReturnType<TData, TError> = DistributiveOmit<
   ToRefs<Readonly<DefinedQueryObserverResult<TData, TError>>>,
-  'refetch' | 'remove'
+  'refetch'
 > & {
   suspense: () => Promise<QueryObserverResult<TData, TError>>
   refetch: QueryObserverResult<TData, TError>['refetch']
-  remove: QueryObserverResult<TData, TError>['remove']
 }
 
 export type UseQueryOptions<
@@ -173,6 +171,5 @@ export function useQuery<
   return {
     ...result,
     refetch: result.refetch.value,
-    remove: result.remove.value,
   }
 }
