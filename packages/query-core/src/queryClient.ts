@@ -25,7 +25,6 @@ import type {
   ResetOptions,
   ResetQueryFilters,
   SetDataOptions,
-  WithRequired,
 } from './types'
 import type { QueryState } from './query'
 import { QueryCache } from './queryCache'
@@ -178,9 +177,9 @@ export class QueryClient {
   }
 
   getQueryState<TQueryFnData = unknown, TError = undefined>(
-    filters: WithRequired<QueryFilters, 'queryKey'>,
+    queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
-    return this.queryCache.find<TQueryFnData, TError>(filters)?.state
+    return this.queryCache.find<TQueryFnData, TError>({ queryKey })?.state
   }
 
   removeQueries(filters?: QueryFilters): void {

@@ -128,11 +128,11 @@ describe('QueryCache', () => {
     test('should properly unwrap 1 parameter', async () => {
       const queryClient = new QueryClient()
 
-      queryClient.getQueryState({ queryKey: queryKeyRef })
+      queryClient.getQueryState(queryKeyRef)
 
-      expect(QueryClientOrigin.prototype.getQueryState).toBeCalledWith({
-        queryKey: queryKeyUnref,
-      })
+      expect(QueryClientOrigin.prototype.getQueryState).toBeCalledWith(
+        queryKeyUnref,
+      )
     })
   })
 

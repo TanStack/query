@@ -22,7 +22,6 @@ import type {
   MutationFilters,
   QueryState,
   Updater,
-  WithRequired,
 } from '@tanstack/query-core'
 import type { MaybeRefDeep } from './types'
 import { cloneDeepUnref } from './utils'
@@ -89,11 +88,9 @@ export class QueryClient extends QC {
   }
 
   getQueryState<TData = unknown, TError = undefined>(
-    filters: MaybeRefDeep<WithRequired<QueryFilters, 'queryKey'>>,
+    queryKey: MaybeRefDeep<QueryKey>,
   ): QueryState<TData, TError> | undefined {
-    return super.getQueryState(
-      cloneDeepUnref(filters) as WithRequired<QueryFilters, 'queryKey'>,
-    )
+    return super.getQueryState(cloneDeepUnref(queryKey) as QueryKey)
   }
 
   removeQueries(filters?: MaybeRefDeep<QueryFilters>): void {

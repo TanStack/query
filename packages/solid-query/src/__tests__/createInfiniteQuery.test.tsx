@@ -1154,7 +1154,7 @@ describe('useInfiniteQuery', () => {
     await sleep(300)
 
     expect(fetches).toBe(2)
-    expect(queryClient.getQueryState({ queryKey: key() })).toMatchObject({
+    expect(queryClient.getQueryState(key())).toMatchObject({
       data: initialData,
       status: 'success',
       error: null,

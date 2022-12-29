@@ -263,13 +263,13 @@ Updates via `setQueryData` must be performed in an _immuatable_ way. **DO NOT** 
 `getQueryState` is a synchronous function that can be used to get an existing query's state. If the query does not exist, `undefined` will be returned.
 
 ```tsx
-const state = queryClient.getQueryState({ queryKey })
+const state = queryClient.getQueryState(queryKey)
 console.log(state.dataUpdatedAt)
 ```
 
 **Options**
 
-- `filters?: QueryFilters`: [Query Filters](../guides/filters#query-filters)
+- `queryKey: QueryKey`: [Query Keys](../guides/query-keys)
 
 ## `queryClient.setQueriesData`
 

@@ -79,13 +79,22 @@ now we only support the object format.
 + queryCache.findAll({ queryKey, ...filters })
 ```
 
-### `getQueryData` now accepts queryKey only as an Argument
+### `queryClient.getQueryData` now accepts queryKey only as an Argument
 
-`getQueryData` argument is changed to accept only a `queryKey`
+`queryClient.getQueryData` argument is changed to accept only a `queryKey`
 
 ```diff
-- queryClient.getQueryData({...filters})
+- queryClient.getQueryData(queryKey, filters)
 + queryClient.getQueryData(queryKey)
+```
+
+### `queryClient.getQueryState` now accepts queryKey only as an Argument
+
+`queryClient.getQueryState` argument is changed to accept only a `queryKey`
+
+```diff
+- queryClient.getQueryState(queryKey, filters)
++ queryClient.getQueryState(queryKey)
 ```
 
 ### The `remove` method has been removed from useQuery

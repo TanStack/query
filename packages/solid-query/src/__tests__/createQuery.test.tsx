@@ -5921,7 +5921,7 @@ describe('createQuery', () => {
 
       await sleep(15)
 
-      expect(queryClient.getQueryState({ queryKey: key() })).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })
@@ -6062,7 +6062,7 @@ describe('createQuery', () => {
 
       await sleep(15)
 
-      expect(queryClient.getQueryState({ queryKey: key() })).toMatchObject({
+      expect(queryClient.getQueryState(key())).toMatchObject({
         fetchStatus: 'idle',
         status: 'success',
       })

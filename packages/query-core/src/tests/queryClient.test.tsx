@@ -410,17 +410,17 @@ describe('queryClient', () => {
           return 23
         },
       })
-      expect(queryClient.getQueryState({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryState(key)).toMatchObject({
         data: undefined,
         fetchStatus: 'fetching',
       })
       queryClient.setQueryData(key, 42)
-      expect(queryClient.getQueryState({ queryKey: key })).toMatchObject({
+      expect(queryClient.getQueryState(key)).toMatchObject({
         data: 42,
         fetchStatus: 'fetching',
       })
       await waitFor(() =>
-        expect(queryClient.getQueryState({ queryKey: key })).toMatchObject({
+        expect(queryClient.getQueryState(key)).toMatchObject({
           data: 23,
           fetchStatus: 'idle',
         }),
@@ -871,9 +871,9 @@ describe('queryClient', () => {
       })
       await sleep(10)
       await queryClient.cancelQueries()
-      const state1 = queryClient.getQueryState({ queryKey: key1 })
-      const state2 = queryClient.getQueryState({ queryKey: key2 })
-      const state3 = queryClient.getQueryState({ queryKey: key3 })
+      const state1 = queryClient.getQueryState(key1)
+      const state2 = queryClient.getQueryState(key2)
+      const state3 = queryClient.getQueryState(key3)
       expect(state1).toMatchObject({
         data: 'data',
         status: 'success',
@@ -907,7 +907,7 @@ describe('queryClient', () => {
       })
       await sleep(10)
       await queryClient.cancelQueries({ queryKey: key1 }, { revert: false })
-      const state1 = queryClient.getQueryState({ queryKey: key1 })
+      const state1 = queryClient.getQueryState(key1)
       expect(state1).toMatchObject({
         status: 'error',
       })
@@ -1313,13 +1313,13 @@ describe('queryClient', () => {
 
       await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
 
-      let state = queryClient.getQueryState({ queryKey: key })
+      let state = queryClient.getQueryState(key)
       expect(state?.data).toEqual('data')
       expect(state?.status).toEqual('success')
 
       queryClient.resetQueries({ queryKey: key })
 
-      state = queryClient.getQueryState({ queryKey: key })
+      state = queryClient.getQueryState(key)
 
       expect(state).toBeTruthy()
       expect(state?.data).toBeUndefined()
@@ -1336,12 +1336,12 @@ describe('queryClient', () => {
         initialData: 'initial',
       })
 
-      let state = queryClient.getQueryState({ queryKey: key })
+      let state = queryClient.getQueryState(key)
       expect(state?.data).toEqual('data')
 
       queryClient.resetQueries({ queryKey: key })
 
-      state = queryClient.getQueryState({ queryKey: key })
+      state = queryClient.getQueryState(key)
 
       expect(state).toBeTruthy()
       expect(state?.data).toEqual('initial')
