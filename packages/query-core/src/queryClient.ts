@@ -698,11 +698,11 @@ export class QueryClient {
   }
 
   defaultQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey,
+    TQueryFnData = unknown,
+    TError = Error,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
   >(
     options?:
       | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>

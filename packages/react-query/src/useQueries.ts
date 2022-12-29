@@ -138,7 +138,10 @@ export type QueriesResults<
       any
     >[]
   ? // Dynamic-size (homogenous) UseQueryOptions array: map directly to array of results
-    UseQueryResult<unknown extends TData ? TQueryFnData : TData, TError>[]
+    UseQueryResult<
+      unknown extends TData ? TQueryFnData : TData,
+      unknown extends TError ? Error : TError
+    >[]
   : // Fallback
     UseQueryResult[]
 
