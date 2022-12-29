@@ -11,6 +11,7 @@ import type { QueryObserver } from './queryObserver'
 // TYPES
 
 interface QueryCacheConfig {
+  createCache?: () => Map<string, Query>
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
 }
@@ -75,7 +76,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   constructor(config?: QueryCacheConfig) {
     super()
     this.config = config || {}
-    this.queries = new Map<string, Query>()
+    this.queries = config?.createCache?.() ?? new Map<string, Query>()
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
