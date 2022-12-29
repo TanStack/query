@@ -231,6 +231,23 @@ describe('queryCache', () => {
     })
   })
 
+  describe('QueryCacheConfig.createCache', () => {
+    test('should call createCache', async () => {
+      const createCache = jest.fn().mockImplementation(() => new Map())
+      new QueryCache({ createCache })
+      expect(createCache).toHaveBeenCalledWith()
+    })
+
+    test('should use created cache', async () => {
+      const cache = new Map()
+      const spy = jest.spyOn(cache, 'get')
+
+      new QueryCache({ createCache: () => cache }).get('key')
+
+      expect(spy).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('QueryCache.add', () => {
     test('should not try to add a query already added to the cache', async () => {
       const key = queryKey()
@@ -240,7 +257,7 @@ describe('queryCache', () => {
 
       // Directly add the query from the cache
       // to simulate a race condition
-      const query = queryCache['queriesMap'].get(hash) as Query
+      const query = queryCache['queries'].get(hash) as Query
       const queryClone = Object.assign({}, query)
 
       // No error should be thrown when trying to add the query
@@ -248,7 +265,7 @@ describe('queryCache', () => {
       expect(queryCache.getAll().length).toEqual(1)
 
       // Clean-up to avoid an error when queryClient.clear()
-      queryCache['queriesMap'].delete(hash)
+      queryCache['queries'].delete(hash)
     })
 
     describe('QueryCache.remove', () => {
@@ -260,9 +277,9 @@ describe('queryCache', () => {
 
         // Directly remove the query from the cache
         // to simulate a race condition
-        const query = queryCache['queriesMap'].get(hash) as Query
+        const query = queryCache['queries'].get(hash) as Query
         const queryClone = Object.assign({}, query)
-        queryCache['queriesMap'].delete(hash)
+        queryCache['queries'].delete(hash)
 
         // No error should be thrown when trying to remove the query
         expect(() => queryCache.remove(queryClone)).not.toThrow()

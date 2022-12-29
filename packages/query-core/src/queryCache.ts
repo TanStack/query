@@ -73,10 +73,10 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   private queries: Map<string, Query>
 
-  constructor(config?: QueryCacheConfig) {
+  constructor(config: QueryCacheConfig = {}) {
     super()
-    this.config = config || {}
-    this.queries = config?.createCache?.() ?? new Map<string, Query>()
+    this.config = config
+    this.queries = config.createCache?.() ?? new Map<string, Query>()
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
