@@ -85,7 +85,7 @@ describe('useQuery', () => {
 
       // should error when the query function result does not match with the specified type
       // @ts-expect-error
-      useQuery<number>(key, () => 'test')
+      useQuery<number>({ queryKey: key, queryFn: () => 'test' })
 
       // it should infer the result type from a generic query function
       function queryFn<T = string>(): Promise<T> {
