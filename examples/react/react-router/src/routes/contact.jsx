@@ -22,7 +22,7 @@ export const loader =
   async ({ params }) => {
     const query = contactDetailQuery(params.contactId);
     return (
-      queryClient.getQueryData(query) ?? (await queryClient.fetchQuery(query))
+      queryClient.getQueryData(query.queryKey) ?? (await queryClient.fetchQuery(query))
     );
   };
 
