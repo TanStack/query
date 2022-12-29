@@ -1179,6 +1179,8 @@ describe('createQuery', () => {
   })
 
   it('should throw an error when a selector throws', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
     const states: CreateQueryResult<string>[] = []
     const error = new Error('Select Error')
@@ -1203,11 +1205,12 @@ describe('createQuery', () => {
 
     await sleep(10)
 
-    expect(console.error).toHaveBeenCalledWith(error)
+    expect(consoleMock).toHaveBeenCalledWith(error)
     expect(states.length).toBe(2)
 
     expect(states[0]).toMatchObject({ status: 'loading', data: undefined })
     expect(states[1]).toMatchObject({ status: 'error', error })
+    consoleMock.mockRestore()
   })
 
   it.skip('should not re-run a stable select when it re-renders if selector throws an error', async () => {
@@ -3682,6 +3685,8 @@ describe('createQuery', () => {
 
   // See https://github.com/tannerlinsley/react-query/issues/160
   it('should continue retry after focus regain', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     // make page unfocused
@@ -3744,7 +3749,8 @@ describe('createQuery', () => {
     await waitFor(() => screen.getByText('failureReason fetching error 4'))
 
     // Check if the error has been logged in the console
-    expect(console.error).toHaveBeenCalledWith('fetching error 4')
+    expect(consoleMock).toHaveBeenCalledWith('fetching error 4')
+    consoleMock.mockRestore()
   })
 
   it('should fetch on mount when a query was already created with setQueryData', async () => {

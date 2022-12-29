@@ -383,8 +383,8 @@ describe('PersistQueryClientProvider', () => {
 
   test('should remove cache after non-successful restoring', async () => {
     const key = queryKey()
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined)
-    jest.spyOn(console, 'error').mockImplementation(() => undefined)
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
 
     const queryClient = createQueryClient()
     const removeClient = jest.fn()
@@ -416,8 +416,9 @@ describe('PersistQueryClientProvider', () => {
 
     await waitFor(() => rendered.getByText('fetched'))
     expect(removeClient).toHaveBeenCalledTimes(1)
-    expect(console.error).toHaveBeenCalledTimes(2)
-    expect(console.error).toHaveBeenNthCalledWith(2, error)
+    expect(consoleMock).toHaveBeenCalledTimes(2)
+    expect(consoleMock).toHaveBeenNthCalledWith(2, error)
+    consoleMock.mockRestore()
   })
 
   test('should be able to persist into multiple clients', async () => {

@@ -30,8 +30,7 @@ export const Blink = (
 }
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ ...config })
+  return new QueryClient(config)
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {

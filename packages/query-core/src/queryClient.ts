@@ -68,12 +68,6 @@ export class QueryClient {
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
-
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(
-        `Passing a custom logger has been deprecated and will be removed in the next major version.`,
-      )
-    }
   }
 
   mount(): void {

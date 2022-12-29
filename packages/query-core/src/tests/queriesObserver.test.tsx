@@ -35,6 +35,8 @@ describe('queriesObserver', () => {
   })
 
   test('should still return value for undefined query key', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key1 = queryKey()
     const queryFn1 = jest.fn().mockReturnValue(1)
     const queryFn2 = jest.fn().mockReturnValue(2)
@@ -50,13 +52,14 @@ describe('queriesObserver', () => {
     unsubscribe()
     expect(observerResult).toMatchObject([{ data: 1 }, { data: 2 }])
 
-    expect(console.error).toHaveBeenCalledTimes(2)
-    expect(console.error).toHaveBeenCalledWith(
-      'Passing a custom logger has been deprecated and will be removed in the next major version.',
-    )
-    expect(console.error).toHaveBeenCalledWith(
-      'Passing a custom logger has been deprecated and will be removed in the next major version.',
-    )
+    // expect(consoleMock).toHaveBeenCalledTimes(2)
+    // expect(consoleMock).toHaveBeenCalledWith(
+    //   'Passing a custom logger has been deprecated and will be removed in the next major version.',
+    // )
+    // expect(consoleMock).toHaveBeenCalledWith(
+    //   'Passing a custom logger has been deprecated and will be removed in the next major version.',
+    // )
+    consoleMock.mockRestore()
   })
 
   test('should update when a query updates', async () => {

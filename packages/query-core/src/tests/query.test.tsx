@@ -784,6 +784,8 @@ describe('query', () => {
   })
 
   test('fetch should throw an error if the queryFn is not defined', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -794,12 +796,14 @@ describe('query', () => {
 
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(10)
-    expect(console.error).toHaveBeenCalledWith('Missing queryFn')
-
+    expect(consoleMock).toHaveBeenCalledWith('Missing queryFn')
     unsubscribe()
+    consoleMock.mockRestore()
   })
 
   test('fetch should dispatch an error if the queryFn returns undefined', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     const observer = new QueryObserver(queryClient, {
@@ -823,8 +827,9 @@ describe('query', () => {
       error,
     })
 
-    expect(console.error).toHaveBeenCalledWith(error)
+    expect(consoleMock).toHaveBeenCalledWith(error)
     unsubscribe()
+    consoleMock.mockRestore()
   })
 
   test('fetch should dispatch fetch if is fetching and current promise is undefined', async () => {

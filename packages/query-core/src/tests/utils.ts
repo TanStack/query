@@ -5,8 +5,7 @@ import { QueryClient } from '@tanstack/query-core'
 import * as utils from '../utils'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
-  return new QueryClient({ ...config })
+  return new QueryClient(config)
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {

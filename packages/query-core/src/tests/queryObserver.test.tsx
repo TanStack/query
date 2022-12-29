@@ -518,6 +518,8 @@ describe('queryObserver', () => {
   })
 
   test('the retrier should not throw an error when reject if the retrier is already resolved', async () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
     let count = 0
 
@@ -544,7 +546,8 @@ describe('queryObserver', () => {
     // Should not log an error
     queryClient.clear()
     await sleep(40)
-    expect(console.error).not.toHaveBeenNthCalledWith(1, 'reject 1')
+    expect(consoleMock).not.toHaveBeenNthCalledWith(1, 'reject 1')
+    consoleMock.mockRestore()
   })
 
   test('should throw an error if enabled option type is not valid', async () => {
@@ -673,6 +676,8 @@ describe('queryObserver', () => {
   })
 
   test('select function error using placeholderdata should log an error', () => {
+    const consoleMock = jest.spyOn(console, 'error')
+    consoleMock.mockImplementation(() => undefined)
     const key = queryKey()
 
     new QueryObserver(queryClient, {
@@ -684,7 +689,8 @@ describe('queryObserver', () => {
       },
     })
 
-    expect(console.error).toHaveBeenNthCalledWith(2, new Error('error'))
+    expect(consoleMock).toHaveBeenNthCalledWith(1, new Error('error'))
+    consoleMock.mockRestore()
   })
 
   test('should not use replaceEqualDeep for select value when structuralSharing option is true and placeholderdata is defined', () => {

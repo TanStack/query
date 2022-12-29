@@ -41,7 +41,6 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       jsName: 'QueryCore',
       outputFile: 'index',
       entryFile: ['src/index.ts', 
-      // 'src/logger.native.ts'
     ],
       globals: {},
     }),
@@ -369,7 +368,6 @@ function cjs({
       forceDevEnv ? forceEnvPlugin('development') : undefined,
       replace({
         // TODO: figure out a better way to produce extensionless cjs imports
-        // "require('./logger.js')": "require('./logger')",
         "require('./reactBatchedUpdates.js')":
           "require('./reactBatchedUpdates')",
         "require('./useSyncExternalStore.js')":
