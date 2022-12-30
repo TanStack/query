@@ -234,7 +234,7 @@ describe('useIsMutating', () => {
 
       function Page() {
         const { mutate } = useMutation(['mutation'], async () => 'data', {
-          useErrorBoundary: true,
+          throwErrors: true,
           context,
         })
 
