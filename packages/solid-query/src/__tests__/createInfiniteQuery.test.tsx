@@ -16,7 +16,7 @@ import type {
   InfiniteData,
   QueryFunctionContext,
 } from '..'
-import { createInfiniteQuery, QueryCache, QueryClientProvider } from '..'
+import { createInfiniteQuery, QueryCache, QueryClientProvider, keepPreviousData } from '..'
 import { Blink, queryKey, setActTimeout } from './utils'
 
 interface Result {
@@ -195,7 +195,7 @@ describe('useInfiniteQuery', () => {
         },
 
         getNextPageParam: () => 1,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       }))
 

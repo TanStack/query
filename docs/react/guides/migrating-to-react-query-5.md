@@ -167,7 +167,7 @@ Since the only supported syntax now is the object syntax, this rule is no longer
 We have removed the `keepPreviousData` option and `isPreviousData` flag as they were doing mostly the same thing as `placeholderData` and `isPlaceholderData` flag.
 
 To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` function.
-Therefore you just need to provide an identity function to `placeholderData`
+Therefore you just need to provide an identity function to `placeholderData` or use `keepPreviousData` function returned from Tanstack Query.
 
 ```diff
 const {
@@ -178,7 +178,7 @@ const {
   queryKey,
   queryFn,
 - keepPreviousData: true,
-+ placeholderData: (previousData) => previousData
++ placeholderData: keepPreviousData
 });
 ```
 

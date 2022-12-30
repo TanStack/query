@@ -22,7 +22,7 @@ This experience is not optimal and unfortunately is how many tools today insist 
 
 ## Better Paginated Queries with `placeholderData`
 
-Consider the following example where we would ideally want to increment a pageIndex (or cursor) for a query. If we were to use `useQuery`, **it would still technically work fine**, but the UI would jump in and out of the `success` and `loading` states as different queries are created and destroyed for each page or cursor. By setting `placeholderData` to `(previousData) => previousData` we get a few new things:
+Consider the following example where we would ideally want to increment a pageIndex (or cursor) for a query. If we were to use `useQuery`, **it would still technically work fine**, but the UI would jump in and out of the `success` and `loading` states as different queries are created and destroyed for each page or cursor. By setting `placeholderData` to `(previousData) => previousData` or `keepPreviousData` function exported from TanStack Query, we get a few new things:
 
 - **The data from the last successful fetch available while new data is being requested, even though the query key has changed**.
 - When the new data arrives, the previous `data` is seamlessly swapped to show the new data.
@@ -45,7 +45,7 @@ function Todos() {
   } = useQuery({
     queryKey: ['projects', page],
     queryFn: () => fetchProjects(page),
-    placeholderData: (previousData) => previousData,
+    placeholderData: keepPreviousData,
   })
 
   return (

@@ -20,7 +20,7 @@ import type {
   UseQueryOptions,
   UseQueryResult,
 } from '..'
-import { QueryCache, useQuery } from '..'
+import { QueryCache, useQuery, keepPreviousData } from '..'
 import { ErrorBoundary } from 'react-error-boundary'
 
 describe('useQuery', () => {
@@ -1669,7 +1669,7 @@ describe('useQuery', () => {
           await sleep(10)
           return count
         },
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1735,7 +1735,7 @@ describe('useQuery', () => {
           return Promise.resolve(count)
         },
         retry: false,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1837,7 +1837,7 @@ describe('useQuery', () => {
           return count
         },
         initialData: 99,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
       })
 
       states.push(state)
@@ -1918,7 +1918,7 @@ describe('useQuery', () => {
           return count
         },
         enabled: false,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -2024,7 +2024,7 @@ describe('useQuery', () => {
           return count
         },
         enabled: false,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 
@@ -3877,7 +3877,7 @@ describe('useQuery', () => {
         initialData() {
           return filter === '' ? initialTodos : undefined
         },
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         staleTime: 5000,
       })
 

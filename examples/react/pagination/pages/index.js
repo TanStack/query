@@ -5,6 +5,7 @@ import {
   useQueryClient,
   QueryClient,
   QueryClientProvider,
+  keepPreviousData,
 } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
@@ -30,7 +31,7 @@ function Example() {
   const { status, data, error, isFetching, isPlaceholderData } = useQuery({
     queryKey: ['projects', page],
     queryFn: () => fetchProjects(page),
-    placeholderData: (previousData) => previousData,
+    placeholderData: keepPreviousData,
     staleTime: 5000,
   })
 

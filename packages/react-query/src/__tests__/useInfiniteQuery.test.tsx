@@ -13,7 +13,7 @@ import type {
   QueryFunctionContext,
   UseInfiniteQueryResult,
 } from '..'
-import { QueryCache, useInfiniteQuery } from '..'
+import { QueryCache, useInfiniteQuery, keepPreviousData } from '..'
 
 interface Result {
   items: number[]
@@ -180,7 +180,7 @@ describe('useInfiniteQuery', () => {
           return `${pageParam}-${order}`
         },
         getNextPageParam: () => 1,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       })
 

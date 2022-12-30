@@ -17,7 +17,7 @@ import type {
   DefinedCreateQueryResult,
   QueryFunction,
 } from '..'
-import { createQuery, QueryCache, QueryClientProvider } from '..'
+import { createQuery, QueryCache, QueryClientProvider, keepPreviousData } from '..'
 import {
   Blink,
   createQueryClient,
@@ -1605,7 +1605,7 @@ describe('createQuery', () => {
           await sleep(10)
           return count()
         },
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
       }))
 
       createRenderEffect(() => {
@@ -1673,7 +1673,7 @@ describe('createQuery', () => {
           return count()
         },
         initialData: 99,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
       }))
 
       createRenderEffect(() => {
@@ -1753,7 +1753,7 @@ describe('createQuery', () => {
           return count()
         },
         enabled: false,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       }))
 
@@ -1849,7 +1849,7 @@ describe('createQuery', () => {
           return count()
         },
         enabled: false,
-        placeholderData: (previousData) => previousData,
+        placeholderData: keepPreviousData,
         notifyOnChangeProps: 'all',
       }))
 
