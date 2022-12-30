@@ -22,7 +22,7 @@ $ yarn add @lukemorales/query-key-factory
 Start by defining the query keys for your app:
 
 ### Declare everything in a single file
-```ts
+```tsx
 import { createQueryKeyStore } from '@lukemorales/query-key-factory'
 
 export const queryKeys = createQueryKeyStore({
@@ -36,7 +36,7 @@ export const queryKeys = createQueryKeyStore({
 ```
 
 ### Fine-grained declaration by features
-```ts
+```tsx
 import { createQueryKeys, mergeQueryKeys } from '@lukemorales/query-key-factory'
 
 // my-api/users.ts
