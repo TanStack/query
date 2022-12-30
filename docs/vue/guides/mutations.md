@@ -36,7 +36,7 @@ function addTodo() {
 
 ```vue
 <script>
-import { useMutation } from 'vue-query'
+import { useMutation } from '@tanstack/vue-query'
 
 const { error, mutate, reset } = useMutation({
   mutationFn: (newTodo) => axios.post('/todos', newTodo),
