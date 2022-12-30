@@ -99,6 +99,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center"><a href="https://kubajastrz.com"><img src="https://avatars.githubusercontent.com/u/6443113?v=4?s=100" width="100px;" alt="Jakub Jastrzębski"/><br /><sub><b>Jakub Jastrzębski</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=KubaJastrz" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/balazsmatepetro"><img src="https://avatars.githubusercontent.com/u/1608725?v=4?s=100" width="100px;" alt="Balázs Máté Petró"/><br /><sub><b>Balázs Máté Petró</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=balazsmatepetro" title="Code">💻</a></td>
+      <td align="center"><a href="http://linkedin.com/in/mamoanwar97/"><img src="https://avatars.githubusercontent.com/u/36894846?v=4?s=100" width="100px;" alt="Mahmoud M. Anwar"/><br /><sub><b>Mahmoud M. Anwar</b></sub></a><br /><a href="https://github.com/TanStack/query/commits?author=Mamoanwar97" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

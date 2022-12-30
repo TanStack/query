@@ -7,22 +7,31 @@ A query function can be literally any function that **returns a promise**. The p
 
 All of the following are valid query function configurations:
 
+[//]: # 'Example'
+
 ```tsx
 useQuery({ queryKey: ['todos'], queryFn: fetchAllTodos })
 useQuery({ queryKey: ['todos', todoId], queryFn: () => fetchTodoById(todoId) })
-useQuery({ queryKey: ['todos', todoId], queryFn: async () => {
-  const data = await fetchTodoById(todoId)
-  return data
-}})
+useQuery({
+  queryKey: ['todos', todoId],
+  queryFn: async () => {
+    const data = await fetchTodoById(todoId)
+    return data
+  },
+})
 useQuery({
   queryKey: ['todos', todoId],
   queryFn: ({ queryKey }) => fetchTodoById(queryKey[1]),
 })
 ```
 
+[//]: # 'Example'
+
 ## Handling and Throwing Errors
 
-For React Query to determine a query has errored, the query function **must throw** or return a **rejected Promise**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
+For TanStack Query to determine a query has errored, the query function **must throw** or return a **rejected Promise**. Any error that is thrown in the query function will be persisted on the `error` state of the query.
+
+[//]: # 'Example2'
 
 ```tsx
 const { error } = useQuery({
@@ -36,13 +45,17 @@ const { error } = useQuery({
     }
 
     return data
-  }
+  },
 })
 ```
+
+[//]: # 'Example2'
 
 ## Usage with `fetch` and other clients that do not throw by default
 
 While most utilities like `axios` or `graphql-request` automatically throw errors for unsuccessful HTTP calls, some utilities like `fetch` do not throw errors by default. If that's the case, you'll need to throw them on your own. Here is a simple way to do that with the popular `fetch` API:
+
+[//]: # 'Example3'
 
 ```tsx
 useQuery({
@@ -53,13 +66,17 @@ useQuery({
       throw new Error('Network response was not ok')
     }
     return response.json()
-  }
+  },
 })
 ```
+
+[//]: # 'Example3'
 
 ## Query Function Variables
 
 Query keys are not just for uniquely identifying the data you are fetching, but are also conveniently passed into your query function as part of the QueryFunctionContext. While not always necessary, this makes it possible to extract your query functions if needed:
+
+[//]: # 'Example4'
 
 ```tsx
 function Todos({ status, page }) {
@@ -76,6 +93,8 @@ function fetchTodoList({ queryKey }) {
 }
 ```
 
+[//]: # 'Example4'
+
 ### QueryFunctionContext
 
 The `QueryFunctionContext` is the object passed to each query function. It consists of:
@@ -85,7 +104,7 @@ The `QueryFunctionContext` is the object passed to each query function. It consi
   - only for [Infinite Queries](../guides/infinite-queries)
   - the page parameter used to fetch the current page
 - `signal?: AbortSignal`
-  - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by react-query
+  - [AbortSignal](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal) instance provided by TanStack Query
   - Can be used for [Query Cancellation](../guides/query-cancellation)
 - `meta: Record<string, unknown> | undefined`
   - an optional field you can fill with additional information about your query

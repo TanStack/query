@@ -30,7 +30,7 @@ $ yarn add react-query-kit
 
 [CodeSandbox](https://codesandbox.io/s/example-react-query-kit-nextjs-uldl88)
 
-```ts
+```tsx
 import { QueryClient, dehydrate } from '@tanstack/react-query'
 import { createQuery } from 'react-query-kit'
 
