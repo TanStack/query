@@ -7,7 +7,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noImplicitAny": true,
-    "noImplicitReturns": false,
+    "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,

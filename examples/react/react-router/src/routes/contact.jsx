@@ -22,7 +22,8 @@ export const loader =
   async ({ params }) => {
     const query = contactDetailQuery(params.contactId);
     return (
-      queryClient.getQueryData(query) ?? (await queryClient.fetchQuery(query))
+      queryClient.getQueryData(query.queryKey) ??
+      (await queryClient.fetchQuery(query))
     );
   };
 
@@ -33,7 +34,7 @@ export const action =
     const contact = await updateContact(params.contactId, {
       favorite: formData.get("favorite") === "true",
     });
-    await queryClient.invalidateQueries(["contacts"]);
+    await queryClient.invalidateQueries({ queryKey: ["contacts"] });
     return contact;
   };
 

@@ -203,7 +203,7 @@ export interface QueryObserverOptions<
    */
   notifyOnChangeProps?: Array<keyof InfiniteQueryObserverResult> | 'all'
   /**
-   * This callback will fire any time the query successfully fetches new data or the cache is updated via `setQueryData`.
+   * This callback will fire any time the query successfully fetches new data.
    */
   onSuccess?: (data: TData) => void
   /**
@@ -250,7 +250,8 @@ export interface QueryObserverOptions<
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
 
-type WithRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>
+export type WithRequired<T, K extends keyof T> = Omit<T, K> &
+  Required<Pick<T, K>>
 export type DefaultedQueryObserverOptions<
   TQueryFnData = unknown,
   TError = unknown,

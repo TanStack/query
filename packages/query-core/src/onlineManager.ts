@@ -28,6 +28,8 @@ export class OnlineManager extends Subscribable {
           window.removeEventListener('offline', listener)
         }
       }
+
+      return
     }
   }
 

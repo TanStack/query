@@ -470,6 +470,28 @@ describe('queryClient', () => {
     })
   })
 
+  describe('ensureQueryData', () => {
+    test('should return the cached query data if the query is found', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve('data')
+
+      queryClient.setQueryData([key, 'id'], 'bar')
+
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key, 'id'], queryFn }),
+      ).resolves.toEqual('bar')
+    })
+
+    test('should call fetchQuery and return its results if the query is not found', async () => {
+      const key = queryKey()
+      const queryFn = () => Promise.resolve('data')
+
+      await expect(
+        queryClient.ensureQueryData({ queryKey: [key], queryFn }),
+      ).resolves.toEqual('data')
+    })
+  })
+
   describe('getQueriesData', () => {
     test('should return the query data for all matched queries', () => {
       const key1 = queryKey()

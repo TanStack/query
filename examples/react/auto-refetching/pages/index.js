@@ -9,8 +9,8 @@ import {
   useMutation,
   QueryClient,
   QueryClientProvider,
-} from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
+} from '@tanstack/react-query'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 const queryClient = new QueryClient()
 
@@ -27,24 +27,24 @@ function Example() {
   const [intervalMs, setIntervalMs] = React.useState(1000)
   const [value, setValue] = React.useState('')
 
-  const { status, data, error, isFetching } = useQuery(
-    ['todos'],
-    async () => {
+  const { status, data, error, isFetching } = useQuery({
+    queryKey: ['todos'],
+    queryFn: async () => {
       const res = await axios.get('/api/data')
       return res.data
     },
-    {
-      // Refetch the data every second
-      refetchInterval: intervalMs,
-    },
-  )
-
-  const addMutation = useMutation((value) => fetch(`/api/data?add=${value}`), {
-    onSuccess: () => queryClient.invalidateQueries(['todos']),
+    // Refetch the data every second
+    refetchInterval: intervalMs,
   })
 
-  const clearMutation = useMutation(() => fetch(`/api/data?clear=1`), {
-    onSuccess: () => queryClient.invalidateQueries(['todos']),
+  const addMutation = useMutation({
+    mutationFn: (add) => fetch(`/api/data?add=${add}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
+  })
+
+  const clearMutation = useMutation({
+    mutationFn: () => fetch(`/api/data?clear=1`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   if (status === 'loading') return <h1>Loading...</h1>
