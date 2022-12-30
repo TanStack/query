@@ -704,7 +704,7 @@ describe('ReactQueryDevtools', () => {
 
       function Page() {
         const { data = 'default' } = useQuery(['check'], async () => 'test', {
-          throwError: true,
+          throwErrors: true,
         })
 
         return (
@@ -739,7 +739,7 @@ describe('ReactQueryDevtools', () => {
 
       function Page() {
         const { data = 'default' } = useQuery(['check'], async () => 'test', {
-          throwError: true,
+          throwErrors: true,
           context,
         })
 
