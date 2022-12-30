@@ -34,6 +34,8 @@ Previously, This function was used to indicate whether to use previous `data` (`
 You can achieve the same functionality by passing a function to `structuralSharing` instead:
 
 ```diff
-- isDataEqual: () => true
-+ structuralSharing: false
+ import { replaceEqualDeep } from '@tanstack/react-query'
+
+- isDataEqual: (oldData, newData) => customCheck(oldData, newData)
++ structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
 ```
