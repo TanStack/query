@@ -97,5 +97,5 @@ function Example() {
 [//]: # 'Course'
 
 - Consider taking the official [React Query Course](https://ui.dev/react-query?from=tanstack) (or buying it for your whole team!)
-  [//]: # (Course)
+[//]: # 'Course'
 - Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
