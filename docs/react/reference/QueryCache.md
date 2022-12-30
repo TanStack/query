@@ -3,7 +3,7 @@ id: QueryCache
 title: QueryCache
 ---
 
-The `QueryCache` is the storage mechanism for React Query. It stores all the data, meta information and state of queries it contains.
+The `QueryCache` is the storage mechanism for TanStack Query. It stores all the data, meta information and state of queries it contains.
 
 **Normally, you will not interact with the QueryCache directly and instead use the `QueryClient` for a specific cache.**
 

@@ -5,6 +5,7 @@ title: Updates from Mutation Responses
 
 When dealing with mutations that **update** objects on the server, it's common for the new object to be automatically returned in the response of the mutation. Instead of refetching any queries for that item and wasting a network call for data we already have, we can take advantage of the object returned by the mutation function and update the existing query with the new data immediately using the [Query Client's `setQueryData`](../reference/QueryClient#queryclientsetquerydata) method:
 
+[//]: # 'Example'
 ```tsx
 const queryClient = useQueryClient()
 
@@ -27,10 +28,12 @@ const { status, data, error } = useQuery({
   queryFn: fetchTodoById,
 })
 ```
+[//]: # 'Example'
 
 You might want to tie the `onSuccess` logic into a reusable mutation, for that you can
 create a custom hook like this:
 
+[//]: # 'Example2'
 ```tsx
 const useMutateTodo = () => {
   const queryClient = useQueryClient()
@@ -44,11 +47,13 @@ const useMutateTodo = () => {
   })
 }
 ```
+[//]: # 'Example2'
 
 ## Immutability
 
 Updates via `setQueryData` must be performed in an _immutable_ way. **DO NOT** attempt to write directly to the cache by mutating data (that you retrieved via from the cache) in place. It might work at first but can lead to subtle bugs along the way.
 
+[//]: # 'Example3'
 ```tsx
 queryClient.setQueryData(
   ['posts', { id }],
@@ -59,9 +64,7 @@ queryClient.setQueryData(
     }
     return oldData
   })
-```
 
-```tsx
 queryClient.setQueryData(
   ['posts', { id }],
   // ✅ this is the way
@@ -71,3 +74,4 @@ queryClient.setQueryData(
   } : oldData
 )
 ```
+[//]: # 'Example3'

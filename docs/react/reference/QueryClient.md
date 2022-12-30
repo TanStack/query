@@ -437,7 +437,7 @@ if (queryClient.isFetching()) {
 }
 ```
 
-React Query also exports a handy [`useIsFetching`](../reference/useIsFetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
+TanStack Query also exports a handy [`useIsFetching`](../reference/useIsFetching) hook that will let you subscribe to this state in your components without creating a manual subscription to the query cache.
 
 **Options**
 
@@ -457,7 +457,7 @@ if (queryClient.isMutating()) {
 }
 ```
 
-React Query also exports a handy [`useIsMutating`](../reference/useIsMutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
+TanStack Query also exports a handy [`useIsMutating`](../reference/useIsMutating) hook that will let you subscribe to this state in your components without creating a manual subscription to the mutation cache.
 
 **Options**
 

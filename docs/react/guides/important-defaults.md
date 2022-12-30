@@ -3,7 +3,7 @@ id: important-defaults
 title: Important Defaults
 ---
 
-Out of the box, React Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use React Query:
+Out of the box, TanStack Query is configured with **aggressive but sane** defaults. **Sometimes these defaults can catch new users off guard or make learning/debugging difficult if they are unknown by the user.** Keep them in mind as you continue to learn and use TanStack Query:
 
 - Query instances via `useQuery` or `useInfiniteQuery` by default **consider cached data as stale**.
 
@@ -15,7 +15,7 @@ Out of the box, React Query is configured with **aggressive but sane** defaults.
   - The network is reconnected
   - The query is optionally configured with a refetch interval
 
-If you see a refetch that you are not expecting, it is likely because you just focused the window and React Query is doing a [`refetchOnWindowFocus`](../guides/window-focus-refetching). During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
+If you see a refetch that you are not expecting, it is likely because you just focused the window and TanStack Query is doing a [`refetchOnWindowFocus`](../guides/window-focus-refetching). During development, this will probably be triggered more frequently, especially because focusing between the Browser DevTools and your app will also cause a fetch, so be aware of that.
 
 > To change this functionality, you can use options like `refetchOnMount`, `refetchOnWindowFocus`, `refetchOnReconnect` and `refetchInterval`.
 
@@ -32,9 +32,13 @@ If you see a refetch that you are not expecting, it is likely because you just f
 
   > Structural sharing only works with JSON-compatible values, any other value types will always be considered as changed. If you are seeing performance issues because of large responses for example, you can disable this feature with the `config.structuralSharing` flag. If you are dealing with non-JSON compatible values in your query responses and still want to detect if data has changed or not, you can define a data compare function with `config.isDataEqual` or provide your own custom function as `config.structuralSharing` to compute a value from the old and new responses, retaining references as required.
 
+[//]: # 'Materials'
+
 ## Further Reading
 
 Have a look at the following articles from our Community Resources for further explanations of the defaults:
 
 - [Practical React Query](../community/tkdodos-blog#1-practical-react-query)
 - [React Query as a State Manager](../community/tkdodos-blog#10-react-query-as-a-state-manager)
+
+[//]: # 'Materials'

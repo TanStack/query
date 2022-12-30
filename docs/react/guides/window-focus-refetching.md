@@ -3,9 +3,11 @@ id: window-focus-refetching
 title: Window Focus Refetching
 ---
 
-If a user leaves your application and returns to stale data, **React Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
+If a user leaves your application and returns to stale data, **TanStack Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
 
 #### Disabling Globally
+
+[//]: # 'Example'
 
 ```tsx
 //
@@ -22,7 +24,11 @@ function App() {
 }
 ```
 
+[//]: # 'Example'
+
 #### Disabling Per-Query
+
+[//]: # 'Example2'
 
 ```tsx
 useQuery({
@@ -32,12 +38,16 @@ useQuery({
 })
 ```
 
+[//]: # 'Example2'
+
 ## Custom Window Focus Event
 
-In rare circumstances, you may want to manage your own window focus events that trigger React Query to revalidate. To do this, React Query provides a `focusManager.setEventListener` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setEventListener`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
+In rare circumstances, you may want to manage your own window focus events that trigger TanStack Query to revalidate. To do this, TanStack Query provides a `focusManager.setEventListener` function that supplies you the callback that should be fired when the window is focused and allows you to set up your own events. When calling `focusManager.setEventListener`, the previously set handler is removed (which in most cases will be the default handler) and your new handler is used instead. For example, this is the default handler:
+
+[//]: # 'Example3'
 
 ```tsx
-focusManager.setEventListener(handleFocus => {
+focusManager.setEventListener((handleFocus) => {
   // Listen to visibilitychange and focus
   if (typeof window !== 'undefined' && window.addEventListener) {
     window.addEventListener('visibilitychange', handleFocus, false)
@@ -52,9 +62,13 @@ focusManager.setEventListener(handleFocus => {
 })
 ```
 
+[//]: # 'Example3'
+
 ## Ignoring Iframe Focus Events
 
 A great use-case for replacing the focus handler is that of iframe events. Iframes present problems with detecting window focus by both double-firing events and also firing false-positive events when focusing or using iframes within your app. If you experience this, you should use an event handler that ignores these events as much as possible. I recommend [this one](https://gist.github.com/tannerlinsley/1d3a2122332107fcd8c9cc379be10d88)! It can be set up in the following way:
+
+[//]: # 'Example4'
 
 ```tsx
 import { focusManager } from '@tanstack/react-query'
@@ -62,6 +76,9 @@ import onWindowFocus from './onWindowFocus' // The gist above
 
 focusManager.setEventListener(onWindowFocus) // Boom!
 ```
+
+[//]: # 'Example4'
+[//]: # 'ReactNative'
 
 ## Managing Focus in React Native
 
@@ -84,7 +101,11 @@ useEffect(() => {
 }, [])
 ```
 
+[//]: # 'ReactNative'
+
 ## Managing focus state
+
+[//]: # 'Example5'
 
 ```tsx
 import { focusManager } from '@tanstack/react-query'
@@ -95,6 +116,8 @@ focusManager.setFocused(true)
 // Fallback to the default focus check
 focusManager.setFocused(undefined)
 ```
+
+[//]: # 'Example5'
 
 ## Pitfalls & Caveats
 

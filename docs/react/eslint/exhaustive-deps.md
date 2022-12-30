@@ -10,7 +10,7 @@ This makes sure that queries are cached independently and that queries are refet
 
 Examples of **incorrect** code for this rule:
 
-```ts
+```tsx
 /* eslint "@tanstack/query/exhaustive-deps": "error" */
 
 useQuery({
@@ -26,7 +26,7 @@ const todoQueries = {
 
 Examples of **correct** code for this rule:
 
-```ts
+```tsx
 useQuery({
     queryKey: ["todo", todoId],
     queryFn: () => api.getTodo(todoId)

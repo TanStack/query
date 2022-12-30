@@ -21,7 +21,7 @@ It should be set as the same value or higher than persistQueryClient's `maxAge` 
 
 You can also pass it `Infinity` to disable garbage collection behavior entirely.
 
-```ts
+```tsx
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -35,7 +35,7 @@ const queryClient = new QueryClient({
 
 Sometimes you may make changes to your application or data that immediately invalidate any and all cached data. If and when this happens, you can pass a `buster` string option. If the cache that is found does not also have that buster string, it will be discarded.  The following several functions accept this option:
 
-```ts
+```tsx
 persistQueryClient({ queryClient, persister, buster: buildHash })
 persistQueryClientSave({ queryClient, persister, buster: buildHash })
 persistQueryClientRestore({ queryClient, persister, buster: buildHash })
@@ -61,7 +61,7 @@ the persister `removeClient()` is called and the cache is immediately discarded.
 
 You can use this to explicitly persist the cache at the moment(s) you choose.
 
-```ts
+```tsx
 persistQueryClientSave({
   queryClient,
   persister,
@@ -77,7 +77,7 @@ Runs `persistQueryClientSave` whenever the cache changes for your `queryClient`.
 - It returns an `unsubscribe` function which you can use to discontinue the monitor; ending the updates to the persisted cache.
 - If you want to erase the persisted cache after the `unsubscribe`, you can send a new `buster` to `persistQueryClientRestore` which will trigger the persister's `removeClient` function and discard the persisted cache.
 
-```ts
+```tsx
 persistQueryClientSubscribe({
   queryClient,
   persister,
@@ -93,7 +93,7 @@ persistQueryClientSubscribe({
 
 You can use this to restore the cache at moment(s) you choose.
 
-```ts
+```tsx
 persistQueryClientRestore({
   queryClient,
   persister,
@@ -112,7 +112,7 @@ Takes the following actions:
 
 This functionality is preserved from version 3.x.
 
-```ts
+```tsx
 persistQueryClient({
   queryClient,
   persister,
@@ -127,7 +127,7 @@ persistQueryClient({
 
 All options available are as follows:
 
-```ts
+```tsx
 interface PersistQueryClientOptions {
   /** The QueryClient to persist */
   queryClient: QueryClient
@@ -227,7 +227,7 @@ If you are using the `PersistQueryClientProvider`, you can also use the `useIsRe
 
 Persisters have the following interfaces:
 
-```ts
+```tsx
 export interface Persister {
   persistClient(persistClient: PersistedClient): Promisable<void>
   restoreClient(): Promisable<PersistedClient | undefined>
@@ -237,7 +237,7 @@ export interface Persister {
 
 Persisted Client entries have the following interface:
 
-```ts
+```tsx
 export interface PersistedClient {
   timestamp: number
   buster: string
@@ -246,14 +246,14 @@ export interface PersistedClient {
 ```
 
 You can import these (to build a persister):
-```ts
+```tsx
 import { PersistedClient, Persister } from "@tanstack/react-query-persist-client";
 ```
 
 ### Building A Persister
 You can persist however you like.  Here is an example of how to build an [Indexed DB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) persister. Compared to `Web Storage API`, Indexed DB is faster, stores more than 5MB, and doesn't require serialization.  That means it can readily store Javascript native types, such as `Date` and `File`.
 
-```ts
+```tsx
 import { get, set, del } from "idb-keyval";
 import { PersistedClient, Persister } from "@tanstack/react-query-persist-client";
 

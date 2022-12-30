@@ -3,20 +3,22 @@ id: paginated-queries
 title: Paginated / Lagged Queries
 ---
 
-Rendering paginated data is a very common UI pattern and in React Query, it "just works" by including the page information in the query key:
+Rendering paginated data is a very common UI pattern and in TanStack Query, it "just works" by including the page information in the query key:
 
+[//]: # 'Example'
 ```tsx
 const result = useQuery({
   queryKey: ['projects', page],
   queryFn: fetchProjects
 })
 ```
+[//]: # 'Example'
 
 However, if you run this simple example, you might notice something strange:
 
 **The UI jumps in and out of the `success` and `loading` states because each new page is treated like a brand new query.**
 
-This experience is not optimal and unfortunately is how many tools today insist on working. But not React Query! As you may have guessed, React Query comes with an awesome feature called `keepPreviousData` that allows us to get around this.
+This experience is not optimal and unfortunately is how many tools today insist on working. But not TanStack Query! As you may have guessed, TanStack Query comes with an awesome feature called `keepPreviousData` that allows us to get around this.
 
 ## Better Paginated Queries with `keepPreviousData`
 
@@ -26,6 +28,7 @@ Consider the following example where we would ideally want to increment a pageIn
 - When the new data arrives, the previous `data` is seamlessly swapped to show the new data.
 - `isPreviousData` is made available to know what data the query is currently providing you
 
+[//]: # 'Example2'
 ```tsx
 function Todos() {
   const [page, setPage] = React.useState(0)
@@ -81,6 +84,7 @@ function Todos() {
   )
 }
 ```
+[//]: # 'Example2'
 
 ## Lagging Infinite Query results with `keepPreviousData`
 
