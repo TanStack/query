@@ -16,7 +16,12 @@ import type {
   InfiniteData,
   QueryFunctionContext,
 } from '..'
-import { createInfiniteQuery, QueryCache, QueryClientProvider, keepPreviousData } from '..'
+import {
+  createInfiniteQuery,
+  QueryCache,
+  QueryClientProvider,
+  keepPreviousData,
+} from '..'
 import { Blink, queryKey, setActTimeout } from './utils'
 
 interface Result {

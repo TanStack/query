@@ -17,7 +17,12 @@ import type {
   DefinedCreateQueryResult,
   QueryFunction,
 } from '..'
-import { createQuery, QueryCache, QueryClientProvider, keepPreviousData } from '..'
+import {
+  createQuery,
+  QueryCache,
+  QueryClientProvider,
+  keepPreviousData,
+} from '..'
 import {
   Blink,
   createQueryClient,
