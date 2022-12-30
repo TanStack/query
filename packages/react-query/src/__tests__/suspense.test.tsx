@@ -598,7 +598,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when useErrorBoundary: false', async () => {
+  it('should not throw errors to the error boundary when throwErrors: false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -610,7 +610,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        useErrorBoundary: false,
+        throwErrors: false,
       })
       return <div>rendered</div>
     }
@@ -637,7 +637,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('rendered'))
   })
 
-  it('should not throw errors to the error boundary when a useErrorBoundary function returns true', async () => {
+  it('should not throw errors to the error boundary when a throwErrors function returns true', async () => {
     const key = queryKey()
 
     function Page() {
@@ -649,7 +649,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        useErrorBoundary: (err) => err !== 'Local Error',
+        throwErrors: (err) => err !== 'Local Error',
       })
       return <div>rendered</div>
     }
@@ -676,7 +676,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when a useErrorBoundary function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -688,7 +688,7 @@ describe("useQuery's in Suspense mode", () => {
         },
         retry: false,
         suspense: true,
-        useErrorBoundary: (err) => err !== 'Local Error',
+        throwErrors: (err) => err !== 'Local Error',
       })
       return <div>rendered</div>
     }

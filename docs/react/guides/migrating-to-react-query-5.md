@@ -116,3 +116,7 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 ### The minimum required TypeScript version is now 4.7
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
+
+### The `useErrorBoundary` prop has been renamed to `throwErrors`
+
+To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.

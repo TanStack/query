@@ -747,7 +747,7 @@ describe('ReactQueryDevtools', () => {
         const { data = 'default' } = useQuery({
           queryKey: ['check'],
           queryFn: async () => 'test',
-          useErrorBoundary: true,
+          throwErrors: true,
         })
 
         return (
@@ -784,7 +784,7 @@ describe('ReactQueryDevtools', () => {
         const { data = 'default' } = useQuery({
           queryKey: ['check'],
           queryFn: async () => 'test',
-          useErrorBoundary: true,
+          throwErrors: true,
           context,
         })
 

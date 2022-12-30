@@ -257,7 +257,7 @@ describe('useIsMutating', () => {
         const { mutate } = useMutation({
           mutationKey: ['mutation'],
           mutationFn: async () => 'data',
-          useErrorBoundary: true,
+          throwErrors: true,
           context,
         })
 

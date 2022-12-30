@@ -2894,7 +2894,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('Error test jaylen'))
   })
 
-  it('should throw error if queryFn throws and useErrorBoundary is in use', async () => {
+  it('should throw error if queryFn throws and throwErrors is in use', async () => {
     const key = queryKey()
 
     function Page() {
@@ -2902,7 +2902,7 @@ describe('useQuery', () => {
         queryKey: key,
         queryFn: () => Promise.reject('Error test jaylen'),
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
 
       return (
@@ -2923,7 +2923,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('error boundary'))
   })
 
-  it('should update with data if we observe no properties and useErrorBoundary', async () => {
+  it('should update with data if we observe no properties and throwErrors', async () => {
     const key = queryKey()
 
     let result: UseQueryResult<string> | undefined
@@ -2932,7 +2932,7 @@ describe('useQuery', () => {
       const query = useQuery({
         queryKey: key,
         queryFn: () => Promise.resolve('data'),
-        useErrorBoundary: true,
+        throwErrors: true,
       })
 
       React.useEffect(() => {
@@ -2960,7 +2960,7 @@ describe('useQuery', () => {
         queryFn: () => Promise.reject('Local Error'),
 
         retry: false,
-        useErrorBoundary: (err) => err !== 'Local Error',
+        throwErrors: (err) => err !== 'Local Error',
       })
 
       return (
@@ -2991,7 +2991,7 @@ describe('useQuery', () => {
         queryFn: () => Promise.reject(new Error('Remote Error')),
 
         retry: false,
-        useErrorBoundary: (err) => err.message !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       })
 
       return (

@@ -104,7 +104,7 @@ export interface QueryOptions<
   meta?: QueryMeta
 }
 
-export type UseErrorBoundary<
+export type ThrowErrors<
   TQueryFnData,
   TError,
   TQueryData,
@@ -221,12 +221,7 @@ export interface QueryObserverOptions<
    * If set to a function, it will be passed the error and the query, and it should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`).
    * Defaults to `false`.
    */
-  useErrorBoundary?: UseErrorBoundary<
-    TQueryFnData,
-    TError,
-    TQueryData,
-    TQueryKey
-  >
+  throwErrors?: ThrowErrors<TQueryFnData, TError, TQueryData, TQueryKey>
   /**
    * This option can be used to transform or select a part of the data returned by the query function.
    */
@@ -260,7 +255,7 @@ export type DefaultedQueryObserverOptions<
   TQueryKey extends QueryKey = QueryKey,
 > = WithRequired<
   QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
-  'useErrorBoundary' | 'refetchOnReconnect'
+  'throwErrors' | 'refetchOnReconnect'
 >
 
 export interface InfiniteQueryObserverOptions<
@@ -291,7 +286,7 @@ export type DefaultedInfiniteQueryObserverOptions<
     TQueryData,
     TQueryKey
   >,
-  'useErrorBoundary' | 'refetchOnReconnect'
+  'throwErrors' | 'refetchOnReconnect'
 >
 
 export interface FetchQueryOptions<
@@ -590,7 +585,7 @@ export interface MutationObserverOptions<
   TVariables = void,
   TContext = unknown,
 > extends MutationOptions<TData, TError, TVariables, TContext> {
-  useErrorBoundary?: boolean | ((error: TError) => boolean)
+  throwErrors?: boolean | ((error: TError) => boolean)
 }
 
 export interface MutateOptions<

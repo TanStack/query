@@ -32,9 +32,8 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
       return <div>{data}</div>
     }
@@ -89,7 +88,7 @@ describe('QueryErrorResetBoundary', () => {
         },
         retry: false,
         enabled: !succeed,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
       return (
         <div>
@@ -150,7 +149,7 @@ describe('QueryErrorResetBoundary', () => {
         },
         retry: false,
         enabled,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
 
       React.useEffect(() => {
@@ -203,7 +202,7 @@ describe('QueryErrorResetBoundary', () => {
         },
         retry: false,
         enabled: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
 
       return (
@@ -265,9 +264,8 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
       return <div>{data}</div>
     }
@@ -320,7 +318,7 @@ describe('QueryErrorResetBoundary', () => {
           }
         },
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
         initialData: 'initial',
       })
       return <div>{data}</div>
@@ -375,9 +373,8 @@ describe('QueryErrorResetBoundary', () => {
             return 'data'
           }
         },
-
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
       return <div>{data}</div>
     }
@@ -435,7 +432,7 @@ describe('QueryErrorResetBoundary', () => {
           throw new Error('Error')
         },
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
       return <div>{data}</div>
     }
@@ -573,7 +570,7 @@ describe('QueryErrorResetBoundary', () => {
           }
         },
         retry: false,
-        useErrorBoundary: true,
+        throwErrors: true,
       })
       return <div>{data}</div>
     }

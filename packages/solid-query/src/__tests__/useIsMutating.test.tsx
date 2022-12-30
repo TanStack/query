@@ -299,7 +299,7 @@ describe('useIsMutating', () => {
         const { mutate } = createMutation({
           mutationKey: ['mutation'],
           mutationFn: async () => 'data',
-          useErrorBoundary: true,
+          throwErrors: true,
           context,
         })
 
