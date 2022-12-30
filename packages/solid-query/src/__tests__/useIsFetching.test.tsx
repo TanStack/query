@@ -245,7 +245,7 @@ describe('useIsFetching', () => {
         createQuery(key, async () => 'test', {
           enabled: true,
           context,
-          throwError: true,
+          throwErrors: true,
         })
 
         return (

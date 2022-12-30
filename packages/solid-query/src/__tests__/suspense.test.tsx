@@ -604,7 +604,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when throwError: false', async () => {
+  it('should not throw errors to the error boundary when throwErrors: false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -617,7 +617,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          throwError: false,
+          throwErrors: false,
         },
       )
 
@@ -656,7 +656,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('rendered'))
   })
 
-  it('should not throw errors to the error boundary when a throwError function returns true', async () => {
+  it('should not throw errors to the error boundary when a throwErrors function returns true', async () => {
     const key = queryKey()
 
     function Page() {
@@ -669,7 +669,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          throwError: (err) => err !== 'Local Error',
+          throwErrors: (err) => err !== 'Local Error',
         },
       )
 
@@ -708,7 +708,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('error boundary'))
   })
 
-  it('should not throw errors to the error boundary when a throwError function returns false', async () => {
+  it('should not throw errors to the error boundary when a throwErrors function returns false', async () => {
     const key = queryKey()
 
     function Page() {
@@ -721,7 +721,7 @@ describe("useQuery's in Suspense mode", () => {
         {
           retry: false,
           suspense: true,
-          throwError: (err) => err !== 'Local Error',
+          throwErrors: (err) => err !== 'Local Error',
         },
       )
 
