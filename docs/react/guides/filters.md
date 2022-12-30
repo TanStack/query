@@ -3,7 +3,7 @@ id: filters
 title: Filters
 ---
 
-Some methods within React Query accept a `QueryFilters` or `MutationFilters` object.
+Some methods within TanStack Query accept a `QueryFilters` or `MutationFilters` object.
 
 ## `Query Filters`
 

@@ -18,6 +18,8 @@ There are a few ways to supply placeholder data for a query to the cache before 
 
 ## Placeholder Data as a Value
 
+[//]: # 'Example'
+
 ```tsx
 function Todos() {
   const result = useQuery({
@@ -28,9 +30,15 @@ function Todos() {
 }
 ```
 
+[//]: # 'Example'
+[//]: # 'Memoization'
+
 ### Placeholder Data Memoization
 
 If the process for accessing a query's placeholder data is intensive or just not something you want to perform on every render, you can memoize the value:
+
+[//]: # 'Memoization'
+[//]: # 'Example2'
 
 ```tsx
 function Todos() {
@@ -38,14 +46,18 @@ function Todos() {
   const result = useQuery({
     queyKey: ['todos'],
     queryFn: () => fetch('/todos'),
-    placeholderData
+    placeholderData,
   })
 }
 ```
 
+[//]: # 'Example2'
+
 ### Placeholder Data from Cache
 
 In some circumstances, you may be able to provide the placeholder data for a query from the cached result of another. A good example of this would be searching the cached data from a blog post list query for a preview version of the post, then using that as the placeholder data for your individual post query:
+
+[//]: # 'Example3'
 
 ```tsx
 function Todo({ blogPostId }) {
@@ -57,12 +69,17 @@ function Todo({ blogPostId }) {
       // query as the placeholder data for this blogPost query
       return queryClient
         .getQueryData(['blogPosts'])
-        ?.find(d => d.id === blogPostId)
+        ?.find((d) => d.id === blogPostId)
     },
   })
 }
 ```
 
+[//]: # 'Example3'
+[//]: # 'Materials'
+
 ## Further reading
 
 For a comparison between `Placeholder Data` and `Initial Data`, have a look at the [Community Resources](../community/tkdodos-blog#9-placeholder-and-initial-data-in-react-query).
+
+[//]: # 'Materials'
