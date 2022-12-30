@@ -31,6 +31,10 @@ export type PlaceholderDataFunction<TQueryData> = (
   previousData: TQueryData | undefined,
 ) => TQueryData | undefined
 
+export type QueriesPlaceholderDataFunction<TQueryData> = () =>
+  | TQueryData
+  | undefined
+
 export type QueryKeyHashFunction<TQueryKey extends QueryKey> = (
   queryKey: TQueryKey,
 ) => string
