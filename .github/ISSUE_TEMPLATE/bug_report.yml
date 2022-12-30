@@ -98,9 +98,9 @@ body:
   - type: input
     id: rq-version
     attributes:
-      label: Tanstack Query version
+      label: TanStack Query version
       description: |
-        Please let us know the exact version of Tanstack Query you were using when the issue occurred. Please don't just put in "latest", as this is subject to change.
+        Please let us know the exact version of TanStack Query you were using when the issue occurred. Please don't just put in "latest", as this is subject to change.
       placeholder: |
         e.g. v3.30.1
     validations:

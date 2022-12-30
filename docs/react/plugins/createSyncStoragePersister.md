@@ -24,7 +24,7 @@ yarn add @tanstack/query-sync-storage-persister @tanstack/react-query-persist-cl
 - Create a new syncStoragePersister
 - Pass it to the [`persistQueryClient`](../plugins/persistQueryClient) function
 
-```ts
+```tsx
 import { persistQueryClient } from '@tanstack/react-query-persist-client'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 
@@ -51,7 +51,7 @@ Persistence can fail, e.g. if the size exceeds the available space on the storag
 
 The retry function receives the `persistedClient` it tried to save, as well as the `error` and the `errorCount` as input. It is expected to return a _new_ `PersistedClient`, with which it tries to persist again. If _undefined_ is returned, there will be no further attempt to persist.
 
-```ts
+```tsx
 export type PersistRetryer = (props: {
   persistedClient: PersistedClient
   error: Error
@@ -85,7 +85,7 @@ createSyncStoragePersister(options: CreateSyncStoragePersisterOptions)
 
 ### `Options`
 
-```ts
+```tsx
 interface CreateSyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache (window.localStorage or window.sessionStorage) */
   storage: Storage
