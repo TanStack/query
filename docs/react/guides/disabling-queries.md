@@ -14,20 +14,16 @@ When `enabled` is `false`:
 - The query will ignore query client `invalidateQueries` and `refetchQueries` calls that would normally result in the query refetching.
 - `refetch` returned from `useQuery` can be used to manually trigger the query to fetch.
 
+[//]: # 'Example'
+
 ```tsx
 function Todos() {
-  const {
-    isInitialLoading,
-    isError,
-    data,
-    error,
-    refetch,
-    isFetching
-  } = useQuery({
-    queryKey: ['todos'],
-    queryFn: fetchTodoList,
-    enabled: false,
-  })
+  const { isInitialLoading, isError, data, error, refetch, isFetching } =
+    useQuery({
+      queryKey: ['todos'],
+      queryFn: fetchTodoList,
+      enabled: false,
+    })
 
   return (
     <div>
@@ -36,21 +32,17 @@ function Todos() {
       {data ? (
         <>
           <ul>
-            {data.map(todo => (
+            {data.map((todo) => (
               <li key={todo.id}>{todo.title}</li>
             ))}
           </ul>
         </>
+      ) : isError ? (
+        <span>Error: {error.message}</span>
+      ) : isInitialLoading ? (
+        <span>Loading...</span>
       ) : (
-        isError ? (
-          <span>Error: {error.message}</span>
-        ) : (
-          isInitialLoading ? (
-            <span>Loading...</span>
-         ) : (
-            <span>Not ready ...</span>
-         )
-        )
+        <span>Not ready ...</span>
       )}
 
       <div>{isFetching ? 'Fetching...' : null}</div>
@@ -59,11 +51,15 @@ function Todos() {
 }
 ```
 
-Permanently disabling a query opts out of many great features that react-query has to offer (like background refetches), and it's also not the idiomatic way. It takes you from the declarative approach (defining dependencies when your query should run) into an imperative mode (fetch whenever I click here). It is also not possible to pass parameters to `refetch`. Oftentimes, all you want is a lazy query that defers the initial fetch:
+[//]: # 'Example'
+
+Permanently disabling a query opts out of many great features that TanStack Query has to offer (like background refetches), and it's also not the idiomatic way. It takes you from the declarative approach (defining dependencies when your query should run) into an imperative mode (fetch whenever I click here). It is also not possible to pass parameters to `refetch`. Oftentimes, all you want is a lazy query that defers the initial fetch:
 
 ## Lazy Queries
 
 The enabled option can not only be used to permanently disable a query, but also to enable / disable it at a later time. A good example would be a filter form where you only want to fire off the first request once the user has entered a filter value:
+
+[//]: # 'Example2'
 
 ```tsx
 function Todos() {
@@ -85,6 +81,8 @@ function Todos() {
   )
 }
 ```
+
+[//]: # 'Example2'
 
 ### isInitialLoading
 

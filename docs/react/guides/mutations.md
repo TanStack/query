@@ -3,16 +3,18 @@ id: mutations
 title: Mutations
 ---
 
-Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, React Query exports a `useMutation` hook.
+Unlike queries, mutations are typically used to create/update/delete data or perform server side-effects. For this purpose, TanStack Query exports a `useMutation` hook.
 
 Here's an example of a mutation that adds a new todo to the server:
+
+[//]: # 'Example'
 
 ```tsx
 function App() {
   const mutation = useMutation({
-    mutationFn: newTodo => {
+    mutationFn: (newTodo) => {
       return axios.post('/todos', newTodo)
-    }
+    },
   })
 
   return (
@@ -41,6 +43,8 @@ function App() {
 }
 ```
 
+[//]: # 'Example'
+
 A mutation can only be in one of the following states at any given moment:
 
 - `isIdle` or `status === 'idle'` - The mutation is currently idle or in a fresh/reset state
@@ -57,25 +61,34 @@ In the example above, you also saw that you can pass variables to your mutations
 
 Even with just variables, mutations aren't all that special, but when used with the `onSuccess` option, the [Query Client's `invalidateQueries` method](../reference/QueryClient#queryclientinvalidatequeries) and the [Query Client's `setQueryData` method](../reference/QueryClient#queryclientsetquerydata), mutations become a very powerful tool.
 
+[//]: # 'Info1'
+
 > IMPORTANT: The `mutate` function is an asynchronous function, which means you cannot use it directly in an event callback in **React 16 and earlier**. If you need to access the event in `onSubmit` you need to wrap `mutate` in another function. This is due to [React event pooling](https://reactjs.org/docs/legacy-event-pooling.html).
+
+[//]: # 'Info1'
+[//]: # 'Example2'
 
 ```tsx
 // This will not work in React 16 and earlier
 const CreateTodo = () => {
-  const mutation = useMutation({ mutationFn: event => {
-    event.preventDefault()
-    return fetch('/api', new FormData(event.target))
-  }})
+  const mutation = useMutation({
+    mutationFn: (event) => {
+      event.preventDefault()
+      return fetch('/api', new FormData(event.target))
+    },
+  })
 
   return <form onSubmit={mutation.mutate}>...</form>
 }
 
 // This will work
 const CreateTodo = () => {
-  const mutation = useMutation({ mutationFn: formData => {
-    return fetch('/api', formData)
-  }})
-  const onSubmit = event => {
+  const mutation = useMutation({
+    mutationFn: (formData) => {
+      return fetch('/api', formData)
+    },
+  })
+  const onSubmit = (event) => {
     event.preventDefault()
     mutation.mutate(new FormData(event.target))
   }
@@ -84,16 +97,20 @@ const CreateTodo = () => {
 }
 ```
 
+[//]: # 'Example2'
+
 ## Resetting Mutation State
 
 It's sometimes the case that you need to clear the `error` or `data` of a mutation request. To do this, you can use the `reset` function to handle this:
+
+[//]: # 'Example3'
 
 ```tsx
 const CreateTodo = () => {
   const [title, setTitle] = useState('')
   const mutation = useMutation({ mutationFn: createTodo })
 
-  const onCreateTodo = e => {
+  const onCreateTodo = (e) => {
     e.preventDefault()
     mutation.mutate({ title })
   }
@@ -106,7 +123,7 @@ const CreateTodo = () => {
       <input
         type="text"
         value={title}
-        onChange={e => setTitle(e.target.value)}
+        onChange={(e) => setTitle(e.target.value)}
       />
       <br />
       <button type="submit">Create Todo</button>
@@ -115,14 +132,18 @@ const CreateTodo = () => {
 }
 ```
 
+[//]: # 'Example3'
+
 ## Mutation Side Effects
 
 `useMutation` comes with some helper options that allow quick and easy side-effects at any stage during the mutation lifecycle. These come in handy for both [invalidating and refetching queries after mutations](../guides/invalidations-from-mutations) and even [optimistic updates](../guides/optimistic-updates)
 
+[//]: # 'Example4'
+
 ```tsx
 useMutation({
   mutationFn: addTodo,
-  onMutate: variables => {
+  onMutate: (variables) => {
     // A mutation is about to happen!
 
     // Optionally return a context containing data to use when for example rolling back
@@ -141,7 +162,11 @@ useMutation({
 })
 ```
 
+[//]: # 'Example4'
+
 When returning a promise in any of the callback functions it will first be awaited before the next callback is called:
+
+[//]: # 'Example5'
 
 ```tsx
 useMutation({
@@ -155,7 +180,11 @@ useMutation({
 })
 ```
 
+[//]: # 'Example5'
+
 You might find that you want to **trigger additional callbacks** beyond the ones defined on `useMutation` when calling `mutate`. This can be used to trigger component-specific side effects. To do that, you can provide any of the same callback options to the `mutate` function after your mutation variable. Supported overrides include: `onSuccess`, `onError` and `onSettled`. Please keep in mind that those additional callbacks won't run if your component unmounts _before_ the mutation finishes.
+
+[//]: # 'Example6'
 
 ```tsx
 useMutation({
@@ -184,10 +213,15 @@ mutate(todo, {
 })
 ```
 
+[//]: # 'Example6'
+
 ### Consecutive mutations
-There is a slight difference in handling `onSuccess`, `onError` and `onSettled` callbacks when it comes to consecutive mutations. When passed to the `mutate` function, they will be fired up only _once_ and only if the component is still mounted.  This is due to the fact that mutation observer is removed and resubscribed every time when the `mutate` function is called. On the contrary, `useMutation` handlers execute for each `mutate` call.
+
+There is a slight difference in handling `onSuccess`, `onError` and `onSettled` callbacks when it comes to consecutive mutations. When passed to the `mutate` function, they will be fired up only _once_ and only if the component is still mounted. This is due to the fact that mutation observer is removed and resubscribed every time when the `mutate` function is called. On the contrary, `useMutation` handlers execute for each `mutate` call.
 
 > Be aware that most likely, `mutationFn` passed to `useMutation` is asynchronous. In that case, the order in which mutations are fulfilled may differ from the order of `mutate` function calls.
+
+[//]: # 'Example7'
 
 ```tsx
 useMutation({
@@ -197,7 +231,7 @@ useMutation({
   },
 })
 
-['Todo 1', 'Todo 2', 'Todo 3'].forEach((todo) => {
+[('Todo 1', 'Todo 2', 'Todo 3')].forEach((todo) => {
   mutate(todo, {
     onSuccess: (data, error, variables, context) => {
       // Will execute only once, for the last mutation (Todo 3),
@@ -205,11 +239,15 @@ useMutation({
     },
   })
 })
-
 ```
+
+[//]: # 'Example7'
+
 ## Promises
 
 Use `mutateAsync` instead of `mutate` to get a promise which will resolve on success or throw on an error. This can for example be used to compose side effects.
+
+[//]: # 'Example8'
 
 ```tsx
 const mutation = useMutation({ mutationFn: addTodo })
@@ -224,9 +262,13 @@ try {
 }
 ```
 
+[//]: # 'Example8'
+
 ## Retry
 
-By default React Query will not retry a mutation on error, but it is possible with the `retry` option:
+By default TanStack Query will not retry a mutation on error, but it is possible with the `retry` option:
+
+[//]: # 'Example9'
 
 ```tsx
 const mutation = useMutation({
@@ -235,11 +277,15 @@ const mutation = useMutation({
 })
 ```
 
+[//]: # 'Example9'
+
 If mutations fail because the device is offline, they will be retried in the same order when the device reconnects.
 
 ## Persist mutations
 
 Mutations can be persisted to storage if needed and resumed at a later point. This can be done with the hydration functions:
+
+[//]: # 'Example10'
 
 ```tsx
 const queryClient = new QueryClient()
@@ -255,18 +301,24 @@ queryClient.setMutationDefaults(['addTodo'], {
     const optimisticTodo = { id: uuid(), title: variables.title }
 
     // Add optimistic todo to todos list
-    queryClient.setQueryData(['todos'], old => [...old, optimisticTodo])
+    queryClient.setQueryData(['todos'], (old) => [...old, optimisticTodo])
 
     // Return context with the optimistic todo
     return { optimisticTodo }
   },
   onSuccess: (result, variables, context) => {
     // Replace optimistic todo in the todos list with the result
-    queryClient.setQueryData(['todos'], old => old.map(todo => todo.id === context.optimisticTodo.id ? result : todo))
+    queryClient.setQueryData(['todos'], (old) =>
+      old.map((todo) =>
+        todo.id === context.optimisticTodo.id ? result : todo,
+      ),
+    )
   },
   onError: (error, variables, context) => {
     // Remove optimistic todo from the todos list
-    queryClient.setQueryData(['todos'], old => old.filter(todo => todo.id !== context.optimisticTodo.id))
+    queryClient.setQueryData(['todos'], (old) =>
+      old.filter((todo) => todo.id !== context.optimisticTodo.id),
+    )
   },
   retry: 3,
 })
@@ -286,11 +338,15 @@ hydrate(queryClient, state)
 queryClient.resumePausedMutations()
 ```
 
+[//]: # 'Example10'
+
 ### Persisting Offline mutations
 
 If you persist offline mutations with the [persistQueryClient plugin](../plugins/persistQueryClient), mutations cannot be resumed when the page is reloaded unless you provide a default mutation function.
 
 This is a technical limitation. When persisting to an external storage, only the state of mutations is persisted, as functions cannot be serialized. After hydration, the component that triggers the mutation might not be mounted, so calling `resumePausedMutations` might yield an error: `No mutationFn found`.
+
+[//]: # 'Example11'
 
 ```tsx
 const persister = createSyncStoragePersister({
@@ -327,9 +383,15 @@ export default function App() {
 }
 ```
 
+[//]: # 'Example11'
+
 We also have an extensive [offline example](../examples/react/offline) that covers both queries and mutations.
+
+[//]: # 'Materials'
 
 ## Further reading
 
 For more information about mutations, have a look at [#12: Mastering Mutations in React Query](../community/tkdodos-blog#12-mastering-mutations-in-react-query) from
 the Community Resources.
+
+[//]: # 'Materials'

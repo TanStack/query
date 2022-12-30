@@ -3,7 +3,7 @@ id: query-cancellation
 title: Query Cancellation
 ---
 
-React Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal), **if it's available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable, and you can respond to the cancellation inside your query function if desired. The best part about this is that it allows you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation. Additionally, this solution works better with TypeScript than the old solution.
+TanStack Query provides each query function with an [`AbortSignal` instance](https://developer.mozilla.org/docs/Web/API/AbortSignal), **if it's available in your runtime environment**. When a query becomes out-of-date or inactive, this `signal` will become aborted. This means that all queries are cancellable, and you can respond to the cancellation inside your query function if desired. The best part about this is that it allows you to continue to use normal async/await syntax while getting all the benefits of automatic cancellation.
 
 The `AbortController` API is available in [most runtime environments](https://developer.mozilla.org/docs/Web/API/AbortController#browser_compatibility), but if the runtime environment does not support it then the query function will receive `undefined` in its place. You may choose to polyfill the `AbortController` API if you wish, there are [several available](https://www.npmjs.com/search?q=abortcontroller%20polyfill).
 
@@ -14,6 +14,8 @@ By default, queries that unmount or become unused before their promises are reso
 However, if you consume the `AbortSignal`, the Promise will be cancelled (e.g. aborting the fetch) and therefore, also the Query must be cancelled. Cancelling the query will result in its state being _reverted_ to its previous state.
 
 ## Using `fetch`
+
+[//]: # 'Example'
 
 ```tsx
 const query = useQuery({
@@ -34,13 +36,15 @@ const query = useQuery({
     })
 
     return Promise.all(todoDetails)
-  }
+  },
 })
 ```
 
-## Using `axios`
+[//]: # 'Example'
 
-### Using `axios` [v0.22.0+](https://github.com/axios/axios/releases/tag/v0.22.0)
+## Using `axios` [v0.22.0+](https://github.com/axios/axios/releases/tag/v0.22.0)
+
+[//]: # 'Example2'
 
 ```tsx
 import axios from 'axios'
@@ -55,7 +59,11 @@ const query = useQuery({
 })
 ```
 
-### Using an `axios` version less than v0.22.0
+[//]: # 'Example2'
+
+### Using `axios` with version lower than v0.22.0
+
+[//]: # 'Example3'
 
 ```tsx
 import axios from 'axios'
@@ -72,17 +80,21 @@ const query = useQuery({
       cancelToken: source.token,
     })
 
-    // Cancel the request if React Query signals to abort
+    // Cancel the request if TanStack Query signals to abort
     signal?.addEventListener('abort', () => {
-      source.cancel('Query was cancelled by React Query')
+      source.cancel('Query was cancelled by TanStack Query')
     })
 
     return promise
-  }
+  },
 })
 ```
 
+[//]: # 'Example3'
+
 ## Using `XMLHttpRequest`
+
+[//]: # 'Example4'
 
 ```tsx
 const query = useQuery({
@@ -100,13 +112,17 @@ const query = useQuery({
       oReq.open('GET', '/todos')
       oReq.send()
     })
-  }
+  },
 })
 ```
+
+[//]: # 'Example4'
 
 ## Using `graphql-request`
 
 An `AbortSignal` can be set in the client `request` method.
+
+[//]: # 'Example5'
 
 ```tsx
 const client = new GraphQLClient(endpoint)
@@ -115,29 +131,37 @@ const query = useQuery({
   queryKey: ['todos'],
   queryFn: ({ signal }) => {
     client.request({ document: query, signal })
-  }
+  },
 })
 ```
 
-## Using `graphql-request`  version less than v4.0.0
+[//]: # 'Example5'
+
+## Using `graphql-request` with version lower than v4.0.0
 
 An `AbortSignal` can be set in the `GraphQLClient` constructor.
+
+[//]: # 'Example6'
 
 ```tsx
 const query = useQuery({
   queryKey: ['todos'],
   queryFn: ({ signal }) => {
     const client = new GraphQLClient(endpoint, {
-        signal,
-    });
+      signal,
+    })
     return client.request(query, variables)
-  }
+  },
 })
 ```
 
+[//]: # 'Example6'
+
 ## Manual Cancellation
 
-You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, React Query will additionally also cancel the Promise.
+You might want to cancel a query manually. For example, if the request takes a long time to finish, you can allow the user to click a cancel button to stop the request. To do this, you just need to call `queryClient.cancelQueries({ queryKey })`, which will cancel the query and revert it back to its previous state. If you have consumed the `signal` passed to the query function, TanStack Query will additionally also cancel the Promise.
+
+[//]: # 'Example7'
 
 ```tsx
 const query = useQuery({
@@ -145,7 +169,7 @@ const query = useQuery({
   queryFn: async ({ signal }) => {
     const resp = await fetch('/todos', { signal })
     return resp.json()
-  }
+  },
 })
 
 const queryClient = useQueryClient()
@@ -161,3 +185,5 @@ return (
   </button>
 )
 ```
+
+[//]: # 'Example7'

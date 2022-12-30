@@ -40,7 +40,8 @@ On a more technical note, React Query will likely:
 - Have a direct impact on your end-users by making your application feel faster and more responsive than ever before.
 - Potentially help you save on bandwidth and increase memory performance
 
-[//]: # (Example)
+[//]: # 'Example'
+
 ## Enough talk, show me some code already!
 
 In the example below, you can see React Query in its most basic and simple form being used to fetch the GitHub stats for the React Query GitHub project itself:
@@ -48,7 +49,11 @@ In the example below, you can see React Query in its most basic and simple form 
 [Open in CodeSandbox](https://codesandbox.io/s/github/tannerlinsley/react-query/tree/main/examples/react/simple)
 
 ```tsx
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from '@tanstack/react-query'
 
 const queryClient = new QueryClient()
 
@@ -64,9 +69,9 @@ function Example() {
   const { isLoading, error, data } = useQuery({
     queryKey: ['repoData'],
     queryFn: () =>
-      fetch('https://api.github.com/repos/tanstack/query').then(res =>
-        res.json()
-      )
+      fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
+        (res) => res.json(),
+      ),
   })
 
   if (isLoading) return 'Loading...'
@@ -84,11 +89,13 @@ function Example() {
   )
 }
 ```
-[//]: # (Example)
+
+[//]: # 'Example'
 
 ## You talked me into it, so what now?
 
-[//]: # (Course)
+[//]: # 'Course'
+
 - Consider taking the official [React Query Course](https://ui.dev/react-query?from=tanstack) (or buying it for your whole team!)
-[//]: # (Course)
+  [//]: # (Course)
 - Learn React Query at your own pace with our amazingly thorough [Walkthrough Guide](../installation) and [API Reference](../reference/useQuery)
