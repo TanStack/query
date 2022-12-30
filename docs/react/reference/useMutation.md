@@ -29,7 +29,7 @@ const {
   onSuccess,
   retry,
   retryDelay,
-  throwError,
+  throwErrors,
   meta
 })
 
@@ -82,8 +82,8 @@ mutate(variables, {
   - This function receives a `retryAttempt` integer and the actual Error and returns the delay to apply before the next attempt in milliseconds.
   - A function like `attempt => Math.min(attempt > 1 ? 2 ** attempt * 1000 : 1000, 30 * 1000)` applies exponential backoff.
   - A function like `attempt => attempt * 1000` applies linear backoff.
-- `throwError: undefined | boolean | (error: TError) => boolean`
-  - Defaults to the global query config's `throwError` value, which is `undefined`
+- `throwErrors: undefined | boolean | (error: TError) => boolean`
+  - Defaults to the global query config's `throwErrors` value, which is `undefined`
   - Set this to `true` if you want mutation errors to be thrown in the render phase and propagate to the nearest error boundary
   - Set this to `false` to disable the behavior of throwing errors to the error boundary.
   - If set to a function, it will be passed the error and should return a boolean indicating whether to show the error in an error boundary (`true`) or return the error as state (`false`)
