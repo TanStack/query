@@ -494,9 +494,9 @@ export class QueryObserver<
       } else {
         placeholderData =
           typeof options.placeholderData === 'function'
-            ? (options.placeholderData as PlaceholderDataFunction<TQueryData>)(
-                prevQueryResult?.data as TQueryData | undefined,
-              )
+            ? (
+                options.placeholderData as unknown as PlaceholderDataFunction<TQueryData>
+              )(prevQueryResult?.data as TQueryData | undefined)
             : options.placeholderData
         if (options.select && typeof placeholderData !== 'undefined') {
           try {
