@@ -242,7 +242,9 @@ export interface QueryObserverOptions<
   /**
    * If set, this value will be used as the placeholder data for this particular query observer while the query is still in the `loading` data and no initialData has been provided.
    */
-  placeholderData?: NonFunctionGuard<TQueryData> | PlaceholderDataFunction<NonFunctionGuard<TQueryData>>
+  placeholderData?:
+    | NonFunctionGuard<TQueryData>
+    | PlaceholderDataFunction<NonFunctionGuard<TQueryData>>
 
   _optimisticResults?: 'optimistic' | 'isRestoring'
 }
