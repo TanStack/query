@@ -1,5 +1,5 @@
 import { sleep, queryKey, createQueryClient } from './utils'
-import type { QueryClient } from '..'
+import { QueryClient } from '..'
 import { QueryCache, QueryObserver } from '..'
 import type { Query } from '.././query'
 import { waitFor } from '@testing-library/react'
@@ -231,20 +231,54 @@ describe('queryCache', () => {
     })
   })
 
-  describe('QueryCacheConfig.createCache', () => {
-    test('should call createCache', async () => {
-      const createCache = jest.fn().mockImplementation(() => new Map())
-      new QueryCache({ createCache })
-      expect(createCache).toHaveBeenCalledWith()
+  describe('QueryCacheConfig.experimental_createStore', () => {
+    test('should call createStore', async () => {
+      const createStore = jest.fn().mockImplementation(() => new Map())
+      const cache = new QueryCache({ experimental_createStore: createStore })
+      expect(createStore).toHaveBeenCalledWith(cache)
     })
 
-    test('should use created cache', async () => {
-      const cache = new Map()
-      const spy = jest.spyOn(cache, 'get')
+    test('should use created store', async () => {
+      const store = new Map()
+      const spy = jest.spyOn(store, 'get')
 
-      new QueryCache({ createCache: () => cache }).get('key')
+      new QueryCache({ experimental_createStore: () => store }).get('key')
 
       expect(spy).toHaveBeenCalledTimes(1)
+    })
+
+    test('should be able to limit cache size', async () => {
+      class MaxSizeStore extends Map<string, Query> {
+        constructor(
+          private readonly cache: QueryCache,
+          private maxSize: number,
+        ) {
+          super()
+        }
+        set(key: string, value: Query) {
+          if (this.size >= this.maxSize) {
+            this.cache.findAll({ type: 'inactive' }).forEach((query) => {
+              this.cache.remove(query)
+            })
+          }
+          super.set(key, value)
+          return this
+        }
+      }
+
+      const testCache = new QueryCache({
+        experimental_createStore: (cache) => new MaxSizeStore(cache, 2),
+      })
+
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      await testClient.prefetchQuery(['key1'], () => 'data1')
+      expect(testCache.findAll().length).toBe(1)
+      await testClient.prefetchQuery(['key2'], () => 'data2')
+      expect(testCache.findAll().length).toBe(2)
+      await testClient.prefetchQuery(['key3'], () => 'data3')
+      expect(testCache.findAll().length).toBe(1)
+      expect(testCache.findAll()[0]!.state.data).toBe('data3')
     })
   })
 

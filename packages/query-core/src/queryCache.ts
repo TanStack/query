@@ -10,8 +10,16 @@ import type { QueryObserver } from './queryObserver'
 
 // TYPES
 
+export interface QueryStore {
+  has: (queryKey: string) => boolean
+  set: (queryKey: string, query: Query) => void
+  get: (queryKey: string) => Query | undefined
+  delete: (queryKey: string) => void
+  values: () => IterableIterator<Query>
+}
+
 interface QueryCacheConfig {
-  createCache?: () => Map<string, Query>
+  experimental_createStore?: (c: QueryCache) => QueryStore
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
 }
@@ -69,11 +77,14 @@ type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 // CLASS
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
-  private queries: Map<string, Query>
+  private queries: QueryStore
 
   constructor(public config: QueryCacheConfig = {}) {
     super()
-    this.queries = config.createCache?.() ?? new Map<string, Query>()
+    this.queries =
+      config.experimental_createStore?.(this) ?? new Map<string, Query>()
+
+    new Map().set('a', 1)
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
