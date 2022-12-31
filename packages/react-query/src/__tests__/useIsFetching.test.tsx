@@ -27,16 +27,14 @@ describe('useIsFetching', () => {
     function Query() {
       const [ready, setReady] = React.useState(false)
 
-      useQuery(
-        key,
-        async () => {
+      useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(50)
           return 'test'
         },
-        {
-          enabled: ready,
-        },
-      )
+        enabled: ready,
+      })
 
       return <button onClick={() => setReady(true)}>setReady</button>
     }
@@ -74,17 +72,23 @@ describe('useIsFetching', () => {
     }
 
     function FirstQuery() {
-      useQuery(key1, async () => {
-        await sleep(100)
-        return 'data'
+      useQuery({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
       return null
     }
 
     function SecondQuery() {
-      useQuery(key2, async () => {
-        await sleep(100)
-        return 'data'
+      useQuery({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
       return null
     }
@@ -119,24 +123,30 @@ describe('useIsFetching', () => {
     const isFetchings: number[] = []
 
     function One() {
-      useQuery(key1, async () => {
-        await sleep(10)
-        return 'test'
+      useQuery({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
       return null
     }
 
     function Two() {
-      useQuery(key2, async () => {
-        await sleep(20)
-        return 'test'
+      useQuery({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(20)
+          return 'test'
+        },
       })
       return null
     }
 
     function Page() {
       const [started, setStarted] = React.useState(false)
-      const isFetching = useIsFetching(key1)
+      const isFetching = useIsFetching({ queryKey: key1 })
 
       isFetchings.push(isFetching)
 
@@ -177,17 +187,15 @@ describe('useIsFetching', () => {
 
         const isFetching = useIsFetching(undefined, { context: context })
 
-        useQuery(
-          key,
-          async () => {
+        useQuery({
+          queryKey: key,
+          queryFn: async () => {
             await sleep(50)
             return 'test'
           },
-          {
-            enabled: ready,
-            context,
-          },
-        )
+          enabled: ready,
+          context,
+        })
 
         return (
           <div>
@@ -221,7 +229,9 @@ describe('useIsFetching', () => {
       function Page() {
         const isFetching = useIsFetching()
 
-        useQuery(key, async () => 'test', {
+        useQuery({
+          queryKey: key,
+          queryFn: async () => 'test',
           enabled: true,
           context,
           throwErrors: true,
@@ -253,9 +263,12 @@ describe('useIsFetching', () => {
     const key = queryKey()
 
     function Page() {
-      useQuery(key, async () => {
-        await sleep(10)
-        return 'test'
+      useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       const isFetching = useIsFetching()

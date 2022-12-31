@@ -1109,27 +1109,27 @@ const QueryRow = React.memo(
     const queryHash =
       useSubscribeToQueryCache(
         queryCache,
-        () => queryCache.find(queryKey)?.queryHash,
+        () => queryCache.find({ queryKey })?.queryHash,
       ) ?? ''
 
     const queryState = useSubscribeToQueryCache(
       queryCache,
-      () => queryCache.find(queryKey)?.state,
+      () => queryCache.find({ queryKey })?.state,
     )
 
     const isStale =
       useSubscribeToQueryCache(queryCache, () =>
-        queryCache.find(queryKey)?.isStale(),
+        queryCache.find({ queryKey })?.isStale(),
       ) ?? false
 
     const isDisabled =
       useSubscribeToQueryCache(queryCache, () =>
-        queryCache.find(queryKey)?.isDisabled(),
+        queryCache.find({ queryKey })?.isDisabled(),
       ) ?? false
 
     const observerCount =
       useSubscribeToQueryCache(queryCache, () =>
-        queryCache.find(queryKey)?.getObserversCount(),
+        queryCache.find({ queryKey })?.getObserversCount(),
       ) ?? 0
 
     if (!queryState) {

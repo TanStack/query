@@ -1,5 +1,4 @@
-import type { MutationFunction, MutationKey } from '@tanstack/query-core'
-import { parseMutationArgs, MutationObserver } from '@tanstack/query-core'
+import { MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
   CreateMutateFunction,
@@ -17,61 +16,9 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationFn: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationFn'
-  >,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MutationKey,
-  options?: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationKey'
-  >,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  mutationKey: MutationKey,
-  mutationFn?: MutationFunction<TData, TVariables>,
-  options?: Omit<
-    CreateMutationOptions<TData, TError, TVariables, TContext>,
-    'mutationKey' | 'mutationFn'
-  >,
-): CreateMutationResult<TData, TError, TVariables, TContext>
-export function createMutation<
-  TData = unknown,
-  TError = unknown,
-  TVariables = void,
-  TContext = unknown,
->(
-  arg1:
-    | MutationKey
-    | MutationFunction<TData, TVariables>
-    | CreateMutationOptions<TData, TError, TVariables, TContext>,
-  arg2?:
-    | MutationFunction<TData, TVariables>
-    | CreateMutationOptions<TData, TError, TVariables, TContext>,
-  arg3?: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  mutationOptions: CreateMutationOptions<TData, TError, TVariables, TContext>,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  const [options, setOptions] = createStore(parseMutationArgs(arg1, arg2, arg3))
+  const [options, setOptions] = createStore(mutationOptions)
   const queryClient = useQueryClient({ context: options.context })
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
@@ -95,9 +42,8 @@ export function createMutation<
   })
 
   createComputed(() => {
-    const newParsedOptions = parseMutationArgs(arg1, arg2, arg3)
-    setOptions(newParsedOptions)
-    observer.setOptions(newParsedOptions)
+    setOptions(mutationOptions)
+    observer.setOptions(mutationOptions)
   })
 
   createComputed(

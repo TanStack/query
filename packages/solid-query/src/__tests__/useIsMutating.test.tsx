@@ -33,13 +33,19 @@ describe('useIsMutating', () => {
     }
 
     function Mutations() {
-      const { mutate: mutate1 } = createMutation(['mutation1'], async () => {
-        await sleep(150)
-        return 'data'
+      const { mutate: mutate1 } = createMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(150)
+          return 'data'
+        },
       })
-      const { mutate: mutate2 } = createMutation(['mutation2'], async () => {
-        await sleep(50)
-        return 'data'
+      const { mutate: mutate2 } = createMutation({
+        mutationKey: ['mutation2'],
+        mutationFn: async () => {
+          await sleep(50)
+          return 'data'
+        },
       })
 
       createEffect(() => {
@@ -74,7 +80,7 @@ describe('useIsMutating', () => {
     const queryClient = createQueryClient()
 
     function IsMutating() {
-      const isMutating = useIsMutating(['mutation1'])
+      const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
       createRenderEffect(() => {
         isMutatings.push(isMutating())
       })
@@ -82,13 +88,19 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = createMutation(['mutation1'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate1 } = createMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
-      const { mutate: mutate2 } = createMutation(['mutation2'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate2 } = createMutation({
+        mutationKey: ['mutation2'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
 
       createEffect(() => {
@@ -124,13 +136,19 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = createMutation(['mutation1'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate1 } = createMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
-      const { mutate: mutate2 } = createMutation(['mutation2'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate2 } = createMutation({
+        mutationKey: ['mutation2'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
 
       createEffect(() => {
@@ -176,9 +194,12 @@ describe('useIsMutating', () => {
 
     function Page() {
       const [mounted, setMounted] = createSignal(true)
-      const { mutate: mutate1 } = createMutation(['mutation1'], async () => {
-        await sleep(10)
-        return 'data'
+      const { mutate: mutate1 } = createMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(10)
+          return 'data'
+        },
       })
 
       createEffect(() => {
@@ -227,22 +248,22 @@ describe('useIsMutating', () => {
       }
 
       function Page() {
-        const { mutate: mutate1 } = createMutation(
-          ['mutation1'],
-          async () => {
+        const { mutate: mutate1 } = createMutation({
+          mutationKey: ['mutation1'],
+          mutationFn: async () => {
             await sleep(150)
             return 'data'
           },
-          { context },
-        )
-        const { mutate: mutate2 } = createMutation(
-          ['mutation2'],
-          async () => {
+          context,
+        })
+        const { mutate: mutate2 } = createMutation({
+          mutationKey: ['mutation2'],
+          mutationFn: async () => {
             await sleep(50)
             return 'data'
           },
-          { context },
-        )
+          context,
+        })
 
         createEffect(() => {
           mutate1()
@@ -275,7 +296,9 @@ describe('useIsMutating', () => {
       }
 
       function Page() {
-        const { mutate } = createMutation(['mutation'], async () => 'data', {
+        const { mutate } = createMutation({
+          mutationKey: ['mutation'],
+          mutationFn: async () => 'data',
           throwErrors: true,
           context,
         })

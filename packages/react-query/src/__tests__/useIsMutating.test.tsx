@@ -24,13 +24,19 @@ describe('useIsMutating', () => {
     }
 
     function Mutations() {
-      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
-        await sleep(150)
-        return 'data'
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(150)
+          return 'data'
+        },
       })
-      const { mutate: mutate2 } = useMutation(['mutation2'], async () => {
-        await sleep(50)
-        return 'data'
+      const { mutate: mutate2 } = useMutation({
+        mutationKey: ['mutation2'],
+        mutationFn: async () => {
+          await sleep(50)
+          return 'data'
+        },
       })
 
       React.useEffect(() => {
@@ -61,19 +67,25 @@ describe('useIsMutating', () => {
     const queryClient = createQueryClient()
 
     function IsMutating() {
-      const isMutating = useIsMutating(['mutation1'])
+      const isMutating = useIsMutating({ mutationKey: ['mutation1'] })
       isMutatings.push(isMutating)
       return null
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
-      const { mutate: mutate2 } = useMutation(['mutation2'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate2 } = useMutation({
+        mutationKey: ['mutation2'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
 
       React.useEffect(() => {
@@ -102,13 +114,19 @@ describe('useIsMutating', () => {
     }
 
     function Page() {
-      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
-      const { mutate: mutate2 } = useMutation(['mutation2'], async () => {
-        await sleep(100)
-        return 'data'
+      const { mutate: mutate2 } = useMutation({
+        mutationKey: ['mutation2'],
+        mutationFn: async () => {
+          await sleep(100)
+          return 'data'
+        },
       })
 
       React.useEffect(() => {
@@ -148,9 +166,12 @@ describe('useIsMutating', () => {
 
     function Page() {
       const [mounted, setMounted] = React.useState(true)
-      const { mutate: mutate1 } = useMutation(['mutation1'], async () => {
-        await sleep(10)
-        return 'data'
+      const { mutate: mutate1 } = useMutation({
+        mutationKey: ['mutation1'],
+        mutationFn: async () => {
+          await sleep(10)
+          return 'data'
+        },
       })
 
       React.useEffect(() => {
@@ -189,22 +210,22 @@ describe('useIsMutating', () => {
       }
 
       function Page() {
-        const { mutate: mutate1 } = useMutation(
-          ['mutation1'],
-          async () => {
+        const { mutate: mutate1 } = useMutation({
+          mutationKey: ['mutation1'],
+          mutationFn: async () => {
             await sleep(150)
             return 'data'
           },
-          { context },
-        )
-        const { mutate: mutate2 } = useMutation(
-          ['mutation2'],
-          async () => {
+          context,
+        })
+        const { mutate: mutate2 } = useMutation({
+          mutationKey: ['mutation2'],
+          mutationFn: async () => {
             await sleep(50)
             return 'data'
           },
-          { context },
-        )
+          context,
+        })
 
         React.useEffect(() => {
           mutate1()
@@ -233,7 +254,9 @@ describe('useIsMutating', () => {
       }
 
       function Page() {
-        const { mutate } = useMutation(['mutation'], async () => 'data', {
+        const { mutate } = useMutation({
+          mutationKey: ['mutation'],
+          mutationFn: async () => 'data',
           throwErrors: true,
           context,
         })
