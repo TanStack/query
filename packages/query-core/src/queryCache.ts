@@ -83,8 +83,6 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     super()
     this.queries =
       config.experimental_createStore?.(this) ?? new Map<string, Query>()
-
-    new Map().set('a', 1)
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
