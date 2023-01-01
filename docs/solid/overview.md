@@ -14,7 +14,10 @@ import { Switch, Match, For } from 'solid-js'
 const queryClient = new QueryClient()
 
 function Example() {
-  const query = createQuery(() => ['todos'], fetchTodos)
+  const query = createQuery({
+    queryKey: () => ['todos'],
+    queryFn: fetchTodos
+  })
 
   return (
     <div>
@@ -70,10 +73,16 @@ Solid Query offers an API similar to  React Query, but there are some key differ
 
 ```tsx
 // ❌ react version
-useQuery(["todos", todo], fetchTodos)
+useQuery({
+  queryKey: ["todos", todo],
+  queryFn: fetchTodos
+})
 
 // ✅ solid version
-createQuery(() => ["todos", todo()], fetchTodos)
+createQuery({
+  queryKey: () => ["todos", todo()], 
+  queryFn: fetchTodos
+})
 ```
 
 - Suspense works for queries out of the box if you access the query data inside a `<Suspense>` boundary.
@@ -82,7 +91,11 @@ createQuery(() => ["todos", todo()], fetchTodos)
 import { For, Suspense } from 'solid-js'
 
 function Example() {
-  const query = createQuery(() => ['todos'], fetchTodos)
+  const query = createQuery({
+    queryKey: () => ['todos'], 
+    queryFn: fetchTodos
+  }
+  )
   return (
     <div>
       {/* ✅ Will trigger loading fallback, data accessed in a suspense context. */}
@@ -114,20 +127,21 @@ export default function App() {
 
 function Example() {
   // ❌ react version -- supports destructing outside reactive context
-  // const { isLoading, error, data } = useQuery(['repoData'], () =>
-  //   fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
+  // const { isLoading, error, data } = useQuery({
+  //  queryKey: ['repoData'], () =>
+  //  queryFn:  fetch('https://api.github.com/repos/tannerlinsley/react-query').then(res =>
   //     res.json()
   //   )
-  // )
+  // })
 
   // ✅ solid version -- does not support destructuring outside reactive context
-  const query = createQuery(
-    () => ['repoData'],
-    () =>
+  const query = createQuery({
+    queryKey: () => ['repoData'],
+    queryFn: () =>
       fetch('https://api.github.com/repos/tannerlinsley/react-query').then(
         (res) => res.json(),
       ),
-  )
+  })
 
   // ✅ access query properties in JSX reactive context
   return (
@@ -162,7 +176,9 @@ const queryClient = new QueryClient()
 
 function Example() {
   const [enabled, setEnabled] = createSignal(false)
-  const query = createQuery(() => ['todos'], fetchTodos, {
+  const query = createQuery({
+    queryKey: () => ['todos'], 
+    queryFn: fetchTodos,
     // ❌ passing a signal directly is not reactive
     // enabled: enabled(),
 

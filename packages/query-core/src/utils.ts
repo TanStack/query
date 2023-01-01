@@ -1,14 +1,6 @@
 import type { Mutation } from './mutation'
 import type { Query } from './query'
-import type {
-  FetchStatus,
-  MutationFunction,
-  MutationKey,
-  MutationOptions,
-  QueryFunction,
-  QueryKey,
-  QueryOptions,
-} from './types'
+import type { FetchStatus, MutationKey, QueryKey, QueryOptions } from './types'
 
 // TYPES
 
@@ -99,74 +91,6 @@ export function replaceAt<T>(array: T[], index: number, value: T): T[] {
 
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
-}
-
-export function parseQueryArgs<
-  TOptions extends QueryOptions<any, any, any, TQueryKey>,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  arg1: TQueryKey | TOptions,
-  arg2?: QueryFunction<any, TQueryKey> | TOptions,
-  arg3?: TOptions,
-): TOptions {
-  if (!isQueryKey(arg1)) {
-    return arg1 as TOptions
-  }
-
-  if (typeof arg2 === 'function') {
-    return { ...arg3, queryKey: arg1, queryFn: arg2 } as TOptions
-  }
-
-  return { ...arg2, queryKey: arg1 } as TOptions
-}
-
-export function parseMutationArgs<
-  TOptions extends MutationOptions<any, any, any, any>,
->(
-  arg1: MutationKey | MutationFunction<any, any> | TOptions,
-  arg2?: MutationFunction<any, any> | TOptions,
-  arg3?: TOptions,
-): TOptions {
-  if (isQueryKey(arg1)) {
-    if (typeof arg2 === 'function') {
-      return { ...arg3, mutationKey: arg1, mutationFn: arg2 } as TOptions
-    }
-    return { ...arg2, mutationKey: arg1 } as TOptions
-  }
-
-  if (typeof arg1 === 'function') {
-    return { ...arg2, mutationFn: arg1 } as TOptions
-  }
-
-  return { ...arg1 } as TOptions
-}
-
-export function parseFilterArgs<
-  TFilters extends QueryFilters,
-  TOptions = unknown,
->(
-  arg1?: QueryKey | TFilters,
-  arg2?: TFilters | TOptions,
-  arg3?: TOptions,
-): [TFilters, TOptions | undefined] {
-  return (
-    isQueryKey(arg1) ? [{ ...arg2, queryKey: arg1 }, arg3] : [arg1 || {}, arg2]
-  ) as [TFilters, TOptions]
-}
-
-export function parseMutationFilterArgs<
-  TFilters extends MutationFilters,
-  TOptions = unknown,
->(
-  arg1?: QueryKey | TFilters,
-  arg2?: TFilters | TOptions,
-  arg3?: TOptions,
-): [TFilters, TOptions | undefined] {
-  return (
-    isQueryKey(arg1)
-      ? [{ ...arg2, mutationKey: arg1 }, arg3]
-      : [arg1 || {}, arg2]
-  ) as [TFilters, TOptions]
 }
 
 export function matchQuery(

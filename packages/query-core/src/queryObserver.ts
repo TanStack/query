@@ -618,7 +618,7 @@ export class QueryObserver<
 
       const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
 
-      if (this.options.useErrorBoundary) {
+      if (this.options.throwErrors) {
         includedProps.add('error')
       }
 

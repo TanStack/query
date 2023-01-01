@@ -44,9 +44,12 @@ describe('ReactQueryDevtools', () => {
     const onToggleClick = jest.fn()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => {
-        await sleep(10)
-        return 'test'
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -118,9 +121,12 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => {
-        await sleep(10)
-        return 'test'
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -151,14 +157,14 @@ describe('ReactQueryDevtools', () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(
-        ['check'],
-        async () => {
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
           await sleep(100)
           return 'test'
         },
-        { staleTime: 300 },
-      )
+        staleTime: 300,
+      })
 
       return (
         <div>
@@ -193,7 +199,7 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
-    const currentQuery = queryCache.find(['check'])
+    const currentQuery = queryCache.find({ queryKey: ['check'] })
 
     // When the query is fetching then expect number of
     // fetching queries to be 1
@@ -243,9 +249,12 @@ describe('ReactQueryDevtools', () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => {
-        await sleep(10)
-        return 'test'
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -261,7 +270,7 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
-    const currentQuery = queryCache.find(['check'])
+    const currentQuery = queryCache.find({ queryKey: ['check'] })
 
     await screen.findByText(getByTextContent(`1${currentQuery?.queryHash}`))
 
@@ -278,19 +287,28 @@ describe('ReactQueryDevtools', () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const fooResult = useQuery(['foo'], async () => {
-        await sleep(10)
-        return 'foo-result'
+      const fooResult = useQuery({
+        queryKey: ['foo'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'foo-result'
+        },
       })
 
-      const barResult = useQuery(['bar'], async () => {
-        await sleep(10)
-        return 'bar-result'
+      const barResult = useQuery({
+        queryKey: ['bar'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'bar-result'
+        },
       })
 
-      const bazResult = useQuery(['baz'], async () => {
-        await sleep(10)
-        return 'baz-result'
+      const bazResult = useQuery({
+        queryKey: ['baz'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'baz-result'
+        },
       })
 
       return (
@@ -308,9 +326,12 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
-    const fooQueryHash = queryCache.find(['foo'])?.queryHash ?? 'invalid hash'
-    const barQueryHash = queryCache.find(['bar'])?.queryHash ?? 'invalid hash'
-    const bazQueryHash = queryCache.find(['baz'])?.queryHash ?? 'invalid hash'
+    const fooQueryHash =
+      queryCache.find({ queryKey: ['foo'] })?.queryHash ?? 'invalid hash'
+    const barQueryHash =
+      queryCache.find({ queryKey: ['bar'] })?.queryHash ?? 'invalid hash'
+    const bazQueryHash =
+      queryCache.find({ queryKey: ['baz'] })?.queryHash ?? 'invalid hash'
 
     await screen.findByText(fooQueryHash)
     screen.getByText(barQueryHash)
@@ -333,16 +354,14 @@ describe('ReactQueryDevtools', () => {
 
     function Page() {
       const [enabled, setEnabled] = React.useState(false)
-      const { data } = useQuery(
-        ['key'],
-        async () => {
+      const { data } = useQuery({
+        queryKey: ['key'],
+        queryFn: async () => {
           await sleep(10)
           return 'test'
         },
-        {
-          enabled,
-        },
-      )
+        enabled,
+      })
 
       return (
         <div>
@@ -367,7 +386,9 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data } = useQuery(['key'], () => Promise.resolve('test'), {
+      const { data } = useQuery({
+        queryKey: ['key'],
+        queryFn: () => Promise.resolve('test'),
         enabled: false,
       })
 
@@ -405,9 +426,12 @@ describe('ReactQueryDevtools', () => {
     let count = 0
 
     function App() {
-      const { data, fetchStatus } = useQuery(['key'], () => {
-        count++
-        return Promise.resolve('test')
+      const { data, fetchStatus } = useQuery({
+        queryKey: ['key'],
+        queryFn: () => {
+          count++
+          return Promise.resolve('test')
+        },
       })
 
       return (
@@ -458,30 +482,33 @@ describe('ReactQueryDevtools', () => {
     const { queryClient, queryCache } = createQueryClient()
 
     function Page() {
-      const query1Result = useQuery(['query-1'], async () => {
-        await sleep(20)
-        return 'query-1-result'
+      const query1Result = useQuery({
+        queryKey: ['query-1'],
+        queryFn: async () => {
+          await sleep(20)
+          return 'query-1-result'
+        },
       })
 
-      const query3Result = useQuery(
-        ['query-3'],
-        async () => {
+      const query3Result = useQuery({
+        queryKey: ['query-3'],
+        queryFn: async () => {
           await sleep(10)
           return 'query-3-result'
         },
-        { staleTime: Infinity, enabled: typeof query1Result.data === 'string' },
-      )
+        staleTime: Infinity,
+        enabled: typeof query1Result.data === 'string',
+      })
 
-      const query2Result = useQuery(
-        ['query-2'],
-        async () => {
+      const query2Result = useQuery({
+        queryKey: ['query-2'],
+        queryFn: async () => {
           await sleep(10)
           return 'query-2-result'
         },
-        {
-          enabled: typeof query3Result.data === 'string',
-        },
-      )
+
+        enabled: typeof query3Result.data === 'string',
+      })
 
       return (
         <div>
@@ -498,9 +525,12 @@ describe('ReactQueryDevtools', () => {
       screen.getByRole('button', { name: /open react query devtools/i }),
     )
 
-    const query1Hash = queryCache.find(['query-1'])?.queryHash ?? 'invalid hash'
-    const query2Hash = queryCache.find(['query-2'])?.queryHash ?? 'invalid hash'
-    const query3Hash = queryCache.find(['query-3'])?.queryHash ?? 'invalid hash'
+    const query1Hash =
+      queryCache.find({ queryKey: ['query-1'] })?.queryHash ?? 'invalid hash'
+    const query2Hash =
+      queryCache.find({ queryKey: ['query-2'] })?.queryHash ?? 'invalid hash'
+    const query3Hash =
+      queryCache.find({ queryKey: ['query-3'] })?.queryHash ?? 'invalid hash'
 
     const sortSelect = screen.getByLabelText(/sort queries/i)
     let queries = []
@@ -563,9 +593,12 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => {
-        await sleep(10)
-        return 'test'
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -603,9 +636,12 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => {
-        await sleep(10)
-        return 'test'
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -632,9 +668,12 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => {
-        await sleep(10)
-        return 'test'
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
       })
 
       return (
@@ -676,7 +715,9 @@ describe('ReactQueryDevtools', () => {
       const { queryClient } = createQueryClient()
 
       function Page() {
-        const { data = 'default' } = useQuery(['check'], async () => 'test', {
+        const { data = 'default' } = useQuery({
+          queryKey: ['check'],
+          queryFn: async () => 'test',
           context,
         })
 
@@ -703,8 +744,10 @@ describe('ReactQueryDevtools', () => {
       const { queryClient } = createQueryClient()
 
       function Page() {
-        const { data = 'default' } = useQuery(['check'], async () => 'test', {
-          useErrorBoundary: true,
+        const { data = 'default' } = useQuery({
+          queryKey: ['check'],
+          queryFn: async () => 'test',
+          throwErrors: true,
         })
 
         return (
@@ -738,8 +781,10 @@ describe('ReactQueryDevtools', () => {
       const { queryClient } = createQueryClient()
 
       function Page() {
-        const { data = 'default' } = useQuery(['check'], async () => 'test', {
-          useErrorBoundary: true,
+        const { data = 'default' } = useQuery({
+          queryKey: ['check'],
+          queryFn: async () => 'test',
+          throwErrors: true,
           context,
         })
 
@@ -770,7 +815,10 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => 'test')
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => 'test',
+      })
 
       return (
         <div>
@@ -794,7 +842,10 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => 'test')
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => 'test',
+      })
 
       return (
         <div>
@@ -827,7 +878,10 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => 'test')
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => 'test',
+      })
 
       return (
         <div>
@@ -869,7 +923,10 @@ describe('ReactQueryDevtools', () => {
     const { queryClient } = createQueryClient()
 
     function Page() {
-      const { data = 'default' } = useQuery(['check'], async () => 'test')
+      const { data = 'default' } = useQuery({
+        queryKey: ['check'],
+        queryFn: async () => 'test',
+      })
 
       return (
         <div>

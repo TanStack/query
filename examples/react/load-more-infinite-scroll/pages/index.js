@@ -33,17 +33,15 @@ function Example() {
     fetchPreviousPage,
     hasNextPage,
     hasPreviousPage,
-  } = useInfiniteQuery(
-    ['projects'],
-    async ({ pageParam = 0 }) => {
+  } = useInfiniteQuery({
+    queryKey: ['projects'],
+    queryFn: async ({ pageParam = 0 }) => {
       const res = await axios.get('/api/projects?cursor=' + pageParam)
       return res.data
     },
-    {
-      getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
-      getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
-    },
-  )
+    getPreviousPageParam: (firstPage) => firstPage.previousId ?? undefined,
+    getNextPageParam: (lastPage) => lastPage.nextId ?? undefined,
+  })
 
   React.useEffect(() => {
     if (inView) {

@@ -97,13 +97,11 @@ const getPostById = async (id: number): Promise<Post> => {
 }
 
 function createPost(postId: number) {
-  return createQuery(
-    () => ['post', postId],
-    () => getPostById(postId),
-    {
-      enabled: !!postId,
-    },
-  )
+  return createQuery({
+    queryKey: () => ['post', postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
+  })
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
