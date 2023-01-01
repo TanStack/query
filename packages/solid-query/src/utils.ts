@@ -1,10 +1,4 @@
-import type {
-  SolidQueryKey,
-  SolidQueryFilters,
-  ParseFilterArgs,
-  ParseQueryArgs,
-} from './types'
-import type { QueryFunction, QueryOptions } from '@tanstack/query-core'
+import type { SolidQueryKey, SolidQueryFilters, ParseFilterArgs } from './types'
 
 export function isQueryKey(value: unknown): value is SolidQueryKey {
   return typeof value === 'function'
@@ -12,62 +6,40 @@ export function isQueryKey(value: unknown): value is SolidQueryKey {
 
 // The parseQuery Args functions helps normalize the arguments into the correct form.
 // Whatever the parameters are, they are normalized into the correct form.
-export function parseQueryArgs<
-  TOptions extends Omit<
-    QueryOptions<any, any, any, ReturnType<TQueryKey>>,
-    'queryKey'
-  > & {
-    queryKey?: TQueryKey
-  },
-  TQueryKey extends () => readonly unknown[] = SolidQueryKey,
->(
-  arg1: TQueryKey | TOptions,
-  arg2?: QueryFunction<any, ReturnType<TQueryKey>> | TOptions,
-  arg3?: TOptions,
-): ParseQueryArgs<TOptions, TQueryKey> {
-  if (!isQueryKey(arg1)) {
-    const { queryKey: solidKey, ...opts } = arg1 as any
-    if (solidKey) {
-      return {
-        ...opts,
-        queryKey: solidKey(),
-      }
+export function normalizeQueryOptions<T>(arg: T): T {
+  const { queryKey: solidKey, ...opts } = arg as any
+  if (solidKey) {
+    return {
+      ...opts,
+      queryKey: solidKey(),
     }
-    return arg1 as any
   }
-
-  if (typeof arg2 === 'function') {
-    return { ...arg3, queryKey: arg1(), queryFn: arg2 } as any
-  }
-
-  return { ...arg2, queryKey: arg1() } as any
+  return arg as any
 }
 
-export function parseFilterArgs<
+export function normalizeFilterArgs<
   TFilters extends SolidQueryFilters,
   TOptions = unknown,
 >(
-  arg1?: SolidQueryKey | TFilters,
-  arg2?: TFilters | TOptions,
-  arg3?: TOptions,
+  arg1?: TFilters,
+  arg2?: TOptions,
 ): [ParseFilterArgs<TFilters>, TOptions | undefined] {
-  return (
-    isQueryKey(arg1)
-      ? [{ ...arg2, queryKey: arg1() }, arg3]
-      : [{ ...arg1, queryKey: arg1?.queryKey?.() }, arg2]
-  ) as [ParseFilterArgs<TFilters>, TOptions]
+  return [{ ...arg1, queryKey: arg1?.queryKey?.() }, arg2] as [
+    ParseFilterArgs<TFilters>,
+    TOptions,
+  ]
 }
 
 export function shouldThrowError<T extends (...args: any[]) => boolean>(
-  _useErrorBoundary: boolean | T | undefined,
+  throwError: boolean | T | undefined,
   params: Parameters<T>,
 ): boolean {
-  // Allow useErrorBoundary function to override throwing behavior on a per-error basis
-  if (typeof _useErrorBoundary === 'function') {
-    return _useErrorBoundary(...params)
+  // Allow throwError function to override throwing behavior on a per-error basis
+  if (typeof throwError === 'function') {
+    return throwError(...params)
   }
 
-  return !!_useErrorBoundary
+  return !!throwError
 }
 
 export function sleep(timeout: number): Promise<void> {

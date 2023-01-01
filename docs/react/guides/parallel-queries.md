@@ -7,7 +7,9 @@ title: Parallel Queries
 
 ## Manual Parallel Queries
 
-When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Just use any number of React Query's `useQuery` and `useInfiniteQuery` hooks side-by-side!
+When the number of parallel queries does not change, there is **no extra effort** to use parallel queries. Just use any number of TanStack Query's `useQuery` and `useInfiniteQuery` hooks side-by-side!
+
+[//]: # 'Example'
 
 ```tsx
 function App () {
@@ -19,23 +21,32 @@ function App () {
 }
 ```
 
+[//]: # 'Example'
+[//]: # 'Info'
+
 > When using React Query in suspense mode, this pattern of parallelism does not work, since the first query would throw a promise internally and would suspend the component before the other queries run. To get around this, you'll either need to use the `useQueries` hook (which is suggested) or orchestrate your own parallelism with separate components for each `useQuery` instance (which is lame).
+
+[//]: # 'Info'
 
 ## Dynamic Parallel Queries with `useQueries`
 
-If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, React Query provides a `useQueries` hook, which you can use to dynamically execute as many queries in parallel as you'd like.
+If the number of queries you need to execute is changing from render to render, you cannot use manual querying since that would violate the rules of hooks. Instead, TanStack Query provides a `useQueries` hook, which you can use to dynamically execute as many queries in parallel as you'd like.
 
 `useQueries` accepts an **options object** with a **queries key** whose value is an **array of query objects**. It returns an **array of query results**:
+
+[//]: # 'Example2'
 
 ```tsx
 function App({ users }) {
   const userQueries = useQueries({
-    queries: users.map(user => {
+    queries: users.map((user) => {
       return {
         queryKey: ['user', user.id],
         queryFn: () => fetchUserById(user.id),
       }
-    })
+    }),
   })
 }
 ```
+
+[//]: # 'Example2'

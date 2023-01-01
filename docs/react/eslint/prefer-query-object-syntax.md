@@ -7,7 +7,7 @@ You can use [`useQuery`](https://tanstack.com/query/v4/docs/reference/useQuery) 
 
 Standard
 
-```ts
+```tsx
 useQuery(queryKey, queryFn?, options?)
 
 // or

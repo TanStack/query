@@ -2,37 +2,40 @@
 id: quick-start
 title: Quick Start
 ref: docs/react/quick-start.md
-replace: {
-    'React': 'Vue',
-}
+replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 
-[//]: # (Example)
+[//]: # 'Example'
+
 If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](../examples/vue/basic)
+
 ```vue
 <script setup>
-import { useQueryClient, useQuery, useMutation } from "@tanstack/vue-query";
+import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query'
 
 // Access QueryClient instance
-const queryClient = useQueryClient();
+const queryClient = useQueryClient()
 
 // Query
-const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: getTodos });
+const { isLoading, isError, data, error } = useQuery({
+  queryKey: ['todos'],
+  queryFn: getTodos,
+})
 
 // Mutation
 const mutation = useMutation({
   mutationFn: postTodo,
   onSuccess: () => {
     // Invalidate and refetch
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
-});
+})
 
 function onButtonClick() {
   mutation.mutate({
     id: Date.now(),
-    title: "Do Laundry",
-  });
+    title: 'Do Laundry',
+  })
 }
 </script>
 
@@ -46,4 +49,5 @@ function onButtonClick() {
   <button @click="onButtonClick">Add Todo</button>
 </template>
 ```
-[//]: # (Example)
+
+[//]: # 'Example'

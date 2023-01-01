@@ -72,7 +72,7 @@ export function setupDevtools(app: any, queryClient: QueryClient) {
             tooltip: 'Invalidate',
             action: (queryHash: string) => {
               const query = queryCache.get(queryHash) as Query
-              queryClient.invalidateQueries(query.queryKey)
+              queryClient.invalidateQueries(query)
             },
           },
           {

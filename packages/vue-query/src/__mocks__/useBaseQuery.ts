@@ -1,5 +1,5 @@
-const { useBaseQuery: originImpl, parseQueryArgs: originalParse } =
+const { useBaseQuery: originImpl, unrefQueryArgs: originalParse } =
   jest.requireActual('../useBaseQuery')
 
 export const useBaseQuery = jest.fn(originImpl)
-export const parseQueryArgs = originalParse
+export const unrefQueryArgs = originalParse

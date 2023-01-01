@@ -3,14 +3,18 @@ id: default-query-function
 title: Default Query Function
 ---
 
-If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to identify what it should fetch, you can do that by providing a **default query function** to React Query:
+If you find yourself wishing for whatever reason that you could just share the same query function for your entire app and just use query keys to identify what it should fetch, you can do that by providing a **default query function** to TanStack Query:
+
+[//]: # 'Example'
 
 ```tsx
 // Define a default query function that will receive the query key
 const defaultQueryFn = async ({ queryKey }) => {
-  const { data } = await axios.get(`https://jsonplaceholder.typicode.com${queryKey[0]}`);
-  return data;
-};
+  const { data } = await axios.get(
+    `https://jsonplaceholder.typicode.com${queryKey[0]}`,
+  )
+  return data
+}
 
 // provide the default query function to your app with defaultOptions
 const queryClient = new QueryClient({
@@ -46,5 +50,7 @@ function Post({ postId }) {
   // ...
 }
 ```
+
+[//]: # 'Example'
 
 If you ever want to override the default queryFn, you can just provide your own like you normally would.
