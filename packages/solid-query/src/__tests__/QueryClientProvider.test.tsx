@@ -4,7 +4,6 @@ import { queryKey } from './utils'
 import { QueryCache, QueryClient } from '@tanstack/query-core'
 import type { Context } from 'solid-js'
 import { createContext, useContext } from 'solid-js'
-import { renderToString } from 'solid-js/web'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
 
@@ -16,13 +15,13 @@ describe('QueryClientProvider', () => {
     const queryClient = createQueryClient({ queryCache })
 
     function Page() {
-      const query = createQuery({
+      const query = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
           return 'test'
         },
-      })
+      }))
 
       return (
         <div>
@@ -41,7 +40,7 @@ describe('QueryClientProvider', () => {
       return screen.getByText('test')
     })
 
-    expect(queryCache.find({ queryKey: key() })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
 
   it('allows multiple caches to be partitioned', async () => {
@@ -55,13 +54,13 @@ describe('QueryClientProvider', () => {
     const queryClient2 = createQueryClient({ queryCache: queryCache2 })
 
     function Page1() {
-      const query = createQuery({
+      const query = createQuery(() => ({
         queryKey: key1,
         queryFn: async () => {
           await sleep(10)
           return 'test1'
         },
-      })
+      }))
 
       return (
         <div>
@@ -70,13 +69,13 @@ describe('QueryClientProvider', () => {
       )
     }
     function Page2() {
-      const query = createQuery({
+      const query = createQuery(() => ({
         queryKey: key2,
         queryFn: async () => {
           await sleep(10)
           return 'test2'
         },
-      })
+      }))
 
       return (
         <div>
@@ -99,10 +98,10 @@ describe('QueryClientProvider', () => {
     await waitFor(() => screen.getByText('test1'))
     await waitFor(() => screen.getByText('test2'))
 
-    expect(queryCache1.find({ queryKey: key1() })).toBeDefined()
-    expect(queryCache1.find({ queryKey: key2() })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key1() })).not.toBeDefined()
-    expect(queryCache2.find({ queryKey: key2() })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key1 })).toBeDefined()
+    expect(queryCache1.find({ queryKey: key2 })).not.toBeDefined()
+    expect(queryCache2.find({ queryKey: key1 })).not.toBeDefined()
+    expect(queryCache2.find({ queryKey: key2 })).toBeDefined()
   })
 
   it("uses defaultOptions for queries when they don't provide their own config", async () => {
@@ -119,13 +118,13 @@ describe('QueryClientProvider', () => {
     })
 
     function Page() {
-      const query = createQuery({
+      const query = createQuery(() => ({
         queryKey: key,
         queryFn: async () => {
           await sleep(10)
           return 'test'
         },
-      })
+      }))
 
       return (
         <div>
@@ -142,10 +141,8 @@ describe('QueryClientProvider', () => {
 
     await waitFor(() => screen.getByText('test'))
 
-    expect(queryCache.find({ queryKey: key() })).toBeDefined()
-    expect(queryCache.find({ queryKey: key() })?.options.cacheTime).toBe(
-      Infinity,
-    )
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
+    expect(queryCache.find({ queryKey: key })?.options.cacheTime).toBe(Infinity)
   })
 
   describe('with custom context', () => {
@@ -167,20 +164,20 @@ describe('QueryClientProvider', () => {
       })
 
       function Page() {
-        const queryOuter = createQuery({
+        const queryOuter = createQuery(() => ({
           queryKey: key,
           queryFn: async () => 'testOuter',
           context: contextOuter,
-        })
-        const queryInner = createQuery({
+        }))
+        const queryInner = createQuery(() => ({
           queryKey: key,
           queryFn: async () => 'testInner',
           context: contextInner,
-        })
-        const queryInnerInner = createQuery({
+        }))
+        const queryInnerInner = createQuery(() => ({
           queryKey: key,
           queryFn: async () => 'testInnerInner',
-        })
+        }))
 
         return (
           <div>
@@ -254,35 +251,6 @@ describe('QueryClientProvider', () => {
 
       expect(queryClientFromHook).toEqual(queryClient)
       expect(queryClientFromWindow).toEqual(queryClient)
-    })
-
-    it.skip('should not use window to get the context when contextSharing is true and window does not exist', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      // Mock a non web browser environment
-      const windowSpy = jest
-        .spyOn(window, 'window', 'get')
-        .mockImplementation(undefined)
-
-      let queryClientFromHook: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        return null
-      }
-
-      // TODO(lukemurray): fails because renderToString never calls Page
-      // probably an SSR-testing issue we need to fix.
-      renderToString(() => (
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      expect(queryClientFromHook).toEqual(queryClient)
-
-      windowSpy.mockRestore()
     })
   })
 })

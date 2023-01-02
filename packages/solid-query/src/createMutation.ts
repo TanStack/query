@@ -16,14 +16,13 @@ export function createMutation<
   TVariables = void,
   TContext = unknown,
 >(
-  mutationOptions: CreateMutationOptions<TData, TError, TVariables, TContext>,
+  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
 ): CreateMutationResult<TData, TError, TVariables, TContext> {
-  const [options, setOptions] = createStore(mutationOptions)
-  const queryClient = useQueryClient({ context: options.context })
+  const queryClient = useQueryClient({ context: options().context })
 
   const observer = new MutationObserver<TData, TError, TVariables, TContext>(
     queryClient,
-    options,
+    options(),
   )
 
   const mutate: CreateMutateFunction<TData, TError, TVariables, TContext> = (
@@ -42,8 +41,7 @@ export function createMutation<
   })
 
   createComputed(() => {
-    setOptions(mutationOptions)
-    observer.setOptions(mutationOptions)
+    observer.setOptions(options())
   })
 
   createComputed(

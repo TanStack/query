@@ -1,14 +1,9 @@
 import { createComputed, onCleanup, onMount } from 'solid-js'
-import type { QueryFunction } from '@tanstack/query-core'
+import { notifyManager, QueryFunction, QueryKey } from '@tanstack/query-core'
 import { QueriesObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
-import type {
-  CreateQueryOptions,
-  CreateQueryResult,
-  SolidQueryKey,
-} from './types'
+import type { CreateQueryResult, SolidQueryOptions } from './types'
 import { createStore, unwrap } from 'solid-js/store'
-import { scheduleMicrotask } from './utils'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
@@ -16,8 +11,8 @@ type CreateQueryOptionsForCreateQueries<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
-> = Omit<CreateQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
+  TQueryKey extends QueryKey = QueryKey,
+> = Omit<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>, 'context'>
 
 // Avoid TS depth-limit error in case of large array literal
 type MAXIMUM_DEPTH = 20
@@ -50,14 +45,14 @@ type GetOptions<T> =
         TQueryFnData,
         unknown,
         TData,
-        () => TQueryKey
+        TQueryKey
       >
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,
         unknown,
         TQueryFnData,
-        () => TQueryKey
+        TQueryKey
       >
     : // Fallback
       CreateQueryOptionsForCreateQueries
@@ -143,26 +138,19 @@ export type QueriesResults<
   : // Fallback
     CreateQueryResult[]
 
-type ArrType<T> = T extends (infer U)[] ? U : never
+export function createQueries<T extends any[]>(
+  queriesOptions: () => {
+    queries: readonly [...QueriesOptions<T>]
+    context?: SolidQueryOptions['context']
+  },
+): QueriesResults<T> {
+  const queryClient = useQueryClient({ context: queriesOptions().context })
 
-export function createQueries<T extends any[]>(queriesOptions: {
-  queries: readonly [...QueriesOptions<T>]
-  context?: CreateQueryOptions['context']
-}): QueriesResults<T> {
-  const queryClient = useQueryClient({ context: queriesOptions.context })
-
-  const normalizeOptions = (
-    options: ArrType<typeof queriesOptions.queries>,
-  ) => {
-    const normalizedOptions = { ...options, queryKey: options.queryKey?.() }
-    const defaultedOptions = queryClient.defaultQueryOptions(normalizedOptions)
+  const defaultedQueries = queriesOptions().queries.map((options) => {
+    const defaultedOptions = queryClient.defaultQueryOptions(options)
     defaultedOptions._optimisticResults = 'optimistic'
     return defaultedOptions
-  }
-
-  const defaultedQueries = queriesOptions.queries.map((options) =>
-    normalizeOptions(options),
-  )
+  })
 
   const observer = new QueriesObserver(queryClient, defaultedQueries)
 
@@ -170,20 +158,10 @@ export function createQueries<T extends any[]>(queriesOptions: {
     observer.getOptimisticResult(defaultedQueries),
   )
 
-  const taskQueue: Array<() => void> = []
-
   const unsubscribe = observer.subscribe((result) => {
-    taskQueue.push(() => {
+    notifyManager.batchCalls(() => {
       setState(unwrap(result))
-    })
-
-    scheduleMicrotask(() => {
-      const taskToRun = taskQueue.pop()
-      if (taskToRun) {
-        taskToRun()
-        taskQueue.splice(0, taskQueue.length)
-      }
-    })
+    })()
   })
 
   onCleanup(unsubscribe)
@@ -193,10 +171,12 @@ export function createQueries<T extends any[]>(queriesOptions: {
   })
 
   createComputed(() => {
-    const updateDefaultedQueries = queriesOptions.queries.map((options) =>
-      normalizeOptions(options),
-    )
-    observer.setQueries(updateDefaultedQueries)
+    const updatedQueries = queriesOptions().queries.map((options) => {
+      const defaultedOptions = queryClient.defaultQueryOptions(options)
+      defaultedOptions._optimisticResults = 'optimistic'
+      return defaultedOptions
+    })
+    observer.setQueries(updatedQueries)
   })
 
   return state as QueriesResults<T>
