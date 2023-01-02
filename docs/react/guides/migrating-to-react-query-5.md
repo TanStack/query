@@ -169,6 +169,8 @@ We have removed the `keepPreviousData` option and `isPreviousData` flag as they 
 To achieve the same functionality as `keepPreviousData`, we have added previous query `data` as an argument to `placeholderData` function.
 Therefore you just need to provide an identity function to `placeholderData` or use `keepPreviousData` function returned from Tanstack Query.
 
+> A note here is that `useQueries` would not receive `previousData` in the `placeholderData` function as argument. This is due to a dynamic nature of queries passed in the array, which may lead to a different shape of result from placeholder and queryFn.
+
 ```diff
 const {
    data,
