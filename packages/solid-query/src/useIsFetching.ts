@@ -1,6 +1,6 @@
-import { QueryFilters } from '@tanstack/query-core'
-
-import { Accessor, createSignal, createMemo, onCleanup } from 'solid-js'
+import type { QueryFilters } from '@tanstack/query-core'
+import type { Accessor } from 'solid-js'
+import { createMemo, createSignal, onCleanup } from 'solid-js'
 import { useQueryClient } from './QueryClientProvider'
 import type { ContextOptions } from './types'
 

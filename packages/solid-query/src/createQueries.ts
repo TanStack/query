@@ -1,9 +1,9 @@
+import type { QueryFunction, QueryKey } from '@tanstack/query-core'
+import { notifyManager, QueriesObserver } from '@tanstack/query-core'
 import { createComputed, onCleanup, onMount } from 'solid-js'
-import { notifyManager, QueryFunction, QueryKey } from '@tanstack/query-core'
-import { QueriesObserver } from '@tanstack/query-core'
+import { createStore, unwrap } from 'solid-js/store'
 import { useQueryClient } from './QueryClientProvider'
 import type { CreateQueryResult, SolidQueryOptions } from './types'
-import { createStore, unwrap } from 'solid-js/store'
 
 // This defines the `UseQueryOptions` that are accepted in `QueriesOptions` & `GetOptions`.
 // - `context` is omitted as it is passed as a root-level option to `useQueries` instead.
