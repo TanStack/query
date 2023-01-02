@@ -175,6 +175,10 @@ export class Query<
     this.state = this.initialState
   }
 
+  get queryCache(): QueryCache {
+    return this.cache
+  }
+
   get meta(): QueryMeta | undefined {
     return this.options.meta
   }

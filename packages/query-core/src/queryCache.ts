@@ -19,7 +19,7 @@ export interface QueryStore {
 }
 
 interface QueryCacheConfig {
-  experimental_createStore?: (c: QueryCache) => QueryStore
+  experimental_createStore?: () => QueryStore
   onError?: (error: unknown, query: Query<unknown, unknown, unknown>) => void
   onSuccess?: (data: unknown, query: Query<unknown, unknown, unknown>) => void
 }
@@ -82,7 +82,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   constructor(public config: QueryCacheConfig = {}) {
     super()
     this.queries =
-      config.experimental_createStore?.(this) ?? new Map<string, Query>()
+      config.experimental_createStore?.() ?? new Map<string, Query>()
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(

@@ -280,8 +280,8 @@ describe('queryCache', () => {
   describe('QueryCacheConfig.experimental_createStore', () => {
     test('should call createStore', async () => {
       const createStore = jest.fn().mockImplementation(() => new Map())
-      const cache = new QueryCache({ experimental_createStore: createStore })
-      expect(createStore).toHaveBeenCalledWith(cache)
+      new QueryCache({ experimental_createStore: createStore })
+      expect(createStore).toHaveBeenCalledWith()
     })
 
     test('should use created store', async () => {
@@ -295,16 +295,14 @@ describe('queryCache', () => {
 
     test('should be able to limit cache size', async () => {
       class MaxSizeStore extends Map<string, Query> {
-        constructor(
-          private readonly cache: QueryCache,
-          private maxSize: number,
-        ) {
+        constructor(private maxSize: number) {
           super()
         }
         set(key: string, value: Query) {
           if (this.size >= this.maxSize) {
-            this.cache.findAll({ type: 'inactive' }).forEach((query) => {
-              this.cache.remove(query)
+            const cache = value.queryCache
+            cache.findAll({ type: 'inactive' }).forEach((query) => {
+              cache.remove(query)
             })
           }
           super.set(key, value)
@@ -313,7 +311,7 @@ describe('queryCache', () => {
       }
 
       const testCache = new QueryCache({
-        experimental_createStore: (cache) => new MaxSizeStore(cache, 2),
+        experimental_createStore: () => new MaxSizeStore(2),
       })
 
       const testClient = new QueryClient({ queryCache: testCache })
