@@ -1,43 +1,22 @@
-import type { QueryObserver, QueryOptions } from '@tanstack/query-core'
+import type { QueryObserver, QueryKey } from '@tanstack/query-core'
 import { InfiniteQueryObserver } from '@tanstack/query-core'
 import type {
   CreateInfiniteQueryOptions,
   CreateInfiniteQueryResult,
-  SolidQueryKey,
 } from './types'
 import { createBaseQuery } from './createBaseQuery'
-import { createComputed } from 'solid-js'
-import { createStore } from 'solid-js/store'
-import { normalizeQueryOptions } from './utils'
+import { createMemo } from 'solid-js'
 
 export function createInfiniteQuery<
   TQueryFnData,
   TError,
   TData = TQueryFnData,
-  TQueryKey extends SolidQueryKey = SolidQueryKey,
+  TQueryKey extends QueryKey = QueryKey,
 >(
-  options: CreateInfiniteQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
-  >,
+  options: CreateInfiniteQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): CreateInfiniteQueryResult<TData, TError> {
-  // The parseQuery Args functions helps normalize the arguments into the correct form.
-  // Whatever the parameters are, they are normalized into the correct form.
-  const [parsedOptions, setParsedOptions] = createStore(
-    normalizeQueryOptions(options),
-  )
-
-  // Watch for changes in the options and update the parsed options.
-  createComputed(() => {
-    const newParsedOptions = normalizeQueryOptions(options)
-    setParsedOptions(newParsedOptions)
-  })
-
   return createBaseQuery(
-    parsedOptions as QueryOptions<any, any, any, ReturnType<TQueryKey>>,
+    createMemo(() => options()),
     InfiniteQueryObserver as typeof QueryObserver,
   ) as CreateInfiniteQueryResult<TData, TError>
 }

@@ -30,9 +30,9 @@ describe('useMutation', () => {
 
   it('should be able to reset `data`', async () => {
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: () => Promise.resolve('mutation'),
-      })
+      }))
 
       return (
         <div>
@@ -66,13 +66,13 @@ describe('useMutation', () => {
 
   it('should be able to reset `error`', async () => {
     function Page() {
-      const mutation = createMutation<string, Error>({
+      const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
           const err = new Error('Expected mock error. All is well!')
           err.stack = ''
           return Promise.reject(err)
         },
-      })
+      }))
 
       return (
         <div>
@@ -114,7 +114,7 @@ describe('useMutation', () => {
     const onSettledMock = jest.fn()
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: (vars: { count: number }) => Promise.resolve(vars.count),
         onSuccess: (data) => {
           onSuccessMock(data)
@@ -122,7 +122,7 @@ describe('useMutation', () => {
         onSettled: (data) => {
           onSettledMock(data)
         },
-      })
+      }))
 
       return (
         <div>
@@ -188,9 +188,9 @@ describe('useMutation', () => {
     })
 
     function Page() {
-      const mutation = createMutation<Value, string, Value>({
+      const mutation = createMutation<Value, string, Value>(() => ({
         mutationFn: mutateFn,
-      })
+      }))
 
       return (
         <div>
@@ -238,7 +238,7 @@ describe('useMutation', () => {
     const [count, setCount] = createSignal(0)
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: (vars: { count: number }) => {
           const error = new Error(
             `Expected mock error. All is well! ${vars.count}`,
@@ -252,7 +252,7 @@ describe('useMutation', () => {
         onSettled: (_data, error) => {
           onSettledMock(error?.message)
         },
-      })
+      }))
 
       return (
         <div>
@@ -316,7 +316,7 @@ describe('useMutation', () => {
     const callbacks: string[] = []
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (text: string) => text,
         onSuccess: async () => {
           callbacks.push('useMutation.onSuccess')
@@ -324,7 +324,7 @@ describe('useMutation', () => {
         onSettled: async () => {
           callbacks.push('useMutation.onSettled')
         },
-      })
+      }))
 
       createEffect(() => {
         const { mutateAsync } = mutation
@@ -367,7 +367,7 @@ describe('useMutation', () => {
     const callbacks: string[] = []
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => Promise.reject('oops'),
 
         onError: async () => {
@@ -376,7 +376,7 @@ describe('useMutation', () => {
         onSettled: async () => {
           callbacks.push('useMutation.onSettled')
         },
-      })
+      }))
 
       createEffect(() => {
         const { mutateAsync } = mutation
@@ -419,7 +419,7 @@ describe('useMutation', () => {
   it('should be able to use mutation defaults', async () => {
     const key = queryKey()
 
-    queryClient.setMutationDefaults(key(), {
+    queryClient.setMutationDefaults(key, {
       mutationFn: async (text: string) => {
         await sleep(10)
         return text
@@ -429,9 +429,9 @@ describe('useMutation', () => {
     const states: CreateMutationResult<any, any, any, any>[] = []
 
     function Page() {
-      const mutation = createMutation<string, unknown, string>({
-        mutationKey: key(),
-      })
+      const mutation = createMutation<string, unknown, string>(() => ({
+        mutationKey: key,
+      }))
 
       createRenderEffect(() => {
         states.push({ ...mutation })
@@ -465,14 +465,14 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: (_text: string) => {
           count++
           return Promise.reject('oops')
         },
         retry: 1,
         retryDelay: 5,
-      })
+      }))
 
       createEffect(() => {
         const { mutate } = mutation
@@ -501,14 +501,14 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: (_text: string) => {
           count++
           return Promise.reject(new Error('oops'))
         },
         retry: 1,
         retryDelay: 5,
-      })
+      }))
 
       return (
         <div>
@@ -568,14 +568,14 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
           return count
         },
         onMutate,
-      })
+      }))
 
       return (
         <div>
@@ -620,13 +620,13 @@ describe('useMutation', () => {
     const states: Array<string> = []
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
           return count
         },
-      })
+      }))
 
       createRenderEffect(() => {
         states.push(`${mutation.status}, ${mutation.isPaused}`)
@@ -674,7 +674,7 @@ describe('useMutation', () => {
     const states: CreateMutationResult<any, any, any, any>[] = []
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(1)
           count++
@@ -683,7 +683,7 @@ describe('useMutation', () => {
         retry: 1,
         retryDelay: 5,
         networkMode: 'offlineFirst',
-      })
+      }))
 
       createRenderEffect(() => {
         states.push({ ...mutation })
@@ -758,7 +758,7 @@ describe('useMutation', () => {
 
   it('should not change state if unmounted', async () => {
     function Mutates() {
-      const mutation = createMutation({ mutationFn: () => sleep(10) })
+      const mutation = createMutation(() => ({ mutationFn: () => sleep(10) }))
       return <button onClick={() => mutation.mutate()}>mutate</button>
     }
     function Page() {
@@ -782,14 +782,14 @@ describe('useMutation', () => {
 
   it('should be able to throw an error when throwErrors is set to true', async () => {
     function Page() {
-      const mutation = createMutation<string, Error>({
+      const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
           const err = new Error('Expected mock error. All is well!')
           err.stack = ''
           return Promise.reject(err)
         },
         throwErrors: true,
-      })
+      }))
 
       return (
         <div>
@@ -822,7 +822,7 @@ describe('useMutation', () => {
   it('should be able to throw an error when throwErrors is a function that returns true', async () => {
     let boundary = false
     function Page() {
-      const mutation = createMutation<string, Error>({
+      const mutation = createMutation<string, Error>(() => ({
         mutationFn: () => {
           const err = new Error('mock error')
           err.stack = ''
@@ -832,7 +832,7 @@ describe('useMutation', () => {
           boundary = !boundary
           return !boundary
         },
-      })
+      }))
 
       return (
         <div>
@@ -888,16 +888,16 @@ describe('useMutation', () => {
     const metaErrorMessage = 'mutation failed'
 
     function Page() {
-      const mutationSucceed = createMutation({
+      const mutationSucceed = createMutation(() => ({
         mutationFn: async () => '',
         meta: { metaSuccessMessage },
-      })
-      const mutationError = createMutation({
+      }))
+      const mutationError = createMutation(() => ({
         mutationFn: async () => {
           throw new Error('')
         },
         meta: { metaErrorMessage },
-      })
+      }))
 
       return (
         <div>
@@ -948,17 +948,17 @@ describe('useMutation', () => {
     }
 
     function Component() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
           return count
         },
-        mutationKey: mutationKey(),
+        mutationKey: mutationKey,
         cacheTime: 0,
         onSuccess,
         onSettled,
-      })
+      }))
 
       return (
         <div>
@@ -993,7 +993,7 @@ describe('useMutation', () => {
 
     await waitFor(() => {
       expect(
-        queryClient.getMutationCache().findAll({ mutationKey: mutationKey() }),
+        queryClient.getMutationCache().findAll({ mutationKey: mutationKey }),
       ).toHaveLength(0)
     })
 
@@ -1010,10 +1010,10 @@ describe('useMutation', () => {
       const context = createContext<QueryClient | undefined>(undefined)
 
       function Page() {
-        const mutation = createMutation({
+        const mutation = createMutation(() => ({
           mutationFn: () => Promise.resolve('mutation'),
           context,
-        })
+        }))
 
         return (
           <div>
@@ -1049,9 +1049,9 @@ describe('useMutation', () => {
       const context = createContext<QueryClient | undefined>(undefined)
 
       function Page() {
-        const { data = '' } = createMutation({
+        const { data = '' } = createMutation(() => ({
           mutationFn: () => Promise.resolve('mutation'),
-        })
+        }))
 
         return (
           <div>
@@ -1081,7 +1081,7 @@ describe('useMutation', () => {
     let count = 0
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           count++
           await sleep(10)
@@ -1089,7 +1089,7 @@ describe('useMutation', () => {
         },
         onSuccess,
         onSettled,
-      })
+      }))
 
       return (
         <div>
@@ -1143,14 +1143,14 @@ describe('useMutation', () => {
     const onError = jest.fn()
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(10)
           return 'result'
         },
         onSuccess: () => Promise.reject(error),
         onError,
-      })
+      }))
 
       return (
         <div>
@@ -1180,13 +1180,13 @@ describe('useMutation', () => {
     const mutateFnError = new Error('mutateFnError')
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(10)
           throw mutateFnError
         },
         onError: () => Promise.reject(error),
-      })
+      }))
 
       return (
         <div>
@@ -1219,14 +1219,14 @@ describe('useMutation', () => {
     const onError = jest.fn()
 
     function Page() {
-      const mutation = createMutation({
+      const mutation = createMutation(() => ({
         mutationFn: async (_text: string) => {
           await sleep(10)
           throw mutateFnError
         },
         onSettled: () => Promise.reject(error),
         onError,
-      })
+      }))
 
       return (
         <div>

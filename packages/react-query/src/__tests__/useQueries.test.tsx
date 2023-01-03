@@ -244,7 +244,7 @@ describe('useQueries', () => {
           return {
             queryKey: [key, id],
             queryFn: async () => {
-              await sleep(5)
+              await sleep(10)
               return id * 5
             },
             keepPreviousData: true,

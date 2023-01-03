@@ -1,50 +1,29 @@
 import type { QueryFilters } from '@tanstack/query-core'
-
-import type { ContextOptions, SolidQueryFilters } from './types'
-import { useQueryClient } from './QueryClientProvider'
 import type { Accessor } from 'solid-js'
-import { createSignal, onCleanup, createComputed, createMemo } from 'solid-js'
-import { normalizeFilterArgs } from './utils'
+import { createMemo, createSignal, onCleanup } from 'solid-js'
+import { useQueryClient } from './QueryClientProvider'
+import type { ContextOptions } from './types'
 
-interface Options extends ContextOptions {}
+type Options = () => {
+  filters?: QueryFilters
+  options?: ContextOptions
+}
 
-export function useIsFetching(
-  filtersArgs?: SolidQueryFilters,
-  optionsArgs?: Options,
-): Accessor<number> {
-  const [filtersObj, optionsObj = {}] = normalizeFilterArgs(
-    filtersArgs,
-    optionsArgs,
-  )
-
-  const [filters, setFilters] = createSignal(filtersObj)
-  const [options, setOptions] = createSignal(optionsObj)
-
+export function useIsFetching(options: Options = () => ({})): Accessor<number> {
   const queryClient = createMemo(() =>
-    useQueryClient({ context: options().context }),
+    useQueryClient({ context: options().options?.context }),
   )
   const queryCache = createMemo(() => queryClient().getQueryCache())
 
   const [fetches, setFetches] = createSignal(
-    queryClient().isFetching(filters as QueryFilters),
+    queryClient().isFetching(options().filters),
   )
 
-  createComputed(() => {
-    const [newFiltersObj, newOptionsObj = {}] = normalizeFilterArgs(
-      filtersArgs,
-      optionsArgs,
-    )
-    setFilters(newFiltersObj)
-    setOptions(newOptionsObj)
-  })
-
   const unsubscribe = queryCache().subscribe(() => {
-    setFetches(queryClient().isFetching(filters() as QueryFilters))
+    setFetches(queryClient().isFetching(options().filters))
   })
 
-  onCleanup(() => {
-    unsubscribe()
-  })
+  onCleanup(unsubscribe)
 
   return fetches
 }
