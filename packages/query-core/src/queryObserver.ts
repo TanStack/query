@@ -187,6 +187,10 @@ export class QueryObserver<
     }
 
     this.updateQuery()
+    // This would ensure that every time when the observer options are updated
+    // that query options are also picked up correctly,
+    // even if no fetch is happening.
+    this.currentQuery.setOptions(this.options)
 
     const mounted = this.hasListeners()
 

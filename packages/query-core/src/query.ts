@@ -179,18 +179,18 @@ export class Query<
     return this.options.meta
   }
 
-  private setOptions(
+  protected optionalRemove() {
+    if (!this.observers.length && this.state.fetchStatus === 'idle') {
+      this.cache.remove(this)
+    }
+  }
+
+  setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
     this.options = { ...this.defaultOptions, ...options }
 
     this.updateCacheTime(this.options.cacheTime)
-  }
-
-  protected optionalRemove() {
-    if (!this.observers.length && this.state.fetchStatus === 'idle') {
-      this.cache.remove(this)
-    }
   }
 
   setData(
