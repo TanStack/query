@@ -117,6 +117,21 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
 
+
+### The `isDataEqual` options has been removed from useQuery
+
+Previously, This function was used to indicate whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
+
+You can achieve the same functionality by passing a function to `structuralSharing` instead:
+
+```diff
+ import { replaceEqualDeep } from '@tanstack/react-query'
+
+- isDataEqual: (oldData, newData) => customCheck(oldData, newData)
++ structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
+```
+
 ### The `useErrorBoundary` prop has been renamed to `throwErrors`
 
 To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
+

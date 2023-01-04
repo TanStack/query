@@ -338,20 +338,6 @@ describe('queryClient', () => {
       )
     })
 
-    test('should use prev data if an isDataEqual function is defined and returns "true"', () => {
-      const key = queryKey()
-
-      queryClient.setDefaultOptions({
-        queries: { isDataEqual: (_prev, data) => data === 'data' },
-      })
-      queryClient.setQueryData(key, 'prev data')
-      queryClient.setQueryData(key, 'data')
-
-      expect(queryCache.find({ queryKey: key })!.state.data).toEqual(
-        'prev data',
-      )
-    })
-
     test('should set the new data without comparison if structuralSharing is set to false', () => {
       const key = queryKey()
 
