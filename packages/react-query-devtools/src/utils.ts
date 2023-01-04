@@ -1,3 +1,4 @@
+'use client'
 import * as React from 'react'
 import type { Query } from '@tanstack/react-query'
 import SuperJSON from 'superjson'
