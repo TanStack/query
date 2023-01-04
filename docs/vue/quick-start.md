@@ -1,42 +1,41 @@
 ---
-id: overview
-title: Vue Query
+id: quick-start
+title: Quick Start
+ref: docs/react/quick-start.md
+replace: { 'React': 'Vue', 'react-query': 'vue-query' }
 ---
 
-The `vue-query` package offers a 1st-class API for using TanStack Query via Vue. However, all of the primitives you receive from these hooks are core APIs that are shared across all of the TanStack Adapters including the Query Client, query results, query subscriptions, etc.
+[//]: # 'Example'
 
-## Example
-
-This example very briefly illustrates the 3 core concepts of Vue Query:
-
-- [Queries](guides/queries)
-- [Mutations](guides/mutations)
-- [Query Invalidation](guides/query-invalidation)
+If you're looking for a fully functioning example, please have a look at our [basic codesandbox example](../examples/vue/basic)
 
 ```vue
 <script setup>
-import { useQueryClient, useQuery, useMutation } from "@tanstack/vue-query";
+import { useQueryClient, useQuery, useMutation } from '@tanstack/vue-query'
 
 // Access QueryClient instance
-const queryClient = useQueryClient();
+const queryClient = useQueryClient()
 
 // Query
-const { isLoading, isError, data, error } = useQuery({ queryKey: ['todos'], queryFn: getTodos });
+const { isLoading, isError, data, error } = useQuery({
+  queryKey: ['todos'],
+  queryFn: getTodos,
+})
 
 // Mutation
 const mutation = useMutation({
   mutationFn: postTodo,
   onSuccess: () => {
     // Invalidate and refetch
-    queryClient.invalidateQueries({ queryKey: ["todos"] });
+    queryClient.invalidateQueries({ queryKey: ['todos'] })
   },
-});
+})
 
 function onButtonClick() {
   mutation.mutate({
     id: Date.now(),
-    title: "Do Laundry",
-  });
+    title: 'Do Laundry',
+  })
 }
 </script>
 
@@ -51,4 +50,4 @@ function onButtonClick() {
 </template>
 ```
 
-These three concepts make up most of the core functionality of Vue Query. The next sections of the documentation will go over each of these core concepts in great detail.
+[//]: # 'Example'

@@ -3,7 +3,7 @@ id: infinite-queries
 title: Infinite Queries
 ---
 
-Rendering lists that can additively "load more" data onto an existing set of data or "infinite scroll" is also a very common UI pattern. React Query supports a useful version of `useQuery` called `useInfiniteQuery` for querying these types of lists.
+Rendering lists that can additively "load more" data onto an existing set of data or "infinite scroll" is also a very common UI pattern. TanStack Query supports a useful version of `useQuery` called `useInfiniteQuery` for querying these types of lists.
 
 When using `useInfiniteQuery`, you'll notice a few things are different:
 
@@ -41,13 +41,15 @@ With this information, we can create a "Load More" UI by:
 
 > Note: It's very important you do not call `fetchNextPage` with arguments unless you want them to override the `pageParam` data returned from the `getNextPageParam` function. e.g. Do not do this: `<button onClick={fetchNextPage} />` as this would send the onClick event to the `fetchNextPage` function.
 
+[//]: # 'Example'
+
 ```tsx
 import { useInfiniteQuery } from '@tanstack/react-query'
 
 function Projects() {
   const fetchProjects = async ({ pageParam = 0 }) => {
-    const res = await fetch('/api/projects?cursor=' + pageParam);
-    return res.json();
+    const res = await fetch('/api/projects?cursor=' + pageParam)
+    return res.json()
   }
 
   const {
@@ -72,7 +74,7 @@ function Projects() {
     <>
       {data.pages.map((group, i) => (
         <React.Fragment key={i}>
-          {group.projects.map(project => (
+          {group.projects.map((project) => (
             <p key={project.id}>{project.name}</p>
           ))}
         </React.Fragment>
@@ -95,6 +97,8 @@ function Projects() {
 }
 ```
 
+[//]: # 'Example'
+
 ## What happens when an infinite query needs to be refetched?
 
 When an infinite query becomes `stale` and needs to be refetched, each group is fetched `sequentially`, starting from the first one. This ensures that even if the underlying data is mutated, we're not using stale cursors and potentially getting duplicates or skipping records. If an infinite query's results are ever removed from the queryCache, the pagination restarts at the initial state with only the initial group being requested.
@@ -102,6 +106,8 @@ When an infinite query becomes `stale` and needs to be refetched, each group is 
 ### refetchPage
 
 If you only want to actively refetch a subset of all pages, you can pass the `refetchPage` function to `refetch` returned from `useInfiniteQuery`.
+
+[//]: # 'Example2'
 
 ```tsx
 const { refetch } = useInfiniteQuery({
@@ -114,6 +120,8 @@ const { refetch } = useInfiniteQuery({
 refetch({ refetchPage: (page, index) => index === 0 })
 ```
 
+[//]: # 'Example2'
+
 You can also pass this function as part of the 2nd argument (`queryFilters`) to [queryClient.refetchQueries](../reference/QueryClient#queryclientrefetchqueries), [queryClient.invalidateQueries](../reference/QueryClient#queryclientinvalidatequeries) or [queryClient.resetQueries](../reference/QueryClient#queryclientresetqueries).
 
 **Signature**
@@ -125,6 +133,8 @@ The function is executed for each page, and only pages where this function retur
 ## What if I need to pass custom information to my query function?
 
 By default, the variable returned from `getNextPageParam` will be supplied to the query function, but in some cases, you may want to override this. You can pass custom variables to the `fetchNextPage` function which will override the default variable like so:
+
+[//]: # 'Example3'
 
 ```tsx
 function Projects() {
@@ -149,9 +159,13 @@ function Projects() {
 }
 ```
 
+[//]: # 'Example3'
+
 ## What if I want to implement a bi-directional infinite list?
 
 Bi-directional lists can be implemented by using the `getPreviousPageParam`, `fetchPreviousPage`, `hasPreviousPage` and `isFetchingPreviousPage` properties and functions.
+
+[//]: # 'Example4'
 
 ```tsx
 useInfiniteQuery({
@@ -162,43 +176,58 @@ useInfiniteQuery({
 })
 ```
 
+[//]: # 'Example4'
+
 ## What if I want to show the pages in reversed order?
 
 Sometimes you may want to show the pages in reversed order. If this is case, you can use the `select` option:
+
+[//]: # 'Example5'
 
 ```tsx
 useInfiniteQuery({
   queryKey: ['projects'],
   queryFn: fetchProjects,
-  select: data => ({
+  select: (data) => ({
     pages: [...data.pages].reverse(),
     pageParams: [...data.pageParams].reverse(),
   }),
 })
 ```
 
+[//]: # 'Example5'
+
 ## What if I want to manually update the infinite query?
 
 Manually removing first page:
 
+[//]: # 'Example6'
+
 ```tsx
-queryClient.setQueryData(['projects'], data => ({
+queryClient.setQueryData(['projects'], (data) => ({
   pages: data.pages.slice(1),
   pageParams: data.pageParams.slice(1),
 }))
 ```
 
+[//]: # 'Example6'
+
 Manually removing a single value from an individual page:
 
-```tsx
-const newPagesArray = oldPagesArray?.pages.map((page) =>
-  page.filter((val) => val.id !== updatedId)
-) ?? []
+[//]: # 'Example7'
 
-queryClient.setQueryData(['projects'], data => ({
+```tsx
+const newPagesArray =
+  oldPagesArray?.pages.map((page) =>
+    page.filter((val) => val.id !== updatedId),
+  ) ?? []
+
+queryClient.setQueryData(['projects'], (data) => ({
   pages: newPagesArray,
   pageParams: data.pageParams,
 }))
 ```
+
+[//]: # 'Example7'
 
 Make sure to keep the same data structure of pages and pageParams!

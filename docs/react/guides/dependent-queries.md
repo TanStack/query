@@ -5,6 +5,8 @@ title: Dependent Queries
 
 Dependent (or serial) queries depend on previous ones to finish before they can execute. To achieve this, it's as easy as using the `enabled` option to tell a query when it is ready to run:
 
+[//]: # 'Example'
+
 ```tsx
 // Get the user
 const { data: user } = useQuery({
@@ -15,13 +17,19 @@ const { data: user } = useQuery({
 const userId = user?.id
 
 // Then get the user's projects
-const { status, fetchStatus, data: projects } = useQuery({
+const {
+  status,
+  fetchStatus,
+  data: projects,
+} = useQuery({
   queryKey: ['projects', userId],
   queryFn: getProjectsByUser,
   // The query will not execute until the userId exists
   enabled: !!userId,
 })
 ```
+
+[//]: # 'Example'
 
 The `projects` query will start in:
 

@@ -25,7 +25,7 @@ yarn add @tanstack/query-async-storage-persister @tanstack/react-query-persist-c
   - you can pass any `storage` to it that adheres to the `AsyncStorage` interface - the example below uses the async-storage from React Native
 - Wrap your app by using [`PersistQueryClientProvider`](../plugins/persistQueryClient.md#persistqueryclientprovider) component.
 
-```ts
+```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister'
@@ -70,7 +70,7 @@ createAsyncStoragePersister(options: CreateAsyncStoragePersisterOptions)
 
 ### `Options`
 
-```ts
+```tsx
 interface CreateAsyncStoragePersisterOptions {
   /** The storage client used for setting an retrieving items from cache */
   storage: AsyncStorage

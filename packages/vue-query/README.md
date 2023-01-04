@@ -46,7 +46,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 
 2. Initialize **Vue Query** via **VueQueryPlugin**
 
-   ```ts
+   ```tsx
    import { createApp } from "vue";
    import { VueQueryPlugin } from "@tanstack/vue-query";
 
@@ -57,7 +57,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 
 3. Use query
 
-   ```ts
+   ```tsx
    import { defineComponent } from "vue";
    import { useQuery } from "@tanstack/vue-query";
 
@@ -75,7 +75,7 @@ Visit https://tanstack.com/query/v4/docs/adapters/vue-query
 
 4. If you need to update options on your query dynamically, make sure to pass them as reactive variables
 
-   ```ts
+   ```tsx
    const id = ref(1);
    const enabled = ref(false);
 

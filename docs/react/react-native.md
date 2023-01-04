@@ -7,6 +7,8 @@ React Query is designed to work out of the box with React Native, with the excep
 
 There is a 3rd party [Flipper](https://fbflipper.com/docs/getting-started/react-native/) plugin which you can try: https://github.com/bgaleotti/react-query-native-devtools
 
+There is a 3rd party [Reactotron](https://github.com/infinitered/reactotron/) plugin which you can try: https://github.com/hsndmr/reactotron-react-query
+
 If you would like to help us make the built-in devtools platform agnostic, please let us know!
 
 ## Online status management
@@ -14,7 +16,7 @@ If you would like to help us make the built-in devtools platform agnostic, pleas
 React Query already supports auto refetch on reconnect in web browser.
 To add this behavior in React Native you have to use React Query `onlineManager` as in the example below:
 
-```ts
+```tsx
 import NetInfo from '@react-native-community/netinfo'
 import { onlineManager } from '@tanstack/react-query'
 
@@ -29,7 +31,7 @@ onlineManager.setEventListener(setOnline => {
 
 Instead of event listeners on `window`, React Native provides focus information through the [`AppState` module](https://reactnative.dev/docs/appstate#app-states). You can use the `AppState` "change" event to trigger an update when the app state changes to "active":
 
-```ts
+```tsx
 import { useEffect } from "react"
 import { AppState, Platform } from 'react-native'
 import type { AppStateStatus } from "react-native"
@@ -53,7 +55,7 @@ useEffect(() => {
 In some situations, you may want to refetch the query when a React Native Screen is focused again.
 This custom hook will call the provided `refetch` function when the screen is focused again.
 
-```ts
+```tsx
 import React from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 
