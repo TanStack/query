@@ -1,5 +1,5 @@
 ---
-id: migrating-to-react-query-5
+id: migrating-to-v5
 title: Migrating to TanStack Query v5
 ---
 
@@ -9,7 +9,7 @@ v5 is a major version, so there are some breaking changes to be aware of:
 
 ### Supports a single signature, one object
 
-useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options. 
+useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options.
 
 now we only support the object format.
 
@@ -120,3 +120,37 @@ Mainly because an important fix was shipped around type inference. Please see th
 ### The `useErrorBoundary` prop has been renamed to `throwErrors`
 
 To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
+
+## New Features
+
+v5 has some awesome new features:
+
+### custom store inside the queryCache
+
+You can now customize how the internal in-memory store of TanStack Query should be created (e.g. to limit its size) by passing the `experimental_createStore` method to the `QueryCache` constructor:
+
+```ts
+import { QueryCache, QueryClient } from '@tanstack/react-query'
+
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    experimental_createStore: () => {
+      return myCustomStore
+    },
+  }),
+})
+```
+
+The store has to adhere to the following interface:
+
+```ts
+interface QueryStore {
+  has: (queryKey: string) => boolean
+  set: (queryKey: string, query: Query) => void
+  get: (queryKey: string) => Query | undefined
+  delete: (queryKey: string) => void
+  values: () => IterableIterator<Query>
+}
+```
+
+This feature is inspired by the [Cache Provider feature from SWR](https://swr.vercel.app/docs/advanced/cache#cache-provider). It is marked as _experimental` because the API might change in a future minor version.
