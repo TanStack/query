@@ -121,12 +121,12 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/react-query': 'ReactQuery',
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
-        "superjson": 'SuperJson',
+        superjson: 'SuperJson',
       },
       bundleUMDGlobals: [
         '@tanstack/match-sorter-utils',
         'use-sync-external-store/shim/index.js',
-        "superjson",
+        'superjson',
       ],
     }),
     ...buildConfigs({
@@ -141,7 +141,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         '@tanstack/react-query': 'ReactQuery',
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
         'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
-        "superjson": 'SuperJson',
+        superjson: 'SuperJson',
       },
       forceDevEnv: true,
       forceBundle: true,
@@ -165,7 +165,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/solid-query',
       jsName: 'SolidQuery',
       outputFile: 'index',
-      entryFile: 'src/index.tsx',
+      entryFile: 'src/index.ts',
       globals: {
         'solid-js/store': 'SolidStore',
         'solid-js': 'Solid',

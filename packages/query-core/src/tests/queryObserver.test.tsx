@@ -377,7 +377,7 @@ describe('queryObserver', () => {
       enabled: false,
     })
     const unsubscribe = observer.subscribe(callback)
-    await queryClient.fetchQuery(key, queryFn)
+    await queryClient.fetchQuery({ queryKey: key, queryFn })
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
     expect(callback).toHaveBeenCalledTimes(2)
@@ -395,7 +395,7 @@ describe('queryObserver', () => {
       results.push(x)
     })
     observer.setOptions({ enabled: false, staleTime: 10 })
-    await queryClient.fetchQuery(key, queryFn)
+    await queryClient.fetchQuery({ queryKey: key, queryFn })
     await sleep(100)
     unsubscribe()
     expect(queryFn).toHaveBeenCalledTimes(1)
@@ -420,7 +420,7 @@ describe('queryObserver', () => {
     const unsubscribe2 = observer.subscribe((x) => {
       results2.push(x)
     })
-    await queryClient.fetchQuery(key, queryFn)
+    await queryClient.fetchQuery({ queryKey: key, queryFn })
     await sleep(50)
     unsubscribe1()
     unsubscribe2()
@@ -469,7 +469,7 @@ describe('queryObserver', () => {
     // @ts-expect-error
     expect(observer.refetchIntervalId).toBeUndefined()
     await sleep(10)
-    expect(queryClient.getQueryCache().find(key)).toBeUndefined()
+    expect(queryClient.getQueryCache().find({ queryKey: key })).toBeUndefined()
   })
 
   test('uses placeholderData as non-cache data when loading a query with no data', async () => {
@@ -772,11 +772,11 @@ describe('queryObserver', () => {
     const data1 = { value: 'data 1' }
     const data2 = { value: 'data 2' }
 
-    await queryClient.prefetchQuery(key, () => data1)
+    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => data1 })
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
     })
-    await queryClient.prefetchQuery(key, () => data2)
+    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => data2 })
 
     const spy = jest.fn()
     const unsubscribe = queryClient.getQueryCache().subscribe(spy)
@@ -791,7 +791,7 @@ describe('queryObserver', () => {
     const key = queryKey()
     const queryFn = () => 'data'
 
-    await queryClient.prefetchQuery(key, queryFn)
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
       queryFn,
@@ -800,7 +800,7 @@ describe('queryObserver', () => {
 
     const spy = jest.fn()
     const unsubscribe = observer.subscribe(spy)
-    await queryClient.refetchQueries(key)
+    await queryClient.refetchQueries({ queryKey: key })
     await sleep(10)
 
     // Force isStale to true

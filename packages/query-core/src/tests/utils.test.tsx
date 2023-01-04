@@ -2,7 +2,6 @@ import {
   replaceEqualDeep,
   partialDeepEqual,
   isPlainObject,
-  parseMutationArgs,
   matchMutation,
   scheduleMicrotask,
   sleep,
@@ -324,13 +323,6 @@ describe('core/utils', () => {
       expect(result.todos[0]?.state).not.toBe(next.todos[0]?.state)
       expect(result.todos[0]?.state.done).toBe(next.todos[0]?.state.done)
       expect(result.todos[1]).toBe(prev.todos[1])
-    })
-  })
-
-  describe('parseMutationArgs', () => {
-    it('should return mutation options', () => {
-      const options = { mutationKey: ['key'] }
-      expect(parseMutationArgs(options)).toMatchObject(options)
     })
   })
 

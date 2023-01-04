@@ -4,9 +4,9 @@ import type { ParentProps } from 'solid-js'
 import { createEffect, createSignal, onCleanup, Show } from 'solid-js'
 
 let queryKeyCount = 0
-export function queryKey(): () => Array<string> {
-  const localQueryKeyCount = queryKeyCount++
-  return () => [`query_${localQueryKeyCount}`]
+export function queryKey(): Array<string> {
+  queryKeyCount++
+  return [`query_${queryKeyCount}`]
 }
 
 export const Blink = (

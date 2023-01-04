@@ -8,6 +8,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
         }),
       )
@@ -23,6 +24,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
         }),
       )
@@ -40,6 +42,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
         }),
       )
@@ -56,6 +59,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
         }),
       )
@@ -72,6 +76,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useInfiniteQuery({
+          queryKey: ['infiniteQuery'],
           queryFn: simpleFetcher,
         }),
       )

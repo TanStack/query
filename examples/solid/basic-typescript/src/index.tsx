@@ -3,7 +3,6 @@ import {
   createQuery,
   QueryClient,
   QueryClientProvider,
-  useQueryClient,
 } from '@tanstack/solid-query'
 import type { Component, Setter } from 'solid-js'
 import { createSignal, For, Match, Switch } from 'solid-js'
@@ -24,8 +23,8 @@ type Post = {
 }
 
 function createPosts() {
-  return createQuery({
-    queryKey: () => ['posts'],
+  return createQuery(() => ({
+    queryKey: ['posts'],
     queryFn: async (): Promise<Array<Post>> => {
       const response = await fetch(
         'https://jsonplaceholder.typicode.com/posts',
@@ -35,11 +34,10 @@ function createPosts() {
       )
       return response.json()
     },
-  })
+  }))
 }
 
 function Posts(props: { setPostId: Setter<number> }) {
-  const queryClient = useQueryClient()
   const state = createPosts()
 
   return (
@@ -97,13 +95,11 @@ const getPostById = async (id: number): Promise<Post> => {
 }
 
 function createPost(postId: number) {
-  return createQuery(
-    () => ['post', postId],
-    () => getPostById(postId),
-    {
-      enabled: !!postId,
-    },
-  )
+  return createQuery(() => ({
+    queryKey: ['post', postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
+  }))
 }
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {

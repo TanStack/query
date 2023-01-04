@@ -7,6 +7,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useQuery({
+          queryKey: ['key'],
           queryFn: simpleFetcher,
         }),
       )
@@ -20,6 +21,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useQuery({
+          queryKey: ['key'],
           queryFn: simpleFetcher,
         }),
       )
@@ -36,6 +38,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useQuery({
+          queryKey: ['key'],
           queryFn: simpleFetcher,
         }),
       )
@@ -52,6 +55,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useQuery({
+          queryKey: ['key'],
           queryFn: simpleFetcher,
         }),
       )
@@ -68,6 +72,7 @@ describe('Discriminated union return type', () => {
     doNotExecute(() => {
       const query = reactive(
         useQuery({
+          queryKey: ['key'],
           queryFn: simpleFetcher,
         }),
       )

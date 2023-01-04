@@ -4,7 +4,6 @@ import {
   createQuery,
   QueryClient,
   QueryClientProvider,
-  useQueryClient,
 } from '@tanstack/solid-query'
 import type { Setter } from 'solid-js'
 import { createSignal, For, Match, Show, Switch } from 'solid-js'
@@ -53,10 +52,8 @@ function App() {
 }
 
 function Posts(props: { setPostId: Setter<number> }) {
-  const queryClient = useQueryClient()
-
   // All you have to do now is pass a key!
-  const state = createQuery<any[]>({ queryKey: () => ['/posts'] })
+  const state = createQuery<any[]>(() => ({ queryKey: ['/posts'] }))
 
   return (
     <div>
@@ -104,10 +101,10 @@ function Posts(props: { setPostId: Setter<number> }) {
 
 function Post(props: { postId: number; setPostId: Setter<number> }) {
   // You can even leave out the queryFn and just go straight into options
-  const state = createQuery<any>({
-    queryKey: () => [`/posts/${props.postId}`],
+  const state = createQuery<any>(() => ({
+    queryKey: [`/posts/${props.postId}`],
     enabled: !!props.postId,
-  })
+  }))
 
   return (
     <div>
