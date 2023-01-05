@@ -22,11 +22,11 @@ type Props = {
 };
 
 export function MovieDetailsScreen({ route }: Props) {
-  const { isLoading, error, data, refetch } = useQuery<MovieDetails, Error>(
-    ['movie', route.params.movie.title],
-    () => fetchMovie(route.params.movie.title),
-    { initialData: route.params.movie as MovieDetails }
-  );
+  const { isLoading, error, data, refetch } = useQuery<MovieDetails, Error>({
+    queryKey: ['movie', route.params.movie.title],
+    queryFn: () => fetchMovie(route.params.movie.title),
+    initialData: route.params.movie as MovieDetails,
+  });
 
   const { isRefetchingByUser, refetchByUser } = useRefreshByUser(refetch);
 

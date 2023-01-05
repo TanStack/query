@@ -11,6 +11,7 @@ import type {
   MutationObserverOptions,
   MutateFunction,
   DefinedQueryObserverResult,
+  WithRequired,
 } from '@tanstack/query-core'
 import type { QueryClient } from '@tanstack/query-core'
 
@@ -28,19 +29,19 @@ export interface UseBaseQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
-    QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
+    WithRequired<
+      QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>,
+      'queryKey'
+    > {}
 
 export interface UseQueryOptions<
   TQueryFnData = unknown,
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends UseBaseQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryFnData,
-    TQueryKey
+> extends WithRequired<
+    UseBaseQueryOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>,
+    'queryKey'
   > {}
 
 export interface UseInfiniteQueryOptions<
@@ -50,12 +51,15 @@ export interface UseInfiniteQueryOptions<
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > extends ContextOptions,
-    InfiniteQueryObserverOptions<
-      TQueryFnData,
-      TError,
-      TData,
-      TQueryData,
-      TQueryKey
+    WithRequired<
+      InfiniteQueryObserverOptions<
+        TQueryFnData,
+        TError,
+        TData,
+        TQueryData,
+        TQueryKey
+      >,
+      'queryKey'
     > {}
 
 export type UseBaseQueryResult<

@@ -16,7 +16,7 @@
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "solid": "./build/solid/index.jsx",
+      "solid": "./build/solid/index.js",
       "import": "./build/lib/index.mjs",
       "browser": "./build/lib/index.mjs",
       "require": "./build/lib/index.js",
@@ -25,7 +25,9 @@
     },
     "./package.json": "./package.json"
   },
-  "sideEffects": false,
+  "sideEffects": [
+    "./src/setBatchUpdatesFn.ts"
+  ],
   "scripts": {
     "clean": "rm -rf ./build",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",

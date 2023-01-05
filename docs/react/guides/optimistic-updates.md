@@ -9,13 +9,15 @@ To do this, `useMutation`'s `onMutate` handler option allows you to return a val
 
 ## Updating a list of todos when adding a new todo
 
+[//]: # 'Example'
+
 ```tsx
 const queryClient = useQueryClient()
 
 useMutation({
   mutationFn: updateTodo,
   // When mutate is called:
-  onMutate: async newTodo => {
+  onMutate: async (newTodo) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
     await queryClient.cancelQueries({ queryKey: ['todos'] })
@@ -24,7 +26,7 @@ useMutation({
     const previousTodos = queryClient.getQueryData(['todos'])
 
     // Optimistically update to the new value
-    queryClient.setQueryData(['todos'], old => [...old, newTodo])
+    queryClient.setQueryData(['todos'], (old) => [...old, newTodo])
 
     // Return a context object with the snapshotted value
     return { previousTodos }
@@ -41,13 +43,17 @@ useMutation({
 })
 ```
 
+[//]: # 'Example'
+
 ## Updating a single todo
+
+[//]: # 'Example2'
 
 ```tsx
 useMutation({
   mutationFn: updateTodo,
   // When mutate is called:
-  onMutate: async newTodo => {
+  onMutate: async (newTodo) => {
     // Cancel any outgoing refetches
     // (so they don't overwrite our optimistic update)
     await queryClient.cancelQueries({ queryKey: ['todos', newTodo.id] })
@@ -65,17 +71,21 @@ useMutation({
   onError: (err, newTodo, context) => {
     queryClient.setQueryData(
       ['todos', context.newTodo.id],
-      context.previousTodo
+      context.previousTodo,
     )
   },
   // Always refetch after error or success:
-  onSettled: newTodo => {
+  onSettled: (newTodo) => {
     queryClient.invalidateQueries({ queryKey: ['todos', newTodo.id] })
   },
 })
 ```
 
+[//]: # 'Example2'
+
 You can also use the `onSettled` function in place of the separate `onError` and `onSuccess` handlers if you wish:
+
+[//]: # 'Example3'
 
 ```tsx
 useMutation({
@@ -88,3 +98,5 @@ useMutation({
   },
 })
 ```
+
+[//]: # 'Example3'

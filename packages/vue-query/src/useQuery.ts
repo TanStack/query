@@ -1,10 +1,10 @@
-import type { ToRefs, UnwrapRef } from 'vue-demi'
+import type { ToRefs } from 'vue-demi'
 import { QueryObserver } from '@tanstack/query-core'
 import type {
-  QueryFunction,
   QueryKey,
   QueryObserverResult,
   DefinedQueryObserverResult,
+  WithRequired,
 } from '@tanstack/query-core'
 import { useBaseQuery } from './useBaseQuery'
 import type { UseQueryReturnType as UQRT } from './useBaseQuery'
@@ -34,20 +34,44 @@ export type UseQueryOptions<
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> = WithQueryClientKey<
-  VueQueryObserverOptions<TQueryFnData, TError, TData, TQueryFnData, TQueryKey>
+> = WithRequired<
+  WithQueryClientKey<
+    VueQueryObserverOptions<
+      TQueryFnData,
+      TError,
+      TData,
+      TQueryFnData,
+      TQueryKey
+    >
+  >,
+  'queryKey'
 >
 
+type UndefinedInitialDataOptions<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData?: undefined
+}
+
+type DefinedInitialDataOptions<
+  TQueryFnData = unknown,
+  TError = Error,
+  TData = TQueryFnData,
+  TQueryKey extends QueryKey = QueryKey,
+> = UseQueryOptions<TQueryFnData, TError, TData, TQueryKey> & {
+  initialData: TQueryFnData | (() => TQueryFnData)
+}
+
 export function useQuery<
   TQueryFnData = unknown,
   TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData?: () => undefined },
+  options: UndefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseQueryReturnType<TData, TError>
 
 export function useQuery<
@@ -56,101 +80,8 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
+  options: DefinedInitialDataOptions<TQueryFnData, TError, TData, TQueryKey>,
 ): UseQueryDefinedReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-): UseQueryReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'initialData'
-  > & { initialData?: () => undefined },
-): UseQueryReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): UseQueryDefinedReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey'
-  >,
-): UseQueryReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData?: () => undefined },
-): UseQueryReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn' | 'initialData'
-  > & { initialData: TQueryFnData | (() => TQueryFnData) },
-): UseQueryDefinedReturnType<TData, TError>
-
-export function useQuery<
-  TQueryFnData = unknown,
-  TError = Error,
-  TData = TQueryFnData,
-  TQueryKey extends QueryKey = QueryKey,
->(
-  queryKey: TQueryKey,
-  queryFn: QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>,
-  options?: Omit<
-    UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-    'queryKey' | 'queryFn'
-  >,
-): UseQueryReturnType<TData, TError>
 
 export function useQuery<
   TQueryFnData,
@@ -158,15 +89,11 @@ export function useQuery<
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  arg1: TQueryKey | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg2?:
-    | QueryFunction<TQueryFnData, UnwrapRef<TQueryKey>>
-    | UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
-  arg3?: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
+  options: UseQueryOptions<TQueryFnData, TError, TData, TQueryKey>,
 ):
   | UseQueryReturnType<TData, TError>
   | UseQueryDefinedReturnType<TData, TError> {
-  const result = useBaseQuery(QueryObserver, arg1, arg2, arg3)
+  const result = useBaseQuery(QueryObserver, options)
 
   return {
     ...result,

@@ -21,7 +21,7 @@ npm install @testing-library/react-hooks react-test-renderer --save-dev
 
 Once installed, a simple test can be written. Given the following custom hook:
 
-```ts
+```tsx
 export function useCustomHook() {
   return useQuery({ queryKey: ['customHook'], queryFn: () => 'Hello' });
 }
@@ -87,7 +87,7 @@ This will set the defaults for all queries in the component tree to "no retries"
 When testing we want to suppress network errors being logged to the console.
 To do this, we can pass a custom logger to `QueryClient`:
 
-```ts
+```tsx
 import { QueryClient } from '@tanstack/react-query'
 
 const queryClient = new QueryClient({
@@ -112,7 +112,7 @@ There are plenty of ways that these can be tested, but for this example we are g
 
 Given the following custom hook:
 
-```ts
+```tsx
 function useFetchData() {
   return useQuery({
     queryKey: ['fetchData'],
@@ -152,7 +152,7 @@ Here we are making use of `waitFor` and waiting until the query status indicates
 
 First we need to mock our API response
 
-```ts
+```tsx
 function generateMockedResponse(page) {
   return {
     page: page,
@@ -164,7 +164,7 @@ function generateMockedResponse(page) {
 Then, our `nock` configuration needs to differentiate responses based on the page, and we'll be using `uri` to do this.
 `uri`'s value here will be something like `"/?page=1` or `/?page=2`
 
-```ts
+```tsx
 const expectation = nock('http://example.com')
   .persist()
   .query(true)
@@ -180,7 +180,7 @@ const expectation = nock('http://example.com')
 
 Now we can safely run our tests, the trick here is to await for the data assertion to pass:
 
-```ts
+```tsx
 const { result, waitFor } = renderHook(
   () => useInfiniteQueryCustomHook(),
   { wrapper },

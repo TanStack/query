@@ -91,6 +91,8 @@ hydrate(queryClient, dehydratedState, options)
 
 If the queries included in dehydration already exist in the queryCache, `hydrate` does not overwrite them and they will be **silently** discarded.
 
+[//]: # 'useHydrate'
+
 ## `useHydrate`
 
 `useHydrate` adds a previously dehydrated state into the `queryClient` that would be returned by `useQueryClient()`. If the client already contains data, the new queries will be intelligently merged based on update timestamp.
@@ -112,6 +114,9 @@ useHydrate(dehydratedState, options)
     - The default query options to use for the hydrated queries.
   - `context?: React.Context<QueryClient | undefined>`
     - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+
+[//]: # 'useHydrate'
+[//]: # 'Hydrate'
 
 ## `Hydrate`
 
@@ -135,3 +140,5 @@ function App() {
     - The default query options to use for the hydrated queries.
   - `context?: React.Context<QueryClient | undefined>`
     - Use this to use a custom React Query context. Otherwise, `defaultContext` will be used.
+
+[//]: # 'Hydrate'

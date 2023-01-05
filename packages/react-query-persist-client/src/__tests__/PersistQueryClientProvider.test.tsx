@@ -57,7 +57,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -66,9 +69,12 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
       })
 
       states.push(state)
@@ -126,7 +132,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -202,7 +211,10 @@ describe('PersistQueryClientProvider', () => {
     const states: DefinedUseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -211,19 +223,18 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(
-        key,
-        async () => {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           return 'fetched'
         },
-        {
-          initialData: 'initial',
-          // make sure that initial data is older than the hydration data
-          // otherwise initialData would be newer and takes precedence
-          initialDataUpdatedAt: 1,
-        },
-      )
+
+        initialData: 'initial',
+        // make sure that initial data is older than the hydration data
+        // otherwise initialData would be newer and takes precedence
+        initialDataUpdatedAt: 1,
+      })
 
       states.push(state)
 
@@ -280,7 +291,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult<string>[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -289,16 +303,15 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(
-        key,
-        async () => {
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(10)
           return 'fetched'
         },
-        {
-          staleTime: Infinity,
-        },
-      )
+
+        staleTime: Infinity,
+      })
 
       states.push(state)
 
@@ -341,7 +354,10 @@ describe('PersistQueryClientProvider', () => {
     const key = queryKey()
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -350,9 +366,12 @@ describe('PersistQueryClientProvider', () => {
     queryClient.clear()
 
     function Page() {
-      const state = useQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
       })
 
       return (
@@ -392,9 +411,12 @@ describe('PersistQueryClientProvider', () => {
     const [error, persister] = createMockErrorPersister(removeClient)
 
     function Page() {
-      const state = useQuery(key, async () => {
-        await sleep(10)
-        return 'fetched'
+      const state = useQuery({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'fetched'
+        },
       })
 
       return (
@@ -425,7 +447,10 @@ describe('PersistQueryClientProvider', () => {
     const states: UseQueryResult[] = []
 
     const queryClient = createQueryClient()
-    await queryClient.prefetchQuery(key, () => Promise.resolve('hydrated'))
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.resolve('hydrated'),
+    })
 
     const persister = createMockPersister()
 
@@ -480,7 +505,7 @@ describe('PersistQueryClientProvider', () => {
     }
 
     function Page() {
-      const state = useQuery(key)
+      const state = useQuery({ queryKey: key })
 
       states.push(state)
 

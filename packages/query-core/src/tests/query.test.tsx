@@ -30,16 +30,22 @@ describe('query', () => {
 
   test('should use the longest cache time it has seen', async () => {
     const key = queryKey()
-    await queryClient.prefetchQuery(key, () => 'data', {
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
       cacheTime: 100,
     })
-    await queryClient.prefetchQuery(key, () => 'data', {
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
       cacheTime: 200,
     })
-    await queryClient.prefetchQuery(key, () => 'data', {
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
       cacheTime: 10,
     })
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
     expect(query.cacheTime).toBe(200)
   })
 
@@ -52,9 +58,9 @@ describe('query', () => {
     let count = 0
     let result
 
-    const promise = queryClient.fetchQuery(
-      key,
-      async () => {
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: async () => {
         count++
 
         if (count === 3) {
@@ -63,11 +69,9 @@ describe('query', () => {
 
         throw new Error(`error${count}`)
       },
-      {
-        retry: 3,
-        retryDelay: 1,
-      },
-    )
+      retry: 3,
+      retryDelay: 1,
+    })
 
     promise.then((data) => {
       result = data
@@ -100,9 +104,9 @@ describe('query', () => {
     let count = 0
     let result
 
-    const promise = queryClient.fetchQuery(
-      key,
-      async () => {
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: async () => {
         count++
 
         if (count === 3) {
@@ -111,11 +115,9 @@ describe('query', () => {
 
         throw new Error(`error${count}`)
       },
-      {
-        retry: 3,
-        retryDelay: 1,
-      },
-    )
+      retry: 3,
+      retryDelay: 1,
+    })
 
     promise.then((data) => {
       result = data
@@ -148,23 +150,21 @@ describe('query', () => {
     let count = 0
     let result
 
-    const promise = queryClient.fetchQuery(
-      key,
-      async (): Promise<unknown> => {
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn: async (): Promise<unknown> => {
         count++
         throw new Error(`error${count}`)
       },
-      {
-        retry: 3,
-        retryDelay: 1,
-      },
-    )
+      retry: 3,
+      retryDelay: 1,
+    })
 
     promise.catch((data) => {
       result = data
     })
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     // Check if the query is really paused
     await sleep(50)
@@ -195,7 +195,7 @@ describe('query', () => {
       >()
       .mockResolvedValue('data')
 
-    queryClient.prefetchQuery(key, queryFn)
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
 
     await sleep(10)
 
@@ -210,9 +210,12 @@ describe('query', () => {
   test('should continue if cancellation is not supported and signal is not consumed', async () => {
     const key = queryKey()
 
-    queryClient.prefetchQuery(key, async () => {
-      await sleep(100)
-      return 'data'
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
+        await sleep(100)
+        return 'data'
+      },
     })
 
     await sleep(10)
@@ -227,7 +230,7 @@ describe('query', () => {
 
     await sleep(100)
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     expect(query.state).toMatchObject({
       data: 'data',
@@ -239,9 +242,12 @@ describe('query', () => {
   test('should not continue when last observer unsubscribed if the signal was consumed', async () => {
     const key = queryKey()
 
-    queryClient.prefetchQuery(key, async ({ signal }) => {
-      await sleep(100)
-      return signal?.aborted ? 'aborted' : 'data'
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async ({ signal }) => {
+        await sleep(100)
+        return signal?.aborted ? 'aborted' : 'data'
+      },
     })
 
     await sleep(10)
@@ -256,7 +262,7 @@ describe('query', () => {
 
     await sleep(100)
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     expect(query.state).toMatchObject({
       data: undefined,
@@ -289,7 +295,9 @@ describe('query', () => {
       throw new Error()
     })
 
-    const promise = queryClient.fetchQuery(key, queryFn, {
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
       retry: 3,
       retryDelay: 10,
     })
@@ -298,7 +306,7 @@ describe('query', () => {
       error = e
     })
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     expect(queryFn).toHaveBeenCalledTimes(1)
 
@@ -329,7 +337,9 @@ describe('query', () => {
 
     let error
 
-    const promise = queryClient.fetchQuery(key, queryFn, {
+    const promise = queryClient.fetchQuery({
+      queryKey: key,
+      queryFn,
       retry: 3,
       retryDelay: 10,
     })
@@ -338,7 +348,7 @@ describe('query', () => {
       error = e
     })
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
     query.cancel()
 
     await sleep(100)
@@ -357,13 +367,10 @@ describe('query', () => {
       throw new Error()
     })
 
-    queryClient.fetchQuery(key, queryFn, {
-      retry: 3,
-      retryDelay: 10,
-    })
+    queryClient.fetchQuery({ queryKey: key, queryFn, retry: 3, retryDelay: 10 })
 
     // Ensure the query is loading
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
     expect(query.state.status).toBe('loading')
 
     // Reset the query while it is loading
@@ -387,8 +394,8 @@ describe('query', () => {
       return 'data'
     })
 
-    queryClient.prefetchQuery(key, queryFn)
-    const query = queryCache.find(key)!
+    queryClient.prefetchQuery({ queryKey: key, queryFn })
+    const query = queryCache.find({ queryKey: key })!
     await sleep(10)
     query.cancel()
     await sleep(100)
@@ -403,8 +410,11 @@ describe('query', () => {
 
   test('cancelling a resolved query should not have any effect', async () => {
     const key = queryKey()
-    await queryClient.prefetchQuery(key, async () => 'data')
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => 'data',
+    })
+    const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await sleep(10)
     expect(query.state.data).toBe('data')
@@ -413,10 +423,13 @@ describe('query', () => {
   test('cancelling a rejected query should not have any effect', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, async (): Promise<unknown> => {
-      throw new Error('error')
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async (): Promise<unknown> => {
+        throw new Error('error')
+      },
     })
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await sleep(10)
 
@@ -427,27 +440,25 @@ describe('query', () => {
   test('the previous query status should be kept when refetching', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, () => 'data')
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    const query = queryCache.find({ queryKey: key })!
     expect(query.state.status).toBe('success')
 
-    await queryClient.prefetchQuery(
-      key,
-      () => Promise.reject<string>('reject'),
-      {
-        retry: false,
-      },
-    )
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => Promise.reject<string>('reject'),
+      retry: false,
+    })
     expect(query.state.status).toBe('error')
 
-    queryClient.prefetchQuery(
-      key,
-      async () => {
+    queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: async () => {
         await sleep(10)
         return Promise.reject<unknown>('reject')
       },
-      { retry: false },
-    )
+      retry: false,
+    })
     expect(query.state.status).toBe('error')
 
     await sleep(100)
@@ -468,11 +479,15 @@ describe('query', () => {
     })
     const unsubscribe1 = observer.subscribe(() => undefined)
     unsubscribe1()
-    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
+    await waitFor(() =>
+      expect(queryCache.find({ queryKey: key })).toBeUndefined(),
+    )
     const unsubscribe2 = observer.subscribe(() => undefined)
     unsubscribe2()
 
-    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
+    await waitFor(() =>
+      expect(queryCache.find({ queryKey: key })).toBeUndefined(),
+    )
     expect(count).toBe(1)
   })
 
@@ -483,11 +498,13 @@ describe('query', () => {
       queryFn: async () => 'data',
       cacheTime: 0,
     })
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     const unsubscribe = observer.subscribe(() => undefined)
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     unsubscribe()
-    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
+    await waitFor(() =>
+      expect(queryCache.find({ queryKey: key })).toBeUndefined(),
+    )
   })
 
   test('should be garbage collected later when unsubscribed and query is fetching', async () => {
@@ -502,15 +519,17 @@ describe('query', () => {
     })
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(20)
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     observer.refetch()
     unsubscribe()
     await sleep(10)
     // unsubscribe should not remove even though cacheTime has elapsed b/c query is still fetching
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     await sleep(10)
     // should be removed after an additional staleTime wait
-    await waitFor(() => expect(queryCache.find(key)).toBeUndefined())
+    await waitFor(() =>
+      expect(queryCache.find({ queryKey: key })).toBeUndefined(),
+    )
   })
 
   test('should not be garbage collected unless there are no subscribers', async () => {
@@ -520,16 +539,16 @@ describe('query', () => {
       queryFn: async () => 'data',
       cacheTime: 0,
     })
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     const unsubscribe = observer.subscribe(() => undefined)
     await sleep(100)
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
     unsubscribe()
     await sleep(100)
-    expect(queryCache.find(key)).toBeUndefined()
+    expect(queryCache.find({ queryKey: key })).toBeUndefined()
     queryClient.setQueryData(key, 'data')
     await sleep(100)
-    expect(queryCache.find(key)).toBeDefined()
+    expect(queryCache.find({ queryKey: key })).toBeDefined()
   })
 
   test('should return proper count of observers', async () => {
@@ -538,7 +557,7 @@ describe('query', () => {
     const observer = new QueryObserver(queryClient, options)
     const observer2 = new QueryObserver(queryClient, options)
     const observer3 = new QueryObserver(queryClient, options)
-    const query = queryCache.find(key)
+    const query = queryCache.find({ queryKey: key })
 
     expect(query?.getObserversCount()).toEqual(0)
 
@@ -564,11 +583,13 @@ describe('query', () => {
 
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, () => 'data', {
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: () => 'data',
       meta,
     })
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     expect(query.meta).toBe(meta)
     expect(query.options.meta).toBe(meta)
@@ -582,15 +603,11 @@ describe('query', () => {
     const key = queryKey()
     const queryFn = () => 'data'
 
-    await queryClient.prefetchQuery(key, queryFn, {
-      meta,
-    })
+    await queryClient.prefetchQuery({ queryKey: key, queryFn, meta })
 
-    await queryClient.prefetchQuery(key, queryFn, {
-      meta: undefined,
-    })
+    await queryClient.prefetchQuery({ queryKey: key, queryFn, meta: undefined })
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     expect(query.meta).toBeUndefined()
     expect(query.options.meta).toBeUndefined()
@@ -606,9 +623,9 @@ describe('query', () => {
 
     queryClient.setQueryDefaults(key, { meta })
 
-    await queryClient.prefetchQuery(key, queryFn)
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
 
-    const query = queryCache.find(key)!
+    const query = queryCache.find({ queryKey: key })!
 
     expect(query.meta).toBe(meta)
   })
@@ -622,9 +639,7 @@ describe('query', () => {
 
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, queryFn, {
-      meta,
-    })
+    await queryClient.prefetchQuery({ queryKey: key, queryFn, meta })
 
     expect(queryFn).toBeCalledWith(
       expect.objectContaining({
@@ -655,8 +670,8 @@ describe('query', () => {
   test('should not add an existing observer', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, () => 'data')
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    const query = queryCache.find({ queryKey: key })!
     expect(query.getObserversCount()).toEqual(0)
 
     const observer = new QueryObserver(queryClient, {
@@ -674,8 +689,8 @@ describe('query', () => {
   test('should not try to remove an observer that does not exist', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, () => 'data')
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    const query = queryCache.find({ queryKey: key })!
     const observer = new QueryObserver(queryClient, {
       queryKey: key,
     })
@@ -691,8 +706,8 @@ describe('query', () => {
   test('should not dispatch "invalidate" on invalidate() if already invalidated', async () => {
     const key = queryKey()
 
-    await queryClient.prefetchQuery(key, () => 'data')
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({ queryKey: key, queryFn: () => 'data' })
+    const query = queryCache.find({ queryKey: key })!
 
     query.invalidate()
     expect(query.state.isInvalidated).toBeTruthy()
@@ -717,8 +732,8 @@ describe('query', () => {
       return 'data'
     }
 
-    await queryClient.prefetchQuery(key, queryFn)
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    const query = queryCache.find({ queryKey: key })!
 
     const meta = { meta1: '1' }
 
@@ -772,9 +787,12 @@ describe('query', () => {
     globalThis['AbortController'] = undefined
 
     let signalTest: any
-    await queryClient.prefetchQuery(key, ({ signal }) => {
-      signalTest = signal
-      return 'data'
+    await queryClient.prefetchQuery({
+      queryKey: key,
+      queryFn: ({ signal }) => {
+        signalTest = signal
+        return 'data'
+      },
     })
 
     expect(signalTest).toBeUndefined()
@@ -836,8 +854,8 @@ describe('query', () => {
       return 'data'
     }
 
-    await queryClient.prefetchQuery(key, queryFn)
-    const query = queryCache.find(key)!
+    await queryClient.prefetchQuery({ queryKey: key, queryFn })
+    const query = queryCache.find({ queryKey: key })!
 
     query.fetch({
       queryKey: key,

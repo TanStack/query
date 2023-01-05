@@ -15,7 +15,7 @@ This utility comes as a separate package and is available under the `'@tanstack/
 
 Import the `broadcastQueryClient` function, and pass it your `QueryClient` instance, and optionally, set a `broadcastChannel`.
 
-```ts
+```tsx
 import { broadcastQueryClient } from '@tanstack/query-broadcast-client-experimental'
 
 const queryClient = new QueryClient()
@@ -32,7 +32,7 @@ broadcastQueryClient({
 
 Pass this function a `QueryClient` instance and optionally, a `broadcastChannel`.
 
-```ts
+```tsx
 broadcastQueryClient({ queryClient, broadcastChannel })
 ```
 
@@ -40,7 +40,7 @@ broadcastQueryClient({ queryClient, broadcastChannel })
 
 An object of options:
 
-```ts
+```tsx
 interface broadcastQueryClient {
   /** The QueryClient to sync */
   queryClient: QueryClient
@@ -52,7 +52,7 @@ interface broadcastQueryClient {
 
 The default options are:
 
-```ts
+```tsx
 {
   broadcastChannel = 'react-query',
 }

@@ -244,7 +244,7 @@ describe('useQueries', () => {
           return {
             queryKey: [key, id],
             queryFn: async () => {
-              await sleep(5)
+              await sleep(10)
               return id * 5
             },
             keepPreviousData: true,
@@ -1103,7 +1103,7 @@ describe('useQueries', () => {
     })
   })
 
-  it("should throw error if in one of queries' queryFn throws and useErrorBoundary is in use", async () => {
+  it("should throw error if in one of queries' queryFn throws and throwErrors is in use", async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -1117,14 +1117,14 @@ describe('useQueries', () => {
             queryFn: () =>
               Promise.reject(
                 new Error(
-                  'this should not throw because useErrorBoundary is not set',
+                  'this should not throw because throwErrors is not set',
                 ),
               ),
           },
           {
             queryKey: key2,
             queryFn: () => Promise.reject(new Error('single query error')),
-            useErrorBoundary: true,
+            throwErrors: true,
             retry: false,
           },
           {
@@ -1137,7 +1137,7 @@ describe('useQueries', () => {
               Promise.reject(
                 new Error('this should not throw because query#2 already did'),
               ),
-            useErrorBoundary: true,
+            throwErrors: true,
             retry: false,
           },
         ],
@@ -1164,7 +1164,7 @@ describe('useQueries', () => {
     await waitFor(() => rendered.getByText('single query error'))
   })
 
-  it("should throw error if in one of queries' queryFn throws and useErrorBoundary function resolves to true", async () => {
+  it("should throw error if in one of queries' queryFn throws and throwErrors function resolves to true", async () => {
     const key1 = queryKey()
     const key2 = queryKey()
     const key3 = queryKey()
@@ -1178,10 +1178,10 @@ describe('useQueries', () => {
             queryFn: () =>
               Promise.reject(
                 new Error(
-                  'this should not throw because useErrorBoundary function resolves to false',
+                  'this should not throw because throwErrors function resolves to false',
                 ),
               ),
-            useErrorBoundary: () => false,
+            throwErrors: () => false,
             retry: false,
           },
           {
@@ -1191,7 +1191,7 @@ describe('useQueries', () => {
           {
             queryKey: key3,
             queryFn: () => Promise.reject(new Error('single query error')),
-            useErrorBoundary: () => true,
+            throwErrors: () => true,
             retry: false,
           },
           {
@@ -1200,7 +1200,7 @@ describe('useQueries', () => {
               Promise.reject(
                 new Error('this should not throw because query#3 already did'),
               ),
-            useErrorBoundary: true,
+            throwErrors: true,
             retry: false,
           },
         ],
