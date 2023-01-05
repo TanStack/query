@@ -1,12 +1,17 @@
 import type { App, ComponentOptions } from 'vue'
-import { isVue2, isVue3 } from 'vue-demi'
+import { isVue2, isVue3, ref } from 'vue-demi'
 
-import type { QueryClient } from '../queryClient'
+import { QueryClient } from '../queryClient'
 import { VueQueryPlugin } from '../vueQueryPlugin'
 import { VUE_QUERY_CLIENT } from '../utils'
 import { setupDevtools } from '../devtools/devtools'
+import { flushPromises } from './test-utils'
+import { useQuery } from '../useQuery'
+import { useQueries } from '../useQueries'
 
 jest.mock('../devtools/devtools')
+jest.mock('../useQueryClient')
+jest.mock('../useBaseQuery')
 
 interface TestApp extends App {
   onUnmount: Function
@@ -256,6 +261,124 @@ describe('VueQueryPlugin', () => {
       VueQueryPlugin.install(appMock, { contextSharing: true })
 
       expect(customClient.mount).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('when persister is provided', () => {
+    test('should properly modify isRestoring flag on queryClient', async () => {
+      const appMock = getAppMock()
+      const customClient = {
+        mount: jest.fn(),
+        isRestoring: ref(false),
+      } as unknown as QueryClient
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: () => [
+          jest.fn(),
+          new Promise((resolve) => {
+            resolve()
+          }),
+        ],
+      })
+
+      expect(customClient.isRestoring.value).toBeTruthy()
+
+      await flushPromises()
+
+      expect(customClient.isRestoring.value).toBeFalsy()
+    })
+
+    test('should delay useQuery subscription and not call fetcher if data is not stale', async () => {
+      const appMock = getAppMock()
+      const customClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 60,
+          },
+        },
+      })
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: (client) => [
+          jest.fn(),
+          new Promise((resolve) => {
+            setTimeout(() => {
+              client.setQueryData(['persist'], () => ({
+                foo: 'bar',
+              }))
+              resolve()
+            }, 0)
+          }),
+        ],
+      })
+
+      const fnSpy = jest.fn()
+
+      const query = useQuery(['persist'], fnSpy, {
+        queryClient: customClient,
+      })
+
+      expect(customClient.isRestoring.value).toBeTruthy()
+      expect(query.isFetching.value).toBeFalsy()
+      expect(query.data.value).toStrictEqual(undefined)
+      expect(fnSpy).toHaveBeenCalledTimes(0)
+
+      await flushPromises()
+
+      expect(customClient.isRestoring.value).toBeFalsy()
+      expect(query.data.value).toStrictEqual({ foo: 'bar' })
+      expect(fnSpy).toHaveBeenCalledTimes(0)
+    })
+
+    test('should delay useQueries subscription and not call fetcher if data is not stale', async () => {
+      const appMock = getAppMock()
+      const customClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 1000 * 60 * 60,
+          },
+        },
+      })
+
+      VueQueryPlugin.install(appMock, {
+        queryClient: customClient,
+        clientPersister: (client) => [
+          jest.fn(),
+          new Promise((resolve) => {
+            setTimeout(() => {
+              client.setQueryData(['persist'], () => ({
+                foo: 'bar',
+              }))
+              resolve()
+            }, 0)
+          }),
+        ],
+      })
+
+      const fnSpy = jest.fn()
+
+      const queries = useQueries({
+        queries: [
+          {
+            queryKey: ['persist'],
+            queryFn: fnSpy,
+            queryClient: customClient,
+          },
+        ],
+      })
+
+      expect(customClient.isRestoring.value).toBeTruthy()
+      expect(queries[0].isFetching).toBeFalsy()
+      expect(queries[0].data).toStrictEqual(undefined)
+      expect(fnSpy).toHaveBeenCalledTimes(0)
+
+      await flushPromises()
+
+      expect(customClient.isRestoring.value).toBeFalsy()
+      expect(queries[0].data).toStrictEqual({ foo: 'bar' })
+      expect(fnSpy).toHaveBeenCalledTimes(0)
     })
   })
 })

@@ -26,7 +26,7 @@ async function fetchTodos(): Promise<Todos> {
 }
 
 function useTodos() {
-  return useQuery(['todos'], fetchTodos)
+  return useQuery({ queryKey: ['todos'], queryFn: fetchTodos })
 }
 
 function Example() {
@@ -34,45 +34,43 @@ function Example() {
   const [text, setText] = React.useState('')
   const { isFetching, ...queryInfo } = useTodos()
 
-  const addTodoMutation = useMutation(
-    (newTodo) => axios.post('/api/data', { text: newTodo }),
-    {
-      // When mutate is called:
-      onMutate: async (newTodo: string) => {
-        setText('')
-        // Cancel any outgoing refetches
-        // (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries(['todos'])
+  const addTodoMutation = useMutation({
+    mutationFn: (newTodo) => axios.post('/api/data', { text: newTodo }),
+    // When mutate is called:
+    onMutate: async (newTodo: string) => {
+      setText('')
+      // Cancel any outgoing refetches
+      // (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ['todos'] })
 
-        // Snapshot the previous value
-        const previousTodos = queryClient.getQueryData<Todos>(['todos'])
+      // Snapshot the previous value
+      const previousTodos = queryClient.getQueryData<Todos>(['todos'])
 
-        // Optimistically update to the new value
-        if (previousTodos) {
-          queryClient.setQueryData<Todos>(['todos'], {
-            ...previousTodos,
-            items: [
-              ...previousTodos.items,
-              { id: Math.random().toString(), text: newTodo },
-            ],
-          })
-        }
+      // Optimistically update to the new value
+      if (previousTodos) {
+        queryClient.setQueryData<Todos>(['todos'], {
+          ...previousTodos,
+          items: [
+            ...previousTodos.items,
+            { id: Math.random().toString(), text: newTodo },
+          ],
+        })
+      }
 
-        return { previousTodos }
-      },
-      // If the mutation fails,
-      // use the context returned from onMutate to roll back
-      onError: (err, variables, context) => {
-        if (context?.previousTodos) {
-          queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
-        }
-      },
-      // Always refetch after error or success:
-      onSettled: () => {
-        queryClient.invalidateQueries(['todos'])
-      },
+      return { previousTodos }
     },
-  )
+    // If the mutation fails,
+    // use the context returned from onMutate to roll back
+    onError: (err, variables, context) => {
+      if (context?.previousTodos) {
+        queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
+      }
+    },
+    // Always refetch after error or success:
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['todos'] })
+    },
+  })
 
   return (
     <div>

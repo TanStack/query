@@ -40,23 +40,26 @@ function App() {
 }
 
 function usePosts() {
-  return useQuery(["posts"], async () => {
-    const {
-      posts: { data },
-    } = await request(
-      endpoint,
-      gql`
-        query {
-          posts {
-            data {
-              id
-              title
+  return useQuery({
+    queryKey: ["posts"],
+    queryFn: async () => {
+      const {
+        posts: { data },
+      } = await request(
+        endpoint,
+        gql`
+          query {
+            posts {
+              data {
+                id
+                title
+              }
             }
           }
-        }
-      `
-    );
-    return data;
+        `
+      );
+      return data;
+    },
   });
 }
 

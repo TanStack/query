@@ -30,7 +30,7 @@ export const loader =
 
 export const action = (queryClient) => async () => {
   const contact = await createContact();
-  queryClient.invalidateQueries(["contacts", "list"]);
+  queryClient.invalidateQueries({ queryKey: ["contacts", "list"] });
   return contact;
 };
 

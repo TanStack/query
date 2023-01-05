@@ -193,6 +193,7 @@ export function hasNextPage(
       nextPageParam !== false
     )
   }
+  return
 }
 
 /**
@@ -211,4 +212,5 @@ export function hasPreviousPage(
       previousPageParam !== false
     )
   }
+  return
 }

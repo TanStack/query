@@ -1,32 +1,32 @@
 <script lang="ts">
-import { defineComponent } from "vue";
-import { useQuery } from "@tanstack/vue-query";
+import { defineComponent } from 'vue'
+import { useQuery } from '@tanstack/vue-query'
 
-import type { Post } from "./types";
+import type { Post } from './types'
 
 const fetcher = async (): Promise<Post[]> =>
-  await fetch("https://jsonplaceholder.typicode.com/posts").then((response) =>
-    response.json()
-  );
+  await fetch('https://jsonplaceholder.typicode.com/posts').then((response) =>
+    response.json(),
+  )
 
 export default defineComponent({
-  name: "PostsList",
+  name: 'PostsList',
   props: {
     isVisited: {
       type: Function,
       required: true,
     },
   },
-  emits: ["setPostId"],
+  emits: ['setPostId'],
   setup() {
-    const { isLoading, isError, isFetching, data, error, refetch } = useQuery(
-      ["posts"],
-      fetcher
-    );
+    const { isLoading, isError, isFetching, data, error, refetch } = useQuery({
+      queryKey: ['posts'],
+      queryFn: fetcher,
+    })
 
-    return { isLoading, isError, isFetching, data, error, refetch };
+    return { isLoading, isError, isFetching, data, error, refetch }
   },
-});
+})
 </script>
 
 <template>

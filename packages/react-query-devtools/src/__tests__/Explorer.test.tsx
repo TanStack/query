@@ -1,7 +1,7 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { fireEvent, render, screen, act } from '@testing-library/react'
 import * as React from 'react'
 
-import { chunkArray, DefaultRenderer } from '../Explorer'
+import { chunkArray, CopyButton, DefaultRenderer } from '../Explorer'
 import { displayValue } from '../utils'
 
 describe('Explorer', () => {
@@ -38,6 +38,7 @@ describe('Explorer', () => {
           toggleExpanded={toggleExpanded}
           pageSize={10}
           expanded={false}
+          copyable={false}
           subEntryPages={[[{ label: 'A lovely label' }]]}
           handleEntry={() => <></>}
           value={undefined}
@@ -53,6 +54,69 @@ describe('Explorer', () => {
       fireEvent.click(expandButton)
 
       expect(toggleExpanded).toHaveBeenCalledTimes(1)
+    })
+
+    it('when the copy button is clicked, update the clipboard value', async () => {
+      // Mock clipboard
+      let clipBoardContent = null
+      const value = 'someValue'
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: async () => {
+            return new Promise(() => (clipBoardContent = value))
+          },
+        },
+        configurable: true,
+      })
+
+      act(() => {
+        render(<CopyButton value={value} />)
+      })
+
+      // After rendering the clipboard content should be null
+      expect(clipBoardContent).toBe(null)
+
+      const copyButton = screen.getByRole('button')
+
+      await screen.findByLabelText('Copy object to clipboard')
+
+      // After clicking the content should be added to the clipboard
+      await act(async () => {
+        fireEvent.click(copyButton)
+      })
+
+      expect(clipBoardContent).toBe(value)
+      screen.findByLabelText('Object copied to clipboard')
+    })
+
+    it('when the copy button is clicked but there is an error, show error state', async () => {
+      // Mock clipboard with error state
+      Object.defineProperty(navigator, 'clipboard', {
+        value: {
+          writeText: async () => {
+            return new Promise(() => {
+              throw Error
+            })
+          },
+        },
+        configurable: true,
+      })
+
+      act(() => {
+        render(<CopyButton value={'someValue'} />)
+      })
+
+      const copyButton = screen.getByRole('button')
+
+      await screen.findByLabelText('Copy object to clipboard')
+
+      // After clicking the content should NOT be added to the clipboard
+      await act(async () => {
+        fireEvent.click(copyButton)
+      })
+
+      // Check that it has failed
+      await screen.findByLabelText('Failed copying to clipboard')
     })
   })
 

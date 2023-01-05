@@ -1,3 +1,4 @@
+import { ref } from 'vue-demi'
 import { QueryClient as QC } from '@tanstack/query-core'
 import type {
   QueryKey,
@@ -39,6 +40,8 @@ export class QueryClient extends QC {
     }
     super(vueQueryConfig)
   }
+
+  isRestoring = ref(false)
 
   isFetching(filters?: MaybeRefDeep<QueryFilters>): number
   isFetching(

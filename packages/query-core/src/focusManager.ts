@@ -28,6 +28,7 @@ export class FocusManager extends Subscribable {
           window.removeEventListener('focus', listener)
         }
       }
+      return
     }
   }
 
