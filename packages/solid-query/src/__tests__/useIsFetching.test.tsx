@@ -27,18 +27,14 @@ describe('useIsFetching', () => {
     function Query() {
       const [ready, setReady] = createSignal(false)
 
-      createQuery(
-        key,
-        async () => {
+      createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
           await sleep(50)
           return 'test'
         },
-        {
-          get enabled() {
-            return ready()
-          },
-        },
-      )
+        enabled: ready(),
+      }))
 
       return <button onClick={() => setReady(true)}>setReady</button>
     }
@@ -82,18 +78,24 @@ describe('useIsFetching', () => {
     }
 
     function FirstQuery() {
-      createQuery(key1, async () => {
-        await sleep(100)
-        return 'data'
-      })
+      createQuery(() => ({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(150)
+          return 'data'
+        },
+      }))
       return null
     }
 
     function SecondQuery() {
-      createQuery(key2, async () => {
-        await sleep(100)
-        return 'data'
-      })
+      createQuery(() => ({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(200)
+          return 'data'
+        },
+      }))
       return null
     }
 
@@ -103,7 +105,7 @@ describe('useIsFetching', () => {
       createEffect(() => {
         setActTimeout(() => {
           setRenderSecond(true)
-        }, 50)
+        }, 100)
       })
 
       return (
@@ -134,24 +136,34 @@ describe('useIsFetching', () => {
     const isFetchings: number[] = []
 
     function One() {
-      createQuery(key1, async () => {
-        await sleep(10)
-        return 'test'
-      })
+      createQuery(() => ({
+        queryKey: key1,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
+      }))
       return null
     }
 
     function Two() {
-      createQuery(key2, async () => {
-        await sleep(20)
-        return 'test'
-      })
+      createQuery(() => ({
+        queryKey: key2,
+        queryFn: async () => {
+          await sleep(20)
+          return 'test'
+        },
+      }))
       return null
     }
 
     function Page() {
       const [started, setStarted] = createSignal(false)
-      const isFetching = useIsFetching(key1)
+      const isFetching = useIsFetching(() => ({
+        filters: {
+          queryKey: key1,
+        },
+      }))
 
       createRenderEffect(() => {
         isFetchings.push(isFetching())
@@ -196,21 +208,21 @@ describe('useIsFetching', () => {
       function Page() {
         const [ready, setReady] = createSignal(false)
 
-        const isFetching = useIsFetching(undefined, { context: context })
+        const isFetching = useIsFetching(() => ({
+          options: {
+            context,
+          },
+        }))
 
-        createQuery(
-          key,
-          async () => {
+        createQuery(() => ({
+          queryKey: key,
+          queryFn: async () => {
             await sleep(50)
             return 'test'
           },
-          {
-            get enabled() {
-              return ready()
-            },
-            context,
-          },
-        )
+          enabled: ready(),
+          context,
+        }))
 
         return (
           <div>
@@ -242,11 +254,13 @@ describe('useIsFetching', () => {
       function Page() {
         const isFetching = useIsFetching()
 
-        createQuery(key, async () => 'test', {
+        createQuery(() => ({
+          queryKey: key,
+          queryFn: async () => 'test',
           enabled: true,
           context,
-          useErrorBoundary: true,
-        })
+          throwErrors: true,
+        }))
 
         return (
           <div>
@@ -272,10 +286,13 @@ describe('useIsFetching', () => {
     const key = queryKey()
 
     function Page() {
-      createQuery(key, async () => {
-        await sleep(10)
-        return 'test'
-      })
+      createQuery(() => ({
+        queryKey: key,
+        queryFn: async () => {
+          await sleep(10)
+          return 'test'
+        },
+      }))
 
       const isFetching = useIsFetching()
 

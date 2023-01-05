@@ -3,7 +3,7 @@ id: FocusManager
 title: FocusManager
 ---
 
-The `FocusManager` manages the focus state within React Query.
+The `FocusManager` manages the focus state within TanStack Query.
 
 It can be used to change the default event listeners or to manually change the focus state.
 

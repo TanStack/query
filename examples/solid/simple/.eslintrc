@@ -6,6 +6,7 @@
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "jsx-a11y/accessible-emoji": "off"
+    "jsx-a11y/accessible-emoji": "off",
+    "@tanstack/query/prefer-query-object-syntax": "off"
   }
 }
