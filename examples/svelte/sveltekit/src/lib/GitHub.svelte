@@ -1,0 +1,40 @@
+<script lang="ts">
+  import { useQuery } from '@tanstack/svelte-query'
+
+  type Repo = {
+    name: string
+    description: string
+    subscribers_count: number
+    stargazers_count: number
+    forks_count: number
+  }
+
+  const query = useQuery<Repo, Error>({
+    queryKey: ['repoData'],
+    queryFn: async () =>
+      await fetch('https://api.github.com/repos/SvelteStack/svelte-query').then(
+        (r) => r.json(),
+      ),
+  })
+</script>
+
+<div class="my-4">
+  <div>
+    {#if $query.isLoading}
+      Loading...
+    {/if}
+    {#if $query.error}
+      An error has occurred:
+      {$query.error.message}
+    {/if}
+    {#if $query.isSuccess}
+      <div>
+        <h1>{$query.data.name}</h1>
+        <p>{$query.data.description}</p>
+        <strong>👀 {$query.data.subscribers_count}</strong>{' '}
+        <strong>✨ {$query.data.stargazers_count}</strong>{' '}
+        <strong>🍴 {$query.data.forks_count}</strong>
+      </div>
+    {/if}
+  </div>
+</div>
