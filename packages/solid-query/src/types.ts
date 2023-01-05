@@ -54,7 +54,7 @@ export interface SolidQueryOptions<
 
 export type CreateQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<SolidQueryOptions<TQueryFnData, TError, TData, TQueryKey>>
@@ -104,7 +104,7 @@ export interface SolidInfiniteQueryOptions<
 
 export type CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 > = FunctionedParams<
@@ -136,7 +136,7 @@ export interface SolidMutationOptions<
 
 export type CreateMutationOptions<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = FunctionedParams<SolidMutationOptions<TData, TError, TVariables, TContext>>
