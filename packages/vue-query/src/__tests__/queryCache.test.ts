@@ -13,12 +13,13 @@ describe('QueryCache', () => {
     test('should properly unwrap parameters', async () => {
       const queryCache = new QueryCache()
 
-      queryCache.find(['foo', ref('bar')], {
-        queryKey: ref(['baz']),
+      queryCache.find({
+        queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.find).toBeCalledWith(['foo', 'bar'], {
-        queryKey: ['baz'],
+      expect(QueryCacheOrigin.prototype.find).toBeCalledWith({
+        queryKey: ['foo', 'bar'],
+        exact: true, //Exact is true, as `find` in QueryCacheOrigin sets exact to true in the passed filters if exact is undefined
       })
     })
   })
@@ -27,16 +28,13 @@ describe('QueryCache', () => {
     test('should properly unwrap two parameters', async () => {
       const queryCache = new QueryCache()
 
-      queryCache.findAll(['foo', ref('bar')], {
-        queryKey: ref(['baz']),
+      queryCache.findAll({
+        queryKey: ['foo', ref('bar')],
       })
 
-      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith(
-        ['foo', 'bar'],
-        {
-          queryKey: ['baz'],
-        },
-      )
+      expect(QueryCacheOrigin.prototype.findAll).toBeCalledWith({
+        queryKey: ['foo', 'bar'],
+      })
     })
 
     test('should properly unwrap one parameter', async () => {

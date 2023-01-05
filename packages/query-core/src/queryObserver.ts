@@ -154,17 +154,6 @@ export class QueryObserver<
 
     this.options = this.client.defaultQueryOptions(options)
 
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      typeof options?.isDataEqual !== 'undefined'
-    ) {
-      this.client
-        .getLogger()
-        .error(
-          `The isDataEqual option has been deprecated and will be removed in the next major version. You can achieve the same functionality by passing a function as the structuralSharing option`,
-        )
-    }
-
     if (!shallowEqualObjects(prevOptions, this.options)) {
       this.client.getQueryCache().notify({
         type: 'observerOptionsUpdated',
@@ -618,7 +607,7 @@ export class QueryObserver<
 
       const includedProps = new Set(notifyOnChangeProps ?? this.trackedProps)
 
-      if (this.options.useErrorBoundary) {
+      if (this.options.throwErrors) {
         includedProps.add('error')
       }
 

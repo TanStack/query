@@ -14,27 +14,24 @@ import {
   getSimpleFetcherWithReturnData,
 } from './test-utils'
 import { useQuery } from '../useQuery'
-import { parseQueryArgs, useBaseQuery } from '../useBaseQuery'
+import { unrefQueryArgs, useBaseQuery } from '../useBaseQuery'
 
 jest.mock('../useQueryClient')
 jest.mock('../useBaseQuery')
 
 describe('useQuery', () => {
   test('should properly execute query', () => {
-    useQuery(['key0'], simpleFetcher, { staleTime: 1000 })
+    useQuery({ queryKey: ['key0'], queryFn: simpleFetcher, staleTime: 1000 })
 
-    expect(useBaseQuery).toBeCalledWith(
-      QueryObserver,
-      ['key0'],
-      simpleFetcher,
-      {
-        staleTime: 1000,
-      },
-    )
+    expect(useBaseQuery).toBeCalledWith(QueryObserver, {
+      queryKey: ['key0'],
+      queryFn: simpleFetcher,
+      staleTime: 1000,
+    })
   })
 
   test('should return loading status initially', () => {
-    const query = useQuery(['key1'], simpleFetcher)
+    const query = useQuery({ queryKey: ['key1'], queryFn: simpleFetcher })
 
     expect(query).toMatchObject({
       status: { value: 'loading' },
@@ -45,7 +42,10 @@ describe('useQuery', () => {
   })
 
   test('should resolve to success and update reactive state: useQuery(key, dataFn)', async () => {
-    const query = useQuery(['key2'], getSimpleFetcherWithReturnData('result2'))
+    const query = useQuery({
+      queryKey: ['key2'],
+      queryFn: getSimpleFetcherWithReturnData('result2'),
+    })
 
     await flushPromises()
 
@@ -79,7 +79,8 @@ describe('useQuery', () => {
   })
 
   test('should resolve to success and update reactive state: useQuery(key, optionsObj)', async () => {
-    const query = useQuery(['key32'], {
+    const query = useQuery({
+      queryKey: ['key32'],
       queryFn: getSimpleFetcherWithReturnData('result32'),
       enabled: true,
     })
@@ -97,7 +98,10 @@ describe('useQuery', () => {
   })
 
   test('should reject and update reactive state', async () => {
-    const query = useQuery(['key3'], rejectFetcher)
+    const query = useQuery({
+      queryKey: ['key3'],
+      queryFn: rejectFetcher,
+    })
 
     await flushPromises()
 
@@ -120,9 +124,9 @@ describe('useQuery', () => {
       // Noop
     })
     useQuery(
-      ['key6'],
-      simpleFetcher,
       reactive({
+        queryKey: ['key6'],
+        queryFn: simpleFetcher,
         onSuccess,
         staleTime: 1000,
       }),
@@ -137,7 +141,10 @@ describe('useQuery', () => {
 
   test('should update query on reactive (Ref) key change', async () => {
     const secondKeyRef = ref('key7')
-    const query = useQuery(['key6', secondKeyRef], simpleFetcher)
+    const query = useQuery({
+      queryKey: ['key6', secondKeyRef],
+      queryFn: simpleFetcher,
+    })
 
     await flushPromises()
 
@@ -162,7 +169,11 @@ describe('useQuery', () => {
 
   test("should update query when an option is passed as Ref and it's changed", async () => {
     const enabled = ref(false)
-    const query = useQuery(['key9'], simpleFetcher, { enabled })
+    const query = useQuery({
+      queryKey: ['key9'],
+      queryFn: simpleFetcher,
+      enabled,
+    })
 
     await flushPromises()
 
@@ -188,14 +199,17 @@ describe('useQuery', () => {
   })
 
   test('should properly execute dependant queries', async () => {
-    const { data } = useQuery(['dependant1'], simpleFetcher)
+    const { data } = useQuery({
+      queryKey: ['dependant1'],
+      queryFn: simpleFetcher,
+    })
 
     const enabled = computed(() => !!data.value)
 
     const { fetchStatus, status } = useQuery(
-      ['dependant2'],
-      simpleFetcher,
       reactive({
+        queryKey: ['dependant2'],
+        queryFn: simpleFetcher,
         enabled,
       }),
     )
@@ -220,7 +234,10 @@ describe('useQuery', () => {
     >
     onScopeDisposeMock.mockImplementationOnce((fn) => fn())
 
-    const { status } = useQuery(['onScopeDispose'], simpleFetcher)
+    const { status } = useQuery({
+      queryKey: ['onScopeDispose'],
+      queryFn: simpleFetcher,
+    })
 
     expect(status.value).toStrictEqual('loading')
 
@@ -234,42 +251,12 @@ describe('useQuery', () => {
   })
 
   describe('parseQueryArgs', () => {
-    test('should unwrap refs arguments', () => {
-      const key = ref(['key'])
-      const fn = ref(simpleFetcher)
-      const options = ref({ enabled: ref(true) })
-
-      const result = parseQueryArgs(key, fn, options)
-      const expected = {
-        queryKey: ['key'],
-        queryFn: simpleFetcher,
-        enabled: true,
-      }
-
-      expect(result).toEqual(expected)
-    })
-
-    test('should unwrap refs with fn in options', () => {
-      const key = ref(['key'])
-      const fn = ref(simpleFetcher)
-      const options = ref({ queryFn: fn, enabled: ref(true) })
-
-      const result = parseQueryArgs(key, options)
-      const expected = {
-        queryKey: ['key'],
-        queryFn: simpleFetcher,
-        enabled: true,
-      }
-
-      expect(result).toEqual(expected)
-    })
-
     test('should unwrap refs in options', () => {
       const key = ref(['key'])
       const fn = ref(simpleFetcher)
       const options = ref({ queryKey: key, queryFn: fn, enabled: ref(true) })
 
-      const result = parseQueryArgs(options)
+      const result = unrefQueryArgs(options)
       const expected = {
         queryKey: ['key'],
         queryFn: simpleFetcher,
@@ -285,7 +272,7 @@ describe('useQuery', () => {
       const getCurrentInstanceSpy = getCurrentInstance as jest.Mock
       getCurrentInstanceSpy.mockImplementation(() => ({ suspense: {} }))
 
-      const query = useQuery(['suspense'], simpleFetcher)
+      const query = useQuery({ queryKey: ['suspense'], queryFn: simpleFetcher })
       const result = query.suspense()
 
       expect(result).toBeInstanceOf(Promise)
@@ -297,7 +284,9 @@ describe('useQuery', () => {
 
       let afterTimeout = false
       const isEnabeld = ref(false)
-      const query = useQuery(['suspense'], simpleFetcher, {
+      const query = useQuery({
+        queryKey: ['suspense'],
+        queryFn: simpleFetcher,
         enabled: isEnabeld,
       })
 
@@ -318,7 +307,9 @@ describe('useQuery', () => {
       const fetcherSpy = jest.fn(() => simpleFetcher())
 
       // let afterTimeout = false;
-      const query = useQuery(['suspense'], simpleFetcher, {
+      const query = useQuery({
+        queryKey: ['suspense'],
+        queryFn: simpleFetcher,
         staleTime: 10000,
         initialData: 'foo',
       })

@@ -5,10 +5,10 @@ jest.mock('../useQueryClient')
 
 describe('useQuery', () => {
   test('should properly execute infinite query', async () => {
-    const { data, fetchNextPage, status } = useInfiniteQuery(
-      ['infiniteQuery'],
-      infiniteFetcher,
-    )
+    const { data, fetchNextPage, status } = useInfiniteQuery({
+      queryKey: ['infiniteQuery'],
+      queryFn: infiniteFetcher,
+    })
 
     expect(data.value).toStrictEqual(undefined)
     expect(status.value).toStrictEqual('loading')

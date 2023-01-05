@@ -3,7 +3,7 @@ id: window-focus-refetching
 title: Window Focus Refetching
 ---
 
-If a user leaves your application and returns to stale data, **TanStack Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
+If a user leaves your application and returns and the query data is stale, **TanStack Query automatically requests fresh data for you in the background**. You can disable this globally or per-query using the `refetchOnWindowFocus` option:
 
 #### Disabling Globally
 
@@ -14,7 +14,7 @@ If a user leaves your application and returns to stale data, **TanStack Query au
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      refetchOnWindowFocus: false,
+      refetchOnWindowFocus: false, // default: true
     },
   },
 })
