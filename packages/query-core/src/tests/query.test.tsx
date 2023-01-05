@@ -11,7 +11,7 @@ import type {
   QueryFunctionContext,
   QueryObserverResult,
 } from '..'
-import { QueryObserver, isCancelledError, isError, onlineManager } from '..'
+import { QueryObserver, isCancelledError, onlineManager } from '..'
 import { waitFor } from '@testing-library/react'
 
 describe('query', () => {
@@ -246,7 +246,7 @@ describe('query', () => {
       queryKey: key,
       queryFn: async ({ signal }) => {
         await sleep(100)
-        return signal?.aborted ? 'aborted' : 'data'
+        return signal.aborted ? 'aborted' : 'data'
       },
     })
 
@@ -283,15 +283,11 @@ describe('query', () => {
     let error
 
     queryFn.mockImplementation(async ({ signal }) => {
-      if (signal) {
-        signal.onabort = onAbort
-        signal.addEventListener('abort', abortListener)
-      }
+      signal.onabort = onAbort
+      signal.addEventListener('abort', abortListener)
       await sleep(10)
-      if (signal) {
-        signal.onabort = null
-        signal.removeEventListener('abort', abortListener)
-      }
+      signal.onabort = null
+      signal.removeEventListener('abort', abortListener)
       throw new Error()
     })
 
@@ -311,7 +307,7 @@ describe('query', () => {
     expect(queryFn).toHaveBeenCalledTimes(1)
 
     const signal = queryFn.mock.calls[0]![0].signal
-    expect(signal?.aborted).toBe(false)
+    expect(signal.aborted).toBe(false)
     expect(onAbort).not.toHaveBeenCalled()
     expect(abortListener).not.toHaveBeenCalled()
 
@@ -319,7 +315,7 @@ describe('query', () => {
 
     await sleep(100)
 
-    expect(signal?.aborted).toBe(true)
+    expect(signal.aborted).toBe(true)
     expect(onAbort).toHaveBeenCalledTimes(1)
     expect(abortListener).toHaveBeenCalledTimes(1)
     expect(isCancelledError(error)).toBe(true)
@@ -422,18 +418,19 @@ describe('query', () => {
 
   test('cancelling a rejected query should not have any effect', async () => {
     const key = queryKey()
+    const error = new Error('error')
 
     await queryClient.prefetchQuery({
       queryKey: key,
       queryFn: async (): Promise<unknown> => {
-        throw new Error('error')
+        throw error
       },
     })
     const query = queryCache.find({ queryKey: key })!
     query.cancel()
     await sleep(10)
 
-    expect(isError(query.state.error)).toBe(true)
+    expect(query.state.error).toBe(error)
     expect(isCancelledError(query.state.error)).toBe(false)
   })
 

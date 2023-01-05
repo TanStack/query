@@ -1,4 +1,3 @@
-import { difference, replaceAt } from './utils'
 import { notifyManager } from './notifyManager'
 import type {
   QueryObserverOptions,
@@ -9,6 +8,16 @@ import type { QueryClient } from './queryClient'
 import type { NotifyOptions } from './queryObserver'
 import { QueryObserver } from './queryObserver'
 import { Subscribable } from './subscribable'
+
+function difference<T>(array1: T[], array2: T[]): T[] {
+  return array1.filter((x) => array2.indexOf(x) === -1)
+}
+
+function replaceAt<T>(array: T[], index: number, value: T): T[] {
+  const copy = array.slice(0)
+  copy[index] = value
+  return copy
+}
 
 type QueriesObserverListener = (result: QueryObserverResult[]) => void
 

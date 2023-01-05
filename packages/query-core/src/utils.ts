@@ -79,16 +79,6 @@ export function isValidTimeout(value: unknown): value is number {
   return typeof value === 'number' && value >= 0 && value !== Infinity
 }
 
-export function difference<T>(array1: T[], array2: T[]): T[] {
-  return array1.filter((x) => array2.indexOf(x) === -1)
-}
-
-export function replaceAt<T>(array: T[], index: number, value: T): T[] {
-  const copy = array.slice(0)
-  copy[index] = value
-  return copy
-}
-
 export function timeUntilStale(updatedAt: number, staleTime?: number): number {
   return Math.max(updatedAt + (staleTime || 0) - Date.now(), 0)
 }
@@ -106,7 +96,7 @@ export function matchQuery(
     stale,
   } = filters
 
-  if (isQueryKey(queryKey)) {
+  if (Array.isArray(queryKey)) {
     if (exact) {
       if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
@@ -149,7 +139,7 @@ export function matchMutation(
   mutation: Mutation<any, any>,
 ): boolean {
   const { exact, fetching, predicate, mutationKey } = filters
-  if (isQueryKey(mutationKey)) {
+  if (Array.isArray(mutationKey)) {
     if (!mutation.options.mutationKey) {
       return false
     }
@@ -314,14 +304,6 @@ export function isPlainObject(o: any): o is Object {
 
 function hasObjectPrototype(o: any): boolean {
   return Object.prototype.toString.call(o) === '[object Object]'
-}
-
-export function isQueryKey(value: unknown): value is QueryKey {
-  return Array.isArray(value)
-}
-
-export function isError(value: any): value is Error {
-  return value instanceof Error
 }
 
 export function sleep(timeout: number): Promise<void> {
