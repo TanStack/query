@@ -18,7 +18,6 @@ type MutationObserverListener<TData, TError, TVariables, TContext> = (
 ) => void
 
 interface NotifyOptions {
-  listeners?: boolean
   onError?: boolean
   onSuccess?: boolean
 }
@@ -82,9 +81,7 @@ export class MutationObserver<
     this.#updateResult()
 
     // Determine which callbacks to trigger
-    const notifyOptions: NotifyOptions = {
-      listeners: true,
-    }
+    const notifyOptions: NotifyOptions = {}
 
     if (action.type === 'success') {
       notifyOptions.onSuccess = true
@@ -107,7 +104,7 @@ export class MutationObserver<
   reset(): void {
     this.#currentMutation = undefined
     this.#updateResult()
-    this.#notify({ listeners: true })
+    this.#notify({})
   }
 
   mutate(
@@ -193,11 +190,9 @@ export class MutationObserver<
       }
 
       // Then trigger the listeners
-      if (options.listeners) {
-        this.listeners.forEach((listener) => {
-          listener(this.#currentResult)
-        })
-      }
+      this.listeners.forEach((listener) => {
+        listener(this.#currentResult)
+      })
     })
   }
 }
