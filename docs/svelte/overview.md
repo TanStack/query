@@ -1,8 +1,54 @@
 ---
 id: overview
-title: Svelte Query (Coming Soon)
+title: Svelte Query
 ---
 
-> ⚠️ This module has not yet been developed. It requires an adapter similar to `react-query` to work. We estimate the amount of code to do this is low-to-moderate, but does require familiarity with the Svelte framework. If you would like to contribute this adapter, please open a PR!
+The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Query via Svelte.
 
-The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Query via Svelte. However, all of the primitives you receive from this API are core APIs that are shared across all of the TanStack Adapters including the Query Client, query results, query subscriptions, etc.
+## Example
+
+```
+<script lang="ts">
+  import { setQueryClient, useQuery } from '@tanstack/svelte-query'
+
+  setQueryClient()
+
+  const query = useQuery({
+    queryKey: ['todos'],
+    queryFn: () => fetchTodos(),
+  })
+</script>
+
+<div>
+  {#if $query.isLoading}
+    <p>Loading...</p>
+  {:else if $query.isError}
+    <p>Error: {$query.error.message}</p>
+  {:else if $query.isSuccess}
+      {#each $query.data as todo}
+        <p>{todo.title}</p>
+      {/each}
+  {/if}
+</div>
+```
+
+## Available Functions
+
+Svelte Query offers useful primitives and functions that will make managing server state in Svelte apps easier.
+
+- `setQueryClient`
+- `useQueryClient`
+- `useQuery`
+- `useQueries`
+- `useMutation`
+- `useInfiniteQuery`
+- `useHydrate`
+- `useIsFetching`
+- `useIsMutating`
+
+## Important Differences between Svelte Query & React Query
+
+Svelte Query offers an API similar to React Query, but there are some key differences to be mindful of.
+
+- Svelte Query does not use a provider to initialise the query client. Instead, you call `setQueryClient()` in the root file of your project (e.g. `src/App.svelte`).
+- Many of the functions in Svelte Query return a Svelte store. To access values on these stores reactively, you need to prefix the store with a `$`. You can learn more about Svelte stores [here](https://svelte.dev/tutorial/writable-stores).
