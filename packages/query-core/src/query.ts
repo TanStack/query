@@ -375,15 +375,17 @@ export class Query<
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
-    const withSignalProperty = <T>(object: T): T & { signal: AbortSignal } => {
-      return Object.defineProperty(object, 'signal', {
+    const addSignalProperty = (object: unknown) => {
+      Object.defineProperty(object, 'signal', {
         enumerable: true,
         get: () => {
           this.#abortSignalConsumed = true
           return abortController.signal
         },
-      }) as T & { signal: AbortSignal }
+      })
     }
+
+    addSignalProperty(queryFnContext)
 
     // Create fetch function
     const fetchFn = () => {
@@ -391,7 +393,9 @@ export class Query<
         return Promise.reject('Missing queryFn')
       }
       this.#abortSignalConsumed = false
-      return this.options.queryFn(withSignalProperty(queryFnContext))
+      return this.options.queryFn(
+        queryFnContext as QueryFunctionContext<TQueryKey>,
+      )
     }
 
     // Trigger behavior hook
@@ -406,7 +410,11 @@ export class Query<
       fetchFn,
     }
 
-    this.options.behavior?.onFetch(withSignalProperty(context))
+    addSignalProperty(context)
+
+    this.options.behavior?.onFetch(
+      context as FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+    )
 
     // Store state in case the current fetch needs to be reverted
     this.revertState = this.state
