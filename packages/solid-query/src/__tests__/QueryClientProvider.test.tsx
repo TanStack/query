@@ -2,8 +2,7 @@ import { render, screen, waitFor } from 'solid-testing-library'
 import { queryKey } from './utils'
 
 import { QueryCache, QueryClient } from '@tanstack/query-core'
-import type { Context } from 'solid-js'
-import { createContext, useContext } from 'solid-js'
+import { createContext } from 'solid-js'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
 
