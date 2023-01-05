@@ -9,7 +9,7 @@ ref: docs/react/guides/paginated-queries.md
 ```vue
 <script setup lang="ts">
 import { ref, Ref } from 'vue'
-import { useQuery } from 'vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 const fetcher = (page: Ref<number>) =>
   fetch(
