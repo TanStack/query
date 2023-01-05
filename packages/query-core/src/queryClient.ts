@@ -58,6 +58,7 @@ export class QueryClient {
   private defaultOptions: DefaultOptions
   private queryDefaults: QueryDefaults[]
   private mutationDefaults: MutationDefaults[]
+  private mountCount: number
   private unsubscribeFocus?: () => void
   private unsubscribeOnline?: () => void
 
@@ -68,6 +69,7 @@ export class QueryClient {
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
+    this.mountCount = 0
 
     if (process.env.NODE_ENV !== 'production' && config.logger) {
       this.logger.error(
@@ -77,6 +79,9 @@ export class QueryClient {
   }
 
   mount(): void {
+    this.mountCount++
+    if (this.mountCount !== 1) return
+
     this.unsubscribeFocus = focusManager.subscribe(() => {
       if (focusManager.isFocused()) {
         this.resumePausedMutations()
@@ -92,8 +97,14 @@ export class QueryClient {
   }
 
   unmount(): void {
+    this.mountCount--
+    if (this.mountCount !== 0) return
+
     this.unsubscribeFocus?.()
+    this.unsubscribeFocus = undefined
+
     this.unsubscribeOnline?.()
+    this.unsubscribeOnline = undefined
   }
 
   isFetching(filters: QueryFilters = {}): number {
