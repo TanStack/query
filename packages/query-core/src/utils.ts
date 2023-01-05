@@ -338,13 +338,6 @@ export function scheduleMicrotask(callback: () => void) {
   sleep(0).then(callback)
 }
 
-export function getAbortController(): AbortController | undefined {
-  if (typeof AbortController === 'function') {
-    return new AbortController()
-  }
-  return
-}
-
 export function replaceData<
   TData,
   TOptions extends QueryOptions<any, any, any, any>,

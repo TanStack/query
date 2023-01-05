@@ -1,4 +1,4 @@
-import { getAbortController, noop, replaceData, timeUntilStale } from './utils'
+import { noop, replaceData, timeUntilStale } from './utils'
 import type {
   InitialDataFunction,
   QueryKey,
@@ -59,7 +59,7 @@ export interface FetchContext<
 > {
   fetchFn: () => unknown | Promise<unknown>
   fetchOptions?: FetchOptions
-  signal?: AbortSignal
+  signal: AbortSignal
   options: QueryOptions<TQueryFnData, TError, TData, any>
   queryKey: TQueryKey
   state: QueryState<TData, TError>
@@ -363,10 +363,10 @@ export class Query<
       }
     }
 
-    const abortController = getAbortController()
+    const abortController = new AbortController()
 
     // Create query function context
-    const queryFnContext: QueryFunctionContext<TQueryKey> = {
+    const queryFnContext: Omit<QueryFunctionContext<TQueryKey>, 'signal'> = {
       queryKey: this.queryKey,
       pageParam: undefined,
       meta: this.meta,
@@ -375,20 +375,15 @@ export class Query<
     // Adds an enumerable signal property to the object that
     // which sets abortSignalConsumed to true when the signal
     // is read.
-    const addSignalProperty = (object: unknown) => {
-      Object.defineProperty(object, 'signal', {
+    const withSignalProperty = <T>(object: T): T & { signal: AbortSignal } => {
+      return Object.defineProperty(object, 'signal', {
         enumerable: true,
         get: () => {
-          if (abortController) {
-            this.#abortSignalConsumed = true
-            return abortController.signal
-          }
-          return undefined
+          this.#abortSignalConsumed = true
+          return abortController.signal
         },
-      })
+      }) as T & { signal: AbortSignal }
     }
-
-    addSignalProperty(queryFnContext)
 
     // Create fetch function
     const fetchFn = () => {
@@ -396,11 +391,14 @@ export class Query<
         return Promise.reject('Missing queryFn')
       }
       this.#abortSignalConsumed = false
-      return this.options.queryFn(queryFnContext)
+      return this.options.queryFn(withSignalProperty(queryFnContext))
     }
 
     // Trigger behavior hook
-    const context: FetchContext<TQueryFnData, TError, TData, TQueryKey> = {
+    const context: Omit<
+      FetchContext<TQueryFnData, TError, TData, TQueryKey>,
+      'signal'
+    > = {
       fetchOptions,
       options: this.options,
       queryKey: this.queryKey,
@@ -408,9 +406,7 @@ export class Query<
       fetchFn,
     }
 
-    addSignalProperty(context)
-
-    this.options.behavior?.onFetch(context)
+    this.options.behavior?.onFetch(withSignalProperty(context))
 
     // Store state in case the current fetch needs to be reverted
     this.revertState = this.state
@@ -451,7 +447,7 @@ export class Query<
     // Try to fetch the data
     this.#retryer = createRetryer({
       fn: context.fetchFn as () => TData,
-      abort: abortController?.abort.bind(abortController),
+      abort: abortController.abort.bind(abortController),
       onSuccess: (data) => {
         if (typeof data === 'undefined') {
           if (process.env.NODE_ENV !== 'production') {
