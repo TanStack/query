@@ -74,14 +74,14 @@ type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 export class QueryCache extends Subscribable<QueryCacheListener> {
   config: QueryCacheConfig
 
-  private queries: Query<any, any, any, any>[]
-  private queriesMap: QueryHashMap
+  #queries: Query<any, any, any, any>[]
+  #queriesMap: QueryHashMap
 
   constructor(config?: QueryCacheConfig) {
     super()
     this.config = config || {}
-    this.queries = []
-    this.queriesMap = {}
+    this.#queries = []
+    this.#queriesMap = {}
   }
 
   build<TQueryFnData, TError, TData, TQueryKey extends QueryKey>(
@@ -111,9 +111,9 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   add(query: Query<any, any, any, any>): void {
-    if (!this.queriesMap[query.queryHash]) {
-      this.queriesMap[query.queryHash] = query
-      this.queries.push(query)
+    if (!this.#queriesMap[query.queryHash]) {
+      this.#queriesMap[query.queryHash] = query
+      this.#queries.push(query)
       this.notify({
         type: 'added',
         query,
@@ -122,15 +122,15 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   }
 
   remove(query: Query<any, any, any, any>): void {
-    const queryInMap = this.queriesMap[query.queryHash]
+    const queryInMap = this.#queriesMap[query.queryHash]
 
     if (queryInMap) {
       query.destroy()
 
-      this.queries = this.queries.filter((x) => x !== query)
+      this.#queries = this.#queries.filter((x) => x !== query)
 
       if (queryInMap === query) {
-        delete this.queriesMap[query.queryHash]
+        delete this.#queriesMap[query.queryHash]
       }
 
       this.notify({ type: 'removed', query })
@@ -139,7 +139,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   clear(): void {
     notifyManager.batch(() => {
-      this.queries.forEach((query) => {
+      this.#queries.forEach((query) => {
         this.remove(query)
       })
     })
@@ -153,11 +153,11 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
   >(
     queryHash: string,
   ): Query<TQueryFnData, TError, TData, TQueyKey> | undefined {
-    return this.queriesMap[queryHash]
+    return this.#queriesMap[queryHash]
   }
 
   getAll(): Query[] {
-    return this.queries
+    return this.#queries
   }
 
   find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
@@ -167,13 +167,13 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
       filters.exact = true
     }
 
-    return this.queries.find((query) => matchQuery(filters, query))
+    return this.#queries.find((query) => matchQuery(filters, query))
   }
 
   findAll(filters: QueryFilters = {}): Query[] {
     return Object.keys(filters).length > 0
-      ? this.queries.filter((query) => matchQuery(filters, query))
-      : this.queries
+      ? this.#queries.filter((query) => matchQuery(filters, query))
+      : this.#queries
   }
 
   notify(event: QueryCacheNotifyEvent) {
@@ -186,7 +186,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   onFocus(): void {
     notifyManager.batch(() => {
-      this.queries.forEach((query) => {
+      this.#queries.forEach((query) => {
         query.onFocus()
       })
     })
@@ -194,7 +194,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   onOnline(): void {
     notifyManager.batch(() => {
-      this.queries.forEach((query) => {
+      this.#queries.forEach((query) => {
         query.onOnline()
       })
     })
