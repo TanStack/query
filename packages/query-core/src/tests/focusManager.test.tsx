@@ -63,26 +63,34 @@ describe('focusManager', () => {
     globalThis.document = document
   })
 
-  test('cleanup should still be undefined if window is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window is not defined', async () => {
     const restoreIsServer = setIsServer(true)
 
+    const removeEventListenerSpy = jest.spyOn(globalThis, 'removeEventListener')
+
     const unsubscribe = focusManager.subscribe(() => undefined)
-    expect(focusManager['cleanup']).toBeUndefined()
 
     unsubscribe()
+
+    expect(removeEventListenerSpy).not.toHaveBeenCalled()
+
     restoreIsServer()
   })
 
-  test('cleanup should still be undefined if window.addEventListener is not defined', async () => {
+  test('cleanup (removeEventListener) should not be called if window.addEventListener is not defined', async () => {
     const { addEventListener } = globalThis.window
 
     // @ts-expect-error
     globalThis.window.addEventListener = undefined
 
+    const removeEventListenerSpy = jest.spyOn(globalThis, 'removeEventListener')
+
     const unsubscribe = focusManager.subscribe(() => undefined)
-    expect(focusManager['cleanup']).toBeUndefined()
 
     unsubscribe()
+
+    expect(removeEventListenerSpy).not.toHaveBeenCalled()
+
     globalThis.window.addEventListener = addEventListener
   })
 
