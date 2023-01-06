@@ -35,6 +35,14 @@ const babelPlugin = babel({
   extensions: ['.ts', '.tsx', '.native.ts', '.svelte'],
 })
 
+const sveltePlugin = svelte({
+  preprocess: autoPreprocess(),
+  compilerOptions: {
+    generate: 'dom',
+    hydratable: true,
+  },
+})
+
 export default function rollup(options: RollupOptions): RollupOptions[] {
   return [
     ...buildConfigs({
@@ -297,13 +305,7 @@ function mjs({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte({
-        preprocess: autoPreprocess(),
-        compilerOptions: {
-          generate: 'ssr',
-          hydratable: true,
-        },
-      }),
+      sveltePlugin,
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], dedupe: ['svelte'] }),
@@ -343,13 +345,7 @@ function esm({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte({
-        preprocess: autoPreprocess(),
-        compilerOptions: {
-          generate: 'ssr',
-          hydratable: true,
-        },
-      }),
+      sveltePlugin,
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], dedupe: ['svelte'] }),
@@ -391,13 +387,7 @@ function cjs({
     input,
     output: forceBundle ? bundleOutput : normalOutput,
     plugins: [
-      svelte({
-        preprocess: autoPreprocess(),
-        compilerOptions: {
-          generate: 'ssr',
-          hydratable: true,
-        },
-      }),
+      sveltePlugin,
       babelPlugin,
       commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], dedupe: ['svelte'] }),
@@ -438,15 +428,9 @@ function umdDev({
       banner,
     },
     plugins: [
-      svelte({
-        preprocess: autoPreprocess(),
-        compilerOptions: {
-          generate: 'ssr',
-          hydratable: true,
-        },
-      }),
-      commonJS(),
+      sveltePlugin,
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], dedupe: ['svelte'] }),
       forceEnvPlugin('development'),
     ],
@@ -475,15 +459,9 @@ function umdProd({
       banner,
     },
     plugins: [
-      svelte({
-        preprocess: autoPreprocess(),
-        compilerOptions: {
-          generate: 'ssr',
-          hydratable: true,
-        },
-      }),
-      commonJS(),
+      sveltePlugin,
       babelPlugin,
+      commonJS(),
       nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], dedupe: ['svelte'] }),
       forceEnvPlugin('production'),
       terser({
