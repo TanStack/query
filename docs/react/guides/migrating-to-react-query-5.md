@@ -9,7 +9,7 @@ v5 is a major version, so there are some breaking changes to be aware of:
 
 ### Supports a single signature, one object
 
-useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options. 
+useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options.
 
 now we only support the object format.
 
@@ -135,3 +135,6 @@ You can achieve the same functionality by passing a function to `structuralShari
 
 To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
+### eslint `prefer-query-object-syntax` rule is removed
+
+Since the only supported syntax now is the object syntax, this rule is no longer needed
