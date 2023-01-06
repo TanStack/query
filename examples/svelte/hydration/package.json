@@ -1,5 +1,5 @@
 {
-  "name": "hydration",
+  "name": "@tanstack/query-example-svelte-hydration",
   "version": "0.0.1",
   "private": true,
   "scripts": {

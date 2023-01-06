@@ -1,6 +1,6 @@
 # Example
 
-In this simple example, we integrate Svelte Query with SvelteKit.
+This example is a rewrite of the React Query playground example.
 
 To run this example:
 

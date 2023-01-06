@@ -1,5 +1,5 @@
 {
-  "name": "optimistic-updates-typescript",
+  "name": "@tanstack/query-example-svelte-optimistic-updates-typescript",
   "version": "0.0.1",
   "private": true,
   "scripts": {

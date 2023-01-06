@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-  <title>SvelteKit Example</title>
+  <title>Svelte Query Playground Example</title>
 </svelte:head>
 
 <QueryClientProvider client={queryClient}>
