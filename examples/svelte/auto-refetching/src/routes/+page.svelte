@@ -44,13 +44,13 @@
 
     <span
       style="display:inline-block; 
-					margin-left:.5rem;
-					width:.75rem;
-					height:.75rem; 
-					background: {$todos.isFetching ? 'green' : 'transparent'};
-					transition:: {!$todos.isFetching ? 'all .3s ease' : 'none'};
-					border-radius: 100%;
-					transform: 'scale(2)"
+          margin-left:.5rem;
+          width:.75rem;
+          height:.75rem; 
+          background: {$todos.isFetching ? 'green' : 'transparent'};
+          transition:: {!$todos.isFetching ? 'all .3s ease' : 'none'};
+          border-radius: 100%;
+          transform: 'scale(2)"
     />
   </div>
 </label>
