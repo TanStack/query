@@ -1,13 +1,15 @@
 <script lang="ts">
 	import '../app.css';
-	import { setQueryClient, useHydrate } from '@tanstack/svelte-query';
+	import { QueryClient, QueryClientProvider, useHydrate } from '@tanstack/svelte-query';
 	import { dehydratedState } from '$lib/store';
 
-	setQueryClient();
+	const queryClient = new QueryClient()
 
 	useHydrate($dehydratedState);
 </script>
 
-<main>
-	<slot />
-</main>
+<QueryClientProvider client={queryClient}>
+	<main>
+		<slot />
+	</main>
+</QueryClientProvider>

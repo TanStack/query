@@ -1,13 +1,13 @@
 <script lang="ts">
-  import { setQueryClient } from '@tanstack/svelte-query'
+  import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import LoadMore from './lib/LoadMore.svelte'
-  setQueryClient()
+
+  const queryClient = new QueryClient()
 </script>
 
-<main>
-  <h1>Infinte Load More</h1>
-  <LoadMore />
-</main>
-
-<style>
-</style>
+<QueryClientProvider client={queryClient}>
+  <main>
+    <h1>Infinte Load More</h1>
+    <LoadMore />
+  </main>
+</QueryClientProvider>

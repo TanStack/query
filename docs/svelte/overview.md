@@ -7,11 +7,26 @@ The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Q
 
 ## Example
 
-```
-<script lang="ts">
-  import { setQueryClient, useQuery } from '@tanstack/svelte-query'
+Include the QueryClientProvider near the root of your project:
 
-  setQueryClient()
+```svelte
+<script lang="ts">
+  import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
+  import Simple from './lib/Example.svelte'
+
+  const queryClient = new QueryClient()
+</script>
+
+<QueryClientProvider client={queryClient}>
+  <Simple />
+</QueryClientProvider>
+```
+
+Then call any function (e.g. useQuery) from any component:
+
+```svelte
+<script lang="ts">
+  import { useQuery } from '@tanstack/svelte-query'
 
   const query = useQuery({
     queryKey: ['todos'],
@@ -36,7 +51,7 @@ The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Q
 
 Svelte Query offers useful primitives and functions that will make managing server state in Svelte apps easier.
 
-- `setQueryClient`
+- `QueryClientProvider`
 - `useQueryClient`
 - `useQuery`
 - `useQueries`
@@ -50,5 +65,4 @@ Svelte Query offers useful primitives and functions that will make managing serv
 
 Svelte Query offers an API similar to React Query, but there are some key differences to be mindful of.
 
-- Svelte Query does not use a provider to initialise the query client. Instead, you call `setQueryClient()` in the root file of your project (e.g. `src/App.svelte`).
 - Many of the functions in Svelte Query return a Svelte store. To access values on these stores reactively, you need to prefix the store with a `$`. You can learn more about Svelte stores [here](https://svelte.dev/tutorial/writable-stores).

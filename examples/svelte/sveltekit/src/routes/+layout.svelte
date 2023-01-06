@@ -1,14 +1,16 @@
 <script lang="ts">
   import '../app.css'
-  import { setQueryClient } from '@tanstack/svelte-query'
+  import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
 
-  setQueryClient()
+  const queryClient = new QueryClient()
 </script>
 
 <svelte:head>
   <title>SvelteKit Example</title>
 </svelte:head>
 
-<div id="app">
-  <slot />
-</div>
+<QueryClientProvider client={queryClient}>
+  <div id="app">
+    <slot />
+  </div>
+</QueryClientProvider>

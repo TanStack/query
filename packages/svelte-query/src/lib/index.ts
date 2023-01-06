@@ -4,8 +4,6 @@
 export * from '@tanstack/query-core'
 
 // Svelte Query
-export * from './types'
-export { setQueryClient } from './context'
 export { useQueryClient } from './useQueryClient'
 export { useQuery } from './useQuery'
 export { useQueries } from './useQueries'
@@ -14,5 +12,4 @@ export { useInfiniteQuery } from './useInfiniteQuery'
 export { useHydrate } from './useHydrate'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
-
-export { default as Test } from './Test.svelte'
+export { default as QueryClientProvider } from './QueryClientProvider.svelte'
