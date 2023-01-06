@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
-   "dependencies": {
+  "dependencies": {
     "@tanstack/svelte-query": "^4.12.0"
   },
   "devDependencies": {
