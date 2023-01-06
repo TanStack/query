@@ -17,7 +17,7 @@
     "prepublishOnly": "echo 'Did you mean to publish `./package/`, instead of `./`?' && exit 1",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "test:vitest": "vitest"
+    "test:vitest": "vitest run"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^1.0.0",
