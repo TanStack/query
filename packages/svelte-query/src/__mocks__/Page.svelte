@@ -1,13 +1,11 @@
 <script lang="ts">
-  import { UseQueryStoreResult } from '../lib'
+  import type { UseQueryStoreResult } from '../lib'
 
   export let queryKey: Array<string>
   export let query: UseQueryStoreResult<string, unknown, string>
   export let defaultData: string | undefined = undefined
 
-  const queryResult = query
-
-  let { data = defaultData } = $queryResult
+  let { data = defaultData } = $query
 </script>
 
 <div>
@@ -15,19 +13,19 @@
     <h1>{data}</h1>
   {:else}
     <div class="my-4">
-      {#if $queryResult.isLoading}
+      {#if $query.isLoading}
         Loading...
       {/if}
-      {#if $queryResult.error}
-        <div>Failure Count: {$queryResult.failureCount}</div>
+      {#if $query.error}
+        <div>Failure Count: {$query.failureCount}</div>
       {/if}
-      {#if $queryResult.isSuccess}
+      {#if $query.isSuccess}
         <div>
-          <h1>{$queryResult.data}</h1>
+          <h1>{$query.data}</h1>
         </div>
-        <button on:click={() => $queryResult.refetch()}>refetch</button>
+        <button on:click={() => $query.refetch()}>refetch</button>
       {/if}
-      <strong>Status: {$queryResult.status}</strong>
+      <strong>Status: {$query.status}</strong>
     </div>
   {/if}
 </div>

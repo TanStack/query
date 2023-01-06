@@ -17,7 +17,10 @@ describe('useQuery', () => {
 
   it('should allow to set default data value', async () => {
     const key = queryKey()
-    const query = useQuery(key, simplefetcher)
+    const query = useQuery({
+      queryKey: key,
+      queryFn: simplefetcher,
+    })
 
     render(Page, {
       props: {
