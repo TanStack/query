@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/svelte'
 import { describe, it, expect } from 'vitest';
-import { useQuery, useQueryClient, type UseQueryResult } from '..'
+import { useQuery, useQueryClient, type UseQueryResult } from '../lib'
 
 // @ts-ignore
 import Page from '../__mocks__/Page.svelte'

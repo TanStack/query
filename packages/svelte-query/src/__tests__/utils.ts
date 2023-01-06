@@ -1,5 +1,5 @@
 import { act } from '@testing-library/svelte'
-import { QueryClient, type QueryClientConfig, type MutationOptions } from '..'
+import { QueryClient, type QueryClientConfig, type MutationOptions } from '../lib'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   jest.spyOn(console, 'error').mockImplementation(() => undefined)
