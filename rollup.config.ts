@@ -301,7 +301,7 @@ function mjs({
       }),
       babelPlugin,
       commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], exportConditions: ['svelte'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
@@ -343,7 +343,7 @@ function esm({
       }),
       babelPlugin,
       commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], exportConditions: ['svelte'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
     ],
   }
@@ -387,7 +387,7 @@ function cjs({
       }),
       babelPlugin,
       commonJS(),
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], exportConditions: ['svelte'] }),
       forceDevEnv ? forceEnvPlugin('development') : undefined,
       replace({
         // TODO: figure out a better way to produce extensionless cjs imports
@@ -430,7 +430,7 @@ function umdDev({
       }),
       commonJS(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], exportConditions: ['svelte'] }),
       forceEnvPlugin('development'),
     ],
   }
@@ -463,7 +463,7 @@ function umdProd({
       }),
       commonJS(),
       babelPlugin,
-      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts'] }),
+      nodeResolve({ extensions: ['.ts', '.tsx', '.native.ts', '.svelte'], exportConditions: ['svelte'] }),
       forceEnvPlugin('production'),
       terser({
         mangle: true,
