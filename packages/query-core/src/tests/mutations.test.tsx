@@ -2,6 +2,7 @@ import type { QueryClient } from '..'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 import type { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
+import { MutationCache } from '..'
 
 describe('mutations', () => {
   let queryClient: QueryClient
@@ -309,21 +310,23 @@ describe('mutations', () => {
   })
 
   test('addObserver should not add an existing observer', async () => {
-    const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
-        return 'update'
-      },
-      onMutate: (text) => text,
+    const mutationCache = queryClient.getMutationCache()
+    const observer = new MutationObserver(queryClient, {})
+    const currentMutation = mutationCache.build(queryClient, {})
+
+    const fn = jest.fn()
+
+    const unsubscribe = mutationCache.subscribe((event) => {
+      fn(event.type)
     })
-    await mutation.mutate()
 
-    // Force addObserver usage to add an existing observer
-    // because no use case has been found
-    const currentMutation = mutation['currentMutation']!
-    expect(currentMutation['observers'].length).toEqual(1)
-    currentMutation.addObserver(mutation)
+    currentMutation.addObserver(observer)
+    currentMutation.addObserver(observer)
 
-    expect(currentMutation['observers'].length).toEqual(1)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('observerAdded')
+
+    unsubscribe()
   })
 
   test('mutate should throw an error if no mutationFn found', async () => {
