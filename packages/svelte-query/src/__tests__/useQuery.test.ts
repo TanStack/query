@@ -1,5 +1,5 @@
-import '@testing-library/jest-dom'
 import { fireEvent, render, screen, waitFor } from '@testing-library/svelte'
+import { describe, it, expect } from 'vitest';
 import { useQuery, useQueryClient, type UseQueryResult } from '..'
 
 // @ts-ignore
