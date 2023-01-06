@@ -1,3 +1,4 @@
+import { vi } from 'vitest';
 import { act } from '@testing-library/svelte'
 import { QueryClient, type QueryClientConfig, type MutationOptions } from '../lib'
 
@@ -15,9 +16,9 @@ export function mockNavigatorOnLine(value: boolean) {
 }
 
 export const mockLogger = {
-  log: jest.fn(),
-  warn: jest.fn(),
-  error: jest.fn(),
+  log: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 }
 
 let queryKeyCount = 0

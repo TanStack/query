@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { UseQueryStoreResult } from '..'
+  import { UseQueryStoreResult } from '../lib'
 
   export let queryKey: Array<string>
   export let query: UseQueryStoreResult<string, unknown, string>

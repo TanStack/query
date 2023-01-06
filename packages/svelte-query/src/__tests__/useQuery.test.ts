@@ -1,5 +1,5 @@
+import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/svelte'
-import { describe, it, expect } from 'vitest';
 import { useQuery, useQueryClient, type UseQueryResult } from '../lib'
 
 // @ts-ignore
@@ -259,7 +259,7 @@ describe('useQuery', () => {
   it('should call onSuccess after a query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
     const query = useQuery(
       key,
       async () => {
@@ -289,7 +289,7 @@ describe('useQuery', () => {
   it('should call onSuccess after a query has been refetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
     let count = 0
     const query = useQuery(
       key,
@@ -324,7 +324,7 @@ describe('useQuery', () => {
   it('should call onSuccess after a disabled query has been fetched', async () => {
     const key = queryKey()
     const states: UseQueryResult<string>[] = []
-    const onSuccess = jest.fn()
+    const onSuccess = vi.fn()
     const query = useQuery(key, () => 'data', { enabled: false, onSuccess })
 
     let rendered = 0
