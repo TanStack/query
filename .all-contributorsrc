@@ -306,6 +306,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Moshyfawn",
+      "name": "moshyfawn",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16290753?v=4",
+      "profile": "http://moshyfawn.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

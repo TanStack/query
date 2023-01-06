@@ -166,7 +166,7 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       packageDir: 'packages/solid-query',
       jsName: 'SolidQuery',
       outputFile: 'index',
-      entryFile: 'src/index.tsx',
+      entryFile: 'src/index.ts',
       globals: {
         'solid-js/store': 'SolidStore',
         'solid-js': 'Solid',
