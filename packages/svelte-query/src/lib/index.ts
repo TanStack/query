@@ -14,3 +14,5 @@ export { useInfiniteQuery } from './useInfiniteQuery'
 export { useHydrate } from './useHydrate'
 export { useIsFetching } from './useIsFetching'
 export { useIsMutating } from './useIsMutating'
+
+export { default as Test } from './Test.svelte'
