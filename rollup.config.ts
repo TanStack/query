@@ -299,6 +299,10 @@ function mjs({
     plugins: [
       svelte({
         preprocess: autoPreprocess(),
+        compilerOptions: {
+          generate: 'ssr',
+          hydratable: true,
+        },
       }),
       babelPlugin,
       commonJS(),
@@ -341,6 +345,10 @@ function esm({
     plugins: [
       svelte({
         preprocess: autoPreprocess(),
+        compilerOptions: {
+          generate: 'ssr',
+          hydratable: true,
+        },
       }),
       babelPlugin,
       commonJS(),
@@ -385,6 +393,10 @@ function cjs({
     plugins: [
       svelte({
         preprocess: autoPreprocess(),
+        compilerOptions: {
+          generate: 'ssr',
+          hydratable: true,
+        },
       }),
       babelPlugin,
       commonJS(),
@@ -428,6 +440,10 @@ function umdDev({
     plugins: [
       svelte({
         preprocess: autoPreprocess(),
+        compilerOptions: {
+          generate: 'ssr',
+          hydratable: true,
+        },
       }),
       commonJS(),
       babelPlugin,
@@ -461,6 +477,10 @@ function umdProd({
     plugins: [
       svelte({
         preprocess: autoPreprocess(),
+        compilerOptions: {
+          generate: 'ssr',
+          hydratable: true,
+        },
       }),
       commonJS(),
       babelPlugin,
