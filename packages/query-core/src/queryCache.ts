@@ -72,14 +72,11 @@ type QueryCacheListener = (event: QueryCacheNotifyEvent) => void
 // CLASS
 
 export class QueryCache extends Subscribable<QueryCacheListener> {
-  config: QueryCacheConfig
-
   #queries: Query<any, any, any, any>[]
   #queriesMap: QueryHashMap
 
-  constructor(config?: QueryCacheConfig) {
+  constructor(public config: QueryCacheConfig = {}) {
     super()
-    this.config = config || {}
     this.#queries = []
     this.#queriesMap = {}
   }

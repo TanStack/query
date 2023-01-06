@@ -66,18 +66,12 @@ interface ContinueAction {
   type: 'continue'
 }
 
-interface SetStateAction<TData, TError, TVariables, TContext> {
-  type: 'setState'
-  state: MutationState<TData, TError, TVariables, TContext>
-}
-
 export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
   | ErrorAction<TError>
   | FailedAction<TError>
   | LoadingAction<TVariables, TContext>
   | PauseAction
-  | SetStateAction<TData, TError, TVariables, TContext>
   | SuccessAction<TData>
 
 // CLASS
@@ -116,10 +110,6 @@ export class Mutation<
 
   get meta(): MutationMeta | undefined {
     return this.options.meta
-  }
-
-  setState(state: MutationState<TData, TError, TVariables, TContext>): void {
-    this.#dispatch({ type: 'setState', state })
   }
 
   addObserver(observer: MutationObserver<any, any, any, any>): void {
@@ -321,11 +311,6 @@ export class Mutation<
             failureReason: action.error,
             isPaused: false,
             status: 'error',
-          }
-        case 'setState':
-          return {
-            ...state,
-            ...action.state,
           }
       }
     }

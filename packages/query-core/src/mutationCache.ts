@@ -75,14 +75,11 @@ type MutationCacheListener = (event: MutationCacheNotifyEvent) => void
 // CLASS
 
 export class MutationCache extends Subscribable<MutationCacheListener> {
-  config: MutationCacheConfig
-
   #mutations: Mutation<any, any, any, any>[]
   #mutationId: number
 
-  constructor(config?: MutationCacheConfig) {
+  constructor(public config: MutationCacheConfig = {}) {
     super()
-    this.config = config || {}
     this.#mutations = []
     this.#mutationId = 0
   }
