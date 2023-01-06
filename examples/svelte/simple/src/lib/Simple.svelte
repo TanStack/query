@@ -9,32 +9,32 @@
     forks_count: number
   }
 
-  const queryResult = useQuery<Repo, Error>(
-    ['repoData'],
-    async () =>
+  const query = useQuery<Repo, Error>({
+    queryKey: ['repoData'],
+    queryFn: async () =>
       await fetch('https://api.github.com/repos/SvelteStack/svelte-query').then(
         (r) => r.json(),
       ),
-  )
+  })
 </script>
 
 <h1>Simple</h1>
 <div class="my-4">
   <div>
-    {#if $queryResult.isLoading}
+    {#if $query.isLoading}
       Loading...
     {/if}
-    {#if $queryResult.error}
+    {#if $query.error}
       An error has occurred:
-      {$queryResult.error.message}
+      {$query.error.message}
     {/if}
-    {#if $queryResult.isSuccess}
+    {#if $query.isSuccess}
       <div>
-        <h1>{$queryResult.data.name}</h1>
-        <p>{$queryResult.data.description}</p>
-        <strong>👀 {$queryResult.data.subscribers_count}</strong>{' '}
-        <strong>✨ {$queryResult.data.stargazers_count}</strong>{' '}
-        <strong>🍴 {$queryResult.data.forks_count}</strong>
+        <h1>{$query.data.name}</h1>
+        <p>{$query.data.description}</p>
+        <strong>👀 {$query.data.subscribers_count}</strong>{' '}
+        <strong>✨ {$query.data.stargazers_count}</strong>{' '}
+        <strong>🍴 {$query.data.forks_count}</strong>
       </div>
     {/if}
   </div>
