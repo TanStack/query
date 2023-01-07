@@ -41,5 +41,9 @@
     "./package.json": "./package.json",
     ".": "./build/lib/index.js"
   },
-  "svelte": "./build/lib/index.js"
+  "svelte": "./build/lib/index.js",
+  "files": [
+    "build/lib/*",
+    "src"
+  ]
 }
