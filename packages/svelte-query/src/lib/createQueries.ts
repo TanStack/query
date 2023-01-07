@@ -42,7 +42,12 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? CreateQueryOptionsForCreateQueries<TQueryFnData, unknown, TData, TQueryKey>
+    ? CreateQueryOptionsForCreateQueries<
+        TQueryFnData,
+        unknown,
+        TData,
+        TQueryKey
+      >
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
     ? CreateQueryOptionsForCreateQueries<
         TQueryFnData,

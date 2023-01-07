@@ -5,7 +5,10 @@ import {
   type QueryFunction,
   type QueryKey,
 } from '@tanstack/query-core'
-import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult } from './types'
+import type {
+  CreateInfiniteQueryOptions,
+  CreateInfiniteQueryResult,
+} from './types'
 import { createBaseQuery } from './createBaseQuery'
 
 export function createInfiniteQuery<
