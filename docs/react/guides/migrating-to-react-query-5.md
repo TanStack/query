@@ -9,7 +9,7 @@ v5 is a major version, so there are some breaking changes to be aware of:
 
 ### Supports a single signature, one object
 
-useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options. 
+useQuery and friends used to have many overloads in TypeScript - different ways how the function can be invoked. Not only this was tough to maintain, type wise, it also required a runtime check to see which type the first and the second parameter, to correctly create options.
 
 now we only support the object format.
 
@@ -117,7 +117,6 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
 
-
 ### The `isDataEqual` options has been removed from useQuery
 
 Previously, This function was used to indicate whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
@@ -130,6 +129,14 @@ You can achieve the same functionality by passing a function to `structuralShari
 - isDataEqual: (oldData, newData) => customCheck(oldData, newData)
 + structuralSharing: (oldData, newData) => customCheck(oldData, newData) ? oldData : replaceEqualDeep(oldData, newData)
 ```
+
+### Supported Browsers
+
+We have updated our browserslist to produce a more modern, performant and smaller bundle. You can read about the requirements [here](../installation#requirements).
+
+### Private class fields and methods
+
+TanStack Query has always had private fields and methods on classes, but they weren't really private - they were just private in `TypeScript`. We now use [ECMAScript Private class features](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Private_class_fields), which means those fields are now truly private and can't be accessed from the outside at runtime.
 
 ### The `useErrorBoundary` prop has been renamed to `throwErrors`
 
