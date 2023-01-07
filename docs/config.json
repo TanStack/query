@@ -294,10 +294,6 @@
             {
               "label": "Exhaustive Deps",
               "to": "react/eslint/exhaustive-deps"
-            },
-            {
-              "label": "Prefer object syntax",
-              "to": "react/eslint/prefer-query-object-syntax"
             }
           ]
         },
