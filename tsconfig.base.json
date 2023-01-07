@@ -35,7 +35,6 @@
         "packages/react-query-persist-client/src"
       ],
       "@tanstack/solid-query": ["packages/solid-query/src"],
-      "@tanstack/svelte-query": ["packages/svelte-query/src"],
       "@tanstack/vue-query": ["packages/vue-query/src"],
     }
   }
