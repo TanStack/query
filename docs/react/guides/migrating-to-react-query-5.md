@@ -142,3 +142,6 @@ TanStack Query has always had private fields and methods on classes, but they we
 
 To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
+### eslint `prefer-query-object-syntax` rule is removed
+
+Since the only supported syntax now is the object syntax, this rule is no longer needed
