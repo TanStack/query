@@ -15,7 +15,7 @@
   "scripts": {
     "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "test:jest": "vitest run"
+    "test:jest": "svelte-kit sync && vitest run"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^1.0.0",
