@@ -10,8 +10,9 @@
     "type": "github",
     "url": "https://github.com/sponsors/tannerlinsley"
   },
-  "type": "module",
+  "types": "build/lib/index.d.ts",
   "module": "build/lib/index.js",
+  "type": "module",
   "scripts": {
     "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
