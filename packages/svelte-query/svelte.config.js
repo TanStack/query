@@ -9,7 +9,7 @@ const config = {
   },
   package: {
     source: "./src/lib",
-    dir: "./build"
+    dir: "./build/lib"
   }
 };
 

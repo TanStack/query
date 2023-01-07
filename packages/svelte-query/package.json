@@ -11,6 +11,7 @@
     "url": "https://github.com/sponsors/tannerlinsley"
   },
   "type": "module",
+  "module": "build/lib/index.js",
   "scripts": {
     "build": "svelte-kit sync && svelte-package",
     "prepublishOnly": "echo 'Did you mean to publish `./package/`, instead of `./`?' && exit 1",
@@ -35,5 +36,10 @@
   },
   "peerDependencies": {
     "svelte": "^3.54.0"
-  }
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": "./build/lib/index.js"
+  },
+  "svelte": "./build/lib/index.js"
 }
