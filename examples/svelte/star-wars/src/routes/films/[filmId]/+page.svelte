@@ -14,8 +14,6 @@
     queryKey: ["film", data.params.filmId],
     queryFn: getFilm,
   });
-
-  $: console.log($query.data);
 </script>
 
 {#if $query.status === "loading"}
@@ -35,7 +33,7 @@
     {#each $query.data.characters as character}
       {@const characterUrlParts = character.split("/").filter(Boolean)}
       {@const characterId = characterUrlParts[characterUrlParts.length - 1]}
-      <Character characterId={characterId} />
+      <Character {characterId} />
     {/each}
   </div>
 {/if}
