@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/svelte'
-import { useQuery, useQueryClient, type UseQueryResult } from '../lib'
+import { createQuery, useQueryClient, type CreateQueryResult } from '../lib'
 
 // @ts-ignore
 import Page from '../__mocks__/Page.svelte'
@@ -12,12 +12,12 @@ import {
   sleep,
 } from './utils'
 
-describe('useQuery', () => {
+describe('createQuery', () => {
   const queryClient = useQueryClient()
 
   it('should allow to set default data value', async () => {
     const key = queryKey()
-    const query = useQuery({
+    const query = createQuery({
       queryKey: key,
       queryFn: simplefetcher,
     })
@@ -39,9 +39,9 @@ describe('useQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
     const key = queryKey()
-    const query = useQuery<string, Error>(key, simplefetcher)
-    const states: UseQueryResult<string>[] = []
-    let state!: UseQueryResult<string, Error>
+    const query = createQuery<string, Error>(key, simplefetcher)
+    const states: CreateQueryResult<string>[] = []
+    let state!: CreateQueryResult<string, Error>
 
     query.subscribe((result) => {
       states.push(result)
@@ -133,9 +133,9 @@ describe('useQuery', () => {
 
   it('should return the correct states for a unsuccessful query', async () => {
     const key = queryKey()
-    const states: UseQueryResult<undefined, string>[] = []
+    const states: CreateQueryResult<undefined, string>[] = []
 
-    const query = useQuery<string[], string, undefined>(
+    const query = createQuery<string[], string, undefined>(
       key,
       () => Promise.reject('rejected'),
       {
@@ -144,7 +144,7 @@ describe('useQuery', () => {
       },
     )
 
-    let state!: UseQueryResult<undefined, string>
+    let state!: CreateQueryResult<undefined, string>
 
     query.subscribe((result) => {
       states.push(result)
@@ -229,10 +229,10 @@ describe('useQuery', () => {
 
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string, Error>[] = []
+    const states: CreateQueryResult<string, Error>[] = []
 
     await queryClient.prefetchQuery(key, () => 'prefetched')
-    const query = useQuery<string, Error>(key, () => 'data')
+    const query = createQuery<string, Error>(key, () => 'data')
 
     query.subscribe(async (result) => {
       states.push(result)
@@ -261,9 +261,9 @@ describe('useQuery', () => {
 
   it('should call onSuccess after a query has been fetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: CreateQueryResult<string>[] = []
     const onSuccess = vi.fn()
-    const query = useQuery(
+    const query = createQuery(
       key,
       async () => {
         await sleep(10)
@@ -291,10 +291,10 @@ describe('useQuery', () => {
 
   it('should call onSuccess after a query has been refetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: CreateQueryResult<string>[] = []
     const onSuccess = vi.fn()
     let count = 0
-    const query = useQuery(
+    const query = createQuery(
       key,
       async () => {
         count++
@@ -326,9 +326,9 @@ describe('useQuery', () => {
 
   it('should call onSuccess after a disabled query has been fetched', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
+    const states: CreateQueryResult<string>[] = []
     const onSuccess = vi.fn()
-    const query = useQuery(key, () => 'data', { enabled: false, onSuccess })
+    const query = createQuery(key, () => 'data', { enabled: false, onSuccess })
 
     let rendered = 0
     query.subscribe(async (result) => {

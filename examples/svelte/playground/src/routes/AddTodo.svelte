@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useMutation, useQueryClient } from '@tanstack/svelte-query';
+  import { createMutation, useQueryClient } from '@tanstack/svelte-query';
   import { errorRate, queryTimeMin, queryTimeMax, list, id } from "../lib/stores"
 
   const queryClient = useQueryClient();
@@ -23,7 +23,7 @@
   });
 }
 
-  const addMutation = useMutation({
+  const addMutation = createMutation({
     mutationFn: postTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["todos"] });

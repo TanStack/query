@@ -22,13 +22,13 @@ Include the QueryClientProvider near the root of your project:
 </QueryClientProvider>
 ```
 
-Then call any function (e.g. useQuery) from any component:
+Then call any function (e.g. createQuery) from any component:
 
 ```svelte
 <script lang="ts">
-  import { useQuery } from '@tanstack/svelte-query'
+  import { createQuery } from '@tanstack/svelte-query'
 
-  const query = useQuery({
+  const query = createQuery({
     queryKey: ['todos'],
     queryFn: () => fetchTodos(),
   })
@@ -49,17 +49,18 @@ Then call any function (e.g. useQuery) from any component:
 
 ## Available Functions
 
-Svelte Query offers useful primitives and functions that will make managing server state in Svelte apps easier.
+Svelte Query offers useful functions and components that will make managing server state in Svelte apps easier.
 
-- `QueryClientProvider`
+- `createQuery`
+- `createQueries`
+- `createInfiniteQuery`
+- `createMutation`
 - `useQueryClient`
-- `useQuery`
-- `useQueries`
-- `useMutation`
-- `useInfiniteQuery`
-- `useHydrate`
 - `useIsFetching`
 - `useIsMutating`
+- `useHydrate`
+- `<QueryClientProvider>`
+- `<Hydrate>`
 
 ## Important Differences between Svelte Query & React Query
 

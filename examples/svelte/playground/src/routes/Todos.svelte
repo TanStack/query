@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQuery } from "@tanstack/svelte-query"
+  import { createQuery } from "@tanstack/svelte-query"
   import { errorRate, queryTimeMin, queryTimeMax, list, editingIndex } from "../lib/stores"
 
   export let initialFilter: string;
@@ -21,7 +21,7 @@
     });
   }
 
-  const query = useQuery<any, Error>({
+  const query = createQuery<any, Error>({
     queryKey: ["todos", { filter }],
     queryFn: () => fetchTodos({ filter }),
   });

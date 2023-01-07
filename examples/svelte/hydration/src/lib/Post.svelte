@@ -1,11 +1,11 @@
 <script lang="ts">
-  import { useQuery } from '@tanstack/svelte-query'
+  import { createQuery } from '@tanstack/svelte-query'
   import { getPostById } from './data'
 
   export let postId: number
   export let setPostId: (id: number) => void
 
-  const post = useQuery<{ title: string; body: string }, Error>(
+  const post = createQuery<{ title: string; body: string }, Error>(
     ['post', postId],
     () => getPostById(postId),
     {

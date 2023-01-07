@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQueryClient, useQuery, useMutation} from '@tanstack/svelte-query';
+  import { useQueryClient, createQuery, createMutation} from '@tanstack/svelte-query';
   import { errorRate, queryTimeMin, queryTimeMax, list, editingIndex } from "../lib/stores"
 
   const queryClient = useQueryClient();
@@ -36,13 +36,13 @@
   });
 }
 
-  const query = useQuery({
+  const query = createQuery({
     queryKey: ["todo", { id: $editingIndex }],
     queryFn: () => fetchTodoById({ id: $editingIndex || 0 }),
     enabled: $editingIndex !== null,
   });
 
-  const saveMutation = useMutation({
+  const saveMutation = createMutation({
     mutationFn: patchTodo,
     onSuccess: (data) => {
       // Update `todos` and the individual todo queries when this mutation succeeds
@@ -57,7 +57,7 @@
     $saveMutation.mutate(todo);
   };
 
-  const disableEditSave = $query.status === "loading" || $saveMutation.status === "loading";
+  $: disableEditSave = $query.status === "loading" || $saveMutation.status === "loading";
 </script>
 
 <div>

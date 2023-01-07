@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQuery } from "@tanstack/svelte-query"
+  import { createQuery } from "@tanstack/svelte-query"
   import Character from "./Character.svelte";
   import type { PageData } from './$types';
 
@@ -10,7 +10,7 @@
     return await res.json();
   }
 
-  const query = useQuery({
+  const query = createQuery({
     queryKey: ["film", data.params.filmId],
     queryFn: getFilm,
   });

@@ -8,21 +8,21 @@ import {
 } from '@tanstack/query-core'
 import type {
   UseMutateFunction,
-  UseMutationOptions,
+  CreateMutationOptions,
   MutationStoreResult,
 } from './types'
 import { useQueryClient } from './useQueryClient'
 
-export function useMutation<
+export function createMutation<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
   TContext = unknown,
 >(
-  options: UseMutationOptions<TData, TError, TVariables, TContext>,
+  options: CreateMutationOptions<TData, TError, TVariables, TContext>,
 ): MutationStoreResult<TData, TError, TVariables, TContext>
 
-export function useMutation<
+export function createMutation<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
@@ -30,12 +30,12 @@ export function useMutation<
 >(
   mutationFn: MutationFunction<TData, TVariables>,
   options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
+    CreateMutationOptions<TData, TError, TVariables, TContext>,
     'mutationFn'
   >,
 ): MutationStoreResult<TData, TError, TVariables, TContext>
 
-export function useMutation<
+export function createMutation<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
@@ -43,12 +43,12 @@ export function useMutation<
 >(
   mutationKey: MutationKey,
   options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
+    CreateMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey'
   >,
 ): MutationStoreResult<TData, TError, TVariables, TContext>
 
-export function useMutation<
+export function createMutation<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
@@ -57,12 +57,12 @@ export function useMutation<
   mutationKey: MutationKey,
   mutationFn?: MutationFunction<TData, TVariables>,
   options?: Omit<
-    UseMutationOptions<TData, TError, TVariables, TContext>,
+    CreateMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey' | 'mutationFn'
   >,
 ): MutationStoreResult<TData, TError, TVariables, TContext>
 
-export function useMutation<
+export function createMutation<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
@@ -71,11 +71,11 @@ export function useMutation<
   arg1:
     | MutationKey
     | MutationFunction<TData, TVariables>
-    | UseMutationOptions<TData, TError, TVariables, TContext>,
+    | CreateMutationOptions<TData, TError, TVariables, TContext>,
   arg2?:
     | MutationFunction<TData, TVariables>
-    | UseMutationOptions<TData, TError, TVariables, TContext>,
-  arg3?: UseMutationOptions<TData, TError, TVariables, TContext>,
+    | CreateMutationOptions<TData, TError, TVariables, TContext>,
+  arg3?: CreateMutationOptions<TData, TError, TVariables, TContext>,
 ): MutationStoreResult<TData, TError, TVariables, TContext> {
   const options = parseMutationArgs(arg1, arg2, arg3)
   const queryClient = useQueryClient()

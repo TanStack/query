@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQueryClient, useQuery, useMutation } from '@tanstack/svelte-query'
+  import { useQueryClient, createQuery, createMutation } from '@tanstack/svelte-query'
 
   let intervalMs = 1000
   let value: string
@@ -8,7 +8,7 @@
 
   const endpoint = 'http://localhost:5173/api/data'
 
-  const todos = useQuery<{ items: string[] }, Error>(
+  const todos = createQuery<{ items: string[] }, Error>(
     ['refetch'],
     async () => await fetch(endpoint).then((r) => r.json()),
     {
@@ -17,11 +17,11 @@
     },
   )
 
-  const addMutation = useMutation(
+  const addMutation = createMutation(
     (value: string) => fetch(`${endpoint}?add=${value}`).then((r) => r.json()),
     { onSuccess: () => client.invalidateQueries(['refetch']) },
   )
-  const clearMutation = useMutation(
+  const clearMutation = createMutation(
     () => fetch(`${endpoint}?clear=1`).then((r) => r.json()),
     {
       onSuccess: () => client.invalidateQueries(['refetch']),

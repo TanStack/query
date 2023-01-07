@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQuery } from '@tanstack/svelte-query'
+  import { createQuery } from '@tanstack/svelte-query'
 
   type Repo = {
     name: string
@@ -9,7 +9,7 @@
     forks_count: number
   }
 
-  const query = useQuery<Repo, Error>({
+  const query = createQuery<Repo, Error>({
     queryKey: ['repoData'],
     queryFn: async () =>
       await fetch('https://api.github.com/repos/SvelteStack/svelte-query').then(

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { useQuery } from "@tanstack/svelte-query"
+  import { createQuery } from "@tanstack/svelte-query"
 
   export let filmId: string;
 
@@ -8,7 +8,7 @@
     return await res.json();
   }
 
-  const query = useQuery({
+  const query = createQuery({
     queryKey: ["film", filmId],
     queryFn: getFilm,
   });

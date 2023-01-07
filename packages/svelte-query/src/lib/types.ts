@@ -19,7 +19,7 @@ export interface ContextOptions {
   context?: QueryClient | undefined
 }
 
-export interface UseBaseQueryOptions<
+export interface CreateBaseQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -28,12 +28,12 @@ export interface UseBaseQueryOptions<
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
 
-export interface UseQueryOptions<
+export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
-> extends UseBaseQueryOptions<
+> extends CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,
@@ -41,7 +41,7 @@ export interface UseQueryOptions<
     TQueryKey
   > {}
 
-export interface UseInfiniteQueryOptions<
+export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -55,44 +55,44 @@ export interface UseInfiniteQueryOptions<
     TQueryKey
   > {}
 
-export type UseInfiniteQueryResult<
+export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = unknown,
 > = Readable<InfiniteQueryObserverResult<TData, TError>>
 
-export interface UseInfiniteQueryStoreResult<
+export interface CreateInfiniteQueryStoreResult<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-> extends Readable<UseInfiniteQueryResult<TData, TError>> {}
+> extends Readable<CreateInfiniteQueryResult<TData, TError>> {}
 
-export type UseBaseQueryResult<
+export type CreateBaseQueryResult<
   TData = unknown,
   TError = unknown,
 > = QueryObserverResult<TData, TError>
 
-export type UseQueryResult<
+export type CreateQueryResult<
   TData = unknown,
   TError = unknown,
-> = UseBaseQueryResult<TData, TError>
+> = CreateBaseQueryResult<TData, TError>
 
-export interface UseQueryStoreResult<
+export interface CreateQueryStoreResult<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
-> extends Readable<UseQueryResult<TData, TError>> {}
+> extends Readable<CreateQueryResult<TData, TError>> {}
 
-export type DefinedUseBaseQueryResult<
+export type DefinedCreateBaseQueryResult<
   TData = unknown,
   TError = unknown,
 > = Readable<DefinedQueryObserverResult<TData, TError>>
 
-export type DefinedUseQueryResult<
+export type DefinedCreateQueryResult<
   TData = unknown,
   TError = unknown,
-> = DefinedUseBaseQueryResult<TData, TError>
+> = DefinedCreateBaseQueryResult<TData, TError>
 
-export interface UseMutationOptions<
+export interface CreateMutationOptions<
   TData = unknown,
   TError = unknown,
   TVariables = void,
@@ -129,7 +129,7 @@ export type UseBaseMutationResult<
   { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
 > & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
 
-export type UseMutationResult<
+export type CreateMutationResult<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
@@ -141,6 +141,6 @@ export interface MutationStoreResult<
   TError = unknown,
   TVariables = unknown,
   TContext = unknown,
-> extends Readable<UseMutationResult<TData, TError, TVariables, TContext>> {}
+> extends Readable<CreateMutationResult<TData, TError, TVariables, TContext>> {}
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

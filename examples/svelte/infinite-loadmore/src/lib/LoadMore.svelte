@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { useInfiniteQuery } from '@tanstack/svelte-query'
+  import { createInfiniteQuery } from '@tanstack/svelte-query'
 
   const endPoint = 'https://swapi.dev/api'
 
   const fetchPlanets = async ({ pageParam = 1 }) =>
     await fetch(`${endPoint}/planets/?page=${pageParam}`).then((r) => r.json())
 
-  const query = useInfiniteQuery({
+  const query = createInfiniteQuery({
     queryKey: ['planets'],
     queryFn: fetchPlanets,
     //@ts-ignore

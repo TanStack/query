@@ -1,6 +1,6 @@
 <script lang="ts">
   import '../app.css';
-  import { useQueryClient, useQuery, useMutation } from '@tanstack/svelte-query';
+  import { useQueryClient, createQuery, createMutation } from '@tanstack/svelte-query';
 
   type Todo = {
     id: string;
@@ -32,12 +32,12 @@
     }).then((res) => res.json());
 
   function useTodos() {
-    return useQuery<Todos, Error>(['optimistic'], fetchTodos);
+    return createQuery<Todos, Error>(['optimistic'], fetchTodos);
   }
 
   const todos = useTodos();
 
-  const addTodoMutation = useMutation(createTodo, {
+  const addTodoMutation = createMutation(createTodo, {
     // When mutate is called:
     onMutate: async (newTodo: string) => {
       text = '';

@@ -5,24 +5,24 @@ import {
   type QueryFunction,
   type QueryKey,
 } from '@tanstack/query-core'
-import type { UseInfiniteQueryOptions, UseInfiniteQueryResult } from './types'
-import { useBaseQuery } from './useBaseQuery'
+import type { CreateInfiniteQueryOptions, CreateInfiniteQueryResult } from './types'
+import { createBaseQuery } from './createBaseQuery'
 
-export function useInfiniteQuery<
+export function createInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
-  options: UseInfiniteQueryOptions<
+  options: CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryFnData,
     TQueryKey
   >,
-): UseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<
+): CreateInfiniteQueryResult<TData, TError>
+export function createInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -30,7 +30,7 @@ export function useInfiniteQuery<
 >(
   queryKey: TQueryKey,
   options?: Omit<
-    UseInfiniteQueryOptions<
+    CreateInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
@@ -39,8 +39,8 @@ export function useInfiniteQuery<
     >,
     'queryKey'
   >,
-): UseInfiniteQueryResult<TData, TError>
-export function useInfiniteQuery<
+): CreateInfiniteQueryResult<TData, TError>
+export function createInfiniteQuery<
   TQueryFnData = unknown,
   TError = unknown,
   TData = TQueryFnData,
@@ -49,7 +49,7 @@ export function useInfiniteQuery<
   queryKey: TQueryKey,
   queryFn: QueryFunction<TQueryFnData, TQueryKey>,
   options?: Omit<
-    UseInfiniteQueryOptions<
+    CreateInfiniteQueryOptions<
       TQueryFnData,
       TError,
       TData,
@@ -58,9 +58,9 @@ export function useInfiniteQuery<
     >,
     'queryKey' | 'queryFn'
   >,
-): UseInfiniteQueryResult<TData, TError>
+): CreateInfiniteQueryResult<TData, TError>
 
-export function useInfiniteQuery<
+export function createInfiniteQuery<
   TQueryFnData,
   TError,
   TData = TQueryFnData,
@@ -68,7 +68,7 @@ export function useInfiniteQuery<
 >(
   arg1:
     | TQueryKey
-    | UseInfiniteQueryOptions<
+    | CreateInfiniteQueryOptions<
         TQueryFnData,
         TError,
         TData,
@@ -77,24 +77,24 @@ export function useInfiniteQuery<
       >,
   arg2?:
     | QueryFunction<TQueryFnData, TQueryKey>
-    | UseInfiniteQueryOptions<
+    | CreateInfiniteQueryOptions<
         TQueryFnData,
         TError,
         TData,
         TQueryFnData,
         TQueryKey
       >,
-  arg3?: UseInfiniteQueryOptions<
+  arg3?: CreateInfiniteQueryOptions<
     TQueryFnData,
     TError,
     TData,
     TQueryFnData,
     TQueryKey
   >,
-): UseInfiniteQueryResult<TData, TError> {
+): CreateInfiniteQueryResult<TData, TError> {
   const options = parseQueryArgs(arg1, arg2, arg3)
-  return useBaseQuery(
+  return createBaseQuery(
     options,
     InfiniteQueryObserver as typeof QueryObserver,
-  ) as UseInfiniteQueryResult<TData, TError>
+  ) as CreateInfiniteQueryResult<TData, TError>
 }

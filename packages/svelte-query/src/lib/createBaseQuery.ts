@@ -3,18 +3,18 @@ import {
   type QueryKey,
   type QueryObserver,
 } from '@tanstack/query-core'
-import type { UseBaseQueryOptions } from './types'
+import type { CreateBaseQueryOptions } from './types'
 import { useQueryClient } from './useQueryClient'
 import { derived, readable } from 'svelte/store'
 
-export function useBaseQuery<
+export function createBaseQuery<
   TQueryFnData,
   TError,
   TData,
   TQueryData,
   TQueryKey extends QueryKey,
 >(
-  options: UseBaseQueryOptions<
+  options: CreateBaseQueryOptions<
     TQueryFnData,
     TError,
     TData,

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import type { UseQueryStoreResult } from '../lib'
+  import type { CreateQueryStoreResult } from '../lib'
 
   export let queryKey: Array<string>
-  export let query: UseQueryStoreResult<string, unknown, string>
+  export let query: CreateQueryStoreResult<string, unknown, string>
   export let defaultData: string | undefined = undefined
 
   let { data = defaultData } = $query
