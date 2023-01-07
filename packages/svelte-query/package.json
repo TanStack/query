@@ -13,8 +13,7 @@
   "type": "module",
   "module": "build/lib/index.js",
   "scripts": {
-    "build": "svelte-kit sync && svelte-package",
-    "prepublishOnly": "echo 'Did you mean to publish `./package/`, instead of `./`?' && exit 1",
+    "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "test:jest": "vitest run"
   },
@@ -24,6 +23,7 @@
     "@sveltejs/package": "^1.0.0",
     "@testing-library/svelte": "^3.2.2",
     "jsdom": "^20.0.3",
+    "rimraf": "^3.0.2",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
     "tslib": "^2.4.1",
