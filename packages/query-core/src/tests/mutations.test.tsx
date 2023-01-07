@@ -2,7 +2,6 @@ import type { QueryClient } from '..'
 import { createQueryClient, executeMutation, queryKey, sleep } from './utils'
 import type { MutationState } from '../mutation'
 import { MutationObserver } from '../mutationObserver'
-import { MutationCache } from '..'
 
 describe('mutations', () => {
   let queryClient: QueryClient
