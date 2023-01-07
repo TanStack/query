@@ -96,7 +96,7 @@ export function matchQuery(
     stale,
   } = filters
 
-  if (Array.isArray(queryKey)) {
+  if (queryKey) {
     if (exact) {
       if (query.queryHash !== hashQueryKeyByOptions(queryKey, query.options)) {
         return false
@@ -139,7 +139,7 @@ export function matchMutation(
   mutation: Mutation<any, any>,
 ): boolean {
   const { exact, fetching, predicate, mutationKey } = filters
-  if (Array.isArray(mutationKey)) {
+  if (mutationKey) {
     if (!mutation.options.mutationKey) {
       return false
     }
