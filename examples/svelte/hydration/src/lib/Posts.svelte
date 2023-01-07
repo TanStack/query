@@ -11,7 +11,7 @@
     Error
   >({
     queryKey: ['posts', limit],
-    queryFn: () => getPosts(limit)
+    queryFn: () => getPosts(limit),
   })
 </script>
 

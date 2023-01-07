@@ -36,7 +36,10 @@
       }),
     }).then((res) => res.json())
 
-  const todos = createQuery<Todos, Error>({queryKey: ['optimistic'], queryFn: fetchTodos})
+  const todos = createQuery<Todos, Error>({
+    queryKey: ['optimistic'],
+    queryFn: fetchTodos,
+  })
 
   const addTodoMutation = createMutation(createTodo, {
     // When mutate is called:
