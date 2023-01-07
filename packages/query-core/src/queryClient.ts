@@ -1,6 +1,6 @@
 import type { QueryFilters, Updater, MutationFilters } from './utils'
 import {
-  hashQueryKey,
+  hashKey,
   noop,
   partialMatchKey,
   hashQueryKeyByOptions,
@@ -369,7 +369,7 @@ export class QueryClient {
     options: Omit<QueryObserverOptions<unknown, any, any, any>, 'queryKey'>,
   ): void {
     const result = this.#queryDefaults.find(
-      (x) => hashQueryKey(queryKey) === hashQueryKey(x.queryKey),
+      (x) => hashKey(queryKey) === hashKey(x.queryKey),
     )
     if (result) {
       result.defaultOptions = options
@@ -414,7 +414,7 @@ export class QueryClient {
     options: MutationObserverOptions<any, any, any, any>,
   ): void {
     const result = this.#mutationDefaults.find(
-      (x) => hashQueryKey(mutationKey) === hashQueryKey(x.mutationKey),
+      (x) => hashKey(mutationKey) === hashKey(x.mutationKey),
     )
     if (result) {
       result.defaultOptions = options

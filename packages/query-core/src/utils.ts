@@ -144,9 +144,7 @@ export function matchMutation(
       return false
     }
     if (exact) {
-      if (
-        hashQueryKey(mutation.options.mutationKey) !== hashQueryKey(mutationKey)
-      ) {
+      if (hashKey(mutation.options.mutationKey) !== hashKey(mutationKey)) {
         return false
       }
     } else if (!partialMatchKey(mutation.options.mutationKey, mutationKey)) {
@@ -172,15 +170,15 @@ export function hashQueryKeyByOptions<TQueryKey extends QueryKey = QueryKey>(
   queryKey: TQueryKey,
   options?: QueryOptions<any, any, any, TQueryKey>,
 ): string {
-  const hashFn = options?.queryKeyHashFn || hashQueryKey
+  const hashFn = options?.queryKeyHashFn || hashKey
   return hashFn(queryKey)
 }
 
 /**
- * Default query keys hash function.
+ * Default query & mutation keys hash function.
  * Hashes the value into a stable hash.
  */
-export function hashQueryKey(queryKey: QueryKey): string {
+export function hashKey(queryKey: QueryKey | MutationKey): string {
   return JSON.stringify(queryKey, (_, val) =>
     isPlainObject(val)
       ? Object.keys(val)
