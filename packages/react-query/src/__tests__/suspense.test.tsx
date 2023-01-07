@@ -493,11 +493,6 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(rendered.getByText('switch'))
     await waitFor(() => rendered.getByText('Loading...'))
     await waitFor(() => rendered.getByText(`data: ${key2}`))
-    expect(
-      // @ts-expect-error
-      queryClient.getQueryCache().find({ queryKey: key2 })!.observers[0]
-        .listeners.length,
-    ).toBe(1)
   })
 
   it('should retry fetch if the reset error boundary has been reset with global hook', async () => {

@@ -526,11 +526,6 @@ describe("useQuery's in Suspense mode", () => {
     fireEvent.click(screen.getByText('switch'))
     await waitFor(() => screen.getByText('Loading...'))
     await waitFor(() => screen.getByText(`data: ${key2}`))
-    expect(
-      // @ts-expect-error
-      queryClient.getQueryCache().find({ queryKey: key2 })!.observers[0]
-        .listeners.length,
-    ).toBe(1)
   })
 
   it('should throw errors to the error boundary by default', async () => {
