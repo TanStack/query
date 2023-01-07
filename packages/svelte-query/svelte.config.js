@@ -8,6 +8,7 @@ const config = {
     adapter: adapter()
   },
   package: {
+    source: "./src/lib",
     dir: "./build"
   }
 };
