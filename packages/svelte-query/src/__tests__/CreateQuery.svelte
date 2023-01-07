@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createQuery, QueryClient } from '../lib'
-  import { setQueryClientContext } from "../lib/context"
+  import { setQueryClientContext } from '../lib/context'
 
   export let queryKey: Array<string>
   export let queryFn: () => Promise<string>
@@ -11,7 +11,7 @@
   const query = createQuery({
     queryKey,
     queryFn,
-  });
+  })
 </script>
 
 {#if $query.isLoading}

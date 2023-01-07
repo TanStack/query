@@ -1,42 +1,48 @@
 <script lang="ts">
-  import { createQuery } from "@tanstack/svelte-query"
-  import { errorRate, queryTimeMin, queryTimeMax, list, editingIndex } from "../lib/stores"
+  import { createQuery } from '@tanstack/svelte-query'
+  import {
+    errorRate,
+    queryTimeMin,
+    queryTimeMax,
+    list,
+    editingIndex,
+  } from '../lib/stores'
 
-  export let initialFilter: string;
+  export let initialFilter: string
 
-  let filter = initialFilter;
+  let filter = initialFilter
 
-  const fetchTodos = async ({ filter }: {filter: string}) => {
-    console.info("fetchTodos", { filter });
+  const fetchTodos = async ({ filter }: { filter: string }) => {
+    console.info('fetchTodos', { filter })
 
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         if (Math.random() < $errorRate) {
           return reject(
-            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2))
-          );
+            new Error(JSON.stringify({ fetchTodos: { filter } }, null, 2)),
+          )
         }
-        resolve($list.filter((d) => d.name.includes(filter)));
-      }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin));
-    });
+        resolve($list.filter((d) => d.name.includes(filter)))
+      }, $queryTimeMin + Math.random() * ($queryTimeMax - $queryTimeMin))
+    })
   }
 
   const query = createQuery<any, Error>({
-    queryKey: ["todos", { filter }],
+    queryKey: ['todos', { filter }],
     queryFn: () => fetchTodos({ filter }),
-  });
+  })
 </script>
 
 <div>
   <label>
-    Filter:{" "}
+    Filter:{' '}
     <input bind:value={filter} />
   </label>
 </div>
 
-{#if $query.status === "loading" }
+{#if $query.status === 'loading'}
   <span>Loading... (Attempt: {$query.failureCount + 1})</span>
-{:else if $query.status === "error" }
+{:else if $query.status === 'error'}
   <span>
     Error: {$query.error.message}
     <br />
@@ -47,10 +53,8 @@
     {#if $query.data}
       {#each $query.data as todo}
         <li>
-          {todo.name}{" "}
-          <button on:click={() => editingIndex.set(todo.id)}>
-            Edit
-          </button>
+          {todo.name}{' '}
+          <button on:click={() => editingIndex.set(todo.id)}> Edit </button>
         </li>
       {/each}
     {/if}

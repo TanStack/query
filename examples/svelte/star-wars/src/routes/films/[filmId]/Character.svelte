@@ -1,20 +1,20 @@
 <script lang="ts">
-  import { createQuery } from "@tanstack/svelte-query"
+  import { createQuery } from '@tanstack/svelte-query'
 
-  export let characterId: string;
+  export let characterId: string
 
   const getCharacter = async () => {
-    const res = await fetch(`https://swapi.dev/api/people/${characterId}/`);
-    return await res.json();
+    const res = await fetch(`https://swapi.dev/api/people/${characterId}/`)
+    return await res.json()
   }
 
   const query = createQuery({
-    queryKey: ["character", characterId],
+    queryKey: ['character', characterId],
     queryFn: getCharacter,
-  });
+  })
 </script>
 
-{#if $query.status === "success"}
+{#if $query.status === 'success'}
   <article>
     <a href={`/characters/${characterId}`}>
       <h6 class="text-lg">{$query.data.name}</h6>

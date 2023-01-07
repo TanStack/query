@@ -5,13 +5,11 @@
   export let postId: number
   export let setPostId: (id: number) => void
 
-  const post = createQuery<{ title: string; body: string }, Error>(
-    ['post', postId],
-    () => getPostById(postId),
-    {
-      enabled: !!postId,
-    },
-  )
+  const post = createQuery<{ title: string; body: string }, Error>({
+    queryKey: ['post', postId],
+    queryFn: () => getPostById(postId),
+    enabled: !!postId,
+  })
 </script>
 
 <div>

@@ -1,25 +1,30 @@
 <script lang="ts">
-  import { useQueryClient } from '@tanstack/svelte-query';
-  import { staleTime, cacheTime, errorRate, queryTimeMin, queryTimeMax } from '../lib/stores'
+  import { useQueryClient } from '@tanstack/svelte-query'
+  import {
+    staleTime,
+    cacheTime,
+    errorRate,
+    queryTimeMin,
+    queryTimeMax,
+  } from '../lib/stores'
   import App from './App.svelte'
 
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
   queryClient.setDefaultOptions({
     queries: {
-        staleTime: $staleTime,
-        cacheTime: $cacheTime,
-      },
-  });
+      staleTime: $staleTime,
+      cacheTime: $cacheTime,
+    },
+  })
 </script>
 
 <p>
-  The "staleTime" and "cacheTime" durations have been altered in this
-  example to show how query stale-ness and query caching work on a
-  granular level
+  The "staleTime" and "cacheTime" durations have been altered in this example to
+  show how query stale-ness and query caching work on a granular level
 </p>
 <div>
-  Stale Time:{" "}
+  Stale Time:{' '}
   <input
     type="number"
     min="0"
@@ -29,7 +34,7 @@
   />
 </div>
 <div>
-  Cache Time:{" "}
+  Cache Time:{' '}
   <input
     type="number"
     min="0"
@@ -40,7 +45,7 @@
 </div>
 <br />
 <div>
-  Error Rate:{" "}
+  Error Rate:{' '}
   <input
     type="number"
     min="0"
@@ -51,17 +56,17 @@
   />
 </div>
 <div>
-  Fetch Time Min:{" "}
+  Fetch Time Min:{' '}
   <input
     type="number"
     min="1"
     step="500"
     bind:value={$queryTimeMin}
     style="width: 100px"
-  />{" "}
+  />{' '}
 </div>
 <div>
-  Fetch Time Max:{" "}
+  Fetch Time Max:{' '}
   <input
     type="number"
     min="1"
