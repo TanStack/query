@@ -196,14 +196,8 @@ export function hashQueryKey(queryKey: QueryKey): string {
 /**
  * Checks if key `b` partially matches with key `a`.
  */
-export function partialMatchKey(a: QueryKey, b: QueryKey): boolean {
-  return partialDeepEqual(a, b)
-}
-
-/**
- * Checks if `b` partially matches with `a`.
- */
-export function partialDeepEqual(a: any, b: any): boolean {
+export function partialMatchKey(a: QueryKey, b: QueryKey): boolean
+export function partialMatchKey(a: any, b: any): boolean {
   if (a === b) {
     return true
   }
@@ -213,7 +207,7 @@ export function partialDeepEqual(a: any, b: any): boolean {
   }
 
   if (a && b && typeof a === 'object' && typeof b === 'object') {
-    return !Object.keys(b).some((key) => !partialDeepEqual(a[key], b[key]))
+    return !Object.keys(b).some((key) => !partialMatchKey(a[key], b[key]))
   }
 
   return false
