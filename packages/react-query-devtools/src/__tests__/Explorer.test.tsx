@@ -90,6 +90,9 @@ describe('Explorer', () => {
     })
 
     it('when the copy button is clicked but there is an error, show error state', async () => {
+      const consoleMock = jest.spyOn(console, 'error')
+      consoleMock.mockImplementation(() => undefined)
+
       // Mock clipboard with error state
       Object.defineProperty(navigator, 'clipboard', {
         value: {
@@ -117,6 +120,8 @@ describe('Explorer', () => {
 
       // Check that it has failed
       await screen.findByLabelText('Failed copying to clipboard')
+      expect(consoleMock).toHaveBeenCalledTimes(1)
+      consoleMock.mockRestore()
     })
   })
 
