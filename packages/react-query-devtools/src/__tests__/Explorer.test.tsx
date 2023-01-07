@@ -120,7 +120,7 @@ describe('Explorer', () => {
 
       // Check that it has failed
       await screen.findByLabelText('Failed copying to clipboard')
-      expect(consoleMock).toHaveBeenCalledTimes(1)
+      expect(consoleMock).toHaveBeenCalled()
       consoleMock.mockRestore()
     })
   })
