@@ -28,7 +28,6 @@ type QueryObserverListener<TData, TError> = (
 ) => void
 
 export interface NotifyOptions {
-  cache?: boolean
   listeners?: boolean
   onError?: boolean
   onSuccess?: boolean
@@ -591,7 +590,7 @@ export class QueryObserver<
     this.#currentResult = nextResult
 
     // Determine which callbacks to trigger
-    const defaultNotifyOptions: NotifyOptions = { cache: true }
+    const defaultNotifyOptions: NotifyOptions = {}
 
     const shouldNotifyListeners = (): boolean => {
       if (!prevResult) {
@@ -682,12 +681,10 @@ export class QueryObserver<
       }
 
       // Then the cache listeners
-      if (notifyOptions.cache) {
-        this.#client.getQueryCache().notify({
-          query: this.#currentQuery,
-          type: 'observerResultsUpdated',
-        })
-      }
+      this.#client.getQueryCache().notify({
+        query: this.#currentQuery,
+        type: 'observerResultsUpdated',
+      })
     })
   }
 }
