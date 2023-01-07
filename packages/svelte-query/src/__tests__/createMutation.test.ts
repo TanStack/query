@@ -4,7 +4,7 @@ import CreateMutation from "./CreateMutation.svelte";
 import { sleep } from "./utils";
 
 describe('createMutation', () => {
-  it('Render and wait for success', async () => {
+  it('Call mutate and check function runs', async () => {
     const queryFn = vi.fn();
 
     render(CreateMutation,  {
