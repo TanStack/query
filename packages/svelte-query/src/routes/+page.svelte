@@ -1,3 +1,4 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+<h1>Svelte Query</h1>
+<p>This routes foulder is unused</p> 
+<p>Documentation should be written in docs/svelte</p>
+<p>Examples should be added to examples/svelte</p>
