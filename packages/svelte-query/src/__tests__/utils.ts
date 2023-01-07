@@ -3,16 +3,16 @@ import { act } from '@testing-library/svelte'
 import { QueryClient, type QueryClientConfig, type MutationOptions } from '../lib'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
-  jest.spyOn(console, 'error').mockImplementation(() => undefined)
+  vi.spyOn(console, 'error').mockImplementation(() => undefined)
   return new QueryClient({ logger: mockLogger, ...config })
 }
 
 export function mockVisibilityState(value: DocumentVisibilityState) {
-  return jest.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
+  return vi.spyOn(document, 'visibilityState', 'get').mockReturnValue(value)
 }
 
 export function mockNavigatorOnLine(value: boolean) {
-  return jest.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
+  return vi.spyOn(navigator, 'onLine', 'get').mockReturnValue(value)
 }
 
 export const mockLogger = {
