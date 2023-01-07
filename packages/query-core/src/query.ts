@@ -147,11 +147,11 @@ export class Query<
   queryKey: TQueryKey
   queryHash: string
   options!: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
-  initialState: QueryState<TData, TError>
-  revertState?: QueryState<TData, TError>
   state: QueryState<TData, TError>
   isFetchingOptimistic?: boolean
 
+  #initialState: QueryState<TData, TError>
+  #revertState?: QueryState<TData, TError>
   #cache: QueryCache
   #logger: Logger
   #promise?: Promise<TData>
@@ -171,8 +171,8 @@ export class Query<
     this.#logger = config.logger || defaultLogger
     this.queryKey = config.queryKey
     this.queryHash = config.queryHash
-    this.initialState = config.state || getDefaultState(this.options)
-    this.state = this.initialState
+    this.#initialState = config.state || getDefaultState(this.options)
+    this.state = this.#initialState
   }
 
   get meta(): QueryMeta | undefined {
@@ -231,7 +231,7 @@ export class Query<
 
   reset(): void {
     this.destroy()
-    this.setState(this.initialState)
+    this.setState(this.#initialState)
   }
 
   isActive(): boolean {
@@ -417,7 +417,7 @@ export class Query<
     )
 
     // Store state in case the current fetch needs to be reverted
-    this.revertState = this.state
+    this.#revertState = this.state
 
     // Set to fetching state if not already in it
     if (
@@ -551,8 +551,8 @@ export class Query<
         case 'error':
           const error = action.error as unknown
 
-          if (isCancelledError(error) && error.revert && this.revertState) {
-            return { ...this.revertState }
+          if (isCancelledError(error) && error.revert && this.#revertState) {
+            return { ...this.#revertState }
           }
 
           return {
