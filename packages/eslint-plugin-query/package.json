@@ -15,7 +15,7 @@
     "typecheck": "tsc",
     "build": "tsup --minify",
     "dev": "tsup --watch --sourcemap",
-    "clean": "rm -rf ./build",
+    "clean": "rimraf ./build",
     "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "test:dev": "pnpm run test:jest --watch"

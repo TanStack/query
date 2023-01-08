@@ -25,7 +25,7 @@
     "./src/setBatchUpdatesFn.ts"
   ],
   "scripts": {
-    "clean": "rm -rf ./build",
+    "clean": "rimraf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
     "test:jest": "pnpm run test:codemods && ../../node_modules/.bin/jest --config ./jest.config.ts",
