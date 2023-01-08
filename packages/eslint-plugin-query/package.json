@@ -12,13 +12,14 @@
   },
   "main": "build/lib/index.js",
   "scripts": {
-    "typecheck": "tsc",
-    "build": "tsup --minify",
-    "dev": "tsup --watch --sourcemap",
     "clean": "rimraf ./build",
-    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "dev": "tsup --watch --sourcemap",
     "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:dev": "pnpm run test:jest --watch"
+    "test:types": "tsc",
+    "test:lib": "../../node_modules/.bin/jest --config ./jest.config.ts",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:lib:publish": "pnpm run test:lib --collectCoverage false",
+    "build": "tsup --minify"
   },
   "files": [
     "build"
