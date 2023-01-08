@@ -345,4 +345,43 @@ describe('createQuery', () => {
     expect(count).toBe(2);
     expect(onSuccess).toHaveBeenCalledTimes(2);
   });
+
+
+  it('should call onSuccess after a disabled query has been fetched', async () => {
+    const onSuccess = vi.fn();
+
+    const {component} = render(CreateQuery_Successful, {
+      props: {
+        queryFn : async () => {return 'data'},
+        options : {
+          enabled: false,
+          onSuccess : onSuccess
+        }
+      },
+    });
+
+    expect(component.queryState).toBeDefined();
+    if (!component.queryState) {return}
+    const queryStateStore : CreateQueryStoreResult<string, Error> = component.queryState;
+    const states: CreateQueryResult<string>[] = []
+
+    let queryState : CreateQueryResult<string, Error> | undefined = undefined;
+
+    queryStateStore.subscribe(value => {
+      states.push({...value});
+      if (queryState === undefined) {
+        queryState = value;
+      }
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (queryState !== undefined) {
+      await (queryState as CreateQueryResult<string, Error>).refetch();
+    }
+    await waitFor(() => screen.getByText('data'));
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  });
+
 });
