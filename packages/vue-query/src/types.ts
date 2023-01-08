@@ -29,7 +29,7 @@ export type WithQueryClientKey<T> = T & {
 // Accept refs as options
 export type VueQueryObserverOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
@@ -63,7 +63,7 @@ export type VueQueryObserverOptions<
 // Accept refs as options
 export type VueInfiniteQueryObserverOptions<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = unknown,
   TQueryData = unknown,
   TQueryKey extends QueryKey = QueryKey,

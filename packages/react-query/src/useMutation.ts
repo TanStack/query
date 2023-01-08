@@ -13,7 +13,7 @@ import { shouldThrowError } from './utils'
 
 export function useMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(

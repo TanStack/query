@@ -325,7 +325,7 @@ describe('mutations', () => {
       context: undefined,
       variables: undefined,
       data: 'new',
-      error: undefined,
+      error: null,
       failureCount: 0,
       failureReason: null,
       isPaused: false,
