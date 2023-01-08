@@ -16,7 +16,7 @@
   "scripts": {
     "clean": "rimraf ./build",
     "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "svelte-kit sync && ../../node_modules/.bin/eslint --ext .svelte,.ts ./src",
+    "test:eslint": "svelte-kit sync && eslint --ext .svelte,.ts ./src",
     "test:lib": "svelte-kit sync && vitest run --coverage true",
     "test:lib:dev": "svelte-kit sync && vitest watch",
     "test:lib:publish": "svelte-kit sync && vitest run --coverage false",

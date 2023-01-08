@@ -11,6 +11,8 @@
     "test:eslint": "pnpm --filter \"./packages/**\" run test:eslint",
     "test:format": "pnpm run prettier --check",
     "test:lib": "pnpm --filter \"./packages/**\" run test:lib",
+    "test:lib:dev": "pnpm --filter \"./packages/**\" run test:lib:dev",
+    "test:lib:publish": "pnpm --filter \"./packages/**\" run test:lib:publish",
     "test:size": "pnpm run build && bundlewatch",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
     "build": "rollup --config rollup.config.js && pnpm --filter \"@tanstack/eslint-plugin-query\" --filter \"@tanstack/svelte-query\" run build && pnpm run build:types",
