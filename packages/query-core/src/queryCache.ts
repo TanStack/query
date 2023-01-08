@@ -147,7 +147,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
 
   get<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueyKey extends QueryKey = QueryKey,
   >(
@@ -160,7 +160,7 @@ export class QueryCache extends Subscribable<QueryCacheListener> {
     return this.queries
   }
 
-  find<TQueryFnData = unknown, TError = unknown, TData = TQueryFnData>(
+  find<TQueryFnData = unknown, TError = Error, TData = TQueryFnData>(
     filters: WithRequired<QueryFilters, 'queryKey'>,
   ): Query<TQueryFnData, TError, TData> | undefined {
     if (typeof filters.exact === 'undefined') {

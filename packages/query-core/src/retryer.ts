@@ -5,7 +5,7 @@ import type { CancelOptions, NetworkMode } from './types'
 
 // TYPES
 
-interface RetryerConfig<TData = unknown, TError = unknown> {
+interface RetryerConfig<TData = unknown, TError = Error> {
   fn: () => TData | Promise<TData>
   abort?: () => void
   onError?: (error: TError) => void
@@ -28,14 +28,14 @@ export interface Retryer<TData = unknown> {
 
 export type RetryValue<TError> = boolean | number | ShouldRetryFunction<TError>
 
-type ShouldRetryFunction<TError> = (
+type ShouldRetryFunction<TError = Error> = (
   failureCount: number,
   error: TError,
 ) => boolean
 
 export type RetryDelayValue<TError> = number | RetryDelayFunction<TError>
 
-type RetryDelayFunction<TError = unknown> = (
+type RetryDelayFunction<TError = Error> = (
   failureCount: number,
   error: TError,
 ) => number
@@ -63,7 +63,7 @@ export function isCancelledError(value: any): value is CancelledError {
   return value instanceof CancelledError
 }
 
-export function createRetryer<TData = unknown, TError = unknown>(
+export function createRetryer<TData = unknown, TError = Error>(
   config: RetryerConfig<TData, TError>,
 ): Retryer<TData> {
   let isRetryCancelled = false

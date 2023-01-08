@@ -140,6 +140,24 @@ You can achieve the same functionality by passing a function to `structuralShari
 
 To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
+### `Error` is now the default type for errors instead of `unknown`
+
+Even though in JavaScript, you can `throw` anything (which makes `unknown` the most correct type), almost always, `Errors` (or subclasses of `Error`) are thrown. This change makes it easier to work with the `error` field in TypeScript for most cases.
+
+If you want to throw something that isn't an Error, you'll now have to set the generic for yourself:
+
+```ts
+useQuery<number, string>({
+  queryKey: ['some-query'],
+  queryFn: async () => {
+      if (Math.random() > 0.5) {
+        throw 'some error'
+      }
+      return 42
+  }
+})
+```
+
 ### eslint `prefer-query-object-syntax` rule is removed
 
 Since the only supported syntax now is the object syntax, this rule is no longer needed

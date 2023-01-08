@@ -6,7 +6,7 @@ import { useBaseQuery } from './useBaseQuery'
 // HOOK
 export function useInfiniteQuery<
   TQueryFnData,
-  TError,
+  TError = Error,
   TData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,
 >(
