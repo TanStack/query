@@ -1,7 +1,9 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/svelte'
-import CreateQuery from './CreateQuery.svelte'
-import { sleep } from './utils'
+import CreateQuery_TypeCheck from "./CreateQuery_TypeCheck.test.svelte";
+import CreateQuery from "./CreateQuery.test.svelte";
+
+import {sleep} from '../../../../../../query/packages/svelte-query/src/__tests__/utils'
 
 describe('createQuery', () => {
   it('Render and wait for success', async () => {
@@ -24,5 +26,17 @@ describe('createQuery', () => {
     expect(screen.queryByText('Success')).toBeInTheDocument()
     expect(screen.queryByText('Loading')).not.toBeInTheDocument()
     expect(screen.queryByText('Error')).not.toBeInTheDocument()
-  })
-})
+  });
+
+  it('should have types that match the spec.', async () => {
+    const {component} = render(CreateQuery_TypeCheck, {
+      props: {
+      }
+    });
+
+    //This is just demo code showing how to access svelte component props. Should be removed later.
+    expect(component.queryKey).toBeDefined();
+    if (!component.queryKey) {return}
+  });
+});
+
