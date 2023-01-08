@@ -10,6 +10,9 @@ const config: UserConfig = {
     }
   },
   test: {
+    coverage: {
+      provider: 'istanbul'
+    },
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts}'],
     setupFiles: ['vitest.setup.ts']
