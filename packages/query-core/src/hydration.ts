@@ -65,11 +65,11 @@ function dehydrateQuery(query: Query): DehydratedQuery {
   }
 }
 
-function defaultShouldDehydrateMutation(mutation: Mutation) {
+export function defaultShouldDehydrateMutation(mutation: Mutation) {
   return mutation.state.isPaused
 }
 
-function defaultShouldDehydrateQuery(query: Query) {
+export function defaultShouldDehydrateQuery(query: Query) {
   return query.state.status === 'success'
 }
 
