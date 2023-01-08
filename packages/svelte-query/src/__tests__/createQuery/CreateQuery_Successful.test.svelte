@@ -1,19 +1,20 @@
 <script lang="ts">
-  import type {CreateQueryResult, CreateQueryStoreResult} from "$lib";
+  import type {CreateQueryOptions, CreateQueryStoreResult} from "$lib";
   import {createQuery, QueryClient} from "$lib";
   import {setQueryClientContext} from "$lib/context";
   import {expectType, sleep} from "../utils";
 
   export let queryKey: Array<string> = ["test"];
+  export let options : Omit<
+      CreateQueryOptions<string, Error, string>,
+      'queryKey' | 'queryFn' | 'initialData'
+    > & { initialData?: () => undefined } = {};
 
   const queryClient = new QueryClient()
   setQueryClientContext(queryClient)
 
   // unspecified query function should default to unknown.
-  export let queryState: CreateQueryStoreResult<string, Error> = createQuery<string, Error>(queryKey, async () => {
-    await sleep(1)
-    return 'test'
-  })
+  export let queryState: CreateQueryStoreResult<string, Error> = createQuery<string, Error>(queryKey, () => 'data', Object.keys(options).length > 0 ? options : undefined)
 
   queryState.subscribe(value => {
     if (value.isLoading) {

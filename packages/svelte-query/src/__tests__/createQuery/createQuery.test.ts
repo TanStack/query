@@ -1,14 +1,18 @@
-import { describe, it, expect } from 'vitest'
-import {render, screen, waitFor} from '@testing-library/svelte'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import {cleanup, render, screen, waitFor} from '@testing-library/svelte'
 import CreateQuery_TypeCheck from "./CreateQuery_TypeCheck.test.svelte";
 import CreateQuery from "./CreateQuery.test.svelte";
 
 import {sleep} from '../../../../../../query/packages/svelte-query/src/__tests__/utils'
-import CreateQuery_State_Successful from "./CreateQuery_State_Successful.test.svelte";
-import CreateQuery_State_Unsuccessful from "./CreateQuery_State_Unsuccessful.test.svelte";
+import CreateQuery_Successful from "./CreateQuery_Successful.test.svelte";
+import CreateQuery_Unsuccessful from "./CreateQuery_Unsuccessful.test.svelte";
 import CreateQuery_Prefetch from "./CreateQuery_Prefetch.test.svelte";
 import type {CreateQueryResult, CreateQueryStoreResult} from "$lib";
 import {QueryClient} from "@tanstack/query-core";
+
+afterEach(() => {
+  cleanup();
+})
 
 describe('createQuery', () => {
   it('Render and wait for success', async () => {
@@ -47,7 +51,7 @@ describe('createQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
 
-    const {component} = render(CreateQuery_State_Successful, {
+    const {component} = render(CreateQuery_Successful, {
       props: {
       },
     });
@@ -62,7 +66,7 @@ describe('createQuery', () => {
       states.push({...value});
     });
 
-    await waitFor(() => screen.getByText('test'));
+    await waitFor(() => screen.getByText('data'));
     expect(states.length).toEqual(2);
 
     expect(states[0]).toEqual({
@@ -94,7 +98,7 @@ describe('createQuery', () => {
     })
 
     expect(states[1]).toEqual({
-      data: 'test',
+      data: 'data',
       dataUpdatedAt: expect.any(Number),
       error: null,
       errorUpdatedAt: 0,
@@ -125,7 +129,7 @@ describe('createQuery', () => {
 
   it('should return the correct states for an unsuccessful query', async () => {
 
-    const {component} = render(CreateQuery_State_Unsuccessful, {
+    const {component} = render(CreateQuery_Unsuccessful, {
       props: {
       },
     });
@@ -231,7 +235,7 @@ describe('createQuery', () => {
   it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
 
     const queryClient = new QueryClient();
-    const queryKey = ["test"];
+    const queryKey = ["test_prefetch"];
 
     //prefetch.
     await queryClient.prefetchQuery(queryKey, () => 'prefetched');
@@ -253,6 +257,7 @@ describe('createQuery', () => {
       states.push({...value});
     });
 
+
     await waitFor(() => screen.getByText('data'));
     expect(states.length).toBe(2);
 
@@ -269,5 +274,32 @@ describe('createQuery', () => {
   })
 
 
-});
+  it('should call onSuccess after a query has been fetched', async () => {
+    const onSuccess = vi.fn();
 
+    const {component} = render(CreateQuery_Successful, {
+      props: {
+        options : {
+          onSuccess : onSuccess
+        }
+      },
+    });
+
+    expect(component.queryState).toBeDefined();
+    if (!component.queryState) {return}
+    const queryState : CreateQueryStoreResult<string, Error> = component.queryState;
+    const states: CreateQueryResult<string>[] = []
+
+
+    queryState.subscribe(value => {
+      states.push({...value});
+    });
+
+    await waitFor(() => screen.getByText('data'));
+    expect(states.length).toEqual(2);
+
+    expect(onSuccess).toHaveBeenCalledTimes(1)
+    expect(onSuccess).toHaveBeenCalledWith('data')
+  });
+
+});
