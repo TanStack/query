@@ -1,8 +1,69 @@
 ---
 id: overview
-title: Svelte Query (Coming Soon)
+title: Svelte Query
 ---
 
-> ⚠️ This module has not yet been developed. It requires an adapter similar to `react-query` to work. We estimate the amount of code to do this is low-to-moderate, but does require familiarity with the Svelte framework. If you would like to contribute this adapter, please open a PR!
+The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Query via Svelte.
 
-The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Query via Svelte. However, all of the primitives you receive from this API are core APIs that are shared across all of the TanStack Adapters including the Query Client, query results, query subscriptions, etc.
+## Example
+
+Include the QueryClientProvider near the root of your project:
+
+```svelte
+<script lang="ts">
+  import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
+  import Simple from './lib/Example.svelte'
+
+  const queryClient = new QueryClient()
+</script>
+
+<QueryClientProvider client={queryClient}>
+  <Simple />
+</QueryClientProvider>
+```
+
+Then call any function (e.g. createQuery) from any component:
+
+```svelte
+<script lang="ts">
+  import { createQuery } from '@tanstack/svelte-query'
+
+  const query = createQuery({
+    queryKey: ['todos'],
+    queryFn: () => fetchTodos(),
+  })
+</script>
+
+<div>
+  {#if $query.isLoading}
+    <p>Loading...</p>
+  {:else if $query.isError}
+    <p>Error: {$query.error.message}</p>
+  {:else if $query.isSuccess}
+      {#each $query.data as todo}
+        <p>{todo.title}</p>
+      {/each}
+  {/if}
+</div>
+```
+
+## Available Functions
+
+Svelte Query offers useful functions and components that will make managing server state in Svelte apps easier.
+
+- `createQuery`
+- `createQueries`
+- `createInfiniteQuery`
+- `createMutation`
+- `useQueryClient`
+- `useIsFetching`
+- `useIsMutating`
+- `useHydrate`
+- `<QueryClientProvider>`
+- `<Hydrate>`
+
+## Important Differences between Svelte Query & React Query
+
+Svelte Query offers an API similar to React Query, but there are some key differences to be mindful of.
+
+- Many of the functions in Svelte Query return a Svelte store. To access values on these stores reactively, you need to prefix the store with a `$`. You can learn more about Svelte stores [here](https://svelte.dev/tutorial/writable-stores).

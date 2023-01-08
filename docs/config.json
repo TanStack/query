@@ -688,7 +688,7 @@
           "label": "Getting Started",
           "children": [
             {
-              "label": "Coming Soon",
+              "label": "Overview",
               "to": "svelte/overview"
             }
           ]
