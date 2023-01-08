@@ -637,7 +637,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => rendered.getByText('rendered'))
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
     const key = queryKey()
 
     function Page() {

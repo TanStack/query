@@ -631,7 +631,7 @@ describe("useQuery's in Suspense mode", () => {
     await waitFor(() => screen.getByText('rendered'))
   })
 
-  it('should not throw errors to the error boundary when a throwErrors function returns true', async () => {
+  it('should throw errors to the error boundary when a throwErrors function returns true', async () => {
     const key = queryKey()
 
     function Page() {
@@ -639,7 +639,7 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Remote Error')
+          return Promise.reject(new Error('Remote Error'))
         },
         retry: false,
         throwErrors: (err) => err.message !== 'Local Error',
@@ -688,7 +688,7 @@ describe("useQuery's in Suspense mode", () => {
         queryKey: key,
         queryFn: async (): Promise<unknown> => {
           await sleep(10)
-          return Promise.reject('Local Error')
+          return Promise.reject(new Error('Local Error'))
         },
 
         retry: false,
