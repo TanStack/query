@@ -13,7 +13,7 @@ export const rule = createRule({
   meta: {
     type: 'problem',
     docs: {
-      description: 'Prefer object syntax for useQuery',
+      description: 'Exhaustive deps rule for useQuery',
       recommended: 'error',
     },
     messages: {

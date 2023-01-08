@@ -7,6 +7,8 @@ React Query is designed to work out of the box with React Native, with the excep
 
 There is a 3rd party [Flipper](https://fbflipper.com/docs/getting-started/react-native/) plugin which you can try: https://github.com/bgaleotti/react-query-native-devtools
 
+There is a 3rd party [Reactotron](https://github.com/infinitered/reactotron/) plugin which you can try: https://github.com/hsndmr/reactotron-react-query
+
 If you would like to help us make the built-in devtools platform agnostic, please let us know!
 
 ## Online status management

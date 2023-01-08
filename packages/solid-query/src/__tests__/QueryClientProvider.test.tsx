@@ -2,8 +2,7 @@ import { render, screen, waitFor } from 'solid-testing-library'
 import { queryKey } from './utils'
 
 import { QueryCache, QueryClient } from '@tanstack/query-core'
-import type { Context } from 'solid-js'
-import { createContext, useContext } from 'solid-js'
+import { createContext } from 'solid-js'
 import { createQuery, QueryClientProvider, useQueryClient } from '..'
 import { createQueryClient, sleep } from './utils'
 
@@ -188,16 +187,10 @@ describe('QueryClientProvider', () => {
         )
       }
 
-      // contextSharing should be ignored when passing a custom context.
-      const contextSharing = true
-
       render(() => (
         <QueryClientProvider client={queryClientOuter} context={contextOuter}>
           <QueryClientProvider client={queryClientInner} context={contextInner}>
-            <QueryClientProvider
-              client={queryClientInnerInner}
-              contextSharing={contextSharing}
-            >
+            <QueryClientProvider client={queryClientInnerInner}>
               <Page />
             </QueryClientProvider>
           </QueryClientProvider>
@@ -226,31 +219,6 @@ describe('QueryClientProvider', () => {
       )
 
       consoleMock.mockRestore()
-    })
-
-    it('should use window to get the context when contextSharing is true', () => {
-      const queryCache = new QueryCache()
-      const queryClient = createQueryClient({ queryCache })
-
-      let queryClientFromHook: QueryClient | undefined
-      let queryClientFromWindow: QueryClient | undefined
-
-      function Page() {
-        queryClientFromHook = useQueryClient()
-        queryClientFromWindow = useContext(
-          window.SolidQueryClientContext as Context<QueryClient | undefined>,
-        )
-        return null
-      }
-
-      render(() => (
-        <QueryClientProvider client={queryClient} contextSharing={true}>
-          <Page />
-        </QueryClientProvider>
-      ))
-
-      expect(queryClientFromHook).toEqual(queryClient)
-      expect(queryClientFromWindow).toEqual(queryClient)
     })
   })
 })
