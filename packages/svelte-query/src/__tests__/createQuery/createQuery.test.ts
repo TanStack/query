@@ -302,4 +302,47 @@ describe('createQuery', () => {
     expect(onSuccess).toHaveBeenCalledWith('data')
   });
 
+
+
+  it('should call onSuccess after a query has been refetched', async () => {
+    const onSuccess = vi.fn();
+
+    let count = 0;
+    const {component} = render(CreateQuery_Successful, {
+      props: {
+        queryFn : async () => {count++; return 'data' + count},
+        options : {
+          onSuccess : onSuccess
+        }
+      },
+    });
+
+    expect(component.queryState).toBeDefined();
+    if (!component.queryState) {return}
+    const queryStateStore : CreateQueryStoreResult<string, Error> = component.queryState;
+    const states: CreateQueryResult<string>[] = []
+
+    let queryState : CreateQueryResult<string, Error> | undefined = undefined;
+
+    queryStateStore.subscribe(value => {
+      states.push({...value});
+      if (queryState === undefined) {
+        queryState = value;
+      }
+    });
+
+    await waitFor(() => screen.getByText('data1'));
+
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (queryState !== undefined) {
+      await (queryState as CreateQueryResult<string, Error>).refetch();
+    }
+
+    await waitFor(() => screen.getByText('data2'));
+
+    expect(states.length).toBe(3) //loading, success, success after refetch.
+    expect(count).toBe(2);
+    expect(onSuccess).toHaveBeenCalledTimes(2);
+  });
 });
