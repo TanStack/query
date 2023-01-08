@@ -54,6 +54,7 @@ importers:
       jsonfile: ^6.1.0
       luxon: ^2.3.2
       prettier: ^2.6.2
+      prettier-plugin-svelte: ^2.9.0
       react: ^18.2.0
       react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
@@ -121,6 +122,7 @@ importers:
       jsonfile: 6.1.0
       luxon: 2.4.0
       prettier: 2.7.1
+      prettier-plugin-svelte: 2.9.0_prettier@2.7.1
       react: 18.2.0
       react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
@@ -14528,6 +14530,15 @@ packages:
       fast-diff: 1.2.0
     dev: true
 
+  /prettier-plugin-svelte/2.9.0_prettier@2.7.1:
+    resolution: {integrity: sha512-3doBi5NO4IVgaNPtwewvrgPpqAcvNv0NwJNflr76PIGgi9nf1oguQV1Hpdm9TI2ALIQVn/9iIwLpBO5UcD2Jiw==}
+    peerDependencies:
+      prettier: ^1.16.4 || ^2.0.0
+      svelte: ^3.2.0
+    dependencies:
+      prettier: 2.7.1
+    dev: true
+
   /prettier/2.7.1:
     resolution: {integrity: sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==}
     engines: {node: '>=10.13.0'}
@@ -14725,7 +14736,7 @@ packages:
     peerDependencies:
       react: '>=16.13.1'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       react: 18.2.0
     dev: true
 
