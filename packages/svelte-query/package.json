@@ -14,8 +14,10 @@
   "module": "build/lib/index.js",
   "type": "module",
   "scripts": {
+    "clean": "rimraf ./build",
     "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "svelte-kit sync && ../../node_modules/.bin/eslint --ext .svelte,.ts ./src",
     "test:jest": "svelte-kit sync && vitest run --watch false"
   },
   "devDependencies": {
@@ -23,6 +25,7 @@
     "@sveltejs/kit": "^1.0.0",
     "@sveltejs/package": "^1.0.0",
     "@testing-library/svelte": "^3.2.2",
+    "eslint-plugin-svelte": "^2.14.1",
     "jsdom": "^20.0.3",
     "rimraf": "^3.0.2",
     "svelte": "^3.54.0",

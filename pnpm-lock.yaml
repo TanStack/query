@@ -1009,6 +1009,7 @@ importers:
       '@sveltejs/package': ^1.0.0
       '@tanstack/query-core': workspace:*
       '@testing-library/svelte': ^3.2.2
+      eslint-plugin-svelte: ^2.14.1
       jsdom: ^20.0.3
       rimraf: ^3.0.2
       svelte: ^3.54.0
@@ -1024,6 +1025,7 @@ importers:
       '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
       '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
+      eslint-plugin-svelte: 2.14.1_svelte@3.55.0
       jsdom: 20.0.3
       rimraf: 3.0.2
       svelte: 3.55.0
@@ -7299,12 +7301,12 @@ packages:
       acorn: 7.4.1
     dev: true
 
-  /acorn-jsx/5.3.2_acorn@8.8.0:
+  /acorn-jsx/5.3.2_acorn@8.8.1:
     resolution: {integrity: sha512-rq9s+JNhf0IChjtDXxllJ7g41oZk5SlXtp0LHwyA5cejwn7vKmKp4pPri6YEePv2PU65sAsegbXtIinmDFDXgQ==}
     peerDependencies:
       acorn: ^6.0.0 || ^7.0.0 || ^8.0.0
     dependencies:
-      acorn: 8.8.0
+      acorn: 8.8.1
     dev: true
 
   /acorn-node/1.8.2:
@@ -9954,6 +9956,31 @@ packages:
       eslint: 7.32.0
     dev: true
 
+  /eslint-plugin-svelte/2.14.1_svelte@3.55.0:
+    resolution: {integrity: sha512-7M4QHtbtTjLA2xore4rXBwKshPaycil5AsOwYNyvJdunEEdimrIp6otX6PGpFoAojz+qTb4MZuReaHEj1hX7Wg==}
+    engines: {node: ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^7.0.0 || ^8.0.0-0
+      svelte: ^3.37.0
+    peerDependenciesMeta:
+      svelte:
+        optional: true
+    dependencies:
+      debug: 4.3.4
+      eslint-utils: 3.0.0
+      esutils: 2.0.3
+      known-css-properties: 0.26.0
+      postcss: 8.4.21
+      postcss-load-config: 3.1.4_postcss@8.4.21
+      postcss-safe-parser: 6.0.0_postcss@8.4.21
+      sourcemap-codec: 1.4.8
+      svelte: 3.55.0
+      svelte-eslint-parser: 0.22.3_svelte@3.55.0
+    transitivePeerDependencies:
+      - supports-color
+      - ts-node
+    dev: true
+
   /eslint-restricted-globals/0.2.0:
     resolution: {integrity: sha512-kwYJALm5KS2QW3Mc1PgObO4V+pTR6RQtRT65L1GQILlEnAhabUQqGAX7/qUjoQR4KZJKehWpBtyDEiDecwmY9A==}
     dev: true
@@ -9979,6 +10006,15 @@ packages:
     engines: {node: '>=6'}
     dependencies:
       eslint-visitor-keys: 1.3.0
+    dev: true
+
+  /eslint-utils/3.0.0:
+    resolution: {integrity: sha512-uuQC43IGctw68pJA1RgbQS8/NP7rch6Cwd4j3ZBtgo4/8Flj4eGE7ZYSZRN3iq5pVUv6GPdW5Z1RFleo84uLDA==}
+    engines: {node: ^10.0.0 || ^12.0.0 || >= 14.0.0}
+    peerDependencies:
+      eslint: '>=5'
+    dependencies:
+      eslint-visitor-keys: 2.1.0
     dev: true
 
   /eslint-utils/3.0.0_eslint@7.32.0:
@@ -10130,8 +10166,8 @@ packages:
     resolution: {integrity: sha512-DQmnRpLj7f6TgN/NYb0MTzJXL+vJF9h3pHy4JhCIs3zwcgez8xmGg3sXHcEO97BrmO2OSvCwMdfdlyl+E9KjOw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dependencies:
-      acorn: 8.8.0
-      acorn-jsx: 5.3.2_acorn@8.8.0
+      acorn: 8.8.1
+      acorn-jsx: 5.3.2_acorn@8.8.1
       eslint-visitor-keys: 3.3.0
     dev: true
 
@@ -12621,6 +12657,10 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /known-css-properties/0.26.0:
+    resolution: {integrity: sha512-5FZRzrZzNTBruuurWpvZnvP9pum+fe0HcK8z/ooo+U+Hmp4vtbyp1/QDsqmufirXy4egGzbaH/y2uCZf+6W5Kg==}
+    dev: true
+
   /ky-universal/0.8.2_53xdiffegfcxt6522645rot5ue:
     resolution: {integrity: sha512-xe0JaOH9QeYxdyGLnzUOVGK4Z6FGvDVzcXFTdrYA1f33MZdEa45sUDaMBy98xQMcsd2XIBrTXRrRYnegcSdgVQ==}
     engines: {node: '>=10.17'}
@@ -14377,6 +14417,15 @@ packages:
       postcss-selector-parser: 6.0.11
     dev: true
 
+  /postcss-safe-parser/6.0.0_postcss@8.4.21:
+    resolution: {integrity: sha512-FARHN8pwH+WiS2OPCxJI8FuRJpTVnn6ZNFiqAM2aeW2LwTHWWmWgIyKC6cUo0L8aeKiF/14MNvnpls6R2PBeMQ==}
+    engines: {node: '>=12.0'}
+    peerDependencies:
+      postcss: ^8.3.3
+    dependencies:
+      postcss: 8.4.21
+    dev: true
+
   /postcss-selector-parser/6.0.11:
     resolution: {integrity: sha512-zbARubNdogI9j7WY4nQJBiNqQf3sLS3wCP4WfOidu+p28LofJqDH1tcXypGrcmMHhDk2t9wGhCsYe/+szLTy1g==}
     engines: {node: '>=4'}
@@ -15724,6 +15773,7 @@ packages:
 
   /sourcemap-codec/1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
+    deprecated: Please use @jridgewell/sourcemap-codec instead
 
   /spawn-command/0.0.2-1:
     resolution: {integrity: sha512-n98l9E2RMSJ9ON1AKisHzz7V42VDiBQGY6PB1BwRglz99wpVsSuGzQ+jOi6lFXBGVTCrRpltvjm+/XA+tpeJrg==}
@@ -16086,6 +16136,18 @@ packages:
       - sass
       - stylus
       - sugarss
+    dev: true
+
+  /svelte-eslint-parser/0.22.3_svelte@3.55.0:
+    resolution: {integrity: sha512-l9M1QbQ8YsF92FNtwHYKoJWnJvBAKB89jmiKLCG9R5GOlidehFzvmxzdK4lsJjzx5UylrTKuKlR815RFopq1Vw==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      svelte: ^3.37.0
+    dependencies:
+      eslint-scope: 7.1.1
+      eslint-visitor-keys: 3.3.0
+      espree: 9.4.0
+      svelte: 3.55.0
     dev: true
 
   /svelte-hmr/0.15.1_svelte@3.55.0:
