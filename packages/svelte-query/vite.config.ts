@@ -4,13 +4,15 @@ import type { UserConfig } from 'vite';
 
 const config: UserConfig = {
   plugins: [sveltekit()],
+  resolve: {
+    alias: {
+      "@tanstack/query-core": path.resolve(__dirname, '..', 'query-core', 'src'),
+    }
+  },
   test: {
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts}'],
-    setupFiles: ['vitest.setup.ts'],
-    alias: {
-      "@tanstack/query-core": path.resolve(__dirname, '../query-core/src'),
-    }
+    setupFiles: ['vitest.setup.ts']
   }
 };
 
