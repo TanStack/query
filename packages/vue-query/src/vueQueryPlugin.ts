@@ -6,17 +6,10 @@ import { getClientKey } from './utils'
 import { setupDevtools } from './devtools/devtools'
 import type { MaybeRefDeep } from './types'
 
-declare global {
-  interface Window {
-    __VUE_QUERY_CONTEXT__?: QueryClient
-  }
-}
-
 type ClientPersister = (client: QueryClient) => [() => void, Promise<void>]
 
 interface CommonOptions {
   queryClientKey?: string
-  contextSharing?: boolean
   clientPersister?: ClientPersister
 }
 
@@ -38,22 +31,9 @@ export const VueQueryPlugin = {
     if ('queryClient' in options && options.queryClient) {
       client = options.queryClient
     } else {
-      if (options.contextSharing && typeof window !== 'undefined') {
-        if (!window.__VUE_QUERY_CONTEXT__) {
-          const clientConfig =
-            'queryClientConfig' in options
-              ? options.queryClientConfig
-              : undefined
-          client = new QueryClient(clientConfig)
-          window.__VUE_QUERY_CONTEXT__ = client
-        } else {
-          client = window.__VUE_QUERY_CONTEXT__
-        }
-      } else {
-        const clientConfig =
-          'queryClientConfig' in options ? options.queryClientConfig : undefined
-        client = new QueryClient(clientConfig)
-      }
+      const clientConfig =
+        'queryClientConfig' in options ? options.queryClientConfig : undefined
+      client = new QueryClient(clientConfig)
     }
 
     client.mount()
@@ -68,14 +48,6 @@ export const VueQueryPlugin = {
       promise.then(() => {
         client.isRestoring.value = false
       })
-    }
-
-    if (process.env.NODE_ENV !== 'production' && options.contextSharing) {
-      client
-        .getLogger()
-        .error(
-          `The contextSharing option has been deprecated and will be removed in the next major version`,
-        )
     }
 
     const cleanup = () => {
