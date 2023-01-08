@@ -5,8 +5,10 @@ import CreateQuery from "./CreateQuery.test.svelte";
 
 import {sleep} from '../../../../../../query/packages/svelte-query/src/__tests__/utils'
 import CreateQuery_State_Successful from "./CreateQuery_State_Successful.test.svelte";
-import CreateQuery_State_Unsuccessful from "./CreateQuery_State_Unsuccessful.svelte";
+import CreateQuery_State_Unsuccessful from "./CreateQuery_State_Unsuccessful.test.svelte";
+import CreateQuery_Prefetch from "./CreateQuery_Prefetch.test.svelte";
 import type {CreateQueryResult, CreateQueryStoreResult} from "$lib";
+import {QueryClient} from "@tanstack/query-core";
 
 describe('createQuery', () => {
   it('Render and wait for success', async () => {
@@ -225,6 +227,47 @@ describe('createQuery', () => {
       fetchStatus: 'idle',
     })
   });
+
+  it('should set isFetchedAfterMount to true after a query has been fetched', async () => {
+
+    const queryClient = new QueryClient();
+    const queryKey = ["test"];
+
+    //prefetch.
+    await queryClient.prefetchQuery(queryKey, () => 'prefetched');
+
+    const {component} = render(CreateQuery_Prefetch, {
+      props: {
+        queryKey : queryKey,
+        queryClient : queryClient
+      },
+    });
+
+    expect(component.queryState).toBeDefined();
+    if (!component.queryState) {return}
+    const queryState : CreateQueryStoreResult<string> = component.queryState;
+
+    const states: CreateQueryResult<string>[] = []
+
+    queryState.subscribe(value => {
+      states.push({...value});
+    });
+
+    await waitFor(() => screen.getByText('data'));
+    expect(states.length).toBe(2);
+
+    expect(states[0]).toMatchObject({
+      data: 'prefetched',
+      isFetched: true,
+      isFetchedAfterMount: false,
+    })
+    expect(states[1]).toMatchObject({
+      data: 'data',
+      isFetched: true,
+      isFetchedAfterMount: true,
+    })
+  })
+
 
 });
 
