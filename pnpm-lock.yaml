@@ -1008,9 +1008,8 @@ importers:
 
   packages/svelte-query:
     specifiers:
-      '@sveltejs/adapter-auto': ^1.0.0
-      '@sveltejs/kit': ^1.0.0
       '@sveltejs/package': ^1.0.0
+      '@sveltejs/vite-plugin-svelte': ^1.0.2
       '@tanstack/query-core': workspace:*
       '@testing-library/svelte': ^3.2.2
       '@vitest/coverage-istanbul': ^0.26.3
@@ -1025,9 +1024,8 @@ importers:
     dependencies:
       '@tanstack/query-core': link:../query-core
     devDependencies:
-      '@sveltejs/adapter-auto': 1.0.0_@sveltejs+kit@1.0.7
-      '@sveltejs/kit': 1.0.7_svelte@3.55.0+vite@4.0.4
       '@sveltejs/package': 1.0.2_glsdxddlaertg66rhhvanbinpy
+      '@sveltejs/vite-plugin-svelte': 1.4.0_svelte@3.55.0+vite@4.0.4
       '@testing-library/svelte': 3.2.2_svelte@3.55.0
       '@vitest/coverage-istanbul': 0.26.3_jsdom@20.0.3
       eslint-plugin-svelte: 2.14.1_svelte@3.55.0
@@ -6049,6 +6047,25 @@ packages:
       svelte-hmr: 0.15.1_svelte@3.55.0
       vite: 3.2.2
       vitefu: 0.2.4_vite@3.2.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@sveltejs/vite-plugin-svelte/1.4.0_svelte@3.55.0+vite@4.0.4:
+    resolution: {integrity: sha512-6QupI/jemMfK+yI2pMtJcu5iO2gtgTfcBdGwMZZt+lgbFELhszbDl6Qjh000HgAV8+XUA+8EY8DusOFk8WhOIg==}
+    engines: {node: ^14.18.0 || >= 16}
+    peerDependencies:
+      svelte: ^3.44.0
+      vite: ^3.0.0
+    dependencies:
+      debug: 4.3.4
+      deepmerge: 4.2.2
+      kleur: 4.1.5
+      magic-string: 0.26.7
+      svelte: 3.55.0
+      svelte-hmr: 0.15.1_svelte@3.55.0
+      vite: 4.0.4
+      vitefu: 0.2.4_vite@4.0.4
     transitivePeerDependencies:
       - supports-color
     dev: true
