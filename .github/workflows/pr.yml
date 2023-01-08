@@ -47,7 +47,7 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm --filter "./packages/**" --filter query --prefer-offline install
-      - run: pnpm run typecheck
+      - run: pnpm run test:types
   format:
     name: 'Format'
     runs-on: ubuntu-latest
