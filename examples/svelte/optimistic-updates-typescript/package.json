@@ -16,7 +16,6 @@
     "@sveltejs/kit": "^1.0.0",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
-    "svelte-preprocess": "^4.10.7",
     "tslib": "^2.4.1",
     "typescript": "^4.7.4",
     "vite": "^4.0.0"
