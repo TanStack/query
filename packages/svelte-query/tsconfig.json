@@ -20,5 +20,9 @@
     "sourceMap": true,
     "strict": true,
 		"target": "esnext"
-  }
+  },
+  "include": ["src"],
+  "references": [
+    { "path": "../query-core" }
+  ]
 }
