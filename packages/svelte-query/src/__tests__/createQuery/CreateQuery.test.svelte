@@ -1,23 +1,42 @@
 <script lang="ts">
-  import { createQuery, QueryClient } from '$lib'
-  import { setQueryClientContext } from '$lib/context'
+  import type {CreateQueryOptions, CreateQueryStoreResult} from "$lib";
+  import {createQuery, QueryClient} from "$lib";
+  import {setQueryClientContext} from "$lib/context";
+  import {expectType, sleep} from "../utils";
 
-  export let queryKey: Array<string>
-  export let queryFn: () => Promise<string>
+  export let queryFn: () => Promise<string> = async () => 'data'
+  export let queryKey: Array<string> = ["test"];
+  export let options : Omit<
+      CreateQueryOptions<string, Error, string>,
+      'queryKey' | 'queryFn' | 'initialData'
+    > & { initialData?: () => undefined } = {};
 
-  const queryClient = new QueryClient()
+  export let queryClient = new QueryClient();
   setQueryClientContext(queryClient)
 
-  const query = createQuery({
-    queryKey,
-    queryFn,
+  // unspecified query function should default to unknown.
+  export let queryState: CreateQueryStoreResult<string, Error> = createQuery<string, Error>(queryKey, queryFn, Object.keys(options).length > 0 ? options : undefined)
+
+  queryState.subscribe(value => {
+    if (value.isLoading) {
+      expectType<undefined>(value.data)
+      expectType<null>(value.error)
+    } else if (value.isLoadingError) {
+      expectType<undefined>(value.data)
+      expectType<Error>(value.error)
+    } else {
+      expectType<string>(value.data)
+      expectType<Error | null>(value.error)
+    }
   })
+
 </script>
 
-{#if $query.isLoading}
-  <p>Loading</p>
-{:else if $query.isError}
-  <p>Error</p>
-{:else if $query.isSuccess}
-  <p>Success</p>
+
+<span>Status:{$queryState.status}</span>
+<span>Failure Count:{$queryState.failureCount}</span>
+<span>Failure Reason:{$queryState.failureReason}</span>
+{#if $queryState.isLoadingError}
+<span>Error Message:{$queryState.error.message}</span>
 {/if}
+<span>{$queryState.data}</span>

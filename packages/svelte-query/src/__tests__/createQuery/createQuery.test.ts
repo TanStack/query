@@ -1,12 +1,9 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import {cleanup, render, screen, waitFor} from '@testing-library/svelte'
 import CreateQuery_TypeCheck from "./CreateQuery_TypeCheck.test.svelte";
-import CreateQuery from "./CreateQuery.test.svelte";
 
 import {sleep} from '../../../../../../query/packages/svelte-query/src/__tests__/utils'
-import CreateQuery_Successful from "./CreateQuery_Successful.test.svelte";
-import CreateQuery_Unsuccessful from "./CreateQuery_Unsuccessful.test.svelte";
-import CreateQuery_Prefetch from "./CreateQuery_Prefetch.test.svelte";
+import CreateQuery from "./CreateQuery.test.svelte";
 import type {CreateQueryResult, CreateQueryStoreResult} from "$lib";
 import {QueryClient} from "@tanstack/query-core";
 
@@ -26,15 +23,15 @@ describe('createQuery', () => {
       },
     })
 
-    expect(screen.queryByText('Loading')).toBeInTheDocument()
-    expect(screen.queryByText('Error')).not.toBeInTheDocument()
-    expect(screen.queryByText('Success')).not.toBeInTheDocument()
+    expect(screen.queryByText('Status:loading')).toBeInTheDocument()
+    expect(screen.queryByText('Status:error')).not.toBeInTheDocument()
+    expect(screen.queryByText('Status:success')).not.toBeInTheDocument()
 
     await sleep(200)
 
-    expect(screen.queryByText('Success')).toBeInTheDocument()
-    expect(screen.queryByText('Loading')).not.toBeInTheDocument()
-    expect(screen.queryByText('Error')).not.toBeInTheDocument()
+    expect(screen.queryByText('Status:success')).toBeInTheDocument()
+    expect(screen.queryByText('Status:loading')).not.toBeInTheDocument()
+    expect(screen.queryByText('Status:error')).not.toBeInTheDocument()
   });
 
   it('should have types that match the spec.', async () => {
@@ -51,7 +48,7 @@ describe('createQuery', () => {
 
   it('should return the correct states for a successful query', async () => {
 
-    const {component} = render(CreateQuery_Successful, {
+    const {component} = render(CreateQuery, {
       props: {
       },
     });
@@ -129,15 +126,21 @@ describe('createQuery', () => {
 
   it('should return the correct states for an unsuccessful query', async () => {
 
-    const {component} = render(CreateQuery_Unsuccessful, {
+    const {component} = render(CreateQuery, {
       props: {
+        queryFn : () => Promise.reject("rejected"),
+        options :
+          {
+            retry: 1,
+            retryDelay: 1,
+          },
       },
     });
 
     expect(component.queryState).toBeDefined();
     if (!component.queryState) {return}
-    const queryState : CreateQueryStoreResult<string[], string, undefined> = component.queryState;
-    const states: CreateQueryResult<undefined, string>[] = []
+    const queryState : CreateQueryStoreResult<unknown> = component.queryState;
+    const states: CreateQueryResult<unknown>[] = []
 
 
     queryState.subscribe(value => {
@@ -240,7 +243,7 @@ describe('createQuery', () => {
     //prefetch.
     await queryClient.prefetchQuery(queryKey, () => 'prefetched');
 
-    const {component} = render(CreateQuery_Prefetch, {
+    const {component} = render(CreateQuery, {
       props: {
         queryKey : queryKey,
         queryClient : queryClient
@@ -277,7 +280,7 @@ describe('createQuery', () => {
   it('should call onSuccess after a query has been fetched', async () => {
     const onSuccess = vi.fn();
 
-    const {component} = render(CreateQuery_Successful, {
+    const {component} = render(CreateQuery, {
       props: {
         options : {
           onSuccess : onSuccess
@@ -303,12 +306,11 @@ describe('createQuery', () => {
   });
 
 
-
   it('should call onSuccess after a query has been refetched', async () => {
     const onSuccess = vi.fn();
 
     let count = 0;
-    const {component} = render(CreateQuery_Successful, {
+    const {component} = render(CreateQuery, {
       props: {
         queryFn : async () => {count++; return 'data' + count},
         options : {
@@ -350,7 +352,7 @@ describe('createQuery', () => {
   it('should call onSuccess after a disabled query has been fetched', async () => {
     const onSuccess = vi.fn();
 
-    const {component} = render(CreateQuery_Successful, {
+    const {component} = render(CreateQuery, {
       props: {
         queryFn : async () => {return 'data'},
         options : {
@@ -359,6 +361,7 @@ describe('createQuery', () => {
         }
       },
     });
+
 
     expect(component.queryState).toBeDefined();
     if (!component.queryState) {return}
@@ -383,5 +386,77 @@ describe('createQuery', () => {
     expect(onSuccess).toHaveBeenCalledTimes(1)
     expect(onSuccess).toHaveBeenCalledWith('data')
   });
+
+
+
+  // it('should not call onSuccess if a component has unmounted', async () => {
+  //   const onSuccess = vi.fn();
+  //
+  //   const {component} = render(CreateQuery_Successful, {
+  //     props: {
+  //       queryFn : async () => {return 'data'},
+  //       options : {
+  //         enabled: false,
+  //         onSuccess : onSuccess
+  //       }
+  //     },
+  //   });
+  //
+  //
+  //   expect(component.queryState).toBeDefined();
+  //   if (!component.queryState) {return}
+  //   const queryStateStore : CreateQueryStoreResult<string, Error> = component.queryState;
+  //   const states: CreateQueryResult<string>[] = []
+  //
+  //   let queryState : CreateQueryResult<string, Error> | undefined = undefined;
+  //
+  //   queryStateStore.subscribe(value => {
+  //     states.push({...value});
+  //     if (queryState === undefined) {
+  //       queryState = value;
+  //     }
+  //   });
+  //
+  //   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  //   if (queryState !== undefined) {
+  //     await (queryState as CreateQueryResult<string, Error>).refetch();
+  //   }
+  //   await waitFor(() => screen.getByText('data'));
+  //
+  //   expect(onSuccess).toHaveBeenCalledTimes(1)
+  //   expect(onSuccess).toHaveBeenCalledWith('data')
+  // });
+
+
+  it('should call onError after a query has been fetched with an error', async () => {
+    const onError = vi.fn();
+
+    const {component} = render(CreateQuery, {
+      props: {
+        queryFn : () => Promise.reject("error"),
+        options : {
+          retry: 1,
+          retryDelay: 1,
+          onError: onError
+        }
+      },
+    });
+
+    expect(component.queryState).toBeDefined();
+    if (!component.queryState) {return}
+    const queryState : CreateQueryStoreResult<unknown> = component.queryState;
+    const states: CreateQueryResult<unknown>[] = []
+
+    queryState.subscribe(value => {
+      states.push({...value});
+    });
+
+    await waitFor(() => screen.getByText('Failure Reason:error'));
+    expect(states.length).toBe(2);
+    console.log(states);
+    expect(onError).toHaveBeenCalledTimes(1);
+    expect(onError).toHaveBeenCalledWith('error');
+  });
+
 
 });
