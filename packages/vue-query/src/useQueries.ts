@@ -64,12 +64,7 @@ type GetOptions<T> =
       }
     ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptionsForUseQueries<
-        TQueryFnData,
-        Error,
-        TQueryFnData,
-        TQueryKey
-      >
+    ? UseQueryOptionsForUseQueries<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptionsForUseQueries
 
