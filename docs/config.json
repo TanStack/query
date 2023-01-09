@@ -690,6 +690,47 @@
             {
               "label": "Overview",
               "to": "svelte/overview"
+            },
+            {
+              "label": "Installation",
+              "to": "svelte/installation"
+            }
+          ]
+        },
+        {
+          "label": "Examples",
+          "children": [
+            {
+              "label": "Simple",
+              "to": "svelte/examples/svelte/simple"
+            },
+            {
+              "label": "Basic",
+              "to": "svelte/examples/svelte/basic"
+            },
+            {
+              "label": "Auto Refetching / Polling / Realtime",
+              "to": "svelte/examples/svelte/auto-refetching"
+            },
+            {
+              "label": "Optimistic Updates in TypeScript",
+              "to": "svelte/examples/svelte/optimistic-updates-typescript"
+            },
+            {
+              "label": "Playground",
+              "to": "svelte/examples/svelte/playground"
+            },
+            {
+              "label": "Star Wars",
+              "to": "svelte/examples/svelte/star-wars"
+            },
+            {
+              "label": "Infinite Queries",
+              "to": "svelte/examples/svelte/infinite-loadmore"
+            },
+            {
+              "label": "Hydration",
+              "to": "svelte/examples/svelte/hydration"
             }
           ]
         }
