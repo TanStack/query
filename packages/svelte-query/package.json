@@ -15,6 +15,7 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf ./build",
+    "dev": "svelte-package --watch",
     "test:types": "svelte-check --tsconfig ./tsconfig.json",
     "test:eslint": "eslint --ext .svelte,.ts ./src",
     "test:lib": "vitest run --coverage true",
