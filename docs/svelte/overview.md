@@ -12,13 +12,13 @@ Include the QueryClientProvider near the root of your project:
 ```svelte
 <script lang="ts">
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
-  import Simple from './lib/Example.svelte'
+  import Example from './lib/Example.svelte'
 
   const queryClient = new QueryClient()
 </script>
 
 <QueryClientProvider client={queryClient}>
-  <Simple />
+  <Example />
 </QueryClientProvider>
 ```
 
@@ -40,9 +40,9 @@ Then call any function (e.g. createQuery) from any component:
   {:else if $query.isError}
     <p>Error: {$query.error.message}</p>
   {:else if $query.isSuccess}
-      {#each $query.data as todo}
-        <p>{todo.title}</p>
-      {/each}
+    {#each $query.data as todo}
+      <p>{todo.title}</p>
+    {/each}
   {/if}
 </div>
 ```
