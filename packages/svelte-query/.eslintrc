@@ -6,7 +6,9 @@
     "extraFileExtensions": [".svelte"]
   },
   "rules": {
-    "react-hooks/rules-of-hooks": "off"
+    "react-hooks/rules-of-hooks": "off",
+    "import/no-unresolved" : "off",
+    "svelte/valid-compile" : "off"
   },
   "extends": [
     "plugin:svelte/recommended",

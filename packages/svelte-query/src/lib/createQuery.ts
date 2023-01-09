@@ -4,7 +4,7 @@ import { createBaseQuery } from './createBaseQuery'
 import type {
   DefinedCreateQueryResult,
   CreateQueryOptions,
-  CreateQueryStoreResult,
+  CreateQueryStoreResult, CreateQueryResult,
 } from './types'
 
 export function createQuery<
@@ -34,6 +34,7 @@ export function createQuery<
     initialData: TQueryFnData | (() => TQueryFnData)
   },
 ): DefinedCreateQueryResult<TData, TError>
+
 
 export function createQuery<
   TQueryFnData = unknown,

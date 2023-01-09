@@ -10,6 +10,10 @@ const config = {
   package: {
     source: "./src/lib",
     dir: "./build/lib"
+  },
+  compilerOptions : {
+    //Allow vitest to access svelte component properties.
+    accessors : true
   }
 };
 
