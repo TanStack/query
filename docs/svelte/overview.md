@@ -1,6 +1,6 @@
 ---
 id: overview
-title: Svelte Query
+title: Overview
 ---
 
 The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Query via Svelte.
@@ -9,7 +9,7 @@ The `@tanstack/svelte-query` package offers a 1st-class API for using TanStack Q
 
 Include the QueryClientProvider near the root of your project:
 
-```svelte
+```markdown
 <script lang="ts">
   import { QueryClientProvider, QueryClient } from '@tanstack/svelte-query'
   import Example from './lib/Example.svelte'
@@ -24,7 +24,7 @@ Include the QueryClientProvider near the root of your project:
 
 Then call any function (e.g. createQuery) from any component:
 
-```svelte
+```markdown
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
 
