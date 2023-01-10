@@ -15,7 +15,7 @@
     "test:lib:publish": "pnpm --filter \"./packages/**\" run test:lib:publish",
     "test:size": "pnpm run build && bundlewatch",
     "test:types": "pnpm --filter \"./packages/**\" run test:types",
-    "build": "rollup --config rollup.config.js && pnpm --filter \"@tanstack/eslint-plugin-query\" --filter \"@tanstack/svelte-query\" run build && pnpm run build:types",
+    "build": "rollup --config rollup.config.js && pnpm --filter \"./packages/**\" run build && pnpm run build:types",
     "build:types": "pnpm --filter \"./packages/**\" run build:types",
     "watch": "concurrently --kill-others \"rollup --config rollup.config.js -w\" \"pnpm run build:types --watch\"",
     "dev": "pnpm run watch",
