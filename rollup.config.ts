@@ -92,20 +92,15 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
       entryFile: [
         'src/index.ts',
         'src/reactBatchedUpdates.native.ts',
-        'src/useSyncExternalStore.native.ts',
       ],
       globals: {
         react: 'React',
         'react-dom': 'ReactDOM',
         '@tanstack/query-core': 'QueryCore',
-        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
-        'use-sync-external-store/shim/index.native.js':
-          'UseSyncExternalStoreNative',
         'react-native': 'ReactNative',
       },
       bundleUMDGlobals: [
         '@tanstack/query-core',
-        'use-sync-external-store/shim/index.js',
       ],
     }),
     ...buildConfigs({
@@ -119,12 +114,10 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
-        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
         superjson: 'SuperJson',
       },
       bundleUMDGlobals: [
         '@tanstack/match-sorter-utils',
-        'use-sync-external-store/shim/index.js',
         'superjson',
       ],
     }),
@@ -139,7 +132,6 @@ export default function rollup(options: RollupOptions): RollupOptions[] {
         'react-dom': 'ReactDOM',
         '@tanstack/react-query': 'ReactQuery',
         '@tanstack/match-sorter-utils': 'MatchSorterUtils',
-        'use-sync-external-store/shim/index.js': 'UseSyncExternalStore',
         superjson: 'SuperJson',
       },
       forceDevEnv: true,
@@ -370,8 +362,6 @@ function cjs({
         "require('./logger.js')": "require('./logger')",
         "require('./reactBatchedUpdates.js')":
           "require('./reactBatchedUpdates')",
-        "require('./useSyncExternalStore.js')":
-          "require('./useSyncExternalStore')",
         preventAssignment: true,
         delimiters: ['', ''],
       }),
