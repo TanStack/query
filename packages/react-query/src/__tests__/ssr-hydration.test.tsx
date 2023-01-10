@@ -15,14 +15,14 @@ import {
 import { createQueryClient, setIsServer, sleep } from './utils'
 
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
-  let root: any 
-  ReactDOMTestUtils.act(() => { 
-    // @ts-expect-error 
-    root = ReactDOM.hydrateRoot(container, element) 
-  }) 
-  return () => { 
-    root.unmount() 
-  } 
+  let root: any
+  ReactDOMTestUtils.act(() => {
+    // @ts-expect-error
+    root = ReactDOM.hydrateRoot(container, element)
+  })
+  return () => {
+    root.unmount()
+  }
 }
 
 async function fetchData<TData>(value: TData, ms?: number): Promise<TData> {
