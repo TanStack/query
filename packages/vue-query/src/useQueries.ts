@@ -44,9 +44,9 @@ type GetOptions<T> =
         queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey>
         select: (data: any) => infer TData
       }
-    ? UseQueryOptions<TQueryFnData, unknown, TData, TQueryKey>
+    ? UseQueryOptions<TQueryFnData, Error, TData, TQueryKey>
     : T extends { queryFn?: QueryFunction<infer TQueryFnData, infer TQueryKey> }
-    ? UseQueryOptions<TQueryFnData, unknown, TQueryFnData, TQueryKey>
+    ? UseQueryOptions<TQueryFnData, Error, TQueryFnData, TQueryKey>
     : // Fallback
       UseQueryOptions
 

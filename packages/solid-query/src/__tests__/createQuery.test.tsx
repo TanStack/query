@@ -2856,17 +2856,17 @@ describe('createQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const state = createQuery<unknown, string>(() => ({
+      const state = createQuery(() => ({
         queryKey: key,
-        queryFn: () => Promise.reject('Local Error'),
+        queryFn: () => Promise.reject(new Error('Local Error')),
         retry: false,
-        throwErrors: (err) => err !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       }))
 
       return (
         <div>
           <h1>{state.status}</h1>
-          <h2>{state.error}</h2>
+          <h2>{state.error?.message}</h2>
         </div>
       )
     }

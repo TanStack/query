@@ -2472,8 +2472,8 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 2'))
 
-    // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
+    // Should be 3 instead of 5
+    expect(renders).toBe(3)
 
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
@@ -2955,18 +2955,18 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<unknown, string>({
+      const { status, error } = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject('Local Error'),
+        queryFn: () => Promise.reject(new Error('Local Error')),
 
         retry: false,
-        throwErrors: (err) => err !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       })
 
       return (
         <div>
           <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h2>{error?.message}</h2>
         </div>
       )
     }

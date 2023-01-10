@@ -5,6 +5,6 @@ import vue from "@vitejs/plugin-vue";
 export default defineConfig({
   plugins: [vue()],
   optimizeDeps: {
-    exclude: ["vue-query", "vue-demi"],
+    exclude: ["@tanstack/vue-query", "vue-demi"],
   },
 });

@@ -14,23 +14,14 @@ import {
 } from '..'
 import { createQueryClient, setIsServer, sleep } from './utils'
 
-const isReact18 = () => (process.env.REACTJS_VERSION || '18') === '18'
-
 const ReactHydrate = (element: React.ReactElement, container: Element) => {
-  if (isReact18()) {
-    let root: any
-    ReactDOMTestUtils.act(() => {
-      // @ts-expect-error
-      root = ReactDOM.hydrateRoot(container, element)
-    })
-    return () => {
-      root.unmount()
-    }
-  }
-
-  ReactDOM.hydrate(element, container)
+  let root: any
+  ReactDOMTestUtils.act(() => {
+    // @ts-expect-error
+    root = ReactDOM.hydrateRoot(container, element)
+  })
   return () => {
-    ReactDOM.unmountComponentAtNode(container)
+    root.unmount()
   }
 }
 
@@ -58,9 +49,6 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
     const fetchDataSuccess = jest.fn<
       ReturnType<typeof fetchData>,
       Parameters<typeof fetchData>
@@ -142,9 +130,6 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
     const fetchDataError = jest.fn(() => {
       throw new Error('fetchDataError')
     })
@@ -225,9 +210,6 @@ describe('Server side rendering with de/rehydration', () => {
     const consoleMock = jest.spyOn(console, 'error')
     consoleMock.mockImplementation(() => undefined)
 
-    if (!isReact18()) {
-      return
-    }
     const fetchDataSuccess = jest.fn<
       ReturnType<typeof fetchData>,
       Parameters<typeof fetchData>

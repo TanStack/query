@@ -7,7 +7,7 @@ ref: docs/react/guides/queries.md
 [//]: # 'Example'
 
 ```ts
-import { useQuery } from 'vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 ```
@@ -17,7 +17,7 @@ const result = useQuery({ queryKey: ['todos'], queryFn: fetchTodoList })
 
 ```vue
 <script setup>
-import { useQuery } from 'vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 const { isLoading, isError, data, error } = useQuery({
   queryKey: ['todos'],
@@ -40,7 +40,7 @@ const { isLoading, isError, data, error } = useQuery({
 
 ```vue
 <script setup>
-import { useQuery } from 'vue-query'
+import { useQuery } from '@tanstack/vue-query'
 
 const { status, data, error } = useQuery({
   queryKey: ['todos'],

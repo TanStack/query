@@ -78,7 +78,7 @@ describe('Discriminated union return type', () => {
       )
 
       if (query.isError) {
-        const result: Expect<Equal<unknown, typeof query.error>> = true
+        const result: Expect<Equal<Error, typeof query.error>> = true
         return result
       }
       return

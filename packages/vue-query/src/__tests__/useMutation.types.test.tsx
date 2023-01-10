@@ -64,7 +64,7 @@ describe('Discriminated union return type', () => {
       )
 
       if (mutation.isError) {
-        const result: Expect<Equal<unknown, typeof mutation.error>> = true
+        const result: Expect<Equal<Error, typeof mutation.error>> = true
         return result
       }
       return

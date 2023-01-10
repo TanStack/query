@@ -58,6 +58,7 @@ export class QueryClient {
   private defaultOptions: DefaultOptions
   private queryDefaults: QueryDefaults[]
   private mutationDefaults: MutationDefaults[]
+  private mountCount: number
   private unsubscribeFocus?: () => void
   private unsubscribeOnline?: () => void
 
@@ -68,6 +69,7 @@ export class QueryClient {
     this.defaultOptions = config.defaultOptions || {}
     this.queryDefaults = []
     this.mutationDefaults = []
+    this.mountCount = 0
 
     if (process.env.NODE_ENV !== 'production' && config.logger) {
       this.logger.error(
@@ -77,6 +79,9 @@ export class QueryClient {
   }
 
   mount(): void {
+    this.mountCount++
+    if (this.mountCount !== 1) return
+
     this.unsubscribeFocus = focusManager.subscribe(() => {
       if (focusManager.isFocused()) {
         this.resumePausedMutations()
@@ -92,8 +97,14 @@ export class QueryClient {
   }
 
   unmount(): void {
+    this.mountCount--
+    if (this.mountCount !== 0) return
+
     this.unsubscribeFocus?.()
+    this.unsubscribeFocus = undefined
+
     this.unsubscribeOnline?.()
+    this.unsubscribeOnline = undefined
   }
 
   isFetching(filters: QueryFilters = {}): number {
@@ -176,7 +187,7 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = undefined>(
+  getQueryState<TQueryFnData = unknown, TError = Error>(
     queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.queryCache.find<TQueryFnData, TError>({ queryKey })?.state
@@ -275,7 +286,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -297,7 +308,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -308,7 +319,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -320,7 +331,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -444,11 +455,11 @@ export class QueryClient {
   }
 
   defaultQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey,
+    TQueryFnData = unknown,
+    TError = Error,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
   >(
     options?:
       | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>
