@@ -28,9 +28,12 @@
     "src"
   ],
   "scripts": {
-    "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts",
-    "test:dev": "pnpm run test:jest --watch"
+    "clean": "rimraf ./build",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "test:lib": "jest --config ./jest.config.ts",
+    "test:lib:dev": "pnpm run test:lib --watch",
+    "test:lib:publish": "pnpm run test:lib --collectCoverage false",
+    "build:types": "tsc --build"
   }
 }

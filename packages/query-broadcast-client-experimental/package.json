@@ -28,10 +28,10 @@
     "src"
   ],
   "scripts": {
-    "clean": "rm -rf ./build",
-    "test:eslint": "../../node_modules/.bin/eslint --ext .ts,.tsx ./src",
-    "test:jest": "../../node_modules/.bin/jest --config ./jest.config.ts --passWithNoTests",
-    "test:dev": "pnpm run test:jest --watch"
+    "clean": "rimraf ./build",
+    "test:eslint": "eslint --ext .ts,.tsx ./src",
+    "test:types": "tsc",
+    "build:types": "tsc --build"
   },
   "dependencies": {
     "@tanstack/query-core": "workspace:*",

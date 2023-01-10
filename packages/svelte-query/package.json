@@ -15,10 +15,12 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf ./build",
-    "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "svelte-kit sync && ../../node_modules/.bin/eslint --ext .svelte,.ts ./src",
-    "test:jest": "svelte-kit sync && vitest run --coverage"
+    "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "svelte-kit sync && eslint --ext .svelte,.ts ./src",
+    "test:lib": "svelte-kit sync && vitest run --coverage true",
+    "test:lib:dev": "svelte-kit sync && vitest watch",
+    "test:lib:publish": "svelte-kit sync && vitest run --coverage false",
+    "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^1.0.0",
@@ -28,7 +30,6 @@
     "@vitest/coverage-istanbul": "^0.26.3",
     "eslint-plugin-svelte": "^2.14.1",
     "jsdom": "^20.0.3",
-    "rimraf": "^3.0.2",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
     "tslib": "^2.4.1",
