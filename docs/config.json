@@ -694,6 +694,10 @@
             {
               "label": "Installation",
               "to": "svelte/installation"
+            },
+            {
+              "label": "SSR & SvelteKit",
+              "to": "react/guides/ssr"
             }
           ]
         },
