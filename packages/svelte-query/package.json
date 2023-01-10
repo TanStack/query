@@ -15,12 +15,12 @@
   "type": "module",
   "scripts": {
     "clean": "rimraf ./build",
-    "test:types": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "test:eslint": "svelte-kit sync && eslint --ext .svelte,.ts ./src",
-    "test:lib": "svelte-kit sync && vitest run --coverage true",
-    "test:lib:dev": "svelte-kit sync && vitest watch",
-    "test:lib:publish": "svelte-kit sync && vitest run --coverage false",
-    "build": "svelte-kit sync && svelte-package && rimraf ./build/lib/package.json"
+    "test:types": "svelte-check --tsconfig ./tsconfig.json",
+    "test:eslint": "eslint --ext .svelte,.ts ./src",
+    "test:lib": "vitest run --coverage true",
+    "test:lib:dev": "vitest watch",
+    "test:lib:publish": "vitest run --coverage false",
+    "build": "svelte-package && rimraf ./build/lib/package.json"
   },
   "devDependencies": {
     "@sveltejs/package": "^1.0.0",
