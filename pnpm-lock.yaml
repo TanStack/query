@@ -16,7 +16,6 @@ importers:
       '@rollup/plugin-replace': ^4.0.0
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.0.0
-      '@testing-library/react-17': npm:@testing-library/react@12.1.4
       '@testing-library/react-hooks': ^7.0.2
       '@tsconfig/svelte': ^3.0.0
       '@types/jest': ^26.0.4
@@ -83,7 +82,6 @@ importers:
       '@rollup/plugin-replace': 4.0.0_rollup@2.78.1
       '@testing-library/jest-dom': 5.16.4
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
-      '@testing-library/react-17': /@testing-library/react/12.1.4_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 7.0.2_biqbaboplfbrettd7655fr4n2y
       '@tsconfig/svelte': 3.0.0
       '@types/jest': 26.0.24
@@ -5599,20 +5597,6 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/dom/8.18.1:
-    resolution: {integrity: sha512-oEvsm2B/WtcHKE+IcEeeCqNU/ltFGaVyGbpcm4g/2ytuT49jrlH9x5qRKL/H3A6yfM4YAbSbC0ceT5+9CEXnLg==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@babel/code-frame': 7.18.6
-      '@babel/runtime': 7.19.0
-      '@types/aria-query': 4.2.2
-      aria-query: 5.0.2
-      chalk: 4.1.2
-      dom-accessibility-api: 0.5.14
-      lz-string: 1.4.4
-      pretty-format: 27.5.1
-    dev: true
-
   /@testing-library/jest-dom/5.16.4:
     resolution: {integrity: sha512-Gy+IoFutbMQcky0k+bqqumXZ1cTGswLsFqmNLzNdSKkU9KGV2u9oXhukCbbJ9/LRPKiqwxEE8VpV/+YZlfkPUA==}
     engines: {node: '>=8', npm: '>=6', yarn: '>=1'}
@@ -5648,20 +5632,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
-    dev: true
-
-  /@testing-library/react/12.1.4_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-jiPKOm7vyUw311Hn/HlNQ9P8/lHNtArAx0PisXyFixDDvfl8DbD6EUdbshK5eqauvBSvzZd19itqQ9j3nferJA==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '*'
-      react-dom: '*'
-    dependencies:
-      '@babel/runtime': 7.19.0
-      '@testing-library/dom': 8.18.1
-      '@types/react-dom': 18.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /@testing-library/react/13.3.0_biqbaboplfbrettd7655fr4n2y:
