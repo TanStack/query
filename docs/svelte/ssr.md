@@ -11,27 +11,27 @@ Together with SvelteKit's [`load`](https://kit.svelte.dev/docs/load), you can pa
 
 **src/routes/+page.ts**
 ```ts
-import type { PageLoad } from './$types';
+import type { PageLoad } from './$types'
 
 export const load: PageLoad = async () => {
-  const posts = await getPosts();
-  return { posts };
-};
+  const posts = await getPosts()
+  return { posts }
+}
 ```
 
 **src/routes/+page.svelte**
 ```markdown
 <script>
-  import { createQuery } from '@tanstack/svelte-query';
-  import type { PageData } from './$types';
+  import { createQuery } from '@tanstack/svelte-query'
+  import type { PageData } from './$types'
 
-  export let data: PageData;
+  export let data: PageData
 
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts,
     initialData: posts
-  });
+  })
 </script>
 ```
 
@@ -51,22 +51,22 @@ Svelte Query supports prefetching queries on the server. Using this setup below,
 
 **src/routes/+layout.ts**
 ```ts
-import { QueryClient } from '@tanstack/svelte-query';
-import type { LayoutLoad } from './$types';
+import { QueryClient } from '@tanstack/svelte-query'
+import type { LayoutLoad } from './$types'
 
 export const load: LayoutLoad = async () => {
-  const queryClient = new QueryClient();
-  return { queryClient };
-};
+  const queryClient = new QueryClient()
+  return { queryClient }
+}
 ```
 
 **src/routes/+layout.svelte**
 ```markdown
 <script lang="ts">
-  import { QueryClientProvider } from '@tanstack/svelte-query';
-  import type { PageData } from './$types';
+  import { QueryClientProvider } from '@tanstack/svelte-query'
+  import type { PageData } from './$types'
 
-  export let data: PageData;
+  export let data: PageData
 </script>
 
 <QueryClientProvider client={data.queryClient}>
@@ -76,27 +76,27 @@ export const load: LayoutLoad = async () => {
 
 **src/routes/+page.ts**
 ```ts
-import type { PageLoad } from './$types';
+import type { PageLoad } from './$types'
 
 export const load: PageLoad = async ({ parent }) => {
-  const { queryClient } = await parent();
+  const { queryClient } = await parent()
   await queryClient.prefetchQuery({
     queryKey: ['posts'],
     queryFn: getPosts
-  });
-};
+  })
+}
 ```
 
 **src/routes/+page.svelte**
 ```markdown
 <script lang="ts">
-  import { createQuery } from '@tanstack/svelte-query';
+  import { createQuery } from '@tanstack/svelte-query'
 
   // This data is cached by prefetchQuery in +page.ts so no fetch actually happens here
   const query = createQuery({
     queryKey: ['posts'],
     queryFn: getPosts
-  });
+  })
 </script>
 ```
 
