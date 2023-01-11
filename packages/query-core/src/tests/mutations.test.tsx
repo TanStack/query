@@ -25,9 +25,7 @@ describe('mutations', () => {
       },
     })
 
-    mutation.mutate(null)
-
-    await sleep(10)
+    await mutation.mutate(null)
 
     expect(variables).toBe(null)
   })

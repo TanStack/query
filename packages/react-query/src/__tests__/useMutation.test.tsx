@@ -1165,4 +1165,69 @@ describe('useMutation', () => {
 
     expect(onError).toHaveBeenCalledWith(mutateFnError, 'todo', undefined)
   })
+
+  it('should reset variables after successful mutation', async () => {
+    function Page() {
+      const mutation = useMutation({
+        mutationFn: async (text: string) => {
+          await sleep(10)
+          return 'result-' + text
+        },
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            data: {mutation.data ?? 'null'}, status: {mutation.status},
+            variables: {mutation.variables ?? 'null'}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('data: null, status: idle, variables: null')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('data: null, status: loading, variables: todo')
+    await rendered.findByText(
+      'data: result-todo, status: success, variables: null',
+    )
+  })
+
+  it('should reset variables after errorneous mutation', async () => {
+    function Page() {
+      const mutation = useMutation({
+        mutationFn: async (text: string) => {
+          await sleep(10)
+          throw new Error('error-' + text)
+        },
+      })
+
+      return (
+        <div>
+          <button onClick={() => mutation.mutate('todo')}>mutate</button>
+          <div>
+            error:{' '}
+            {mutation.error instanceof Error ? mutation.error.message : 'null'},
+            status: {mutation.status}, variables: {mutation.variables ?? 'null'}
+          </div>
+        </div>
+      )
+    }
+
+    const rendered = renderWithClient(queryClient, <Page />)
+
+    await rendered.findByText('error: null, status: idle, variables: null')
+
+    rendered.getByRole('button', { name: /mutate/i }).click()
+
+    await rendered.findByText('error: null, status: loading, variables: todo')
+    await rendered.findByText(
+      'error: error-todo, status: error, variables: null',
+    )
+  })
 })
