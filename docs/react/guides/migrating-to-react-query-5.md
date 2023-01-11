@@ -161,3 +161,18 @@ useQuery<number, string>({
 ### eslint `prefer-query-object-syntax` rule is removed
 
 Since the only supported syntax now is the object syntax, this rule is no longer needed
+
+### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
+
+Since the function `unstable_batchedUpdates` is noop in React 18, it will no longer be automatically set as the batching function in `react-query`.
+
+If your framework supports a custom batching function, you can let TanStack Query know about it by calling `notifyManager.setBatchNotifyFunction`.
+
+For example, this is how the batch function is set in `solid-query`:
+
+```ts
+import { notifyManager } from '@tanstack/query-core' 
+import { batch } from 'solid-js' 
+  
+notifyManager.setBatchNotifyFunction(batch) 
+```
