@@ -160,38 +160,19 @@ useQuery<number, string>({
 
 ### eslint `prefer-query-object-syntax` rule is removed
 
-Since the only supported syntax now is the object syntax, this rule is no longer needed.
+Since the only supported syntax now is the object syntax, this rule is no longer needed
 
-## New Features
+### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
 
-v5 has some awesome new features:
+Since the function `unstable_batchedUpdates` is noop in React 18, it will no longer be automatically set as the batching function in `react-query`.
 
-### custom store inside the queryCache
+If your framework supports a custom batching function, you can let TanStack Query know about it by calling `notifyManager.setBatchNotifyFunction`.
 
-You can now customize how the internal in-memory store of TanStack Query should be created (e.g. to limit its size) by passing the `experimental_createStore` method to the `QueryCache` constructor:
-
-```ts
-import { QueryCache, QueryClient } from '@tanstack/react-query'
-
-const queryClient = new QueryClient({
-  queryCache: new QueryCache({
-    experimental_createStore: () => {
-      return myCustomStore
-    },
-  }),
-})
-```
-
-The store has to adhere to the following interface:
+For example, this is how the batch function is set in `solid-query`:
 
 ```ts
-interface QueryStore {
-  has: (queryKey: string) => boolean
-  set: (queryKey: string, query: Query) => void
-  get: (queryKey: string) => Query | undefined
-  delete: (queryKey: string) => void
-  values: () => IterableIterator<Query>
-}
+import { notifyManager } from '@tanstack/query-core' 
+import { batch } from 'solid-js' 
+  
+notifyManager.setBatchNotifyFunction(batch) 
 ```
-
-This feature is inspired by the [Cache Provider feature from SWR](https://swr.vercel.app/docs/advanced/cache#cache-provider). It is marked as _experimental` because the API might change in a future minor version.

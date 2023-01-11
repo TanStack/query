@@ -1,5 +1,4 @@
 import * as React from 'react'
-import { useSyncExternalStore } from './useSyncExternalStore'
 import { notifyManager, MutationObserver } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type {
@@ -33,7 +32,7 @@ export function useMutation<
     observer.setOptions(options)
   }, [observer, options])
 
-  const result = useSyncExternalStore(
+  const result = React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
         observer.subscribe(notifyManager.batchCalls(onStoreChange)),
