@@ -187,7 +187,7 @@ export class QueryClient {
     )
   }
 
-  getQueryState<TQueryFnData = unknown, TError = undefined>(
+  getQueryState<TQueryFnData = unknown, TError = Error>(
     queryKey: QueryKey,
   ): QueryState<TQueryFnData, TError> | undefined {
     return this.#queryCache.find<TQueryFnData, TError>({ queryKey })?.state
@@ -286,7 +286,7 @@ export class QueryClient {
 
   fetchQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -308,7 +308,7 @@ export class QueryClient {
 
   prefetchQuery<
     TQueryFnData = unknown,
-    TError = unknown,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -319,7 +319,7 @@ export class QueryClient {
 
   fetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -331,7 +331,7 @@ export class QueryClient {
 
   prefetchInfiniteQuery<
     TQueryFnData,
-    TError,
+    TError = Error,
     TData = TQueryFnData,
     TQueryKey extends QueryKey = QueryKey,
   >(
@@ -455,11 +455,11 @@ export class QueryClient {
   }
 
   defaultQueryOptions<
-    TQueryFnData,
-    TError,
-    TData,
-    TQueryData,
-    TQueryKey extends QueryKey,
+    TQueryFnData = unknown,
+    TError = Error,
+    TData = TQueryFnData,
+    TQueryData = TQueryFnData,
+    TQueryKey extends QueryKey = QueryKey,
   >(
     options?:
       | QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey>

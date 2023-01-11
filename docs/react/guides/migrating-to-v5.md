@@ -1,5 +1,5 @@
 ---
-id: migrating-to-react-query-5
+id: migrating-to-v5
 title: Migrating to TanStack Query v5
 ---
 
@@ -117,6 +117,12 @@ if you still need to remove a query, you can use `queryClient.removeQueries({que
 
 Mainly because an important fix was shipped around type inference. Please see this [TypeScript issue](https://github.com/microsoft/TypeScript/issues/43371) for more information.
 
+### The `contextSharing` prop has been removed from QueryClientProvider
+
+You could previously use the `contextSharing` property to share the first (and at least one) instance of the query client context across the window. This ensured that if TanStack Query was used across different bundles or microfrontends then they will all use the same instance of the context, regardless of module scoping.
+
+However, isolation is often preferred for microfrontends. In v4 the option to pass a custom context to the `QueryClientProvider` was added, which allows exactly this. If you wish to use the same query client across multiple packages of an application, you can create a `QueryClient` in your application and then let the bundles share this through the `context` property of the `QueryClientProvider`.
+
 ### The `isDataEqual` options has been removed from useQuery
 
 Previously, This function was used to indicate whether to use previous `data` (`true`) or new data (`false`) as a resolved data for the query.
@@ -142,6 +148,39 @@ TanStack Query has always had private fields and methods on classes, but they we
 
 To make the `useErrorBoundary` prop more framework-agnostic and avoid confusion with the established React function prefix "`use`" for hooks and the "ErrorBoundary" component name, it has been renamed to `throwErrors` to more accurately reflect its functionality.
 
+### `Error` is now the default type for errors instead of `unknown`
+
+Even though in JavaScript, you can `throw` anything (which makes `unknown` the most correct type), almost always, `Errors` (or subclasses of `Error`) are thrown. This change makes it easier to work with the `error` field in TypeScript for most cases.
+
+If you want to throw something that isn't an Error, you'll now have to set the generic for yourself:
+
+```ts
+useQuery<number, string>({
+  queryKey: ['some-query'],
+  queryFn: async () => {
+      if (Math.random() > 0.5) {
+        throw 'some error'
+      }
+      return 42
+  }
+})
+```
+
 ### eslint `prefer-query-object-syntax` rule is removed
 
 Since the only supported syntax now is the object syntax, this rule is no longer needed
+
+### No longer using `unstable_batchedUpdates` as the batching function in React and React Native
+
+Since the function `unstable_batchedUpdates` is noop in React 18, it will no longer be automatically set as the batching function in `react-query`.
+
+If your framework supports a custom batching function, you can let TanStack Query know about it by calling `notifyManager.setBatchNotifyFunction`.
+
+For example, this is how the batch function is set in `solid-query`:
+
+```ts
+import { notifyManager } from '@tanstack/query-core' 
+import { batch } from 'solid-js' 
+  
+notifyManager.setBatchNotifyFunction(batch) 
+```

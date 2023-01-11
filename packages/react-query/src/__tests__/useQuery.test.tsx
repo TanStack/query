@@ -673,26 +673,29 @@ describe('useQuery', () => {
 
   it('should call onSettled after a query has been fetched with an error', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
     const onSettled = jest.fn()
+    const error = new Error('error')
 
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject<unknown>('error'),
+        queryFn: async () => {
+          await sleep(10)
+          return Promise.reject(error)
+        },
         retry: false,
         onSettled,
       })
-      states.push(state)
-      return null
+      return <div>status: {state.status}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    await waitFor(() => {
+      rendered.getByText('status: error')
+    })
     expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
+    expect(onSettled).toHaveBeenCalledWith(undefined, error)
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
@@ -2472,8 +2475,8 @@ describe('useQuery', () => {
 
     await waitFor(() => rendered.getByText('count: 2'))
 
-    // Should be 2 / 3 instead of 5, uSES batches differently
-    expect(renders).toBe(process.env.REACTJS_VERSION === '17' ? 2 : 3)
+    // Should be 3 instead of 5
+    expect(renders).toBe(3)
 
     // Both callbacks should have been executed
     expect(callbackCount).toBe(2)
@@ -2955,18 +2958,18 @@ describe('useQuery', () => {
     const key = queryKey()
 
     function Page() {
-      const { status, error } = useQuery<unknown, string>({
+      const { status, error } = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject('Local Error'),
+        queryFn: () => Promise.reject(new Error('Local Error')),
 
         retry: false,
-        throwErrors: (err) => err !== 'Local Error',
+        throwErrors: (err) => err.message !== 'Local Error',
       })
 
       return (
         <div>
           <h1>{status}</h1>
-          <h2>{error}</h2>
+          <h2>{error?.message}</h2>
         </div>
       )
     }

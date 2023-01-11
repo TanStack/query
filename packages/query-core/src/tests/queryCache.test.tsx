@@ -1,5 +1,5 @@
 import { sleep, queryKey, createQueryClient } from './utils'
-import type { QueryClient } from '..'
+import { QueryClient } from '..'
 import { QueryCache, QueryObserver } from '..'
 import { waitFor } from '@testing-library/react'
 
@@ -92,6 +92,46 @@ describe('queryCache', () => {
       })
       await sleep(100)
       expect(callback).toHaveBeenCalled()
+    })
+
+    test('should be able to limit cache size', async () => {
+      const testCache = new QueryCache()
+
+      const unsubscribe = testCache.subscribe((event) => {
+        if (event.type === 'added') {
+          if (testCache.getAll().length > 2) {
+            testCache
+              .findAll({
+                type: 'inactive',
+                predicate: (q) => q !== event.query,
+              })
+              .forEach((query) => {
+                testCache.remove(query)
+              })
+          }
+        }
+      })
+
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      await testClient.prefetchQuery({
+        queryKey: ['key1'],
+        queryFn: () => 'data1',
+      })
+      expect(testCache.findAll().length).toBe(1)
+      await testClient.prefetchQuery({
+        queryKey: ['key2'],
+        queryFn: () => 'data2',
+      })
+      expect(testCache.findAll().length).toBe(2)
+      await testClient.prefetchQuery({
+        queryKey: ['key3'],
+        queryFn: () => 'data3',
+      })
+      expect(testCache.findAll().length).toBe(1)
+      expect(testCache.findAll()[0]!.state.data).toBe('data3')
+
+      unsubscribe()
     })
   })
 

@@ -20,7 +20,7 @@ type MutationObserverListener<TData, TError, TVariables, TContext> = (
 
 export class MutationObserver<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > extends Subscribable<
