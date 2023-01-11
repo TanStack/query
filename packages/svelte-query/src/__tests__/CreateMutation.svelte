@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createMutation, QueryClient } from '../lib'
-  import { setQueryClientContext } from '../lib/context'
+  import { createMutation, QueryClient } from '../index'
+  import { setQueryClientContext } from '../context'
 
   export let queryFn: () => Promise<string>
 

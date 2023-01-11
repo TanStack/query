@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { createQuery, QueryClient } from '../lib'
-  import { setQueryClientContext } from '../lib/context'
+  import { createQuery, QueryClient } from '../index'
+  import { setQueryClientContext } from '../context'
 
   export let queryKey: Array<string>
   export let queryFn: () => Promise<string>

@@ -1,9 +1,9 @@
-import { sveltekit } from '@sveltejs/kit/vite';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'path';
 import type { UserConfig } from 'vite';
 
 const config: UserConfig = {
-  plugins: [sveltekit()],
+  plugins: [svelte()],
   resolve: {
     alias: {
       "@tanstack/query-core": path.resolve(__dirname, '..', 'query-core', 'src'),

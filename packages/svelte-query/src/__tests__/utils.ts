@@ -4,7 +4,7 @@ import {
   QueryClient,
   type QueryClientConfig,
   type MutationOptions,
-} from '../lib'
+} from '../index'
 
 export function createQueryClient(config?: QueryClientConfig): QueryClient {
   vi.spyOn(console, 'error').mockImplementation(() => undefined)
