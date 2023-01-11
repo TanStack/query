@@ -21,9 +21,7 @@
     },
     "./package.json": "./package.json"
   },
-  "sideEffects": [
-    "./src/setBatchUpdatesFn.ts"
-  ],
+  "sideEffects": false,
   "scripts": {
     "clean": "rm -rf ./build",
     "test:codemods": "../../node_modules/.bin/jest --config codemods/jest.config.js",
