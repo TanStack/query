@@ -550,7 +550,6 @@ export interface MutationOptions<
 > {
   mutationFn?: MutationFunction<TData, TVariables>
   mutationKey?: MutationKey
-  variables?: TVariables
   onMutate?: (
     variables: TVariables,
   ) => Promise<TContext | undefined> | TContext | undefined
@@ -638,6 +637,7 @@ export interface MutationObserverIdleResult<
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
+  variables: undefined
   error: null
   isError: false
   isIdle: true
@@ -653,6 +653,7 @@ export interface MutationObserverLoadingResult<
   TContext = unknown,
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
+  variables: TVariables
   error: null
   isError: false
   isIdle: false
@@ -669,6 +670,7 @@ export interface MutationObserverErrorResult<
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: undefined
   error: TError
+  variables: undefined
   isError: true
   isIdle: false
   isLoading: false
@@ -684,6 +686,7 @@ export interface MutationObserverSuccessResult<
 > extends MutationObserverBaseResult<TData, TError, TVariables, TContext> {
   data: TData
   error: null
+  variables: undefined
   isError: false
   isIdle: false
   isLoading: false

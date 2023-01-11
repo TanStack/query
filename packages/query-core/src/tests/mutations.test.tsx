@@ -15,15 +15,6 @@ describe('mutations', () => {
     queryClient.clear()
   })
 
-  test('mutate should trigger a mutation', async () => {
-    const result = await executeMutation(queryClient, {
-      mutationFn: async (text: string) => text,
-      variables: 'todo',
-    })
-
-    expect(result).toBe(result)
-  })
-
   test('mutate should accept null values', async () => {
     let variables
 
@@ -43,17 +34,22 @@ describe('mutations', () => {
 
   test('setMutationDefaults should be able to set defaults', async () => {
     const key = queryKey()
+    const fn = jest.fn()
 
     queryClient.setMutationDefaults(key, {
-      mutationFn: async (text: string) => text,
+      mutationFn: fn,
     })
 
-    const result = await executeMutation(queryClient, {
-      mutationKey: key,
-      variables: 'todo',
-    })
+    await executeMutation(
+      queryClient,
+      {
+        mutationKey: key,
+      },
+      'vars',
+    )
 
-    expect(result).toBe(result)
+    expect(fn).toHaveBeenCalledTimes(1)
+    expect(fn).toHaveBeenCalledWith('vars')
   })
 
   test('mutation should set correct success states', async () => {
@@ -63,7 +59,6 @@ describe('mutations', () => {
         return text
       },
       onMutate: (text) => text,
-      variables: 'todo',
     })
 
     expect(mutation.getCurrentResult()).toEqual({
@@ -89,7 +84,7 @@ describe('mutations', () => {
       states.push(state)
     })
 
-    mutation.mutate()
+    mutation.mutate('todo')
 
     await sleep(0)
 
@@ -145,18 +140,17 @@ describe('mutations', () => {
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'success',
-      variables: 'todo',
+      variables: undefined,
     })
   })
 
   test('mutation should set correct error states', async () => {
     const mutation = new MutationObserver(queryClient, {
-      mutationFn: async () => {
+      mutationFn: async (_: string) => {
         await sleep(20)
         return Promise.reject('err')
       },
       onMutate: (text) => text,
-      variables: 'todo',
       retry: 1,
       retryDelay: 1,
     })
@@ -167,7 +161,7 @@ describe('mutations', () => {
       states.push(state)
     })
 
-    mutation.mutate().catch(() => undefined)
+    mutation.mutate('todo').catch(() => undefined)
 
     await sleep(0)
 
@@ -242,7 +236,7 @@ describe('mutations', () => {
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'error',
-      variables: 'todo',
+      variables: undefined,
     })
   })
 
@@ -300,7 +294,7 @@ describe('mutations', () => {
       failureReason: null,
       isPaused: false,
       status: 'success',
-      variables: 'todo',
+      variables: undefined,
     })
 
     expect(onMutate).not.toHaveBeenCalled()

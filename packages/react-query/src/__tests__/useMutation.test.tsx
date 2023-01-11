@@ -982,10 +982,11 @@ describe('useMutation', () => {
 
     function Page() {
       const mutation = useMutation({
-        mutationFn: async (_text: string) => {
+        mutationFn: async (text: string) => {
           count++
+          const result = `result-${text}`
           await sleep(10)
-          return `result${count}`
+          return result
         },
         onSuccess,
         onSettled,
@@ -995,13 +996,23 @@ describe('useMutation', () => {
         <div>
           <button
             onClick={() =>
-              mutation.mutate('todo', {
+              mutation.mutate('todo1', {
                 onSuccess: onSuccessMutate,
                 onSettled: onSettledMutate,
               })
             }
           >
-            mutate
+            mutate1
+          </button>
+          <button
+            onClick={() =>
+              mutation.mutate('todo2', {
+                onSuccess: onSuccessMutate,
+                onSettled: onSettledMutate,
+              })
+            }
+          >
+            mutate2
           </button>
           <div>
             data: {mutation.data ?? 'null'}, status: {mutation.status}
@@ -1014,22 +1025,38 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: idle')
 
-    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
-    fireEvent.click(rendered.getByRole('button', { name: /mutate/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate1/i }))
+    fireEvent.click(rendered.getByRole('button', { name: /mutate2/i }))
 
-    await rendered.findByText('data: result2, status: success')
+    await rendered.findByText('data: result-todo2, status: success')
 
     expect(count).toBe(2)
 
     expect(onSuccess).toHaveBeenCalledTimes(2)
+    expect(onSuccess).toHaveBeenNthCalledWith(
+      1,
+      'result-todo1',
+      'todo1',
+      undefined,
+    )
+    expect(onSuccess).toHaveBeenNthCalledWith(
+      2,
+      'result-todo2',
+      'todo2',
+      undefined,
+    )
     expect(onSettled).toHaveBeenCalledTimes(2)
     expect(onSuccessMutate).toHaveBeenCalledTimes(1)
-    expect(onSuccessMutate).toHaveBeenCalledWith('result2', 'todo', undefined)
+    expect(onSuccessMutate).toHaveBeenCalledWith(
+      'result-todo2',
+      'todo2',
+      undefined,
+    )
     expect(onSettledMutate).toHaveBeenCalledTimes(1)
     expect(onSettledMutate).toHaveBeenCalledWith(
-      'result2',
+      'result-todo2',
       null,
-      'todo',
+      'todo2',
       undefined,
     )
   })

@@ -5,7 +5,6 @@ import type { QueryClient } from './queryClient'
 import { Subscribable } from './subscribable'
 import type {
   MutateOptions,
-  MutationObserverBaseResult,
   MutationObserverResult,
   MutationObserverOptions,
 } from './types'
@@ -16,11 +15,6 @@ import { shallowEqualObjects } from './utils'
 type MutationObserverListener<TData, TError, TVariables, TContext> = (
   result: MutationObserverResult<TData, TError, TVariables, TContext>,
 ) => void
-
-interface NotifyOptions {
-  onError?: boolean
-  onSuccess?: boolean
-}
 
 // CLASS
 
@@ -80,16 +74,7 @@ export class MutationObserver<
   onMutationUpdate(action: Action<TData, TError, TVariables, TContext>): void {
     this.#updateResult()
 
-    // Determine which callbacks to trigger
-    const notifyOptions: NotifyOptions = {}
-
-    if (action.type === 'success') {
-      notifyOptions.onSuccess = true
-    } else if (action.type === 'error') {
-      notifyOptions.onError = true
-    }
-
-    this.#notify(notifyOptions)
+    this.#notify(action)
   }
 
   getCurrentResult(): MutationObserverResult<
@@ -104,7 +89,7 @@ export class MutationObserver<
   reset(): void {
     this.#currentMutation = undefined
     this.#updateResult()
-    this.#notify({})
+    this.#notify()
   }
 
   mutate(
@@ -121,26 +106,19 @@ export class MutationObserver<
       .getMutationCache()
       .build(this.#client, {
         ...this.options,
-        variables:
-          typeof variables !== 'undefined' ? variables : this.options.variables,
       })
 
     this.#currentMutation.addObserver(this)
 
-    return this.#currentMutation.execute()
+    return this.#currentMutation.execute(variables)
   }
 
   #updateResult(): void {
-    const state = this.#currentMutation
-      ? this.#currentMutation.state
-      : getDefaultState<TData, TError, TVariables, TContext>()
+    const state =
+      this.#currentMutation?.state ??
+      getDefaultState<TData, TError, TVariables, TContext>()
 
-    const result: MutationObserverBaseResult<
-      TData,
-      TError,
-      TVariables,
-      TContext
-    > = {
+    this.#currentResult = {
       ...state,
       isLoading: state.status === 'loading',
       isSuccess: state.status === 'success',
@@ -148,42 +126,35 @@ export class MutationObserver<
       isIdle: state.status === 'idle',
       mutate: this.mutate,
       reset: this.reset,
-    }
-
-    this.#currentResult = result as MutationObserverResult<
-      TData,
-      TError,
-      TVariables,
-      TContext
-    >
+    } as MutationObserverResult<TData, TError, TVariables, TContext>
   }
 
-  #notify(options: NotifyOptions) {
+  #notify(action?: Action<TData, TError, TVariables, TContext>): void {
     notifyManager.batch(() => {
       // First trigger the mutate callbacks
       if (this.#mutateOptions) {
-        if (options.onSuccess) {
+        if (action?.type === 'success') {
           this.#mutateOptions.onSuccess?.(
-            this.#currentResult.data!,
-            this.#currentResult.variables!,
+            action.data,
+            action.variables,
             this.#currentResult.context!,
           )
           this.#mutateOptions.onSettled?.(
-            this.#currentResult.data!,
+            action.data,
             null,
-            this.#currentResult.variables!,
+            action.variables,
             this.#currentResult.context,
           )
-        } else if (options.onError) {
+        } else if (action?.type === 'error') {
           this.#mutateOptions.onError?.(
-            this.#currentResult.error!,
-            this.#currentResult.variables!,
+            action.error,
+            action.variables,
             this.#currentResult.context,
           )
           this.#mutateOptions.onSettled?.(
             undefined,
-            this.#currentResult.error,
-            this.#currentResult.variables!,
+            action.error,
+            action.variables,
             this.#currentResult.context,
           )
         }

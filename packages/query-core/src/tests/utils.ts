@@ -48,17 +48,15 @@ export function setActTimeout(fn: () => void, ms?: number) {
  */
 export const expectType = <T>(_: T): void => undefined
 
-/**
- * Assert the parameter is not typed as `any`
- */
-export const expectTypeNotAny = <T>(_: 0 extends 1 & T ? never : T): void =>
-  undefined
-
-export const executeMutation = (
+export const executeMutation = <TVariables>(
   queryClient: QueryClient,
-  options: MutationOptions<any, any, any, any>,
-): Promise<unknown> => {
-  return queryClient.getMutationCache().build(queryClient, options).execute()
+  options: MutationOptions<any, any, TVariables, any>,
+  variables: TVariables,
+) => {
+  return queryClient
+    .getMutationCache()
+    .build(queryClient, options)
+    .execute(variables)
 }
 
 // This monkey-patches the isServer-value from utils,

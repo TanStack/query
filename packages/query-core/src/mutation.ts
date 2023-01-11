@@ -48,14 +48,16 @@ interface LoadingAction<TVariables, TContext> {
   context?: TContext
 }
 
-interface SuccessAction<TData> {
+interface SuccessAction<TData, TVariables> {
   type: 'success'
   data: TData
+  variables: TVariables
 }
 
-interface ErrorAction<TError> {
+interface ErrorAction<TError, TVariables> {
   type: 'error'
   error: TError
+  variables: TVariables
 }
 
 interface PauseAction {
@@ -68,11 +70,11 @@ interface ContinueAction {
 
 export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
-  | ErrorAction<TError>
+  | ErrorAction<TError, TVariables>
   | FailedAction<TError>
   | LoadingAction<TVariables, TContext>
   | PauseAction
-  | SuccessAction<TData>
+  | SuccessAction<TData, TVariables>
 
 // CLASS
 
@@ -157,7 +159,7 @@ export class Mutation<
     return this.execute()
   }
 
-  async execute(): Promise<TData> {
+  async execute(input?: TVariables): Promise<TData> {
     const executeMutation = () => {
       this.#retryer = createRetryer({
         fn: () => {
@@ -184,54 +186,52 @@ export class Mutation<
     }
 
     const restored = this.state.status === 'loading'
+    let variables: TVariables | undefined = input
+
     try {
       if (!restored) {
-        this.#dispatch({ type: 'loading', variables: this.options.variables! })
+        this.#dispatch({ type: 'loading', variables })
         // Notify cache callback
         await this.#mutationCache.config.onMutate?.(
-          this.state.variables,
+          variables,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
-        const context = await this.options.onMutate?.(this.state.variables!)
+        const context = await this.options.onMutate?.(variables!)
         if (context !== this.state.context) {
           this.#dispatch({
             type: 'loading',
             context,
-            variables: this.state.variables,
+            variables,
           })
         }
       }
+      // this makes sure variables are set even if the mutation is restored
+      // in which case we call execute without input
+      // we need to store variables here because dispatching success or error
+      // will reset the variables to undefined and then onSuccess and other callbacks won't see them
+      variables = this.state.variables
       const data = await executeMutation()
 
       // Notify cache callback
       await this.#mutationCache.config.onSuccess?.(
         data,
-        this.state.variables,
+        variables,
         this.state.context,
         this as Mutation<unknown, unknown, unknown, unknown>,
       )
 
-      await this.options.onSuccess?.(
-        data,
-        this.state.variables!,
-        this.state.context!,
-      )
+      await this.options.onSuccess?.(data, variables!, this.state.context!)
 
-      await this.options.onSettled?.(
-        data,
-        null,
-        this.state.variables!,
-        this.state.context,
-      )
+      await this.options.onSettled?.(data, null, variables!, this.state.context)
 
-      this.#dispatch({ type: 'success', data })
+      this.#dispatch({ type: 'success', data, variables: variables! })
       return data
     } catch (error) {
       try {
         // Notify cache callback
         await this.#mutationCache.config.onError?.(
           error,
-          this.state.variables,
+          variables,
           this.state.context,
           this as Mutation<unknown, unknown, unknown, unknown>,
         )
@@ -242,19 +242,23 @@ export class Mutation<
 
         await this.options.onError?.(
           error as TError,
-          this.state.variables!,
+          variables!,
           this.state.context,
         )
 
         await this.options.onSettled?.(
           undefined,
           error as TError,
-          this.state.variables!,
+          variables!,
           this.state.context,
         )
         throw error
       } finally {
-        this.#dispatch({ type: 'error', error: error as TError })
+        this.#dispatch({
+          type: 'error',
+          error: error as TError,
+          variables: variables!,
+        })
       }
     }
   }
@@ -301,6 +305,7 @@ export class Mutation<
             error: null,
             status: 'success',
             isPaused: false,
+            variables: undefined,
           }
         case 'error':
           return {
@@ -311,6 +316,7 @@ export class Mutation<
             failureReason: action.error,
             isPaused: false,
             status: 'error',
+            variables: undefined,
           }
       }
     }
