@@ -94,6 +94,46 @@ describe('queryCache', () => {
       await sleep(100)
       expect(callback).toHaveBeenCalled()
     })
+
+    test('should be able to limit cache size', async () => {
+      const testCache = new QueryCache()
+
+      const unsubscribe = testCache.subscribe((event) => {
+        if (event.type === 'added') {
+          if (testCache.getAll().length > 2) {
+            testCache
+              .findAll({
+                type: 'inactive',
+                predicate: (q) => q !== event.query,
+              })
+              .forEach((query) => {
+                testCache.remove(query)
+              })
+          }
+        }
+      })
+
+      const testClient = new QueryClient({ queryCache: testCache })
+
+      await testClient.prefetchQuery({
+        queryKey: ['key1'],
+        queryFn: () => 'data1',
+      })
+      expect(testCache.findAll().length).toBe(1)
+      await testClient.prefetchQuery({
+        queryKey: ['key2'],
+        queryFn: () => 'data2',
+      })
+      expect(testCache.findAll().length).toBe(2)
+      await testClient.prefetchQuery({
+        queryKey: ['key3'],
+        queryFn: () => 'data3',
+      })
+      expect(testCache.findAll().length).toBe(1)
+      expect(testCache.findAll()[0]!.state.data).toBe('data3')
+
+      unsubscribe()
+    })
   })
 
   describe('find', () => {
@@ -274,64 +314,6 @@ describe('queryCache', () => {
       })
       const query = testCache.find({ queryKey: key })
       expect(onSuccess).toHaveBeenCalledWith({ data: 5 }, query)
-    })
-  })
-
-  describe('QueryCacheConfig.experimental_createStore', () => {
-    test('should call createStore', async () => {
-      const createStore = jest.fn().mockImplementation(() => new Map())
-      new QueryCache({ experimental_createStore: createStore })
-      expect(createStore).toHaveBeenCalledWith()
-    })
-
-    test('should use created store', async () => {
-      const store = new Map()
-      const spy = jest.spyOn(store, 'get')
-
-      new QueryCache({ experimental_createStore: () => store }).get('key')
-
-      expect(spy).toHaveBeenCalledTimes(1)
-    })
-
-    test('should be able to limit cache size', async () => {
-      class MaxSizeStore extends Map<string, Query> {
-        constructor(private maxSize: number) {
-          super()
-        }
-        set(key: string, value: Query) {
-          if (this.size >= this.maxSize) {
-            const cache = value.queryCache
-            cache.findAll({ type: 'inactive' }).forEach((query) => {
-              cache.remove(query)
-            })
-          }
-          super.set(key, value)
-          return this
-        }
-      }
-
-      const testCache = new QueryCache({
-        experimental_createStore: () => new MaxSizeStore(2),
-      })
-
-      const testClient = new QueryClient({ queryCache: testCache })
-
-      await testClient.prefetchQuery({
-        queryKey: ['key1'],
-        queryFn: () => 'data1',
-      })
-      expect(testCache.findAll().length).toBe(1)
-      await testClient.prefetchQuery({
-        queryKey: ['key2'],
-        queryFn: () => 'data2',
-      })
-      expect(testCache.findAll().length).toBe(2)
-      await testClient.prefetchQuery({
-        queryKey: ['key3'],
-        queryFn: () => 'data3',
-      })
-      expect(testCache.findAll().length).toBe(1)
-      expect(testCache.findAll()[0]!.state.data).toBe('data3')
     })
   })
 

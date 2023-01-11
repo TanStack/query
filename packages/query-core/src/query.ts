@@ -159,7 +159,6 @@ export class Query<
   private observers: QueryObserver<any, any, any, any, any>[]
   private defaultOptions?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>
   private abortSignalConsumed: boolean
-
   constructor(config: QueryConfig<TQueryFnData, TError, TData, TQueryKey>) {
     super()
 
@@ -174,15 +173,9 @@ export class Query<
     this.initialState = config.state || getDefaultState(this.options)
     this.state = this.initialState
   }
-
-  get queryCache(): QueryCache {
-    return this.cache
-  }
-
   get meta(): QueryMeta | undefined {
     return this.options.meta
   }
-
   private setOptions(
     options?: QueryOptions<TQueryFnData, TError, TData, TQueryKey>,
   ): void {
