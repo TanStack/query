@@ -39,7 +39,7 @@ export interface ObserverFetchOptions extends FetchOptions {
 
 export class QueryObserver<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,

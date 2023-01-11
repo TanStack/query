@@ -23,7 +23,7 @@ type InfiniteQueryObserverListener<TData, TError> = (
 
 export class InfiniteQueryObserver<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,

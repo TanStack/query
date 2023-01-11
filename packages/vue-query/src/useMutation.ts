@@ -36,7 +36,7 @@ export type UseMutationOptions<TData, TError, TVariables, TContext> =
 
 export type VueMutationObserverOptions<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = {
@@ -52,7 +52,7 @@ export type VueMutationObserverOptions<
 
 type MutateSyncFunction<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 > = (
@@ -73,7 +73,7 @@ export type UseMutationReturnType<
 
 export function useMutation<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(
@@ -131,7 +131,7 @@ export function useMutation<
 
 export function unrefMutationArgs<
   TData = unknown,
-  TError = unknown,
+  TError = Error,
   TVariables = void,
   TContext = unknown,
 >(

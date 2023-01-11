@@ -136,7 +136,7 @@ export function useBaseQuery<
 
 export function unrefQueryArgs<
   TQueryFnData = unknown,
-  TError = unknown,
+  TError = Error,
   TData = TQueryFnData,
   TQueryData = TQueryFnData,
   TQueryKey extends QueryKey = QueryKey,

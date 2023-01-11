@@ -16,7 +16,6 @@ importers:
       '@rollup/plugin-replace': ^4.0.0
       '@testing-library/jest-dom': ^5.16.4
       '@testing-library/react': ^13.0.0
-      '@testing-library/react-17': npm:@testing-library/react@12.1.4
       '@testing-library/react-hooks': ^7.0.2
       '@tsconfig/svelte': ^3.0.0
       '@types/jest': ^26.0.4
@@ -56,9 +55,7 @@ importers:
       luxon: ^2.3.2
       prettier: ^2.6.2
       react: ^18.2.0
-      react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
-      react-dom-17: npm:react-dom@^17.0.2
       rollup: ^2.70.2
       rollup-plugin-size: ^0.2.2
       rollup-plugin-svelte: ^7.1.0
@@ -85,7 +82,6 @@ importers:
       '@rollup/plugin-replace': 4.0.0_rollup@2.78.1
       '@testing-library/jest-dom': 5.16.4
       '@testing-library/react': 13.3.0_biqbaboplfbrettd7655fr4n2y
-      '@testing-library/react-17': /@testing-library/react/12.1.4_biqbaboplfbrettd7655fr4n2y
       '@testing-library/react-hooks': 7.0.2_biqbaboplfbrettd7655fr4n2y
       '@tsconfig/svelte': 3.0.0
       '@types/jest': 26.0.24
@@ -125,9 +121,7 @@ importers:
       luxon: 2.4.0
       prettier: 2.7.1
       react: 18.2.0
-      react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
-      react-dom-17: /react-dom/17.0.2_react@18.2.0
       rollup: 2.78.1
       rollup-plugin-size: 0.2.2
       rollup-plugin-svelte: 7.1.0_7rgskvp3hfjz55pue4td2a2xga
@@ -740,27 +734,19 @@ importers:
       '@types/jscodeshift': ^0.11.3
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
-      '@types/use-sync-external-store': ^0.0.3
       jscodeshift: ^0.13.1
       react: ^18.2.0
-      react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
-      react-dom-17: npm:react-dom@^17.0.2
       react-error-boundary: ^3.1.4
-      use-sync-external-store: ^1.2.0
     dependencies:
       '@tanstack/query-core': link:../query-core
-      use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
       '@types/jscodeshift': 0.11.5
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
-      '@types/use-sync-external-store': 0.0.3
       jscodeshift: 0.13.1
       react: 18.2.0
-      react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
-      react-dom-17: /react-dom/17.0.2_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
 
   packages/react-query-devtools:
@@ -769,27 +755,19 @@ importers:
       '@tanstack/react-query': workspace:*
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
-      '@types/use-sync-external-store': ^0.0.3
       react: ^18.2.0
-      react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
-      react-dom-17: npm:react-dom@^17.0.2
       react-error-boundary: ^3.1.4
       superjson: ^1.10.0
-      use-sync-external-store: ^1.2.0
     dependencies:
       '@tanstack/match-sorter-utils': 8.7.0
       superjson: 1.10.0
-      use-sync-external-store: 1.2.0_react@18.2.0
     devDependencies:
       '@tanstack/react-query': link:../react-query
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
-      '@types/use-sync-external-store': 0.0.3
       react: 18.2.0
-      react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
-      react-dom-17: /react-dom/17.0.2_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
 
   packages/react-query-persist-client:
@@ -799,9 +777,7 @@ importers:
       '@types/react': ^18.0.14
       '@types/react-dom': ^18.0.5
       react: ^18.2.0
-      react-17: npm:react@^17.0.2
       react-dom: ^18.2.0
-      react-dom-17: npm:react-dom@^17.0.2
     dependencies:
       '@tanstack/query-persist-client-core': link:../query-persist-client-core
     devDependencies:
@@ -809,9 +785,7 @@ importers:
       '@types/react': 18.0.15
       '@types/react-dom': 18.0.6
       react: 18.2.0
-      react-17: /react/17.0.2
       react-dom: 18.2.0_react@18.2.0
-      react-dom-17: /react-dom/17.0.2_react@18.2.0
 
   packages/solid-query:
     specifiers:
@@ -5623,20 +5597,6 @@ packages:
       pretty-format: 27.5.1
     dev: true
 
-  /@testing-library/dom/8.18.1:
-    resolution: {integrity: sha512-oEvsm2B/WtcHKE+IcEeeCqNU/ltFGaVyGbpcm4g/2ytuT49jrlH9x5qRKL/H3A6yfM4YAbSbC0ceT5+9CEXnLg==}
-    engines: {node: '>=12'}
-    dependencies:
-      '@babel/code-frame': 7.18.6
-      '@babel/runtime': 7.19.0
-      '@types/aria-query': 4.2.2
-      aria-query: 5.0.2
-      chalk: 4.1.2
-      dom-accessibility-api: 0.5.14
-      lz-string: 1.4.4
-      pretty-format: 27.5.1
-    dev: true
-
   /@testing-library/jest-dom/5.16.4:
     resolution: {integrity: sha512-Gy+IoFutbMQcky0k+bqqumXZ1cTGswLsFqmNLzNdSKkU9KGV2u9oXhukCbbJ9/LRPKiqwxEE8VpV/+YZlfkPUA==}
     engines: {node: '>=8', npm: '>=6', yarn: '>=1'}
@@ -5672,20 +5632,6 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-error-boundary: 3.1.4_react@18.2.0
-    dev: true
-
-  /@testing-library/react/12.1.4_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-jiPKOm7vyUw311Hn/HlNQ9P8/lHNtArAx0PisXyFixDDvfl8DbD6EUdbshK5eqauvBSvzZd19itqQ9j3nferJA==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '*'
-      react-dom: '*'
-    dependencies:
-      '@babel/runtime': 7.19.0
-      '@testing-library/dom': 8.18.1
-      '@types/react-dom': 18.0.6
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
     dev: true
 
   /@testing-library/react/13.3.0_biqbaboplfbrettd7655fr4n2y:
@@ -5914,10 +5860,6 @@ packages:
     resolution: {integrity: sha512-SBwbxYoyPIvxHbeHxTZX2Pe/74F/tX2/D3mMvzabdeJ25bBojfW0TyB8BHrbq/9zaaKICJZjLP+8r6AeZMFCuQ==}
     dependencies:
       '@types/jest': 26.0.24
-    dev: true
-
-  /@types/use-sync-external-store/0.0.3:
-    resolution: {integrity: sha512-EwmlvuaxPNej9+T4v5AuBPJa2x2UOJVdjCtDHgcDqitUeOtjnJKJ+apYjVcAoBEMjKW1VVFGZLUb5+qqa09XFA==}
     dev: true
 
   /@types/yargs-parser/21.0.0:
@@ -13573,17 +13515,6 @@ packages:
       scheduler: 0.20.2
     dev: false
 
-  /react-dom/17.0.2_react@18.2.0:
-    resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
-    peerDependencies:
-      react: 17.0.2
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-      react: 18.2.0
-      scheduler: 0.20.2
-    dev: true
-
   /react-dom/18.2.0_react@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
@@ -13609,7 +13540,7 @@ packages:
     peerDependencies:
       react: '>=16.13.1'
     dependencies:
-      '@babel/runtime': 7.18.9
+      '@babel/runtime': 7.19.0
       react: 18.2.0
     dev: true
 
@@ -13881,14 +13812,6 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
     dev: false
-
-  /react/17.0.2:
-    resolution: {integrity: sha512-gnhPt75i/dq/z3/6q/0asP78D0u592D5L1pd7M8P+dck6Fu/jJeL6iVVK23fptSUZj8Vjf++7wXA8UNclGQcbA==}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      loose-envify: 1.4.0
-      object-assign: 4.1.1
-    dev: true
 
   /react/18.2.0:
     resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
@@ -14302,6 +14225,7 @@ packages:
     dependencies:
       loose-envify: 1.4.0
       object-assign: 4.1.1
+    dev: false
 
   /scheduler/0.23.0:
     resolution: {integrity: sha512-CtuThmgHNg7zIZWAXi3AsyIzA3n4xx7aNyjwC2VJldO2LMVDhFK+63xGqq6CsJH4rTAt6/M+N4GhZiDYPx9eUw==}
@@ -15561,14 +15485,6 @@ packages:
 
   /use-sync-external-store/1.1.0_react@18.2.0:
     resolution: {integrity: sha512-SEnieB2FPKEVne66NpXPd1Np4R1lTNKfjuy3XdIoPQKYBAFdzbzSZlSn1KJZUiihQLQC5Znot4SBz1EOTBwQAQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      react: 18.2.0
-    dev: false
-
-  /use-sync-external-store/1.2.0_react@18.2.0:
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
