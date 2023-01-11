@@ -28,10 +28,8 @@ export interface CreateBaseQueryOptions<
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
 
-export interface CreateBaseQueryResult<
-  TData = unknown,
-  TError = unknown,
-> extends Readable<QueryObserverResult<TData, TError>> {}
+export interface CreateBaseQueryResult<TData = unknown, TError = unknown>
+  extends Readable<QueryObserverResult<TData, TError>> {}
 
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
@@ -46,11 +44,9 @@ export interface CreateQueryOptions<
     TQueryKey
   > {}
 
-export interface CreateQueryResult<
-  TData = unknown,
-  TError = unknown,
-> extends CreateBaseQueryResult<TData, TError> {}
-  
+export interface CreateQueryResult<TData = unknown, TError = unknown>
+  extends CreateBaseQueryResult<TData, TError> {}
+
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -122,6 +118,8 @@ export interface CreateMutationResult<
   TError = unknown,
   TVariables = unknown,
   TContext = unknown,
-> extends Readable<UseBaseMutationResult<TData, TError, TVariables, TContext>> {}
+> extends Readable<
+    UseBaseMutationResult<TData, TError, TVariables, TContext>
+  > {}
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }
