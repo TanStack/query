@@ -1,5 +1,5 @@
 ---
-id: migrating-to-react-query-5
+id: migrating-to-v5
 title: Migrating to TanStack Query v5
 ---
 

@@ -673,26 +673,29 @@ describe('useQuery', () => {
 
   it('should call onSettled after a query has been fetched with an error', async () => {
     const key = queryKey()
-    const states: UseQueryResult<string>[] = []
     const onSettled = jest.fn()
+    const error = new Error('error')
 
     function Page() {
       const state = useQuery({
         queryKey: key,
-        queryFn: () => Promise.reject<unknown>('error'),
+        queryFn: async () => {
+          await sleep(10)
+          return Promise.reject(error)
+        },
         retry: false,
         onSettled,
       })
-      states.push(state)
-      return null
+      return <div>status: {state.status}</div>
     }
 
-    renderWithClient(queryClient, <Page />)
+    const rendered = renderWithClient(queryClient, <Page />)
 
-    await sleep(10)
-    expect(states.length).toBe(2)
+    await waitFor(() => {
+      rendered.getByText('status: error')
+    })
     expect(onSettled).toHaveBeenCalledTimes(1)
-    expect(onSettled).toHaveBeenCalledWith(undefined, 'error')
+    expect(onSettled).toHaveBeenCalledWith(undefined, error)
   })
 
   it('should not cancel an ongoing fetch when refetch is called with cancelRefetch=false if we have data already', async () => {
