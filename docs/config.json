@@ -697,7 +697,7 @@
             },
             {
               "label": "SSR & SvelteKit",
-              "to": "react/guides/ssr"
+              "to": "svelte/ssr"
             }
           ]
         },
