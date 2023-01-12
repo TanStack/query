@@ -1,6 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { useIsMutating, useMutationVariables } from '../useIsMutating'
+import { useIsMutating, useMutationVariables } from '../useMutationState'
 import { useMutation } from '../useMutation'
 import {
   createQueryClient,
