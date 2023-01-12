@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import type { MutationFilters, Mutation } from '@tanstack/query-core'
+import type { MutationFilters } from '@tanstack/query-core'
 import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import type { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
@@ -21,15 +21,7 @@ export function useMutationVariables<TVariables = unknown>(
 ): Array<TVariables> {
   const queryClient = useQueryClient({ context: options.context })
   return useMutationState(
-    () =>
-      queryClient
-        .getMutationCache()
-        .findAll({ ...filters, fetching: true })
-        .map(
-          (m) =>
-            (m as any as Mutation<unknown, Error, TVariables>).state.variables,
-        )
-        .filter((v): v is TVariables => Boolean(v)),
+    () => queryClient.getMutationVariables(filters),
     options,
   )
 }
