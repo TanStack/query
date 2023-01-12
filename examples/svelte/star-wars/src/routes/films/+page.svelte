@@ -6,7 +6,7 @@
     return await res.json()
   }
 
-  $: query = createQuery({
+  query = createQuery({
     queryKey: ['films'],
     queryFn: getFilms,
   })
