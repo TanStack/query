@@ -696,6 +696,10 @@
               "to": "svelte/installation"
             },
             {
+              "label": "Reactivity",
+              "to": "svelte/reactivity"
+            },
+            {
               "label": "SSR & SvelteKit",
               "to": "svelte/ssr"
             }
@@ -730,7 +734,7 @@
             },
             {
               "label": "Infinite Queries",
-              "to": "svelte/examples/svelte/infinite-loadmore"
+              "to": "svelte/examples/svelte/load-more-infinite-scroll"
             },
             {
               "label": "Hydration",
