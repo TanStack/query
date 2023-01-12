@@ -35,41 +35,8 @@ function Example() {
   const { isFetching, ...queryInfo } = useTodos()
 
   const addTodoMutation = useMutation({
-    mutationFn: (newTodo) => axios.post('/api/data', { text: newTodo }),
-    // When mutate is called:
-    onMutate: async (newTodo: string) => {
-      setText('')
-      // Cancel any outgoing refetches
-      // (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ['todos'] })
-
-      // Snapshot the previous value
-      const previousTodos = queryClient.getQueryData<Todos>(['todos'])
-
-      // Optimistically update to the new value
-      if (previousTodos) {
-        queryClient.setQueryData<Todos>(['todos'], {
-          ...previousTodos,
-          items: [
-            ...previousTodos.items,
-            { id: Math.random().toString(), text: newTodo },
-          ],
-        })
-      }
-
-      return { previousTodos }
-    },
-    // If the mutation fails,
-    // use the context returned from onMutate to roll back
-    onError: (err, variables, context) => {
-      if (context?.previousTodos) {
-        queryClient.setQueryData<Todos>(['todos'], context.previousTodos)
-      }
-    },
-    // Always refetch after error or success:
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['todos'] })
-    },
+    mutationFn: (newTodo: string) => axios.post('/api/data', { text: newTodo }),
+    onSettled: () => queryClient.invalidateQueries({ queryKey: ['todos'] }),
   })
 
   return (
@@ -85,6 +52,7 @@ function Example() {
       <form
         onSubmit={(e) => {
           e.preventDefault()
+          setText('')
           addTodoMutation.mutate(text)
         }}
       >
@@ -106,6 +74,11 @@ function Example() {
             {queryInfo.data.items.map((todo) => (
               <li key={todo.id}>{todo.text}</li>
             ))}
+            {addTodoMutation.variables && (
+              <li key={addTodoMutation.variables} style={{ opacity: 0.5 }}>
+                {addTodoMutation.variables}
+              </li>
+            )}
           </ul>
           {isFetching && <div>Updating in background...</div>}
         </>
