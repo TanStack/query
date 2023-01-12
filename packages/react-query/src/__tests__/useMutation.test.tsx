@@ -1194,7 +1194,7 @@ describe('useMutation', () => {
 
     await rendered.findByText('data: null, status: loading, variables: todo')
     await rendered.findByText(
-      'data: result-todo, status: success, variables: null',
+      'data: result-todo, status: success, variables: todo',
     )
   })
 
@@ -1227,7 +1227,7 @@ describe('useMutation', () => {
 
     await rendered.findByText('error: null, status: loading, variables: todo')
     await rendered.findByText(
-      'error: error-todo, status: error, variables: null',
+      'error: error-todo, status: error, variables: todo',
     )
   })
 })

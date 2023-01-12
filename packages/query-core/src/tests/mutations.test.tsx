@@ -138,7 +138,7 @@ describe('mutations', () => {
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'success',
-      variables: undefined,
+      variables: 'todo',
     })
   })
 
@@ -234,7 +234,7 @@ describe('mutations', () => {
       mutate: expect.any(Function),
       reset: expect.any(Function),
       status: 'error',
-      variables: undefined,
+      variables: 'todo',
     })
   })
 
@@ -292,7 +292,7 @@ describe('mutations', () => {
       failureReason: null,
       isPaused: false,
       status: 'success',
-      variables: undefined,
+      variables: 'todo',
     })
 
     expect(onMutate).not.toHaveBeenCalled()
