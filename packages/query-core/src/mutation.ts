@@ -48,16 +48,14 @@ interface LoadingAction<TVariables, TContext> {
   context?: TContext
 }
 
-interface SuccessAction<TData, TVariables> {
+interface SuccessAction<TData> {
   type: 'success'
   data: TData
-  variables: TVariables
 }
 
-interface ErrorAction<TError, TVariables> {
+interface ErrorAction<TError> {
   type: 'error'
   error: TError
-  variables: TVariables
 }
 
 interface PauseAction {
@@ -70,11 +68,11 @@ interface ContinueAction {
 
 export type Action<TData, TError, TVariables, TContext> =
   | ContinueAction
-  | ErrorAction<TError, TVariables>
+  | ErrorAction<TError>
   | FailedAction<TError>
   | LoadingAction<TVariables, TContext>
   | PauseAction
-  | SuccessAction<TData, TVariables>
+  | SuccessAction<TData>
 
 // CLASS
 
@@ -207,8 +205,6 @@ export class Mutation<
       }
       // this makes sure variables are set even if the mutation is restored
       // in which case we call execute without input
-      // we need to store variables here because dispatching success or error
-      // will reset the variables to undefined and then onSuccess and other callbacks won't see them
       variables = this.state.variables
       const data = await executeMutation()
 
@@ -224,7 +220,7 @@ export class Mutation<
 
       await this.options.onSettled?.(data, null, variables!, this.state.context)
 
-      this.#dispatch({ type: 'success', data, variables: variables! })
+      this.#dispatch({ type: 'success', data })
       return data
     } catch (error) {
       try {
@@ -257,7 +253,6 @@ export class Mutation<
         this.#dispatch({
           type: 'error',
           error: error as TError,
-          variables: variables!,
         })
       }
     }
@@ -305,7 +300,6 @@ export class Mutation<
             error: null,
             status: 'success',
             isPaused: false,
-            variables: undefined,
           }
         case 'error':
           return {
@@ -316,7 +310,6 @@ export class Mutation<
             failureReason: action.error,
             isPaused: false,
             status: 'error',
-            variables: undefined,
           }
       }
     }

@@ -289,7 +289,9 @@ describe('useMutationVariables', () => {
     const mutationKey = ['mutation']
 
     function Variables() {
-      variables.push(useMutationVariables<number>({ mutationKey }))
+      variables.push(
+        useMutationVariables<number>({ mutationKey, fetching: true }),
+      )
 
       return null
     }

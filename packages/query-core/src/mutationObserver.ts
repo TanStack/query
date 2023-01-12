@@ -136,25 +136,25 @@ export class MutationObserver<
         if (action?.type === 'success') {
           this.#mutateOptions.onSuccess?.(
             action.data,
-            action.variables,
+            this.#currentResult.variables!,
             this.#currentResult.context!,
           )
           this.#mutateOptions.onSettled?.(
             action.data,
             null,
-            action.variables,
+            this.#currentResult.variables!,
             this.#currentResult.context,
           )
         } else if (action?.type === 'error') {
           this.#mutateOptions.onError?.(
             action.error,
-            action.variables,
+            this.#currentResult.variables!,
             this.#currentResult.context,
           )
           this.#mutateOptions.onSettled?.(
             undefined,
             action.error,
-            action.variables,
+            this.#currentResult.variables!,
             this.#currentResult.context,
           )
         }

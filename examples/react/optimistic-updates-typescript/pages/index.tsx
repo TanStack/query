@@ -74,7 +74,7 @@ function Example() {
             {queryInfo.data.items.map((todo) => (
               <li key={todo.id}>{todo.text}</li>
             ))}
-            {addTodoMutation.variables && (
+            {addTodoMutation.isLoading && (
               <li key={addTodoMutation.variables} style={{ opacity: 0.5 }}>
                 {addTodoMutation.variables}
               </li>
