@@ -1,5 +1,5 @@
 {
-  "name": "@tanstack/query-example-svelte-infinite-loadmore",
+  "name": "@tanstack/query-example-svelte-load-more-infinite-scroll",
   "private": true,
   "version": "0.0.0",
   "type": "module",

@@ -703,7 +703,7 @@ importers:
       typescript: 4.8.4
       vite: 4.0.4
 
-  examples/svelte/infinite-loadmore:
+  examples/svelte/load-more-infinite-scroll:
     specifiers:
       '@sveltejs/vite-plugin-svelte': ^2.0.2
       '@tanstack/svelte-query': ^4.12.0

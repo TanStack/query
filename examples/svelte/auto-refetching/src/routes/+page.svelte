@@ -12,7 +12,7 @@
 
   const endpoint = 'http://localhost:5173/api/data'
 
-  const todos = createQuery<{ items: string[] }, Error>({
+  $: todos = createQuery<{ items: string[] }, Error>({
     queryKey: ['refetch'],
     queryFn: async () => await fetch(endpoint).then((r) => r.json()),
     // Refetch the data every second

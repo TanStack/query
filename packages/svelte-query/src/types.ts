@@ -28,6 +28,9 @@ export interface CreateBaseQueryOptions<
 > extends ContextOptions,
     QueryObserverOptions<TQueryFnData, TError, TData, TQueryData, TQueryKey> {}
 
+export interface CreateBaseQueryResult<TData = unknown, TError = unknown>
+  extends Readable<QueryObserverResult<TData, TError>> {}
+
 export interface CreateQueryOptions<
   TQueryFnData = unknown,
   TError = unknown,
@@ -40,6 +43,9 @@ export interface CreateQueryOptions<
     TQueryFnData,
     TQueryKey
   > {}
+
+export interface CreateQueryResult<TData = unknown, TError = unknown>
+  extends CreateBaseQueryResult<TData, TError> {}
 
 export interface CreateInfiniteQueryOptions<
   TQueryFnData = unknown,
@@ -59,28 +65,6 @@ export type CreateInfiniteQueryResult<
   TData = unknown,
   TError = unknown,
 > = Readable<InfiniteQueryObserverResult<TData, TError>>
-
-export interface CreateInfiniteQueryStoreResult<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-> extends Readable<CreateInfiniteQueryResult<TData, TError>> {}
-
-export type CreateBaseQueryResult<
-  TData = unknown,
-  TError = unknown,
-> = QueryObserverResult<TData, TError>
-
-export type CreateQueryResult<
-  TData = unknown,
-  TError = unknown,
-> = CreateBaseQueryResult<TData, TError>
-
-export interface CreateQueryStoreResult<
-  TQueryFnData = unknown,
-  TError = unknown,
-  TData = TQueryFnData,
-> extends Readable<CreateQueryResult<TData, TError>> {}
 
 export type DefinedCreateBaseQueryResult<
   TData = unknown,
@@ -129,18 +113,13 @@ export type UseBaseMutationResult<
   { mutate: UseMutateFunction<TData, TError, TVariables, TContext> }
 > & { mutateAsync: UseMutateAsyncFunction<TData, TError, TVariables, TContext> }
 
-export type CreateMutationResult<
+export interface CreateMutationResult<
   TData = unknown,
   TError = unknown,
   TVariables = unknown,
   TContext = unknown,
-> = UseBaseMutationResult<TData, TError, TVariables, TContext>
-
-export interface MutationStoreResult<
-  TData = unknown,
-  TError = unknown,
-  TVariables = unknown,
-  TContext = unknown,
-> extends Readable<CreateMutationResult<TData, TError, TVariables, TContext>> {}
+> extends Readable<
+    UseBaseMutationResult<TData, TError, TVariables, TContext>
+  > {}
 
 type Override<A, B> = { [K in keyof A]: K extends keyof B ? B[K] : A[K] }

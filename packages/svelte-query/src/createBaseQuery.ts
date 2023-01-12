@@ -3,7 +3,7 @@ import {
   type QueryKey,
   type QueryObserver,
 } from '@tanstack/query-core'
-import type { CreateBaseQueryOptions } from './types'
+import type { CreateBaseQueryOptions, CreateBaseQueryResult } from './types'
 import { useQueryClient } from './useQueryClient'
 import { derived, readable } from 'svelte/store'
 
@@ -22,7 +22,7 @@ export function createBaseQuery<
     TQueryKey
   >,
   Observer: typeof QueryObserver,
-) {
+): CreateBaseQueryResult<TData, TError> {
   const queryClient = useQueryClient()
   const defaultedOptions = queryClient.defaultQueryOptions(options)
   defaultedOptions._optimisticResults = 'optimistic'

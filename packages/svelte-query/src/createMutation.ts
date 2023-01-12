@@ -9,7 +9,7 @@ import {
 import type {
   UseMutateFunction,
   CreateMutationOptions,
-  MutationStoreResult,
+  CreateMutationResult,
 } from './types'
 import { useQueryClient } from './useQueryClient'
 
@@ -20,7 +20,7 @@ export function createMutation<
   TContext = unknown,
 >(
   options: CreateMutationOptions<TData, TError, TVariables, TContext>,
-): MutationStoreResult<TData, TError, TVariables, TContext>
+): CreateMutationResult<TData, TError, TVariables, TContext>
 
 export function createMutation<
   TData = unknown,
@@ -33,7 +33,7 @@ export function createMutation<
     CreateMutationOptions<TData, TError, TVariables, TContext>,
     'mutationFn'
   >,
-): MutationStoreResult<TData, TError, TVariables, TContext>
+): CreateMutationResult<TData, TError, TVariables, TContext>
 
 export function createMutation<
   TData = unknown,
@@ -46,7 +46,7 @@ export function createMutation<
     CreateMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey'
   >,
-): MutationStoreResult<TData, TError, TVariables, TContext>
+): CreateMutationResult<TData, TError, TVariables, TContext>
 
 export function createMutation<
   TData = unknown,
@@ -60,7 +60,7 @@ export function createMutation<
     CreateMutationOptions<TData, TError, TVariables, TContext>,
     'mutationKey' | 'mutationFn'
   >,
-): MutationStoreResult<TData, TError, TVariables, TContext>
+): CreateMutationResult<TData, TError, TVariables, TContext>
 
 export function createMutation<
   TData = unknown,
@@ -76,7 +76,7 @@ export function createMutation<
     | MutationFunction<TData, TVariables>
     | CreateMutationOptions<TData, TError, TVariables, TContext>,
   arg3?: CreateMutationOptions<TData, TError, TVariables, TContext>,
-): MutationStoreResult<TData, TError, TVariables, TContext> {
+): CreateMutationResult<TData, TError, TVariables, TContext> {
   const options = parseMutationArgs(arg1, arg2, arg3)
   const queryClient = useQueryClient()
   let observer = new MutationObserver<TData, TError, TVariables, TContext>(
