@@ -2608,7 +2608,7 @@ describe('useQuery', () => {
     await waitFor(() => rendered.getByText('default'))
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     expect(queryFn).not.toHaveBeenCalled()
@@ -2635,7 +2635,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2666,7 +2666,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2697,7 +2697,7 @@ describe('useQuery', () => {
     await sleep(10)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(10)
@@ -2732,7 +2732,7 @@ describe('useQuery', () => {
     await sleep(20)
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(20)
@@ -2774,7 +2774,7 @@ describe('useQuery', () => {
     expect(states[1]).toMatchObject({ data: 0, isFetching: false })
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await rendered.findByText('data: 1')
@@ -2786,7 +2786,7 @@ describe('useQuery', () => {
     expect(states[3]).toMatchObject({ data: 1, isFetching: false })
 
     act(() => {
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await sleep(20)
@@ -3519,7 +3519,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     // Wait for the final result
@@ -3601,7 +3601,7 @@ describe('useQuery', () => {
     act(() => {
       // reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
     })
 
     await waitFor(() => expect(states.length).toBe(4))
@@ -5327,7 +5327,7 @@ describe('useQuery', () => {
         rendered.getByText('status: success, fetchStatus: paused'),
       )
 
-      window.dispatchEvent(new FocusEvent('focus'))
+      window.dispatchEvent(new Event('visibilitychange'))
       await sleep(15)
 
       await waitFor(() =>
@@ -5493,7 +5493,7 @@ describe('useQuery', () => {
 
       // triggers a second pause
       act(() => {
-        window.dispatchEvent(new FocusEvent('focus'))
+        window.dispatchEvent(new Event('visibilitychange'))
       })
 
       onlineMock.mockReturnValue(true)
