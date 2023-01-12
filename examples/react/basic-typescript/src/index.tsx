@@ -2,7 +2,13 @@
 import * as React from "react";
 import ReactDOM from "react-dom/client";
 import axios from "axios";
-import { useQuery, useQueryClient, QueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useQueryClient,
+  QueryClient,
+  useIsMutating,
+  useMutationVariables,
+} from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -44,6 +50,8 @@ function Posts({
 }) {
   const queryClient = useQueryClient();
   const { status, data, error, isFetching } = usePosts();
+
+  const a = useIsMutating();
 
   return (
     <div>

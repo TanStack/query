@@ -1,6 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import * as React from 'react'
-import { useIsMutating } from '../useIsMutating'
+import { useIsMutating, useMutationVariables } from '../useIsMutating'
 import { useMutation } from '../useMutation'
 import {
   createQueryClient,
@@ -11,6 +11,7 @@ import {
 import { ErrorBoundary } from 'react-error-boundary'
 import { QueryClient } from '@tanstack/query-core'
 import * as MutationCacheModule from '../../../query-core/src/mutationCache'
+import { screen } from 'solid-testing-library'
 
 describe('useIsMutating', () => {
   it('should return the number of fetching mutations', async () => {
@@ -97,7 +98,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
   it('should filter correctly by predicate', async () => {
@@ -138,7 +139,7 @@ describe('useIsMutating', () => {
     }
 
     renderWithClient(queryClient, <Page />)
-    await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 0]))
+    await waitFor(() => expect(isMutatings).toEqual([0, 1, 0]))
   })
 
   it('should not change state if unmounted', async () => {
@@ -238,7 +239,7 @@ describe('useIsMutating', () => {
       }
 
       renderWithClient(queryClient, <Page />, { context })
-      await waitFor(() => expect(isMutatings).toEqual([0, 1, 1, 2, 2, 1, 0]))
+      await waitFor(() => expect(isMutatings).toEqual([0, 1, 2, 1, 0]))
     })
 
     it('should throw if the context is not passed to useIsMutating', async () => {
@@ -277,6 +278,56 @@ describe('useIsMutating', () => {
       )
 
       await waitFor(() => rendered.getByText('error boundary'))
+    })
+  })
+  describe('useMutationVariables', () => {
+    it('should work', async () => {
+      const queryClient = createQueryClient()
+      const variables: number[][] = []
+      const mutationKey = ['mutation']
+
+      function Variables() {
+        variables.push(useMutationVariables<number>({ mutationKey }))
+
+        return null
+      }
+
+      function Mutate() {
+        const { mutate, data } = useMutation({
+          mutationKey,
+          mutationFn: async (input: number) => {
+            await sleep(150)
+            return 'data' + input
+          },
+        })
+
+        return (
+          <div>
+            data: {data ?? 'null'}
+            <button onClick={() => mutate(1)}>mutate</button>
+          </div>
+        )
+      }
+
+      function Page() {
+        return (
+          <div>
+            <Variables />
+            <Mutate />
+          </div>
+        )
+      }
+
+      const rendered = renderWithClient(queryClient, <Page />)
+
+      await waitFor(() => rendered.getByText('data: null'))
+
+      fireEvent.click(screen.getByRole('button', { name: /mutate/i }))
+
+      await waitFor(() => rendered.getByText('data: data1'))
+
+      expect(variables).toEqual([[], [1], []])
+      console.log(variables)
     })
   })
 })

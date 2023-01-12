@@ -1,7 +1,7 @@
 import * as React from 'react'
 
-import type { MutationFilters } from '@tanstack/query-core'
-import { notifyManager } from '@tanstack/query-core'
+import type { MutationFilters, Mutation } from '@tanstack/query-core'
+import { notifyManager, replaceEqualDeep } from '@tanstack/query-core'
 import type { ContextOptions } from './types'
 import { useQueryClient } from './QueryClientProvider'
 
@@ -12,15 +12,57 @@ export function useIsMutating(
   options: Options = {},
 ): number {
   const queryClient = useQueryClient({ context: options.context })
+  return useMutationState(() => queryClient.isMutating(filters), options)
+}
+
+export function useMutationVariables<TVariables = unknown>(
+  filters?: MutationFilters,
+  options: Options = {},
+): Array<TVariables> {
+  const queryClient = useQueryClient({ context: options.context })
+  return useMutationState(
+    () =>
+      queryClient
+        .getMutationCache()
+        .findAll({ ...filters, fetching: true })
+        .map(
+          (m) =>
+            (m as any as Mutation<unknown, Error, TVariables>).state.variables,
+        )
+        .filter((v): v is TVariables => Boolean(v)),
+    options,
+  )
+}
+
+function useMutationState<T>(selector: () => T, options: Options = {}): T {
+  const queryClient = useQueryClient({ context: options.context })
   const mutationCache = queryClient.getMutationCache()
+  const selectorRef = React.useRef(selector)
+  const result = React.useRef<T>()
+  if (!result.current) {
+    result.current = selector()
+  }
+
+  React.useEffect(() => {
+    selectorRef.current = selector
+  })
 
   return React.useSyncExternalStore(
     React.useCallback(
       (onStoreChange) =>
-        mutationCache.subscribe(notifyManager.batchCalls(onStoreChange)),
+        mutationCache.subscribe(() => {
+          const nextResult = replaceEqualDeep(
+            result.current,
+            selectorRef.current(),
+          )
+          if (result.current !== nextResult) {
+            result.current = nextResult
+            notifyManager.schedule(onStoreChange)
+          }
+        }),
       [mutationCache],
     ),
-    () => queryClient.isMutating(filters),
-    () => queryClient.isMutating(filters),
-  )
+    () => result.current,
+    () => result.current,
+  )!
 }
