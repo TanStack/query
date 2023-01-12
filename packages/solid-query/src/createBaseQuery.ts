@@ -1,10 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-condition */
+// Had to disable the lint rule because isServer type is defined as false
+// in solid-js/web package. I'll create a GitHub issue with them to see
+// why that happens.
 import type {
   QueryKey,
   QueryObserver,
   QueryObserverResult,
+  DehydratedState,
 } from '@tanstack/query-core'
+import { hydrate, dehydrate } from '@tanstack/query-core'
 import { notifyManager } from '@tanstack/query-core'
 import type { Accessor } from 'solid-js'
+import { isServer } from 'solid-js/web'
 import {
   batch,
   createComputed,
@@ -35,46 +42,99 @@ export function createBaseQuery<
   const queryClient = createMemo(() =>
     useQueryClient({ context: options().context }),
   )
-  const emptyData = Symbol('empty')
 
   const defaultedOptions = queryClient().defaultQueryOptions(options())
   defaultedOptions._optimisticResults = 'optimistic'
   const observer = new Observer(queryClient(), defaultedOptions)
 
+  const emptyData = Symbol('empty')
+
+  let resolver: (value: TData | undefined) => void
+  let queryResolver: (value: DehydratedState) => void
+
+  // This resource will be used in a Server environment to
+  // dehydrate the queryClient when the query is
+  // pre fetched on the server. It will always be undefined
+  // if an observer is mounted on client.
+  const [queryResource] = createResource<DehydratedState | undefined>(() => {
+    return new Promise((resolve) => {
+      if (!isServer) {
+        resolve(undefined)
+      }
+      queryResolver = resolve
+    })
+  })
+
+  // If queryResource is defined,
+  // This means that the query was fetched on the server!
+  // We need to hydrate the queryClient with the query from
+  // the server before we set up the observer and its results.
+  if (queryResource()) {
+    hydrate(queryClient(), queryResource())
+  }
+
   const [state, setState] = createStore<QueryObserverResult<TData, TError>>(
     observer.getOptimisticResult(defaultedOptions),
   )
 
-  const [dataResource, { refetch, mutate }] = createResource<TData | undefined>(
+  const [dataResource, { mutate, refetch }] = createResource<TData | undefined>(
     () => {
       return new Promise((resolve) => {
-        if (!(state.isFetching && state.isLoading)) {
-          if ((unwrap(state.data) as TData | typeof emptyData) === emptyData) {
-            resolve(undefined)
+        if (isServer) {
+          if (!(state.isFetching && state.isLoading)) {
+            const dehydratedClient = dehydrate(queryClient())
+            queryResolver(dehydratedClient)
+            resolve(unwrap(state.data))
           }
-          resolve(unwrap(state.data))
+          // We only resolve the data resource
+          // when the query observer finds a result
+          // This function will be called inside the observer
+          // subscription function.
+          resolver = resolve
+        } else {
+          if (!(state.isFetching && state.isLoading)) {
+            if (
+              (unwrap(state.data) as TData | typeof emptyData) === emptyData
+            ) {
+              resolve(undefined)
+            }
+            resolve(unwrap(state.data))
+          }
         }
       })
     },
   )
 
-  batch(() => {
-    mutate(() => unwrap(state.data))
-    refetch()
-  })
+  if (!isServer) {
+    batch(() => {
+      mutate(() => unwrap(state.data))
+      refetch()
+    })
+  }
 
   const unsubscribe = observer.subscribe((result) => {
     notifyManager.batchCalls(() => {
       const unwrappedResult = { ...unwrap(result) }
-      if (unwrappedResult.data === undefined) {
-        // This is a hack to prevent Solid
-        // from deleting the data property when it is `undefined`
-        // ref: https://www.solidjs.com/docs/latest/api#updating-stores
-        unwrappedResult.data = emptyData as any as undefined
+      if (isServer) {
+        setState(unwrappedResult)
+        // If on the server, we dehydrate the queryclient resource
+        // So that it is available to be hydrated on the client
+        if (!(result.isFetching && result.isLoading)) {
+          const dehydratedClient = dehydrate(queryClient())
+          queryResolver(dehydratedClient)
+          resolver(unwrap(unwrappedResult.data))
+        }
+      } else {
+        if (unwrappedResult.data === undefined) {
+          // This is a hack to prevent Solid
+          // from deleting the data property when it is `undefined`
+          // ref: https://www.solidjs.com/docs/latest/api#updating-stores
+          unwrappedResult.data = emptyData as any as undefined
+        }
+        setState(unwrap(unwrappedResult))
+        mutate(() => unwrap(result.data))
+        refetch()
       }
-      setState(unwrap(unwrappedResult))
-      mutate(() => unwrap(result.data))
-      refetch()
     })()
   })
 
