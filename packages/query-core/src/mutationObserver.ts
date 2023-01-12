@@ -98,9 +98,7 @@ export class MutationObserver<
   ): Promise<TData> {
     this.#mutateOptions = options
 
-    if (this.#currentMutation) {
-      this.#currentMutation.removeObserver(this)
-    }
+    this.#currentMutation?.removeObserver(this)
 
     this.#currentMutation = this.#client
       .getMutationCache()
