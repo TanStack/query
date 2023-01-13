@@ -1,20 +1,20 @@
 {
   "name": "@tanstack/query-example-svelte-basic",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "check": "svelte-check --tsconfig ./tsconfig.json"
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^4.12.0"
+    "@tanstack/svelte-query": "^4.20.0"
   },
   "devDependencies": {
-    "@sveltejs/vite-plugin-svelte": "^2.0.2",
-    "@tsconfig/svelte": "^3.0.0",
+    "@sveltejs/adapter-auto": "^1.0.0",
+    "@sveltejs/kit": "^1.0.0",
     "svelte": "^3.54.0",
     "svelte-check": "^2.9.2",
     "tslib": "^2.4.1",
