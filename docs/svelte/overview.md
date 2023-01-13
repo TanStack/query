@@ -47,6 +47,10 @@ Then call any function (e.g. createQuery) from any component:
 </div>
 ```
 
+## SvelteKit
+
+If you are using SvelteKit, please have a look at [SSR & SvelteKit](./ssr).
+
 ## Available Functions
 
 Svelte Query offers useful functions and components that will make managing server state in Svelte apps easier.
@@ -67,3 +71,4 @@ Svelte Query offers useful functions and components that will make managing serv
 Svelte Query offers an API similar to React Query, but there are some key differences to be mindful of.
 
 - Many of the functions in Svelte Query return a Svelte store. To access values on these stores reactively, you need to prefix the store with a `$`. You can learn more about Svelte stores [here](https://svelte.dev/tutorial/writable-stores).
+- If your query or mutation depends on variables, you must assign it reactively. You can read more about this [here](./reactivity).
