@@ -5,7 +5,7 @@
   const client = useQueryClient()
 
   let limit = 10
-  
+
   const posts = createQuery<
     { id: number; title: string; body: string }[],
     Error

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createQuery } from '@tanstack/svelte-query'
   import { getPostById } from './data'
-  import type { Post } from "./types"
+  import type { Post } from './types'
 
   export let postId: string
 
@@ -13,9 +13,7 @@
 
 <div>
   <div>
-    <a class="button" href="/">
-      Back
-    </a>
+    <a class="button" href="/"> Back </a>
   </div>
   {#if !postId || $post.isLoading}
     <span>Loading...</span>
