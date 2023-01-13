@@ -95,9 +95,6 @@ export class MutationCache extends Subscribable<MutationCacheListener> {
       mutationId: ++this.#mutationId,
       options: client.defaultMutationOptions(options),
       state,
-      defaultOptions: options.mutationKey
-        ? client.getMutationDefaults(options.mutationKey)
-        : undefined,
     })
 
     this.add(mutation)

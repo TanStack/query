@@ -15,9 +15,7 @@ interface MutationConfig<TData, TError, TVariables, TContext> {
   mutationCache: MutationCache
   options: MutationOptions<TData, TError, TVariables, TContext>
   logger?: Logger
-  defaultOptions?: MutationOptions<TData, TError, TVariables, TContext>
   state?: MutationState<TData, TError, TVariables, TContext>
-  meta?: MutationMeta
 }
 
 export interface MutationState<
@@ -83,8 +81,8 @@ export class Mutation<
   TContext = unknown,
 > extends Removable {
   state: MutationState<TData, TError, TVariables, TContext>
-  options: MutationOptions<TData, TError, TVariables, TContext>
-  mutationId: number
+  readonly options: MutationOptions<TData, TError, TVariables, TContext>
+  readonly mutationId: number
 
   #observers: MutationObserver<TData, TError, TVariables, TContext>[]
   #mutationCache: MutationCache
@@ -94,10 +92,7 @@ export class Mutation<
   constructor(config: MutationConfig<TData, TError, TVariables, TContext>) {
     super()
 
-    this.options = {
-      ...config.defaultOptions,
-      ...config.options,
-    }
+    this.options = config.options
     this.mutationId = config.mutationId
     this.#mutationCache = config.mutationCache
     this.#logger = config.logger || defaultLogger
