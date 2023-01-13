@@ -18,14 +18,12 @@ export class FocusManager extends Subscribable {
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!isServer && window.addEventListener) {
         const listener = () => onFocus()
-        // Listen to visibillitychange and focus
+        // Listen to visibilitychange
         window.addEventListener('visibilitychange', listener, false)
-        window.addEventListener('focus', listener, false)
 
         return () => {
           // Be sure to unsubscribe if a new handler is set
           window.removeEventListener('visibilitychange', listener)
-          window.removeEventListener('focus', listener)
         }
       }
       return

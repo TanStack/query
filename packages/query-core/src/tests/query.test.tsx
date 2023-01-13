@@ -86,7 +86,7 @@ describe('query', () => {
 
     // Reset visibilityState to original value
     visibilityMock.mockRestore()
-    window.dispatchEvent(new FocusEvent('focus'))
+    window.dispatchEvent(new Event('visibilitychange'))
 
     // There should not be a result yet
     expect(result).toBeUndefined()
@@ -181,7 +181,6 @@ describe('query', () => {
     } finally {
       // Reset visibilityState to original value
       visibilityMock.mockRestore()
-      window.dispatchEvent(new FocusEvent('focus'))
     }
   })
 
