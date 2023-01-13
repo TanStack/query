@@ -186,8 +186,8 @@ const {
 
 There are some caveats to this change however, which you must be aware of:
 
-- `placeholderData` will always put you into `success` state, while `keepPreviousData` will give you the status of the previous query. That status could be `error` if we have data fetched successfully and then got a background refetch error. However, the error itself is not shared. This doesn't seem quite right in any case. Therefore we decided to stick with behavior of `placeholderData`.
-- `keepPreviousData` will give you the `dataUpdatedAt` timestamp of the previous data, while with `placeholderData`, `dataUpdatedAt` will stay at `0`. This might be annoying if you want to show that timestamp continuously on screen. However you might get around it with `useEffect`.
+- `placeholderData` will always put you into `success` state, while `keepPreviousData` gave you the status of the previous query. That status could be `error` if we have data fetched successfully and then got a background refetch error. However, the error itself was not shared, so we decided to stick with behavior of `placeholderData`.
+- `keepPreviousData` gave you the `dataUpdatedAt` timestamp of the previous data, while with `placeholderData`, `dataUpdatedAt` will stay at `0`. This might be annoying if you want to show that timestamp continuously on screen. However you might get around it with `useEffect`.
 
   ```ts
   const [updatedAt, setUpdatedAt] = useState(0)
