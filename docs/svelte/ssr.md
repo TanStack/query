@@ -7,7 +7,7 @@ Svelte Query supports two ways of prefetching data on the server and passing tha
 
 ## Caveat
 
-SvelteKit defaults to rendering routes with SSR. Unless you are using one of the below solutions, you need to disable SSR. Otherwise, your query will continue executing on the server asynchronously, even after the HTML has been sent to the client.
+SvelteKit defaults to rendering routes with SSR. Unless you are using one of the below solutions, you need to disable the query on the server. Otherwise, your query will continue executing on the server asynchronously, even after the HTML has been sent to the client.
 
 One way to achieve this is to `import { browser } from '$app/environment'` and add `enabled: browser` to the options of `createQuery`. This will set the query to disabled on the server, but enabled on the client.
 
