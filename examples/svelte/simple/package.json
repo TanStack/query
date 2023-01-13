@@ -1,7 +1,7 @@
 {
   "name": "@tanstack/query-example-svelte-simple",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,7 +10,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@tanstack/svelte-query": "^4.12.0"
+    "@tanstack/svelte-query": "^4.20.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^2.0.2",
