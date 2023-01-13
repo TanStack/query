@@ -5,10 +5,13 @@ import { hydrate } from '@tanstack/query-core'
 import { useQueryClient } from './QueryClientProvider'
 import type { ContextOptions } from './types'
 
-export function useHydrate(
-  state: unknown,
-  options: HydrateOptions & ContextOptions = {},
-) {
+export interface HydrationBoundaryProps {
+  state?: unknown
+  options?: HydrateOptions & ContextOptions,
+  children?: React.ReactNode
+}
+
+export const HydrationBoundary = ({ children, options = {}, state }: HydrationBoundaryProps) => {
   const queryClient = useQueryClient({ context: options.context })
 
   const optionsRef = React.useRef(options)
@@ -23,15 +26,6 @@ export function useHydrate(
       hydrate(queryClient, state, optionsRef.current)
     }
   }, [queryClient, state])
-}
 
-export interface HydrateProps {
-  state?: unknown
-  options?: HydrateOptions
-  children?: React.ReactNode
-}
-
-export const Hydrate = ({ children, options, state }: HydrateProps) => {
-  useHydrate(state, options)
   return children as React.ReactElement
 }
